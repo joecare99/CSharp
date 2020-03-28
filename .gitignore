@@ -5,5 +5,5 @@
 /.svn
 /.vs
 /bin/Debug
-/TestStatements/.vs/TestStatements/v16
-/TestStatements/AsyncExampleWPF/obj/Release
+/TestStatements/.vs
+/TestStatements/AsyncExampleWPF/obj

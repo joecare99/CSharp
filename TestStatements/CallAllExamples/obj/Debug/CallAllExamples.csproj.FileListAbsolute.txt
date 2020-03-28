@@ -1,0 +1,8 @@
+C:\Projekte\CSharp\bin\Debug\CallAllExamples.exe.config
+C:\Projekte\CSharp\bin\Debug\CallAllExamples.exe
+C:\Projekte\CSharp\bin\Debug\CallAllExamples.pdb
+C:\Projekte\CSharp\TestStatements\CallAllExamples\obj\Debug\CallAllExamples.csprojAssemblyReference.cache
+C:\Projekte\CSharp\TestStatements\CallAllExamples\obj\Debug\CallAllExamples.csproj.CoreCompileInputs.cache
+C:\Projekte\CSharp\TestStatements\CallAllExamples\obj\Debug\CallAllExamples.csproj.CopyComplete
+C:\Projekte\CSharp\TestStatements\CallAllExamples\obj\Debug\CallAllExamples.exe
+C:\Projekte\CSharp\TestStatements\CallAllExamples\obj\Debug\CallAllExamples.pdb
