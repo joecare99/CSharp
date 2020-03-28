@@ -1,0 +1,13 @@
+C:\Projekte\CSharp\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Projekte\CSharp\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Projekte\CSharp\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Projekte\CSharp\bin\Debug\de\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
+C:\Projekte\CSharp\bin\Debug\de\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
+C:\Projekte\CSharp\bin\Debug\de\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
+C:\Projekte\CSharp\bin\Debug\TestStatementTest.dll
+C:\Projekte\CSharp\bin\Debug\TestStatementTest.pdb
+C:\Projekte\CSharp\TestStatements\TestStatementsTest\obj\Debug\TestStatementsTest.csprojAssemblyReference.cache
+C:\Projekte\CSharp\TestStatements\TestStatementsTest\obj\Debug\TestStatementsTest.csproj.CoreCompileInputs.cache
+C:\Projekte\CSharp\TestStatements\TestStatementsTest\obj\Debug\TestStatementsTest.csproj.CopyComplete
+C:\Projekte\CSharp\TestStatements\TestStatementsTest\obj\Debug\TestStatementTest.dll
+C:\Projekte\CSharp\TestStatements\TestStatementsTest\obj\Debug\TestStatementTest.pdb
