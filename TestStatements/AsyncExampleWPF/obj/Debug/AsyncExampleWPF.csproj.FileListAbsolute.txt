@@ -1,0 +1,16 @@
+C:\Projekte\CSharp\bin\Debug\AsyncExampleWPF.exe.config
+C:\Projekte\CSharp\bin\Debug\AsyncExampleWPF.exe
+C:\Projekte\CSharp\bin\Debug\AsyncExampleWPF.pdb
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.csprojAssemblyReference.cache
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\MainWindow.g.cs
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\App.g.cs
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF_MarkupCompile.cache
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF_MarkupCompile.lref
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\MainWindow.baml
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.g.resources
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.Properties.Resources.resources
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.csproj.GenerateResource.cache
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.csproj.CoreCompileInputs.cache
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.csproj.CopyComplete
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.exe
+C:\Projekte\CSharp\TestStatements\AsyncExampleWPF\obj\Debug\AsyncExampleWPF.pdb
