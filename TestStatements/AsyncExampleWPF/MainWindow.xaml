@@ -1,0 +1,19 @@
+﻿<Window x:Class="AsyncExampleWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AsyncExampleWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="startButton" Content="Start" HorizontalAlignment="Left" Margin="106,49,0,0" VerticalAlignment="Top" Width="75" Click="startButton_Click"/>
+        <TextBlock x:Name="resultsTextBox" HorizontalAlignment="Left" Margin="44,95,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="295" Width="500" FontFamily="Lucida Console" RenderTransformOrigin="0.5,0.5">
+        </TextBlock>
+        <Button x:Name="startButtonAsync" Content="Start [A]" HorizontalAlignment="Left" Margin="186,49,0,0" VerticalAlignment="Top" Width="75" Click="startButtonAsync_Click"/>
+        <Button x:Name="startButtonAsync2" Content="Start [I]" HorizontalAlignment="Left" Margin="266,49,0,0" VerticalAlignment="Top" Width="75" Click="startButtonAsync2_Click"/>
+        <Button x:Name="startButtonAsync3" Content="Start [A]" HorizontalAlignment="Left" Margin="345,49,0,0" VerticalAlignment="Top" Width="75" Click="startButtonAsync3_Click"/>
+        <Button x:Name="startButtonAsync4" Content="Start [A]" HorizontalAlignment="Left" Margin="425,49,0,0" VerticalAlignment="Top" Width="75" Click="startButtonAsync4_Click"/>
+
+    </Grid>
+</Window>

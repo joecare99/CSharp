@@ -1,0 +1,8 @@
+C:\Projekte\CSharp\bin\Debug\TestStatements.exe.config
+C:\Projekte\CSharp\bin\Debug\TestStatements.exe
+C:\Projekte\CSharp\bin\Debug\TestStatements.pdb
+C:\Projekte\CSharp\TestStatements\TestStatements\obj\Debug\TestStatements.csprojAssemblyReference.cache
+C:\Projekte\CSharp\TestStatements\TestStatements\obj\Debug\TestStatements.csproj.CoreCompileInputs.cache
+C:\Projekte\CSharp\TestStatements\TestStatements\obj\Debug\TestStatements.csproj.CopyComplete
+C:\Projekte\CSharp\TestStatements\TestStatements\obj\Debug\TestStatements.exe
+C:\Projekte\CSharp\TestStatements\TestStatements\obj\Debug\TestStatements.pdb
