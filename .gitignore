@@ -5,10 +5,8 @@
 /.svn
 /.vs
 /bin/Debug
-/TestStatements/.vs
-/TestStatements/AsyncExampleWPF/obj
-/CSharpBible/Calc32WPF/obj
 /CSharpBible/.vs
+/CSharpBible/Calc32WPF/obj
 /NUnitTestProject1/NUnitTestProject1/obj
 /CSharpBible/AboutEx/obj
 /CSharpBible/AboutExTests/bin
@@ -30,3 +28,7 @@
 /CSharpBible/DataGridEx/obj
 /CSharpBible/CSFreeVision/obj
 /CSharpBible/BindingGroupExp/obj
+/TestStatements/.vs
+/TestStatements/AsyncExampleWPF/obj
+/TestStatements/TestClockApp/obj
+/TestStatements/ctlClockLib/obj
