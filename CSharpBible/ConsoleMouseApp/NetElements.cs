@@ -1,17 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Traingames.NetElements
 {
-    public class ConsoleFramework
+    public static class ConsoleFramework
     {
-        public char[] chars = { '█', '▓', '▒', '░' };
+        public static readonly char[] chars = { '█', '▓', '▒', '░',' ' };
+        public static readonly char[] singleBoarder = { '─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼' };
+        public static readonly char[] doubleBoarder = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
+        public static readonly char[] simpleBoarder = { '-', '|', '+', '+', '+', '+', '+', '+', '+', '+', '+' };
 
-        public Point MousePos =>
+        public static Point MousePos =>
             new Point((System.Windows.Forms.Control.MousePosition.X / (Console.LargestWindowWidth / 24)) - 100, System.Windows.Forms.Control.MousePosition.Y / (Console.LargestWindowHeight / 7));
-        
-       public ConsoleFramework()
+
+        public static bool MouseButtonLeft => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left;
+        public static bool MouseButtonRight => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right;
+        public static bool MouseButtonMiddle => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Middle;
+
+        static ConsoleFramework()
         {
             IntPtr inHandle = GetStdHandle(STD_INPUT_HANDLE);
             GetConsoleMode(inHandle, out ConsoleMode mode);
@@ -21,7 +29,7 @@ namespace Traingames.NetElements
             SetConsoleMode(inHandle, mode);
         }
 
-        public void SetPixel(int x, int y, ConsoleColor color)
+        static public void SetPixel(int x, int y, ConsoleColor color)
         {
             Console.SetCursorPosition(x, y);
             Console.BackgroundColor = color;
@@ -54,110 +62,102 @@ namespace Traingames.NetElements
 
     }
 
-    public class Pixel : GUI
+    public class Pixel : Control
     {
         public void Set(int X, int Y, string text)
         {
             ConsoleColor backColor = ConsoleColor.Black;
             BackColor = backColor;
-            int yyyyyy = (int)Math.Floor(Y / 1.5f);
             Text = text;
-            y = Y;
-            x = X;
+            position = new Point(X,Y);
         }
     }
 
-    public class GUI
+    public class Control 
     {
-        public int x, y;
-        public static GUI[,] GraphicalUserInterfaces = new GUI[1000, 1000];
+        private Point _position;
+        private Size _size;
+        private bool _active;
+        private bool _shaddow;
+        private bool _visible;
+
+        public Point position { get => _position; 
+            set 
+            { 
+                if (_position == value) return;
+                _position = value;
+                OnMove?.Invoke(this, null);
+            }
+        }
+        public Size dimension
+        {
+            get => _size; set
+            {
+                if (_size == value) return;
+                _size = value;
+                OnResize?.Invoke(this, null);
+            }
+        }
+
+        public bool active
+        {
+            get => _active; set
+            {
+                if (_active == value) return;
+                _active = value;
+                OnChange?.Invoke(this, null);
+                Invalidate();
+            }
+        }
+
+        public event EventHandler OnMove;
+        public event EventHandler OnResize;
+        public event EventHandler OnChange;
+
         public ConsoleColor BackColor;
         public string Text;
 
-        public void Draw()
+        public List<Control> children = new List<Control>();
+        public Control parent;
+
+
+        public Control Add(Control control)
         {
-            Console.SetCursorPosition(x, y);
+            children.Add(control);
+            control.parent = this;
+            return control;
+        }
+        public virtual void Draw()
+        {
+            Console.SetCursorPosition(_position.X, _position.Y);
             Console.BackgroundColor = BackColor;
             Console.Write($"[{Text}]");
             Console.BackgroundColor = ConsoleColor.Black;
             Point M = ConsoleTools.NET.Program.MousePos;
         }
 
-        static GUI Last;
-
-        public static void Add(GUI gui)
-        {
-            GraphicalUserInterfaces[gui.x, gui.y] = gui;
-        }
-
-        public static void CalculateOnStart()
-        {
-            for (int x = 0; x < 1000; x++)
-            {
-                for (int y = 0; y < 1000; y++)
-                {
-                    if (GraphicalUserInterfaces[x, y] != null)
-                    {
-
-                        if (Last != null && y < Last.y)
-                        {
-                            GraphicalUserInterfaces[x, y].x = Last.x - GraphicalUserInterfaces[x, y].x;
-                            GraphicalUserInterfaces[x, y].y = Last.y - GraphicalUserInterfaces[x, y].y;
-                        }
-                        GraphicalUserInterfaces[x, y].Draw();
-                        GraphicalUserInterfaces[x, y].x = x;
-                        GraphicalUserInterfaces[x, y].y = y;
-                        Last = GraphicalUserInterfaces[x, y];
-                    }
-
-                }
-            }
-        }
-
     }
 
-    public class Button : GUI
+    public class Button : Control
     {
+        private bool _WasPressed;
 
-        public bool Over(Point M)
-        {
-            int yy = ((y * 2) - y / 3) + 2;
+        public bool Over(Point M) => new Rectangle(position, dimension).Contains(M);
 
-            int xx = (x / (Console.LargestWindowWidth / 24)) + Text.Length;
-
-            if (M.X >= xx && M.X <= (xx + Text.Length + 1) && M.Y >= yy && M.Y <= yy + 2)
-                Console.BackgroundColor = ConsoleColor.DarkBlue;
-
-            return M.X >= xx && M.X <= (xx + Text.Length + 1) && M.Y >= yy && M.Y <= yy + 2;
-        }
-
-        public bool Pressed(Point M)
-        {
-            int yy = ((y * 2) - y / 3) + 1;
-
-            int xx = (x / (Console.LargestWindowWidth / 24));
-
-            return M.X >= xx && M.X <= (xx + Text.Length * 1.5f) && M.Y >= yy && M.Y <= yy + 2 && System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left;
-        }
+        public bool Pressed(Point M) => Over(M) && !_WasPressed & (_WasPressed=ConsoleFramework.MouseButtonLeft) ;
 
         public void CalculateClick(Point M)
         {
-            if (Pressed(M))
-            {
-                Console.Clear();
-                Draw();
-            }
+           
         }
 
         public void Set(int X, int Y, string text, ConsoleColor backColor)
         {
             BackColor = backColor;
-            int yyyyyy = (int)Math.Floor(Y / 1.5f);
             Text = text;
-            y = Y;
-            x = X;
-
-            int xx = (x / (Console.LargestWindowWidth / 24)) + Text.Length;
+            position = new Point(X, Y);
         }
     }
+
+
 }
