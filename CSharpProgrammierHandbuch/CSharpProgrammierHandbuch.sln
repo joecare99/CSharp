@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpProgrammierHandbuch", "CSharpProgrammierHandbuch\CSharpProgrammierHandbuch.csproj", "{76360D49-1BBE-48B6-9C7B-199075F11017}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documente", "Documente", "{488D6251-1F59-490A-9D3C-62AEDFF89B25}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\C#-Programmierhandbuch   Microsoft Docs.html = Docs\C#-Programmierhandbuch   Microsoft Docs.html
+		HTMLPage1.html = HTMLPage1.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Einblicke in ein CSharp-Programm", "Einblicke in ein CSharp-Programm", "{FB33A4BA-CA99-49A5-81B5-8346A46FC139}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Einblicke in ein C#-Programm   Microsoft Docs.html = Docs\Einblicke in ein C#-Programm   Microsoft Docs.html
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "HelloWorld\HelloWorld.csproj", "{86C519CC-4DFB-4037-9259-04BC3E0C839B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fibonacci", "Fibonacci\Fibonacci.csproj", "{81E70BF3-C1AB-41BB-96D6-4A40F466E441}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fibonacci2", "Fibonacci2\Fibonacci2.csproj", "{812452AA-1098-4055-B06F-47C0629EFFF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{967CBAEC-29E3-4689-83BC-7275E3E6BF46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CGui", "CGui\CGui.csproj", "{E31E6E91-35A3-4115-93B2-94EF8060D9E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76360D49-1BBE-48B6-9C7B-199075F11017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76360D49-1BBE-48B6-9C7B-199075F11017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76360D49-1BBE-48B6-9C7B-199075F11017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76360D49-1BBE-48B6-9C7B-199075F11017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86C519CC-4DFB-4037-9259-04BC3E0C839B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C519CC-4DFB-4037-9259-04BC3E0C839B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C519CC-4DFB-4037-9259-04BC3E0C839B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C519CC-4DFB-4037-9259-04BC3E0C839B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81E70BF3-C1AB-41BB-96D6-4A40F466E441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81E70BF3-C1AB-41BB-96D6-4A40F466E441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81E70BF3-C1AB-41BB-96D6-4A40F466E441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81E70BF3-C1AB-41BB-96D6-4A40F466E441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{812452AA-1098-4055-B06F-47C0629EFFF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{812452AA-1098-4055-B06F-47C0629EFFF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{812452AA-1098-4055-B06F-47C0629EFFF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{812452AA-1098-4055-B06F-47C0629EFFF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967CBAEC-29E3-4689-83BC-7275E3E6BF46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967CBAEC-29E3-4689-83BC-7275E3E6BF46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967CBAEC-29E3-4689-83BC-7275E3E6BF46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967CBAEC-29E3-4689-83BC-7275E3E6BF46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E31E6E91-35A3-4115-93B2-94EF8060D9E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E31E6E91-35A3-4115-93B2-94EF8060D9E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E31E6E91-35A3-4115-93B2-94EF8060D9E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E31E6E91-35A3-4115-93B2-94EF8060D9E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FB33A4BA-CA99-49A5-81B5-8346A46FC139} = {488D6251-1F59-490A-9D3C-62AEDFF89B25}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77C3821D-3322-437A-828C-13F037CAD2F9}
+	EndGlobalSection
+EndGlobal

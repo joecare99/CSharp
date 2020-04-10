@@ -34,3 +34,6 @@
 /TestStatements/TestStatements/obj
 /TestStatements/DynamicSample/obj
 /TestStatements/CallAllExamples/obj
+/CSharpProgrammierHandbuch/.vs
+/CSharpProgrammierHandbuch/Fibonacci/obj
+/CSharpProgrammierHandbuch/HelloWorld/obj
