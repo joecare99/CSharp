@@ -1,8 +1,0 @@
-C:\Projekte\CSharp\bin\Debug\DynamicSample.exe.config
-C:\Projekte\CSharp\bin\Debug\DynamicSample.exe
-C:\Projekte\CSharp\bin\Debug\DynamicSample.pdb
-C:\Projekte\CSharp\TestStatements\DynamicSample\obj\Debug\DynamicSample.csprojAssemblyReference.cache
-C:\Projekte\CSharp\TestStatements\DynamicSample\obj\Debug\DynamicSample.csproj.CoreCompileInputs.cache
-C:\Projekte\CSharp\TestStatements\DynamicSample\obj\Debug\DynamicSample.csproj.CopyComplete
-C:\Projekte\CSharp\TestStatements\DynamicSample\obj\Debug\DynamicSample.exe
-C:\Projekte\CSharp\TestStatements\DynamicSample\obj\Debug\DynamicSample.pdb
