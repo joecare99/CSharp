@@ -36,7 +36,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -46,12 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSet\DataLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataSet\DataLine.Designer.cs">
-      <DependentUpon>DataLine.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataSet\TFieldDef.cs" />
     <Compile Include="DataSet\TFieldDefs.cs" />
     <Compile Include="Visual\FrmCSVViewerMain.cs">
@@ -72,6 +65,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Properties\DataSources\CSharpBible.CSV_Viewer.DataSet.DataLine.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

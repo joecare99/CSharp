@@ -64,7 +64,10 @@ namespace CSharpBible.Calc32.NonVisual
         {
             if (bEditMode)
             {
-                Akkumulator = nAkkumulator * 10 + aNumber;
+                if (nAkkumulator < int.MaxValue / 10)
+                {
+                    Akkumulator = nAkkumulator * 10 + aNumber;
+                }
             }
             else
             {
