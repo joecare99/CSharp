@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSet\Class1.cs" />
     <Compile Include="DataSet\TFieldDef.cs" />
     <Compile Include="DataSet\TFieldDefs.cs" />
     <Compile Include="Visual\FrmCSVViewerMain.cs">
@@ -66,9 +65,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Visual\FrmCSVViewerMain.resx">
-      <DependentUpon>FrmCSVViewerMain.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\DataSources\CSharpBible.CSV_Viewer.DataSet.DataLine.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
