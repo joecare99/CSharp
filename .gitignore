@@ -5,9 +5,10 @@
 /.svn
 /.vs
 /bin
-/TestStatements/.vs
 /CSharpBible/.vs
+/CSharpBible/packages
 /CSharpBible/AboutEx/obj
+/TestStatements/.vs
 /TestStatements/ctlClockLib/obj
 /TestStatements/TestClockApp/obj
 /TestStatements/AsyncExample/obj
