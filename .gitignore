@@ -4,7 +4,13 @@
 
 /.svn
 /.vs
-/bin/Debug
-/TestStatements/.vs/TestStatements/v16
-/CSharpBible/.vs/CSharpBible/v16
-/CSharpBible/AboutEx/obj/Debug
+/bin
+/TestStatements/.vs
+/CSharpBible/.vs
+/CSharpBible/AboutEx/obj
+/TestStatements/ctlClockLib/obj
+/TestStatements/TestClockApp/obj
+/TestStatements/AsyncExample/obj
+/TestStatements/TestStatements/obj
+/TestStatements/DynamicSample/obj
+/TestStatements/CallAllExamples/obj
