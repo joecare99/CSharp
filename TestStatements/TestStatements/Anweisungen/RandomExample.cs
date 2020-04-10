@@ -9,11 +9,11 @@ namespace TestStatements.Anweisungen
     public static class RandomExample
     {
 
+        // Instantiate random number generator using system-supplied value as seed.
+        public static Random rand = new Random();
+
         public static void ExampleMain1()
         {
-            // Instantiate random number generator using system-supplied value as seed.
-            var rand = new Random();
-
             // Generate and display 5 random byte (integer) values.
             var bytes = new byte[5];
             rand.NextBytes(bytes);
@@ -69,7 +69,6 @@ namespace TestStatements.Anweisungen
 
         public static void ExampleMain2()
         {
-            Random rnd = new Random();
             string[] malePetNames = { "Rufus", "Bear", "Dakota", "Fido",
                           "Vanya", "Samuel", "Koani", "Volodya",
                           "Prince", "Yiska" };
@@ -78,8 +77,8 @@ namespace TestStatements.Anweisungen
                             "Starlight", "Talla" };
 
             // Generate random indexes for pet names.
-            int mIndex = rnd.Next(malePetNames.Length);
-            int fIndex = rnd.Next(femalePetNames.Length);
+            int mIndex = rand.Next(malePetNames.Length);
+            int fIndex = rand.Next(femalePetNames.Length);
 
             // Display the result.
             Console.WriteLine("Suggested pet name of the day: ");
@@ -96,8 +95,9 @@ namespace TestStatements.Anweisungen
         {
             byte[] bytes1 = new byte[100];
             byte[] bytes2 = new byte[100];
-            Random rnd1 = new Random();
-            Random rnd2 = new Random();
+            int nSeed = rand.Next();
+            Random rnd1 = new Random(nSeed);
+            Random rnd2 = new Random(nSeed);
 
             rnd1.NextBytes(bytes1);
             rnd2.NextBytes(bytes2);
