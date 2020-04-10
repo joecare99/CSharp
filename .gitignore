@@ -4,12 +4,10 @@
 
 /.svn
 /.vs
-/bin/Debug
+/bin
 /CSharpBible/.vs
-/CSharpBible/Calc32WPF/obj
-/NUnitTestProject1/NUnitTestProject1/obj
+/CSharpBible/packages
 /CSharpBible/AboutEx/obj
-/CSharpBible/AboutExTests/bin
 /CSharpBible/AboutExTests/obj
 /CSharpBible/ActionTest/obj
 /CSharpBible/ActionTestWPF/obj
@@ -17,9 +15,9 @@
 /CSharpBible/AddPageWPF/obj
 /CSharpBible/Calc32/obj
 /CSharpBible/Calc32Tests/obj
+/CSharpBible/Calc32WPF/obj
 /CSharpBible/CharGrid/obj
 /CSharpBible/CSharpBibleTest/obj
-/CSharpBible/packages
 /CSharpBible/CSV_Viewer/obj
 /CSharpBible/CSV_ViewerTest/obj
 /CSharpBible/ConsoleMouseApp/obj
@@ -28,7 +26,11 @@
 /CSharpBible/DataGridEx/obj
 /CSharpBible/CSFreeVision/obj
 /CSharpBible/BindingGroupExp/obj
+/NUnitTestProject1/NUnitTestProject1/obj
 /TestStatements/.vs
-/TestStatements/AsyncExampleWPF/obj
-/TestStatements/TestClockApp/obj
 /TestStatements/ctlClockLib/obj
+/TestStatements/TestClockApp/obj
+/TestStatements/AsyncExample/obj
+/TestStatements/TestStatements/obj
+/TestStatements/DynamicSample/obj
+/TestStatements/CallAllExamples/obj
