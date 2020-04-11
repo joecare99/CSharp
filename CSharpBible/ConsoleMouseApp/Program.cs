@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Traingames.NetElements;
 //using System.Windows.Forms;
 using System.Drawing;
+using ConsoleLib.CommonControls;
+using ConsoleLib;
 
 namespace ConsoleTools.NET
 {
@@ -14,18 +15,23 @@ namespace ConsoleTools.NET
         static public Point MousePos;
         static Button One = new Button();
         static Pixel Mouse = new Pixel();
-//        static Application App = new Application();
+        static Panel App = new Panel();
 
         static void Main(string[] args)
         {
 
             Console.ForegroundColor = ConsoleColor.White;
+            App.Boarder = ConsoleFramework.singleBoarder;
+            App.size = ConsoleFramework.Canvas.ClipRect.Size;
+            App.position = ConsoleFramework.Canvas.ClipRect.Location;
+
             // t.Draw(10, 40, ConsoleColor.Gray);
+            App.Add(One);
+            App.Add(Mouse);
             One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
             Mouse.Set(0,0," ");
             Mouse.BackColor = ConsoleColor.Red;
 
-            //  App.Add(One);
             Point _MousePos = ConsoleFramework.MousePos;
 
             for (; ; )
@@ -44,6 +50,8 @@ namespace ConsoleTools.NET
                     }
 
                 }
+                else
+                    Task.Delay(1);
                 //   Console.Clear();
             }
         }
