@@ -7,7 +7,7 @@
 *.dll
 /.svn
 /.vs
-/bin/Debug
+/bin
 /CSharpBible/.vs
 /CSharpBible/AboutEx/obj
 /CSharpBible/AboutEx/publish
@@ -34,3 +34,9 @@
 /NUnitTestProject1/NUnitTestProject1/obj
 /TestStatements/.vs
 /TestStatements/AsyncExampleWPF/obj
+/TestStatements/CallAllExamples/obj
+/TestStatements/ctlClockLib/obj
+/TestStatements/DynamicSample/obj
+/TestStatements/TestClockApp/obj
+/TestStatements/AsyncExample/obj
+/TestStatements/TestStatements/obj
