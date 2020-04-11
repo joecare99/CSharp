@@ -40,13 +40,19 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtendedConsole.cs" />
-    <Compile Include="NetElements.cs" />
+    <Compile Include="ConsoleLib\CommonControls\Button.cs" />
+    <Compile Include="ConsoleLib\ConsoleFramework.cs" />
+    <Compile Include="ConsoleLib\ExtendedConsole.cs" />
+    <Compile Include="ConsoleLib\Control.cs" />
+    <Compile Include="ConsoleLib\CommonControls\Panel.cs" />
+    <Compile Include="ConsoleLib\CommonControls\Pixel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConsoleLib\TextCanvas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

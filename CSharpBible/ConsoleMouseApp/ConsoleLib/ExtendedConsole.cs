@@ -1,11 +1,56 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 
-namespace ConsoleMouseApp.
+namespace ConsoleLib
 {
-    class ExtendedConsole
+    public static class ExtendedConsole
     {
+        static ExtendedConsole()
+        {
+
+            IntPtr inHandle = GetStdHandle(STD_INPUT_HANDLE);
+            GetConsoleMode(inHandle, out ConsoleMode mode);
+            mode &= ~ConsoleMode.ENABLE_QUICK_EDIT_MODE; //disable
+            mode |= ConsoleMode.ENABLE_WINDOW_INPUT; //enable (if you want)
+            mode |= ConsoleMode.ENABLE_MOUSE_INPUT; //enable
+            SetConsoleMode(inHandle, mode);
+            if (!Run)
+            {
+                Run = true;
+                IntPtr handleIn = GetStdHandle(STD_INPUT_HANDLE);
+                new Thread(() =>
+                {
+                    while (true)
+                    {
+                        uint numRead = 0;
+                        INPUT_RECORD[] record = new INPUT_RECORD[1];
+                        record[0] = new INPUT_RECORD();
+                        ReadConsoleInput(handleIn, record, 1, ref numRead);
+                        if (Run)
+                            switch (record[0].usEventType)
+                            {
+                                case EventType.MOUSE_EVENT:
+                                    MouseEvent?.Invoke(null, record[0].MouseEvent);
+                                    break;
+                                case EventType.KEY_EVENT:
+                                    KeyEvent?.Invoke(null, record[0].KeyEvent);
+                                    break;
+                                case EventType.WINDOW_BUFFER_SIZE_EVENT:
+                                    WindowBufferSizeEvent?.Invoke(null, record[0].WindowBufferSizeEvent);
+                                    break;
+                            }
+                        else
+                        {
+                            uint numWritten = 0;
+                            WriteConsoleInput(handleIn, record, 1, ref numWritten);
+                            return;
+                        }
+                    }
+                }).Start();
+            }
+        }
         // Native Input-Methods
         private static bool Run = false;
 
