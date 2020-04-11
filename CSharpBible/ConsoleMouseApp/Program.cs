@@ -14,7 +14,7 @@ namespace ConsoleTools.NET
         static public Point MousePos;
         static Button One = new Button();
         static Pixel Mouse = new Pixel();
-        static Application App = new Application();
+//        static Application App = new Application();
 
         static void Main(string[] args)
         {
@@ -22,19 +22,27 @@ namespace ConsoleTools.NET
             Console.ForegroundColor = ConsoleColor.White;
             // t.Draw(10, 40, ConsoleColor.Gray);
             One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
+            Mouse.Set(0,0," ");
+            Mouse.BackColor = ConsoleColor.Red;
 
-            App.Add(One);
-            
+            //  App.Add(One);
+            Point _MousePos = ConsoleFramework.MousePos;
+
             for (; ; )
             {
-                MousePos = c.MousePos;
+                MousePos = ConsoleFramework.MousePos;
                 if (One.Pressed(MousePos))
                 {
                     Console.Write("1");
                 }
-                else
+                else if (_MousePos != MousePos)
                 {
-                    
+                    _MousePos = MousePos;
+                    if (ConsoleFramework.Canvas.ClipRect.Contains(MousePos))
+                    {
+                        Mouse.Set(MousePos);
+                    }
+
                 }
                 //   Console.Clear();
             }
