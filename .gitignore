@@ -33,12 +33,13 @@
 /CSharpBible/packages
 /NUnitTestProject1/NUnitTestProject1/obj
 /TestStatements/.vs
-/TestStatements/ctlClockLib/obj
-/TestStatements/TestClockApp/obj
 /TestStatements/AsyncExample/obj
-/TestStatements/TestStatements/obj
-/TestStatements/DynamicSample/obj
+/TestStatements/AsyncExampleWPF/obj
 /TestStatements/CallAllExamples/obj
+/TestStatements/ctlClockLib/obj
+/TestStatements/DynamicSample/obj
+/TestStatements/TestClockApp/obj
+/TestStatements/TestStatements/obj
 /CSharpProgrammierHandbuch/.vs
 /CSharpProgrammierHandbuch/Fibonacci/obj
 /CSharpProgrammierHandbuch/HelloWorld/obj
