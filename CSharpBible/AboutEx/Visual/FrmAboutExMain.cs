@@ -13,16 +13,23 @@ namespace CSharpBible.AboutEx.Visual
     public partial class FrmAboutExMain : Form
     {
         private FrmAbout frmAbout;
+        private AboutBox1 frmAbout2;
 
         public FrmAboutExMain()
         {
             InitializeComponent();
-            frmAbout = new FrmAbout(); 
+            frmAbout = new FrmAbout();
+            frmAbout2 = new AboutBox1();
         }
 
         private void btnClickMe_Click(object sender, EventArgs e)
         {
             frmAbout?.Show();
+        }
+
+        private void btnClickMe2_Click(object sender, EventArgs e)
+        {
+            frmAbout2?.Show();
         }
     }
 }
