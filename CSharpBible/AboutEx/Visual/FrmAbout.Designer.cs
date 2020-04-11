@@ -78,7 +78,7 @@
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(417, 29);
             this.lblCopyright.TabIndex = 3;
-            this.lblCopyright.Text = "Copyright © 2001 by the Ugly Ducking";
+            this.lblCopyright.Text = "Copyleft © 2001 by the Ugly Ducking";
             // 
             // lblVersion
             // 
