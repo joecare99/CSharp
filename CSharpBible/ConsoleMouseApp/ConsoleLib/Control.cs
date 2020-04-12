@@ -21,7 +21,7 @@ namespace ConsoleLib
                 _dimension = value;
                 if (parent == null)
                 {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace ConsoleLib
                 _dimension.Location = value;
                 if (parent == null)
                 {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
                 }
                 else
                 {
@@ -98,7 +98,7 @@ namespace ConsoleLib
                 _dimension.Size = value;
                 if (parent == null)
                 {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
                 }
                 else
                 {
@@ -203,7 +203,7 @@ namespace ConsoleLib
         public virtual void Draw()
         {
             // Draw Background
-            Console.SetCursorPosition(_dimension.X, _dimension.Y);
+            Console.SetCursorPosition(realDim.X, realDim.Y);
             Console.ForegroundColor = ForeColor;
             Console.BackgroundColor = BackColor;
             Console.Write($"[{Text}]");

@@ -14,10 +14,12 @@ namespace ConsoleLib
 
         public ConsoleColor BackgroundColor { get; internal set; }
         public Rectangle ClipRect { get =>_dimension; }
+        public ConsoleColor ForegroundColor { get; internal set; }
 
-        public void FillRect(Rectangle dimension,ConsoleColor color,Char c)
+        public void FillRect(Rectangle dimension,ConsoleColor frcolor, ConsoleColor bkcolor, Char c)
         {
-            Console.BackgroundColor = color;
+            Console.BackgroundColor = bkcolor;
+            Console.ForegroundColor = frcolor;
             if (_dimension.Contains(dimension.Location))
             {
                 for (int i = dimension.Y; i < dimension.Bottom; i++)
@@ -29,7 +31,7 @@ namespace ConsoleLib
             }
         }
 
-        public void DrawRect(Rectangle dimension, ConsoleColor color, char[] boarder)
+        public void DrawRect(Rectangle dimension, ConsoleColor frcolor, ConsoleColor bkcolor, char[] boarder)
         {
             if (dimension.Width==0 || dimension.Height==0)  return;
             if (dimension.Width == 1 ) 
@@ -48,7 +50,8 @@ namespace ConsoleLib
                 }
                 return;
             }
-            Console.BackgroundColor = color;
+            Console.BackgroundColor = bkcolor;
+            Console.ForegroundColor = frcolor;
             if (_dimension.Contains(dimension.Location))
                 for (int i = dimension.Y + 1; i < dimension.Bottom - 1; i++)
                 {

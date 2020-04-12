@@ -24,13 +24,17 @@ namespace ConsoleTools.NET
             App.Boarder = ConsoleFramework.singleBoarder;
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3); 
-            App.dimension = cl ;
+            App.ForeColor = ConsoleColor.Gray;
+            App.BackColor = ConsoleColor.DarkGray;
+            App.BoarderColor = ConsoleColor.Green;
+            App.dimension = cl;
 
             // t.Draw(10, 40, ConsoleColor.Gray);
             App.Add(One);
             App.Add(Mouse);
-            One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
+            One.ForeColor = ConsoleColor.White;
             One.shaddow = true;
+            One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
             Mouse.Set(0,0," ");
             Mouse.BackColor = ConsoleColor.Red;
 
@@ -48,7 +52,7 @@ namespace ConsoleTools.NET
                     _MousePos = MousePos;
                     if (ConsoleFramework.Canvas.ClipRect.Contains(MousePos))
                     {
-                        Mouse.Set(MousePos);
+                        Mouse.Set(Point.Subtract(MousePos, (Size)Mouse.parent.position));
                     }
 
                 }

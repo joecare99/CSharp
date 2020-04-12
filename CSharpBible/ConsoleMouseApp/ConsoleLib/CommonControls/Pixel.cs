@@ -18,13 +18,14 @@ namespace ConsoleLib.CommonControls
             position = new Point(X,Y);
         }
 
-        public void Set(Point mousePos, string text= "")
+        public void Set(Point position, string text= "")
         {
-            Set(mousePos.X, mousePos.Y, text);
+            Set(position.X, position.Y, text);
         }
         public override void Draw()
         {
-            Console.SetCursorPosition(_dimension.X, _dimension.Y);
+            if (parent != null && !parent.dimension.Contains(Point.Add(position,(Size)parent.position))) return;
+            Console.SetCursorPosition(realDim.X, realDim.Y);
             Console.BackgroundColor = BackColor;
             Console.Write($"{Text}");
             Console.BackgroundColor = ConsoleColor.Black;
