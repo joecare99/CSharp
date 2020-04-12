@@ -54,7 +54,7 @@
             this.tableLayoutPanel.Controls.Add(this.okButton, 1, 5);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(12, 11);
-            this.tableLayoutPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanel.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 6;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
@@ -71,7 +71,7 @@
             this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.logoPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("logoPictureBox.Image")));
             this.logoPictureBox.Location = new System.Drawing.Point(4, 4);
-            this.logoPictureBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.logoPictureBox.Margin = new System.Windows.Forms.Padding(4);
             this.logoPictureBox.Name = "logoPictureBox";
             this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 6);
             this.logoPictureBox.Size = new System.Drawing.Size(175, 310);
@@ -143,18 +143,20 @@
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.okButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.okButton.Dock = System.Windows.Forms.DockStyle.Right;
             this.okButton.Image = global::CSharpBible.AboutEx.Properties.Resources.CheckMarkGreen;
             this.okButton.Location = new System.Drawing.Point(390, 271);
-            this.okButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.okButton.Margin = new System.Windows.Forms.Padding(4);
             this.okButton.Name = "okButton";
+            this.okButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.okButton.Size = new System.Drawing.Size(162, 43);
             this.okButton.TabIndex = 24;
             this.okButton.Text = "&OK";
             this.okButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // AboutBox1
             // 
@@ -164,7 +166,7 @@
             this.ClientSize = new System.Drawing.Size(580, 340);
             this.Controls.Add(this.tableLayoutPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutBox1";
