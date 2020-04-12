@@ -25,6 +25,7 @@ namespace ConsoleLib
                 }
                 else
                 {
+                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
                     parent.ReDraw(_lastdim);
                 }
                 if (_visible)
@@ -73,6 +74,7 @@ namespace ConsoleLib
                 }
                 else
                 {
+                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
                     parent.ReDraw(_lastdim);
                 }
                 if (_visible) 
@@ -102,6 +104,7 @@ namespace ConsoleLib
                 }
                 else
                 {
+                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
                     parent.ReDraw(_lastdim);
                 }
                 if (_visible)
@@ -111,7 +114,7 @@ namespace ConsoleLib
                 OnResize?.Invoke(this, null);
             }
         }
-        public bool Over(Point M) => _dimension.Contains(M);
+        public bool Over(Point M) => realDim.Contains(M);
 
         public bool active
         {

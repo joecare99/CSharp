@@ -9,7 +9,8 @@ namespace ConsoleLib
     {
         static ExtendedConsole()
         {
-
+            Console.WindowHeight = 50;
+            Console.BufferHeight = 50;
             IntPtr inHandle = GetStdHandle(STD_INPUT_HANDLE);
             GetConsoleMode(inHandle, out ConsoleMode mode);
             mode &= ~ConsoleMode.ENABLE_QUICK_EDIT_MODE; //disable

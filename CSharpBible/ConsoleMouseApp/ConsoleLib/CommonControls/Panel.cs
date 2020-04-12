@@ -10,16 +10,17 @@ namespace ConsoleLib.CommonControls
         
         public override void Draw()
         {
-            ConsoleFramework.Canvas.FillRect(_dimension,ForeColor, BackColor, ConsoleFramework.chars[3]);
+            ConsoleFramework.Canvas.FillRect(realDim,ForeColor, BackColor, ConsoleFramework.chars[3]);
             if (Boarder != null && Boarder.Length > 5)
-                ConsoleFramework.Canvas.DrawRect(_dimension, BoarderColor, BackColor, Boarder);
+                ConsoleFramework.Canvas.DrawRect(realDim, BoarderColor, BackColor, Boarder);
             foreach( Control c in children) if (c.visible)
                 {
                 if (c.shaddow)
                 {
                     var sdim = c.dimension;
                     sdim.Offset(1, 1);
-                    ConsoleFramework.Canvas.FillRect(sdim, ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
+                    sdim.Offset(position);
+                    ConsoleFramework.Canvas.FillRect(realDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
                 }
                 c.Draw();
 
@@ -28,14 +29,17 @@ namespace ConsoleLib.CommonControls
 
         public override void ReDraw(Rectangle dimension)
         {
-            if (dimension.Width == 0 || dimension.Height == 0) return;
+            if (dimension.IsEmpty) return;
             Rectangle innerRect = _dimension;
             innerRect.Inflate(-1, -1);
-            dimension.Intersect(innerRect);
-            ConsoleFramework.Canvas.FillRect(dimension,ForeColor, BackColor, ConsoleFramework.chars[3]);
+            var icl = dimension;
+            icl.Intersect(innerRect);
+            ConsoleFramework.Canvas.FillRect(realDimOf(icl),ForeColor, BackColor, ConsoleFramework.chars[3]);
             // ToDo: Boarder
-            //            if (Boarder != null && Boarder.Length > 5)
-            //                ConsoleFramework.Canvas.DrawRect(_dimension,BoarderColor, BackColor, Boarder);
+            if (Boarder != null && Boarder.Length > 5 && _dimension.IntersectsWith(dimension) &&
+                !( innerRect.Contains(dimension.Location) && innerRect.Contains(Point.Subtract(Point.Add(dimension.Location,dimension.Size),new Size(1,1)) )
+                ))
+                            ConsoleFramework.Canvas.DrawRect(realDim,BoarderColor, BackColor, Boarder);
             foreach (Control c in children)
                 if (c.visible)
                 {
@@ -43,12 +47,13 @@ namespace ConsoleLib.CommonControls
                     {
                         var sdim = c.dimension;
                         sdim.Offset(1, 1);
+                        sdim.Offset(position);
                         sdim.Intersect(dimension);
-                        ConsoleFramework.Canvas.FillRect(sdim, ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[3]);
+                        ConsoleFramework.Canvas.FillRect(realDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
                     }
                     var CClip = dimension;
-                    dimension.Location = Point.Subtract(dimension.Location,(Size)c.dimension.Location);
-                    c.ReDraw(dimension);
+                    CClip.Location = Point.Subtract(dimension.Location,(Size)_dimension.Location);
+                    c.ReDraw(CClip);
                 }
         }
     }

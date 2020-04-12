@@ -20,6 +20,7 @@ namespace ConsoleTools.NET
         static void Main(string[] args)
         {
 
+            App.visible = false;
             Console.ForegroundColor = ConsoleColor.White;
             App.Boarder = ConsoleFramework.singleBoarder;
             var cl = ConsoleFramework.Canvas.ClipRect;
@@ -38,6 +39,30 @@ namespace ConsoleTools.NET
             Mouse.Set(0,0," ");
             Mouse.BackColor = ConsoleColor.Red;
 
+            var Panel2 = new Panel();
+            App.Add(Panel2);
+            Panel2.Boarder = ConsoleFramework.doubleBoarder;
+            cl = new Rectangle(3,15,30,10);
+            Panel2.ForeColor = ConsoleColor.Blue;
+            Panel2.BackColor = ConsoleColor.DarkBlue;
+            Panel2.BoarderColor = ConsoleColor.Green;
+            Panel2.dimension = cl;
+            Panel2.shaddow = true;
+
+            var btnOK = new Button();
+            Panel2.Add(btnOK);
+            btnOK.ForeColor = ConsoleColor.White;
+            btnOK.shaddow = true;
+            btnOK.Set(2, 2, "░░░OK░░░", ConsoleColor.Gray);
+
+            var btnCancel = new Button();
+            Panel2.Add(btnCancel);
+            btnCancel.ForeColor = ConsoleColor.White;
+            btnCancel.shaddow = true;
+            btnCancel.Set(14, 2, "░Cancel░", ConsoleColor.Gray);
+
+            App.visible = true;
+            App.Draw();
             Point _MousePos = ConsoleFramework.MousePos;
 
             for (; ; )
@@ -46,6 +71,14 @@ namespace ConsoleTools.NET
                 if (One.Pressed(MousePos))
                 {
                     Console.Write("1");
+                }
+                else if (btnCancel.Pressed(MousePos))
+                {
+                    break;
+                }
+                else if(btnOK.Pressed(MousePos))
+                {
+                    Console.Write("OK"); 
                 }
                 else if (_MousePos != MousePos)
                 {
@@ -60,6 +93,9 @@ namespace ConsoleTools.NET
                     Thread.Sleep(1);
                 //   Console.Clear();
             }
+
+            Console.Write("Programm end ...");
+            ExtendedConsole.Stop();
         }
     }
 }
