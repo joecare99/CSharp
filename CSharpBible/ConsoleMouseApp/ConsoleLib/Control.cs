@@ -11,6 +11,56 @@ namespace ConsoleLib
         private bool _shaddow;
         private bool _visible = true;
 
+        public Rectangle dimension
+        {
+            get => _dimension;
+            set
+            {
+                if (_dimension == value) return;
+                Rectangle _lastdim = _dimension;
+                _dimension = value;
+                if (parent == null)
+                {
+                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                }
+                else
+                {
+                    parent.ReDraw(_lastdim);
+                }
+                if (_visible)
+                {
+                    Draw();
+                }
+                if (_lastdim.Location != _dimension.Location)
+                    OnMove?.Invoke(this, null);
+                if (_lastdim.Size != _dimension.Size)
+                    OnResize?.Invoke(this, null);
+            }
+        }
+
+        public Rectangle realDim => realDimOf(_dimension);
+
+        public Rectangle realDimOf(Rectangle aDim)
+        {
+            var result = aDim;
+            if (parent != null)
+            {
+                result.Offset(parent.realDim.Location);
+            }
+            return result;
+        }
+
+        public Rectangle localDimOf(Rectangle aDim,Control ancestor = null)
+        {
+            var result = aDim;
+            result.Location = Point.Subtract(result.Location,(Size)_dimension.Location);
+            if (parent != null && parent != ancestor)
+            {
+                result = parent.localDimOf(result, ancestor);                 
+            }
+            return result;
+        }
+
         public Point position { get => _dimension.Location; 
             set 
             { 
@@ -127,6 +177,8 @@ namespace ConsoleLib
         public event EventHandler OnMouseLeave;
 
         public ConsoleColor BackColor;
+        public ConsoleColor ForeColor;
+
         public string Text;
 
         public List<Control> children = new List<Control>();
@@ -152,6 +204,7 @@ namespace ConsoleLib
         {
             // Draw Background
             Console.SetCursorPosition(_dimension.X, _dimension.Y);
+            Console.ForegroundColor = ForeColor;
             Console.BackgroundColor = BackColor;
             Console.Write($"[{Text}]");
             Console.BackgroundColor = ConsoleColor.Black;

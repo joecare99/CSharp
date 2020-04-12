@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 //using System.Windows.Forms;
 using System.Drawing;
 using ConsoleLib.CommonControls;
@@ -22,13 +22,15 @@ namespace ConsoleTools.NET
 
             Console.ForegroundColor = ConsoleColor.White;
             App.Boarder = ConsoleFramework.singleBoarder;
-            App.size = ConsoleFramework.Canvas.ClipRect.Size;
-            App.position = ConsoleFramework.Canvas.ClipRect.Location;
+            var cl = ConsoleFramework.Canvas.ClipRect;
+            cl.Inflate(-3, -3); 
+            App.dimension = cl ;
 
             // t.Draw(10, 40, ConsoleColor.Gray);
             App.Add(One);
             App.Add(Mouse);
             One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
+            One.shaddow = true;
             Mouse.Set(0,0," ");
             Mouse.BackColor = ConsoleColor.Red;
 
@@ -51,7 +53,7 @@ namespace ConsoleTools.NET
 
                 }
                 else
-                    Task.Delay(1);
+                    Thread.Sleep(1);
                 //   Console.Clear();
             }
         }
