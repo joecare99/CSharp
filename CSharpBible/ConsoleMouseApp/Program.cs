@@ -43,6 +43,7 @@ namespace ConsoleTools.NET
             App.Add(Panel2);
             Panel2.Boarder = ConsoleFramework.doubleBoarder;
             cl = new Rectangle(3,15,30,10);
+             
             Panel2.ForeColor = ConsoleColor.Blue;
             Panel2.BackColor = ConsoleColor.DarkBlue;
             Panel2.BoarderColor = ConsoleColor.Green;
