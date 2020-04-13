@@ -28,7 +28,7 @@ namespace ConsoleLib
                     _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
                     parent.ReDraw(_lastdim);
                 }
-                if (_visible)
+                if (IsVisible)
                 {
                     Draw();
                 }
@@ -77,7 +77,7 @@ namespace ConsoleLib
                     _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
                     parent.ReDraw(_lastdim);
                 }
-                if (_visible) 
+                if (IsVisible) 
                 {
                     Draw();
                 } 
@@ -107,7 +107,7 @@ namespace ConsoleLib
                     _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
                     parent.ReDraw(_lastdim);
                 }
-                if (_visible)
+                if (IsVisible)
                 {
                     Draw();
                 }
@@ -155,6 +155,8 @@ namespace ConsoleLib
                 Invalidate();
             }
         }
+
+        public bool IsVisible => _visible && (parent?.IsVisible ?? true);
 
         public bool shaddow
         {
