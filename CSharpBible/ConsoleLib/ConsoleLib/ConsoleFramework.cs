@@ -1,5 +1,4 @@
-﻿using ConsoleLib;
-using System;
+﻿using System;
 using System.Drawing;
 
 namespace ConsoleLib
@@ -24,12 +23,12 @@ namespace ConsoleLib
             ExtendedConsole.WindowBufferSizeEvent += OnWindowSizeEvent;
         }
 
-        private static void OnWindowSizeEvent(object sender, ExtendedConsole.WINDOW_BUFFER_SIZE_RECORD e)
+        private static void OnWindowSizeEvent(object sender, NativeMethods.WINDOW_BUFFER_SIZE_RECORD e)
         {
             (Canvas._dimension.Width, Canvas._dimension.Height) = (e.dwSize.X, e.dwSize.Y);
         }
 
-        private static void OnMouseEvent(object sender, ExtendedConsole.MOUSE_EVENT_RECORD e)
+        private static void OnMouseEvent(object sender, NativeMethods.MOUSE_EVENT_RECORD e)
         {
             MousePos = e.dwMousePosition.AsPoint;
         }
