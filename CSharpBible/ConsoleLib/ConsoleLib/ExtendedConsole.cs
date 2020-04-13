@@ -107,7 +107,7 @@ namespace ConsoleLib
             /// <summary>Initializes a new instance of the <see cref="SMALL_RECT" /> struct with 2 <see cref="COORD" /> values.</summary>
             /// <param name="topLeft">The top left corner.</param>
             /// <param name="bottomRight">The bottom right corner.</param>
-            public SMALL_RECT(COORD topLeft, COORD bottomRight) => (TopLeft, BottomRight) = (topLeft, bottomRight);
+            public SMALL_RECT(COORD topLeft, COORD bottomRight) => (Left, Top, Right, Bottom) = ( topLeft.X,topLeft.Y, bottomRight.X,bottomRight.Y);
             /// <summary>Converts the <see cref="SMALL_RECT" /> to a <see cref="Rectangle" />.</summary>
             /// <value>As <see cref="Rectangle" />.</value>
             public Rectangle AsRectangle => new Rectangle(Left, Top, Right - Left, Bottom - Top);
@@ -187,12 +187,25 @@ namespace ConsoleLib
             SHIFT_PRESSED = 0x0010
         };
 
+        /// <summary>The type of mouse event. If this value is zero, it indicates a mouse button being pressed or released. Otherwise, this member is one of the following values.</summary>
         [Flags]
         public enum EventFlags : uint
         {
+            /// <summary>  The second click (button press) of a double-click occurred. The first click is returned as a regular button-press event.</summary>
             DOUBLE_CLICK = 0x0002,
+            /// <summary>
+            ///   The horizontal mouse wheel was moved.
+            ///   <para>If the high word of the <strong>dwButtonState</strong> member contains a positive value, the wheel was rotated to the right. Otherwise, the wheel was rotated to the left.</para>
+            /// </summary>
             MOUSE_HWHEELED = 0x0008,
+            /// <summary>  A change in mouse position occurred.</summary>
             MOUSE_MOVED = 0x0001,
+            /// <summary>
+            ///   The vertical mouse wheel was moved.
+            ///   <para>If the high word of the <strong>dwButtonState</strong> member 
+            /// contains a positive value, the wheel was rotated forward, away from the 
+            /// user. Otherwise, the wheel was rotated backward, toward the user.</para>
+            /// </summary>
             MOUSE_WHEELED = 0x0004
         };
 
