@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using static ConsoleLib.NativeMethods;
 
 namespace ConsoleLib
@@ -270,6 +271,21 @@ namespace ConsoleLib
             public ControlKeyState dwControlKeyState;
 
             public EventFlags dwEventFlags;
+
+            public MouseEventArgs AsMouseEventArgs 
+            { 
+                get
+                {
+                    MouseButtons btn = default;
+                    if (dwButtonState == ButtonState.FROM_LEFT_1ST_BUTTON_PRESSED)
+                        btn |= MouseButtons.Left;
+                    if (dwButtonState == ButtonState.FROM_LEFT_2ND_BUTTON_PRESSED)
+                        btn |= MouseButtons.Middle;
+                    if (dwButtonState == ButtonState.RIGHTMOST_BUTTON_PRESSED)
+                        btn |= MouseButtons.Right;
+                    return new MouseEventArgs(btn, 1, dwMousePosition.X, dwMousePosition.Y, 0);
+                }  
+            }
         }
 
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]

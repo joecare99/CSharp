@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace ConsoleLib
 {
@@ -165,6 +166,7 @@ namespace ConsoleLib
         public event EventHandler OnActivate;
         public event EventHandler OnMouseEnter;
         public event EventHandler OnMouseLeave;
+        public event EventHandler<MouseEventArgs> OnMouseMove;
 
         public ConsoleColor BackColor;
         public ConsoleColor ForeColor;
@@ -173,13 +175,26 @@ namespace ConsoleLib
 
         public List<Control> children = new List<Control>();
         public Control ActiveControl;
-        public Control parent { get; private set; }
+        private Control _parent;
+
+        public Control parent { get => _parent; set => SetParent(value); }
+
+        private void SetParent(Control value)
+        {
+            if (_parent == value) return;
+            var oldPar = _parent;
+            _parent = value;
+            oldPar?.Remove(this);
+            value?.Add(this);
+        }
 
         public Control Add(Control control)
         {
-            control.parent?.Remove(control);
+            if (control.parent != this)
+               control.parent?.Remove(control);
             children.Add(control);
-            control.parent = this;
+            if (control.parent == null)
+                control.parent = this;
             return this;
         }
 
@@ -199,6 +214,40 @@ namespace ConsoleLib
             Console.Write($"[{Text}]");
             Console.BackgroundColor = ConsoleColor.Black;
             
+        }
+
+        public virtual void Click()
+        {
+            OnClick?.Invoke(this, null);
+        }
+
+        public virtual void MouseEnter(Point M)
+        {
+            OnMouseEnter?.Invoke(this, null);
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M))
+                    ctrl.MouseEnter(M);
+            }
+        }
+        public virtual void MouseLeave(Point M)
+        {
+            OnMouseLeave?.Invoke(this, null);
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M))
+                    ctrl.MouseLeave(M);
+            }
+        }
+
+        public virtual void MouseMove(MouseEventArgs M)
+        {
+            OnMouseMove?.Invoke(this, M);
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M.Location))
+                    ctrl.MouseMove(M);
+            }
         }
 
     }

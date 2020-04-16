@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using static ConsoleLib.NativeMethods;
 
 namespace ConsoleLib.CommonControls
@@ -7,6 +8,8 @@ namespace ConsoleLib.CommonControls
     public class Application : Panel
     {
         public Point MousePos { get; private set; }
+
+        private MouseEventArgs MButtons;
 
         public Application()
         {
@@ -24,8 +27,11 @@ namespace ConsoleLib.CommonControls
         private void HandleKeyEvent(object sender, KEY_EVENT_RECORD e)
         {
             // Determine the Control to send the Event to
+
             if (e.bKeyDown)
-            { }
+            {
+                
+            }
             else
             { };     
 
@@ -37,8 +43,20 @@ namespace ConsoleLib.CommonControls
             {
                 Point lastMousePos = MousePos;
                 MousePos = e.dwMousePosition.AsPoint;
-                // Invoke Mouse Leave
-                // Invoke Mouse Enter
+                MButtons = e.AsMouseEventArgs;
+                foreach (var ctrl in children)
+                {
+                    bool xoHit = ctrl.Over(lastMousePos);
+                    bool xnHit = ctrl.Over(MousePos);
+                    if (xoHit && !xnHit)
+                        ctrl.MouseLeave(lastMousePos);
+                    // Invoke Mouse Leave
+                    if (!xoHit && xnHit)
+                        ctrl.MouseEnter(MousePos);
+                    // Invoke Mouse Enter
+                    if (xoHit && xnHit)
+                        ctrl.MouseMove(MButtons);
+                }
             }
         }
 
