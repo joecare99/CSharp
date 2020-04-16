@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ctlClockLib", "ctlClockLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClockApp", "TestClockApp\TestClockApp.csproj", "{12B84388-9497-496B-B82D-1F04D3CC424F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorials", "Tutorials\Tutorials.csproj", "{C84A2121-34B1-424F-8A90-DB2E7C76E313}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{12B84388-9497-496B-B82D-1F04D3CC424F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12B84388-9497-496B-B82D-1F04D3CC424F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12B84388-9497-496B-B82D-1F04D3CC424F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C84A2121-34B1-424F-8A90-DB2E7C76E313}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C84A2121-34B1-424F-8A90-DB2E7C76E313}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C84A2121-34B1-424F-8A90-DB2E7C76E313}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C84A2121-34B1-424F-8A90-DB2E7C76E313}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

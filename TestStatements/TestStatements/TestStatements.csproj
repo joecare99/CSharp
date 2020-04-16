@@ -96,6 +96,8 @@
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="DataTypes\EnumTest.cs" />
     <Compile Include="DataTypes\Formating.cs" />
+    <Compile Include="DataTypes\IntegratedTypes.cs" />
+    <Compile Include="CS_Concepts\TypeSystem.cs" />
     <Compile Include="Diagnostics\StopWatchExample.cs" />
     <Compile Include="Linq\LinqLookup.cs" />
     <Compile Include="Program.cs" />
