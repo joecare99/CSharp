@@ -24,7 +24,7 @@ namespace CSharpBible.AboutEx.Visual
 
         public void btnOK_Click(object sender, EventArgs e)
         {
-            Hide();
+            Close();
         }
     }
 }

@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="..\Calc32\NonVisual\CalculatorClass.cs">
       <SubType>Component</SubType>
+      <Link>NonVisual\CalculatorClass.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
