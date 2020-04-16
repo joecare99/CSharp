@@ -192,9 +192,14 @@ namespace ConsoleLib
         {
             if (control.parent != this)
                control.parent?.Remove(control);
-            children.Add(control);
             if (control.parent == null)
+            {
+                children.Add(control);
                 control.parent = this;
+            }
+            else if (!children.Contains(control))
+                children.Add(control);
+
             return this;
         }
 
@@ -240,14 +245,37 @@ namespace ConsoleLib
             }
         }
 
-        public virtual void MouseMove(MouseEventArgs M)
+        public virtual void MouseMove(MouseEventArgs M, Point lastMousePos)
         {
             OnMouseMove?.Invoke(this, M);
             foreach (var ctrl in children)
             {
-                if (ctrl.Over(M.Location))
-                    ctrl.MouseMove(M);
+                bool xoHit = ctrl.Over(lastMousePos);
+                bool xnHit = ctrl.Over(M.Location);
+                if (xoHit && !xnHit)
+                    ctrl.MouseLeave(lastMousePos);
+                // Invoke Mouse Leave
+                if (!xoHit && xnHit)
+                    ctrl.MouseEnter(M.Location);
+                // Invoke Mouse Enter
+                if (xoHit && xnHit)
+                    ctrl.MouseMove(M, lastMousePos);
             }
+        }
+        public virtual void MouseClick(MouseEventArgs M)
+        {
+            bool xFlag = false;
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M.Location))
+                {
+                    xFlag = true;
+                    ctrl.MouseClick(M);
+                }
+            }
+            if (!xFlag && M.Button== MouseButtons.Left)
+                OnClick?.Invoke(this, null);
+
         }
 
     }

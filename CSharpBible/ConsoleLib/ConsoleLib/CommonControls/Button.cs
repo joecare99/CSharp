@@ -22,6 +22,19 @@ namespace ConsoleLib.CommonControls
             size = new Size(text.Length + 2, 1);
             position = new Point(X, Y);
         }
+
+        public override void MouseEnter(Point M)
+        {
+            base.MouseEnter(M);
+            BackColor = ConsoleColor.Green;
+        }
+        public override void MouseLeave(Point M)
+        {
+            base.MouseLeave(M);
+            BackColor = ConsoleColor.Gray;
+            Draw();
+        }
+
     }
 
 }

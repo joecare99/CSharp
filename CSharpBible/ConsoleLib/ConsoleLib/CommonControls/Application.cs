@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using static ConsoleLib.NativeMethods;
 
@@ -8,6 +9,7 @@ namespace ConsoleLib.CommonControls
     public class Application : Panel
     {
         public Point MousePos { get; private set; }
+        public bool running { get; private set; }
 
         private MouseEventArgs MButtons;
 
@@ -42,20 +44,20 @@ namespace ConsoleLib.CommonControls
             if (e.dwEventFlags == EventFlags.MOUSE_MOVED)
             {
                 Point lastMousePos = MousePos;
+                 
+                MousePos = e.dwMousePosition.AsPoint;
+                MButtons = e.AsMouseEventArgs;
+                MouseMove(MButtons,lastMousePos);
+            }
+            else if (e.dwEventFlags == 0)
+            {
+               
                 MousePos = e.dwMousePosition.AsPoint;
                 MButtons = e.AsMouseEventArgs;
                 foreach (var ctrl in children)
                 {
-                    bool xoHit = ctrl.Over(lastMousePos);
-                    bool xnHit = ctrl.Over(MousePos);
-                    if (xoHit && !xnHit)
-                        ctrl.MouseLeave(lastMousePos);
-                    // Invoke Mouse Leave
-                    if (!xoHit && xnHit)
-                        ctrl.MouseEnter(MousePos);
-                    // Invoke Mouse Enter
-                    if (xoHit && xnHit)
-                        ctrl.MouseMove(MButtons);
+                    if (ctrl.Over(MousePos))
+                        ctrl.MouseClick(MButtons);
                 }
             }
         }
@@ -65,6 +67,21 @@ namespace ConsoleLib.CommonControls
 
         }
 
+        public void Run()
+        {
+            running = true;
+            while (running)
+            {
+                // Handling the Event-Queue    
 
+                Thread.Sleep(1);
+                //   Console.Clear();
+            }
+        }
+
+        public void Stop()
+        {
+            running = false;
+        }
     }
 }
