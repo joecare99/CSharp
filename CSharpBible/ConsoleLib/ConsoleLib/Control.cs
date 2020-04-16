@@ -4,6 +4,7 @@ using System.Drawing;
 
 namespace ConsoleLib
 {
+    /// <summary>This is the basic class of all TextControls</summary>
     public class Control 
     {
         protected Rectangle _dimension;
@@ -19,23 +20,54 @@ namespace ConsoleLib
                 if (_dimension == value) return;
                 Rectangle _lastdim = _dimension;
                 _dimension = value;
-                if (parent == null)
-                {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-                }
-                else
-                {
-                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                    parent.ReDraw(_lastdim);
-                }
-                if (IsVisible)
-                {
-                    Draw();
-                }
+                HandleControlMove(_lastdim);
                 if (_lastdim.Location != _dimension.Location)
                     OnMove?.Invoke(this, null);
                 if (_lastdim.Size != _dimension.Size)
                     OnResize?.Invoke(this, null);
+            }
+        }
+
+        public Point position
+        {
+            get => _dimension.Location;
+            set
+            {
+                if (_dimension.Location == value) return;
+                Rectangle _lastdim = _dimension;
+                _dimension.Location = value;
+                HandleControlMove(_lastdim);
+                OnMove?.Invoke(this, null);
+            }
+        }
+
+        public Size size
+        {
+            get => _dimension.Size; set
+            {
+                if (_dimension.Size == value) return;
+                Rectangle _lastdim = _dimension;
+                _dimension.Size = value;
+                HandleControlMove(_lastdim);
+                OnResize?.Invoke(this, null);
+            }
+        }
+
+        private void HandleControlMove(Rectangle _lastdim)
+        {
+            if (parent == null)
+            {
+                // Todo: Restore From Background
+                ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+            }
+            else
+            {
+                _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
+                parent.ReDraw(_lastdim);
+            }
+            if (IsVisible)
+            {
+                Draw();
             }
         }
 
@@ -62,57 +94,10 @@ namespace ConsoleLib
             return result;
         }
 
-        public Point position { get => _dimension.Location; 
-            set 
-            { 
-                if (_dimension.Location == value) return;
-                Rectangle _lastdim = _dimension;
-                _dimension.Location = value;
-                if (parent == null)
-                {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-                }
-                else
-                {
-                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                    parent.ReDraw(_lastdim);
-                }
-                if (IsVisible) 
-                {
-                    Draw();
-                } 
-                OnMove?.Invoke(this, null);
-            }
-        }
-
         public virtual void ReDraw(Rectangle dimension)
         {
             if (_visible && dimension.IntersectsWith(_dimension))
                 Draw();
-        }
-
-        public Size size
-        {
-            get => _dimension.Size; set
-            {
-                if (_dimension.Size == value) return;
-                Rectangle _lastdim = _dimension;
-                _dimension.Size = value;
-                if (parent == null)
-                {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-                }
-                else
-                {
-                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                    parent.ReDraw(_lastdim);
-                }
-                if (IsVisible)
-                {
-                    Draw();
-                }
-                OnResize?.Invoke(this, null);
-            }
         }
         public bool Over(Point M) => realDim.Contains(M);
 
