@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace ConsoleLib
 {
+    /// <summary>This is the basic class of all TextControls</summary>
     public class Control 
     {
         protected Rectangle _dimension;
@@ -19,23 +21,54 @@ namespace ConsoleLib
                 if (_dimension == value) return;
                 Rectangle _lastdim = _dimension;
                 _dimension = value;
-                if (parent == null)
-                {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-                }
-                else
-                {
-                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                    parent.ReDraw(_lastdim);
-                }
-                if (IsVisible)
-                {
-                    Draw();
-                }
+                HandleControlMove(_lastdim);
                 if (_lastdim.Location != _dimension.Location)
                     OnMove?.Invoke(this, null);
                 if (_lastdim.Size != _dimension.Size)
                     OnResize?.Invoke(this, null);
+            }
+        }
+
+        public Point position
+        {
+            get => _dimension.Location;
+            set
+            {
+                if (_dimension.Location == value) return;
+                Rectangle _lastdim = _dimension;
+                _dimension.Location = value;
+                HandleControlMove(_lastdim);
+                OnMove?.Invoke(this, null);
+            }
+        }
+
+        public Size size
+        {
+            get => _dimension.Size; set
+            {
+                if (_dimension.Size == value) return;
+                Rectangle _lastdim = _dimension;
+                _dimension.Size = value;
+                HandleControlMove(_lastdim);
+                OnResize?.Invoke(this, null);
+            }
+        }
+
+        private void HandleControlMove(Rectangle _lastdim)
+        {
+            if (parent == null)
+            {
+                // Todo: Restore From Background
+                ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+            }
+            else
+            {
+                _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
+                parent.ReDraw(_lastdim);
+            }
+            if (IsVisible)
+            {
+                Draw();
             }
         }
 
@@ -62,57 +95,10 @@ namespace ConsoleLib
             return result;
         }
 
-        public Point position { get => _dimension.Location; 
-            set 
-            { 
-                if (_dimension.Location == value) return;
-                Rectangle _lastdim = _dimension;
-                _dimension.Location = value;
-                if (parent == null)
-                {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-                }
-                else
-                {
-                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                    parent.ReDraw(_lastdim);
-                }
-                if (IsVisible) 
-                {
-                    Draw();
-                } 
-                OnMove?.Invoke(this, null);
-            }
-        }
-
         public virtual void ReDraw(Rectangle dimension)
         {
             if (_visible && dimension.IntersectsWith(_dimension))
                 Draw();
-        }
-
-        public Size size
-        {
-            get => _dimension.Size; set
-            {
-                if (_dimension.Size == value) return;
-                Rectangle _lastdim = _dimension;
-                _dimension.Size = value;
-                if (parent == null)
-                {
-                    ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-                }
-                else
-                {
-                    _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                    parent.ReDraw(_lastdim);
-                }
-                if (IsVisible)
-                {
-                    Draw();
-                }
-                OnResize?.Invoke(this, null);
-            }
         }
         public bool Over(Point M) => realDim.Contains(M);
 
@@ -180,6 +166,7 @@ namespace ConsoleLib
         public event EventHandler OnActivate;
         public event EventHandler OnMouseEnter;
         public event EventHandler OnMouseLeave;
+        public event EventHandler<MouseEventArgs> OnMouseMove;
 
         public ConsoleColor BackColor;
         public ConsoleColor ForeColor;
@@ -188,13 +175,31 @@ namespace ConsoleLib
 
         public List<Control> children = new List<Control>();
         public Control ActiveControl;
-        public Control parent { get; private set; }
+        private Control _parent;
+
+        public Control parent { get => _parent; set => SetParent(value); }
+
+        private void SetParent(Control value)
+        {
+            if (_parent == value) return;
+            var oldPar = _parent;
+            _parent = value;
+            oldPar?.Remove(this);
+            value?.Add(this);
+        }
 
         public Control Add(Control control)
         {
-            control.parent?.Remove(control);
-            children.Add(control);
-            control.parent = this;
+            if (control.parent != this)
+               control.parent?.Remove(control);
+            if (control.parent == null)
+            {
+                children.Add(control);
+                control.parent = this;
+            }
+            else if (!children.Contains(control))
+                children.Add(control);
+
             return this;
         }
 
@@ -214,6 +219,63 @@ namespace ConsoleLib
             Console.Write($"[{Text}]");
             Console.BackgroundColor = ConsoleColor.Black;
             
+        }
+
+        public virtual void Click()
+        {
+            OnClick?.Invoke(this, null);
+        }
+
+        public virtual void MouseEnter(Point M)
+        {
+            OnMouseEnter?.Invoke(this, null);
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M))
+                    ctrl.MouseEnter(M);
+            }
+        }
+        public virtual void MouseLeave(Point M)
+        {
+            OnMouseLeave?.Invoke(this, null);
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M))
+                    ctrl.MouseLeave(M);
+            }
+        }
+
+        public virtual void MouseMove(MouseEventArgs M, Point lastMousePos)
+        {
+            OnMouseMove?.Invoke(this, M);
+            foreach (var ctrl in children)
+            {
+                bool xoHit = ctrl.Over(lastMousePos);
+                bool xnHit = ctrl.Over(M.Location);
+                if (xoHit && !xnHit)
+                    ctrl.MouseLeave(lastMousePos);
+                // Invoke Mouse Leave
+                if (!xoHit && xnHit)
+                    ctrl.MouseEnter(M.Location);
+                // Invoke Mouse Enter
+                if (xoHit && xnHit)
+                    ctrl.MouseMove(M, lastMousePos);
+            }
+        }
+        public virtual void MouseClick(MouseEventArgs M)
+        {
+            bool xFlag = false;
+            foreach (var ctrl in children)
+            {
+                if (ctrl.Over(M.Location))
+                {
+                    xFlag = true;
+                    ctrl.MouseClick(M);
+                }
+            }
+            if (!xFlag && M.Button== MouseButtons.Left)
+                OnClick?.Invoke(this, null);
+
         }
 
     }
