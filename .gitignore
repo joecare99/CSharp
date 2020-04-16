@@ -38,8 +38,10 @@
 /TestStatements/CallAllExamples/obj
 /TestStatements/ctlClockLib/obj
 /TestStatements/DynamicSample/obj
+/TestStatements/packages
 /TestStatements/TestClockApp/obj
 /TestStatements/TestStatements/obj
+/TestStatements/TestStatementsTest/obj
 /CSharpProgrammierHandbuch/.vs
 /CSharpProgrammierHandbuch/Fibonacci/obj
 /CSharpProgrammierHandbuch/HelloWorld/obj
