@@ -26,10 +26,10 @@ namespace ConsoleLib
                 {
                     while (true)
                     {
-                        uint numRead = 0;
+                        uint numRead;
                         INPUT_RECORD[] record = new INPUT_RECORD[1];
                         record[0] = new INPUT_RECORD();
-                        ReadConsoleInput(handleIn, record, 1, ref numRead);
+                        ReadConsoleInput(handleIn, record, 1, out numRead);
                         if (Run)
                             switch (record[0].usEventType)
                             {
@@ -48,8 +48,8 @@ namespace ConsoleLib
                             }
                         else
                         {
-                            uint numWritten = 0;
-                            WriteConsoleInput(handleIn, record, 1, ref numWritten);
+                            uint numWritten;
+                            WriteConsoleInput(handleIn, record, 1, out numWritten);
                             return;
                         }
                     }
@@ -58,12 +58,18 @@ namespace ConsoleLib
         }
         private static bool Run = false;
 
+        /// <summary>Stops this instance.</summary>
         public static void Stop() => Run = false;
 
+        /// <summary>Occurs when a mouse event happend.</summary>
         public static event EventHandler<MOUSE_EVENT_RECORD> MouseEvent;
 
+        /// <summary>
+        ///  Occurs when a key event happend.
+        /// </summary>
         public static event EventHandler<KEY_EVENT_RECORD> KeyEvent;
 
+        /// <summary>Occurs when a window buffer size change event happend.</summary>
         public static event EventHandler<WINDOW_BUFFER_SIZE_RECORD> WindowBufferSizeEvent;
 
     }
@@ -425,10 +431,10 @@ namespace ConsoleLib
         /// </example>
         /// <seealso cref="ReadConsoleInput" />
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern bool ReadConsoleInput(IntPtr hConsoleInput, [Out] INPUT_RECORD[] lpBuffer, uint nLength, ref uint lpNumberOfEventsRead);
+        public static extern bool ReadConsoleInput(IntPtr hConsoleInput, [Out] INPUT_RECORD[] lpBuffer, uint nLength, out uint lpNumberOfEventsRead);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern bool WriteConsoleInput(IntPtr hConsoleInput, INPUT_RECORD[] lpBuffer, uint nLength, ref uint lpNumberOfEventsWritten);
+        public static extern bool WriteConsoleInput(IntPtr hConsoleInput, INPUT_RECORD[] lpBuffer, uint nLength, out uint lpNumberOfEventsWritten);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern bool WriteConsoleOutput(IntPtr hConsoleInput, CHAR_INFO[,] lpBuffer, COORD dwBufferSize, COORD dwBufferCoord, ref SMALL_RECT lpWriteRegion);
