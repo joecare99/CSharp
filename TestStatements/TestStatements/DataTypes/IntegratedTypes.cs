@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestStatements.DataTypes
 {
-    class IntegratedTypes
+    public static class IntegratedTypes
     {
     }
 }

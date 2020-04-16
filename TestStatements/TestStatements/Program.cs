@@ -10,6 +10,7 @@ using TestStatements.Threading.Tasks;
 using TestStatements.Diagnostics;
 using TestStatements.Reflection;
 using TestStatements.Linq;
+using TestStatements.CS_Concepts;
 
 namespace TestStatements
 {
@@ -19,6 +20,7 @@ namespace TestStatements
         {
             Declarations.DoVarDeclarations(args);
             Declarations.DoConstantDeclarations(args);
+            TypeSystem.All();          
             Expressions.DoExpressions(args);
             ConditionalStatement.DoIfStatement(args);
             ConditionalStatement.DoSwitchStatement(args);
