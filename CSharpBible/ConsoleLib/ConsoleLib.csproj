@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="ConsoleLib\CommonControls\Application.cs" />
     <Compile Include="ConsoleLib\CommonControls\Button.cs" />
     <Compile Include="ConsoleLib\CommonControls\Panel.cs" />
     <Compile Include="ConsoleLib\CommonControls\Pixel.cs" />

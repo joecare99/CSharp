@@ -7,15 +7,16 @@ using System.Threading;
 using System.Drawing;
 using ConsoleLib.CommonControls;
 using ConsoleLib;
+using System.Windows.Forms;
 
 namespace ConsoleTools.NET
 {
     class Program
     {        
         static public Point MousePos;
-        static Button One = new Button();
+        static ConsoleLib.CommonControls.Button One = new ConsoleLib.CommonControls.Button();
         static Pixel Mouse = new Pixel();
-        static Panel App = new Panel();
+        static ConsoleLib.CommonControls.Application App = new ConsoleLib.CommonControls.Application();
 
         static void Main(string[] args)
         {
@@ -31,16 +32,19 @@ namespace ConsoleTools.NET
             App.dimension = cl;
 
             // t.Draw(10, 40, ConsoleColor.Gray);
-            App.Add(One);
             App.Add(Mouse);
+
+            One.parent = App;
             One.ForeColor = ConsoleColor.White;
             One.shaddow = true;
             One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
+            One.OnClick += One_Click;
+
             Mouse.Set(0,0," ");
             Mouse.BackColor = ConsoleColor.Red;
 
-            var Panel2 = new Panel();
-            App.Add(Panel2);
+            var Panel2 = new ConsoleLib.CommonControls.Panel();
+            Panel2.parent = App;
             Panel2.Boarder = ConsoleFramework.doubleBoarder;
             cl = new Rectangle(3,15,30,10);
              
@@ -50,53 +54,48 @@ namespace ConsoleTools.NET
             Panel2.dimension = cl;
             Panel2.shaddow = true;
 
-            var btnOK = new Button();
-            Panel2.Add(btnOK);
+            var btnOK = new ConsoleLib.CommonControls.Button();
+            btnOK.parent = Panel2;
             btnOK.ForeColor = ConsoleColor.White;
             btnOK.shaddow = true;
+            btnOK.OnClick += btnOK_Click;
             btnOK.Set(2, 2, "░░░OK░░░", ConsoleColor.Gray);
 
-            var btnCancel = new Button();
-            Panel2.Add(btnCancel);
+            var btnCancel = new ConsoleLib.CommonControls.Button();
+            btnCancel.parent = Panel2;
             btnCancel.ForeColor = ConsoleColor.White;
             btnCancel.shaddow = true;
+            btnCancel.OnClick += btnCancel_Click;
             btnCancel.Set(14, 2, "░Cancel░", ConsoleColor.Gray);
 
             App.visible = true;
             App.Draw();
             Point _MousePos = ConsoleFramework.MousePos;
-
-            for (; ; )
-            {
-                MousePos = ConsoleFramework.MousePos;
-                if (One.Pressed(MousePos))
-                {
-                    Console.Write("1");
-                }
-                else if (btnCancel.Pressed(MousePos))
-                {
-                    break;
-                }
-                else if(btnOK.Pressed(MousePos))
-                {
-                    Console.Write("OK"); 
-                }
-                else if (_MousePos != MousePos)
-                {
-                    _MousePos = MousePos;
-                    if (ConsoleFramework.Canvas.ClipRect.Contains(MousePos))
-                    {
-                        Mouse.Set(Point.Subtract(MousePos, (Size)Mouse.parent.position));
-                    }
-
-                }
-                else
-                    Thread.Sleep(1);
-                //   Console.Clear();
-            }
+            App.OnMouseMove += App_MouseMove;
+            App.Run();          
 
             Console.Write("Programm end ...");
             ExtendedConsole.Stop();
+        }
+
+        private static void btnCancel_Click(object sender, EventArgs e)
+        {
+            App.Stop();
+        }
+
+        private static void App_MouseMove(object sender, MouseEventArgs e)
+        {
+            Mouse.Set(Point.Subtract(e.Location, (Size)Mouse.parent.position));
+        }
+
+        private static void btnOK_Click(object sender, EventArgs e)
+        {
+            Console.Write("OK");
+        }
+
+        private static void One_Click(object sender, EventArgs e)
+        {
+            Console.Write("1");
         }
     }
 }
