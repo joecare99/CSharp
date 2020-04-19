@@ -47,7 +47,7 @@ namespace ConsoleTools.NET
                 BackColor = ConsoleColor.Gray,
                 shaddow = true,
                 position = new Point(5, 10),
-                Text = "░░1░░":
+                Text = "░░1░░"
             };
             One.OnClick += One_Click;
 
