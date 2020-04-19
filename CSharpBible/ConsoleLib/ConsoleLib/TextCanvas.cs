@@ -16,17 +16,23 @@ namespace ConsoleLib
         public Rectangle ClipRect { get =>_dimension; }
         public ConsoleColor ForegroundColor { get; internal set; }
 
+
         public void FillRect(Rectangle dimension,ConsoleColor frcolor, ConsoleColor bkcolor, Char c)
         {
+
             Console.BackgroundColor = bkcolor;
             Console.ForegroundColor = frcolor;
             if (_dimension.Contains(dimension.Location))
             {
+                // Build String
+                string sLine = "";
+                for (int j = dimension.X; j < dimension.Right; j++)
+                {
+                    sLine += c;
+                }
                 for (int i = dimension.Y; i < dimension.Bottom; i++)
                 {
-                    Console.SetCursorPosition(dimension.X + _dimension.X, i + _dimension.Y);
-                    for (int j = dimension.X; j < dimension.Right; j++)
-                        Console.Write(c);
+                    OutTextXY(dimension.X, i, sLine);
                 }
             }
         }
@@ -58,11 +64,16 @@ namespace ConsoleLib
                     OutTextXY(dimension.Left, i, boarder[1]);
                     OutTextXY(dimension.Right-1, i, boarder[1]);
                 }
-            for (int j = dimension.X + 1; j < dimension.Right - 1; j++)
+
+            string sLine = "";
+            for (int j = dimension.X; j < dimension.Right - 2; j++)
             {
-                OutTextXY(j, dimension.Top, boarder[0]);
-                OutTextXY(j, dimension.Bottom-1, boarder[0]);
+                sLine += boarder[0];
             }
+
+            OutTextXY(dimension.X+1, dimension.Top, sLine);
+            OutTextXY(dimension.X+1, dimension.Bottom-1, sLine);
+ 
             OutTextXY(dimension.Location, boarder[2]);
             OutTextXY(dimension.Right-1,dimension.Top, boarder[3]);
             OutTextXY(dimension.Left, dimension.Bottom-1, boarder[4]);

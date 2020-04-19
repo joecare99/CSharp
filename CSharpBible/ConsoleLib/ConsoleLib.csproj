@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ConsoleLib\CommonControls\Application.cs" />
     <Compile Include="ConsoleLib\CommonControls\Button.cs" />
+    <Compile Include="ConsoleLib\CommonControls\Label.cs" />
     <Compile Include="ConsoleLib\CommonControls\Panel.cs" />
     <Compile Include="ConsoleLib\CommonControls\Pixel.cs" />
     <Compile Include="ConsoleLib\ConsoleFramework.cs" />
