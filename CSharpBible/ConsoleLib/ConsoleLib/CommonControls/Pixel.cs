@@ -25,9 +25,8 @@ namespace ConsoleLib.CommonControls
         public override void Draw()
         {
             if (parent != null && !parent.dimension.Contains(Point.Add(position,(Size)parent.position))) return;
-            Console.SetCursorPosition(realDim.X, realDim.Y);
             Console.BackgroundColor = BackColor;
-            Console.Write($"{Text}");
+            ConsoleFramework.Canvas.OutTextXY(realDim.Location,$"{Text}");
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
