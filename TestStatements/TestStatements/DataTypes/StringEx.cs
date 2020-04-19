@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,11 @@ namespace TestStatements.DataTypes
         {
             StringEx1();
             StringEx2();
+            StringEx3();
+            StringEx4();
+            StringEx5();
+            UnicodeEx1();
+            StringSurogarteEx1();
         }
 
         /// <summary>
@@ -84,6 +90,79 @@ namespace TestStatements.DataTypes
             //       cccccccccccccccccccc
             //       ABCDE
             //       word  
+
+        }
+
+        public static void StringEx3()
+        {
+            string string1 = "Today is " + DateTime.Now.ToString("D") + ".";
+            Console.WriteLine(string1);
+
+            string string2 = "This is one sentence. " + "This is a second. ";
+            string2 += "This is a third sentence.";
+            Console.WriteLine(string2);
+            // The example displays output like the following:
+            //    Today is Tuesday, July 06, 2011.
+            //    This is one sentence. This is a second. This is a third sentence.
+
+        }
+
+        public static void StringEx4()
+        {
+            string sentence = "This sentence has five words.";
+            // Extract the second word.
+            int startPosition = sentence.IndexOf(" ") + 1;
+            string word2 = sentence.Substring(startPosition,
+                                              sentence.IndexOf(" ", startPosition) - startPosition);
+            Console.WriteLine("Second word: " + word2);
+            // The example displays the following output:
+            //       Second word: sentence
+        }
+
+        public static void StringEx5()
+        {
+            DateTime dateAndTime = new DateTime(2011, 7, 6, 7, 32, 0);
+            double temperature = 68.3;
+            string result = String.Format("At {0:t} on {0:D}, the temperature was {1:F1} degrees Fahrenheit.",
+                                          dateAndTime, temperature);
+            Console.WriteLine(result);
+            // The example displays the following output:
+            //       At 7:32 AM on Wednesday, July 06, 2011, the temperature was 68.3 degrees Fahrenheit.
+        }
+
+        public static void UnicodeEx1()
+        {
+            StreamWriter sw = new StreamWriter(@".\graphemes.txt");
+            string grapheme = "\u0061\u0308";
+            sw.WriteLine(grapheme);
+
+            string singleChar = "\u00e4";
+            sw.WriteLine(singleChar);
+
+            sw.WriteLine("{0} = {1} (Culture-sensitive): {2}", grapheme, singleChar,
+                         String.Equals(grapheme, singleChar,
+                                       StringComparison.CurrentCulture));
+            sw.WriteLine("{0} = {1} (Ordinal): {2}", grapheme, singleChar,
+                         String.Equals(grapheme, singleChar,
+                                       StringComparison.Ordinal));
+            sw.WriteLine("{0} = {1} (Normalized Ordinal): {2}", grapheme, singleChar,
+                         String.Equals(grapheme.Normalize(),
+                                       singleChar.Normalize(),
+                                       StringComparison.Ordinal));
+            sw.Close();
+        }
+        public static void StringSurogarteEx1()
+        {
+            string surrogate = "\uD800\uDC03";
+            for (int ctr = 0; ctr < surrogate.Length; ctr++)
+                Console.Write("U+{0:X2} ", Convert.ToUInt16(surrogate[ctr]));
+
+            Console.WriteLine();
+            Console.WriteLine("   Is Surrogate Pair: {0}",
+                              Char.IsSurrogatePair(surrogate[0], surrogate[1]));
+            // The example displays the following output:
+            //       U+D800 U+DC03
+            //          Is Surrogate Pair: True
 
         }
     }
