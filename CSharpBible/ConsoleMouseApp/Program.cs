@@ -13,19 +13,20 @@ namespace ConsoleTools.NET
 {
     class Program
     {        
-        static public Point MousePos;
         static ConsoleLib.CommonControls.Button One = new ConsoleLib.CommonControls.Button();
         static Pixel Mouse = new Pixel();
         static ConsoleLib.CommonControls.Application App = new ConsoleLib.CommonControls.Application();
+        private static ConsoleLib.CommonControls.Label lblMousePos;
 
         static void Main(string[] args)
         {
 
-            App.visible = false;
-            Console.ForegroundColor = ConsoleColor.White;
-            App.Boarder = ConsoleFramework.singleBoarder;
             var cl = ConsoleFramework.Canvas.ClipRect;
-            cl.Inflate(-3, -3); 
+            cl.Inflate(-3, -3);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            App.visible = false;
+            App.Boarder = ConsoleFramework.singleBoarder;
             App.ForeColor = ConsoleColor.Gray;
             App.BackColor = ConsoleColor.DarkGray;
             App.BoarderColor = ConsoleColor.Green;
@@ -40,42 +41,69 @@ namespace ConsoleTools.NET
             One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
             One.OnClick += One_Click;
 
-            Mouse.Set(0,0," ");
+            Mouse.Set(0, 0, " ");
             Mouse.BackColor = ConsoleColor.Red;
 
-            var Panel2 = new ConsoleLib.CommonControls.Panel();
-            Panel2.parent = App;
-            Panel2.Boarder = ConsoleFramework.doubleBoarder;
-            cl = new Rectangle(3,15,30,10);
-             
-            Panel2.ForeColor = ConsoleColor.Blue;
-            Panel2.BackColor = ConsoleColor.DarkBlue;
-            Panel2.BoarderColor = ConsoleColor.Green;
-            Panel2.dimension = cl;
-            Panel2.shaddow = true;
+            cl = new Rectangle(3, 15, 30, 10);
+            var Panel2 = new ConsoleLib.CommonControls.Panel
+            {
+                parent = App,
+                Boarder = ConsoleFramework.doubleBoarder,
+                ForeColor = ConsoleColor.Blue,
+                BackColor = ConsoleColor.DarkBlue,
+                BoarderColor = ConsoleColor.Green,
+                dimension = cl,
+                shaddow = true
+            };
 
-            var btnOK = new ConsoleLib.CommonControls.Button();
-            btnOK.parent = Panel2;
-            btnOK.ForeColor = ConsoleColor.White;
-            btnOK.shaddow = true;
+            var btnOK = new ConsoleLib.CommonControls.Button
+            {
+                parent = Panel2,
+                ForeColor = ConsoleColor.White,
+                BackColor = ConsoleColor.Gray,
+                shaddow = true,
+                position = new Point(2,2),
+                Text = "░░░OK░░░",
+            };
             btnOK.OnClick += btnOK_Click;
-            btnOK.Set(2, 2, "░░░OK░░░", ConsoleColor.Gray);
 
-            var btnCancel = new ConsoleLib.CommonControls.Button();
-            btnCancel.parent = Panel2;
-            btnCancel.ForeColor = ConsoleColor.White;
-            btnCancel.shaddow = true;
+            var btnCancel = new ConsoleLib.CommonControls.Button
+            {
+                parent = Panel2,
+                ForeColor = ConsoleColor.White,
+                BackColor = ConsoleColor.Gray,
+                shaddow = true,
+                position = new Point(14, 2),
+                Text = "░Cancel░",
+            };
             btnCancel.OnClick += btnCancel_Click;
-            btnCancel.Set(14, 2, "░Cancel░", ConsoleColor.Gray);
+
+            lblMousePos = new ConsoleLib.CommonControls.Label
+            {
+                parent = App,
+                ForeColor = ConsoleColor.Gray,
+                ParentBackground = true,
+                position = new Point(40, 2),
+                Text = "lblMousePos",
+                size = new Size(15, 1)
+            };
 
             App.visible = true;
             App.Draw();
             Point _MousePos = ConsoleFramework.MousePos;
             App.OnMouseMove += App_MouseMove;
+            App.OnCanvasResize += App_CanvasResize;
             App.Run();          
 
             Console.Write("Programm end ...");
             ExtendedConsole.Stop();
+        }
+
+        private static void App_CanvasResize(object sender, Point e)
+        {
+            var cl = ConsoleFramework.Canvas.ClipRect;
+            cl.Inflate(-3, -3);
+            App.dimension = cl;
         }
 
         private static void btnCancel_Click(object sender, EventArgs e)
@@ -86,6 +114,7 @@ namespace ConsoleTools.NET
         private static void App_MouseMove(object sender, MouseEventArgs e)
         {
             Mouse.Set(Point.Subtract(e.Location, (Size)Mouse.parent.position));
+            lblMousePos.Text = e.Location.ToString();
         }
 
         private static void btnOK_Click(object sender, EventArgs e)
