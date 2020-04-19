@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpBible.CSV_Viewer.DataSet
+namespace CSharpBible.CSV_Viewer.CustomDataSet
 {
     public class TFieldDef : IEquatable<TFieldDef>
     {

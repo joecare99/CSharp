@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CSharpBible.CSV_Viewer.DataSet
+namespace DataGridEx
 {
-    public partial class DataLine : UserControl
+    public partial class Form1 : Form
     {
-        public TFieldDefs FieldDefs { get; set; }
 
-        public DataLine()
+
+        public Form1()
         {
             InitializeComponent();
         }
