@@ -37,7 +37,9 @@ namespace TestStatements
             Checking.CheckedUnchecked(args);
             Locking.DoLockTest(args);
             UsingStatement.DoUsingStatement(args);
+            // Datatypes
             EnumTest.MainTest();
+            StringEx.AllTests();
             Formating.CombinedFormating();
             Formating.IndexKomponent();
             Formating.IndexKomponent2();
