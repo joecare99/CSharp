@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,6 +12,8 @@ namespace ConsoleLib.CommonControls
         public Point MousePos { get; private set; }
         public bool running { get; private set; }
 
+        public event EventHandler<Point> OnCanvasResize;
+
         private MouseEventArgs MButtons;
 
         public Application()
@@ -19,11 +22,14 @@ namespace ConsoleLib.CommonControls
             ExtendedConsole.KeyEvent += HandleKeyEvent;
             ExtendedConsole.WindowBufferSizeEvent += HandleWinBufEvent;
             Boarder = new Char[] { };
+            Control.MessageQueue = new Stack<(Action<object, EventArgs>,object,EventArgs)>();
         }
 
         private void HandleWinBufEvent(object sender, WINDOW_BUFFER_SIZE_RECORD e)
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            OnCanvasResize?.Invoke(this,e.dwSize.AsPoint);
+            Invalidate();
         }
 
         private void HandleKeyEvent(object sender, KEY_EVENT_RECORD e)
@@ -64,7 +70,7 @@ namespace ConsoleLib.CommonControls
 
         public virtual void Initialize()
         {
-
+               
         }
 
         public void Run()
@@ -72,11 +78,26 @@ namespace ConsoleLib.CommonControls
             running = true;
             while (running)
             {
-                // Handling the Event-Queue    
+                HandleMessages();   
+                // DoOnIdle
 
                 Thread.Sleep(1);
                 //   Console.Clear();
             }
+        }
+
+        private void HandleMessages()
+        {
+            int cc = Control.MessageQueue.Count;
+            if (cc > 0)
+            {
+                while (cc--> 0)
+                {
+                    (var Act, var sender, var args) = Control.MessageQueue.Pop();
+                    Act?.Invoke(sender, args);
+                }
+                DoUpdate();    
+            }        
         }
 
         public void Stop()

@@ -27,14 +27,20 @@ namespace ConsoleLib.CommonControls
         {
             base.MouseEnter(M);
             BackColor = ConsoleColor.Green;
+            Invalidate();
         }
         public override void MouseLeave(Point M)
         {
             base.MouseLeave(M);
             BackColor = ConsoleColor.Gray;
-            Draw();
+            Invalidate();
         }
 
+        public override void SetText(string value)
+        {
+            base.SetText(value);
+            size = new Size(value.Length+2, 1);
+        }
     }
 
 }

@@ -10,8 +10,10 @@ namespace ConsoleLib
     {
         protected Rectangle _dimension;
         private bool _active;
+        private bool _valid;
         private bool _shaddow;
         private bool _visible = true;
+        public static Stack<(Action<object, EventArgs>, object, EventArgs)> MessageQueue { get;  set; }
 
         public Rectangle dimension
         {
@@ -68,7 +70,7 @@ namespace ConsoleLib
             }
             if (IsVisible)
             {
-                Draw();
+                Invalidate();
             }
         }
 
@@ -98,7 +100,10 @@ namespace ConsoleLib
         public virtual void ReDraw(Rectangle dimension)
         {
             if (_visible && dimension.IntersectsWith(_dimension))
+            {
                 Draw();
+                _valid = true;
+            }
         }
         public bool Over(Point M) => realDim.Contains(M);
 
@@ -153,10 +158,32 @@ namespace ConsoleLib
                 parent?.Invalidate();
             }
         }
-
-        private void Invalidate()
+        public bool valid
         {
-            // Todo:
+            get => _valid; set
+            {
+                if (_valid == value) return;
+                if (!value)
+                {
+                    Invalidate();
+                }
+                else
+                {
+                    _valid = value;
+                }
+            }
+        }
+
+        public void Invalidate()
+        {
+            _valid = false;
+            MessageQueue?.Push((DoRedraw, this, null));
+        }
+
+        private void DoRedraw(object sender, EventArgs a)
+        {
+            if (!_valid)
+                ReDraw(((Control)sender).dimension);
         }
 
         public event EventHandler OnClick;
@@ -171,11 +198,20 @@ namespace ConsoleLib
         public ConsoleColor BackColor;
         public ConsoleColor ForeColor;
 
-        public string Text;
+        public string Text { get => _text; set => SetText(value); }
+
+        public virtual void SetText(string value)
+        {
+            if (_text == value) return;
+            _text = value;
+            OnChange?.Invoke(this, null);
+            Invalidate();
+        }
 
         public List<Control> children = new List<Control>();
         public Control ActiveControl;
         private Control _parent;
+        private string _text;
 
         public Control parent { get => _parent; set => SetParent(value); }
 
@@ -217,8 +253,7 @@ namespace ConsoleLib
             Console.ForegroundColor = ForeColor;
             Console.BackgroundColor = BackColor;
             Console.Write($"[{Text}]");
-            Console.BackgroundColor = ConsoleColor.Black;
-            
+            Console.BackgroundColor = ConsoleColor.Black;            
         }
 
         public virtual void Click()
@@ -278,6 +313,13 @@ namespace ConsoleLib
 
         }
 
-    }
+        public virtual void DoUpdate()
+        {
+            foreach (var ctrl in children)
+            {
+                ctrl.DoUpdate();
+            }
+        }
 
+    }
 }
