@@ -10,11 +10,6 @@ namespace ConsoleLib.CommonControls
 
         public bool Pressed(Point M) => Over(M) && !_WasPressed & (_WasPressed=ConsoleFramework.MouseButtonLeft) ;
 
-        public void CalculateClick(Point M)
-        {
-           
-        }
-
         public void Set(int X, int Y, string text, ConsoleColor backColor)
         {
             BackColor = backColor;

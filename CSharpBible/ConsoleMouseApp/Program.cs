@@ -13,9 +13,9 @@ namespace ConsoleTools.NET
 {
     class Program
     {        
-        static ConsoleLib.CommonControls.Button One = new ConsoleLib.CommonControls.Button();
-        static Pixel Mouse = new Pixel();
-        static ConsoleLib.CommonControls.Application App = new ConsoleLib.CommonControls.Application();
+        private static ConsoleLib.CommonControls.Button One;
+        private static Pixel Mouse = new Pixel();
+        private static ConsoleLib.CommonControls.Application App;
         private static ConsoleLib.CommonControls.Label lblMousePos;
 
         static void Main(string[] args)
@@ -25,24 +25,31 @@ namespace ConsoleTools.NET
             cl.Inflate(-3, -3);
             Console.ForegroundColor = ConsoleColor.White;
 
-            App.visible = false;
-            App.Boarder = ConsoleFramework.singleBoarder;
-            App.ForeColor = ConsoleColor.Gray;
-            App.BackColor = ConsoleColor.DarkGray;
-            App.BoarderColor = ConsoleColor.Green;
-            App.dimension = cl;
+            App = new ConsoleLib.CommonControls.Application
+            {
+                visible = false,
+                Boarder = ConsoleFramework.singleBoarder,
+                ForeColor = ConsoleColor.Gray,
+                BackColor = ConsoleColor.DarkGray,
+                BoarderColor = ConsoleColor.Green,
+                dimension = cl
+            };
 
             // t.Draw(10, 40, ConsoleColor.Gray);
-            App.Add(Mouse);
-
-            One.parent = App;
-            One.ForeColor = ConsoleColor.White;
-            One.shaddow = true;
-            One.Set(5, 10, "░░1░░", ConsoleColor.Gray);
-            One.OnClick += One_Click;
-
+            Mouse.parent = App;
             Mouse.Set(0, 0, " ");
             Mouse.BackColor = ConsoleColor.Red;
+
+            One = new ConsoleLib.CommonControls.Button
+            {
+                parent = App,
+                ForeColor = ConsoleColor.White,
+                BackColor = ConsoleColor.Gray,
+                shaddow = true,
+                position = new Point(5, 10),
+                Text = "░░1░░":
+            };
+            One.OnClick += One_Click;
 
             cl = new Rectangle(3, 15, 30, 10);
             var Panel2 = new ConsoleLib.CommonControls.Panel
@@ -90,9 +97,9 @@ namespace ConsoleTools.NET
 
             App.visible = true;
             App.Draw();
-            Point _MousePos = ConsoleFramework.MousePos;
             App.OnMouseMove += App_MouseMove;
             App.OnCanvasResize += App_CanvasResize;
+
             App.Run();          
 
             Console.Write("Programm end ...");

@@ -64,6 +64,7 @@
     <Compile Include="Anweisungen\LockingTests.cs" />
     <Compile Include="Anweisungen\LoopStatementsTests.cs" />
     <Compile Include="Anweisungen\ProgramFlowTests.cs" />
+    <Compile Include="Anweisungen\RandomExampleTests.cs" />
     <Compile Include="Anweisungen\ReturnStatementTests.cs" />
     <Compile Include="Anweisungen\UsingStatementTests.cs" />
     <Compile Include="Anweisungen\YieldStatementTests.cs" />
@@ -77,12 +78,19 @@
     <Compile Include="Collection\Generic\TestListTests.cs" />
     <Compile Include="DataTypes\EnumTestTests.cs" />
     <Compile Include="DataTypes\FormatingTests.cs" />
+    <Compile Include="DynamicTestProgramTests.cs" />
     <Compile Include="Linq\LinqLookupTests.cs" />
+    <Compile Include="Reflection\AssemblyExampleTests.cs" />
+    <Compile Include="Reflection\ReflectionExampleTests.cs" />
     <Compile Include="Threading\Tasks\TaskExampleTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DynamicSample\DynamicSample.csproj">
+      <Project>{7C4980B9-2187-4D61-B259-8C6DC7F94207}</Project>
+      <Name>DynamicSample</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TestStatements\TestStatements.csproj">
       <Project>{91649497-4218-44fb-90db-ca3f1eacfb78}</Project>
       <Name>TestStatements</Name>

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html class="hasSidebar hasPageActions hasBreadcrumb conceptual has-default-focus js-focus-visible theme-light" dir="ltr" data-css-variable-support="true" data-authenticated="false" data-auth-status-determined="true" data-target="docs" x-ms-format-detection="none" lang="de-de"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta property="og:title" content="C#-Programmierhandbuch">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:site" content="@docsmsft">
+
+
+	<meta name="apiPlatform" content="dotnet">
+<meta name="author" content="BillWagner">
+<meta name="bilingual_type" content="hover over">
+<meta name="breadcrumb_path" content="/dotnet/breadcrumb/toc.json">
+<meta name="depot_name" content="VS.core-docs">
+<meta name="document_id" content="fc2fe8f7-b023-5aa7-52c2-b9c1c5c13ded">
+<meta name="document_version_independent_id" content="18c373d4-02f9-4cc6-656d-9cf4d11f6498">
+<meta name="enable_loc_sxs" content="true">
+<meta name="gitcommit" content="https://github.com/dotnet/docs.de-de/blob/6770f6b4877c69333bcf2913238be5f17fbb33e0/docs/csharp/programming-guide/index.md">
+<meta name="locale" content="de-de">
+<meta name="ms.assetid" content="ac0f23a2-6bf3-4077-be99-538ae5fd3bc5">
+<meta name="ms.author" content="wiwagn">
+<meta name="ms.contentlocale" content="de-DE">
+<meta name="ms.date" content="05/02/2017">
+<meta name="ms.devlang" content="csharp">
+<meta name="ms.lasthandoff" content="12/25/2019">
+<meta name="ms.locfileid" content="75337255">
+<meta name="ms.openlocfilehash" content="de40369a661c347a2125075e820420af4eb71cac">
+<meta name="ms.prod" content="dotnet-csharp">
+<meta name="ms.sourcegitcommit" content="30a558d23e3ac5a52071121a52c305c85fe15726">
+<meta name="ms.topic" content="conceptual">
+<meta name="ms.translationtype" content="HT">
+<meta name="original_content_git_url" content="https://github.com/dotnet/docs.de-de/blob/live-sxs/docs/csharp/programming-guide/index.md">
+<meta name="search.ms_docsetname" content="core-docs">
+<meta name="search.ms_product" content="VS">
+<meta name="search.ms_sitename" content="Docs">
+<meta name="site_name" content="Docs">
+<meta name="uhfHeaderId" content="MSDocsHeader-DotNet">
+<meta name="updated_at" content="2020-01-06 06:07 PM">
+<meta name="page_type" content="conceptual">
+<meta name="toc_rel" content="../toc.json">
+<meta name="pdf_url_template" content="https://docs.microsoft.com/pdfstore/de-de/VS.core-docs/{branchName}{pdfName}">
+<meta name="search.mshattr.devlang" content="csharp">
+<meta name="word_count" content="314">
+
+
+	<meta name="scope" content=".NET">
+<link href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/" rel="canonical">
+	<title>C#-Programmierhandbuch | Microsoft Docs</title>
+
+		<link rel="stylesheet" href="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/7472df92.css">
+
+	<link rel="stylesheet" href="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/672b4bb0.css">
+
+
+	<script>
+	var msDocs = {
+		data: {
+			timeOrigin: Date.now(),
+			azureHeaderLocale: 'de-de',
+			contentLocale: 'de-de',
+			contentDir: 'ltr',
+			userLocale: 'de-de',
+			userDir: 'ltr',
+			pageTemplate: 'Conceptual',
+			brand: '',
+			context: {
+
+			
+				moniker_type: 'none',
+			},
+			hasBinaryRating: true,
+			hasGithubIssues: true,
+			showFeedbackReport: false,
+			enableTutorialFeedback: false,
+			feedbackSystem: 'GitHub',
+			feedbackGitHubRepo: 'dotnet/docs.de-de',
+			feedbackProductUrl: 'https://developercommunity.visualstudio.com/spaces/61/index.html',
+			contentGitUrl: 'https://github.com/dotnet/docs.de-de/blob/live/docs/csharp/programming-guide/index.md',
+			showLatex: true,
+			extendBreadcrumb: false,
+		},
+		functions:{}
+	};
+	if (!('Promise' in window && 'resolve' in window.Promise && 'reject' in window.Promise && 'all' in window.Promise && 'race' in window.Promise)) {
+		document.write('<script src="https://static.docs.com/ui/third-party/bluebird/3.5.0/bluebird.min.js" integrity="sha384-aD4BDeDGeLXLpPK4yKeqtZQa9dv4a/7mQ+4L5vwshIYH1Mc2BrXvHd32iHzYCQy5" crossorigin="anonymous"><\/script>');
+	}
+	if (typeof fetch !== 'function') {
+		document.write('<script src="https://static.docs.com/ui/third-party/fetch/3.0.0/fetch.umd.min.js" integrity="sha384-EQIXrC5K2+7X8nGgLkB995I0/6jfAvvyG1ieZ+WYGxgJHFMD/alsG9fSDWvzb5Y1" crossorigin="anonymous"><\/script>');
+	}
+	if (typeof HTMLTemplateElement === 'undefined') {
+		document.write('<script src="https://static.docs.com/ui/third-party/template/1.4.0/template.min.js" integrity="sha384-1zKzI6ldTVHMU7n0W2HpE/lhHI+UG4D9IIaxbj3kT2UhCWicdTuJkTtnKuu0CQzN" crossorigin="anonymous"><\/script>');
+	}
+	if (typeof URL !== 'function') {
+		document.write('<script src="https://static.docs.com/ui/third-party/url/0.5.7/url.min.js" integrity="sha384-vn7xBMtpSTfzaTRWxj0kVq0UcsbBrTOgZ/M1ISHqe1V358elYva+lfiEC+T8jLPc" crossorigin="anonymous"><\/script>');
+	}
+	</script>
+
+	<script src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/jquery-3.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+		<script src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/6f6affe3.js"></script><style></style><script src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/jsll-4.js" async="" defer="defer"></script>
+
+</head>
+
+<body dir="ltr" lang="de-de">
+<div class="header-holder has-default-focus">
+	<a href="#main" class="skip-to-main-link visually-hidden-until-focused is-fixed has-inner-focus focus-visible has-top-zero has-left-zero has-right-zero has-padding-medium has-text-centered has-body-background-medium" tabindex="1">Weiter zum Hauptinhalt</a>
+		<div id="headerAreaHolder" data-bi-name="header"><div class="has-padding-top-medium has-padding-bottom-medium has-body-background-medium"><div id="msccBanner" dir="ltr" data-site-name="docs.microsoft.com" data-mscc-version="0.4.2" data-nver="netcore-3.2.1" data-sver="0.1.3" class="cc-banner uhf-container" role="alert" aria-labelledby="msccMessage"><div class="cc-container"> <span id="msccMessage" class="cc-v-center cc-text" tabindex="0">Diese
+ Website verwendet Cookies für Analysen, personalisierte Inhalte und 
+Werbung. Indem Sie diese Website nutzen, erklären Sie sich mit dieser 
+Verwendung einverstanden.</span> <a href="https://go.microsoft.com/fwlink/?linkid=845480" target="_top" aria-label="Weitere Informationen über die Microsoft Cookie-Richtlinie" id="msccLearnMore" class="cc-link cc-v-center cc-float-right" data-mscc-ic="false">Weitere Informationen</a></div></div></div>
+<header role="banner" itemscope="itemscope" itemtype="http://schema.org/Organization"><!----><!----><div class="nav-bar"><!---->
+		
+		<a itemprop="url" href="https://www.microsoft.com/" aria-label="Microsoft" class="nav-bar-button ">
+			<div class="nav-bar-logo has-background-image theme-display is-light" role="presentation" aria-hidden="true" itemprop="logo" itemscope="itemscope"></div>
+			<div class="nav-bar-logo has-background-image theme-display is-dark is-high-contrast" role="presentation" aria-hidden="true" itemprop="logo" itemscope="itemscope"></div>
+		</a>
+		
+			
+		<button class="nav-bar-burger" title="Globale Navigation" aria-controls="ax-12" aria-expanded="false">
+			<span></span>
+			<span></span>
+			<span></span>
+			<span class="is-visually-hidden"><!---->Globale Navigation<!----></span>
+		</button>
+		<nav class="nav-bar-mobile-nav" role="navigation" id="ax-12" aria-label="Global" hidden="">
+			<ul class="nav-bar-mobile-nav-list">
+				
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/"><!---->.NET<!----></a>
+		</li>
+				<!---->
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn/dotnet/what-is-dotnet"><!---->About<!----></a>
+		</li><!---->
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn"><!---->Learn<!----></a>
+		</li><!---->
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn/dotnet/architecture-guides"><!---->Architecture<!----></a>
+		</li><!---->
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://docs.microsoft.com/dotnet"><!---->Docs<!----></a>
+		</li><!---->
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/download"><!---->Downloads<!----></a>
+		</li><!---->
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/platform/community"><!---->Community<!----></a>
+		</li><!---->
+				
+		<li class="nav-bar-mobile-nav-item">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn/dotnet/hello-world-tutorial/intro"><!---->Get Started<!----></a>
+		</li>
+			</ul>
+		</nav>
+	
+			
+			
+		<nav class="nav-bar-nav" role="navigation" aria-label="Global">
+			<ul class="nav-bar-nav-list">
+				
+		<li class="nav-bar-item is-category has-spacing">
+			<a class="nav-bar-button title has-hover-underline is-4" itemprop="url" href="https://dotnet.microsoft.com/">
+				<span><!---->.NET<!----></span>
+			</a>
+		</li>
+	
+				<!---->
+		<li class="nav-bar-item">
+			<a class="nav-bar-button has-hover-underline" href="https://dotnet.microsoft.com/learn/dotnet/what-is-dotnet">
+				<span><!---->About<!----></span>
+			</a>
+		</li><!---->
+		<li class="nav-bar-item">
+			<a class="nav-bar-button has-hover-underline" href="https://dotnet.microsoft.com/learn">
+				<span><!---->Learn<!----></span>
+			</a>
+		</li><!---->
+		<li class="nav-bar-item">
+			<a class="nav-bar-button has-hover-underline" href="https://dotnet.microsoft.com/learn/dotnet/architecture-guides">
+				<span><!---->Architecture<!----></span>
+			</a>
+		</li><!---->
+		<li class="nav-bar-item">
+			<a class="nav-bar-button has-hover-underline" href="https://docs.microsoft.com/dotnet">
+				<span><!---->Docs<!----></span>
+			</a>
+		</li><!---->
+		<li class="nav-bar-item">
+			<a class="nav-bar-button has-hover-underline" href="https://dotnet.microsoft.com/download">
+				<span><!---->Downloads<!----></span>
+			</a>
+		</li><!---->
+		<li class="nav-bar-item">
+			<a class="nav-bar-button has-hover-underline" href="https://dotnet.microsoft.com/platform/community">
+				<span><!---->Community<!----></span>
+			</a>
+		</li><!---->
+		<li class="dropdown nav-bar-item" hidden="">
+			<button aria-expanded="false" class="dropdown-trigger nav-bar-button has-hover-underline" aria-controls="ax-13">
+				<span><!---->Mehr<!----></span>
+				<span class="nav-bar-button-chevron" aria-hidden="true">
+					<span class="docon docon-chevron-down-light expanded-indicator"></span>
+				</span>
+			</button>
+			<ul class="dropdown-menu" id="ax-13" aria-label="Mehr">
+				<!---->
+		<li class="nav-bar-item" hidden="">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn/dotnet/what-is-dotnet"><!---->About<!----></a>
+		</li>
+	<!---->
+		<li class="nav-bar-item" hidden="">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn"><!---->Learn<!----></a>
+		</li>
+	<!---->
+		<li class="nav-bar-item" hidden="">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/learn/dotnet/architecture-guides"><!---->Architecture<!----></a>
+		</li>
+	<!---->
+		<li class="nav-bar-item" hidden="">
+			<a class="nav-bar-button" href="https://docs.microsoft.com/dotnet"><!---->Docs<!----></a>
+		</li>
+	<!---->
+		<li class="nav-bar-item" hidden="">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/download"><!---->Downloads<!----></a>
+		</li>
+	<!---->
+		<li class="nav-bar-item" hidden="">
+			<a class="nav-bar-button" href="https://dotnet.microsoft.com/platform/community"><!---->Community<!----></a>
+		</li>
+	<!---->
+			</ul>
+		</li><!---->
+				
+		<li class="nav-bar-item has-spacing">
+			<a class="button is-small is-primary is-outlined" href="https://dotnet.microsoft.com/learn/dotnet/hello-world-tutorial/intro">
+				Get Started
+			</a>
+		</li>
+	
+			</ul>
+		</nav>
+	
+			<span class="nav-bar-spacer is-hidden-mobile"></span>
+			
+			<div class="nav-bar-item nav-bar-search-form-item " id="ax-14" hidden="">
+				
+			<form class="is-flex" method="GET" id="searchForm" name="searchForm" role="search" aria-label="Suche" aria-expanded="false" action="https://docs.microsoft.com/de-de/search/">
+					<div class="autocomplete" data-bi-name="autocomplete"><!---->
+		<div class="control ">
+			<input role="combobox" maxlength="100" aria-autocomplete="list" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" id="site-search-input" class="autocomplete-input input   is-full-width" type="search" name="search" aria-expanded="false" aria-owns="ax-15-listbox" aria-activedescendant="" aria-label="Suche" placeholder="Suche">
+
+			<span class="icon is-small is-left" aria-hidden="true" hidden="">
+				<span class="has-text-primary docon docon-undefined"></span>
+			</span>
+
+			<span class="autocomplete-loader loader has-text-primary" aria-hidden="true" hidden=""></span>
+		</div>
+
+		<ul class="autocomplete-suggestions is-vertically-scrollable" role="listbox" id="ax-15-listbox" hidden="">
+			
+		</ul><!----></div>
+					<!-- mobile safari will not dispatch submit event unless there's a submit button that is not display:none -->
+					<button type="submit" class="visually-hidden" tabindex="-1" aria-hidden="true"></button>
+					<input name="category" value="All" hidden="">
+					<input name="scope" value=".NET" hidden="">
+					
+			</form>
+		
+			</div>
+			<div class="nav-bar-item  ">
+				<button id="form-expander" class="nav-bar-button has-hover-underline has-margin-left-extra-small " title="Suche" aria-expanded="false" aria-controls="ax-14">
+						
+					<span class="is-visually-hidden-mobile"><!---->Suche<!----></span>
+					<span class="icon" aria-hidden="true">
+						<span class="docon docon-search"></span>
+					</span>
+	
+				</button>
+			</div>
+		
+		
+	<!----></div></header>		</div>
+		<div class="content-header uhf-container has-padding has-default-focus" data-bi-name="content-header">
+			<nav class="has-padding-none-mobile has-flex-grow" data-bi-name="breadcrumb" itemscope="" itemtype="http://schema.org/BreadcrumbList" role="navigation" aria-label="Breadcrumb">
+				<ul id="page-breadcrumbs" class="breadcrumbs"><!---->
+		<!---->
+		<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+			
+			<a itemprop="item" href="https://docs.microsoft.com/de-de/">
+				<span itemprop="name">
+					Docs
+				</span>
+			</a>
+			<meta itemprop="position" content="1">
+		</li><!---->
+		<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+			
+			<a itemprop="item" href="https://docs.microsoft.com/de-de/dotnet/">
+				<span itemprop="name">
+					.NET
+				</span>
+			</a>
+			<meta itemprop="position" content="2">
+		</li><!---->
+		<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+			
+			<a itemprop="item" href="https://docs.microsoft.com/de-de/dotnet/csharp/">
+				<span itemprop="name">
+					Leitfaden für C#
+				</span>
+			</a>
+			<meta itemprop="position" content="3">
+		</li><!---->
+		<li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+			
+			<span itemprop="name">
+				Programmierhandbuch
+			</span>
+			<meta itemprop="position" content="4">
+		</li><!---->
+	<!----></ul>
+			</nav>
+		<div class="content-header-controls">
+			<button type="button" class="contents-button button" data-bi-name="contents-expand" aria-haspopup="true">
+				<span class="icon"><span class="docon docon-menu" aria-hidden="true"></span></span>
+				<span>Inhalte</span>
+			</button>
+		</div>
+		<div class="content-header-controls exit-focus">
+			<button type="button" class="ap-collapse-behavior ap-expanded button" data-bi-name="ap-collapse" aria-controls="action-panel">
+				<span class="icon"><span class="docon docon-exit-mode" aria-hidden="true"></span></span>
+				<span>Fokusmodus beenden</span>
+			</button>
+		</div>
+		<div class="is-size-7 is-flex-touch has-flex-justify-content-space-between-touch has-flex-grow has-padding-none has-padding-none-mobile">
+			<ul class="action-list has-flex-justify-content-start has-flex-justify-content-end-tablet is-flex is-flex-row has-flex-wrap has-flex-grow is-unstyled">
+				<li>
+					<button type="button" class="bookmark button is-text has-inner-focus is-small is-icon-only-touch" data-list-type="bookmarks" data-bi-name="bookmark" title="Lesezeichen für C#-Programmierhandbuch | Microsoft Docs hinzufügen" aria-pressed="false">
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-single-bookmark"></span>
+						</span>
+						<span class="bookmark-status is-visually-hidden-touch is-hidden-portrait">Lesezeichen</span>
+					</button>
+				</li>
+					<li>
+						<a href="#feedback" class="button is-text has-inner-focus is-small is-icon-only-touch" data-bi-name="comments" title="Feedback geben zu dieser Seite">
+							<span class="icon">
+								<span class="docon docon-comment-lines" aria-hidden="true"></span>
+							</span>
+							<span class="is-visually-hidden-touch is-hidden-portrait">Feedback</span>
+						</a>
+					</li>
+							<li id="contenteditbtn">
+									<a href="https://github.com/dotnet/docs.de-de/blob/live/docs/csharp/programming-guide/index.md" class="button is-text has-inner-focus is-icon-only-touch is-small" title="Dieses Dokument bearbeiten" data-bi-name="edit" data-original_content_git_url="https://github.com/dotnet/docs.de-de/blob/live-sxs/docs/csharp/programming-guide/index.md" data-original_content_git_url_template="{repo}/blob/{branch}/docs/csharp/programming-guide/index.md" data-pr_repo="" data-pr_branch="">
+									<span class="icon">
+										<span class="docon docon-edit-outline" aria-hidden="true"></span>
+									</span>
+									<span class="is-visually-hidden-touch is-hidden-portrait">Bearbeiten</span>
+								</a>
+							</li>
+				<li>
+<div class="sharing dropdown has-caret">
+	<button class="dropdown-trigger button is-text is-fullwidth has-flex-justify-content-start has-inner-focus is-small is-icon-only-touch" aria-controls="sharing-menu" aria-expanded="false" title="Dieses Dokument freigeben" data-bi-name="share">
+		<span class="icon" aria-hidden="true">
+			<span class="docon docon-sharing"></span>
+		</span>
+		<span class="is-visually-hidden-touch is-hidden-portrait">Teilen</span>
+	</button>
+	<div class="dropdown-menu has-padding-small" id="sharing-menu">
+		<ul data-bi-name="share-links">
+			<li>
+				<a class="button is-text is-fullwidth has-flex-justify-content-start has-inner-focus is-small share-twitter" data-bi-name="twitter" href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F%3FWT.mc_id%3Dtwitter&amp;text=C%23-Programmierhandbuch%20%7C%20Microsoft%20Docs&amp;tw_p=tweetbutton&amp;url=https%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F%3FWT.mc_id%3Dtwitter">
+					<span class="icon">
+						<span class="docon docon-brand-twitter has-text-primary" aria-hidden="true"></span>
+					</span>
+					<span>Twitter</span>
+				</a>
+			</li>
+			<li>
+				<a class="button is-text is-fullwidth has-flex-justify-content-start has-inner-focus is-small share-linkedin" data-bi-name="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F%3FWT.mc_id%3Dlinkedin">
+					<span class="icon">
+						<span class="docon docon-brand-linkedin has-text-primary" aria-hidden="true"></span>
+					</span>
+					<span>LinkedIn</span>
+				</a>
+			</li>
+			<li>
+				<a class="button is-text is-fullwidth has-flex-justify-content-start has-inner-focus is-small share-facebook" data-bi-name="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F%3FWT.mc_id%3Dfacebook">
+					<span class="icon">
+						<span class="docon docon-brand-facebook has-text-primary" aria-hidden="true"></span>
+					</span>
+					<span>Facebook</span>
+				</a>
+			</li>
+			<li>
+				<a class="button is-text is-fullwidth has-flex-justify-content-start has-inner-focus is-small share-email" data-bi-name="email" href="mailto:?subject=%5BFreigegebener%20Artikel%5D%20C%23-Programmierhandbuch%20%7C%20Microsoft%20Docs&amp;body=C%23-Programmierhandbuch%20%7C%20Microsoft%20Docs%0A%0Ahttps%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F%3FWT.mc_id%3Demail">
+					<span class="icon">
+						<span class="docon docon-mail-message-fill has-text-primary" aria-hidden="true"></span>
+					</span>
+					<span>E-Mail</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>				</li>
+				<li>
+<div class="dropdown has-caret">
+	<button class="dropdown-trigger button is-text is-small is-icon-only-touch has-inner-focus" aria-controls="theme-menu" aria-expanded="false" title="Design" data-bi-name="theme">
+		<span class="icon">
+			<span class="docon docon-sun" aria-hidden="true"></span>
+		</span>
+		<span class="is-visually-hidden-touch is-hidden-portrait">Design</span>
+	</button>
+	<div class="dropdown-menu" id="theme-menu" role="menu">
+		<ul class="theme-selector has-padding-small">
+			<li class="theme is-block">
+				<button class="button is-text is-small theme-control is-fullwidth has-flex-justify-content-start is-selected" data-theme-to="light" aria-pressed="true">
+					<span class="theme-light has-margin-right-small">
+						<span class="theme-selector-icon css-variable-support has-border is-inline-block has-body-background" aria-hidden="true">
+							<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+								<rect width="22" height="14" class="has-fill-body-background"></rect>
+								<rect x="5" y="5" width="12" height="4" class="has-fill-secondary"></rect>
+								<rect x="5" y="2" width="2" height="1" class="has-fill-secondary"></rect>
+								<rect x="8" y="2" width="2" height="1" class="has-fill-secondary"></rect>
+								<rect x="11" y="2" width="3" height="1" class="has-fill-secondary"></rect>
+								<rect x="1" y="1" width="2" height="2" class="has-fill-secondary"></rect>
+								<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary"></rect>
+								<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary"></rect>
+							</svg>
+						</span>
+					</span>
+					<span role="menuitem">
+Hell					</span>
+				</button>
+			</li>
+			<li class="theme is-block">
+				<button class="button is-text is-small theme-control is-fullwidth has-flex-justify-content-start" data-theme-to="dark" aria-pressed="false">
+					<span class="theme-dark has-margin-right-small">
+						<span class="has-border theme-selector-icon css-variable-support is-inline-block has-body-background" aria-hidden="true">
+							<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+								<rect width="22" height="14" class="has-fill-body-background"></rect>
+								<rect x="5" y="5" width="12" height="4" class="has-fill-secondary"></rect>
+								<rect x="5" y="2" width="2" height="1" class="has-fill-secondary"></rect>
+								<rect x="8" y="2" width="2" height="1" class="has-fill-secondary"></rect>
+								<rect x="11" y="2" width="3" height="1" class="has-fill-secondary"></rect>
+								<rect x="1" y="1" width="2" height="2" class="has-fill-secondary"></rect>
+								<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary"></rect>
+								<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary"></rect>
+							</svg>
+						</span>
+					</span>
+					<span role="menuitem">
+Dunkel					</span>
+				</button>
+			</li>
+			<li class="theme is-block">
+				<button class="button is-text is-small theme-control is-fullwidth has-flex-justify-content-start" data-theme-to="high-contrast" aria-pressed="false">
+					<span class="theme-high-contrast has-margin-right-small">
+						<span class="has-border theme-selector-icon css-variable-support is-inline-block has-body-background" aria-hidden="true">
+							<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+								<rect width="22" height="14" class="has-fill-body-background"></rect>
+								<rect x="5" y="5" width="12" height="4" class="has-fill-secondary"></rect>
+								<rect x="5" y="2" width="2" height="1" class="has-fill-secondary"></rect>
+								<rect x="8" y="2" width="2" height="1" class="has-fill-secondary"></rect>
+								<rect x="11" y="2" width="3" height="1" class="has-fill-secondary"></rect>
+								<rect x="1" y="1" width="2" height="2" class="has-fill-secondary"></rect>
+								<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary"></rect>
+								<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary"></rect>
+							</svg>
+						</span>
+					</span>
+					<span role="menuitem">
+Hoher Kontrast					</span>
+				</button>
+			</li>
+		</ul>
+	</div>
+</div>				</li>
+				<li>
+
+<div class="lang-toggle-container" style="display: flex;">
+	<label for="language-toggle" aria-hidden="true" tabindex="-1">Auf Englisch lesen</label>
+	<div class="checkbox-toggle-wrapper">
+		<input type="checkbox" id="language-toggle" aria-label="Auf Englisch lesen" data-m="{&quot;cN&quot;:&quot;language-toggle&quot;,&quot;value&quot;:&quot;off&quot;}">
+		<label for="language-toggle" class="switch"></label>
+	</div>
+</div>				</li>
+				<li id="docs-sign-in-container-item">
+					<a class="docs-sign-in auth-status-determined not-authenticated button is-text has-inner-focus has-text-primary is-small" href="#">Anmelden</a>
+					<div class="dropdown has-caret auth-status-determined authenticated">
+						<button class="dropdown-trigger button is-text has-inner-focus is-small is-icon-only-touch has-inner-focus" aria-label="Ihr Konto" aria-controls="user-menu" aria-expanded="false">
+							<span class="icon" aria-hidden="true">
+								<span class="image">
+									<img class="has-body-background-medium is-rounded" data-profile-property="avatarThumbnailUrl">
+								</span>
+							</span>
+							<span class="is-inline-truncated has-margin-left-small" data-profile-property="userName"></span>
+						</button>
+						<div class="dropdown-menu box" id="user-menu" role="menu">
+							<div class="media is-user-dir">
+								<div class="media-left">
+									<span class="image is-64x64" aria-hidden="true">
+										<img class="has-body-background-medium is-rounded" data-profile-property="avatarUrl">
+									</span>
+								</div>
+								<div class="media-content">
+									<p class="title">
+										<span class="is-inline-truncated has-max-width-200" data-profile-property="userName"></span>
+									</p>
+									<p class="subtitle has-margin-bottom-none">
+										<span class="is-inline-truncated has-max-width-200" data-profile-property="upn"></span>
+									</p>
+									<ul class="is-unstyled has-margin-none has-margin-top-small">
+										<li><a href="https://docs.microsoft.com/profile" data-profile-property="profileUrl">Profil</a></li>
+										<li><a href="https://docs.microsoft.com/profile" data-profile-property="bookmarksUrl">Lesezeichen</a></li>
+										<li><a href="https://docs.microsoft.com/profile" data-profile-property="collectionsUrl">Sammlungen</a></li>
+										<li><a class="docs-sign-out" href="#">Abmelden</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<button type="button" class="contents-button button is-small is-text is-hidden-tablet has-inner-focus is-hidden-tablet" aria-label="Inhalte" data-bi-name="contents-expand-">
+				<span class="icon">
+					<span class="docon docon-editor-list-bullet" aria-hidden="true"></span>
+				</span>
+				<span>Contents</span>
+			</button>
+		</div>
+	</div>
+
+	<div id="banner-holder" class="has-default-focus has-overflow-hidden">
+	</div>
+
+	<div id="disclaimer-holder" class="has-overflow-hidden has-default-focus"></div>
+	</div>
+
+	<div class="mainContainer  uhf-container has-top-padding  has-default-focus" data-bi-name="body">
+
+		<div class="columns has-large-gaps is-gapless-mobile ">
+
+			<div id="left-container" class="left-container is-hidden-mobile column is-one-third-tablet is-one-quarter-desktop">
+				<nav id="affixed-left-container" class="is-fixed is-flex is-flex-column" role="navigation" aria-label="Primär" style="width: 334.967px; top: 166.267px; bottom: 24px;" data-bi-name="left toc"><div><form action="javascript:" role="search" aria-label="Suche" class="is-full-width has-margin-bottom-small"><label class="visually-hidden" for="ax-16">Suche</label><div class="autocomplete is-block" data-bi-name="autocomplete"><!---->
+		<div class="control has-icons-left">
+			<input role="combobox" maxlength="100" aria-autocomplete="list" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" id="ax-16" class="autocomplete-input input control has-icons-left is-small is-full-width" type="text" aria-expanded="false" aria-owns="ax-17-listbox" aria-activedescendant="" placeholder="Nach Titel filtern">
+
+			<span class="icon is-small is-left" aria-hidden="true">
+				<span class="has-text-primary docon docon-filter"></span>
+			</span>
+
+			<span class="autocomplete-loader loader has-text-primary" aria-hidden="true" hidden=""></span>
+		</div>
+
+		<ul class="autocomplete-suggestions is-vertically-scrollable" role="listbox" id="ax-17-listbox" hidden="">
+			
+		</ul><!----></div></form></div><ul class="tree is-vertically-scrollable has-flex-grow has-flex-shrink" role="tree" aria-label="Inhaltsverzeichnis" data-bi-name="tree"><li role="none"><a aria-setsize="11" aria-level="1" aria-posinset="1" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/">C#-Dokumentation</a></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="2" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Erste Schritte</span></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="3" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Tutorials</span></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="4" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Einführung in C#</span></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="5" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Neues in C#</span></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="6" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>C#-Konzepte</span></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="7" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Artikel zu Vorgehensweisen in C#</span></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="8" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Das .NET Compiler Platform SDK (Roslyn APIs)</span></li><li class="tree-item is-expanded" aria-setsize="11" aria-level="1" aria-posinset="9" role="treeitem" tabindex="0" aria-expanded="true"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>C#-Programmierhandbuch</span><ul class="tree-group" role="group"><li role="none"><a aria-setsize="20" aria-level="2" aria-posinset="1" role="treeitem" tabindex="-1" class="tree-item is-leaf is-selected" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/" aria-current="page">Übersicht</a></li><li class="tree-item is-expanded" aria-setsize="20" aria-level="2" aria-posinset="2" role="treeitem" tabindex="-1" aria-expanded="true"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Einblicke in ein C#-Programm</span><ul class="tree-group" role="group"><li role="none"><a aria-setsize="5" aria-level="3" aria-posinset="1" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/inside-a-program/">Einblicke in ein C#-Programm</a></li><li role="none"><a aria-setsize="5" aria-level="3" aria-posinset="2" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/inside-a-program/hello-world-your-first-program">Hello World – Ihr erstes Programm</a></li><li role="none"><a aria-setsize="5" aria-level="3" aria-posinset="3" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/inside-a-program/general-structure-of-a-csharp-program">Allgemeine Struktur eines C#-Programms</a></li><li role="none"><a aria-setsize="5" aria-level="3" aria-posinset="4" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/inside-a-program/identifier-names">Bezeichnernamen</a></li><li role="none"><a aria-setsize="5" aria-level="3" aria-posinset="5" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/inside-a-program/coding-conventions">Codekonventionen für C#</a></li></ul></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="3" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Main() und Befehlszeilenargumente</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="4" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Programmierkonzepte</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="5" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Anweisungen, Ausdrücke und Operatoren</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="6" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Typen</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="7" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Klassen und Strukturen</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="8" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Schnittstellen</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="9" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Delegaten</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="10" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Arrays</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="11" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Zeichenfolgen</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="12" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Indexer</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="13" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Ereignisse</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="14" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Generics</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="15" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Namespaces</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="16" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Unsicherer Code und Zeiger</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="17" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>XML-Dokumentationskommentare</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="18" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Ausnahmen und Ausnahmebehandlung</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="19" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Das Dateisystem und die Registrierung</span></li><li class="tree-item" aria-setsize="20" aria-level="2" aria-posinset="20" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Interoperabilität</span></li></ul></li><li class="tree-item" aria-setsize="11" aria-level="1" aria-posinset="10" role="treeitem" tabindex="-1" aria-expanded="false"><span class="tree-expander" data-bi-name="tree-expander"><span class="tree-expander-indicator docon docon-chevron-right-light" aria-hidden="true"></span>Sprachreferenz</span></li><li role="none"><a aria-setsize="11" aria-level="1" aria-posinset="11" role="treeitem" tabindex="-1" class="tree-item is-leaf" data-bi-name="tree-leaf" href="https://docs.microsoft.com/de-de/dotnet/csharp/walkthroughs">Exemplarische Vorgehensweisen</a></li></ul><a class="button is-small is-text has-flex-justify-content-start has-inner-focus has-margin-top-small has-border-top has-border-bottom has-flex-shrink-none" href="https://docs.microsoft.com/de-de/dotnet/opbuildpdf/csharp/toc.pdf?branch=live" data-bi-name="downloadPdf"><!---->
+		<span class="icon is-size-8 has-text-subtle">
+			<span aria-hidden="true" class="docon docon-arrow-down"></span>
+		</span>
+		<span><!---->PDF herunterladen<!----></span><!----></a></nav>
+			</div>
+
+			<section class="primary-holder column is-two-thirds-tablet is-three-quarters-desktop">
+				<div class="columns is-gapless-mobile has-large-gaps ">
+
+
+				<div id="main-column" class="column  is-full is-four-fifths-desktop ">
+
+					<main id="main" role="main" class="content " data-bi-name="content" dir="ltr" lang="de-de">
+
+
+
+						<h1 id="c-programming-guide"><span data-ttu-id="c8c49-102">C#-Programmierhandbuch</span><span class="sxs-lookup"><span data-stu-id="c8c49-102">C# programming guide</span></span></h1>
+
+						<ul class="metadata page-metadata" data-bi-name="page info" dir="ltr" lang="de-de">
+							<li class="displayDate">
+								<time role="presentation" datetime="2017-05-02T00:00:00.000Z" data-article-date-source="ms.date">02.05.2017</time>
+							</li>
+								<li class="readingTime">2 Minuten Lesedauer</li>
+							<li class="contributors-holder">
+								<a class="has-inner-focus" href="https://github.com/dotnet/docs.de-de/blob/live/docs/csharp/programming-guide/index.md" title="4 Beitragende" aria-label="4 Beitragende">
+									<ul class="contributors" data-bi-name="contributors" aria-hidden="true">
+												<li><img src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/contributor.svg" data-src="https://github.com/BillWagner.png?size=32" role="presentation"></li>
+												<li><img src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/contributor.svg" data-src="https://github.com/olprod.png?size=32" role="presentation"></li>
+												<li><img src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/contributor.svg" data-src="https://github.com/OpenLocalizationService.png?size=32" role="presentation"></li>
+												<li><img src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/contributor.svg" data-src="https://github.com/Saisang.png?size=32" role="presentation"></li>
+									</ul>
+								</a>
+							</li>
+
+						</ul>
+
+						<nav id="center-doc-outline" class="doc-outline is-hidden-desktop" data-bi-name="intopic toc" role="navigation" aria-label="Artikelgliederung">
+							<h3>In diesem Artikel</h3>
+						<ol><li><a href="#program-sections">Programmabschnitte</a></li><li><a href="#language-sections">Abschnitte zur Sprache</a></li><li><a href="#platform-sections">Abschnitte zur Plattform</a></li><li><a href="#see-also">Siehe auch</a></li></ol></nav>
+
+						<!-- <content> -->
+							
+<p><span data-ttu-id="c8c49-103">Dieser Abschnitt bietet ausführliche 
+Informationen zu wichtigen Funktionen von C# sowie zu Funktionen, die 
+über .NET Framework für C# verfügbar sind.</span><span class="sxs-lookup"><span data-stu-id="c8c49-103">This section provides detailed information on key C# language features and features accessible to C# through the .NET Framework.</span></span></p>
+<p><span data-ttu-id="c8c49-104">In diesem Abschnitt wird größtenteils 
+davon ausgegangen, dass Sie bereits über einige Kenntnisse zu C# und 
+allgemeinen Programmierkonzepten verfügen.</span><span class="sxs-lookup"><span data-stu-id="c8c49-104">Most of this section assumes that you already know something about C# and general programming concepts.</span></span> <span data-ttu-id="c8c49-105">Wenn Sie Einsteiger beim Programmieren oder bei C# sind, sind die <a href="https://docs.microsoft.com/de-de/dotnet/csharp/tutorials/intro-to-csharp/" data-linktype="relative-path">Tutorials zur Einführung in C#</a> oder das <a href="https://dotnet.microsoft.com/learn/dotnet/in-browser-tutorial/1" data-linktype="external">Tutorial zu .NET im Browser</a> am besten für Sie geeignet, da für diese keine Programmierkenntnisse erforderlich sind.</span><span class="sxs-lookup"><span data-stu-id="c8c49-105">If you are a complete beginner with programming or with C#, you might want to visit the <a href="https://docs.microsoft.com/de-de/dotnet/csharp/tutorials/intro-to-csharp/" data-linktype="relative-path">Introduction to C# Tutorials</a> or <a href="https://dotnet.microsoft.com/learn/dotnet/in-browser-tutorial/1" data-linktype="external">.NET In-Browser Tutorial</a>, where no prior programming knowledge is required.</span></span></p>
+<p><span data-ttu-id="c8c49-106">Informationen zu bestimmten Schlüsselwörtern, Operatoren und Präprozessordirektiven finden Sie in der <a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/" data-linktype="relative-path">C#-Referenz</a>.</span><span class="sxs-lookup"><span data-stu-id="c8c49-106">For information about specific keywords, operators and preprocessor directives, see <a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/" data-linktype="relative-path">C# Reference</a>.</span></span> <span data-ttu-id="c8c49-107">Informationen zur Spezifikation für C# finden Sie unter <a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/language-specification/introduction" data-linktype="absolute-path">C#-Sprachspezifikation</a>.</span><span class="sxs-lookup"><span data-stu-id="c8c49-107">For information about the C# Language Specification, see <a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/language-specification/introduction" data-linktype="absolute-path">C# Language Specification</a>.</span></span></p>
+<h2 id="program-sections"><span data-ttu-id="c8c49-108">Programmabschnitte</span><span class="sxs-lookup"><span data-stu-id="c8c49-108">Program sections</span></span><a class="docon docon-link heading-anchor" href="#program-sections" aria-labelledby="program-sections"></a></h2>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/inside-a-program/" data-linktype="relative-path"><span data-ttu-id="c8c49-109">Einblicke in ein C#-Programm</span><span class="sxs-lookup"><span data-stu-id="c8c49-109">Inside a C# Program</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/main-and-command-args/" data-linktype="relative-path"><span data-ttu-id="c8c49-110">Main() und Befehlszeilenargumente</span><span class="sxs-lookup"><span data-stu-id="c8c49-110">Main() and Command-Line Arguments</span></span></a></p>
+<h2 id="language-sections"><span data-ttu-id="c8c49-111">Abschnitte zur Sprache</span><span class="sxs-lookup"><span data-stu-id="c8c49-111">Language Sections</span></span><a class="docon docon-link heading-anchor" href="#language-sections" aria-labelledby="language-sections"></a></h2>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/statements-expressions-operators/" data-linktype="relative-path"><span data-ttu-id="c8c49-112">Anweisungen, Ausdrücke und Operatoren</span><span class="sxs-lookup"><span data-stu-id="c8c49-112">Statements, Expressions, and Operators</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/types/" data-linktype="relative-path"><span data-ttu-id="c8c49-113">Typen</span><span class="sxs-lookup"><span data-stu-id="c8c49-113">Types</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/" data-linktype="relative-path"><span data-ttu-id="c8c49-114">Klassen und Strukturen</span><span class="sxs-lookup"><span data-stu-id="c8c49-114">Classes and Structs</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/interfaces/" data-linktype="relative-path"><span data-ttu-id="c8c49-115">Schnittstellen</span><span class="sxs-lookup"><span data-stu-id="c8c49-115">Interfaces</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/delegates/" data-linktype="relative-path"><span data-ttu-id="c8c49-116">Delegaten</span><span class="sxs-lookup"><span data-stu-id="c8c49-116">Delegates</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/arrays/" data-linktype="relative-path"><span data-ttu-id="c8c49-117">Arrays</span><span class="sxs-lookup"><span data-stu-id="c8c49-117">Arrays</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/strings/" data-linktype="relative-path"><span data-ttu-id="c8c49-118">Zeichenfolgen</span><span class="sxs-lookup"><span data-stu-id="c8c49-118">Strings</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/properties" data-linktype="relative-path"><span data-ttu-id="c8c49-119">Eigenschaften</span><span class="sxs-lookup"><span data-stu-id="c8c49-119">Properties</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/indexers/" data-linktype="relative-path"><span data-ttu-id="c8c49-120">Indexer</span><span class="sxs-lookup"><span data-stu-id="c8c49-120">Indexers</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/events/" data-linktype="relative-path"><span data-ttu-id="c8c49-121">Ereignisse</span><span class="sxs-lookup"><span data-stu-id="c8c49-121">Events</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/generics/" data-linktype="relative-path"><span data-ttu-id="c8c49-122">Generics</span><span class="sxs-lookup"><span data-stu-id="c8c49-122">Generics</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/concepts/iterators" data-linktype="relative-path"><span data-ttu-id="c8c49-123">Iteratoren</span><span class="sxs-lookup"><span data-stu-id="c8c49-123">Iterators</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/linq/" data-linktype="relative-path"><span data-ttu-id="c8c49-124">LINQ-Abfrageausdrücke</span><span class="sxs-lookup"><span data-stu-id="c8c49-124">LINQ Query Expressions</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions" data-linktype="relative-path"><span data-ttu-id="c8c49-125">Lambda-Ausdrücke</span><span class="sxs-lookup"><span data-stu-id="c8c49-125">Lambda Expressions</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/namespaces/" data-linktype="relative-path"><span data-ttu-id="c8c49-126">Namespaces</span><span class="sxs-lookup"><span data-stu-id="c8c49-126">Namespaces</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/unsafe-code-pointers/" data-linktype="relative-path"><span data-ttu-id="c8c49-127">Unsicherer Code und Zeiger</span><span class="sxs-lookup"><span data-stu-id="c8c49-127">Unsafe Code and Pointers</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/xmldoc/" data-linktype="relative-path"><span data-ttu-id="c8c49-128">XML-Dokumentationskommentare</span><span class="sxs-lookup"><span data-stu-id="c8c49-128">XML Documentation Comments</span></span></a></p>
+<h2 id="platform-sections"><span data-ttu-id="c8c49-129">Abschnitte zur Plattform</span><span class="sxs-lookup"><span data-stu-id="c8c49-129">Platform Sections</span></span><a class="docon docon-link heading-anchor" href="#platform-sections" aria-labelledby="platform-sections"></a></h2>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/framework/app-domains/application-domains" data-linktype="relative-path"><span data-ttu-id="c8c49-130">Anwendungsdomänen</span><span class="sxs-lookup"><span data-stu-id="c8c49-130">Application Domains</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/standard/assembly/" data-linktype="relative-path"><span data-ttu-id="c8c49-131">Assemblys in .NET</span><span class="sxs-lookup"><span data-stu-id="c8c49-131">Assemblies in .NET</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/concepts/attributes/" data-linktype="relative-path"><span data-ttu-id="c8c49-132">Attribute</span><span class="sxs-lookup"><span data-stu-id="c8c49-132">Attributes</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/concepts/collections" data-linktype="relative-path"><span data-ttu-id="c8c49-133">Sammlungen</span><span class="sxs-lookup"><span data-stu-id="c8c49-133">Collections</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/exceptions/" data-linktype="relative-path"><span data-ttu-id="c8c49-134">Ausnahmen und Ausnahmebehandlung</span><span class="sxs-lookup"><span data-stu-id="c8c49-134">Exceptions and Exception Handling</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/file-system/" data-linktype="relative-path"><span data-ttu-id="c8c49-135">Das Dateisystem und die Registrierung (C#-Programmierhandbuch)</span><span class="sxs-lookup"><span data-stu-id="c8c49-135">File System and the Registry (C# Programming Guide)</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/interop/" data-linktype="relative-path"><span data-ttu-id="c8c49-136">Interoperabilität</span><span class="sxs-lookup"><span data-stu-id="c8c49-136">Interoperability</span></span></a></p>
+<p><a href="https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/concepts/reflection" data-linktype="relative-path"><span data-ttu-id="c8c49-137">Reflexion</span><span class="sxs-lookup"><span data-stu-id="c8c49-137">Reflection</span></span></a></p>
+<h2 id="see-also"><span data-ttu-id="c8c49-138">Siehe auch</span><span class="sxs-lookup"><span data-stu-id="c8c49-138">See also</span></span><a class="docon docon-link heading-anchor" href="#see-also" aria-labelledby="see-also"></a></h2>
+<ul>
+<li><a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/" data-linktype="relative-path"><span data-ttu-id="c8c49-139">C#-Referenz</span><span class="sxs-lookup"><span data-stu-id="c8c49-139">C# Reference</span></span></a></li>
+</ul>
+
+						<!-- </content> -->
+
+						</main>
+
+						<!-- recommended content page section -->
+
+							<nav data-bi-name="recommendation-bottom" id="recommended-content-center" class="is-hidden-desktop" aria-labelledby="recommended-content-center-title" hidden="">
+								<h3 id="recommended-content-center-title" class="is-size-2 has-margin-top-large has-margin-bottom-small">Ähnliche Artikel</h3>
+							</nav>
+
+						<!-- end recommended content page section -->
+
+						<!-- page rating section -->
+								<div class="is-hidden-desktop has-border-top has-margin-top-large has-padding-top-small">
+									
+<div class="feedback-verbatim has-border-bottom has-padding-bottom-small has-margin-bottom-small" data-bi-name="rating">
+    <div class="binary-rating">
+        <div class="binary-rating-buttons">
+            <h3 class="has-text-weight-semibold has-margin-top-none has-margin-bottom-small">Ist diese Seite hilfreich?</h3>
+            <div>
+                <button class="thumb-rating like has-inner-focus has-padding-left-extra-small has-padding-right-extra-small" title="Yes" data-bi-name="rating-yes" aria-expanded="false" data-bi-sat="1" aria-controls="feedbackVerbatimForm">
+                    <span aria-hidden="true" class="icon docon docon-like"></span>
+                    <span>Yes</span>
+                </button>
+                <button class="thumb-rating dislike has-inner-focus has-padding-none has-padding-right-extra-small" title="No" data-bi-name="rating-no" data-bi-sat="0" aria-expanded="false" aria-controls="feedbackVerbatimForm">
+                    <span aria-hidden="true" class="icon docon docon-dislike"></span>
+                    <span>No</span>
+                </button>
+            </div>
+        </div>
+        <form class="feedback-verbatim-form is-hidden" id="feedbackVerbatimForm">
+            <div class="verbatim-textarea box is-relative has-box-shadow-none has-border has-margin-top-small has-padding-extra-small is-size-8">
+                <label for="rating-textarea-mobile" class="visually-hidden">Haben Sie weiteres Feedback für uns?</label>
+                <textarea id="rating-textarea-mobile" rows="4" maxlength="999" placeholder="Haben Sie weiteres Feedback für uns?" required="" class="textarea has-border-none has-box-shadow-none has-inner-focus"></textarea>
+            </div>
+            <div class="buttons is-right has-margin-top-medium has-margin-right-extra-small">
+                <button class="skip-rating button is-text is-link is-small" type="button">Überspringen</button>
+                <button class="submit-rating button is-primary is-small" data-bi-name="rating-verbatim" disabled="disabled" type="submit">Übermitteln</button>
+            </div>
+        </form>
+    </div>
+    <div class="thankyou-rating is-hidden" tabindex="-1">
+        <p>Vielen Dank.</p>
+    </div>
+</div>								</div>
+						<!-- end page rating section -->
+
+
+						<!-- feedback section -->
+<section class="feedback-section" data-bi-name="feedback-section">
+
+	<h2 id="feedback">Feedback</h2>
+
+	<div class="alert choose-feedback-type">
+		<p id="send-feedback-about" aria-hidden="true">Feedback geben</p>
+
+		<div class="choose-feedback-buttons">
+			<a class="button feedback-type-product has-margin-bottom-small" aria-label="Feedback geben zu diesem Produkt" href="https://developercommunity.visualstudio.com/spaces/61/index.html" data-bi-name="product-feedback">
+				<span>Dieses Produkt</span>
+				<span class="icon docon docon-navigate-external" aria-hidden="true"></span>
+			</a>
+
+			<div class="field has-addons is-inline-flex has-margin-bottom-small">
+				<div class="control has-margin-top-none has-margin-bottom-none">
+					<button class="button feedback-sign-in-button has-text-wrap" aria-label="Feedback geben zu dieser Seite" data-bi-name="feedback-sign-in">
+						<span class="icon docon docon-brand-github" aria-hidden="true"></span>
+						<span>Diese Seite</span>
+					</button>
+				</div>
+				<div class="control dropdown has-caret has-margin-top-none has-margin-bottom-none">
+					<button class="button dropdown-trigger is-full-height" aria-describedby="send-feedback-about" aria-expanded="false" aria-controls="fbm0" aria-label="Weitere Feedbackoptionen" data-bi-name="documentation-feedback-menu">
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-chevron-down-light expanded-indicator"></span>
+						</span>
+					</button>
+					<div id="fbm0" class="dropdown-menu documentation-feedback-menu">
+						Sie können Ihr Feedback auch direkt auf <a data-bi-name="create-issue-on-github" href="https://github.com/dotnet/docs.de-de/issues/new?title=&amp;body=%0A%0A%5BHier%20Feedback%20eingeben%5D%0A%0A%0A---%0A%23%23%23%23%20Dokumentdetails%0A%0A%E2%9A%A0%20*Bearbeiten%20Sie%20diesen%20Abschnitt%20nicht.%20Er%20ist%20f%C3%BCr%20die%20Verkn%C3%BCpfung%20von%20docs.microsoft.com%20zum%20GitHub-Artikel%20erforderlich.*%0A%0A*%20ID%3A%20fc2fe8f7-b023-5aa7-52c2-b9c1c5c13ded%0A*%20Version%20Independent%20ID%3A%2018c373d4-02f9-4cc6-656d-9cf4d11f6498%0A*%20Content%3A%20%5BC%23-Programmierhandbuch%5D(https%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F)%0A*%20Content%20Source%3A%20%5Bdocs%2Fcsharp%2Fprogramming-guide%2Findex.md%5D(https%3A%2F%2Fgithub.com%2Fdotnet%2Fdocs.de-de%2Fblob%2Flive%2Fdocs%2Fcsharp%2Fprogramming-guide%2Findex.md)%0A*%20Product%3A%20**dotnet-csharp**%0A*%20GitHub%20Login%3A%20%40BillWagner%0A*%20Microsoft%20Alias%3A%20**wiwagn**">GitHub<span class="docon docon-navigate-external" aria-hidden="true"></span></a> eingeben.					</div>
+				</div>
+			</div>
+
+			<div class="field has-addons is-inline-flex has-margin-bottom-small" hidden="">
+				<div class="control has-margin-top-none has-margin-bottom-none">
+					<button class="button feedback-form-toggle" aria-describedby="send-feedback-about" aria-expanded="false" aria-controls="feedback-form" data-bi-name="documentation-feedback">
+Diese Seite					</button>
+				</div>
+				<div class="control dropdown has-caret has-margin-top-none has-margin-bottom-none">
+					<button class="button dropdown-trigger" aria-describedby="send-feedback-about" aria-expanded="false" aria-controls="fbm1" aria-label="Weitere Feedbackoptionen" data-bi-name="documentation-feedback-menu">
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-chevron-down-light expanded-indicator"></span>
+						</span>
+					</button>
+					<div id="fbm1" class="dropdown-menu documentation-feedback-menu">
+						Sie können Ihr Feedback auch direkt auf <a data-bi-name="create-issue-on-github" href="https://github.com/dotnet/docs.de-de/issues/new?title=&amp;body=%0A%0A%5BHier%20Feedback%20eingeben%5D%0A%0A%0A---%0A%23%23%23%23%20Dokumentdetails%0A%0A%E2%9A%A0%20*Bearbeiten%20Sie%20diesen%20Abschnitt%20nicht.%20Er%20ist%20f%C3%BCr%20die%20Verkn%C3%BCpfung%20von%20docs.microsoft.com%20zum%20GitHub-Artikel%20erforderlich.*%0A%0A*%20ID%3A%20fc2fe8f7-b023-5aa7-52c2-b9c1c5c13ded%0A*%20Version%20Independent%20ID%3A%2018c373d4-02f9-4cc6-656d-9cf4d11f6498%0A*%20Content%3A%20%5BC%23-Programmierhandbuch%5D(https%3A%2F%2Fdocs.microsoft.com%2Fde-de%2Fdotnet%2Fcsharp%2Fprogramming-guide%2F)%0A*%20Content%20Source%3A%20%5Bdocs%2Fcsharp%2Fprogramming-guide%2Findex.md%5D(https%3A%2F%2Fgithub.com%2Fdotnet%2Fdocs.de-de%2Fblob%2Flive%2Fdocs%2Fcsharp%2Fprogramming-guide%2Findex.md)%0A*%20Product%3A%20**dotnet-csharp**%0A*%20GitHub%20Login%3A%20%40BillWagner%0A*%20Microsoft%20Alias%3A%20**wiwagn**">GitHub<span class="docon docon-navigate-external" aria-hidden="true"></span></a> eingeben.					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<form class="feedback-form" id="feedback-form" accept-charset="UTF-8" autocomplete="off" action="javascript:" hidden="">
+		<h3 class="feedback-form-heading current-user">
+			<img class="avatar" alt="Avatar" aria-hidden="true" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9InRyYW5zcGFyZW50IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" width="36" height="36">
+			<span class="username" aria-hidden="true"></span>
+			<span class="visually-hidden">Feedback geben zu dieser Seite</span>
+		</h3>
+
+		<label>
+			<span class="visually-hidden">Titel</span>
+			<input class="input is-radiusless has-margin-bottom-small" name="title" type="text" placeholder="Titel" required="" pattern=".*[^\s]+.*">
+		</label>
+		<label>
+			<span class="visually-hidden">Kommentar hinterlassen</span>
+			<textarea name="body" placeholder="Kommentar hinterlassen" class="textarea is-radiusless" required=""></textarea>
+		</label>
+
+		<div class="action-container">
+			<button class="button is-primary" type="submit" name="submit">Feedback übermitteln</button>
+		</div>
+	</form>
+
+	<div class="feedback-status alert is-loading">
+		<p>Feedback wird geladen...</p>
+	</div>
+
+	<div class="feedback-tab-group tabGroup" data-tab-group-independent="" data-bi-name="tab-group" hidden="">
+		<ul role="tablist">
+			<li role="presentation">
+				<a href="#tabpanel-issues-open" role="tab" aria-controls="tabpanel-issues-open" data-tab="issues-open" data-bi-name="tab" aria-selected="true" tabindex="0"></a>
+			</li>
+			<li role="presentation">
+				<a href="#tabpanel-issues-closed" role="tab" aria-controls="tabpanel-issues-closed" data-tab="issues-closed" data-bi-name="tab" aria-selected="false" tabindex="-1"></a>
+			</li>
+		</ul>
+		<section id="tabpanel-issues-open" role="tabpanel" data-tab="issues-open">
+			<div class="no-issues-placeholder">Es gibt keine offenen Probleme.</div>
+			<ul class="github-issues-list" aria-label="Offene Probleme"></ul>
+		</section>
+		<section id="tabpanel-issues-closed" role="tabpanel" data-tab="issues-closed" aria-hidden="true" hidden="hidden">
+			<div class="no-issues-placeholder">Es gibt keine geschlossenen Probleme.</div>
+			<ul class="github-issues-list" aria-label="Geschlossene Probleme"></ul>
+		</section>
+	</div>
+	<div class="action-container">
+		<a class="view-on-github" href="https://github.com/dotnet/docs.de-de/issues?utf8=%E2%9C%93&amp;q=%2218c373d4-02f9-4cc6-656d-9cf4d11f6498%22&amp;in=body" data-bi-name="view-on-github" hidden="">
+			<span class="docon docon-brand-github" aria-hidden="true"></span>
+			<span>Auf GitHub anzeigen</span>
+			<span class="docon docon-navigate-external" aria-hidden="true"></span>
+		</a>
+	</div>
+</section>
+
+						<!-- end feedback section -->
+
+						<!-- feedback report section -->
+						<!-- end feedback report section -->
+
+						<div class="footerContainer is-visible-interactive has-default-focus ">
+<footer id="footer-interactive" data-bi-name="footer" class="footer-layout">
+
+    <a data-mscc-ic="false" class="locale-selector-link" href="https://docs.microsoft.com/de-de/locale?target=https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/" data-bi-name="select-locale"><span class="icon docon docon-world is-size-4 has-margin-right-small" aria-hidden="true"></span><span class="local-selector-link-text has-inner-focus">Deutsch</span></a>
+
+    <ul class="links" data-bi-name="footerlinks">
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/previous-versions/" data-bi-name="archivelink">Vorherige Dokumentversionen</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/teamblog" data-bi-name="bloglink">Blog</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/contribute" data-bi-name="contributorGuide">Mitwirken</a></li>
+			<li><a data-mscc-ic="false" href="https://go.microsoft.com/fwlink/?LinkId=521839" data-bi-name="privacy">Datenschutz &amp; Cookies</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/de-de/legal/termsofuse" data-bi-name="termsofuse">Nutzungsbedingungen</a></li>
+		<li><a data-mscc-ic="false" href="https://aka.ms/sitefeedback" data-bi-name="feedback">Websitefeedback</a></li>
+			<li id="impressum-section"><a data-mscc-ic="false" id="impressum-link" href="https://www.microsoft.com/de-de/corporate/rechtliche-hinweise/impressum.aspx" data-bi-name="impressum">Impressum</a></li>
+		<li><a data-mscc-ic="false" href="https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/EN-US.aspx" data-bi-name="trademarks">Marken</a></li>
+		<li>© Microsoft 2020</li>
+    </ul>
+</footer>
+						</div>
+					</div>
+
+					<div class="is-size-7 right-container column is-one-quarter is-one-fifth-desktop is-hidden-mobile is-hidden-tablet-only" data-bi-name="pageactions" role="complementary" aria-label="Seitenaktionen">
+						<div id="affixed-right-container" class="doc-outline is-fixed is-vertically-scrollable" style="width: 181.767px; top: 166.267px; bottom: 24px;">
+								
+<div class="feedback-verbatim has-border-bottom has-padding-bottom-small has-margin-bottom-small" data-bi-name="rating">
+    <div class="binary-rating">
+        <div class="binary-rating-buttons">
+            <h3 class="has-text-weight-semibold has-margin-top-none has-margin-bottom-small">Ist diese Seite hilfreich?</h3>
+            <div>
+                <button class="thumb-rating like has-inner-focus has-padding-left-extra-small has-padding-right-extra-small" title="Yes" data-bi-name="rating-yes" aria-expanded="false" data-bi-sat="1" aria-controls="feedbackVerbatimForm">
+                    <span aria-hidden="true" class="icon docon docon-like"></span>
+                    <span>Yes</span>
+                </button>
+                <button class="thumb-rating dislike has-inner-focus has-padding-none has-padding-right-extra-small" title="No" data-bi-name="rating-no" data-bi-sat="0" aria-expanded="false" aria-controls="feedbackVerbatimForm">
+                    <span aria-hidden="true" class="icon docon docon-dislike"></span>
+                    <span>No</span>
+                </button>
+            </div>
+        </div>
+        <form class="feedback-verbatim-form is-hidden" id="feedbackVerbatimForm">
+            <div class="verbatim-textarea box is-relative has-box-shadow-none has-border has-margin-top-small has-padding-extra-small is-size-8">
+                <label for="rating-textarea-desktop" class="visually-hidden">Haben Sie weiteres Feedback für uns?</label>
+                <textarea id="rating-textarea-desktop" rows="4" maxlength="999" placeholder="Haben Sie weiteres Feedback für uns?" required="" class="textarea has-border-none has-box-shadow-none has-inner-focus"></textarea>
+            </div>
+            <div class="buttons is-right has-margin-top-medium has-margin-right-extra-small">
+                <button class="skip-rating button is-text is-link is-small" type="button">Überspringen</button>
+                <button class="submit-rating button is-primary is-small" data-bi-name="rating-verbatim" disabled="disabled" type="submit">Übermitteln</button>
+            </div>
+        </form>
+    </div>
+    <div class="thankyou-rating is-hidden" tabindex="-1">
+        <p>Vielen Dank.</p>
+    </div>
+</div>								<nav data-bi-name="recommendation-sidebar" id="recommended-content-nav" role="navigation" aria-labelledby="recommended-content-nav-title" hidden="">
+									<h3 id="recommended-content-nav-title">Ähnliche Artikel</h3>
+								</nav>
+							<nav id="side-doc-outline" data-bi-name="intopic toc" role="navigation" aria-label="Artikelgliederung">
+								<h3>In diesem Artikel</h3>
+							<ol><li class="selected"><a href="#program-sections">Programmabschnitte</a></li><li class=""><a href="#language-sections">Abschnitte zur Sprache</a></li><li><a href="#platform-sections">Abschnitte zur Plattform</a></li><li><a href="#see-also">Siehe auch</a></li></ol></nav>
+						</div>
+					</div>
+
+					<!--end of div.columns -->
+				</div>
+
+			<!--end of .primary-holder -->
+			</section>
+
+			<aside id="interactive-container" class="interactive-container is-visible-interactive column has-body-background-dark ">
+			</aside>
+		</div>
+
+		<!--end of .mainContainer -->
+	</div>
+
+	<div id="openFeedbackContainer" class="openfeedback-container"></div>
+
+	<div class="footerContainer has-default-focus is-hidden-interactive ">
+<footer id="footer" data-bi-name="footer" class="footer-layout uhf-container has-padding" role="contentinfo">
+
+    <a data-mscc-ic="false" class="locale-selector-link" href="https://docs.microsoft.com/de-de/locale?target=https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/" data-bi-name="select-locale"><span class="icon docon docon-world is-size-4 has-margin-right-small" aria-hidden="true"></span><span class="local-selector-link-text">Deutsch</span></a>
+
+    <ul class="links" data-bi-name="footerlinks">
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/previous-versions/" data-bi-name="archivelink">Vorherige Dokumentversionen</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/teamblog" data-bi-name="bloglink">Blog</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/contribute" data-bi-name="contributorGuide">Mitwirken</a></li>
+			<li><a data-mscc-ic="false" href="https://go.microsoft.com/fwlink/?LinkId=521839" data-bi-name="privacy">Datenschutz &amp; Cookies</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/de-de/legal/termsofuse" data-bi-name="termsofuse">Nutzungsbedingungen</a></li>
+		<li><a data-mscc-ic="false" href="https://aka.ms/sitefeedback" data-bi-name="feedback">Websitefeedback</a></li>
+			<li id="impressum-section"><a data-mscc-ic="false" id="impressum-link" href="https://www.microsoft.com/de-de/corporate/rechtliche-hinweise/impressum.aspx" data-bi-name="impressum">Impressum</a></li>
+		<li><a data-mscc-ic="false" href="https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/EN-US.aspx" data-bi-name="trademarks">Marken</a></li>
+		<li>© Microsoft 2020</li>
+    </ul>
+</footer>
+	</div>
+
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				showMathMenu: false,
+				showMathMenuMSIE: false,
+				tex2jax: {
+					inlineMath: [['$','$'], ['\\(','\\)']],
+					processEscapes: true
+				}
+			});
+		</script>
+		<script src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/MathJax.js" integrity="sha384-RLsAi7wiVvnmHrRjlVvUjU45C0bfsIBg6Gsxue6azjJi+lA5q5uK+XbGzO3yn5g1" crossorigin="anonymous"></script>
+	<div id="action-panel" role="region" aria-label="Aktionsbereich" class="action-panel has-default-focus" tabindex="-1"></div>
+
+
+<script src="C%23-Programmierhandbuch%20%20%20Microsoft%20Docs-Dateien/mscc-0.js" async="" defer="defer"></script></body></html>
