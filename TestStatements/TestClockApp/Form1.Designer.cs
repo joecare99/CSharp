@@ -1,5 +1,10 @@
 ﻿namespace TestClockApp
 {
+    /// <summary>
+    /// Class Form1.
+    /// Implements the <see cref="System.Windows.Forms.Form" />
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     partial class Form1
     {
         /// <summary>
