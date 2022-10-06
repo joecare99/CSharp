@@ -1,0 +1,17 @@
+     #####            ###               ### 
+   ###        ###    ###  ##    ###    #####      #####  #####
+    ###    ###  ##  ###  ##  ###  ##  ###  ##  ###  ##  ###  ##
+     ###  ###  ##  #####    ###  ##  ###  ##  ###  ##  ###  ##
+#####      ###    ###  ##    ###    #####      #####  ###  ##     
+
+In diesem Spiel müssen sie alle {0}e zum Zielbereich bringen. 
+Sie könne die Spielfigur in 4 Richtungen bewegen: {1}, aber nur wenn sie nicht eine Wand trifft.
+Die {0}e können bewegt werden, indem sie in die gewünschte Richtung geschoben werden. 
+
+{2} : {0}
+
+{3} : Spielfigur
+
+{4} : Wand
+
+{5} : Zielbereich
