@@ -1,0 +1,17 @@
+     #####            ###               ### 
+   ###        ###    ###  ##    ###    #####      #####  #####
+    ###    ###  ##  ###  ##  ###  ##  ###  ##  ###  ##  ###  ##
+     ###  ###  ##  #####    ###  ##  ###  ##  ###  ##  ###  ##
+#####      ###    ###  ##    ###    #####      #####  ###  ##     
+
+In this game, you have to put all {0}s into the target-places. 
+Your can move the player in 4 directions: {1}, but only if you are not hitting a wall.
+The {0}s can be moved, by pushing them into the desired direction. 
+
+{2} : {0}
+
+{3} : Player
+
+{4} : Wall
+
+{5} : Target
