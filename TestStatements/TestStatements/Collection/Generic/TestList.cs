@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="TestList.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,18 +19,38 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Collection.Generic
 {
-    // Simple business object. A PartId is used to identify the type of part 
-    // but the part name can change. 
+    /// <summary>
+    /// Class Part.
+    /// Implements the <see cref="System.IEquatable{TestStatements.Collection.Generic.Part}" />
+    /// </summary>
+    /// <seealso cref="System.IEquatable{TestStatements.Collection.Generic.Part}" />
     public class Part : IEquatable<Part>
     {
+        /// <summary>
+        /// Gets or sets the name of the part.
+        /// </summary>
+        /// <value>The name of the part.</value>
         public string PartName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the part identifier.
+        /// </summary>
+        /// <value>The part identifier.</value>
         public int PartId { get; set; }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
             return "ID: " + PartId + "   Name: " + PartName;
         }
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">Das Objekt, das mit dem aktuellen Objekt verglichen werden soll.</param>
+        /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
@@ -25,10 +58,19 @@ namespace TestStatements.Collection.Generic
             if (objAsPart == null) return false;
             else return Equals(objAsPart);
         }
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
         public override int GetHashCode()
         {
             return PartId;
         }
+        /// <summary>
+        /// Gibt an, ob das aktuelle Objekt gleich einem anderen Objekt des gleichen Typs ist.
+        /// </summary>
+        /// <param name="other">Ein Objekt, das mit diesem Objekt verglichen werden soll.</param>
+        /// <returns><see langword="true" />, wenn das aktuelle Objekt gleich dem <paramref name="other" />-Parameter ist, andernfalls <see langword="false" />.</returns>
         public bool Equals(Part other)
         {
             if (other == null) return false;
@@ -37,9 +79,18 @@ namespace TestStatements.Collection.Generic
         // Should also override == and != operators.
     }
 
+    /// <summary>
+    /// Class TestList.
+    /// </summary>
     public static class TestList
     {
+        /// <summary>
+        /// The parts
+        /// </summary>
         private static List<Part> parts;
+        /// <summary>
+        /// Lists the main.
+        /// </summary>
         public static void ListMain()
         {
             const string Title = "Show List<T>";
@@ -101,6 +152,9 @@ namespace TestStatements.Collection.Generic
 
         }
 
+        /// <summary>
+        /// Creates the test data.
+        /// </summary>
         private static void CreateTestData()
         {
             // Create a list of parts.
@@ -116,6 +170,10 @@ namespace TestStatements.Collection.Generic
             parts.Add(new Part() { PartName = "shift lever", PartId = 1634 });
         }
 
+        /// <summary>
+        /// Shows the list.
+        /// </summary>
+        /// <param name="parts">The parts.</param>
         private static void ShowList(List<Part> parts)
         {
             // Write out the parts in the list. This will call the overridden ToString method
@@ -127,6 +185,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the contains.
+        /// </summary>
         public static void ShowContains()
         {
 
@@ -139,6 +200,9 @@ namespace TestStatements.Collection.Generic
                 parts.Contains(new Part { PartId = 1734, PartName = "" }));
         }
 
+        /// <summary>
+        /// Shows the insert.
+        /// </summary>
         public static void ShowInsert()
         {
             // Insert a new item at position 2.
@@ -151,6 +215,9 @@ namespace TestStatements.Collection.Generic
             ShowList(parts);        
         }
 
+        /// <summary>
+        /// Shows the index.
+        /// </summary>
         public static void ShowIndex()
         {
             CreateTestData();
@@ -160,6 +227,9 @@ namespace TestStatements.Collection.Generic
             Console.WriteLine("\nParts[3]: {0}", parts[3]);
         }
 
+        /// <summary>
+        /// Shows the remove1.
+        /// </summary>
         public static void ShowRemove1()
         {
             CreateTestData();
@@ -175,6 +245,9 @@ namespace TestStatements.Collection.Generic
             ShowList(parts);
         }
 
+        /// <summary>
+        /// Shows the remove2.
+        /// </summary>
         public static void ShowRemove2()
         {
             CreateTestData();
@@ -192,9 +265,18 @@ namespace TestStatements.Collection.Generic
 
     }
 
+    /// <summary>
+    /// Class DinosaurExample.
+    /// </summary>
     public static class DinosaurExample
-    { 
+    {
+        /// <summary>
+        /// The dinosaurs
+        /// </summary>
         private static List<string> dinosaurs;
+        /// <summary>
+        /// Lists the dinos.
+        /// </summary>
         public static void ListDinos()
         {
             const string Title = "Dinosaur Example";
@@ -256,6 +338,9 @@ namespace TestStatements.Collection.Generic
              */
         }
 
+        /// <summary>
+        /// Shows the create data.
+        /// </summary>
         public static void ShowCreateData()
         {
             const string Title = "Show Create (default) Data";
@@ -266,6 +351,9 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
+        /// <summary>
+        /// Shows the contains.
+        /// </summary>
         public static void ShowContains()
         {
             const string Title = "Show Contains";
@@ -275,6 +363,9 @@ namespace TestStatements.Collection.Generic
                 dinosaurs.Contains("Deinonychus"));
         }
 
+        /// <summary>
+        /// Shows the insert.
+        /// </summary>
         public static void ShowInsert()
         {
             const string Title = "Show Insert";
@@ -287,6 +378,9 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
+        /// <summary>
+        /// Shows the item property.
+        /// </summary>
         public static void ShowItemProperty()
         {
             const string Title = "Show Item-Property";
@@ -297,6 +391,9 @@ namespace TestStatements.Collection.Generic
             Console.WriteLine("\ndinosaurs[3]: {0}", dinosaurs[3]);
         }
 
+        /// <summary>
+        /// Shows the remove.
+        /// </summary>
         public static void ShowRemove()
         {
             const string Title = "Show Remove";
@@ -311,6 +408,9 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
+        /// <summary>
+        /// Shows the trim excess.
+        /// </summary>
         public static void ShowTrimExcess()
         {
             const string Title = "Show TrimExcess";
@@ -326,6 +426,9 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
+        /// <summary>
+        /// Shows the clear.
+        /// </summary>
         public static void ShowClear()
         {
             const string Title = "Show Clear";
@@ -339,6 +442,9 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
+        /// <summary>
+        /// Creates the test data.
+        /// </summary>
         private static void CreateTestData()
         {
             dinosaurs?.Clear();
@@ -350,6 +456,10 @@ namespace TestStatements.Collection.Generic
             dinosaurs.Add("Compsognathus");
         }
 
+        /// <summary>
+        /// Shows the list.
+        /// </summary>
+        /// <param name="dinosaurs">The dinosaurs.</param>
         private static void ShowList(List<string> dinosaurs)
         {
             Console.WriteLine();
@@ -359,6 +469,10 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the status.
+        /// </summary>
+        /// <param name="dinosaurs">The dinosaurs.</param>
         private static void ShowStatus(List<string> dinosaurs)
         {
             if (null != dinosaurs)

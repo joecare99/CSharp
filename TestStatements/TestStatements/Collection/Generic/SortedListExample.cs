@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="SortedListExample.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +19,19 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Collection.Generic
 {
+    /// <summary>
+    /// Class SortedListExample.
+    /// </summary>
     public static class SortedListExample
     {
+        /// <summary>
+        /// The open with
+        /// </summary>
         private static SortedList<string, string> openWith;
 
+        /// <summary>
+        /// Sorteds the list main.
+        /// </summary>
         public static void SortedListMain()
         {
             const string Title = "SortedList<TKey,TValue>";
@@ -30,6 +52,9 @@ namespace TestStatements.Collection.Generic
             ShowRemove();
         }
 
+        /// <summary>
+        /// Shows the values1.
+        /// </summary>
         public static void ShowValues1()
         {
             // To get the values alone, use the Values property.
@@ -50,6 +75,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the values2.
+        /// </summary>
         public static void ShowValues2()
         {
             // The Values property is an efficient way to retrieve
@@ -63,6 +91,9 @@ namespace TestStatements.Collection.Generic
                 "property: Values[2] = {0}", openWith.Values[2]);
         }
 
+        /// <summary>
+        /// Shows the keys1.
+        /// </summary>
         public static void ShowKeys1()
         {
             // To get the keys alone, use the Keys property.
@@ -83,6 +114,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the keys2.
+        /// </summary>
         public static void ShowKeys2()
         {
             // The Keys property is an efficient way to retrieve
@@ -96,6 +130,9 @@ namespace TestStatements.Collection.Generic
                 "property: Keys[2] = {0}", openWith.Keys[2]);
         }
 
+        /// <summary>
+        /// Shows the remove.
+        /// </summary>
         public static void ShowRemove()
         {
             // Use the Remove method to remove a key/value pair.
@@ -113,6 +150,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows for each.
+        /// </summary>
         public static void ShowForEach()
         {
             // When you use foreach to enumerate list elements,
@@ -131,6 +171,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the contains key.
+        /// </summary>
         public static void ShowContainsKey()
         {
             const string Title = "Show ContainsKey";
@@ -147,6 +190,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the try get value.
+        /// </summary>
         public static void ShowTryGetValue()
         {
             const string Title = "Show TryGetValue";
@@ -167,6 +213,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Tests the indexr.
+        /// </summary>
         public static void TestIndexr()
         {
             const string Title = "Use Index to access SortedList";
@@ -201,6 +250,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Tests the add existing.
+        /// </summary>
         public static void TestAddExisting()
         {
             const string Title = "Add Existing Value to SortedList";
@@ -219,6 +271,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Creates the test sl.
+        /// </summary>
         private static void CreateTestSL()
         {
             // Create a new sorted list of strings, with string
