@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="LinqLookup.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,18 +19,42 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Linq
 {
+    /// <summary>
+    /// Class Package.
+    /// </summary>
     class Package
     {
+        /// <summary>
+        /// The company
+        /// </summary>
         public string Company;
+        /// <summary>
+        /// The weight
+        /// </summary>
         public double Weight;
+        /// <summary>
+        /// The tracking number
+        /// </summary>
         public long TrackingNumber;
     }
 
+    /// <summary>
+    /// Class LinqLookup.
+    /// </summary>
     public static class LinqLookup
     {
+        /// <summary>
+        /// The packages
+        /// </summary>
         private static List<Package> packages;
+        /// <summary>
+        /// The lookup
+        /// </summary>
         private static Lookup<char, string> lookup;
 
+        /// <summary>
+        /// Lookups the example.
+        /// </summary>
         public static void LookupExample()
         {
             const string Title = "Show HashSet<T>";
@@ -32,6 +69,9 @@ namespace TestStatements.Linq
             ShowContains();
         }
 
+        /// <summary>
+        /// Shows the contains.
+        /// </summary>
         public static void ShowContains()
         {
             const string Title = "Show Contains";
@@ -51,6 +91,9 @@ namespace TestStatements.Linq
 
         }
 
+        /// <summary>
+        /// Shows the i enumerable.
+        /// </summary>
         public static void ShowIEnumerable()
         {
             const string Title = "Show IEnumerable";
@@ -72,6 +115,9 @@ namespace TestStatements.Linq
             // Contoso Pharmaceuticals 670053128
         }
 
+        /// <summary>
+        /// Creates the data.
+        /// </summary>
         private static void CreateData()
         {
             packages?.Clear();
@@ -88,6 +134,9 @@ namespace TestStatements.Linq
                                                             p => p.Company + " " + p.TrackingNumber);
         }
 
+        /// <summary>
+        /// Shows the count.
+        /// </summary>
         public static void ShowCount()
         {
             const string Title = "Show Count of Lookup";
@@ -99,7 +148,10 @@ namespace TestStatements.Linq
             Console.WriteLine("    {0}", count);
         }
 
- 
+
+        /// <summary>
+        /// Shows the grouping.
+        /// </summary>
         public static void ShowGrouping()
         {
             const string Title = "Show Grouping Example";

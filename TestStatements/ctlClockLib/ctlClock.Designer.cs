@@ -1,5 +1,10 @@
 ﻿namespace ctlClockLib
 {
+    /// <summary>
+    /// Class ctlClock.
+    /// Implements the <see cref="System.Windows.Forms.UserControl" />
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.UserControl" />
     partial class ctlClock
     {
         /// <summary>

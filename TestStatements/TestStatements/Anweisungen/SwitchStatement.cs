@@ -1,4 +1,17 @@
-ï»¿using System;
+// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 07-13-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="SwitchStatement.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +20,36 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Anweisungen
 {
+    /// <summary>
+    /// Class SwitchStatement.
+    /// </summary>
     public class SwitchStatement
     {
+        /// <summary>
+        /// The r
+        /// </summary>
         private static Random r = new Random();
 
+        /// <summary>
+        /// The get now
+        /// </summary>
         public static Func<DateTime> GetNow = delegate { return DateTime.Now; };
+        /// <summary>
+        /// The random
+        /// </summary>
         public static Func<Random> random = delegate { return r; };
 
 
+        /// <summary>
+        /// Switches the example1.
+        /// </summary>
         public static void SwitchExample1()
         {
             int caseSwitch = 1;
 
             switch (caseSwitch)
             {
+                /// <summary>Enum Color</summary>
                 case 1:
                     Console.WriteLine("Case 1");
                     break;
@@ -33,8 +62,27 @@ namespace TestStatements.Anweisungen
             }
         }
 
-        public enum Color { Red, Green, Blue }
+        /// <summary>
+        /// The enum Color
+        /// </summary>
+        public enum Color {
+            /// <summary>
+            /// The red
+            /// </summary>
+            Red,
+            /// <summary>
+            /// The green
+            /// </summary>
+            Green,
+            /// <summary>
+            /// The blue
+            /// </summary>
+            Blue
+        }
 
+        /// <summary>
+        /// Switches the example2.
+        /// </summary>
         public static void SwitchExample2()
         {
             Color c = (Color)(random().Next(0, 3));
@@ -55,6 +103,9 @@ namespace TestStatements.Anweisungen
             }
         }
 
+        /// <summary>
+        /// Switches the example3.
+        /// </summary>
         public static void SwitchExample3()
         {
             Random rnd = random();
@@ -75,6 +126,9 @@ namespace TestStatements.Anweisungen
             }
         }
 
+        /// <summary>
+        /// Switches the example4.
+        /// </summary>
         public static void SwitchExample4()
         {
             var values = new List<object>();
@@ -91,6 +145,9 @@ namespace TestStatements.Anweisungen
             Console.WriteLine($"The sum of { values.Count } die is { DiceLibrary.DiceSum(values) }");
         }
 
+        /// <summary>
+        /// Switches the example5.
+        /// </summary>
         public static void SwitchExample5()
         {
             switch (GetNow().DayOfWeek)
@@ -110,6 +167,9 @@ namespace TestStatements.Anweisungen
                     break;
             }
         }
+        /// <summary>
+        /// Switches the example6.
+        /// </summary>
         public static void SwitchExample6()
         {
             int[] values = { 2, 4, 6, 8, 10 };
@@ -119,13 +179,25 @@ namespace TestStatements.Anweisungen
             names.AddRange(new string[] { "Adam", "Abigail", "Bertrand", "Bridgette" });
             ShowCollectionInformation(names);
 
-            List<int> numbers = null;
-            ShowCollectionInformation(numbers);
+#if NET5_0_OR_GREATER
+			List<int>? numbers = null;
+#else
+			List<int> numbers = null;
+#endif
+			ShowCollectionInformation(numbers);
         }
 
-        private static void ShowCollectionInformation(object coll)
-        {
-            switch (coll)
+        /// <summary>
+        /// Show Collection Information
+        /// </summary>
+        /// <param name="coll">The coll.</param>
+#if NET5_0_OR_GREATER
+        private static void ShowCollectionInformation(object? coll)
+#else
+		private static void ShowCollectionInformation(object coll)
+#endif
+		{
+			switch (coll)
             {
                 case Array arr:
                     Console.WriteLine($"An array with {arr.Length} elements.");
@@ -151,6 +223,9 @@ namespace TestStatements.Anweisungen
             }
         }
 
+        /// <summary>
+        /// Switches the example7.
+        /// </summary>
         public static void SwitchExample7()
         {
             int[] values = { 2, 4, 6, 8, 10 };
@@ -160,10 +235,19 @@ namespace TestStatements.Anweisungen
             names.AddRange(new string[] { "Adam", "Abigail", "Bertrand", "Bridgette" });
             ShowCollectionInformation2(names);
 
-            List<int> numbers = null;
-            ShowCollectionInformation2(numbers);
+#if NET5_0_OR_GREATER
+			List<int>? numbers = null;
+#else
+			List<int> numbers = null;
+#endif
+			ShowCollectionInformation2(numbers);
         }
 
+        /// <summary>
+        /// Shows the collection information2.
+        /// </summary>
+        /// <typeparam name="T">The generic Type</typeparam>
+        /// <param name="coll">The collection.</param>
         private static void ShowCollectionInformation2<T>(T coll)
         {
             switch (coll)
@@ -194,18 +278,32 @@ namespace TestStatements.Anweisungen
 
     }
 
+    /// <summary>
+    /// Class DiceLibrary.
+    /// </summary>
     public static class DiceLibrary
     {
         // Random number generator to simulate dice rolls.
+        /// <summary>
+        /// The random
+        /// </summary>
         static Random rnd = SwitchStatement.random();
 
         // Roll a single die.
+        /// <summary>
+        /// Rolls this instance.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
         public static int Roll()
         {
             return rnd.Next(1, 7);
         }
 
         // Roll two dice.
+        /// <summary>
+        /// Roll2s this instance.
+        /// </summary>
+        /// <returns>List&lt;System.Object&gt;.</returns>
         public static List<object> Roll2()
         {
             var rolls = new List<object>();
@@ -215,6 +313,12 @@ namespace TestStatements.Anweisungen
         }
 
         // Calculate the sum of n dice rolls.
+        /// <summary>
+        /// Dices the sum.
+        /// </summary>
+        /// <param name="values">The values.</param>
+        /// <returns>System.Int32.</returns>
+        /// <exception cref="System.InvalidOperationException">unknown item type</exception>
         public static int DiceSum(IEnumerable<object> values)
         {
             var sum = 0;
@@ -247,6 +351,10 @@ namespace TestStatements.Anweisungen
             return sum;
         }
 
+        /// <summary>
+        /// Passes this instance.
+        /// </summary>
+        /// <returns>System.Object.</returns>
         public static object Pass()
         {
             if (rnd.Next(0, 2) == 0)

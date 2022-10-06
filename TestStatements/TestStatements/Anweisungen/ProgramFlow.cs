@@ -1,4 +1,17 @@
-﻿using System;
+// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 07-13-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="ProgramFlow.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +19,14 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Anweisungen
 {
+    /// <summary>
+    /// Class ProgramFlow.
+    /// </summary>
     public class ProgramFlow
     {
-        /// <summary>Does the break statement.</summary>
+        /// <summary>
+        /// Does the break statement.
+        /// </summary>
         /// <param name="args">The arguments.</param>
         public static void DoBreakStatement(string[] args)
         {
@@ -17,14 +35,16 @@ namespace TestStatements.Anweisungen
 
             while (true)
             {
-                string s = Console.ReadLine();
+                string s = Console.ReadLine() ?? "";
                 if (string.IsNullOrEmpty(s))
                     break;
                 Console.WriteLine(s);
             }
         }
 
-        /// <summary>Does the continues statement.</summary>
+        /// <summary>
+        /// Does the continues statement.
+        /// </summary>
         /// <param name="args">The arguments.</param>
         public static void DoContinueStatement(string[] args)
         {
@@ -39,7 +59,9 @@ namespace TestStatements.Anweisungen
             }
         }
 
-        /// <summary>Does the goto statement.</summary>
+        /// <summary>
+        /// Does the goto statement.
+        /// </summary>
         /// <param name="args">The arguments.</param>
         public static void DoGoToStatement(string[] args)
         {

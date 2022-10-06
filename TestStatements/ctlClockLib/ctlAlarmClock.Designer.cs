@@ -1,5 +1,10 @@
 ﻿namespace ctlClockLib
 {
+    /// <summary>
+    /// Class ctlAlarmClock.
+    /// Implements the <see cref="ctlClockLib.ctlClock" />
+    /// </summary>
+    /// <seealso cref="ctlClockLib.ctlClock" />
     partial class ctlAlarmClock
     {
         /// <summary> 

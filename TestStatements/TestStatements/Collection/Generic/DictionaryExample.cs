@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-10-2022
+// ***********************************************************************
+// <copyright file="DictionaryExample.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +19,22 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Collection.Generic
 {
+    /// <summary>
+    /// Class DictionaryExample.
+    /// </summary>
     public static class DictionaryExample
     {
+        /// <summary>
+        /// The open with
+        /// </summary>
         private static Dictionary<string, string> openWith;
+        /// <summary>
+        /// The main procedure of DictionaryExample.
+        /// </summary>
+        /// <remarks>The main-procedure calls all examples.</remarks>
         public static void DictionaryExampleMain()
         {
+
             const string Title = "Dictionary<TKey,TValue>";
             Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
 
@@ -20,13 +44,7 @@ namespace TestStatements.Collection.Generic
 
             TryAddExisting();
 
-            ShowIndex1();
-
-            ShowIndex2();
-
-            ShowIndex3();
-
-            ShowIndex4();
+            ShowAllIndices();
 
             ShowTryGetValue();
 
@@ -41,6 +59,22 @@ namespace TestStatements.Collection.Generic
             ShowRemove();
         }
 
+        /// <summary>
+        /// Shows all the indices.
+        /// </summary>
+        private static void ShowAllIndices()
+        {
+            ShowIndex1();
+            ShowIndex2();
+            AddValueWithDiffKeys();
+            ShowIndex4();
+        }
+
+        /// <summary>
+        /// Tries to add an existing value to the dictionary.
+        /// </summary>
+        /// <remarks>Produces an output like:<br />
+        /// An element with Key = "txt" already exists.</remarks>
         public static void TryAddExisting()
         {
             // The Add method throws an exception if the new key is 
@@ -59,6 +93,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the index number of "rtf" (non-existent).
+        /// </summary>
         public static void ShowIndex1()
         {
             // The Item property is another name for the indexer, so you 
@@ -71,6 +108,9 @@ namespace TestStatements.Collection.Generic
                 openWith["rtf"]);
         }
 
+        /// <summary>
+        /// Shows the index number of "rtf" (now existent).
+        /// </summary>
         public static void ShowIndex2()
         {
             // The indexer can be used to change the value associated
@@ -86,7 +126,10 @@ namespace TestStatements.Collection.Generic
             ShowDict(openWith);
         }
 
-        public static void ShowIndex3()
+        /// <summary>
+        /// Adds the value "winword.exe" with difference keys.
+        /// </summary>
+        public static void AddValueWithDiffKeys()
         {
             // If a key does not exist, setting the indexer for that key
             // adds a new key/value pair.
@@ -99,6 +142,9 @@ namespace TestStatements.Collection.Generic
             ShowDict(openWith);
         }
 
+        /// <summary>
+        /// Shows the index4.
+        /// </summary>
         public static void ShowIndex4()
         {
             // The indexer throws an exception if the requested key is
@@ -120,6 +166,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the try get value.
+        /// </summary>
         public static void ShowTryGetValue()
         {
             // When a program often has to try keys that turn out not to
@@ -142,6 +191,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the contains key.
+        /// </summary>
         public static void ShowContainsKey()
         {
             // ContainsKey can be used to test keys before inserting 
@@ -160,6 +212,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the value collection.
+        /// </summary>
         public static void ShowValueCollection()
         {
             // To get the values alone, use the Values property.
@@ -182,6 +237,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the key collection.
+        /// </summary>
         public static void ShowKeyCollection()
         {
             // To get the keys alone, use the Keys property.
@@ -204,6 +262,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Shows the example of removing a value/key.
+        /// </summary>
         public static void ShowRemove()
         {
             // Use the Remove method to remove a key/value pair.
@@ -225,6 +286,10 @@ namespace TestStatements.Collection.Generic
             ShowDict(openWith);
         }
 
+        /// <summary>
+        /// Shows the dictionary.
+        /// </summary>
+        /// <param name="aDict">a dictionary.</param>
         private static void ShowDict(Dictionary<string, string> aDict)
         {
             // When you use foreach to enumerate dictionary elements,
@@ -239,6 +304,10 @@ namespace TestStatements.Collection.Generic
 
         }
 
+        /// <summary>
+        /// Shows the status.
+        /// </summary>
+        /// <param name="aDict">a dictionary.</param>
         private static void ShowStatus(Dictionary<string,string> aDict)
         {
             if (null != aDict)
@@ -251,6 +320,9 @@ namespace TestStatements.Collection.Generic
             }
         }
 
+        /// <summary>
+        /// Creates the test data.
+        /// </summary>
         private static void CreateTestData()
         {
             // Create a new dictionary of strings, with string keys.

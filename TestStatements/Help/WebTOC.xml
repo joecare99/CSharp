@@ -1,0 +1,1560 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpTOC>
+
+  <HelpTOCNode Id="43f9687d-41c5-45a9-8207-94cceda9e6fb" Title="AsyncExampleWPF Namespace" Url="html/N-AsyncExampleWPF.htm">
+    <HelpTOCNode Id="7043384a-7019-424f-8cfc-45ab59b3c00a" Title="App Class" Url="html/T-AsyncExampleWPF.App.htm">
+      <HelpTOCNode Title="App Methods" Url="html/Methods.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Methods" Url="html/Methods.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Properties" Url="html/Properties.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Properties" Url="html/Properties.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Events" Url="html/Events.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Events" Url="html/Events.T-AsyncExampleWPF.App.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="d8237d17-0727-4356-b024-a209bb49a464" Title="App Class" Url="html/T-AsyncExampleWPF.App.htm">
+      <HelpTOCNode Title="App Methods" Url="html/Methods.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Methods" Url="html/Methods.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Properties" Url="html/Properties.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Properties" Url="html/Properties.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Events" Url="html/Events.T-AsyncExampleWPF.App.htm" />
+      <HelpTOCNode Title="App Events" Url="html/Events.T-AsyncExampleWPF.App.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="4b6d3b0b-7954-4a78-86eb-39f9345de85e" Title="MainWindow Class" Url="html/T-AsyncExampleWPF.MainWindow.htm">
+      <HelpTOCNode Title="MainWindow Members" Url="html/AllMembers.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Members" Url="html/AllMembers.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Constructor " Url="html/M-AsyncExampleWPF.MainWindow.-ctor.htm" />
+      <HelpTOCNode Title="MainWindow Constructor " Url="html/M-AsyncExampleWPF.MainWindow.-ctor.htm" />
+      <HelpTOCNode Title="MainWindow Methods" Url="html/Methods.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Methods" Url="html/Methods.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Properties" Url="html/Properties.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Properties" Url="html/Properties.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Events" Url="html/Events.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Events" Url="html/Events.T-AsyncExampleWPF.MainWindow.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="956ecbd2-eab8-42fe-a92f-eefa6f00b2c0" Title="MainWindow Class" Url="html/T-AsyncExampleWPF.MainWindow.htm">
+      <HelpTOCNode Title="MainWindow Members" Url="html/AllMembers.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Members" Url="html/AllMembers.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Constructor " Url="html/M-AsyncExampleWPF.MainWindow.-ctor.htm" />
+      <HelpTOCNode Title="MainWindow Constructor " Url="html/M-AsyncExampleWPF.MainWindow.-ctor.htm" />
+      <HelpTOCNode Title="MainWindow Methods" Url="html/Methods.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Methods" Url="html/Methods.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Properties" Url="html/Properties.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Properties" Url="html/Properties.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Events" Url="html/Events.T-AsyncExampleWPF.MainWindow.htm" />
+      <HelpTOCNode Title="MainWindow Events" Url="html/Events.T-AsyncExampleWPF.MainWindow.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="3edb508e-f337-4ec0-bf69-5418e55dcdc5" Title="AsyncExampleWPF.Properties Namespace" Url="html/N-AsyncExampleWPF.Properties.htm">
+    <HelpTOCNode Id="55fd03c0-effe-4dc1-a05a-dd835392eec6" Title="Resources Class" Url="html/T-AsyncExampleWPF.Properties.Resources.htm">
+      <HelpTOCNode Title="Resources Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Constructor " Url="html/M-AsyncExampleWPF.Properties.Resources.-ctor.htm" />
+      <HelpTOCNode Title="Resources Constructor " Url="html/M-AsyncExampleWPF.Properties.Resources.-ctor.htm" />
+      <HelpTOCNode Title="Resources Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Id="b33dae5f-3a38-4f52-b2d0-123062e18118" Title="Resources Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Resources.htm">
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4c101607-0a2a-4287-b5db-78dc64ddf044" Title="Resources Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Resources.htm">
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7952dd21-e0e1-4ca3-a67a-f94bc8d394e0" Title="Resources Class" Url="html/T-AsyncExampleWPF.Properties.Resources.htm">
+      <HelpTOCNode Title="Resources Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Constructor " Url="html/M-AsyncExampleWPF.Properties.Resources.-ctor.htm" />
+      <HelpTOCNode Title="Resources Constructor " Url="html/M-AsyncExampleWPF.Properties.Resources.-ctor.htm" />
+      <HelpTOCNode Title="Resources Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Resources.htm" />
+      <HelpTOCNode Id="297f47b5-2392-4059-8c4c-09b12d977af7" Title="Resources Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Resources.htm">
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="06f14919-50fa-43b0-b65f-0722335118a0" Title="Resources Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Resources.htm">
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="Culture Property " Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="a75db2e4-a705-4078-8e5d-751952fc439d" Title="Settings Class" Url="html/T-AsyncExampleWPF.Properties.Settings.htm">
+      <HelpTOCNode Title="Settings Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Id="3755f38d-98b4-451c-89ea-150669c60007" Title="Settings Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Settings.htm">
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="2316833d-616e-403f-84e3-a4980a516fea" Title="Settings Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Settings.htm">
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Settings Events" Url="html/Events.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Events" Url="html/Events.T-AsyncExampleWPF.Properties.Settings.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="8d116bfb-f6c2-4466-8c49-76e0f1f9a0a1" Title="Settings Class" Url="html/T-AsyncExampleWPF.Properties.Settings.htm">
+      <HelpTOCNode Title="Settings Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Members" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Methods" Url="html/Methods.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Id="3820798d-df6e-4e8e-999a-8b50d5769b54" Title="Settings Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Settings.htm">
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="dadc1b4d-abe2-4a16-be45-04094f979db3" Title="Settings Properties" Url="html/Properties.T-AsyncExampleWPF.Properties.Settings.htm">
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+        <HelpTOCNode Title="Default Property " Url="html/P-AsyncExampleWPF.Properties.Settings.Default.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Settings Events" Url="html/Events.T-AsyncExampleWPF.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Events" Url="html/Events.T-AsyncExampleWPF.Properties.Settings.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="2754fedd-b851-45cb-a98d-5482cd82bada" Title="CallAllExamples Namespace" Url="html/N-CallAllExamples.htm">
+    <HelpTOCNode Id="f44144ad-1767-41c0-9629-5dfc83d8e352" Title="Program Class" Url="html/T-CallAllExamples.Program.htm">
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-CallAllExamples.Program.htm" />
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-CallAllExamples.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-CallAllExamples.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-CallAllExamples.Program.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="05674eff-a620-4db5-818a-eb91cf2a5854" Title="Program Class" Url="html/T-CallAllExamples.Program.htm">
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-CallAllExamples.Program.htm" />
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-CallAllExamples.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-CallAllExamples.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-CallAllExamples.Program.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="08327a5d-e89c-4687-8c9a-5e5d08528289" Title="ctlClockLib Namespace" Url="html/N-ctlClockLib.htm">
+    <HelpTOCNode Id="a6c72683-4170-4247-aaa2-33a4c62a5eeb" Title="ctlAlarmClock Class" Url="html/T-ctlClockLib.ctlAlarmClock.htm">
+      <HelpTOCNode Title="ctlAlarmClock Members" Url="html/AllMembers.T-ctlClockLib.ctlAlarmClock.htm" />
+      <HelpTOCNode Title="ctlAlarmClock Constructor " Url="html/M-ctlClockLib.ctlAlarmClock.-ctor.htm" />
+      <HelpTOCNode Title="ctlAlarmClock Methods" Url="html/Methods.T-ctlClockLib.ctlAlarmClock.htm" />
+      <HelpTOCNode Id="6a4cc5cb-8e13-457b-9fad-ab7361805c59" Title="ctlAlarmClock Properties" Url="html/Properties.T-ctlClockLib.ctlAlarmClock.htm">
+        <HelpTOCNode Title="AlarmSet Property " Url="html/P-ctlClockLib.ctlAlarmClock.AlarmSet.htm" />
+        <HelpTOCNode Title="AlarmTime Property " Url="html/P-ctlClockLib.ctlAlarmClock.AlarmTime.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="ctlAlarmClock Events" Url="html/Events.T-ctlClockLib.ctlAlarmClock.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="95f9c0de-d947-44d9-b5f1-6ddd627af19a" Title="ctlClock Class" Url="html/T-ctlClockLib.ctlClock.htm">
+      <HelpTOCNode Title="ctlClock Members" Url="html/AllMembers.T-ctlClockLib.ctlClock.htm" />
+      <HelpTOCNode Title="ctlClock Constructor " Url="html/M-ctlClockLib.ctlClock.-ctor.htm" />
+      <HelpTOCNode Title="ctlClock Methods" Url="html/Methods.T-ctlClockLib.ctlClock.htm" />
+      <HelpTOCNode Id="1411671a-df15-4fff-a175-9151004715ff" Title="ctlClock Properties" Url="html/Properties.T-ctlClockLib.ctlClock.htm">
+        <HelpTOCNode Title="ClockBackColor Property " Url="html/P-ctlClockLib.ctlClock.ClockBackColor.htm" />
+        <HelpTOCNode Title="ClockForeColor Property " Url="html/P-ctlClockLib.ctlClock.ClockForeColor.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="ctlClock Events" Url="html/Events.T-ctlClockLib.ctlClock.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="4f45c72b-3c94-4dff-ba22-eca109d324ba" Title="DynamicSample Namespace" Url="html/N-DynamicSample.htm">
+    <HelpTOCNode Id="b97f70ce-856d-4182-b6e7-1e29e78cd1a2" Title="DynamicTestProgram Class" Url="html/T-DynamicSample.DynamicTestProgram.htm">
+      <HelpTOCNode Title="DynamicTestProgram Members" Url="html/AllMembers.T-DynamicSample.DynamicTestProgram.htm" />
+      <HelpTOCNode Title="DynamicTestProgram Members" Url="html/AllMembers.T-DynamicSample.DynamicTestProgram.htm" />
+      <HelpTOCNode Id="37a35446-af78-4650-a455-4298ba926fcb" Title="DynamicTestProgram Methods" Url="html/Methods.T-DynamicSample.DynamicTestProgram.htm">
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="aad495e7-2e55-4448-9640-7ac9896b3cfe" Title="DynamicTestProgram Methods" Url="html/Methods.T-DynamicSample.DynamicTestProgram.htm">
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ff49fa42-7b61-432e-9645-00d2aefde8a7" Title="DynamicTestProgram Class" Url="html/T-DynamicSample.DynamicTestProgram.htm">
+      <HelpTOCNode Title="DynamicTestProgram Members" Url="html/AllMembers.T-DynamicSample.DynamicTestProgram.htm" />
+      <HelpTOCNode Title="DynamicTestProgram Members" Url="html/AllMembers.T-DynamicSample.DynamicTestProgram.htm" />
+      <HelpTOCNode Id="b4505d9c-e8dd-47ac-8d4a-b8d66efdace9" Title="DynamicTestProgram Methods" Url="html/Methods.T-DynamicSample.DynamicTestProgram.htm">
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="e16ef68f-a1bc-43fd-9f7d-e7490c6d64f3" Title="DynamicTestProgram Methods" Url="html/Methods.T-DynamicSample.DynamicTestProgram.htm">
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="Main Method " Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomer Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomer.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowCustomerContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowCustomerContains.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplier Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplier.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+        <HelpTOCNode Title="ShowSupplierContains Method " Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="30112ff2-6460-4921-b824-f1754f948146" Title="DynamicSample.Constants Namespace" Url="html/N-DynamicSample.Constants.htm">
+    <HelpTOCNode Id="f95875c2-8a42-40c5-b735-1aa2dc15247a" Title="Constants Class" Url="html/T-DynamicSample.Constants.Constants.htm">
+      <HelpTOCNode Title="Constants Members" Url="html/AllMembers.T-DynamicSample.Constants.Constants.htm" />
+      <HelpTOCNode Title="Constants Members" Url="html/AllMembers.T-DynamicSample.Constants.Constants.htm" />
+      <HelpTOCNode Id="5b5dd870-c5cd-4724-be79-b01c9ff066ff" Title="Constants Fields" Url="html/Fields.T-DynamicSample.Constants.Constants.htm">
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7e35e0d3-87bd-4942-80f1-c0fd10529a30" Title="Constants Fields" Url="html/Fields.T-DynamicSample.Constants.Constants.htm">
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Constants Methods" Url="html/Methods.T-DynamicSample.Constants.Constants.htm" />
+      <HelpTOCNode Title="Constants Methods" Url="html/Methods.T-DynamicSample.Constants.Constants.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="b3a1b3e4-292f-4d58-a245-43805de81b20" Title="Constants Class" Url="html/T-DynamicSample.Constants.Constants.htm">
+      <HelpTOCNode Title="Constants Members" Url="html/AllMembers.T-DynamicSample.Constants.Constants.htm" />
+      <HelpTOCNode Title="Constants Members" Url="html/AllMembers.T-DynamicSample.Constants.Constants.htm" />
+      <HelpTOCNode Id="9b85b833-ae75-4b53-b118-4da37c0c72cb" Title="Constants Fields" Url="html/Fields.T-DynamicSample.Constants.Constants.htm">
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="da2ba3fb-afce-4ebf-9911-29de9acb0872" Title="Constants Fields" Url="html/Fields.T-DynamicSample.Constants.Constants.htm">
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header Field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Constants Methods" Url="html/Methods.T-DynamicSample.Constants.Constants.htm" />
+      <HelpTOCNode Title="Constants Methods" Url="html/Methods.T-DynamicSample.Constants.Constants.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="4189e283-17ed-4848-a36c-6cd594f4b302" Title="DynamicSample.Model Namespace" Url="html/N-DynamicSample.Model.htm">
+    <HelpTOCNode Id="147d00c8-295e-418a-9802-c1027498d742" Title="DynPropertyClass Class" Url="html/T-DynamicSample.Model.DynPropertyClass.htm">
+      <HelpTOCNode Title="DynPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.DynPropertyClass.htm" />
+      <HelpTOCNode Title="DynPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.DynPropertyClass.htm" />
+      <HelpTOCNode Title="DynPropertyClass Constructor " Url="html/M-DynamicSample.Model.DynPropertyClass.-ctor.htm" />
+      <HelpTOCNode Title="DynPropertyClass Constructor " Url="html/M-DynamicSample.Model.DynPropertyClass.-ctor.htm" />
+      <HelpTOCNode Id="7ce3c33f-8173-4de1-932e-d203debcc918" Title="DynPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Id="cb9d51f9-31c5-431b-816e-0e97c893f78e" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="d8eca29d-0d05-43af-84f4-6071bb7051db" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="2dae4326-d47c-4e48-aa67-5389d0eeed58" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="a04e19fa-1547-47dd-b3ae-97722c24dc38" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="9b0b15b9-f797-4569-9553-36729391068f" Title="DynPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Id="c0f6b9bc-011d-4a38-b082-e8de49280a6d" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="167a717a-9c85-47d9-b327-688e97a1baa7" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="12d80fc4-0a67-4673-ba18-6ffbba891a65" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="c08525f8-b413-460d-9d45-ca2b74e292a7" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="24ed66fb-0688-4183-98ba-b7f48d1ba8fa" Title="DynPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="54420a19-65fe-4fa3-9836-a3744576ea14" Title="DynPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4eb43ea1-1389-4868-af8d-f7d25d3963f6" Title="DynPropertyClass Class" Url="html/T-DynamicSample.Model.DynPropertyClass.htm">
+      <HelpTOCNode Title="DynPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.DynPropertyClass.htm" />
+      <HelpTOCNode Title="DynPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.DynPropertyClass.htm" />
+      <HelpTOCNode Title="DynPropertyClass Constructor " Url="html/M-DynamicSample.Model.DynPropertyClass.-ctor.htm" />
+      <HelpTOCNode Title="DynPropertyClass Constructor " Url="html/M-DynamicSample.Model.DynPropertyClass.-ctor.htm" />
+      <HelpTOCNode Id="a141d7ae-50ed-4387-af84-4ab1e40a6d5b" Title="DynPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Id="b22edb59-d8de-41c6-b197-78f7f5e539ac" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="82bbc0c1-5b2b-4669-abbf-e962d664d4ee" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="481204c0-e5ce-438b-a4c9-fb985863adf2" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="c6919e0d-44c1-459e-b62d-ae644cf20e34" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="3e452019-4b9a-4a4a-a969-0695569df0d7" Title="DynPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Title="GetDynamicMemberNames Method " Url="html/M-DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames.htm" />
+        <HelpTOCNode Id="ecca81ed-39a7-456e-addf-a612bc497fca" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="502cf4e3-61c1-4700-8743-cb8bb01c2926" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="6fac1407-e42f-4c94-984b-616521788fc6" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="935d05e0-c4bb-4186-87da-5f98af52942d" Title="TrySetMember Method " Url="html/Overload-DynamicSample.Model.DynPropertyClass.TrySetMember.htm">
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+          <HelpTOCNode Title="TrySetMember Method " Url="html/M-DynamicSample.Model.DynPropertyClass.TrySetMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="bc6ac1b4-0872-41d6-a909-35d6648c795e" Title="DynPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="dc497209-3af3-4ba6-89f5-3e808a056895" Title="DynPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.DynPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.DynPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-DynamicSample.Model.DynPropertyClass.Item-pFields-.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="pFields Enumeration" Url="html/T-DynamicSample.Model.pFields.htm" />
+    <HelpTOCNode Title="pFields Enumeration" Url="html/T-DynamicSample.Model.pFields.htm" />
+    <HelpTOCNode Id="af219e73-056c-40c6-9e68-4238cc78913b" Title="ReadOnlyFile Class" Url="html/T-DynamicSample.Model.ReadOnlyFile.htm">
+      <HelpTOCNode Title="ReadOnlyFile Members" Url="html/AllMembers.T-DynamicSample.Model.ReadOnlyFile.htm" />
+      <HelpTOCNode Title="ReadOnlyFile Members" Url="html/AllMembers.T-DynamicSample.Model.ReadOnlyFile.htm" />
+      <HelpTOCNode Title="ReadOnlyFile Constructor " Url="html/M-DynamicSample.Model.ReadOnlyFile.-ctor.htm" />
+      <HelpTOCNode Title="ReadOnlyFile Constructor " Url="html/M-DynamicSample.Model.ReadOnlyFile.-ctor.htm" />
+      <HelpTOCNode Id="26d1d88a-556c-41e5-89f2-4453076a68f7" Title="ReadOnlyFile Methods" Url="html/Methods.T-DynamicSample.Model.ReadOnlyFile.htm">
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Id="faf44e2d-f33e-4a4b-9038-847df685aa8d" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="e823d3fc-6aa7-43cf-aa7a-c150d273891d" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="25e2c5b1-49c9-4d79-ab4b-6603e9614e0d" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="d5cb34e7-08fe-4fe3-bd36-87dd73a2cbdb" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="74fe27bb-09fb-43ba-a020-d318e924a7ea" Title="ReadOnlyFile Methods" Url="html/Methods.T-DynamicSample.Model.ReadOnlyFile.htm">
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Id="8912e3eb-d045-4582-b4bc-88858e84f16f" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="48337cdd-33b7-4dd9-ac00-0dbab7112cbf" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="6ac22264-065b-4e17-acc9-f980b1a47e24" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="e0d516ed-134f-490b-bb6f-0504563f0d3a" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c1ccaddf-e70e-46c5-9cda-07aa0d6b9145" Title="ReadOnlyFile Class" Url="html/T-DynamicSample.Model.ReadOnlyFile.htm">
+      <HelpTOCNode Title="ReadOnlyFile Members" Url="html/AllMembers.T-DynamicSample.Model.ReadOnlyFile.htm" />
+      <HelpTOCNode Title="ReadOnlyFile Members" Url="html/AllMembers.T-DynamicSample.Model.ReadOnlyFile.htm" />
+      <HelpTOCNode Title="ReadOnlyFile Constructor " Url="html/M-DynamicSample.Model.ReadOnlyFile.-ctor.htm" />
+      <HelpTOCNode Title="ReadOnlyFile Constructor " Url="html/M-DynamicSample.Model.ReadOnlyFile.-ctor.htm" />
+      <HelpTOCNode Id="58c22445-1673-4cb3-a471-e55896fd1551" Title="ReadOnlyFile Methods" Url="html/Methods.T-DynamicSample.Model.ReadOnlyFile.htm">
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Id="b6ba4d37-eda8-479e-95fc-b7322c4d5dba" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="b574caa4-518d-4850-bfcc-1d0586cfba52" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="37050d7c-c18e-4019-81ef-4e445b752fdb" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="0e411c3d-d215-41d6-afe2-b110470138ba" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="f380b461-9bb4-4b90-b502-cbe1085f8d29" Title="ReadOnlyFile Methods" Url="html/Methods.T-DynamicSample.Model.ReadOnlyFile.htm">
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Title="GetPropertyValue Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.GetPropertyValue.htm" />
+        <HelpTOCNode Id="80503191-d7d0-40df-aa45-e3bdea994c10" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="b1aba30b-a6d2-4a16-aaf2-43ef4321b9cb" Title="TryGetMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm">
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+          <HelpTOCNode Title="TryGetMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryGetMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="f0253513-13a4-4854-a30d-09c3613b8a27" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="25ec4715-ebe0-4f92-bbc5-fb18af5cb112" Title="TryInvokeMember Method " Url="html/Overload-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm">
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+          <HelpTOCNode Title="TryInvokeMember Method " Url="html/M-DynamicSample.Model.ReadOnlyFile.TryInvokeMember.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4b687e8b-ba44-4df6-a987-91878e6c9133" Title="StatPropertyClass Class" Url="html/T-DynamicSample.Model.StatPropertyClass.htm">
+      <HelpTOCNode Title="StatPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Title="StatPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Title="StatPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Title="StatPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Id="81241bf1-4cae-4b5a-9d04-fab826aa3e4b" Title="StatPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.StatPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="43889926-4bba-4395-bfac-fcfc2f3b5fae" Title="StatPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.StatPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="74469d25-564a-4418-8513-a214f4c1c946" Title="StatPropertyClass Class" Url="html/T-DynamicSample.Model.StatPropertyClass.htm">
+      <HelpTOCNode Title="StatPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Title="StatPropertyClass Members" Url="html/AllMembers.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Title="StatPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Title="StatPropertyClass Methods" Url="html/Methods.T-DynamicSample.Model.StatPropertyClass.htm" />
+      <HelpTOCNode Id="7203053f-bb6e-4cf7-aa1e-ccffb509d8a4" Title="StatPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.StatPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="f1bf1377-3d16-4a19-baa9-a90ac817f2bf" Title="StatPropertyClass Properties" Url="html/Properties.T-DynamicSample.Model.StatPropertyClass.htm">
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="FullAddress Property " Url="html/P-DynamicSample.Model.StatPropertyClass.FullAddress.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCity Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCity.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strCountry Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strCountry.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strName Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strName.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strPLZ Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strPLZ.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+        <HelpTOCNode Title="strStreet Property " Url="html/P-DynamicSample.Model.StatPropertyClass.strStreet.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="StringSearchOption Enumeration" Url="html/T-DynamicSample.Model.StringSearchOption.htm" />
+    <HelpTOCNode Title="StringSearchOption Enumeration" Url="html/T-DynamicSample.Model.StringSearchOption.htm" />
+  </HelpTOCNode>
+  <HelpTOCNode Id="590b20e5-3900-464d-844f-31d8913ad321" Title="DynamicSample.Tests Namespace" Url="html/N-DynamicSample.Tests.htm">
+    <HelpTOCNode Id="5f830f81-99fb-46cb-8c61-18f89f9191c0" Title="DynamicTestProgramTests Class" Url="html/T-DynamicSample.Tests.DynamicTestProgramTests.htm">
+      <HelpTOCNode Title="DynamicTestProgramTests Members" Url="html/AllMembers.T-DynamicSample.Tests.DynamicTestProgramTests.htm" />
+      <HelpTOCNode Id="1c359bcc-b3f3-4f9a-bfc6-cd4db070cc3a" Title="DynamicTestProgramTests Methods" Url="html/Methods.T-DynamicSample.Tests.DynamicTestProgramTests.htm">
+        <HelpTOCNode Title="MainTest Method " Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.MainTest.htm" />
+        <HelpTOCNode Title="ShowCustomerContainsTest Method " Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.ShowCustomerContainsTest.htm" />
+        <HelpTOCNode Title="ShowCustomerTest Method " Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.ShowCustomerTest.htm" />
+        <HelpTOCNode Title="ShowSupplierContainsTest Method " Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.ShowSupplierContainsTest.htm" />
+        <HelpTOCNode Title="ShowSupplierTest Method " Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.ShowSupplierTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="0d19d676-812e-40d2-bf52-a5b226bef4f9" Title="TestClockApp Namespace" Url="html/N-TestClockApp.htm">
+    <HelpTOCNode Id="febac94f-94c4-46d9-845d-65d48b1db80b" Title="Form1 Class" Url="html/T-TestClockApp.Form1.htm">
+      <HelpTOCNode Title="Form1 Members" Url="html/AllMembers.T-TestClockApp.Form1.htm" />
+      <HelpTOCNode Title="Form1 Constructor " Url="html/M-TestClockApp.Form1.-ctor.htm" />
+      <HelpTOCNode Title="Form1 Methods" Url="html/Methods.T-TestClockApp.Form1.htm" />
+      <HelpTOCNode Title="Form1 Properties" Url="html/Properties.T-TestClockApp.Form1.htm" />
+      <HelpTOCNode Title="Form1 Events" Url="html/Events.T-TestClockApp.Form1.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="ef09368b-018b-4e33-a388-1dafe684db07" Title="Program Class" Url="html/T-TestClockApp.Program.htm">
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-TestClockApp.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-TestClockApp.Program.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="ac42b88d-a88b-44e9-b6db-90c2f2a2e9a5" Title="TestClockApp.Properties Namespace" Url="html/N-TestClockApp.Properties.htm">
+    <HelpTOCNode Id="7ff12603-29f1-44da-a55b-6dc4b0d6da5b" Title="Resources Class" Url="html/T-TestClockApp.Properties.Resources.htm">
+      <HelpTOCNode Title="Resources Members" Url="html/AllMembers.T-TestClockApp.Properties.Resources.htm" />
+      <HelpTOCNode Title="Resources Constructor " Url="html/M-TestClockApp.Properties.Resources.-ctor.htm" />
+      <HelpTOCNode Title="Resources Methods" Url="html/Methods.T-TestClockApp.Properties.Resources.htm" />
+      <HelpTOCNode Id="99277eed-e4fe-4447-a213-68e363e58c01" Title="Resources Properties" Url="html/Properties.T-TestClockApp.Properties.Resources.htm">
+        <HelpTOCNode Title="Culture Property " Url="html/P-TestClockApp.Properties.Resources.Culture.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-TestClockApp.Properties.Resources.ResourceManager.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b5d50b4b-84f9-4745-a8eb-a73a70be4668" Title="Settings Class" Url="html/T-TestClockApp.Properties.Settings.htm">
+      <HelpTOCNode Title="Settings Members" Url="html/AllMembers.T-TestClockApp.Properties.Settings.htm" />
+      <HelpTOCNode Title="Settings Methods" Url="html/Methods.T-TestClockApp.Properties.Settings.htm" />
+      <HelpTOCNode Id="7501613f-7093-4107-b659-2b258c18e1a6" Title="Settings Properties" Url="html/Properties.T-TestClockApp.Properties.Settings.htm">
+        <HelpTOCNode Title="Default Property " Url="html/P-TestClockApp.Properties.Settings.Default.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Settings Events" Url="html/Events.T-TestClockApp.Properties.Settings.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="4455ee28-a270-4b88-a5c1-c6eae29b12ee" Title="TestNamespaces Namespace" Url="html/N-TestNamespaces.htm">
+    <HelpTOCNode Id="1517c97d-bbfc-47b7-9c9e-5e327ae07174" Title="Program Class" Url="html/T-TestNamespaces.Program.htm">
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-TestNamespaces.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-TestNamespaces.Program.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="707352f0-cd5f-4d75-bdef-5d5f31091175" Title="TestNamespaces2 Namespace" Url="html/N-TestNamespaces2.htm">
+    <HelpTOCNode Id="224321c5-4371-42cc-a599-c668631796a4" Title="Program2 Class" Url="html/T-TestNamespaces2.Program2.htm">
+      <HelpTOCNode Title="Program2 Members" Url="html/AllMembers.T-TestNamespaces2.Program2.htm" />
+      <HelpTOCNode Title="Program2 Methods" Url="html/Methods.T-TestNamespaces2.Program2.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="361171e8-7919-44d2-9045-30f7063a5317" Title="TestStatements Namespace" Url="html/N-TestStatements.htm">
+    <HelpTOCNode Id="29dbac92-73fa-4294-b927-851dc10f8355" Title="Program Class" Url="html/T-TestStatements.Program.htm">
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-TestStatements.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-TestStatements.Program.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="6e13812f-0543-426c-af37-8c79af75b595" Title="Resource1 Class" Url="html/T-TestStatements.Resource1.htm">
+      <HelpTOCNode Title="Resource1 Members" Url="html/AllMembers.T-TestStatements.Resource1.htm" />
+      <HelpTOCNode Title="Resource1 Constructor " Url="html/M-TestStatements.Resource1.-ctor.htm" />
+      <HelpTOCNode Title="Resource1 Methods" Url="html/Methods.T-TestStatements.Resource1.htm" />
+      <HelpTOCNode Id="e6828cd4-b47f-423e-95b8-2c195e0a8a1c" Title="Resource1 Properties" Url="html/Properties.T-TestStatements.Resource1.htm">
+        <HelpTOCNode Title="Culture Property " Url="html/P-TestStatements.Resource1.Culture.htm" />
+        <HelpTOCNode Title="ResourceManager Property " Url="html/P-TestStatements.Resource1.ResourceManager.htm" />
+        <HelpTOCNode Title="Version Property " Url="html/P-TestStatements.Resource1.Version.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="faeaf455-72c7-4194-b5e9-e21a844f9b30" Title="TestStatements.Anweisungen Namespace" Url="html/N-TestStatements.Anweisungen.htm">
+    <HelpTOCNode Id="1436b9f1-6e73-4bcc-acf3-1c74e24bbc8d" Title="Account Class" Url="html/T-TestStatements.Anweisungen.Account.htm">
+      <HelpTOCNode Title="Account Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Account.htm" />
+      <HelpTOCNode Title="Account Constructor " Url="html/M-TestStatements.Anweisungen.Account.-ctor.htm" />
+      <HelpTOCNode Id="fe1ddaac-ffef-40dc-a42a-5e9498de45a1" Title="Account Methods" Url="html/Methods.T-TestStatements.Anweisungen.Account.htm">
+        <HelpTOCNode Title="Withdraw Method " Url="html/M-TestStatements.Anweisungen.Account.Withdraw.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="710ec476-0454-47a0-a586-67fbb3030282" Title="Account Properties" Url="html/Properties.T-TestStatements.Anweisungen.Account.htm">
+        <HelpTOCNode Title="Balance Property " Url="html/P-TestStatements.Anweisungen.Account.Balance.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="99040842-16ed-41ee-89cd-665f27d2a366" Title="Checking Class" Url="html/T-TestStatements.Anweisungen.Checking.htm">
+      <HelpTOCNode Title="Checking Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Checking.htm" />
+      <HelpTOCNode Id="ff29aeee-0ff7-4a88-8d71-727534a24a40" Title="Checking Methods" Url="html/Methods.T-TestStatements.Anweisungen.Checking.htm">
+        <HelpTOCNode Title="CheckedUnchecked Method " Url="html/M-TestStatements.Anweisungen.Checking.CheckedUnchecked.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7e30cad1-5038-4b3e-8025-9185097e8552" Title="Circle Class" Url="html/T-TestStatements.Anweisungen.Circle.htm">
+      <HelpTOCNode Title="Circle Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Circle.htm" />
+      <HelpTOCNode Title="Circle Constructor " Url="html/M-TestStatements.Anweisungen.Circle.-ctor.htm" />
+      <HelpTOCNode Title="Circle Methods" Url="html/Methods.T-TestStatements.Anweisungen.Circle.htm" />
+      <HelpTOCNode Id="bfb940f6-12f7-480a-a788-a7139b79f821" Title="Circle Properties" Url="html/Properties.T-TestStatements.Anweisungen.Circle.htm">
+        <HelpTOCNode Title="Area Property " Url="html/P-TestStatements.Anweisungen.Circle.Area.htm" />
+        <HelpTOCNode Title="Circumference Property " Url="html/P-TestStatements.Anweisungen.Circle.Circumference.htm" />
+        <HelpTOCNode Title="Radius Property " Url="html/P-TestStatements.Anweisungen.Circle.Radius.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="53016658-a47f-4b0d-a520-b7ad685d7442" Title="ConditionalStatement Class" Url="html/T-TestStatements.Anweisungen.ConditionalStatement.htm">
+      <HelpTOCNode Title="ConditionalStatement Members" Url="html/AllMembers.T-TestStatements.Anweisungen.ConditionalStatement.htm" />
+      <HelpTOCNode Id="1ea447cb-fca5-46b8-949e-64e67a169975" Title="ConditionalStatement Methods" Url="html/Methods.T-TestStatements.Anweisungen.ConditionalStatement.htm">
+        <HelpTOCNode Title="DoIfStatement Method " Url="html/M-TestStatements.Anweisungen.ConditionalStatement.DoIfStatement.htm" />
+        <HelpTOCNode Title="DoIfStatement2 Method " Url="html/M-TestStatements.Anweisungen.ConditionalStatement.DoIfStatement2.htm" />
+        <HelpTOCNode Title="DoIfStatement3 Method " Url="html/M-TestStatements.Anweisungen.ConditionalStatement.DoIfStatement3.htm" />
+        <HelpTOCNode Title="DoSwitchStatement Method " Url="html/M-TestStatements.Anweisungen.ConditionalStatement.DoSwitchStatement.htm" />
+        <HelpTOCNode Title="DoSwitchStatement1 Method " Url="html/M-TestStatements.Anweisungen.ConditionalStatement.DoSwitchStatement1.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="dbbf260f-6049-4556-b0c1-2252d01bfd2a" Title="Declarations Class" Url="html/T-TestStatements.Anweisungen.Declarations.htm">
+      <HelpTOCNode Title="Declarations Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Declarations.htm" />
+      <HelpTOCNode Id="4172e0ff-e499-4265-b007-37367df8cab5" Title="Declarations Methods" Url="html/Methods.T-TestStatements.Anweisungen.Declarations.htm">
+        <HelpTOCNode Title="DoConstantDeclarations Method " Url="html/M-TestStatements.Anweisungen.Declarations.DoConstantDeclarations.htm" />
+        <HelpTOCNode Title="DoVarDeclarations Method " Url="html/M-TestStatements.Anweisungen.Declarations.DoVarDeclarations.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="6ddafe28-43ef-4d70-9059-ceb9ec64437d" Title="DiceLibrary Class" Url="html/T-TestStatements.Anweisungen.DiceLibrary.htm">
+      <HelpTOCNode Title="DiceLibrary Members" Url="html/AllMembers.T-TestStatements.Anweisungen.DiceLibrary.htm" />
+      <HelpTOCNode Id="9b7d6d78-8b47-4e34-acc2-5ab985906168" Title="DiceLibrary Methods" Url="html/Methods.T-TestStatements.Anweisungen.DiceLibrary.htm">
+        <HelpTOCNode Title="DiceSum Method " Url="html/M-TestStatements.Anweisungen.DiceLibrary.DiceSum.htm" />
+        <HelpTOCNode Title="Pass Method " Url="html/M-TestStatements.Anweisungen.DiceLibrary.Pass.htm" />
+        <HelpTOCNode Title="Roll Method " Url="html/M-TestStatements.Anweisungen.DiceLibrary.Roll.htm" />
+        <HelpTOCNode Title="Roll2 Method " Url="html/M-TestStatements.Anweisungen.DiceLibrary.Roll2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="04172433-7759-4e03-851c-bec9e3042958" Title="ExceptionHandling Class" Url="html/T-TestStatements.Anweisungen.ExceptionHandling.htm">
+      <HelpTOCNode Title="ExceptionHandling Members" Url="html/AllMembers.T-TestStatements.Anweisungen.ExceptionHandling.htm" />
+      <HelpTOCNode Id="048abbbe-0246-446a-a035-92449aafd4a7" Title="ExceptionHandling Methods" Url="html/Methods.T-TestStatements.Anweisungen.ExceptionHandling.htm">
+        <HelpTOCNode Title="DoTryCatch Method " Url="html/M-TestStatements.Anweisungen.ExceptionHandling.DoTryCatch.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="bcc86e2f-0922-4355-9596-737613d586db" Title="Expressions Class" Url="html/T-TestStatements.Anweisungen.Expressions.htm">
+      <HelpTOCNode Title="Expressions Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Expressions.htm" />
+      <HelpTOCNode Id="24c06eda-22a7-4374-8807-2a05c9d1b1d4" Title="Expressions Methods" Url="html/Methods.T-TestStatements.Anweisungen.Expressions.htm">
+        <HelpTOCNode Title="DoExpressions Method " Url="html/M-TestStatements.Anweisungen.Expressions.DoExpressions.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="df4bcabd-bcfa-4c24-ad23-74e21634a1c4" Title="Locking Class" Url="html/T-TestStatements.Anweisungen.Locking.htm">
+      <HelpTOCNode Title="Locking Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Locking.htm" />
+      <HelpTOCNode Id="6eea4b99-2de1-4938-90ab-9ac4e4352e46" Title="Locking Methods" Url="html/Methods.T-TestStatements.Anweisungen.Locking.htm">
+        <HelpTOCNode Title="DoLockTest Method " Url="html/M-TestStatements.Anweisungen.Locking.DoLockTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="f82af2e2-c8df-47f7-8fe8-3c822f774997" Title="LoopStatements Class" Url="html/T-TestStatements.Anweisungen.LoopStatements.htm">
+      <HelpTOCNode Title="LoopStatements Members" Url="html/AllMembers.T-TestStatements.Anweisungen.LoopStatements.htm" />
+      <HelpTOCNode Id="da81333b-2edc-402f-baf2-821d8f1e3222" Title="LoopStatements Methods" Url="html/Methods.T-TestStatements.Anweisungen.LoopStatements.htm">
+        <HelpTOCNode Title="DoDoDoStatement Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoDoDoStatement.htm" />
+        <HelpTOCNode Title="DoDoDoStatement2 Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoDoDoStatement2.htm" />
+        <HelpTOCNode Title="DoDoStatement Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoDoStatement.htm" />
+        <HelpTOCNode Title="DoDoStatement2 Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoDoStatement2.htm" />
+        <HelpTOCNode Title="DoDoStatement3 Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoDoStatement3.htm" />
+        <HelpTOCNode Title="DoDoWhileNestedStatement2 Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoDoWhileNestedStatement2.htm" />
+        <HelpTOCNode Title="DoForEachStatement Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoForEachStatement.htm" />
+        <HelpTOCNode Title="DoForStatement Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoForStatement.htm" />
+        <HelpTOCNode Title="DoForStatement2 Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoForStatement2.htm" />
+        <HelpTOCNode Title="DoWhileStatement Method " Url="html/M-TestStatements.Anweisungen.LoopStatements.DoWhileStatement.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c2346eab-9d35-40a6-8029-f09404f9dccf" Title="ProgramFlow Class" Url="html/T-TestStatements.Anweisungen.ProgramFlow.htm">
+      <HelpTOCNode Title="ProgramFlow Members" Url="html/AllMembers.T-TestStatements.Anweisungen.ProgramFlow.htm" />
+      <HelpTOCNode Id="1630ece9-940e-42dc-9002-ef1bccba6dbd" Title="ProgramFlow Methods" Url="html/Methods.T-TestStatements.Anweisungen.ProgramFlow.htm">
+        <HelpTOCNode Title="DoBreakStatement Method " Url="html/M-TestStatements.Anweisungen.ProgramFlow.DoBreakStatement.htm" />
+        <HelpTOCNode Title="DoContinueStatement Method " Url="html/M-TestStatements.Anweisungen.ProgramFlow.DoContinueStatement.htm" />
+        <HelpTOCNode Title="DoGoToStatement Method " Url="html/M-TestStatements.Anweisungen.ProgramFlow.DoGoToStatement.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="41af28e5-c348-42b1-945d-6723f604c9f9" Title="RandomExample Class" Url="html/T-TestStatements.Anweisungen.RandomExample.htm">
+      <HelpTOCNode Title="RandomExample Members" Url="html/AllMembers.T-TestStatements.Anweisungen.RandomExample.htm" />
+      <HelpTOCNode Id="3fb28cf4-dc06-450a-a5e5-a6637e22ef1c" Title="RandomExample Fields" Url="html/Fields.T-TestStatements.Anweisungen.RandomExample.htm">
+        <HelpTOCNode Title="rand Field" Url="html/F-TestStatements.Anweisungen.RandomExample.rand.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="595c0976-de53-4fb6-a333-119e3cd0a7e3" Title="RandomExample Methods" Url="html/Methods.T-TestStatements.Anweisungen.RandomExample.htm">
+        <HelpTOCNode Title="ExampleMain1 Method " Url="html/M-TestStatements.Anweisungen.RandomExample.ExampleMain1.htm" />
+        <HelpTOCNode Title="ExampleMain2 Method " Url="html/M-TestStatements.Anweisungen.RandomExample.ExampleMain2.htm" />
+        <HelpTOCNode Title="ExampleMain3 Method " Url="html/M-TestStatements.Anweisungen.RandomExample.ExampleMain3.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="65d913d2-2656-417c-9e55-2211a45e56e0" Title="Rectangle Class" Url="html/T-TestStatements.Anweisungen.Rectangle.htm">
+      <HelpTOCNode Title="Rectangle Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Rectangle.htm" />
+      <HelpTOCNode Title="Rectangle Constructor " Url="html/M-TestStatements.Anweisungen.Rectangle.-ctor.htm" />
+      <HelpTOCNode Title="Rectangle Methods" Url="html/Methods.T-TestStatements.Anweisungen.Rectangle.htm" />
+      <HelpTOCNode Id="537f7756-c5b9-432f-b42a-f1cce3d385b1" Title="Rectangle Properties" Url="html/Properties.T-TestStatements.Anweisungen.Rectangle.htm">
+        <HelpTOCNode Title="Area Property " Url="html/P-TestStatements.Anweisungen.Rectangle.Area.htm" />
+        <HelpTOCNode Title="Circumference Property " Url="html/P-TestStatements.Anweisungen.Rectangle.Circumference.htm" />
+        <HelpTOCNode Title="Length Property " Url="html/P-TestStatements.Anweisungen.Rectangle.Length.htm" />
+        <HelpTOCNode Title="Width Property " Url="html/P-TestStatements.Anweisungen.Rectangle.Width.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="9aac7743-e744-47ec-90c1-adb6c1a2f635" Title="ReturnStatement Class" Url="html/T-TestStatements.Anweisungen.ReturnStatement.htm">
+      <HelpTOCNode Title="ReturnStatement Members" Url="html/AllMembers.T-TestStatements.Anweisungen.ReturnStatement.htm" />
+      <HelpTOCNode Id="81012098-6d9d-4cfe-9bee-78a04049cbde" Title="ReturnStatement Methods" Url="html/Methods.T-TestStatements.Anweisungen.ReturnStatement.htm">
+        <HelpTOCNode Title="DoReturnStatement Method " Url="html/M-TestStatements.Anweisungen.ReturnStatement.DoReturnStatement.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="9b0e412b-b9a1-4913-b770-f59f1d9d9901" Title="Shape Class" Url="html/T-TestStatements.Anweisungen.Shape.htm">
+      <HelpTOCNode Title="Shape Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Shape.htm" />
+      <HelpTOCNode Title="Shape Methods" Url="html/Methods.T-TestStatements.Anweisungen.Shape.htm" />
+      <HelpTOCNode Id="5d30db0d-6df2-46d0-89c9-eea130916aab" Title="Shape Properties" Url="html/Properties.T-TestStatements.Anweisungen.Shape.htm">
+        <HelpTOCNode Title="Area Property " Url="html/P-TestStatements.Anweisungen.Shape.Area.htm" />
+        <HelpTOCNode Title="Circumference Property " Url="html/P-TestStatements.Anweisungen.Shape.Circumference.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7f5390bc-5c16-4063-a040-380472134299" Title="Square Class" Url="html/T-TestStatements.Anweisungen.Square.htm">
+      <HelpTOCNode Title="Square Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Square.htm" />
+      <HelpTOCNode Title="Square Constructor " Url="html/M-TestStatements.Anweisungen.Square.-ctor.htm" />
+      <HelpTOCNode Title="Square Methods" Url="html/Methods.T-TestStatements.Anweisungen.Square.htm" />
+      <HelpTOCNode Id="d11f5351-aeb5-42d0-956e-8ce6dbfbd77f" Title="Square Properties" Url="html/Properties.T-TestStatements.Anweisungen.Square.htm">
+        <HelpTOCNode Title="Side Property " Url="html/P-TestStatements.Anweisungen.Square.Side.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b8044072-4725-4eb8-b28d-d7679066df96" Title="SwitchStatement Class" Url="html/T-TestStatements.Anweisungen.SwitchStatement.htm">
+      <HelpTOCNode Title="SwitchStatement Members" Url="html/AllMembers.T-TestStatements.Anweisungen.SwitchStatement.htm" />
+      <HelpTOCNode Id="8bd27e91-eeaa-4986-9f7f-c1e38ba465ac" Title="SwitchStatement Fields" Url="html/Fields.T-TestStatements.Anweisungen.SwitchStatement.htm">
+        <HelpTOCNode Title="GetNow Field" Url="html/F-TestStatements.Anweisungen.SwitchStatement.GetNow.htm" />
+        <HelpTOCNode Title="random Field" Url="html/F-TestStatements.Anweisungen.SwitchStatement.random.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7e3bb537-5125-41b3-abb4-3065c4eaeac0" Title="SwitchStatement Methods" Url="html/Methods.T-TestStatements.Anweisungen.SwitchStatement.htm">
+        <HelpTOCNode Title="SwitchExample1 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample1.htm" />
+        <HelpTOCNode Title="SwitchExample2 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample2.htm" />
+        <HelpTOCNode Title="SwitchExample3 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample3.htm" />
+        <HelpTOCNode Title="SwitchExample4 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample4.htm" />
+        <HelpTOCNode Title="SwitchExample5 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample5.htm" />
+        <HelpTOCNode Title="SwitchExample6 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample6.htm" />
+        <HelpTOCNode Title="SwitchExample7 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement.SwitchExample7.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="SwitchStatement.Color Enumeration" Url="html/T-TestStatements.Anweisungen.SwitchStatement.Color.htm" />
+    <HelpTOCNode Id="2bcca810-d664-4472-8563-05eebbb304e3" Title="SwitchStatement2 Class" Url="html/T-TestStatements.Anweisungen.SwitchStatement2.htm">
+      <HelpTOCNode Title="SwitchStatement2 Members" Url="html/AllMembers.T-TestStatements.Anweisungen.SwitchStatement2.htm" />
+      <HelpTOCNode Id="baf5119f-6fe3-4fdf-83f8-be3fdc488b31" Title="SwitchStatement2 Methods" Url="html/Methods.T-TestStatements.Anweisungen.SwitchStatement2.htm">
+        <HelpTOCNode Title="SwitchExample21 Method " Url="html/M-TestStatements.Anweisungen.SwitchStatement2.SwitchExample21.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="74ecafea-641b-421d-bf50-4be6950e8cd0" Title="UsingStatement Class" Url="html/T-TestStatements.Anweisungen.UsingStatement.htm">
+      <HelpTOCNode Title="UsingStatement Members" Url="html/AllMembers.T-TestStatements.Anweisungen.UsingStatement.htm" />
+      <HelpTOCNode Id="267178a8-e0f8-4a63-887f-ffb04db2912c" Title="UsingStatement Methods" Url="html/Methods.T-TestStatements.Anweisungen.UsingStatement.htm">
+        <HelpTOCNode Title="DoUsingStatement Method " Url="html/M-TestStatements.Anweisungen.UsingStatement.DoUsingStatement.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="aa00bad5-bbf5-4f60-98b3-18187d3eb7c3" Title="YieldStatement Class" Url="html/T-TestStatements.Anweisungen.YieldStatement.htm">
+      <HelpTOCNode Title="YieldStatement Members" Url="html/AllMembers.T-TestStatements.Anweisungen.YieldStatement.htm" />
+      <HelpTOCNode Id="e4ef57bc-ad89-4c6b-a6ae-06ec8c744dd6" Title="YieldStatement Methods" Url="html/Methods.T-TestStatements.Anweisungen.YieldStatement.htm">
+        <HelpTOCNode Title="DoYieldStatement Method " Url="html/M-TestStatements.Anweisungen.YieldStatement.DoYieldStatement.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="c7970aed-32d6-42e8-abb9-85199bcdaf10" Title="TestStatements.Anweisungen.Tests Namespace" Url="html/N-TestStatements.Anweisungen.Tests.htm">
+    <HelpTOCNode Id="f3358976-fae7-4cb6-ad4a-f977a4464392" Title="AccountTests Class" Url="html/T-TestStatements.Anweisungen.Tests.AccountTests.htm">
+      <HelpTOCNode Title="AccountTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.AccountTests.htm" />
+      <HelpTOCNode Id="d1b465ba-5131-4354-811c-ec8811d10018" Title="AccountTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.AccountTests.htm">
+        <HelpTOCNode Title="AccountTest Method " Url="html/M-TestStatements.Anweisungen.Tests.AccountTests.AccountTest.htm" />
+        <HelpTOCNode Title="Init Method " Url="html/M-TestStatements.Anweisungen.Tests.AccountTests.Init.htm" />
+        <HelpTOCNode Title="TestSetup Method " Url="html/M-TestStatements.Anweisungen.Tests.AccountTests.TestSetup.htm" />
+        <HelpTOCNode Title="WithdrawTest Method " Url="html/M-TestStatements.Anweisungen.Tests.AccountTests.WithdrawTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="14f907f1-1cdc-429a-8e0c-d4f0b68a84e0" Title="CheckingTests Class" Url="html/T-TestStatements.Anweisungen.Tests.CheckingTests.htm">
+      <HelpTOCNode Title="CheckingTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.CheckingTests.htm" />
+      <HelpTOCNode Id="5089a6d6-a713-43f5-8a8e-6c86196ccea7" Title="CheckingTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.CheckingTests.htm">
+        <HelpTOCNode Title="CheckedUncheckedTest Method " Url="html/M-TestStatements.Anweisungen.Tests.CheckingTests.CheckedUncheckedTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="8765e8b2-589e-4b5a-9f07-8d7588d414a1" Title="ConditionalStatementTests Class" Url="html/T-TestStatements.Anweisungen.Tests.ConditionalStatementTests.htm">
+      <HelpTOCNode Title="ConditionalStatementTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.ConditionalStatementTests.htm" />
+      <HelpTOCNode Id="e53c77ee-c30a-4891-8edd-875472c3a0c5" Title="ConditionalStatementTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.ConditionalStatementTests.htm">
+        <HelpTOCNode Title="DoIfStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ConditionalStatementTests.DoIfStatementTest.htm" />
+        <HelpTOCNode Title="DoIfStatementTest2 Method " Url="html/M-TestStatements.Anweisungen.Tests.ConditionalStatementTests.DoIfStatementTest2.htm" />
+        <HelpTOCNode Title="DoSwitchStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ConditionalStatementTests.DoSwitchStatementTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="6129763a-2ddf-4b56-9e4b-ffaaec86c147" Title="DeclarationsTests Class" Url="html/T-TestStatements.Anweisungen.Tests.DeclarationsTests.htm">
+      <HelpTOCNode Title="DeclarationsTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.DeclarationsTests.htm" />
+      <HelpTOCNode Id="7ef396c9-b11a-40b8-b628-0313a38a58b3" Title="DeclarationsTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.DeclarationsTests.htm">
+        <HelpTOCNode Title="DoConstantDeclarationsTest Method " Url="html/M-TestStatements.Anweisungen.Tests.DeclarationsTests.DoConstantDeclarationsTest.htm" />
+        <HelpTOCNode Title="DoVarDeclarationsTest Method " Url="html/M-TestStatements.Anweisungen.Tests.DeclarationsTests.DoVarDeclarationsTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="8b393a93-65e6-4649-89ff-4b6491c88be7" Title="ExceptionHandlingTests Class" Url="html/T-TestStatements.Anweisungen.Tests.ExceptionHandlingTests.htm">
+      <HelpTOCNode Title="ExceptionHandlingTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.ExceptionHandlingTests.htm" />
+      <HelpTOCNode Id="9756cffa-16a0-49a7-9239-bdee0939f920" Title="ExceptionHandlingTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.ExceptionHandlingTests.htm">
+        <HelpTOCNode Title="DoTryCatchTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ExceptionHandlingTests.DoTryCatchTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="f78151a0-308a-419a-b051-2e52f1f87f4b" Title="ExpressionsTests Class" Url="html/T-TestStatements.Anweisungen.Tests.ExpressionsTests.htm">
+      <HelpTOCNode Title="ExpressionsTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.ExpressionsTests.htm" />
+      <HelpTOCNode Id="b57a2940-d96a-4005-8daa-b19f8a825555" Title="ExpressionsTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.ExpressionsTests.htm">
+        <HelpTOCNode Title="DoExpressionsTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ExpressionsTests.DoExpressionsTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e4e5f642-c8b4-45c1-942b-68f52eea0603" Title="LockingTests Class" Url="html/T-TestStatements.Anweisungen.Tests.LockingTests.htm">
+      <HelpTOCNode Title="LockingTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.LockingTests.htm" />
+      <HelpTOCNode Id="61bb1f6a-0525-473a-8062-fea62839c738" Title="LockingTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.LockingTests.htm">
+        <HelpTOCNode Title="DoLockTestTest Method " Url="html/M-TestStatements.Anweisungen.Tests.LockingTests.DoLockTestTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="dd290129-3a92-46db-b602-ad1a5da49523" Title="LoopStatementsTests Class" Url="html/T-TestStatements.Anweisungen.Tests.LoopStatementsTests.htm">
+      <HelpTOCNode Title="LoopStatementsTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.LoopStatementsTests.htm" />
+      <HelpTOCNode Id="311c103d-7bf7-45f0-9b5a-92bc307ce57c" Title="LoopStatementsTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.LoopStatementsTests.htm">
+        <HelpTOCNode Title="DoDoStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoDoStatementTest.htm" />
+        <HelpTOCNode Title="DoForEachStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoForEachStatementTest.htm" />
+        <HelpTOCNode Title="DoForStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoForStatementTest.htm" />
+        <HelpTOCNode Title="DoWhileStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoWhileStatementTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="f2fda961-cc83-4151-98c8-3588fcd2ef10" Title="ProgramFlowTests Class" Url="html/T-TestStatements.Anweisungen.Tests.ProgramFlowTests.htm">
+      <HelpTOCNode Title="ProgramFlowTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.ProgramFlowTests.htm" />
+      <HelpTOCNode Id="5c672084-618e-4445-80c2-06859d905a64" Title="ProgramFlowTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.ProgramFlowTests.htm">
+        <HelpTOCNode Title="DoBreakStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ProgramFlowTests.DoBreakStatementTest.htm" />
+        <HelpTOCNode Title="DoContinueStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ProgramFlowTests.DoContinueStatementTest.htm" />
+        <HelpTOCNode Title="DoGoToStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ProgramFlowTests.DoGoToStatementTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="21fb3e65-8e60-41a3-b8b0-f6e6248594f4" Title="RandomExampleTests Class" Url="html/T-TestStatements.Anweisungen.Tests.RandomExampleTests.htm">
+      <HelpTOCNode Title="RandomExampleTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.RandomExampleTests.htm" />
+      <HelpTOCNode Id="e7700fdd-75be-45f3-9a6d-105f90016455" Title="RandomExampleTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.RandomExampleTests.htm">
+        <HelpTOCNode Title="ExampleMain1Test Method " Url="html/M-TestStatements.Anweisungen.Tests.RandomExampleTests.ExampleMain1Test.htm" />
+        <HelpTOCNode Title="ExampleMain2Test Method " Url="html/M-TestStatements.Anweisungen.Tests.RandomExampleTests.ExampleMain2Test.htm" />
+        <HelpTOCNode Title="ExampleMain3Test Method " Url="html/M-TestStatements.Anweisungen.Tests.RandomExampleTests.ExampleMain3Test.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="8fa286e8-5c88-44b3-9123-78b1aaba8463" Title="ReturnStatementTests Class" Url="html/T-TestStatements.Anweisungen.Tests.ReturnStatementTests.htm">
+      <HelpTOCNode Title="ReturnStatementTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.ReturnStatementTests.htm" />
+      <HelpTOCNode Id="bd1ea705-c98b-4d29-a27d-7207371bdda1" Title="ReturnStatementTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.ReturnStatementTests.htm">
+        <HelpTOCNode Title="DoReturnStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.ReturnStatementTests.DoReturnStatementTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="184c634f-13c9-45be-a428-057f6bbfece9" Title="UsingStatementTests Class" Url="html/T-TestStatements.Anweisungen.Tests.UsingStatementTests.htm">
+      <HelpTOCNode Title="UsingStatementTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.UsingStatementTests.htm" />
+      <HelpTOCNode Id="dd17c4e0-1185-41e9-9607-ae2a68a2216f" Title="UsingStatementTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.UsingStatementTests.htm">
+        <HelpTOCNode Title="DoUsingStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.UsingStatementTests.DoUsingStatementTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="272391b7-b5ee-4c5d-9fcb-5b3536f9cbbb" Title="YieldStatementTests Class" Url="html/T-TestStatements.Anweisungen.Tests.YieldStatementTests.htm">
+      <HelpTOCNode Title="YieldStatementTests Members" Url="html/AllMembers.T-TestStatements.Anweisungen.Tests.YieldStatementTests.htm" />
+      <HelpTOCNode Id="a75d75a6-3823-40a9-ab27-5d95f0e9a6af" Title="YieldStatementTests Methods" Url="html/Methods.T-TestStatements.Anweisungen.Tests.YieldStatementTests.htm">
+        <HelpTOCNode Title="DoYieldStatementTest Method " Url="html/M-TestStatements.Anweisungen.Tests.YieldStatementTests.DoYieldStatementTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="718ce9b1-8dc3-4f45-ba1a-9af4f73c41d2" Title="TestStatements.ClassesAndObjects Namespace" Url="html/N-TestStatements.ClassesAndObjects.htm">
+    <HelpTOCNode Id="75292a8d-f3b5-4258-af26-09423cf49a2a" Title="Class1 Class" Url="html/T-TestStatements.ClassesAndObjects.Class1.htm">
+      <HelpTOCNode Title="Class1 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Class1.htm" />
+      <HelpTOCNode Id="c34d1602-f47d-4a5b-919c-13544c887861" Title="Class1 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Class1.htm">
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.ClassesAndObjects.Class1.ToString.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="159b2091-6b6a-4cdf-a1cb-88fb66ac8a46" Title="Class2 Class" Url="html/T-TestStatements.ClassesAndObjects.Class2.htm">
+      <HelpTOCNode Title="Class2 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Class2.htm" />
+      <HelpTOCNode Id="0c05b607-83a2-4b39-8fce-60ced6e59b1a" Title="Class2 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Class2.htm">
+        <HelpTOCNode Title="Quack Method " Url="html/M-TestStatements.ClassesAndObjects.Class2.Quack.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.ClassesAndObjects.Class2.ToString.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="91f1b9d3-c928-45c9-bbea-2b9bcd54fe1d" Title="Class3 Class" Url="html/T-TestStatements.ClassesAndObjects.Class3.htm">
+      <HelpTOCNode Title="Class3 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Class3.htm" />
+      <HelpTOCNode Id="160293b5-0523-45a0-a883-df903ce9e0f0" Title="Class3 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Class3.htm">
+        <HelpTOCNode Title="Move Method " Url="html/M-TestStatements.ClassesAndObjects.Class3.Move.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.ClassesAndObjects.Class3.ToString.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="0e403b24-6cb6-45db-ae48-58df24a6dfb6" Title="Class4 Class" Url="html/T-TestStatements.ClassesAndObjects.Class4.htm">
+      <HelpTOCNode Title="Class4 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Class4.htm" />
+      <HelpTOCNode Id="4a87e26d-ab68-46f4-ac19-1d184bc80964" Title="Class4 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Class4.htm">
+        <HelpTOCNode Title="Move Method " Url="html/M-TestStatements.ClassesAndObjects.Class4.Move.htm" />
+        <HelpTOCNode Title="Roll Method " Url="html/M-TestStatements.ClassesAndObjects.Class4.Roll.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.ClassesAndObjects.Class4.ToString.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="a201fc41-3409-426d-90ef-86903395d65d" Title="Class5 Class" Url="html/T-TestStatements.ClassesAndObjects.Class5.htm">
+      <HelpTOCNode Title="Class5 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Class5.htm" />
+      <HelpTOCNode Id="44858873-09f5-4463-a7e1-952b7e753d8f" Title="Class5 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Class5.htm">
+        <HelpTOCNode Title="Quack Method " Url="html/M-TestStatements.ClassesAndObjects.Class5.Quack.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.ClassesAndObjects.Class5.ToString.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ae8eb4b3-0344-44ce-923c-54b4e80614aa" Title="IInterface1 Interface" Url="html/T-TestStatements.ClassesAndObjects.IInterface1.htm">
+      <HelpTOCNode Title="IInterface1 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.IInterface1.htm" />
+      <HelpTOCNode Id="1aea9851-d351-4d82-8154-26a900f38fda" Title="IInterface1 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.IInterface1.htm">
+        <HelpTOCNode Title="Quack Method " Url="html/M-TestStatements.ClassesAndObjects.IInterface1.Quack.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="56fb4ead-0fcc-470a-a98a-464c15dd4b2f" Title="IInterface2 Interface" Url="html/T-TestStatements.ClassesAndObjects.IInterface2.htm">
+      <HelpTOCNode Title="IInterface2 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.IInterface2.htm" />
+      <HelpTOCNode Id="14b03d22-25b0-4f5a-8314-f29951255ca1" Title="IInterface2 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.IInterface2.htm">
+        <HelpTOCNode Title="Move Method " Url="html/M-TestStatements.ClassesAndObjects.IInterface2.Move.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="28b897f5-715c-4b6c-9f63-9d59e7f0c459" Title="IInterface3 Interface" Url="html/T-TestStatements.ClassesAndObjects.IInterface3.htm">
+      <HelpTOCNode Title="IInterface3 Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.IInterface3.htm" />
+      <HelpTOCNode Id="cad43a5e-d1e9-4d1d-8c18-497f0cec4600" Title="IInterface3 Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.IInterface3.htm">
+        <HelpTOCNode Title="Roll Method " Url="html/M-TestStatements.ClassesAndObjects.IInterface3.Roll.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="660ef3ad-792e-4ae8-af1f-28cdb3c2e436" Title="InterfaceTest Class" Url="html/T-TestStatements.ClassesAndObjects.InterfaceTest.htm">
+      <HelpTOCNode Title="InterfaceTest Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.InterfaceTest.htm" />
+      <HelpTOCNode Id="f6ae7655-efc1-4599-a8f8-852ea7c06e19" Title="InterfaceTest Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.InterfaceTest.htm">
+        <HelpTOCNode Title="Run Method " Url="html/M-TestStatements.ClassesAndObjects.InterfaceTest.Run.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c9963c1e-caeb-4f38-8ec7-bdaac03f705c" Title="Members Class" Url="html/T-TestStatements.ClassesAndObjects.Members.htm">
+      <HelpTOCNode Title="Members Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Members.htm" />
+      <HelpTOCNode Id="cc919a84-eba0-4f64-b4d3-49751a484cf1" Title="Members Fields" Url="html/Fields.T-TestStatements.ClassesAndObjects.Members.htm">
+        <HelpTOCNode Title="ConstString Field" Url="html/F-TestStatements.ClassesAndObjects.Members.ConstString.htm" />
+        <HelpTOCNode Title="FieldCount Field" Url="html/F-TestStatements.ClassesAndObjects.Members.FieldCount.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="593123ef-e4d3-4488-bbd3-27b68c67099b" Title="Members Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Members.htm">
+        <HelpTOCNode Title="aMethod Method " Url="html/M-TestStatements.ClassesAndObjects.Members.aMethod.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="202e54fd-1f5a-41ce-b20c-2daf5d6c9325" Title="Members Properties" Url="html/Properties.T-TestStatements.ClassesAndObjects.Members.htm">
+        <HelpTOCNode Title="aProperty Property " Url="html/P-TestStatements.ClassesAndObjects.Members.aProperty.htm" />
+        <HelpTOCNode Title="Item Property " Url="html/P-TestStatements.ClassesAndObjects.Members.Item-System.Int32-.htm" />
+        <HelpTOCNode Title="OnChange Property " Url="html/P-TestStatements.ClassesAndObjects.Members.OnChange.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="9f03d03b-2bd8-48eb-845c-fe55752c097b" Title="TestStatements.ClassesAndObjects.Tests Namespace" Url="html/N-TestStatements.ClassesAndObjects.Tests.htm">
+    <HelpTOCNode Id="511b8e5d-d367-47ab-94b4-9ee5c3079fe8" Title="MembersTests Class" Url="html/T-TestStatements.ClassesAndObjects.Tests.MembersTests.htm">
+      <HelpTOCNode Title="MembersTests Members" Url="html/AllMembers.T-TestStatements.ClassesAndObjects.Tests.MembersTests.htm" />
+      <HelpTOCNode Id="f2570bee-74ca-4b22-bd6f-7b8d17d4c61d" Title="MembersTests Methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.Tests.MembersTests.htm">
+        <HelpTOCNode Title="aMethodTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.aMethodTest.htm" />
+        <HelpTOCNode Title="ConstantTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.ConstantTest.htm" />
+        <HelpTOCNode Title="DelegateTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.DelegateTest.htm" />
+        <HelpTOCNode Title="IndexerTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.IndexerTest.htm" />
+        <HelpTOCNode Title="Init Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.Init.htm" />
+        <HelpTOCNode Title="PropertyTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.PropertyTest.htm" />
+        <HelpTOCNode Title="SetupTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.SetupTest.htm" />
+        <HelpTOCNode Title="VariableTest Method " Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.VariableTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="1a9fbbcc-49c1-46a8-9bbf-677114c81a4f" Title="TestStatements.Collection.Generic Namespace" Url="html/N-TestStatements.Collection.Generic.htm">
+    <HelpTOCNode Id="0de57f30-8408-468f-8a2b-8ff177355ab2" Title="Box Class" Url="html/T-TestStatements.Collection.Generic.Box.htm">
+      <HelpTOCNode Title="Box Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Box.htm" />
+      <HelpTOCNode Title="Box Constructor " Url="html/M-TestStatements.Collection.Generic.Box.-ctor.htm" />
+      <HelpTOCNode Id="14d5b84f-4799-4ae8-b024-c81deec7f875" Title="Box Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Box.htm">
+        <HelpTOCNode Title="CompareTo Method " Url="html/M-TestStatements.Collection.Generic.Box.CompareTo.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="ff0b1d2d-9b13-4382-a257-663f16ae8209" Title="Box Properties" Url="html/Properties.T-TestStatements.Collection.Generic.Box.htm">
+        <HelpTOCNode Title="Height Property " Url="html/P-TestStatements.Collection.Generic.Box.Height.htm" />
+        <HelpTOCNode Title="Length Property " Url="html/P-TestStatements.Collection.Generic.Box.Length.htm" />
+        <HelpTOCNode Title="Width Property " Url="html/P-TestStatements.Collection.Generic.Box.Width.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="cc665868-c961-46ca-84f9-c09957f9ef6f" Title="BoxComp Class" Url="html/T-TestStatements.Collection.Generic.BoxComp.htm">
+      <HelpTOCNode Title="BoxComp Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.BoxComp.htm" />
+      <HelpTOCNode Id="d70ca7c4-652e-4902-9ddb-728f01a2fadd" Title="BoxComp Methods" Url="html/Methods.T-TestStatements.Collection.Generic.BoxComp.htm">
+        <HelpTOCNode Title="Compare Method " Url="html/M-TestStatements.Collection.Generic.BoxComp.Compare.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="630d32cb-76f5-46d5-809d-af14cf6ee09a" Title="BoxLengthFirst Class" Url="html/T-TestStatements.Collection.Generic.BoxLengthFirst.htm">
+      <HelpTOCNode Title="BoxLengthFirst Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.BoxLengthFirst.htm" />
+      <HelpTOCNode Id="46d7fd6c-ac2b-45ae-b614-f97a1e707b4c" Title="BoxLengthFirst Methods" Url="html/Methods.T-TestStatements.Collection.Generic.BoxLengthFirst.htm">
+        <HelpTOCNode Id="4a652741-80f9-44e3-bd2d-0ce00cd928e3" Title="Compare Method " Url="html/Overload-TestStatements.Collection.Generic.BoxLengthFirst.Compare.htm">
+          <HelpTOCNode Title="Compare Method " Url="html/M-TestStatements.Collection.Generic.BoxLengthFirst.Compare.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="cd82e68a-d7d6-45fd-8ab6-00b3a0ddd5a5" Title="ComparerExample Class" Url="html/T-TestStatements.Collection.Generic.ComparerExample.htm">
+      <HelpTOCNode Title="ComparerExample Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.ComparerExample.htm" />
+      <HelpTOCNode Id="abe02390-9dba-4053-abef-a228ed7b419e" Title="ComparerExample Methods" Url="html/Methods.T-TestStatements.Collection.Generic.ComparerExample.htm">
+        <HelpTOCNode Title="ComparerExampleMain Method " Url="html/M-TestStatements.Collection.Generic.ComparerExample.ComparerExampleMain.htm" />
+        <HelpTOCNode Title="ShowLengthFirstComparer Method " Url="html/M-TestStatements.Collection.Generic.ComparerExample.ShowLengthFirstComparer.htm" />
+        <HelpTOCNode Title="ShowSortwithDefaultComparer Method " Url="html/M-TestStatements.Collection.Generic.ComparerExample.ShowSortwithDefaultComparer.htm" />
+        <HelpTOCNode Title="ShowSortWithLengthFirstComparer Method " Url="html/M-TestStatements.Collection.Generic.ComparerExample.ShowSortWithLengthFirstComparer.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c6596b19-928f-49bc-8af7-71e15a9ac2e4" Title="DictionaryExample Class" Url="html/T-TestStatements.Collection.Generic.DictionaryExample.htm">
+      <HelpTOCNode Title="DictionaryExample Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.DictionaryExample.htm" />
+      <HelpTOCNode Id="8f9e9934-1a96-47a3-bd6a-d54c03d96438" Title="DictionaryExample Methods" Url="html/Methods.T-TestStatements.Collection.Generic.DictionaryExample.htm">
+        <HelpTOCNode Title="AddValueWithDiffKeys Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.AddValueWithDiffKeys.htm" />
+        <HelpTOCNode Title="DictionaryExampleMain Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.DictionaryExampleMain.htm" />
+        <HelpTOCNode Title="ShowContainsKey Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowContainsKey.htm" />
+        <HelpTOCNode Title="ShowIndex1 Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowIndex1.htm" />
+        <HelpTOCNode Title="ShowIndex2 Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowIndex2.htm" />
+        <HelpTOCNode Title="ShowIndex4 Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowIndex4.htm" />
+        <HelpTOCNode Title="ShowKeyCollection Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowKeyCollection.htm" />
+        <HelpTOCNode Title="ShowRemove Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowRemove.htm" />
+        <HelpTOCNode Title="ShowTryGetValue Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowTryGetValue.htm" />
+        <HelpTOCNode Title="ShowValueCollection Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowValueCollection.htm" />
+        <HelpTOCNode Title="TryAddExisting Method " Url="html/M-TestStatements.Collection.Generic.DictionaryExample.TryAddExisting.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e48eba6b-9174-4033-8020-615b9c83f94b" Title="DinosaurExample Class" Url="html/T-TestStatements.Collection.Generic.DinosaurExample.htm">
+      <HelpTOCNode Title="DinosaurExample Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.DinosaurExample.htm" />
+      <HelpTOCNode Id="c2e21e49-2d31-4062-95c5-6bc7c40e9415" Title="DinosaurExample Methods" Url="html/Methods.T-TestStatements.Collection.Generic.DinosaurExample.htm">
+        <HelpTOCNode Title="ListDinos Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ListDinos.htm" />
+        <HelpTOCNode Title="ShowClear Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowClear.htm" />
+        <HelpTOCNode Title="ShowContains Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowContains.htm" />
+        <HelpTOCNode Title="ShowCreateData Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowCreateData.htm" />
+        <HelpTOCNode Title="ShowInsert Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowInsert.htm" />
+        <HelpTOCNode Title="ShowItemProperty Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowItemProperty.htm" />
+        <HelpTOCNode Title="ShowRemove Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowRemove.htm" />
+        <HelpTOCNode Title="ShowTrimExcess Method " Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowTrimExcess.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4f1af71b-4eaa-42c4-a28b-ce7114ebc734" Title="Part Class" Url="html/T-TestStatements.Collection.Generic.Part.htm">
+      <HelpTOCNode Title="Part Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Part.htm" />
+      <HelpTOCNode Id="7e0b2870-0aa3-4dd3-9a93-f41382fedd00" Title="Part Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Part.htm">
+        <HelpTOCNode Id="2c90a4d4-184a-4285-bbe7-e9b97a032974" Title="Equals Method " Url="html/Overload-TestStatements.Collection.Generic.Part.Equals.htm">
+          <HelpTOCNode Title="Equals Method (Object)" Url="html/M-TestStatements.Collection.Generic.Part.Equals.htm" />
+          <HelpTOCNode Title="Equals Method (Part)" Url="html/M-TestStatements.Collection.Generic.Part.Equals_1.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetHashCode Method " Url="html/M-TestStatements.Collection.Generic.Part.GetHashCode.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.Collection.Generic.Part.ToString.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b588351e-8df4-4b31-b46d-75e0aa629599" Title="Part Properties" Url="html/Properties.T-TestStatements.Collection.Generic.Part.htm">
+        <HelpTOCNode Title="PartId Property " Url="html/P-TestStatements.Collection.Generic.Part.PartId.htm" />
+        <HelpTOCNode Title="PartName Property " Url="html/P-TestStatements.Collection.Generic.Part.PartName.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="2c0df04d-c04c-4437-bc02-5660748c965f" Title="SortedListExample Class" Url="html/T-TestStatements.Collection.Generic.SortedListExample.htm">
+      <HelpTOCNode Title="SortedListExample Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.SortedListExample.htm" />
+      <HelpTOCNode Id="daebef2c-a44f-4f72-a4f6-91a1753cae23" Title="SortedListExample Methods" Url="html/Methods.T-TestStatements.Collection.Generic.SortedListExample.htm">
+        <HelpTOCNode Title="ShowContainsKey Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowContainsKey.htm" />
+        <HelpTOCNode Title="ShowForEach Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowForEach.htm" />
+        <HelpTOCNode Title="ShowKeys1 Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowKeys1.htm" />
+        <HelpTOCNode Title="ShowKeys2 Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowKeys2.htm" />
+        <HelpTOCNode Title="ShowRemove Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowRemove.htm" />
+        <HelpTOCNode Title="ShowTryGetValue Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowTryGetValue.htm" />
+        <HelpTOCNode Title="ShowValues1 Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowValues1.htm" />
+        <HelpTOCNode Title="ShowValues2 Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.ShowValues2.htm" />
+        <HelpTOCNode Title="SortedListMain Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.SortedListMain.htm" />
+        <HelpTOCNode Title="TestAddExisting Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.TestAddExisting.htm" />
+        <HelpTOCNode Title="TestIndexr Method " Url="html/M-TestStatements.Collection.Generic.SortedListExample.TestIndexr.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="9f5011ff-3808-4d13-9aaa-611065eef945" Title="TestHashSet Class" Url="html/T-TestStatements.Collection.Generic.TestHashSet.htm">
+      <HelpTOCNode Title="TestHashSet Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.TestHashSet.htm" />
+      <HelpTOCNode Id="c7502098-5ccd-4010-9369-2c6c2cd201ef" Title="TestHashSet Methods" Url="html/Methods.T-TestStatements.Collection.Generic.TestHashSet.htm">
+        <HelpTOCNode Title="ShowHashSet Method " Url="html/M-TestStatements.Collection.Generic.TestHashSet.ShowHashSet.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7184d3e9-020d-4ac4-915f-bfb1439b1bf5" Title="TestList Class" Url="html/T-TestStatements.Collection.Generic.TestList.htm">
+      <HelpTOCNode Title="TestList Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.TestList.htm" />
+      <HelpTOCNode Id="e19722a3-74ac-440a-8198-f6c470a62701" Title="TestList Methods" Url="html/Methods.T-TestStatements.Collection.Generic.TestList.htm">
+        <HelpTOCNode Title="ListMain Method " Url="html/M-TestStatements.Collection.Generic.TestList.ListMain.htm" />
+        <HelpTOCNode Title="ShowContains Method " Url="html/M-TestStatements.Collection.Generic.TestList.ShowContains.htm" />
+        <HelpTOCNode Title="ShowIndex Method " Url="html/M-TestStatements.Collection.Generic.TestList.ShowIndex.htm" />
+        <HelpTOCNode Title="ShowInsert Method " Url="html/M-TestStatements.Collection.Generic.TestList.ShowInsert.htm" />
+        <HelpTOCNode Title="ShowRemove1 Method " Url="html/M-TestStatements.Collection.Generic.TestList.ShowRemove1.htm" />
+        <HelpTOCNode Title="ShowRemove2 Method " Url="html/M-TestStatements.Collection.Generic.TestList.ShowRemove2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="99aa9603-cbc5-4802-8505-9b3b48a3c605" Title="TestStatements.Collection.Generic.Tests Namespace" Url="html/N-TestStatements.Collection.Generic.Tests.htm">
+    <HelpTOCNode Id="30b344e0-1668-420c-bac8-5375d9ad38a4" Title="ComparerExampleTests Class" Url="html/T-TestStatements.Collection.Generic.Tests.ComparerExampleTests.htm">
+      <HelpTOCNode Title="ComparerExampleTests Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Tests.ComparerExampleTests.htm" />
+      <HelpTOCNode Id="e08ef0e1-ce9a-47f1-8569-0d34b2f6e2ac" Title="ComparerExampleTests Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.ComparerExampleTests.htm">
+        <HelpTOCNode Title="ComparerExampleMainTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.ComparerExampleMainTest.htm" />
+        <HelpTOCNode Title="CompareTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.CompareTest.htm" />
+        <HelpTOCNode Title="CompareTest1 Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.CompareTest1.htm" />
+        <HelpTOCNode Title="CompareTestD Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.CompareTestD.htm" />
+        <HelpTOCNode Title="ShowLengthFirstComparerTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.ShowLengthFirstComparerTest.htm" />
+        <HelpTOCNode Title="ShowSortwithDefaultComparerTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.ShowSortwithDefaultComparerTest.htm" />
+        <HelpTOCNode Title="ShowSortWithLengthFirstComparerTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.ComparerExampleTests.ShowSortWithLengthFirstComparerTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="cfc882a3-f49e-4fb8-805d-9e6d980c61a9" Title="DictionaryExampleTests Class" Url="html/T-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.htm">
+      <HelpTOCNode Title="DictionaryExampleTests Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.htm" />
+      <HelpTOCNode Id="2ab898b2-9be3-498d-b96f-b522cb2309cb" Title="DictionaryExampleTests Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.htm">
+        <HelpTOCNode Title="DictionaryExampleMainTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.DictionaryExampleMainTest.htm" />
+        <HelpTOCNode Title="ShowContainsKeyTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowContainsKeyTest.htm" />
+        <HelpTOCNode Title="ShowIndex1Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex1Test.htm" />
+        <HelpTOCNode Title="ShowIndex2Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex2Test.htm" />
+        <HelpTOCNode Title="ShowIndex3Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex3Test.htm" />
+        <HelpTOCNode Title="ShowIndex4Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex4Test.htm" />
+        <HelpTOCNode Title="ShowKeyCollectionTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowKeyCollectionTest.htm" />
+        <HelpTOCNode Title="ShowRemoveTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowRemoveTest.htm" />
+        <HelpTOCNode Title="ShowTryGetValueTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowTryGetValueTest.htm" />
+        <HelpTOCNode Title="ShowValueCollectionTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowValueCollectionTest.htm" />
+        <HelpTOCNode Title="TryAddExistingTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DictionaryExampleTests.TryAddExistingTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="0ae13192-32ef-41ef-a983-44e6bf5a127d" Title="DinosaurExampleTests Class" Url="html/T-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.htm">
+      <HelpTOCNode Title="DinosaurExampleTests Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.htm" />
+      <HelpTOCNode Id="a5dbd178-c44e-49d1-9dc5-5b83a82a83c0" Title="DinosaurExampleTests Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.htm">
+        <HelpTOCNode Title="ListDinosTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ListDinosTest.htm" />
+        <HelpTOCNode Title="ShowClearTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowClearTest.htm" />
+        <HelpTOCNode Title="ShowContainsTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowContainsTest.htm" />
+        <HelpTOCNode Title="ShowCreateDataTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowCreateDataTest.htm" />
+        <HelpTOCNode Title="ShowInsertTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowInsertTest.htm" />
+        <HelpTOCNode Title="ShowItemPropertyTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowItemPropertyTest.htm" />
+        <HelpTOCNode Title="ShowRemoveTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowRemoveTest.htm" />
+        <HelpTOCNode Title="ShowTrimExcessTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowTrimExcessTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4b184659-3a67-4ceb-b06c-ce1893d89c9c" Title="SortedListExampleTests Class" Url="html/T-TestStatements.Collection.Generic.Tests.SortedListExampleTests.htm">
+      <HelpTOCNode Title="SortedListExampleTests Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Tests.SortedListExampleTests.htm" />
+      <HelpTOCNode Id="62093c88-5af6-47c0-9367-64f224632162" Title="SortedListExampleTests Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.SortedListExampleTests.htm">
+        <HelpTOCNode Title="ShowContainsKeyTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowContainsKeyTest.htm" />
+        <HelpTOCNode Title="ShowForEachTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowForEachTest.htm" />
+        <HelpTOCNode Title="ShowKeys1Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowKeys1Test.htm" />
+        <HelpTOCNode Title="ShowKeys2Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowKeys2Test.htm" />
+        <HelpTOCNode Title="ShowRemoveTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowRemoveTest.htm" />
+        <HelpTOCNode Title="ShowTryGetValueTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowTryGetValueTest.htm" />
+        <HelpTOCNode Title="ShowValues1Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowValues1Test.htm" />
+        <HelpTOCNode Title="ShowValues2Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowValues2Test.htm" />
+        <HelpTOCNode Title="SortedListMainTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.SortedListMainTest.htm" />
+        <HelpTOCNode Title="TestAddExistingTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.TestAddExistingTest.htm" />
+        <HelpTOCNode Title="TestIndexrTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.TestIndexrTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="bd21fbfe-3d11-48ce-a105-98bf58481328" Title="TestHashSetTests Class" Url="html/T-TestStatements.Collection.Generic.Tests.TestHashSetTests.htm">
+      <HelpTOCNode Title="TestHashSetTests Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Tests.TestHashSetTests.htm" />
+      <HelpTOCNode Id="611044d8-7af1-4d9c-b754-dfd94cbb8108" Title="TestHashSetTests Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.TestHashSetTests.htm">
+        <HelpTOCNode Title="ShowHashSetTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestHashSetTests.ShowHashSetTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="46d928cc-7940-4335-a7cd-01e48a402bad" Title="TestListTests Class" Url="html/T-TestStatements.Collection.Generic.Tests.TestListTests.htm">
+      <HelpTOCNode Title="TestListTests Members" Url="html/AllMembers.T-TestStatements.Collection.Generic.Tests.TestListTests.htm" />
+      <HelpTOCNode Id="96f6d3de-77cd-4959-90ec-1dbdc0627e0a" Title="TestListTests Methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.TestListTests.htm">
+        <HelpTOCNode Title="ListMainTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ListMainTest.htm" />
+        <HelpTOCNode Title="ShowContainsTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowContainsTest.htm" />
+        <HelpTOCNode Title="ShowIndexTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowIndexTest.htm" />
+        <HelpTOCNode Title="ShowInsertTest Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowInsertTest.htm" />
+        <HelpTOCNode Title="ShowRemove1Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowRemove1Test.htm" />
+        <HelpTOCNode Title="ShowRemove2Test Method " Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowRemove2Test.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="d98dc498-5b87-47c2-84d0-f8570db7052e" Title="TestStatements.Constants Namespace" Url="html/N-TestStatements.Constants.htm">
+    <HelpTOCNode Id="e5f33f44-632a-4a1e-a883-8511ee50435c" Title="Constants Class" Url="html/T-TestStatements.Constants.Constants.htm">
+      <HelpTOCNode Title="Constants Members" Url="html/AllMembers.T-TestStatements.Constants.Constants.htm" />
+      <HelpTOCNode Id="0f46721f-8bf7-4e6f-82dd-3810400d55c8" Title="Constants Fields" Url="html/Fields.T-TestStatements.Constants.Constants.htm">
+        <HelpTOCNode Title="Header Field" Url="html/F-TestStatements.Constants.Constants.Header.htm" />
+        <HelpTOCNode Title="Header2 Field" Url="html/F-TestStatements.Constants.Constants.Header2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Constants Methods" Url="html/Methods.T-TestStatements.Constants.Constants.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="a5b10a39-d4da-4e85-a56b-d1ca9a477aa3" Title="TestStatements.CS_Concepts Namespace" Url="html/N-TestStatements.CS_Concepts.htm">
+    <HelpTOCNode Id="146dea12-8fc9-4714-9e47-ce11fe09e083" Title="TypeSystem Class" Url="html/T-TestStatements.CS_Concepts.TypeSystem.htm">
+      <HelpTOCNode Title="TypeSystem Members" Url="html/AllMembers.T-TestStatements.CS_Concepts.TypeSystem.htm" />
+      <HelpTOCNode Id="15438bf1-9817-48fa-a69b-ef87a474e4ad" Title="TypeSystem Methods" Url="html/Methods.T-TestStatements.CS_Concepts.TypeSystem.htm">
+        <HelpTOCNode Title="All Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.All.htm" />
+        <HelpTOCNode Title="DelareVariables Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.DelareVariables.htm" />
+        <HelpTOCNode Title="GetName Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.GetName.htm" />
+        <HelpTOCNode Title="UseOfTypes Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.UseOfTypes.htm" />
+        <HelpTOCNode Title="ValueTypes1 Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.ValueTypes1.htm" />
+        <HelpTOCNode Title="ValueTypes2 Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.ValueTypes2.htm" />
+        <HelpTOCNode Title="ValueTypes3 Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.ValueTypes3.htm" />
+        <HelpTOCNode Title="ValueTypes4 Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.ValueTypes4.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1e351f34-325a-46d5-89f9-b92ec6f6bc2b" Title="TypeSystem.Coords Structure" Url="html/T-TestStatements.CS_Concepts.TypeSystem.Coords.htm">
+      <HelpTOCNode Title="TypeSystem.Coords Members" Url="html/AllMembers.T-TestStatements.CS_Concepts.TypeSystem.Coords.htm" />
+      <HelpTOCNode Title="Coords Constructor " Url="html/M-TestStatements.CS_Concepts.TypeSystem.Coords.-ctor.htm" />
+      <HelpTOCNode Id="2dea04e0-8a95-439e-a90d-711a5c4c54e6" Title="TypeSystem.Coords Fields" Url="html/Fields.T-TestStatements.CS_Concepts.TypeSystem.Coords.htm">
+        <HelpTOCNode Title="x Field" Url="html/F-TestStatements.CS_Concepts.TypeSystem.Coords.x.htm" />
+        <HelpTOCNode Title="y Field" Url="html/F-TestStatements.CS_Concepts.TypeSystem.Coords.y.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="fcb7c6fc-53c1-42d5-b453-11f34576f99a" Title="TypeSystem.Coords Methods" Url="html/Methods.T-TestStatements.CS_Concepts.TypeSystem.Coords.htm">
+        <HelpTOCNode Title="ToString Method " Url="html/M-TestStatements.CS_Concepts.TypeSystem.Coords.ToString.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="TypeSystem.FileMode Enumeration" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
+  </HelpTOCNode>
+  <HelpTOCNode Id="f2c3bea8-6382-4388-ad78-bf89fa065797" Title="TestStatements.DataTypes Namespace" Url="html/N-TestStatements.DataTypes.htm">
+    <HelpTOCNode Id="f8831c99-5edc-427b-b041-48ab0313618d" Title="EnumTest Class" Url="html/T-TestStatements.DataTypes.EnumTest.htm">
+      <HelpTOCNode Title="EnumTest Members" Url="html/AllMembers.T-TestStatements.DataTypes.EnumTest.htm" />
+      <HelpTOCNode Id="fd9c7bd9-420a-4eec-9a84-76c685246024" Title="EnumTest Methods" Url="html/Methods.T-TestStatements.DataTypes.EnumTest.htm">
+        <HelpTOCNode Title="MainTest Method " Url="html/M-TestStatements.DataTypes.EnumTest.MainTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b1d52901-3183-49f6-940b-2333bf5a31ce" Title="Formating Class" Url="html/T-TestStatements.DataTypes.Formating.htm">
+      <HelpTOCNode Title="Formating Members" Url="html/AllMembers.T-TestStatements.DataTypes.Formating.htm" />
+      <HelpTOCNode Id="b2fb48f8-791e-4433-9e48-00f479019018" Title="Formating Fields" Url="html/Fields.T-TestStatements.DataTypes.Formating.htm">
+        <HelpTOCNode Title="GetNow Field" Url="html/F-TestStatements.DataTypes.Formating.GetNow.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="637a6a97-2c5a-44c1-8668-c105c05a0a70" Title="Formating Methods" Url="html/Methods.T-TestStatements.DataTypes.Formating.htm">
+        <HelpTOCNode Title="CodeExamples1 Method " Url="html/M-TestStatements.DataTypes.Formating.CodeExamples1.htm" />
+        <HelpTOCNode Title="CodeExamples2 Method " Url="html/M-TestStatements.DataTypes.Formating.CodeExamples2.htm" />
+        <HelpTOCNode Title="CodeExamples3 Method " Url="html/M-TestStatements.DataTypes.Formating.CodeExamples3.htm" />
+        <HelpTOCNode Title="CodeExamples4 Method " Url="html/M-TestStatements.DataTypes.Formating.CodeExamples4.htm" />
+        <HelpTOCNode Title="CombinedFormating Method " Url="html/M-TestStatements.DataTypes.Formating.CombinedFormating.htm" />
+        <HelpTOCNode Title="EscapeSequence Method " Url="html/M-TestStatements.DataTypes.Formating.EscapeSequence.htm" />
+        <HelpTOCNode Title="IndentationKomponent Method " Url="html/M-TestStatements.DataTypes.Formating.IndentationKomponent.htm" />
+        <HelpTOCNode Title="IndexKomponent Method " Url="html/M-TestStatements.DataTypes.Formating.IndexKomponent.htm" />
+        <HelpTOCNode Title="IndexKomponent2 Method " Url="html/M-TestStatements.DataTypes.Formating.IndexKomponent2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1a9ca0cf-ec36-4dd1-9ab5-512650053abe" Title="IntegratedTypes Class" Url="html/T-TestStatements.DataTypes.IntegratedTypes.htm">
+      <HelpTOCNode Title="IntegratedTypes Members" Url="html/AllMembers.T-TestStatements.DataTypes.IntegratedTypes.htm" />
+      <HelpTOCNode Title="IntegratedTypes Methods" Url="html/Methods.T-TestStatements.DataTypes.IntegratedTypes.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="ce358412-08a2-44ae-9dd6-46269e5dfa63" Title="StringEx Class" Url="html/T-TestStatements.DataTypes.StringEx.htm">
+      <HelpTOCNode Title="StringEx Members" Url="html/AllMembers.T-TestStatements.DataTypes.StringEx.htm" />
+      <HelpTOCNode Id="0f19a22d-5a35-4863-8b59-4466b82a518b" Title="StringEx Methods" Url="html/Methods.T-TestStatements.DataTypes.StringEx.htm">
+        <HelpTOCNode Title="AllTests Method " Url="html/M-TestStatements.DataTypes.StringEx.AllTests.htm" />
+        <HelpTOCNode Title="StringEx1 Method " Url="html/M-TestStatements.DataTypes.StringEx.StringEx1.htm" />
+        <HelpTOCNode Title="StringEx2 Method " Url="html/M-TestStatements.DataTypes.StringEx.StringEx2.htm" />
+        <HelpTOCNode Title="StringEx3 Method " Url="html/M-TestStatements.DataTypes.StringEx.StringEx3.htm" />
+        <HelpTOCNode Title="StringEx4 Method " Url="html/M-TestStatements.DataTypes.StringEx.StringEx4.htm" />
+        <HelpTOCNode Title="StringEx5 Method " Url="html/M-TestStatements.DataTypes.StringEx.StringEx5.htm" />
+        <HelpTOCNode Title="StringSurogarteEx1 Method " Url="html/M-TestStatements.DataTypes.StringEx.StringSurogarteEx1.htm" />
+        <HelpTOCNode Title="UnicodeEx1 Method " Url="html/M-TestStatements.DataTypes.StringEx.UnicodeEx1.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="2345c24a-6b11-4074-a9fd-8aa35053816c" Title="TestStatements.DataTypes.Tests Namespace" Url="html/N-TestStatements.DataTypes.Tests.htm">
+    <HelpTOCNode Id="bbadc935-7d7c-4a73-ac70-3d66c1e37399" Title="EnumTestTests Class" Url="html/T-TestStatements.DataTypes.Tests.EnumTestTests.htm">
+      <HelpTOCNode Title="EnumTestTests Members" Url="html/AllMembers.T-TestStatements.DataTypes.Tests.EnumTestTests.htm" />
+      <HelpTOCNode Id="06f22e4d-d875-43e4-89c8-d153b0afaf37" Title="EnumTestTests Methods" Url="html/Methods.T-TestStatements.DataTypes.Tests.EnumTestTests.htm">
+        <HelpTOCNode Title="MainTestTest Method " Url="html/M-TestStatements.DataTypes.Tests.EnumTestTests.MainTestTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ae2a71df-da3d-4516-b592-6faee8740587" Title="FormatingTests Class" Url="html/T-TestStatements.DataTypes.Tests.FormatingTests.htm">
+      <HelpTOCNode Title="FormatingTests Members" Url="html/AllMembers.T-TestStatements.DataTypes.Tests.FormatingTests.htm" />
+      <HelpTOCNode Id="34f935cf-f517-4bda-b718-62d02720d16e" Title="FormatingTests Methods" Url="html/Methods.T-TestStatements.DataTypes.Tests.FormatingTests.htm">
+        <HelpTOCNode Title="CodeExamples1Test Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.CodeExamples1Test.htm" />
+        <HelpTOCNode Title="CodeExamples2Test Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.CodeExamples2Test.htm" />
+        <HelpTOCNode Title="CodeExamples3Test Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.CodeExamples3Test.htm" />
+        <HelpTOCNode Title="CodeExamples4Test Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.CodeExamples4Test.htm" />
+        <HelpTOCNode Title="CombinedFormatingTest Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.CombinedFormatingTest.htm" />
+        <HelpTOCNode Title="EscapeSequenceTest Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.EscapeSequenceTest.htm" />
+        <HelpTOCNode Title="IndentationKomponentTest Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.IndentationKomponentTest.htm" />
+        <HelpTOCNode Title="IndexKomponent2Test Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.IndexKomponent2Test.htm" />
+        <HelpTOCNode Title="IndexKomponentTest Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.IndexKomponentTest.htm" />
+        <HelpTOCNode Title="Init Method " Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.Init.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="808480e7-c474-40ed-9c7a-6a74b86f91f8" Title="TestStatements.Diagnostics Namespace" Url="html/N-TestStatements.Diagnostics.htm">
+    <HelpTOCNode Id="3dfbae49-df91-4600-ac25-96fb2c2115ff" Title="StopWatchExample Class" Url="html/T-TestStatements.Diagnostics.StopWatchExample.htm">
+      <HelpTOCNode Title="StopWatchExample Members" Url="html/AllMembers.T-TestStatements.Diagnostics.StopWatchExample.htm" />
+      <HelpTOCNode Id="92d99cd0-a2c0-4f50-9077-8d52539aab56" Title="StopWatchExample Methods" Url="html/Methods.T-TestStatements.Diagnostics.StopWatchExample.htm">
+        <HelpTOCNode Title="DisplayTimerProperties Method " Url="html/M-TestStatements.Diagnostics.StopWatchExample.DisplayTimerProperties.htm" />
+        <HelpTOCNode Title="ExampleMain Method " Url="html/M-TestStatements.Diagnostics.StopWatchExample.ExampleMain.htm" />
+        <HelpTOCNode Title="ExampleMain1 Method " Url="html/M-TestStatements.Diagnostics.StopWatchExample.ExampleMain1.htm" />
+        <HelpTOCNode Title="ExampleMain2 Method " Url="html/M-TestStatements.Diagnostics.StopWatchExample.ExampleMain2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="ebdf9547-e2d2-4605-b7e5-d5da41a5a7ef" Title="TestStatements.Helper Namespace" Url="html/N-TestStatements.Helper.htm">
+    <HelpTOCNode Id="90894afd-f58f-4647-8ba4-86026ddb5efa" Title="ExtensionExample Class" Url="html/T-TestStatements.Helper.ExtensionExample.htm">
+      <HelpTOCNode Title="ExtensionExample Members" Url="html/AllMembers.T-TestStatements.Helper.ExtensionExample.htm" />
+      <HelpTOCNode Id="707d3a12-f869-4903-80af-c44e6939611d" Title="ExtensionExample Methods" Url="html/Methods.T-TestStatements.Helper.ExtensionExample.htm">
+        <HelpTOCNode Title="ShowExtensionEx1 Method " Url="html/M-TestStatements.Helper.ExtensionExample.ShowExtensionEx1.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="6297d642-0726-40d1-a7e5-3d790eda4ebd" Title="Extensions Class" Url="html/T-TestStatements.Helper.Extensions.htm">
+      <HelpTOCNode Title="Extensions Members" Url="html/AllMembers.T-TestStatements.Helper.Extensions.htm" />
+      <HelpTOCNode Id="500697e8-abf8-4e8b-833f-2d53b84792d2" Title="Extensions Methods" Url="html/Methods.T-TestStatements.Helper.Extensions.htm">
+        <HelpTOCNode Title="AsDouble Method " Url="html/M-TestStatements.Helper.Extensions.AsDouble.htm" />
+        <HelpTOCNode Title="AsFloat Method " Url="html/M-TestStatements.Helper.Extensions.AsFloat.htm" />
+        <HelpTOCNode Title="AsInt Method " Url="html/M-TestStatements.Helper.Extensions.AsInt.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="3d751415-e5b9-478a-8454-cb4c87f2b521" Title="TestStatements.Linq Namespace" Url="html/N-TestStatements.Linq.htm">
+    <HelpTOCNode Id="2c009603-3cbe-4316-b162-c8d54e143a02" Title="LinqLookup Class" Url="html/T-TestStatements.Linq.LinqLookup.htm">
+      <HelpTOCNode Title="LinqLookup Members" Url="html/AllMembers.T-TestStatements.Linq.LinqLookup.htm" />
+      <HelpTOCNode Id="b4f6ca32-3957-4d8a-b994-b8468943ec0e" Title="LinqLookup Methods" Url="html/Methods.T-TestStatements.Linq.LinqLookup.htm">
+        <HelpTOCNode Title="LookupExample Method " Url="html/M-TestStatements.Linq.LinqLookup.LookupExample.htm" />
+        <HelpTOCNode Title="ShowContains Method " Url="html/M-TestStatements.Linq.LinqLookup.ShowContains.htm" />
+        <HelpTOCNode Title="ShowCount Method " Url="html/M-TestStatements.Linq.LinqLookup.ShowCount.htm" />
+        <HelpTOCNode Title="ShowGrouping Method " Url="html/M-TestStatements.Linq.LinqLookup.ShowGrouping.htm" />
+        <HelpTOCNode Title="ShowIEnumerable Method " Url="html/M-TestStatements.Linq.LinqLookup.ShowIEnumerable.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="a4bef03d-16ab-48c8-9e42-fc4a035bf2b5" Title="Package Class" Url="html/T-TestStatements.Linq.Package.htm">
+      <HelpTOCNode Title="Package Members" Url="html/AllMembers.T-TestStatements.Linq.Package.htm" />
+      <HelpTOCNode Id="013020f0-0e6d-407a-b2cf-3adf7616ab87" Title="Package Fields" Url="html/Fields.T-TestStatements.Linq.Package.htm">
+        <HelpTOCNode Title="Company Field" Url="html/F-TestStatements.Linq.Package.Company.htm" />
+        <HelpTOCNode Title="TrackingNumber Field" Url="html/F-TestStatements.Linq.Package.TrackingNumber.htm" />
+        <HelpTOCNode Title="Weight Field" Url="html/F-TestStatements.Linq.Package.Weight.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Package Methods" Url="html/Methods.T-TestStatements.Linq.Package.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="d9fd10ca-50e3-458b-9537-a03a54328a5f" Title="TestStatements.Linq.Tests Namespace" Url="html/N-TestStatements.Linq.Tests.htm">
+    <HelpTOCNode Id="2bc6ba90-eb8a-44d9-a807-f8ff995e1df6" Title="LinqLookupTests Class" Url="html/T-TestStatements.Linq.Tests.LinqLookupTests.htm">
+      <HelpTOCNode Title="LinqLookupTests Members" Url="html/AllMembers.T-TestStatements.Linq.Tests.LinqLookupTests.htm" />
+      <HelpTOCNode Id="733ddcaa-a04c-45e5-b2bc-26a587652944" Title="LinqLookupTests Methods" Url="html/Methods.T-TestStatements.Linq.Tests.LinqLookupTests.htm">
+        <HelpTOCNode Title="LookupExampleTest Method " Url="html/M-TestStatements.Linq.Tests.LinqLookupTests.LookupExampleTest.htm" />
+        <HelpTOCNode Title="ShowContainsTest Method " Url="html/M-TestStatements.Linq.Tests.LinqLookupTests.ShowContainsTest.htm" />
+        <HelpTOCNode Title="ShowCountTest Method " Url="html/M-TestStatements.Linq.Tests.LinqLookupTests.ShowCountTest.htm" />
+        <HelpTOCNode Title="ShowGroupingTest Method " Url="html/M-TestStatements.Linq.Tests.LinqLookupTests.ShowGroupingTest.htm" />
+        <HelpTOCNode Title="ShowIEnumerableTest Method " Url="html/M-TestStatements.Linq.Tests.LinqLookupTests.ShowIEnumerableTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="49a4f540-6437-4b57-bc71-91edd27babe2" Title="TestStatements.Reflection Namespace" Url="html/N-TestStatements.Reflection.htm">
+    <HelpTOCNode Id="928dade5-7602-4257-a135-828c9c6d49a2" Title="AssemblyExample Class" Url="html/T-TestStatements.Reflection.AssemblyExample.htm">
+      <HelpTOCNode Title="AssemblyExample Members" Url="html/AllMembers.T-TestStatements.Reflection.AssemblyExample.htm" />
+      <HelpTOCNode Title="AssemblyExample Constructor " Url="html/M-TestStatements.Reflection.AssemblyExample.-ctor.htm" />
+      <HelpTOCNode Id="a87fc8b3-d296-439f-8b71-13d02df859bf" Title="AssemblyExample Methods" Url="html/Methods.T-TestStatements.Reflection.AssemblyExample.htm">
+        <HelpTOCNode Title="ExampleMain Method " Url="html/M-TestStatements.Reflection.AssemblyExample.ExampleMain.htm" />
+        <HelpTOCNode Title="SampleMethod Method " Url="html/M-TestStatements.Reflection.AssemblyExample.SampleMethod.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="56dd2d0b-239b-4a50-b4a9-39a29e9df9b0" Title="ReflectionExample Class" Url="html/T-TestStatements.Reflection.ReflectionExample.htm">
+      <HelpTOCNode Title="ReflectionExample Members" Url="html/AllMembers.T-TestStatements.Reflection.ReflectionExample.htm" />
+      <HelpTOCNode Id="3d7f4d82-c953-4ca1-8596-ba7d347c4697" Title="ReflectionExample Methods" Url="html/Methods.T-TestStatements.Reflection.ReflectionExample.htm">
+        <HelpTOCNode Title="ExampleMain Method " Url="html/M-TestStatements.Reflection.ReflectionExample.ExampleMain.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="92639b5f-f8e8-457e-a9d0-a0edbc1b7924" Title="ReflectionExample.INested Interface" Url="html/T-TestStatements.Reflection.ReflectionExample.INested.htm">
+      <HelpTOCNode Title="ReflectionExample.INested Methods" Url="html/Methods.T-TestStatements.Reflection.ReflectionExample.INested.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="74c192e5-95a1-48f6-ab93-218717480d1e" Title="S Structure" Url="html/T-TestStatements.Reflection.S.htm">
+      <HelpTOCNode Title="S Members" Url="html/AllMembers.T-TestStatements.Reflection.S.htm" />
+      <HelpTOCNode Id="15882acf-3018-4cc4-9805-1ab2d61d8ad9" Title="S Fields" Url="html/Fields.T-TestStatements.Reflection.S.htm">
+        <HelpTOCNode Title="X Field" Url="html/F-TestStatements.Reflection.S.X.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="S Methods" Url="html/Methods.T-TestStatements.Reflection.S.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="c2fe013e-e5db-4155-8d41-95ce96214028" Title="TestStatements.Reflection.Tests Namespace" Url="html/N-TestStatements.Reflection.Tests.htm">
+    <HelpTOCNode Id="a0a148d5-5201-48af-8d3e-7b87368e29b6" Title="AssemblyExampleTests Class" Url="html/T-TestStatements.Reflection.Tests.AssemblyExampleTests.htm">
+      <HelpTOCNode Title="AssemblyExampleTests Members" Url="html/AllMembers.T-TestStatements.Reflection.Tests.AssemblyExampleTests.htm" />
+      <HelpTOCNode Id="cdb33658-1eb9-47d3-ad1e-6dce8e9bfcc3" Title="AssemblyExampleTests Methods" Url="html/Methods.T-TestStatements.Reflection.Tests.AssemblyExampleTests.htm">
+        <HelpTOCNode Title="AssemblyExampleTest Method " Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.AssemblyExampleTest.htm" />
+        <HelpTOCNode Title="ExampleMainTest Method " Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.ExampleMainTest.htm" />
+        <HelpTOCNode Title="SampleDataMethodTest Method " Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.SampleDataMethodTest.htm" />
+        <HelpTOCNode Title="SampleMethodTest Method " Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.SampleMethodTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e6806465-95fa-47d9-9709-7595a6547584" Title="ReflectionExampleTests Class" Url="html/T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm">
+      <HelpTOCNode Title="ReflectionExampleTests Members" Url="html/AllMembers.T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm" />
+      <HelpTOCNode Id="45338549-f896-42d3-be80-11e16a9d005e" Title="ReflectionExampleTests Methods" Url="html/Methods.T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm">
+        <HelpTOCNode Title="ExampleMainTest Method " Url="html/M-TestStatements.Reflection.Tests.ReflectionExampleTests.ExampleMainTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="290fdc3e-e81d-42e6-8164-9256ebf7742b" Title="TestStatements.SystemNS Namespace" Url="html/N-TestStatements.SystemNS.htm">
+    <HelpTOCNode Id="c8f74f2c-6083-49c3-bed5-8486cc55b4cc" Title="System_Namespace Class" Url="html/T-TestStatements.SystemNS.System_Namespace.htm">
+      <HelpTOCNode Title="System_Namespace Methods" Url="html/Methods.T-TestStatements.SystemNS.System_Namespace.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="f8c91876-6e39-47b9-9e25-ebbb63db4ca7" Title="TestStatements.SystemNS.Xml Namespace" Url="html/N-TestStatements.SystemNS.Xml.htm">
+    <HelpTOCNode Id="427c03b3-fb3d-4c93-9c86-e9a85f3fc0a8" Title="XmlNS Class" Url="html/T-TestStatements.SystemNS.Xml.XmlNS.htm">
+      <HelpTOCNode Title="XmlNS Members" Url="html/AllMembers.T-TestStatements.SystemNS.Xml.XmlNS.htm" />
+      <HelpTOCNode Id="6df1369b-795d-48cd-ac6a-21029edbd6ac" Title="XmlNS Methods" Url="html/Methods.T-TestStatements.SystemNS.Xml.XmlNS.htm">
+        <HelpTOCNode Title="XmlTest1 Method " Url="html/M-TestStatements.SystemNS.Xml.XmlNS.XmlTest1.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="432f73c4-bedb-4441-b493-45244cd2a1bc" Title="TestStatements.SystemNS.Xml.Tests Namespace" Url="html/N-TestStatements.SystemNS.Xml.Tests.htm">
+    <HelpTOCNode Id="31b72ba4-1864-4d1a-97da-79ac6525d59e" Title="XmlNSTests Class" Url="html/T-TestStatements.SystemNS.Xml.Tests.XmlNSTests.htm">
+      <HelpTOCNode Title="XmlNSTests Members" Url="html/AllMembers.T-TestStatements.SystemNS.Xml.Tests.XmlNSTests.htm" />
+      <HelpTOCNode Id="1804aa49-09c4-48ec-9e47-fbabc05d0a5c" Title="XmlNSTests Methods" Url="html/Methods.T-TestStatements.SystemNS.Xml.Tests.XmlNSTests.htm">
+        <HelpTOCNode Title="XmlTest1Test Method " Url="html/M-TestStatements.SystemNS.Xml.Tests.XmlNSTests.XmlTest1Test.htm" />
+        <HelpTOCNode Title="XmlTest2Test Method " Url="html/M-TestStatements.SystemNS.Xml.Tests.XmlNSTests.XmlTest2Test.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="46ea0786-facd-4d49-86b2-a947221641fe" Title="TestStatements.Threading.Tasks Namespace" Url="html/N-TestStatements.Threading.Tasks.htm">
+    <HelpTOCNode Id="3bc12041-4f7d-4ba9-a37f-ed66356289f3" Title="AsyncBreakfast Class" Url="html/T-TestStatements.Threading.Tasks.AsyncBreakfast.htm">
+      <HelpTOCNode Title="AsyncBreakfast Members" Url="html/AllMembers.T-TestStatements.Threading.Tasks.AsyncBreakfast.htm" />
+      <HelpTOCNode Id="38ccba9b-5c7d-493c-8710-e38d7d728a0d" Title="AsyncBreakfast Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.AsyncBreakfast.htm">
+        <HelpTOCNode Title="AsyncBreakfast_Main Method " Url="html/M-TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main.htm" />
+        <HelpTOCNode Title="AsyncBreakfast_Main2 Method " Url="html/M-TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main2.htm" />
+        <HelpTOCNode Title="AsyncBreakfast_Main3 Method " Url="html/M-TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main3.htm" />
+        <HelpTOCNode Title="AsyncBreakfast_Main4 Method " Url="html/M-TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main4.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="fae0b20a-b8f8-4ffc-a50b-4512c1dbc9ed" Title="Bacon Class" Url="html/T-TestStatements.Threading.Tasks.Bacon.htm">
+      <HelpTOCNode Title="Bacon Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Bacon.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="9cbfd1a6-2734-476b-8a84-85299737d9d3" Title="Coffee Class" Url="html/T-TestStatements.Threading.Tasks.Coffee.htm">
+      <HelpTOCNode Title="Coffee Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Coffee.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="0ec35440-2cd4-4e39-9272-a78fa85f4ee6" Title="Egg Class" Url="html/T-TestStatements.Threading.Tasks.Egg.htm">
+      <HelpTOCNode Title="Egg Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Egg.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="6cdb6ace-35d1-4722-87e1-6e9777d03b49" Title="Juice Class" Url="html/T-TestStatements.Threading.Tasks.Juice.htm">
+      <HelpTOCNode Title="Juice Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Juice.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="cfd99994-6d32-4b68-b696-aba3835241ce" Title="TaskExample Class" Url="html/T-TestStatements.Threading.Tasks.TaskExample.htm">
+      <HelpTOCNode Title="TaskExample Members" Url="html/AllMembers.T-TestStatements.Threading.Tasks.TaskExample.htm" />
+      <HelpTOCNode Id="05e3ceee-b808-4fc9-8879-8a0fde19bff8" Title="TaskExample Fields" Url="html/Fields.T-TestStatements.Threading.Tasks.TaskExample.htm">
+        <HelpTOCNode Title="random Field" Url="html/F-TestStatements.Threading.Tasks.TaskExample.random.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4bbeead0-68be-4cad-94cc-499c8bdcd24d" Title="TaskExample Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.TaskExample.htm">
+        <HelpTOCNode Title="ExampleMain Method " Url="html/M-TestStatements.Threading.Tasks.TaskExample.ExampleMain.htm" />
+        <HelpTOCNode Title="ExampleMain1 Method " Url="html/M-TestStatements.Threading.Tasks.TaskExample.ExampleMain1.htm" />
+        <HelpTOCNode Title="ExampleMain2 Method " Url="html/M-TestStatements.Threading.Tasks.TaskExample.ExampleMain2.htm" />
+        <HelpTOCNode Title="ExampleMain3 Method " Url="html/M-TestStatements.Threading.Tasks.TaskExample.ExampleMain3.htm" />
+        <HelpTOCNode Title="ExampleMain4 Method " Url="html/M-TestStatements.Threading.Tasks.TaskExample.ExampleMain4.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="04b5932c-3d5f-4f45-9b60-a35871855a1e" Title="Toast Class" Url="html/T-TestStatements.Threading.Tasks.Toast.htm">
+      <HelpTOCNode Title="Toast Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Toast.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="7e55348b-8e7c-4268-bad0-eaff3a7b2a4a" Title="TestStatements.Threading.Tasks.Tests Namespace" Url="html/N-TestStatements.Threading.Tasks.Tests.htm">
+    <HelpTOCNode Id="37c27d0b-d455-4f4b-8aaa-6a6205f9abe5" Title="TaskExampleTests Class" Url="html/T-TestStatements.Threading.Tasks.Tests.TaskExampleTests.htm">
+      <HelpTOCNode Title="TaskExampleTests Members" Url="html/AllMembers.T-TestStatements.Threading.Tasks.Tests.TaskExampleTests.htm" />
+      <HelpTOCNode Id="b4a48cbc-fe86-491c-88ae-1a0aa9d4d676" Title="TaskExampleTests Methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Tests.TaskExampleTests.htm">
+        <HelpTOCNode Title="ExampleMain1Test Method " Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain1Test.htm" />
+        <HelpTOCNode Title="ExampleMain2Test Method " Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain2Test.htm" />
+        <HelpTOCNode Title="ExampleMain3Test Method " Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain3Test.htm" />
+        <HelpTOCNode Title="ExampleMain4Test Method " Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain4Test.htm" />
+        <HelpTOCNode Title="ExampleMainTest Method " Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMainTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="f4a52f8e-a929-4f7d-ae28-04be5bc23ff4" Title="TestStatements.UnitTesting Namespace" Url="html/N-TestStatements.UnitTesting.htm">
+    <HelpTOCNode Id="422c8a19-0f46-4394-bc44-90a2cb794391" Title="ConsoleTestsBase Class" Url="html/T-TestStatements.UnitTesting.ConsoleTestsBase.htm">
+      <HelpTOCNode Title="ConsoleTestsBase Members" Url="html/AllMembers.T-TestStatements.UnitTesting.ConsoleTestsBase.htm" />
+      <HelpTOCNode Title="ConsoleTestsBase Methods" Url="html/Methods.T-TestStatements.UnitTesting.ConsoleTestsBase.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="321ad380-5b41-460f-8c03-ae2bc6fcdc3d" Title="TestStatements.UnitTesting.Tests Namespace" Url="html/N-TestStatements.UnitTesting.Tests.htm">
+    <HelpTOCNode Id="71de5934-0037-4d3c-a19b-fc9ddcd7da50" Title="DataTests Class" Url="html/T-TestStatements.UnitTesting.Tests.DataTests.htm">
+      <HelpTOCNode Title="DataTests Members" Url="html/AllMembers.T-TestStatements.UnitTesting.Tests.DataTests.htm" />
+      <HelpTOCNode Id="7758f74b-9037-4bc3-8cbe-5d7a5fc37158" Title="DataTests Methods" Url="html/Methods.T-TestStatements.UnitTesting.Tests.DataTests.htm">
+        <HelpTOCNode Title="AssemblyExampleTest Method " Url="html/M-TestStatements.UnitTesting.Tests.DataTests.AssemblyExampleTest.htm" />
+        <HelpTOCNode Title="Dummy Method " Url="html/M-TestStatements.UnitTesting.Tests.DataTests.Dummy.htm" />
+        <HelpTOCNode Title="SampleDataMethodTest Method " Url="html/M-TestStatements.UnitTesting.Tests.DataTests.SampleDataMethodTest.htm" />
+        <HelpTOCNode Title="SampleDataPropertyTest Method " Url="html/M-TestStatements.UnitTesting.Tests.DataTests.SampleDataPropertyTest.htm" />
+        <HelpTOCNode Title="SampleMethodTest Method " Url="html/M-TestStatements.UnitTesting.Tests.DataTests.SampleMethodTest.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="3fc58ac9-ada4-433b-8348-ead7f93c43bf" Title="TestStatementsNew.Anweisungen Namespace" Url="html/N-TestStatementsNew.Anweisungen.htm">
+    <HelpTOCNode Id="c898523d-1e0c-4f4d-8c9d-d06ec15a6d90" Title="Bus Class" Url="html/T-TestStatementsNew.Anweisungen.Bus.htm">
+      <HelpTOCNode Title="Bus Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Bus.htm" />
+      <HelpTOCNode Title="Bus Constructor " Url="html/M-TestStatementsNew.Anweisungen.Bus.-ctor.htm" />
+      <HelpTOCNode Title="Bus Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Bus.htm" />
+      <HelpTOCNode Title="Bus Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Bus.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="627883d5-8be6-469b-a130-4b56d308d330" Title="Car Class" Url="html/T-TestStatementsNew.Anweisungen.Car.htm">
+      <HelpTOCNode Title="Car Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Car.htm" />
+      <HelpTOCNode Id="c4220914-d8f5-4987-bec3-1015d688a7d3" Title="Car Constructor " Url="html/Overload-TestStatementsNew.Anweisungen.Car.-ctor.htm">
+        <HelpTOCNode Title="Car Constructor (Int32)" Url="html/M-TestStatementsNew.Anweisungen.Car.-ctor.htm" />
+        <HelpTOCNode Title="Car Constructor " Url="html/M-TestStatementsNew.Anweisungen.Car.-ctor_1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Car Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Car.htm" />
+      <HelpTOCNode Title="Car Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Car.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="7be73184-9d74-4274-a1c4-16c841fa7420" Title="DeliveryTruck Class" Url="html/T-TestStatementsNew.Anweisungen.DeliveryTruck.htm">
+      <HelpTOCNode Title="DeliveryTruck Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
+      <HelpTOCNode Id="bd648656-0f80-486e-9f6a-4895b6f5049c" Title="DeliveryTruck Constructor " Url="html/Overload-TestStatementsNew.Anweisungen.DeliveryTruck.-ctor.htm">
+        <HelpTOCNode Title="DeliveryTruck Constructor " Url="html/M-TestStatementsNew.Anweisungen.DeliveryTruck.-ctor.htm" />
+        <HelpTOCNode Title="DeliveryTruck Constructor (Int32)" Url="html/M-TestStatementsNew.Anweisungen.DeliveryTruck.-ctor_1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="DeliveryTruck Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
+      <HelpTOCNode Title="DeliveryTruck Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="04ba8c8b-4b92-4696-a199-fe53a40ae5b4" Title="LightTruck Class" Url="html/T-TestStatementsNew.Anweisungen.LightTruck.htm">
+      <HelpTOCNode Title="LightTruck Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
+      <HelpTOCNode Id="b031adbb-5966-4a0d-bc59-34fe47862b5e" Title="LightTruck Constructor " Url="html/Overload-TestStatementsNew.Anweisungen.LightTruck.-ctor.htm">
+        <HelpTOCNode Title="LightTruck Constructor " Url="html/M-TestStatementsNew.Anweisungen.LightTruck.-ctor.htm" />
+        <HelpTOCNode Title="LightTruck Constructor (Int32)" Url="html/M-TestStatementsNew.Anweisungen.LightTruck.-ctor_1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="LightTruck Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
+      <HelpTOCNode Title="LightTruck Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="87cb3eef-28c3-42ca-a9cd-6e9261e0f1fd" Title="SwitchStatement3 Class" Url="html/T-TestStatementsNew.Anweisungen.SwitchStatement3.htm">
+      <HelpTOCNode Title="SwitchStatement3 Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
+      <HelpTOCNode Id="588944c8-fd2b-4561-b297-68bed31ad141" Title="SwitchStatement3 Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.SwitchStatement3.htm">
+        <HelpTOCNode Title="ShowTollCollector Method " Url="html/M-TestStatementsNew.Anweisungen.SwitchStatement3.ShowTollCollector.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="2970b911-ea74-454e-b91a-e3a77f1535ef" Title="Taxi Class" Url="html/T-TestStatementsNew.Anweisungen.Taxi.htm">
+      <HelpTOCNode Title="Taxi Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Taxi.htm" />
+      <HelpTOCNode Id="216e88ad-8c35-468a-94d3-457e1e135838" Title="Taxi Constructor " Url="html/Overload-TestStatementsNew.Anweisungen.Taxi.-ctor.htm">
+        <HelpTOCNode Title="Taxi Constructor (Int32)" Url="html/M-TestStatementsNew.Anweisungen.Taxi.-ctor.htm" />
+        <HelpTOCNode Title="Taxi Constructor " Url="html/M-TestStatementsNew.Anweisungen.Taxi.-ctor_1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Taxi Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Taxi.htm" />
+      <HelpTOCNode Title="Taxi Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Taxi.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="0ff52db7-3c91-4c86-83fd-5f65ebe0214f" Title="TollCalculator Class" Url="html/T-TestStatementsNew.Anweisungen.TollCalculator.htm">
+      <HelpTOCNode Title="TollCalculator Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
+      <HelpTOCNode Id="fac0a484-36fb-4575-a080-899ccc233f20" Title="TollCalculator Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.TollCalculator.htm">
+        <HelpTOCNode Title="CalculateToll Method " Url="html/M-TestStatementsNew.Anweisungen.TollCalculator.CalculateToll.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="f3f0ef3d-0532-4be3-8f78-5796fef22cef" Title="Truck Class" Url="html/T-TestStatementsNew.Anweisungen.Truck.htm">
+      <HelpTOCNode Title="Truck Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Truck.htm" />
+      <HelpTOCNode Id="f32d32ce-021c-4506-a3c7-266f0379f545" Title="Truck Constructor " Url="html/Overload-TestStatementsNew.Anweisungen.Truck.-ctor.htm">
+        <HelpTOCNode Title="Truck Constructor " Url="html/M-TestStatementsNew.Anweisungen.Truck.-ctor.htm" />
+        <HelpTOCNode Title="Truck Constructor (Int32)" Url="html/M-TestStatementsNew.Anweisungen.Truck.-ctor_1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Truck Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Truck.htm" />
+      <HelpTOCNode Title="Truck Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Truck.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="45dc33cd-3b1f-4590-9b1c-80c6ac190673" Title="Vehicle Class" Url="html/T-TestStatementsNew.Anweisungen.Vehicle.htm">
+      <HelpTOCNode Title="Vehicle Members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
+      <HelpTOCNode Id="95ff8d51-ac9d-4949-b24e-f4fa48b78198" Title="Vehicle Constructor " Url="html/Overload-TestStatementsNew.Anweisungen.Vehicle.-ctor.htm">
+        <HelpTOCNode Title="Vehicle Constructor " Url="html/M-TestStatementsNew.Anweisungen.Vehicle.-ctor.htm" />
+        <HelpTOCNode Title="Vehicle Constructor (Int32)" Url="html/M-TestStatementsNew.Anweisungen.Vehicle.-ctor_1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Vehicle Methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
+      <HelpTOCNode Id="ba6fe44a-6161-412a-8945-786ca133d401" Title="Vehicle Properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Vehicle.htm">
+        <HelpTOCNode Title="Capacity Property " Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Capacity.htm" />
+        <HelpTOCNode Title="fee Property " Url="html/P-TestStatementsNew.Anweisungen.Vehicle.fee.htm" />
+        <HelpTOCNode Title="Persons Property " Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Persons.htm" />
+        <HelpTOCNode Title="Weight Property " Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Weight.htm" />
+        <HelpTOCNode Title="WeightClass Property " Url="html/P-TestStatementsNew.Anweisungen.Vehicle.WeightClass.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="464c60ac-db72-493a-94c0-cd37c4e9cae8" Title="TestStatementTest.UnitTesting Namespace" Url="html/N-TestStatementTest.UnitTesting.htm">
+    <HelpTOCNode Id="1168bbaf-cb38-41f9-b8fd-a25567897a95" Title="UnitTest1 Class" Url="html/T-TestStatementTest.UnitTesting.UnitTest1.htm">
+      <HelpTOCNode Title="UnitTest1 Members" Url="html/AllMembers.T-TestStatementTest.UnitTesting.UnitTest1.htm" />
+      <HelpTOCNode Id="f295175c-249f-44ca-8483-7a2f8f3d4ad0" Title="UnitTest1 Methods" Url="html/Methods.T-TestStatementTest.UnitTesting.UnitTest1.htm">
+        <HelpTOCNode Title="DataTestOpenArray Method " Url="html/M-TestStatementTest.UnitTesting.UnitTest1.DataTestOpenArray.htm" />
+        <HelpTOCNode Title="DataTestOpenArrayParams Method " Url="html/M-TestStatementTest.UnitTesting.UnitTest1.DataTestOpenArrayParams.htm" />
+        <HelpTOCNode Title="DataTestPropertyTest Method " Url="html/M-TestStatementTest.UnitTesting.UnitTest1.DataTestPropertyTest.htm" />
+        <HelpTOCNode Title="TestMethod1 Method " Url="html/M-TestStatementTest.UnitTesting.UnitTest1.TestMethod1.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="ea999014-fa60-4f03-a10d-a2ba70da1b68" Title="Tutorials Namespace" Url="html/N-Tutorials.htm">
+    <HelpTOCNode Id="aef6dd28-6a01-4188-a5b2-f052b175a194" Title="Program Class" Url="html/T-Tutorials.Program.htm">
+      <HelpTOCNode Title="Program Members" Url="html/AllMembers.T-Tutorials.Program.htm" />
+      <HelpTOCNode Title="Program Methods" Url="html/Methods.T-Tutorials.Program.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="2e0ad0c7-f855-454d-b5bc-8b7adc2d9a1c" Title="Tutorials.DeclarationOfVariables Namespace" Url="html/N-Tutorials.DeclarationOfVariables.htm">
+    <HelpTOCNode Id="5c5d8e82-1987-4992-a56b-d596f001d31d" Title="UseVariables Class" Url="html/T-Tutorials.DeclarationOfVariables.UseVariables.htm">
+      <HelpTOCNode Title="UseVariables Methods" Url="html/Methods.T-Tutorials.DeclarationOfVariables.UseVariables.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="7775b60d-f468-42cf-a00a-c0bc098f2368" Title="Tutorials.HelloWorld Namespace" Url="html/N-Tutorials.HelloWorld.htm">
+    <HelpTOCNode Id="e7387a7f-8a7a-4021-9924-b65cf43868fb" Title="HelloWorldClass Class" Url="html/T-Tutorials.HelloWorld.HelloWorldClass.htm">
+      <HelpTOCNode Title="HelloWorldClass Members" Url="html/AllMembers.T-Tutorials.HelloWorld.HelloWorldClass.htm" />
+      <HelpTOCNode Id="bd5060d2-e21c-4ca2-a8cd-d94d2a831f5c" Title="HelloWorldClass Methods" Url="html/Methods.T-Tutorials.HelloWorld.HelloWorldClass.htm">
+        <HelpTOCNode Title="HelloWorld Method " Url="html/M-Tutorials.HelloWorld.HelloWorldClass.HelloWorld.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+</HelpTOC>

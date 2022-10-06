@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestStatements.Anweisungen;
 using System;
 using System.Collections.Generic;
@@ -8,17 +8,26 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Anweisungen.Tests
 {
+    /// <summary>
+    /// Defines test class AccountTests.
+    /// </summary>
     [TestClass()]
     public class AccountTests
     {
         private Account Faccount = null;
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         [TestInitialize()]
         public void Init()
         {
             Faccount = new Account();
         }
 
+        /// <summary>
+        /// Defines the test method TestSetup.
+        /// </summary>
         [TestMethod()]
         public void TestSetup()
         {
@@ -26,12 +35,18 @@ namespace TestStatements.Anweisungen.Tests
             Assert.AreEqual(0, Faccount.Balance);
         }
 
+        /// <summary>
+        /// Defines the test method AccountTest.
+        /// </summary>
         [TestMethod()]
         public void AccountTest()
         {
             Assert.IsInstanceOfType(Faccount, typeof(Account));
         }
 
+        /// <summary>
+        /// Defines the test method WithdrawTest.
+        /// </summary>
         [TestMethod()]
         public void WithdrawTest()
         {

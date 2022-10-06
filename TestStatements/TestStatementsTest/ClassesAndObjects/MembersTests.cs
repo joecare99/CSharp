@@ -8,17 +8,26 @@ using System.Threading.Tasks;
 
 namespace TestStatements.ClassesAndObjects.Tests
 {
+    /// <summary>
+    /// Defines test class MembersTests.
+    /// </summary>
     [TestClass()]
     public class MembersTests
     {
         private readonly string csExpectedConstString = "This is a constant string!";
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         [TestInitialize()]
         public void Init()
         {
             Members.FieldCount = 0;
         }
 
+        /// <summary>
+        /// Defines the test method SetupTest.
+        /// </summary>
         [TestMethod()]
         public void SetupTest()
         {
@@ -26,12 +35,18 @@ namespace TestStatements.ClassesAndObjects.Tests
             Assert.AreEqual(0, nChanges);
         }
 
+        /// <summary>
+        /// Defines the test method ConstantTest.
+        /// </summary>
         [TestMethod()]
         public void ConstantTest()
         {
             Assert.AreEqual(csExpectedConstString, Members.ConstString);
         }
 
+        /// <summary>
+        /// Defines the test method VariableTest.
+        /// </summary>
         [TestMethod()]
         public void VariableTest()
         {
@@ -57,6 +72,9 @@ namespace TestStatements.ClassesAndObjects.Tests
             }
         }
 
+        /// <summary>
+        /// Defines the test method aMethodTest.
+        /// </summary>
         [TestMethod()]
         public void aMethodTest()
         {
@@ -64,6 +82,9 @@ namespace TestStatements.ClassesAndObjects.Tests
             Assert.AreEqual(3, Members.FieldCount);
         }
 
+        /// <summary>
+        /// Defines the test method PropertyTest.
+        /// </summary>
         [TestMethod()]
         public void PropertyTest()
         {
@@ -79,6 +100,9 @@ namespace TestStatements.ClassesAndObjects.Tests
             Assert.AreEqual(int.MinValue, Members.aProperty);
         }
 
+        /// <summary>
+        /// Defines the test method IndexerTest.
+        /// </summary>
         [TestMethod()]
         public void IndexerTest()
         {
@@ -96,6 +120,9 @@ namespace TestStatements.ClassesAndObjects.Tests
             nChanges++;
         }
 
+        /// <summary>
+        /// Defines the test method DelegateTest.
+        /// </summary>
         [TestMethod()]
         public void DelegateTest()
         {

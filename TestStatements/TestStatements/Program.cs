@@ -1,4 +1,17 @@
-ï»¿using System;
+// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 07-12-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="Program.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +24,28 @@ using TestStatements.Diagnostics;
 using TestStatements.Reflection;
 using TestStatements.Linq;
 using TestStatements.CS_Concepts;
+using TestStatements.ClassesAndObjects;
+using TestStatements.Helper;
+using TestStatements.Runtime.Loader;
 
 namespace TestStatements
 {
-     class Program
+    /// <summary>
+    /// Class Program.
+    /// </summary>
+    class Program
     {
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
         static void Main(string[] args)
         {
+			foreach (var s in Properties.Resource1.Version.Split(new string[] {"\r\n"},StringSplitOptions.None))
+			  Console.WriteLine(s.Substring(s.IndexOf(']')+1));
+            Console.WriteLine();
+            RTLoaderExample.Main(args);
+            DebugExample.Main();
             Declarations.DoVarDeclarations(args);
             Declarations.DoConstantDeclarations(args);
             TypeSystem.All();          
@@ -37,6 +65,8 @@ namespace TestStatements
             Checking.CheckedUnchecked(args);
             Locking.DoLockTest(args);
             UsingStatement.DoUsingStatement(args);
+            // ClassesAndObjects
+            InterfaceTest.Run();
             // Datatypes
             EnumTest.MainTest();
             StringEx.AllTests();
@@ -68,8 +98,14 @@ namespace TestStatements
             StopWatchExample.ExampleMain();
             AssemblyExample.ExampleMain();
             ReflectionExample.ExampleMain();
+            AsyncBreakfast.AsyncBreakfast_Main(args);
+            AsyncBreakfast.AsyncBreakfast_Main2(args).Wait();
+            AsyncBreakfast.AsyncBreakfast_Main3(args).Wait();
+            AsyncBreakfast.AsyncBreakfast_Main4(args).Wait();
             Console.WriteLine("===============================================");
             Console.Write("<Enter> to continue");
+            // Extension
+            ExtensionExample.ShowExtensionEx1();
             // Linq
             LinqLookup.LookupExample();
 

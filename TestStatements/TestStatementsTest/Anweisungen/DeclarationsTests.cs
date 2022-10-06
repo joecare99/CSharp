@@ -4,6 +4,12 @@ using System.IO;
 
 namespace TestStatements.Anweisungen.Tests
 {
+    /// <summary>
+    /// Defines test class DeclarationsTests.
+    /// </summary>
+    /// <summary>
+    /// Defines test class DeclarationsTests.
+    /// </summary>
     [TestClass()]
     public class DeclarationsTests
     {
@@ -12,10 +18,16 @@ namespace TestStatements.Anweisungen.Tests
                  "## Deklaration von Variablen \r\n" +
                  "======================================================================\r\n6\r";
 
+        /// <summary>
+        /// The expected2
+        /// </summary>
         private const string Expected2 = "======================================================================\r\n" +
                  "## Deklaration von Konstanten \r\n" +
                  "======================================================================\r\n1963,495";
 
+        /// <summary>
+        /// Defines the test method DoVarDeclarationsTest.
+        /// </summary>
         [TestMethod()]
         public void DoVarDeclarationsTest()
         {
@@ -36,6 +48,9 @@ namespace TestStatements.Anweisungen.Tests
             }
         }
 
+        /// <summary>
+        /// Defines the test method DoConstantDeclarationsTest.
+        /// </summary>
         [TestMethod()]
         public void DoConstantDeclarationsTest()
         {

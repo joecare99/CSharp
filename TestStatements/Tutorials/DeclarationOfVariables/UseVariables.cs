@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tutorials.DeclarationOfVariables
 {
+    /// <summary>
+    /// Class UseVariables.
+    /// </summary>
     class UseVariables
     {
     }

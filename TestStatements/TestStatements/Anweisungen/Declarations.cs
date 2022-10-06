@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="Declarations.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +20,14 @@ using TestStatements.Constants;
 
 namespace TestStatements.Anweisungen
 {
+    /// <summary>
+    /// Class Declarations.
+    /// </summary>
     public class Declarations
     {
-        /// <summary>Does variable declarations.</summary>
+        /// <summary>
+        /// Does variable declarations.
+        /// </summary>
         /// <param name="args">The arguments.</param>
         public static void DoVarDeclarations(string[] args)
         {
@@ -21,7 +39,9 @@ namespace TestStatements.Anweisungen
             Console.WriteLine(a + b + c);
         }
 
-        /// <summary>Does constant declarations.</summary>
+        /// <summary>
+        /// Does constant declarations.
+        /// </summary>
         /// <param name="args">The arguments.</param>
         public static void DoConstantDeclarations(string[] args)
         {
