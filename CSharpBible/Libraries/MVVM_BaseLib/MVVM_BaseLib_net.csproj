@@ -1,0 +1,31 @@
+﻿<Project>
+	<PropertyGroup>
+		<!--
+		<TargetFramework>net48-windows</TargetFramework>
+		<TargetFrameworks>net48-windows;net6.0-windows</TargetFrameworks>
+		-->
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<!-->UseWPF>true</UseWPF-->
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<LangVersion>8.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<DefineConstants>NULLABLE</DefineConstants>
+  </PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Include="..\BaseLib\Helper\Property.cs" Link="Helper\Property.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	</ItemGroup>
+
+</Project>

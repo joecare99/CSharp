@@ -42,6 +42,7 @@
 /TestStatements/TestClockApp/obj
 /TestStatements/TestStatements/obj
 /TestStatements/TestStatementsTest/obj
+/TestStatements/Tutorials/obj
 /CSharpProgrammierHandbuch/.vs
 /CSharpProgrammierHandbuch/Fibonacci/obj
 /CSharpProgrammierHandbuch/HelloWorld/obj
@@ -51,3 +52,4 @@
 /CSharpProgrammierHandbuch/Fibonacci2
 /TestStatements/AsyncExampleWPF
 /TestStatements/Tutorials/obj/Debug
+

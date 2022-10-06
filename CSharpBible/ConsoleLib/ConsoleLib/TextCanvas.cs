@@ -25,11 +25,7 @@ namespace ConsoleLib
             if (_dimension.Contains(dimension.Location))
             {
                 // Build String
-                string sLine = "";
-                for (int j = dimension.X; j < dimension.Right; j++)
-                {
-                    sLine += c;
-                }
+                string sLine = new string(c, dimension.Width);
                 for (int i = dimension.Y; i < dimension.Bottom; i++)
                 {
                     OutTextXY(dimension.X, i, sLine);
@@ -65,11 +61,7 @@ namespace ConsoleLib
                     OutTextXY(dimension.Right-1, i, boarder[1]);
                 }
 
-            string sLine = "";
-            for (int j = dimension.X; j < dimension.Right - 2; j++)
-            {
-                sLine += boarder[0];
-            }
+            string sLine = new string(boarder[0], dimension.Width - 2);
 
             OutTextXY(dimension.X+1, dimension.Top, sLine);
             OutTextXY(dimension.X+1, dimension.Bottom-1, sLine);
