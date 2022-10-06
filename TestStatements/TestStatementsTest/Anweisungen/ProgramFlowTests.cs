@@ -1,11 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using TestStatements.UnitTesting;
 
 namespace TestStatements.Anweisungen.Tests
 {
+    /// <summary>
+    /// Defines test class ProgramFlowTests.
+    /// Implements the <see cref="ConsoleTestsBase" />
+    /// </summary>
+    /// <seealso cref="ConsoleTestsBase" />
     [TestClass()]
-    public class ProgramFlowTests
+    public class ProgramFlowTests : ConsoleTestsBase
     {
         private readonly string cExpected1=
             "======================================================================\r\n## Beispiel für Break-Anweisung \r\n" +
@@ -22,6 +28,9 @@ namespace TestStatements.Anweisungen.Tests
             "======================================================================\r\nThis\r\nis\r\na\r\nwonderfull\r\nDay\r\n!";
         private readonly string cInputb= "This\r\nis\r\na\r\nwonderfull\r\nDay\r\n!\r\n\r\n";
 
+        /// <summary>
+        /// Defines the test method DoBreakStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoBreakStatementTest()
         {
@@ -29,55 +38,23 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleInOutputArgs(cExpected1b, cInputb, new string[] { }, ProgramFlow.DoBreakStatement);
         }
 
+        /// <summary>
+        /// Defines the test method DoContinueStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoContinueStatementTest()
         {
             AssertConsoleOutputArgs(cExpected2, new string[] { }, ProgramFlow.DoContinueStatement);
         }
 
+        /// <summary>
+        /// Defines the test method DoGoToStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoGoToStatementTest()
         {
             AssertConsoleOutputArgs(cExpected3, new string[] { }, ProgramFlow.DoGoToStatement);
         }
 
-        private static void AssertConsoleOutput(string Expected, CrossAppDomainDelegate ToTest)
-        {
-            using (var sw = new StringWriter())
-            {
-                Console.SetOut(sw);
-
-                ToTest?.Invoke();
-
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
-            }
-        }
-        private static void AssertConsoleOutputArgs(string Expected, string[] Args, Action<String[]> ToTest)
-        {
-            using (var sw = new StringWriter())
-            {
-                Console.SetOut(sw);
-
-                ToTest?.Invoke(Args);
-
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
-            }
-        }
-        private void AssertConsoleInOutputArgs(string Expected, string TestInput, string[] Args, Action<string[]> ToTest)
-        {
-            using (var sw = new StringWriter())
-            using (var sr = new StringReader(TestInput))
-            {
-                Console.SetOut(sw);
-                Console.SetIn(sr);
-
-                ToTest?.Invoke(Args);
-
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
-            }
-        }
     }
 }

@@ -1,14 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="StringEx.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestStatements.DataTypes
 {
+    /// <summary>
+    /// Class StringEx.
+    /// </summary>
     public static class StringEx
     {
+        /// <summary>
+        /// Alls the tests.
+        /// </summary>
         public static void AllTests()
         {
             StringEx1();
@@ -21,13 +36,13 @@ namespace TestStatements.DataTypes
         }
 
         /// <summary>
-        ///   <span data-ttu-id="ca35c-120">Durch Zuweisen eines Zeichenfolgenliterals zu einer <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a> Variable.</span>
-        ///   <span data-ttu-id="ca35c-121">Dies ist die am häufigsten verwendete Methode zum Erstellen einer Zeichenfolge.</span>
-        ///   <span data-ttu-id="ca35c-122">Im folgenden Beispiel wird die Zuweisung verwendet, um mehrere Zeichen folgen zu erstellen.</span>
-        ///   <span data-ttu-id="ca35c-123">Beachten
-        /// Sie, C#dass in, da der umgekehrte Schrägstrich (\) ein Escapezeichen 
-        /// ist, literale umgekehrte Schrägstriche in einer Zeichenfolge mit 
-        /// Escapezeichen versehen oder die gesamte Zeichenfolge @-quoted werden 
+        /// <span data-ttu-id="ca35c-120">Durch Zuweisen eines Zeichenfolgenliterals zu einer <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a> Variable.</span>
+        /// <span data-ttu-id="ca35c-121">Dies ist die am häufigsten verwendete Methode zum Erstellen einer Zeichenfolge.</span>
+        /// <span data-ttu-id="ca35c-122">Im folgenden Beispiel wird die Zuweisung verwendet, um mehrere Zeichen folgen zu erstellen.</span>
+        /// <span data-ttu-id="ca35c-123">Beachten
+        /// Sie, C#dass in, da der umgekehrte Schrägstrich (\) ein Escapezeichen
+        /// ist, literale umgekehrte Schrägstriche in einer Zeichenfolge mit
+        /// Escapezeichen versehen oder die gesamte Zeichenfolge @-quoted werden
         /// muss.</span>
         /// </summary>
         public static void StringEx1()
@@ -46,11 +61,11 @@ namespace TestStatements.DataTypes
         }
 
         /// <summary>
-        ///   <span data-ttu-id="ca35c-124">Durch Aufrufen eines <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-Klassenkonstruktors.</span>
-        ///   <span data-ttu-id="ca35c-125">Im folgenden Beispiel werden Zeichen folgen durch Aufrufen mehrerer Klassenkonstruktoren instanziiert.</span>
-        ///   <span data-ttu-id="ca35c-126">Beachten Sie, dass einige der Konstruktoren Zeiger auf Zeichen Arrays oder signierte Byte Arrays als Parameter enthalten.</span>
-        ///   <span data-ttu-id="ca35c-127">Der Visual Basic unterstützt keine Aufrufe dieser Konstruktoren.</span>
-        ///   <span data-ttu-id="ca35c-128">Ausführliche Informationen zu <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-Konstruktoren finden Sie in der <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string.-ctor?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-konstruktorzusammenfassung.</span>
+        /// <span data-ttu-id="ca35c-124">Durch Aufrufen eines <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-Klassenkonstruktors.</span>
+        /// <span data-ttu-id="ca35c-125">Im folgenden Beispiel werden Zeichen folgen durch Aufrufen mehrerer Klassenkonstruktoren instanziiert.</span>
+        /// <span data-ttu-id="ca35c-126">Beachten Sie, dass einige der Konstruktoren Zeiger auf Zeichen Arrays oder signierte Byte Arrays als Parameter enthalten.</span>
+        /// <span data-ttu-id="ca35c-127">Der Visual Basic unterstützt keine Aufrufe dieser Konstruktoren.</span>
+        /// <span data-ttu-id="ca35c-128">Ausführliche Informationen zu <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-Konstruktoren finden Sie in der <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string.-ctor?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-konstruktorzusammenfassung.</span>
         /// </summary>
         public static void StringEx2()
         {
@@ -93,6 +108,9 @@ namespace TestStatements.DataTypes
 
         }
 
+        /// <summary>
+        /// Strings the ex3.
+        /// </summary>
         public static void StringEx3()
         {
             string string1 = "Today is " + DateTime.Now.ToString("D") + ".";
@@ -107,6 +125,9 @@ namespace TestStatements.DataTypes
 
         }
 
+        /// <summary>
+        /// Strings the ex4.
+        /// </summary>
         public static void StringEx4()
         {
             string sentence = "This sentence has five words.";
@@ -119,6 +140,9 @@ namespace TestStatements.DataTypes
             //       Second word: sentence
         }
 
+        /// <summary>
+        /// Strings the ex5.
+        /// </summary>
         public static void StringEx5()
         {
             DateTime dateAndTime = new DateTime(2011, 7, 6, 7, 32, 0);
@@ -130,6 +154,9 @@ namespace TestStatements.DataTypes
             //       At 7:32 AM on Wednesday, July 06, 2011, the temperature was 68.3 degrees Fahrenheit.
         }
 
+        /// <summary>
+        /// Unicodes the ex1.
+        /// </summary>
         public static void UnicodeEx1()
         {
             StreamWriter sw = new StreamWriter(@".\graphemes.txt");
@@ -151,6 +178,9 @@ namespace TestStatements.DataTypes
                                        StringComparison.Ordinal));
             sw.Close();
         }
+        /// <summary>
+        /// Strings the surogarte ex1.
+        /// </summary>
         public static void StringSurogarteEx1()
         {
             string surrogate = "\uD800\uDC03";

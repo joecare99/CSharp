@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace TestClockApp
 {
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     static class Program
     {
         /// <summary>

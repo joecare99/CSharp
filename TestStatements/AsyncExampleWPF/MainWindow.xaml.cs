@@ -16,6 +16,9 @@ namespace AsyncExampleWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -182,7 +185,11 @@ namespace AsyncExampleWPF
             var content = new MemoryStream();
 
             // Initialize an HttpWebRequest for the current URL.
+#if NET5_0_OR_GREATER
             var webReq = (HttpWebRequest)WebRequest.Create(url);
+#else
+            var webReq = (HttpWebRequest)WebRequest.Create(url);
+#endif
 
             // Send the request to the Internet resource and wait for
             // the response.
