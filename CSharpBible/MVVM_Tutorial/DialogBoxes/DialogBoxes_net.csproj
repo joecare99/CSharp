@@ -1,0 +1,21 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+	<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+	<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	<Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+  </ItemGroup>
+
+</Project>

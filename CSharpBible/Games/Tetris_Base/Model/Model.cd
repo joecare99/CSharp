@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Tetris_Base.Model.Block">
+    <Position X="8.25" Y="2.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EAAAAAAQAYAIAEAkEAAAAAAAAgAEACAIAAAAgACAAAA=</HashCode>
+      <FileName>Model\Block.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ActBlockAngle" />
+      <Property Name="ActBlockType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Tetris_Base.Model.Game">
+    <Position X="1" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAgAAAAAAAAAAICQAgAAGAIAAAhAiAAAAAAAA=</HashCode>
+      <FileName>Model\Game.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="playField" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Tetris_Base.Model.PlayField">
+    <Position X="5.75" Y="2.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAgAAgAABAABAAAAAIAAAAAAAQAACAAAgACAAAhAAAA=</HashCode>
+      <FileName>Model\PlayField.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ActualBlock" />
+      <Property Name="NextBlock" />
+      <Property Name="playGround" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Tetris_Base.Model.PlayGround">
+    <Position X="3.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgAAABEABACAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Model\PlayGround.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Tetris_Base.Model.UserAction" Collapsed="true">
+    <Position X="1.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAgYAAAAAAAAAAAAAAAAAAAIQAAAAAEAIQA=</HashCode>
+      <FileName>Model\Game.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Tetris_Base.Model.GameSound" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAwAA=</HashCode>
+      <FileName>Model\Game.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Tetris_Base.Model.BlockAngle" Collapsed="true">
+    <Position X="11.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAIAAAAAE=</HashCode>
+      <FileName>Model\BlockAngle.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Tetris_Base.Model.BlockType" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAACSFAAE=</HashCode>
+      <FileName>Model\BlockType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

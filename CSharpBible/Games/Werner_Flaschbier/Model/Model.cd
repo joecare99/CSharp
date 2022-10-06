@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Werner_Flaschbier_Base.Model.Playfield">
+    <Position X="0.5" Y="2.25" Width="1.5" />
+    <AssociationLine Name="Enemies" Type="Werner_Flaschbier_Base.Model.Enemy" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.812" Y="2.25" />
+        <Point X="1.812" Y="1.924" />
+        <Point X="10.562" Y="1.924" />
+        <Point X="10.562" Y="5.25" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Stones" Type="Werner_Flaschbier_Base.Model.Stone" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.625" Y="2.25" />
+        <Point X="1.625" Y="1.829" />
+        <Point X="10.632" Y="1.829" />
+        <Point X="10.632" Y="3.623" />
+        <Point X="12.312" Y="3.623" />
+        <Point X="12.312" Y="5.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AACAAAAACAABkAgACACAAAAQAAEAAAgBEAAAAABAAAA=</HashCode>
+      <FileName>Model\Playfield.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="this[System.Drawing.Point]" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="Enemies" />
+      <Field Name="Stones" />
+      <Field Name="_fields" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Enemy">
+    <Position X="10.25" Y="5.25" Width="1.5" />
+    <InheritanceLine Type="Werner_Flaschbier_Base.Model.PlayObject" FixedToPoint="true">
+      <Path>
+        <Point X="13.75" Y="4.574" />
+        <Point X="13.75" Y="4.875" />
+        <Point X="12.396" Y="4.875" Type="JumpStart" />
+        <Point X="12.229" Y="4.875" Type="JumpEnd" />
+        <Point X="11.5" Y="4.875" />
+        <Point X="11.5" Y="5.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAgA=</HashCode>
+      <FileName>Model\Enemy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Stone">
+    <Position X="12" Y="5.25" Width="1.5" />
+    <InheritanceLine Type="Werner_Flaschbier_Base.Model.PlayObject" FixedToPoint="true">
+      <Path>
+        <Point X="13.75" Y="4.574" />
+        <Point X="13.75" Y="4.875" />
+        <Point X="13.125" Y="4.875" />
+        <Point X="13.125" Y="5.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Model\Stone.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.PlayObject">
+    <Position X="13" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAACAAAAAAAAAgAAAAAAAAAAEAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Model\PlayObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Dirt">
+    <Position X="15.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Model\Dirt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Player">
+    <Position X="13.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQACAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Model\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Field">
+    <Position X="5.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABEAAAAAAABAAgAAAAQAAEABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Field.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Item" />
+      <Property Name="fieldDef" />
+      <Property Name="Parent" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Destination" Collapsed="true">
+    <Position X="4.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Field.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Space" Collapsed="true">
+    <Position X="4.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Space.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Werner_Flaschbier_Base.Model.Wall" Collapsed="true">
+    <Position X="6.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Wall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Werner_Flaschbier_Base.Model.FieldDef" Collapsed="true">
+    <Position X="7.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAIAAAAAAAAAAAQEEAAAAQAAAgA=</HashCode>
+      <FileName>Model\FieldDef.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
