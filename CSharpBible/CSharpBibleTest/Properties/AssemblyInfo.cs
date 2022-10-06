@@ -1,3 +1,16 @@
+// ***********************************************************************
+// Assembly         : CSharpBibleTest
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 01-31-2020
+// ***********************************************************************
+// <copyright file="AssemblyInfo.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

@@ -1,4 +1,17 @@
-﻿using System.Resources;
+﻿// ***********************************************************************
+// Assembly         : CSV_Viewer
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 02-29-2020
+// ***********************************************************************
+// <copyright file="AssemblyInfo.cs" company="JC Soft">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System.Resources;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

@@ -1,12 +1,28 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : Calc32
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 08-28-2022
+// ***********************************************************************
+// <copyright file="Program.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CSharpBible.Calc32.Visual;
+using Calc32.Visual;
 
 namespace CSharpBible.Calc32
 {
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     static class Program
     {
         /// <summary>

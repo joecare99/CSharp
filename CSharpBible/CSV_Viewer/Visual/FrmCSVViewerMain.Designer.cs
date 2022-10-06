@@ -1,5 +1,23 @@
-﻿namespace CSharpBible.CSV_Viewer.Visual
+﻿// ***********************************************************************
+// Assembly         : CSV_Viewer
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 04-06-2020
+// ***********************************************************************
+// <copyright file="FrmCSVViewerMain.Designer.cs" company="JC Soft">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+namespace CSharpBible.CSV_Viewer.Visual
 {
+    /// <summary>
+    /// Class FrmCSVViewerMain.
+    /// Implements the <see cref="System.Windows.Forms.Form" />
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     partial class FrmCSVViewerMain
     {
         /// <summary>
@@ -192,19 +210,61 @@
         }
 
         #endregion
+        /// <summary>
+        /// The binding navigator1
+        /// </summary>
         private System.Windows.Forms.BindingNavigator bindingNavigator1;
+        /// <summary>
+        /// The binding navigator add new item
+        /// </summary>
         private System.Windows.Forms.ToolStripButton bindingNavigatorAddNewItem;
+        /// <summary>
+        /// The binding navigator count item
+        /// </summary>
         private System.Windows.Forms.ToolStripLabel bindingNavigatorCountItem;
+        /// <summary>
+        /// The binding navigator delete item
+        /// </summary>
         private System.Windows.Forms.ToolStripButton bindingNavigatorDeleteItem;
+        /// <summary>
+        /// The binding navigator move first item
+        /// </summary>
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveFirstItem;
+        /// <summary>
+        /// The binding navigator move previous item
+        /// </summary>
         private System.Windows.Forms.ToolStripButton bindingNavigatorMovePreviousItem;
+        /// <summary>
+        /// The binding navigator separator
+        /// </summary>
         private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator;
+        /// <summary>
+        /// The binding navigator position item
+        /// </summary>
         private System.Windows.Forms.ToolStripTextBox bindingNavigatorPositionItem;
+        /// <summary>
+        /// The binding navigator separator1
+        /// </summary>
         private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator1;
+        /// <summary>
+        /// The binding navigator move next item
+        /// </summary>
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveNextItem;
+        /// <summary>
+        /// The binding navigator move last item
+        /// </summary>
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveLastItem;
+        /// <summary>
+        /// The binding navigator separator2
+        /// </summary>
         private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator2;
+        /// <summary>
+        /// The binding source1
+        /// </summary>
         private System.Windows.Forms.BindingSource bindingSource1;
+        /// <summary>
+        /// The panel1
+        /// </summary>
         private System.Windows.Forms.Panel panel1;
     }
 }

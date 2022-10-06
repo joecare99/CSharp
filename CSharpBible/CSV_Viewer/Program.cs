@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : CSV_Viewer
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 02-29-2020
+// ***********************************************************************
+// <copyright file="Program.cs" company="JC Soft">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +20,9 @@ using CSharpBible.CSV_Viewer.Visual;
 
 namespace CSharpBible.CSV_Viewer
 {
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     static class Program
     {
         /// <summary>

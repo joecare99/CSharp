@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -9,8 +9,16 @@ using System.Windows.Forms;
 
 namespace CSharpBible.AboutEx.Visual
 {
+    /// <summary>
+    /// Class AboutBox1.
+    /// Implements the <see cref="Form" />
+    /// </summary>
+    /// <seealso cref="Form" />
     partial class AboutBox1 : Form
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AboutBox1"/> class.
+        /// </summary>
         public AboutBox1()
         {
             InitializeComponent();
@@ -24,6 +32,10 @@ namespace CSharpBible.AboutEx.Visual
 
         #region Assemblyattributaccessoren
 
+        /// <summary>
+        /// Gets the assembly title.
+        /// </summary>
+        /// <value>The assembly title.</value>
         public string AssemblyTitle
         {
             get
@@ -41,6 +53,10 @@ namespace CSharpBible.AboutEx.Visual
             }
         }
 
+        /// <summary>
+        /// Gets the assembly version.
+        /// </summary>
+        /// <value>The assembly version.</value>
         public string AssemblyVersion
         {
             get
@@ -49,6 +65,10 @@ namespace CSharpBible.AboutEx.Visual
             }
         }
 
+        /// <summary>
+        /// Gets the assembly description.
+        /// </summary>
+        /// <value>The assembly description.</value>
         public string AssemblyDescription
         {
             get
@@ -62,6 +82,10 @@ namespace CSharpBible.AboutEx.Visual
             }
         }
 
+        /// <summary>
+        /// Gets the assembly product.
+        /// </summary>
+        /// <value>The assembly product.</value>
         public string AssemblyProduct
         {
             get
@@ -75,34 +99,36 @@ namespace CSharpBible.AboutEx.Visual
             }
         }
 
-        public string AssemblyCopyright
-        {
-            get
-            {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-            }
-        }
+		/// <summary>
+		/// The Copyright of this Assembly
+		/// </summary>
+		public string AssemblyCopyright {
+			get {
+				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+				if (attributes.Length == 0) {
+					return "";
+				}
+				return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+			}
+		}
 
-        public string AssemblyCompany
-        {
-            get
-            {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCompanyAttribute)attributes[0]).Company;
-            }
-        }
-        #endregion
+		/// <summary>
+		/// The Company of the assembly
+		/// </summary>
+		/// <remarks>Füllt das Company-Feld des Info/About-Dialogs</remarks>
+		/// <value>&lt;Name of Company&gt;</value>
+		public string AssemblyCompany {
+			get {
+				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+				if (attributes.Length == 0) {
+					return "";
+				}
+				return ((AssemblyCompanyAttribute)attributes[0]).Company;
+			}
+		}
+		#endregion
 
-        private void okButton_Click(object sender, EventArgs e)
+		private void okButton_Click(object sender, EventArgs e)
         {
             Close();
         }

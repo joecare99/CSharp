@@ -1,5 +1,10 @@
 ﻿namespace CSharpBible.AboutEx.Visual
 {
+    /// <summary>
+    /// Class FrmAboutExMain.
+    /// Implements the <see cref="System.Windows.Forms.Form" />
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     partial class FrmAboutExMain
     {
         /// <summary>
