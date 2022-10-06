@@ -42,8 +42,14 @@ namespace TestStatements.Runtime.Loader
                         }
                     }    
                     stream.Position = 0L;
-                    var context = AssemblyLoadContext.Default;
+#if NET6_0_OR_GREATER
+                    var context = AssemblyLoadContext.Default;     
                     Assembly a = context.LoadFromStream(stream);//<--Exception here.
+#else
+                    var bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+                    Assembly a = Assembly.Load(bytes);
+#endif
                     var m = a.GetType("C").GetRuntimeMethod("M", new System.Type[] { typeof(int), typeof(int) });
                     Console.WriteLine();
                     Console.Write($"{"",5}");
