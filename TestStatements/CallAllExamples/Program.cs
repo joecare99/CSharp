@@ -5,6 +5,12 @@ using System.Reflection;
 
 namespace CallAllExamples
 {
+    /// <summary>
+    /// Class Program.
+    /// <summary>
+    /// The invoke title
+    /// </summary>
+    /// </summary>
     class Program
     {
         static readonly string InvokeTitle =
