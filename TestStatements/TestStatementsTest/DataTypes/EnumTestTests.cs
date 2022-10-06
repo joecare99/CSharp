@@ -9,9 +9,18 @@ using System.IO;
 
 namespace TestStatements.DataTypes.Tests
 {
+    /// <summary>
+    /// Defines test class EnumTestTests.
+    /// </summary>
+    /// <summary>
+    /// Defines test class EnumTestTests.
+    /// </summary>
     [TestClass()]
     public class EnumTestTests
     {
+        /// <summary>
+        /// The c expected1
+        /// </summary>
         private string cExpected1 =
             "======================================================================\r\n## Enumerations \r\n" +
             "======================================================================\r\n" +
@@ -22,6 +31,9 @@ namespace TestStatements.DataTypes.Tests
             "The BoilingPoints Enum defines the following items, and corresponding values:\r\nCelsius    = 100\r\n" +
             "Fahrenheit = 212\r\n\r\nmyColors holds a combination of colors. Namely: Red, Blue, Yellow";
 
+        /// <summary>
+        /// Defines the test method MainTestTest.
+        /// </summary>
         [TestMethod()]
         public void MainTestTest()
         {

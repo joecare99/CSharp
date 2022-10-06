@@ -5,12 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestStatements.ConsoleAsserts;
+using TestStatements.UnitTesting;
 
 namespace DynamicSample.Tests
 {
+    /// <summary>
+    /// Defines test class DynamicClassTests.
+    /// Implements the <see cref="ConsoleTestsBase" />
+    /// </summary>
+    /// <seealso cref="ConsoleTestsBase" />
     [TestClass()]
-    public class DynamicClassTests : TestConsole
+    public class DynamicClassTests : ConsoleTestsBase
     {
         private readonly string cExpMain =
             "======================================================================\r\n## Example for dynamic class\r\n=======" +
@@ -52,30 +57,45 @@ namespace DynamicSample.Tests
             " Graphic Design Institute (https://www.graphicdesigninstitute.com/)   \r\nSupplier: Fabrikam, Inc. (https://www.f" +
             "abrikam.com/)   \r\nSupplier: Proseware, Inc. (http://www.proseware.com/)   \r\n----------------------------";
 
+        /// <summary>
+        /// Defines the test method MainTest.
+        /// </summary>
         [TestMethod()]
         public void MainTest()
         {
             AssertConsoleInOutputArgs(cExpMain,"\r\n",new string[] { },DynamicTestProgram.Main);
         }
 
+        /// <summary>
+        /// Defines the test method ShowCustomerContainsTest.
+        /// </summary>
         [TestMethod()]
         public void ShowCustomerContainsTest()
         {
             AssertConsoleOutput(cExpShowCustomerContains, DynamicTestProgram.ShowCustomerContains);
         }
 
+        /// <summary>
+        /// Defines the test method ShowCustomerTest.
+        /// </summary>
         [TestMethod()]
         public void ShowCustomerTest()
         {
             AssertConsoleOutput(cExpShowCustomer, DynamicTestProgram.ShowCustomer);
         }
 
+        /// <summary>
+        /// Defines the test method ShowSupplierContainsTest.
+        /// </summary>
         [TestMethod()]
         public void ShowSupplierContainsTest()
         {
             AssertConsoleOutput(cExpShowSupplierContains, DynamicTestProgram.ShowSupplierContains);
         }
 
+        /// <summary>
+        /// Defines the test method ShowSupplierTest.
+        /// </summary>
         [TestMethod()]
         public void ShowSupplierTest()
         {

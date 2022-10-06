@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestStatements.Anweisungen;
 using System;
 using System.Collections.Generic;
@@ -6,11 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using TestStatements.UnitTesting;
 
 namespace TestStatements.Anweisungen.Tests
 {
+    /// <summary>
+    /// Defines test class LoopStatementsTests.
+    /// Implements the <see cref="ConsoleTestsBase" />
+    /// </summary>
+    /// <seealso cref="ConsoleTestsBase" />
     [TestClass()]
-    public class LoopStatementsTests
+    public class LoopStatementsTests : ConsoleTestsBase
     {
         private readonly string Expected1= "======================================================================\r\n" +
             "## Beispiel für While-Schleife \r\n======================================================================";
@@ -33,6 +39,9 @@ namespace TestStatements.Anweisungen.Tests
         private readonly string Expected4b = "======================================================================\r\n" +
             "## Beispiel für Foreach-Schleife \r\n======================================================================\r\none\r\ntwo";
 
+        /// <summary>
+        /// Defines the test method DoWhileStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoWhileStatementTest()
         {
@@ -41,6 +50,9 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutputArgs(Expected1b, new string[] { "one", "two" }, LoopStatements.DoWhileStatement);
         }
 
+        /// <summary>
+        /// Defines the test method DoDoStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoDoStatementTest()
         {
@@ -48,6 +60,9 @@ namespace TestStatements.Anweisungen.Tests
         }
 
 
+        /// <summary>
+        /// Defines the test method DoForStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoForStatementTest()
         {
@@ -56,6 +71,9 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutputArgs(Expected3b, new string[] { "one", "two" }, LoopStatements.DoForStatement);
         }
 
+        /// <summary>
+        /// Defines the test method DoForEachStatementTest.
+        /// </summary>
         [TestMethod()]
         public void DoForEachStatementTest()
         {
@@ -64,43 +82,5 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutputArgs(Expected4b, new string[] { "one" , "two" }, LoopStatements.DoForEachStatement);   
         }
 
-        private static void AssertConsoleOutput(string Expected, CrossAppDomainDelegate ToTest)
-        {
-            using (var sw = new StringWriter())
-            {
-                Console.SetOut(sw);
-
-                ToTest?.Invoke();
-
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
-            }
-        }
-        private static void AssertConsoleOutputArgs(string Expected, string[] Args, Action<String[]> ToTest)
-        {
-            using (var sw = new StringWriter())
-            {
-                Console.SetOut(sw);
-
-                ToTest?.Invoke(Args);
-
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
-            }
-        }
-        private void AssertConsoleInOutputArgs(string Expected, string TestInput, string[] Args, Action<string[]> ToTest)
-        {
-            using (var sw = new StringWriter())
-            using (var sr = new StringReader(TestInput))
-            {
-                Console.SetOut(sw);
-                Console.SetIn(sr);
-
-                ToTest?.Invoke(Args);
-
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
-            }
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestStatements.Collection.Generic;
 using System;
 using System.Collections.Generic;
@@ -6,13 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using TestStatements.ConsoleAsserts;
+using TestStatements.UnitTesting;
 
 namespace TestStatements.Collection.Generic.Tests
 {
+    /// <summary>
+    /// Defines test class SortedListExampleTests.
+    /// Implements the <see cref="ConsoleTestsBase" />
+    /// </summary>
+    /// <seealso cref="ConsoleTestsBase" />
     [TestClass()]
-    public class SortedListExampleTests : TestConsole
-    {
+    public class SortedListExampleTests : ConsoleTestsBase
+		{
         private readonly string cExpected1 = "+----------------------------------------------------------\r\n" +
             "| Show Values - list\r\n" +
             "+----------------------------------------------------------\r\n\r\nValue = paint.exe\r\n" +
@@ -84,68 +89,101 @@ namespace TestStatements.Collection.Generic.Tests
             "+----------------------------------------------------------\r\n\nRemove(\"doc\")\r\n" +
             "Key \"doc\" is not found.";
 
+        /// <summary>
+        /// Defines the test method SortedListMainTest.
+        /// </summary>
         [TestMethod()]
         public void SortedListMainTest()
         {
             AssertConsoleOutput(cExpSortedListMain, SortedListExample.SortedListMain);
         }
 
+        /// <summary>
+        /// Defines the test method ShowValues1Test.
+        /// </summary>
         [TestMethod()]
         public void ShowValues1Test()
         {
             string Expected = cExpected1;
-            CrossAppDomainDelegate ToTest = SortedListExample.ShowValues1;
+            Action ToTest = SortedListExample.ShowValues1;
             AssertConsoleOutput(Expected, ToTest);
         }
 
+        /// <summary>
+        /// Defines the test method ShowValues2Test.
+        /// </summary>
         [TestMethod()]
         public void ShowValues2Test()
         {
             AssertConsoleOutput(cExpShowValues2, SortedListExample.ShowValues2);
         }
 
+        /// <summary>
+        /// Defines the test method ShowKeys1Test.
+        /// </summary>
         [TestMethod()]
         public void ShowKeys1Test()
         {
             AssertConsoleOutput(cExpShowKeys1, SortedListExample.ShowKeys1);
         }
 
+        /// <summary>
+        /// Defines the test method ShowKeys2Test.
+        /// </summary>
         [TestMethod()]
         public void ShowKeys2Test()
         {
             AssertConsoleOutput(cExpShowKeys2, SortedListExample.ShowKeys2);
         }
 
+        /// <summary>
+        /// Defines the test method ShowRemoveTest.
+        /// </summary>
         [TestMethod()]
         public void ShowRemoveTest()
         {
             AssertConsoleOutput(cExpShowRemove, SortedListExample.ShowRemove);
         }
 
+        /// <summary>
+        /// Defines the test method ShowForEachTest.
+        /// </summary>
         [TestMethod()]
         public void ShowForEachTest()
         {
             AssertConsoleOutput(cExpShowForEach, SortedListExample.ShowForEach);
         }
 
+        /// <summary>
+        /// Defines the test method ShowContainsKeyTest.
+        /// </summary>
         [TestMethod()]
         public void ShowContainsKeyTest()
         {
             AssertConsoleOutput(cExpShowContainsKey, SortedListExample.ShowContainsKey);
         }
 
+        /// <summary>
+        /// Defines the test method ShowTryGetValueTest.
+        /// </summary>
         [TestMethod()]
         public void ShowTryGetValueTest()
         {
             AssertConsoleOutput(cExpShowTryGetValue, SortedListExample.ShowTryGetValue);
         }
 
+        /// <summary>
+        /// Defines the test method TestIndexrTest.
+        /// </summary>
         [TestMethod()]
         public void TestIndexrTest()
         {
             AssertConsoleOutput(cExpTestIndexr, SortedListExample.TestIndexr);
         }
 
+        /// <summary>
+        /// Defines the test method TestAddExistingTest.
+        /// </summary>
         [TestMethod()]
         public void TestAddExistingTest()
         {
