@@ -6,13 +6,12 @@
 // Last Modified By : Mir
 // Last Modified On : 02-02-2020
 // ***********************************************************************
-// <copyright file="AssemblyInfo.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="AssemblyInfo.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
@@ -21,9 +20,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Calc32Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HP Inc.")]
+[assembly: AssemblyCompany("JC-Soft")]
 [assembly: AssemblyProduct("Calc32Tests")]
-[assembly: AssemblyCopyright("Copyright © HP Inc. 2020")]
+[assembly: AssemblyCopyright("Copyright © JC-Soft 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

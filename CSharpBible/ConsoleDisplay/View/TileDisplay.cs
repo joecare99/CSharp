@@ -7,7 +7,7 @@
 // Last Modified On : 08-27-2022
 // ***********************************************************************
 // <copyright file="TileDisplay.cs" company="ConsoleDisplay">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

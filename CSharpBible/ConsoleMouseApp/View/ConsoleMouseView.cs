@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 08-18-2022
 // ***********************************************************************
-// <copyright file="ConsoleMouseView.cs" company="HP Inc.">
+// <copyright file="ConsoleMouseView.cs" company="JC-Soft">
 //     Copyright © 2020
 // </copyright>
 // <summary></summary>

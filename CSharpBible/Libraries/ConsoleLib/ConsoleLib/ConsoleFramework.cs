@@ -7,7 +7,7 @@
 // Last Modified On : 07-15-2022
 // ***********************************************************************
 // <copyright file="ConsoleFramework.cs" company="ConsoleLib">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

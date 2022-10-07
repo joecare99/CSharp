@@ -7,7 +7,7 @@
 // Last Modified On : 08-08-2022
 // ***********************************************************************
 // <copyright file="Space.cs" company="Werner_Flaschbier_Base">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

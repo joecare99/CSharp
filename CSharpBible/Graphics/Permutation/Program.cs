@@ -7,7 +7,7 @@
 // Last Modified On : 07-30-2022
 // ***********************************************************************
 // <copyright file="Program.cs" company="Permutation">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

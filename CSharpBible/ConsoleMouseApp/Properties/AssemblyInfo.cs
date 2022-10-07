@@ -6,13 +6,12 @@
 // Last Modified By : Mir
 // Last Modified On : 07-14-2022
 // ***********************************************************************
-// <copyright file="AssemblyInfo.cs" company="HP Inc.">
+// <copyright file="AssemblyInfo.cs" company="JC-Soft">
 //     Copyright © 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden

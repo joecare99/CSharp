@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 08-12-2022
 // ***********************************************************************
-// <copyright file="FrmAboutTests.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="FrmAboutTests.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

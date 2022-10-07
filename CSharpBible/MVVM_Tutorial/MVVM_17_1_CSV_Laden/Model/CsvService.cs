@@ -7,7 +7,7 @@
 // Last Modified On : 07-04-2022
 // ***********************************************************************
 // <copyright file="CsvService.cs" company="MVVM_17_1_CSV_Laden">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

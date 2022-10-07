@@ -7,7 +7,7 @@
 // Last Modified On : 07-03-2022
 // ***********************************************************************
 // <copyright file="CurrencyValueConverter.cs" company="MVVM_6_Converters">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

@@ -6,17 +6,12 @@
 // Last Modified By : Mir
 // Last Modified On : 08-18-2022
 // ***********************************************************************
-// <copyright file="Program.cs" company="HP Inc.">
+// <copyright file="Program.cs" company="JC-Soft">
 //     Copyright © 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-//using System.Windows.Forms;
 using System.Drawing;
 using ConsoleLib.CommonControls;
 using ConsoleLib;

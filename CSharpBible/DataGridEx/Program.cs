@@ -6,15 +6,12 @@
 // Last Modified By : Mir
 // Last Modified On : 04-10-2020
 // ***********************************************************************
-// <copyright file="Program.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="Program.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DataGridEx

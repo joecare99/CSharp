@@ -7,7 +7,7 @@
 // Last Modified On : 08-16-2022
 // ***********************************************************************
 // <copyright file="DelegateCommand.cs" company="MVVM_BaseLib">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

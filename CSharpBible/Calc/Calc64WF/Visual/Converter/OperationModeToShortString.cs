@@ -6,18 +6,14 @@
 // Last Modified By : Mir
 // Last Modified On : 08-31-2022
 // ***********************************************************************
-// <copyright file="OperationModeToShortString.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="OperationModeToShortString.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using Calc64Base;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Calc64WF.Visual.Converter

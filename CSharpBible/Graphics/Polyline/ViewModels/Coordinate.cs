@@ -7,7 +7,7 @@
 // Last Modified On : 08-20-2022
 // ***********************************************************************
 // <copyright file="Coordinate.cs" company="Polyline_net">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

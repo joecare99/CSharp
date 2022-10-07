@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 03-12-2020
 // ***********************************************************************
-// <copyright file="MainWindow.xaml.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="MainWindow.xaml.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

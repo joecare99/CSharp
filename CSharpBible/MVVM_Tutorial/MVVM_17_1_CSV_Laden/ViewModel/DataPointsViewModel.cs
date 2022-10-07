@@ -7,7 +7,7 @@
 // Last Modified On : 08-13-2022
 // ***********************************************************************
 // <copyright file="DataPointsViewModel.cs" company="MVVM_17_1_CSV_Laden">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

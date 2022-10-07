@@ -7,7 +7,7 @@
 // Last Modified On : 07-01-2022
 // ***********************************************************************
 // <copyright file="App.xaml.cs" company="PlotgraphWPF">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

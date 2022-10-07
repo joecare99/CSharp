@@ -7,7 +7,7 @@
 // Last Modified On : 07-04-2022
 // ***********************************************************************
 // <copyright file="App.xaml.cs" company="MVVM_6_Converters_3">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
