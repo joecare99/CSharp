@@ -7,13 +7,12 @@
 // Last Modified On : 02-29-2020
 // ***********************************************************************
 // <copyright file="AssemblyInfo.cs" company="JC Soft">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System.Resources;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden

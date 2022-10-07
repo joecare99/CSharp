@@ -7,7 +7,7 @@
 // Last Modified On : 07-17-2022
 // ***********************************************************************
 // <copyright file="Page1ViewModel.cs" company="PlotgraphWPF">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

@@ -7,7 +7,7 @@
 // Last Modified On : 08-05-2022
 // ***********************************************************************
 // <copyright file="Control.cs" company="ConsoleLib">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

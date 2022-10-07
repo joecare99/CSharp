@@ -1,0 +1,32 @@
+﻿<Project>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup>
+	<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
+  </PropertyGroup>
+	<ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="*.bak" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+  </ItemGroup>
+
+</Project>

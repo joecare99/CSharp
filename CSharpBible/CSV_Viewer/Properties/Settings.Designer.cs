@@ -7,7 +7,7 @@
 // Last Modified On : 07-19-2022
 // ***********************************************************************
 // <copyright file="Settings.Designer.cs" company="JC Soft">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

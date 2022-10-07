@@ -7,7 +7,7 @@
 // Last Modified On : 06-17-2022
 // ***********************************************************************
 // <copyright file="IObservableCollection.cs" company="MVVM_BaseLib">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 12-19-2021
 // ***********************************************************************
-// <copyright file="TFieldDefsTest.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="TFieldDefsTest.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

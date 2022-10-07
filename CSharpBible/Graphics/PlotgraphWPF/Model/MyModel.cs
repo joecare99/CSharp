@@ -7,15 +7,10 @@
 // Last Modified On : 07-01-2022
 // ***********************************************************************
 // <copyright file="MyModel.cs" company="PlotgraphWPF">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace PlotgraphWPF.Model

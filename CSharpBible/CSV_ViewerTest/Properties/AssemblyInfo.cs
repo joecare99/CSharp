@@ -6,21 +6,20 @@
 // Last Modified By : Mir
 // Last Modified On : 02-29-2020
 // ***********************************************************************
-// <copyright file="AssemblyInfo.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="AssemblyInfo.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("CSV_ViewerTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HP Inc.")]
+[assembly: AssemblyCompany("JC-Soft")]
 [assembly: AssemblyProduct("CSV_ViewerTest")]
-[assembly: AssemblyCopyright("Copyright © HP Inc. 2020")]
+[assembly: AssemblyCopyright("Copyright © JC-Soft 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

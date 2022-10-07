@@ -7,17 +7,17 @@
 // Last Modified On : 08-20-2022
 // ***********************************************************************
 // <copyright file="BaseViewModel.cs" company="MVVM_BaseLib">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace MVVM.ViewModel {
+namespace MVVM.ViewModel
+{
 	/// <summary>
 	/// Class BaseViewModel.
 	/// Implements the <see cref="MVVM.ViewModel.NotificationObject" />
