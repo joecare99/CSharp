@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 09-20-2022
 // ***********************************************************************
-// <copyright file="System_Namespace.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="System_Namespace.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
