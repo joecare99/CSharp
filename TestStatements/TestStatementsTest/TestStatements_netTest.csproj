@@ -3,10 +3,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
@@ -20,7 +16,10 @@
     <Authors>Joe Care</Authors>
     <Copyright>Copyright © JC-Soft 2022</Copyright>
     <Product>TestStatements 1.0 Tests</Product>
-
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="obj\**" />
