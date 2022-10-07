@@ -1,5 +1,23 @@
-﻿namespace CSharpBible.CharGrid.Visual
+﻿// ***********************************************************************
+// Assembly         : CharGrid
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 12-24-2021
+// ***********************************************************************
+// <copyright file="FrmCharGridMain.Designer.cs" company="HP Inc.">
+//     Copyright © HP Inc. 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+namespace CSharpBible.CharGrid.Visual
 {
+    /// <summary>
+    /// Class FrmCharGridMain.
+    /// Implements the <see cref="System.Windows.Forms.Form" />
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     partial class FrmCharGridMain
     {
         /// <summary>
@@ -294,24 +312,81 @@
 
         #endregion
 
+        /// <summary>
+        /// The menu strip1
+        /// </summary>
         private System.Windows.Forms.MenuStrip menuStrip1;
+        /// <summary>
+        /// The file tool strip menu item
+        /// </summary>
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        /// <summary>
+        /// The exit tool strip menu item
+        /// </summary>
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        /// <summary>
+        /// The help tool strip menu item
+        /// </summary>
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        /// <summary>
+        /// The about tool strip menu item
+        /// </summary>
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        /// <summary>
+        /// The PNL top
+        /// </summary>
         private System.Windows.Forms.Panel pnlTop;
+        /// <summary>
+        /// The text box1
+        /// </summary>
         private System.Windows.Forms.TextBox textBox1;
+        /// <summary>
+        /// The label1
+        /// </summary>
         private System.Windows.Forms.Label label1;
+        /// <summary>
+        /// The check box1
+        /// </summary>
         private System.Windows.Forms.CheckBox checkBox1;
+        /// <summary>
+        /// The label font
+        /// </summary>
         private System.Windows.Forms.Label lblFont;
+        /// <summary>
+        /// The combo box1
+        /// </summary>
         private System.Windows.Forms.ComboBox comboBox1;
+        /// <summary>
+        /// The PNL bottom
+        /// </summary>
         private System.Windows.Forms.Panel pnlBottom;
+        /// <summary>
+        /// The button4
+        /// </summary>
         private System.Windows.Forms.Button button4;
+        /// <summary>
+        /// The button3
+        /// </summary>
         private System.Windows.Forms.Button button3;
+        /// <summary>
+        /// The button2
+        /// </summary>
         private System.Windows.Forms.Button button2;
+        /// <summary>
+        /// The text box2
+        /// </summary>
         private System.Windows.Forms.TextBox textBox2;
+        /// <summary>
+        /// The button1
+        /// </summary>
         private System.Windows.Forms.Button button1;
+        /// <summary>
+        /// The table layout panel1
+        /// </summary>
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        /// <summary>
+        /// The text box3
+        /// </summary>
         private System.Windows.Forms.TextBox textBox3;
     }
 }
