@@ -18,7 +18,7 @@ namespace JCAMS.Core
     /// <summary>
     /// Class TWinAPI.
     /// </summary>
-    public static class TWinAPI
+    public static class SWinAPI
     {
 
         /// <summary>

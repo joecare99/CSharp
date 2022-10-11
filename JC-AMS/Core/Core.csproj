@@ -1,9 +1,9 @@
 ﻿<Project>
   <PropertyGroup>
-    <AssemblyName>JCAMS</AssemblyName>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <TargetFrameworks>net472-windows;net48-windows;net60-windows</TargetFrameworks>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>JCAMS</RootNamespace>
 	  <Platforms>AnyCPU;x64</Platforms>
 	  <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 	  <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
@@ -16,7 +16,6 @@
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <RootNamespace>JCAMS</RootNamespace>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>

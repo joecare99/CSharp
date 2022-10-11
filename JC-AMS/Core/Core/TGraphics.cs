@@ -350,7 +350,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return false;
             }
         }
@@ -376,7 +376,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return false;
             }
         }
@@ -398,7 +398,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return false;
             }
         }
@@ -422,7 +422,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return false;
             }
         }
@@ -482,7 +482,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(EJournalTopic.Graphic, 10000, Core.TExceptionHelper.AsString(Ex));
+                TLogging.Log(ELogTopic.Graphic, 10000, Core.TExceptionHelper.AsString(Ex));
             }
         }
 
@@ -596,7 +596,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return false;
             }
         }
@@ -768,7 +768,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
             }
             return Font;
         }
@@ -800,7 +800,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
             }
             return Font;
         }

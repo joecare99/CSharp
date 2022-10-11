@@ -62,7 +62,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 (Framework, Servicepack) = (0d, 0);
                 return false;
             }
