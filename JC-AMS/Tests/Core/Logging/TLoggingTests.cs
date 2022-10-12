@@ -7,11 +7,14 @@ namespace JCAMS.Core.Logging.Tests
     [TestClass()]
     public class TLoggingTests
     {
-        private const string cExpLogTest0_1 = "L:c:\\JCAMSstartup.txt,'Exception;TestExcption;;',(LogTest0_1)\r\nL:c:\\JCAMSstartup.txt,'\n',()\r\n";
         string DebugResult = "";
+        private readonly string cExpLogTest = "L:c:\\JCAMSstartup.txt,'Exception;TestException;;',(LogTest)\r\nL:c:\\JCAMSstartup.txt,'\n',()\r\n";
+        private readonly string cExpLogTest0_1 = "L:c:\\JCAMSstartup.txt,'Exception;TestException;;',(LogTest0_1)\r\nL:c:\\JCAMSstartup.txt,'\n',()\r\n";
         private readonly string cExpLogTest0 = "";
         private readonly string cExpLogTest1 = "L:c:\\JCAMSstartup.txt,'LogTest1: {0}, {1}, {2}',(4321;1234;3rd Param)\r\nL:c:\\JCAMSstartup.txt,'\n',()\r\n";
         private readonly string cExpLogTest2 = "";
+        private readonly string cExpLogTest2_1 = "";
+        private readonly string cExpLogTest2_2 = "L:c:\\JCAMSstartup.txt,'LogTest2: {0}, {1}, {2}',(4321;1234;3rd Param)\r\nL:c:\\JCAMSstartup.txt,'\n',()\r\n";
 
         [TestInitialize()]
         public void Init()
@@ -32,20 +35,20 @@ namespace JCAMS.Core.Logging.Tests
 
         [TestMethod()]
         public void CreateProtocolTest()
-        {
+        {         
             Assert.Fail();
         }
 
         [TestMethod()]
         public void DebugPrintTest()
         {
-            Assert.Fail();
+            TLogging.DebugPrint("Hello World!");
         }
 
         [TestMethod()]
         public void DebugPrintTest1()
         {
-            Assert.Fail();
+            TLogging.DebugPrint("{0} {1}!","Ciao","Bella");
         }
 
         [TestMethod()]
@@ -57,15 +60,16 @@ namespace JCAMS.Core.Logging.Tests
         [TestMethod()]
         public void LogTest()
         {
-            TLogging.Log(new Exception("TestExcption"));
-            Assert.AreEqual("",DebugResult);
+            TLogging.xTriggerError = false;
+            TLogging.Log(new Exception("TestException"));
+            Assert.AreEqual(cExpLogTest,DebugResult);
         }
 
         [TestMethod()]
         public void LogTest0_1()
         {
-            TLogging.xTriggerError = false;
-            TLogging.Log(new Exception("TestExcption"));
+            TLogging.xTriggerError = true;
+            TLogging.Log(new Exception("TestException"));
             Assert.AreEqual(cExpLogTest0_1, DebugResult);
         }
 
@@ -83,6 +87,24 @@ namespace JCAMS.Core.Logging.Tests
             TLogging.xTriggerError = false;
             TLogging.Log(ELogTopic.Debug, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
             Assert.AreEqual(cExpLogTest2, DebugResult);
+        }
+
+        [TestMethod()]
+        public void LogTest2_1()
+        {
+            TLogging.xTriggerError = false;
+            TLogging.xAppIsStarting = false;
+            TLogging.Log(ELogTopic.Debug, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
+            Assert.AreEqual(cExpLogTest2_1, DebugResult);
+        }
+
+        [TestMethod()]
+        public void LogTest2_2()
+        {
+            TLogging.xTriggerError = false;
+            TLogging.xAppIsStarting = false;
+            TLogging.Log(ELogTopic.Always, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
+            Assert.AreEqual(cExpLogTest2_2, DebugResult);
         }
 
         [TestMethod()]
