@@ -11,20 +11,25 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
 using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace JCAMS.Core.System
 {
     /// <summary>
     /// Class SSubstation.
     /// </summary>
-    public class CSubStation : IHasParent , IHasID , ISerializable, IHasDescription
+    [Serializable]
+    public class CSubStation : IHasParent , IHasID , IXmlSerializable, IHasDescription
     {
         #region Properties
         /// <summary>
         /// The identifier substation
         /// </summary>
-        public int idSubstation;
+        public long idSubStation;
 
         /// <summary>
         /// The description
@@ -45,7 +50,7 @@ namespace JCAMS.Core.System
         #region Interface properties
         object IHasParent.Parent { get => Station; set { if (value is CStation cs) Station = cs; } }
 
-        long IHasID.ID => idSubstation;
+        long IHasID.ID => idSubStation;
         #endregion
         #endregion
         #region Methods
@@ -57,17 +62,54 @@ namespace JCAMS.Core.System
         /// Initializes a new instance of the <see cref="CSubStation" /> class.
         /// </summary>
         /// <param name="Q">The q.</param>
-        public CSubStation(CStation cStation,int idSubstation,string sDescription)
+        public CSubStation(CStation cStation, long idSubstation,string sDescription)
         {
             Station = cStation;
-            this.idSubstation = idSubstation;
+            this.idSubStation = idSubstation;
             Description = sDescription;
         }
 
-        #region Interface properties
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        #region Interface methods
+        public CSubStation(SerializationInfo info, StreamingContext context)
+        {
+            idSubStation = info.GetInt64(nameof(idSubStation));
+            Description = info.GetString(nameof(Description));
+            var _idStation = info.GetInt64(nameof(idStation));
+            Station = CStation.GetStation(_idStation);
+        }
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(idSubStation), idSubStation, typeof(long));
+            info.AddValue(nameof(Description), Description, typeof(string));
+            info.AddValue(nameof(idStation), idStation, typeof(long));           
+        }
+
+        public void CompleteDeserialization(object deserialized)
         {
             throw new global::System.NotImplementedException();
+        }
+
+        public XmlSchema GetSchema() => null;
+
+        public void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartAttribute(nameof(idSubStation));
+            writer.WriteValue(idSubStation);
+            writer.WriteEndAttribute();
+
+            writer.WriteStartAttribute(nameof(Description));
+            writer.WriteValue(Description);
+            writer.WriteEndAttribute();
+
+            writer.WriteStartAttribute(nameof(idStation));
+            writer.WriteValue(idStation);
+            writer.WriteEndAttribute();
+
         }
         #endregion
         #endregion
