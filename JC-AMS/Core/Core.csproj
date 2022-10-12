@@ -1,9 +1,9 @@
 ﻿<Project>
   <PropertyGroup>
-    <AssemblyName>JCAMS</AssemblyName>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <TargetFrameworks>net472-windows;net48-windows;net60-windows</TargetFrameworks>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>JCAMS</RootNamespace>
 	  <Platforms>AnyCPU;x64</Platforms>
 	  <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 	  <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
@@ -15,8 +15,8 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
+	  <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <RootNamespace>JCAMS</RootNamespace>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,4 +48,10 @@
 	  <PackageReference Include="System.Management" Version="6.0.0" />
 	  <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resource\" />
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;dir&gt;nul" />
+  </Target>
 </Project>

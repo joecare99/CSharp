@@ -15,6 +15,7 @@ using JCAMS.Core.Components.Coloring;
 using JCAMS.Core.Extensions;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Xml;
 namespace JCAMS.Core
@@ -91,6 +92,22 @@ namespace JCAMS.Core
         }
 
         /// <summary>
+        /// Font2s the XML.
+        /// </summary>
+        /// <param name="font">The font.</param>
+        /// <param name="XMLNode">The XML node.</param>
+        /// <returns>XmlNode.</returns>
+        public static void WriteToXML(this Font font, XmlWriter writer, bool xFull=false)
+        {
+            if (font == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
+            if (xFull) writer.WriteStartElement(font.GetType().Name);
+            writer.WriteAttributeString(nameof(font.Name), font.Name);
+            writer.WriteAttributeString(nameof(font.Size), font.Size.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString(nameof(font.Style), ((int)font.Style).ToString());
+            if (xFull) writer.WriteEndElement();
+        }
+
+        /// <summary>
         /// Pen2s the string.
         /// </summary>
         /// <param name="Pen">The pen.</param>
@@ -98,6 +115,23 @@ namespace JCAMS.Core
         public static string Pen2String(Pen Pen)
         {
             return Pen==null?"":$"{Color2String(Pen.Color)};{Pen.Width:0.00}"; // CultureInfo ??
+        }
+
+        /// <summary>
+        /// Font2s the XML.
+        /// </summary>
+        /// <param name="pen">The font.</param>
+        /// <param name="XMLNode">The XML node.</param>
+        /// <returns>XmlNode.</returns>
+        public static void WriteToXML(this Pen pen, XmlWriter writer, bool xFull = false,string sPrefix="")
+        {
+            if (pen == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
+            var EntryState = writer.WriteState;
+            if (xFull) { writer.WriteStartElement(pen.GetType().Name); sPrefix = "";EntryState = WriteState.Element; }
+            writer.WriteAttributeString(sPrefix+nameof(pen.Width), pen.Width.ToString("0.00",CultureInfo.InvariantCulture));
+            writer.WriteAttributeString(sPrefix + nameof(pen.PenType), ((int)pen.PenType).ToString());
+            pen.Color.WriteToXML(writer,xFull | EntryState== WriteState.Element, sPrefix + "Color.");
+            if (xFull) writer.WriteEndElement();
         }
 
         /// <summary>
@@ -128,6 +162,22 @@ namespace JCAMS.Core
         }
 
         /// <summary>
+        /// Point2s the XML.
+        /// </summary>
+        /// <param name="Pt">The pt.</param>
+        /// <param name="XMLNode">The XML node.</param>
+        /// <returns>XmlNode.</returns>
+        public static void WriteToXML(this Point Pt, XmlWriter writer, bool xFull = false, string sPrefix = "")
+        {
+            if (Pt == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
+            var EntryState = writer.WriteState;
+            if (xFull) { writer.WriteStartElement(Pt.GetType().Name); sPrefix = ""; EntryState = WriteState.Element; }
+            writer.WriteAttributeString(sPrefix + nameof(Pt.X), Pt.X.ToString());
+            writer.WriteAttributeString(sPrefix + nameof(Pt.Y), Pt.Y.ToString());
+            if (xFull) writer.WriteEndElement();
+        }
+
+        /// <summary>
         /// Rectangle2s the string.
         /// </summary>
         /// <param name="Rect">The rect.</param>
@@ -150,6 +200,24 @@ namespace JCAMS.Core
                 return Color.Empty;
             }
             return Color.FromArgb(Convert.ToInt32(aC[0], 16), Convert.ToInt32(aC[1], 16), Convert.ToInt32(aC[2], 16), Convert.ToInt32(aC[3], 16));
+        }
+
+        /// <summary>
+        /// Font2s the XML.
+        /// </summary>
+        /// <param name="color">The font.</param>
+        /// <param name="XMLNode">The XML node.</param>
+        /// <returns>XmlNode.</returns>
+        public static void WriteToXML(this Color color, XmlWriter writer, bool xFull = false,string sPrefix="")
+        {
+            if (color == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
+            var EntryState = writer.WriteState;
+            if (xFull) {writer.WriteStartElement(color.GetType().Name); sPrefix = ""; EntryState = WriteState.Element; }
+            if (color.IsKnownColor)
+              writer.WriteAttributeString(sPrefix + nameof(color.Name), color.Name);
+            else
+                writer.WriteAttributeString(sPrefix + nameof(color), $"#{color.ToArgb():X8}");
+            if (xFull) writer.WriteEndElement();
         }
 
         /// <summary>

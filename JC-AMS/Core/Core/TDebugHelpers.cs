@@ -44,7 +44,7 @@ namespace JCAMS.Core
                 }
                 catch (Exception Ex)
                 {
-                    TLogging.Journalize(Ex);
+                    TLogging.Log(Ex);
                 }
             }
             return Stack.ToString();

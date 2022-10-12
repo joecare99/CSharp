@@ -46,7 +46,7 @@ namespace JCAMS.Core.Extensions
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
             }
             return false;
         }

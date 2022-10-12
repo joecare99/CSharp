@@ -76,7 +76,7 @@ namespace JCAMS.Core
             }
             catch (Exception ex)
             {
-                TLogging.Journalize(ex);
+                TLogging.Log(ex);
                 return "";
             }
         }
@@ -110,7 +110,7 @@ namespace JCAMS.Core
             }
             catch (Exception ex)
             {
-                TLogging.Journalize(ex);
+                TLogging.Log(ex);
                 return "";
             }
         }

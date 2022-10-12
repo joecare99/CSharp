@@ -316,7 +316,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return false;
             }
         }
@@ -408,7 +408,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return float.NaN;
             }
         }
@@ -427,7 +427,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception Ex)
             {
-                TLogging.Journalize(Ex);
+                TLogging.Log(Ex);
                 return float.NaN;
             }
         }

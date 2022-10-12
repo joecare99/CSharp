@@ -76,7 +76,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception ex)
             {
-                TLogging.Journalize(ex);
+                TLogging.Log(ex);
                 M = double.NaN;
                 return false;
             }
