@@ -118,6 +118,23 @@ namespace JCAMS.Core
         }
 
         /// <summary>
+        /// Font2s the XML.
+        /// </summary>
+        /// <param name="pen">The font.</param>
+        /// <param name="XMLNode">The XML node.</param>
+        /// <returns>XmlNode.</returns>
+        public static void WriteToXML(this Pen pen, XmlWriter writer, bool xFull = false,string sPrefix="")
+        {
+            if (pen == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
+            var EntryState = writer.WriteState;
+            if (xFull) { writer.WriteStartElement(pen.GetType().Name); sPrefix = "";EntryState = WriteState.Element; }
+            writer.WriteAttributeString(sPrefix+nameof(pen.Width), pen.Width.ToString("0.00",CultureInfo.InvariantCulture));
+            writer.WriteAttributeString(sPrefix + nameof(pen.PenType), ((int)pen.PenType).ToString());
+            pen.Color.WriteToXML(writer,xFull | EntryState== WriteState.Element, sPrefix + "Color.");
+            if (xFull) writer.WriteEndElement();
+        }
+
+        /// <summary>
         /// Point2s the string.
         /// </summary>
         /// <param name="Pt">The pt.</param>
@@ -150,12 +167,13 @@ namespace JCAMS.Core
         /// <param name="Pt">The pt.</param>
         /// <param name="XMLNode">The XML node.</param>
         /// <returns>XmlNode.</returns>
-        public static void WriteToXML(this Point Pt, XmlWriter writer, bool xFull=false)
+        public static void WriteToXML(this Point Pt, XmlWriter writer, bool xFull = false, string sPrefix = "")
         {
             if (Pt == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
-            if (xFull) writer.WriteStartElement(Pt.GetType().Name);
-            writer.WriteAttributeString(nameof(Pt.X), Pt.X.ToString());
-            writer.WriteAttributeString(nameof(Pt.Y), Pt.Y.ToString());
+            var EntryState = writer.WriteState;
+            if (xFull) { writer.WriteStartElement(Pt.GetType().Name); sPrefix = ""; EntryState = WriteState.Element; }
+            writer.WriteAttributeString(sPrefix + nameof(Pt.X), Pt.X.ToString());
+            writer.WriteAttributeString(sPrefix + nameof(Pt.Y), Pt.Y.ToString());
             if (xFull) writer.WriteEndElement();
         }
 
@@ -182,6 +200,24 @@ namespace JCAMS.Core
                 return Color.Empty;
             }
             return Color.FromArgb(Convert.ToInt32(aC[0], 16), Convert.ToInt32(aC[1], 16), Convert.ToInt32(aC[2], 16), Convert.ToInt32(aC[3], 16));
+        }
+
+        /// <summary>
+        /// Font2s the XML.
+        /// </summary>
+        /// <param name="color">The font.</param>
+        /// <param name="XMLNode">The XML node.</param>
+        /// <returns>XmlNode.</returns>
+        public static void WriteToXML(this Color color, XmlWriter writer, bool xFull = false,string sPrefix="")
+        {
+            if (color == null) { if (xFull) writer.WriteElementString("NULL", ""); return; }
+            var EntryState = writer.WriteState;
+            if (xFull) {writer.WriteStartElement(color.GetType().Name); sPrefix = ""; EntryState = WriteState.Element; }
+            if (color.IsKnownColor)
+              writer.WriteAttributeString(sPrefix + nameof(color.Name), color.Name);
+            else
+                writer.WriteAttributeString(sPrefix + nameof(color), $"#{color.ToArgb():X8}");
+            if (xFull) writer.WriteEndElement();
         }
 
         /// <summary>

@@ -1,17 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JCAMS.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using JCAMS.Core.Components.Coloring;
 using System.Xml;
-using System.Xml.Linq;
-using System.Drawing.Text;
 using System.IO;
-using System.Runtime.Serialization;
 
 namespace JCAMS.Core.Tests
 {
@@ -48,6 +41,36 @@ namespace JCAMS.Core.Tests
             new object[]{ "Orange", Color.Orange,"FF;FF;A5;0" },
             new object[]{ "OrangeRed", Color.OrangeRed,"FF;FF;45;0" },
             new object[]{ "Purple", Color.Purple,"FF;80;0;80" }
+        };
+
+        protected static IEnumerable<object?[]> Color2StringXData => new[]
+{
+            new object?[]{ "Null",null,"0;0;0;0",new string[] { "<Color color=\"#00000000\" />", "color=\"#00000000\"" } },
+            new object[]{ "Empty",Color.Empty,"0;0;0;0",new string[] { "<Color color=\"#00000000\" />", "color=\"#00000000\"" } },
+            new object[]{ "Black",Color.Black,"FF;0;0;0",new string[] { "<Color Name=\"Black\" />", "Name=\"Black\"" } },
+            new object[]{ "White", Color.White,"FF;FF;FF;FF",new string[] { "<Color Name=\"White\" />", "Name=\"White\"" } },
+            new object[]{ "Transparent",Color.Transparent,"0;FF;FF;FF",new string[] { "<Color Name=\"Transparent\" />", "Name=\"Transparent\"" } },
+            new object[]{ "Blue", Color.Blue,"FF;0;0;FF",new string[] { "<Color Name=\"Blue\" />", "Name=\"Blue\"" } },
+            new object[]{ "Cyan", Color.Cyan,"FF;0;FF;FF",new string[] { "<Color Name=\"Cyan\" />", "Name=\"Cyan\"" } },
+            new object[]{ "Lime!", Color.Lime,"FF;0;FF;0",new string[] { "<Color Name=\"Lime\" />", "Name=\"Lime\"" } },
+            new object[]{ "Yellow", Color.Yellow,"FF;FF;FF;0",new string[] { "<Color Name=\"Yellow\" />", "Name=\"Yellow\"" } },
+            new object[]{ "Red", Color.Red,"FF;FF;0;0",new string[] { "<Color Name=\"Red\" />", "Name=\"Red\"" } },
+            new object[]{ "Magenta", Color.Magenta, "FF;FF;0;FF",new string[] { "<Color Name=\"Magenta\" />", "Name=\"Magenta\"" } },
+            new object[]{ "DarkCyan", Color.DarkCyan,"FF;0;8B;8B",new string[] { "<Color Name=\"DarkCyan\" />", "Name=\"DarkCyan\"" } },
+            new object[]{ "Green", Color.Green,"FF;0;80;0",new string[] { "<Color Name=\"Green\" />", "Name=\"Green\"" } },
+            new object[]{ "DarkGreen", Color.DarkGreen,"FF;0;64;0",new string[] { "<Color Name=\"DarkGreen\" />", "Name=\"DarkGreen\"" } },
+            new object[]{ "DarkOrange", Color.DarkOrange,"FF;FF;8C;0",new string[] { "<Color Name=\"DarkOrange\" />", "Name=\"DarkOrange\"" } },
+            new object[]{ "DarkRed", Color.DarkRed,"FF;8B;0;0",new string[] { "<Color Name=\"DarkRed\" />", "Name=\"DarkRed\"" } },
+            new object[]{ "Magenta2", TGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF",new string[] { "<Color Name=\"Magenta\" />", "Name=\"Magenta\"" } },
+            new object[]{ "Magenta1", Color.FromArgb(255,255,0,255),"FF;FF;0;FF",new string[] { "<Color color=\"#FFFF00FF\" />", "color=\"#FFFF00FF\"" } },
+            new object[]{ "DarkBlue", Color.DarkBlue,"FF;0;0;8B",new string[] { "<Color Name=\"DarkBlue\" />", "Name=\"DarkBlue\"" } },
+            new object[]{ "DarkKhaki", Color.DarkKhaki,"FF;BD;B7;6B",new string[] { "<Color Name=\"DarkKhaki\" />", "Name=\"DarkKhaki\"" } },
+            new object[]{ "DarkGray", Color.DarkGray,"FF;A9;A9;A9",new string[] { "<Color Name=\"DarkGray\" />", "Name=\"DarkGray\"" } },
+            new object[]{ "Lime?", Color.FromArgb(255,0,255,0),"FF;0;FF;0",new string[] { "<Color color=\"#FF00FF00\" />", "color=\"#FF00FF00\"" } },
+            new object[]{ "GreenYellow", Color.GreenYellow,"FF;AD;FF;2F",new string[] { "<Color Name=\"GreenYellow\" />", "Name=\"GreenYellow\"" } },
+            new object[]{ "Orange", Color.Orange,"FF;FF;A5;0",new string[] { "<Color Name=\"Orange\" />", "Name=\"Orange\"" } },
+            new object[]{ "OrangeRed", Color.OrangeRed,"FF;FF;45;0",new string[] { "<Color Name=\"OrangeRed\" />", "Name=\"OrangeRed\"" } },
+            new object[]{ "Purple", Color.Purple,"FF;80;0;80", new string[] { "<Color Name=\"Purple\" />", "Name=\"Purple\"" } }
         };
 
         protected static IEnumerable<object[]> ColorCube2StringData => new[]
@@ -105,18 +128,18 @@ namespace JCAMS.Core.Tests
             new object[]{ "MS Sans,8,Underline", new Font("MS Sans Serif",8,FontStyle.Underline),new[] { "<Font Name=\"Microsoft Sans Serif\" Size=\"8\" Style=\"4\" />", "Name=\"Microsoft Sans Serif\" Size=\"8\" Style=\"4\"" } },
         };
 
-        protected static IEnumerable<object?[]> Pen2StringData => new[]
+        protected static IEnumerable<object?[]> Pen2StringXData => new[]
         {
-            new object?[]{ "null", null, "" },
-            new object[]{ "Black", Pens.Black, "FF;0;0;0;1,00" },
-            new object[]{ "Blue-1.1", new Pen(new SolidBrush(Color.Blue),1.1f), "FF;0;0;FF;1,10" },
-            new object[]{ "Cyan-1.1", new Pen(new SolidBrush(Color.Cyan),1.2f), "FF;0;FF;FF;1,20" },
-            new object[]{ "Green-1.3", new Pen(Color.Lime,1.3f), "FF;0;FF;0;1,30" },
-            new object[]{ "Yellow-1.3", new Pen(Color.Yellow,1.4f), "FF;FF;FF;0;1,40" },
-            new object[]{ "Red-1.5", new Pen(new SolidBrush(Color.Red),1.5f), "FF;FF;0;0;1,50" },
-            new object[]{ "Magenta-1.6", new Pen(new SolidBrush(Color.Magenta),1.6f), "FF;FF;0;FF;1,60" },
-            new object[]{ "White-1.7", new Pen(Color.White,1.7f), "FF;FF;FF;FF;1,70" },
-            new object[]{ "Transparent-1.8", new Pen(Color.Transparent,1.8f), "0;FF;FF;FF;1,80" },
+            new object?[]{ "null", null, "",new[] { "<NULL />", "" } },
+            new object[]{ "Black", Pens.Black, "FF;0;0;0;1,00",new[] { "<Pen Width=\"1.00\" PenType=\"0\">\r\n  <Color Name=\"Black\" />\r\n</Pen>", "Width=\"1.00\" PenType=\"0\" Color.Name=\"Black\"" } },
+            new object[]{ "Blue-1.1", new Pen(new SolidBrush(Color.Blue),1.1f), "FF;0;0;FF;1,10",new[] { "<Pen Width=\"1.10\" PenType=\"0\">\r\n  <Color color=\"#FF0000FF\" />\r\n</Pen>", "Width=\"1.10\" PenType=\"0\" Color.color=\"#FF0000FF\"" } },
+            new object[]{ "Cyan-1.1", new Pen(new SolidBrush(Color.Cyan),1.2f), "FF;0;FF;FF;1,20",new[] { "<Pen Width=\"1.20\" PenType=\"0\">\r\n  <Color color=\"#FF00FFFF\" />\r\n</Pen>", "Width=\"1.20\" PenType=\"0\" Color.color=\"#FF00FFFF\"" } },
+            new object[]{ "Green-1.3", new Pen(Color.Lime,1.3f), "FF;0;FF;0;1,30",new[] { "<Pen Width=\"1.30\" PenType=\"0\">\r\n  <Color Name=\"Lime\" />\r\n</Pen>", "Width=\"1.30\" PenType=\"0\" Color.Name=\"Lime\"" } },
+            new object[]{ "Yellow-1.3", new Pen(Color.Yellow,1.4f), "FF;FF;FF;0;1,40",new[] { "<Pen Width=\"1.40\" PenType=\"0\">\r\n  <Color Name=\"Yellow\" />\r\n</Pen>", "Width=\"1.40\" PenType=\"0\" Color.Name=\"Yellow\"" } },
+            new object[]{ "Red-1.5", new Pen(new SolidBrush(Color.Red),1.5f), "FF;FF;0;0;1,50",new[] { "<Pen Width=\"1.50\" PenType=\"0\">\r\n  <Color color=\"#FFFF0000\" />\r\n</Pen>", "Width=\"1.50\" PenType=\"0\" Color.color=\"#FFFF0000\"" } },
+            new object[]{ "Magenta-1.6", new Pen(new SolidBrush(Color.Magenta),1.6f), "FF;FF;0;FF;1,60",new[] { "<Pen Width=\"1.60\" PenType=\"0\">\r\n  <Color color=\"#FFFF00FF\" />\r\n</Pen>", "Width=\"1.60\" PenType=\"0\" Color.color=\"#FFFF00FF\"" } },
+            new object[]{ "White-1.7", new Pen(Color.White,1.7f), "FF;FF;FF;FF;1,70",new[] { "<Pen Width=\"1.70\" PenType=\"0\">\r\n  <Color Name=\"White\" />\r\n</Pen>", "Width=\"1.70\" PenType=\"0\" Color.Name=\"White\"" } },
+            new object[]{ "Transparent-1.8", new Pen(Color.Transparent,1.8f), "0;FF;FF;FF;1,80",new[] { "<Pen Width=\"1.80\" PenType=\"0\">\r\n  <Color Name=\"Transparent\" />\r\n</Pen>", "Width=\"1.80\" PenType=\"0\" Color.Name=\"Transparent\"" } },
         };
 
         protected static IEnumerable<object?[]> Point2StringXData => new[]
@@ -156,7 +179,7 @@ namespace JCAMS.Core.Tests
         protected new static IEnumerable<object[]> Color2StringData => TGraphics2Tests_Base.Color2StringData;
         protected new static IEnumerable<object[]> ColorCube2StringData => TGraphics2Tests_Base.ColorCube2StringData;
         protected new static IEnumerable<object[]> Font2StringData => TGraphics2Tests_Base.Font2StringData;
-        protected new static IEnumerable<object[]> Pen2StringData => TGraphics2Tests_Base.Pen2StringData;
+        protected new static IEnumerable<object[]> Pen2StringXData => TGraphics2Tests_Base.Pen2StringXData;
         protected new static IEnumerable<object[]> Point2StringXData => TGraphics2Tests_Base.Point2StringXData;
         protected new static IEnumerable<object[]> Rectangle2StringData => TGraphics2Tests_Base.Rectangle2StringData;
         #endregion
@@ -188,8 +211,8 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringData")]
-        public void Pen2StringTest(string name, Pen pVal, string sExp)
+        [DynamicData("Pen2StringXData")]
+        public void Pen2StringTest(string name, Pen pVal, string sExp, string[] xExp)
         {
             Assert.AreEqual(sExp, TGraphics2.Pen2String(pVal), $"Test: {name}");
         }
@@ -248,8 +271,8 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringData")]
-        public void String2PenTest(string name, Pen pExp, string sVal)
+        [DynamicData("Pen2StringXData")]
+        public void String2PenTest(string name, Pen pExp, string sVal, string[] xExp)
         {
             AssertAreEqualPen(pExp, TGraphics2.String2Pen(sVal), $"Test: {name}");
         }
@@ -289,10 +312,10 @@ namespace JCAMS.Core.Tests
     [TestClass()]
     public class TGraphics2Tests_Xml : TGraphics2Tests_Base
     {
-        protected new static IEnumerable<object[]> Color2StringData => TGraphics2Tests_Base.Color2StringData;
+        protected new static IEnumerable<object[]> Color2StringXData => TGraphics2Tests_Base.Color2StringXData;
         protected new static IEnumerable<object[]> ColorCube2StringData => TGraphics2Tests_Base.ColorCube2StringData;
         protected new static IEnumerable<object[]> Font2StringXData => TGraphics2Tests_Base.Font2StringXData;
-        protected new static IEnumerable<object[]> Pen2StringData => TGraphics2Tests_Base.Pen2StringData;
+        protected new static IEnumerable<object[]> Pen2StringXData => TGraphics2Tests_Base.Pen2StringXData;
         protected new static IEnumerable<object[]> Point2StringXData => TGraphics2Tests_Base.Point2StringXData;
 
         [TestMethod()]
@@ -464,6 +487,238 @@ namespace JCAMS.Core.Tests
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Pen2StringXData")]
+        public void WriteToXMLTest_Pen(string sVal, Pen fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw, true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Pen2StringXData")]
+        public void WriteToXMLTest1_Pen(string sVal, Pen fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Pen2StringXData")]
+        public void WriteToXMLTest2_Pen(string sVal, Pen fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw, true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Pen2StringXData")]
+        public void WriteToXMLTest3_Pen(string sVal, Pen fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Pen2StringXData")]
+        public void WriteToXMLTest4_Pen(string sVal, Pen fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    if (fVal == null) xsw.WriteElementString("NULL", "");
+                    else
+                    {
+                        xsw.WriteStartElement(fVal.GetType().Name);
+                        TGraphics2.WriteToXML(fVal, xsw);
+                        xsw.WriteEndElement();
+                    }
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Pen2StringXData")]
+        public void WriteToXMLTest5_Pen(string sVal, Pen fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    if (fVal == null) xsw.WriteElementString("NULL", "");
+                    else
+                    {
+                        xsw.WriteStartElement(fVal.GetType().Name);
+                        fVal.WriteToXML(xsw);
+                        xsw.WriteEndElement();
+                    }
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Color2StringXData")]
+        public void WriteToXMLTest_Color(string sVal, Color fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw, true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Color2StringXData")]
+        public void WriteToXMLTest1_Color(string sVal, Color fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Color2StringXData")]
+        public void WriteToXMLTest2_Color(string sVal, Color fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw, true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Color2StringXData")]
+        public void WriteToXMLTest3_Color(string sVal, Color fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Color2StringXData")]
+        public void WriteToXMLTest4_Color(string sVal, Color fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    xsw.WriteStartElement(fVal.GetType().Name);
+                    TGraphics2.WriteToXML(fVal, xsw);
+                    xsw.WriteEndElement();
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Color2StringXData")]
+        public void WriteToXMLTest5_Color(string sVal, Color fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    xsw.WriteStartElement(fVal.GetType().Name);
+                    fVal.WriteToXML(xsw);
+                    xsw.WriteEndElement();
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
             }
         }
     }
