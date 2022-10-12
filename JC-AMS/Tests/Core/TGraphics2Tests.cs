@@ -10,9 +10,12 @@ using JCAMS.Core.Components.Coloring;
 using System.Xml;
 using System.Xml.Linq;
 using System.Drawing.Text;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace JCAMS.Core.Tests
 {
+
     [TestClass()]
     public class TGraphics2Tests_Base
     {
@@ -84,9 +87,22 @@ namespace JCAMS.Core.Tests
         {
             new object?[]{ "null", null, "" },
             new object[]{ "DefaultFont", SystemFonts.DefaultFont, "Microsoft Sans Serif;825;0" },
-            new object[]{ "DefaultFont", SystemFonts.DialogFont, "Tahoma;800;0" },
-            new object[]{ "DefaultFont", SystemFonts.MenuFont, "Segoe UI;900;0" },
-            new object[]{ "DefaultFont", new Font("Times New Roman",12), "Times New Roman;1200;0" },
+            new object[]{ "DialogFont", SystemFonts.DialogFont, "Tahoma;800;0" },
+            new object[]{ "MenuFont", SystemFonts.MenuFont, "Segoe UI;900;0" },
+            new object[]{ "TimesNewRoman,12", new Font("Times New Roman",12), "Times New Roman;1200;0" },
+            new object[]{ "Courier New,18,Bold & Italic", new Font("Courier New",18,FontStyle.Bold | FontStyle.Italic), "Courier New;1800;3" },
+            new object[]{ "MS Sans,8,Underline", new Font("MS Sans Serif",8,FontStyle.Underline), "Microsoft Sans Serif;800;4" },
+        };
+
+        protected static IEnumerable<object?[]> Font2StringXData => new[]
+{
+            new object?[]{ "null", null,new[] { "<NULL />","" } },
+            new object[]{ "DefaultFont", SystemFonts.DefaultFont,new[] { "<Font Name=\"Microsoft Sans Serif\" Size=\"8.25\" Style=\"0\" />", "Name=\"Microsoft Sans Serif\" Size=\"8.25\" Style=\"0\"" } },
+            new object[]{ "DialogFont", SystemFonts.DialogFont, new[] { "<Font Name=\"Tahoma\" Size=\"8\" Style=\"0\" />", "Name=\"Tahoma\" Size=\"8\" Style=\"0\"" } },
+            new object[]{ "MenuFont", SystemFonts.MenuFont,new[] { "<Font Name=\"Segoe UI\" Size=\"9\" Style=\"0\" />", "Name=\"Segoe UI\" Size=\"9\" Style=\"0\"" } },
+            new object[]{ "TimesNewRoman,12", new Font("Times New Roman",12),new[] { "<Font Name=\"Times New Roman\" Size=\"12\" Style=\"0\" />", "Name=\"Times New Roman\" Size=\"12\" Style=\"0\"" } },
+            new object[]{ "Courier New,18,Bold & Italic", new Font("Courier New",18,FontStyle.Bold | FontStyle.Italic), new[] { "<Font Name=\"Courier New\" Size=\"18\" Style=\"3\" />", "Name=\"Courier New\" Size=\"18\" Style=\"3\"" } },
+            new object[]{ "MS Sans,8,Underline", new Font("MS Sans Serif",8,FontStyle.Underline),new[] { "<Font Name=\"Microsoft Sans Serif\" Size=\"8\" Style=\"4\" />", "Name=\"Microsoft Sans Serif\" Size=\"8\" Style=\"4\"" } },
         };
 
         protected static IEnumerable<object?[]> Pen2StringData => new[]
@@ -105,11 +121,11 @@ namespace JCAMS.Core.Tests
 
         protected static IEnumerable<object?[]> Point2StringXData => new[]
         {
-            new object?[]{ "null", null, "0;0", "" }, // ?
-            new object[]{ "Empty", Point.Empty, "0;0", "" },
-            new object[]{ "MinValue", new Point(int.MinValue,int.MinValue), "-2147483648;-2147483648", "" },
-            new object[]{ "MaxValue", new Point(int.MaxValue, int.MaxValue), "2147483647;2147483647", "" },
-            new object[]{ "(1;2)", new Point(1, 2), "1;2", "" },
+            new object?[]{ "null", null, "0;0",new[] { "<Point X=\"0\" Y=\"0\" />", "X=\"0\" Y=\"0\"" } }, // ?
+            new object[]{ "Empty", Point.Empty, "0;0",new[] { "<Point X=\"0\" Y=\"0\" />", "X=\"0\" Y=\"0\"" } },
+            new object[]{ "MinValue", new Point(int.MinValue,int.MinValue), "-2147483648;-2147483648",new[] { "<Point X=\"-2147483648\" Y=\"-2147483648\" />", "X=\"-2147483648\" Y=\"-2147483648\"" } },
+            new object[]{ "MaxValue", new Point(int.MaxValue, int.MaxValue), "2147483647;2147483647",new[] { "<Point X=\"2147483647\" Y=\"2147483647\" />", "X=\"2147483647\" Y=\"2147483647\"" } },
+            new object[]{ "(1;2)", new Point(1, 2), "1;2",new[] { "<Point X=\"1\" Y=\"2\" />", "X=\"1\" Y=\"2\"" } },
         };
 
         protected static IEnumerable<object?[]> Rectangle2StringData => new[]
@@ -181,7 +197,7 @@ namespace JCAMS.Core.Tests
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DynamicData("Point2StringXData")]
-        public void Point2StringTest(string name, Point pVal, string sExp, string xExp)
+        public void Point2StringTest(string name, Point pVal, string sExp, string[] xExp)
         {
             Assert.AreEqual(sExp, TGraphics2.Point2String(pVal), $"Test: {name}");
         }
@@ -241,7 +257,7 @@ namespace JCAMS.Core.Tests
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DynamicData("Point2StringXData")]
-        public void String2PointTest(string name, Point pExp, string sVal, string xVal)
+        public void String2PointTest(string name, Point pExp, string sVal, string[] xVal)
         {
             Assert.AreEqual(pExp, TGraphics2.String2Point(sVal), $"Test: {name}");
         }
@@ -273,16 +289,23 @@ namespace JCAMS.Core.Tests
     [TestClass()]
     public class TGraphics2Tests_Xml : TGraphics2Tests_Base
     {
+        protected new static IEnumerable<object[]> Color2StringData => TGraphics2Tests_Base.Color2StringData;
+        protected new static IEnumerable<object[]> ColorCube2StringData => TGraphics2Tests_Base.ColorCube2StringData;
+        protected new static IEnumerable<object[]> Font2StringXData => TGraphics2Tests_Base.Font2StringXData;
+        protected new static IEnumerable<object[]> Pen2StringData => TGraphics2Tests_Base.Pen2StringData;
+        protected new static IEnumerable<object[]> Point2StringXData => TGraphics2Tests_Base.Point2StringXData;
+
         [TestMethod()]
         public void Font2XMLTest(string name, Font fVal, string sExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.Font2String(fVal), $"Test: {name}");
+            XmlNode xn = null;
+            Assert.AreEqual(sExp, TGraphics2.Font2XML(fVal,xn), $"Test: {name}");
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DynamicData("Point2StringXData")]
-        public void Point2XMLTest(string name, Point pVal, string sExp, string xExp)
+        public void Point2XMLTest(string name, Point pVal, string sExp, string[] xExp)
         {
             var xNode = new XmlDocument();
             Assert.AreEqual(xExp, TGraphics2.Point2XML(pVal, xNode)?.InnerXml, $"Test: {name}");
@@ -298,6 +321,150 @@ namespace JCAMS.Core.Tests
         public void XML2PointTest()
         {
             Assert.Fail();
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Font2StringXData")]
+        public void WriteToXMLTest_Font(string sVal,Font fVal,string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+            using (var xsw = new XmlTextWriter(tw))
+            {
+                xsw.Formatting = Formatting.Indented;
+                xsw.Indentation = 2;
+                TGraphics2.WriteToXML(fVal,xsw,true);           
+            }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Font2StringXData")]
+        public void WriteToXMLTest1_Font(string sVal, Font fVal, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Font2StringXData")]
+        public void WriteToXMLTest2_Font(string sVal, Font fVal, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw,true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Font2StringXData")]
+        public void WriteToXMLTest3_Font(string sVal, Font fVal, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Point2StringXData")]
+        public void WriteToXMLTest_Point(string sVal, Point fVal,string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw, true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Point2StringXData")]
+        public void WriteToXMLTest1_Point(string sVal, Point fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    TGraphics2.WriteToXML(fVal, xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Point2StringXData")]
+        public void WriteToXMLTest2_Point(string sVal, Point fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw, true);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[0], s);
+            }
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("Point2StringXData")]
+        public void WriteToXMLTest3_Point(string sVal, Point fVal, string sP, string[] sExp)
+        {
+            using (var tw = new StringWriter())
+            {
+                using (var xsw = new XmlTextWriter(tw))
+                {
+                    xsw.Formatting = Formatting.Indented;
+                    xsw.Indentation = 2;
+                    fVal.WriteToXML(xsw);
+                }
+                var s = tw.ToString();
+                Assert.AreEqual(sExp[1], s);
+            }
         }
     }
 }
