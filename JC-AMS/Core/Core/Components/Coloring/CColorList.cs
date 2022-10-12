@@ -17,6 +17,7 @@ using System.Drawing;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using JCAMS.Core.Extensions;
 using JCAMS.Core.Logging;
 using JCAMS.Core.System;
 
@@ -25,18 +26,21 @@ namespace JCAMS.Core.Components.Coloring
     /// <summary>
     /// Class CColorList.
     /// </summary>
-    public class CColorList :IHasDescription , IXmlSerializable
+    public class CColorList :IHasDescription //, IXmlSerializable
     {
         #region Properties
+        public static Single fFineWidth { get; set; } = 1.0f;
+        public static Single fThickWidth { get; set; } = 5.0f;
+
         /// <summary>
         /// The m label
         /// </summary>
-        private string _Label;
+        private string? _Label;
 
         /// <summary>
         /// The m color
         /// </summary>
-        private Color[] _Color;
+        private Color[]? _Color;
 
         /// <summary>
         /// The m brush
@@ -46,12 +50,12 @@ namespace JCAMS.Core.Components.Coloring
         /// <summary>
         /// The m pen1
         /// </summary>
-        private Pen[] _Pen1;
+        private Pen[] _PenFine;
 
         /// <summary>
         /// The m pen5
         /// </summary>
-        private Pen[] _Pen5;
+        private Pen[] _PenThick;
 
         /// <summary>
         /// The m nr
@@ -62,7 +66,7 @@ namespace JCAMS.Core.Components.Coloring
         /// Gets or sets the label.
         /// </summary>
         /// <value>The label.</value>
-        public string Label { get => _Label; set => _Label = value; }
+        public string Label { get => _Label ?? ""; set => _Label = value; }
 
         /// <summary>
         /// Gets the nr.
@@ -76,23 +80,25 @@ namespace JCAMS.Core.Components.Coloring
         /// </summary>
         /// <value>The list.</value>
         [Browsable(false)]
-        public Color[] List => _Color;
+        public Color[]? List => _Color;
 
         [Browsable(false)]
+        [XmlIgnore]
         public Brush[] Brushes => _Brushes;
 
         [Browsable(false)]
-        public Pen[] Pen1 => _Pen1;
+        [XmlIgnore]
+        public Pen[] Pen1 => _PenFine;
 
         [Browsable(false)]
-        public Pen[] Pen5 => _Pen5;
+        [XmlIgnore]
+        public Pen[] Pen5 => _PenThick;
 
-        string IHasDescription.Description => _Label;
+        string IHasDescription.Description => _Label ?? "";
         #endregion
         #region Methods
         public CColorList()
         {
-
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="CColorList" /> class.
@@ -110,14 +116,14 @@ namespace JCAMS.Core.Components.Coloring
                 int N = Clr.Length;
                 _Color = new Color[N];
                 _Brushes = new Brush[N];
-                _Pen1 = new Pen[N];
-                _Pen5 = new Pen[N];
+                _PenFine = new Pen[N];
+                _PenThick = new Pen[N];
                 for (int I = 0; I < _Color.Length; I++)
                 {
                     _Color[I] = Clr[I];
                     _Brushes[I] = new SolidBrush(Clr[I]);
-                    _Pen1[I] = new Pen(Clr[I], 1f);
-                    _Pen5[I] = new Pen(Clr[I], 5f);
+                    _PenFine[I] = new Pen(Clr[I], fFineWidth);
+                    _PenThick[I] = new Pen(Clr[I], fThickWidth);
                 }
             }
             catch (Exception Ex)
@@ -143,8 +149,8 @@ namespace JCAMS.Core.Components.Coloring
             while (_Color != null && I < _Color.Length)
             {
                 _Brushes[I].Dispose();
-                _Pen1[I].Dispose();
-                _Pen5[I].Dispose();
+                _PenFine[I].Dispose();
+                _PenThick[I].Dispose();
                 I++;
             }
         }
@@ -179,8 +185,8 @@ namespace JCAMS.Core.Components.Coloring
                 TVariableHandling.LoadVar(AppName, SectionName, $"{KeyName} Idx {I}", out int C);
                 _Color[I] = Color.FromArgb(C);
                 _Brushes[I] = new SolidBrush(_Color[I]);
-                _Pen1[I] = new Pen(_Color[I], 1f);
-                _Pen5[I] = new Pen(_Color[I], 5f);
+                _PenFine[I] = new Pen(_Color[I], fFineWidth);
+                _PenThick[I] = new Pen(_Color[I], fThickWidth);
             }
             return true;
         }
@@ -208,21 +214,24 @@ namespace JCAMS.Core.Components.Coloring
             return base.GetHashCode();
         }
 
-        public XmlSchema GetSchema() => null;
+        public XmlSchema? GetSchema() => null;
 
         public void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            Label=reader.GetAttribute(nameof(Label));
+            Nr = reader.GetAttribute(nameof(Nr)).AsInt32();
+
+            //          throw new NotImplementedException();
         }
 
         public void WriteXml(XmlWriter writer)
         {
             writer.WriteAttributeString(nameof(Label), Label);
             writer.WriteAttributeString(nameof(Nr), Nr.ToString());
-            writer.WriteAttributeString($"{nameof(Color)}.Count", _Color.Length.ToString());
-            for (var i = 0; i < _Color.Length ; i++)
+            writer.WriteAttributeString($"{nameof(Color)}.Count", (_Color?.Length??0).ToString());
+            for (var i = 0; i < _Color?.Length; i++)
             {
-//                _Color[i].WriteToXML(writer);
+                _Color[i].WriteToXML(writer,true);
             }
         }
         #endregion
