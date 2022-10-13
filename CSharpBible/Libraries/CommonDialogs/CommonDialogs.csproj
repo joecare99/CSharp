@@ -1,0 +1,22 @@
+<Project>
+	<PropertyGroup>
+		<TargetFrameworks>net48-windows;net472-windows</TargetFrameworks>
+		<TargetFrameworks Condition="False">$(TargetFrameWorks);net461-windows</TargetFrameworks>
+		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<UseWindowsForms>true</UseWindowsForms>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+	  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Class1.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="CommonDialogs.csproj.bak" />
+	</ItemGroup>
+</Project>
