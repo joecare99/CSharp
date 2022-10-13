@@ -1,0 +1,44 @@
+﻿<Page x:Class="MVVM_18_MultiConverters.View.DateDifView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_18_MultiConverters.View"
+      xmlns:model="clr-namespace:MVVM_18_MultiConverters.Model"
+      xmlns:vc="clr-namespace:MVVM_18_MultiConverters.ValueConverter"
+      xmlns:mvvm="clr-namespace:MVVM_18_MultiConverters.ViewModel"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="400"
+      Title="DateDifView">
+    <Page.DataContext>
+        <mvvm:DateDifViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <vc:TimeSpanConverter x:Key="vcTimeSpan"/>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type model:DateDifFormat}" x:Key="EnumValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="model:DateDifFormat"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Page.Resources>
+    <Grid>
+        <StackPanel>
+            <Label Content="Start-Datum"/>
+            <DatePicker SelectedDate="{Binding StartDate}"/>
+            <Label Content="Ende-Datum"/>
+            <DatePicker SelectedDate="{Binding EndDate}"/>
+            <Label Content="Zeit"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="80" d:Text="1234" >
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource vcTimeSpan}" Mode="OneWay" ConverterParameter="">
+                            <Binding Path="DateDif"/>
+                            <Binding Path="Format"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <ComboBox Width="100" ItemsSource="{Binding Source={StaticResource EnumValues}}" SelectedItem="{Binding Format}"></ComboBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
