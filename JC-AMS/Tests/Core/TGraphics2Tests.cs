@@ -31,7 +31,7 @@ namespace JCAMS.Core.Tests
             new object[]{ "DarkGreen", Color.DarkGreen,"FF;0;64;0" },
             new object[]{ "DarkOrange", Color.DarkOrange,"FF;FF;8C;0" },
             new object[]{ "DarkRed", Color.DarkRed,"FF;8B;0;0" },
-            new object[]{ "Magenta2", TGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF" },
+            new object[]{ "Magenta2", SGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF" },
             new object[]{ "Magenta1", Color.FromArgb(255,255,0,255),"FF;FF;0;FF" },
             new object[]{ "DarkBlue", Color.DarkBlue,"FF;0;0;8B" },
             new object[]{ "DarkKhaki", Color.DarkKhaki,"FF;BD;B7;6B" },
@@ -61,7 +61,7 @@ namespace JCAMS.Core.Tests
             new object[]{ "DarkGreen", Color.DarkGreen,"FF;0;64;0",new string[] { "<Color Name=\"DarkGreen\" />", "Name=\"DarkGreen\"" } },
             new object[]{ "DarkOrange", Color.DarkOrange,"FF;FF;8C;0",new string[] { "<Color Name=\"DarkOrange\" />", "Name=\"DarkOrange\"" } },
             new object[]{ "DarkRed", Color.DarkRed,"FF;8B;0;0",new string[] { "<Color Name=\"DarkRed\" />", "Name=\"DarkRed\"" } },
-            new object[]{ "Magenta2", TGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF",new string[] { "<Color Name=\"Magenta\" />", "Name=\"Magenta\"" } },
+            new object[]{ "Magenta2", SGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF",new string[] { "<Color Name=\"Magenta\" />", "Name=\"Magenta\"" } },
             new object[]{ "Magenta1", Color.FromArgb(255,255,0,255),"FF;FF;0;FF",new string[] { "<Color color=\"#FFFF00FF\" />", "color=\"#FFFF00FF\"" } },
             new object[]{ "DarkBlue", Color.DarkBlue,"FF;0;0;8B",new string[] { "<Color Name=\"DarkBlue\" />", "Name=\"DarkBlue\"" } },
             new object[]{ "DarkKhaki", Color.DarkKhaki,"FF;BD;B7;6B",new string[] { "<Color Name=\"DarkKhaki\" />", "Name=\"DarkKhaki\"" } },
@@ -190,7 +190,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Color2StringData")]
         public void Color2StringTest(string name, Color cVal, string sExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.Color2String(cVal), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.Color2String(cVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -198,7 +198,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("ColorCube2StringData")]
         public void ColorCube2StringTest(string name, CColorCube cVal, string sExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.ColorCube2String(cVal), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.ColorCube2String(cVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -206,7 +206,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Font2StringData")]
         public void Font2StringTest(string name, Font fVal, string sExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.Font2String(fVal), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.Font2String(fVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -214,7 +214,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Pen2StringXData")]
         public void Pen2StringTest(string name, Pen pVal, string sExp, string[] xExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.Pen2String(pVal), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.Pen2String(pVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -222,7 +222,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Point2StringXData")]
         public void Point2StringTest(string name, Point pVal, string sExp, string[] xExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.Point2String(pVal), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.Point2String(pVal), $"Test: {name}");
         }
 
 
@@ -231,7 +231,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Rectangle2StringData")]
         public void Rectangle2StringTest(string name, Rectangle rVal, string sExp)
         {
-            Assert.AreEqual(sExp, TGraphics2.Rectangle2String(rVal), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.Rectangle2String(rVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -239,7 +239,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Color2StringData")]
         public void String2ColorTest(string name, Color cExp, string sVal)
         {
-            Assert.AreEqual(Color.FromArgb(cExp.ToArgb()), TGraphics2.String2Color(sVal), $"Test: {name}");
+            Assert.AreEqual(Color.FromArgb(cExp.ToArgb()), SGraphics2.String2Color(sVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -247,7 +247,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("ColorCube2StringData")]
         public void String2ColorCubeTest(string name, CColorCube cExp, string sVal)
         {
-            Assert.AreEqual(cExp, TGraphics2.String2ColorCube(sVal), $"Test: {name}");
+            Assert.AreEqual(cExp, SGraphics2.String2ColorCube(sVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -258,7 +258,7 @@ namespace JCAMS.Core.Tests
             Font fAct = default;
             try
             {
-                Assert.AreEqual(fExp, fAct = TGraphics2.String2Font(sVal), $"Test: {name}");
+                Assert.AreEqual(fExp, fAct = SGraphics2.String2Font(sVal), $"Test: {name}");
             }
             catch (AssertFailedException afe)
             {
@@ -274,7 +274,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Pen2StringXData")]
         public void String2PenTest(string name, Pen pExp, string sVal, string[] xExp)
         {
-            AssertAreEqualPen(pExp, TGraphics2.String2Pen(sVal), $"Test: {name}");
+            AssertAreEqualPen(pExp, SGraphics2.String2Pen(sVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -282,7 +282,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Point2StringXData")]
         public void String2PointTest(string name, Point pExp, string sVal, string[] xVal)
         {
-            Assert.AreEqual(pExp, TGraphics2.String2Point(sVal), $"Test: {name}");
+            Assert.AreEqual(pExp, SGraphics2.String2Point(sVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -290,7 +290,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Rectangle2StringData")]
         public void String2RectangleTest(string name, Rectangle rExp, string sVal)
         {
-            Assert.AreEqual(rExp, TGraphics2.String2Rectangle(sVal), $"Test: {name}");
+            Assert.AreEqual(rExp, SGraphics2.String2Rectangle(sVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -298,7 +298,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("Color2StringData")]
         public void FindKnownColorTest(string name, Color cVal, string sExp)
         {
-            Color c = TGraphics2.FindKnownColor(cVal);
+            Color c = SGraphics2.FindKnownColor(cVal);
             if (c != Color.Empty)
             {
                 Assert.AreEqual(true, c.IsNamedColor);
@@ -322,7 +322,7 @@ namespace JCAMS.Core.Tests
         public void Font2XMLTest(string name, Font fVal, string sExp)
         {
             XmlNode xn = null;
-            Assert.AreEqual(sExp, TGraphics2.Font2XML(fVal,xn), $"Test: {name}");
+            Assert.AreEqual(sExp, SGraphics2.Font2XML(fVal,xn), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -331,7 +331,7 @@ namespace JCAMS.Core.Tests
         public void Point2XMLTest(string name, Point pVal, string sExp, string[] xExp)
         {
             var xNode = new XmlDocument();
-            Assert.AreEqual(xExp, TGraphics2.Point2XML(pVal, xNode)?.InnerXml, $"Test: {name}");
+            Assert.AreEqual(xExp, SGraphics2.Point2XML(pVal, xNode)?.InnerXml, $"Test: {name}");
         }
 
         [TestMethod()]
@@ -357,7 +357,7 @@ namespace JCAMS.Core.Tests
             {
                 xsw.Formatting = Formatting.Indented;
                 xsw.Indentation = 2;
-                TGraphics2.WriteToXML(fVal,xsw,true);           
+                SGraphics2.WriteToXML(fVal,xsw,true);           
             }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[0], s);
@@ -375,7 +375,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw);
+                    SGraphics2.WriteToXML(fVal, xsw);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[1], s);
@@ -429,7 +429,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw, true);
+                    SGraphics2.WriteToXML(fVal, xsw, true);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[0], s);
@@ -447,7 +447,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw);
+                    SGraphics2.WriteToXML(fVal, xsw);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[1], s);
@@ -502,7 +502,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw, true);
+                    SGraphics2.WriteToXML(fVal, xsw, true);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[0], s);
@@ -520,7 +520,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw);
+                    SGraphics2.WriteToXML(fVal, xsw);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[1], s);
@@ -578,7 +578,7 @@ namespace JCAMS.Core.Tests
                     else
                     {
                         xsw.WriteStartElement(fVal.GetType().Name);
-                        TGraphics2.WriteToXML(fVal, xsw);
+                        SGraphics2.WriteToXML(fVal, xsw);
                         xsw.WriteEndElement();
                     }
                 }
@@ -621,7 +621,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw, true);
+                    SGraphics2.WriteToXML(fVal, xsw, true);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[0], s);
@@ -639,7 +639,7 @@ namespace JCAMS.Core.Tests
                 {
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
-                    TGraphics2.WriteToXML(fVal, xsw);
+                    SGraphics2.WriteToXML(fVal, xsw);
                 }
                 var s = tw.ToString();
                 Assert.AreEqual(sExp[1], s);
@@ -694,7 +694,7 @@ namespace JCAMS.Core.Tests
                     xsw.Formatting = Formatting.Indented;
                     xsw.Indentation = 2;
                     xsw.WriteStartElement(fVal.GetType().Name);
-                    TGraphics2.WriteToXML(fVal, xsw);
+                    SGraphics2.WriteToXML(fVal, xsw);
                     xsw.WriteEndElement();
                 }
                 var s = tw.ToString();

@@ -19,7 +19,7 @@ namespace JCAMS.Core.Logging.Tests
         [TestInitialize()]
         public void Init()
         {
-            TLogging.DoWriteLog = LogDoWrite;
+            SLogging.DoWriteLog = LogDoWrite;
             DebugResult = "";
         }
 
@@ -42,13 +42,13 @@ namespace JCAMS.Core.Logging.Tests
         [TestMethod()]
         public void DebugPrintTest()
         {
-            TLogging.DebugPrint("Hello World!");
+            SLogging.DebugPrint("Hello World!");
         }
 
         [TestMethod()]
         public void DebugPrintTest1()
         {
-            TLogging.DebugPrint("{0} {1}!","Ciao","Bella");
+            SLogging.DebugPrint("{0} {1}!","Ciao","Bella");
         }
 
         [TestMethod()]
@@ -60,50 +60,50 @@ namespace JCAMS.Core.Logging.Tests
         [TestMethod()]
         public void LogTest()
         {
-            TLogging.xTriggerError = false;
-            TLogging.Log(new Exception("TestException"));
+            SLogging.xTriggerError = false;
+            SLogging.Log(new Exception("TestException"));
             Assert.AreEqual(cExpLogTest,DebugResult);
         }
 
         [TestMethod()]
         public void LogTest0_1()
         {
-            TLogging.xTriggerError = true;
-            TLogging.Log(new Exception("TestException"));
+            SLogging.xTriggerError = true;
+            SLogging.Log(new Exception("TestException"));
             Assert.AreEqual(cExpLogTest0_1, DebugResult);
         }
 
         [TestMethod()]
         public void LogTest1()
         {
-            TLogging.xTriggerError = false;
-            TLogging.Log("LogTest1: {0}, {1}, {2}",4321,1234,"3rd Param");
+            SLogging.xTriggerError = false;
+            SLogging.Log("LogTest1: {0}, {1}, {2}",4321,1234,"3rd Param");
             Assert.AreEqual(cExpLogTest1, DebugResult);
         }
 
         [TestMethod()]
         public void LogTest2()
         {
-            TLogging.xTriggerError = false;
-            TLogging.Log(ELogTopic.Debug, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
+            SLogging.xTriggerError = false;
+            SLogging.Log(ELogTopic.Debug, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
             Assert.AreEqual(cExpLogTest2, DebugResult);
         }
 
         [TestMethod()]
         public void LogTest2_1()
         {
-            TLogging.xTriggerError = false;
-            TLogging.xAppIsStarting = false;
-            TLogging.Log(ELogTopic.Debug, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
+            SLogging.xTriggerError = false;
+            SLogging.xAppIsStarting = false;
+            SLogging.Log(ELogTopic.Debug, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
             Assert.AreEqual(cExpLogTest2_1, DebugResult);
         }
 
         [TestMethod()]
         public void LogTest2_2()
         {
-            TLogging.xTriggerError = false;
-            TLogging.xAppIsStarting = false;
-            TLogging.Log(ELogTopic.Always, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
+            SLogging.xTriggerError = false;
+            SLogging.xAppIsStarting = false;
+            SLogging.Log(ELogTopic.Always, "LogTest2: {0}, {1}, {2}", 4321, 1234, "3rd Param");
             Assert.AreEqual(cExpLogTest2_2, DebugResult);
         }
 

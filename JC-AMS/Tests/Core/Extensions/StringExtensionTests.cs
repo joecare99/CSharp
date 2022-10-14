@@ -21,9 +21,9 @@ namespace JCAMS.Core.Extensions.Tests
         protected static IEnumerable<object[]> StreamDumpData => new[]
         {
             new object[]{"Null",null,"" },
-            new object[]{"Empty",StringExtension.String2Stream(""),"" },
-            new object[]{"Hello World",StringExtension.String2Stream("Hello World"),"0000: 48 65 6C 6C 6F 20 57 6F : 72 6C 64                 | Hello World\r\n" },
-            new object[]{"Lorem Ipsum...",StringExtension.String2Stream(TestData.cLoremIpsum),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
+            new object[]{"Empty",SStringExtension.String2Stream(""),"" },
+            new object[]{"Hello World",SStringExtension.String2Stream("Hello World"),"0000: 48 65 6C 6C 6F 20 57 6F : 72 6C 64                 | Hello World\r\n" },
+            new object[]{"Lorem Ipsum...",SStringExtension.String2Stream(TestData.cLoremIpsum),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
 0010: 72 20 73 69 74 20 61 6D : 65 74 2C 20 63 6F 6E 73  | r sit amet, cons
 0020: 65 63 74 65 74 75 72 20 : 61 64 69 70 69 73 69 63  | ectetur adipisic
 0030: 69 20 65 6C 69 74 2C 20 : 73 65 64 20 65 69 75 73  | i elit, sed eius
@@ -52,7 +52,7 @@ namespace JCAMS.Core.Extensions.Tests
 01A0: 69 74 20 61 6E 69 6D 20 : 69 64 20 65 73 74 20 6C  | it anim id est l
 01B0: 61 62 6F 72 75 6D 2E                               | aborum.
 " },
-            new object[]{"Lorem Ipsum...2",StringExtension.String2Stream(TestData.cBase64LoremIpsum,true),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
+            new object[]{"Lorem Ipsum...2",SStringExtension.String2Stream(TestData.cBase64LoremIpsum,true),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
 0010: 72 20 73 69 74 20 61 6D : 65 74 2C 20 63 6F 6E 73  | r sit amet, cons
 0020: 65 63 74 65 74 75 72 20 : 61 64 69 70 69 73 69 63  | ectetur adipisic
 0030: 69 20 65 6C 69 74 2C 20 : 73 65 64 20 65 69 75 73  | i elit, sed eius
@@ -81,7 +81,7 @@ namespace JCAMS.Core.Extensions.Tests
 01A0: 69 74 20 61 6E 69 6D 20 : 69 64 20 65 73 74 20 6C  | it anim id est l
 01B0: 61 62 6F 72 75 6D 2E                               | aborum.
 " },
-            new object[]{"Binary Data",StringExtension.String2Stream(
+            new object[]{"Binary Data",SStringExtension.String2Stream(
                 "tkSKmV0ot0HdTxKIAyBPxa0F3FNR7bRVvwY4iqDOt9nOXOKLM5GyIs5A1TlLh5" +
                 "2MZ+OV4PczZt69mjoACanw1GCfEPkvWvOvlXTB1UmXcxV42YyHxujuk45391uf" +
                 "LqgJrGeJCzw+M5JyYq4WXK4qcWp9PyGhwzr9waHUi3ZNQVj2otsnnDoJkGKxw1" +
@@ -231,7 +231,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("Ha11o", 11)]
         public void GetFirstNumberTest(string sVal, long lExp)
         {
-            Assert.AreEqual(lExp, StringExtension.GetFirstNumber(sVal), $"Test: GetFirstNumber({sVal})");
+            Assert.AreEqual(lExp, SStringExtension.GetFirstNumber(sVal), $"Test: GetFirstNumber({sVal})");
         }
 
         [DataTestMethod()]
@@ -276,7 +276,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow(TestData.cLoremIpsum, 'l', 20)]
         public void CharCntTest(string sVal, char cCh, long lExp)
         {
-            Assert.AreEqual(lExp, StringExtension.CharCnt(sVal, cCh), $"Test: CharCnt({sVal},{cCh})");
+            Assert.AreEqual(lExp, SStringExtension.CharCnt(sVal, cCh), $"Test: CharCnt({sVal},{cCh})");
         }
 
         [DataTestMethod()]
@@ -319,7 +319,7 @@ namespace JCAMS.Core.Extensions.Tests
         public void DumpTest2(string name, Stream sVal, string sExp)
         {
             var oPos = sVal?.Position;
-            Assert.AreEqual(sExp, StringExtension.Dump(sVal), $"Test: Dump({name})");
+            Assert.AreEqual(sExp, SStringExtension.Dump(sVal), $"Test: Dump({name})");
             Assert.AreEqual(oPos, sVal?.Position, $"Test: {name}.Position");
         }
 
@@ -344,7 +344,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow(TestData.cLoremIpsum, false, TestData.cLoremIpsum)]
         public void String2StreamTest(string sVal, bool xVal, string sExp)
         {
-            var ms = StringExtension.String2Stream(sVal, xVal);
+            var ms = SStringExtension.String2Stream(sVal, xVal);
             if (ms != null)
             {
                 Assert.IsInstanceOfType(ms, typeof(MemoryStream));
@@ -432,7 +432,7 @@ namespace JCAMS.Core.Extensions.Tests
             )]
         public void AsCompStringTest(string sVal, bool xVal, string sExp)
         {
-            Assert.AreEqual(sExp, StringExtension.String2Stream(sVal, xVal).AsCompString());
+            Assert.AreEqual(sExp, SStringExtension.String2Stream(sVal, xVal).AsCompString());
         }
 
         [DataTestMethod()]
@@ -472,7 +472,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow(TestData.cLoremIpsum, false, TestData.cBase64LoremIpsum )]
         public void AsBase54StringTest(string sVal, bool xVal, string sExp)
         {
-            Assert.AreEqual(sExp, StringExtension.String2Stream(sVal, xVal).AsBase64String());
+            Assert.AreEqual(sExp, SStringExtension.String2Stream(sVal, xVal).AsBase64String());
         }
     }
 }

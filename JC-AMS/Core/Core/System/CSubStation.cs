@@ -11,7 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using JCAMS.Core.DataOperations;
+using JCAMS.Core.System.Values;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
@@ -23,9 +26,12 @@ namespace JCAMS.Core.System
     /// Class SSubstation.
     /// </summary>
     [Serializable]
-    public class CSubStation : IHasParent , IHasID , IXmlSerializable, IHasDescription
+    public class CSubStation : CPropNotificationClass, IHasParent , IHasID , IXmlSerializable, IHasDescription
     {
         #region Properties
+        #region private properties
+        private string _Description;
+        #endregion
         /// <summary>
         /// The identifier substation
         /// </summary>
@@ -34,7 +40,7 @@ namespace JCAMS.Core.System
         /// <summary>
         /// The description
         /// </summary>
-        public string Description { get; private set; }
+        public string Description { get=>_Description; private set => SetValue(value, ref _Description); }
 
         /// <summary>
         /// The identifier station
@@ -42,9 +48,14 @@ namespace JCAMS.Core.System
         public long idStation { get => Station?.idStation ?? -1; }
         public CStation Station { get; private set; }
 
+        /// <summary>The values of this instance. Contains ALL values of this instance (flat).</summary>
+        public Dictionary<string, CSystemValue> Values = new Dictionary<string, CSystemValue>();
+
         #region static properties
         // Some "well known" SubStations
         public static CSubStation System { get; private set; }
+
+        public static Dictionary<long, CSubStation> SubStations = new Dictionary<long, CSubStation>();
         #endregion
 
         #region Interface properties
@@ -67,6 +78,7 @@ namespace JCAMS.Core.System
             Station = cStation;
             this.idSubStation = idSubstation;
             Description = sDescription;
+            SubStations[idSubStation] = this;
         }
 
         #region Interface methods
@@ -82,11 +94,6 @@ namespace JCAMS.Core.System
             info.AddValue(nameof(idSubStation), idSubStation, typeof(long));
             info.AddValue(nameof(Description), Description, typeof(string));
             info.AddValue(nameof(idStation), idStation, typeof(long));           
-        }
-
-        public void CompleteDeserialization(object deserialized)
-        {
-            throw new global::System.NotImplementedException();
         }
 
         public XmlSchema GetSchema() => null;
@@ -110,6 +117,12 @@ namespace JCAMS.Core.System
             writer.WriteValue(idStation);
             writer.WriteEndAttribute();
 
+        }
+        #endregion
+        #region static Methods
+        public static CSubStation GetSubStationGetStation(long idSubStation)
+        {
+            return SubStations.ContainsKey(idSubStation) ? SubStations[idSubStation] : null;
         }
         #endregion
         #endregion

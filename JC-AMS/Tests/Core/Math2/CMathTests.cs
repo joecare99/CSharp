@@ -24,22 +24,22 @@ namespace JCAMS.Core.Math2.Tests
 
         protected static IEnumerable<Object[]> SqrData => new[]
         {
-            new object[] {CMath.SqRoot_Of_2, 2}
+            new object[] {SMath.SqRoot_Of_2, 2}
         };
 
         [TestMethod()]
         public void SqRoot_Of_2Test()
         {
-            Assert.AreEqual(2d, CMath.SqRoot_Of_2 * CMath.SqRoot_Of_2, 1e-12, "The sqare-root of 2");
+            Assert.AreEqual(2d, SMath.SqRoot_Of_2 * SMath.SqRoot_Of_2, 1e-12, "The sqare-root of 2");
         }
 
         [TestMethod()]
         public void PI_DIV_180Test()
         {
-            Assert.AreEqual(-1d, Math.Cos(180 * CMath.PI_DIV_180), 1e-14, "pi/180");
-            Assert.AreEqual(0d, Math.Cos(90 * CMath.PI_DIV_180), 1e-14, "pi/180");
-            Assert.AreEqual(0d, Math.Sin(180 * CMath.PI_DIV_180), 1e-14, "pi/180");
-            Assert.AreEqual(1d, Math.Sin(90 * CMath.PI_DIV_180), 1e-14, "pi/180");
+            Assert.AreEqual(-1d, Math.Cos(180 * SMath.PI_DIV_180), 1e-14, "pi/180");
+            Assert.AreEqual(0d, Math.Cos(90 * SMath.PI_DIV_180), 1e-14, "pi/180");
+            Assert.AreEqual(0d, Math.Sin(180 * SMath.PI_DIV_180), 1e-14, "pi/180");
+            Assert.AreEqual(1d, Math.Sin(90 * SMath.PI_DIV_180), 1e-14, "pi/180");
         }
 
         [DataTestMethod()]
@@ -59,7 +59,7 @@ namespace JCAMS.Core.Math2.Tests
         {
 
             var ld = (ad != null) ? new List<double>(ad.ToList()) : null;
-            Assert.AreEqual(xExp, CMath.ArithmeticAverage(out double dAct, ld), $"Test:{name}");
+            Assert.AreEqual(xExp, SMath.ArithmeticAverage(out double dAct, ld), $"Test:{name}");
             if (double.IsNaN(dRes))
                 Assert.AreEqual(dRes, dAct, $"Test:{name}.result1");
             else
@@ -81,7 +81,7 @@ namespace JCAMS.Core.Math2.Tests
         [DynamicData("AritmeticAverageData")]
         public void ArithmeticAverageTest2(string name, double[] ad, bool xExp, double dRes)
         {
-            Assert.AreEqual(xExp, CMath.ArithmeticAverage(out double dAct, ad), $"Test:{name}");
+            Assert.AreEqual(xExp, SMath.ArithmeticAverage(out double dAct, ad), $"Test:{name}");
             if (double.IsNaN(dRes))
                 Assert.AreEqual(dRes, dAct, $"Test:{name}.result1");
             else
@@ -104,7 +104,7 @@ namespace JCAMS.Core.Math2.Tests
         public void ArithmeticAverageTest1(string name, double[] ad, bool xExp, double dRes)
         {
             Queue<double> q = (ad == null) ? null : new Queue<double>(ad.ToList());
-            Assert.AreEqual(xExp, CMath.ArithmeticAverage(out double dAct, q), $"Test:{name}");
+            Assert.AreEqual(xExp, SMath.ArithmeticAverage(out double dAct, q), $"Test:{name}");
             if (double.IsNaN(dRes))
                 Assert.AreEqual(dRes, dAct, $"Test:{name}.result1");
             else
@@ -128,9 +128,9 @@ namespace JCAMS.Core.Math2.Tests
         {
             var ld = (ad != null) ? new List<double>(ad.ToList()) : null;
             if (double.IsNaN(dRes))
-                Assert.AreEqual(dRes, CMath.ArithmeticAverage(ld), $"Test:{name}.result1");
+                Assert.AreEqual(dRes, SMath.ArithmeticAverage(ld), $"Test:{name}.result1");
             else
-                Assert.AreEqual(dRes, CMath.ArithmeticAverage(ld), 1e-12, $"Test:{name}.result1");
+                Assert.AreEqual(dRes, SMath.ArithmeticAverage(ld), 1e-12, $"Test:{name}.result1");
 
         }
 
@@ -173,9 +173,9 @@ namespace JCAMS.Core.Math2.Tests
         public void ArithmeticAverageTest4(string name, double[] ad, bool xExp, double dRes)
         {
             if (double.IsNaN(dRes))
-                Assert.AreEqual(dRes, CMath.ArithmeticAverage(ad), $"Test:{name}.result1");
+                Assert.AreEqual(dRes, SMath.ArithmeticAverage(ad), $"Test:{name}.result1");
             else
-                Assert.AreEqual(dRes, CMath.ArithmeticAverage(ad), 1e-12, $"Test:{name}.result1");
+                Assert.AreEqual(dRes, SMath.ArithmeticAverage(ad), 1e-12, $"Test:{name}.result1");
 
         }
 
@@ -211,7 +211,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("01 (12;6;0.5)", 12, 6, 0.5, true, 2)]
         public void CpTest(string name, double dMin, double dMax, double dSigma, bool xExp, double dExp)
         {
-            Assert.AreEqual(xExp, CMath.Cp(out double dVal, dMin, dMax, dSigma), $"Test: {name}");
+            Assert.AreEqual(xExp, SMath.Cp(out double dVal, dMin, dMax, dSigma), $"Test: {name}");
             Assert.AreEqual(dExp, dVal);
         }
 
@@ -225,7 +225,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("01 (12;6;0.5)", 12, 6, 0.5, true, 2)]
         public void CpTest1(string name, double dMin, double dMax, double dSigma, bool xExp, double dExp)
         {
-            Assert.AreEqual(dExp, CMath.Cp(dMin, dMax, dSigma), $"Test: {name}");
+            Assert.AreEqual(dExp, SMath.Cp(dMin, dMax, dSigma), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -243,26 +243,26 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("01 (12;6;0.5)", 12, 6, 9, 0.5, false, true, -2)]
         public void CpKTest(string name, double dMin, double dMax, double dMW, double dSigma, bool xFlag, bool xExp, double dExp)
         {
-            Assert.AreEqual(xExp, CMath.CpK(out double dVal, dMin, dMax,dMW, dSigma,xFlag), $"Test: {name}");
+            Assert.AreEqual(xExp, SMath.CpK(out double dVal, dMin, dMax,dMW, dSigma,xFlag), $"Test: {name}");
             Assert.AreEqual(dExp, dVal);
         }
 
         [TestMethod()]
         public void Deg2RadTest()
         {
-            Assert.AreEqual(-1f, Math.Cos(CMath.Deg2Rad(180f)), 1e-6, "c180°");
-            Assert.AreEqual(0f, Math.Cos(CMath.Deg2Rad(90f)), 1e-6, "c90°");
-            Assert.AreEqual(0f, Math.Sin(CMath.Deg2Rad(180f)), 1e-6, "s180°");
-            Assert.AreEqual(1f, Math.Sin(CMath.Deg2Rad(90f)), 1e-6, "s90°");
+            Assert.AreEqual(-1f, Math.Cos(SMath.Deg2Rad(180f)), 1e-6, "c180°");
+            Assert.AreEqual(0f, Math.Cos(SMath.Deg2Rad(90f)), 1e-6, "c90°");
+            Assert.AreEqual(0f, Math.Sin(SMath.Deg2Rad(180f)), 1e-6, "s180°");
+            Assert.AreEqual(1f, Math.Sin(SMath.Deg2Rad(90f)), 1e-6, "s90°");
         }
 
         [TestMethod()]
         public void Deg2RadTest1()
         {
-            Assert.AreEqual(-1d, Math.Cos(CMath.Deg2Rad(180d)), 1e-12, "c180°");
-            Assert.AreEqual(0d, Math.Cos(CMath.Deg2Rad(90d)), 1e-12, "c90°");
-            Assert.AreEqual(0d, Math.Sin(CMath.Deg2Rad(180d)), 1e-12, "s180°");
-            Assert.AreEqual(1d, Math.Sin(CMath.Deg2Rad(90d)), 1e-12, "s90°");
+            Assert.AreEqual(-1d, Math.Cos(SMath.Deg2Rad(180d)), 1e-12, "c180°");
+            Assert.AreEqual(0d, Math.Cos(SMath.Deg2Rad(90d)), 1e-12, "c90°");
+            Assert.AreEqual(0d, Math.Sin(SMath.Deg2Rad(180d)), 1e-12, "s180°");
+            Assert.AreEqual(1d, Math.Sin(SMath.Deg2Rad(90d)), 1e-12, "s90°");
         }
 
         [DataTestMethod()]
@@ -279,7 +279,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0A 10;13;12", 10d, 13d, 12d, 12d)]
         public void MinMaxTest(string name, double dMin, double dVal, double dMax, double dExp)
         {
-            Assert.AreEqual(dExp, CMath.MinMax(dMin, dVal, dMax));
+            Assert.AreEqual(dExp, SMath.MinMax(dMin, dVal, dMax));
         }
 
         [DataTestMethod()]
@@ -296,7 +296,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0A 10;13;12", 10f, 13f, 12f, 12f)]
         public void MinMaxTest1(string name, float dMin, float dVal, float dMax, float dExp)
         {
-            Assert.AreEqual(dExp, CMath.MinMax(dMin, dVal, dMax));
+            Assert.AreEqual(dExp, SMath.MinMax(dMin, dVal, dMax));
         }
 
         [DataTestMethod()]
@@ -313,7 +313,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0A 10;13;12", 10, 13, 12, 12)]
         public void MinMaxTest2(string name, int dMin, int dVal, int dMax, int dExp)
         {
-            Assert.AreEqual(dExp, CMath.MinMax(dMin, dVal, dMax));
+            Assert.AreEqual(dExp, SMath.MinMax(dMin, dVal, dMax));
         }
 
         [DataTestMethod()]
@@ -330,7 +330,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0A 10;13;12", 10, 13, 12, 12)]
         public void MinMaxTest2a(string name, int dMin, int dVal, int dMax, int dExp)
         {
-            Assert.AreEqual((long)dExp, CMath.MinMax((long)dMin, (long)dVal, (long)dMax));
+            Assert.AreEqual((long)dExp, SMath.MinMax((long)dMin, (long)dVal, (long)dMax));
         }
 
         [DataTestMethod()]
@@ -347,7 +347,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0A 10;13;12", 10, 13, 12, 12)]
         public void MinMaxTest2b(string name, int dMin, int dVal, int dMax, int dExp)
         {
-            Assert.AreEqual((decimal)dExp, CMath.MinMax((decimal)dMin, (decimal)dVal, (decimal)dMax));
+            Assert.AreEqual((decimal)dExp, SMath.MinMax((decimal)dMin, (decimal)dVal, (decimal)dMax));
         }
 
         [DataTestMethod()]
@@ -364,7 +364,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0A 10;9;12", 10u, 13u, 12u, 12u)]
         public void MinMaxTest3(string name, uint dMin, uint dVal, uint dMax, uint dExp)
         {
-            Assert.AreEqual(dExp, CMath.MinMax(dMin, dVal, dMax));
+            Assert.AreEqual(dExp, SMath.MinMax(dMin, dVal, dMax));
         }
 
         [DataTestMethod()]
@@ -399,7 +399,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1000000,-360000", 1000000d, -360000d, true, 80d)] //??
         public void DeltaAngleTest(string name, double dStart, double dStop, bool xExp, double dSExp)
         {
-            Assert.AreEqual(dSExp, CMath.DeltaAngle(dStart,dStop), $"Test:{name}");
+            Assert.AreEqual(dSExp, SMath.DeltaAngle(dStart,dStop), $"Test:{name}");
         }
 
         [DataTestMethod()]
@@ -417,7 +417,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1000000,-360000", 1000000d, -360000d, true, 80d)] //??
         public void DeltaAngleClockwiseTest(string name, double dStart, double dStop, bool xExp, double dSExp)
         {
-            Assert.AreEqual(dSExp, CMath.DeltaAngleClockwise(dStart, dStop), $"Test:{name}");
+            Assert.AreEqual(dSExp, SMath.DeltaAngleClockwise(dStart, dStop), $"Test:{name}");
         }
 
         [DataTestMethod()]
@@ -444,7 +444,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1A 12;13;10", 12, 13, 10, false)]
         public void IsBetweenTest(string name, int dMin, int dVal, int dMax, bool xExp)
         {
-            Assert.AreEqual(xExp, CMath.IsBetween(dVal, dMin, dMax));
+            Assert.AreEqual(xExp, SMath.IsBetween(dVal, dMin, dMax));
         }
 
         [DataTestMethod()]
@@ -471,7 +471,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1A 12;9;10", 10u, 13u, 12u, false)]
         public void IsBetweenTest1(string name, uint dMin, uint dVal, uint dMax, bool xExp)
         {
-            Assert.AreEqual(xExp, CMath.IsBetween(dVal, dMin, dMax));
+            Assert.AreEqual(xExp, SMath.IsBetween(dVal, dMin, dMax));
         }
 
         [DataTestMethod()]
@@ -498,7 +498,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1A 12;9;10", 10u, 13u, 12u, false)]
         public void IsBetweenTest1a(string name, uint dMin, uint dVal, uint dMax, bool xExp)
         {
-            Assert.AreEqual(xExp, CMath.IsBetween((ulong)dVal, (ulong)dMin, (ulong)dMax));
+            Assert.AreEqual(xExp, SMath.IsBetween((ulong)dVal, (ulong)dMin, (ulong)dMax));
         }
 
 
@@ -526,7 +526,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1A 12;13;10", 12, 13, 10, false)]
         public void IsBetweenTest2(string name, int dMin, int dVal, int dMax, bool xExp)
         {
-            Assert.AreEqual(xExp, CMath.IsBetween((double)dVal, (double)dMin, (double)dMax));
+            Assert.AreEqual(xExp, SMath.IsBetween((double)dVal, (double)dMin, (double)dMax));
         }
 
         [DataTestMethod()]
@@ -553,7 +553,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1A 12;13;10", 12, 13, 10, false)]
         public void IsBetweenTest2a(string name, int dMin, int dVal, int dMax, bool xExp)
         {
-            Assert.AreEqual(xExp, CMath.IsBetween((float)dVal, (float)dMin, (float)dMax));
+            Assert.AreEqual(xExp, SMath.IsBetween((float)dVal, (float)dMin, (float)dMax));
         }
 
         [DataTestMethod()]
@@ -580,7 +580,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1A 12;13;10", 12, 13, 10, false)]
         public void IsBetweenTest2b(string name, int dMin, int dVal, int dMax, bool xExp)
         {
-            Assert.AreEqual(xExp, CMath.IsBetween((decimal)dVal, (decimal)dMin, (decimal)dMax));
+            Assert.AreEqual(xExp, SMath.IsBetween((decimal)dVal, (decimal)dMin, (decimal)dMax));
         }
 
         [DataTestMethod()]
@@ -600,8 +600,8 @@ namespace JCAMS.Core.Math2.Tests
         {
             var fStart = (float)dStart;
             var fStop = (float)dStop;
-            Assert.AreEqual(xExp, CMath.NormalizeAngle(ref fStart),  $"Test:{name}.Start");
-            Assert.AreEqual(xExp, CMath.NormalizeAngle(ref fStop),  $"Test:{name}.Stop");
+            Assert.AreEqual(xExp, SMath.NormalizeAngle(ref fStart),  $"Test:{name}.Start");
+            Assert.AreEqual(xExp, SMath.NormalizeAngle(ref fStop),  $"Test:{name}.Stop");
             Assert.AreEqual((float)dSExp, fStart, 1e-12, $"Test:{name}.Start");
             Assert.AreEqual((float)dSExp2, fStop, 1e-12, $"Test:{name}.Stop");
         }
@@ -623,8 +623,8 @@ namespace JCAMS.Core.Math2.Tests
         {
             var iStart = (int)dStart;
             var iStop = (int)dStop;
-            Assert.AreEqual(xExp, CMath.NormalizeAngle(ref iStart), $"Test:{name}.Start");
-            Assert.AreEqual(xExp, CMath.NormalizeAngle(ref iStop), $"Test:{name}.Stop");
+            Assert.AreEqual(xExp, SMath.NormalizeAngle(ref iStart), $"Test:{name}.Start");
+            Assert.AreEqual(xExp, SMath.NormalizeAngle(ref iStop), $"Test:{name}.Stop");
             Assert.AreEqual((int)dSExp, iStart, 1e-12, $"Test:{name}.Start");
             Assert.AreEqual((int)dSExp2, iStop, 1e-12, $"Test:{name}.Stop");
         }
@@ -645,8 +645,8 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1000000,-360000", 1000000d, -360000d, true, 280d, 0d)]
         public void NormalizeAngleTest3(string name, double dStart, double dStop, bool xExp, double dSExp, double dSExp2)
         {
-            Assert.AreEqual(xExp, CMath.NormalizeAngle(ref dStart), $"Test:{name}.Start");
-            Assert.AreEqual(xExp, CMath.NormalizeAngle(ref dStop), $"Test:{name}.Stop");
+            Assert.AreEqual(xExp, SMath.NormalizeAngle(ref dStart), $"Test:{name}.Start");
+            Assert.AreEqual(xExp, SMath.NormalizeAngle(ref dStop), $"Test:{name}.Stop");
             Assert.AreEqual(dSExp, dStart, 1e-12, $"Test:{name}.Start");
             Assert.AreEqual(dSExp2, dStop, 1e-12, $"Test:{name}.Stop");
         }
@@ -666,8 +666,8 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1000000,-360000", 1000000d, -360000d, true, 280d, 0d)]
         public void NormalizeAngleTest4(string name, double dStart, double dStop, bool xExp, double dSExp, double dSExp2)
         {
-            Assert.AreEqual(dSExp, CMath.NormalizeAngle(dStart),1e-12, $"Test:{name}.Start");
-            Assert.AreEqual(dSExp2, CMath.NormalizeAngle(dStop), 1e-12, $"Test:{name}.Stop");
+            Assert.AreEqual(dSExp, SMath.NormalizeAngle(dStart),1e-12, $"Test:{name}.Start");
+            Assert.AreEqual(dSExp2, SMath.NormalizeAngle(dStop), 1e-12, $"Test:{name}.Stop");
         }
 
         [DataTestMethod()]
@@ -712,7 +712,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow(-Math.PI, -180)]
         public void Rad2DegTest(double dVal, double dExp)
         {
-            Assert.AreEqual(dExp, CMath.Rad2Deg(dVal), 1e-13);
+            Assert.AreEqual(dExp, SMath.Rad2Deg(dVal), 1e-13);
         }
 
         [DataTestMethod()]
@@ -738,7 +738,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow(-Math.PI, -180)]
         public void Rad2DegTest1(double fVal, double fExp)
         {
-            Assert.AreEqual((float)fExp, CMath.Rad2Deg((float)fVal), 1e-7);
+            Assert.AreEqual((float)fExp, SMath.Rad2Deg((float)fVal), 1e-7);
         }
 
         [DataTestMethod()]
@@ -758,7 +758,7 @@ namespace JCAMS.Core.Math2.Tests
         public void StandardDeviationTest(string name, double[] ad, bool xExp,double dPred, double dRes)
         {
             var ld = (ad != null) ? new List<double>(ad.ToList()) : null;
-            Assert.AreEqual(xExp, CMath.StandardDeviation(out double dAct, ld, dPred), $"Test:{name}");
+            Assert.AreEqual(xExp, SMath.StandardDeviation(out double dAct, ld, dPred), $"Test:{name}");
             if (double.IsNaN(dRes))
                 Assert.AreEqual(dRes, dAct, $"Test:{name}.result1");
             else
@@ -781,7 +781,7 @@ namespace JCAMS.Core.Math2.Tests
 
         public void StandardDeviationTest1(string name, double[] ad, bool xExp, double dPred, double dRes)
         {
-            Assert.AreEqual(xExp, CMath.StandardDeviation(out double dAct, ad,dPred), $"Test:{name}");
+            Assert.AreEqual(xExp, SMath.StandardDeviation(out double dAct, ad,dPred), $"Test:{name}");
             if (double.IsNaN(dRes))
                 Assert.AreEqual(dRes, dAct, $"Test:{name}.result1");
             else
@@ -805,9 +805,9 @@ namespace JCAMS.Core.Math2.Tests
         public void StandardDeviationTest2(string name, double[] ad, bool xExp, double dPred, double dRes)
         {
             if (double.IsNaN(dRes))
-                Assert.AreEqual(dRes, CMath.StandardDeviation(ad, dPred), $"Test:{name}.result1");
+                Assert.AreEqual(dRes, SMath.StandardDeviation(ad, dPred), $"Test:{name}.result1");
             else
-                Assert.AreEqual(dRes, CMath.StandardDeviation(ad, dPred), 1e-12, $"Test:{name}.result1");
+                Assert.AreEqual(dRes, SMath.StandardDeviation(ad, dPred), 1e-12, $"Test:{name}.result1");
         }
 
         [DataTestMethod()]
@@ -847,7 +847,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1000,-360", 1000d, -360d, true, 1000d, -180d)]
         public void TrimAngle180Test(string name, double dStart, double dStop, bool xExp, double dSExp, double dSExp2)
         {
-            Assert.AreEqual(xExp, CMath.TrimAngle180(ref dStart, ref dStop));
+            Assert.AreEqual(xExp, SMath.TrimAngle180(ref dStart, ref dStop));
             Assert.AreEqual(dSExp, dStart, 1e-12, $"Test:{name}.Start");
             Assert.AreEqual(dSExp2, dStop, 1e-12, $"Test:{name}.Stop");
         }
@@ -866,7 +866,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("1000,-360", 1000d, -360d, true, 1000d, 0d)]
         public void TrimAngle360Test(string name, double dStart, double dStop, bool xExp, double dSExp, double dSExp2)
         {
-            Assert.AreEqual(xExp, CMath.TrimAngle360(ref dStart, ref dStop));
+            Assert.AreEqual(xExp, SMath.TrimAngle360(ref dStart, ref dStop));
             Assert.AreEqual(dSExp, dStart, 1e-12, $"Test:{name}.Start");
             Assert.AreEqual(dSExp2, dStop, 1e-12, $"Test:{name}.Stop");
         }
@@ -903,9 +903,9 @@ namespace JCAMS.Core.Math2.Tests
         public void SqrTest(double dVal,double dExp)
         {
             if (double.IsNaN(dExp))
-            Assert.AreEqual(dExp,CMath.Sqr(dVal));
+            Assert.AreEqual(dExp,SMath.Sqr(dVal));
             else
-            Assert.AreEqual(dExp, CMath.Sqr(dVal),1e-13);
+            Assert.AreEqual(dExp, SMath.Sqr(dVal),1e-13);
         }
     }
 }

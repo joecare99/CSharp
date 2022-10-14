@@ -130,7 +130,7 @@ namespace JCAMS.Core.Math2.Tests
         {
             var pExp = new PointF(afExp[0], afExp[1]);
             var pVal = new Point(aiVal[0], aiVal[1]);
-            Assert.AreEqual(pExp, CMath2.ToPointF(pVal));
+            Assert.AreEqual(pExp, SMath2.ToPointF(pVal));
         }
 
         [DataTestMethod()]
@@ -150,7 +150,7 @@ namespace JCAMS.Core.Math2.Tests
         {
             var pExp = new Point(aiExp[0], aiExp[1]);
             var pVal = new PointF(afVal[0], afVal[1]);
-            Assert.AreEqual(pExp, CMath2.ToPoint(pVal));
+            Assert.AreEqual(pExp, SMath2.ToPoint(pVal));
         }
 
         [DataTestMethod()]
@@ -219,7 +219,7 @@ namespace JCAMS.Core.Math2.Tests
         public void Vector2alTest(double dAng,double dVal, float[] afExp)
         {
             var vExp = new Vector2(afExp[0], afExp[1]);
-            Assert.AreEqual(vExp,CMath2.Vector2al(dAng,dVal));
+            Assert.AreEqual(vExp,SMath2.Vector2al(dAng,dVal));
         }
     }
 }

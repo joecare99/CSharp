@@ -32,7 +32,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("-1", -1, true)] // !!
         public void AsBoolTest(string name, object o,bool xExp)
         {
-            Assert.AreEqual(xExp,AsBoolExtension.AsBool(o));
+            Assert.AreEqual(xExp,SAsBoolExtension.AsBool(o));
         }
     }
 }

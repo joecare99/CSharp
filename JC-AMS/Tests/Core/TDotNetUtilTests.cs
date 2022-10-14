@@ -14,15 +14,15 @@ namespace JCAMS.Core.Tests
         [TestMethod()]
         public void CheckDotNETVersionTest()
         {
-            Assert.IsTrue(TDotNetUtil.CheckDotNETVersion(3.5, 1));
-            Assert.IsTrue(TDotNetUtil.CheckDotNETVersion(4.0, 0));
-            Assert.IsFalse(TDotNetUtil.CheckDotNETVersion(4.0, 1));
+            Assert.IsTrue(SDotNetUtil.CheckDotNETVersion(3.5, 1));
+            Assert.IsTrue(SDotNetUtil.CheckDotNETVersion(4.0, 0));
+            Assert.IsFalse(SDotNetUtil.CheckDotNETVersion(4.0, 1));
         }
 
         [TestMethod()]
         public void GetDotNETVersionTest()
         {
-            Assert.IsTrue(TDotNetUtil.GetDotNETVersion(out double fw,out int sp));
+            Assert.IsTrue(SDotNetUtil.GetDotNETVersion(out double fw,out int sp));
             Assert.IsTrue(fw >= 4.0);
             Assert.IsTrue(sp >= 0);
         }

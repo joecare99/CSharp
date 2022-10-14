@@ -19,7 +19,7 @@ namespace JCAMS.Core.Tests
         [TestMethod()]
         public void GetMethodStackTest()
         {
-            Assert.AreEqual(cExp,TDebugHelpers.GetMethodStack());
+            Assert.AreEqual(cExp,SDebugHelpers.GetMethodStack());
         }
     }
 }
