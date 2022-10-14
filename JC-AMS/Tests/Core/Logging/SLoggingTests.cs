@@ -5,7 +5,7 @@ using System.Linq;
 namespace JCAMS.Core.Logging.Tests
 {
     [TestClass()]
-    public class TLoggingTests
+    public class SLoggingTests
     {
         string DebugResult = "";
         private readonly string cExpLogTest = "L:c:\\JCAMSstartup.txt,'Exception;TestException;;',(LogTest)\r\nL:c:\\JCAMSstartup.txt,'\n',()\r\n";

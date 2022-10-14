@@ -20,7 +20,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class ListExtensions.
     /// </summary>
-    public static class SListExtensions
+    public static class SListXtntn
     {
 
         /// <summary>

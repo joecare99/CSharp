@@ -3,7 +3,7 @@
 namespace JCAMS.Core.Tests
 {
     [TestClass()]
-    public class TSimpleCipherTests
+    public class SSimpleCipherTests
     {
         [DataTestMethod()]
         [DataRow("Null", "", null)]

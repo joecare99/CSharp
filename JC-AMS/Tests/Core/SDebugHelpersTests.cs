@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace JCAMS.Core.Tests
 {
     [TestClass()]
-    public class TDebugHelpersTests
+    public class SDebugHelpersTests
     {
 #if NET6_0_OR_GREATER
         private readonly string cExp= @".Invoke.ExecuteInternal.ExecuteWithAbortSafety.<ExecuteInternal>b__0.InvokeAsSynchronousTask.Invoke.Invoke.InvokeMethod";

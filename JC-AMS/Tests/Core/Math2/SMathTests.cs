@@ -1,16 +1,13 @@
-﻿using JCAMS.Core.Math2;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using JCAMS.Core.Tests;
-using System.Security.Cryptography;
-using System.Xml.Linq;
 
 namespace JCAMS.Core.Math2.Tests
 {
     [TestClass()]
-    public class CMathTests
+    public class SMathTests
     {
         protected static IEnumerable<Object[]> AritmeticAverageData => new[]
         {

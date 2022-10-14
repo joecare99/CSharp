@@ -82,25 +82,26 @@ namespace JCAMS.Core.System
         }
 
         #region Interface methods
-        public CSubStation(SerializationInfo info, StreamingContext context)
+        public CSubStation(SerializationInfo info, StreamingContext context):
+            this(CStation.GetStation(info.GetInt64(nameof(idStation))), 
+                info.GetInt64(nameof(idSubStation)),
+                info.GetString(nameof(Description)))
         {
-            idSubStation = info.GetInt64(nameof(idSubStation));
-            Description = info.GetString(nameof(Description));
-            var _idStation = info.GetInt64(nameof(idStation));
-            Station = CStation.GetStation(_idStation);
-        }
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(idSubStation), idSubStation, typeof(long));
-            info.AddValue(nameof(Description), Description, typeof(string));
-            info.AddValue(nameof(idStation), idStation, typeof(long));           
         }
 
-        public XmlSchema GetSchema() => null;
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(idStation), idStation, typeof(long));           
+            info.AddValue(nameof(idSubStation), idSubStation, typeof(long));
+            info.AddValue(nameof(Description), Description, typeof(string));
+        }
+
+        public XmlSchema? GetSchema() => null;
 
         public void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+//            _idStation = reader.AttributeValue(nameof(idStation));
+//            Station = CStation.GetStation();
         }
 
         public void WriteXml(XmlWriter writer)

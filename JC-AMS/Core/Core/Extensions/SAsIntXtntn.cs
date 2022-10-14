@@ -18,7 +18,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class AsIntExtension.
     /// </summary>
-    public static class SAsIntExtension
+    public static class SAsIntXtntn
     {
 
         /// <summary>

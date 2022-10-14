@@ -20,7 +20,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class AsNumericExtension.
     /// </summary>
-    public static class SAsNumericExtension
+    public static class SAsNumericXtntn
     {
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace JCAMS.Core.Extensions
         }
 
         /// <summary>
-        /// Ases the u int64.
+        /// return the object as uint64.
         /// </summary>
         /// <param name="dr">The dr.</param>
         /// <returns>System.UInt64.</returns>
@@ -156,6 +156,37 @@ namespace JCAMS.Core.Extensions
             {
                 return 0uL;
             }
+        }
+
+        /// <summary>
+        /// return the object as uint32.
+        /// </summary>
+        /// <param name="o">The object.</param>
+        /// <returns>System.UInt32.</returns>
+        public static uint AsUInt32(this object o)
+        {
+
+            if (o == null || o.Equals(DBNull.Value) || o.Equals("") || o.GetType() == typeof(object)) return 0u;
+            else if (o is string s && s.StartsWith("0x")) return Convert.ToUInt32(s.Substring(2), 8);
+            else if (o is double d) return (uint)d;
+            else if (o is int i) return (uint)i;
+            else if (o is byte[] arrB)
+            {
+                uint Result = 0u;
+                for (var J = 0; J < arrB.Length; J++)
+                {
+                    Result = (Result << 8) + arrB[J];
+                }
+                return Result;
+            }
+            else try
+                {
+                    return Convert.ToUInt32(o);
+                }
+                catch
+                {
+                    return 0u;
+                }
         }
     }
 }
