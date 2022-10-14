@@ -17,7 +17,7 @@ namespace JCAMS.Core.DataOperations
     /// <summary>
     /// Class TBitOperations.
     /// </summary>
-    public static class TBitOperations
+    public static class SBitOperations
     {
         #region Methods
         /// <summary>
