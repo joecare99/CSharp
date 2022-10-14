@@ -22,7 +22,7 @@ namespace JCAMS.Core.Converter
     /// Implements the <see cref="BooleanConverter" />
     /// </summary>
     /// <seealso cref="BooleanConverter" />
-    public class BoolClassConverter : BooleanConverter
+    public class CBoolClassConverter : BooleanConverter
     {
         private const string cJa = "Ja";
         private const string cNein = "Nein";

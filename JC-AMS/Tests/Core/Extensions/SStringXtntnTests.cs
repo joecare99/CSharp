@@ -1,12 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JCAMS.Core.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Security.Authentication.ExtendedProtection;
 using System.Drawing;
 using JCAMS.Core.Tests;
 using System.IO;
@@ -14,16 +8,16 @@ using System.IO;
 namespace JCAMS.Core.Extensions.Tests
 {
     [TestClass()]
-    public class StringExtensionTests
+    public class SStringXtntnTests
     {
         protected static IEnumerable<object[]> AsATML1Data => TestData.AsATML1Data;
 
         protected static IEnumerable<object[]> StreamDumpData => new[]
         {
             new object[]{"Null",null,"" },
-            new object[]{"Empty",SStringExtension.String2Stream(""),"" },
-            new object[]{"Hello World",SStringExtension.String2Stream("Hello World"),"0000: 48 65 6C 6C 6F 20 57 6F : 72 6C 64                 | Hello World\r\n" },
-            new object[]{"Lorem Ipsum...",SStringExtension.String2Stream(TestData.cLoremIpsum),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
+            new object[]{"Empty",SStringXtntn.String2Stream(""),"" },
+            new object[]{"Hello World",SStringXtntn.String2Stream("Hello World"),"0000: 48 65 6C 6C 6F 20 57 6F : 72 6C 64                 | Hello World\r\n" },
+            new object[]{"Lorem Ipsum...",SStringXtntn.String2Stream(TestData.cLoremIpsum),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
 0010: 72 20 73 69 74 20 61 6D : 65 74 2C 20 63 6F 6E 73  | r sit amet, cons
 0020: 65 63 74 65 74 75 72 20 : 61 64 69 70 69 73 69 63  | ectetur adipisic
 0030: 69 20 65 6C 69 74 2C 20 : 73 65 64 20 65 69 75 73  | i elit, sed eius
@@ -52,7 +46,7 @@ namespace JCAMS.Core.Extensions.Tests
 01A0: 69 74 20 61 6E 69 6D 20 : 69 64 20 65 73 74 20 6C  | it anim id est l
 01B0: 61 62 6F 72 75 6D 2E                               | aborum.
 " },
-            new object[]{"Lorem Ipsum...2",SStringExtension.String2Stream(TestData.cBase64LoremIpsum,true),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
+            new object[]{"Lorem Ipsum...2",SStringXtntn.String2Stream(TestData.cBase64LoremIpsum,true),@"0000: 4C 6F 72 65 6D 20 69 70 : 73 75 6D 20 64 6F 6C 6F  | Lorem ipsum dolo
 0010: 72 20 73 69 74 20 61 6D : 65 74 2C 20 63 6F 6E 73  | r sit amet, cons
 0020: 65 63 74 65 74 75 72 20 : 61 64 69 70 69 73 69 63  | ectetur adipisic
 0030: 69 20 65 6C 69 74 2C 20 : 73 65 64 20 65 69 75 73  | i elit, sed eius
@@ -81,7 +75,7 @@ namespace JCAMS.Core.Extensions.Tests
 01A0: 69 74 20 61 6E 69 6D 20 : 69 64 20 65 73 74 20 6C  | it anim id est l
 01B0: 61 62 6F 72 75 6D 2E                               | aborum.
 " },
-            new object[]{"Binary Data",SStringExtension.String2Stream(
+            new object[]{"Binary Data",SStringXtntn.String2Stream(
                 "tkSKmV0ot0HdTxKIAyBPxa0F3FNR7bRVvwY4iqDOt9nOXOKLM5GyIs5A1TlLh5" +
                 "2MZ+OV4PczZt69mjoACanw1GCfEPkvWvOvlXTB1UmXcxV42YyHxujuk45391uf" +
                 "LqgJrGeJCzw+M5JyYq4WXK4qcWp9PyGhwzr9waHUi3ZNQVj2otsnnDoJkGKxw1" +
@@ -139,11 +133,33 @@ namespace JCAMS.Core.Extensions.Tests
         [TestProperty("Author", "JC")]
         [DataRow("Empty", "", false)]
         [DataRow("'Hello'", "Hello", false)]
+        [DataRow("\\\\server1\\awd", "\\\\server1\\awd", true)]
+        [DataRow("\\\\\\server1\\awd", "\\\\\\server1\\awd", true)] // ?
+        public void IsUNCPathTest2(string name, string s, bool xExp)
+        {
+            Assert.AreEqual(xExp, SStringXtntn.IsUNCPath(s), $"Test: {name}");
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("Empty", "", false)]
+        [DataRow("'Hello'", "Hello", false)]
         [DataRow("ftp://server1/awd", "ftp://server1/awd", true)]
         [DataRow("ftp://!server1/awd", "ftp://!server1/awd", true)] // ?
         public void IsFTPPathTest(string name, string s, bool xExp)
         {
             Assert.AreEqual(xExp, s.IsFTPPath(), $"Test: {name}");
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("Empty", "", false)]
+        [DataRow("'Hello'", "Hello", false)]
+        [DataRow("ftp://server1/awd", "ftp://server1/awd", true)]
+        [DataRow("ftp://!server1/awd", "ftp://!server1/awd", true)] // ?
+        public void IsFTPPathTest2(string name, string s, bool xExp)
+        {
+            Assert.AreEqual(xExp, SStringXtntn.IsFTPPath(s), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -161,6 +177,17 @@ namespace JCAMS.Core.Extensions.Tests
         [TestProperty("Author", "JC")]
         [DataRow("Empty", "", false)]
         [DataRow("'Hello'", "Hello", false)]
+        [DataRow("ftp://server1/awd", "ftp://server1/awd", true)]
+        [DataRow("ftp://!server1/awd", "ftp://!server1/awd", true)] // ?
+        public void IsDrivePathTest2(string name, string s, bool xExp)
+        {
+            Assert.AreEqual(xExp, SStringXtntn.IsFTPPath(s), $"Test: {name}");
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("Empty", "", false)]
+        [DataRow("'Hello'", "Hello", false)]
         [DataRow("25.2.1983", "25.2.1983", true)]
         [DataRow("29.02.1900", "29.02.1900", false)]
         [DataRow("2022-01-01", "2022-01-01", true)]
@@ -169,6 +196,20 @@ namespace JCAMS.Core.Extensions.Tests
         {
             Assert.AreEqual(xExp, s.IsDateTime(), $"Test: {name}");
         }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("Empty", "", false)]
+        [DataRow("'Hello'", "Hello", false)]
+        [DataRow("25.2.1983", "25.2.1983", true)]
+        [DataRow("29.02.1900", "29.02.1900", false)]
+        [DataRow("2022-01-01", "2022-01-01", true)]
+        [DataRow("09/11/2001", "09/11/2001", true)]
+        public void IsDateTimeTest2(string name, string s, bool xExp)
+        {
+            Assert.AreEqual(xExp, SStringXtntn.IsDateTime(s), $"Test: {name}");
+        }
+
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
@@ -231,7 +272,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("Ha11o", 11)]
         public void GetFirstNumberTest(string sVal, long lExp)
         {
-            Assert.AreEqual(lExp, SStringExtension.GetFirstNumber(sVal), $"Test: GetFirstNumber({sVal})");
+            Assert.AreEqual(lExp, SStringXtntn.GetFirstNumber(sVal), $"Test: GetFirstNumber({sVal})");
         }
 
         [DataTestMethod()]
@@ -276,7 +317,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow(TestData.cLoremIpsum, 'l', 20)]
         public void CharCntTest(string sVal, char cCh, long lExp)
         {
-            Assert.AreEqual(lExp, SStringExtension.CharCnt(sVal, cCh), $"Test: CharCnt({sVal},{cCh})");
+            Assert.AreEqual(lExp, SStringXtntn.CharCnt(sVal, cCh), $"Test: CharCnt({sVal},{cCh})");
         }
 
         [DataTestMethod()]
@@ -319,7 +360,7 @@ namespace JCAMS.Core.Extensions.Tests
         public void DumpTest2(string name, Stream sVal, string sExp)
         {
             var oPos = sVal?.Position;
-            Assert.AreEqual(sExp, SStringExtension.Dump(sVal), $"Test: Dump({name})");
+            Assert.AreEqual(sExp, SStringXtntn.Dump(sVal), $"Test: Dump({name})");
             Assert.AreEqual(oPos, sVal?.Position, $"Test: {name}.Position");
         }
 
@@ -344,7 +385,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow(TestData.cLoremIpsum, false, TestData.cLoremIpsum)]
         public void String2StreamTest(string sVal, bool xVal, string sExp)
         {
-            var ms = SStringExtension.String2Stream(sVal, xVal);
+            var ms = SStringXtntn.String2Stream(sVal, xVal);
             if (ms != null)
             {
                 Assert.IsInstanceOfType(ms, typeof(MemoryStream));
@@ -432,7 +473,7 @@ namespace JCAMS.Core.Extensions.Tests
             )]
         public void AsCompStringTest(string sVal, bool xVal, string sExp)
         {
-            Assert.AreEqual(sExp, SStringExtension.String2Stream(sVal, xVal).AsCompString());
+            Assert.AreEqual(sExp, SStringXtntn.String2Stream(sVal, xVal).AsCompString());
         }
 
         [DataTestMethod()]
@@ -472,7 +513,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow(TestData.cLoremIpsum, false, TestData.cBase64LoremIpsum )]
         public void AsBase54StringTest(string sVal, bool xVal, string sExp)
         {
-            Assert.AreEqual(sExp, SStringExtension.String2Stream(sVal, xVal).AsBase64String());
+            Assert.AreEqual(sExp, SStringXtntn.String2Stream(sVal, xVal).AsBase64String());
         }
     }
 }

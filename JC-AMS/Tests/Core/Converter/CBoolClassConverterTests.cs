@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 namespace JCAMS.Core.Converter.Tests
 {
     [TestClass()]
-    public class BoolClassConverterTests
+    public class CBoolClassConverterTests
     {
         [DataTestMethod()]
         [DataRow(false,"Nein")]
         [DataRow(true, "Ja")]
         public void ConvertToTest(bool xVal,string sExp)
         {
-            var cv = new BoolClassConverter();
+            var cv = new CBoolClassConverter();
             Assert.AreEqual(sExp,cv.ConvertTo(xVal,typeof(string)));
         }
 
@@ -28,7 +28,7 @@ namespace JCAMS.Core.Converter.Tests
         [DataRow("Leberwust", false)]
         public void ConvertFromTest(string xVal, bool xExp)
         {
-            var cv = new BoolClassConverter();
+            var cv = new CBoolClassConverter();
             Assert.AreEqual(xExp, cv.ConvertFrom(xVal));
         }
     }

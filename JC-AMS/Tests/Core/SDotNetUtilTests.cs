@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace JCAMS.Core.Tests
 {
     [TestClass()]
-    public class TDotNetUtilTests
+    public class SDotNetUtilTests
     {
         [TestMethod()]
         public void CheckDotNETVersionTest()

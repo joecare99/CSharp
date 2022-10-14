@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace JCAMS.Core.Extensions.Tests
 {
     [TestClass()]
-    public class AsBoolExtensionTests
+    public class SAsBoolXtntnTests
     {
         [DataTestMethod()]
         [DataRow("Null",null,false)]
@@ -32,7 +32,31 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("-1", -1, true)] // !!
         public void AsBoolTest(string name, object o,bool xExp)
         {
-            Assert.AreEqual(xExp,SAsBoolExtension.AsBool(o));
+            Assert.AreEqual(xExp,o.AsBool());
+        }
+
+        [DataTestMethod()]
+        [DataRow("Null", null, false)]
+        //Todo:        [DataRow("DBNull.value", System.DBNull.Value, false)]
+        [DataRow("false", false, false)]
+        [DataRow("true", true, true)]
+        [DataRow("'false'", "false", false)]
+        [DataRow("'true'", "true", true)]
+        [DataRow("'False'", "False", false)]
+        [DataRow("'True'", "True", true)]
+        [DataRow("'FALSE'", "FALSE", false)]
+        [DataRow("'TRUE'", "TRUE", true)]
+        [DataRow("'NEIN'", "NEIN", false)]
+        [DataRow("'JA'", "JA", false)] // ??
+        [DataRow("Entfalserine", "Entfalserine", false)] // ?
+        [DataRow("Trantruete", "Trantruete", true)] //?
+        [DataRow("0", 0, false)]
+        [DataRow("1", 1, true)]
+        [DataRow("2", 2, false)]
+        [DataRow("-1", -1, true)] // !!
+        public void AsBoolTest2(string name, object o, bool xExp)
+        {
+            Assert.AreEqual(xExp, SAsBoolXtntn.AsBool(o));
         }
     }
 }

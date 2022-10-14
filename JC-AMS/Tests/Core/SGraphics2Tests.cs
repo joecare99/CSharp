@@ -8,9 +8,8 @@ using System.IO;
 
 namespace JCAMS.Core.Tests
 {
-
     [TestClass()]
-    public class TGraphics2Tests_Base
+    public class SGraphics2Tests_Base
     {
         #region Properties
         protected static IEnumerable<object[]> Color2StringData => new[]
@@ -94,7 +93,7 @@ namespace JCAMS.Core.Tests
             new object[]{ "DarkGreen", Color.DarkGreen,"FF;0;64;0" },
             new object[]{ "DarkOrange", Color.DarkOrange,"FF;FF;8C;0" },
             new object[]{ "DarkRed", Color.DarkRed,"FF;8B;0;0" },
-            new object[]{ "Magenta2", TGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF" },
+            new object[]{ "Magenta2", SGraphics2.FindKnownColor(Color.FromArgb(255, 255, 0, 255)),"FF;FF;0;FF" },
             new object[]{ "Magenta1", Color.FromArgb(255,255,0,255),"FF;FF;0;FF" },
             new object[]{ "DarkBlue", Color.DarkBlue,"FF;0;0;8B" },
             new object[]{ "DarkKhaki", Color.DarkKhaki,"FF;BD;B7;6B" },
@@ -173,15 +172,15 @@ namespace JCAMS.Core.Tests
         #endregion
     }
     [TestClass()]
-    public class TGraphics2Tests_Std : TGraphics2Tests_Base
+    public class SGraphics2Tests_Std : SGraphics2Tests_Base
     {
         #region Properties
-        protected new static IEnumerable<object[]> Color2StringData => TGraphics2Tests_Base.Color2StringData;
-        protected new static IEnumerable<object[]> ColorCube2StringData => TGraphics2Tests_Base.ColorCube2StringData;
-        protected new static IEnumerable<object[]> Font2StringData => TGraphics2Tests_Base.Font2StringData;
-        protected new static IEnumerable<object[]> Pen2StringXData => TGraphics2Tests_Base.Pen2StringXData;
-        protected new static IEnumerable<object[]> Point2StringXData => TGraphics2Tests_Base.Point2StringXData;
-        protected new static IEnumerable<object[]> Rectangle2StringData => TGraphics2Tests_Base.Rectangle2StringData;
+        protected new static IEnumerable<object[]> Color2StringData => SGraphics2Tests_Base.Color2StringData;
+        protected new static IEnumerable<object[]> ColorCube2StringData => SGraphics2Tests_Base.ColorCube2StringData;
+        protected new static IEnumerable<object[]> Font2StringData => SGraphics2Tests_Base.Font2StringData;
+        protected new static IEnumerable<object[]> Pen2StringXData => SGraphics2Tests_Base.Pen2StringXData;
+        protected new static IEnumerable<object[]> Point2StringXData => SGraphics2Tests_Base.Point2StringXData;
+        protected new static IEnumerable<object[]> Rectangle2StringData => SGraphics2Tests_Base.Rectangle2StringData;
         #endregion
 
         #region Methods
@@ -310,13 +309,13 @@ namespace JCAMS.Core.Tests
         #endregion
     }
     [TestClass()]
-    public class TGraphics2Tests_Xml : TGraphics2Tests_Base
+    public class SGraphics2Tests_Xml : SGraphics2Tests_Base
     {
-        protected new static IEnumerable<object[]> Color2StringXData => TGraphics2Tests_Base.Color2StringXData;
-        protected new static IEnumerable<object[]> ColorCube2StringData => TGraphics2Tests_Base.ColorCube2StringData;
-        protected new static IEnumerable<object[]> Font2StringXData => TGraphics2Tests_Base.Font2StringXData;
-        protected new static IEnumerable<object[]> Pen2StringXData => TGraphics2Tests_Base.Pen2StringXData;
-        protected new static IEnumerable<object[]> Point2StringXData => TGraphics2Tests_Base.Point2StringXData;
+        protected new static IEnumerable<object[]> Color2StringXData => SGraphics2Tests_Base.Color2StringXData;
+        protected new static IEnumerable<object[]> ColorCube2StringData => SGraphics2Tests_Base.ColorCube2StringData;
+        protected new static IEnumerable<object[]> Font2StringXData => SGraphics2Tests_Base.Font2StringXData;
+        protected new static IEnumerable<object[]> Pen2StringXData => SGraphics2Tests_Base.Pen2StringXData;
+        protected new static IEnumerable<object[]> Point2StringXData => SGraphics2Tests_Base.Point2StringXData;
 
         [TestMethod()]
         public void Font2XMLTest(string name, Font fVal, string sExp)

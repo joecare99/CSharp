@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace JCAMS.Core.Extensions.Tests
 {
     [TestClass()]
-    public class AsIntExtensionTests
+    public class SAsIntXtntnTests
     {
         protected static IEnumerable<object?[]> AsDBNullData => new[]
         {
@@ -34,6 +34,29 @@ namespace JCAMS.Core.Extensions.Tests
         public void AsInt32Test(string name, object o, int iExp)
         {
             Assert.AreEqual(iExp, o.AsInt32(), $"Test: {name}");
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("null", null, 0)]
+        [DataRow("Hello", "Hello", 0)]
+        [DataRow("25", 25, 25)]
+        [DataRow("25L", 25L, 25)]
+        [DataRow("long.MaxValue", long.MaxValue, 0)]
+        [DataRow("long.MinValue", long.MinValue, -0)]
+        [DataRow("int.MaxValue", int.MaxValue, 2147483647)]
+        [DataRow("int.MinValue", int.MinValue, -2147483648)]
+        [DataRow("-1", -1, -1)]
+        [DataRow("Math.PI", Math.PI, 3)]
+        [DataRow("NaN", double.NaN, 0)]
+        [DataRow("PositiveInfinity", double.PositiveInfinity, 0)]
+        [DataRow("NegativeInfinity", double.NegativeInfinity, 0)]
+        [DataRow("double.MaxValue", double.MaxValue, 0)]
+        [DataRow("double.MinValue", double.MinValue, 0)]
+        [DynamicData("AsDBNullData")]
+        public void AsInt32Test2(string name, object o, int iExp)
+        {
+            Assert.AreEqual(iExp, SAsIntXtntn.AsInt32(o), $"Test: {name}");
         }
 
         [DataTestMethod()]

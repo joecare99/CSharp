@@ -1,17 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JCAMS.Core.Math2;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Numerics;
 
 namespace JCAMS.Core.Math2.Tests
 {
     [TestClass()]
-    public class CMath2Tests
+    public class SMath2Tests
     {
         [TestMethod()]
         public void IsUndefinedTest()

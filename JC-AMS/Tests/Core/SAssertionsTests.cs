@@ -6,7 +6,7 @@ using System.IO;
 namespace JCAMS.Core.Tests
 {
     [TestClass()]
-    public class TAssertionsTests
+    public class SAssertionsTests
     {
         private MemoryStream listenerStream = default;
 

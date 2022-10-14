@@ -11,7 +11,7 @@ using System.Drawing;
 namespace JCAMS.Core.Extensions.Tests
 {
     [TestClass()]
-    public class AsNumericExtensionTests
+    public class SAsNumericXtntnTests
     {
         /// <summary>
         /// Gets the test data2 ok x.
@@ -61,6 +61,14 @@ namespace JCAMS.Core.Extensions.Tests
         public void AsDateTimeTest(string name,object? o, DateTime dt)
         {
             Assert.AreEqual(dt,o.AsDateTime());
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData("AsDateTimeData")]
+        public void AsDateTimeTest2(string name, object? o, DateTime dt)
+        {
+            Assert.AreEqual(dt, SAsNumericXtntn.AsDateTime(o));
         }
 
         [DataTestMethod()]
@@ -153,6 +161,73 @@ namespace JCAMS.Core.Extensions.Tests
         public void AsUInt64Test(string name, object o, ulong ulExp)
         {
             Assert.AreEqual(ulExp, o.AsUInt64(), $"Test: {name}");
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("null", null, 0UL)]
+        [DataRow("Hello", "Hello", 0UL)]
+        [DataRow("0x7F", "0x7F", 127UL)]
+        [DataRow("0x80", "0x80", 128UL)]
+        [DataRow("0x7FFFFFFFFFFFFFFF", "0x7FFFFFFFFFFFFFFF", 9223372036854775807UL)]
+        [DataRow("0x8000000000000000", "0x8000000000000000", 9223372036854775808UL)]
+        [DataRow("25", 25, 25UL)]
+        [DataRow("25L", 25L, 25UL)]
+        [DataRow("ulong.MaxValue", ulong.MaxValue, 18446744073709551615U)]
+        [DataRow("ulong.MinValue", ulong.MinValue, 0U)]
+        [DataRow("Math.PI", Math.PI, 3UL)]
+        [DataRow("double.MaxValue", double.MaxValue, 0U)]
+        [DataRow("double.MinValue", double.MinValue, 9223372036854775808U)]
+        [DataRow("{0,1,2,3 }", new byte[] { 0, 1, 2, 3 }, 66051UL)]
+        [DataRow("{127,255,255,255,0,0,0,0 }", new byte[] { 127, 255, 255, 255, 0, 0, 0, 0 }, 9223372032559808512UL)]
+        public void AsUInt64Test1(string name, object o, ulong ulExp)
+        {
+            Assert.AreEqual(ulExp, SAsNumericXtntn.AsUInt64(o), $"Test: {name}");
+        }
+
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("null", null, 0UL)]
+        [DataRow("Hello", "Hello", 0UL)]
+        [DataRow("0x7F", "0x7F", 127UL)]
+        [DataRow("0x80", "0x80", 128UL)]
+        [DataRow("0x7FFFFFFFFFFFFFFF", "0x7FFFFFFFFFFFFFFF", 9223372036854775807UL)]
+        [DataRow("0x8000000000000000", "0x8000000000000000", 9223372036854775808UL)]
+        [DataRow("25", 25, 25UL)]
+        [DataRow("25L", 25L, 25UL)]
+        [DataRow("ulong.MaxValue", ulong.MaxValue, 18446744073709551615U)]
+        [DataRow("ulong.MinValue", ulong.MinValue, 0U)]
+        [DataRow("Math.PI", Math.PI, 3UL)]
+        [DataRow("double.MaxValue", double.MaxValue, 0U)]
+        [DataRow("double.MinValue", double.MinValue, 9223372036854775808U)]
+        [DataRow("{0,1,2,3 }", new byte[] { 0, 1, 2, 3 }, 66051UL)]
+        [DataRow("{127,255,255,255,0,0,0,0 }", new byte[] { 127, 255, 255, 255, 0, 0, 0, 0 }, 9223372032559808512UL)]
+        public void AsUInt32Test(string name, object o, uint ulExp)
+        {
+            Assert.AreEqual(ulExp, o.AsUInt32(), $"Test: {name}");
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DataRow("null", null, 0UL)]
+        [DataRow("Hello", "Hello", 0UL)]
+        [DataRow("0x7F", "0x7F", 127UL)]
+        [DataRow("0x80", "0x80", 128UL)]
+        [DataRow("0x7FFFFFFFFFFFFFFF", "0x7FFFFFFFFFFFFFFF", 9223372036854775807UL)]
+        [DataRow("0x8000000000000000", "0x8000000000000000", 9223372036854775808UL)]
+        [DataRow("25", 25, 25UL)]
+        [DataRow("25L", 25L, 25UL)]
+        [DataRow("ulong.MaxValue", ulong.MaxValue, 18446744073709551615U)]
+        [DataRow("ulong.MinValue", ulong.MinValue, 0U)]
+        [DataRow("Math.PI", Math.PI, 3UL)]
+        [DataRow("double.MaxValue", double.MaxValue, 0U)]
+        [DataRow("double.MinValue", double.MinValue, 9223372036854775808U)]
+        [DataRow("{0,1,2,3 }", new byte[] { 0, 1, 2, 3 }, 66051UL)]
+        [DataRow("{127,255,255,255,0,0,0,0 }", new byte[] { 127, 255, 255, 255, 0, 0, 0, 0 }, 9223372032559808512UL)]
+        public void AsUInt64Test1(string name, object o, uint ulExp)
+        {
+            Assert.AreEqual(ulExp, SAsNumericXtntn.AsUInt32(o), $"Test: {name}");
         }
     }
 }

@@ -18,7 +18,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class AsDoubleExtension.
     /// </summary>
-    public static class SAsDoubleExtension
+    public static class SAsDoubleXtntn
     {
 
         /// <summary>

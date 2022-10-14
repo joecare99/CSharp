@@ -11,12 +11,14 @@ namespace JCAMS.Core.System.Values
 {
     /// <summary>The defintion of Values</summary>
     [Serializable]
-    public class CSystemValueDef : CPropNotificationClass, IHasDescription, IHasParent, ISerializable , IXmlSerializable
+    public class CSystemValueDef : CPropNotificationClass, IHasDescription, IHasParent, ISerializable , IXmlSerializable, IHasID
     {
         #region Properties
         #region private properties
         private string _Description;
+        private long _idValueDef;
         #endregion
+        public long idValueDef { get => _idValueDef; private set => SetValue(value, ref _idValueDef); }
         /// <summary>Gets the description.</summary>
         /// <value>The description of the Value(def)</value>
         public string Description { get=> _Description; private set=> SetValue(value, ref _Description); }
@@ -37,6 +39,8 @@ namespace JCAMS.Core.System.Values
         object IHasParent.Parent { get => Station; set => Station = value as CStation; }
         public int MinIndex { get; private set; }
         public int MaxIndex { get; private set; }
+
+        public long ID => throw new NotImplementedException();
         #endregion
 
         #region Methods
@@ -62,6 +66,9 @@ namespace JCAMS.Core.System.Values
 
         public void ReadXml(XmlReader reader)
         {
+            reader.MoveToAttribute(nameof(idValueDef));
+            idValueDef = reader.ReadString().AsInt64();
+
             reader.MoveToAttribute(nameof(Description));
             Description = reader.ReadString();
 
@@ -71,10 +78,30 @@ namespace JCAMS.Core.System.Values
 
             reader.MoveToAttribute(nameof(DataType));
             DataType = Type.GetType($"System.{reader.ReadString()}");
+
+            reader.MoveToAttribute(nameof(MinIndex));
+            MinIndex = reader.ReadString().AsInt32();
+
+            reader.MoveToAttribute(nameof(MaxIndex));
+            MaxIndex = reader.ReadString().AsInt32();
+
+            reader.MoveToAttribute(nameof(Children) + ".Count");
+            var _childCount = reader.ReadString().AsInt32();
+
+            for (int i = 0; i < _childCount; i++)
+            {
+                var _svd = reader.ReadContentAsObject();
+                if (_svd is CSystemValueDef svd)
+                   Children.Add(svd);
+            }
         }
 
         public void WriteXml(XmlWriter writer)
         {
+            writer.WriteStartAttribute(nameof(idValueDef));
+            writer.WriteValue(idValueDef);
+            writer.WriteEndAttribute();
+
             writer.WriteStartAttribute(nameof(Description));
             writer.WriteValue(Description);
             writer.WriteEndAttribute();

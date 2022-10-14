@@ -193,7 +193,7 @@ namespace JCAMS.Core.Tests
     }
 
     [TestClass()]
-    public class TGraphicsTests : TGraphicsTestsBase
+    public class SGraphicsTests : TGraphicsTestsBase
     {
         protected static IEnumerable<object[]> TrafficLightData => new[]
         {
