@@ -20,7 +20,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class AsNumericExtension.
     /// </summary>
-    public static class AsNumericExtension
+    public static class SAsNumericExtension
     {
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace JCAMS.Core.Extensions
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
             return dt;
         }

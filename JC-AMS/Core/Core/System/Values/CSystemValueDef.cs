@@ -1,5 +1,7 @@
-﻿using JCAMS.Core.Extensions;
+﻿using JCAMS.Core.DataOperations;
+using JCAMS.Core.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
@@ -9,11 +11,15 @@ namespace JCAMS.Core.System.Values
 {
     /// <summary>The defintion of Values</summary>
     [Serializable]
-    public class CSystemValueDef : IHasDescription, IHasParent, ISerializable , IXmlSerializable
+    public class CSystemValueDef : CPropNotificationClass, IHasDescription, IHasParent, ISerializable , IXmlSerializable
     {
+        #region Properties
+        #region private properties
+        private string _Description;
+        #endregion
         /// <summary>Gets the description.</summary>
         /// <value>The description of the Value(def)</value>
-        public string Description { get; private set; }
+        public string Description { get=> _Description; private set=> SetValue(value, ref _Description); }
         /// <summary>Gets the station.</summary>
         /// <value>The station of the value-defintion</value>
         public CStation Station { get; private set; }
@@ -22,8 +28,18 @@ namespace JCAMS.Core.System.Values
         public Type DataType { get; private set; }
 
         public CSystemValueDef? StructParent;
-        public CSystemValueDef[] Children;
+        public List<CSystemValueDef> Children=new List<CSystemValueDef>();
 
+        public long idStation => Station?.idStation ?? -1;
+        public bool IsStruct => Children != null;
+        public bool IsArray => (MinIndex < MaxIndex);
+
+        object IHasParent.Parent { get => Station; set => Station = value as CStation; }
+        public int MinIndex { get; private set; }
+        public int MaxIndex { get; private set; }
+        #endregion
+
+        #region Methods
         public CSystemValueDef()
         {
         }
@@ -34,11 +50,6 @@ namespace JCAMS.Core.System.Values
             DataType = tDType;
             Station = station;
         }
-
-        public long idStation => Station?.idStation ?? -1;
-        public bool IsStruct => Children != null; 
-        
-        object IHasParent.Parent { get => Station; set => Station = value as CStation; }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -75,7 +86,24 @@ namespace JCAMS.Core.System.Values
             writer.WriteStartAttribute(nameof(DataType));
             writer.WriteValue(Type.GetTypeCode(DataType).ToString());
             writer.WriteEndAttribute();
-        }
 
+            writer.WriteStartAttribute(nameof(MinIndex));
+            writer.WriteValue(MinIndex);
+            writer.WriteEndAttribute();
+
+            writer.WriteStartAttribute(nameof(MaxIndex));
+            writer.WriteValue(MaxIndex);
+            writer.WriteEndAttribute();
+
+            writer.WriteStartAttribute(nameof(Children)+".Count");
+            writer.WriteValue(Children.Count);
+            writer.WriteEndAttribute();
+
+            foreach(var ch in Children)
+            {
+                writer.WriteValue(ch);
+            }
+        }
+        #endregion
     }
 }

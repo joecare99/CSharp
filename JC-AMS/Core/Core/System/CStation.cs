@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using JCAMS.Core.DataOperations;
 using JCAMS.Core.System.Values;
 using System;
 using System.Collections.Generic;
@@ -26,18 +27,22 @@ namespace JCAMS.Core.System
     /// <summary>
     /// Class Station. Logical station of the System
     /// </summary>
-    public class CStation : IHasID , IHasDescription, ISerializable, IXmlSerializable
+    public class CStation : CPropNotificationClass, IHasID , IHasDescription, ISerializable, IXmlSerializable
     {
         #region Properties
+        #region private Properties
+        private string _Description;
+        private long _idStation;
+        #endregion
         /// <summary>
         /// The identifier station
         /// </summary>
-        public long idStation { get; private set; }
+        public long idStation { get => _idStation; private set => SetValue(value,ref _idStation); }
 
         /// <summary>
         /// The description
         /// </summary>
-        public string Description { get; private set; }
+        public string Description { get => _Description; private set => SetValue(value,ref _Description); }
 
         public Dictionary<string,CSubStation> SubStations = new Dictionary<string, CSubStation>();
         public Dictionary<string, CSystemValueDef> ValueDefs = new Dictionary<string, CSystemValueDef>();
@@ -48,12 +53,11 @@ namespace JCAMS.Core.System
         public CSystemValueDef ValDef(string s) => ValueDefs.ContainsKey(s) ? ValueDefs[s] : null;
         long IHasID.ID => idStation;
 
-
-
         #region static properties
-        public static event EventHandler<long> OnNewStation;
+        public static event EventHandler<long> OnNewStation=default;
 
-        protected static Dictionary<long, CStation> Stations = new Dictionary<long, CStation>(); 
+        protected static Dictionary<long, CStation> Stations = new Dictionary<long, CStation>();
+
         // Some "well known" Stations
         public static CStation System { get; private set; }
         #endregion

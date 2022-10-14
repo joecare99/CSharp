@@ -36,7 +36,7 @@ namespace JCAMS.Core
     /// <summary>
     /// Class TFileHelpers.
     /// </summary>
-    public static class TFileHelpers
+    public static class SFileHelpers
     {
         #region Properties
         /// <summary>
@@ -67,7 +67,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
         }
 
@@ -84,7 +84,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
         }
 
@@ -121,12 +121,12 @@ namespace JCAMS.Core
             }
             catch (DirectoryNotFoundException)
             {
-                TLogging.Log("Path '{0}' not found", sPath);
+                SLogging.Log("Path '{0}' not found", sPath);
             }
             catch (Exception Ex)
             {
-                TLogging.Log("Path '{0}'", sPath);
-                TLogging.Log(Ex);
+                SLogging.Log("Path '{0}'", sPath);
+                SLogging.Log(Ex);
             }
             return "";
         }
@@ -290,8 +290,8 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
-                TLogging.Log("FileName:" + FileName);
+                SLogging.Log(Ex);
+                SLogging.Log("FileName:" + FileName);
                 return false;
             }
         }
@@ -349,7 +349,7 @@ namespace JCAMS.Core
                 {
                     if ((DateTime.Now - FI.LastWriteTime).TotalSeconds > (double)KeepLastSeconds)
                     {
-                        TLogging.Log("Delete File {0}\\{1}", Path, FI.Name);
+                        SLogging.Log("Delete File {0}\\{1}", Path, FI.Name);
                         FI.Delete();
                         Cnt++;
                     }
@@ -357,7 +357,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
             return Cnt > 0;
         }
@@ -470,8 +470,8 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
-                TLogging.Log("SourceFilename: {0}, TargetFilename: {1}:", SourceFilename, TargetFilename);
+                SLogging.Log(Ex);
+                SLogging.Log("SourceFilename: {0}, TargetFilename: {1}:", SourceFilename, TargetFilename);
                 State = -4;
                 return false;
             }
@@ -501,11 +501,11 @@ namespace JCAMS.Core
                 }
                 catch (Exception Ex)
                 {
-                    TLogging.Log(Ex);
+                    SLogging.Log(Ex);
                 }
             }
 
-            TLogging.Log("ReadFile {0}: failed", FileName);
+            SLogging.Log("ReadFile {0}: failed", FileName);
             TXTDoc?.Close();
             return false;
         }
@@ -527,7 +527,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return new string[0];
             }
         }
@@ -546,7 +546,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
         }
 
@@ -606,7 +606,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }

@@ -128,7 +128,7 @@ namespace JCAMS.Core.Components.Coloring
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
         }
 
@@ -166,7 +166,7 @@ namespace JCAMS.Core.Components.Coloring
         {
             for (int I = 0; I < List.Length; I++)
             {
-                TVariableHandling.SaveVar(AppName, SectionName, $"{KeyName} Idx {I}", _Color[I].ToArgb());
+                SVariableHandling.SaveVar(AppName, SectionName, $"{KeyName} Idx {I}", _Color[I].ToArgb());
             }
             return true;
         }
@@ -182,7 +182,7 @@ namespace JCAMS.Core.Components.Coloring
         {
             for (int I = 0; I < List.Length; I++)
             {
-                TVariableHandling.LoadVar(AppName, SectionName, $"{KeyName} Idx {I}", out int C);
+                SVariableHandling.LoadVar(AppName, SectionName, $"{KeyName} Idx {I}", out int C);
                 _Color[I] = Color.FromArgb(C);
                 _Brushes[I] = new SolidBrush(_Color[I]);
                 _PenFine[I] = new Pen(_Color[I], fFineWidth);

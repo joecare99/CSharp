@@ -17,7 +17,7 @@ namespace JCAMS.Core.DataOperations
     /// <summary>
     /// Class TDataHelpers.
     /// </summary>
-    public static class TDataHelpers
+    public static class SDataHelpers
     {
         /// <summary>
         /// extracts th high-byte of the value.

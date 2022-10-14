@@ -12,7 +12,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class StringExtension.
     /// </summary>
-    public static class StringExtension
+    public static class SStringExtension
     {
         /// <summary>
         /// Gets the encapsulated.

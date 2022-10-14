@@ -24,12 +24,12 @@ namespace JCAMS.Core.Tests
         [DataTestMethod()]
         public void AssertTest()
         {
-            TAssertions.Assert(true);
+            SAssertions.Assert(true);
             Assert.AreEqual(0, listenerStream.Length);
 #if NET6_0_OR_GREATER
-            Assert.ThrowsException<Exception>(() => TAssertions.Assert(false, "Some Message2"));
+            Assert.ThrowsException<Exception>(() => SAssertions.Assert(false, "Some Message2"));
 #else
-            TAssertions.Assert(false);
+            SAssertions.Assert(false);
 #endif
             Assert.AreEqual(0, listenerStream.Length);
         }
@@ -37,23 +37,23 @@ namespace JCAMS.Core.Tests
         [TestMethod()]
         public void AssertTest1()
         {
-            TAssertions.Assert(true, "Some Message");
+            SAssertions.Assert(true, "Some Message");
             Assert.AreEqual(0, listenerStream.Length);
 #if NET6_0_OR_GREATER
-            Assert.ThrowsException<Exception>(() => TAssertions.Assert(false, "Some Message2"));
+            Assert.ThrowsException<Exception>(() => SAssertions.Assert(false, "Some Message2"));
 #else
-            TAssertions.Assert(false, "Some Message2");
+            SAssertions.Assert(false, "Some Message2");
 #endif
         }
 
         [TestMethod()]
         public void AssertTest2()
         {
-            TAssertions.Assert(true, "Some Message", "Detail");
+            SAssertions.Assert(true, "Some Message", "Detail");
 #if NET6_0_OR_GREATER
-            Assert.ThrowsException<Exception>(() => TAssertions.Assert(false, "Some Message2","Detail"));
+            Assert.ThrowsException<Exception>(() => SAssertions.Assert(false, "Some Message2","Detail"));
 #else
-            TAssertions.Assert(false, "Some Message2", "Detail");
+            SAssertions.Assert(false, "Some Message2", "Detail");
 #endif
         }
     }

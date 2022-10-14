@@ -21,14 +21,14 @@ namespace JCAMS.Core.Logging
     /// <summary>
     /// Class TLogging.
     /// </summary>
-    public static class TLogging
+    public static class SLogging
     {
         #region Properties
         public static Func<object, string, object[], bool> DoWriteLog = (o, s, p) =>
         {
             switch (o) {
-                case string f: return TFileHelpers.WriteToFile(f, s, p);
-                case Stream fs: return TFileHelpers.WriteToStream(fs, s, p);
+                case string f: return SFileHelpers.WriteToFile(f, s, p);
+                case Stream fs: return SFileHelpers.WriteToStream(fs, s, p);
                 case IProtocol pr: return pr.Write((int)p[0], s);
                 case EventLog el: el.WriteEntry(s); return true;
                 default: return false;
@@ -81,9 +81,9 @@ namespace JCAMS.Core.Logging
 
         #region Methods
         /// <summary>
-        /// Initializes static members of the <see cref="TLogging"/> class.
+        /// Initializes static members of the <see cref="SLogging"/> class.
         /// </summary>
-        static TLogging()
+        static SLogging()
         {
             _StartupLogfile = $"c:\\{cxAMS}startup.txt"; // TODO !!!! Allgemeiner machen !!!!
         }
@@ -117,7 +117,7 @@ namespace JCAMS.Core.Logging
         /// Deletes the startup log.
         /// </summary>
         public static void DeleteStartupLog() 
-            => TFileHelpers.DeleteFile(_StartupLogfile);
+            => SFileHelpers.DeleteFile(_StartupLogfile);
 
         /// <summary>
         /// Journalizes the specified ex.
@@ -130,7 +130,7 @@ namespace JCAMS.Core.Logging
             {
                 ErrorHandler?.Invoke(name, new ErrorEventArgs(Ex));
             }
-            Log(ELogTopic.Always, -1, TExceptionHelper.AsString(Ex), name);
+            Log(ELogTopic.Always, -1, SExceptionHelper.AsString(Ex), name);
         }
 
         /// <summary>
@@ -190,13 +190,13 @@ namespace JCAMS.Core.Logging
                         WriteLog(_StartupLogfile, "Protocol.Write FAILED\n{0}\n", Ex2.Message);
                     }
                 }
-                else if (TLogging.EventLog != null)
+                else if (SLogging.EventLog != null)
                 {
                     try
                     {
                         WriteLog(_StartupLogfile, Format, Arguments);
                         WriteLog(_StartupLogfile, "\n");
-                        WriteLog(TLogging.EventLog, string.Format(Format, Arguments));
+                        WriteLog(SLogging.EventLog, string.Format(Format, Arguments));
                     }
                     catch (Exception Ex2)
                     {
@@ -213,7 +213,7 @@ namespace JCAMS.Core.Logging
             {
                 try
                 {
-                    WriteLog(_StartupLogfile, "Journalize FAILED\n{0}\n", TExceptionHelper.AsString(Ex2));
+                    WriteLog(_StartupLogfile, "Journalize FAILED\n{0}\n", SExceptionHelper.AsString(Ex2));
                 }
                 catch (Exception)
                 {

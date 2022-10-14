@@ -496,7 +496,7 @@ namespace JCAMS.Core.Tests
             {
                 Graphics g = GraphicsWriter(ms);
                 var oP = ms.Position;
-                TGraphics.TrafficLight(g, rVal, iState, xVal);
+                SGraphics.TrafficLight(g, rVal, iState, xVal);
                 g.Dispose();
                 ms.Position = 0L;
                 DrawToScreen(new Metafile(ms), rVal);
@@ -513,7 +513,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.TrafficLight(g, rVal, iState, xVal);
+                SGraphics.TrafficLight(g, rVal, iState, xVal);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));
@@ -531,7 +531,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.TrafficLight(g, rVal, iState, xVal);
+                SGraphics.TrafficLight(g, rVal, iState, xVal);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * iState/2, xVal ? rVal.Height : 0));
@@ -548,7 +548,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.LoadAndUnload(g, rVal, iState, xVal, iPos);
+                SGraphics.LoadAndUnload(g, rVal, iState, xVal, iPos);
                 
                 g.Dispose();
                 ms.Position = 0L;
@@ -567,7 +567,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.BeUndEntladen1(g, rVal, iState, xVal, iPos);
+                SGraphics.BeUndEntladen1(g, rVal, iState, xVal, iPos);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * (iState & 0x30) / 16, rVal.Height * (((iState & 0x200) >> 9) + (xVal ? 2 : 0))));
@@ -585,7 +585,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawAGVArrowHead(g, bVal, pnVal, pVal, dAng, iLen,dSpeed);
+                SGraphics.DrawAGVArrowHead(g, bVal, pnVal, pVal, dAng, iLen,dSpeed);
                 g.Dispose();
                 ms.Position = 0L;
 //                rVal.Offset(new Point(rVal.Width * (iState & 0x30) / 16, rVal.Height * (((iState & 0x200) >> 9) + (xVal ? 2 : 0))));
@@ -615,7 +615,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawBullsEye(g, pVal, pCnt, iVal);
+                SGraphics.DrawBullsEye(g, pVal, pCnt, iVal);
                 g.Dispose();
                 ms.Position = 0L;
                 DrawToScreen(new Metafile(ms) );
@@ -632,7 +632,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawCircle(g, pVal, pCntr, iRad);
+                SGraphics.DrawCircle(g, pVal, pCntr, iRad);
                 g.Dispose();
                 ms.Position = 0L;
                 DrawToScreen(new Metafile(ms));
@@ -649,7 +649,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawCross(g, pVal, pCntr, iRad);
+                SGraphics.DrawCross(g, pVal, pCntr, iRad);
                 g.Dispose();
                 ms.Position = 0L;
                 DrawToScreen(new Metafile(ms));
@@ -666,7 +666,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawX(g, pVal, pCntr, iRad);
+                SGraphics.DrawX(g, pVal, pCntr, iRad);
                 g.Dispose();
                 ms.Position = 0L;
                 DrawToScreen(new Metafile(ms));
@@ -681,7 +681,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawLabel(g, rVal, iSze, sVal,cVal);
+                SGraphics.DrawLabel(g, rVal, iSze, sVal,cVal);
                 g.Dispose();
                 ms.Position = 0L;
                 Assert.AreEqual(sExp, ms.AsCompString(), $"Test: {name}");
@@ -715,7 +715,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawRectangularLED(g, rVal, cCol, xAct);
+                SGraphics.DrawRectangularLED(g, rVal, cCol, xAct);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * iTestNo  , rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
@@ -734,7 +734,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawRoundLED(g, rVal, cCol, xAct);
+                SGraphics.DrawRoundLED(g, rVal, cCol, xAct);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
@@ -753,7 +753,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.DrawTriangularLED(g, rVal, cCol, xAct);
+                SGraphics.DrawTriangularLED(g, rVal, cCol, xAct);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
@@ -804,7 +804,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("ColorLDData")]
         public void GetDarkColorTest(string name, Color cVal, byte bVal, Color cExp, Color cDummy)
         {
-            Assert.AreEqual(cExp,TGraphics.GetDarkColor(cVal,bVal),$"Test: {name}");
+            Assert.AreEqual(cExp,SGraphics.GetDarkColor(cVal,bVal),$"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -812,7 +812,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("ColorLDData")]
         public void GetDarkColorTest1(string name, Color cVal, byte bVal, Color cExp, Color cDummy)
         {
-            Assert.AreEqual(cExp, TGraphics.GetDarkColor(cVal, bVal), $"Test: {name}");
+            Assert.AreEqual(cExp, SGraphics.GetDarkColor(cVal, bVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -820,7 +820,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("ColorLDData")]
         public void GetLightColorTest(string name, Color cVal, byte bVal, Color cDummx, Color cExp)
         {
-            Assert.AreEqual(cExp, TGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
+            Assert.AreEqual(cExp, SGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
@@ -828,7 +828,7 @@ namespace JCAMS.Core.Tests
         [DynamicData("ColorLDData")]
         public void GetLightColorTest1(string name, Color cVal, byte bVal, Color cDummx, Color cExp)
         {
-            Assert.AreEqual(cExp, TGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
+            Assert.AreEqual(cExp, SGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
         }
 
         [TestMethod()]
@@ -881,7 +881,7 @@ namespace JCAMS.Core.Tests
             using (var ms = new MemoryStream())
             {
                 Graphics g = GraphicsWriter(ms);
-                TGraphics.TrafficSignal(g, rVal, (iState & 8)!=0, (iState & 4) != 0, (iState & 2) != 0);
+                SGraphics.TrafficSignal(g, rVal, (iState & 8)!=0, (iState & 4) != 0, (iState & 2) != 0);
                 g.Dispose();
                 ms.Position = 0L;
                 rVal.Offset(new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));

@@ -22,7 +22,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(int.MaxValue , 31, false)]
         public void IsBitSetTest(int iVal,int iBit,bool xExp)
         {
-            Assert.AreEqual(xExp,TBitOperations.IsBitSet(iVal,iBit));
+            Assert.AreEqual(xExp,SBitOperations.IsBitSet(iVal,iBit));
         }
 
         [DataTestMethod()]
@@ -40,7 +40,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(long.MaxValue, 63, false)]
         public void IsBitSetTest1(long lVal, int iBit, bool xExp)
         {
-            Assert.AreEqual(xExp, TBitOperations.IsBitSet(lVal, iBit));
+            Assert.AreEqual(xExp, SBitOperations.IsBitSet(lVal, iBit));
         }
 
         [DataTestMethod()]
@@ -58,7 +58,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow((ulong)long.MaxValue, 63, false)]
         public void IsBitSetTest2(ulong lVal, int iBit, bool xExp)
         {
-            Assert.AreEqual(xExp, TBitOperations.IsBitSet(lVal, iBit));
+            Assert.AreEqual(xExp, SBitOperations.IsBitSet(lVal, iBit));
         }
 
         [DataTestMethod()]
@@ -154,7 +154,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(int.MinValue, 31, false, 0)]
         public void SetBitTest(int iVal, int iBit, bool xVal,int iExp)
         {
-            Assert.AreEqual(iExp, TBitOperations.SetBit(iVal, iBit,xVal));
+            Assert.AreEqual(iExp, SBitOperations.SetBit(iVal, iBit,xVal));
         }
 
         [TestMethod()]
@@ -194,7 +194,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(int.MinValue, 31, false, 0)]
         public void SetBitTest1(int iVal, int iBit, bool xVal, int iExp)
         {
-            TBitOperations.SetBit(ref iVal, iBit, xVal);
+            SBitOperations.SetBit(ref iVal, iBit, xVal);
             Assert.AreEqual(iExp, iVal);
         }
 
@@ -243,7 +243,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(long.MinValue, 63, false, 0)]
         public void SetBitTest2(long lVal, int iBit, bool xVal, long lExp)
         {
-            Assert.AreEqual(lExp, TBitOperations.SetBit(lVal, iBit, xVal));
+            Assert.AreEqual(lExp, SBitOperations.SetBit(lVal, iBit, xVal));
         }
 
         [TestMethod()]
@@ -291,7 +291,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(long.MinValue, 63, false, 0)]
         public void SetBitTest3(long lVal, int iBit, bool xVal, long lExp)
         {
-            TBitOperations.SetBit(ref lVal, iBit, xVal);
+            SBitOperations.SetBit(ref lVal, iBit, xVal);
             Assert.AreEqual(lExp, lVal);
         }
 
@@ -340,7 +340,7 @@ namespace JCAMS.Core.DataOperations.Tests
         [DataRow(ulong.MaxValue / 2 + 1, 63, false, 0u)]
         public void SetBitTest4(ulong uVal, int iBit, bool xVal, ulong uExp)
         {
-            Assert.AreEqual(uExp, TBitOperations.SetBit(uVal, iBit, xVal));
+            Assert.AreEqual(uExp, SBitOperations.SetBit(uVal, iBit, xVal));
         }
 
         [TestMethod()]

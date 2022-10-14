@@ -22,7 +22,7 @@ namespace JCAMS.Core
     /// <summary>
     /// Class TGraphics.
     /// </summary> 
-    public static class TGraphics
+    public static class SGraphics
     {
 
         /// <summary>
@@ -43,15 +43,15 @@ namespace JCAMS.Core
         public static bool xTransportFreigabeEx { get; set; } = true;
 
         /// <summary>
-        /// Initializes static members of the <see cref="TGraphics"/> class.
+        /// Initializes static members of the <see cref="SGraphics"/> class.
         /// </summary>
-        static TGraphics()
+        static SGraphics()
         {
-            TGraphics.m_FillSolidRectPen = new Pen(Color.Black, 1f);
-            TGraphics.m_FillSolidRectBrush = new SolidBrush(Color.White);
-            TGraphics.m_FillSolidRectSF = new StringFormat();
-            TGraphics.m_FillSolidRectSF.Alignment = StringAlignment.Center;
-            TGraphics.m_FillSolidRectSF.LineAlignment = StringAlignment.Center;
+            SGraphics.m_FillSolidRectPen = new Pen(Color.Black, 1f);
+            SGraphics.m_FillSolidRectBrush = new SolidBrush(Color.White);
+            SGraphics.m_FillSolidRectSF = new StringFormat();
+            SGraphics.m_FillSolidRectSF.Alignment = StringAlignment.Center;
+            SGraphics.m_FillSolidRectSF.LineAlignment = StringAlignment.Center;
         }
 
         /// <summary>
@@ -263,28 +263,28 @@ namespace JCAMS.Core
             {
                 Pt2,
                 Pt3,
-CMath2.ToPoint(PtDest)
+SMath2.ToPoint(PtDest)
             };
             double Len = Length;
-            PtDest = CMath2.PointVectorToPoint(PtDest, Angle, Length * 2);
+            PtDest = SMath2.PointVectorToPoint(PtDest, Angle, Length * 2);
             Pt2.X = (int)((double)PtDest.X - Math.Cos((Angle + 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt2.Y = (int)((double)PtDest.Y - Math.Sin((Angle + 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt3.X = (int)((double)PtDest.X - Math.Cos((Angle - 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt3.Y = (int)((double)PtDest.Y - Math.Sin((Angle - 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt[0] = Pt2;
-            Pt[1] = CMath2.ToPoint(PtDest);
+            Pt[1] = SMath2.ToPoint(PtDest);
             Pt[2] = Pt3;
             Gr.FillPolygon(Brush, Pt, FillMode.Alternate);
             Gr.DrawPolygon(Pens.Red, Pt);
             if (Speed > 0.0)
             {
-                Pt4 = CMath2.ToPoint(CMath2.PointVectorToPoint(Pt2, Angle, Length * 2));
-                Pt5 = CMath2.ToPoint(CMath2.PointVectorToPoint(Pt3, Angle, Length * 2));
+                Pt4 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt2, Angle, Length * 2));
+                Pt5 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt3, Angle, Length * 2));
             }
             else
             {
-                Pt4 = CMath2.ToPoint(CMath2.PointVectorToPoint(Pt2, Angle + 180.0, Length * 2));
-                Pt5 = CMath2.ToPoint(CMath2.PointVectorToPoint(Pt3, Angle + 180.0, Length * 2));
+                Pt4 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt2, Angle + 180.0, Length * 2));
+                Pt5 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt3, Angle + 180.0, Length * 2));
             }
             Gr.DrawLines(Pen, new Point[4]
             {
@@ -313,14 +313,14 @@ CMath2.ToPoint(PtDest)
             {
                 Pt2,
                 Pt3,
-CMath2.ToPoint(PtDest)
+SMath2.ToPoint(PtDest)
             };
             Pt2.X = (int)((double)PtDest.X - Math.Cos((Angle + 20.0) * Math.PI / 180.0) * (double)Length);
             Pt2.Y = (int)((double)PtDest.Y - Math.Sin((Angle + 20.0) * Math.PI / 180.0) * (double)Length);
             Pt3.X = (int)((double)PtDest.X - Math.Cos((Angle - 20.0) * Math.PI / 180.0) * (double)Length);
             Pt3.Y = (int)((double)PtDest.Y - Math.Sin((Angle - 20.0) * Math.PI / 180.0) * (double)Length);
             Pt[0] = Pt2;
-            Pt[1] = CMath2.ToPoint(PtDest);
+            Pt[1] = SMath2.ToPoint(PtDest);
             Pt[2] = Pt3;
             Gr.FillPolygon(Brush, Pt, FillMode.Alternate);
             return true;
@@ -341,16 +341,16 @@ CMath2.ToPoint(PtDest)
             {
                 Point[] Pts = new Point[4];
                 int Sqrt2xSize2 = (int)Math.Sqrt(2 * Size * Size);
-                Pts[0] = CMath2.ToPoint(CMath2.PointVectorToPoint(Center, Direction - 45f, Math.Sqrt(2 * Size * Size)));
-                Pts[1] = CMath2.ToPoint(CMath2.PointVectorToPoint(Center, Direction - 90f, Size));
-                Pts[2] = CMath2.ToPoint(CMath2.PointVectorToPoint(Center, Direction + 90f, Size));
-                Pts[3] = CMath2.ToPoint(CMath2.PointVectorToPoint(Center, Direction + 45f, Math.Sqrt(2 * Size * Size)));
+                Pts[0] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction - 45f, Math.Sqrt(2 * Size * Size)));
+                Pts[1] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction - 90f, Size));
+                Pts[2] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction + 90f, Size));
+                Pts[3] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction + 45f, Math.Sqrt(2 * Size * Size)));
                 Gr.DrawLines(Pen, Pts);
                 return true;
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }
@@ -376,7 +376,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }
@@ -398,7 +398,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }
@@ -422,7 +422,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }
@@ -482,7 +482,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(ELogTopic.Graphic, 10000, Core.TExceptionHelper.AsString(Ex));
+                SLogging.Log(ELogTopic.Graphic, 10000, Core.SExceptionHelper.AsString(Ex));
             }
         }
 
@@ -596,7 +596,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }
@@ -768,7 +768,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
             return Font;
         }
@@ -800,7 +800,7 @@ CMath2.ToPoint(PtDest)
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
             return Font;
         }

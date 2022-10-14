@@ -21,7 +21,7 @@ namespace JCAMS.Core.Math2
     /// <summary>
     /// Class CMath.
     /// </summary>
-    public static class CMath
+    public static class SMath
     {
         /// <summary>
         /// The wurzel aus 2
@@ -76,7 +76,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception ex)
             {
-                TLogging.Log(ex);
+                SLogging.Log(ex);
                 M = double.NaN;
                 return false;
             }
@@ -390,7 +390,7 @@ namespace JCAMS.Core.Math2
             double dSumme = 0.0;
             double dCount = 0.0;
             foreach (var d in X)
-            { dSumme += CMath.Sqr(d - Predictand); dCount++; }
+            { dSumme += SMath.Sqr(d - Predictand); dCount++; }
             if (dCount >= 0.9)
             S = Math.Sqrt(dSumme / dCount);
             // for the corrected Value the Sum has to be divided by (dCount-1)
@@ -408,7 +408,7 @@ namespace JCAMS.Core.Math2
         {
             if (X == null || X.Count() < 1) return double.NaN;
             if (double.IsNaN(Predictand)) Predictand = X.Average();
-            return Math.Sqrt(X.Average((d) => CMath.Sqr(d - Predictand)));
+            return Math.Sqrt(X.Average((d) => SMath.Sqr(d - Predictand)));
             // for the corrected Value the Sum has to be divided by (dCount-1)        
         }
 

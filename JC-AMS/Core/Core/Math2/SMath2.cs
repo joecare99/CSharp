@@ -21,7 +21,7 @@ namespace JCAMS.Core.Math2
     /// <summary>
     /// Class CMath2.
     /// </summary>
-    public static class CMath2
+    public static class SMath2
     {
         #region Properties
         
@@ -74,9 +74,9 @@ namespace JCAMS.Core.Math2
 
         #region Methods
         /// <summary>
-        /// Initializes static members of the <see cref="CMath2"/> class.
+        /// Initializes static members of the <see cref="SMath2"/> class.
         /// </summary>
-        static CMath2()
+        static SMath2()
         {
         }
         /// <summary>
@@ -102,7 +102,7 @@ namespace JCAMS.Core.Math2
         /// <returns>System.Single.</returns>
         public static float AbsArcLength(double Deg, double Radius)
         {
-            return (float)Math.Abs(CMath.Deg2Rad(Deg) * Radius);
+            return (float)Math.Abs(SMath.Deg2Rad(Deg) * Radius);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace JCAMS.Core.Math2
             {
                 Rad = -1.0;
             }
-            Angle = (float)CMath.Rad2Deg(Math.Asin(Rad));
+            Angle = (float)SMath.Rad2Deg(Math.Asin(Rad));
             if (Math.Sign(AdjacentLeg) >= 0 && Math.Sign(OpppositeLeg) >= 0)
             {
                 Angle = 0f + Angle;
@@ -162,7 +162,7 @@ namespace JCAMS.Core.Math2
         /// <returns>System.Single.</returns>
         public static float ArcLength(double Deg, double Radius)
         {
-            return (float)(CMath.Deg2Rad(Deg) * Radius);
+            return (float)(SMath.Deg2Rad(Deg) * Radius);
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return false;
             }
         }
@@ -408,7 +408,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return float.NaN;
             }
         }
@@ -427,7 +427,7 @@ namespace JCAMS.Core.Math2
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 return float.NaN;
             }
         }
@@ -645,8 +645,8 @@ namespace JCAMS.Core.Math2
         public static PointF PointVectorToPoint(PointF Pt, double VectorAngle, double VectorLength)
         {
             PointF result = Pt;
-            result.X += (float)(Math.Cos(CMath.Deg2Rad(VectorAngle)) * VectorLength);
-            result.Y += (float)(Math.Sin(CMath.Deg2Rad(VectorAngle)) * VectorLength);
+            result.X += (float)(Math.Cos(SMath.Deg2Rad(VectorAngle)) * VectorLength);
+            result.Y += (float)(Math.Sin(SMath.Deg2Rad(VectorAngle)) * VectorLength);
             return result;
         }
 
@@ -661,7 +661,7 @@ namespace JCAMS.Core.Math2
         {
             PointF H = default;
 
-            double Arcus = CMath.Deg2Rad(Angle);
+            double Arcus = SMath.Deg2Rad(Angle);
             double Cosinus = Math.Cos(Arcus);
             double Sinus = Math.Sin(Arcus);
             H.X = P.X - Center.X;
@@ -697,7 +697,7 @@ namespace JCAMS.Core.Math2
         public static bool Rotate(ref Point P, double Angle, Point Center)
         {
             Point H = default;
-            double Arcus = CMath.Deg2Rad(Angle);
+            double Arcus = SMath.Deg2Rad(Angle);
             double Cosinus = Math.Cos(Arcus);
             double Sinus = Math.Sin(Arcus);
             H.X = P.X - Center.X;
@@ -733,7 +733,7 @@ namespace JCAMS.Core.Math2
         public static PointF RotatePoint(PointF thePoint, PointF theOrigin, float theRotationDeg)
         {
             PointF aTranslatedPoint = default;
-            double RotationRad = CMath.Deg2Rad(theRotationDeg);
+            double RotationRad = SMath.Deg2Rad(theRotationDeg);
             double Sin = Math.Sin(RotationRad);
             double Cos = Math.Cos(RotationRad);
             aTranslatedPoint.X = (float)((double)theOrigin.X + (double)(thePoint.X - theOrigin.X) * Cos - (double)(thePoint.Y - theOrigin.Y) * Sin);

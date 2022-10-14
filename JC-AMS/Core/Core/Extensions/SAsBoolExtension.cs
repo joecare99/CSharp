@@ -17,7 +17,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class AsBoolExtension.
     /// </summary>
-    public static class AsBoolExtension
+    public static class SAsBoolExtension
     {
 
         /// <summary>
