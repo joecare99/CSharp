@@ -20,7 +20,7 @@ namespace JCAMS.Core.Extensions
     /// <summary>
     /// Class ListExtensions.
     /// </summary>
-    public static class ListExtensions
+    public static class SListExtensions
     {
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace JCAMS.Core.Extensions
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
             }
             return false;
         }

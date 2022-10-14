@@ -16,7 +16,7 @@ using System.Text;
 // ***********************************************************************
 namespace JCAMS.Core
 {
-    public static class TExceptionHelper
+    public static class SExceptionHelper
     {
 
         /// <summary>
