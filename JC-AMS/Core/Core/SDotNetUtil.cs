@@ -17,7 +17,7 @@ using System;
 using System.Globalization;
 namespace JCAMS.Core
 {
-    public static class TDotNetUtil
+    public static class SDotNetUtil
     {
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace JCAMS.Core
             }
             catch (Exception Ex)
             {
-                TLogging.Log(Ex);
+                SLogging.Log(Ex);
                 (Framework, Servicepack) = (0d, 0);
                 return false;
             }

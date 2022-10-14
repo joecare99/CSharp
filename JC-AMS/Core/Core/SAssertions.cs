@@ -30,7 +30,7 @@ namespace JCAMS.Core
     /// <summary>
     /// Class TAssertions.
     /// </summary>
-    public static class TAssertions
+    public static class SAssertions
     {
 
         /// <summary>

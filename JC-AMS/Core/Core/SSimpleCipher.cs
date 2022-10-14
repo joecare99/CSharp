@@ -21,7 +21,7 @@ namespace JCAMS.Core
     /// <summary>
     /// Class TSimpleCipher provides a simple cipher.
     /// </summary>
-    public static class TSimpleCipher
+    public static class SSimpleCipher
     {
         #region Properties
         /// <summary>
@@ -45,9 +45,9 @@ namespace JCAMS.Core
 
         #region Methods
         /// <summary>
-        /// Initializes static members of the <see cref="TSimpleCipher"/> class.
+        /// Initializes static members of the <see cref="SSimpleCipher"/> class.
         /// </summary>
-        static TSimpleCipher()
+        static SSimpleCipher()
         { }
 
         /// <summary>Does a simple the decrypt.</summary>
@@ -76,7 +76,7 @@ namespace JCAMS.Core
             }
             catch (Exception ex)
             {
-                TLogging.Log(ex);
+                SLogging.Log(ex);
                 return "";
             }
         }
@@ -110,7 +110,7 @@ namespace JCAMS.Core
             }
             catch (Exception ex)
             {
-                TLogging.Log(ex);
+                SLogging.Log(ex);
                 return "";
             }
         }

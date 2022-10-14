@@ -18,7 +18,7 @@ using System.Text;
 // ***********************************************************************
 namespace JCAMS.Core
 {
-    public static class TDebugHelpers
+    public static class SDebugHelpers
     {
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace JCAMS.Core
                 }
                 catch (Exception Ex)
                 {
-                    TLogging.Log(Ex);
+                    SLogging.Log(Ex);
                 }
             }
             return Stack.ToString();

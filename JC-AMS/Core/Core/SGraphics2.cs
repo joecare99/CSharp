@@ -20,10 +20,10 @@ using System.Runtime.InteropServices;
 using System.Xml;
 namespace JCAMS.Core
 {
-    public static class TGraphics2
+    public static class SGraphics2
     {
         
-        static TGraphics2()
+        static SGraphics2()
         {
             
         }
