@@ -1,27 +1,101 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : Calc32
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-10-2022
+// ***********************************************************************
+// <copyright file="CalculatorClass.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.ComponentModel;
 
-namespace CSharpBible.Calc32.NonVisual
+/// <summary>
+/// The NonVisual namespace.
+/// </summary>
+namespace Calc32.NonVisual
+
 {
+    /// <summary>
+    /// Class CalculatorClass.
+    /// Implements the <see cref="Component" />
+    /// </summary>
     public class CalculatorClass : Component
     {
+        /// <summary>
+        /// Enum Mode
+        /// of Operation
+        /// </summary>
         enum eOpMode
         {
-            CalcResult = 1, Plus = 2, Minus = 3, Multiply = 4, Divide = 5,
-            BinaryAnd = 6, BinaryOr = 7, BinaryXor = 8, BinaryNot = 9
+            /// <summary>No mode</summary>
+            NoMode =  0,
+
+            /// <summary>The calculate result</summary>
+            CalcResult = 1,
+            /// <summary>The plus mode</summary>
+            Plus = 2,
+            /// <summary>The minus mode</summary>
+            Minus = 3,
+            /// <summary>The multiply mode</summary>
+            Multiply = 4,
+            /// <summary>The divide
+            /// mode</summary>
+            Divide = 5,
+            /// <summary>The binary and
+            /// mode</summary>
+            BinaryAnd = 6,
+            /// <summary>The binary or
+            /// mode</summary>
+            BinaryOr = 7,
+            /// <summary>The binary xor
+            /// mode</summary>
+            BinaryXor = 8,
+            /// <summary>The binary not
+            /// mode</summary>
+            BinaryNot = 9
         };
 
-        readonly string[] sMode = { "", "", "+", "-", "*", "/", "/\\", "\\/", "><", "!" };
+        #region Property
+        #region private property
         // Fields
+        /// <summary>
+        /// The n akkumulator
+        /// </summary>
         private int nAkkumulator; // Editorfeld
+        /// <summary>
+        /// The n mode
+        /// </summary>
         private eOpMode nMode;
+        /// <summary>
+        /// The b edit mode
+        /// </summary>
         private bool bEditMode;
-        private bool bNegMode;
+        // private bool bNegMode;
+        /// <summary>
+        /// The n memory
+        /// </summary>
         private int nMemory; // Gemerkte Zahl für Operationen
+        #endregion
 
+        /// <summary>
+        /// The mode-string
+        /// </summary>
+        public readonly static string[] sMode = { "", "=", "+", "-", "*", "/", "&", "|", "x", "!" };
+        /// <summary>
+        /// Occurs when a change happens.
+        /// </summary>
         public event EventHandler OnChange;
 
         // Properties
+        /// <summary>
+        /// Gets or sets the akkumulator.
+        /// </summary>
+        /// <value>The akkumulator.</value>
         public int Akkumulator
         {
             get => nAkkumulator;
@@ -33,6 +107,10 @@ namespace CSharpBible.Calc32.NonVisual
             }
         }
 
+        /// <summary>
+        /// Gets or sets the memory.
+        /// </summary>
+        /// <value>The memory.</value>
         public int Memory
         {
             get => nMemory;
@@ -43,11 +121,17 @@ namespace CSharpBible.Calc32.NonVisual
                 OnChange?.Invoke(this, null);
             }
         }
-        public string OperationText
-        {
-            get => sMode[(int)nMode];
-        }
+        /// <summary>
+        /// Gets the operation text.
+        /// </summary>
+        /// <value>The operation text.</value>
+        public string OperationText => sMode[(int)nMode];
+        #endregion
 
+        #region Methode
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Calc32.NonVisual.CalculatorClass" /> class.
+        /// </summary>
         public CalculatorClass()
         {
             nAkkumulator = 0;
@@ -55,7 +139,11 @@ namespace CSharpBible.Calc32.NonVisual
             OnChange = null;
         }
 
-        public void Button(int aNumber)
+        /// <summary>
+        /// Button of Numbers.
+        /// </summary>
+        /// <param name="aNumber">a number.</param>
+        public void NumberButton(int aNumber)
         {
             if (bEditMode)
             {
@@ -71,7 +159,11 @@ namespace CSharpBible.Calc32.NonVisual
             }
         }
 
-        internal void Operation(int v)
+        /// <summary>
+        /// Executes the specified Operation.
+        /// </summary>
+        /// <param name="v">The operation.</param>
+        public void Operation(int v)
         {
             if ((v > 0) && (v <= (int)eOpMode.BinaryNot))
             {
@@ -121,6 +213,9 @@ namespace CSharpBible.Calc32.NonVisual
             }
         }
 
+        /// <summary>
+        /// Backs the space.
+        /// </summary>
         public void BackSpace()
         {
             if (bEditMode)
@@ -132,5 +227,6 @@ namespace CSharpBible.Calc32.NonVisual
                 Akkumulator = 0;
             }
         }
+        #endregion
     }
 }

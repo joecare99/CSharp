@@ -7,7 +7,7 @@
 // Last Modified On : 08-24-2022
 // ***********************************************************************
 // <copyright file="PropertyTests.cs" company="MVVM_BaseLibTests">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

@@ -10,9 +10,17 @@ using System.Windows.Forms;
 
 namespace CSharpBible.AboutEx.Visual
 {
+    /// <summary>
+    /// Class FrmAboutExMain.
+    /// Implements the <see cref="Form" />
+    /// </summary>
+    /// <seealso cref="Form" />
     public partial class FrmAboutExMain : Form
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmAboutExMain"/> class.
+        /// </summary>
         public FrmAboutExMain()
         {
             InitializeComponent();

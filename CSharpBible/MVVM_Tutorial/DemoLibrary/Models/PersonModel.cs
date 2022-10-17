@@ -7,7 +7,7 @@
 // Last Modified On : 06-14-2022
 // ***********************************************************************
 // <copyright file="PersonModel.cs" company="DemoLibrary">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

@@ -1,138 +1,108 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-//using System.Windows.Forms;
+﻿// ***********************************************************************
+// Assembly         : ConsoleMouseApp
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 08-18-2022
+// ***********************************************************************
+// <copyright file="Program.cs" company="JC-Soft">
+//     Copyright © 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Drawing;
 using ConsoleLib.CommonControls;
 using ConsoleLib;
 using System.Windows.Forms;
+using ConsoleMouseApp.View;
 
-namespace ConsoleTools.NET
+namespace ConsoleMouseApp
 {
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     class Program
-    {        
-        private static ConsoleLib.CommonControls.Button One;
+    {
+        #region Properties
+        /// <summary>
+        /// The mouse
+        /// </summary>
         private static Pixel Mouse = new Pixel();
+
+        /// <summary>
+        /// The application
+        /// </summary>
         private static ConsoleLib.CommonControls.Application App;
-        private static ConsoleLib.CommonControls.Label lblMousePos;
+        #endregion
 
-        static void Main(string[] args)
+        #region Methods
+        /// <summary>
+        /// Initializes static members of the <see cref="Program"/> class.
+        /// </summary>
+        static Program()
         {
-
-            var cl = ConsoleFramework.Canvas.ClipRect;
-            cl.Inflate(-3, -3);
             Console.ForegroundColor = ConsoleColor.White;
 
-            App = new ConsoleLib.CommonControls.Application
-            {
-                visible = false,
-                Boarder = ConsoleFramework.singleBoarder,
-                ForeColor = ConsoleColor.Gray,
-                BackColor = ConsoleColor.DarkGray,
-                BoarderColor = ConsoleColor.Green,
-                dimension = cl
-            };
+            App = new ConsoleMouseView();
 
             // t.Draw(10, 40, ConsoleColor.Gray);
             Mouse.parent = App;
             Mouse.Set(0, 0, " ");
             Mouse.BackColor = ConsoleColor.Red;
 
-            One = new ConsoleLib.CommonControls.Button
-            {
-                parent = App,
-                ForeColor = ConsoleColor.White,
-                BackColor = ConsoleColor.Gray,
-                shaddow = true,
-                position = new Point(5, 10),
-                Text = "░░1░░"
-            };
-            One.OnClick += One_Click;
-
-            cl = new Rectangle(3, 15, 30, 10);
-            var Panel2 = new ConsoleLib.CommonControls.Panel
-            {
-                parent = App,
-                Boarder = ConsoleFramework.doubleBoarder,
-                ForeColor = ConsoleColor.Blue,
-                BackColor = ConsoleColor.DarkBlue,
-                BoarderColor = ConsoleColor.Green,
-                dimension = cl,
-                shaddow = true
-            };
-
-            var btnOK = new ConsoleLib.CommonControls.Button
-            {
-                parent = Panel2,
-                ForeColor = ConsoleColor.White,
-                BackColor = ConsoleColor.Gray,
-                shaddow = true,
-                position = new Point(2,2),
-                Text = "░░░OK░░░",
-            };
-            btnOK.OnClick += btnOK_Click;
-
-            var btnCancel = new ConsoleLib.CommonControls.Button
-            {
-                parent = Panel2,
-                ForeColor = ConsoleColor.White,
-                BackColor = ConsoleColor.Gray,
-                shaddow = true,
-                position = new Point(14, 2),
-                Text = "░Cancel░",
-            };
-            btnCancel.OnClick += btnCancel_Click;
-
-            lblMousePos = new ConsoleLib.CommonControls.Label
-            {
-                parent = App,
-                ForeColor = ConsoleColor.Gray,
-                ParentBackground = true,
-                position = new Point(40, 2),
-                Text = "lblMousePos",
-                size = new Size(15, 1)
-            };
-
-            App.visible = true;
-            App.Draw();
-            App.OnMouseMove += App_MouseMove;
             App.OnCanvasResize += App_CanvasResize;
+            App.OnMouseMove += App_MouseMove;
 
-            App.Run();          
+        }
+
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        static void Main(string[] args)
+        {
+
+            App.Draw();
+            App.Run();
 
             Console.Write("Programm end ...");
             ExtendedConsole.Stop();
         }
 
+#if NET5_0_OR_GREATER
+        private static void App_CanvasResize(object? sender, Point e)
+#else
+        /// <summary>
+        /// Applications the canvas resize.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
         private static void App_CanvasResize(object sender, Point e)
+#endif
         {
+            if (App == null) return;
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
             App.dimension = cl;
         }
 
-        private static void btnCancel_Click(object sender, EventArgs e)
+#if NET5_0_OR_GREATER
+        private static void App_MouseMove(object? sender, MouseEventArgs e)
+#else
+        /// <summary>
+        /// Handles the MouseMove event of the App control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
+        private static void App_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+#endif
         {
-            App.Stop();
+            Mouse.Set(Point.Subtract(e.Location, (Size?)Mouse.parent?.position ?? Size.Empty));
         }
 
-        private static void App_MouseMove(object sender, MouseEventArgs e)
-        {
-            Mouse.Set(Point.Subtract(e.Location, (Size)Mouse.parent.position));
-            lblMousePos.Text = e.Location.ToString();
-        }
-
-        private static void btnOK_Click(object sender, EventArgs e)
-        {
-            Console.Write("OK");
-        }
-
-        private static void One_Click(object sender, EventArgs e)
-        {
-            Console.Write("1");
-        }
+        #endregion
     }
 }
 

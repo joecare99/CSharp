@@ -1,0 +1,57 @@
+﻿<Project>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFrameworks>net472-windows;net48-windows;net60-windows</TargetFrameworks>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>JCAMS</RootNamespace>
+	  <Platforms>AnyCPU;x64</Platforms>
+	  <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+	  <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <IntermediateOutputPath Condition="'$(TargetFramework)'!='net60-windows'">..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+	<IntermediateOutputPath Condition="'$(TargetFramework)'=='net60-windows'">..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
+	<UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+	  <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<PlatformTarget>x64</PlatformTarget>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Core\Logging\CProtocol.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <Compile Update="Properties\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+	<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.SqlClient" Version="4.8.3" />
+	  <PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" Version="4.3.0" />
+	  <PackageReference Include="System.Management" Version="6.0.0" />
+	  <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resource\" />
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;dir&gt;nul" />
+  </Target>
+</Project>

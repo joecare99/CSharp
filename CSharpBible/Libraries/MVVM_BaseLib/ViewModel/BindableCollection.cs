@@ -7,17 +7,17 @@
 // Last Modified On : 06-17-2022
 // ***********************************************************************
 // <copyright file="BindableCollection.cs" company="MVVM_BaseLib">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace MVVM.ViewModel{
+namespace MVVM.ViewModel
+{
 	/// <summary>
 	/// A base collection class that supports automatic UI thread marshalling.
 	/// </summary>

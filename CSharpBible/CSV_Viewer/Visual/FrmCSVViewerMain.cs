@@ -1,17 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿// ***********************************************************************
+// Assembly         : CSV_Viewer
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 04-06-2020
+// ***********************************************************************
+// <copyright file="FrmCSVViewerMain.cs" company="JC Soft">
+//     Copyright (c) JC-Soft. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CSharpBible.CSV_Viewer.Visual
 {
+    /// <summary>
+    /// Class FrmCSVViewerMain.
+    /// Implements the <see cref="Form" />
+    /// </summary>
+    /// <seealso cref="Form" />
     public partial class FrmCSVViewerMain : Form
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmCSVViewerMain"/> class.
+        /// </summary>
         public FrmCSVViewerMain()
         {
             InitializeComponent();
@@ -19,9 +33,18 @@ namespace CSharpBible.CSV_Viewer.Visual
         }
 
         // Put the next line into the Declarations section.
+        /// <summary>
+        /// The data set
+        /// </summary>
         private DataSet dataSet;
+        /// <summary>
+        /// The data grid1
+        /// </summary>
         private DataGrid dataGrid1;
 
+        /// <summary>
+        /// Makes the data tables.
+        /// </summary>
         private void MakeDataTables()
         {
             // Run all of the functions. 
@@ -31,6 +54,9 @@ namespace CSharpBible.CSV_Viewer.Visual
             BindToDataGrid();
         }
 
+        /// <summary>
+        /// Makes the parent table.
+        /// </summary>
         private void MakeParentTable()
         {
             // Create a new DataTable.
@@ -82,6 +108,9 @@ namespace CSharpBible.CSV_Viewer.Visual
             }
         }
 
+        /// <summary>
+        /// Makes the child table.
+        /// </summary>
         private void MakeChildTable()
         {
             // Create a new DataTable.
@@ -151,6 +180,9 @@ namespace CSharpBible.CSV_Viewer.Visual
             }
         }
 
+        /// <summary>
+        /// Makes the data relation.
+        /// </summary>
         private void MakeDataRelation()
         {
             // DataRelation requires two DataColumn 
@@ -164,6 +196,9 @@ namespace CSharpBible.CSV_Viewer.Visual
             dataSet.Tables["ChildTable"].ParentRelations.Add(relation);
         }
 
+        /// <summary>
+        /// Binds to data grid.
+        /// </summary>
         private void BindToDataGrid()
         {
             // Instruct the DataGrid to bind to the DataSet, with the 

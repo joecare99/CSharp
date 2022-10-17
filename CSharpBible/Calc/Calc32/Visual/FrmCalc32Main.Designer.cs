@@ -1,8 +1,27 @@
-﻿using System;
-using CSharpBible.Calc32.NonVisual;
+﻿// ***********************************************************************
+// Assembly         : Calc32
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 08-28-2022
+// ***********************************************************************
+// <copyright file="FrmCalc32Main.Designer.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
+using Calc32.Properties;
+using Calc32.NonVisual;
 
-namespace CSharpBible.Calc32.Visual
+namespace Calc32.Visual
 {
+    /// <summary>
+    /// Class FrmCalc32Main.
+    /// Implements the <see cref="System.Windows.Forms.Form" />
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     partial class FrmCalc32Main
     {
         /// <summary>
@@ -33,7 +52,7 @@ namespace CSharpBible.Calc32.Visual
         {
             this.btnOne = new System.Windows.Forms.Button();
             this.lblResult = new System.Windows.Forms.Label();
-            this.calculatorClass1 = new CSharpBible.Calc32.NonVisual.CalculatorClass();
+            this.calculatorClass1 = new Calc32.NonVisual.CalculatorClass();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -125,7 +144,7 @@ namespace CSharpBible.Calc32.Visual
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackgroundImage = global::CSharpBible.Calc32.Properties.Resources.Glow_White;
+            this.pictureBox1.BackgroundImage = Resources.Glow_White;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox1.Location = new System.Drawing.Point(627, 383);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -759,7 +778,7 @@ namespace CSharpBible.Calc32.Visual
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClose.BackgroundImage = global::CSharpBible.Calc32.Properties.Resources.Exit;
+            this.btnClose.BackgroundImage = Resources.Exit;
             this.btnClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnClose.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
@@ -872,7 +891,11 @@ namespace CSharpBible.Calc32.Visual
             this.Controls.Add(this.pictureBox1);
             this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FrmCalc32Main";
-            this.Text = "FrmCalc32Main";
+#if NET5_0_OR_GREATER
+            this.Text = "FrmCalc32Main .NET 6.0";
+#else
+            this.Text = "FrmCalc32Main FW 4.8";
+#endif
             this.Click += new System.EventHandler(this.btnOperator_Click);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
@@ -883,50 +906,185 @@ namespace CSharpBible.Calc32.Visual
         }
         #endregion
 
+        /// <summary>
+        /// The BTN one
+        /// </summary>
         private System.Windows.Forms.Button btnOne;
+        /// <summary>
+        /// The label result
+        /// </summary>
         private System.Windows.Forms.Label lblResult;
+        /// <summary>
+        /// The picture box1
+        /// </summary>
         private System.Windows.Forms.PictureBox pictureBox1;
+        /// <summary>
+        /// The calculator class1
+        /// </summary>
         private NonVisual.CalculatorClass calculatorClass1;
+        /// <summary>
+        /// The button1
+        /// </summary>
         private System.Windows.Forms.Button button1;
+        /// <summary>
+        /// The button2
+        /// </summary>
         private System.Windows.Forms.Button button2;
+        /// <summary>
+        /// The button3
+        /// </summary>
         private System.Windows.Forms.Button button3;
+        /// <summary>
+        /// The button4
+        /// </summary>
         private System.Windows.Forms.Button button4;
+        /// <summary>
+        /// The button5
+        /// </summary>
         private System.Windows.Forms.Button button5;
+        /// <summary>
+        /// The button6
+        /// </summary>
         private System.Windows.Forms.Button button6;
+        /// <summary>
+        /// The button7
+        /// </summary>
         private System.Windows.Forms.Button button7;
+        /// <summary>
+        /// The button8
+        /// </summary>
         private System.Windows.Forms.Button button8;
+        /// <summary>
+        /// The BTN hexadecimal a
+        /// </summary>
         private System.Windows.Forms.Button btnHexA;
+        /// <summary>
+        /// The button10
+        /// </summary>
         private System.Windows.Forms.Button button10;
+        /// <summary>
+        /// The button11
+        /// </summary>
         private System.Windows.Forms.Button button11;
+        /// <summary>
+        /// The label operation
+        /// </summary>
         private System.Windows.Forms.Label lblOperation;
+        /// <summary>
+        /// The label memory
+        /// </summary>
         private System.Windows.Forms.Label lblMemory;
+        /// <summary>
+        /// The BTN back
+        /// </summary>
         private System.Windows.Forms.Button btnBack;
+        /// <summary>
+        /// The BTN clear
+        /// </summary>
         private System.Windows.Forms.Button btnClear;
+        /// <summary>
+        /// The BTN clear all
+        /// </summary>
         private System.Windows.Forms.Button btnClearAll;
+        /// <summary>
+        /// The BTN hexadecimal b
+        /// </summary>
         private System.Windows.Forms.Button btnHexB;
+        /// <summary>
+        /// The BTN hexadecimal c
+        /// </summary>
         private System.Windows.Forms.Button btnHexC;
+        /// <summary>
+        /// The BTN hexadecimal f
+        /// </summary>
         private System.Windows.Forms.Button btnHexF;
+        /// <summary>
+        /// The BTN hexadecimal e
+        /// </summary>
         private System.Windows.Forms.Button btnHexE;
+        /// <summary>
+        /// The BTN hexadecimal d
+        /// </summary>
         private System.Windows.Forms.Button btnHexD;
+        /// <summary>
+        /// The BTN mult
+        /// </summary>
         private System.Windows.Forms.Button btnMult;
+        /// <summary>
+        /// The BTN divide
+        /// </summary>
         private System.Windows.Forms.Button btnDivide;
+        /// <summary>
+        /// The BTN plus
+        /// </summary>
         private System.Windows.Forms.Button btnPlus;
+        /// <summary>
+        /// The BTN minus
+        /// </summary>
         private System.Windows.Forms.Button btnMinus;
+        /// <summary>
+        /// The BTN result
+        /// </summary>
         private System.Windows.Forms.Button btnResult;
+        /// <summary>
+        /// The BTN op and
+        /// </summary>
         private System.Windows.Forms.Button btnOpAnd;
+        /// <summary>
+        /// The BTN op or
+        /// </summary>
         private System.Windows.Forms.Button btnOpOR;
+        /// <summary>
+        /// The BTN op xor
+        /// </summary>
         private System.Windows.Forms.Button btnOpXOR;
+        /// <summary>
+        /// The BTN op not
+        /// </summary>
         private System.Windows.Forms.Button btnOpNOT;
+        /// <summary>
+        /// The PNL left
+        /// </summary>
         private System.Windows.Forms.Panel pnlLeft;
+        /// <summary>
+        /// The PNL right
+        /// </summary>
         private System.Windows.Forms.Panel pnlRight;
+        /// <summary>
+        /// The panel2
+        /// </summary>
         private System.Windows.Forms.Panel panel2;
+        /// <summary>
+        /// The button9
+        /// </summary>
         private System.Windows.Forms.Button button9;
+        /// <summary>
+        /// The button12
+        /// </summary>
         private System.Windows.Forms.Button button12;
+        /// <summary>
+        /// The PNL bottom
+        /// </summary>
         private System.Windows.Forms.Panel pnlBottom;
+        /// <summary>
+        /// The BTN close
+        /// </summary>
         private System.Windows.Forms.Button btnClose;
+        /// <summary>
+        /// The panel1
+        /// </summary>
         private System.Windows.Forms.Panel panel1;
+        /// <summary>
+        /// The panel3
+        /// </summary>
         private System.Windows.Forms.Panel panel3;
+        /// <summary>
+        /// The panel4
+        /// </summary>
         private System.Windows.Forms.Panel panel4;
+        /// <summary>
+        /// The panel5
+        /// </summary>
         private System.Windows.Forms.Panel panel5;
     }
 }

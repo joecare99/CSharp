@@ -7,7 +7,7 @@
 // Last Modified On : 06-19-2022
 // ***********************************************************************
 // <copyright file="PersonModelTests.cs" company="DemoLibraryTests">
-//     Copyright (c) HP Inc.. All rights reserved.
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
