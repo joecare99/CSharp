@@ -7,3 +7,5 @@ Inspired by Tom Swan's Delphi-Bible this is a collection of best practices and e
 ## TestStatements
 Inspired from https://docs.microsoft.com/de-de/dotnet/csharp/walkthroughs some examples & best practices
 
+## JC-AMS
+Joe Cares Automation and Management System

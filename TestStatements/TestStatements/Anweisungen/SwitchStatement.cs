@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 09-09-2022
 // ***********************************************************************
-// <copyright file="SwitchStatement.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="SwitchStatement.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
@@ -15,8 +15,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestStatements.Anweisungen
 {

@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <OutputType>Exe</OutputType>
+    <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   	<BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
   </PropertyGroup>  
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

@@ -6,17 +6,12 @@
 // Last Modified By : Mir
 // Last Modified On : 09-20-2022
 // ***********************************************************************
-// <copyright file="Extensons.cs" company="HP Inc.">
-//     Copyright © HP Inc. 2020
+// <copyright file="Extensons.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestStatements.Helper
 {
