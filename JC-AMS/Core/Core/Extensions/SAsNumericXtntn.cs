@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : JCAMS
 // Author           : Mir
 // Created          : 12-19-2021
@@ -117,6 +117,7 @@ namespace JCAMS.Core.Extensions
             else if (dr is int i) return (long)i;
             else if (dr is byte[] arrB)
             {
+				// Motorola Format 
                 long Result = 0L;
                 for (var J = 0; J < arrB.Length; J++)
                 {
@@ -142,7 +143,7 @@ namespace JCAMS.Core.Extensions
             else if (dr is byte[] arrB)
             {
                 ulong Result = 0uL;
-                for (var J = 0; J < arrB.Length; J++)
+                for (var J = 0; J < Math.Min(arrB.Length, 8); J++)
                 {
                     Result = (Result << 8) + arrB[J];
                 }
@@ -167,19 +168,19 @@ namespace JCAMS.Core.Extensions
         {
 
             if (o == null || o.Equals(DBNull.Value) || o.Equals("") || o.GetType() == typeof(object)) return 0u;
-            else if (o is string s && s.StartsWith("0x")) return Convert.ToUInt32(s.Substring(2), 8);
+            else if (o is string s && s.StartsWith("0x")) return Convert.ToUInt32(s.Substring(2,Math.Min(s.Length-2,8)), 16);
             else if (o is double d) return (uint)d;
             else if (o is int i) return (uint)i;
             else if (o is byte[] arrB)
             {
-                uint Result = 0u;
-                for (var J = 0; J < arrB.Length; J++)
-                {
-                    Result = (Result << 8) + arrB[J];
-                }
-                return Result;
-            }
-            else try
+				// Motorola Format
+				uint Result = 0u;
+				for (var J = 0; J < Math.Min(arrB.Length,4); J++) {
+					Result = (Result << 8) + arrB[J];
+				}
+				return Result;
+			}
+			else try
                 {
                     return Convert.ToUInt32(o);
                 }
