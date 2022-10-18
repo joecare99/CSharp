@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 09-18-2022
 // ***********************************************************************
-// <copyright file="SSubstation.cs" company="JC-Soft">
+// <copyright file="CSubstation.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2008-2015
 // </copyright>
 // <summary></summary>
@@ -16,6 +16,7 @@ using JCAMS.Core.System.Values;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -30,12 +31,14 @@ namespace JCAMS.Core.System
     {
         #region Properties
         #region private properties
+        private long _idSubStation;
         private string _Description;
         #endregion
         /// <summary>
         /// The identifier substation
         /// </summary>
-        public long idSubStation;
+        public long idSubStation { get => _idSubStation; private set => SetValue(value, ref _idSubStation , OnChangeIdSubStation); }
+
 
         /// <summary>
         /// The description
@@ -69,16 +72,35 @@ namespace JCAMS.Core.System
         {
             System = new CSubStation(CStation.System, 0, "System");
         }
+
+        public CSubStation()
+        {
+
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CSubStation" /> class.
         /// </summary>
         /// <param name="Q">The q.</param>
-        public CSubStation(CStation cStation, long idSubstation,string sDescription)
+        public CSubStation(CStation cStation, long idSubstation, string sDescription)
         {
             Station = cStation;
             this.idSubStation = idSubstation;
             Description = sDescription;
             SubStations[idSubStation] = this;
+        }
+
+        private void OnChangeIdSubStation(long oldId, long newId, string name)
+        {
+            if (oldId > 0)
+                RemoveSubStation(oldId);
+            if (newId > 0)
+                SubStations[newId] = this;
+        }
+
+        private static void RemoveSubStation(long oldId)
+        {
+            throw new NotImplementedException();
         }
 
         #region Interface methods
@@ -100,8 +122,15 @@ namespace JCAMS.Core.System
 
         public void ReadXml(XmlReader reader)
         {
-//            _idStation = reader.AttributeValue(nameof(idStation));
-//            Station = CStation.GetStation();
+            reader.MoveToAttribute(nameof(idSubStation));
+            idSubStation = reader.ReadContentAsLong();
+
+            reader.MoveToAttribute(nameof(Description));
+            Description = reader.ReadContentAsString();
+
+            reader.MoveToAttribute(nameof(idStation));
+            var _idStation = reader.ReadContentAsLong();
+            Station = CStation.GetStation(_idStation);
         }
 
         public void WriteXml(XmlWriter writer)
