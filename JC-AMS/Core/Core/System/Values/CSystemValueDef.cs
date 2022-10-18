@@ -67,26 +67,26 @@ namespace JCAMS.Core.System.Values
         public void ReadXml(XmlReader reader)
         {
             reader.MoveToAttribute(nameof(idValueDef));
-            idValueDef = reader.ReadString().AsInt64();
+            idValueDef = reader.ReadContentAsLong();
 
             reader.MoveToAttribute(nameof(Description));
-            Description = reader.ReadString();
+            Description = reader.ReadContentAsString();
 
             reader.MoveToAttribute(nameof(idStation));
-            var _idStation = reader.ReadString().AsInt64();
+            var _idStation = reader.ReadContentAsLong();
             Station = CStation.GetStation(_idStation);
 
             reader.MoveToAttribute(nameof(DataType));
-            DataType = Type.GetType($"System.{reader.ReadString()}");
+            DataType = Type.GetType($"System.{reader.ReadContentAsString()}");
 
             reader.MoveToAttribute(nameof(MinIndex));
-            MinIndex = reader.ReadString().AsInt32();
+            MinIndex = reader.ReadContentAsInt();
 
             reader.MoveToAttribute(nameof(MaxIndex));
-            MaxIndex = reader.ReadString().AsInt32();
+            MaxIndex = reader.ReadContentAsInt();
 
             reader.MoveToAttribute(nameof(Children) + ".Count");
-            var _childCount = reader.ReadString().AsInt32();
+            var _childCount = reader.ReadContentAsInt();
 
             for (int i = 0; i < _childCount; i++)
             {
@@ -125,10 +125,14 @@ namespace JCAMS.Core.System.Values
             writer.WriteStartAttribute(nameof(Children)+".Count");
             writer.WriteValue(Children.Count);
             writer.WriteEndAttribute();
-
-            foreach(var ch in Children)
+            if (Children.Count > 0)
             {
-                writer.WriteValue(ch);
+                writer.WriteStartElement(nameof(Children));
+                foreach (var ch in Children)
+                {
+                    writer.WriteValue(ch);
+                }
+                writer.WriteEndElement();
             }
         }
         #endregion

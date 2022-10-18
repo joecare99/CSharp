@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using JCAMS.Core.DataOperations;
+using JCAMS.Core.Extensions;
 using JCAMS.Core.System.Values;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,8 @@ namespace JCAMS.Core.System
         /// <summary>
         /// The identifier station
         /// </summary>
-        public long idStation { get => _idStation; private set => SetValue(value,ref _idStation); }
+        public long idStation { get => _idStation; private set => SetValue(value,ref _idStation, OnChangeIdStation); }
+
 
         /// <summary>
         /// The description
@@ -68,6 +70,14 @@ namespace JCAMS.Core.System
             // Initialize some few! "well-known" Stations
             System = new CStation(0, "System");    
         }
+        private void OnChangeIdStation(long oldId, long newId, string name)
+        {
+            if (oldId > 0)
+                RemoveStation(oldId);
+            if (newId > 0)
+                Stations[newId] = this;
+        }
+
         public static CStation GetStation(long idStation)
         {
             return Stations.ContainsKey(idStation) ? Stations[idStation]:null;
@@ -91,7 +101,45 @@ namespace JCAMS.Core.System
 
         public void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            reader.MoveToAttribute(nameof(idStation));
+            var _idStation = reader.ReadContentAsLong();
+            idStation = _idStation;
+
+            reader.MoveToAttribute(nameof(Description));
+            Description = reader.ReadContentAsString();
+
+            reader.MoveToAttribute(nameof(ValueDefs) + "." + nameof(ValueDefs.Count));
+            var _idValDefCount = reader.ReadContentAsInt();           
+
+            reader.MoveToAttribute(nameof(SubStations) + "." + nameof(SubStations.Count));
+            var _idSubStCount = reader.ReadContentAsInt();
+
+            reader.ReadToFollowing(nameof(ValueDefs));
+            for (int i = 0; i < _idValDefCount; i++)
+            {
+                reader.ReadToFollowing(nameof(CSystemValueDef));
+                var _svd = new CSystemValueDef();
+                _svd.ReadXml(reader);
+                if (_svd is CSystemValueDef svd)
+                    ValueDefs.Add(svd.Description,svd);
+            }
+
+            reader.ReadToFollowing(nameof(SubStations));
+            for (int i = 0; i < _idSubStCount; i++)
+            {
+                reader.ReadToFollowing(nameof(CSubStation));
+                var _sst = new CSubStation();
+                _sst.ReadXml(reader);
+                if (_sst is CSubStation sst)
+                    SubStations.Add(sst.Description, sst);
+            }
+
+        }
+
+        private static void RemoveStation(long idStation)
+        {
+            if (Stations.ContainsKey(idStation))
+                Stations.Remove(idStation);
         }
 
         public void WriteXml(XmlWriter writer)
@@ -112,6 +160,7 @@ namespace JCAMS.Core.System
             writer.WriteValue(SubStations.Count);
             writer.WriteEndAttribute();
 
+            writer.WriteStartElement(nameof(ValueDefs));
             var aVD = ValueDefs.Values.ToArray();
             for (int i = 0; i < ValueDefs.Count; i++)
             {
@@ -120,7 +169,9 @@ namespace JCAMS.Core.System
                   ix.WriteXml(writer);
                 writer.WriteEndElement();
             }
+            writer.WriteEndElement();
 
+            writer.WriteStartElement(nameof(SubStations));
             var aSS = SubStations.Values.ToArray();
             for (int i = 0; i < SubStations.Count; i++)
             {
@@ -129,6 +180,7 @@ namespace JCAMS.Core.System
                     ix.WriteXml(writer);
                 writer.WriteEndElement();
             }
+            writer.WriteEndElement();
         }
 
         public CStation()
