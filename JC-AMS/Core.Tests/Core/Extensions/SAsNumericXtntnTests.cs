@@ -122,7 +122,31 @@ namespace JCAMS.Core.Extensions.Tests
             Assert.AreEqual(sExp, o.AsTimeStampS(), $"Test: {name}");
         }
 
-        [DataTestMethod()]
+		[DataTestMethod()]
+		[TestProperty("Author", "JC")]
+		[DataRow("null", null, "0x0000000000000000")]
+		[DataRow("Hello", "Hello", "0x0000000000000000")]
+		[DataRow("25", 25, "0x0000000000000019")]
+		[DataRow("25L", 25L, "0x0000000000000019")]
+		[DataRow("0x7FFFFFFFFFFFFFFF", "0x7FFFFFFFFFFFFFFF", "0x7FFFFFFFFFFFFFFF")]
+		[DataRow("0x8000000000000000", "0x8000000000000000", "0x8000000000000000")]
+		[DataRow("long.MaxValue", long.MaxValue, "0x7FFFFFFFFFFFFFFF")]
+		[DataRow("long.MinValue", long.MinValue, "0x8000000000000000")]
+		[DataRow("Math.PI", Math.PI, "0x0000000000000003")]
+		[DataRow("double.MaxValue", double.MaxValue, "0x8000000000000000")]
+		[DataRow("double.MinValue", double.MinValue, "0x8000000000000000")]
+		[DataRow("{47,11 }", new byte[] { 47, 11 }, "0x0000000000002F0B")]
+		[DataRow("{0,1,2,3 }", new byte[] { 0, 1, 2, 3 }, "0x0000000000010203")]
+		[DataRow("{127,255,255,255,0,0,0,0 }", new byte[] { 127, 255, 255, 255, 0, 0, 0, 0 }, "0x7FFFFFFF00000000")]
+		public void AsTimeStampSTest1(string name, object o, string sExp) {
+			Assert.AreEqual(sExp, SAsNumericXtntn.AsTimeStampS(o), $"Test: {name}");
+		}
+
+		/// <summary>As TimeStamp-L test.</summary>
+		/// <param name="name">The name.</param>
+		/// <param name="o">The o.</param>
+		/// <param name="lExp">The l exp.</param>
+		[DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DataRow("null", null, 0)]
         [DataRow("Hello", "Hello", 0)]
@@ -143,7 +167,35 @@ namespace JCAMS.Core.Extensions.Tests
             Assert.AreEqual(lExp, o.AsTimeStampL(), $"Test: {name}");
         }
 
-        [DataTestMethod()]
+		/// <summary>As TimeStamp-L test.</summary>
+		/// <param name="name">The name.</param>
+		/// <param name="o">The o.</param>
+		/// <param name="lExp">The l exp.</param>
+		[DataTestMethod()]
+		[TestProperty("Author", "JC")]
+		[DataRow("null", null, 0)]
+		[DataRow("Hello", "Hello", 0)]
+		[DataRow("0x7FFFFFFFFFFFFFFF", "0x7FFFFFFFFFFFFFFF", 9223372036854775807)]
+		[DataRow("0x8000000000000000", "0x8000000000000000", -9223372036854775808)]
+		[DataRow("25", 25, 25)]
+		[DataRow("25L", 25L, 25)]
+		[DataRow("long.MaxValue", long.MaxValue, 9223372036854775807)]
+		[DataRow("long.MinValue", long.MinValue, -9223372036854775808)]
+		[DataRow("Math.PI", Math.PI, 3L)]
+		[DataRow("double.MaxValue", double.MaxValue, -9223372036854775808)]
+		[DataRow("double.MinValue", double.MinValue, -9223372036854775808)]
+		[DataRow("{47,11 }", new byte[] { 47, 11 }, 12043)]
+		[DataRow("{0,1,2,3 }", new byte[] { 0, 1, 2, 3 }, 66051)]
+		[DataRow("{127,255,255,255,0,0,0,0 }", new byte[] { 127, 255, 255, 255, 0, 0, 0, 0 }, 9223372032559808512)]
+		public void AsTimeStampLTest1(string name, object o, long lExp) {
+			Assert.AreEqual(lExp, SAsNumericXtntn.AsTimeStampL(o), $"Test: {name}");
+		}
+
+		/// <summary>As UInt64 test.</summary>
+		/// <param name="name">The name.</param>
+		/// <param name="o">The o.</param>
+		/// <param name="ulExp">The ul exp.</param>
+		[DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DataRow("null", null, 0UL)]
         [DataRow("Hello", "Hello", 0UL)]
@@ -190,7 +242,11 @@ namespace JCAMS.Core.Extensions.Tests
         }
 
 
-        [DataTestMethod()]
+		/// <summary>As Uint32 test.</summary>
+		/// <param name="name">The name.</param>
+		/// <param name="o">The o.</param>
+		/// <param name="ulExp">The ul exp.</param>
+		[DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DataRow("null", null, 0u)]
         [DataRow("Hello", "Hello", 0u)]
@@ -213,7 +269,11 @@ namespace JCAMS.Core.Extensions.Tests
             Assert.AreEqual(ulExp, o.AsUInt32(), $"Test: {name}");
         }
 
-        [DataTestMethod()]
+		/// <summary>As UInt32 test 1.</summary>
+		/// <param name="name">The name.</param>
+		/// <param name="o">The o.</param>
+		/// <param name="ulExp">The ul exp.</param>
+		[DataTestMethod()]
         [TestProperty("Author", "JC")]
 		[DataRow("null", null, 0u)]
 		[DataRow("Hello", "Hello", 0u)]

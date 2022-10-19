@@ -1,9 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq.Expressions;
 using System.Numerics;
+using System.Xml;
 
 namespace JCAMS.Core.Math2.Tests
 {
@@ -13,12 +15,16 @@ namespace JCAMS.Core.Math2.Tests
         protected static IEnumerable<object?[]> IsUndefinedData => new[]
         {
             new object?[]{"null",null,true },
-            new object?[]{"DBNull",DBNull.Value,true },
-            new object?[]{ "UndefinedPoint", SMath2.UndefinedPoint,true },
-            new object?[]{ "UndefinedPointF", SMath2.UndefinedPointF, true },
-            new object?[]{ "UndefinedRectangle", SMath2.UndefinedRectangle,true },
-            new object?[]{ "UndefinedRectangleF", SMath2.UndefinedRectangleF,true },
-        };
+            new object[]{"DBNull",DBNull.Value,true },
+            new object[]{ "UndefinedPoint", SMath2.UndefinedPoint,true },
+            new object[]{ "UndefinedPointF", SMath2.UndefinedPointF, true },
+            new object[]{ "UndefinedRectangle", SMath2.UndefinedRectangle,true },
+            new object[]{ "UndefinedRectangleF", SMath2.UndefinedRectangleF,true },
+			new object[]{ "1", 1,false },
+			new object[]{ "String.Empty", string.Empty,false },
+			new object[]{ "0f", 0f,false },
+			new object[]{ "25d", 25d,false },
+		};
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
@@ -43,14 +49,20 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("0,NaN", 0f, float.NaN, float.NaN)]
         public void AbsArcLengthTest(string name, float fDeg, float fRadius, float fExp)
         {
-            Assert.Fail();
-        }
+			Assert.AreEqual(fExp, SMath2.AbsArcLength(fDeg, fRadius));
+		}
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        public void AngleTest()
+		[DataRow("Zero", 0,new float[] {0,0,0,0})] //??
+		[DataRow("1;2", 0, new float[] { 1, 0, 2, 0 })] //??
+		[DataRow("1i;2i", 90, new float[] { 0, 1, 0, 2 })] //??
+		[DataRow("135°", 135, new float[] { 1, 0, 0, 1 })] //??
+		public void AngleTest(string name,float fExp, float[] p)
         {
-            Assert.Fail();
+			PointF pA = new PointF(p[0], p[1]);
+			PointF pB = new PointF(p[2], p[3]);
+			Assert.AreEqual(fExp,SMath2.Angle(pA,pB));
         }
 
         [DataTestMethod()]
