@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : JCAMS
 // Author           : Mir
 // Created          : 09-22-2022
@@ -98,6 +98,13 @@ namespace JCAMS.Core.Math2
                 null => true,
                 _ => false
             };
+
+		/// <summary>2 Points to vector.</summary>
+		/// <param name="pA">The point A.</param>
+		/// <param name="pB">The point B.</param>
+		/// <returns>The Vector from A to B</returns>
+		public static Vector2 PntVector(this PointF pA,PointF pB) => new Vector2(pB.X-pA.X, pB.Y-pA.Y); 
+
         /// <summary>
         /// Abses the length of the arc.
         /// </summary>
@@ -118,46 +125,36 @@ namespace JCAMS.Core.Math2
         /// <returns>System.Single.</returns>
         public static float Angle(PointF A, PointF B)
         {
-            float Angle = 0f;
+            double Angle = 0d;
             if (IsUndefinedPointF(A) || IsUndefinedPointF(B))
             {
-                return Angle;
+                return 0f;
             }
             if (Equals(A, B))
             {
                 return 0f;
             }
-            double OpppositeLeg = B.Y - A.Y;
-            double AdjacentLeg = B.X - A.X;
-            double Hypotenuse = DistanceAB(A, B);
-            double Rad = OpppositeLeg / Hypotenuse;
-            if (Rad > 1.0)
-            {
-                Rad = 1.0;
-            }
-            if (Rad < -1.0)
-            {
-                Rad = -1.0;
-            }
-            Angle = (float)SMath.Rad2Deg(Math.Asin(Rad));
-            if (Math.Sign(AdjacentLeg) >= 0 && Math.Sign(OpppositeLeg) >= 0)
-            {
-                Angle = 0f + Angle;
-            }
-            else if (Math.Sign(AdjacentLeg) > 0 && Math.Sign(OpppositeLeg) < 0)
-            {
-                Angle = 360f + Angle;
-            }
-            else if (Math.Sign(AdjacentLeg) <= 0 && Math.Sign(OpppositeLeg) <= 0)
-            {
-                Angle = 180f - Angle;
-            }
-            else if (Math.Sign(AdjacentLeg) < 0 && Math.Sign(OpppositeLeg) > 0)
-            {
-                Angle = 180f - Angle;
-            }
-            return Angle;
+			double fDist;
+            (Angle,fDist) = AngleLength( A.PntVector(B));
+			return (float)Angle;   
         }
+
+		public static (double dAngle,double dLength) AngleLength(Vector2 v) {
+			double fDist = v.Length();
+			if (fDist == 0d)
+				return (0d, 0d);
+			double Rad = (v.X / fDist).Limit(-1d, 1d);
+			var Angle = Math.Asin(Rad);
+			if (v.Y >= 0 && v.X >= 0) {
+				;
+			}
+			else if (v.Y > 0 && v.X < 0) {
+				Angle = Math.PI*2d + Angle;
+			}
+			else 
+				Angle = Math.PI - Angle;
+			return (Angle,fDist);
+		}
 
         /// <summary>
         /// Arcs the length.
