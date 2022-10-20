@@ -122,6 +122,7 @@ namespace MVVM_BaseLib.Helper.Tests
         /// The data result
         /// </summary>
         private string DataResult;
+        private bool boolProp;
 
         /// <summary>
         /// Initializes this instance.
@@ -130,7 +131,6 @@ namespace MVVM_BaseLib.Helper.Tests
         public void Init()
         {
             intProp = 0;
-            DataResult = "";
             floatProp = 0.0f;
             doubleProp = 0d;
             strProp = "";
@@ -138,6 +138,9 @@ namespace MVVM_BaseLib.Helper.Tests
             structProp.TestString = "";
             objProp = null;
             enumProp = new TestEnum();
+            boolProp = false;
+
+            DataResult = "";
         }
 
         /// <summary>
@@ -149,54 +152,64 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <param name="bExp">if set to <c>true</c> [b exp].</param>
         /// <param name="expResult">The exp result.</param>
         [DataTestMethod()]
-        [DataRow("object",typeof(object),"123",true, @"c:	SetPropertyTest,	o:,	n:123
+        [DataRow("object",TypeCode.Object,"123",true, @"c:	SetPropertyTest,	o:,	n:123
 ")]
-        [DataRow("int", typeof(int), "123", true, @"c:	SetPropertyTest,	o:0,	n:123
+        [DataRow("int", TypeCode.Int32, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
 ")]
-        [DataRow("int", typeof(int), "0", false, @"")]
+        [DataRow("int", TypeCode.Int32, "0", false, @"")]
 
-        [DataRow("float", typeof(float), "123", true, @"c:	SetPropertyTest,	o:0,	n:123
-/// <summary>
-/// The tick
-/// </summary>le", typeof(double), "123", true, @"c:	SetPropertyTest,	o:0,	n:123
+        [DataRow("bool", TypeCode.Boolean, "true", true, @"c:	SetPropertyTest,	o:False,	n:True
 ")]
-        [DataRow("double", typeof(double), "0", false, @"")]
-        [DataRow("string", typeof(string), "123", true, @"c:	SetPropertyTest,	o:,	n:123
+        [DataRow("Bool", TypeCode.Boolean, "false", false, @"")]
+        [DataRow("float", TypeCode.Single, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
 ")]
-        [DataRow("string", typeof(string), "", false, @"")]
-        [DataRow("struct", typeof(TestStruct), "123;Dada", true, @"c:	SetPropertyTest,	o:(0;),	n:(123;Dada)
+        [DataRow("float", TypeCode.Single, "0", false, @"")]
+        [DataRow("double", TypeCode.Double, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
 ")]
-        [DataRow("struct", typeof(TestStruct), "0;", false, @"")]
+        [DataRow("double", TypeCode.Double, "0", false, @"")]
+        [DataRow("string", TypeCode.String, "123", true, @"c:	SetPropertyTest,	o:,	n:123
+")]
+        [DataRow("string", TypeCode.String, "", false, @"")]
+        [DataRow("struct", TypeCode.Object, "123;Dada", true, @"c:	SetPropertyTest,	o:(0;),	n:(123;Dada)
+")]
+        [DataRow("struct", TypeCode.Object, "0;", false, @"")]
 
-        public void SetPropertyTest(string Name,Type tt,string value,bool bExp,string expResult )
+        [DataRow("enum", TypeCode.Object, "teCherry", true, @"c:	SetPropertyTest,	o:teApple,	n:teCherry
+")]
+        [DataRow("enum", TypeCode.Object, "teApple", false, @"")]
+        public void SetPropertyTest(string Name,TypeCode tt,string value,bool bExp,string expResult )
         {
             switch (tt)
             {
-                case Type t when t == typeof(TestStruct):
+                case TypeCode.Object when value.Contains(";"): // struct
                     Assert.AreEqual(bExp, Property.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
-                case Type t when t == typeof(string):
+                case TypeCode.String:
                     Assert.AreEqual(bExp, Property.SetProperty(ref strProp,  value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
-                case Type t when t == typeof(Enum):
+                case TypeCode.Object when value.StartsWith("te"):
                     Assert.AreEqual(bExp, Property.SetProperty(ref enumProp, (TestEnum)Enum.Parse(typeof(TestEnum),value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
-                case Type t when t == typeof(double):
+                case TypeCode.Double:
                     Assert.AreEqual(bExp, Property.SetProperty(ref doubleProp, double.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
-                case Type t when t == typeof(float):
+                case TypeCode.Single:
                     Assert.AreEqual(bExp, Property.SetProperty(ref floatProp, float.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
-                case Type t when t==typeof(int):
+                case TypeCode.Int32:
                     Assert.AreEqual(bExp, Property.SetProperty(ref intProp, int.Parse(value),DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
-                case Type t when t == typeof(object):
+                case TypeCode.Boolean:
+                    Assert.AreEqual(bExp, Property.SetProperty(ref boolProp, bool.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Object:
                     Assert.AreEqual(bExp, Property.SetProperty(ref objProp, (object)value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
