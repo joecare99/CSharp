@@ -21,6 +21,10 @@
     <Optimize>False</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Remove="ViewModel\.info" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="View\" />
