@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -23,43 +24,42 @@ namespace ItemsControlTut3.ViewModel
     /// Implements the <see cref="INotifyPropertyChanged" />
     /// </summary>
     /// <seealso cref="INotifyPropertyChanged" />
-    public class TodoItem : INotifyPropertyChanged
+    public class TodoItem : NotificationObject 
     {
+        #region Properties
+        #region private properties
+        private int _completion = 0;
+        private string _Title = "";
+        #endregion
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
         /// <value>The title.</value>
-        public string Title { get; set; }
+        public string Title { get=> _Title; set => SetProperty(ref _Title,value); } 
         /// <summary>
         /// Gets or sets the completion.
         /// </summary>
         /// <value>The completion.</value>
-        public int Completion { get; set; }
+        public int Completion { get => _completion; set => SetProperty(ref _completion,value); }
         /// <summary>
-        /// Gets or sets the do.
+        /// Gets or sets the do-Command.
         /// </summary>
         /// <value>The do.</value>
         public DelegateCommand Do { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Step-Command.
+        /// </summary>
+        /// <value>The do.</value>
+        public DelegateCommand Step { get; set; }
+
         /// <summary>
         /// Gets the this.
         /// </summary>
         /// <value>The this.</value>
         public object This => this;
+        #endregion
 
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        /// <summary>
-        /// Notifies the property changed.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        public void NotifyPropertyChanged([CallerMemberName] string name = "")
-        {
-            if (!string.IsNullOrEmpty(name))
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
     }
 
     /// <summary>
@@ -69,15 +69,46 @@ namespace ItemsControlTut3.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class MainWindowViewModel: BaseViewModel
     {
+        #region Properties
+        #region private properties
+        private string _newItem="";
+        #endregion
+
+        /// <summary>
+        /// Gets or sets the todo list.
+        /// </summary>
+        /// <value>The todo list.</value>
+        public ObservableCollection<TodoItem> TodoList { get ; set; }
+        public DelegateCommand AddCommand { get; set; }
+        public string NewItem { get=>_newItem; set=>SetProperty(ref _newItem,value); }
+        #endregion
+        #region Methods
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
         public MainWindowViewModel()
         {
             TodoList = new ObservableCollection<TodoItem>();
-            TodoList.Add(new TodoItem() { Title = "Complete this WPF tutorial", Completion = 50,Do= new DelegateCommand(DoAction) });
-            TodoList.Add(new TodoItem() { Title = "Learn C#", Completion = 90, Do = new DelegateCommand(DoAction) });
-            TodoList.Add(new TodoItem() { Title = "Wash the car", Completion = 10, Do = new DelegateCommand(DoAction) });
+            TodoList.Add(new TodoItem() { Title = "Complete this WPF tutorial", Completion = 50,Do= new DelegateCommand(DoAction), Step = new DelegateCommand(StepAction) });
+            TodoList.Add(new TodoItem() { Title = "Learn C#", Completion = 90, Do = new DelegateCommand(DoAction), Step = new DelegateCommand(StepAction) });
+            TodoList.Add(new TodoItem() { Title = "Wash the car", Completion = 10, Do = new DelegateCommand(DoAction), Step = new DelegateCommand(StepAction) });
+
+            AddCommand = new DelegateCommand((o)=> { AddTodo(NewItem, 0); NewItem = ""; },(o)=>!String.IsNullOrEmpty(NewItem));
+            CommandCanExecuteBinding.Add((nameof(NewItem), nameof(AddCommand)));
+        }
+
+        /// <summary>Steps the action.</summary>
+        /// <param name="obj">The object.</param>
+        private void StepAction(object? obj)
+        {
+            if (obj is TodoItem todo)
+            {
+                if (todo.Completion < 90)
+                    todo.Completion += 10;
+                else
+                    todo.Completion = 100;
+            }
         }
 
         /// <summary>
@@ -89,15 +120,13 @@ namespace ItemsControlTut3.ViewModel
             if (obj is TodoItem todo)
             {
                 todo.Completion = 100;
-                todo.NotifyPropertyChanged(nameof(todo.Completion));
             }
         }
 
-        /// <summary>
-        /// Gets or sets the todo list.
-        /// </summary>
-        /// <value>The todo list.</value>
-        public ObservableCollection<TodoItem> TodoList { get ; set; }
-
+        public void AddTodo(string sTitle, int iCompl)
+        {
+            TodoList.Add(new TodoItem() { Title = sTitle, Completion = iCompl, Do = new DelegateCommand(DoAction), Step = new DelegateCommand(StepAction) });
+        }
+        #endregion
     }
 }
