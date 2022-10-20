@@ -266,7 +266,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_DrawGrid3_No
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_Grid3_NonLin", "Graphics\MVVM_Converter_Grid3_NonLin\MVVM_Converter_Grid3_NonLin.csproj", "{8DE194E5-C84B-4781-92CD-8539572499EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitleGen", "Graphics\TitleGen\TitleGen.csproj", "{FC714AE4-2AA2-481D-8F53-C9A13D096166}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TitleGen", "Graphics\TitleGen\TitleGen.csproj", "{FC714AE4-2AA2-481D-8F53-C9A13D096166}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut4_net", "MVVM_Tutorial\ItemsControlTut4\ItemsControlTut4_net.csproj", "{9457C3AB-6349-4C09-8319-3FCA307E6438}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -745,6 +747,10 @@ Global
 		{FC714AE4-2AA2-481D-8F53-C9A13D096166}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC714AE4-2AA2-481D-8F53-C9A13D096166}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC714AE4-2AA2-481D-8F53-C9A13D096166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9457C3AB-6349-4C09-8319-3FCA307E6438}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9457C3AB-6349-4C09-8319-3FCA307E6438}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9457C3AB-6349-4C09-8319-3FCA307E6438}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9457C3AB-6349-4C09-8319-3FCA307E6438}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -851,6 +857,7 @@ Global
 		{92FEDA3D-2A80-464D-B629-42315B133CB7} = {E1D77C39-936E-4ADB-8350-74B5A4401280}
 		{8DE194E5-C84B-4781-92CD-8539572499EC} = {E1D77C39-936E-4ADB-8350-74B5A4401280}
 		{FC714AE4-2AA2-481D-8F53-C9A13D096166} = {E1D77C39-936E-4ADB-8350-74B5A4401280}
+		{9457C3AB-6349-4C09-8319-3FCA307E6438} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
