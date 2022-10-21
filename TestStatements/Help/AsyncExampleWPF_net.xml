@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>AsyncExampleWPF_net</name>
+  </assembly>
+  <members>
+    <member name="T:AsyncExampleWPF.Properties.Resources">
+      <summary>
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:AsyncExampleWPF.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:AsyncExampleWPF.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:AsyncExampleWPF.Properties.Resources.ResourceManager">
+      <summary>
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+    </member>
+    <member name="P:AsyncExampleWPF.Properties.Resources.Culture">
+      <summary>
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+    </member>
+    <member name="T:AsyncExampleWPF.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+      <summary> Gets the default. </summary>
+      <value>The default.</value>
+    </member>
+    <member name="P:AsyncExampleWPF.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:AsyncExampleWPF.App">
+      <summary> Interaktionslogik für "App.xaml" </summary>
+    </member>
+    <member name="T:AsyncExampleWPF.MainWindow">
+      <summary> Interaktionslogik für MainWindow.xaml </summary>
+    </member>
+    <member name="M:AsyncExampleWPF.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:AsyncExampleWPF.MainWindow" /> class.
+   </summary>
+    </member>
+  </members>
+</doc>
