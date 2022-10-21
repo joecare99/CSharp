@@ -21,9 +21,9 @@ namespace ItemsControlTut3.ViewModel
 {
     /// <summary>
     /// Class TodoItem.
-    /// Implements the <see cref="INotifyPropertyChanged" />
+    /// Extends the <see cref="NotificationObject" />
     /// </summary>
-    /// <seealso cref="INotifyPropertyChanged" />
+    /// <seealso cref="NotificationObject" />
     public class TodoItem : NotificationObject 
     {
         #region Properties
@@ -79,7 +79,11 @@ namespace ItemsControlTut3.ViewModel
         /// </summary>
         /// <value>The todo list.</value>
         public ObservableCollection<TodoItem> TodoList { get ; set; }
+        /// <summary>Gets or sets the add command.</summary>
+        /// <value>The add command.</value>
         public DelegateCommand AddCommand { get; set; }
+        /// <summary>Title of the new item.</summary>
+        /// <value>The title of the new item.</value>
         public string NewItem { get=>_newItem; set=>SetProperty(ref _newItem,value); }
         #endregion
         #region Methods
@@ -123,6 +127,9 @@ namespace ItemsControlTut3.ViewModel
             }
         }
 
+        /// <summary>Adds an item to the the todo-List.</summary>
+        /// <param name="sTitle">The title.</param>
+        /// <param name="iCompl">The completion-percentage.</param>
         public void AddTodo(string sTitle, int iCompl)
         {
             TodoList.Add(new TodoItem() { Title = sTitle, Completion = iCompl, Do = new DelegateCommand(DoAction), Step = new DelegateCommand(StepAction) });

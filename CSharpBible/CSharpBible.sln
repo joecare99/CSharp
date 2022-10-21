@@ -272,6 +272,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut4_net", "MVV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemsControlTut3_netTests", "MVVM_Tutorial\ItemsControlTut3_netTests\ItemsControlTut3_netTests.csproj", "{A66C16B1-C48C-4C1B-9FC0-61826967F933}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemsControlTut4_netTests", "MVVM_Tutorial\ItemsControlTut4_netTests\ItemsControlTut4_netTests.csproj", "{229D9174-FB54-4366-BC1C-072366D8A6B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -757,6 +759,10 @@ Global
 		{A66C16B1-C48C-4C1B-9FC0-61826967F933}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A66C16B1-C48C-4C1B-9FC0-61826967F933}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A66C16B1-C48C-4C1B-9FC0-61826967F933}.Release|Any CPU.Build.0 = Release|Any CPU
+		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -865,6 +871,7 @@ Global
 		{FC714AE4-2AA2-481D-8F53-C9A13D096166} = {E1D77C39-936E-4ADB-8350-74B5A4401280}
 		{9457C3AB-6349-4C09-8319-3FCA307E6438} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 		{A66C16B1-C48C-4C1B-9FC0-61826967F933} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
+		{229D9174-FB54-4366-BC1C-072366D8A6B2} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
