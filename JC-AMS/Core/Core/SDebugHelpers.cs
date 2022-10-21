@@ -18,6 +18,7 @@ using System.Text;
 // ***********************************************************************
 namespace JCAMS.Core
 {
+    /// <summary>static Class DebugHelpers.</summary>
     public static class SDebugHelpers
     {
 
