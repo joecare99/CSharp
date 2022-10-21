@@ -1,0 +1,828 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>TestStatementsTest</name>
+  </assembly>
+  <members>
+    <member name="T:TestStatements.Anweisungen.Tests.AccountTests">
+      <summary>
+   Defines test class AccountTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.AccountTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.AccountTests.TestSetup">
+      <summary>
+   Defines the test method TestSetup.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.AccountTests.AccountTest">
+      <summary>
+   Defines the test method AccountTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.AccountTests.WithdrawTest">
+      <summary>
+   Defines the test method WithdrawTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.CheckingTests">
+      <summary>
+   Defines test class CheckingTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.CheckingTests.CheckedUncheckedTest">
+      <summary>
+   Defines the test method CheckedUncheckedTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.ConditionalStatementTests">
+      <summary>
+   Defines test class ConditionalStatementTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ConditionalStatementTests.DoIfStatementTest">
+      <summary>
+   Defines the test method DoIfStatementTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ConditionalStatementTests.DoIfStatementTest2">
+      <summary>
+   Defines the test method DoIfStatementTest2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ConditionalStatementTests.DoSwitchStatementTest">
+      <summary>
+   Defines the test method DoSwitchStatementTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.DeclarationsTests">
+      <summary>
+   Defines test class DeclarationsTests.
+   </summary>
+      <summary>
+   Defines test class DeclarationsTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.DeclarationsTests.DoVarDeclarationsTest">
+      <summary>
+   Defines the test method DoVarDeclarationsTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.DeclarationsTests.DoConstantDeclarationsTest">
+      <summary>
+   Defines the test method DoConstantDeclarationsTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.ExceptionHandlingTests">
+      <summary>
+   Defines test class ExceptionHandlingTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ExceptionHandlingTests.DoTryCatchTest">
+      <summary>
+   Defines the test method DoTryCatchTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.ExpressionsTests">
+      <summary>
+   Defines test class ExpressionsTests.
+   </summary>
+      <summary>
+   Defines test class ExpressionsTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ExpressionsTests.DoExpressionsTest">
+      <summary>
+   Defines the test method DoExpressionsTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.LockingTests">
+      <summary>
+   Defines test class LockingTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.LockingTests.DoLockTestTest">
+      <summary>
+   Defines the test method DoLockTestTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.LoopStatementsTests">
+      <summary>
+   Defines test class LoopStatementsTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.LoopStatementsTests.DoWhileStatementTest">
+      <summary>
+   Defines the test method DoWhileStatementTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.LoopStatementsTests.DoDoStatementTest">
+      <summary>
+   Defines the test method DoDoStatementTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.LoopStatementsTests.DoForStatementTest">
+      <summary>
+   Defines the test method DoForStatementTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.LoopStatementsTests.DoForEachStatementTest">
+      <summary>
+   Defines the test method DoForEachStatementTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.ProgramFlowTests">
+      <summary>
+   Defines test class ProgramFlowTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ProgramFlowTests.DoBreakStatementTest">
+      <summary>
+   Defines the test method DoBreakStatementTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ProgramFlowTests.DoContinueStatementTest">
+      <summary>
+   Defines the test method DoContinueStatementTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ProgramFlowTests.DoGoToStatementTest">
+      <summary>
+   Defines the test method DoGoToStatementTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.RandomExampleTests">
+      <summary>
+   Defines test class RandomExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.RandomExampleTests.ExampleMain1Test">
+      <summary>
+   Defines the test method ExampleMain1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.RandomExampleTests.ExampleMain2Test">
+      <summary>
+   Defines the test method ExampleMain2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.RandomExampleTests.ExampleMain3Test">
+      <summary>
+   Defines the test method ExampleMain3Test.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.ReturnStatementTests">
+      <summary>
+   Defines test class ReturnStatementTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.ReturnStatementTests.DoReturnStatementTest">
+      <summary>
+   Defines the test method DoReturnStatementTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.UsingStatementTests">
+      <summary>
+   Defines test class UsingStatementTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.UsingStatementTests.DoUsingStatementTest">
+      <summary>
+   Defines the test method DoUsingStatementTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Tests.YieldStatementTests">
+      <summary>
+   Defines test class YieldStatementTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Tests.YieldStatementTests.DoYieldStatementTest">
+      <summary>
+   Defines the test method DoYieldStatementTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Tests.MembersTests">
+      <summary>
+   Defines test class MembersTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.SetupTest">
+      <summary>
+   Defines the test method SetupTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.ConstantTest">
+      <summary>
+   Defines the test method ConstantTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.VariableTest">
+      <summary>
+   Defines the test method VariableTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.aMethodTest">
+      <summary>
+   Defines the test method aMethodTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.PropertyTest">
+      <summary>
+   Defines the test method PropertyTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.IndexerTest">
+      <summary>
+   Defines the test method IndexerTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Tests.MembersTests.DelegateTest">
+      <summary>
+   Defines the test method DelegateTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Tests.ComparerExampleTests">
+      <summary>
+   Defines test class ComparerExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.ComparerExampleMainTest">
+      <summary>
+   Defines the test method ComparerExampleMainTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.ShowSortWithLengthFirstComparerTest">
+      <summary>
+   Defines the test method ShowSortWithLengthFirstComparerTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.ShowSortwithDefaultComparerTest">
+      <summary>
+   Defines the test method ShowSortwithDefaultComparerTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.ShowLengthFirstComparerTest">
+      <summary>
+   Defines the test method ShowLengthFirstComparerTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.CompareTest">
+      <summary>
+   Defines the test method CompareTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.CompareTestD(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>
+   Compares the test d.
+   </summary>
+      <param name="expected">The expected.</param>
+      <param name="box1_1">The box1 1.</param>
+      <param name="box1_2">The box1 2.</param>
+      <param name="box1_3">The box1 3.</param>
+      <param name="box2_1">The box2 1.</param>
+      <param name="box2_2">The box2 2.</param>
+      <param name="box2_3">The box2 3.</param>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.ComparerExampleTests.CompareTest1">
+      <summary>
+   Defines the test method CompareTest1.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Tests.DictionaryExampleTests">
+      <summary>
+   Defines test class DictionaryExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.DictionaryExampleMainTest">
+      <summary>
+   Defines the test method DictionaryExampleMainTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.TryAddExistingTest">
+      <summary>
+   Defines the test method TryAddExistingTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex1Test">
+      <summary>
+   Defines the test method ShowIndex1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex2Test">
+      <summary>
+   Defines the test method ShowIndex2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex3Test">
+      <summary>
+   Defines the test method ShowIndex3Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowIndex4Test">
+      <summary>
+   Defines the test method ShowIndex4Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowTryGetValueTest">
+      <summary>
+   Defines the test method ShowTryGetValueTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowContainsKeyTest">
+      <summary>
+   Defines the test method ShowContainsKeyTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowValueCollectionTest">
+      <summary>
+   Defines the test method ShowValueCollectionTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowKeyCollectionTest">
+      <summary>
+   Defines the test method ShowKeyCollectionTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DictionaryExampleTests.ShowRemoveTest">
+      <summary>
+   Defines the test method ShowRemoveTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Tests.DinosaurExampleTests">
+      <summary>
+   Defines test class DinosaurExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ListDinosTest">
+      <summary>
+   Defines the test method ListDinosTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowCreateDataTest">
+      <summary>
+   Defines the test method ShowCreateDataTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowContainsTest">
+      <summary>
+   Defines the test method ShowContainsTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowInsertTest">
+      <summary>
+   Defines the test method ShowInsertTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowItemPropertyTest">
+      <summary>
+   Defines the test method ShowItemPropertyTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowRemoveTest">
+      <summary>
+   Defines the test method ShowRemoveTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowTrimExcessTest">
+      <summary>
+   Defines the test method ShowTrimExcessTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowClearTest">
+      <summary>
+   Defines the test method ShowClearTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Tests.SortedListExampleTests">
+      <summary>
+   Defines test class SortedListExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.SortedListMainTest">
+      <summary>
+   Defines the test method SortedListMainTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowValues1Test">
+      <summary>
+   Defines the test method ShowValues1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowValues2Test">
+      <summary>
+   Defines the test method ShowValues2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowKeys1Test">
+      <summary>
+   Defines the test method ShowKeys1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowKeys2Test">
+      <summary>
+   Defines the test method ShowKeys2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowRemoveTest">
+      <summary>
+   Defines the test method ShowRemoveTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowForEachTest">
+      <summary>
+   Defines the test method ShowForEachTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowContainsKeyTest">
+      <summary>
+   Defines the test method ShowContainsKeyTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.ShowTryGetValueTest">
+      <summary>
+   Defines the test method ShowTryGetValueTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.TestIndexrTest">
+      <summary>
+   Defines the test method TestIndexrTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.SortedListExampleTests.TestAddExistingTest">
+      <summary>
+   Defines the test method TestAddExistingTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Tests.TestHashSetTests">
+      <summary>
+   Defines test class TestHashSetTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestHashSetTests.ShowHashSetTest">
+      <summary>
+   Defines the test method ShowHashSetTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Tests.TestListTests">
+      <summary>
+   Defines test class TestListTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestListTests.ListMainTest">
+      <summary>
+   Defines the test method ListMainTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestListTests.ShowContainsTest">
+      <summary>
+   Defines the test method ShowContainsTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestListTests.ShowInsertTest">
+      <summary>
+   Defines the test method ShowInsertTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestListTests.ShowIndexTest">
+      <summary>
+   Defines the test method ShowIndexTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestListTests.ShowRemove1Test">
+      <summary>
+   Defines the test method ShowRemove1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Tests.TestListTests.ShowRemove2Test">
+      <summary>
+   Defines the test method ShowRemove2Test.
+   </summary>
+    </member>
+    <member name="T:TestStatements.DataTypes.Tests.EnumTestTests">
+      <summary>
+   Defines test class EnumTestTests.
+   </summary>
+      <summary>
+   Defines test class EnumTestTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.EnumTestTests.MainTestTest">
+      <summary>
+   Defines the test method MainTestTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.DataTypes.Tests.FormatingTests">
+      <summary>
+   Defines test class FormatingTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.CombinedFormatingTest">
+      <summary>
+   Defines the test method CombinedFormatingTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.IndexKomponentTest">
+      <summary>
+   Defines the test method IndexKomponentTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.IndexKomponent2Test">
+      <summary>
+   Defines the test method IndexKomponent2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.IndentationKomponentTest">
+      <summary>
+   Defines the test method IndentationKomponentTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.EscapeSequenceTest">
+      <summary>
+   Defines the test method EscapeSequenceTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.CodeExamples1Test">
+      <summary>
+   Defines the test method CodeExamples1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.CodeExamples2Test">
+      <summary>
+   Defines the test method CodeExamples2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.CodeExamples3Test">
+      <summary>
+   Defines the test method CodeExamples3Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Tests.FormatingTests.CodeExamples4Test">
+      <summary>
+   Defines the test method CodeExamples4Test.
+   </summary>
+    </member>
+    <member name="T:DynamicSample.Tests.DynamicTestProgramTests">
+      <summary>
+   Defines test class DynamicTestProgramTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:DynamicSample.Tests.DynamicTestProgramTests.MainTest">
+      <summary>
+   Defines the test method MainTest.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.Tests.DynamicTestProgramTests.ShowCustomerContainsTest">
+      <summary>
+   Defines the test method ShowCustomerContainsTest.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.Tests.DynamicTestProgramTests.ShowCustomerTest">
+      <summary>
+   Defines the test method ShowCustomerTest.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.Tests.DynamicTestProgramTests.ShowSupplierContainsTest">
+      <summary>
+   Defines the test method ShowSupplierContainsTest.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.Tests.DynamicTestProgramTests.ShowSupplierTest">
+      <summary>
+   Defines the test method ShowSupplierTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Linq.Tests.LinqLookupTests">
+      <summary>
+   Defines test class LinqLookupTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Linq.Tests.LinqLookupTests.LookupExampleTest">
+      <summary>
+   Defines the test method LookupExampleTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.Tests.LinqLookupTests.ShowContainsTest">
+      <summary>
+   Defines the test method ShowContainsTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.Tests.LinqLookupTests.ShowIEnumerableTest">
+      <summary>
+   Defines the test method ShowIEnumerableTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.Tests.LinqLookupTests.ShowCountTest">
+      <summary>
+   Defines the test method ShowCountTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.Tests.LinqLookupTests.ShowGroupingTest">
+      <summary>
+   Defines the test method ShowGroupingTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.Tests.AssemblyExampleTests">
+      <summary>
+   Defines test class AssemblyExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Reflection.Tests.AssemblyExampleTests.AssemblyExampleTest">
+      <summary>
+   Defines the test method AssemblyExampleTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Reflection.Tests.AssemblyExampleTests.SampleMethodTest(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>
+   Samples the method test.
+   </summary>
+      <param name="iStart">The i start.</param>
+      <param name="iTest1">The i test1.</param>
+      <param name="iExp1">The i exp1.</param>
+      <param name="iTest2">The i test2.</param>
+      <param name="iExp2">The i exp2.</param>
+      <param name="iTest3">The i test3.</param>
+      <param name="iExp3">The i exp3.</param>
+    </member>
+    <member name="M:TestStatements.Reflection.Tests.AssemblyExampleTests.SampleDataMethodTest">
+      <summary>
+   Defines the test method SampleDataMethodTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Reflection.Tests.AssemblyExampleTests.ExampleMainTest">
+      <summary>
+   Defines the test method ExampleMainTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.Tests.ReflectionExampleTests">
+      <summary>
+   Defines test class ReflectionExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Reflection.Tests.ReflectionExampleTests.ExampleMainTest">
+      <summary>
+   Defines the test method ExampleMainTest.
+   </summary>
+    </member>
+    <member name="T:TestStatements.SystemNS.Xml.Tests.XmlNSTests">
+      <summary>
+   Defines test class XmlNSTests.
+   </summary>
+    </member>
+    <member name="M:TestStatements.SystemNS.Xml.Tests.XmlNSTests.XmlTest1Test">
+      <summary>
+   Defines the test method XmlTest1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.SystemNS.Xml.Tests.XmlNSTests.XmlTest2Test">
+      <summary>
+   Defines the test method XmlTest2Test.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.Tests.TaskExampleTests">
+      <summary>
+   Defines test class TaskExampleTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMainTest">
+      <summary>
+   Defines the test method ExampleMainTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain1Test">
+      <summary>
+   Defines the test method ExampleMain1Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain2Test">
+      <summary>
+   Defines the test method ExampleMain2Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain3Test">
+      <summary>
+   Defines the test method ExampleMain3Test.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain4Test">
+      <summary>
+   Defines the test method ExampleMain4Test.
+   </summary>
+    </member>
+    <member name="T:TestStatements.UnitTesting.ConsoleTestsBase">
+      <summary>
+   Class ConsoleTestsBase.
+   </summary>
+    </member>
+    <member name="T:TestStatements.UnitTesting.Tests.DataTests">
+      <summary>
+   Defines test class DataTests.
+   Implements the <see cref="T:TestStatements.UnitTesting.ConsoleTestsBase" /></summary>
+      <seealso cref="T:TestStatements.UnitTesting.ConsoleTestsBase" />
+    </member>
+    <member name="M:TestStatements.UnitTesting.Tests.DataTests.Dummy">
+      <summary>
+   Dummies this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.UnitTesting.Tests.DataTests.AssemblyExampleTest">
+      <summary>
+   Defines the test method AssemblyExampleTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.UnitTesting.Tests.DataTests.SampleDataPropertyTest(System.Int32,System.Int32[],System.Int32[],System.String)">
+      <summary>
+   Samples the data property test.
+   </summary>
+      <param name="iStart">The i start.</param>
+      <param name="iTest">The i test.</param>
+      <param name="iExp">The i exp.</param>
+      <param name="TestName">Name of the test.</param>
+    </member>
+    <member name="M:TestStatements.UnitTesting.Tests.DataTests.SampleDataMethodTest(System.Int32,System.Int32[],System.Int32[],System.String)">
+      <summary>
+   Samples the data method test.
+   </summary>
+      <param name="iStart">The i start.</param>
+      <param name="iTest">The i test.</param>
+      <param name="iExp">The i exp.</param>
+      <param name="TestName">Name of the test.</param>
+    </member>
+    <member name="M:TestStatements.UnitTesting.Tests.DataTests.SampleMethodTest(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>
+   Samples the method test.
+   </summary>
+      <param name="iStart">The i start.</param>
+      <param name="iTest1">The i test1.</param>
+      <param name="iExp1">The i exp1.</param>
+      <param name="iTest2">The i test2.</param>
+      <param name="iExp2">The i exp2.</param>
+      <param name="iTest3">The i test3.</param>
+      <param name="iExp3">The i exp3.</param>
+    </member>
+    <member name="T:TestStatementTest.UnitTesting.UnitTest1">
+      <summary>
+   Defines test class UnitTest1.
+   </summary>
+    </member>
+    <member name="M:TestStatementTest.UnitTesting.UnitTest1.TestMethod1">
+      <summary>
+   Defines the test method TestMethod1.
+   </summary>
+    </member>
+    <member name="M:TestStatementTest.UnitTesting.UnitTest1.DataTestOpenArray(System.Int32,System.Int32[])">
+      <summary>
+   Datas the test open array.
+   </summary>
+      <param name="expected">The expected.</param>
+      <param name="ints">The ints.</param>
+    </member>
+    <member name="M:TestStatementTest.UnitTesting.UnitTest1.DataTestOpenArrayParams(System.Int32[])">
+      <summary>
+   Datas the test open array parameters.
+   </summary>
+      <param name="ints">The ints.</param>
+    </member>
+    <member name="M:TestStatementTest.UnitTesting.UnitTest1.DataTestPropertyTest(System.Int32,System.Int32[],System.Int32[],System.String)">
+      <summary>
+   Datas the test property test.
+   </summary>
+      <param name="iStart">The i start.</param>
+      <param name="iTest">The i test.</param>
+      <param name="iExp">The i exp.</param>
+      <param name="TestName">Name of the test.</param>
+    </member>
+  </members>
+</doc>
