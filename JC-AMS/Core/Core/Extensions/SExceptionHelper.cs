@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Text;
-// ***********************************************************************
+﻿// ***********************************************************************
 // Assembly         : JCAMS
 // Author           : Mir
 // Created          : 12-19-2021
@@ -14,13 +11,17 @@ using System.Text;
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
+using System.Data.SqlClient;
+using System.Text;
 namespace JCAMS.Core
 {
+    /// <summary>Class SExceptionHelper.<br />static class helper for exceptions</summary>
     public static class SExceptionHelper
     {
 
         /// <summary>
-        /// The m last exception
+        /// The last exception
         /// </summary>
         public static Exception m_LastException;
 
