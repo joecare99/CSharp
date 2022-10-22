@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : JCAMS
 // Author           : Mir
 // Created          : 09-22-2022
@@ -416,7 +416,7 @@ namespace JCAMS.Core.Math2
         /// Computes the Square of the Value
         /// </summary>
         /// <param name="dValue">The value</param>
-        public static double Sqr(double dValue) => dValue*dValue;
+        public static double Sqr(this double dValue) => dValue*dValue;
 
         /// <summary>
         /// Trims the start- or stopangle by 180. (??)

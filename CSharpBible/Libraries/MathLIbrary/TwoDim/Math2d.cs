@@ -57,22 +57,28 @@ namespace MathLibrary.TwoDim {
 			/// <value>The y.</value>
 			public double y { get => _y; set => _y = value; }
 
+#if NET472_OR_GREATER
 			/// <summary>
 			/// Gets or sets the vector as a tuple.
 			/// </summary>
 			/// <value>The vector as a tuple.</value>
 			public ValueTuple<double, double> vTuple { get => new ValueTuple<double, double>(_x, _y); set => (_x, _y) = value; }
-			/// <summary>
-			/// Gets or sets the vector as a complex number.
-			/// </summary>
-			/// <value>As complex.</value>
-			public Complex AsComplex { get => new Complex(_x, _y); set => (_x, _y) = (value.Real, value.Imaginary); }
+#endif
+            /// <summary>
+            /// Gets or sets the vector as a complex number.
+            /// </summary>
+            /// <value>As complex.</value>
+#if NET472_OR_GREATER
+            public Complex AsComplex { get => new Complex(_x, _y); set => (_x, _y) = (value.Real, value.Imaginary); }
+#else
+			public Complex AsComplex { get => new Complex(_x, _y); set {_x = value.Real; _y= value.Imaginary;} }
+#endif
 
-			/// <summary>
-			/// Calculates the (carthesian) length of the vector.
-			/// </summary>
-			/// <returns>The (carthesian) length of the vector</returns>
-			public double Length() => Math.Sqrt(_x * _x + _y * _y);
+            /// <summary>
+            /// Calculates the (carthesian) length of the vector.
+            /// </summary>
+            /// <returns>The (carthesian) length of the vector</returns>
+            public double Length() => Math.Sqrt(_x * _x + _y * _y);
 
 			/// <summary>
 			/// Converts the vector to a string.

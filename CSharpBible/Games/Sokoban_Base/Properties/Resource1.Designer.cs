@@ -169,12 +169,12 @@ namespace Sokoban_Base.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
-        ///[7]Revision: 239
+        ///[7]Revision: 395
         ///[8]Node Kind: directory
         ///[9]Schedule: normal
         ///[10]Last Changed Author: jc99
-        ///[11]Last Changed Rev: 237
-        ///[12]Last Changed Date: 2022-09-11 23:18:52 +0200 (So, 11 Sep 2022)
+        ///[11]Last Changed Rev: 240
+        ///[12]Last Changed Date: 2022-09-17 12:15:49 +0200 (Sa, 17 Sep 2022)
         ///[13]
         /// ähnelt.
         /// </summary>

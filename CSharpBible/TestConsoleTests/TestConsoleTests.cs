@@ -151,10 +151,17 @@ PQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ !""#$%&'()*+,-./0123456789:;<=
         /// <summary>
         /// Defines the test method SetCursorPositionTest.
         /// </summary>
-        [TestMethod()]
-        public void SetCursorPositionTest()
+        [DataTestMethod()]
+        [DataRow("0,0",0,0)]
+        [DataRow("0,1", 0, 1)]
+        [DataRow("1,0", 1, 0)]
+        [DataRow("79,0", 79, 0)]
+        [DataRow("79,24", 79, 24)]
+        [DataRow("0,24", 0, 24)]
+        public void SetCursorPositionTest(string name,int x,int y)
         {
-            Assert.Fail();
+            console?.SetCursorPosition(x, y);
+            Assert.AreEqual((x,y),console?.GetCursorPosition());
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : JCAMS
 // Author           : Mir
 // Created          : 09-22-2022
@@ -44,7 +44,9 @@ namespace JCAMS.Core.Math2
         /// <summary>
         /// The is undefined rectangle
         /// </summary>
-        public static Func<RectangleF, bool> IsUndefinedRectangleF = (Rt) => IsUndefinedPointF(Rt.Location) && Rt.Width == UndefinedRectangleF.Width && Rt.Height == UndefinedRectangleF.Height;
+        public static Func<RectangleF, bool> IsUndefinedRectangleF = (Rt) => IsUndefinedPointF(Rt.Location) 
+        && (float.IsNaN( Rt.Width )) 
+        && (float.IsNaN( Rt.Height));
 
         /// <summary>
         /// The deg to RAD
@@ -85,24 +87,34 @@ namespace JCAMS.Core.Math2
         /// <typeparam name="T"></typeparam>
         /// <param name="obj">The object.</param>
         /// <returns><c>true</c> if the specified object is undefined; otherwise, <c>false</c>.</returns>
-        public static bool IsUndefined<T>(T obj)
+        public static bool IsUndefined<T>(this T obj)
             => obj switch
             {
                 Point p => IsUndefinedPoint(p),
                 PointF p => IsUndefinedPointF(p),
                 Rectangle r => IsUndefinedRectangle(r),
                 RectangleF r => IsUndefinedRectangleF(r),
+                DBNull n => true,
+                null => true,
                 _ => false
             };
+
+		/// <summary>2 Points to vector.</summary>
+		/// <param name="pA">The point A.</param>
+		/// <param name="pB">The point B.</param>
+		/// <returns>The Vector from A to B</returns>
+		public static Vector2 PntVector(this PointF pA,PointF pB) => new Vector2(pB.X-pA.X, pB.Y-pA.Y); 
+
         /// <summary>
         /// Abses the length of the arc.
         /// </summary>
         /// <param name="Deg">The angle in degr.</param>
         /// <param name="Radius">The radius.</param>
         /// <returns>System.Single.</returns>
+        [Obsolete]
         public static float AbsArcLength(double Deg, double Radius)
         {
-            return (float)Math.Abs(SMath.Deg2Rad(Deg) * Radius);
+            return (float)Math.Abs(ArcLength(SMath.Deg2Rad(Deg) , Radius));
         }
 
         /// <summary>
@@ -113,46 +125,36 @@ namespace JCAMS.Core.Math2
         /// <returns>System.Single.</returns>
         public static float Angle(PointF A, PointF B)
         {
-            float Angle = 0f;
+            double Angle = 0d;
             if (IsUndefinedPointF(A) || IsUndefinedPointF(B))
             {
-                return Angle;
+                return 0f;
             }
             if (Equals(A, B))
             {
                 return 0f;
             }
-            double OpppositeLeg = B.Y - A.Y;
-            double AdjacentLeg = B.X - A.X;
-            double Hypotenuse = DistanceAB(A, B);
-            double Rad = OpppositeLeg / Hypotenuse;
-            if (Rad > 1.0)
-            {
-                Rad = 1.0;
-            }
-            if (Rad < -1.0)
-            {
-                Rad = -1.0;
-            }
-            Angle = (float)SMath.Rad2Deg(Math.Asin(Rad));
-            if (Math.Sign(AdjacentLeg) >= 0 && Math.Sign(OpppositeLeg) >= 0)
-            {
-                Angle = 0f + Angle;
-            }
-            else if (Math.Sign(AdjacentLeg) > 0 && Math.Sign(OpppositeLeg) < 0)
-            {
-                Angle = 360f + Angle;
-            }
-            else if (Math.Sign(AdjacentLeg) <= 0 && Math.Sign(OpppositeLeg) <= 0)
-            {
-                Angle = 180f - Angle;
-            }
-            else if (Math.Sign(AdjacentLeg) < 0 && Math.Sign(OpppositeLeg) > 0)
-            {
-                Angle = 180f - Angle;
-            }
-            return Angle;
+			double fDist;
+            (Angle,fDist) = AngleLength( A.PntVector(B));
+			return (float)Angle;   
         }
+
+		public static (double dAngle,double dLength) AngleLength(Vector2 v) {
+			double fDist = v.Length();
+			if (fDist == 0d)
+				return (0d, 0d);
+			double Rad = (v.X / fDist).Limit(-1d, 1d);
+			var Angle = Math.Asin(Rad);
+			if (v.Y >= 0 && v.X >= 0) {
+				;
+			}
+			else if (v.Y > 0 && v.X < 0) {
+				Angle = Math.PI*2d + Angle;
+			}
+			else 
+				Angle = Math.PI - Angle;
+			return (Angle,fDist);
+		}
 
         /// <summary>
         /// Arcs the length.
@@ -160,9 +162,21 @@ namespace JCAMS.Core.Math2
         /// <param name="Deg">The deg.</param>
         /// <param name="Radius">The radius.</param>
         /// <returns>System.Single.</returns>
-        public static float ArcLength(double Deg, double Radius)
+        [Obsolete]
+        public static float ArcLength(double Deg, float Radius)
         {
-            return (float)(SMath.Deg2Rad(Deg) * Radius);
+            return (float)ArcLength(SMath.Deg2Rad(Deg) ,(double) Radius);
+        }
+
+        /// <summary>
+        /// Arcs the length.
+        /// </summary>
+        /// <param name="dAngle">The angle in rad.</param>
+        /// <param name="dRadius">The radius.</param>
+        /// <returns>System.Single.</returns>
+        public static double ArcLength(double dAngle, double dRadius)
+        {
+            return dAngle * dRadius;
         }
 
         /// <summary>
@@ -173,24 +187,39 @@ namespace JCAMS.Core.Math2
         /// <param name="StraightPoint2">The straight point2.</param>
         /// <param name="Base">The base.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        [Obsolete]
         public static bool BaseOfPointOrthographicToStraight(PointF Point, PointF StraightPoint1, PointF StraightPoint2, out PointF Base)
+        {
+            Base = BaseOfPointOrthographicToStraight(Point,StraightPoint1,StraightPoint2);
+            return Base!=UndefinedPointF;
+        }
+
+        /// <summary>
+        /// Bases the of point orthographic to straight.
+        /// </summary>
+        /// <param name="Point">The point.</param>
+        /// <param name="StraightPoint1">The straight point1.</param>
+        /// <param name="StraightPoint2">The straight point2.</param>
+        /// <param name="Base">The base.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public static PointF BaseOfPointOrthographicToStraight(PointF Point, PointF StraightPoint1, PointF StraightPoint2)
         {
             double A = Angle(StraightPoint1, StraightPoint2);
             PointF U = default;
-            Base = new PointF(0f, 0f);
+            var Base = new PointF(0f, 0f);
             U.X = StraightPoint2.X - StraightPoint1.X;
             U.Y = StraightPoint2.Y - StraightPoint1.Y;
             float Len = (float)Math.Sqrt(U.X * U.X + U.Y * U.Y);
             if (Len <= 0f)
             {
-                return false;
+                return UndefinedPointF;
             }
             U.X /= Len;
             U.Y /= Len;
             float Lambda = (Point.X - StraightPoint1.X) * U.X + (Point.Y - StraightPoint1.Y) * U.Y;
             Base.X = StraightPoint1.X + Lambda * U.X;
             Base.Y = StraightPoint1.Y + Lambda * U.Y;
-            return true;
+            return Base;
         }
 
         /// <summary>
@@ -201,7 +230,7 @@ namespace JCAMS.Core.Math2
         /// <returns>Point.</returns>
         public static Point Bisector(Point A, Point B)
         {
-            return ToPoint(MiddlePoint(ToPointF(A), ToPointF(B)));
+            return new Point(A.X /2+B.X/2 +((A.X % 2)+(B.X % 2))/2,A.Y/2+B.Y/2 + ((A.Y % 2)+(B.Y % 2))/2);
         }
 
         /// <summary>
@@ -370,7 +399,8 @@ namespace JCAMS.Core.Math2
         {
             S1 = PointF.Empty;
             S2 = PointF.Empty;
-            if (!BaseOfPointOrthographicToStraight(M, Pt1, Pt2, out PointF Base))
+            var Base = BaseOfPointOrthographicToStraight(M, Pt1, Pt2);
+            if (Base == UndefinedPointF)
             {
                 return false;
             }
@@ -443,7 +473,9 @@ namespace JCAMS.Core.Math2
         public static bool DistancePointSegment(PointF Point, PointF SegStartPoint, PointF SegStopPoint, out double D)
         {
             D = 9999.0;
-            if (!BaseOfPointOrthographicToStraight(Point, SegStartPoint, SegStopPoint, out PointF Base))
+
+            var Base = BaseOfPointOrthographicToStraight(Point, SegStartPoint, SegStopPoint);
+            if (Base == UndefinedPointF)
             {
                 return false;
             }
@@ -470,7 +502,8 @@ namespace JCAMS.Core.Math2
         public static bool DistancePointStraight(PointF Point, PointF StraightPoint1, PointF StraightPoint2, out double D)
         {
             D = 0.0;
-            if (!BaseOfPointOrthographicToStraight(Point, StraightPoint1, StraightPoint2, out PointF Base))
+            var Base = BaseOfPointOrthographicToStraight(Point, StraightPoint1, StraightPoint2);
+            if (Base==UndefinedPointF)
             {
                 return false;
             }

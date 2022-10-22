@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 09-10-2022
 // ***********************************************************************
-// <copyright file="Property.cs" company="MVVM_BaseLib">
+// <copyright file="Property.cs" company="JC-Soft">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>

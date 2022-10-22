@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 06-17-2022
 // ***********************************************************************
-// <copyright file="PersonViewViewModelTests.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2022
+// <copyright file="PersonViewViewModelTests.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

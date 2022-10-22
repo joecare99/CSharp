@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <TargetFramework>net48-windows</TargetFramework>
+    <TargetFrameworks>net48-windows;net472-windows;net461-windows</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
 	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
