@@ -13,10 +13,6 @@
 // ***********************************************************************
 using BaseLib.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calc64Base
 {
@@ -82,6 +78,7 @@ namespace Calc64Base
             OperationMode = 0;
         }
 
+        public static string GetShortDesc(eOpMode e) => (e!=eOpMode.CalcResult)? Calc64.ToCalcOperation((int)e)?.ShortDescr ?? "":"=";
         /// <summary>
         /// Buttons the specified a number.
         /// </summary>
