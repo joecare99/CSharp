@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CallAllExamples</name>
+  </assembly>
+  <members>
+    <member name="T:CallAllExamples.Program">
+      <summary>
+   Class Program.
+   <summary>
+   The invoke title
+   </summary></summary>
+    </member>
+  </members>
+</doc>

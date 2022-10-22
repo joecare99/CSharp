@@ -4,7 +4,7 @@
 // Created          : 12-19-2021
 //
 // Last Modified By : Mir
-// Last Modified On : 09-10-2022
+// Last Modified On : 10-22-2022
 // ***********************************************************************
 // <copyright file="CalculatorClass.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2020
@@ -32,31 +32,51 @@ namespace Calc32.NonVisual
         /// </summary>
         enum eOpMode
         {
-            /// <summary>No mode</summary>
+            /// <summary>
+            /// No mode
+            /// </summary>
             NoMode =  0,
 
-            /// <summary>The calculate result</summary>
+            /// <summary>
+            /// The calculate result
+            /// </summary>
             CalcResult = 1,
-            /// <summary>The plus mode</summary>
+            /// <summary>
+            /// The plus mode
+            /// </summary>
             Plus = 2,
-            /// <summary>The minus mode</summary>
+            /// <summary>
+            /// The minus mode
+            /// </summary>
             Minus = 3,
-            /// <summary>The multiply mode</summary>
+            /// <summary>
+            /// The multiply mode
+            /// </summary>
             Multiply = 4,
-            /// <summary>The divide
-            /// mode</summary>
+            /// <summary>
+            /// The divide
+            /// mode
+            /// </summary>
             Divide = 5,
-            /// <summary>The binary and
-            /// mode</summary>
+            /// <summary>
+            /// The binary and
+            /// mode
+            /// </summary>
             BinaryAnd = 6,
-            /// <summary>The binary or
-            /// mode</summary>
+            /// <summary>
+            /// The binary or
+            /// mode
+            /// </summary>
             BinaryOr = 7,
-            /// <summary>The binary xor
-            /// mode</summary>
+            /// <summary>
+            /// The binary xor
+            /// mode
+            /// </summary>
             BinaryXor = 8,
-            /// <summary>The binary not
-            /// mode</summary>
+            /// <summary>
+            /// The binary not
+            /// mode
+            /// </summary>
             BinaryNot = 9
         };
 

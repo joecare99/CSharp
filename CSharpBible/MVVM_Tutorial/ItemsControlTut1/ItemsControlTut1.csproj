@@ -28,6 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ViewModel\.info" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="View\" />
     <Folder Include="ViewModel\" />
   </ItemGroup>

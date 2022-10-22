@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>TestNamespaces</name>
+  </assembly>
+  <members>
+    <member name="T:TestNamespaces.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="T:TestNamespaces2.Program2">
+      <summary>
+   Class Program2.
+   </summary>
+    </member>
+  </members>
+</doc>

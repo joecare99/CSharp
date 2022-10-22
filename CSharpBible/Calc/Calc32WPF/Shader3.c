@@ -1,3 +1,16 @@
+// ***********************************************************************
+// Assembly         : Calc32WPF_net
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 04-06-2020
+// ***********************************************************************
+// <copyright file="Shader3.c" company="Calc32WPF_net">
+//     Copyright (c) JC-Soft. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     // Normalized pixel coordinates (from -1 to 1)

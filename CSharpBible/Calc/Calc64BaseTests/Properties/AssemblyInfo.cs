@@ -1,4 +1,17 @@
-﻿using System.Reflection;
+﻿// ***********************************************************************
+// Assembly         : Calc64BaseTests
+// Author           : Mir
+// Created          : 08-27-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 10-22-2022
+// ***********************************************************************
+// <copyright file="AssemblyInfo.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2022
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,9 +21,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Calc64BaseTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard Company")]
+[assembly: AssemblyCompany("JC-Soft")]
 [assembly: AssemblyProduct("Calc64BaseTests")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2022")]
+[assembly: AssemblyCopyright("Copyright © JC-Soft 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>DynamicSample</name>
+  </assembly>
+  <members>
+    <member name="T:DynamicSample.Constants.Constants">
+      <summary>
+   Class Constants.
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Constants.Constants.Header">
+      <summary>
+   The header
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Constants.Constants.Header2">
+      <summary>
+   The header2
+   </summary>
+    </member>
+    <member name="T:DynamicSample.DynamicTestProgram">
+      <summary>
+   Class DynamicTestProgram.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.DynamicTestProgram.Main(System.String[])">
+      <summary>
+   Defines the entry point of the application.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:DynamicSample.DynamicTestProgram.ShowCustomerContains">
+      <summary>
+   Shows the customer contains.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.DynamicTestProgram.ShowCustomer">
+      <summary>
+   Shows the customer.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.DynamicTestProgram.ShowSupplierContains">
+      <summary>
+   Shows the supplier contains.
+   </summary>
+    </member>
+    <member name="M:DynamicSample.DynamicTestProgram.ShowSupplier">
+      <summary>
+   Shows the supplier.
+   </summary>
+    </member>
+    <member name="N:DynamicSample.Model">
+      <summary>
+   The Model namespace.
+   </summary>
+    </member>
+    <member name="T:DynamicSample.Model.pFields">
+      <summary>
+   Enum pFields
+   </summary>
+    </member>
+    <member name="T:DynamicSample.Model.DynPropertyClass">
+      <summary>
+   Class DynPropertyClass.
+   Implements the <see cref="T:System.Dynamic.DynamicObject" /></summary>
+      <seealso cref="T:System.Dynamic.DynamicObject" />
+    </member>
+    <member name="F:DynamicSample.Model.pFields.Name">
+      <summary>
+   The name
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Model.pFields.Street">
+      <summary>
+   The street
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Model.pFields.City">
+      <summary>
+   The city
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Model.pFields.PLZ">
+      <summary>
+   The PLZ
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Model.pFields.Country">
+      <summary>
+   The country
+   </summary>
+    </member>
+    <member name="M:DynamicSample.Model.DynPropertyClass.TryGetMember(GetMemberBinder,System.Object@)">
+      <summary>
+   Stellt die Implementierung für Vorgänge, die Memberwerte abrufen.
+   Abgeleitete Klassen die <see cref="T:System.Dynamic.DynamicObject" /> Klasse kann überschreiben diese Methode, um dynamisches Verhalten für Vorgänge wie das Abrufen eines Werts für eine Eigenschaft anzugeben.
+   </summary>
+      <param name="binder">Enthält Informationen über das Objekt, das den dynamischen Vorgang aufgerufen hat.
+   Die binder.Name -Eigenschaft gibt den Namen des Elements für den dynamische Vorgang ausgeführt wird.
+   Z. B. für die Console.WriteLine(sampleObject.SampleProperty) -Anweisung, in denen sampleObject ist eine Instanz der abgeleiteten Klasse von der <see cref="T:System.Dynamic.DynamicObject" /> -Klasse, binder.Name "SampleProperty" zurückgegeben.
+   Die binder.IgnoreCase -Eigenschaft gibt an, ob der Membername Groß-/Kleinschreibung beachtet wird.</param>
+      <param name="result">Das Ergebnis des Get-Vorgangs.
+   Z. B. wenn die Methode für eine Eigenschaft aufgerufen wird, können Sie zuweisen den Eigenschaftswert <paramref name="result" />.</param>
+      <returns>
+        <see langword="true" />, wenn der Vorgang erfolgreich ist, andernfalls <see langword="false" />.
+   Wenn diese Methode gibt <see langword="false" />, die Laufzeitbinder der Sprache bestimmt das Verhalten.
+   (In den meisten Fällen wird eine Laufzeitausnahme ausgelöst.)</returns>
+    </member>
+    <member name="M:DynamicSample.Model.DynPropertyClass.GetDynamicMemberNames">
+      <summary>
+   Gibt die Enumeration aller dynamischen Membernamen zurück.
+   </summary>
+      <returns>Eine Sequenz, die dynamische Membernamen enthält.</returns>
+    </member>
+    <member name="M:DynamicSample.Model.DynPropertyClass.TrySetMember(SetMemberBinder,System.Object)">
+      <summary>
+   Stellt die Implementierung für Vorgänge, die Memberwerte festlegen.
+   Abgeleitete Klassen die <see cref="T:System.Dynamic.DynamicObject" /> Klasse kann überschreiben diese Methode, um dynamisches Verhalten für Vorgänge wie das Festlegen eines Werts für eine Eigenschaft anzugeben.
+   </summary>
+      <param name="binder">Enthält Informationen über das Objekt, das den dynamischen Vorgang aufgerufen hat.
+   Die binder.Name -Eigenschaft gibt den Namen des Members, der der Wert zugewiesen wird.
+   Beispielsweise für die Anweisung sampleObject.SampleProperty = "Test", wobei sampleObject ist eine Instanz der abgeleiteten Klasse von der <see cref="T:System.Dynamic.DynamicObject" /> -Klasse, binder.Name "SampleProperty" zurückgegeben.
+   Die binder.IgnoreCase -Eigenschaft gibt an, ob der Membername Groß-/Kleinschreibung beachtet wird.</param>
+      <param name="value">Der Wert für das Element fest.
+   Z. B. für sampleObject.SampleProperty = "Test", wobei sampleObject ist eine Instanz der abgeleiteten Klasse von der <see cref="T:System.Dynamic.DynamicObject" /> -Klasse, die <paramref name="value" /> "Test" ist.</param>
+      <returns>
+        <see langword="true" />, wenn der Vorgang erfolgreich ist, andernfalls <see langword="false" />.
+   Wenn diese Methode gibt <see langword="false" />, die Laufzeitbinder der Sprache bestimmt das Verhalten.
+   (In den meisten Fällen wird eine sprachspezifische Laufzeitausnahme ausgelöst.)</returns>
+    </member>
+    <member name="P:DynamicSample.Model.DynPropertyClass.Item(pFields)">
+      <summary>
+   Gets or sets the <see cref="T:System.String" /> with the specified field.
+   </summary>
+      <param name="field">The field.</param>
+      <returns>System.String.</returns>
+    </member>
+    <member name="P:DynamicSample.Model.DynPropertyClass.FullAddress">
+      <summary>
+   Gets the full address.
+   </summary>
+      <value>The full address.</value>
+    </member>
+    <member name="M:DynamicSample.Model.DynPropertyClass.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DynamicSample.Model.DynPropertyClass" /> class.
+   </summary>
+    </member>
+    <member name="T:DynamicSample.Model.StringSearchOption">
+      <summary>
+   Enum StringSearchOption
+   </summary>
+    </member>
+    <member name="T:DynamicSample.Model.ReadOnlyFile">
+      <summary>
+   Class ReadOnlyFile.
+   Implements the <see cref="T:System.Dynamic.DynamicObject" /></summary>
+      <seealso cref="T:System.Dynamic.DynamicObject" />
+    </member>
+    <member name="F:DynamicSample.Model.StringSearchOption.StartsWith">
+      <summary>
+   The starts with
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Model.StringSearchOption.Contains">
+      <summary>
+   Determines whether this instance contains the object.
+   </summary>
+    </member>
+    <member name="F:DynamicSample.Model.StringSearchOption.EndsWith">
+      <summary>
+   The ends with
+   </summary>
+    </member>
+    <member name="M:DynamicSample.Model.ReadOnlyFile.#ctor(System.String)">
+      <summary>
+   Initializes a new instance of the <see cref="T:DynamicSample.Model.ReadOnlyFile" /> class.
+   </summary>
+      <param name="filePath">The file path.</param>
+      <exception cref="T:System.Exception">File path does not exist.</exception>
+    </member>
+    <member name="M:DynamicSample.Model.ReadOnlyFile.GetPropertyValue(System.String,StringSearchOption,System.Boolean)">
+      <summary>
+   Gets the property value.
+   </summary>
+      <param name="propertyName">Name of the property.</param>
+      <param name="StringSearchOption">The string search option.</param>
+      <param name="trimSpaces">if set to <c>true</c> [trim spaces].</param>
+      <returns>List&lt;System.String&gt;.</returns>
+    </member>
+    <member name="M:DynamicSample.Model.ReadOnlyFile.TryGetMember(GetMemberBinder,System.Object@)">
+      <summary>
+   Stellt die Implementierung für Vorgänge, die Memberwerte abrufen.
+   Abgeleitete Klassen die <see cref="T:System.Dynamic.DynamicObject" /> Klasse kann überschreiben diese Methode, um dynamisches Verhalten für Vorgänge wie das Abrufen eines Werts für eine Eigenschaft anzugeben.
+   </summary>
+      <param name="binder">Enthält Informationen über das Objekt, das den dynamischen Vorgang aufgerufen hat.
+   Die binder.Name -Eigenschaft gibt den Namen des Elements für den dynamische Vorgang ausgeführt wird.
+   Z. B. für die Console.WriteLine(sampleObject.SampleProperty) -Anweisung, in denen sampleObject ist eine Instanz der abgeleiteten Klasse von der <see cref="T:System.Dynamic.DynamicObject" /> -Klasse, binder.Name "SampleProperty" zurückgegeben.
+   Die binder.IgnoreCase -Eigenschaft gibt an, ob der Membername Groß-/Kleinschreibung beachtet wird.</param>
+      <param name="result">Das Ergebnis des Get-Vorgangs.
+   Z. B. wenn die Methode für eine Eigenschaft aufgerufen wird, können Sie zuweisen den Eigenschaftswert <paramref name="result" />.</param>
+      <returns>
+        <see langword="true" />, wenn der Vorgang erfolgreich ist, andernfalls <see langword="false" />.
+   Wenn diese Methode gibt <see langword="false" />, die Laufzeitbinder der Sprache bestimmt das Verhalten.
+   (In den meisten Fällen wird eine Laufzeitausnahme ausgelöst.)</returns>
+    </member>
+    <member name="M:DynamicSample.Model.ReadOnlyFile.TryInvokeMember(InvokeMemberBinder,System.Object[],System.Object@)">
+      <summary>
+   Stellt die Implementierung für Vorgänge, die einen Member aufzurufen.
+   Abgeleitete Klassen die <see cref="T:System.Dynamic.DynamicObject" /> Klasse kann überschreiben diese Methode, um dynamisches Verhalten für Vorgänge wie das Aufrufen einer Methode anzugeben.
+   </summary>
+      <param name="binder">Enthält Informationen zu den dynamischen Vorgang.
+   Die binder.Name -Eigenschaft gibt den Namen des Elements für den dynamische Vorgang ausgeführt wird.
+   Beispielsweise für die Anweisung sampleObject.SampleMethod(100), wobei sampleObject ist eine Instanz der abgeleiteten Klasse von der <see cref="T:System.Dynamic.DynamicObject" /> -Klasse binder.Name gibt "z. B. SampleMethod" zurück.
+   Die binder.IgnoreCase -Eigenschaft gibt an, ob der Membername Groß-/Kleinschreibung beachtet wird.</param>
+      <param name="args">Die Argumente, die während des Aufrufvorgangs an dem Objektmember übergeben werden.
+   Beispielsweise für die Anweisung sampleObject.SampleMethod(100), wobei sampleObject stammt von der <see cref="T:System.Dynamic.DynamicObject" /> -Klasse, <paramref name="args[0]" /> gleich 100 ist.</param>
+      <param name="result">Das Ergebnis des Memberaufrufs.</param>
+      <returns>
+        <see langword="true" />, wenn der Vorgang erfolgreich ist, andernfalls <see langword="false" />.
+   Wenn diese Methode gibt <see langword="false" />, die Laufzeitbinder der Sprache bestimmt das Verhalten.
+   (In den meisten Fällen wird eine sprachspezifische Laufzeitausnahme ausgelöst.)</returns>
+      <exception cref="T:System.ArgumentException">StringSearchOption argument must be a StringSearchOption enum value.</exception>
+      <exception cref="T:System.ArgumentException">trimSpaces argument must be a Boolean value.</exception>
+    </member>
+    <member name="T:DynamicSample.Model.StatPropertyClass">
+      <summary>
+   Class StatPropertyClass.
+   </summary>
+    </member>
+    <member name="P:DynamicSample.Model.StatPropertyClass.strName">
+      <summary>
+   Gets or sets the name of the string.
+   </summary>
+      <value>The name of the string.</value>
+    </member>
+    <member name="P:DynamicSample.Model.StatPropertyClass.strStreet">
+      <summary>
+   Gets or sets the string street.
+   </summary>
+      <value>The string street.</value>
+    </member>
+    <member name="P:DynamicSample.Model.StatPropertyClass.strPLZ">
+      <summary>
+   Gets or sets the string PLZ.
+   </summary>
+      <value>The string PLZ.</value>
+    </member>
+    <member name="P:DynamicSample.Model.StatPropertyClass.strCity">
+      <summary>
+   Gets or sets the string city.
+   </summary>
+      <value>The string city.</value>
+    </member>
+    <member name="P:DynamicSample.Model.StatPropertyClass.strCountry">
+      <summary>
+   Gets or sets the string country.
+   </summary>
+      <value>The string country.</value>
+    </member>
+    <member name="P:DynamicSample.Model.StatPropertyClass.FullAddress">
+      <summary>
+   Gets the full address.
+   </summary>
+      <value>The full address.</value>
+    </member>
+  </members>
+</doc>

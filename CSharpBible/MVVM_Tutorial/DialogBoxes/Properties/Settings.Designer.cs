@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 07-01-2022
 // ***********************************************************************
-// <copyright file="Settings.Designer.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2021
+// <copyright file="Settings.Designer.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2021
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
