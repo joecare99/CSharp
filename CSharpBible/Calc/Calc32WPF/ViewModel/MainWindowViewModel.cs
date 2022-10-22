@@ -1,4 +1,17 @@
-﻿using MVVM.ViewModel;
+﻿// ***********************************************************************
+// Assembly         : Calc32WPF_net
+// Author           : Mir
+// Created          : 12-22-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 10-22-2022
+// ***********************************************************************
+// <copyright file="MainWindowViewModel.cs" company="Calc32WPF_net">
+//     Copyright (c) JC-Soft. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using MVVM.ViewModel;
 using Calc32.NonVisual;
 using System;
 
@@ -7,15 +20,21 @@ using System;
 /// </summary>
 namespace Calc32WPF.ViewModel
 {
-    /// <summary>Class MainWindowViewModel.
-    /// Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+    /// <summary>
+    /// Class MainWindowViewModel.
+    /// Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" />
+    /// </summary>
     public class MainWindowViewModel: BaseViewModel
     {
-        /// <summary>The calculator class</summary>
+        /// <summary>
+        /// The calculator class
+        /// </summary>
         private CalculatorClass calculatorClass;
 
-        /// <summary>Gets or sets the akkumulator.
-        /// <see cref="CalculatorClass.Akkumulator" /></summary>
+        /// <summary>
+        /// Gets or sets the akkumulator.
+        /// <see cref="CalculatorClass.Akkumulator" />
+        /// </summary>
         /// <value>The akkumulator.</value>
         public int Akkumulator
         {
@@ -25,8 +44,10 @@ namespace Calc32WPF.ViewModel
                 RaisePropertyChanged();
             }
         }
-        /// <summary>Gets or sets the memory.
-        /// <see cref="CalculatorClass.Memory" /></summary>
+        /// <summary>
+        /// Gets or sets the memory.
+        /// <see cref="CalculatorClass.Memory" />
+        /// </summary>
         /// <value>The memory.</value>
         public int Memory
         {
@@ -37,7 +58,9 @@ namespace Calc32WPF.ViewModel
             }
         }
 
-        /// <summary>Initializes a new instance of the <see cref="T:Calc32WPF.ViewModel.MainWindowViewModel" /> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Calc32WPF.ViewModel.MainWindowViewModel" /> class.
+        /// </summary>
         public MainWindowViewModel()
         {
             calculatorClass = new CalculatorClass();
@@ -53,6 +76,11 @@ namespace Calc32WPF.ViewModel
                 (o)=>calculatorClass.Akkumulator!=0);
         }
 
+        /// <summary>
+        /// Handles the OnChange event of the CalculatorClass control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void CalculatorClass_OnChange(object sender, EventArgs e)
         {
             RaisePropertyChanged(nameof(Akkumulator));
@@ -60,14 +88,26 @@ namespace Calc32WPF.ViewModel
             RaisePropertyChanged(nameof(OperationText));
         }
 
-        /// <summary>Gets or sets the number-button - delegate.</summary>
+        /// <summary>
+        /// Gets or sets the number-button - delegate.
+        /// </summary>
         /// <value>The BTN number.</value>
         public DelegateCommand btnNumber { get; set; }
-        /// <summary>Gets or sets the Delegate for the operation command.</summary>
+        /// <summary>
+        /// Gets or sets the Delegate for the operation command.
+        /// </summary>
         /// <value>The BTN operation.</value>
         public DelegateCommand btnOperation { get; set; }
+        /// <summary>
+        /// Gets or sets the BTN backspace.
+        /// </summary>
+        /// <value>The BTN backspace.</value>
         public DelegateCommand btnBackspace { get; set; }
 
+        /// <summary>
+        /// Gets the operation text.
+        /// </summary>
+        /// <value>The operation text.</value>
         public string OperationText { get => calculatorClass.OperationText; }
 
 

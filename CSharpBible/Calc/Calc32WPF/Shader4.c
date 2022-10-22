@@ -1,3 +1,16 @@
+// ***********************************************************************
+// Assembly         : Calc32WPF_net
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 04-06-2020
+// ***********************************************************************
+// <copyright file="Shader4.c" company="Calc32WPF_net">
+//     Copyright (c) JC-Soft. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 
 vec2 hr = vec2(1.,sqrt(3.));
 
