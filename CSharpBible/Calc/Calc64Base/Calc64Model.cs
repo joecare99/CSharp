@@ -6,17 +6,13 @@
 // Last Modified By : Mir
 // Last Modified On : 08-31-2022
 // ***********************************************************************
-// <copyright file="Calc64Model.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2022
+// <copyright file="Calc64Model.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calc64Base
 {
@@ -82,6 +78,7 @@ namespace Calc64Base
             OperationMode = 0;
         }
 
+        public static string GetShortDesc(eOpMode e) => (e!=eOpMode.CalcResult)? Calc64.ToCalcOperation((int)e)?.ShortDescr ?? "":"=";
         /// <summary>
         /// Buttons the specified a number.
         /// </summary>
