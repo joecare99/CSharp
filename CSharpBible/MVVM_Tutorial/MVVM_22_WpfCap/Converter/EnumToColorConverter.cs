@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 08-14-2022
 // ***********************************************************************
-// <copyright file="EnumToColorConverter.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2022
+// <copyright file="EnumToColorConverter.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
