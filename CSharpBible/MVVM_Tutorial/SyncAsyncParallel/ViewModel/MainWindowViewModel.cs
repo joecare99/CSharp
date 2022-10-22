@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 12-29-2021
 // ***********************************************************************
-// <copyright file="MainWindowViewModel.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2021
+// <copyright file="MainWindowViewModel.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2021
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

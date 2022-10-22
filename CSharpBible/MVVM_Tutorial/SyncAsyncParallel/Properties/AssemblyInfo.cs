@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 12-26-2021
 // ***********************************************************************
-// <copyright file="AssemblyInfo.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2021
+// <copyright file="AssemblyInfo.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2021
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
@@ -23,9 +23,9 @@ using System.Windows;
 [assembly: AssemblyTitle("SyncAsyncParallel")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard Company")]
+[assembly: AssemblyCompany("JC-Soft")]
 [assembly: AssemblyProduct("SyncAsyncParallel")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2021")]
+[assembly: AssemblyCopyright("Copyright © JC-Soft 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
