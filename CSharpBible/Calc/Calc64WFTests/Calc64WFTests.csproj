@@ -8,10 +8,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Calc64WFTests</RootNamespace>
     <AssemblyName>Calc64WFTests</AssemblyName>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-	  <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -60,9 +60,14 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\FrmCalc64MainViewModelTests.cs" />
     <Compile Include="Visual\Converter\OperationModeToShortStringTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj">
+      <Project>{ABC8A3FB-12D1-40ED-AA6C-DBFF48B7A080}</Project>
+      <Name>MVVM_BaseLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Calc64Base\Calc64Base.csproj">
       <Project>{5B519E7C-1335-439C-900E-BF0E5FAD92BC}</Project>
       <Name>Calc64Base</Name>
