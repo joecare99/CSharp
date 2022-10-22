@@ -6,8 +6,8 @@
 // Last Modified By : Mir
 // Last Modified On : 12-26-2021
 // ***********************************************************************
-// <copyright file="App.xaml.cs" company="Hewlett-Packard Company">
-//     Copyright © Hewlett-Packard Company 2021
+// <copyright file="App.xaml.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2021
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
