@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="TaskExample.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -6,8 +19,14 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Threading.Tasks
 {
+    /// <summary>
+    /// Class TaskExample.
+    /// </summary>
     public static class TaskExample
     {
+        /// <summary>
+        /// The urls
+        /// </summary>
         private static String[] urls = {
                 "www.adatum.com",
                 "www.cohovineyard.com",
@@ -17,8 +36,14 @@ namespace TestStatements.Threading.Tasks
                 "www.contoso.com"
             };
 
+        /// <summary>
+        /// The random
+        /// </summary>
         public static Random random = new Random();
 
+        /// <summary>
+        /// Examples the main.
+        /// </summary>
         public static void ExampleMain()
         {
             ExampleMain1();
@@ -26,6 +51,9 @@ namespace TestStatements.Threading.Tasks
             ExampleMain3();
             ExampleMain4();
         }
+        /// <summary>
+        /// Examples the main1.
+        /// </summary>
         public static void ExampleMain1()
         {
             int failed = 0;
@@ -67,11 +95,17 @@ namespace TestStatements.Threading.Tasks
                 Console.WriteLine("{0} ping attempts failed", failed);
         }
 
+        /// <summary>
+        /// Examples the main2.
+        /// </summary>
         public static void ExampleMain2()
         {
             Task t = ExampleMain2a();
             t.Wait();
         }
+        /// <summary>
+        /// Examples the main2a.
+        /// </summary>
         private static async Task ExampleMain2a()
         {
             int failed = 0;
@@ -113,6 +147,9 @@ namespace TestStatements.Threading.Tasks
                 Console.WriteLine("{0} ping attempts failed", failed);
         }
 
+        /// <summary>
+        /// Examples the main3.
+        /// </summary>
         public static void ExampleMain3()
         {
             var tasks = new List<Task<long>>();
@@ -162,6 +199,9 @@ namespace TestStatements.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Examples the main4.
+        /// </summary>
         public static void ExampleMain4()
         {
             var tasks = new Task<long>[10];

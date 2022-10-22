@@ -1,17 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ***********************************************************************
+// Assembly         : CharGrid
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 12-24-2021
+// ***********************************************************************
+// <copyright file="FrmCharGridMain.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using System.Windows.Forms;
 
 namespace CSharpBible.CharGrid.Visual
 {
+    /// <summary>
+    /// Class FrmCharGridMain.
+    /// Implements the <see cref="Form" />
+    /// </summary>
+    /// <seealso cref="Form" />
     public partial class FrmCharGridMain : Form
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmCharGridMain"/> class.
+        /// </summary>
         public FrmCharGridMain()
         {
             InitializeComponent();

@@ -10,19 +10,30 @@ using System.Windows.Forms;
 
 namespace CSharpBible.AboutEx.Visual
 {
+    /// <summary>
+    /// Class FrmAboutExMain.
+    /// Implements the <see cref="Form" />
+    /// </summary>
+    /// <seealso cref="Form" />
     public partial class FrmAboutExMain : Form
     {
-        private FrmAbout frmAbout;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmAboutExMain"/> class.
+        /// </summary>
         public FrmAboutExMain()
         {
             InitializeComponent();
-            frmAbout = new FrmAbout(); 
         }
 
         private void btnClickMe_Click(object sender, EventArgs e)
         {
-            frmAbout?.Show();
+            new FrmAbout().Show();
+        }
+
+        private void btnClickMe2_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().Show();
         }
     }
 }

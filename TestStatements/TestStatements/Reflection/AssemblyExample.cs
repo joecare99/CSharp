@@ -1,22 +1,53 @@
-ï»¿using System;
+// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 07-13-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="AssemblyExample.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Reflection;
 
 namespace TestStatements.Reflection
 {
+    /// <summary>
+    /// Class AssemblyExample.
+    /// </summary>
     public class AssemblyExample
     {
+        /// <summary>
+        /// The factor
+        /// </summary>
         private int factor;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyExample" /> class.
+        /// </summary>
+        /// <param name="f">The f.</param>
         public AssemblyExample(int f)
         {
             factor = f;
         }
 
+        /// <summary>
+        /// Samples the method.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <returns>System.Int32.</returns>
         public int SampleMethod(int x)
         {
             Console.WriteLine("\nExample.SampleMethod({0}) executes.", x);
             return x * factor;
         }
 
+        /// <summary>
+        /// Examples the main.
+        /// </summary>
         public static void ExampleMain()
         {
             Assembly assem = typeof(Program).Assembly;
@@ -28,21 +59,29 @@ namespace TestStatements.Reflection
             AssemblyName assemName = assem.GetName();
             Console.WriteLine("\nName: {0}", assemName.Name);
             Console.WriteLine("Version: {0}.{1}",
-                assemName.Version.Major, assemName.Version.Minor);
+                assemName.Version?.Major, assemName.Version?.Minor);
 
             Console.WriteLine("\nAssembly CodeBase:");
-            Console.WriteLine(assem.CodeBase);
-
-            // Create an object from the assembly, passing in the correct number
-            // and type of arguments for the constructor.
-            Object o = assem.CreateInstance("TestStatements.Reflection.AssemblyExample", false,
-                BindingFlags.ExactBinding,
+#if NET5_0_OR_GREATER
+			Console.WriteLine(assem.Location);
+#else
+			Console.WriteLine(assem.CodeBase);
+#endif
+			// Create an object from the assembly, passing in the correct number
+			// and type of arguments for the constructor.
+#if NET5_0_OR_GREATER
+			Object? o;
+#else
+			Object o;
+#endif
+			o = assem.CreateInstance("TestStatements.Reflection.AssemblyExample", false,
+			BindingFlags.ExactBinding,
                 null, new Object[] { 2 }, null, null);
 
             foreach (Type x in assem.GetTypes())
             {
                 Console.WriteLine(x.FullName);
-                if (x.FullName.StartsWith("TestStatements."))
+                if (x.FullName?.StartsWith("TestStatements.") ?? false)
                 {
                     foreach (MethodInfo y in x.GetMethods())
                     {
@@ -60,10 +99,19 @@ namespace TestStatements.Reflection
                     }
                 }
             }
-            // Make a late-bound call to an instance method of the object.    
-            MethodInfo m = assem.GetType("TestStatements.Reflection.AssemblyExample")?.GetMethod("SampleMethod");
-            Object ret = m?.Invoke(o, new Object[] { 42 });
-            Console.WriteLine("SampleMethod returned {0}.", ret);
+			// Make a late-bound call to an instance method of the object.    
+#if NET5_0_OR_GREATER
+			MethodInfo? m;
+#else
+			MethodInfo m;
+#endif			
+			m = assem.GetType("TestStatements.Reflection.AssemblyExample")?.GetMethod("SampleMethod");
+#if NET5_0_OR_GREATER
+			Object? ret = m?.Invoke(o, new Object[] { 42 });
+#else
+			Object ret = m?.Invoke(o, new Object[] { 42 });
+#endif
+			Console.WriteLine("SampleMethod returned {0}.", ret);
 
             Console.WriteLine("\nAssembly entry point:");
             Console.WriteLine(assem.EntryPoint);

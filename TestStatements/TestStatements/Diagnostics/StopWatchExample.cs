@@ -1,20 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-20-2022
+// ***********************************************************************
+// <copyright file="StopWatchExample.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace TestStatements.Diagnostics
 {
+    /// <summary>
+    /// Class StopWatchExample.
+    /// </summary>
     public static class StopWatchExample
     {
+        /// <summary>
+        /// Examples the main.
+        /// </summary>
         public static void ExampleMain()
         {
             ExampleMain1();
             ExampleMain2();
         }
+        /// <summary>
+        /// Examples the main1.
+        /// </summary>
         public static void ExampleMain1()
         {
             Console.WriteLine("This will take aprox. 10s");
@@ -32,6 +50,9 @@ namespace TestStatements.Diagnostics
             Console.WriteLine("RunTime " + elapsedTime);
         }
 
+        /// <summary>
+        /// Examples the main2.
+        /// </summary>
         public static void ExampleMain2()
         {
             DisplayTimerProperties();
@@ -45,6 +66,9 @@ namespace TestStatements.Diagnostics
             TimeOperations();
         }
 
+        /// <summary>
+        /// Displays the timer properties.
+        /// </summary>
         public static void DisplayTimerProperties()
         {
             // Display the timer frequency and resolution.
@@ -65,6 +89,9 @@ namespace TestStatements.Diagnostics
                 nanosecPerTick);
         }
 
+        /// <summary>
+        /// Times the operations.
+        /// </summary>
         private static void TimeOperations()
         {
             long nanosecPerTick = (1000L * 1000L * 1000L) / Stopwatch.Frequency;

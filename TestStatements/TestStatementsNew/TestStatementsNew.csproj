@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\/</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props"/>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup>
+     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AssemblyName>TestStatementsNew</AssemblyName>
+    <RootNamespace>TestStatementsNew</RootNamespace>
+    <Deterministic>false</Deterministic>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <AssemblyVersion>1.0.*</AssemblyVersion>
+    <!--VersionSuffix>1.0.0.$([]::UtcNow.ToString(mmff))</VersionSuffix>
+    <AssemblyVersion Condition=" '$(VersionSuffix)' == '' ">0.0.0.1</AssemblyVersion>
+    <AssemblyVersion Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</AssemblyVersion>
+    <Version Condition=" '$(VersionSuffix)' == '' ">0.0.1.0</Version>
+    <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version-->
+    <Company>JC-Soft</Company>
+    <Authors>Joe Care</Authors>
+    <Copyright>Copyright © JC-Soft 2022</Copyright>
+    <Product>TestStatements_new 1.0</Product>
+  </PropertyGroup>
+
+</Project>

@@ -1,19 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TestStatements.Constants;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="EnumTest.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 
 namespace TestStatements.DataTypes
 {
+    /// <summary>
+    /// Class EnumTest.
+    /// </summary>
     public static class EnumTest
     {
-        enum Days { Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday };
-        enum BoilingPoints { Celsius = 100, Fahrenheit = 212 };
-        [Flags]
-        enum Colors { Red = 1, Green = 2, Blue = 4, Yellow = 8 };
+        /// <summary>
+        /// Enum name of days
+        /// </summary>
+        enum Days {
+            /// <summary>
+            /// The saturday
+            /// </summary>
+            Saturday,
+            /// <summary>
+            /// The sunday
+            /// </summary>
+            Sunday,
+            /// <summary>
+            /// The monday
+            /// </summary>
+            Monday,
+            /// <summary>
+            /// The tuesday
+            /// </summary>
+            Tuesday,
+            /// <summary>
+            /// The wednesday
+            /// </summary>
+            Wednesday,
+            /// <summary>
+            /// The thursday
+            /// </summary>
+            Thursday,
+            /// <summary>
+            /// The friday
+            /// </summary>
+            Friday
+        };
+        /// <summary>
+        /// Enum boiling Points
+        /// </summary>
+        enum BoilingPoints 
+        {
+            /// <summary>
+            /// The poinlin point of water in Celcius
+            /// </summary>
+            Celsius = 100,
+            /// <summary>
+            /// The poinlin point of water in Fahrenheit
+            /// </summary>
+            Fahrenheit = 212 
+        };
 
+        /// <summary>
+        /// Enum Colors
+        /// </summary>
+        [Flags]
+        enum Colors {
+            /// <summary>
+            /// The red
+            /// </summary>
+            Red = 1,
+            /// <summary>
+            /// The green
+            /// </summary>
+            Green = 2,
+            /// <summary>
+            /// The blue
+            /// </summary>
+            Blue = 4,
+            /// <summary>
+            /// The yellow
+            /// </summary>
+            Yellow = 8 
+        };
+
+        /// <summary>
+        /// Mains the test.
+        /// </summary>
         public static void MainTest()
         {
             const string Title = "Enumerations";

@@ -7,6 +7,9 @@ using CSharpBible.AboutEx.Visual;
 
 namespace CSharpBible.AboutEx
 {
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     static class Program
     {
         /// <summary>

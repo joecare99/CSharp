@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ctlClockLib</name>
+  </assembly>
+  <members>
+    <member name="T:ctlClockLib.ctlAlarmClock">
+      <summary> Class ctlAlarmClock. Implements the <see cref="T:ctlClockLib.ctlClock" /></summary>
+      <seealso cref="T:ctlClockLib.ctlClock" />
+    </member>
+    <member name="M:ctlClockLib.ctlAlarmClock.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ctlClockLib.ctlAlarmClock" /> class.
+   </summary>
+    </member>
+    <member name="P:ctlClockLib.ctlAlarmClock.AlarmTime">
+      <summary>
+   Gets or sets the alarm time.
+   </summary>
+      <value>The alarm time.</value>
+    </member>
+    <member name="P:ctlClockLib.ctlAlarmClock.AlarmSet">
+      <summary>
+   Gets or sets a value indicating whether [alarm set].
+   </summary>
+      <value>
+        <c>true</c> if [alarm set]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:ctlClockLib.ctlAlarmClock.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+      <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    </member>
+    <member name="T:ctlClockLib.ctlClock">
+      <summary> Class ctlClock. Implements the <see cref="T:System.Windows.Forms.UserControl" /></summary>
+      <seealso cref="T:System.Windows.Forms.UserControl" />
+      <summary> Class ctlClock. Implements the <see cref="T:System.Windows.Forms.UserControl" /></summary>
+      <seealso cref="T:System.Windows.Forms.UserControl" />
+    </member>
+    <member name="P:ctlClockLib.ctlClock.ClockBackColor">
+      <summary>
+   Gets or sets the color of the clock back.
+   </summary>
+      <value>The color of the clock back.</value>
+    </member>
+    <member name="P:ctlClockLib.ctlClock.ClockForeColor">
+      <summary>
+   Gets or sets the color of the clock fore.
+   </summary>
+      <value>The color of the clock fore.</value>
+    </member>
+    <member name="M:ctlClockLib.ctlClock.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ctlClockLib.ctlClock" /> class.
+   </summary>
+    </member>
+    <member name="M:ctlClockLib.ctlClock.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+      <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    </member>
+  </members>
+</doc>

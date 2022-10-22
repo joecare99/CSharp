@@ -1,0 +1,122 @@
+﻿<Window x:Name="window" x:Class="Calc32WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Calc32WPF" 
+        xmlns:local1="clr-namespace:Calc32WPF.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <local1:MainWindowViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="Margin" Value="2,2,2,2"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="16pt"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16pt"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA9FFE8"/>
+                        <GradientStop Color="#FFE0FBF4" Offset="0.519"/>
+                        <GradientStop Color="#FF8DC6B6" Offset="0.532"/>
+                        <GradientStop Color="#FFAAF6E1" Offset="0.998"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2,2,2,2"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="16pt"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA3A3A3" Offset="0"/>
+                        <GradientStop Color="White" Offset="0.2"/>
+                        <GradientStop Color="White" Offset="0.8 "/>
+                        <GradientStop Color="#FFA3A3A3" Offset="0.999"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Button" x:Key="Operation" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="20pt"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA3A3A3" Offset="0"/>
+                        <GradientStop Color="White" Offset="0.1"/>
+                        <GradientStop Color="White" Offset="0.9 "/>
+                        <GradientStop Color="#FFA3A3A3" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="frmCalc32Main" Initialized="frmCalc32Main_Initialized" GotFocus="frmCalc32Main_GotFocus">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="119"/>
+            <RowDefinition Height="83*"/>
+            <RowDefinition Height="22*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="lblMemory"      Content="{Binding Memory}"                      HorizontalContentAlignment="Right"   Grid.Column="1" Grid.Row="1"/>
+            <Label x:Name="lblAkkumulator" Content="{Binding Akkumulator}"                 HorizontalContentAlignment="Right" Grid.Column="1" Grid.Row="2"/>
+            <Label x:Name="lblOperation"   Content="{Binding OperationText, Mode=OneWay}"  HorizontalContentAlignment="Center"   Grid.Column="2" Grid.Row="2"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnZero"  Content="0" AutomationProperties.AcceleratorKey="0" Tag="0" Command="{Binding btnNumber}" CommandParameter="0" Grid.Row="4" Grid.Column="3"/>
+            <Button x:Name="btnOne"   Content="1" AutomationProperties.AcceleratorKey="1" Tag="1" Command="{Binding btnNumber}" CommandParameter="1" Grid.Row="3" Grid.Column="2"/>
+            <Button x:Name="btnTwo"   Content="2" AutomationProperties.AcceleratorKey="2" Tag="2" Command="{Binding btnNumber}" CommandParameter="2" Grid.Row="3" Grid.Column="3"/>
+            <Button x:Name="btnThree" Content="3" AutomationProperties.AcceleratorKey="3" Tag="3" Command="{Binding btnNumber}" CommandParameter="3" Grid.Row="3" Grid.Column="4"/>
+            <Button x:Name="btnFour"  Content="4" AutomationProperties.AcceleratorKey="4" Tag="4" Command="{Binding btnNumber}" CommandParameter="4" Grid.Row="2" Grid.Column="2"/>
+            <Button x:Name="btnFive"  Content="5" AutomationProperties.AcceleratorKey="5" Tag="5" Command="{Binding btnNumber}" CommandParameter="5" Grid.Row="2" Grid.Column="3"/>
+            <Button x:Name="btnSix"   Content="6" AutomationProperties.AcceleratorKey="6" Tag="6" Command="{Binding btnNumber}" CommandParameter="6" Grid.Row="2" Grid.Column="4"/>
+            <Button x:Name="btnSeven" Content="7" AutomationProperties.AcceleratorKey="7" Tag="7" Command="{Binding btnNumber}" CommandParameter="7" Grid.Row="1" Grid.Column="2"/>
+            <Button x:Name="btnEight" Content="8" AutomationProperties.AcceleratorKey="8" Tag="8" Command="{Binding btnNumber}" CommandParameter="8" Grid.Row="1" Grid.Column="3"/>
+            <Button x:Name="btnNine"  Content="9" AutomationProperties.AcceleratorKey="9" Tag="9" Command="{Binding btnNumber}" CommandParameter="9" Grid.Row="1" Grid.Column="4"/>
+            <Button x:Name="btnOpEquals" Content="=" AutomationProperties.AcceleratorKey="=" Command="{Binding btnOperation}" CommandParameter="-1" Style="{StaticResource Operation}" Grid.Row="3" Grid.Column="5" Grid.RowSpan="2" IsDefault="True"/>
+            <Button x:Name="btnOpPlus"   Content="+" AutomationProperties.AcceleratorKey="+" Command="{Binding btnOperation}" CommandParameter="-2" Style="{StaticResource Operation}" Grid.Row="1" Grid.Column="5" Grid.RowSpan="2"/>
+            <Button x:Name="btnOpMinus"  Content="-" AutomationProperties.AcceleratorKey="-" Command="{Binding btnOperation}" CommandParameter="-3" Style="{StaticResource Operation}" Grid.Row="0" Grid.Column="5"/>
+            <Button x:Name="btnOpMul"  Content="*" AutomationProperties.AcceleratorKey="*" Command="{Binding btnOperation}" CommandParameter="-4" Style="{StaticResource Operation}" Grid.Row="0" Grid.Column="4"/>
+            <Button x:Name="btnOpDiv"  Content="/" AutomationProperties.AcceleratorKey="/" Command="{Binding btnOperation}" CommandParameter="-5" Style="{StaticResource Operation}" Grid.Row="0" Grid.Column="3"/>
+        </Grid>
+    </Grid>
+</Window>

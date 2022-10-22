@@ -1,27 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ***********************************************************************
+// Assembly         : AddPage
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 02-02-2020
+// ***********************************************************************
+// <copyright file="FrmAddPageMain.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Windows.Forms;
 
 namespace CSharpBible.AddPage.Visual
 {
+    /// <summary>
+    /// Class FrmAddPageMain.
+    /// Implements the <see cref="Form" />
+    /// </summary>
+    /// <seealso cref="Form" />
     public partial class FrmAddPageMain : Form
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmAddPageMain"/> class.
+        /// </summary>
         public FrmAddPageMain()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles the Click event of the btnClose control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Handles the Click event of the btnAddPage control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void btnAddPage_Click(object sender, EventArgs e)
         {
             TabPage tb = new TabPage();
@@ -33,6 +57,11 @@ namespace CSharpBible.AddPage.Visual
             tabControl1.Controls.Add(tb);
         }
 
+        /// <summary>
+        /// Handles the Click event of the btnAddControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void btnAddControl_Click(object sender, EventArgs e)
         {
             if (tabControl1.SelectedTab.Controls.Count < 1)

@@ -1,0 +1,122 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm;
+using CommunityToolkit.Mvvm.Input;
+
+namespace MVVM.ViewModel {
+	public abstract class BaseViewModel : INotifyPropertyChanged {
+
+        #region Properties
+		/// <summary>Occurs when the property is changed.</summary>
+#if NET5_0_OR_GREATER || NULLABLE
+		public event PropertyChangedEventHandler? PropertyChanged;
+#else
+		public event PropertyChangedEventHandler PropertyChanged;
+#endif
+		protected List<(string, string)> CommandCanExecuteBinding=new List<(string, string)>();
+		private Dictionary<string, object> PropertyOldValue = new Dictionary<string, object>();
+		#endregion
+
+		#region Methods
+		/// <summary>Raises the [property changed] event.</summary>
+		/// <param name="propertyName">Name of the property.
+		/// If this field is not set, the [CallerMemberName] will automatically provided</param>
+		protected void RaisePropertyChanged([CallerMemberName] string propertyName = "") {
+			if (!string.IsNullOrEmpty(propertyName))
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		/// <summary>
+		/// Calls RaisePropertyChanged for each name in the array
+		/// </summary>
+		/// <param name="propertyNames">RaisePropertyChanged will be called for every element</param>
+		protected void RaisePropertyChanged(params string[] propertyNames) {
+			foreach (string s in propertyNames)
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(s));
+		}
+
+		/// <summary>
+		/// Helper for setting properties
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data"></param>
+		/// <param name="value"></param>
+		/// <param name="action"></param>
+		/// <param name="propertyname"></param>
+		/// <returns></returns>
+#if NET5_0_OR_GREATER || NULLABLE
+		protected bool SetProperty<T>(ref T data, T value, Action<T, T> action, [CallerMemberName] string propertyName = "")
+#else
+		protected bool SetProperty<T>(ref T data, T value, Action<T,T> action, [CallerMemberName] string propertyName = "")
+#endif
+			=> SetProperty(ref data, value, null, action, propertyName);
+
+		/// <summary>
+		/// Helper for setting properties
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data"></param>
+		/// <param name="value"></param>
+		/// <param name="otherNames"></param>
+		/// <param name="action"></param>
+		/// <param name="propertyname"></param>
+		/// <returns></returns>
+#if NET5_0_OR_GREATER || NULLABLE
+		protected bool SetProperty<T>(ref T data, T value, string[]? propertyNames = null, Action<T,T>? action = null, [CallerMemberName] string propertyName = "")
+#else
+		protected bool SetProperty<T>(ref T data, T value, string[] propertyNames = null,Action<T,T> action = null, [CallerMemberName] string propertyName = "")
+#endif
+		{
+			if (EqualityComparer<T>.Default.Equals(data, value)) return false;
+			T old = data;
+			data = value;
+			RaisePropertyChanged(propertyName);
+			if (propertyNames != null)
+				RaisePropertyChanged(propertyNames);
+			action?.Invoke(old,value);
+			return true;
+		}
+
+        public BaseViewModel()
+        {
+			PropertyChanged += InternalBindingHandler;
+		}
+
+        private void InternalBindingHandler(object sender, PropertyChangedEventArgs e)
+        {
+
+			foreach (var t in CommandCanExecuteBinding)
+            {
+				if (t.Item1 == e.PropertyName && GetType().GetProperty(t.Item2)?.GetValue(this) is RelayCommand rc)
+					rc.NotifyCanExecuteChanged();
+				else
+				if (t.Item1 == e.PropertyName && GetType().GetMethod(t.Item2) != null)
+                {
+                    var newVal = GetType().GetMethod(t.Item2).Invoke(this, new object[] { });
+                    NewMethod(t.Item2, newVal);
+                }
+				else if (t.Item1 == e.PropertyName && GetType().GetProperty(t.Item2) != null)
+				{
+					var newVal = GetType().GetProperty(t.Item2).GetValue(this);
+					NewMethod(t.Item2, newVal);
+				}
+			}
+
+            void NewMethod(string t, object newVal)
+            {
+				var oldVal = !PropertyOldValue.ContainsKey(t) ? null : PropertyOldValue[t];
+				if (newVal == null && oldVal == null) return;
+                if (!(newVal ?? oldVal).Equals(newVal != null ? oldVal : null))
+                {
+                    PropertyOldValue[t] = newVal;
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(t));
+                }
+            }
+        }
+        #endregion
+    }
+}
+

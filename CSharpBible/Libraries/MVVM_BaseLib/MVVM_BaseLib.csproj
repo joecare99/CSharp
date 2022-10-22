@@ -1,0 +1,29 @@
+﻿<Project>
+	<PropertyGroup>
+		<TargetFrameworks>net48-windows;net472-windows;net461-windows</TargetFrameworks>
+		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+        <!--UseWPF>true</UseWPF-->
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+      <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Helper\" />
+		<Compile Include="..\BaseLib\Helper\Property.cs">
+			<Link>Helper\Property.cs</Link>
+		</Compile>
+	</ItemGroup>
+
+</Project>

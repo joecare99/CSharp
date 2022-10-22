@@ -1,4 +1,17 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 12-19-2021
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="ReflectionExample.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,17 +20,35 @@ using System.Threading.Tasks;
 
 namespace TestStatements.Reflection
 {
+    /// <summary>
+    /// Struct S
+    /// </summary>
     internal struct S
     {
+        /// <summary>
+        /// The x
+        /// </summary>
         public int X;
     }
 
+    /// <summary>
+    /// Class ReflectionExample.
+    /// </summary>
     public abstract class ReflectionExample
     {
+        /// <summary>
+        /// Class NestedClass. This class cannot be inherited.
+        /// </summary>
         protected sealed class NestedClass { }
 
+        /// <summary>
+        /// Interface INested
+        /// </summary>
         public interface INested { }
 
+        /// <summary>
+        /// Examples the main.
+        /// </summary>
         public static void ExampleMain()
         {
             // Create an array of types.
@@ -30,6 +61,10 @@ namespace TestStatements.Reflection
             }
         }
 
+        /// <summary>
+        /// Creates new method.
+        /// </summary>
+        /// <param name="t">The t.</param>
         private static void NewMethod(Type t)
         {
             Console.WriteLine("Attributes for type {0}:", t.Name);

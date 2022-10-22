@@ -1,18 +1,34 @@
-ï»¿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TestStatements.Constants;
+// ***********************************************************************
+// Assembly         : TestStatements
+// Author           : Mir
+// Created          : 07-21-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 09-09-2022
+// ***********************************************************************
+// <copyright file="Formating.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2020
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 
 namespace TestStatements.DataTypes
 {
+    /// <summary>
+    /// Class Formating.
+    /// </summary>
     public static class Formating
     {
 
+        /// <summary>
+        /// The get now
+        /// </summary>
         public static Func<DateTime> GetNow = delegate { return DateTime.Now; };
 
-        /// <summary>Shows the combined formating.</summary>
+        /// <summary>
+        /// Shows the combined formating.
+        /// </summary>
         public static void CombinedFormating()
         {
             const string Title = "Combined Formating";
@@ -22,7 +38,9 @@ namespace TestStatements.DataTypes
             Console.WriteLine(String.Format("Name = {0}, hours = {1:hh}", name, GetNow()));
         }
 
-        /// <summary>Shows  the index-komponent.</summary>
+        /// <summary>
+        /// Shows  the index-komponent.
+        /// </summary>
         public static void IndexKomponent()
         {
             const string Title = "Formating with Index";
@@ -36,6 +54,9 @@ namespace TestStatements.DataTypes
             //      Prime numbers less than 10: 2, 3, 5, 7
         }
 
+        /// <summary>
+        /// Indexes the komponent2.
+        /// </summary>
         public static void IndexKomponent2()
         {
             const string Title = "Formating with Index 2";
@@ -48,6 +69,9 @@ namespace TestStatements.DataTypes
             //      0x7FFFFFFFFFFFFFFF 9.223372E+018 9,223,372,036,854,775,807.00
         }
 
+        /// <summary>
+        /// Indentations the komponent.
+        /// </summary>
         public static void IndentationKomponent()
         {
             string[] names = { "Adam", "Bridgette", "Carla", "Daniel",
@@ -60,6 +84,9 @@ namespace TestStatements.DataTypes
                 Console.WriteLine("{0,-20} {1,5:N1}", names[ctr], hours[ctr]);
         }
 
+        /// <summary>
+        /// Escapes the sequence.
+        /// </summary>
         public static void EscapeSequence()
         {
             int value = 6324;
@@ -73,11 +100,14 @@ namespace TestStatements.DataTypes
             // The example displays the following output:
             //       {6324}        
 
-            string output3 = string.Format("{{{0:D}{0:}}}", value);
+            string output3 = string.Format("{{{0:D} {0:}}}", value);
             Console.WriteLine(output3);
             //       {D}        
         }
 
+        /// <summary>
+        /// Codes the examples1.
+        /// </summary>
         public static void CodeExamples1()
         {
             string FormatString1 = String.Format("{0:dddd MMMM}", GetNow());
@@ -87,6 +117,9 @@ namespace TestStatements.DataTypes
             Console.WriteLine(FormatString2);
         }
 
+        /// <summary>
+        /// Codes the examples2.
+        /// </summary>
         public static void CodeExamples2()
         {
             int MyInt = 100;
@@ -96,6 +129,9 @@ namespace TestStatements.DataTypes
             //        $100.00
         }
 
+        /// <summary>
+        /// Codes the examples3.
+        /// </summary>
         public static void CodeExamples3()
         {
             string myName = "Fred";
@@ -105,6 +141,9 @@ namespace TestStatements.DataTypes
             //    Name = Fred, hours = 11, minutes = 30   
         }
 
+        /// <summary>
+        /// Codes the examples4.
+        /// </summary>
         public static void CodeExamples4()
         {
             string myFName = "Fred";
