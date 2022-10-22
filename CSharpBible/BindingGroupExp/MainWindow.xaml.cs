@@ -24,5 +24,25 @@ namespace BindingGroupExp
         {
             InitializeComponent();
         }
+
+        private void stackPanel1_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Submit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ItemError(object sender, ValidationErrorEventArgs e)
+        {
+
+        }
     }
 }

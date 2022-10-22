@@ -9,8 +9,8 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <StackPanel Name="stackPanel1"  Margin="10" Width="250"
-            Loaded="stackPanel1_Loaded"
-            Validation.Error="ItemError">
+           Loaded="stackPanel1_Loaded"
+           Validation.Error="ItemError">
 
             <StackPanel.Resources>
                 <Style TargetType="HeaderedContentControl">
@@ -40,7 +40,7 @@
             <StackPanel.BindingGroup>
                 <BindingGroup NotifyOnValidationError="True">
                     <BindingGroup.ValidationRules>
-                        <src:ValidateDateAndPrice ValidationStep="ConvertedProposedValue" />
+                        <!--<src:ValidateDateAndPrice ValidationStep="ConvertedProposedValue" />-->
                     </BindingGroup.ValidationRules>
                 </BindingGroup>
             </StackPanel.BindingGroup>
@@ -54,7 +54,7 @@
                     <TextBox.Text>
                         <Binding Path="Price" Mode="TwoWay" >
                             <Binding.ValidationRules>
-                                <src:PriceIsAPositiveNumber/>
+                                <!--<src:PriceIsAPositiveNumber/>-->
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
@@ -65,7 +65,7 @@
                     <TextBox.Text>
                         <Binding Path="OfferExpires" StringFormat="d" >
                             <Binding.ValidationRules>
-                                <src:FutureDateRule/>
+                                <!--<src:FutureDateRule/>-->
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
