@@ -26,10 +26,13 @@ namespace Calc32WPF.ViewModel
     /// </summary>
     public class MainWindowViewModel: BaseViewModel
     {
+        #region Properties
+        #region private properties
         /// <summary>
         /// The calculator class
         /// </summary>
         private CalculatorClass calculatorClass;
+        #endregion
 
         /// <summary>
         /// Gets or sets the akkumulator.
@@ -44,6 +47,7 @@ namespace Calc32WPF.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         /// Gets or sets the memory.
         /// <see cref="CalculatorClass.Memory" />
@@ -59,34 +63,10 @@ namespace Calc32WPF.ViewModel
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Calc32WPF.ViewModel.MainWindowViewModel" /> class.
+        /// Gets the operation text.
         /// </summary>
-        public MainWindowViewModel()
-        {
-            calculatorClass = new CalculatorClass();
-            calculatorClass.OnChange += CalculatorClass_OnChange;
-            this.btnNumber =new DelegateCommand( (o) => { 
-                calculatorClass.NumberButton(int.Parse((string)o)); 
-            });
-            this.btnOperation = new DelegateCommand( (o) => {
-                calculatorClass.Operation(-int.Parse((string)o)); 
-            });
-            this.btnBackspace = new DelegateCommand(
-                (o) => { calculatorClass.Operation((int)(o ?? 0)); },
-                (o)=>calculatorClass.Akkumulator!=0);
-        }
-
-        /// <summary>
-        /// Handles the OnChange event of the CalculatorClass control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void CalculatorClass_OnChange(object sender, EventArgs e)
-        {
-            RaisePropertyChanged(nameof(Akkumulator));
-            RaisePropertyChanged(nameof(Memory));
-            RaisePropertyChanged(nameof(OperationText));
-        }
+        /// <value>The operation text.</value>
+        public string OperationText { get => calculatorClass.OperationText; }
 
         /// <summary>
         /// Gets or sets the number-button - delegate.
@@ -103,13 +83,38 @@ namespace Calc32WPF.ViewModel
         /// </summary>
         /// <value>The BTN backspace.</value>
         public DelegateCommand btnBackspace { get; set; }
+        #endregion
+        #region Methods
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Calc32WPF.ViewModel.MainWindowViewModel" /> class.
+        /// </summary>
+        public MainWindowViewModel()
+        {
+            calculatorClass = new CalculatorClass();
+            calculatorClass.OnChange += CalculatorClass_OnChange;
+            btnNumber =new DelegateCommand( (o) => { 
+                calculatorClass.NumberButton(int.Parse((string)o)); 
+            });
+            btnOperation = new DelegateCommand( (o) => {
+                calculatorClass.Operation(-int.Parse((string)o)); 
+            });
+            btnBackspace = new DelegateCommand(
+                (o) => { calculatorClass.Operation((int)(o ?? 0)); },
+                (o)=>calculatorClass.Akkumulator!=0);
+            CommandCanExecuteBinding.Add((nameof(calculatorClass.Akkumulator), nameof(btnBackspace)));
+        }
 
         /// <summary>
-        /// Gets the operation text.
+        /// Handles the OnChange event of the CalculatorClass control.
         /// </summary>
-        /// <value>The operation text.</value>
-        public string OperationText { get => calculatorClass.OperationText; }
-
-
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void CalculatorClass_OnChange(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(Akkumulator));
+            RaisePropertyChanged(nameof(Memory));
+            RaisePropertyChanged(nameof(OperationText));
+        }
+        #endregion
     }
 }

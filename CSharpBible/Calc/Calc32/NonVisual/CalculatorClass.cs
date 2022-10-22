@@ -4,7 +4,7 @@
 // Created          : 12-19-2021
 //
 // Last Modified By : Mir
-// Last Modified On : 10-07-2022
+// Last Modified On : 10-22-2022
 // ***********************************************************************
 // <copyright file="CalculatorClass.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2020
