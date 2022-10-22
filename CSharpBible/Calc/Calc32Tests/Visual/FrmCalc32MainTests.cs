@@ -43,6 +43,15 @@ namespace Calc32.Visual.Tests
         /// Defines the test method FrmCalc32MainTest.
         /// </summary>
         [TestMethod()]
+        public void SetUpTest()
+        {
+            Assert.IsNotNull(testFrame);
+            Assert.IsInstanceOfType(testFrame,typeof(FrmCalc32Main));
+        }
+        /// <summary>
+        /// Defines the test method FrmCalc32MainTest.
+        /// </summary>
+        [TestMethod()]
         public void FrmCalc32MainTest()
         {
             Assert.Fail();
