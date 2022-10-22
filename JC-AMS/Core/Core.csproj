@@ -52,6 +52,6 @@
     <Folder Include="Resource\" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;dir&gt;nul" />
+    <Exec Command="svn up --accept p -q&#xD;&#xA;echo ---&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;echo ===&#xD;&#xA;set errorlevel=" />
   </Target>
 </Project>

@@ -9,22 +9,6 @@
   <HelpKINode Title=" enumeration member" Url="html/T-DynamicSample.Model.StringSearchOption.htm" />
   <HelpKINode Title=" enumeration member" Url="html/T-DynamicSample.Model.StringSearchOption.htm" />
   <HelpKINode Title=" enumeration member" Url="html/T-DynamicSample.Model.StringSearchOption.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
-  <HelpKINode Title=" enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
   <HelpKINode Title=". constructor" Url="html/M-global.$Program.-ctor.htm" />
   <HelpKINode Title="Account class" Url="html/AllMembers.T-TestStatements.Anweisungen.Account.htm" />
   <HelpKINode Title="Account class" Url="html/T-TestStatements.Anweisungen.Account.htm" />
@@ -99,6 +83,9 @@
   <HelpKINode Title="AssemblyExampleTests.ExampleMainTest method" Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.ExampleMainTest.htm" />
   <HelpKINode Title="AssemblyExampleTests.SampleDataMethodTest method" Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.SampleDataMethodTest.htm" />
   <HelpKINode Title="AssemblyExampleTests.SampleMethodTest method" Url="html/M-TestStatements.Reflection.Tests.AssemblyExampleTests.SampleMethodTest.htm" />
+  <HelpKINode Title="AssertConsoleInOutputArgs method" Url="html/M-TestStatements.UnitTesting.ConsoleTestsBase.AssertConsoleInOutputArgs.htm" />
+  <HelpKINode Title="AssertConsoleOutput method" Url="html/M-TestStatements.UnitTesting.ConsoleTestsBase.AssertConsoleOutput.htm" />
+  <HelpKINode Title="AssertConsoleOutputArgs method" Url="html/M-TestStatements.UnitTesting.ConsoleTestsBase.AssertConsoleOutputArgs.htm" />
   <HelpKINode Title="AsyncBreakfast class" Url="html/AllMembers.T-TestStatements.Threading.Tasks.AsyncBreakfast.htm" />
   <HelpKINode Title="AsyncBreakfast class" Url="html/T-TestStatements.Threading.Tasks.AsyncBreakfast.htm" />
   <HelpKINode Title="AsyncBreakfast class">
@@ -165,31 +152,9 @@
   </HelpKINode>
   <HelpKINode Title="BoxLengthFirst.Compare method" Url="html/M-TestStatements.Collection.Generic.BoxLengthFirst.Compare.htm" />
   <HelpKINode Title="BoxLengthFirst.Compare method" Url="html/Overload-TestStatements.Collection.Generic.BoxLengthFirst.Compare.htm" />
-  <HelpKINode Title="Bus class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Bus.htm" />
-  <HelpKINode Title="Bus class" Url="html/T-TestStatementsNew.Anweisungen.Bus.htm" />
-  <HelpKINode Title="Bus class">
-    <HelpKINode Title="about Bus class" Url="html/T-TestStatementsNew.Anweisungen.Bus.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Bus.htm" />
-    <HelpKINode Title="constructor" Url="html/M-TestStatementsNew.Anweisungen.Bus.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Bus.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Bus.htm" />
-  </HelpKINode>
-  <HelpKINode Title="Bus.Bus constructor" Url="html/M-TestStatementsNew.Anweisungen.Bus.-ctor.htm" />
-  <HelpKINode Title="CalculateToll method" Url="html/M-TestStatementsNew.Anweisungen.TollCalculator.CalculateToll.htm" />
   <HelpKINode Title="CallAllExamples namespace" Url="html/N-CallAllExamples.htm" />
   <HelpKINode Title="CallAllExamples.Program class" Url="html/AllMembers.T-CallAllExamples.Program.htm" />
   <HelpKINode Title="CallAllExamples.Program class" Url="html/T-CallAllExamples.Program.htm" />
-  <HelpKINode Title="Capacity property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Capacity.htm" />
-  <HelpKINode Title="Car class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Car.htm" />
-  <HelpKINode Title="Car class" Url="html/T-TestStatementsNew.Anweisungen.Car.htm" />
-  <HelpKINode Title="Car class">
-    <HelpKINode Title="about Car class" Url="html/T-TestStatementsNew.Anweisungen.Car.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Car.htm" />
-    <HelpKINode Title="constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Car.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Car.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Car.htm" />
-  </HelpKINode>
-  <HelpKINode Title="Car.Car constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Car.-ctor.htm" />
   <HelpKINode Title="CheckedUnchecked method" Url="html/M-TestStatements.Anweisungen.Checking.CheckedUnchecked.htm" />
   <HelpKINode Title="CheckedUncheckedTest method" Url="html/M-TestStatements.Anweisungen.Tests.CheckingTests.CheckedUncheckedTest.htm" />
   <HelpKINode Title="Checking class" Url="html/AllMembers.T-TestStatements.Anweisungen.Checking.htm" />
@@ -357,6 +322,9 @@
     <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.UnitTesting.ConsoleTestsBase.htm" />
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.UnitTesting.ConsoleTestsBase.htm" />
   </HelpKINode>
+  <HelpKINode Title="ConsoleTestsBase.AssertConsoleInOutputArgs method" Url="html/M-TestStatements.UnitTesting.ConsoleTestsBase.AssertConsoleInOutputArgs.htm" />
+  <HelpKINode Title="ConsoleTestsBase.AssertConsoleOutput method" Url="html/M-TestStatements.UnitTesting.ConsoleTestsBase.AssertConsoleOutput.htm" />
+  <HelpKINode Title="ConsoleTestsBase.AssertConsoleOutputArgs method" Url="html/M-TestStatements.UnitTesting.ConsoleTestsBase.AssertConsoleOutputArgs.htm" />
   <HelpKINode Title="Constants class" Url="html/AllMembers.T-DynamicSample.Constants.Constants.htm" />
   <HelpKINode Title="Constants class" Url="html/AllMembers.T-TestStatements.Constants.Constants.htm" />
   <HelpKINode Title="Constants class" Url="html/T-DynamicSample.Constants.Constants.htm" />
@@ -371,10 +339,29 @@
     <HelpKINode Title="methods" Url="html/Methods.T-DynamicSample.Constants.Constants.htm" />
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Constants.Constants.htm" />
   </HelpKINode>
+  <HelpKINode Title="Constants.dGoldenCut field" Url="html/F-TestStatements.Constants.Constants.dGoldenCut.htm" />
+  <HelpKINode Title="Constants.dGoldenCut2 field" Url="html/F-TestStatements.Constants.Constants.dGoldenCut2.htm" />
+  <HelpKINode Title="Constants.dMathConst field" Url="html/F-TestStatements.Constants.Constants.dMathConst.htm" />
   <HelpKINode Title="Constants.Header field" Url="html/F-DynamicSample.Constants.Constants.Header.htm" />
   <HelpKINode Title="Constants.Header field" Url="html/F-TestStatements.Constants.Constants.Header.htm" />
   <HelpKINode Title="Constants.Header2 field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
   <HelpKINode Title="Constants.Header2 field" Url="html/F-TestStatements.Constants.Constants.Header2.htm" />
+  <HelpKINode Title="Constants.HelloWorld field" Url="html/F-TestStatements.Constants.Constants.HelloWorld.htm" />
+  <HelpKINode Title="Constants.iLowPrimes field" Url="html/F-TestStatements.Constants.Constants.iLowPrimes.htm" />
+  <HelpKINode Title="Constants.LoremIpsum field" Url="html/F-TestStatements.Constants.Constants.LoremIpsum.htm" />
+  <HelpKINode Title="ConstantsTests class" Url="html/AllMembers.T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
+  <HelpKINode Title="ConstantsTests class" Url="html/T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
+  <HelpKINode Title="ConstantsTests class">
+    <HelpKINode Title="about ConstantsTests class" Url="html/T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
+    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
+    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ConstantsTests.TestGoldenCut method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestGoldenCut.htm" />
+  <HelpKINode Title="ConstantsTests.TestHelloWorld method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestHelloWorld.htm" />
+  <HelpKINode Title="ConstantsTests.TestHelloWorld2 method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestHelloWorld2.htm" />
+  <HelpKINode Title="ConstantsTests.TestLoremIpsum method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestLoremIpsum.htm" />
+  <HelpKINode Title="ConstantsTests.TestLoremIpsum2 method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestLoremIpsum2.htm" />
+  <HelpKINode Title="ConstantsTests.TestRealConst method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestRealConst.htm" />
   <HelpKINode Title="ConstantTest method" Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.ConstantTest.htm" />
   <HelpKINode Title="ConstString field" Url="html/F-TestStatements.ClassesAndObjects.Members.ConstString.htm" />
   <HelpKINode Title="Contains enumeration member" Url="html/T-DynamicSample.Model.StringSearchOption.htm" />
@@ -405,6 +392,10 @@
   <HelpKINode Title="ctlAlarmClock.AlarmSet property" Url="html/P-ctlClockLib.ctlAlarmClock.AlarmSet.htm" />
   <HelpKINode Title="ctlAlarmClock.AlarmTime property" Url="html/P-ctlClockLib.ctlAlarmClock.AlarmTime.htm" />
   <HelpKINode Title="ctlAlarmClock.ctlAlarmClock constructor" Url="html/M-ctlClockLib.ctlAlarmClock.-ctor.htm" />
+  <HelpKINode Title="ctlAlarmClock.Dispose method" Url="html/M-ctlClockLib.ctlAlarmClock.Dispose.htm" />
+  <HelpKINode Title="ctlAlarmClock.Dispose method" Url="html/Overload-ctlClockLib.ctlAlarmClock.Dispose.htm" />
+  <HelpKINode Title="ctlAlarmClock.timer1_Tick method" Url="html/M-ctlClockLib.ctlAlarmClock.timer1_Tick.htm" />
+  <HelpKINode Title="ctlAlarmClock.timer1_Tick method" Url="html/Overload-ctlClockLib.ctlAlarmClock.timer1_Tick.htm" />
   <HelpKINode Title="ctlClock class" Url="html/AllMembers.T-ctlClockLib.ctlClock.htm" />
   <HelpKINode Title="ctlClock class" Url="html/T-ctlClockLib.ctlClock.htm" />
   <HelpKINode Title="ctlClock class">
@@ -418,6 +409,9 @@
   <HelpKINode Title="ctlClock.ClockBackColor property" Url="html/P-ctlClockLib.ctlClock.ClockBackColor.htm" />
   <HelpKINode Title="ctlClock.ClockForeColor property" Url="html/P-ctlClockLib.ctlClock.ClockForeColor.htm" />
   <HelpKINode Title="ctlClock.ctlClock constructor" Url="html/M-ctlClockLib.ctlClock.-ctor.htm" />
+  <HelpKINode Title="ctlClock.Dispose method" Url="html/M-ctlClockLib.ctlClock.Dispose.htm" />
+  <HelpKINode Title="ctlClock.Dispose method" Url="html/Overload-ctlClockLib.ctlClock.Dispose.htm" />
+  <HelpKINode Title="ctlClock.timer1_Tick method" Url="html/M-ctlClockLib.ctlClock.timer1_Tick.htm" />
   <HelpKINode Title="ctlClockLib namespace" Url="html/N-ctlClockLib.htm" />
   <HelpKINode Title="ctlClockLib.ctlAlarmClock class" Url="html/AllMembers.T-ctlClockLib.ctlAlarmClock.htm" />
   <HelpKINode Title="ctlClockLib.ctlAlarmClock class" Url="html/T-ctlClockLib.ctlAlarmClock.htm" />
@@ -425,7 +419,7 @@
   <HelpKINode Title="ctlClockLib.ctlClock class" Url="html/T-ctlClockLib.ctlClock.htm" />
   <HelpKINode Title="Culture property" Url="html/P-AsyncExampleWPF.Properties.Resources.Culture.htm" />
   <HelpKINode Title="Culture property" Url="html/P-TestClockApp.Properties.Resources.Culture.htm" />
-  <HelpKINode Title="Culture property" Url="html/P-TestStatements.Resource1.Culture.htm" />
+  <HelpKINode Title="Culture property" Url="html/P-TestStatements.Properties.Resource1.Culture.htm" />
   <HelpKINode Title="DataTestOpenArray method" Url="html/M-TestStatementTest.UnitTesting.UnitTest1.DataTestOpenArray.htm" />
   <HelpKINode Title="DataTestOpenArrayParams method" Url="html/M-TestStatementTest.UnitTesting.UnitTest1.DataTestOpenArrayParams.htm" />
   <HelpKINode Title="DataTestPropertyTest method" Url="html/M-TestStatementTest.UnitTesting.UnitTest1.DataTestPropertyTest.htm" />
@@ -441,6 +435,30 @@
   <HelpKINode Title="DataTests.SampleDataMethodTest method" Url="html/M-TestStatements.UnitTesting.Tests.DataTests.SampleDataMethodTest.htm" />
   <HelpKINode Title="DataTests.SampleDataPropertyTest method" Url="html/M-TestStatements.UnitTesting.Tests.DataTests.SampleDataPropertyTest.htm" />
   <HelpKINode Title="DataTests.SampleMethodTest method" Url="html/M-TestStatements.UnitTesting.Tests.DataTests.SampleMethodTest.htm" />
+  <HelpKINode Title="DebugDivideExample method" Url="html/M-TestStatements.Diagnostics.DebugExample.DebugDivideExample.htm" />
+  <HelpKINode Title="DebugDivideExampleTest method" Url="html/M-TestStatements.Diagnostics.Tests.DebugExampleTests.DebugDivideExampleTest.htm" />
+  <HelpKINode Title="DebugExample class" Url="html/AllMembers.T-TestStatements.Diagnostics.DebugExample.htm" />
+  <HelpKINode Title="DebugExample class" Url="html/T-TestStatements.Diagnostics.DebugExample.htm" />
+  <HelpKINode Title="DebugExample class">
+    <HelpKINode Title="about DebugExample class" Url="html/T-TestStatements.Diagnostics.DebugExample.htm" />
+    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Diagnostics.DebugExample.htm" />
+    <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Diagnostics.DebugExample.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DebugExample.DebugDivideExample method" Url="html/M-TestStatements.Diagnostics.DebugExample.DebugDivideExample.htm" />
+  <HelpKINode Title="DebugExample.DebugWriteExample method" Url="html/M-TestStatements.Diagnostics.DebugExample.DebugWriteExample.htm" />
+  <HelpKINode Title="DebugExample.Main method" Url="html/M-TestStatements.Diagnostics.DebugExample.Main.htm" />
+  <HelpKINode Title="DebugExample.NormalDivideExample method" Url="html/M-TestStatements.Diagnostics.DebugExample.NormalDivideExample.htm" />
+  <HelpKINode Title="DebugExampleTests class" Url="html/AllMembers.T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
+  <HelpKINode Title="DebugExampleTests class" Url="html/T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
+  <HelpKINode Title="DebugExampleTests class">
+    <HelpKINode Title="about DebugExampleTests class" Url="html/T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
+    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
+    <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DebugExampleTests.DebugDivideExampleTest method" Url="html/M-TestStatements.Diagnostics.Tests.DebugExampleTests.DebugDivideExampleTest.htm" />
+  <HelpKINode Title="DebugExampleTests.DebugWriteExampleTest method" Url="html/M-TestStatements.Diagnostics.Tests.DebugExampleTests.DebugWriteExampleTest.htm" />
+  <HelpKINode Title="DebugWriteExample method" Url="html/M-TestStatements.Diagnostics.DebugExample.DebugWriteExample.htm" />
+  <HelpKINode Title="DebugWriteExampleTest method" Url="html/M-TestStatements.Diagnostics.Tests.DebugExampleTests.DebugWriteExampleTest.htm" />
   <HelpKINode Title="Declarations class" Url="html/AllMembers.T-TestStatements.Anweisungen.Declarations.htm" />
   <HelpKINode Title="Declarations class" Url="html/T-TestStatements.Anweisungen.Declarations.htm" />
   <HelpKINode Title="Declarations class">
@@ -463,16 +481,8 @@
   <HelpKINode Title="Default property" Url="html/P-TestClockApp.Properties.Settings.Default.htm" />
   <HelpKINode Title="DelareVariables method" Url="html/M-TestStatements.CS_Concepts.TypeSystem.DelareVariables.htm" />
   <HelpKINode Title="DelegateTest method" Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.DelegateTest.htm" />
-  <HelpKINode Title="DeliveryTruck class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-  <HelpKINode Title="DeliveryTruck class" Url="html/T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-  <HelpKINode Title="DeliveryTruck class">
-    <HelpKINode Title="about DeliveryTruck class" Url="html/T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-    <HelpKINode Title="constructor" Url="html/Overload-TestStatementsNew.Anweisungen.DeliveryTruck.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-  </HelpKINode>
-  <HelpKINode Title="DeliveryTruck.DeliveryTruck constructor" Url="html/Overload-TestStatementsNew.Anweisungen.DeliveryTruck.-ctor.htm" />
+  <HelpKINode Title="dGoldenCut field" Url="html/F-TestStatements.Constants.Constants.dGoldenCut.htm" />
+  <HelpKINode Title="dGoldenCut2 field" Url="html/F-TestStatements.Constants.Constants.dGoldenCut2.htm" />
   <HelpKINode Title="DiceLibrary class" Url="html/AllMembers.T-TestStatements.Anweisungen.DiceLibrary.htm" />
   <HelpKINode Title="DiceLibrary class" Url="html/T-TestStatements.Anweisungen.DiceLibrary.htm" />
   <HelpKINode Title="DiceLibrary class">
@@ -554,6 +564,13 @@
   <HelpKINode Title="DinosaurExampleTests.ShowRemoveTest method" Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowRemoveTest.htm" />
   <HelpKINode Title="DinosaurExampleTests.ShowTrimExcessTest method" Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowTrimExcessTest.htm" />
   <HelpKINode Title="DisplayTimerProperties method" Url="html/M-TestStatements.Diagnostics.StopWatchExample.DisplayTimerProperties.htm" />
+  <HelpKINode Title="Dispose method" Url="html/M-ctlClockLib.ctlAlarmClock.Dispose.htm" />
+  <HelpKINode Title="Dispose method" Url="html/M-ctlClockLib.ctlClock.Dispose.htm" />
+  <HelpKINode Title="Dispose method" Url="html/M-TestClockApp.Form1.Dispose.htm" />
+  <HelpKINode Title="Dispose method" Url="html/Overload-ctlClockLib.ctlAlarmClock.Dispose.htm" />
+  <HelpKINode Title="Dispose method" Url="html/Overload-ctlClockLib.ctlClock.Dispose.htm" />
+  <HelpKINode Title="Dispose method" Url="html/Overload-TestClockApp.Form1.Dispose.htm" />
+  <HelpKINode Title="dMathConst field" Url="html/F-TestStatements.Constants.Constants.dMathConst.htm" />
   <HelpKINode Title="DoBreakStatement method" Url="html/M-TestStatements.Anweisungen.ProgramFlow.DoBreakStatement.htm" />
   <HelpKINode Title="DoBreakStatementTest method" Url="html/M-TestStatements.Anweisungen.Tests.ProgramFlowTests.DoBreakStatementTest.htm" />
   <HelpKINode Title="DoConstantDeclarations method" Url="html/M-TestStatements.Anweisungen.Declarations.DoConstantDeclarations.htm" />
@@ -759,7 +776,6 @@
   <HelpKINode Title="Extensions.AsDouble method" Url="html/M-TestStatements.Helper.Extensions.AsDouble.htm" />
   <HelpKINode Title="Extensions.AsFloat method" Url="html/M-TestStatements.Helper.Extensions.AsFloat.htm" />
   <HelpKINode Title="Extensions.AsInt method" Url="html/M-TestStatements.Helper.Extensions.AsInt.htm" />
-  <HelpKINode Title="fee property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.fee.htm" />
   <HelpKINode Title="FieldCount field" Url="html/F-TestStatements.ClassesAndObjects.Members.FieldCount.htm" />
   <HelpKINode Title="FileMode.Append field" Url="html/F-TestStatements.CS_Concepts.TypeSystem.FileMode.Append.htm" />
   <HelpKINode Title="FileMode.Create field" Url="html/F-TestStatements.CS_Concepts.TypeSystem.FileMode.Create.htm" />
@@ -779,6 +795,8 @@
     <HelpKINode Title="methods" Url="html/Methods.T-TestClockApp.Form1.htm" />
     <HelpKINode Title="properties" Url="html/Properties.T-TestClockApp.Form1.htm" />
   </HelpKINode>
+  <HelpKINode Title="Form1.Dispose method" Url="html/M-TestClockApp.Form1.Dispose.htm" />
+  <HelpKINode Title="Form1.Dispose method" Url="html/Overload-TestClockApp.Form1.Dispose.htm" />
   <HelpKINode Title="Form1.Form1 constructor" Url="html/M-TestClockApp.Form1.-ctor.htm" />
   <HelpKINode Title="Formating class" Url="html/AllMembers.T-TestStatements.DataTypes.Formating.htm" />
   <HelpKINode Title="Formating class" Url="html/T-TestStatements.DataTypes.Formating.htm" />
@@ -830,6 +848,7 @@
   <HelpKINode Title="Header2 field" Url="html/F-DynamicSample.Constants.Constants.Header2.htm" />
   <HelpKINode Title="Header2 field" Url="html/F-TestStatements.Constants.Constants.Header2.htm" />
   <HelpKINode Title="Height property" Url="html/P-TestStatements.Collection.Generic.Box.Height.htm" />
+  <HelpKINode Title="HelloWorld field" Url="html/F-TestStatements.Constants.Constants.HelloWorld.htm" />
   <HelpKINode Title="HelloWorld method" Url="html/M-Tutorials.HelloWorld.HelloWorldClass.HelloWorld.htm" />
   <HelpKINode Title="HelloWorldClass class" Url="html/AllMembers.T-Tutorials.HelloWorld.HelloWorldClass.htm" />
   <HelpKINode Title="HelloWorldClass class" Url="html/T-Tutorials.HelloWorld.HelloWorldClass.htm" />
@@ -863,6 +882,7 @@
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.ClassesAndObjects.IInterface3.htm" />
   </HelpKINode>
   <HelpKINode Title="IInterface3.Roll method" Url="html/M-TestStatements.ClassesAndObjects.IInterface3.Roll.htm" />
+  <HelpKINode Title="iLowPrimes field" Url="html/F-TestStatements.Constants.Constants.iLowPrimes.htm" />
   <HelpKINode Title="IndentationKomponent method" Url="html/M-TestStatements.DataTypes.Formating.IndentationKomponent.htm" />
   <HelpKINode Title="IndentationKomponentTest method" Url="html/M-TestStatements.DataTypes.Tests.FormatingTests.IndentationKomponentTest.htm" />
   <HelpKINode Title="IndexerTest method" Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.IndexerTest.htm" />
@@ -899,16 +919,6 @@
   </HelpKINode>
   <HelpKINode Title="Length property" Url="html/P-TestStatements.Anweisungen.Rectangle.Length.htm" />
   <HelpKINode Title="Length property" Url="html/P-TestStatements.Collection.Generic.Box.Length.htm" />
-  <HelpKINode Title="LightTruck class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-  <HelpKINode Title="LightTruck class" Url="html/T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-  <HelpKINode Title="LightTruck class">
-    <HelpKINode Title="about LightTruck class" Url="html/T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-    <HelpKINode Title="constructor" Url="html/Overload-TestStatementsNew.Anweisungen.LightTruck.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-  </HelpKINode>
-  <HelpKINode Title="LightTruck.LightTruck constructor" Url="html/Overload-TestStatementsNew.Anweisungen.LightTruck.-ctor.htm" />
   <HelpKINode Title="LinqLookup class" Url="html/AllMembers.T-TestStatements.Linq.LinqLookup.htm" />
   <HelpKINode Title="LinqLookup class" Url="html/T-TestStatements.Linq.LinqLookup.htm" />
   <HelpKINode Title="LinqLookup class">
@@ -983,7 +993,10 @@
   <HelpKINode Title="LoopStatementsTests.DoForEachStatementTest method" Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoForEachStatementTest.htm" />
   <HelpKINode Title="LoopStatementsTests.DoForStatementTest method" Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoForStatementTest.htm" />
   <HelpKINode Title="LoopStatementsTests.DoWhileStatementTest method" Url="html/M-TestStatements.Anweisungen.Tests.LoopStatementsTests.DoWhileStatementTest.htm" />
+  <HelpKINode Title="LoremIpsum field" Url="html/F-TestStatements.Constants.Constants.LoremIpsum.htm" />
   <HelpKINode Title="Main method" Url="html/M-DynamicSample.DynamicTestProgram.Main.htm" />
+  <HelpKINode Title="Main method" Url="html/M-TestStatements.Diagnostics.DebugExample.Main.htm" />
+  <HelpKINode Title="Main method" Url="html/M-TestStatements.Runtime.Loader.RTLoaderExample.Main.htm" />
   <HelpKINode Title="MainTest method" Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.MainTest.htm" />
   <HelpKINode Title="MainTest method" Url="html/M-TestStatements.DataTypes.EnumTest.MainTest.htm" />
   <HelpKINode Title="MainTestTest method" Url="html/M-TestStatements.DataTypes.Tests.EnumTestTests.MainTestTest.htm" />
@@ -1037,6 +1050,7 @@
   <HelpKINode Title="Move method" Url="html/M-TestStatements.ClassesAndObjects.IInterface2.Move.htm" />
   <HelpKINode Title="Name enumeration member" Url="html/T-DynamicSample.Model.pFields.htm" />
   <HelpKINode Title="Name field" Url="html/F-DynamicSample.Model.pFields.Name.htm" />
+  <HelpKINode Title="NormalDivideExample method" Url="html/M-TestStatements.Diagnostics.DebugExample.NormalDivideExample.htm" />
   <HelpKINode Title="OnChange property" Url="html/P-TestStatements.ClassesAndObjects.Members.OnChange.htm" />
   <HelpKINode Title="Open enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
   <HelpKINode Title="Open field" Url="html/F-TestStatements.CS_Concepts.TypeSystem.FileMode.Open.htm" />
@@ -1069,7 +1083,6 @@
   <HelpKINode Title="PartId property" Url="html/P-TestStatements.Collection.Generic.Part.PartId.htm" />
   <HelpKINode Title="PartName property" Url="html/P-TestStatements.Collection.Generic.Part.PartName.htm" />
   <HelpKINode Title="Pass method" Url="html/M-TestStatements.Anweisungen.DiceLibrary.Pass.htm" />
-  <HelpKINode Title="Persons property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Persons.htm" />
   <HelpKINode Title="pFields enumeration" Url="html/T-DynamicSample.Model.pFields.htm" />
   <HelpKINode Title="pFields.City field" Url="html/F-DynamicSample.Model.pFields.City.htm" />
   <HelpKINode Title="pFields.Country field" Url="html/F-DynamicSample.Model.pFields.Country.htm" />
@@ -1207,6 +1220,13 @@
     <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Reflection.ReflectionExample.INested.htm" />
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Reflection.ReflectionExample.INested.htm" />
   </HelpKINode>
+  <HelpKINode Title="ReflectionExample.NestedClass class" Url="html/AllMembers.T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
+  <HelpKINode Title="ReflectionExample.NestedClass class" Url="html/T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
+  <HelpKINode Title="ReflectionExample.NestedClass class">
+    <HelpKINode Title="about ReflectionExample.NestedClass class" Url="html/T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
+    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
+    <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
+  </HelpKINode>
   <HelpKINode Title="ReflectionExampleTests class" Url="html/AllMembers.T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm" />
   <HelpKINode Title="ReflectionExampleTests class" Url="html/T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm" />
   <HelpKINode Title="ReflectionExampleTests class">
@@ -1215,22 +1235,22 @@
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm" />
   </HelpKINode>
   <HelpKINode Title="ReflectionExampleTests.ExampleMainTest method" Url="html/M-TestStatements.Reflection.Tests.ReflectionExampleTests.ExampleMainTest.htm" />
-  <HelpKINode Title="Resource1 class" Url="html/AllMembers.T-TestStatements.Resource1.htm" />
-  <HelpKINode Title="Resource1 class" Url="html/T-TestStatements.Resource1.htm" />
+  <HelpKINode Title="Resource1 class" Url="html/AllMembers.T-TestStatements.Properties.Resource1.htm" />
+  <HelpKINode Title="Resource1 class" Url="html/T-TestStatements.Properties.Resource1.htm" />
   <HelpKINode Title="Resource1 class">
-    <HelpKINode Title="about Resource1 class" Url="html/T-TestStatements.Resource1.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Resource1.htm" />
-    <HelpKINode Title="constructor" Url="html/M-TestStatements.Resource1.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Resource1.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatements.Resource1.htm" />
+    <HelpKINode Title="about Resource1 class" Url="html/T-TestStatements.Properties.Resource1.htm" />
+    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Properties.Resource1.htm" />
+    <HelpKINode Title="constructor" Url="html/M-TestStatements.Properties.Resource1.-ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Properties.Resource1.htm" />
+    <HelpKINode Title="properties" Url="html/Properties.T-TestStatements.Properties.Resource1.htm" />
   </HelpKINode>
-  <HelpKINode Title="Resource1.Culture property" Url="html/P-TestStatements.Resource1.Culture.htm" />
-  <HelpKINode Title="Resource1.Resource1 constructor" Url="html/M-TestStatements.Resource1.-ctor.htm" />
-  <HelpKINode Title="Resource1.ResourceManager property" Url="html/P-TestStatements.Resource1.ResourceManager.htm" />
-  <HelpKINode Title="Resource1.Version property" Url="html/P-TestStatements.Resource1.Version.htm" />
+  <HelpKINode Title="Resource1.Culture property" Url="html/P-TestStatements.Properties.Resource1.Culture.htm" />
+  <HelpKINode Title="Resource1.Resource1 constructor" Url="html/M-TestStatements.Properties.Resource1.-ctor.htm" />
+  <HelpKINode Title="Resource1.ResourceManager property" Url="html/P-TestStatements.Properties.Resource1.ResourceManager.htm" />
+  <HelpKINode Title="Resource1.Version property" Url="html/P-TestStatements.Properties.Resource1.Version.htm" />
   <HelpKINode Title="ResourceManager property" Url="html/P-AsyncExampleWPF.Properties.Resources.ResourceManager.htm" />
   <HelpKINode Title="ResourceManager property" Url="html/P-TestClockApp.Properties.Resources.ResourceManager.htm" />
-  <HelpKINode Title="ResourceManager property" Url="html/P-TestStatements.Resource1.ResourceManager.htm" />
+  <HelpKINode Title="ResourceManager property" Url="html/P-TestStatements.Properties.Resource1.ResourceManager.htm" />
   <HelpKINode Title="Resources class" Url="html/AllMembers.T-AsyncExampleWPF.Properties.Resources.htm" />
   <HelpKINode Title="Resources class" Url="html/AllMembers.T-TestClockApp.Properties.Resources.htm" />
   <HelpKINode Title="Resources class" Url="html/T-AsyncExampleWPF.Properties.Resources.htm" />
@@ -1273,6 +1293,14 @@
   <HelpKINode Title="Roll method" Url="html/M-TestStatements.ClassesAndObjects.Class4.Roll.htm" />
   <HelpKINode Title="Roll method" Url="html/M-TestStatements.ClassesAndObjects.IInterface3.Roll.htm" />
   <HelpKINode Title="Roll2 method" Url="html/M-TestStatements.Anweisungen.DiceLibrary.Roll2.htm" />
+  <HelpKINode Title="RTLoaderExample class" Url="html/AllMembers.T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
+  <HelpKINode Title="RTLoaderExample class" Url="html/T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
+  <HelpKINode Title="RTLoaderExample class">
+    <HelpKINode Title="about RTLoaderExample class" Url="html/T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
+    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
+    <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RTLoaderExample.Main method" Url="html/M-TestStatements.Runtime.Loader.RTLoaderExample.Main.htm" />
   <HelpKINode Title="Run method" Url="html/M-TestStatements.ClassesAndObjects.InterfaceTest.Run.htm" />
   <HelpKINode Title="S structure" Url="html/AllMembers.T-TestStatements.Reflection.S.htm" />
   <HelpKINode Title="S structure" Url="html/T-TestStatements.Reflection.S.htm" />
@@ -1388,7 +1416,6 @@
   <HelpKINode Title="ShowSupplierContains method" Url="html/M-DynamicSample.DynamicTestProgram.ShowSupplierContains.htm" />
   <HelpKINode Title="ShowSupplierContainsTest method" Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.ShowSupplierContainsTest.htm" />
   <HelpKINode Title="ShowSupplierTest method" Url="html/M-DynamicSample.Tests.DynamicTestProgramTests.ShowSupplierTest.htm" />
-  <HelpKINode Title="ShowTollCollector method" Url="html/M-TestStatementsNew.Anweisungen.SwitchStatement3.ShowTollCollector.htm" />
   <HelpKINode Title="ShowTrimExcess method" Url="html/M-TestStatements.Collection.Generic.DinosaurExample.ShowTrimExcess.htm" />
   <HelpKINode Title="ShowTrimExcessTest method" Url="html/M-TestStatements.Collection.Generic.Tests.DinosaurExampleTests.ShowTrimExcessTest.htm" />
   <HelpKINode Title="ShowTryGetValue method" Url="html/M-TestStatements.Collection.Generic.DictionaryExample.ShowTryGetValue.htm" />
@@ -1544,14 +1571,6 @@
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Anweisungen.SwitchStatement2.htm" />
   </HelpKINode>
   <HelpKINode Title="SwitchStatement2.SwitchExample21 method" Url="html/M-TestStatements.Anweisungen.SwitchStatement2.SwitchExample21.htm" />
-  <HelpKINode Title="SwitchStatement3 class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-  <HelpKINode Title="SwitchStatement3 class" Url="html/T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-  <HelpKINode Title="SwitchStatement3 class">
-    <HelpKINode Title="about SwitchStatement3 class" Url="html/T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-  </HelpKINode>
-  <HelpKINode Title="SwitchStatement3.ShowTollCollector method" Url="html/M-TestStatementsNew.Anweisungen.SwitchStatement3.ShowTollCollector.htm" />
   <HelpKINode Title="System_Namespace class" Url="html/AllMembers.T-TestStatements.SystemNS.System_Namespace.htm" />
   <HelpKINode Title="System_Namespace class" Url="html/T-TestStatements.SystemNS.System_Namespace.htm" />
   <HelpKINode Title="System_Namespace class">
@@ -1585,16 +1604,6 @@
   <HelpKINode Title="TaskExampleTests.ExampleMain3Test method" Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain3Test.htm" />
   <HelpKINode Title="TaskExampleTests.ExampleMain4Test method" Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMain4Test.htm" />
   <HelpKINode Title="TaskExampleTests.ExampleMainTest method" Url="html/M-TestStatements.Threading.Tasks.Tests.TaskExampleTests.ExampleMainTest.htm" />
-  <HelpKINode Title="Taxi class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Taxi.htm" />
-  <HelpKINode Title="Taxi class" Url="html/T-TestStatementsNew.Anweisungen.Taxi.htm" />
-  <HelpKINode Title="Taxi class">
-    <HelpKINode Title="about Taxi class" Url="html/T-TestStatementsNew.Anweisungen.Taxi.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Taxi.htm" />
-    <HelpKINode Title="constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Taxi.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Taxi.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Taxi.htm" />
-  </HelpKINode>
-  <HelpKINode Title="Taxi.Taxi constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Taxi.-ctor.htm" />
   <HelpKINode Title="TestAddExisting method" Url="html/M-TestStatements.Collection.Generic.SortedListExample.TestAddExisting.htm" />
   <HelpKINode Title="TestAddExistingTest method" Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.TestAddExistingTest.htm" />
   <HelpKINode Title="TestClockApp namespace" Url="html/N-TestClockApp.htm" />
@@ -1607,6 +1616,7 @@
   <HelpKINode Title="TestClockApp.Properties.Resources class" Url="html/T-TestClockApp.Properties.Resources.htm" />
   <HelpKINode Title="TestClockApp.Properties.Settings class" Url="html/AllMembers.T-TestClockApp.Properties.Settings.htm" />
   <HelpKINode Title="TestClockApp.Properties.Settings class" Url="html/T-TestClockApp.Properties.Settings.htm" />
+  <HelpKINode Title="TestGoldenCut method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestGoldenCut.htm" />
   <HelpKINode Title="TestHashSet class" Url="html/AllMembers.T-TestStatements.Collection.Generic.TestHashSet.htm" />
   <HelpKINode Title="TestHashSet class" Url="html/T-TestStatements.Collection.Generic.TestHashSet.htm" />
   <HelpKINode Title="TestHashSet class">
@@ -1623,6 +1633,8 @@
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Collection.Generic.Tests.TestHashSetTests.htm" />
   </HelpKINode>
   <HelpKINode Title="TestHashSetTests.ShowHashSetTest method" Url="html/M-TestStatements.Collection.Generic.Tests.TestHashSetTests.ShowHashSetTest.htm" />
+  <HelpKINode Title="TestHelloWorld method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestHelloWorld.htm" />
+  <HelpKINode Title="TestHelloWorld2 method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestHelloWorld2.htm" />
   <HelpKINode Title="TestIndexr method" Url="html/M-TestStatements.Collection.Generic.SortedListExample.TestIndexr.htm" />
   <HelpKINode Title="TestIndexrTest method" Url="html/M-TestStatements.Collection.Generic.Tests.SortedListExampleTests.TestIndexrTest.htm" />
   <HelpKINode Title="TestList class" Url="html/AllMembers.T-TestStatements.Collection.Generic.TestList.htm" />
@@ -1651,6 +1663,8 @@
   <HelpKINode Title="TestListTests.ShowInsertTest method" Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowInsertTest.htm" />
   <HelpKINode Title="TestListTests.ShowRemove1Test method" Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowRemove1Test.htm" />
   <HelpKINode Title="TestListTests.ShowRemove2Test method" Url="html/M-TestStatements.Collection.Generic.Tests.TestListTests.ShowRemove2Test.htm" />
+  <HelpKINode Title="TestLoremIpsum method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestLoremIpsum.htm" />
+  <HelpKINode Title="TestLoremIpsum2 method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestLoremIpsum2.htm" />
   <HelpKINode Title="TestMethod1 method" Url="html/M-TestStatementTest.UnitTesting.UnitTest1.TestMethod1.htm" />
   <HelpKINode Title="TestNamespaces namespace" Url="html/N-TestNamespaces.htm" />
   <HelpKINode Title="TestNamespaces.Program class" Url="html/AllMembers.T-TestNamespaces.Program.htm" />
@@ -1658,6 +1672,7 @@
   <HelpKINode Title="TestNamespaces2 namespace" Url="html/N-TestNamespaces2.htm" />
   <HelpKINode Title="TestNamespaces2.Program2 class" Url="html/AllMembers.T-TestNamespaces2.Program2.htm" />
   <HelpKINode Title="TestNamespaces2.Program2 class" Url="html/T-TestNamespaces2.Program2.htm" />
+  <HelpKINode Title="TestRealConst method" Url="html/M-TestStatementTest.ConstantTests.ConstantsTests.TestRealConst.htm" />
   <HelpKINode Title="TestSetup method" Url="html/M-TestStatements.Anweisungen.Tests.AccountTests.TestSetup.htm" />
   <HelpKINode Title="TestStatements namespace" Url="html/N-TestStatements.htm" />
   <HelpKINode Title="TestStatements.Anweisungen namespace" Url="html/N-TestStatements.Anweisungen.htm" />
@@ -1811,8 +1826,13 @@
   <HelpKINode Title="TestStatements.DataTypes.Tests.FormatingTests class" Url="html/AllMembers.T-TestStatements.DataTypes.Tests.FormatingTests.htm" />
   <HelpKINode Title="TestStatements.DataTypes.Tests.FormatingTests class" Url="html/T-TestStatements.DataTypes.Tests.FormatingTests.htm" />
   <HelpKINode Title="TestStatements.Diagnostics namespace" Url="html/N-TestStatements.Diagnostics.htm" />
+  <HelpKINode Title="TestStatements.Diagnostics.DebugExample class" Url="html/AllMembers.T-TestStatements.Diagnostics.DebugExample.htm" />
+  <HelpKINode Title="TestStatements.Diagnostics.DebugExample class" Url="html/T-TestStatements.Diagnostics.DebugExample.htm" />
   <HelpKINode Title="TestStatements.Diagnostics.StopWatchExample class" Url="html/AllMembers.T-TestStatements.Diagnostics.StopWatchExample.htm" />
   <HelpKINode Title="TestStatements.Diagnostics.StopWatchExample class" Url="html/T-TestStatements.Diagnostics.StopWatchExample.htm" />
+  <HelpKINode Title="TestStatements.Diagnostics.Tests namespace" Url="html/N-TestStatements.Diagnostics.Tests.htm" />
+  <HelpKINode Title="TestStatements.Diagnostics.Tests.DebugExampleTests class" Url="html/AllMembers.T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
+  <HelpKINode Title="TestStatements.Diagnostics.Tests.DebugExampleTests class" Url="html/T-TestStatements.Diagnostics.Tests.DebugExampleTests.htm" />
   <HelpKINode Title="TestStatements.Helper namespace" Url="html/N-TestStatements.Helper.htm" />
   <HelpKINode Title="TestStatements.Helper.ExtensionExample class" Url="html/AllMembers.T-TestStatements.Helper.ExtensionExample.htm" />
   <HelpKINode Title="TestStatements.Helper.ExtensionExample class" Url="html/T-TestStatements.Helper.ExtensionExample.htm" />
@@ -1828,6 +1848,9 @@
   <HelpKINode Title="TestStatements.Linq.Tests.LinqLookupTests class" Url="html/T-TestStatements.Linq.Tests.LinqLookupTests.htm" />
   <HelpKINode Title="TestStatements.Program class" Url="html/AllMembers.T-TestStatements.Program.htm" />
   <HelpKINode Title="TestStatements.Program class" Url="html/T-TestStatements.Program.htm" />
+  <HelpKINode Title="TestStatements.Properties namespace" Url="html/N-TestStatements.Properties.htm" />
+  <HelpKINode Title="TestStatements.Properties.Resource1 class" Url="html/AllMembers.T-TestStatements.Properties.Resource1.htm" />
+  <HelpKINode Title="TestStatements.Properties.Resource1 class" Url="html/T-TestStatements.Properties.Resource1.htm" />
   <HelpKINode Title="TestStatements.Reflection namespace" Url="html/N-TestStatements.Reflection.htm" />
   <HelpKINode Title="TestStatements.Reflection.AssemblyExample class" Url="html/AllMembers.T-TestStatements.Reflection.AssemblyExample.htm" />
   <HelpKINode Title="TestStatements.Reflection.AssemblyExample class" Url="html/T-TestStatements.Reflection.AssemblyExample.htm" />
@@ -1835,6 +1858,8 @@
   <HelpKINode Title="TestStatements.Reflection.ReflectionExample class" Url="html/T-TestStatements.Reflection.ReflectionExample.htm" />
   <HelpKINode Title="TestStatements.Reflection.ReflectionExample.INested interface" Url="html/AllMembers.T-TestStatements.Reflection.ReflectionExample.INested.htm" />
   <HelpKINode Title="TestStatements.Reflection.ReflectionExample.INested interface" Url="html/T-TestStatements.Reflection.ReflectionExample.INested.htm" />
+  <HelpKINode Title="TestStatements.Reflection.ReflectionExample.NestedClass class" Url="html/AllMembers.T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
+  <HelpKINode Title="TestStatements.Reflection.ReflectionExample.NestedClass class" Url="html/T-TestStatements.Reflection.ReflectionExample.NestedClass.htm" />
   <HelpKINode Title="TestStatements.Reflection.S structure" Url="html/AllMembers.T-TestStatements.Reflection.S.htm" />
   <HelpKINode Title="TestStatements.Reflection.S structure" Url="html/T-TestStatements.Reflection.S.htm" />
   <HelpKINode Title="TestStatements.Reflection.Tests namespace" Url="html/N-TestStatements.Reflection.Tests.htm" />
@@ -1842,8 +1867,9 @@
   <HelpKINode Title="TestStatements.Reflection.Tests.AssemblyExampleTests class" Url="html/T-TestStatements.Reflection.Tests.AssemblyExampleTests.htm" />
   <HelpKINode Title="TestStatements.Reflection.Tests.ReflectionExampleTests class" Url="html/AllMembers.T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm" />
   <HelpKINode Title="TestStatements.Reflection.Tests.ReflectionExampleTests class" Url="html/T-TestStatements.Reflection.Tests.ReflectionExampleTests.htm" />
-  <HelpKINode Title="TestStatements.Resource1 class" Url="html/AllMembers.T-TestStatements.Resource1.htm" />
-  <HelpKINode Title="TestStatements.Resource1 class" Url="html/T-TestStatements.Resource1.htm" />
+  <HelpKINode Title="TestStatements.Runtime.Loader namespace" Url="html/N-TestStatements.Runtime.Loader.htm" />
+  <HelpKINode Title="TestStatements.Runtime.Loader.RTLoaderExample class" Url="html/AllMembers.T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
+  <HelpKINode Title="TestStatements.Runtime.Loader.RTLoaderExample class" Url="html/T-TestStatements.Runtime.Loader.RTLoaderExample.htm" />
   <HelpKINode Title="TestStatements.SystemNS namespace" Url="html/N-TestStatements.SystemNS.htm" />
   <HelpKINode Title="TestStatements.SystemNS.System_Namespace class" Url="html/AllMembers.T-TestStatements.SystemNS.System_Namespace.htm" />
   <HelpKINode Title="TestStatements.SystemNS.System_Namespace class" Url="html/T-TestStatements.SystemNS.System_Namespace.htm" />
@@ -1877,28 +1903,15 @@
   <HelpKINode Title="TestStatements.UnitTesting.Tests namespace" Url="html/N-TestStatements.UnitTesting.Tests.htm" />
   <HelpKINode Title="TestStatements.UnitTesting.Tests.DataTests class" Url="html/AllMembers.T-TestStatements.UnitTesting.Tests.DataTests.htm" />
   <HelpKINode Title="TestStatements.UnitTesting.Tests.DataTests class" Url="html/T-TestStatements.UnitTesting.Tests.DataTests.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen namespace" Url="html/N-TestStatementsNew.Anweisungen.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Bus class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Bus.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Bus class" Url="html/T-TestStatementsNew.Anweisungen.Bus.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Car class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Car.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Car class" Url="html/T-TestStatementsNew.Anweisungen.Car.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.DeliveryTruck class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.DeliveryTruck class" Url="html/T-TestStatementsNew.Anweisungen.DeliveryTruck.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.LightTruck class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.LightTruck class" Url="html/T-TestStatementsNew.Anweisungen.LightTruck.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.SwitchStatement3 class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.SwitchStatement3 class" Url="html/T-TestStatementsNew.Anweisungen.SwitchStatement3.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Taxi class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Taxi.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Taxi class" Url="html/T-TestStatementsNew.Anweisungen.Taxi.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.TollCalculator class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.TollCalculator class" Url="html/T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Truck class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Truck.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Truck class" Url="html/T-TestStatementsNew.Anweisungen.Truck.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Vehicle class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-  <HelpKINode Title="TestStatementsNew.Anweisungen.Vehicle class" Url="html/T-TestStatementsNew.Anweisungen.Vehicle.htm" />
+  <HelpKINode Title="TestStatementTest.ConstantTests namespace" Url="html/N-TestStatementTest.ConstantTests.htm" />
+  <HelpKINode Title="TestStatementTest.ConstantTests.ConstantsTests class" Url="html/AllMembers.T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
+  <HelpKINode Title="TestStatementTest.ConstantTests.ConstantsTests class" Url="html/T-TestStatementTest.ConstantTests.ConstantsTests.htm" />
   <HelpKINode Title="TestStatementTest.UnitTesting namespace" Url="html/N-TestStatementTest.UnitTesting.htm" />
   <HelpKINode Title="TestStatementTest.UnitTesting.UnitTest1 class" Url="html/AllMembers.T-TestStatementTest.UnitTesting.UnitTest1.htm" />
   <HelpKINode Title="TestStatementTest.UnitTesting.UnitTest1 class" Url="html/T-TestStatementTest.UnitTesting.UnitTest1.htm" />
+  <HelpKINode Title="timer1_Tick method" Url="html/M-ctlClockLib.ctlAlarmClock.timer1_Tick.htm" />
+  <HelpKINode Title="timer1_Tick method" Url="html/M-ctlClockLib.ctlClock.timer1_Tick.htm" />
+  <HelpKINode Title="timer1_Tick method" Url="html/Overload-ctlClockLib.ctlAlarmClock.timer1_Tick.htm" />
   <HelpKINode Title="Toast class" Url="html/AllMembers.T-TestStatements.Threading.Tasks.Toast.htm" />
   <HelpKINode Title="Toast class" Url="html/T-TestStatements.Threading.Tasks.Toast.htm" />
   <HelpKINode Title="Toast class">
@@ -1906,14 +1919,6 @@
     <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatements.Threading.Tasks.Toast.htm" />
     <HelpKINode Title="methods" Url="html/Methods.T-TestStatements.Threading.Tasks.Toast.htm" />
   </HelpKINode>
-  <HelpKINode Title="TollCalculator class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-  <HelpKINode Title="TollCalculator class" Url="html/T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-  <HelpKINode Title="TollCalculator class">
-    <HelpKINode Title="about TollCalculator class" Url="html/T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.TollCalculator.htm" />
-  </HelpKINode>
-  <HelpKINode Title="TollCalculator.CalculateToll method" Url="html/M-TestStatementsNew.Anweisungen.TollCalculator.CalculateToll.htm" />
   <HelpKINode Title="ToString method" Url="html/M-TestStatements.ClassesAndObjects.Class1.ToString.htm" />
   <HelpKINode Title="ToString method" Url="html/M-TestStatements.ClassesAndObjects.Class2.ToString.htm" />
   <HelpKINode Title="ToString method" Url="html/M-TestStatements.ClassesAndObjects.Class3.ToString.htm" />
@@ -1922,16 +1927,6 @@
   <HelpKINode Title="ToString method" Url="html/M-TestStatements.Collection.Generic.Part.ToString.htm" />
   <HelpKINode Title="ToString method" Url="html/M-TestStatements.CS_Concepts.TypeSystem.Coords.ToString.htm" />
   <HelpKINode Title="TrackingNumber field" Url="html/F-TestStatements.Linq.Package.TrackingNumber.htm" />
-  <HelpKINode Title="Truck class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Truck.htm" />
-  <HelpKINode Title="Truck class" Url="html/T-TestStatementsNew.Anweisungen.Truck.htm" />
-  <HelpKINode Title="Truck class">
-    <HelpKINode Title="about Truck class" Url="html/T-TestStatementsNew.Anweisungen.Truck.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Truck.htm" />
-    <HelpKINode Title="constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Truck.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Truck.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Truck.htm" />
-  </HelpKINode>
-  <HelpKINode Title="Truck.Truck constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Truck.-ctor.htm" />
   <HelpKINode Title="Truncate enumeration member" Url="html/T-TestStatements.CS_Concepts.TypeSystem.FileMode.htm" />
   <HelpKINode Title="Truncate field" Url="html/F-TestStatements.CS_Concepts.TypeSystem.FileMode.Truncate.htm" />
   <HelpKINode Title="TryAddExisting method" Url="html/M-TestStatements.Collection.Generic.DictionaryExample.TryAddExisting.htm" />
@@ -2018,25 +2013,8 @@
   <HelpKINode Title="ValueTypes3 method" Url="html/M-TestStatements.CS_Concepts.TypeSystem.ValueTypes3.htm" />
   <HelpKINode Title="ValueTypes4 method" Url="html/M-TestStatements.CS_Concepts.TypeSystem.ValueTypes4.htm" />
   <HelpKINode Title="VariableTest method" Url="html/M-TestStatements.ClassesAndObjects.Tests.MembersTests.VariableTest.htm" />
-  <HelpKINode Title="Vehicle class" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-  <HelpKINode Title="Vehicle class" Url="html/T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-  <HelpKINode Title="Vehicle class">
-    <HelpKINode Title="about Vehicle class" Url="html/T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-    <HelpKINode Title="all members" Url="html/AllMembers.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-    <HelpKINode Title="constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Vehicle.-ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-    <HelpKINode Title="properties" Url="html/Properties.T-TestStatementsNew.Anweisungen.Vehicle.htm" />
-  </HelpKINode>
-  <HelpKINode Title="Vehicle.Capacity property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Capacity.htm" />
-  <HelpKINode Title="Vehicle.fee property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.fee.htm" />
-  <HelpKINode Title="Vehicle.Persons property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Persons.htm" />
-  <HelpKINode Title="Vehicle.Vehicle constructor" Url="html/Overload-TestStatementsNew.Anweisungen.Vehicle.-ctor.htm" />
-  <HelpKINode Title="Vehicle.Weight property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Weight.htm" />
-  <HelpKINode Title="Vehicle.WeightClass property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.WeightClass.htm" />
-  <HelpKINode Title="Version property" Url="html/P-TestStatements.Resource1.Version.htm" />
+  <HelpKINode Title="Version property" Url="html/P-TestStatements.Properties.Resource1.Version.htm" />
   <HelpKINode Title="Weight field" Url="html/F-TestStatements.Linq.Package.Weight.htm" />
-  <HelpKINode Title="Weight property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.Weight.htm" />
-  <HelpKINode Title="WeightClass property" Url="html/P-TestStatementsNew.Anweisungen.Vehicle.WeightClass.htm" />
   <HelpKINode Title="Width property" Url="html/P-TestStatements.Anweisungen.Rectangle.Width.htm" />
   <HelpKINode Title="Width property" Url="html/P-TestStatements.Collection.Generic.Box.Width.htm" />
   <HelpKINode Title="Withdraw method" Url="html/M-TestStatements.Anweisungen.Account.Withdraw.htm" />

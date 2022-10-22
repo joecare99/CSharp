@@ -17,6 +17,7 @@ using System;
 using System.Globalization;
 namespace JCAMS.Core
 {
+    /// <summary>static Class Utilities for DotNet</summary>
     public static class SDotNetUtil
     {
 

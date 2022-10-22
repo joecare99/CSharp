@@ -1,0 +1,1677 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>TestStatements</name>
+  </assembly>
+  <members>
+    <member name="T:TestStatements.Anweisungen.Checking">
+      <summary>
+   Class Checking.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Checking.CheckedUnchecked(System.String[])">
+      <summary>
+   Do a checked and unchecked numeric calculation.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.ConditionalStatement">
+      <summary>
+   Example class for if statement
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ConditionalStatement.DoIfStatement(System.String[])">
+      <summary>
+   Does an if statement.
+   branches if the length of <see cref="args" /> is 0
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ConditionalStatement.DoIfStatement2(System.String[])">
+      <summary>
+   Does two nested if statements.
+   <br /> the first if statement checks if there are more than 0 arguments in <see cref="args" />.<br />
+   the second if statment checks if there are more than 1 arguments in <see cref="args" /></summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ConditionalStatement.DoIfStatement3">
+      <summary>
+   Does several if statements.
+   </summary>
+      <remarks>if without statements, just a semicolon.<br />
+   if with just empty curly brackets.<br />
+   if calling <see cref="M:TestStatements.Anweisungen.ConditionalStatement.DoIt" /> directly.<br />
+   if with curly brackets calling <see cref="M:TestStatements.Anweisungen.ConditionalStatement.DoIt" /> inside.<br />
+   nested if calling <see cref="M:TestStatements.Anweisungen.ConditionalStatement.DoIt" /> on else of first if<br />
+   curly brackets inside if calling <see cref="M:TestStatements.Anweisungen.ConditionalStatement.DoIt" /> directly with empty else.</remarks>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ConditionalStatement.DoSwitchStatement(System.String[])">
+      <summary>
+   Does the switch statement.<br />"simple" switch with <see cref="T:System.Int32">Int32</see> number with the number of argumemts in <see cref="args" /></summary>
+      <param name="args">The arguments.</param>
+      <remarks>Prints "No arguments" if there are no arguments in args<br />
+   Prints "One argument" if there is one argument in args.<br />
+   Prints "2 arguments" if there are two arguments <br />
+   Prints "3 arguments" if there are three arguments <br />
+   ...<br />
+   Prints "n arguments" if there are n arguments <br /></remarks>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ConditionalStatement.DoSwitchStatement1">
+      <summary>
+   Does some special switch statement.
+   </summary>
+      <remarks>
+        <list type="number">
+          <item>an empty switch-block</item>
+          <item>switch block with only one case</item>
+          <item>switch block with two cases executing the same statement</item>
+          <item>switch bloch with 4 cases and different break-settings</item>
+        </list>
+      </remarks>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Declarations">
+      <summary>
+   Class Declarations.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Declarations.DoVarDeclarations(System.String[])">
+      <summary>
+   Does variable declarations.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Declarations.DoConstantDeclarations(System.String[])">
+      <summary>
+   Does constant declarations.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.ExceptionHandling">
+      <summary>
+   Class ExceptionHandling.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ExceptionHandling.DoTryCatch(System.String[])">
+      <summary>
+   Does the try catch.
+   </summary>
+      <param name="args">The arguments.</param>
+      <exception cref="T:System.InvalidOperationException">Two numbers required</exception>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Expressions">
+      <summary>
+   Class Expressions.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Expressions.DoExpressions(System.String[])">
+      <summary>
+   Does expression statements.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Account">
+      <summary>
+   Class Account.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Locking">
+      <summary>
+   Test the lock statement
+   </summary>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Account.Balance">
+      <summary>
+   Gets the balance.
+   </summary>
+      <value>The balance.</value>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Account.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.Anweisungen.Account" /> class.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Account.Withdraw(System.Decimal)">
+      <summary>
+   Withdraws the specified amount.
+   </summary>
+      <param name="amount">The amount.</param>
+      <exception cref="T:System.Exception">Insufficient funds</exception>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Locking.DoLockTest(System.String[])">
+      <summary>
+   Does the lock test.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.LoopStatements">
+      <summary>
+   Class LoopStatements.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoWhileStatement(System.String[])">
+      <summary>
+   Does the while statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoDoStatement(System.String[])">
+      <summary>
+   Does the do statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoDoStatement2(System.String[])">
+      <summary>
+   Does the do statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoDoStatement3(System.String[])">
+      <summary>
+   Does the do statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoDoDoStatement(System.String[])">
+      <summary>
+   Does the do statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoDoDoStatement2(System.String[])">
+      <summary>
+   Does the do statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoDoWhileNestedStatement2(System.String[])">
+      <summary>
+   Does the do statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoForStatement(System.String[])">
+      <summary>
+   Does for statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoForStatement2(System.String[])">
+      <summary>
+   Does for statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.LoopStatements.DoForEachStatement(System.String[])">
+      <summary>
+   Does for each statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.ProgramFlow">
+      <summary>
+   Class ProgramFlow.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ProgramFlow.DoBreakStatement(System.String[])">
+      <summary>
+   Does the break statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ProgramFlow.DoContinueStatement(System.String[])">
+      <summary>
+   Does the continues statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ProgramFlow.DoGoToStatement(System.String[])">
+      <summary>
+   Does the goto statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.RandomExample">
+      <summary>
+   Class RandomExample.
+   </summary>
+    </member>
+    <member name="F:TestStatements.Anweisungen.RandomExample.rand">
+      <summary>
+   Instantiate random number generator using system-supplied value as seed.
+   The rand
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.RandomExample.ExampleMain1">
+      <summary>
+   Examples the main1.
+   </summary>
+      <remarks>The example displays output like the following:<br />
+   Five random byte values:<br />
+   194  185  239   54  116<br />
+   Five random integer values:<br />
+   507,353,531  1,509,532,693  2,125,074,958  1,409,512,757    652,767,128<br />
+   Five random integers between 0 and 100:<br />
+   16      78      94      79      52<br />
+   Five random integers between 50 and 100:<br />
+   56      66      96      60      65<br />
+   Five Doubles.<br />
+   0.943   0.108   0.744   0.563   0.415<br />
+   Five Doubles between 0 and 5.<br />
+   2.934   3.130   0.292   1.432   4.369</remarks>
+    </member>
+    <member name="M:TestStatements.Anweisungen.RandomExample.ExampleMain2">
+      <summary>
+   Examples the main2.
+   </summary>
+      <remarks>The example displays the following output e.G:<br />
+   Suggested pet name of the day:<br />
+   For a male:     Koani<br />
+   For a female:   Maggie</remarks>
+    </member>
+    <member name="M:TestStatements.Anweisungen.RandomExample.ExampleMain3">
+      <summary>
+   Examples the main3.
+   </summary>
+      <remarks>The example displays output like the following:<br />
+   First Series:<br />
+   97  129  149   54   22  208  120  105   68  177<br />
+   113  214   30  172   74  218  116  230   89   18<br />
+   12  112  130  105  116  180  190  200  187  120<br />
+   7  198  233  158   58   51   50  170   98   23<br />
+   21    1  113   74  146  245   34  255   96   24<br />
+   232  255   23    9  167  240  255   44  194   98<br />
+   18  175  173  204  169  171  236  127  114   23<br />
+   167  202  132   65  253   11  254   56  214  127<br />
+   145  191  104  163  143    7  174  224  247   73<br />
+   52    6  231  255    5  101   83  165  160  231<br /><br />
+   Second Series:<br />
+   97  129  149   54   22  208  120  105   68  177<br />
+   113  214   30  172   74  218  116  230   89   18<br />
+   12  112  130  105  116  180  190  200  187  120<br />
+   7  198  233  158   58   51   50  170   98   23<br />
+   21    1  113   74  146  245   34  255   96   24<br />
+   232  255   23    9  167  240  255   44  194   98<br />
+   18  175  173  204  169  171  236  127  114   23<br />
+   167  202  132   65  253   11  254   56  214  127<br />
+   145  191  104  163  143    7  174  224  247   73<br />
+   52    6  231  255    5  101   83  165  160  231</remarks>
+    </member>
+    <member name="T:TestStatements.Anweisungen.ReturnStatement">
+      <summary>
+   Class ReturnStatement.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.ReturnStatement.DoReturnStatement(System.String[])">
+      <summary>
+   Does the return statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.SwitchStatement">
+      <summary>
+   Class SwitchStatement.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.SwitchStatement.Color">
+      <summary>
+   The enum Color
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.DiceLibrary">
+      <summary>
+   Class DiceLibrary.
+   </summary>
+    </member>
+    <member name="F:TestStatements.Anweisungen.SwitchStatement.GetNow">
+      <summary>
+   The get now
+   </summary>
+    </member>
+    <member name="F:TestStatements.Anweisungen.SwitchStatement.random">
+      <summary>
+   The random
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample1">
+      <summary>
+   Switches the example1.
+   </summary>
+    </member>
+    <member name="F:TestStatements.Anweisungen.SwitchStatement.Color.Red">
+      <summary>
+   The red
+   </summary>
+    </member>
+    <member name="F:TestStatements.Anweisungen.SwitchStatement.Color.Green">
+      <summary>
+   The green
+   </summary>
+    </member>
+    <member name="F:TestStatements.Anweisungen.SwitchStatement.Color.Blue">
+      <summary>
+   The blue
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample2">
+      <summary>
+   Switches the example2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample3">
+      <summary>
+   Switches the example3.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample4">
+      <summary>
+   Switches the example4.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample5">
+      <summary>
+   Switches the example5.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample6">
+      <summary>
+   Switches the example6.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement.SwitchExample7">
+      <summary>
+   Switches the example7.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.DiceLibrary.Roll">
+      <summary>
+   Rolls this instance.
+   </summary>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="M:TestStatements.Anweisungen.DiceLibrary.Roll2">
+      <summary>
+   Roll2s this instance.
+   </summary>
+      <returns>List&lt;System.Object&gt;.</returns>
+    </member>
+    <member name="M:TestStatements.Anweisungen.DiceLibrary.DiceSum(IEnumerable{System.Object})">
+      <summary>
+   Dices the sum.
+   </summary>
+      <param name="values">The values.</param>
+      <returns>System.Int32.</returns>
+      <exception cref="T:System.InvalidOperationException">unknown item type</exception>
+    </member>
+    <member name="M:TestStatements.Anweisungen.DiceLibrary.Pass">
+      <summary>
+   Passes this instance.
+   </summary>
+      <returns>System.Object.</returns>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Shape">
+      <summary>
+   Class Shape.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.Rectangle">
+      <summary>
+   Class Rectangle.
+   Implements the <see cref="T:TestStatements.Anweisungen.Shape" /></summary>
+      <seealso cref="T:TestStatements.Anweisungen.Shape" />
+    </member>
+    <member name="T:TestStatements.Anweisungen.Square">
+      <summary>
+   Class Square.
+   Implements the <see cref="T:TestStatements.Anweisungen.Rectangle" /></summary>
+      <seealso cref="T:TestStatements.Anweisungen.Rectangle" />
+    </member>
+    <member name="T:TestStatements.Anweisungen.Circle">
+      <summary>
+   Class Circle.
+   Implements the <see cref="T:TestStatements.Anweisungen.Shape" /></summary>
+      <seealso cref="T:TestStatements.Anweisungen.Shape" />
+    </member>
+    <member name="T:TestStatements.Anweisungen.SwitchStatement2">
+      <summary>
+   Class SwitchStatement2.
+   </summary>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Shape.Area">
+      <summary>
+   Gets the area.
+   </summary>
+      <value>The area.</value>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Shape.Circumference">
+      <summary>
+   Gets the circumference.
+   </summary>
+      <value>The circumference.</value>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Rectangle.#ctor(System.Double,System.Double)">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.Anweisungen.Rectangle" /> class.
+   </summary>
+      <param name="length">The length.</param>
+      <param name="width">The width.</param>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Rectangle.Length">
+      <summary>
+   Gets or sets the length.
+   </summary>
+      <value>The length.</value>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Rectangle.Width">
+      <summary>
+   Gets or sets the width.
+   </summary>
+      <value>The width.</value>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Rectangle.Area">
+      <summary>
+   Gets the area.
+   </summary>
+      <value>The area.</value>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Rectangle.Circumference">
+      <summary>
+   Gets the circumference.
+   </summary>
+      <value>The circumference.</value>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Square.#ctor(System.Double)">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.Anweisungen.Square" /> class.
+   </summary>
+      <param name="side">The side.</param>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Square.Side">
+      <summary>
+   Gets or sets the side.
+   </summary>
+      <value>The side.</value>
+    </member>
+    <member name="M:TestStatements.Anweisungen.Circle.#ctor(System.Double)">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.Anweisungen.Circle" /> class.
+   </summary>
+      <param name="radius">The radius.</param>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Circle.Radius">
+      <summary>
+   Gets or sets the radius.
+   </summary>
+      <value>The radius.</value>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Circle.Circumference">
+      <summary>
+   Gets the circumference.
+   </summary>
+      <value>The circumference.</value>
+    </member>
+    <member name="P:TestStatements.Anweisungen.Circle.Area">
+      <summary>
+   Gets the area.
+   </summary>
+      <value>The area.</value>
+    </member>
+    <member name="M:TestStatements.Anweisungen.SwitchStatement2.SwitchExample21">
+      <summary>
+   Switches the example21.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Anweisungen.UsingStatement">
+      <summary>
+   Class UsingStatement.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.UsingStatement.DoUsingStatement(System.String[])">
+      <summary>
+   Does the using statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Anweisungen.YieldStatement">
+      <summary>
+   Class YieldStatement.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Anweisungen.YieldStatement.DoYieldStatement(System.String[])">
+      <summary>
+   Does the yield statement.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.IInterface1">
+      <summary>
+   Interface IInterface1
+   </summary>
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.IInterface2">
+      <summary>
+   Interface IInterface2
+   </summary>
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.IInterface3">
+      <summary>
+   Interface IInterface3
+   Extends the <see cref="T:TestStatements.ClassesAndObjects.IInterface2" /></summary>
+      <seealso cref="T:TestStatements.ClassesAndObjects.IInterface2" />
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Class1">
+      <summary>
+   Class Class1.
+   </summary>
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Class2">
+      <summary>
+   Class Class2.
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.Class1" />
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.IInterface1" /></summary>
+      <seealso cref="T:TestStatements.ClassesAndObjects.Class1" />
+      <seealso cref="T:TestStatements.ClassesAndObjects.IInterface1" />
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Class3">
+      <summary>
+   Class Class3.
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.Class1" />
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.IInterface2" /></summary>
+      <seealso cref="T:TestStatements.ClassesAndObjects.Class1" />
+      <seealso cref="T:TestStatements.ClassesAndObjects.IInterface2" />
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Class4">
+      <summary>
+   Class Class4.
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.Class1" />
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.IInterface3" /></summary>
+      <seealso cref="T:TestStatements.ClassesAndObjects.Class1" />
+      <seealso cref="T:TestStatements.ClassesAndObjects.IInterface3" />
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Class5">
+      <summary>
+   Class Class5.
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.Class4" />
+   Implements the <see cref="T:TestStatements.ClassesAndObjects.IInterface1" /></summary>
+      <seealso cref="T:TestStatements.ClassesAndObjects.Class4" />
+      <seealso cref="T:TestStatements.ClassesAndObjects.IInterface1" />
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.InterfaceTest">
+      <summary>
+   Class InterfaceTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.IInterface1.Quack">
+      <summary>
+   Quacks this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.IInterface2.Move">
+      <summary>
+   Moves this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.IInterface3.Roll">
+      <summary>
+   Rolls this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class1.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class2.Quack">
+      <summary>
+   Quacks this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class2.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class3.Move">
+      <summary>
+   Moves this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class3.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class4.Move">
+      <summary>
+   Moves this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class4.Roll">
+      <summary>
+   Rolls this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class4.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class5.Quack">
+      <summary>
+   Quacks this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Class5.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.InterfaceTest.Run">
+      <summary>
+   Runs this instance.
+   </summary>
+    </member>
+    <member name="T:TestStatements.ClassesAndObjects.Members">
+      <summary>
+   Class Members.
+   </summary>
+    </member>
+    <member name="F:TestStatements.ClassesAndObjects.Members.ConstString">
+      <summary>
+   The constant string
+   </summary>
+    </member>
+    <member name="F:TestStatements.ClassesAndObjects.Members.FieldCount">
+      <summary>
+   The field count
+   </summary>
+    </member>
+    <member name="P:TestStatements.ClassesAndObjects.Members.OnChange">
+      <summary>
+   Gets or sets the on change.
+   </summary>
+      <value>The on change.</value>
+    </member>
+    <member name="M:TestStatements.ClassesAndObjects.Members.aMethod">
+      <summary>
+   as the method.
+   </summary>
+    </member>
+    <member name="P:TestStatements.ClassesAndObjects.Members.aProperty">
+      <summary>
+   Gets or sets a property.
+   </summary>
+      <value>a property.</value>
+    </member>
+    <member name="P:TestStatements.ClassesAndObjects.Members.Item(System.Int32)">
+      <summary>
+   Gets or sets the <see cref="T:System.Int32" /> with the specified i.
+   </summary>
+      <param name="i">The i.</param>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.ComparerExample">
+      <summary>
+   Class ComparerExample.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.BoxLengthFirst">
+      <summary>
+   Class BoxLengthFirst.
+   Implements the <see cref="T:System.Collections.Generic.Comparer`1" /></summary>
+      <seealso cref="T:System.Collections.Generic.Comparer`1" />
+    </member>
+    <member name="T:TestStatements.Collection.Generic.BoxComp">
+      <summary>
+   Class BoxComp.
+   Implements the <see cref="T:System.Collections.Generic.IComparer`1" /></summary>
+      <seealso cref="T:System.Collections.Generic.IComparer`1" />
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Box">
+      <summary>
+   Class Box.
+   Implements the <see cref="T:System.IComparable`1" /></summary>
+      <seealso cref="T:System.IComparable`1" />
+    </member>
+    <member name="M:TestStatements.Collection.Generic.ComparerExample.ComparerExampleMain(System.String[])">
+      <summary>
+   Main procedure of Comparer-example.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.ComparerExample.ShowSortWithLengthFirstComparer">
+      <summary>
+   Shows the sort with length first comparer.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.ComparerExample.ShowSortwithDefaultComparer">
+      <summary>
+   Shows the sortwith default comparer.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.ComparerExample.ShowLengthFirstComparer">
+      <summary>
+   Shows the length first comparer.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.BoxLengthFirst.Compare(Box,Box)">
+      <summary>
+   Vergleicht beim Überschreiben in einer abgeleiteten Klasse zwei Objekte gleichen Typs und gibt über den zurückgegebenen Wert an, ob das eine Objekt kleiner, größer oder gleich dem anderen Objekt ist.
+   </summary>
+      <param name="x">Das erste zu vergleichende Objekt.</param>
+      <param name="y">Das zweite zu vergleichende Objekt.</param>
+      <returns>Eine ganze Zahl mit Vorzeichen, die die relativen Werte von <paramref name="x" /> und <paramref name="y" /> angibt, wie in der folgenden Tabelle veranschaulicht.
+   Wert
+   Bedeutung
+   Kleiner als 0 (null)
+   <paramref name="x" /> ist kleiner als <paramref name="y" />.
+   Zero
+   <paramref name="x" /> ist gleich <paramref name="y" />.
+   Größer als 0 (null)
+   <paramref name="x" /> ist größer als <paramref name="y" />.</returns>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.BoxComp.Compare(Box,Box)">
+      <summary>
+   Vergleicht zwei Objekte und gibt einen Wert zurück, der angibt, ob ein Wert niedriger, gleich oder größer als der andere Wert ist.
+   </summary>
+      <param name="x">Das erste zu vergleichende Objekt.</param>
+      <param name="y">Das zweite zu vergleichende Objekt.</param>
+      <returns>Eine ganze Zahl mit Vorzeichen, die die relativen Werte von <paramref name="x" /> und <paramref name="y" /> angibt, wie in der folgenden Tabelle veranschaulicht.
+   Wert   Bedeutung   Kleiner als 0 (null)  <paramref name="x" /> ist kleiner als <paramref name="y" />.   0 (null)  <paramref name="x" /> ist gleich <paramref name="y" />.   Größer als 0 (null)  <paramref name="x" /> ist größer als <paramref name="y" />.</returns>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Box.#ctor(System.Int32,System.Int32,System.Int32)">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.Collection.Generic.Box" /> class.
+   </summary>
+      <param name="h">The h.</param>
+      <param name="l">The l.</param>
+      <param name="w">The w.</param>
+    </member>
+    <member name="P:TestStatements.Collection.Generic.Box.Height">
+      <summary>
+   Gets the height.
+   </summary>
+      <value>The height.</value>
+    </member>
+    <member name="P:TestStatements.Collection.Generic.Box.Length">
+      <summary>
+   Gets the length.
+   </summary>
+      <value>The length.</value>
+    </member>
+    <member name="P:TestStatements.Collection.Generic.Box.Width">
+      <summary>
+   Gets the width.
+   </summary>
+      <value>The width.</value>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Box.CompareTo(Box)">
+      <summary>
+   Vergleicht die aktuelle Instanz mit einem anderen Objekt vom selben Typ und gibt eine ganze Zahl zurück, die angibt, ob die aktuelle Instanz in der Sortierreihenfolge vor oder nach dem anderen Objekt oder an derselben Position auftritt.
+   </summary>
+      <param name="other">Ein Objekt, das mit dieser Instanz verglichen werden soll.</param>
+      <returns>Ein Wert, der die relative Reihenfolge der verglichenen Objekte angibt. Der Rückgabewert hat folgende Bedeutung:
+   Wert   Bedeutung   Kleiner als 0 (null)   Diese Instanz steht in der Sortierreihenfolge vor <paramref name="other" />.   0 (null)   Diese Instanz tritt in der Sortierreihenfolge an der gleichen Position wie <paramref name="other" /> auf.   Größer als 0 (null)   Diese Instanz folgt in der Sortierreihenfolge auf <paramref name="other" />.</returns>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.DictionaryExample">
+      <summary>
+   Class DictionaryExample.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.DictionaryExampleMain">
+      <summary>
+   The main procedure of DictionaryExample.
+   </summary>
+      <remarks>The main-procedure calls all examples.</remarks>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.TryAddExisting">
+      <summary>
+   Tries to add an existing value to the dictionary.
+   </summary>
+      <remarks>Produces an output like:<br />
+   An element with Key = "txt" already exists.</remarks>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowIndex1">
+      <summary>
+   Shows the index number of "rtf" (non-existent).
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowIndex2">
+      <summary>
+   Shows the index number of "rtf" (now existent).
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.AddValueWithDiffKeys">
+      <summary>
+   Adds the value "winword.exe" with difference keys.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowIndex4">
+      <summary>
+   Shows the index4.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowTryGetValue">
+      <summary>
+   Shows the try get value.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowContainsKey">
+      <summary>
+   Shows the contains key.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowValueCollection">
+      <summary>
+   Shows the value collection.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowKeyCollection">
+      <summary>
+   Shows the key collection.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DictionaryExample.ShowRemove">
+      <summary>
+   Shows the example of removing a value/key.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.SortedListExample">
+      <summary>
+   Class SortedListExample.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.SortedListMain">
+      <summary>
+   Sorteds the list main.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowValues1">
+      <summary>
+   Shows the values1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowValues2">
+      <summary>
+   Shows the values2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowKeys1">
+      <summary>
+   Shows the keys1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowKeys2">
+      <summary>
+   Shows the keys2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowRemove">
+      <summary>
+   Shows the remove.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowForEach">
+      <summary>
+   Shows for each.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowContainsKey">
+      <summary>
+   Shows the contains key.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.ShowTryGetValue">
+      <summary>
+   Shows the try get value.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.TestIndexr">
+      <summary>
+   Tests the indexr.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.SortedListExample.TestAddExisting">
+      <summary>
+   Tests the add existing.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.TestHashSet">
+      <summary>
+   Class TestHashSet.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestHashSet.ShowHashSet">
+      <summary>
+   Shows the hash set.
+   </summary>
+      <remarks>This example produces output similar to the following:
+   <list type="bullet"><item>
+   evenNumbers contains 5 elements: { 0 2 4 6 8 }
+   </item><item>
+   oddNumbers contains 5 elements: { 1 3 5 7 9 }
+   </item><item>
+   numbers UnionWith oddNumbers...     </item><item>
+   numbers contains 10 elements: { 0 2 4 6 8 1 3 5 7 9 }
+   </item></list></remarks>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.Part">
+      <summary>
+   Class Part.
+   Implements the <see cref="T:System.IEquatable`1" /></summary>
+      <seealso cref="T:System.IEquatable`1" />
+    </member>
+    <member name="T:TestStatements.Collection.Generic.TestList">
+      <summary>
+   Class TestList.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Collection.Generic.DinosaurExample">
+      <summary>
+   Class DinosaurExample.
+   </summary>
+    </member>
+    <member name="P:TestStatements.Collection.Generic.Part.PartName">
+      <summary>
+   Gets or sets the name of the part.
+   </summary>
+      <value>The name of the part.</value>
+    </member>
+    <member name="P:TestStatements.Collection.Generic.Part.PartId">
+      <summary>
+   Gets or sets the part identifier.
+   </summary>
+      <value>The part identifier.</value>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Part.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Part.Equals(System.Object)">
+      <summary>
+   Determines whether the specified <see cref="T:System.Object" /> is equal to this instance.
+   </summary>
+      <param name="obj">Das Objekt, das mit dem aktuellen Objekt verglichen werden soll.</param>
+      <returns>
+        <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Part.GetHashCode">
+      <summary>
+   Returns a hash code for this instance.
+   </summary>
+      <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.Part.Equals(Part)">
+      <summary>
+   Gibt an, ob das aktuelle Objekt gleich einem anderen Objekt des gleichen Typs ist.
+   </summary>
+      <param name="other">Ein Objekt, das mit diesem Objekt verglichen werden soll.</param>
+      <returns>
+        <see langword="true" />, wenn das aktuelle Objekt gleich dem <paramref name="other" />-Parameter ist, andernfalls <see langword="false" />.</returns>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestList.ListMain">
+      <summary>
+   Lists the main.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestList.ShowContains">
+      <summary>
+   Shows the contains.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestList.ShowInsert">
+      <summary>
+   Shows the insert.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestList.ShowIndex">
+      <summary>
+   Shows the index.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestList.ShowRemove1">
+      <summary>
+   Shows the remove1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.TestList.ShowRemove2">
+      <summary>
+   Shows the remove2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ListDinos">
+      <summary>
+   Lists the dinos.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowCreateData">
+      <summary>
+   Shows the create data.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowContains">
+      <summary>
+   Shows the contains.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowInsert">
+      <summary>
+   Shows the insert.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowItemProperty">
+      <summary>
+   Shows the item property.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowRemove">
+      <summary>
+   Shows the remove.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowTrimExcess">
+      <summary>
+   Shows the trim excess.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Collection.Generic.DinosaurExample.ShowClear">
+      <summary>
+   Shows the clear.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Constants.Constants">
+      <summary>
+   Class Constants.
+   </summary>
+    </member>
+    <member name="F:TestStatements.Constants.Constants.HelloWorld">
+      <summary>
+   The famous "Hello World !"
+   </summary>
+    </member>
+    <member name="F:TestStatements.Constants.Constants.Header">
+      <summary>
+   The header
+   </summary>
+    </member>
+    <member name="F:TestStatements.Constants.Constants.Header2">
+      <summary>
+   The header2
+   </summary>
+    </member>
+    <member name="F:TestStatements.Constants.Constants.dGoldenCut">
+      <summary>The golden cut.</summary>
+    </member>
+    <member name="T:TestStatements.CS_Concepts.TypeSystem">
+      <summary>
+        <h2>Typen, Variablen und Werte</h2>
+        <para>C# ist eine stark typisierte Sprache. Jede Variable und jede Konstante verfügt über einen Typ, genau wie jeder Ausdruck, der zu einem Wert ausgewertet wird. Jede Methodensignatur gibt für jeden Eingabeparameter und den Rückgabewert einen Typ an. In der .NET-Klassenbibliothek werden integrierte numerische Typen und komplexe Typen definiert, die viele logische Konstrukte darstellen, z.B. das Dateisystem, Netzwerkverbindungen, Auflistungen und Arrays von Objekten sowie Datumsangaben. In einem typischen C#-Programm werden Typen aus der Klassenbibliothek sowie benutzerdefinierte Typen verwendet, die die Konzepte für das Problemfeld des Programms modellieren.</para>
+        <para>Folgende Informationen können in einem Typ gespeichert sein:</para>
+        <list type="bullet">
+          <item>    Der Speicherplatz, den eine Variable des Typs erfordert</item>
+          <item>    Die maximalen und minimalen Werte, die diese darstellen kann</item>
+          <item>    Die enthaltenen Member (Methoden, Felder, Ereignisse usw.)</item>
+          <item>    Der Basistyp, von dem geerbt wird</item>
+          <item>    Die Position, an der der Arbeitsspeicher für Variablen zur Laufzeit belegt wird</item>
+          <item>    Die Arten von zulässigen Vorgängen</item>
+        </list>
+      </summary>
+    </member>
+    <member name="T:TestStatements.CS_Concepts.TypeSystem.Coords">
+      <summary>
+   Struct Coords
+   <summary>
+   Enum FileMode
+   </summary></summary>
+    </member>
+    <member name="T:TestStatements.CS_Concepts.TypeSystem.FileMode">
+      <summary>
+   enum FileMode
+   </summary>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.All">
+      <summary>
+   Alls this instance.
+   </summary>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.UseOfTypes">
+      <summary>
+        <span data-ttu-id="b84c8-116">Der Compiler verwendet Typinformationen, um sicherzustellen, dass alle im Code ausgeführten Vorgänge <em>typsicher</em> sind.</span>
+        <span data-ttu-id="b84c8-117">Wenn Sie z.B. eine Variable vom Typ <a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/builtin-types/integral-numeric-types" data-linktype="relative-path"><u><font color="#0066cc">int</font></u></a> deklarieren, können Sie mit dem Compiler die Variable für Additions- und Subtraktionsvorgänge verwenden.</span>
+        <span data-ttu-id="b84c8-118">Wenn Sie dieselben Vorgänge für eine Variable vom Typ <a href="https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/builtin-types/bool" data-linktype="relative-path"><u><font color="#0066cc">bool</font></u></a> ausführen möchten, generiert der Compiler einen Fehler, wie im folgenden Beispiel dargestellt:</span>
+      </summary>
+      <example>
+        <code>int a = 5;
+   int b = a + 2; //OKbool test = true;
+   // Error. Operator '+' cannot be applied to operands of type 'int' and 'bool'.
+   int c = a + test;</code>
+      </example>
+      <remarks>C- und C++-Entwickler sollten beachten, dass in C# bool nicht in int konvertiert werden kann.</remarks>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.DelareVariables">
+      <summary>
+   Delares the variables.
+   </summary>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.GetName(System.Int32)">
+      <summary>
+   Gets the name.
+   </summary>
+      <param name="ID">The identifier.</param>
+      <returns>System.String.</returns>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.ValueTypes1">
+      <summary>
+   Values the types1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.ValueTypes2">
+      <summary>
+   Values the types2.
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.Coords.x">
+      <summary>
+   The x
+   </summary>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.Coords.#ctor(System.Int32,System.Int32)">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.CS_Concepts.TypeSystem.Coords" /> struct.
+   </summary>
+      <param name="p1">The p1.</param>
+      <param name="p2">The p2.</param>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.Coords.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.ValueTypes3">
+      <summary>
+   Values the types3.
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.CreateNew">
+      <summary>
+   The create new
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.Min">
+      <summary>
+   The Min
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.Create">
+      <summary>
+   The Create
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.Open">
+      <summary>
+   The Open
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.OpenOrCreate">
+      <summary>
+   The Open Or Create
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.Truncate">
+      <summary>
+   The Truncate
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.Append">
+      <summary>
+   The Append
+   </summary>
+    </member>
+    <member name="F:TestStatements.CS_Concepts.TypeSystem.FileMode.Max">
+      <summary>
+   The Max
+   </summary>
+    </member>
+    <member name="M:TestStatements.CS_Concepts.TypeSystem.ValueTypes4">
+      <summary>
+   Values the types4.
+   </summary>
+    </member>
+    <member name="T:TestStatements.DataTypes.EnumTest">
+      <summary>
+   Class EnumTest.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.EnumTest.MainTest">
+      <summary>
+   Mains the test.
+   </summary>
+    </member>
+    <member name="T:TestStatements.DataTypes.Formating">
+      <summary>
+   Class Formating.
+   </summary>
+    </member>
+    <member name="F:TestStatements.DataTypes.Formating.GetNow">
+      <summary>
+   The get now
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.CombinedFormating">
+      <summary>
+   Shows the combined formating.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.IndexKomponent">
+      <summary>
+   Shows  the index-komponent.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.IndexKomponent2">
+      <summary>
+   Indexes the komponent2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.IndentationKomponent">
+      <summary>
+   Indentations the komponent.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.EscapeSequence">
+      <summary>
+   Escapes the sequence.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.CodeExamples1">
+      <summary>
+   Codes the examples1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.CodeExamples2">
+      <summary>
+   Codes the examples2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.CodeExamples3">
+      <summary>
+   Codes the examples3.
+   </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.Formating.CodeExamples4">
+      <summary>
+   Codes the examples4.
+   </summary>
+    </member>
+    <member name="T:TestStatements.DataTypes.IntegratedTypes">
+      <summary>
+   Class IntegratedTypes.
+   </summary>
+    </member>
+    <member name="T:TestStatements.DataTypes.StringEx">
+      <summary>
+Class StringEx.
+</summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.AllTests">
+      <summary>
+Alls the tests.
+</summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.StringEx1">
+      <summary>
+        <span data-ttu-id="ca35c-120">Durch Zuweisen eines Zeichenfolgenliterals zu einer <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a> Variable.</span>
+        <span data-ttu-id="ca35c-121">Dies ist die am häufigsten verwendete Methode zum Erstellen einer Zeichenfolge.</span>
+        <span data-ttu-id="ca35c-122">Im folgenden Beispiel wird die Zuweisung verwendet, um mehrere Zeichen folgen zu erstellen.</span>
+        <span data-ttu-id="ca35c-123">Beachten
+Sie, C#dass in, da der umgekehrte Schrägstrich (\) ein Escapezeichen
+ist, literale umgekehrte Schrägstriche in einer Zeichenfolge mit
+Escapezeichen versehen oder die gesamte Zeichenfolge @-quoted werden
+muss.</span>
+      </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.StringEx2">
+      <summary>
+        <span data-ttu-id="ca35c-124">Durch Aufrufen eines <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-Klassenkonstruktors.</span>
+        <span data-ttu-id="ca35c-125">Im folgenden Beispiel werden Zeichen folgen durch Aufrufen mehrerer Klassenkonstruktoren instanziiert.</span>
+        <span data-ttu-id="ca35c-126">Beachten Sie, dass einige der Konstruktoren Zeiger auf Zeichen Arrays oder signierte Byte Arrays als Parameter enthalten.</span>
+        <span data-ttu-id="ca35c-127">Der Visual Basic unterstützt keine Aufrufe dieser Konstruktoren.</span>
+        <span data-ttu-id="ca35c-128">Ausführliche Informationen zu <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-Konstruktoren finden Sie in der <a class="xref" href="https://docs.microsoft.com/de-de/dotnet/api/system.string.-ctor?view=netframework-4.8" data-linktype="relative-path"><u><font color="#0066cc">String</font></u></a>-konstruktorzusammenfassung.</span>
+      </summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.StringEx3">
+      <summary>
+Strings the ex3.
+</summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.StringEx4">
+      <summary>
+Strings the ex4.
+</summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.StringEx5">
+      <summary>
+Strings the ex5.
+</summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.UnicodeEx1">
+      <summary>
+Unicodes the ex1.
+</summary>
+    </member>
+    <member name="M:TestStatements.DataTypes.StringEx.StringSurogarteEx1">
+      <summary>
+Strings the surogarte ex1.
+</summary>
+    </member>
+    <member name="T:TestStatements.Diagnostics.StopWatchExample">
+      <summary>
+   Class StopWatchExample.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Diagnostics.StopWatchExample.ExampleMain">
+      <summary>
+   Examples the main.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Diagnostics.StopWatchExample.ExampleMain1">
+      <summary>
+   Examples the main1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Diagnostics.StopWatchExample.ExampleMain2">
+      <summary>
+   Examples the main2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Diagnostics.StopWatchExample.DisplayTimerProperties">
+      <summary>
+   Displays the timer properties.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Helper.ExtensionExample">
+      <summary>
+   Class ExtensionExample.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Helper.ExtensionExample.ShowExtensionEx1">
+      <summary>
+   Shows the extension ex1.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Helper.Extensions">
+      <summary>
+   Class Extensions.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Helper.Extensions.AsInt(System.String)">
+      <summary>
+   Tries zu parse the string as an int.
+   </summary>
+      <param name="s">The s.</param>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="M:TestStatements.Helper.Extensions.AsFloat(System.String)">
+      <summary>
+   Tries zu parse the string as a float.
+   </summary>
+      <param name="s">The s.</param>
+      <returns>System.Single.</returns>
+    </member>
+    <member name="M:TestStatements.Helper.Extensions.AsDouble(System.String)">
+      <summary>
+   Tries zu parse the string as a double.
+   </summary>
+      <param name="s">The s.</param>
+      <returns>System.Double.</returns>
+    </member>
+    <member name="T:TestStatements.Linq.Package">
+      <summary>
+   Class Package.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Linq.LinqLookup">
+      <summary>
+   Class LinqLookup.
+   </summary>
+    </member>
+    <member name="F:TestStatements.Linq.Package.Company">
+      <summary>
+   The company
+   </summary>
+    </member>
+    <member name="F:TestStatements.Linq.Package.Weight">
+      <summary>
+   The weight
+   </summary>
+    </member>
+    <member name="F:TestStatements.Linq.Package.TrackingNumber">
+      <summary>
+   The tracking number
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.LinqLookup.LookupExample">
+      <summary>
+   Lookups the example.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.LinqLookup.ShowContains">
+      <summary>
+   Shows the contains.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.LinqLookup.ShowIEnumerable">
+      <summary>
+   Shows the i enumerable.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.LinqLookup.ShowCount">
+      <summary>
+   Shows the count.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Linq.LinqLookup.ShowGrouping">
+      <summary>
+   Shows the grouping.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Properties.Resource1">
+      <summary>
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="P:TestStatements.Properties.Resource1.ResourceManager">
+      <summary>
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+    </member>
+    <member name="P:TestStatements.Properties.Resource1.Culture">
+      <summary>
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+    </member>
+    <member name="P:TestStatements.Properties.Resource1.Version">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
+  [7]Revision: 264
+  [8]Node Kind: directory
+  [9]Schedule: normal
+  [10]Last Changed Author: jc99
+  [11]Last Changed Rev: 235
+  [12]Last Changed Date: 2022-09-10 12:41:13 +0200 (Sa, 10 Sep 2022)
+  [13]
+   ähnelt.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.AssemblyExample">
+      <summary>
+   Class AssemblyExample.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Reflection.AssemblyExample.#ctor(System.Int32)">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestStatements.Reflection.AssemblyExample" /> class.
+   </summary>
+      <param name="f">The f.</param>
+    </member>
+    <member name="M:TestStatements.Reflection.AssemblyExample.SampleMethod(System.Int32)">
+      <summary>
+   Samples the method.
+   </summary>
+      <param name="x">The x.</param>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="M:TestStatements.Reflection.AssemblyExample.ExampleMain">
+      <summary>
+   Examples the main.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.S">
+      <summary>
+   Struct S
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.ReflectionExample">
+      <summary>
+   Class ReflectionExample.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.ReflectionExample.NestedClass">
+      <summary>
+   Class NestedClass. This class cannot be inherited.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Reflection.ReflectionExample.INested">
+      <summary>
+   Interface INested
+   </summary>
+    </member>
+    <member name="F:TestStatements.Reflection.S.X">
+      <summary>
+   The x
+   </summary>
+    </member>
+    <member name="M:TestStatements.Reflection.ReflectionExample.ExampleMain">
+      <summary>
+   Examples the main.
+   </summary>
+    </member>
+    <member name="T:TestStatements.SystemNS.System_Namespace">
+      <summary>
+   Class System_Namespace.
+   </summary>
+    </member>
+    <member name="T:TestStatements.SystemNS.Xml.XmlNS">
+      <summary>
+   Class XmlNS.
+   </summary>
+    </member>
+    <member name="M:TestStatements.SystemNS.Xml.XmlNS.XmlTest1">
+      <summary>
+   XMLs the test1.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.AsyncBreakfast">
+      <summary>
+   Class AsyncBreakfast.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.Juice">
+      <summary>
+   Class Juice.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.Toast">
+      <summary>
+   Class Toast.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.Bacon">
+      <summary>
+   Class Bacon.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.Egg">
+      <summary>
+   Class Egg.
+   </summary>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.Coffee">
+      <summary>
+   Class Coffee.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main(System.String[])">
+      <summary>
+   Asynchronouses the breakfast main.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main2(System.String[])">
+      <summary>
+   Asynchronouses the breakfast main2.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main3(System.String[])">
+      <summary>
+   Asynchronouses the breakfast main3.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.AsyncBreakfast.AsyncBreakfast_Main4(System.String[])">
+      <summary>
+   Asynchronouses the breakfast main4.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="T:TestStatements.Threading.Tasks.TaskExample">
+      <summary>
+   Class TaskExample.
+   </summary>
+    </member>
+    <member name="F:TestStatements.Threading.Tasks.TaskExample.random">
+      <summary>
+   The random
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.TaskExample.ExampleMain">
+      <summary>
+   Examples the main.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.TaskExample.ExampleMain1">
+      <summary>
+   Examples the main1.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.TaskExample.ExampleMain2">
+      <summary>
+   Examples the main2.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.TaskExample.ExampleMain3">
+      <summary>
+   Examples the main3.
+   </summary>
+    </member>
+    <member name="M:TestStatements.Threading.Tasks.TaskExample.ExampleMain4">
+      <summary>
+   Examples the main4.
+   </summary>
+    </member>
+  </members>
+</doc>

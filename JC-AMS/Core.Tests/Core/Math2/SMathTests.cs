@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -904,5 +904,41 @@ namespace JCAMS.Core.Math2.Tests
             else
             Assert.AreEqual(dExp, SMath.Sqr(dVal),1e-13);
         }
-    }
+
+		[DataTestMethod()]
+		[DataRow(null, 0)]
+		[DataRow(double.NaN, double.NaN)]
+		[DataRow(double.MaxValue, double.PositiveInfinity)]
+		[DataRow(double.MinValue, double.PositiveInfinity)]
+		[DataRow(double.PositiveInfinity, double.PositiveInfinity)]
+		[DataRow(double.NegativeInfinity, double.PositiveInfinity)]
+		[DataRow(-10, 100)]
+		[DataRow(-9, 81)]
+		[DataRow(-8, 64)]
+		[DataRow(-7, 49)]
+		[DataRow(-6, 36)]
+		[DataRow(-5, 25)]
+		[DataRow(-4, 16)]
+		[DataRow(-3, 9)]
+		[DataRow(-2, 4)]
+		[DataRow(-1, 1)]
+		[DataRow(0, 0)]
+		[DataRow(1, 1)]
+		[DataRow(2, 4)]
+		[DataRow(3, 9)]
+		[DataRow(4, 16)]
+		[DataRow(5, 25)]
+		[DataRow(6, 36)]
+		[DataRow(7, 49)]
+		[DataRow(8, 64)]
+		[DataRow(9, 81)]
+		[DataRow(10, 100)]
+		[DynamicData("SqrData")]
+		public void SqrTest1(double dVal, double dExp) {
+			if (double.IsNaN(dExp))
+				Assert.AreEqual(dExp, dVal.Sqr());
+			else
+				Assert.AreEqual(dExp, dVal.Sqr(), 1e-13);
+		}
+	}
 }
