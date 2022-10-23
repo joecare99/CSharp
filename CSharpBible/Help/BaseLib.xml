@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>BaseLib</name>
+  </assembly>
+  <members>
+    <member name="T:BaseLib.Helper.Property">
+      <summary>
+   Class Property.
+   </summary>
+    </member>
+    <member name="M:BaseLib.Helper.Property.SetProperty``1(``0@,``0,Action{System.String, ``0, ``0},System.String)">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="data">The data.</param>
+      <param name="value">The value.</param>
+      <param name="action">The action.</param>
+      <param name="propertyName">Name of the property.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:BaseLib.Interfaces.IHasChildren`1">
+      <summary>
+   Interface IHasChildren
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+    </member>
+    <member name="T:BaseLib.Interfaces.IHasChildren">
+      <summary>
+   Interface IHasChildren
+   </summary>
+    </member>
+    <member name="M:BaseLib.Interfaces.IHasChildren`1.AddItem(`0)">
+      <summary>
+   Adds the item.
+   </summary>
+      <param name="value">The value.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:BaseLib.Interfaces.IHasChildren`1.RemoveItem(`0)">
+      <summary>
+   Removes the item.
+   </summary>
+      <param name="value">The value.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:BaseLib.Interfaces.IHasChildren`1.GetItems">
+      <summary>
+   Gets the items.
+   </summary>
+      <returns>IEnumerable&lt;T&gt;.</returns>
+    </member>
+    <member name="M:BaseLib.Interfaces.IHasChildren`1.NotifyChildChange(`0,System.Object,System.Object,System.String)">
+      <summary>
+   Notifies the child change.
+   </summary>
+      <param name="childObject">The child object.</param>
+      <param name="oldVal">The old value.</param>
+      <param name="newVal">The new value.</param>
+      <param name="prop">The property.</param>
+    </member>
+    <member name="T:BaseLib.Interfaces.IParentedObject`1">
+      <summary>
+   Interface IParentedObject
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+    </member>
+    <member name="T:BaseLib.Interfaces.IParentedObject">
+      <summary>
+   Interface IParentedObject
+   </summary>
+    </member>
+    <member name="M:BaseLib.Interfaces.IParentedObject`1.SetParent(`0,System.String)">
+      <summary>
+   Sets the parent.
+   </summary>
+      <param name="value">The value.</param>
+      <param name="CallerMember">The caller member.</param>
+    </member>
+    <member name="M:BaseLib.Interfaces.IParentedObject`1.GetParent">
+      <summary>
+   Gets the parent.
+   </summary>
+      <returns>T.</returns>
+    </member>
+  </members>
+</doc>
