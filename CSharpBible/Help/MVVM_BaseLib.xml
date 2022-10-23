@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_BaseLib</name>
+  </assembly>
+  <members>
+    <member name="T:BaseLib.Helper.Property">
+      <summary>
+   Class Property.
+   </summary>
+    </member>
+    <member name="M:BaseLib.Helper.Property.SetProperty``1(``0@,``0,Action{System.String, ``0, ``0},System.String)">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="data">The data.</param>
+      <param name="value">The value.</param>
+      <param name="action">The action.</param>
+      <param name="propertyName">Name of the property.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:MVVM.ViewModel.BaseViewModel">
+      <summary>
+   Class BaseViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.NotificationObject" /></summary>
+      <seealso cref="T:MVVM.ViewModel.NotificationObject" />
+    </member>
+    <member name="F:MVVM.ViewModel.BaseViewModel.KnownParams">
+      <summary>
+   The known parameters
+   </summary>
+    </member>
+    <member name="F:MVVM.ViewModel.BaseViewModel.CommandCanExecuteBinding">
+      <summary>
+   The command can execute binding
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.BaseViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.BaseViewModel" /> class.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.BaseViewModel.AppendKnownParams(System.Object,System.String)">
+      <summary>
+   Appends the known parameters.
+   </summary>
+      <param name="param">The parameter.</param>
+      <param name="propertyName">Name of the property.</param>
+    </member>
+    <member name="T:MVVM.ViewModel.BindableCollection`1">
+      <summary>
+   A base collection class that supports automatic UI thread marshalling.
+   </summary>
+      <typeparam name="T">The type of elements contained in the collection.</typeparam>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.BindableCollection`1" /> class.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.#ctor(IEnumerable{`0})">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.BindableCollection`1" /> class.
+   </summary>
+      <param name="collection">The collection from which the elements are copied.</param>
+    </member>
+    <member name="P:MVVM.ViewModel.BindableCollection`1.IsNotifying">
+      <summary>
+   Enables/Disables property change notification.
+   </summary>
+      <value>
+        <c>true</c> if this instance is notifying; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:MVVM.ViewModel.BindableCollection`1.PropertyChangeNotificationsOnUIThread">
+      <summary>
+   Gets a value indicating whether [property change notifications on UI thread].
+   </summary>
+      <value>
+        <c>true</c> if [property change notifications on UI thread]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.NotifyOfPropertyChange(System.String)">
+      <summary>
+   Notifies subscribers of the property change.
+   </summary>
+      <param name="propertyName">Name of the property.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.Refresh">
+      <summary>
+   Raises a change notification indicating that all bindings should be refreshed.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.InsertItem(System.Int32,`0)">
+      <summary>
+   Inserts the item to the specified position.
+   </summary>
+      <param name="index">The index to insert at.</param>
+      <param name="item">The item to be inserted.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.InsertItemBase(System.Int32,`0)">
+      <summary>
+   Exposes the base implementation of the <see cref="M:MVVM.ViewModel.BindableCollection`1.InsertItem(System.Int32,`0)" /> function.
+   </summary>
+      <param name="index">The index.</param>
+      <param name="item">The item.</param>
+      <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.SetItem(System.Int32,`0)">
+      <summary>
+   Sets the item at the specified position.
+   </summary>
+      <param name="index">The index to set the item at.</param>
+      <param name="item">The item to set.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.SetItemBase(System.Int32,`0)">
+      <summary>
+   Exposes the base implementation of the <see cref="M:MVVM.ViewModel.BindableCollection`1.SetItem(System.Int32,`0)" /> function.
+   </summary>
+      <param name="index">The index.</param>
+      <param name="item">The item.</param>
+      <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.RemoveItem(System.Int32)">
+      <summary>
+   Removes the item at the specified position.
+   </summary>
+      <param name="index">The position used to identify the item to remove.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.RemoveItemBase(System.Int32)">
+      <summary>
+   Exposes the base implementation of the <see cref="M:MVVM.ViewModel.BindableCollection`1.RemoveItem(System.Int32)" /> function.
+   </summary>
+      <param name="index">The index.</param>
+      <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.ClearItems">
+      <summary>
+   Clears the items contained by the collection.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.ClearItemsBase">
+      <summary>
+   Exposes the base implementation of the <see cref="M:MVVM.ViewModel.BindableCollection`1.ClearItems" /> function.
+   </summary>
+      <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.OnCollectionChanged(NotifyCollectionChangedEventArgs)">
+      <summary>
+   Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged" /> event with the provided arguments.
+   </summary>
+      <param name="e">Arguments of the event being raised.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.OnPropertyChanged(PropertyChangedEventArgs)">
+      <summary>
+   Raises the PropertyChanged event with the provided arguments.
+   </summary>
+      <param name="e">The event data to report in the event.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.AddRange(IEnumerable{`0})">
+      <summary>
+   Adds the range.
+   </summary>
+      <param name="items">The items.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.RemoveRange(IEnumerable{`0})">
+      <summary>
+   Removes the range.
+   </summary>
+      <param name="items">The items.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.BindableCollection`1.OnUIThread(System.Action)">
+      <summary>
+   Executes the given action on the UI thread
+   </summary>
+      <param name="action">The action.</param>
+      <remarks>An extension point for subclasses to customise how property change notifications are handled.</remarks>
+    </member>
+    <member name="T:MVVM.ViewModel.DelegateCommand">
+      <summary>
+   Class DelegateCommand.
+   Implements the <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand" />
+   Implements the <see cref="T:System.Windows.Input.ICommand" /></summary>
+      <seealso cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand" />
+      <seealso cref="T:System.Windows.Input.ICommand" />
+    </member>
+    <member name="T:MVVM.ViewModel.DelegateCommand`1">
+      <summary>
+   Class DelegateCommand.
+   Implements the <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand" />
+   Implements the <see cref="T:System.Windows.Input.ICommand" /></summary>
+      <typeparam name="T">
+      </typeparam>
+      <seealso cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand" />
+      <seealso cref="T:System.Windows.Input.ICommand" />
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand.#ctor(Action{System.Object},Predicate{System.Object})">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.DelegateCommand" /> class.
+   </summary>
+      <param name="execute">The execute.</param>
+      <param name="canExecute">The can execute.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand.#ctor(Action{System.Object})">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.DelegateCommand" /> class.
+   </summary>
+      <param name="execute">The execute.</param>
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.DelegateCommand" /> class.
+   </summary>
+      <param name="execute">The execute.</param>
+    </member>
+    <member name="E:MVVM.ViewModel.DelegateCommand.CanExecuteChanged">
+      <summary>
+   Tritt ein, wenn Änderungen auftreten, die sich auf die Ausführung des Befehls auswirken.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand.CanExecute(System.Object)">
+      <summary>
+   Definiert die Methode, die bestimmt, ob der Befehl im aktuellen Zustand ausgeführt werden kann.
+   </summary>
+      <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
+      <returns>
+        <see langword="true" />, wenn der Befehl ausgeführt werden kann, andernfalls <see langword="false" />.</returns>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand.Execute(System.Object)">
+      <summary>
+   Definiert die Methode, die aufgerufen wird, wenn der Befehl aufgerufen wird.
+   </summary>
+      <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand.NotifyCanExecuteChanged">
+      <summary>
+   Notifies that the <see cref="M:System.Windows.Input.ICommand.CanExecute(System.Object)" /> property has changed.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand`1.#ctor(Action{`0},Predicate{`0})">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.DelegateCommand`1" /> class.
+   </summary>
+      <param name="execute">The execute.</param>
+      <param name="canExecute">The can execute.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand`1.#ctor(Action{`0})">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.DelegateCommand`1" /> class.
+   </summary>
+      <param name="execute">The execute.</param>
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM.ViewModel.DelegateCommand`1" /> class.
+   </summary>
+      <param name="execute">The execute.</param>
+    </member>
+    <member name="E:MVVM.ViewModel.DelegateCommand`1.CanExecuteChanged">
+      <summary>
+   Tritt ein, wenn Änderungen auftreten, die sich auf die Ausführung des Befehls auswirken.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand`1.CanExecute(System.Object)">
+      <summary>
+   Definiert die Methode, die bestimmt, ob der Befehl im aktuellen Zustand ausgeführt werden kann.
+   </summary>
+      <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
+      <returns>
+        <see langword="true" />, wenn der Befehl ausgeführt werden kann, andernfalls <see langword="false" />.</returns>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand`1.Execute(System.Object)">
+      <summary>
+   Definiert die Methode, die aufgerufen wird, wenn der Befehl aufgerufen wird.
+   </summary>
+      <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.DelegateCommand`1.NotifyCanExecuteChanged">
+      <summary>
+   Notifies that the <see cref="M:System.Windows.Input.ICommand.CanExecute(System.Object)" /> property has changed.
+   </summary>
+    </member>
+    <member name="T:MVVM.ViewModel.IObservableCollection`1">
+      <summary>
+   Represents a collection that is observable.
+   </summary>
+      <typeparam name="T">The type of elements contained in the collection.</typeparam>
+    </member>
+    <member name="M:MVVM.ViewModel.IObservableCollection`1.AddRange(IEnumerable{`0})">
+      <summary>
+   Adds the range.
+   </summary>
+      <param name="items">The items.</param>
+    </member>
+    <member name="M:MVVM.ViewModel.IObservableCollection`1.RemoveRange(IEnumerable{`0})">
+      <summary>
+   Removes the range.
+   </summary>
+      <param name="items">The items.</param>
+    </member>
+    <member name="T:MVVM.ViewModel.NotificationObject">
+      <summary>
+   Class NotificationObject.
+   Implements the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /></summary>
+      <seealso cref="T:System.ComponentModel.INotifyPropertyChanged" />
+    </member>
+    <member name="E:MVVM.ViewModel.NotificationObject.PropertyChanged">
+      <summary>
+   Tritt ein, wenn sich ein Eigenschaftswert ändert.
+   </summary>
+    </member>
+    <member name="M:MVVM.ViewModel.NotificationObject.RaisePropertyChanged(System.String)">
+      <summary>
+   Raises the [property changed] event.
+   </summary>
+      <param name="propertyName">Name of the property.
+   If this field is not set, the [CallerMemberName] will automatically provided</param>
+    </member>
+    <member name="M:MVVM.ViewModel.NotificationObject.RaisePropertyChanged(System.String[])">
+      <summary>
+   Calls RaisePropertyChanged for each name in the array
+   </summary>
+      <param name="propertyNames">RaisePropertyChanged will be called for every element</param>
+    </member>
+    <member name="M:MVVM.ViewModel.NotificationObject.SetProperty``1(``0@,``0,Action{``0, ``0},System.String)">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="data">The data.</param>
+      <param name="value">The value.</param>
+      <param name="action">The action.</param>
+      <param name="propertyName">Name of the property.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:MVVM.ViewModel.NotificationObject.SetProperty``1(``0@,``0,System.String[],Action{``0, ``0},System.String)">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="data">The data.</param>
+      <param name="value">The value.</param>
+      <param name="propertyNames">The property names.</param>
+      <param name="action">The action.</param>
+      <param name="propertyName">Name of the property.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+  </members>
+</doc>
