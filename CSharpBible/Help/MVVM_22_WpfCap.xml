@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_22_WpfCap</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_22_WpfCap.App">
+      <summary> Interaktionslogik für "App.xaml" </summary>
+    </member>
+    <member name="T:MVVM_22_WpfCap.Converter.EnumToColorStringConverter">
+      <summary>
+   Class EnumToColorStringConverter.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="F:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.ZeroColor">
+      <summary>
+   The zero color
+   </summary>
+    </member>
+    <member name="F:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.TrueColor">
+      <summary>
+   The true color
+   </summary>
+    </member>
+    <member name="F:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.FalseColor">
+      <summary>
+   The false color
+   </summary>
+    </member>
+    <member name="F:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.ThreeColor">
+      <summary>
+   The three color
+   </summary>
+    </member>
+    <member name="F:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.FourColor">
+      <summary>
+   The four color
+   </summary>
+    </member>
+    <member name="M:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Konvertiert einen Wert.
+   </summary>
+      <param name="value">Der von der Bindungsquelle erzeugte Wert.</param>
+      <param name="targetType">Der Typ der Bindungsziel-Eigenschaft.</param>
+      <param name="parameter">Der zu verwendende Konverterparameter.</param>
+      <param name="culture">Die im Konverter zu verwendende Kultur.</param>
+      <returns>Ein konvertierter Wert.
+   Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
+    </member>
+    <member name="M:MVVM_22_WpfCap.Converter.EnumToColorStringConverter.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Konvertiert einen Wert.
+   </summary>
+      <param name="value">Der Wert, der vom Bindungsziel erzeugt wird.</param>
+      <param name="targetType">Der Typ, in den konvertiert werden soll.</param>
+      <param name="parameter">Der zu verwendende Konverterparameter.</param>
+      <param name="culture">Die im Konverter zu verwendende Kultur.</param>
+      <returns>Ein konvertierter Wert.
+   Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:MVVM_22_WpfCap.Converter.IntToStringConverter">
+      <summary>
+   Class IntToStringConverter.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="M:MVVM_22_WpfCap.Converter.IntToStringConverter.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Konvertiert einen Wert.
+   </summary>
+      <param name="value">Der von der Bindungsquelle erzeugte Wert.</param>
+      <param name="targetType">Der Typ der Bindungsziel-Eigenschaft.</param>
+      <param name="parameter">Der zu verwendende Konverterparameter.</param>
+      <param name="culture">Die im Konverter zu verwendende Kultur.</param>
+      <returns>Ein konvertierter Wert.
+   Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
+    </member>
+    <member name="M:MVVM_22_WpfCap.Converter.IntToStringConverter.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Konvertiert einen Wert.
+   </summary>
+      <param name="value">Der Wert, der vom Bindungsziel erzeugt wird.</param>
+      <param name="targetType">Der Typ, in den konvertiert werden soll.</param>
+      <param name="parameter">Der zu verwendende Konverterparameter.</param>
+      <param name="culture">Die im Konverter zu verwendende Kultur.</param>
+      <returns>Ein konvertierter Wert.
+   Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:MVVM_22_WpfCap.MainWindow">
+      <summary> Interaktionslogik für MainWindow.xaml </summary>
+    </member>
+    <member name="M:MVVM_22_WpfCap.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_22_WpfCap.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_22_WpfCap.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:MVVM_22_WpfCap.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_22_WpfCap.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:MVVM_22_WpfCap.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:MVVM_22_WpfCap.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:MVVM_22_WpfCap.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:MVVM_22_WpfCap.View.WpfCapView">
+      <summary> Interaktionslogik für WpfCapView.xaml </summary>
+    </member>
+    <member name="M:MVVM_22_WpfCap.View.WpfCapView.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_22_WpfCap.View.WpfCapView" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_22_WpfCap.ViewModel.RowData">
+      <summary>
+   Class RowData.
+   Implements the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /></summary>
+      <seealso cref="T:System.ComponentModel.INotifyPropertyChanged" />
+    </member>
+    <member name="T:MVVM_22_WpfCap.ViewModel.ColData">
+      <summary>
+   Class ColData.
+   Implements the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /></summary>
+      <seealso cref="T:System.ComponentModel.INotifyPropertyChanged" />
+    </member>
+    <member name="T:MVVM_22_WpfCap.ViewModel.WpfCapViewModel">
+      <summary>
+   Class WpfCapViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.RowData.RowId">
+      <summary>
+   Gets or sets the row identifier.
+   </summary>
+      <value>The row identifier.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.RowData.MoveLeft">
+      <summary>
+   Gets or sets the move left.
+   </summary>
+      <value>The move left.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.RowData.MoveRight">
+      <summary>
+   Gets or sets the move right.
+   </summary>
+      <value>The move right.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.RowData.TileColor">
+      <summary>
+   Gets or sets the color of the tile.
+   </summary>
+      <value>The color of the tile.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.RowData.This">
+      <summary>
+   Gets the this.
+   </summary>
+      <value>The this.</value>
+    </member>
+    <member name="E:MVVM_22_WpfCap.ViewModel.RowData.PropertyChanged">
+      <summary>
+   Tritt ein, wenn sich ein Eigenschaftswert ändert.
+   </summary>
+    </member>
+    <member name="M:MVVM_22_WpfCap.ViewModel.RowData.NotifyPropertyChanged(System.String)">
+      <summary>
+   Notifies the property changed.
+   </summary>
+      <param name="name">The name.</param>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.ColData.ColId">
+      <summary>
+   Gets or sets the col identifier.
+   </summary>
+      <value>The col identifier.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.ColData.MoveUp">
+      <summary>
+   Gets or sets the move up.
+   </summary>
+      <value>The move up.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.ColData.MoveDown">
+      <summary>
+   Gets or sets the move down.
+   </summary>
+      <value>The move down.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.ColData.Item(System.Int32)">
+      <summary>
+   Gets or sets the <see cref="T:System.Int32" /> with the specified ix.
+   </summary>
+      <param name="ix">The ix.</param>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.ColData.This">
+      <summary>
+   Gets the this.
+   </summary>
+      <value>The this.</value>
+    </member>
+    <member name="F:MVVM_22_WpfCap.ViewModel.ColData.Parent">
+      <summary>
+   The parent
+   </summary>
+    </member>
+    <member name="E:MVVM_22_WpfCap.ViewModel.ColData.PropertyChanged">
+      <summary>
+   Tritt ein, wenn sich ein Eigenschaftswert ändert.
+   </summary>
+    </member>
+    <member name="F:MVVM_22_WpfCap.ViewModel.ColData.Length">
+      <summary>
+   The length
+   </summary>
+    </member>
+    <member name="M:MVVM_22_WpfCap.ViewModel.ColData.NotifyPropertyChanged(System.String)">
+      <summary>
+   Notifies the property changed.
+   </summary>
+      <param name="name">The name.</param>
+    </member>
+    <member name="M:MVVM_22_WpfCap.ViewModel.WpfCapViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_22_WpfCap.ViewModel.WpfCapViewModel" /> class.
+   </summary>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.WpfCapViewModel.ShuffleCommand">
+      <summary>
+   Gets or sets the shuffle command.
+   </summary>
+      <value>The shuffle command.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.WpfCapViewModel.Rows">
+      <summary>
+   Gets or sets the rows.
+   </summary>
+      <value>The rows.</value>
+    </member>
+    <member name="P:MVVM_22_WpfCap.ViewModel.WpfCapViewModel.Cols">
+      <summary>
+   Gets or sets the cols.
+   </summary>
+      <value>The cols.</value>
+    </member>
+  </members>
+</doc>
