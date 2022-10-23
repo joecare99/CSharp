@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CSV_Viewer</name>
+  </assembly>
+  <members>
+    <member name="T:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef">
+      <summary>
+   Class TFieldDef.
+   Implements the <see cref="T:System.IEquatable`1" /></summary>
+      <seealso cref="T:System.IEquatable`1" />
+    </member>
+    <member name="F:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.FOwner">
+      <summary>
+   The f owner
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.#ctor(System.String,Type)">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef" /> class.
+   </summary>
+      <param name="aName">a name.</param>
+      <param name="aType">a type.</param>
+    </member>
+    <member name="P:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.FieldName">
+      <summary>
+   Gets the name of the field.
+   </summary>
+      <value>The name of the field.</value>
+    </member>
+    <member name="P:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.FieldType">
+      <summary>
+   Gets or sets the type of the field.
+   </summary>
+      <value>The type of the field.</value>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.Equals(System.Object)">
+      <summary>
+   Determines whether the specified <see cref="T:System.Object" /> is equal to this instance.
+   </summary>
+      <param name="obj">Das Objekt, das mit dem aktuellen Objekt verglichen werden soll.</param>
+      <returns>
+        <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.Equals(TFieldDef)">
+      <summary>
+   Gibt an, ob das aktuelle Objekt gleich einem anderen Objekt des gleichen Typs ist.
+   </summary>
+      <param name="other">Ein Objekt, das mit diesem Objekt verglichen werden soll.</param>
+      <returns>
+        <see langword="true" />, wenn das aktuelle Objekt gleich dem <paramref name="other" />-Parameter ist, andernfalls <see langword="false" />.</returns>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.GetHashCode">
+      <summary>
+   Returns a hash code for this instance.
+   </summary>
+      <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.op_Equality(TFieldDef,TFieldDef)">
+      <summary>
+   Implements the == operator.
+   </summary>
+      <param name="left">The left.</param>
+      <param name="right">The right.</param>
+      <returns>The result of the operator.</returns>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.op_Inequality(TFieldDef,TFieldDef)">
+      <summary>
+   Implements the != operator.
+   </summary>
+      <param name="left">The left.</param>
+      <param name="right">The right.</param>
+      <returns>The result of the operator.</returns>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDef.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="T:CSharpBible.CSV_Viewer.CustomDataSet.TFieldDefs">
+      <summary>
+   Class TFieldDefs.
+   Implements the <see cref="T:System.Collections.Generic.List`1" /></summary>
+      <seealso cref="T:System.Collections.Generic.List`1" />
+    </member>
+    <member name="T:CSharpBible.CSV_Viewer.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="T:CSharpBible.CSV_Viewer.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.CSV_Viewer.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.CSV_Viewer.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:CSharpBible.CSV_Viewer.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:CSharpBible.CSV_Viewer.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:CSharpBible.CSV_Viewer.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:CSharpBible.CSV_Viewer.Visual.FrmCSVViewerMain">
+      <summary> Class FrmCSVViewerMain. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class FrmCSVViewerMain. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.Visual.FrmCSVViewerMain.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.CSV_Viewer.Visual.FrmCSVViewerMain" /> class.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.Visual.FrmCSVViewerMain.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+      <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>DemoLibrary</name>
+  </assembly>
+  <members>
+    <member name="T:DemoLibrary.Models.AddressModel">
+      <summary>
+   Class AddressModel.
+   </summary>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.AdressId">
+      <summary>
+   Gets or sets the adress identifier.
+   </summary>
+      <value>The adress identifier.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.AdditionalLine">
+      <summary>
+   Gets or sets the additional line.
+   </summary>
+      <value>The additional line.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.StreetAddress">
+      <summary>
+   Gets or sets the street address.
+   </summary>
+      <value>The street address.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.City">
+      <summary>
+   Gets or sets the city.
+   </summary>
+      <value>The city.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.State">
+      <summary>
+   Gets or sets the state.
+   </summary>
+      <value>The state.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.ZipCode">
+      <summary>
+   Gets or sets the zip code.
+   </summary>
+      <value>The zip code.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.Country">
+      <summary>
+   Gets or sets the country.
+   </summary>
+      <value>The country.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.AddressModel.FullAddress">
+      <summary>
+   Gets the full address.
+   </summary>
+      <value>The full address.</value>
+    </member>
+    <member name="M:DemoLibrary.Models.AddressModel.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="T:DemoLibrary.Models.PersonModel">
+      <summary>
+   Class PersonModel.
+   </summary>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.PersonId">
+      <summary>
+   Gets or sets the person identifier.
+   </summary>
+      <value>The person identifier.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.Title">
+      <summary>
+   Gets or sets the title.
+   </summary>
+      <value>The title.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.FirstNames">
+      <summary>
+   Gets or sets the first names.
+   </summary>
+      <value>The first names.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.LastName">
+      <summary>
+   Gets or sets the last name.
+   </summary>
+      <value>The last name.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.Age">
+      <summary>
+   Gets or sets the age.
+   </summary>
+      <value>The age.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.DateOfBirth">
+      <summary>
+   Gets or sets the date of birth.
+   </summary>
+      <value>The date of birth.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.IsAlive">
+      <summary>
+   Gets or sets a value indicating whether this instance is alive.
+   </summary>
+      <value>
+        <c>true</c> if this instance is alive; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.AccountBalance">
+      <summary>
+   Gets or sets the account balance.
+   </summary>
+      <value>The account balance.</value>
+    </member>
+    <member name="F:DemoLibrary.Models.PersonModel.Addresses">
+      <summary>
+   The addresses
+   </summary>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.PrimaryAddress">
+      <summary>
+   Gets or sets the primary address.
+   </summary>
+      <value>The primary address.</value>
+    </member>
+    <member name="P:DemoLibrary.Models.PersonModel.FullName">
+      <summary>
+   Gets the full name.
+   </summary>
+      <value>The full name.</value>
+    </member>
+    <member name="T:DemoLibrary.DataAccess">
+      <summary>
+   Class DataAccess.
+   </summary>
+    </member>
+    <member name="F:DemoLibrary.DataAccess.GetNext">
+      <summary>
+   The random
+   </summary>
+    </member>
+    <member name="M:DemoLibrary.DataAccess.GetPeople(System.Int32)">
+      <summary>
+   Gets the people.
+   </summary>
+      <param name="total">The total.</param>
+      <returns>List&lt;PersonModel&gt;.</returns>
+    </member>
+    <member name="M:DemoLibrary.DataAccess.GetPerson(System.Int32)">
+      <summary>
+   Gets the person.
+   </summary>
+      <param name="id">The identifier.</param>
+      <returns>PersonModel.</returns>
+    </member>
+  </members>
+</doc>
