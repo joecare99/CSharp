@@ -24,7 +24,7 @@ namespace DemoLibraryTests.Models
 		/// <summary>
 		/// The c exp to string1
 		/// </summary>
-		private string cExpToString1="1, 4, 2 3";
+		private string cExpToString1="1, 4, 2 3, 5";
 
 		/// <summary>
 		/// Converts to stringtest.
@@ -33,17 +33,19 @@ namespace DemoLibraryTests.Models
 		/// <param name="aCity">a city.</param>
 		/// <param name="aState">a state.</param>
 		/// <param name="aZip">a zip.</param>
-		/// <param name="a">a.</param>
+		/// <param name="aCountry">a.</param>
 		/// <param name="ExpToString">The exp to string.</param>
 		[DataTestMethod()]
-		[DataRow("1", "2", "3", "4", "5", "1, 2, 3 4")]
+		[DataRow("1", "2", "3", "4", "5", "1, 2, 3 4, 5")]
 		[DataRow("123 test street","Los Angelos","WI","90210","", "123 test street, Los Angelos, WI 90210")]
-		public void ToStringTest(string aStreet, string aCity,string aState, string aZip, string a,string ExpToString) {
+        [DataRow("321 ocean drive", "Santa Monica", "CA", "90901", "USA", "321 ocean drive, Santa Monica, CA 90901, USA")]
+        public void ToStringTest(string aStreet, string aCity,string aState, string aZip, string aCountry,string ExpToString) {
 			var model = new AddressModel() {
 				StreetAddress = aStreet,
 				State = aState,
 				ZipCode = aZip,
-				City = aCity
+				City = aCity,
+				Country = aCountry,
 			};
 			Assert.AreEqual(ExpToString,model.ToString());
 		}
@@ -58,7 +60,8 @@ namespace DemoLibraryTests.Models
 				StreetAddress = "1",
 				State = "2",
 				ZipCode = "3",
-				City = "4"
+				City = "4",
+				Country = "5"
 			};
 			Assert.AreEqual(cExpToString1, model.ToString());
 		}

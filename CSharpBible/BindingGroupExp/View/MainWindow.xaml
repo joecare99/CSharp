@@ -1,16 +1,21 @@
-<Window x:Class="BindingGroupExp.MainWindow"
+<Window x:Class="BindingGroupExp.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BindingGroupExp"
-        xmlns:src="clr-namespace:BindingGroupExp"
+        xmlns:local="clr-namespace:BindingGroupExp.View"
+        xmlns:mvvm="clr-namespace:BindingGroupExp.ViewModel"
+        xmlns:src="clr-namespace:BindingGroupExp.View.Validation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        Loaded="Window_Loaded">
+    <Window.DataContext>
+        <mvvm:MainWindowViewModel/>
+    </Window.DataContext>
     <Grid>
         <StackPanel Name="stackPanel1"  Margin="10" Width="250"
-            Loaded="stackPanel1_Loaded"
-            Validation.Error="ItemError">
+           Loaded="stackPanel1_Loaded"
+           Validation.Error="ItemError">
 
             <StackPanel.Resources>
                 <Style TargetType="HeaderedContentControl">
@@ -72,8 +77,8 @@
                 </TextBox>
             </HeaderedContentControl>
             <StackPanel Orientation="Horizontal">
-                <Button IsDefault="True" Click="Submit_Click">_Submit</Button>
-                <Button IsCancel="True" Click="Cancel_Click">_Cancel</Button>
+                <Button IsDefault="True" Command="{Binding SubmitCommand}">_Submit</Button>
+                <Button IsCancel="True" Command="{Binding CancelCommand}">_Cancel</Button>
             </StackPanel>
             <HeaderedContentControl Header="Description">
                 <TextBlock Width="150" Text="{Binding Path=Description}"/>
