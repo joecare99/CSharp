@@ -267,7 +267,7 @@ namespace Calc64Base.Tests
         public void IsRegisterOpeationTest(string Name, int iOp, string sOp, bool xExpResult)
         {
             testCO.SetNeedRegister = xExpResult;
-            Assert.AreEqual(xExpResult, Calc64.IsRegisterOpeation(testCO));
+            Assert.AreEqual(xExpResult, Calc64.IsRegisterOperation(testCO));
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace Calc64Base.Tests
         public void IsRegisterOpeationTest1(string Name, int iOp, string sOp, bool xExpResult)
         {
             testCO.SetNeedRegister = xExpResult;
-            Assert.AreEqual(xExpResult, Calc64.IsRegisterOpeation(sOp));
+            Assert.AreEqual(xExpResult, Calc64.IsRegisterOperation(sOp));
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace Calc64Base.Tests
         public void IsRegisterOpeationTest2(string Name, int iOp, string sOp,bool xExpResult)
         {
             testCO.SetNeedRegister = xExpResult;
-            Assert.AreEqual(xExpResult, Calc64.IsRegisterOpeation(iOp));
+            Assert.AreEqual(xExpResult, Calc64.IsRegisterOperation(iOp));
         }
 
         /// <summary>
