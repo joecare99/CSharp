@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ConsoleDisplayTests</name>
+  </assembly>
+  <members>
+    <member name="N:ConsoleDisplay.View.Tests">
+      <summary>
+   The Tests namespace.
+   </summary>
+    </member>
+    <member name="T:ConsoleDisplay.View.Tests.DisplayTests">
+      <summary>
+   Defines test class DisplayTests.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleDisplay.View.Tests.DisplayTests" /> class.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.Done">
+      <summary>
+   Dones this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.DisplayTest">
+      <summary>
+   Defines the test method DisplayTest.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.DisplayPixelTest2">
+      <summary>
+   Defines the test method DisplayPixelTest2.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.DisplayLineTest">
+      <summary>
+   Defines the test method DisplayLineTest.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.ToStringTest">
+      <summary>
+   Defines the test method ToStringTest.
+   </summary>
+    </member>
+    <member name="T:ConsoleDisplay.View.Tests.TileDefTests">
+      <summary>
+   Defines test class TileDefTests.
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e1">
+      <summary>
+   The e1
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e2">
+      <summary>
+   The e2
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e3">
+      <summary>
+   The e3
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e4">
+      <summary>
+   The e4
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e5">
+      <summary>
+   The e5
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e6">
+      <summary>
+   The e6
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e7">
+      <summary>
+   The e7
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e8">
+      <summary>
+   The e8
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e9">
+      <summary>
+   The e9
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e10">
+      <summary>
+   The e10
+   </summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.TestEnum.e11">
+      <summary>
+   The e11
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TestTileDef.GetTileDef(TestEnum)">
+      <summary>
+   Gets the tile definition.
+   </summary>
+      <param name="tile">The tile.</param>
+      <returns>The visual defintion of the tile</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TestTileDef.TestByteTo2ConsColor(System.Byte)">
+      <summary>
+   Tests the color of the byte to2 cons.
+   </summary>
+      <param name="colDef">The col definition.</param>
+      <returns>System.ValueTuple&lt;ConsoleColor, ConsoleColor&gt;.</returns>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TestTileDef.TestGetArrayElement``1(``0[],TestEnum)">
+      <summary>
+   Tests the get array element.
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="array">The array.</param>
+      <param name="tile">The tile.</param>
+      <returns>T.</returns>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TestTileDef.TestTile2Int(TestEnum)">
+      <summary>
+   Tests the tile2 int.
+   </summary>
+      <param name="tile">The tile.</param>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TileDefTests.GetTileDefTest">
+      <summary>
+   Defines the test method GetTileDefTest.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TileDefTests.ByteTo2ConsColorTest">
+      <summary>
+   Defines the test method ByteTo2ConsColorTest.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TileDefTests.Tile2IntTest">
+      <summary>
+   Defines the test method Tile2IntTest.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TileDefTests.GetArrayElementTest1">
+      <summary>
+   Defines the test method GetArrayElementTest1.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TileDefTests.GetArrayElementTest2">
+      <summary>
+   Defines the test method GetArrayElementTest2.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.TileDefTests.GetArrayElementTest3">
+      <summary>
+   Defines the test method GetArrayElementTest3.
+   </summary>
+    </member>
+  </members>
+</doc>
