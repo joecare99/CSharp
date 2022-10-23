@@ -172,5 +172,65 @@
    Defines the test method GetArrayElementTest3.
    </summary>
     </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.zero">
+      <summary>
+The zero
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.tile1">
+      <summary>
+The tile1
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.Wall">
+      <summary>
+The wall
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.Dest">
+      <summary>
+The dest
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.Player">
+      <summary>
+The player
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.Boulder">
+      <summary>
+The boulder
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.E1">
+      <summary>
+The e1
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.E2">
+      <summary>
+The e2
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.E3">
+      <summary>
+The e3
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.E4">
+      <summary>
+The e4
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.BounderMoving">
+      <summary>
+The bounder moving
+</summary>
+    </member>
+    <member name="F:ConsoleDisplay.View.Tests.VTiles.PlayerDead">
+      <summary>
+The player dead
+</summary>
+    </member>
   </members>
 </doc>

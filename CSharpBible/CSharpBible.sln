@@ -270,9 +270,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TitleGen", "Graphics\TitleG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut4_net", "MVVM_Tutorial\ItemsControlTut4\ItemsControlTut4_net.csproj", "{9457C3AB-6349-4C09-8319-3FCA307E6438}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemsControlTut3_netTests", "MVVM_Tutorial\ItemsControlTut3_netTests\ItemsControlTut3_netTests.csproj", "{A66C16B1-C48C-4C1B-9FC0-61826967F933}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut3_netTests", "MVVM_Tutorial\ItemsControlTut3_netTests\ItemsControlTut3_netTests.csproj", "{A66C16B1-C48C-4C1B-9FC0-61826967F933}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemsControlTut4_netTests", "MVVM_Tutorial\ItemsControlTut4_netTests\ItemsControlTut4_netTests.csproj", "{229D9174-FB54-4366-BC1C-072366D8A6B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut4_netTests", "MVVM_Tutorial\ItemsControlTut4_netTests\ItemsControlTut4_netTests.csproj", "{229D9174-FB54-4366-BC1C-072366D8A6B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64WF_netTests", "Calc\Calc64WFTests\Calc64WF_netTests.csproj", "{246F7428-D220-4DC7-8F12-05CEF2F666A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CBF9810B-C6DB-47A6-9C5D-6E20DBF8B5E1} = {CBF9810B-C6DB-47A6-9C5D-6E20DBF8B5E1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -763,6 +768,10 @@ Global
 		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{229D9174-FB54-4366-BC1C-072366D8A6B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{246F7428-D220-4DC7-8F12-05CEF2F666A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{246F7428-D220-4DC7-8F12-05CEF2F666A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{246F7428-D220-4DC7-8F12-05CEF2F666A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{246F7428-D220-4DC7-8F12-05CEF2F666A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -872,6 +881,7 @@ Global
 		{9457C3AB-6349-4C09-8319-3FCA307E6438} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 		{A66C16B1-C48C-4C1B-9FC0-61826967F933} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 		{229D9174-FB54-4366-BC1C-072366D8A6B2} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
+		{246F7428-D220-4DC7-8F12-05CEF2F666A7} = {278CFF7F-D799-45EE-BADB-8C8380F05716}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}

@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Polyline_net</name>
+  </assembly>
+  <members>
+    <member name="T:Polyline.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:Polyline.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:Polyline.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:Polyline.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:Polyline.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:Polyline.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:Polyline.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:Polyline.ViewModels.ControlPointBehavior">
+      <summary>
+   Class ControlPointBehavior.
+   Implements the <see cref="T:Microsoft.Xaml.Behaviors.Behavior`1" /></summary>
+      <seealso cref="T:Microsoft.Xaml.Behaviors.Behavior`1" />
+    </member>
+    <member name="M:Polyline.ViewModels.ControlPointBehavior.OnAttached">
+      <summary>
+   Called after the behavior is attached to an AssociatedObject.
+   </summary>
+      <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
+    </member>
+    <member name="T:Polyline.ViewModels.Coordinate">
+      <summary>
+   Class Coordinate.
+   Implements the <see cref="T:MVVM.ViewModel.NotificationObject" /></summary>
+      <seealso cref="T:MVVM.ViewModel.NotificationObject" />
+    </member>
+    <member name="P:Polyline.ViewModels.Coordinate.X">
+      <summary>
+   Gets or sets the x.
+   </summary>
+      <value>The x.</value>
+    </member>
+    <member name="P:Polyline.ViewModels.Coordinate.Y">
+      <summary>
+   Gets or sets the y.
+   </summary>
+      <value>The y.</value>
+    </member>
+    <member name="P:Polyline.ViewModels.Coordinate.Point">
+      <summary>
+   Gets or sets the point.
+   </summary>
+      <value>The point.</value>
+    </member>
+    <member name="T:Polyline.ViewModels.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   </summary>
+    </member>
+    <member name="P:Polyline.ViewModels.MainWindowViewModel.plCollection">
+      <summary>
+   Gets or sets the pl collection.
+   </summary>
+      <value>The pl collection.</value>
+    </member>
+    <member name="M:Polyline.ViewModels.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:Polyline.ViewModels.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:Polyline.ViewModels.Polyline">
+      <summary>
+   Class Polyline.
+   Implements the <see cref="T:System.Collections.Generic.List`1" /></summary>
+      <seealso cref="T:System.Collections.Generic.List`1" />
+    </member>
+    <member name="T:Polyline.ViewModels.PolylineCollection">
+      <summary>
+   Class PolylineCollection.
+   Implements the <see cref="T:System.Collections.Generic.List`1" /></summary>
+      <seealso cref="T:System.Collections.Generic.List`1" />
+    </member>
+    <member name="P:Polyline.ViewModels.PolylineCollection.Segments">
+      <summary>
+   Gets the segments.
+   </summary>
+      <value>The segments.</value>
+    </member>
+    <member name="P:Polyline.ViewModels.PolylineCollection.ControlPoints">
+      <summary>
+   Gets the control points.
+   </summary>
+      <value>The control points.</value>
+    </member>
+    <member name="T:Polyline.ViewModels.Segment">
+      <summary>
+   Class Segment.
+   </summary>
+    </member>
+    <member name="P:Polyline.ViewModels.Segment.Start">
+      <summary>
+   Gets or sets the start.
+   </summary>
+      <value>The start.</value>
+    </member>
+    <member name="P:Polyline.ViewModels.Segment.End">
+      <summary>
+   Gets or sets the end.
+   </summary>
+      <value>The end.</value>
+    </member>
+    <member name="T:Polyline.Views.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:Polyline.Views.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:Polyline.Views.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:Polyline.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>

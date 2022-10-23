@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_BaseLibTests</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_BaseLib.Helper.Tests.TestStruct">
+      <summary>
+   Struct TestStruct
+   </summary>
+    </member>
+    <member name="T:MVVM_BaseLib.Helper.Tests.TestEnum">
+      <summary>
+   Enum GameSound
+   </summary>
+    </member>
+    <member name="T:MVVM_BaseLib.Helper.Tests.PropertyTests">
+      <summary>
+   Defines test class PropertyTests.
+   </summary>
+    </member>
+    <member name="F:MVVM_BaseLib.Helper.Tests.TestStruct.TestInt">
+      <summary>
+   The test int
+   </summary>
+    </member>
+    <member name="F:MVVM_BaseLib.Helper.Tests.TestStruct.TestString">
+      <summary>
+   The test string
+   </summary>
+    </member>
+    <member name="M:MVVM_BaseLib.Helper.Tests.TestStruct.Parse(System.String)">
+      <summary>
+   Parses the specified s.
+   </summary>
+      <param name="s">The s.</param>
+      <returns>TestStruct.</returns>
+    </member>
+    <member name="M:MVVM_BaseLib.Helper.Tests.TestStruct.ToString">
+      <summary>
+   Returns a <see cref="T:System.String" /> that represents this instance.
+   </summary>
+      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+    </member>
+    <member name="M:MVVM_BaseLib.Helper.Tests.TestStruct.Equals(System.Object)">
+      <summary>
+   Determines whether the specified <see cref="T:System.Object" /> is equal to this instance.
+   </summary>
+      <param name="obj">Das Objekt, das mit der aktuellen Instanz verglichen werden soll.</param>
+      <returns>
+        <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    </member>
+    <member name="F:MVVM_BaseLib.Helper.Tests.TestEnum.teApple">
+      <summary>
+   The te apple
+   </summary>
+    </member>
+    <member name="F:MVVM_BaseLib.Helper.Tests.TestEnum.tePear">
+      <summary>
+   The te pear
+   </summary>
+    </member>
+    <member name="F:MVVM_BaseLib.Helper.Tests.TestEnum.teCherry">
+      <summary>
+   The te cherry
+   </summary>
+    </member>
+    <member name="F:MVVM_BaseLib.Helper.Tests.TestEnum.teRasberry">
+      <summary>
+   The te rasberry
+   </summary>
+    </member>
+    <member name="M:MVVM_BaseLib.Helper.Tests.PropertyTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:MVVM_BaseLib.Helper.Tests.PropertyTests.SetPropertyTest(System.String,TypeCode,System.String,System.Boolean,System.String)">
+      <summary>
+   Sets the property test.
+   </summary>
+      <param name="Name">The name.</param>
+      <param name="tt">The tt.</param>
+      <param name="value">The value.</param>
+      <param name="bExp">if set to <c>true</c> [b exp].</param>
+      <param name="expResult">The exp result.</param>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_TiledDisplay_net</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_TiledDisplay.View.Converter.PositionConverter">
+      <summary>
+   Class PositionConverter.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.PositionConverter.IsRowConverter">
+      <summary>
+   Gets or sets a value indicating whether this instance is row converter.
+   </summary>
+      <value>
+        <c>true</c> if this instance is row converter; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.PositionConverter.Row">
+      <summary>
+   Gets or sets the row.
+   </summary>
+      <value>The row.</value>
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.PositionConverter.Col">
+      <summary>
+   Gets or sets the col.
+   </summary>
+      <value>The col.</value>
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.PositionConverter.WindowSize">
+      <summary>
+   Gets or sets the size of the window.
+   </summary>
+      <value>The size of the window.</value>
+    </member>
+    <member name="M:MVVM_TiledDisplay.View.Converter.PositionConverter.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value produced by the binding source.</param>
+      <param name="targetType">The type of the binding target property.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="M:MVVM_TiledDisplay.View.Converter.PositionConverter.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value that is produced by the binding target.</param>
+      <param name="targetType">The type to convert to.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay">
+      <summary>
+   Class TileDataArrToTileDisplay.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay.WindowSize">
+      <summary>
+   Gets or sets the size of the window.
+   </summary>
+      <value>The size of the window.</value>
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay.brushes">
+      <summary>
+   Gets or sets the brushes.
+   </summary>
+      <value>The brushes.</value>
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay.ItemStyle">
+      <summary>
+   Gets or sets the background.
+   </summary>
+      <value>The background.</value>
+    </member>
+    <member name="P:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay.TileSize">
+      <summary>
+   Gets or sets the size of the tile.
+   </summary>
+      <value>The size of the tile.</value>
+    </member>
+    <member name="M:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value produced by the binding source.</param>
+      <param name="targetType">The type of the binding target property.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+    </member>
+    <member name="M:MVVM_TiledDisplay.View.Converter.TileDataArrToTileDisplay.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value that is produced by the binding target.</param>
+      <param name="targetType">The type to convert to.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:MVVM_TiledDisplay.View.MainView">
+      <summary> Interaktionslogik für MainView.xaml </summary>
+    </member>
+    <member name="M:MVVM_TiledDisplay.View.MainView.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_TiledDisplay.View.MainView" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_TiledDisplay.View.TileView">
+      <summary> Interaktionslogik für TileView.xaml </summary>
+    </member>
+    <member name="M:MVVM_TiledDisplay.View.TileView.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_TiledDisplay.View.TileView" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_TiledDisplay.ViewModel.MainViewViewModel">
+      <summary>
+   Class MainViewViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="T:MVVM_TiledDisplay.ViewModel.MainWindowViewModel">
+      <summary>
+        <font color="red">Badly formed XML comment.</font>
+      </summary>
+    </member>
+    <member name="T:MVVM_TiledDisplay.ViewModel.TileBehavior">
+      <summary>
+   Class TileBehavior.
+   Implements the <see cref="T:Microsoft.Xaml.Behaviors.Behavior`1" /></summary>
+      <seealso cref="T:Microsoft.Xaml.Behaviors.Behavior`1" />
+    </member>
+    <member name="M:MVVM_TiledDisplay.ViewModel.TileBehavior.OnAttached">
+      <summary>
+   Called after the behavior is attached to an AssociatedObject.
+   </summary>
+      <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
+    </member>
+    <member name="T:MVVM_TiledDisplay.ViewModel.TileData">
+      <summary>
+   Struct TileData
+   </summary>
+    </member>
+    <member name="F:MVVM_TiledDisplay.ViewModel.TileData.Idx">
+      <summary>
+   The index
+   </summary>
+    </member>
+    <member name="F:MVVM_TiledDisplay.ViewModel.TileData.position">
+      <summary>
+   The position
+   </summary>
+    </member>
+    <member name="F:MVVM_TiledDisplay.ViewModel.TileData.destination">
+      <summary>
+   The destination
+   </summary>
+    </member>
+    <member name="F:MVVM_TiledDisplay.ViewModel.TileData.tileType">
+      <summary>
+   The tile type
+   </summary>
+    </member>
+    <member name="T:MVVM_TiledDisplay.ViewModel.TileViewViewModel">
+      <summary>
+   Class TileViewViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:MVVM_TiledDisplay.ViewModel.TileViewViewModel.Tiles">
+      <summary>
+   Gets or sets the tiles.
+   </summary>
+      <value>The tiles.</value>
+    </member>
+    <member name="M:MVVM_TiledDisplay.ViewModel.TileViewViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_TiledDisplay.ViewModel.TileViewViewModel" /> class.
+   </summary>
+    </member>
+    <member name="M:MVVM_TiledDisplay.ViewModel.TileViewViewModel.Storyboard_Completed(System.Object,EventArgs)">
+      <summary>
+   Handles the Completed event of the Storyboard control.
+   </summary>
+      <param name="sender">The source of the event.</param>
+      <param name="e">The <see cref="T:System.EventArgs" /> instance containing the event data.</param>
+    </member>
+    <member name="T:MVVM_TiledDisplay.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_TiledDisplay.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:MVVM_TiledDisplay.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_TiledDisplay.MainWindow" /> class.
+   </summary>
+    </member>
+  </members>
+</doc>
