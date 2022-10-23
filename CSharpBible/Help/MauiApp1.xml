@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MauiApp1</name>
+  </assembly>
+  <members>
+    <member name="T:MauiApp1.MainActivity">
+      <summary>
+   Class MainActivity.
+   Implements the <see cref="T:Microsoft.Maui.MauiAppCompatActivity" /></summary>
+      <seealso cref="T:Microsoft.Maui.MauiAppCompatActivity" />
+    </member>
+    <member name="T:MauiApp1.MainApplication">
+      <summary>
+   Class MainApplication.
+   Implements the <see cref="T:Microsoft.Maui.MauiApplication" /></summary>
+      <seealso cref="T:Microsoft.Maui.MauiApplication" />
+    </member>
+    <member name="M:MauiApp1.MainApplication.#ctor(IntPtr,JniHandleOwnership)">
+      <summary>
+   Initializes a new instance of the <see cref="T:MauiApp1.MainApplication" /> class.
+   </summary>
+      <param name="handle">The handle.</param>
+      <param name="ownership">The ownership.</param>
+    </member>
+    <member name="M:MauiApp1.MainApplication.CreateMauiApp">
+      <summary>
+   Creates the maui application.
+   </summary>
+      <returns>MauiApp.</returns>
+    </member>
+    <member name="T:MauiApp1.AppDelegate">
+      <summary>
+   Class AppDelegate.
+   </summary>
+      <summary>
+   Class AppDelegate.
+   </summary>
+    </member>
+    <member name="M:MauiApp1.AppDelegate.CreateMauiApp">
+      <summary>
+   Creates the maui application.
+   </summary>
+      <returns>MauiApp.</returns>
+    </member>
+    <member name="T:MauiApp1.Program">
+      <summary>
+   Class Program.
+   </summary>
+      <summary>
+   Class Program.
+   </summary>
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="M:MauiApp1.AppDelegate.CreateMauiApp">
+      <summary>
+   Creates the maui application.
+   </summary>
+      <returns>MauiApp.</returns>
+    </member>
+    <member name="M:MauiApp1.Program.CreateMauiApp">
+      <summary>
+   Creates the maui application.
+   </summary>
+      <returns>MauiApp.</returns>
+    </member>
+    <member name="T:MauiApp1.WinUI.App">
+      <summary> Provides application-specific behavior to supplement the default Application class. </summary>
+    </member>
+    <member name="M:MauiApp1.WinUI.App.#ctor">
+      <summary>
+   Initializes the singleton application object.  This is the first line of authored code
+   executed, and as such is the logical equivalent of main() or WinMain().
+   </summary>
+    </member>
+    <member name="M:MauiApp1.WinUI.App.CreateMauiApp">
+      <summary>
+   Creates the maui application.
+   </summary>
+      <returns>MauiApp.</returns>
+    </member>
+    <member name="T:MauiApp1.App">
+      <summary> Class App. Implements the <see cref="T:Microsoft.Maui.Controls.Application" /></summary>
+      <seealso cref="T:Microsoft.Maui.Controls.Application" />
+    </member>
+    <member name="M:MauiApp1.App.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MauiApp1.App" /> class.
+   </summary>
+      <Docs>
+        <summary>Initializes a new <see cref="T:Microsoft.Maui.Controls.Application" /> instance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </member>
+    <member name="T:MauiApp1.AppShell">
+      <summary> Class AppShell. Implements the <see cref="T:Microsoft.Maui.Controls.Shell" /></summary>
+      <seealso cref="T:Microsoft.Maui.Controls.Shell" />
+    </member>
+    <member name="M:MauiApp1.AppShell.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MauiApp1.AppShell" /> class.
+   </summary>
+      <Docs>
+        <summary>Creates a new <see cref="T:Microsoft.Maui.Controls.Shell" /> element with default values.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </member>
+    <member name="T:MauiApp1.MainPage">
+      <summary> Class MainPage. Implements the <see cref="T:Microsoft.Maui.Controls.ContentPage" /></summary>
+      <seealso cref="T:Microsoft.Maui.Controls.ContentPage" />
+    </member>
+    <member name="M:MauiApp1.MainPage.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MauiApp1.MainPage" /> class.
+   </summary>
+    </member>
+    <member name="T:MauiApp1.MauiProgram">
+      <summary>
+   Class MauiProgram.
+   </summary>
+    </member>
+    <member name="M:MauiApp1.MauiProgram.CreateMauiApp">
+      <summary>
+   Creates the maui application.
+   </summary>
+      <returns>MauiApp.</returns>
+    </member>
+  </members>
+</doc>

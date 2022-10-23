@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CanvasWPF</name>
+  </assembly>
+  <members>
+    <member name="T:CanvasWPF.View.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:CanvasWPF.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="E:CanvasWPF.ViewModel.MainWindowViewModel.MissingData">
+      <summary>
+   Occurs when [missing data].
+   </summary>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.MainWindowViewModel.Rectangles">
+      <summary>
+   Gets or sets the rectangles.
+   </summary>
+      <value>The rectangles.</value>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.MainWindowViewModel.Circles">
+      <summary>
+   Gets or sets the circles.
+   </summary>
+      <value>The circles.</value>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.MainWindowViewModel.dcSelectShape">
+      <summary>
+   Gets or sets the dc select shape.
+   </summary>
+      <value>The dc select shape.</value>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.MainWindowViewModel.dcCreateShape">
+      <summary>
+   Gets or sets the dc create shape.
+   </summary>
+      <value>The dc create shape.</value>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.MainWindowViewModel.dcDeleteShape">
+      <summary>
+   Gets or sets the dc delete shape.
+   </summary>
+      <value>The dc delete shape.</value>
+    </member>
+    <member name="M:CanvasWPF.ViewModel.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF.ViewModel.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF.ViewModel.ObservablePoint">
+      <summary>
+   Class ObservablePoint.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:CanvasWPF.ViewModel.ObservablePoint.Dx">
+      <summary>
+   Gets or sets the dx.
+   </summary>
+      <value>The dx.</value>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.ObservablePoint.Dy">
+      <summary>
+   Gets or sets the dy.
+   </summary>
+      <value>The dy.</value>
+    </member>
+    <member name="F:CanvasWPF.ViewModel.ObservablePoint.maxX">
+      <summary>
+   The maximum x
+   </summary>
+    </member>
+    <member name="F:CanvasWPF.ViewModel.ObservablePoint.maxY">
+      <summary>
+   The maximum y
+   </summary>
+    </member>
+    <member name="M:CanvasWPF.ViewModel.ObservablePoint.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF.ViewModel.ObservablePoint" /> class.
+   </summary>
+    </member>
+    <member name="M:CanvasWPF.ViewModel.ObservablePoint.#ctor(System.Double,System.Double)">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF.ViewModel.ObservablePoint" /> class.
+   </summary>
+      <param name="x">The x.</param>
+      <param name="y">The y.</param>
+    </member>
+    <member name="M:CanvasWPF.ViewModel.ObservablePoint.#ctor(Point)">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF.ViewModel.ObservablePoint" /> class.
+   </summary>
+      <param name="p">The p.</param>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.ObservablePoint.X">
+      <summary>
+   Gets or sets the x.
+   </summary>
+      <value>The x.</value>
+    </member>
+    <member name="P:CanvasWPF.ViewModel.ObservablePoint.Y">
+      <summary>
+   Gets or sets the y.
+   </summary>
+      <value>The y.</value>
+    </member>
+    <member name="M:CanvasWPF.ViewModel.ObservablePoint.Step">
+      <summary>
+   Steps this instance.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,1212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ConsoleLib_net</name>
+  </assembly>
+  <members>
+    <member name="T:ConsoleLib.CommonControls.Application">
+      <summary>
+   Class Application.
+   Implements the <see cref="T:ConsoleLib.CommonControls.Panel" /></summary>
+      <seealso cref="T:ConsoleLib.CommonControls.Panel" />
+    </member>
+    <member name="P:ConsoleLib.CommonControls.Application.MousePos">
+      <summary>
+   Gets the mouse position.
+   </summary>
+      <value>The mouse position.</value>
+    </member>
+    <member name="P:ConsoleLib.CommonControls.Application.running">
+      <summary>
+   Gets a value indicating whether this <see cref="T:ConsoleLib.CommonControls.Application" /> is running.
+   </summary>
+      <value>
+        <c>true</c> if running; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="E:ConsoleLib.CommonControls.Application.OnCanvasResize">
+      <summary>
+   Occurs when [on canvas resize].
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Application.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.CommonControls.Application" /> class.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Application.Initialize">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Application.Run">
+      <summary>
+   Runs this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Application.Stop">
+      <summary>
+   Stops this instance.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.CommonControls.Button">
+      <summary>
+   Class Button.
+   Implements the <see cref="T:ConsoleLib.Control" /></summary>
+      <seealso cref="T:ConsoleLib.Control" />
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Button.Pressed(Point)">
+      <summary>
+   Presseds the specified m.
+   </summary>
+      <param name="M">The m.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Button.Set(System.Int32,System.Int32,System.String,ConsoleColor)">
+      <summary>
+   Sets the specified x.
+   </summary>
+      <param name="X">The x.</param>
+      <param name="Y">The y.</param>
+      <param name="text">The text.</param>
+      <param name="backColor">Color of the back.</param>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Button.MouseEnter(Point)">
+      <summary>
+   Mouses the enter.
+   </summary>
+      <param name="M">The m.</param>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Button.MouseLeave(Point)">
+      <summary>
+   Mouses the leave.
+   </summary>
+      <param name="M">The m.</param>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Button.SetText(System.String)">
+      <summary>
+   Sets the text.
+   </summary>
+      <param name="value">The value.</param>
+    </member>
+    <member name="T:ConsoleLib.CommonControls.Label">
+      <summary>
+   Class Label.
+   Implements the <see cref="T:ConsoleLib.Control" /></summary>
+      <seealso cref="T:ConsoleLib.Control" />
+    </member>
+    <member name="P:ConsoleLib.CommonControls.Label.ParentBackground">
+      <summary>
+   Gets or sets a value indicating whether [parent background].
+   </summary>
+      <value>
+        <c>true</c> if [parent background]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Label.Draw">
+      <summary>
+   Draws this instance.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.CommonControls.Panel">
+      <summary>
+   Class Panel.
+   Implements the <see cref="T:ConsoleLib.Control" /></summary>
+      <seealso cref="T:ConsoleLib.Control" />
+    </member>
+    <member name="F:ConsoleLib.CommonControls.Panel.Boarder">
+      <summary>
+   The boarder
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.CommonControls.Panel.BoarderColor">
+      <summary>
+   The boarder color
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Panel.Draw">
+      <summary>
+   Draws this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Panel.ReDraw(Rectangle)">
+      <summary>
+   Res the draw.
+   </summary>
+      <param name="dimension">The dimension.</param>
+    </member>
+    <member name="T:ConsoleLib.CommonControls.Pixel">
+      <summary>
+   Class Pixel.
+   Implements the <see cref="T:ConsoleLib.Control" /></summary>
+      <seealso cref="T:ConsoleLib.Control" />
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Pixel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.CommonControls.Pixel" /> class.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Pixel.Set(System.Int32,System.Int32,System.String)">
+      <summary>
+   Sets the specified x.
+   </summary>
+      <param name="X">The x.</param>
+      <param name="Y">The y.</param>
+      <param name="text">The text.</param>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Pixel.Set(Point,System.String)">
+      <summary>
+   Sets the specified position.
+   </summary>
+      <param name="position">The position.</param>
+      <param name="text">The text.</param>
+    </member>
+    <member name="M:ConsoleLib.CommonControls.Pixel.Draw">
+      <summary>
+   Draws this instance.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.ConsoleFramework">
+      <summary>
+   Class ConsoleFramework.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.ConsoleFramework.chars">
+      <summary>
+   The chars
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.ConsoleFramework.singleBoarder">
+      <summary>
+   The single boarder
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.ConsoleFramework.doubleBoarder">
+      <summary>
+   The double boarder
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.ConsoleFramework.simpleBoarder">
+      <summary>
+   The simple boarder
+   </summary>
+    </member>
+    <member name="P:ConsoleLib.ConsoleFramework.MousePos">
+      <summary>
+   Gets the mouse position.
+   </summary>
+      <value>The mouse position.</value>
+    </member>
+    <member name="P:ConsoleLib.ConsoleFramework.MouseButtonLeft">
+      <summary>
+   Gets a value indicating whether [mouse button left].
+   </summary>
+      <value>
+        <c>true</c> if [mouse button left]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:ConsoleLib.ConsoleFramework.MouseButtonRight">
+      <summary>
+   Gets a value indicating whether [mouse button right].
+   </summary>
+      <value>
+        <c>true</c> if [mouse button right]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:ConsoleLib.ConsoleFramework.MouseButtonMiddle">
+      <summary>
+   Gets a value indicating whether [mouse button middle].
+   </summary>
+      <value>
+        <c>true</c> if [mouse button middle]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="F:ConsoleLib.ConsoleFramework.Canvas">
+      <summary>
+   The canvas
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.ConsoleFramework.SetPixel(System.Int32,System.Int32,ConsoleColor)">
+      <summary>
+   Sets the pixel.
+   </summary>
+      <param name="x">The x.</param>
+      <param name="y">The y.</param>
+      <param name="color">The color.</param>
+    </member>
+    <member name="T:ConsoleLib.Control">
+      <summary>
+   This is the basic class of all TextControls
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.Control._dimension">
+      <summary>
+   The dimension
+   </summary>
+    </member>
+    <member name="P:ConsoleLib.Control.MessageQueue">
+      <summary>
+   Gets or sets the message queue.
+   </summary>
+      <value>The message queue.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.dimension">
+      <summary>
+   Gets or sets the dimension.
+   </summary>
+      <value>The dimension.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.position">
+      <summary>
+   Gets or sets the position.
+   </summary>
+      <value>The position.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.size">
+      <summary>
+   Gets or sets the size.
+   </summary>
+      <value>The size.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.realDim">
+      <summary>
+   Gets the real dim.
+   </summary>
+      <value>The real dim.</value>
+    </member>
+    <member name="M:ConsoleLib.Control.realDimOf(Rectangle)">
+      <summary>
+   Reals the dim of.
+   </summary>
+      <param name="aDim">a dim.</param>
+      <returns>Rectangle.</returns>
+    </member>
+    <member name="M:ConsoleLib.Control.localDimOf(Rectangle,Control)">
+      <summary>
+   Locals the dim of.
+   </summary>
+      <param name="aDim">a dim.</param>
+      <param name="ancestor">The ancestor.</param>
+      <returns>Rectangle.</returns>
+    </member>
+    <member name="M:ConsoleLib.Control.ReDraw(Rectangle)">
+      <summary>
+   Res the draw.
+   </summary>
+      <param name="dimension">The dimension.</param>
+    </member>
+    <member name="M:ConsoleLib.Control.Over(Point)">
+      <summary>
+   Overs the specified m.
+   </summary>
+      <param name="M">The m.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="P:ConsoleLib.Control.active">
+      <summary>
+   Gets or sets a value indicating whether this <see cref="T:ConsoleLib.Control" /> is active.
+   </summary>
+      <value>
+        <c>true</c> if active; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.visible">
+      <summary>
+   Gets or sets a value indicating whether this <see cref="T:ConsoleLib.Control" /> is visible.
+   </summary>
+      <value>
+        <c>true</c> if visible; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.IsVisible">
+      <summary>
+   Gets a value indicating whether this instance is visible.
+   </summary>
+      <value>
+        <c>true</c> if this instance is visible; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.shaddow">
+      <summary>
+   Gets or sets a value indicating whether this <see cref="T:ConsoleLib.Control" /> is shaddow.
+   </summary>
+      <value>
+        <c>true</c> if shaddow; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.valid">
+      <summary>
+   Gets or sets a value indicating whether this <see cref="T:ConsoleLib.Control" /> is valid.
+   </summary>
+      <value>
+        <c>true</c> if valid; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:ConsoleLib.Control.Invalidate">
+      <summary>
+   Invalidates this instance.
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnClick">
+      <summary>
+   Occurs when [on click].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnMove">
+      <summary>
+   Occurs when [on move].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnResize">
+      <summary>
+   Occurs when [on resize].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnChange">
+      <summary>
+   Occurs when [on change].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnActivate">
+      <summary>
+   Occurs when [on activate].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnMouseEnter">
+      <summary>
+   Occurs when [on mouse enter].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnMouseLeave">
+      <summary>
+   Occurs when [on mouse leave].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnMouseMove">
+      <summary>
+   Occurs when [on mouse move].
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.Control.OnKeyPressed">
+      <summary>
+   Occurs when [on key pressed].
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.Control.BackColor">
+      <summary>
+   The back color
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.Control.ForeColor">
+      <summary>
+   The fore color
+   </summary>
+    </member>
+    <member name="P:ConsoleLib.Control.Text">
+      <summary>
+   Gets or sets the text.
+   </summary>
+      <value>The text.</value>
+    </member>
+    <member name="M:ConsoleLib.Control.SetText(System.String)">
+      <summary>
+   Sets the text.
+   </summary>
+      <param name="value">The value.</param>
+    </member>
+    <member name="F:ConsoleLib.Control.children">
+      <summary>
+   The children
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.Control.ActiveControl">
+      <summary>
+   The active control
+   </summary>
+    </member>
+    <member name="P:ConsoleLib.Control.parent">
+      <summary>
+   Gets or sets the parent.
+   </summary>
+      <value>The parent.</value>
+    </member>
+    <member name="M:ConsoleLib.Control.Add(Control)">
+      <summary>
+   Adds the specified control.
+   </summary>
+      <param name="control">The control.</param>
+      <returns>Control.</returns>
+    </member>
+    <member name="M:ConsoleLib.Control.Remove(Control)">
+      <summary>
+   Removes the specified control.
+   </summary>
+      <param name="control">The control.</param>
+      <returns>Control.</returns>
+    </member>
+    <member name="M:ConsoleLib.Control.Draw">
+      <summary>
+   Draws this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.Control.Click">
+      <summary>
+   Clicks this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.Control.MouseEnter(Point)">
+      <summary>
+   Mouses the enter.
+   </summary>
+      <param name="M">The m.</param>
+    </member>
+    <member name="M:ConsoleLib.Control.MouseLeave(Point)">
+      <summary>
+   Mouses the leave.
+   </summary>
+      <param name="M">The m.</param>
+    </member>
+    <member name="M:ConsoleLib.Control.MouseMove(MouseEventArgs,Point)">
+      <summary>
+   Mouses the move.
+   </summary>
+      <param name="M">The <see cref="T:System.Windows.Forms.MouseEventArgs" /> instance containing the event data.</param>
+      <param name="lastMousePos">The last mouse position.</param>
+    </member>
+    <member name="M:ConsoleLib.Control.MouseClick(MouseEventArgs)">
+      <summary>
+   Mouses the click.
+   </summary>
+      <param name="M">The <see cref="T:System.Windows.Forms.MouseEventArgs" /> instance containing the event data.</param>
+    </member>
+    <member name="M:ConsoleLib.Control.HandlePressKeyEvents(KeyPressEventArgs)">
+      <summary>
+   Handles the press key events.
+   </summary>
+      <param name="e">The <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> instance containing the event data.</param>
+    </member>
+    <member name="M:ConsoleLib.Control.DoUpdate">
+      <summary>
+   Does the update.
+   </summary>
+    </member>
+    <member name="P:ConsoleLib.Control.Tag">
+      <summary>
+   Gets or sets the tag.
+   </summary>
+      <value>The tag.</value>
+    </member>
+    <member name="P:ConsoleLib.Control.Accellerator">
+      <summary>
+   Gets or sets the accellerator.
+   </summary>
+      <value>The accellerator.</value>
+    </member>
+    <member name="T:ConsoleLib.ExtendedConsole">
+      <summary>
+   Class ExtendedConsole.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods">
+      <summary>
+   Native Input and Output -Methods
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.COORD">
+      <summary>
+   Interface structure for coordinates
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.SMALL_RECT">
+      <summary>
+   Structure to represent a small rectangle with 'short'-values
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.EventType">
+      <summary>
+   EventType<br />A handle to the type of (<a href="Console">Console</a>)-input event and the event record stored in the Event member.
+   </summary>
+      <example>
+   For an example, see <a href="https://docs.microsoft.com/en-us/windows/console/reading-input-buffer-events" data-linktype="relative-path"><u><font color="#0066cc">Reading Input Buffer Events</font></u></a>.
+   </example>
+      <seealso cref="ReadConsoleInput" />
+      <seealso cref="WriteConsoleInput" />
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.ButtonState">
+      <summary>
+   State of the mouse-buttons
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.ControlKeyState">
+      <summary>
+   The state of the control keys. This member can be one or more of the following values.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.EventFlags">
+      <summary>
+   The type of mouse event. If this value is zero, it indicates a mouse button being pressed or released. Otherwise, this member is one of the following values.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.INPUT_RECORD">
+      <summary>
+   Describes an input event in the console input buffer. These records can be read from the input buffer by using the <a href="https://docs.microsoft.com/en-us/windows/console/readconsoleinput" data-linktype="relative-path"><strong><u><font color="#0066cc">ReadConsoleInput</font></u></strong></a> or <a href="https://docs.microsoft.com/en-us/windows/console/peekconsoleinput" data-linktype="relative-path"><strong><u><font color="#0066cc">PeekConsoleInput</font></u></strong></a> function, or written to the input buffer by using the <a href="https://docs.microsoft.com/en-us/windows/console/writeconsoleinput" data-linktype="relative-path"><strong><u><font color="#0066cc">WriteConsoleInput</font></u></strong></a> function.
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.Attributes">
+      <summary>
+   Enum DateDifFormat
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.CHAR_INFO">
+      <summary>
+   Struct CHAR_INFO
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.MOUSE_EVENT_RECORD">
+      <summary>
+   Struct MOUSE_EVENT_RECORD
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.KEY_EVENT_RECORD">
+      <summary>
+   Struct KEY_EVENT_RECORD
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.WINDOW_BUFFER_SIZE_RECORD">
+      <summary>
+   Struct WINDOW_BUFFER_SIZE_RECORD
+   </summary>
+    </member>
+    <member name="T:ConsoleLib.NativeMethods.ConsoleMode">
+      <summary>
+   The input or output mode to be set. If the <em>hConsoleHandle</em>
+   parameter is an input handle, the mode can be one or more of the
+   following values. When a console is created, all input modes except <strong>ENABLE_WINDOW_INPUT</strong> are enabled by default.
+   </summary>
+      <seealso cref="SetConsoleMode">SetConsoleMode function</seealso>
+      <seealso cref="GetConsoleMode">GetConsoleMode function</seealso>
+      <summary>
+   Enum TestEnum
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.ExtendedConsole.Stop">
+      <summary>
+   Stops this instance.
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.ExtendedConsole.MouseEvent">
+      <summary>
+   Occurs when a mouse event happend.
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.ExtendedConsole.KeyEvent">
+      <summary>
+   Occurs when a key event happend.
+   </summary>
+    </member>
+    <member name="E:ConsoleLib.ExtendedConsole.WindowBufferSizeEvent">
+      <summary>
+   Occurs when a window buffer size change event happend.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.COORD.X">
+      <summary>
+   The x
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.COORD.Y">
+      <summary>
+   The y
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.COORD.#ctor(System.Int16,System.Int16)">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.NativeMethods.COORD" /> struct with 2 values as coordinates.
+   </summary>
+      <param name="x">The x coordinate.</param>
+      <param name="y">The y coordinate.</param>
+    </member>
+    <member name="P:ConsoleLib.NativeMethods.COORD.AsPoint">
+      <summary>
+   Gets the value as a 'Point'.
+   </summary>
+      <value>As point.</value>
+      <summary>
+   Gets the value as a 'Point'.
+   </summary>
+      <value>As point.</value>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.SMALL_RECT.Left">
+      <summary>
+   The left
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.SMALL_RECT.Top">
+      <summary>
+   The top
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.SMALL_RECT.Right">
+      <summary>
+   The right
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.SMALL_RECT.Bottom">
+      <summary>
+   The bottom
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.SMALL_RECT.#ctor(System.Int16,System.Int16,System.Int16,System.Int16)">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.NativeMethods.SMALL_RECT" /> struct with 4 values as coordinates for the upper left and lower right corner.
+   </summary>
+      <param name="x1">The x1.</param>
+      <param name="y1">The y1.</param>
+      <param name="x2">The x2.</param>
+      <param name="y2">The y2.</param>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.SMALL_RECT.#ctor(COORD,COORD)">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.NativeMethods.SMALL_RECT" /> struct with 2 <see cref="T:ConsoleLib.NativeMethods.COORD" /> values.
+   </summary>
+      <param name="topLeft">The top left corner.</param>
+      <param name="bottomRight">The bottom right corner.</param>
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.NativeMethods.SMALL_RECT" /> struct with 2 <see cref="T:ConsoleLib.NativeMethods.COORD" /> values.
+   </summary>
+      <param name="topLeft">The top left corner.</param>
+      <param name="bottomRight">The bottom right corner.</param>
+    </member>
+    <member name="P:ConsoleLib.NativeMethods.SMALL_RECT.AsRectangle">
+      <summary>
+   Converts the <see cref="T:ConsoleLib.NativeMethods.SMALL_RECT" /> to a <see cref="T:System.Drawing.Rectangle" />.
+   </summary>
+      <value>As <see cref="T:System.Drawing.Rectangle" />.</value>
+    </member>
+    <member name="P:ConsoleLib.NativeMethods.SMALL_RECT.TopLeft">
+      <summary>
+   Gets or sets the top left.
+   </summary>
+      <value>The top left.</value>
+    </member>
+    <member name="P:ConsoleLib.NativeMethods.SMALL_RECT.BottomRight">
+      <summary>
+   Gets or sets the bottom right.
+   </summary>
+      <value>The bottom right.</value>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventType.FOCUS_EVENT">
+      <summary>
+     The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/focus-event-record-str"><strong><u><font color="#0066cc">FOCUS_EVENT_RECORD</font></u></strong></a> structure. These events are used internally and should be ignored.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventType.KEY_EVENT">
+      <summary>
+   The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/key-event-record-str"><strong><u><font color="#0066cc">KEY_EVENT_RECORD</font></u></strong></a> structure with information about a keyboard event.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventType.MENU_EVENT">
+      <summary>
+   The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/menu-event-record-str"><strong><u><font color="#0066cc">MENU_EVENT_RECORD</font></u></strong></a> structure. These events are used internally and should be ignored.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventType.MOUSE_EVENT">
+      <summary>
+   The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/mouse-event-record-str"><strong><u><font color="#0066cc">MOUSE_EVENT_RECORD</font></u></strong></a> structure with information about a mouse movement or button press event.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventType.WINDOW_BUFFER_SIZE_EVENT">
+      <summary>
+   The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/window-buffer-size-record-str"><strong><u><font color="#0066cc">WINDOW_BUFFER_SIZE_RECORD</font></u></strong></a> structure with information about the new size of the console screen buffer
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ButtonState.FROM_LEFT_1ST_BUTTON_PRESSED">
+      <summary>
+   The 1st button from left is pressed
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ButtonState.FROM_LEFT_2ND_BUTTON_PRESSED">
+      <summary>
+   The 2nd button from left is pressed
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ButtonState.FROM_LEFT_3RD_BUTTON_PRESSED">
+      <summary>
+   The 3rd button from left is pressed
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ButtonState.FROM_LEFT_4TH_BUTTON_PRESSED">
+      <summary>
+   The 4th button from left is pressed
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ButtonState.RIGHTMOST_BUTTON_PRESSED">
+      <summary>
+   The rightmost button is pressed
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.CAPSLOCK_ON">
+      <summary>  The CAPS LOCK light is on.</summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.ENHANCED_KEY">
+      <summary>
+   The key is enhanced.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.LEFT_ALT_PRESSED">
+      <summary>
+   The left ALT key is pressed.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.LEFT_CTRL_PRESSED">
+      <summary>
+   The left CTRL key is pressed.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.NUMLOCK_ON">
+      <summary>
+   The NUM LOCK light is on.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.RIGHT_ALT_PRESSED">
+      <summary>
+   The right ALT key is pressed.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.RIGHT_CTRL_PRESSED">
+      <summary>
+   The right CTRL key is pressed.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.SCROLLLOCK_ON">
+      <summary>
+   Scroll-Lock is on.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ControlKeyState.SHIFT_PRESSED">
+      <summary>
+   The SHIFT key is pressed.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventFlags.DOUBLE_CLICK">
+      <summary>
+   The second click (button press) of a double-click occurred. The first click is returned as a regular button-press event.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventFlags.MOUSE_HWHEELED">
+      <summary>
+   The horizontal mouse wheel was moved.
+   <para>If the high word of the <strong>dwButtonState</strong> member contains a positive value, the wheel was rotated to the right. Otherwise, the wheel was rotated to the left.</para></summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventFlags.MOUSE_MOVED">
+      <summary>
+   A change in mouse position occurred.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.EventFlags.MOUSE_WHEELED">
+      <summary>
+   The vertical mouse wheel was moved.
+   <para>If the high word of the <strong>dwButtonState</strong> member
+   contains a positive value, the wheel was rotated forward, away from the
+   user. Otherwise, the wheel was rotated backward, toward the user.</para></summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.INPUT_RECORD.usEventType">
+      <summary>
+   The us event type
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.INPUT_RECORD.KeyEvent">
+      <summary>
+   The key event
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.INPUT_RECORD.MouseEvent">
+      <summary>
+   The mouse event
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.INPUT_RECORD.WindowBufferSizeEvent">
+      <summary>
+   The window buffer size event
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.FOREGROUND_BLUE">
+      <summary>
+   The foreground blue
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.FOREGROUND_GREEN">
+      <summary>
+   The foreground green
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.FOREGROUND_RED">
+      <summary>
+   The foreground red
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.FOREGROUND_INTENSITY">
+      <summary>
+   The foreground intensity
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.BACKGROUND_BLUE">
+      <summary>
+   The background blue
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.BACKGROUND_GREEN">
+      <summary>
+   The background green
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.BACKGROUND_RED">
+      <summary>
+   The background red
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.BACKGROUND_INTENSITY">
+      <summary>
+   The background intensity
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_LEADING_BYTE">
+      <summary>
+   The common LVB leading byte
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_TRAILING_BYTE">
+      <summary>
+   The common LVB trailing byte
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_GRID_HORIZONTAL">
+      <summary>
+   The common LVB grid horizontal
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_GRID_LVERTICAL">
+      <summary>
+   The common LVB grid lvertical
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_GRID_RVERTICAL">
+      <summary>
+   The common LVB grid rvertical
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_REVERSE_VIDEO">
+      <summary>
+   The common LVB reverse video
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.Attributes.COMMON_LVB_UNDERSCORE">
+      <summary>
+   The common LVB underscore
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.CHAR_INFO.UnicodeChar">
+      <summary>
+   The unicode character
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.CHAR_INFO.AsciiChar">
+      <summary>
+   The ASCII character
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.CHAR_INFO.usAttributes">
+      <summary>
+   The us attributes
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.MOUSE_EVENT_RECORD.dwMousePosition">
+      <summary>
+   The dw mouse position
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.MOUSE_EVENT_RECORD.dwButtonState">
+      <summary>
+   The dw button state
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.MOUSE_EVENT_RECORD.dwControlKeyState">
+      <summary>
+   The dw control key state
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.MOUSE_EVENT_RECORD.dwEventFlags">
+      <summary>
+   The dw event flags
+   </summary>
+    </member>
+    <member name="P:ConsoleLib.NativeMethods.MOUSE_EVENT_RECORD.AsMouseEventArgs">
+      <summary>
+   Gets as mouse event arguments.
+   </summary>
+      <value>As mouse event arguments.</value>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.bKeyDown">
+      <summary>
+   If the key is pressed, this member is <strong>TRUE</strong>. Otherwise, this member is <strong>FALSE</strong> (the key is released).
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.wRepeatCount">
+      <summary>
+   The repeat count, which indicates that a key is being held down. For
+   example, when a key is held down, you might get five events with this
+   member equal to 1, one event with this member equal to 5, or multiple
+   events with this member greater than or equal to 1.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.wVirtualKeyCode">
+      <summary>
+   A <a href="https://msdn.microsoft.com/library/windows/desktop/dd375731(v=vs.85).aspx" data-linktype="external"><u><font color="#0066cc">virtual-key code</font></u></a> that identifies the given key in a device-independent manner.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.wVirtualScanCode">
+      <summary>
+   The virtual scan code of the given key that represents the device-dependent value generated by the keyboard hardware.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.UnicodeChar">
+      <summary>
+   Translated Unicode character.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.AsciiChar">
+      <summary>
+   Translated ASCII character.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.KEY_EVENT_RECORD.dwControlKeyState">
+      <summary>
+   The state of the control keys. This member can be one or more of the following values.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.WINDOW_BUFFER_SIZE_RECORD.dwSize">
+      <summary>
+   The dw size
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.STD_INPUT_HANDLE">
+      <summary>
+   The standard input handle
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.GetStdHandle(System.UInt32)">
+      <summary>
+   Gets the standard handle.
+   </summary>
+      <param name="nStdHandle">The n standard handle.</param>
+      <returns>IntPtr.</returns>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ConsoleMode.ENABLE_MOUSE_INPUT">
+      <summary>
+   If the mouse pointer is within the borders of the console window and the
+   window has the keyboard focus, mouse events generated by mouse movement
+   and button presses are placed in the input buffer. These events are
+   discarded by <a href="https://msdn.microsoft.com/library/windows/desktop/aa365467"><strong><u><font color="#0066cc">ReadFile</font></u></strong></a> or <a href="https://docs.microsoft.com/en-us/windows/console/readconsole"><strong><u><font color="#0066cc">ReadConsole</font></u></strong></a>, even when this mode is enabled.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ConsoleMode.ENABLE_QUICK_EDIT_MODE">
+      <summary>
+   This flag enables the user to use the mouse to select and edit text.
+  <para>To enable this mode, use <code>ENABLE_QUICK_EDIT_MODE | ENABLE_EXTENDED_FLAGS</code>. To disable this mode, use <strong>ENABLE_EXTENDED_FLAGS</strong> without this flag.</para></summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ConsoleMode.ENABLE_EXTENDED_FLAGS">
+      <summary>
+   Required to enable or disable extended flags. See <strong>ENABLE_INSERT_MODE</strong> and <strong>ENABLE_QUICK_EDIT_MODE</strong>.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ConsoleMode.ENABLE_ECHO_INPUT">
+      <summary>
+   Characters read by the <a href="https://msdn.microsoft.com/library/windows/desktop/aa365467"><strong><u><font color="#0066cc">ReadFile</font></u></strong></a> or <a href="https://docs.microsoft.com/en-us/windows/console/readconsole"><strong><u><font color="#0066cc">ReadConsole</font></u></strong></a> function are written to the active screen buffer as they are read. This mode can be used only if the <strong>ENABLE_LINE_INPUT</strong> mode is also enabled.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.NativeMethods.ConsoleMode.ENABLE_WINDOW_INPUT">
+      <summary>
+   User interactions that change the size of the console screen
+   buffer are reported in the console's input buffer. Information about
+   these events can be read from the input buffer by applications using the
+   <a href="https://docs.microsoft.com/en-us/windows/console/readconsoleinput"><strong><u><font color="#0066cc">ReadConsoleInput</font></u></strong></a>
+   function, but not by those using
+   <a href="https://msdn.microsoft.com/library/windows/desktop/aa365467"><strong><u><font color="#0066cc">ReadFile</font></u></strong></a>
+   or
+   <a href="https://docs.microsoft.com/en-us/windows/console/readconsole"><strong><u><font color="#0066cc">ReadConsole</font></u></strong></a></summary>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.GetConsoleMode(IntPtr,ConsoleMode@)">
+      <summary>
+   Retrieves the current input mode of a console's input buffer or the current output mode of a console screen buffer.
+   </summary>
+      <param name="hConsoleInput">A handle to the console input buffer or the console screen buffer. The handle must have the <strong>GENERIC_READ</strong> access right. For more information, see <a href="https://docs.microsoft.com/en-us/windows/console/console-buffer-security-and-access-rights"><u><font color="#0066cc">Console Buffer Security and Access Rights</font></u></a>.</param>
+      <param name="lpMode">A pointer to a variable that receives the current mode of the specified buffer.</param>
+      <returns>
+        <para>If the function succeeds, the return value is nonzero.</para>
+        <para>If the function fails, the return value is zero. To get extended error information, call <a href="https://msdn.microsoft.com/library/windows/desktop/ms679360" data-linktype="external"><strong><u><font color="#0066cc">GetLastError</font></u></strong></a>.</para>
+      </returns>
+      <example>For an example, see <see cref="https://docs.microsoft.com/en-us/windows/console/reading-input-buffer-events">Reading Input Buffer Events</see>.</example>
+      <seealso cref="https://docs.microsoft.com/en-us/windows/console/getconsolemode">GetConsoleMode Console API</seealso>
+      <seealso cref="https://docs.microsoft.com/en-us/windows/console/console-functions">Console Functions</seealso>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.SetConsoleMode(IntPtr,ConsoleMode)">
+      <summary>
+   Sets the input mode of a console's input buffer or the output mode of a console screen buffer.
+   </summary>
+      <param name="hConsoleInput">A handle to the console input buffer or a console screen buffer. The handle must have the <strong>GENERIC_READ</strong> access right. For more information, see <a href="https://docs.microsoft.com/en-us/windows/console/console-buffer-security-and-access-rights" data-linktype="relative-path"><u><font color="#0066cc">Console Buffer Security and Access Rights</font></u></a>.</param>
+      <param name="dwMode">The input or output mode to be set. If the hConsoleHandle parameter is an input handle, the mode can be one or more of the following values. When a console is created, all input modes except ENABLE_WINDOW_INPUT are enabled by default.</param>
+      <returns>
+        <para>If the function succeeds, the return value is nonzero.</para>
+        <para>If the function fails, the return value is zero. To get extended error information, call GetLastError.</para>
+      </returns>
+      <example>
+   For an example, see <a href="https://docs.microsoft.com/en-us/windows/console/reading-input-buffer-events" data-linktype="relative-path"><u><font color="#0066cc">Reading Input Buffer Events</font></u></a>.
+   </example>
+      <seealso cref="https://docs.microsoft.com/en-us/windows/console/setconsolemode">SetConsoleMode MS API-documentation</seealso>
+      <remarks>A console consists of an input buffer and one or more screen buffers.
+   The mode of a console buffer determines how the console behaves during
+   input and output (I/O) operations. One set of flag constants is used
+   with input handles, and another set is used with screen buffer (output)
+   handles. Setting the output modes of one screen buffer does not affect
+   the output modes of other screen buffers.</remarks>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.ReadConsoleInput(IntPtr,INPUT_RECORD[],System.UInt32,System.UInt32@)">
+      <summary>
+   Reads the console input.
+   </summary>
+      <param name="hConsoleInput">A handle to the console input buffer. The handle must have the <strong>GENERIC_READ</strong> access right. For more information, see <a href="https://docs.microsoft.com/en-us/windows/console/console-buffer-security-and-access-rights" data-linktype="relative-path"><u><font color="#0066cc">Console Buffer Security and Access Rights</font></u></a>.</param>
+      <param name="lpBuffer">A pointer to an array of <a href="https://docs.microsoft.com/en-us/windows/console/input-record-str" data-linktype="relative-path"><strong><u><font color="#0066cc">INPUT_RECORD</font></u></strong></a> structures that receives the input buffer data.</param>
+      <param name="nLength">The size of the array pointed to by the <em>lpBuffer</em> parameter, in array elements.</param>
+      <param name="lpNumberOfEventsRead">Variable that receives the number of input records read.</param>
+      <returns>
+        <para>If the function succeeds, the return value is nonzero.</para>
+        <para>If the function fails, the return value is zero. To get extended error information, call <a href="https://msdn.microsoft.com/library/windows/desktop/ms679360" data-linktype="external"><strong><u><font color="#0066cc">GetLastError</font></u></strong></a>.</para>
+      </returns>
+      <example>
+   For an example, see <a href="https://docs.microsoft.com/en-us/windows/console/reading-input-buffer-events" data-linktype="relative-path"><u><font color="#0066cc">Reading Input Buffer Events</font></u></a>.
+   </example>
+      <seealso cref="M:ConsoleLib.NativeMethods.ReadConsoleInput(IntPtr,INPUT_RECORD[],System.UInt32,System.UInt32@)" />
+      <remarks>
+        <para>If the number of records requested in the <em>nLength</em> parameter
+   exceeds the number of records available in the buffer, the number
+   available is read. The function does not return until at least one input
+   record has been read.</para>
+        <para>A process can specify a console input buffer handle in one of the <a href="https://msdn.microsoft.com/library/windows/desktop/ms687069" data-linktype="external"><u><font color="#0066cc">wait functions</font></u></a>
+   to determine when there is unread console input. When the input buffer
+   is not empty, the state of a console input buffer handle is signaled.</para>
+        <para>To determine the number of unread input records in a console's input buffer, use the <a href="https://docs.microsoft.com/en-us/windows/console/getnumberofconsoleinputevents" data-linktype="relative-path"><strong><u><font color="#0066cc">GetNumberOfConsoleInputEvents</font></u></strong></a> function. To read input records from a console input buffer without affecting the number of unread records, use the <a href="https://docs.microsoft.com/en-us/windows/console/peekconsoleinput" data-linktype="relative-path"><strong><u><font color="#0066cc">PeekConsoleInput</font></u></strong></a> function. To discard all unread records in a console's input buffer, use the <a href="https://docs.microsoft.com/en-us/windows/console/flushconsoleinputbuffer" data-linktype="relative-path"><strong><u><font color="#0066cc">FlushConsoleInputBuffer</font></u></strong></a> function.</para>
+        <para>This function uses either Unicode characters or 8-bit characters from
+   the console's current code page. The console's code page defaults
+   initially to the system's OEM code page. To change the console's code
+   page, use the <a href="https://docs.microsoft.com/en-us/windows/console/setconsolecp" data-linktype="relative-path"><strong><u><font color="#0066cc">SetConsoleCP</font></u></strong></a> or <a href="https://docs.microsoft.com/en-us/windows/console/setconsoleoutputcp" data-linktype="relative-path"><strong><u><font color="#0066cc">SetConsoleOutputCP</font></u></strong></a> functions, or use the <strong>chcp</strong> or <strong>mode con cp select=</strong> commands.</para>
+      </remarks>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.WriteConsoleInput(IntPtr,INPUT_RECORD[],System.UInt32,System.UInt32@)">
+      <summary>
+   Writes the console input.
+   </summary>
+      <param name="hConsoleInput">The h console input.</param>
+      <param name="lpBuffer">The lp buffer.</param>
+      <param name="nLength">Length of the n.</param>
+      <param name="lpNumberOfEventsWritten">The lp number of events written.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.WriteConsoleOutput(IntPtr,CHAR_INFO[],COORD,COORD,SMALL_RECT@)">
+      <summary>
+   Writes to the console output.
+   </summary>
+      <param name="hConsoleInput">The console input.</param>
+      <param name="lpBuffer">The buffer.</param>
+      <param name="dwBufferSize">Size of the buffer.</param>
+      <param name="dwBufferCoord">The buffer coord.</param>
+      <param name="lpWriteRegion">The write region.</param>
+      <returns>If the function succeeds, the return value is nonzero.<para />If the function fails, the return value is zero. To get extended error information, call <see cref="GetLastError" />.</returns>
+    </member>
+    <member name="M:ConsoleLib.NativeMethods.ReadConsoleOutput(IntPtr,CHAR_INFO[],COORD,COORD,SMALL_RECT@)">
+      <summary>
+   Reads from the console output.
+   </summary>
+      <param name="hConsoleInput">The console input.</param>
+      <param name="lpBuffer">The buffer.</param>
+      <param name="dwBufferSize">Size of the buffer.</param>
+      <param name="dwBufferCoord">The buffer coord.</param>
+      <param name="lpWriteRegion">The write region.</param>
+      <returns>If the function succeeds, the return value is nonzero.<para />If the function fails, the return value is zero. To get extended error information, call <see cref="GetLastError" />.</returns>
+    </member>
+    <member name="T:ConsoleLib.TextCanvas">
+      <summary>
+   Class TextCanvas.
+   </summary>
+    </member>
+    <member name="F:ConsoleLib.TextCanvas._dimension">
+      <summary>
+   The dimension
+   </summary>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.#ctor(Rectangle)">
+      <summary>
+   Initializes a new instance of the <see cref="T:ConsoleLib.TextCanvas" /> class.
+   </summary>
+      <param name="dimension">The dimension.</param>
+    </member>
+    <member name="P:ConsoleLib.TextCanvas.BackgroundColor">
+      <summary>
+   Gets the color of the background.
+   </summary>
+      <value>The color of the background.</value>
+    </member>
+    <member name="P:ConsoleLib.TextCanvas.ClipRect">
+      <summary>
+   Gets the clip rect.
+   </summary>
+      <value>The clip rect.</value>
+    </member>
+    <member name="P:ConsoleLib.TextCanvas.ForegroundColor">
+      <summary>
+   Gets the color of the foreground.
+   </summary>
+      <value>The color of the foreground.</value>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.FillRect(Rectangle,ConsoleColor,ConsoleColor,Char)">
+      <summary>
+   Fills the rect.
+   </summary>
+      <param name="dimension">The dimension.</param>
+      <param name="frcolor">The frcolor.</param>
+      <param name="bkcolor">The bkcolor.</param>
+      <param name="c">The c.</param>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.DrawRect(Rectangle,ConsoleColor,ConsoleColor,System.Char[])">
+      <summary>
+   Draws the rect.
+   </summary>
+      <param name="dimension">The dimension.</param>
+      <param name="frcolor">The frcolor.</param>
+      <param name="bkcolor">The bkcolor.</param>
+      <param name="boarder">The boarder.</param>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.OutTextXY(Point,System.String)">
+      <summary>
+   Outs the text xy.
+   </summary>
+      <param name="place">The place.</param>
+      <param name="s">The s.</param>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.OutTextXY(Point,System.Char)">
+      <summary>
+   Outs the text xy.
+   </summary>
+      <param name="place">The place.</param>
+      <param name="c">The c.</param>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.OutTextXY(System.Int32,System.Int32,System.String)">
+      <summary>
+   Outs the text xy.
+   </summary>
+      <param name="x">The x.</param>
+      <param name="y">The y.</param>
+      <param name="s">The s.</param>
+    </member>
+    <member name="M:ConsoleLib.TextCanvas.OutTextXY(System.Int32,System.Int32,System.Char)">
+      <summary>
+   Outs the text xy.
+   </summary>
+      <param name="x">The x.</param>
+      <param name="y">The y.</param>
+      <param name="c">The c.</param>
+    </member>
+  </members>
+</doc>

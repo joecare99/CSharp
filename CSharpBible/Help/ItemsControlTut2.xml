@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ItemsControlTut2</name>
+  </assembly>
+  <members>
+    <member name="T:ItemsControlTut2.View.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="T:ItemsControlTut2.View.TodoItem">
+      <summary>
+   Class TodoItem.
+   </summary>
+    </member>
+    <member name="M:ItemsControlTut2.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ItemsControlTut2.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="P:ItemsControlTut2.View.TodoItem.Title">
+      <summary>
+   Gets or sets the title.
+   </summary>
+      <value>The title.</value>
+    </member>
+    <member name="P:ItemsControlTut2.View.TodoItem.Completion">
+      <summary>
+   Gets or sets the completion.
+   </summary>
+      <value>The completion.</value>
+    </member>
+    <member name="T:ItemsControlTut2.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Calc64Base</name>
+  </assembly>
+  <members>
+    <member name="T:Calc64Base.Calc64">
+      <summary>
+   a 64 bit calculator-class
+   </summary>
+    </member>
+    <member name="P:Calc64Base.Calc64.ShortDesciptions">
+      <summary>
+   Gets the short desciptions.
+   </summary>
+      <value>The short desciptions.</value>
+    </member>
+    <member name="P:Calc64Base.Calc64.IDs">
+      <summary>
+   Gets the i ds.
+   </summary>
+      <value>The i ds.</value>
+    </member>
+    <member name="P:Calc64Base.Calc64.Operations">
+      <summary>
+   Gets the operations.
+   </summary>
+      <value>The operations.</value>
+    </member>
+    <member name="P:Calc64Base.Calc64.Accumulator">
+      <summary>
+   Gets or sets the accumulator.
+   </summary>
+      <value>The accumulator.</value>
+    </member>
+    <member name="P:Calc64Base.Calc64.Memory">
+      <summary>
+   Gets or sets the memory.
+   </summary>
+      <value>The memory.</value>
+    </member>
+    <member name="P:Calc64Base.Calc64.Register">
+      <summary>
+   Gets or sets the register.
+   </summary>
+      <value>The register.</value>
+    </member>
+    <member name="P:Calc64Base.Calc64.LastError">
+      <summary>
+   Gets or sets the last error.
+   </summary>
+      <value>The last error.</value>
+    </member>
+    <member name="E:Calc64Base.Calc64.CalcOperationChanged">
+      <summary>
+   Occurs when [calculate operation changed].
+   </summary>
+    </member>
+    <member name="E:Calc64Base.Calc64.CalcOperationError">
+      <summary>
+   Occurs when [calculate operation error].
+   </summary>
+    </member>
+    <member name="M:Calc64Base.Calc64.RegisterOperation(CalcOperation)">
+      <summary>
+   Registers the operation.
+   </summary>
+      <param name="calcOperation">The calculate operation.</param>
+    </member>
+    <member name="M:Calc64Base.Calc64.IsRegisterOpeation(CalcOperation)">
+      <summary>
+   Determines whether [is register opeation] [the specified co].
+   </summary>
+      <param name="co">The co.</param>
+      <returns>
+        <c>true</c> if [is register opeation] [the specified co]; otherwise, <c>false</c>.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.IsRegisterOpeation(System.String)">
+      <summary>
+   Determines whether [is register opeation] [the specified short desc].
+   </summary>
+      <param name="shortDesc">The short desc.</param>
+      <returns>
+        <c>true</c> if [is register opeation] [the specified short desc]; otherwise, <c>false</c>.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.IsRegisterOpeation(System.Int32)">
+      <summary>
+   Determines whether [is register opeation] [the specified identifier].
+   </summary>
+      <param name="id">The identifier.</param>
+      <returns>
+        <c>true</c> if [is register opeation] [the specified identifier]; otherwise, <c>false</c>.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.ToCalcOperation(System.String)">
+      <summary>
+   Converts to calcoperation.
+   </summary>
+      <param name="shortDesc">The short desc.</param>
+      <returns>CalcOperation.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.ToCalcOperation(System.Int32)">
+      <summary>
+   Converts to calcoperation.
+   </summary>
+      <param name="id">The identifier.</param>
+      <returns>CalcOperation.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.PropChange``1(System.String,``0,``0)">
+      <summary>
+   Properties the change.
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="prop">The property.</param>
+      <param name="oldVal">The old value.</param>
+      <param name="newVal">The new value.</param>
+    </member>
+    <member name="M:Calc64Base.Calc64.DoOpeation(CalcOperation)">
+      <summary>
+   Does the opeation.
+   </summary>
+      <param name="co">The co.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.DoOpeation(System.String)">
+      <summary>
+   Does the opeation.
+   </summary>
+      <param name="shortDesc">The short desc.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:Calc64Base.Calc64.DoOpeation(System.Int32)">
+      <summary>
+   Does the opeation.
+   </summary>
+      <param name="id">The identifier.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:Calc64Base.Calc64Model">
+      <summary>
+   Class Calc64Model.
+   Implements the <see cref="T:Calc64Base.Calc64" /></summary>
+      <seealso cref="T:Calc64Base.Calc64" />
+    </member>
+    <member name="T:Calc64Base.Calc64Model.eOpMode">
+      <summary>
+   Enum Exceptions
+   </summary>
+    </member>
+    <member name="F:Calc64Base.Calc64Model.eOpMode.NoMode">
+      <summary>
+   The no mode
+   </summary>
+    </member>
+    <member name="F:Calc64Base.Calc64Model.eOpMode.CalcResult">
+      <summary>
+   The calculate result
+   </summary>
+    </member>
+    <member name="F:Calc64Base.Calc64Model.eOpMode.BinaryAnd">
+      <summary>
+   The none
+   </summary>
+    </member>
+    <member name="F:Calc64Base.Calc64Model.eOpMode.Power">
+      <summary>
+   The e div by zero ex
+   </summary>
+    </member>
+    <member name="F:Calc64Base.Calc64Model.eOpMode.Nand">
+      <summary>
+   The nand
+   </summary>
+    </member>
+    <member name="F:Calc64Base.Calc64Model.eOpMode.MemRetreive">
+      <summary>
+   The memory retreive
+   </summary>
+    </member>
+    <member name="P:Calc64Base.Calc64Model.OperationMode">
+      <summary>
+   Gets or sets the operation mode.
+   </summary>
+      <value>The operation mode.</value>
+    </member>
+    <member name="M:Calc64Base.Calc64Model.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.Calc64Model" /> class.
+   </summary>
+    </member>
+    <member name="M:Calc64Base.Calc64Model.Button(System.Int32,System.Int32)">
+      <summary>
+   Buttons the specified a number.
+   </summary>
+      <param name="aNumber">a number.</param>
+      <param name="nBase">The n base.</param>
+    </member>
+    <member name="M:Calc64Base.Calc64Model.Operation(System.Int32)">
+      <summary>
+   Operations the specified v.
+   </summary>
+      <param name="v">The v.</param>
+    </member>
+    <member name="M:Calc64Base.Calc64Model.BackSpace(System.Int32)">
+      <summary>
+   Backs the space.
+   </summary>
+      <param name="nBase">The n base.</param>
+    </member>
+    <member name="T:Calc64Base.CalcOperation">
+      <summary>
+   Class CalcOperation.
+   </summary>
+    </member>
+    <member name="T:Calc64Base.CalcOperation.ClcOpSetting">
+      <summary>
+   Struct ClcOpSetting
+   </summary>
+    </member>
+    <member name="T:Calc64Base.UnaryOperation">
+      <summary>
+   Class UnaryOperation.
+   Implements the <see cref="T:Calc64Base.CalcOperation" /></summary>
+      <seealso cref="T:Calc64Base.CalcOperation" />
+    </member>
+    <member name="T:Calc64Base.BinaryOperation">
+      <summary>
+   Class BinaryOperation.
+   Implements the <see cref="T:Calc64Base.CalcOperation" /></summary>
+      <seealso cref="T:Calc64Base.CalcOperation" />
+    </member>
+    <member name="T:Calc64Base.FromMemOperation">
+      <summary>
+   Class FromMemOperation.
+   Implements the <see cref="T:Calc64Base.BinaryOperation" /></summary>
+      <seealso cref="T:Calc64Base.BinaryOperation" />
+    </member>
+    <member name="T:Calc64Base.ToMemOperation">
+      <summary>
+   Class ToMemOperation.
+   Implements the <see cref="T:Calc64Base.BinaryOperation" /></summary>
+      <seealso cref="T:Calc64Base.BinaryOperation" />
+    </member>
+    <member name="F:Calc64Base.CalcOperation.ClcOpSetting.NeedAccumulator">
+      <summary>
+   The need accumulator
+   </summary>
+    </member>
+    <member name="F:Calc64Base.CalcOperation.ClcOpSetting.NeedRegister">
+      <summary>
+   The need register
+   </summary>
+    </member>
+    <member name="F:Calc64Base.CalcOperation.ClcOpSetting.NeedMemory">
+      <summary>
+   The need memory
+   </summary>
+    </member>
+    <member name="M:Calc64Base.CalcOperation.ClcOpSetting.#ctor(System.Boolean,System.Boolean,System.Boolean)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.CalcOperation.ClcOpSetting" /> struct.
+   </summary>
+      <param name="a">if set to <c>true</c> [a].</param>
+      <param name="r">if set to <c>true</c> [r].</param>
+      <param name="m">if set to <c>true</c> [m].</param>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.ClcOpSetting.ArgCount">
+      <summary>
+   Gets the argument count.
+   </summary>
+      <value>The argument count.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.NeedAccumulator">
+      <summary>
+   Gets or sets a value indicating whether [need accumulator].
+   </summary>
+      <value>
+        <c>true</c> if [need accumulator]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.NeedRegister">
+      <summary>
+   Gets or sets a value indicating whether [need register].
+   </summary>
+      <value>
+        <c>true</c> if [need register]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.NeedMemory">
+      <summary>
+   Gets or sets a value indicating whether [need memory].
+   </summary>
+      <value>
+        <c>true</c> if [need memory]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.Setting">
+      <summary>
+   Gets the setting.
+   </summary>
+      <value>The setting.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.ShortDescr">
+      <summary>
+   Gets the short description.
+   </summary>
+      <value>The short description.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.ID">
+      <summary>
+   Gets the identifier.
+   </summary>
+      <value>The identifier.</value>
+    </member>
+    <member name="P:Calc64Base.CalcOperation.LongDescr">
+      <summary>
+   Gets the long description.
+   </summary>
+      <value>The long description.</value>
+    </member>
+    <member name="M:Calc64Base.CalcOperation.#ctor(System.String,System.String,System.Int32)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.CalcOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="id">The identifier.</param>
+    </member>
+    <member name="M:Calc64Base.CalcOperation.Execute(System.Object[]@)">
+      <summary>
+   Executes the specified o.
+   </summary>
+      <param name="o">The o.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:Calc64Base.CalcOperation.CreateArguments(CalcOperation)">
+      <summary>
+   Creates the arguments.
+   </summary>
+      <param name="co">The co.</param>
+      <returns>System.Object[].</returns>
+    </member>
+    <member name="M:Calc64Base.CalcOperation.SetID(System.Int32)">
+      <summary>
+   Sets the identifier.
+   </summary>
+      <param name="v">The v.</param>
+    </member>
+    <member name="P:Calc64Base.UnaryOperation.Function">
+      <summary>
+   Gets or sets the function.
+   </summary>
+      <value>The function.</value>
+    </member>
+    <member name="M:Calc64Base.UnaryOperation.#ctor(System.String,System.Int32,System.String,Func{Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.UnaryOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="id">The identifier.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.UnaryOperation.#ctor(System.String,System.String,Func{Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.UnaryOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.UnaryOperation.Execute(System.Object[]@)">
+      <summary>
+   Executes the specified o.
+   </summary>
+      <param name="o">The o.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="F:Calc64Base.BinaryOperation._func">
+      <summary>
+   The function
+   </summary>
+    </member>
+    <member name="P:Calc64Base.BinaryOperation.Function">
+      <summary>
+   Gets or sets the function.
+   </summary>
+      <value>The function.</value>
+    </member>
+    <member name="M:Calc64Base.BinaryOperation.#ctor(System.String,System.Int32,System.String,Func{Int64, Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.BinaryOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="id">The identifier.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.BinaryOperation.#ctor(System.String,System.String,Func{Int64, Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.BinaryOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.BinaryOperation.Execute(System.Object[]@)">
+      <summary>
+   Executes the specified o.
+   </summary>
+      <param name="o">The o.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:Calc64Base.FromMemOperation.#ctor(System.String,System.String,Func{Int64, Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.FromMemOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.FromMemOperation.#ctor(System.String,System.Int32,System.String,Func{Int64, Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.FromMemOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="id">The identifier.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.ToMemOperation.#ctor(System.String,System.String,Func{Int64, Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.ToMemOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.ToMemOperation.#ctor(System.String,System.Int32,System.String,Func{Int64, Int64, Int64})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Calc64Base.ToMemOperation" /> class.
+   </summary>
+      <param name="shortDescr">The short description.</param>
+      <param name="id">The identifier.</param>
+      <param name="longDescr">The long description.</param>
+      <param name="func">The function.</param>
+    </member>
+    <member name="M:Calc64Base.ToMemOperation.Execute(System.Object[]@)">
+      <summary>
+   Executes the specified o.
+   </summary>
+      <param name="o">The o.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:Calc64Base.StandardOperations">
+      <summary>
+   Class StandardOperations.
+   </summary>
+    </member>
+    <member name="M:Calc64Base.StandardOperations.GetAll">
+      <summary>
+   Gets all.
+   </summary>
+      <returns>IEnumerable&lt;CalcOperation&gt;.</returns>
+    </member>
+  </members>
+</doc>

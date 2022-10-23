@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CSharpBibleTest</name>
+  </assembly>
+  <members>
+    <member name="T:CSharpBibleTest.UnitTest1">
+      <summary>
+   Defines test class UnitTest1.
+   </summary>
+    </member>
+    <member name="M:CSharpBibleTest.UnitTest1.TestMethod1">
+      <summary>
+   Defines the test method TestMethod1.
+   </summary>
+    </member>
+  </members>
+</doc>

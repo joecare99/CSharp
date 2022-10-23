@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>AboutEx</name>
+  </assembly>
+  <members>
+    <member name="T:CSharpBible.AboutEx.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="T:CSharpBible.AboutEx.Properties.Resources">
+      <summary>
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.AboutEx.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Properties.Resources.ResourceManager">
+      <summary>
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Properties.Resources.Culture">
+      <summary>
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Properties.Resources.CheckMarkGreen">
+      <summary>
+     Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Properties.Resources.FireAtDelphi">
+      <summary>
+     Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+   </summary>
+    </member>
+    <member name="T:CSharpBible.AboutEx.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:CSharpBible.AboutEx.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:CSharpBible.AboutEx.Visual.AboutBox1">
+      <summary> Class AboutBox1. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class AboutBox1. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.AboutBox1.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.AboutEx.Visual.AboutBox1" /> class.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.AboutBox1.AssemblyTitle">
+      <summary>
+   Gets the assembly title.
+   </summary>
+      <value>The assembly title.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.AboutBox1.AssemblyVersion">
+      <summary>
+   Gets the assembly version.
+   </summary>
+      <value>The assembly version.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.AboutBox1.AssemblyDescription">
+      <summary>
+   Gets the assembly description.
+   </summary>
+      <value>The assembly description.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.AboutBox1.AssemblyProduct">
+      <summary>
+   Gets the assembly product.
+   </summary>
+      <value>The assembly product.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.AboutBox1.AssemblyCopyright">
+      <summary>
+   The Copyright of this Assembly
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.AboutBox1.AssemblyCompany">
+      <summary>
+   The Company of the assembly
+   </summary>
+      <remarks>Füllt das Company-Feld des Info/About-Dialogs</remarks>
+      <value>&lt;Name of Company&gt;</value>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.AboutBox1.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+    </member>
+    <member name="T:CSharpBible.AboutEx.Visual.FrmAbout">
+      <summary> Class FrmAbout. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class FrmAbout. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.FrmAbout.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.AboutEx.Visual.FrmAbout" /> class.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.FrmAbout.ProductName">
+      <summary>
+   Gets or sets the name of the product.
+   </summary>
+      <value>The name of the product.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.FrmAbout.Version">
+      <summary>
+   Gets or sets the version.
+   </summary>
+      <value>The version.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.FrmAbout.Copyright">
+      <summary>
+   Gets or sets the copyright.
+   </summary>
+      <value>The copyright.</value>
+    </member>
+    <member name="P:CSharpBible.AboutEx.Visual.FrmAbout.Comments">
+      <summary>
+   Gets or sets the comments.
+   </summary>
+      <value>The comments.</value>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.FrmAbout.btnOK_Click(System.Object,EventArgs)">
+      <summary>
+   Handles the Click event of the btnOK control.
+   </summary>
+      <param name="sender">The source of the event.</param>
+      <param name="e">The <see cref="T:System.EventArgs" /> instance containing the event data.</param>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.FrmAbout.Dispose(System.Boolean)">
+      <summary>
+   Clean up any resources being used.
+   </summary>
+      <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    </member>
+    <member name="T:CSharpBible.AboutEx.Visual.FrmAboutExMain">
+      <summary> Class FrmAboutExMain. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class FrmAboutExMain. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.FrmAboutExMain.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.AboutEx.Visual.FrmAboutExMain" /> class.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.FrmAboutExMain.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+      <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    </member>
+  </members>
+</doc>

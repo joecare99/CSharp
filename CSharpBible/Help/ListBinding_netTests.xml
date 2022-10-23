@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ListBinding_netTests</name>
+  </assembly>
+  <members>
+    <member name="T:ListBinding.Model.Tests.PersonTests">
+      <summary>
+   Defines test class PersonTests.
+   </summary>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.ToStringTest(System.Int32,System.String,System.String,System.String,System.String)">
+      <summary>
+   Converts to stringtest.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.PersonTest">
+      <summary>
+   Defines the test method PersonTest.
+   </summary>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.PersonTest2(System.Int32,System.String,System.String,System.String,System.String)">
+      <summary>
+   Persons the test2.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.PersonTest3(System.Int32,System.String,System.String,System.String,System.String)">
+      <summary>
+   Persons the test3.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="ExpFirstname">The exp firstname.</param>
+      <param name="ExpLastname">The exp lastname.</param>
+      <param name="ExpTitle">The exp title.</param>
+      <param name="aFullname">a fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.PersonFullName(System.Int32,System.String,System.String,System.String,System.String)">
+      <summary>
+   Persons the full name.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.GetObjectDataTest(System.Int32,System.String,System.String,System.String,System.String[])">
+      <summary>
+   Gets the object data test.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.CompleteDeserializationTest(System.Int32,System.String,System.String,System.String,System.String[])">
+      <summary>
+   Gets the object data test.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+  </members>
+</doc>
