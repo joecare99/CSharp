@@ -1,6 +1,6 @@
 # The CSharp - bible
 a convolut of projects inspired by Tom Swan's Delphi-bible
-See the [Wiki](/joecare99/CSharp/wiki/CSharpBible)
+See the [Wiki](https://github.com/joecare99/CSharp/wiki/CSharpBible)
 
 ## [MVVM - Tutorial](MVVM_Tutorial)
 Tutorial and best-practices for MVVM - pattern - driven projects.
