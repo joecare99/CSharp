@@ -7,7 +7,7 @@ Tutorial and best-practices for MVVM - pattern - driven projects.
 
 ## [Games](Games) 
 Collection of "small" games
-- [Sokoban](Games/Sokoban)
+- [Sokoban](Games/Sokoban-base)
 - Snake
 - Tetris
 - Werner-Flaschbier
