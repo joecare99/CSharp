@@ -1,6 +1,6 @@
 # CSharp
 This project contains a convolut of various projects (separated by branches and subbranches) 
-See also the [Wiki](/joecare99/CSharp/wiki)
+See also the [[Wiki|Home]]
 
 ## [CSharpBible](CSharpBible)
 Inspired by [Tom Swan's Delphi-Bible](https://www.amazon.com/Delphi-4-Bible-Wiley/dp/0764532375) this is a collection of best practices and examples
