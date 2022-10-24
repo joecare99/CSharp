@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MVVM_16_Usercontrol_1.View
 {
@@ -20,50 +10,34 @@ namespace MVVM_16_Usercontrol_1.View
     /// </summary>
     public partial class LabeldMaxLengthTextbox : UserControl
     {
-        public static readonly DependencyProperty _CaptionProperty =
-            DependencyProperty.Register(nameof(Caption), typeof(object), typeof(LabeldMaxLengthTextbox),
-                new FrameworkPropertyMetadata((object)null, (PropertyChangedCallback)OnCaptionChanged));
+        public static readonly DependencyProperty CaptionProperty =
+            DependencyProperty.Register(nameof(LabeldMaxLengthTextbox.Caption), typeof(string), typeof(LabeldMaxLengthTextbox),
+                new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.None));
   
-        public static readonly DependencyProperty _TextProperty =
-            DependencyProperty.Register(nameof(Text), typeof(object), typeof(LabeldMaxLengthTextbox),
-                new FrameworkPropertyMetadata((object)null, (PropertyChangedCallback)OnTextChanged));
-        private string _text;
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register(nameof(LabeldMaxLengthTextbox.Text), typeof(string), typeof(LabeldMaxLengthTextbox),
+                new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        private static void OnCaptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-            => ((LabeldMaxLengthTextbox)d).OnCaptionChanged(e.OldValue, e.NewValue); // Übergang in die Instanz
-
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-            => ((LabeldMaxLengthTextbox)d).OnTextChanged(e.OldValue, e.NewValue); // Übergang in die Instanz
-
-        private void OnCaptionChanged(object old, object newValue)
-        {
-            if (newValue is string @s)
-                lblCaption.Content = $"{@s}";
-        }
-
-        private void OnTextChanged(object old, object newValue)
-        {
-            if (newValue is string @s && @s != _Text)
-                _Text=@s;
-        }
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register(nameof(LabeldMaxLengthTextbox.Command), typeof(IRelayCommand), typeof(LabeldMaxLengthTextbox),
+                new FrameworkPropertyMetadata(default(IRelayCommand), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public LabeldMaxLengthTextbox()
         {
             InitializeComponent();
         }
 
-        public object Caption { get; set; } = "";
-        public object Text { 
-            get; 
-            set; }
-        public string _Text
+        public object Caption { get; set ; } = "";
+        
+        public string Text { 
+            get => (string)GetValue(TextProperty); 
+            set => SetValue(TextProperty,value); 
+        }
+
+        public IRelayCommand Command
         {
-            get => _text;
-            set { _text = value;
-                if (Text is Binding b)
-                    ;
-                else SetValue(_TextProperty, value);
-            }
+            get => (IRelayCommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
         }
 
         public int MaxLength { get; set; } = 50;
