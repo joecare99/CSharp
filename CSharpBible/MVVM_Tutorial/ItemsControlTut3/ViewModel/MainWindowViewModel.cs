@@ -24,23 +24,29 @@ namespace ItemsControlTut3.ViewModel
     /// Extends the <see cref="NotificationObject" />
     /// </summary>
     /// <seealso cref="NotificationObject" />
-    public class TodoItem : NotificationObject 
+    public class TodoItem : NotificationObject
     {
         #region Properties
         #region private properties
+        /// <summary>
+        /// Storage for completion
+        /// </summary>
         private int _completion = 0;
+        /// <summary>
+        /// Storage for title
+        /// </summary>
         private string _Title = "";
         #endregion
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
-        /// <value>The title.</value>
-        public string Title { get=> _Title; set => SetProperty(ref _Title,value); } 
+        /// <value>The title of the task.</value>
+        public string Title { get => _Title; set => SetProperty(ref _Title, value); }
         /// <summary>
-        /// Gets or sets the completion.
+        /// Gets or sets the completion [%].
         /// </summary>
-        /// <value>The completion.</value>
-        public int Completion { get => _completion; set => SetProperty(ref _completion,value); }
+        /// <value>The completion of the task [%].</value>
+        public int Completion { get => _completion; set => SetProperty(ref _completion, value); }
         /// <summary>
         /// Gets or sets the do-Command.
         /// </summary>
@@ -79,8 +85,10 @@ namespace ItemsControlTut3.ViewModel
         /// </summary>
         /// <value>The todo list.</value>
         public ObservableCollection<TodoItem> TodoList { get ; set; }
-        /// <summary>Gets or sets the add command.</summary>
-        /// <value>The add command.</value>
+        /// <summary>
+        /// Gets or sets the add item command.
+        /// </summary>
+        /// <value>The add item command.</value>
         public DelegateCommand AddCommand { get; set; }
         /// <summary>Title of the new item.</summary>
         /// <value>The title of the new item.</value>
@@ -102,7 +110,9 @@ namespace ItemsControlTut3.ViewModel
             CommandCanExecuteBinding.Add((nameof(NewItem), nameof(AddCommand)));
         }
 
-        /// <summary>Steps the action.</summary>
+        /// <summary>
+        /// Executes the "Step" action.
+        /// </summary>
         /// <param name="obj">The object.</param>
         private void StepAction(object? obj)
         {
@@ -116,7 +126,7 @@ namespace ItemsControlTut3.ViewModel
         }
 
         /// <summary>
-        /// Does the action.
+        /// Executes the "Do" action.
         /// </summary>
         /// <param name="obj">The object.</param>
         private void DoAction(object? obj)

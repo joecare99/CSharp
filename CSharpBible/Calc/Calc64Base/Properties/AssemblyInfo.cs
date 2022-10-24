@@ -4,7 +4,7 @@
 // Created          : 08-27-2022
 //
 // Last Modified By : Mir
-// Last Modified On : 08-27-2022
+// Last Modified On : 10-22-2022
 // ***********************************************************************
 // <copyright file="AssemblyInfo.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2022
