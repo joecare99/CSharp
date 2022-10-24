@@ -5,6 +5,10 @@
 		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
 		<UseWindowsForms>true</UseWindowsForms>
+		<SignAssembly>True</SignAssembly>
+		<Authors>Joe Care from JC-Soft</Authors>
+		<Company>JC-Soft</Company>
+		<Copyright>Copyright (c) by JC-Soft 2022</Copyright>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

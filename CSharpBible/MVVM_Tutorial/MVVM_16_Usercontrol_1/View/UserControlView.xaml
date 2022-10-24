@@ -17,10 +17,12 @@
             <RowDefinition Height="43*"/>
             <RowDefinition Height="47*"/>
         </Grid.RowDefinitions>
-        <local:LabeldMaxLengthTextbox Caption="Bitte Motto Eingeben" Text="{Binding Text}" HorizontalAlignment="Left" Margin="40,35,0,0" VerticalAlignment="Top" Width="512"/>
-        <local:LabeldMaxLengthTextbox Caption="Bitte Daten Eingeben" Text="{Binding Daten}" HorizontalAlignment="Left" Margin="40,95,0,0" VerticalAlignment="Top" Width="512"/>
+        <local:LabeldMaxLengthTextbox Caption="Bitte Motto Eingeben" Text="{Binding Text}" Command="{Binding Command1}" HorizontalAlignment="Left" Margin="40,35,0,0" VerticalAlignment="Top" Width="512"/>
+        <local:LabeldMaxLengthTextbox Caption="Bitte Daten Eingeben" Text="{Binding Daten}" Command="{Binding Command2}" HorizontalAlignment="Left" Margin="40,95,0,0" VerticalAlignment="Top" Width="512"/>
         <StackPanel Grid.Row="1">
+            <TextBlock Text="Daten:"/>
             <TextBlock Text="{Binding Daten}"/>
+            <TextBlock Text="Motto:"/>
             <TextBlock Text="{Binding Text}"/>
         </StackPanel>
     </Grid>
