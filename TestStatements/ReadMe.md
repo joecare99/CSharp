@@ -30,6 +30,22 @@ Example for CSharp-datatypes
 - integrated Typed
 - Type Helpers  or  Type-extensions 
 
+### [Diagnostics](TestStatements/Diagnostics)
+
+### [Helper](TestStatements/Helper)
+
+### [Linq](TestStatements/Linq)
+
+### [Properties](TestStatements/Properties)
+
+### [Reflection](TestStatements/Reflection)
+
+### [Runtime/Loader](TestStatements/Runtime/Loader)
+
+### [System - namespace](TestStatements/SystemNS)
+
+### [Threading/Tasks](TestStatements/Threading/Tasks)
+
 ***
 ## [TestStatementTests](TestStatementTests)
 Tests for TestStatements.
