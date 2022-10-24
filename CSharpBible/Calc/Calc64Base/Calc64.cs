@@ -124,10 +124,10 @@ namespace Calc64Base
         }
 
         /// <summary>
-        /// Determines whether [is register opeation] [the specified co].
+        /// Determines whether the specified CalcOperation co is a register operation (uses the register).
         /// </summary>
         /// <param name="co">The co.</param>
-        /// <returns><c>true</c> if [is register opeation] [the specified co]; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if [is register operation] [the specified co]; otherwise, <c>false</c>.</returns>
         public static bool IsRegisterOperation(
 #if NET5_0_OR_GREATER
      CalcOperation?
