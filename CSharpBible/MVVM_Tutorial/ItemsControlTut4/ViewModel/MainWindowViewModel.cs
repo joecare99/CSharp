@@ -29,29 +29,35 @@ namespace ItemsControlTut4.ViewModel
 
         #region Properties
         #region private properties
+        /// <summary>
+        /// Storage for completion
+        /// </summary>
         private int _completion = 0;
+        /// <summary>
+        /// Storage for title
+        /// </summary>
         private string _Title = "";
         #endregion
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
-        /// <value>The title.</value>
+        /// <value>The title of the task.</value>
         public string Title { get => _Title; set => SetProperty(ref _Title, value); }
         /// <summary>
         /// Gets or sets the completion.
         /// </summary>
-        /// <value>The completion.</value>
+        /// <value>The completion of the task [%].</value>
         public int Completion { get => _completion; set => SetProperty(ref _completion, value); }
         /// <summary>
         /// Gets or sets the do-Command.
         /// </summary>
-        /// <value>The do.</value>
+        /// <value>The commang-delegate for "Do".</value>
         public DelegateCommand Do { get; set; }
 
         /// <summary>
         /// Gets or sets the Step-Command.
         /// </summary>
-        /// <value>The do.</value>
+        /// <value>The command-delegate for the "Step".</value>
         public DelegateCommand Step { get; set; }
 
         /// <summary>
@@ -103,7 +109,10 @@ namespace ItemsControlTut4.ViewModel
             CommandCanExecuteBinding.Add((nameof(NewItem), nameof(AddCommand)));
         }
 
-        /// <summary>Steps the action.</summary>
+        /// <summary>
+        /// Executes the "Step" action.
+        /// </summary>
+        /// <remarks>Increases the completion by 10%</remarks>
         /// <param name="obj">The object.</param>
         private void StepAction(object? obj)
         {
@@ -117,8 +126,9 @@ namespace ItemsControlTut4.ViewModel
         }
 
         /// <summary>
-        /// Does the action.
+        /// Executes the "Do" action.
         /// </summary>
+        /// <remarks>Puts the completion of the task to 100%</remarks>
         /// <param name="obj">The object.</param>
         private void DoAction(object? obj)
         {
