@@ -56,7 +56,7 @@ namespace ListBinding.Model.Tests
         }
 
         /// <summary>
-        /// Defines the test method PersonTest.
+        /// Defines the test method SetupTest.
         /// </summary>
         [TestMethod()]
         public void SetupTest()
@@ -84,35 +84,6 @@ namespace ListBinding.Model.Tests
         }
 
         /// <summary>
-        /// Persons the full name.
-        /// </summary>
-        /// <param name="aId">a identifier.</param>
-        /// <param name="aFirstname">a firstname.</param>
-        /// <param name="aLastname">a lastname.</param>
-        /// <param name="aTitle">a title.</param>
-        /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
-        [DataRow(0, "", "", "", "")]
-        [DataRow(1, "1", "2", "3", "2, 1, 3")]
-        [DataRow(2, "1", "", "", ", 1")]
-        [DataRow(3, "", "2", "", "2, ")]
-        [DataRow(4, "", "", "3", ", 3")]
-        [DataRow(5, "1", "2", "", "2, 1")]
-        [DataRow(6, "", "2", "3", "2, , 3")]
-        [DataRow(7, "1", "", "3", ", 1, 3")]
-        public void PersonFullName(int aId, string aFirstname, string aLastname, string aTitle, string ExpFullname)
-        {
-            var person = new Person()
-            {
-                Id = aId,
-                FirstName = aFirstname,
-                LastName = aLastname,
-                Title = aTitle
-            };
-            Assert.AreEqual(ExpFullname, person.FullName);
-        }
-
-        /// <summary>
         /// Persons the test2.
         /// </summary>
         /// <param name="aId">a identifier.</param>
@@ -129,7 +100,8 @@ namespace ListBinding.Model.Tests
         [DataRow(5, "1", "2", "", "2, 1")]
         [DataRow(6, "", "2", "3", "2, , 3")]
         [DataRow(7, "1", "", "3", ", 1, 3")]
-        public void PersonTest2(int aId, string aFirstname, string aLastname, string aTitle, string ExpFullname) {
+        public void PersonTest2(int aId, string aFirstname, string aLastname, string aTitle, string ExpFullname)
+        {
             var person = new Person(aLastname, aFirstname, aTitle)
             {
                 Id = aId
@@ -160,9 +132,38 @@ namespace ListBinding.Model.Tests
             {
                 Id = aId
             };
-            Assert.AreEqual(ExpLastname, person.LastName);
-            Assert.AreEqual(ExpFirstname, person.FirstName);
-            Assert.AreEqual(ExpTitle, person.Title);
+            Assert.AreEqual(ExpLastname, person.LastName, "Lastname");
+            Assert.AreEqual(ExpFirstname, person.FirstName, "Firstname");
+            Assert.AreEqual(ExpTitle, person.Title,"Title");
+        }
+
+        /// <summary>
+        /// Persons the full name.
+        /// </summary>
+        /// <param name="aId">a identifier.</param>
+        /// <param name="aFirstname">a firstname.</param>
+        /// <param name="aLastname">a lastname.</param>
+        /// <param name="aTitle">a title.</param>
+        /// <param name="ExpFullname">The exp fullname.</param>
+        [DataTestMethod()]
+        [DataRow(0, "", "", "", "")]
+        [DataRow(1, "1", "2", "3", "2, 1, 3")]
+        [DataRow(2, "1", "", "", ", 1")]
+        [DataRow(3, "", "2", "", "2, ")]
+        [DataRow(4, "", "", "3", ", 3")]
+        [DataRow(5, "1", "2", "", "2, 1")]
+        [DataRow(6, "", "2", "3", "2, , 3")]
+        [DataRow(7, "1", "", "3", ", 1, 3")]
+        public void PersonFullName(int aId, string aFirstname, string aLastname, string aTitle, string ExpFullname)
+        {
+            var person = new Person()
+            {
+                Id = aId,
+                FirstName = aFirstname,
+                LastName = aLastname,
+                Title = aTitle
+            };
+            Assert.AreEqual(ExpFullname, person.FullName);
         }
 
         /// <summary>
@@ -226,6 +227,45 @@ namespace ListBinding.Model.Tests
                 Title = aTitle
             };
             Assert.AreEqual(ExpFullname, person.ToString());
+        }
+
+        /// <summary>
+        /// Gets the object data test.
+        /// </summary>
+        /// <param name="aId">a identifier.</param>
+        /// <param name="aFirstname">a firstname.</param>
+        /// <param name="aLastname">a lastname.</param>
+        /// <param name="aTitle">a title.</param>
+        /// <param name="ExpFullname">The exp fullname.</param>
+        [DataTestMethod()]
+        [DataRow(0, "", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>0</Id>\r\n  <FirstName />\r\n  <LastName />\r\n  <Title />\r\n</Person>" })]
+        [DataRow(1, "1", "2", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>1</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName>2</LastName>\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(2, "1", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>2</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName />\r\n  <Title />\r\n</Person>" })]
+        [DataRow(3, "", "2", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>3</Id>\r\n  <FirstName />\r\n  <LastName>2</LastName>\r\n  <Title />\r\n</Person>" })]
+        [DataRow(4, "", "", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>4</Id>\r\n  <FirstName />\r\n  <LastName />\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(5, "1", "2", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>5</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName>2</LastName>\r\n  <Title />\r\n</Person>" })]
+        [DataRow(6, "", "2", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>6</Id>\r\n  <FirstName />\r\n  <LastName>2</LastName>\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(7, "1", "", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>7</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName />\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(8, "Joe", "Care", "Prof. Dr.", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>8</Id>\r\n  <FirstName>Joe</FirstName>\r\n  <LastName>Care</LastName>\r\n  <Title>Prof. Dr.</Title>\r\n</Person>" })]
+        public void CompleteDeserializationTest(int aId, string aFirstname, string aLastname, string aTitle, string[] ExpFullname)
+        {
+            object p=default;
+            var formatter = new XmlSerializer(typeof(Person));
+            using (var stream = new MemoryStream())
+            {
+                var b = Encoding.UTF8.GetBytes(ExpFullname[0]);
+                stream.Write(b, 0, b.Length);
+                stream.Seek(0L, SeekOrigin.Begin);
+                p = formatter.Deserialize(stream);
+            }
+            Assert.IsInstanceOfType(p, typeof(Person));
+            if (p is Person pp)
+            {
+                Assert.AreEqual(aId, pp.Id,$"{DisplayNameAttribute.Default.DisplayName}.ID");
+                Assert.AreEqual(aFirstname, pp.FirstName, $"{DisplayNameAttribute.Default.DisplayName}.FirstName");
+                Assert.AreEqual(aLastname, pp.LastName, $"{DisplayNameAttribute.Default.DisplayName}.LastName");
+                Assert.AreEqual(aTitle, pp.Title, $"{DisplayNameAttribute.Default.DisplayName}.Title");
+            }
         }
 
         /// <summary>
