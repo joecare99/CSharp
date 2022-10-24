@@ -14,13 +14,13 @@ Part 3 - Converter incl. format parameter<br />
 How to open and use (System)-common dialogs
 
 ## Lession 21: Buttons 
-Use Converter to change the color, and the BaseViewModel.CommandCanExecureBinding to update the Properties.
-It's a game: goal to set all buttons to green.
+Use Converter to change the color, and the BaseViewModel.CommandCanExecureBinding to update the Properties. <br />
+It's a game: goal to set all buttons to green.<br />
 <img width="270" alt="MVVM_21_Buttons" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_21_Buttons.PNG"><br />
     
 ## Lession 22: WpfCap 
-Use Converter to change the color, and the BaseViewModel.CommandCanExecureBinding to update the Properties.
-It's a game: goal to sort all colors of the tiles.
+Use Converter to change the color, and the BaseViewModel.CommandCanExecureBinding to update the Properties.<br />
+It's a game: goal to sort all colors of the tiles.<br />
 <img width="270" alt="MVVM_22_WpfCap" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_22_WpfCap.PNG"><br />
 
 ## Lession 31: Validation of values
