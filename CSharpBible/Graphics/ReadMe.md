@@ -18,18 +18,9 @@ Programs with a visual attitude ...
 1. with zoom and unzoom<br /><img width="270" alt="" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Graphics/Resource/Gfx_MVVM_Lines_on_Grid1.PNG">
 
 ## MVVM_Converter_ImageGrid
-e.G: for games with a tiled display
+e.G: for games with a tiled display<br />
 <img width="270" alt="" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Graphics/Resource/Gfx_MVVM_Conv_ImgGrid1.PNG">
 <img width="270" alt="" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Graphics/Resource/Gfx_MVVM_Conv_ImgGrid2.PNG">
 
 ## MVVM_Converter_DrawGrid
 like the Image-Grid but works with drawing-brushes instead of images
-
-
-
-
-        
-            
-        
-
-    
