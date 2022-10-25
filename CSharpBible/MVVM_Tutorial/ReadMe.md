@@ -1,7 +1,24 @@
 # MVVM Tutorials
 
 ## Lession 3: The MVVM - Model
-
+```mermaid
+flowchart LR;
+   subgraph View
+    A[View]==>B[Converter];
+    A==>C[Validator];
+   end
+subgraph ViewModel
+    D[ViewModel];
+end
+subgraph Model
+    E[Model];
+end    
+A -- read/write properties --> D
+A -- read/execute commands --> D
+B -- read/write properties --> D
+D -- read/write data --> E
+A -- read/write properties --> E
+```
 ## Lession 6: Converters
 Part 1 - simple Converter<br />
 <img width="270" alt="MVVM_06_Conv1" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_06_Conv1.PNG"><br />
