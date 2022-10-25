@@ -27,6 +27,21 @@ Part 2 - Converter incl. convert back<br />
 Part 3 - Converter incl. format parameter<br />
 <img width="270" alt="MVVM_06_Conv3" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_06_Conv3.PNG"><br />
 
+## Lession 09: DialogBoxes
+```mermaid
+sequenceDiagram
+   autonumber
+   actor U as User
+    participant V as View
+    participant VM as ViewModel
+    V ->> VM: Connect to ShowDialog event
+    U ->> V: Press a Button
+    V ->> ++VM: Execute Button-Command
+    VM -->> -V: fire ShowDialog-event
+    V ->> +U: Show Dialog to User
+    U -->> -V: Exits the Dialog
+    V ->> -VM: Sends Data from Dialog  
+```    
 ## Lession 20: Sysdialogs 
 How to open and use (System)-common dialogs
 
