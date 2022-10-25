@@ -1,7 +1,24 @@
 # MVVM Tutorials
 
 ## Lession 3: The MVVM - Model
-
+```mermaid
+flowchart LR;
+   subgraph View
+    A[View]==>B[Converter];
+    A==>C[Validator];
+   end
+subgraph ViewModel
+    D[ViewModel];
+end
+subgraph Model
+    E[Model];
+end    
+A -- read/write properties --> D
+A -- read/execute commands --> D
+B -- read/write properties --> D
+D -- read/write data --> E
+A -- read/write properties --> E
+```
 ## Lession 6: Converters
 Part 1 - simple Converter<br />
 <img width="270" alt="MVVM_06_Conv1" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_06_Conv1.PNG"><br />
@@ -10,6 +27,26 @@ Part 2 - Converter incl. convert back<br />
 Part 3 - Converter incl. format parameter<br />
 <img width="270" alt="MVVM_06_Conv3" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_06_Conv3.PNG"><br />
 
+## Lession 09: DialogBoxes
+```mermaid
+sequenceDiagram
+   autonumber
+   actor U as User
+    participant V as View
+    participant VM as ViewModel
+    par View to User
+       V ->> +U: Display Form
+    and View to ViewModel
+       V ->> VM: Create ViewModel
+       V ->> VM: Connect to ShowDialog event
+    end
+    U -->> -V: Press a Button
+    V ->> +VM: Execute Button-Command
+    VM -->> -V: fire ShowDialog-event
+    V ->> +U: Show Dialog to User
+    U -->> -V: Exits the Dialog
+    V ->> VM: Sends Data from Dialog  
+```    
 ## Lession 20: Sysdialogs 
 How to open and use (System)-common dialogs
 
