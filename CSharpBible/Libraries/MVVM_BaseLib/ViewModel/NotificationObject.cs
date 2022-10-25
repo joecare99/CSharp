@@ -18,12 +18,12 @@ using System.Runtime.CompilerServices;
 
 namespace MVVM.ViewModel
 {
-	/// <summary>
-	/// Class NotificationObject.
-	/// Implements the <see cref="INotifyPropertyChanged" />
-	/// </summary>
-	/// <seealso cref="INotifyPropertyChanged" />
-	public class NotificationObject :  INotifyPropertyChanged
+    /// <summary>
+    /// Class NotificationObject.
+    /// Implements the <see cref="INotifyPropertyChanged" />
+    /// </summary>
+    /// <seealso cref="INotifyPropertyChanged" />
+    public class NotificationObject :  INotifyPropertyChanged
     {
 #if NET5_0_OR_GREATER || NULLABLE
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -65,37 +65,72 @@ namespace MVVM.ViewModel
 		/// <param name="propertyName">Name of the property.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 #if NET5_0_OR_GREATER || NULLABLE
-		protected bool SetProperty<T>(ref T data, T value, Action<T, T> action, [CallerMemberName] string propertyName = "")
+		protected bool SetProperty<T>(ref T data, T value, Action<T, T>? action, [CallerMemberName] string propertyName = "")
 #else
 		protected bool SetProperty<T>(ref T data, T value, Action<T, T> action, [CallerMemberName] string propertyName = "")
 #endif
-			=> SetProperty(ref data, value, null, action, propertyName);
+			=> SetProperty(ref data, value, null, null, action, propertyName);
 
-		/// <summary>
-		/// Helper for setting properties
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="data">The data.</param>
-		/// <param name="value">The value.</param>
-		/// <param name="propertyNames">The property names.</param>
-		/// <param name="action">The action.</param>
-		/// <param name="propertyName">Name of the property.</param>
-		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        /// <summary>
+        /// Helper for setting properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 #if NET5_0_OR_GREATER || NULLABLE
-		protected bool SetProperty<T>(ref T data, T value, string[]? propertyNames = null, Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
+		protected bool SetProperty<T>(ref T data, T value,Predicate<T>? validate, Action<T, T>? action=null, [CallerMemberName] string propertyName = "")
 #else
-		protected bool SetProperty<T>(ref T data, T value, string[] propertyNames = null, Action<T, T> action = null, [CallerMemberName] string propertyName = "")
+        protected bool SetProperty<T>(ref T data, T value,Predicate<T> validate, Action<T, T> action=null, [CallerMemberName] string propertyName = "")
 #endif
-		{
-			if (EqualityComparer<T>.Default.Equals(data, value)) return false;
-			T old = data;
-			data = value;
-			RaisePropertyChanged(propertyName);
-			if (propertyNames != null)
-				RaisePropertyChanged(propertyNames);
-			action?.Invoke(old, value);
-			return true;
-		}
+            => SetProperty(ref data, value, null,validate, action, propertyName);
 
-	}
+
+        /// <summary>
+        /// Helper for setting properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="propertyNames">The property names.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+#if NET5_0_OR_GREATER || NULLABLE
+		protected bool SetProperty<T>(ref T data, T value, string[]? propertyNames, Action<T, T>? action, [CallerMemberName] string propertyName = "")
+#else
+        protected bool SetProperty<T>(ref T data, T value, string[] propertyNames, Action<T, T> action, [CallerMemberName] string propertyName = "")
+#endif
+         => SetProperty(ref data, value, propertyNames, null, action, propertyName);
+
+        /// <summary>
+        /// Helper for setting properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="propertyNames">The property names.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+#if NET5_0_OR_GREATER || NULLABLE
+		protected bool SetProperty<T>(ref T data, T value, string[]? propertyNames=null, Predicate<T>? validate=null,Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
+#else
+        protected bool SetProperty<T>(ref T data, T value, string[] propertyNames=null ,Predicate<T> validate=null,Action<T, T> action = null, [CallerMemberName] string propertyName = "")
+#endif
+        {
+            if (EqualityComparer<T>.Default.Equals(data, value)) return false;
+			if (!validate?.Invoke(value) ?? false) return false; 
+            T old = data;
+            data = value;
+            RaisePropertyChanged(propertyName);
+            if (propertyNames != null)
+                RaisePropertyChanged(propertyNames);
+            action?.Invoke(old, value);
+            return true;
+        }
+
+    }
 }
