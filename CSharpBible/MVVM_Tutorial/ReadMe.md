@@ -34,13 +34,18 @@ sequenceDiagram
    actor U as User
     participant V as View
     participant VM as ViewModel
-    V ->> VM: Connect to ShowDialog event
-    U ->> V: Press a Button
-    V ->> ++VM: Execute Button-Command
+    par View to User
+       V ->> +U: Display Form
+    and View to ViewModel
+       V ->> VM: Create ViewModel
+       V ->> VM: Connect to ShowDialog event
+    end
+    U -->> -V: Press a Button
+    V ->> +VM: Execute Button-Command
     VM -->> -V: fire ShowDialog-event
     V ->> +U: Show Dialog to User
     U -->> -V: Exits the Dialog
-    V ->> -VM: Sends Data from Dialog  
+    V ->> VM: Sends Data from Dialog  
 ```    
 ## Lession 20: Sysdialogs 
 How to open and use (System)-common dialogs
