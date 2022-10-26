@@ -17,7 +17,7 @@ a collection of programs having visual effects and technics
 
 And ...
 ## Something2
-Guess, what it does ...<pre>
+Guess, what it does ...
 ```cs
 using ConsoleDisplay.View;using System;MyConsoleBase c = new MyConsole();const
 int Z=1<<11,u=(0x13<<1)+1,O=u&-u,D=O<<((O<<O)+1),B=0x597b;var C=" _|";int[]l0=
@@ -29,4 +29,4 @@ r=new();E[0]=D;S=P=u*u-O;E[S]=Z+2;while(w!=0||L>=h){A=S;S=P;a=E[A];w=0;foreach
 w++]=i;}if(w!=0){var i=Il[r.Next(w)]&3;P=lQ[i]+A;E[A]=a|(O<<i);E[P]|=Z|(O<<((i
 +2)%4));ll[L++]=P;}else if(L>=h)P=ll[h++];}Q(D-2);for(A=O;A<u;A++)Q(D>>O);Q(D+
 O);for(A=O;A<u+O;A++){for(P=O;P<u+O;P++)Q(E[l++] & 6);Q(D);}
-```</pre>
+```
