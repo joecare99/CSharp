@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : TestStatements
 // Author           : Mir
 // Created          : 12-19-2021
@@ -15,10 +15,10 @@ using System;
 
 namespace TestStatements.Anweisungen
 {
-    /// <summary>
-    /// Class ExceptionHandling.
-    /// </summary>
-    public class ExceptionHandling
+	/// <summary>
+	/// Class ExceptionHandling.
+	/// </summary>
+	public class ExceptionHandling
     {
         /// <summary>
         /// Divides the specified x.
@@ -33,6 +33,7 @@ namespace TestStatements.Anweisungen
                 throw new DivideByZeroException();
             return x / y;
         }
+
         /// <summary>
         /// Does the try catch.
         /// </summary>
@@ -59,5 +60,32 @@ namespace TestStatements.Anweisungen
                 Console.WriteLine("Good bye!");
             }
         }
-    }
+
+		/// <summary>
+		/// Does the try finally.
+		/// </summary>
+		/// <param name="args">The arguments.</param>
+		/// <exception cref="System.InvalidOperationException">Two numbers required</exception>
+		public static void DoTryFinally(string[] args) {
+			try {
+				if (args == null || args.Length == 0) {
+					return;			
+				}
+				else
+				if (args.Length == 1) {
+					Console.WriteLine($"The parameter is: ({args[0]})");
+					return;
+				}
+				else
+				if (args.Length >= 2) {
+					Console.WriteLine($"The first parameters are: ({args[0]}) and ({args[1]})");
+					return;
+				}
+			}
+			finally {
+				Console.WriteLine("Good bye!");
+			}
+		}
+
+	}
 }
