@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGridExWPF", "DataGridEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGridEx", "DataGridEx\DataGridEx.csproj", "{C2394507-B93B-4CAA-B667-4D6A8524BDFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSFreeVision", "CSFreeVision\CSFreeVision.csproj", "{05BBD8C1-C970-4B4B-AE79-892D25441E0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSFreeVision", "Libraries\CSFreeVision\CSFreeVision.csproj", "{05BBD8C1-C970-4B4B-AE79-892D25441E0C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDirectives", "TestDirectives\TestDirectives.csproj", "{F22909B4-7DA6-4E52-9682-0AACD6D0E90B}"
 EndProject
