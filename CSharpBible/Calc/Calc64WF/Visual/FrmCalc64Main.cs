@@ -15,6 +15,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Windows.Forms;
 using Calc64Base;
 using Calc64WF.ViewModel;
@@ -30,6 +32,36 @@ namespace Calc64WF.Visual
     /// <seealso cref="Form" />
     public partial class FrmCalc64Main : Form
     {
+        private readonly object[][] btnDef = new object[][]
+        {
+            new object[]{"0",  2,2,3,2},
+            new object[]{"+/-",5,2,3,2},
+            new object[]{"1",2,4,2,2},
+            new object[]{"2",4,4,2,2},
+            new object[]{"3",6,4,2,2},
+            new object[]{"4",2,6,2,2},
+            new object[]{"5",4,6,2,2},
+            new object[]{"6",6,6,2,2},
+            new object[]{"7",2,8,2,2},
+            new object[]{"8",4,8,2,2},
+            new object[]{"9",6,8,2,2},
+            new object[]{"10",2,10,2,2},
+            new object[]{"11",4,10,2,2},
+            new object[]{"12",6,10,2,2},
+            new object[]{"13",2,12,2,2},
+            new object[]{"14",4,12,2,2},
+            new object[]{"15",6,12,2,2},
+            new object[]{"-1",0,4,2,4},
+            new object[]{"-2",0,6,2,2},
+            new object[]{"-3",0,8,2,2},
+            new object[]{"-4",0,10,2,2},
+            new object[]{"-5",0,12,2,2},
+            new object[]{"-6",8,12,3,3},
+            new object[]{"-7",8,9,3,3},
+            new object[]{"-8",8,6,3,3},
+            new object[]{"-9",8,3,3,3},
+        };
+        #region Properties
         /// <summary>
         /// The vc op to string
         /// </summary>
@@ -44,14 +76,20 @@ namespace Calc64WF.Visual
         /// </summary>
         /// <value>The data context.</value>
         public NotificationObject DataContext { get; private set; }
-
+        #endregion
+        #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc64Main" /> class.
         /// </summary>
         public FrmCalc64Main()
         {
             InitializeComponent();
-           
+
+#if NET6_0_OR_GREATER
+            this.Text += " NET6.0";
+#else
+            this.Text += " FW4.8";
+#endif
             FrmCalc64MainViewModel vm;
             DataContext = vm = new FrmCalc64MainViewModel();
             vm.OnDataChanged += DataChanged;
@@ -62,8 +100,19 @@ namespace Calc64WF.Visual
             {
                 if (c != pictureBox1 && c != pnlMaster)
                 {
-                    c.Location = new Point(norm(c.Location.X,24),norm(c.Location.Y,24,10));
-                    c.Size = new Size(norm(c.Size.Width,24,-iMargin * 4),norm(c.Size.Height,24, -iMargin * 4));
+                    var xFlag = true;
+                    for (int i = 0; i < btnDef.Length; i++)
+                        if (c.Tag == btnDef[i][0])
+                        {
+                            xFlag = false;
+                            c.Location = new Point(ClientRectangle.Width / 2 + ((int)btnDef[i][1] * 24), ClientRectangle.Height - ((int)btnDef[i][2] * 24+24));
+                            c.Size = new Size(((int)btnDef[i][3] * 24) - iMargin * 4, ((int)btnDef[i][4] * 24) - iMargin * 4);
+                        }
+                    if (xFlag)
+                    {
+                        c.Location = new Point(norm(c.Location.X, 24), norm(c.Location.Y, 24, 10));
+                        c.Size = new Size(norm(c.Size.Width, 24, -iMargin * 4), norm(c.Size.Height, 24, -iMargin * 4));
+                    }
                 }
             }
 
@@ -113,10 +162,7 @@ namespace Calc64WF.Visual
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void DoCloseForm(object sender,EventArgs e)
-        {
-            Close();
-        }
+        private void DoCloseForm(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Handles the MouseMove event of the FrmCalc32Main control.
@@ -135,55 +181,47 @@ namespace Calc64WF.Visual
             pictureBox1.Location = lMousePnt;
         }
 
+        #region Relay-Events    
         /// <summary>
         /// Handles the Click event of the btnNummber control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnNummber_Click(object sender, EventArgs e)
-        {
-            (DataContext as FrmCalc64MainViewModel).btnNummber_Click(sender, ((Control)sender).Tag, e);
-        }
+        private void btnNummber_Click(object sender, EventArgs e) 
+            => (DataContext as FrmCalc64MainViewModel).btnNummber_Click(sender, ((Control)sender).Tag, e);
 
         /// <summary>
         /// Handles the KeyDown event of the FrmCalc32Main control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="KeyEventArgs" /> instance containing the event data.</param>
-        private void FrmCalc32Main_KeyDown(object sender, KeyEventArgs e)
-        {
-            (DataContext as FrmCalc64MainViewModel).frm_KeyDown(sender, ((Control)sender).Tag, e);
-        }
+        private void FrmCalc32Main_KeyDown(object sender, KeyEventArgs e) 
+            => (DataContext as FrmCalc64MainViewModel).frm_KeyDown(sender, ((Control)sender).Tag, e);
 
         /// <summary>
         /// Handles the Click event of the btnOperator control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnOperator_Click(object sender, EventArgs e)
-        {
-            (DataContext as FrmCalc64MainViewModel).btnOperator_Click(sender, ((Control)sender).Tag, e);
-        }
+        private void btnOperator_Click(object sender, EventArgs e) 
+            => (DataContext as FrmCalc64MainViewModel).btnOperator_Click(sender, ((Control)sender).Tag, e);
 
         /// <summary>
         /// Handles the Click event of the btnClose control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            (DataContext as FrmCalc64MainViewModel).btnClose_Click(sender, ((Control)sender).Tag, e);
-        }
+        private void btnClose_Click(object sender, EventArgs e) 
+            => (DataContext as FrmCalc64MainViewModel).btnClose_Click(sender, ((Control)sender).Tag, e);
 
         /// <summary>
         /// Handles the Click event of the btnBack control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            (DataContext as FrmCalc64MainViewModel).btnBack_Click(sender, ((Control)sender).Tag, e);
-        }
+        private void btnBack_Click(object sender, EventArgs e) 
+            => (DataContext as FrmCalc64MainViewModel).btnBack_Click(sender, ((Control)sender).Tag, e);
+        #endregion
 
         /// <summary>
         /// Handles the SizeChanged event of the pnlMaster control.
@@ -192,20 +230,37 @@ namespace Calc64WF.Visual
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void pnlMaster_SizeChanged(object sender, EventArgs e)
         {
+            Application.Idle += SetMasterRegionWhenIdle;
+            SetMasterRegion();
+        }
+
+#if NET6_0_OR_GREATER
+        private void SetMasterRegionWhenIdle(object? sender, EventArgs e)
+#else
+        private void SetMasterRegionWhenIdle(object sender, EventArgs e)
+#endif
+        {
+            Application.Idle -= SetMasterRegionWhenIdle;
+            SetMasterRegion();
+        }
+
+        private void SetMasterRegion()
+        {
             GraphicsPath gPath = new GraphicsPath();
             foreach (Control c in Controls)
             {
-                if (c != pictureBox1 )
+                if (c != pictureBox1)
                 {
-                    var r = new Rectangle(c.Location,c.Size);
+                    var r = new Rectangle(c.Location, c.Size);
                     r.Inflate(iMargin, iMargin);
-                    
+
                     gPath.AddRectangle(r);
                 }
             }
             var region = new Region(gPath);
-      //      region.Complement(gPath);
+            //      region.Complement(gPath);
             pnlMaster.Region = region;
         }
+        #endregion
     }
 }

@@ -144,6 +144,14 @@ namespace Calc64WF.ViewModel
                 case Keys.Subtract:
                     btnOperator_Click(sender, "-3", e);
                     break;
+                case Keys.Divide:
+                //case Keys.Add:
+                    btnOperator_Click(sender, "-5", e);
+                    break;
+                case Keys.Multiply:
+                //case Keys.:
+                    btnOperator_Click(sender, "-4", e);
+                    break;
                 case Keys.Escape:
                     break;
                 case Keys.Back:
