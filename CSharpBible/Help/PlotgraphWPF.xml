@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>PlotgraphWPF</name>
+  </assembly>
+  <members>
+    <member name="T:PlotgraphWPF.Model.MyModel">
+      <summary>
+   Class MyModel.
+   </summary>
+    </member>
+    <member name="P:PlotgraphWPF.Model.MyModel.points">
+      <summary>
+   Gets or sets the points.
+   </summary>
+      <value>The points.</value>
+    </member>
+    <member name="P:PlotgraphWPF.Model.MyModel.PlotColor">
+      <summary>
+   Gets or sets the color of the plot.
+   </summary>
+      <value>The color of the plot.</value>
+    </member>
+    <member name="T:PlotgraphWPF.ValueConverters.ColorValueConverter">
+      <summary>
+   Class ColorValueConverter.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="M:PlotgraphWPF.ValueConverters.ColorValueConverter.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value produced by the binding source.</param>
+      <param name="targetType">The type of the binding target property.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+    </member>
+    <member name="M:PlotgraphWPF.ValueConverters.ColorValueConverter.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value that is produced by the binding target.</param>
+      <param name="targetType">The type to convert to.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:PlotgraphWPF.ViewModels.Page1ViewModel">
+      <summary>
+   Class Page1ViewModel.
+   </summary>
+    </member>
+    <member name="F:PlotgraphWPF.ViewModels.Page1ViewModel.currentSecond">
+      <summary>
+   The current second
+   </summary>
+    </member>
+    <member name="F:PlotgraphWPF.ViewModels.Page1ViewModel.LtPoint">
+      <summary>
+   The lt point
+   </summary>
+    </member>
+    <member name="P:PlotgraphWPF.ViewModels.Page1ViewModel.myModel">
+      <summary>
+   Gets or sets my model.
+   </summary>
+      <value>My model.</value>
+    </member>
+    <member name="T:PlotgraphWPF.Views.Page1">
+      <summary> Interaktionslogik für Page1.xaml </summary>
+    </member>
+    <member name="M:PlotgraphWPF.Views.Page1.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:PlotgraphWPF.Views.Page1" /> class.
+   </summary>
+    </member>
+    <member name="T:PlotgraphWPF.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:PlotgraphWPF.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:PlotgraphWPF.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:PlotgraphWPF.MainWindow" /> class.
+   </summary>
+    </member>
+  </members>
+</doc>

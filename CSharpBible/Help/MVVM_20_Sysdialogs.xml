@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_20_Sysdialogs</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_20_Sysdialogs.Converter.ColorConverter">
+      <summary>
+   Class ColorConverter.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.Converter.ColorConverter.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value produced by the binding source.</param>
+      <param name="targetType">The type of the binding target property.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.Converter.ColorConverter.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value that is produced by the binding target.</param>
+      <param name="targetType">The type to convert to.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.View.SysDialogs">
+      <summary> Interaktionslogik für SysDialogs.xaml </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.View.SysDialogs.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_20_Sysdialogs.View.SysDialogs" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel">
+      <summary>
+   Class SysDialogsViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.FileDialogHandler">
+      <summary>
+   Delegate FileDialogHandler
+   </summary>
+      <param name="Filename">The filename.</param>
+      <param name="Par">The par.</param>
+      <param name="OnAccept">The on accept.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.ColorDialogHandler">
+      <summary>
+   Delegate ColorDialogHandler
+   </summary>
+      <param name="color">The color.</param>
+      <param name="par">The par.</param>
+      <param name="OnAccept">The on accept.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.FontDialogHandler">
+      <summary>
+   Delegate FontDialogHandler
+   </summary>
+      <param name="font">The font.</param>
+      <param name="par">The par.</param>
+      <param name="OnAccept">The on accept.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.PrintDialogHandler">
+      <summary>
+   Delegate PrintDialogHandler
+   </summary>
+      <param name="par">The par.</param>
+      <param name="OnPrint">The on print.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.FileOpenName">
+      <summary>
+   Gets or sets the name of the file open.
+   </summary>
+      <value>The name of the file open.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.FileSaveName">
+      <summary>
+   Gets or sets the name of the file save.
+   </summary>
+      <value>The name of the file save.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.PathName">
+      <summary>
+   Gets or sets the name of the path.
+   </summary>
+      <value>The name of the path.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.Ext">
+      <summary>
+   Gets or sets the ext.
+   </summary>
+      <value>The ext.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.MyColor">
+      <summary>
+   Gets or sets my color.
+   </summary>
+      <value>My color.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.MyFont">
+      <summary>
+   Gets or sets my font.
+   </summary>
+      <value>My font.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.FileOpenDialog">
+      <summary>
+   Gets or sets the file open dialog.
+   </summary>
+      <value>The file open dialog.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.FileSaveAsDialog">
+      <summary>
+   Gets or sets the file save as dialog.
+   </summary>
+      <value>The file save as dialog.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.DirectoryBrowseDialog">
+      <summary>
+   Gets or sets the directory browse dialog.
+   </summary>
+      <value>The directory browse dialog.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.dColorDialog">
+      <summary>
+   Gets or sets the d color dialog.
+   </summary>
+      <value>The d color dialog.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.dFontDialog">
+      <summary>
+   Gets or sets the d font dialog.
+   </summary>
+      <value>The d font dialog.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.dPrintDialog">
+      <summary>
+   Gets or sets the d print dialog.
+   </summary>
+      <value>The d print dialog.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.OpenFileOpenDialogCommand">
+      <summary>
+   Gets or sets the open file open dialog command.
+   </summary>
+      <value>The open file open dialog command.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.OpenDirectoryBrowseDialogCommand">
+      <summary>
+   Gets or sets the open directory browse dialog command.
+   </summary>
+      <value>The open directory browse dialog command.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.OpenFileSaveAsDialogCommand">
+      <summary>
+   Gets or sets the open file save as dialog command.
+   </summary>
+      <value>The open file save as dialog command.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.OpenColorDialogCommand">
+      <summary>
+   Gets or sets the open color dialog command.
+   </summary>
+      <value>The open color dialog command.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.OpenFontDialogCommand">
+      <summary>
+   Gets or sets the open font dialog command.
+   </summary>
+      <value>The open font dialog command.</value>
+    </member>
+    <member name="P:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.OpenPrintDialogCommand">
+      <summary>
+   Gets or sets the open print dialog command.
+   </summary>
+      <value>The open print dialog command.</value>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_20_Sysdialogs.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_20_Sysdialogs.MainWindow" /> class.
+   </summary>
+    </member>
+  </members>
+</doc>

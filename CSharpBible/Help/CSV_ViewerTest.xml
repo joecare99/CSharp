@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CSV_ViewerTest</name>
+  </assembly>
+  <members>
+    <member name="T:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefsTest">
+      <summary>
+   Defines test class TFieldDefsTest.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefsTest.InitTest">
+      <summary>
+   Initializes the test.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefsTest.CreateTestData">
+      <summary>
+   Creates the test data.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefsTest.TestSetup">
+      <summary>
+   Defines the test method TestSetup.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefsTest.TestCreateData">
+      <summary>
+   Defines the test method TestCreateData.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefsTest.TestFind">
+      <summary>
+   Defines the test method TestFind.
+   </summary>
+    </member>
+    <member name="T:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefTest">
+      <summary>
+   Defines test class TFieldDefTest.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefTest.InitTest">
+      <summary>
+   Initializes the test.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefTest.TestSetup">
+      <summary>
+   Defines the test method TestSetup.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefTest.TestFieldDef1">
+      <summary>
+   Defines the test method TestFieldDef1.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CSV_Viewer.DataSet.Tests.TFieldDefTest.TestFieldDef2">
+      <summary>
+   Defines the test method TestFieldDef2.
+   </summary>
+    </member>
+    <member name="T:CSV_ViewerTest.UnitTest1">
+      <summary>
+   Defines test class UnitTest1.
+   </summary>
+    </member>
+    <member name="M:CSV_ViewerTest.UnitTest1.TestMethod1">
+      <summary>
+   Defines the test method TestMethod1.
+   </summary>
+    </member>
+  </members>
+</doc>

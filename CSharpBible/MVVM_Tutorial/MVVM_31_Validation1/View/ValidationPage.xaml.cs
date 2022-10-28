@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BindingGroupExp
+namespace MVVM_31_Validation1.View
 {
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Interaktionslogik für ValidationPage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ValidationPage : Page
     {
-        public MainWindow()
+        public ValidationPage()
         {
             InitializeComponent();
         }

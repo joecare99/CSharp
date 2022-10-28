@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>DialogBoxes</name>
+  </assembly>
+  <members>
+    <member name="T:DialogBoxes.App">
+      <summary> Interaktionslogik für "App.xaml" </summary>
+    </member>
+    <member name="T:DialogBoxes.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:DialogBoxes.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DialogBoxes.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:DialogBoxes.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:DialogBoxes.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:DialogBoxes.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:DialogBoxes.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:DialogBoxes.View.DialogWindow">
+      <summary> Interaktionslogik für DialogWindow.xaml </summary>
+    </member>
+    <member name="M:DialogBoxes.View.DialogWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DialogBoxes.View.DialogWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:DialogBoxes.View.MainWindow">
+      <summary> Interaktionslogik für MainWindow.xaml </summary>
+    </member>
+    <member name="M:DialogBoxes.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DialogBoxes.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:DialogBoxes.ViewModel.DialogWindowViewModel">
+      <summary>
+   Class DialogWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="E:DialogBoxes.ViewModel.DialogWindowViewModel.OK">
+      <summary>
+   Occurs when [ok].
+   </summary>
+    </member>
+    <member name="E:DialogBoxes.ViewModel.DialogWindowViewModel.Cancel">
+      <summary>
+   Occurs when [cancel].
+   </summary>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.DialogWindowViewModel.OKCommand">
+      <summary>
+   Gets or sets the ok command.
+   </summary>
+      <value>The ok command.</value>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.DialogWindowViewModel.CancelCommand">
+      <summary>
+   Gets or sets the cancel command.
+   </summary>
+      <value>The cancel command.</value>
+    </member>
+    <member name="M:DialogBoxes.ViewModel.DialogWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DialogBoxes.ViewModel.DialogWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.DialogWindowViewModel.Name">
+      <summary>
+   Gets or sets the name.
+   </summary>
+      <value>The name.</value>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.DialogWindowViewModel.Email">
+      <summary>
+   Gets or sets the email.
+   </summary>
+      <value>The email.</value>
+    </member>
+    <member name="T:DialogBoxes.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="T:DialogBoxes.ViewModel.MainWindowViewModel.OpenDialogHandler">
+      <summary>
+   Delegate OpenDialogHandler
+   </summary>
+      <param name="name">The name.</param>
+      <param name="email">The email.</param>
+      <returns>System.ValueTuple&lt;System.String, System.String&gt;.</returns>
+    </member>
+    <member name="T:DialogBoxes.ViewModel.MainWindowViewModel.OpenMessageBoxHandler">
+      <summary>
+   Delegate OpenMessageBoxHandler
+   </summary>
+      <param name="title">The title.</param>
+      <param name="name">The name.</param>
+      <returns>MessageBoxResult.</returns>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.MainWindowViewModel.OpenDialog">
+      <summary>
+   Gets or sets the open dialog.
+   </summary>
+      <value>The open dialog.</value>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.MainWindowViewModel.OpenMessageBox">
+      <summary>
+   Gets or sets the open message box.
+   </summary>
+      <value>The open message box.</value>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.MainWindowViewModel.Name">
+      <summary>
+   Gets or sets the name.
+   </summary>
+      <value>The name.</value>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.MainWindowViewModel.Email">
+      <summary>
+   Gets or sets the email.
+   </summary>
+      <value>The email.</value>
+    </member>
+    <member name="M:DialogBoxes.ViewModel.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DialogBoxes.ViewModel.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.MainWindowViewModel.OpenDialogCommand">
+      <summary>
+   Gets or sets the open dialog command.
+   </summary>
+      <value>The open dialog command.</value>
+    </member>
+    <member name="P:DialogBoxes.ViewModel.MainWindowViewModel.OpenMsgCommand">
+      <summary>
+   Gets or sets the open MSG command.
+   </summary>
+      <value>The open MSG command.</value>
+    </member>
+  </members>
+</doc>
