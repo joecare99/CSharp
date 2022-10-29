@@ -60,7 +60,13 @@ namespace Calc64WF.Visual
             new object[]{"-7",8,9,3,3},
             new object[]{"-8",8,6,3,3},
             new object[]{"-9",8,3,3,3},
+            new object[]{"+0",-14,4,8,4},
+            new object[]{"+1",-4,12,4,2},
+            new object[]{"+2",-14,12,4,2},
+            new object[]{"+3",-4,10,4,2},
         };
+
+
         #region Properties
         /// <summary>
         /// The vc op to string
@@ -70,14 +76,18 @@ namespace Calc64WF.Visual
         /// The i margin
         /// </summary>
         const int iMargin = 2;
-
+#if NET6_0_OR_GREATER
+        const int iRaster = 24;
+#else
+        const int iRaster = 22;
+#endif
         /// <summary>
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
         public NotificationObject DataContext { get; private set; }
-        #endregion
-        #region Methods
+#endregion
+#region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc64Main" /> class.
         /// </summary>
@@ -105,13 +115,13 @@ namespace Calc64WF.Visual
                         if (c.Tag == btnDef[i][0])
                         {
                             xFlag = false;
-                            c.Location = new Point(ClientRectangle.Width / 2 + ((int)btnDef[i][1] * 24), ClientRectangle.Height - ((int)btnDef[i][2] * 24+24));
-                            c.Size = new Size(((int)btnDef[i][3] * 24) - iMargin * 4, ((int)btnDef[i][4] * 24) - iMargin * 4);
+                            c.Location = new Point(ClientRectangle.Width / 2 + (((int)btnDef[i][1]+2 )* iRaster), ClientRectangle.Height - (((int)btnDef[i][2]+1 )* iRaster));
+                            c.Size = new Size(((int)btnDef[i][3] * iRaster) - iMargin * 4, ((int)btnDef[i][4] * iRaster) - iMargin * 4);
                         }
                     if (xFlag)
                     {
-                        c.Location = new Point(norm(c.Location.X, 24), norm(c.Location.Y, 24, 10));
-                        c.Size = new Size(norm(c.Size.Width, 24, -iMargin * 4), norm(c.Size.Height, 24, -iMargin * 4));
+                        c.Location = new Point(norm(c.Location.X, iRaster), norm(c.Location.Y, iRaster, 10));
+                        c.Size = new Size(norm(c.Size.Width, iRaster, -iMargin * 4), norm(c.Size.Height, iRaster, -iMargin * 4));
                     }
                 }
             }
@@ -181,7 +191,7 @@ namespace Calc64WF.Visual
             pictureBox1.Location = lMousePnt;
         }
 
-        #region Relay-Events    
+#region Relay-Events    
         /// <summary>
         /// Handles the Click event of the btnNummber control.
         /// </summary>
@@ -221,7 +231,7 @@ namespace Calc64WF.Visual
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnBack_Click(object sender, EventArgs e) 
             => (DataContext as FrmCalc64MainViewModel).btnBack_Click(sender, ((Control)sender).Tag, e);
-        #endregion
+#endregion
 
         /// <summary>
         /// Handles the SizeChanged event of the pnlMaster control.
@@ -261,6 +271,6 @@ namespace Calc64WF.Visual
             //      region.Complement(gPath);
             pnlMaster.Region = region;
         }
-        #endregion
+#endregion
     }
 }
