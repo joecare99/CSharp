@@ -18,7 +18,7 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
+	  <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	</ItemGroup>
 
 </Project>

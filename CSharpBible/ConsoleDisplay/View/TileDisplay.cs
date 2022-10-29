@@ -141,7 +141,7 @@ namespace ConsoleDisplay.View
         /// Initializes static members of the <see cref="TileDisplay{Enum}"/> class.
         /// </summary>
         static TileDisplay()  {
-            defaultTile = ((Enum[])typeof(Enum).GetEnumValues())[0];
+            defaultTile = null;
         }
 
         /// <summary>
