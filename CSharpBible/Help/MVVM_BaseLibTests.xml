@@ -85,5 +85,10 @@
       <param name="bExp">if set to <c>true</c> [b exp].</param>
       <param name="expResult">The exp result.</param>
     </member>
+    <member name="T:MVVM_BaseLibTests.ViewModel.NotificationObjectTests">
+      <summary>
+   Defines test class PropertyTests.
+   </summary>
+    </member>
   </members>
 </doc>

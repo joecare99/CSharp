@@ -9,11 +9,6 @@
      Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
    </summary>
     </member>
-    <member name="M:MVVM_Converter_DrawGrid.Properties.Images.#ctor">
-      <summary>
-   Initializes a new instance of the <see cref="T:MVVM_Converter_DrawGrid.Properties.Images" /> class.
-   </summary>
-    </member>
     <member name="P:MVVM_Converter_DrawGrid.Properties.Images.ResourceManager">
       <summary>
      Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.

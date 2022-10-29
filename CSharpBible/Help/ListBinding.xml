@@ -33,23 +33,17 @@
    </summary>
       <value>The last name.</value>
     </member>
-    <member name="P:ListBinding.Model.Person.FullName">
-      <summary>
-   Gets the full name.
-   </summary>
-      <value>The full name.</value>
-    </member>
     <member name="P:ListBinding.Model.Person.Title">
       <summary>
    Gets or sets the title.
    </summary>
       <value>The title.</value>
     </member>
-    <member name="M:ListBinding.Model.Person.ToString">
+    <member name="P:ListBinding.Model.Person.FullName">
       <summary>
-   Returns a <see cref="T:System.String" /> that represents this instance.
+   Gets the full name.
    </summary>
-      <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
+      <value>The full name.</value>
     </member>
     <member name="P:ListBinding.Model.Person.IsEmpty">
       <summary>
@@ -60,11 +54,8 @@
     </member>
     <member name="M:ListBinding.Model.Person.#ctor(System.String,System.String,System.String)">
       <summary>
-   Initializes a new instance of the <see cref="T:ListBinding.Model.Person" /> class.
-   </summary>
-      <param name="lastName">The last name.</param>
-      <param name="firstName">The first name.</param>
-      <param name="title">The title.</param>
+        <font color="red">Badly formed XML comment.</font>
+      </summary>
     </member>
     <member name="M:ListBinding.Model.Person.#ctor(System.String)">
       <summary>
@@ -83,6 +74,11 @@
    </summary>
       <param name="info">The information.</param>
       <param name="context">The context.</param>
+    </member>
+    <member name="M:ListBinding.Model.Person.ToString">
+      <summary>
+        <font color="red">Badly formed XML comment.</font>
+      </summary>
     </member>
     <member name="M:ListBinding.Model.Person.GetObjectData(SerializationInfo,StreamingContext)">
       <summary>

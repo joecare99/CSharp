@@ -6,32 +6,24 @@
   <members>
     <member name="T:MVVM_Converter_ImgGrid2.Properties.Images">
       <summary>
-   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
-   </summary>
-    </member>
-    <member name="M:MVVM_Converter_ImgGrid2.Properties.Images.#ctor">
-      <summary>
-   Initializes a new instance of the <see cref="T:MVVM_Converter_ImgGrid2.Properties.Images" /> class.
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
    </summary>
     </member>
     <member name="P:MVVM_Converter_ImgGrid2.Properties.Images.ResourceManager">
       <summary>
-   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
    </summary>
-      <value>The resource manager.</value>
     </member>
     <member name="P:MVVM_Converter_ImgGrid2.Properties.Images.Culture">
       <summary>
-   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
    </summary>
-      <value>The culture.</value>
     </member>
     <member name="P:MVVM_Converter_ImgGrid2.Properties.Images.BIG_original">
       <summary>
-   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+     Sucht eine lokalisierte Ressource vom Typ System.Byte[].
    </summary>
-      <value>The big original.</value>
     </member>
     <member name="T:MVVM_Converter_ImgGrid2.Model.LabDefData">
       <summary>

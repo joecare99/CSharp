@@ -9,20 +9,15 @@
    Defines test class PersonTests.
    </summary>
     </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.SetupTest">
+      <summary>
+   Defines the test method SetupTest.
+   </summary>
+    </member>
     <member name="M:ListBinding.Model.Tests.PersonTests.PersonTest">
       <summary>
    Defines the test method PersonTest.
    </summary>
-    </member>
-    <member name="M:ListBinding.Model.Tests.PersonTests.PersonFullName(System.Int32,System.String,System.String,System.String,System.String)">
-      <summary>
-   Persons the full name.
-   </summary>
-      <param name="aId">a identifier.</param>
-      <param name="aFirstname">a firstname.</param>
-      <param name="aLastname">a lastname.</param>
-      <param name="aTitle">a title.</param>
-      <param name="ExpFullname">The exp fullname.</param>
     </member>
     <member name="M:ListBinding.Model.Tests.PersonTests.PersonTest2(System.Int32,System.String,System.String,System.String,System.String)">
       <summary>
@@ -44,6 +39,16 @@
       <param name="ExpTitle">The exp title.</param>
       <param name="aFullname">a fullname.</param>
     </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.PersonFullName(System.Int32,System.String,System.String,System.String,System.String)">
+      <summary>
+   Persons the full name.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
     <member name="M:ListBinding.Model.Tests.PersonTests.GetObjectDataTest(System.Int32,System.String,System.String,System.String,System.String[])">
       <summary>
    Gets the object data test.
@@ -57,6 +62,26 @@
     <member name="M:ListBinding.Model.Tests.PersonTests.ToStringTest(System.Int32,System.String,System.String,System.String,System.String)">
       <summary>
    Converts to stringtest.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.CompleteDeserializationTest(System.Int32,System.String,System.String,System.String,System.String[])">
+      <summary>
+   Gets the object data test.
+   </summary>
+      <param name="aId">a identifier.</param>
+      <param name="aFirstname">a firstname.</param>
+      <param name="aLastname">a lastname.</param>
+      <param name="aTitle">a title.</param>
+      <param name="ExpFullname">The exp fullname.</param>
+    </member>
+    <member name="M:ListBinding.Model.Tests.PersonTests.PropertyChangeTest(System.Nullable{System.Int32},System.String,System.String,System.String,System.String[])">
+      <summary>
+   test.
    </summary>
       <param name="aId">a identifier.</param>
       <param name="aFirstname">a firstname.</param>

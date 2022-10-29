@@ -332,7 +332,34 @@
       <returns>
         <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     </member>
+    <member name="M:MVVM.ViewModel.NotificationObject.SetProperty``1(``0@,``0,Predicate{``0},Action{``0, ``0},System.String)">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="data">The data.</param>
+      <param name="value">The value.</param>
+      <param name="action">The action.</param>
+      <param name="propertyName">Name of the property.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
     <member name="M:MVVM.ViewModel.NotificationObject.SetProperty``1(``0@,``0,System.String[],Action{``0, ``0},System.String)">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">
+      </typeparam>
+      <param name="data">The data.</param>
+      <param name="value">The value.</param>
+      <param name="propertyNames">The property names.</param>
+      <param name="action">The action.</param>
+      <param name="propertyName">Name of the property.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:MVVM.ViewModel.NotificationObject.SetProperty``1(``0@,``0,System.String[],Predicate{``0},Action{``0, ``0},System.String)">
       <summary>
    Helper for setting properties
    </summary>

@@ -28,13 +28,13 @@
       <summary>
    Gets or sets the title.
    </summary>
-      <value>The title.</value>
+      <value>The title of the task.</value>
     </member>
     <member name="P:ItemsControlTut3.ViewModel.TodoItem.Completion">
       <summary>
-   Gets or sets the completion.
+   Gets or sets the completion [%].
    </summary>
-      <value>The completion.</value>
+      <value>The completion of the task [%].</value>
     </member>
     <member name="P:ItemsControlTut3.ViewModel.TodoItem.Do">
       <summary>
@@ -61,8 +61,10 @@
       <value>The todo list.</value>
     </member>
     <member name="P:ItemsControlTut3.ViewModel.MainWindowViewModel.AddCommand">
-      <summary>Gets or sets the add command.</summary>
-      <value>The add command.</value>
+      <summary>
+   Gets or sets the add item command.
+   </summary>
+      <value>The add item command.</value>
     </member>
     <member name="P:ItemsControlTut3.ViewModel.MainWindowViewModel.NewItem">
       <summary>Title of the new item.</summary>
