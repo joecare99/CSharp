@@ -178,9 +178,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Werner_Flaschbier_Base", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Werner_Flaschbier_BaseTests", "Games\Werner_Flaschbier_BaseTests\Werner_Flaschbier_BaseTests.csproj", "{FA9F3597-4C9F-48FA-A507-54BF6825C637}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Display_Test", "Display_Test\Display_Test.csproj", "{5B2D89EC-28CF-493C-B503-74DCB0F68D73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Display_netTest", "Display_Test\Display_netTest.csproj", "{5B2D89EC-28CF-493C-B503-74DCB0F68D73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay", "ConsoleDisplay\ConsoleDisplay.csproj", "{C0610610-96D6-45C4-A6B6-1A089839C37A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_net", "ConsoleDisplay\ConsoleDisplay_net.csproj", "{C0610610-96D6-45C4-A6B6-1A089839C37A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{90DDFE5D-E27B-449C-8C1B-6275C8E4BD67}"
 EndProject
@@ -188,7 +188,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsoleTests", "TestCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsoleDemo", "TestConsoleDemo\TestConsoleDemo.csproj", "{29598C75-C195-4159-A235-B4843820BB2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplayTests", "ConsoleDisplayTests\ConsoleDisplayTests.csproj", "{6E6FBC29-5A19-4444-BCFE-21E6C88378E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_netTests", "ConsoleDisplayTests\ConsoleDisplay_netTests.csproj", "{6E6FBC29-5A19-4444-BCFE-21E6C88378E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing", "SomeThing\SomeThing.csproj", "{9960C80E-9A03-4D27-BD75-7E1B90A3EDB0}"
 EndProject
