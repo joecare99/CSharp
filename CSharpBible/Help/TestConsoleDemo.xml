@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>TestConsoleDemo</name>
+  </assembly>
+  <members>
+    <member name="T:TestConsoleDemo.View.TextConsoleDemoForm">
+      <summary> Class TextConsoleDemoForm. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:TestConsoleDemo.View.TextConsoleDemoForm.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestConsoleDemo.View.TextConsoleDemoForm" /> class.
+   </summary>
+    </member>
+    <member name="M:TestConsoleDemo.View.TextConsoleDemoForm.Dispose(System.Boolean)">
+      <summary>
+    Clean up any resources being used.
+   </summary>
+      <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    </member>
+    <member name="T:TestConsoleDemo.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+  </members>
+</doc>

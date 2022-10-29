@@ -24,7 +24,7 @@ namespace ConsoleDisplay.View
     /// Class TileDef.
     /// </summary>
     /// <typeparam name="Enum">The type of the enum.</typeparam>
-    public abstract class TileDef<Enum>
+    public abstract class TileDefBase
     {
         /// <summary>
         /// Gets the tile definition.
@@ -61,7 +61,7 @@ namespace ConsoleDisplay.View
     /// Class TileDisplay.
     /// </summary>
     /// <typeparam name="Enum">The type of the enum.</typeparam>
-    public class TileDisplay<Enum>
+    public class TileDisplay
     {
         #region Properties
         #region static Properties
@@ -72,7 +72,7 @@ namespace ConsoleDisplay.View
         /// <summary>
         /// The tile definition
         /// </summary>
-        public static TileDef<Enum> tileDef;
+        public static TileDefBase tileDef;
         #endregion
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace ConsoleDisplay.View
         /// Gets or sets the tile definition.
         /// </summary>
         /// <value>The tile definition.</value>
-        public TileDef<Enum> TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
+        public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; } 
 
         #region Private Properties and Fields
 
@@ -131,7 +131,7 @@ namespace ConsoleDisplay.View
         /// <summary>
         /// The tile definition
         /// </summary>
-        public TileDef<Enum> _tileDef;
+        public TileDefBase _tileDef;
         #endregion
         #endregion
 

@@ -1,0 +1,551 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Tetris_Base</name>
+  </assembly>
+  <members>
+    <member name="T:Tetris_Base.Helper.PropertyClass">
+      <summary>
+   Class PropertyClass.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Helper.PropertyClass.SetProperty``1(``0@,``0,System.Nullable{Action{``0, ``0}},System.Nullable{Action{``0, ``0}})">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">Generic type of the method</typeparam>
+      <param name="data">the data-field that is about to be changed</param>
+      <param name="value">the new data-value</param>
+      <param name="action">the action is executed right <b>after</b> data is changed</param>
+      <param name="preAction">the action is executed right <b>before</b> data is changed</param>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:Tetris_Base.Helper.PropertyClass.SetPropertyP``1(``0@,``0,System.Nullable{Action{``0, ``0}})">
+      <summary>
+   Helper for setting properties
+   </summary>
+      <typeparam name="T">Generic type of the method</typeparam>
+      <param name="data">the data-field that is about to be changed</param>
+      <param name="value">the new data-value</param>
+      <param name="preAction">the action is executed right <b>before</b> data is changed</param>
+      <returns>
+      </returns>
+    </member>
+    <member name="T:Tetris_Base.Model.Block">
+      <summary>
+   Class Block.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Block.#ctor(BlockType,BlockAngle)">
+      <summary>Initializes a new instance of the <see cref="T:Tetris_Base.Model.Block" /> class.</summary>
+      <param name="type">The type of the block.</param>
+      <param name="angle">The angle of the block.</param>
+      <seealso cref="T:Tetris_Base.Model.BlockType" />
+      <seealso cref="T:Tetris_Base.Model.BlockAngle" />
+    </member>
+    <member name="M:Tetris_Base.Model.Block.#ctor(Point,BlockType,BlockAngle)">
+      <summary>Initializes a new instance of the <see cref="T:Tetris_Base.Model.Block" /> class.</summary>
+      <param name="position">The starting position of the block.</param>
+      <param name="type">The type of the block.</param>
+      <param name="angle">The angle of the block.</param>
+      <seealso cref="T:System.Drawing.Point" />
+      <seealso cref="T:Tetris_Base.Model.BlockType" />
+      <seealso cref="T:Tetris_Base.Model.BlockAngle" />
+    </member>
+    <member name="F:Tetris_Base.Model.Block.prTestPixel">
+      <summary>The predicate to test pixels</summary>
+      <seealso cref="T:System.Drawing.Point" />
+      <seealso cref="M:Tetris_Base.Model.Block.CollisionTest(Point,BlockAngle)" />
+    </member>
+    <member name="F:Tetris_Base.Model.Block.acPaint">
+      <summary>The action to paint a pixel</summary>
+      <seealso cref="T:System.Drawing.Point" />
+      <seealso cref="T:System.ConsoleColor" />
+      <seealso cref="M:Tetris_Base.Model.Block.Show" />
+      <seealso cref="M:Tetris_Base.Model.Block.Hide" />
+      <seealso cref="M:Tetris_Base.Model.Block.DoMove(Point,BlockAngle)" />
+    </member>
+    <member name="P:Tetris_Base.Model.Block.Position">
+      <summary>Gets or sets the position of the block.</summary>
+      <value>The (center-) position.</value>
+      <seealso cref="T:System.Drawing.Point" />
+    </member>
+    <member name="P:Tetris_Base.Model.Block.ActBlockType">
+      <summary>Gets or sets the actual type of the block.</summary>
+      <value>The actual type of the block.</value>
+      <seealso cref="T:Tetris_Base.Model.BlockType" />
+    </member>
+    <member name="P:Tetris_Base.Model.Block.ActBlockAngle">
+      <summary>Gets or sets the actual block angle.</summary>
+      <value>The actual block angle.</value>
+      <seealso cref="T:Tetris_Base.Model.BlockAngle" />
+    </member>
+    <member name="P:Tetris_Base.Model.Block.Visible">
+      <summary>Gets a value indicating whether this <see cref="T:Tetris_Base.Model.Block" /> is visible.</summary>
+      <value>
+        <c>true</c> if visible; otherwise, <c>false</c>.</value>
+      <seealso cref="M:Tetris_Base.Model.Block.Show" />
+      <seealso cref="M:Tetris_Base.Model.Block.Hide" />
+    </member>
+    <member name="M:Tetris_Base.Model.Block.Show">
+      <summary>Shows this instance.</summary>
+      <seealso cref="P:Tetris_Base.Model.Block.Visible" />
+    </member>
+    <member name="M:Tetris_Base.Model.Block.Hide">
+      <summary>Hides this instance.</summary>
+      <seealso cref="P:Tetris_Base.Model.Block.Visible" />
+    </member>
+    <member name="M:Tetris_Base.Model.Block.Move(Point,System.Nullable{BlockAngle})">
+      <summary>Moves the block by specified offset, and to specified angle.</summary>
+      <param name="Offset">The offset.</param>
+      <param name="newAngle">The new angle.</param>
+      <seealso cref="T:Tetris_Base.Model.BlockAngle" />
+      <seealso cref="T:System.Drawing.Point" />
+    </member>
+    <member name="M:Tetris_Base.Model.Block.CollisionTest(Point,BlockAngle)">
+      <summary>Tests the block for collision with specified offset and angle.</summary>
+      <param name="Offset">The offset.</param>
+      <param name="newAngle">The new angle.</param>
+      <returns>
+        <c>true</c> if collision was detected; otherwise <c>false</c></returns>
+      <seealso cref="T:System.Drawing.Point" />
+      <seealso cref="T:Tetris_Base.Model.BlockAngle" />
+      <seealso cref="F:Tetris_Base.Model.Block.prTestPixel" />
+    </member>
+    <member name="T:Tetris_Base.Model.BlockAngle">
+      <summary>
+   Enum BlockAngle
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockAngle.Degr0">
+      <summary>
+   The degr0
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockAngle.Degr90">
+      <summary>
+   The degr90
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockAngle.Degr180">
+      <summary>
+   The degr180
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockAngle.Degr270">
+      <summary>
+   The degr270
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.BlockType">
+      <summary>
+   Enum BlockType
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.I">
+      <summary>
+   The i
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.J">
+      <summary>
+   The j
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.L">
+      <summary>
+   The l
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.x">
+      <summary>
+   The x
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.Z">
+      <summary>
+   The z
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.S">
+      <summary>
+   The s
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockType.T">
+      <summary>
+   The t
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.BlockDef">
+      <summary>
+   Struct BlockDef
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.Defines">
+      <summary>
+   Class Defines.
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockDef.bType">
+      <summary>
+   The b type
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockDef.angle">
+      <summary>
+   The angle
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockDef.bColor">
+      <summary>
+   The b color
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.BlockDef.bKoor">
+      <summary>
+   The b koor
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.Defines.BlockDefines">
+      <summary>
+   The block defines
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.UserAction">
+      <summary>
+   Enum UserAction
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.GameSound">
+      <summary>
+   Enum GameSound
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.Game">
+      <summary>
+   Class Game.
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.None">
+      <summary>
+   The none
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.MoveLeft">
+      <summary>
+   The move left
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.MoveRight">
+      <summary>
+   The move right
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.MoveDown">
+      <summary>
+   The move down
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.RotateLeft">
+      <summary>
+   The rotate left
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.RotateRight">
+      <summary>
+   The rotate right
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.Drop">
+      <summary>
+   The drop
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.Quit">
+      <summary>
+   The quit
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.Help">
+      <summary>
+   The help
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.UserAction.Restart">
+      <summary>
+   The restart
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.GameSound.NoSound">
+      <summary>
+   The no sound
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.GameSound.DeepBoom">
+      <summary>
+   The deep boom
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Model.GameSound.Tick">
+      <summary>
+   The tick
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.Model.Game.rndInt">
+      <summary>
+   Gets or sets the random int.
+   </summary>
+      <value>The random int.</value>
+    </member>
+    <member name="F:Tetris_Base.Model.Game.playField">
+      <summary>
+   The play field
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.Model.Game.score">
+      <summary>
+   Gets the score.
+   </summary>
+      <value>The score.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.Game.notEnded">
+      <summary>
+   Gets a value indicating whether [not ended].
+   </summary>
+      <value>
+        <c>true</c> if [not ended]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.Game.level">
+      <summary>
+   Gets the level.
+   </summary>
+      <value>The level.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.Game.Sound">
+      <summary>
+   Gets or sets the sound.
+   </summary>
+      <value>The sound.</value>
+    </member>
+    <member name="E:Tetris_Base.Model.Game.VUpdate">
+      <summary>
+   Occurs when [v update].
+   </summary>
+    </member>
+    <member name="E:Tetris_Base.Model.Game.UpdateScore">
+      <summary>
+   Occurs when [update score].
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Game.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:Tetris_Base.Model.Game" /> class.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Game.GameStep(System.Int32@)">
+      <summary>
+   Games the step.
+   </summary>
+      <param name="wait">The wait.</param>
+    </member>
+    <member name="M:Tetris_Base.Model.Game.DoUserAction(UserAction)">
+      <summary>
+   Does the user action.
+   </summary>
+      <param name="uAction">The u action.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:Tetris_Base.Model.PlayField">
+      <summary>
+   Class PlayField.
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayField.NextBlock">
+      <summary>
+   Gets or sets the next block.
+   </summary>
+      <value>The next block.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayField.ActualBlock">
+      <summary>
+   Gets or sets the actual block.
+   </summary>
+      <value>The actual block.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayField.playGround">
+      <summary>
+   Gets or sets the play ground.
+   </summary>
+      <value>The play ground.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayField.PrevPaint">
+      <summary>
+   Gets or sets the previous paint.
+   </summary>
+      <value>The previous paint.</value>
+    </member>
+    <member name="M:Tetris_Base.Model.PlayField.TestRemoveLine">
+      <summary>
+   Tests the remove line.
+   </summary>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="M:Tetris_Base.Model.PlayField.Clear">
+      <summary>
+   Clears this instance.
+   </summary>
+    </member>
+    <member name="T:Tetris_Base.Model.PlayGround">
+      <summary>
+   Class PlayGround.
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayGround.FieldSize">
+      <summary>
+   Gets the size of the field.
+   </summary>
+      <value>The size of the field.</value>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayGround.Dirty">
+      <summary>
+   Gets or sets a value indicating whether this <see cref="T:Tetris_Base.Model.PlayGround" /> is dirty.
+   </summary>
+      <value>
+        <c>true</c> if dirty; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:Tetris_Base.Model.PlayGround.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:Tetris_Base.Model.PlayGround" /> class.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.PlayGround.RemoveLine(System.Int32)">
+      <summary>
+   Removes the line.
+   </summary>
+      <param name="Y">The y.</param>
+    </member>
+    <member name="M:Tetris_Base.Model.PlayGround.Clear">
+      <summary>
+   Clears this instance.
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.Model.PlayGround.Item(Point)">
+      <summary>
+   Gets or sets the <see cref="T:System.ConsoleColor" /> with the specified PNT.
+   </summary>
+      <param name="pnt">The PNT.</param>
+      <returns>ConsoleColor.</returns>
+    </member>
+    <member name="T:Tetris_Base.View.Visual">
+      <summary>
+   Class Visual.
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.View.Visual.zffrn">
+      <summary>
+   The ZFFRN
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.View.Visual.display1">
+      <summary>
+   The display1
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.View.Visual.display2">
+      <summary>
+   The display2
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.View.Visual.console">
+      <summary>
+   Gets or sets the console.
+   </summary>
+      <value>The console.</value>
+    </member>
+    <member name="P:Tetris_Base.View.Visual.playGround">
+      <summary>
+   Gets or sets the play ground.
+   </summary>
+      <value>The play ground.</value>
+    </member>
+    <member name="P:Tetris_Base.View.Visual.userAction">
+      <summary>
+   Gets or sets the user action.
+   </summary>
+      <value>The user action.</value>
+    </member>
+    <member name="F:Tetris_Base.View.Visual.keyAction">
+      <summary>
+   The key action
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.View.Visual.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.View.Visual.PrevPaint(Point,ConsoleColor)">
+      <summary>
+   Previouses the paint.
+   </summary>
+      <param name="p">The p.</param>
+      <param name="c">The c.</param>
+    </member>
+    <member name="M:Tetris_Base.View.Visual.Update">
+      <summary>
+   Updates this instance.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.View.Visual.UpdateScore(System.ValueTuple{System.Int32, System.Int32})">
+      <summary>
+   Updates the score.
+   </summary>
+      <param name="e">The e.</param>
+    </member>
+    <member name="M:Tetris_Base.View.Visual.Sound(GameSound)">
+      <summary>
+   Sounds the specified gs.
+   </summary>
+      <param name="gs">The gs.</param>
+    </member>
+    <member name="M:Tetris_Base.View.Visual.CheckUserAction">
+      <summary>
+   Checks the user action.
+   </summary>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:Tetris_Base.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="F:Tetris_Base.Program.tetris">
+      <summary>
+   The tetris
+   </summary>
+    </member>
+    <member name="P:Tetris_Base.Program.gameNotEnded">
+      <summary>
+   Gets a value indicating whether [game not ended].
+   </summary>
+      <value>
+        <c>true</c> if [game not ended]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Tetris_Base.Program.playField">
+      <summary>
+   Gets the play field.
+   </summary>
+      <value>The play field.</value>
+    </member>
+    <member name="M:Tetris_Base.Program.Main(System.String[])">
+      <summary>
+   Defines the entry point of the application.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>VTileEdit</name>
+  </assembly>
+  <members>
+    <member name="T:VTileEdit.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+  </members>
+</doc>

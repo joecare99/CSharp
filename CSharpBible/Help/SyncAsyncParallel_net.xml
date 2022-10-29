@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>SyncAsyncParallel_net</name>
+  </assembly>
+  <members>
+    <member name="T:SyncAsyncParallel.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:SyncAsyncParallel.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:SyncAsyncParallel.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:SyncAsyncParallel.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:SyncAsyncParallel.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:SyncAsyncParallel.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:SyncAsyncParallel.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:SyncAsyncParallel.Model.DownloadResult">
+      <summary>
+   Class DownloadResult.
+   </summary>
+    </member>
+    <member name="P:SyncAsyncParallel.Model.DownloadResult.Url">
+      <summary>
+   Gets or sets the URL.
+   </summary>
+      <value>The URL.</value>
+    </member>
+    <member name="P:SyncAsyncParallel.Model.DownloadResult.Html">
+      <summary>
+   Gets or sets the HTML.
+   </summary>
+      <value>The HTML.</value>
+    </member>
+    <member name="P:SyncAsyncParallel.Model.DownloadResult.Contentlength">
+      <summary>
+   Gets the contentlength.
+   </summary>
+      <value>The contentlength.</value>
+    </member>
+    <member name="T:SyncAsyncParallel.View.MainWindow">
+      <summary> Interaktionslogik für MainWindow.xaml </summary>
+    </member>
+    <member name="M:SyncAsyncParallel.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:SyncAsyncParallel.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:SyncAsyncParallel.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:SyncAsyncParallel.ViewModel.MainWindowViewModel.InfoText">
+      <summary>
+   Gets or sets the information text.
+   </summary>
+      <value>The information text.</value>
+    </member>
+    <member name="P:SyncAsyncParallel.ViewModel.MainWindowViewModel.Download_syncCmd">
+      <summary>
+   Gets the download synchronize command.
+   </summary>
+      <value>The download synchronize command.</value>
+    </member>
+    <member name="P:SyncAsyncParallel.ViewModel.MainWindowViewModel.Download_asyncCmd">
+      <summary>
+   Gets the download asynchronous command.
+   </summary>
+      <value>The download asynchronous command.</value>
+    </member>
+    <member name="P:SyncAsyncParallel.ViewModel.MainWindowViewModel.Download_async_paraCmd">
+      <summary>
+   Gets the download asynchronous para command.
+   </summary>
+      <value>The download asynchronous para command.</value>
+    </member>
+    <member name="M:SyncAsyncParallel.ViewModel.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:SyncAsyncParallel.ViewModel.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:SyncAsyncParallel.App">
+      <summary> Interaktionslogik für "App.xaml" </summary>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>TestConsoleTests</name>
+  </assembly>
+  <members>
+    <member name="T:TestConsole.Tests.TestConsoleTests">
+      <summary>
+   Defines test class TestConsoleTests.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.ClearTest">
+      <summary>
+   Defines the test method ClearTest.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.ReadKeyTest">
+      <summary>
+   Defines the test method ReadKeyTest.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.SetCursorPositionTest(System.String,System.Int32,System.Int32)">
+      <summary>
+   Defines the test method SetCursorPositionTest.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.WriteTest">
+      <summary>
+   Defines the test method WriteTest.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.WriteTest1">
+      <summary>
+   Defines the test method WriteTest1.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.WriteLineTest">
+      <summary>
+   Defines the test method WriteLineTest.
+   </summary>
+    </member>
+    <member name="M:TestConsole.Tests.TestConsoleTests.TestConsoleTest">
+      <summary>
+   Defines the test method TestConsoleTest.
+   </summary>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Tetris_BaseTests</name>
+  </assembly>
+  <members>
+    <member name="T:Tetris_Base.Helper.Tests.PropertyClassTests">
+      <summary>
+   Defines test class PropertyClassTests.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Helper.Tests.PropertyClassTests.SetPropertyTest(System.String,System.Object,System.Boolean,System.Object,System.Object)">
+      <summary>
+   Sets the property test.
+   </summary>
+      <param name="Name">The name.</param>
+      <param name="oExp">The o exp.</param>
+      <param name="xExp">if set to <c>true</c> [x exp].</param>
+      <param name="value">The value.</param>
+      <param name="data">The data.</param>
+    </member>
+    <member name="M:Tetris_Base.Helper.Tests.PropertyClassTests.SetPropertyPTest(System.String,System.Object,System.Boolean,System.Object,System.Object)">
+      <summary>
+   Sets the property p test.
+   </summary>
+      <param name="Name">The name.</param>
+      <param name="oExp">The o exp.</param>
+      <param name="xExp">if set to <c>true</c> [x exp].</param>
+      <param name="value">The value.</param>
+      <param name="data">The data.</param>
+    </member>
+    <member name="T:Tetris_Base.Model.Tests.BlockTests">
+      <summary>
+   Defines test class BlockTests.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.ShowTest">
+      <summary>
+   Defines the test method ShowTest.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.HideTest">
+      <summary>
+   Defines the test method HideTest.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.RotateTest">
+      <summary>
+   Defines the test method RotateTest.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.MoveTest">
+      <summary>
+   Defines the test method MoveTest.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.CollisionTestTest">
+      <summary>
+   Defines the test method CollisionTestTest.
+   </summary>
+    </member>
+    <member name="M:Tetris_Base.Model.Tests.BlockTests.CollisionTestTest2">
+      <summary>
+   Defines the test method CollisionTestTest2.
+   </summary>
+    </member>
+    <member name="T:ConsoleDisplay.View.Tests.DisplayTests">
+      <summary>
+   Defines test class DisplayTests.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.DisplayTest">
+      <summary>
+   Defines the test method DisplayTest.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.DisplayPixelTest2">
+      <summary>
+   Defines the test method DisplayPixelTest2.
+   </summary>
+    </member>
+    <member name="M:ConsoleDisplay.View.Tests.DisplayTests.DisplayLineTest">
+      <summary>
+   Defines the test method DisplayLineTest.
+   </summary>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Sokoban_BaseTests</name>
+  </assembly>
+  <members>
+    <member name="T:Sokoban_Base.Model.Tests.OffsetsTests">
+      <summary>
+   Defines test class OffsetsTests.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.Model.Tests.OffsetsTests.DirOffsetTest(Direction,System.Int32[])">
+      <summary>
+   Dirs the offset test.
+   </summary>
+      <param name="dir">The dir.</param>
+      <param name="Koor">The koor.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Tests.OffsetsTests.DirOffsetTest1(System.Nullable{Direction},System.Int32[],System.Int32[])">
+      <summary>
+   Dirs the offset test1.
+   </summary>
+      <param name="dir">The dir.</param>
+      <param name="Koor">The koor.</param>
+      <param name="Pnkt">The PNKT.</param>
+    </member>
+    <member name="T:Sokoban_Base.Model.Tests.WallTests">
+      <summary>
+   Defines test class WallTests.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.Model.Tests.WallTests.WallTest">
+      <summary>
+   Defines the test method WallTest.
+   </summary>
+    </member>
+  </members>
+</doc>

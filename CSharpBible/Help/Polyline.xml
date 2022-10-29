@@ -9,36 +9,19 @@
     </member>
     <member name="T:Polyline.Properties.Resources">
       <summary>
-   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
-   </summary>
-    </member>
-    <member name="M:Polyline.Properties.Resources.#ctor">
-      <summary>
-   Initializes a new instance of the <see cref="T:Polyline.Properties.Resources" /> class.
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
    </summary>
     </member>
     <member name="P:Polyline.Properties.Resources.ResourceManager">
       <summary>
-   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
    </summary>
-      <value>The resource manager.</value>
     </member>
     <member name="P:Polyline.Properties.Resources.Culture">
       <summary>
-   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
    </summary>
-      <value>The culture.</value>
-    </member>
-    <member name="T:Polyline.Properties.Settings">
-      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
-      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
-    </member>
-    <member name="P:Polyline.Properties.Settings.Default">
-      <summary>
-   Gets the default.
-   </summary>
-      <value>The default.</value>
     </member>
     <member name="T:Polyline.ViewModels.ControlPointBehavior">
       <summary>
