@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>WpfDemoUI1</name>
+  </assembly>
+  <members>
+    <member name="T:WpfDemoUI.ViewModels.ShellViewModel">
+      <summary>
+   Class ShellViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:WpfDemoUI.ViewModels.ShellViewModel.People">
+      <summary>
+   Gets or sets the people.
+   </summary>
+      <value>The people.</value>
+    </member>
+    <member name="P:WpfDemoUI.ViewModels.ShellViewModel.Addresses">
+      <summary>
+   Gets or sets the addresses.
+   </summary>
+      <value>The addresses.</value>
+    </member>
+    <member name="P:WpfDemoUI.ViewModels.ShellViewModel.SelectedPerson">
+      <summary>
+   Gets or sets the selected person.
+   </summary>
+      <value>The selected person.</value>
+    </member>
+    <member name="P:WpfDemoUI.ViewModels.ShellViewModel.SelectedAddress">
+      <summary>
+   Gets or sets the selected address.
+   </summary>
+      <value>The selected address.</value>
+    </member>
+    <member name="M:WpfDemoUI.ViewModels.ShellViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:WpfDemoUI.ViewModels.ShellViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:WpfDemoUI.Views.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:WpfDemoUI.Views.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:WpfDemoUI.Views.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:WpfDemoUI.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>
