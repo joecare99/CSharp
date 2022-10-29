@@ -1,0 +1,951 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Sokoban_Base</name>
+  </assembly>
+  <members>
+    <member name="T:Sokoban_Base.Properties.Resource1">
+      <summary>
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.ResourceManager">
+      <summary>
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.Culture">
+      <summary>
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.CannotMoveMsg">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die Cannot move to direction {0} ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.Continue">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die , (&lt;Enter&gt;) to continue ... ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.EndMessage">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die You left the game ! ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.GameSuccess">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die You solved the puzzle ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.InfoText">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die      #####            ###               ###
+     ###        ###    ###  ##    ###    #####      #####  #####
+      ###    ###  ##  ###  ##  ###  ##  ###  ##  ###  ##  ###  ##
+       ###  ###  ##  #####    ###  ##  ###  ##  ###  ##  ###  ##
+  #####      ###    ###  ##    ###    #####      #####  ###  ##
+  
+  In this game, you have to put all {0}s into the target-places.
+  Your can move the player in 4 directions: {1}, but only if you are not hitting a wall.
+  The {0}s can be moved, by pushing them into the de [Rest der Zeichenfolge wurde abgeschnitten]"; ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.OK">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die OK ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.PosibMoves">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die Possible moves: ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.RestartMessage">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die Level will be restarted ... ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.SelectAction">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die Please select an action : (Q)uit ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.stone">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die stone ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.StonesInDest">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die {0}  stones are in target-area ähnelt.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Properties.Resource1.Version">
+      <summary>
+     Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
+  [7]Revision: 395
+  [8]Node Kind: directory
+  [9]Schedule: normal
+  [10]Last Changed Author: jc99
+  [11]Last Changed Rev: 240
+  [12]Last Changed Date: 2022-09-17 12:15:49 +0200 (Sa, 17 Sep 2022)
+  [13]
+   ähnelt.
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.Direction">
+      <summary>
+   Enum Direction
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.Offsets">
+      <summary>
+   Class Offsets.
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Direction.North">
+      <summary>
+   The north
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Direction.West">
+      <summary>
+   The west
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Direction.South">
+      <summary>
+   The south
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Direction.East">
+      <summary>
+   The east
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.Model.Offsets.DirOffset(Direction)">
+      <summary>
+   Dirs the offset.
+   </summary>
+      <param name="d">The d.</param>
+      <returns>Point.</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Offsets.DirOffset(System.Nullable{Direction},Point)">
+      <summary>
+   Dirs the offset.
+   </summary>
+      <param name="dir">The dir.</param>
+      <param name="position">The position.</param>
+      <returns>Point.</returns>
+    </member>
+    <member name="T:Sokoban_Base.Model.Field">
+      <summary>
+   Class Field.
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.Wall">
+      <summary>
+   Class Wall.
+   Implements the <see cref="T:Sokoban_Base.Model.Field" /></summary>
+      <seealso cref="T:Sokoban_Base.Model.Field" />
+    </member>
+    <member name="T:Sokoban_Base.Model.Floor">
+      <summary>
+   Class Floor.
+   Implements the <see cref="T:Sokoban_Base.Model.Field" /></summary>
+      <seealso cref="T:Sokoban_Base.Model.Field" />
+    </member>
+    <member name="T:Sokoban_Base.Model.Destination">
+      <summary>
+   Class Destination.
+   Implements the <see cref="T:Sokoban_Base.Model.Floor" /></summary>
+      <seealso cref="T:Sokoban_Base.Model.Floor" />
+    </member>
+    <member name="F:Sokoban_Base.Model.Field._item">
+      <summary>
+   The item
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Model.Field.Position">
+      <summary>
+   Gets the position.
+   </summary>
+      <value>The position.</value>
+    </member>
+    <member name="P:Sokoban_Base.Model.Field.Item">
+      <summary>
+   Gets or sets the item.
+   </summary>
+      <value>The item.</value>
+    </member>
+    <member name="P:Sokoban_Base.Model.Field.Parent">
+      <summary>
+   Gets the parent.
+   </summary>
+      <value>The parent.</value>
+    </member>
+    <member name="P:Sokoban_Base.Model.Field.fieldDef">
+      <summary>
+   Gets the field definition.
+   </summary>
+      <value>The field definition.</value>
+    </member>
+    <member name="M:Sokoban_Base.Model.Field.GetFieldDef">
+      <summary>
+   Gets the field definition.
+   </summary>
+      <returns>FieldDef.</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Field.SetItem(System.Nullable{PlayObject})">
+      <summary>
+   Sets the item.
+   </summary>
+      <param name="value">The value.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Field.#ctor(Point,Playfield)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.Field" /> class.
+   </summary>
+      <param name="position">The position.</param>
+      <param name="parentPlayObject">The parent play object.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Wall.#ctor(Point,Playfield)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.Wall" /> class.
+   </summary>
+      <param name="position">The position.</param>
+      <param name="parentPlayObject">The parent play object.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Wall.GetFieldDef">
+      <summary>
+   Gets the field definition.
+   </summary>
+      <returns>FieldDef.</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Wall.SetItem(System.Nullable{PlayObject})">
+      <summary>
+   Sets the item.
+   </summary>
+      <param name="value">The value.</param>
+      <exception cref="T:System.ArgumentException">
+      </exception>
+    </member>
+    <member name="M:Sokoban_Base.Model.Floor.#ctor(Point,Playfield)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.Floor" /> class.
+   </summary>
+      <param name="position">The position.</param>
+      <param name="parentPlayObject">The parent play object.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Floor.GetFieldDef">
+      <summary>
+   Gets the field definition.
+   </summary>
+      <returns>FieldDef.</returns>
+      <exception cref="T:System.ArgumentException">Illegal Item</exception>
+    </member>
+    <member name="M:Sokoban_Base.Model.Floor.SetItem(System.Nullable{PlayObject})">
+      <summary>
+   Sets the item.
+   </summary>
+      <param name="value">The value.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Destination.#ctor(Point,Playfield)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.Destination" /> class.
+   </summary>
+      <param name="position">The position.</param>
+      <param name="parentPlayObject">The parent play object.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Destination.GetFieldDef">
+      <summary>
+   Gets the field definition.
+   </summary>
+      <returns>FieldDef.</returns>
+      <exception cref="T:System.ArgumentException">Illegal Item</exception>
+    </member>
+    <member name="T:Sokoban_Base.Model.FieldDef">
+      <summary>
+   Enum FieldDef
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.FieldDefs">
+      <summary>
+   Class FieldDefs.
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.Empty">
+      <summary>
+   The empty
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.Wall">
+      <summary>
+   The wall
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.Floor">
+      <summary>
+   The floor
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.Destination">
+      <summary>
+   The destination
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.Player">
+      <summary>
+   The player
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.PlayerOverDest">
+      <summary>
+   The player over dest
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.Stone">
+      <summary>
+   The stone
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDef.StoneInDest">
+      <summary>
+   The stone in dest
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.FieldDefs.SDef">
+      <summary>
+   The s definition
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.LabDefs">
+      <summary>
+   Class LabDefs.
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.LabDefs.SLevels">
+      <summary>
+   The s levels
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Model.LabDefs.Count">
+      <summary>
+   Gets the count.
+   </summary>
+      <value>The count.</value>
+    </member>
+    <member name="M:Sokoban_Base.Model.LabDefs.GetLevel(System.Int32)">
+      <summary>
+   Gets the level.
+   </summary>
+      <param name="level">The level.</param>
+      <returns>System.ValueTuple&lt;FieldDef[], Size&gt;.</returns>
+    </member>
+    <member name="T:Sokoban_Base.Model.Player">
+      <summary>
+   Class Player.
+   Implements the <see cref="T:Sokoban_Base.Model.PlayObject" /></summary>
+      <seealso cref="T:Sokoban_Base.Model.PlayObject" />
+    </member>
+    <member name="P:Sokoban_Base.Model.Player.LastDir">
+      <summary>
+   Gets or sets the last dir.
+   </summary>
+      <value>The last dir.</value>
+    </member>
+    <member name="M:Sokoban_Base.Model.Player.#ctor(System.Nullable{Field})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.Player" /> class.
+   </summary>
+      <param name="aField">a field.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Player.Go(System.Nullable{Direction})">
+      <summary>
+   Goes the specified a dir.
+   </summary>
+      <param name="aDir">a dir.</param>
+      <returns>
+        <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Player.TestMove(Direction)">
+      <summary>
+   Tests if the object can move in the given direction.
+   </summary>
+      <param name="dir">The directon to test</param>
+      <returns>true: if the object can move in the direction</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Player.TryMove(Direction)">
+      <summary>
+   Tries to move the object in the given direction.
+   </summary>
+      <param name="dir">The directon to move</param>
+      <returns>true: if the object has moveed in the direction</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Player.MoveableDirs">
+      <summary>
+   Moveables the dirs.
+   </summary>
+      <returns>IEnumerable&lt;Direction&gt;.</returns>
+    </member>
+    <member name="T:Sokoban_Base.Model.MoveField">
+      <summary>
+   Struct MoveField
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.Move">
+      <summary>
+   Struct Move
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.Playfield">
+      <summary>
+   Class Playfield.
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.MoveField.p">
+      <summary>
+   The p
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.MoveField.nDef">
+      <summary>
+   The n definition
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Move.d">
+      <summary>
+   The d
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Move.mf">
+      <summary>
+   The mf
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Model.Playfield.Item(Point)">
+      <summary>
+   Gets or sets the <see cref="T:System.Nullable`1" /> with the specified p.
+   </summary>
+      <param name="p">The p.</param>
+      <returns>System.Nullable&lt;Field&gt;.</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Playfield.VField(Point,List{Move})">
+      <summary>
+   vs the field.
+   </summary>
+      <param name="p">The p.</param>
+      <param name="moves">The moves.</param>
+      <returns>FieldDef.</returns>
+    </member>
+    <member name="F:Sokoban_Base.Model.Playfield.fieldSize">
+      <summary>
+   The field size
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Playfield.Stones">
+      <summary>
+   The stones
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.Model.Playfield.player">
+      <summary>
+   The player
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Model.Playfield.StonesInDest">
+      <summary>
+   Gets the stones in dest.
+   </summary>
+      <value>The stones in dest.</value>
+    </member>
+    <member name="P:Sokoban_Base.Model.Playfield.GameSolved">
+      <summary>
+   Gets a value indicating whether [game solved].
+   </summary>
+      <value>
+        <c>true</c> if [game solved]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:Sokoban_Base.Model.Playfield.Setup(System.String[])">
+      <summary>
+   Setups the specified sf definition.
+   </summary>
+      <param name="SFDef">The sf definition.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Playfield.Setup(System.ValueTuple{FieldDef[], Size})">
+      <summary>
+   Setups the specified sf definition.
+   </summary>
+      <param name="SFDef">The sf definition.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Playfield.Clear">
+      <summary>
+   Clears this instance.
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Model.PlayObject">
+      <summary>
+   Class PlayObject.
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.Model.PlayObject.Position">
+      <summary>
+   Gets or sets the position.
+   </summary>
+      <value>The position of the player on the playfield</value>
+    </member>
+    <member name="P:Sokoban_Base.Model.PlayObject.OldPosition">
+      <summary>
+   Gets or sets the old position.
+   </summary>
+      <value>The old position.</value>
+    </member>
+    <member name="P:Sokoban_Base.Model.PlayObject.field">
+      <summary>
+   Gets or sets the field.
+   </summary>
+      <value>The field as reference.</value>
+    </member>
+    <member name="M:Sokoban_Base.Model.PlayObject.TestMove(Direction)">
+      <summary>
+   Tests if the object can move in the given direction.
+   </summary>
+      <param name="dir">The directon to test</param>
+      <returns>true: if the object can move in the direction</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.PlayObject.TryMove(Direction)">
+      <summary>
+   Tries to move the object in the given direction.
+   </summary>
+      <param name="dir">The directon to move</param>
+      <returns>true: if the object has moveed in the direction</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.PlayObject.#ctor(System.Nullable{Field})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.PlayObject" /> class.
+   </summary>
+      <param name="aField">a field.</param>
+    </member>
+    <member name="T:Sokoban_Base.Model.Stone">
+      <summary>
+   Class Stone.
+   Implements the <see cref="T:Sokoban_Base.Model.PlayObject" /></summary>
+      <seealso cref="T:Sokoban_Base.Model.PlayObject" />
+    </member>
+    <member name="M:Sokoban_Base.Model.Stone.#ctor(System.Nullable{Field})">
+      <summary>
+   Initializes a new instance of the <see cref="T:Sokoban_Base.Model.Stone" /> class.
+   </summary>
+      <param name="aField">a field.</param>
+    </member>
+    <member name="M:Sokoban_Base.Model.Stone.TestMove(Direction)">
+      <summary>
+   Tests if the object can move in the given direction.
+   </summary>
+      <param name="dir">The directon to test</param>
+      <returns>true: if the object can move in the direction</returns>
+    </member>
+    <member name="M:Sokoban_Base.Model.Stone.TryMove(Direction)">
+      <summary>
+   Tries to move the object in the given direction.
+   </summary>
+      <param name="dir">The directon to move</param>
+      <returns>true: if the object has moveed in the direction</returns>
+    </member>
+    <member name="T:Sokoban_Base.View.Visuals">
+      <summary>
+   The class that handles the UI
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.View.Visuals.myConsole">
+      <summary>
+   My console
+   is a Console-Proxy for debugging &amp; Testing
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.View.Visuals.KeyAction">
+      <summary>
+   The key action
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.View.Visuals.Message">
+      <summary>
+   Gets or sets the message.
+   </summary>
+      <value>The message.</value>
+    </member>
+    <member name="M:Sokoban_Base.View.Visuals.Show(System.Nullable{UserAction})">
+      <summary>
+   Shows the specified u action.
+   </summary>
+      <param name="uAction">The u action.</param>
+    </member>
+    <member name="M:Sokoban_Base.View.Visuals.Update">
+      <summary>
+   Updates this instance.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.View.Visuals.WaitforUser(System.Nullable{UserAction})">
+      <summary>
+   Waitfors the user.
+   </summary>
+      <param name="uAction">The u action.</param>
+      <returns>System.Nullable&lt;UserAction&gt;.</returns>
+    </member>
+    <member name="M:Sokoban_Base.View.Visuals.WriteTile(PointF,TileDef)">
+      <summary>
+   Writes the tile.
+   </summary>
+      <param name="p">The p.</param>
+      <param name="td">The td.</param>
+    </member>
+    <member name="M:Sokoban_Base.View.Visuals.MarkFirst(System.String)">
+      <summary>
+   Marks the first.
+   </summary>
+      <param name="v">The v.</param>
+      <returns>System.String.</returns>
+    </member>
+    <member name="T:Sokoban_Base.View.VisualsDef">
+      <summary>
+   Class VisualsDef.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.View.VisualsDef.GetTileStr(TileDef)">
+      <summary>
+   Gets the tile string.
+   </summary>
+      <param name="tileDef">The tile definition.</param>
+      <returns>System.String[].</returns>
+    </member>
+    <member name="M:Sokoban_Base.View.VisualsDef.GetTileColors(TileDef)">
+      <summary>
+   Gets the tile colors.
+   </summary>
+      <param name="tileDef">The tile definition.</param>
+      <returns>ConsoleColor[].</returns>
+    </member>
+    <member name="T:Sokoban_Base.ViewModel.Game">
+      <summary>
+   Class Game.
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.Game.visUpdate">
+      <summary>
+   The vis update
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.Game.visGetUserAction">
+      <summary>
+   The vis get user action
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.Game.visSetMessage">
+      <summary>
+   The vis set message
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.visShow">
+      <summary>
+   Gets or sets the vis show.
+   </summary>
+      <value>The vis show.</value>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.Game.playfield">
+      <summary>
+   The playfield
+   </summary>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.player">
+      <summary>
+   Gets the player.
+   </summary>
+      <value>The player.</value>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.PFSize">
+      <summary>
+   Gets the size of the pf.
+   </summary>
+      <value>The size of the pf.</value>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.StonesInDest">
+      <summary>
+   Gets the stones in dest.
+   </summary>
+      <value>The stones in dest.</value>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.Stones">
+      <summary>
+   Gets the stones.
+   </summary>
+      <value>The stones.</value>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.GameSolved">
+      <summary>
+   Gets a value indicating whether [game solved].
+   </summary>
+      <value>
+        <c>true</c> if [game solved]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Sokoban_Base.ViewModel.Game.level">
+      <summary>
+   Gets the level.
+   </summary>
+      <value>The level.</value>
+    </member>
+    <member name="M:Sokoban_Base.ViewModel.Game.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.ViewModel.Game.Run">
+      <summary>
+   Runs this instance.
+   </summary>
+      <returns>System.Nullable&lt;UserAction&gt;.</returns>
+    </member>
+    <member name="M:Sokoban_Base.ViewModel.Game.Cleanup">
+      <summary>
+   Cleanups this instance.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.ViewModel.Game.GetTile(Point)">
+      <summary>
+   Gets the tile.
+   </summary>
+      <param name="p">The p.</param>
+      <returns>TileDef.</returns>
+    </member>
+    <member name="M:Sokoban_Base.ViewModel.Game.GetOldPos(Point)">
+      <summary>
+   Gets the old position.
+   </summary>
+      <param name="p">The p.</param>
+      <returns>Point.</returns>
+    </member>
+    <member name="T:Sokoban_Base.ViewModel.TileDef">
+      <summary>
+   Enum TileDef
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Empty">
+      <summary>
+   The empty
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall">
+      <summary>
+   The wall
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Floor">
+      <summary>
+   The floor
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Destination">
+      <summary>
+   The destination
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Player">
+      <summary>
+   The player
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.PlayerOverDest">
+      <summary>
+   The player over dest
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Stone">
+      <summary>
+   The stone
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.StoneInDest">
+      <summary>
+   The stone in dest
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Floor_Marked">
+      <summary>
+   The floor marked
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_N">
+      <summary>
+   The wall n
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_W">
+      <summary>
+   The wall w
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NW">
+      <summary>
+   The wall nw
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_S">
+      <summary>
+   The wall s
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NS">
+      <summary>
+   The wall ns
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_WS">
+      <summary>
+   The wall ws
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NWS">
+      <summary>
+   The wall NWS
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_E">
+      <summary>
+   The wall e
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NE">
+      <summary>
+   The wall ne
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_WE">
+      <summary>
+   The wall we
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NWE">
+      <summary>
+   The wall nwe
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_SE">
+      <summary>
+   The wall se
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NSE">
+      <summary>
+   The wall nse
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_WSE">
+      <summary>
+   The wall wse
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Wall_NWSE">
+      <summary>
+   The wall nwse
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Player_W">
+      <summary>
+   The player w
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.PlayerOverDest_W">
+      <summary>
+   The player over dest w
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Player_S">
+      <summary>
+   The player s
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.PlayerOverDest_S">
+      <summary>
+   The player over dest s
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.Player_E">
+      <summary>
+   The player e
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.TileDef.PlayerOverDest_E">
+      <summary>
+   The player over dest e
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.ViewModel.UserAction">
+      <summary>
+   Enum UserAction
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.GoNorth">
+      <summary>
+   The go north
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.GoWest">
+      <summary>
+   The none
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.GoSouth">
+      <summary>
+   The move left
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.GoEast">
+      <summary>
+   The move right
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.Quit">
+      <summary>
+   The move down
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.Help">
+      <summary>
+   The rotate left
+   </summary>
+    </member>
+    <member name="F:Sokoban_Base.ViewModel.UserAction.Restart">
+      <summary>
+   The rotate right
+   </summary>
+    </member>
+    <member name="T:Sokoban_Base.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.Program.Main(System.String[])">
+      <summary>
+   Defines the entry point of the application.
+   </summary>
+      <param name="args">The arguments.</param>
+    </member>
+    <member name="M:Sokoban_Base.Program.Cleanup">
+      <summary>
+   Cleanups this instance.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.Program.Run">
+      <summary>
+   Runs this instance.
+   </summary>
+    </member>
+    <member name="M:Sokoban_Base.Program.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+  </members>
+</doc>
