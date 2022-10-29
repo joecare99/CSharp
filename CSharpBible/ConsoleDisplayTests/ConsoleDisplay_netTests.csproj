@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 	<PropertyGroup>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -31,7 +31,7 @@
 	      <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
 	  <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
 
-	  <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
+	  <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 

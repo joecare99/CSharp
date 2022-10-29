@@ -54,7 +54,7 @@ namespace ConsoleDisplay.View.Tests
         PlayerDead
     }
 
-    internal class TestTileDef42 : TileDef<VTiles>
+    internal class TestTileDef42 : TileDefBase
     {
         private static string[][] _vTileDefStr = new string[][]{
             new string[]{"    ", "    " },
@@ -88,7 +88,7 @@ namespace ConsoleDisplay.View.Tests
         };
 
 
-        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(VTiles tile)
+        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum tile)
         {
             (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) result = default;
             result.lines = GetArrayElement(_vTileDefStr, tile);
@@ -104,7 +104,7 @@ namespace ConsoleDisplay.View.Tests
  
     }
 
-    internal class TestTileDef21 : TileDef<VTiles>
+    internal class TestTileDef21 : TileDefBase
     {
         private static string[][] _vTileDefStr = new string[][]{
             new string[]{ "  " },
@@ -138,7 +138,7 @@ namespace ConsoleDisplay.View.Tests
         };
 
 
-        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(VTiles tile)
+        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum tile)
         {
             (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) result = default;
             result.lines = GetArrayElement(_vTileDefStr, tile);
@@ -158,8 +158,8 @@ namespace ConsoleDisplay.View.Tests
     {
         static TileDisplayTests()
         {
-            TileDisplay<VTiles>.defaultTile = VTiles.zero;
-            TileDisplay<VTiles>.tileDef = new TestTileDef42();
+            TileDisplay.defaultTile = (Enum)VTiles.zero;
+            TileDisplay.tileDef = new TestTileDef42();
         }
 
         private static MyConsoleBase? console;
@@ -263,7 +263,7 @@ namespace ConsoleDisplay.View.Tests
         [TestInitialize()]
         public void Init()
         {
-            TileDisplay<VTiles>.myConsole = console ?? ( console= _tstCon = new TstConsole());
+            TileDisplay.myConsole = console ?? ( console= _tstCon = new TstConsole());
             Application.DoEvents();
             console.Clear();
         }
@@ -271,14 +271,14 @@ namespace ConsoleDisplay.View.Tests
         [TestMethod()]
         public void TileDisplayTest()
         {
-            var tileDisplay = new TileDisplay<VTiles>();
-            TileDisplay<VTiles>.WriteTile(Point.Empty,PointF.Empty,VTiles.Wall);           
+            var tileDisplay = new TileDisplay();
+            TileDisplay.WriteTile(Point.Empty,PointF.Empty,VTiles.Wall);           
         }
 
         [TestMethod()]
         public void TileDisplayTest1()
         {
-            var tileDisplay = new TileDisplay<VTiles>(new Point(2,2),new Size(3,5));
+            var tileDisplay = new TileDisplay(new Point(2,2),new Size(3,5));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f-0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f-0.5f), tile);
@@ -287,7 +287,7 @@ namespace ConsoleDisplay.View.Tests
             Application.DoEvents();
             Assert.AreEqual(cTileDisplayTest1, _tstCon.Content);
 
-            tileDisplay = new TileDisplay<VTiles>(new Point(62, 12), new Size(3, 5));
+            tileDisplay = new TileDisplay(new Point(62, 12), new Size(3, 5));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f - 0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f - 0.5f), tile);
@@ -302,7 +302,7 @@ namespace ConsoleDisplay.View.Tests
         [TestMethod()]
         public void TileDisplayTest2()
         {
-            var tileDisplay = new TileDisplay<VTiles>(new Point(2, 2), new Size(3, 5),new Size(3,2));
+            var tileDisplay = new TileDisplay(new Point(2, 2), new Size(3, 5),new Size(3,2));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f - 0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f - 0.5f), tile);
@@ -311,7 +311,7 @@ namespace ConsoleDisplay.View.Tests
             Application.DoEvents();
             Assert.AreEqual(cTileDisplayTest2, _tstCon.Content);
 
-            tileDisplay = new TileDisplay<VTiles>(new Point(62, 12), new Size(3, 5),new Size(2, 2));
+            tileDisplay = new TileDisplay(new Point(62, 12), new Size(3, 5),new Size(2, 2));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f - 0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f - 0.5f), tile);
@@ -320,8 +320,8 @@ namespace ConsoleDisplay.View.Tests
             Application.DoEvents();
             Assert.AreEqual(cTileDisplayTest22, _tstCon.Content);
 
-            tileDisplay = new TileDisplay<VTiles>(new Point(40, 6), new Size(3, 5), new Size(4, 2));
-            var tileDisplay2 = new TileDisplay<VTiles>(new Point(32, 8), new Size(3, 5),new Size(2,1));
+            tileDisplay = new TileDisplay(new Point(40, 6), new Size(3, 5), new Size(4, 2));
+            var tileDisplay2 = new TileDisplay(new Point(32, 8), new Size(3, 5),new Size(2,1));
             tileDisplay2.TileDef = new TestTileDef21();
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
@@ -340,7 +340,7 @@ namespace ConsoleDisplay.View.Tests
         {
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
-                TileDisplay<VTiles>.WriteTile(Point.Empty, new PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
+                TileDisplay.WriteTile(Point.Empty, new PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
                 Thread.Sleep(0);
             }
             Assert.AreEqual(cExpWriteTile, _tstCon.Content);
