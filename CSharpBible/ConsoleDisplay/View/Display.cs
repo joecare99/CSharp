@@ -18,7 +18,8 @@ namespace ConsoleDisplay.View
 {
 
     /// <summary>
-    /// Class Display.
+    /// Class Display. 
+    /// To use the console as an graphic display, Graphic is done with half-blocks and setting the fore- and background color. 
     /// </summary>
     public class Display
     {
@@ -73,13 +74,13 @@ namespace ConsoleDisplay.View
         }
 
         /// <summary>
-        /// Gets the origin.
+        /// Gets the origin of the display.
         /// </summary>
         /// <value>The origin.</value>
         public Point Origin { get; private set; }
 
         /// <summary>
-        /// Clears this instance.
+        /// Clears this instance of the display.
         /// </summary>
         public void Clear()
         {
@@ -88,7 +89,7 @@ namespace ConsoleDisplay.View
         }
 
         /// <summary>
-        /// Gets the size of the d.
+        /// Gets the size of the display.
         /// </summary>
         /// <value>The size of the d.</value>
         public Size dSize { get; private set; }
@@ -110,7 +111,7 @@ namespace ConsoleDisplay.View
         public ConsoleColor DefaultOutsideColor { get; set; } = ConsoleColor.Black;
 
         /// <summary>
-        /// Updates this instance.
+        /// Updates this instance of the display.
         /// </summary>
         public void Update()
         {
@@ -153,14 +154,11 @@ namespace ConsoleDisplay.View
         /// <param name="r">The r.</param>
         /// <param name="g">The g.</param>
         /// <param name="b">The b.</param>
-        public void PutPixel(int x, int y, byte r, byte g, byte b)
-        {
-            if (x >= 0 && x < dSize.Width && y >= 0 && y < dSize.Height)
-                ScreenBuffer[x + y * dSize.Width] = colorMap?[r / 64 + (g / 64) * 4 + (b / 64) * 16] ?? ConsoleColor.Black;
-        }
+        public void PutPixel(int x, int y, byte r, byte g, byte b) =>
+            PutPixel(x, y, colorMap?[r / 64 + (g / 64) * 4 + (b / 64) * 16] ?? ConsoleColor.Black);
 
         /// <summary>
-        /// Puts the pixel.
+        /// Puts the pixel on the display.
         /// </summary>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
@@ -172,7 +170,7 @@ namespace ConsoleDisplay.View
         }
 
         /// <summary>
-        /// Puts the line.
+        /// Puts the line on the display.
         /// </summary>
         /// <param name="x1">The x1.</param>
         /// <param name="y1">The y1.</param>
