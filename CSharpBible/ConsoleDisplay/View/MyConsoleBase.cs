@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
+
 namespace ConsoleDisplay.View
 {
     /// <summary>
