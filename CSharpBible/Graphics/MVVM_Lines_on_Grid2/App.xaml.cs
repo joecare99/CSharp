@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MVVM_Lines_on_Grid
+namespace MVVM_Lines_on_Grid2
 {
     /// <summary>
     /// Interaction logic for App.xaml

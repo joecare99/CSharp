@@ -12,15 +12,9 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
-namespace MVVM_Lines_on_Grid.ViewModel
+namespace MVVM_Lines_on_Grid2.ViewModel
 {
     /// <summary>
     /// Struct SWindowPort

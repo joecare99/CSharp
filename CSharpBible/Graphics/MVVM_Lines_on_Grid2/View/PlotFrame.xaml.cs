@@ -11,12 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_Lines_on_Grid.View.Converter;
-using MVVM_Lines_on_Grid.ViewModel;
+using MVVM_Lines_on_Grid2.View.Converter;
+using MVVM_Lines_on_Grid2.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_Lines_on_Grid.View
+namespace MVVM_Lines_on_Grid2.View
 {
     /// <summary>
     /// Interaktionslogik für PlotFrame.xaml
