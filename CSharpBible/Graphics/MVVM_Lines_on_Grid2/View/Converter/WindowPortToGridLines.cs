@@ -22,11 +22,11 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Shapes;
-using MVVM_Lines_on_Grid.ViewModel;
+using MVVM_Lines_on_Grid2.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace MVVM_Lines_on_Grid.View.Converter
+namespace MVVM_Lines_on_Grid2.View.Converter
 {
     /// <summary>
     /// Class WindowPortToGridLines.

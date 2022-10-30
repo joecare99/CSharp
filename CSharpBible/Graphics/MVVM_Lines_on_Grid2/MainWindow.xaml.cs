@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_Lines_on_Grid
+namespace MVVM_Lines_on_Grid2
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
