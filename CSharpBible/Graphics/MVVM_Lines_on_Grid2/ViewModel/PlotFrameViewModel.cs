@@ -12,7 +12,9 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
+using System;
 using System.Drawing;
+using System.Windows.Media;
 
 namespace MVVM_Lines_on_Grid2.ViewModel
 {
@@ -69,12 +71,22 @@ namespace MVVM_Lines_on_Grid2.ViewModel
         /// The view port
         /// </summary>
         private SWindowPort _viewPort;
+        /// <summary>
+        /// The dataset
+        /// </summary>
+        private DataSet _dataset;
 
         /// <summary>
         /// Gets or sets the window port.
         /// </summary>
         /// <value>The window port.</value>
         public SWindowPort WindowPort { get => _viewPort; set => SetProperty(ref _viewPort, value); }
+
+        /// <summary>
+        /// Gets or sets the dataset.
+        /// </summary>
+        /// <value>The dataset.</value>
+        public DataSet Dataset1 { get => _dataset; set => SetProperty(ref _dataset, value); }
 
         /// <summary>
         /// Gets or sets the vp window.
@@ -99,6 +111,14 @@ namespace MVVM_Lines_on_Grid2.ViewModel
  //           VPWindow = new RectangleF(-0.03f, -0.03f, 0.09f, 0.06f);
             WindowSize = new System.Windows.Size(600, 400);
             _viewPort.Parent = this;
+            _dataset = new DataSet();
+            _dataset.Datapoints = new PointF[100];
+            _dataset.Pen = new System.Windows.Media.Pen(Brushes.Red, 3.0);
+            for (int i = 0; i < 100; i++)
+            {
+                _dataset.Datapoints[i] = new PointF((float)(Math.Sin(i / 50.0f * Math.PI)+ Math.Sin(i / 8.0f * Math.PI)*1.25), (float)(Math.Cos(i/50.0f * Math.PI) + Math.Cos(i / 8.0f * Math.PI) * 1.25));
+            }
+            CommandCanExecuteBinding.Add((nameof(WindowPort), nameof(Dataset1)));
         } 
     }
 }
