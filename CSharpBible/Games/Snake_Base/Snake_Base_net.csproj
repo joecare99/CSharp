@@ -1,12 +1,11 @@
 ﻿<Project>
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net48;net472;net461</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
 	  <ImplicitUsings>disable</ImplicitUsings>
-	  <LangVersion>8.0</LangVersion>
 	  <Nullable>enable</Nullable>
-	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
 	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
 	  <Company>JC-Soft</Company>
 	  <Copyright>Copyright © 2022 by JC-Soft</Copyright>
@@ -19,10 +18,7 @@
     <Folder Include="Helper\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
   </ItemGroup>
 
 </Project>

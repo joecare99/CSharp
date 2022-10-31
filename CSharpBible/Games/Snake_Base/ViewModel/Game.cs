@@ -48,11 +48,27 @@ namespace Snake_Base.ViewModel
         /// The get next random
         /// </summary>
         public Func<int, int> GetNextRnd = (i) => (_rnd ?? (_rnd = new Random())).Next(i);
+        public int Level;
+        public Action<object?, bool> visUpdate;
+        public Action<object?, EventArgs?> visFullRedraw;
+        public static readonly object MaxLives;
+
+        /// <summary>
+        /// Gets the <see cref="Tiles" /> with the specified p.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns>Tiles.</returns>
+        public Tiles this[Point p] => GetTile(p);
+
         /// <summary>
         /// Gets a value indicating whether this instance is running.
         /// </summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         public bool IsRunning => Snake.alive;
+
+        public object Score { get; set; }
+        public object Lives { get; set; }
+        public Size size { get; set; }
         #endregion
 
         #region Methods
@@ -87,6 +103,37 @@ namespace Snake_Base.ViewModel
 
             return 50;
         }
+
+        /// <summary>
+        /// Gets the tile.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns>Tiles.</returns>
+        public Tiles GetTile(Point p)
+        {
+            Tiles result = Tiles.Empty;
+            var field = Playfield[p];
+            switch(field)
+            {
+                case Apple a: result = Tiles.Apple; break;
+                case SnakeHead sh: result = Tiles.SnakeHead_N;break;
+                case SnakeTail st: result = Tiles.SnakeTail_N;break;
+                case SnakeBodyPart sb: result = Tiles.SnakeBody_NS; break;
+                default:
+                    if (Playfield.IsInside(p))
+                        result = Tiles.Empty;
+                    else
+                        result = Tiles.Wall;
+                    break;
+            }
+            return result;
+        }
+
+        public Point OldPos(Point arg)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

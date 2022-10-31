@@ -8,6 +8,7 @@
 	<Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
 	  <Company>JC-Soft</Company>
+	  <Copyright>Copyright © 2022 by JC-Soft</Copyright>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -25,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Snake_Base\Snake_Base.csproj" />
+    <ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
   </ItemGroup>
 
 </Project>

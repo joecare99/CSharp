@@ -26,18 +26,18 @@ namespace BaseLib.Interfaces
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="CallerMember">The caller member.</param>
-        #if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         void SetParent(T? value, [CallerMemberName] string CallerMember ="" );
         T Parent { get => GetParent(); set => SetParent(value); }
         T? GetParent();
-        #else
+#else
         void SetParent(T value, [CallerMemberName] string CallerMember ="" );
         /// <summary>
         /// Gets the parent.
         /// </summary>
         /// <returns>T.</returns>
         T GetParent();
-        #endif
+#endif
 
     }
 
@@ -45,7 +45,7 @@ namespace BaseLib.Interfaces
     /// Interface IParentedObject
     /// </summary>
     public interface IParentedObject : IParentedObject<
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         object?
 #else
         object
