@@ -55,6 +55,8 @@ namespace ConsoleDisplay.View
         /// <param name="tile">The tile.</param>
         /// <returns>System.Int32.</returns>
         protected static int Tile2Int(Enum tile) { return ((int)((object)tile ?? 0)); }
+
+        public Size TileSize { get; protected set; }
     }
 
     /// <summary>
@@ -70,7 +72,7 @@ namespace ConsoleDisplay.View
         /// </summary>
         public static Enum defaultTile;
         /// <summary>
-        /// The tile definition
+        /// The default tile definition
         /// </summary>
         public static TileDefBase tileDef;
         #endregion
@@ -102,10 +104,13 @@ namespace ConsoleDisplay.View
         public static MyConsoleBase myConsole= new MyConsole();
         /// <summary>
         /// Gets or sets the tile definition.
+        /// it returns the default-tileDef when the local tileDef isn't set.
         /// </summary>
         /// <value>The tile definition.</value>
-        public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; } 
+        public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
+        public Func<Point, Enum>? FncGetTile;
+        public Func<Point, Point>? FncOldPos;
         #region Private Properties and Fields
 
         /// <summary>
@@ -129,9 +134,9 @@ namespace ConsoleDisplay.View
         /// </summary>
         private bool _changed;
         /// <summary>
-        /// The tile definition
+        /// The (local) tile-definition
         /// </summary>
-        public TileDefBase _tileDef;
+        private TileDefBase _tileDef;
         #endregion
         #endregion
 
@@ -196,7 +201,17 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="size">The size.</param>
-        public TileDisplay(Point position, Size size) : this(position, size,new Size(4,2)) { }
+        public TileDisplay(Point position, Size size) : this(position, size,tileDef?.TileSize ?? new Size(4,2)) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TileDisplay{Enum}"/> class.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        /// <param name="size">The size.</param>
+        /// <param name="aTileDef">The tile-definition.</param>
+        public TileDisplay(Point position, Size size, TileDefBase aTileDef) : this(position, size, aTileDef.TileSize ) {
+            TileDef = aTileDef;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TileDisplay{Enum}"/> class.
@@ -263,6 +278,64 @@ namespace ConsoleDisplay.View
             if (_tiles.ContainsKey(Idx) && (_tiles[Idx] is Enum e) && e.Equals(value) ) return;
             _tiles[Idx] = value;
             _changed = true;
+        }
+
+        public void Update(bool e)
+        {
+            var diffFields = new List<(Point, Enum, Point?)>();
+            var p = new Point();
+            if (FncGetTile == null) return;
+
+            for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
+                for (p.X = 0; p.X < DispSize.Width; p.X++)
+                {
+                    var td = FncGetTile(p);
+                    if ((td != GetTile(p)) || (FncOldPos?.Invoke(p) != p))
+                    {
+                        Point pp = new Point(p.X, p.Y);
+#pragma warning disable CS8604 // Mögliches Nullverweisargument.
+                        diffFields.Add((pp, td, FncOldPos?.Invoke(p)));
+#pragma warning restore CS8604 // Mögliches Nullverweisargument.
+                        if (!e)
+                            _tiles[p] = td;
+                    }
+                }
+            if (e)
+            {
+                foreach (var f in diffFields)
+                    if (f.Item1 == f.Item3)
+                    {
+                        WriteTile(f.Item1, f.Item2);
+                    }
+                foreach (var f in diffFields)
+                    if (f.Item1 != f.Item3 && Math.Abs(f.Item1.X - f.Item3?.X?? -1) < 2)
+                    {
+                        var zPos = new PointF((f.Item1.X + f.Item3?.X??0) * 0.5f, (f.Item1.Y + f.Item3?.Y??0) * 0.5f);
+                        WriteTile(zPos, f.Item2);
+                    }
+            }
+            else
+                foreach (var f in diffFields)
+                {
+                    if ((f.Item3 !=null) && (f.Item1.X != f.Item3?.X) && (f.Item1.Y != f.Item3?.Y))
+                    {
+                        var p1 = new Point(f.Item1.X, f.Item3?.Y??0);
+                        WriteTile(p1, FncGetTile(p1));
+                        var p2 = new Point(f.Item3?.X??0, f.Item1.Y);
+                        WriteTile(p2, FncGetTile(p2));
+                    }
+                    WriteTile(f.Item1, f.Item2);
+                }
+        }
+
+        public void FullRedraw()
+        {
+            if (FncGetTile == null) return;
+            // Draw playfield
+            Point p = new Point();
+            for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
+                for (p.X = 0; p.X < DispSize.Width; p.X++)
+                    WriteTile(p, _tiles[p] = FncGetTile(p));
         }
         #endregion
         #endregion
