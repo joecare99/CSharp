@@ -113,7 +113,11 @@ namespace Snake_Base.Model
             if (value is IPlacedObject plo)
                 plo.Place = GetPlace();
             if (value is IParentedObject po)
-                po.Parent = this;
+#if NET6_0_OR_GREATER
+                po.Parent= this;
+#else
+                po.SetParent(this);
+#endif
             _items!.Add(value);
             DataChangeEvent?.Invoke(this, ("Items.Add", null, value));
 
@@ -148,7 +152,7 @@ namespace Snake_Base.Model
         /// </summary>
         /// <returns>System.Nullable&lt;System.Object&gt;.</returns>
         public object? GetParent() => _parent;
-        #endregion
+#endregion
         /// <summary>
         /// Initializes a new instance of the <see cref="Field{T}" /> class.
         /// </summary>
@@ -177,7 +181,7 @@ namespace Snake_Base.Model
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString() => $"{nameof(Field<T>)}({GetPlace()},I:{Items?.Count})";
 
-        #region Private Methods
+#region Private Methods
         /// <summary>
         /// Ntfies the place change.
         /// </summary>
@@ -232,13 +236,17 @@ namespace Snake_Base.Model
             {
                 if (childObject is IParentedObject co)
                 {
+#if NET6_0_OR_GREATER
                     if (co.Parent != this && co.Parent is IHasChildren<T> ophc)
+#else
+                    if (co.GetParent() != this && co.GetParent() is IHasChildren<T> ophc)
+#endif
                         ophc.RemoveItem(childObject);
                 }
                 AddItem(childObject);
             }
         }
-        #endregion
-        #endregion
+#endregion
+#endregion
     }
 }
