@@ -7,6 +7,8 @@
 		<BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
 		<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<Company>JC-Soft</Company>
+		<Copyright>Copyright © 2022 by JC-Soft</Copyright>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
