@@ -31,6 +31,14 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding Dataset1, ConverterParameter=100, Converter={StaticResource vcPortGrid}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas>
+                    </Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
     </Grid>
 </Page>
