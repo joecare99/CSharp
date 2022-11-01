@@ -373,6 +373,12 @@ namespace ConsoleDisplay.View.Tests
         [DataRow("3 _", VTiles.Dest, "\\c00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c0E╓╖╓╖╓╖╓╖\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c0E╓╖╓╖╓╖╓╖\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c0E╓╖╓╖╓╖╓╖\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c0E╓╖╓╖╓╖╓╖\\c00")]
         [DataRow("4 _", VTiles.Player, "\\c00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00")]
         [DataRow("5 _", VTiles.Boulder, "\\c00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6E[][][][]\\c00")]
+        [DataRow("6 _", VTiles.E1, "")]
+        [DataRow("7 _", VTiles.E2, "")]
+        [DataRow("8 _", VTiles.E3, "")]
+        [DataRow("9 _", VTiles.E4, "")]
+        [DataRow("10 _", VTiles.BounderMoving, "")]
+        [DataRow("11 _", VTiles.PlayerDead, "")]
         public void FullRedrawTest(string name,VTiles vt,string sExp)
         {
             var tileDisplay = new TileDisplay(new Point(22, 0), new Size(4, 4), new TestTileDef21());
@@ -521,12 +527,19 @@ namespace ConsoleDisplay.View.Tests
 
             Thread.Sleep(100);
 
-            tileDisplay.Update(false);
+            tileDisplay.Update(false); //Fullstep
             Application.DoEvents();
             Assert.AreEqual(sExp[1], _tstCon.Content);
 
             Thread.Sleep(100);
             Application.DoEvents();
+
+            console!.Clear();
+            tileDisplay.FullRedraw(); 
+            Application.DoEvents();
+            Assert.AreEqual(sExp[1], _tstCon.Content);
+
+
             bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
         }
 
