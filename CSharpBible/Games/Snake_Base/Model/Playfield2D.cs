@@ -208,9 +208,9 @@ namespace Snake_Base.Model
             {
                 plo.OnPlaceChange -= ChildPlaceChanged;
 #if NET6_0_OR_GREATER
-                _pfData.Remove(plo.Place);
+                bool result =_pfData.Remove(plo.Place);
 #else
-                _pfData.Remove(plo.GetPlace());
+                bool result = _pfData.Remove(plo.GetPlace());
 #endif
                if (value is IParentedObject pro)
 #if NET6_0_OR_GREATER
@@ -219,7 +219,7 @@ namespace Snake_Base.Model
                     pro.SetParent(null);
 #endif
                 OnDataChanged?.Invoke(this, ("Items", value, null));
-                return true;
+                return result;
             }
             else
                return false;
