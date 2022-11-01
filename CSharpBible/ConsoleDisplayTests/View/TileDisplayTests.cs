@@ -486,22 +486,22 @@ namespace ConsoleDisplay.View.Tests
             "\\c00\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00\r\n\\x00\\x00\\c6F⌐@\\c6E[][]\\c6F⌐@\\c00\r\n\\x00\\x00\\c6F⌐@\\c6E[][]\\c6F⌐@\\c00\r\n\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00"})]
         [DataRow("50 _", VTiles.zero, VTiles.Boulder, new string[] {
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[\\c00  \\c6E][\\c00  \\c6E]\\c00\r\n\\x00\\x00\\c6E[\\c00  \\c6E][\\c00  \\c6E]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00" ,
-            ""})]
+            "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[]\\c00    \\c6E[]\\c00\r\n\\x00\\x00\\c6E[]\\c00    \\c6E[]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00"})]
         [DataRow("51 _", VTiles.tile1, VTiles.Boulder, new string[] {
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[=-][=-]\\c00\r\n\\x00\\x00\\c6E[=-][=-]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00",
-            "" })]
+            "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[]=-=-[]\\c00\r\n\\x00\\x00\\c6E[]=-=-[]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00" })]
         [DataRow("52 _", VTiles.Wall, VTiles.Boulder, new string[] {
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[\\c4F|_\\c6E][\\c4F|_\\c6E]\\c00\r\n\\x00\\x00\\c6E[\\c4F|_\\c6E][\\c4F|_\\c6E]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00",
-            "" })]
+            "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[]\\c4F|_|_\\c6E[]\\c00\r\n\\x00\\x00\\c6E[]\\c4F|_|_\\c6E[]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00" })]
         [DataRow("53 _", VTiles.Dest, VTiles.Boulder, new string[] {
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[\\c0E╓╖\\c6E][\\c0E╓╖\\c6E]\\c00\r\n\\x00\\x00\\c6E[\\c0E╓╖\\c6E][\\c0E╓╖\\c6E]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00",
-            "" })]
+            "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[]\\c0E╓╖╓╖\\c6E[]\\c00\r\n\\x00\\x00\\c6E[]\\c0E╓╖╓╖\\c6E[]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00" })]
         [DataRow("54 _", VTiles.Player, VTiles.Boulder, new string[] {
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[\\c6F⌐@\\c6E][\\c6F⌐@\\c6E]\\c00\r\n\\x00\\x00\\c6E[\\c6F⌐@\\c6E][\\c6F⌐@\\c6E]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00",
-            "" })]
+            "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[]\\c6F⌐@⌐@\\c6E[]\\c00\r\n\\x00\\x00\\c6E[]\\c6F⌐@⌐@\\c6E[]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00" })]
         [DataRow("55 _", VTiles.Boulder, VTiles.Boulder, new string[] {
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[[]][[]]\\c00\r\n\\x00\\x00\\c6E[[]][[]]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00",
-            ""})]
+            "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00"})]
         public void UpdateTest(string name, VTiles vt, VTiles vt2, string[] sExp)
         {
             var tileDisplay = new TileDisplay(new Point(2, 0), new Size(4, 4), new TestTileDef21());
