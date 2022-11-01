@@ -111,7 +111,11 @@ namespace Snake_Base.Model
         {
             if ((_items ?? (Items = new List<T>())).Contains(value)) return false;
             if (value is IPlacedObject plo)
+#if NET6_0_OR_GREATER
                 plo.Place = GetPlace();
+#else
+                plo.SetPlace(GetPlace());
+#endif
             if (value is IParentedObject po)
 #if NET6_0_OR_GREATER
                 po.Parent= this;
@@ -171,8 +175,13 @@ namespace Snake_Base.Model
             _place = place;
             _parent = parent;
             if (_parent is IPlacedObject po)
+#if NET6_0_OR_GREATER
                 _oldPlace =
                 _place = po.Place;
+#else
+                _oldPlace =
+                _place = po.GetPlace();
+#endif
         }
 
         /// <summary>
@@ -181,9 +190,9 @@ namespace Snake_Base.Model
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString() => $"{nameof(Field<T>)}({GetPlace()},I:{Items?.Count})";
 
-#region Private Methods
+        #region Private Methods
         /// <summary>
-        /// Ntfies the place change.
+        /// Notfies the change of place.
         /// </summary>
         /// <param name="arg1">The arg1.</param>
         /// <param name="arg2">The arg2.</param>
@@ -195,8 +204,12 @@ namespace Snake_Base.Model
             if(_items!=null)
             foreach (T item in _items)
                 if (item is IPlacedObject po)
-                    po.Place = arg3;
-            OnPlaceChange?.Invoke(this, (arg2, arg3));
+#if NET6_0_OR_GREATER
+                        po.Place = arg3;
+#else
+                        po.SetPlace ( arg3);
+#endif
+                        OnPlaceChange?.Invoke(this, (arg2, arg3));
             DataChangeEvent?.Invoke(this,(arg1, arg2, arg3));
         }
 
@@ -219,7 +232,11 @@ namespace Snake_Base.Model
         private void NtfyParentChange(string arg1, object? arg2, object? arg3)
         {
             if (arg3 is IPlacedObject po)
+#if NET6_0_OR_GREATER
                 Place = po.Place;
+#else
+                Place = po.GetPlace();
+#endif
             DataChangeEvent?.Invoke(this, (arg1, arg2, arg3));
         }
 

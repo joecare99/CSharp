@@ -91,7 +91,11 @@ namespace Snake_Base.Model
                     if (EqualityComparer<T>.Default.Equals(this[P], value)) return;
                     if (value is IPlacedObject plo)
                     {
+#if NET6_0_OR_GREATER
                         plo.Place = P;
+#else
+                        plo.SetPlace(P);
+#endif
                         plo.OnPlaceChange += ChildPlaceChanged;
                     }
                     if (value is IParentedObject && EqualityComparer<T>.Default.Equals(this[P], value)) return;
@@ -174,9 +178,18 @@ namespace Snake_Base.Model
         public bool AddItem(T value)
         {
             bool result = false;
-            if (value is IPlacedObject po && !EqualityComparer<T>.Default.Equals(this[po.Place], value))
+            if (value is IPlacedObject po
+#if NET6_0_OR_GREATER
+                && !EqualityComparer<T>.Default.Equals(this[po.Place], value))
+#else
+                && !EqualityComparer<T>.Default.Equals(this[po.GetPlace()], value))
+#endif
             {
+#if NET6_0_OR_GREATER
                 this[po.Place] = value;
+#else
+                this[po.GetPlace()] = value;
+#endif
                 //po.OnPlaceChange += ChildPlaceChanged;
                 //OnDataChanged?.Invoke(this, ("Items", null, value));
                 result = true;
@@ -193,8 +206,12 @@ namespace Snake_Base.Model
         {
             if (value is IPlacedObject plo)
             {
-                plo.OnPlaceChange -= ChildPlaceChanged;               
-               _pfData.Remove(plo.Place);
+                plo.OnPlaceChange -= ChildPlaceChanged;
+#if NET6_0_OR_GREATER
+                _pfData.Remove(plo.Place);
+#else
+                _pfData.Remove(plo.GetPlace());
+#endif
                if (value is IParentedObject pro)
 #if NET6_0_OR_GREATER
                     pro.Parent = null;
