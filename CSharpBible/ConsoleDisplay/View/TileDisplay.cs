@@ -300,7 +300,7 @@ namespace ConsoleDisplay.View
                             _tiles[p] = td;
                     }
                 }
-            if (e)
+            if (e) 
             {
                 foreach (var f in diffFields)
                     if (f.Item1 == f.Item3)
