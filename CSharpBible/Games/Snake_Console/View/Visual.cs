@@ -25,12 +25,7 @@ namespace Snake_Console.View
 	public static class Visual {
 
         #region Properties
-        /// <summary>
-        /// The buffer
-        /// </summary>
-        private static Tiles[] _buffer = new Tiles[22 * 22];
 
-        /// <summary>
         /// The game
         /// </summary>
         private static Game? _game;
@@ -38,7 +33,7 @@ namespace Snake_Console.View
 		/// <summary>
 		/// My console
 		/// </summary>
-		public static MyConsoleBase myConsole = new MyConsole();
+		public static MyConsoleBase myConsole;
 
 		private static TileDisplay _tileDisplay;	
 		/// <summary>
@@ -60,16 +55,19 @@ namespace Snake_Console.View
 
 		#region Methods
 		static Visual() {
-		}
-		/// <summary>
-		/// Sets the game.
-		/// </summary>
-		/// <param name="g">The g.</param>
-		public static void SetGame(Game g)
+            myConsole = new MyConsole();
+            TileDisplay.myConsole = myConsole;
+        }
+        /// <summary>
+        /// Sets the game.
+        /// </summary>
+        /// <param name="g">The g.</param>
+        public static void SetGame(Game g)
         {
 			_game = g;
             _tileDisplay = new TileDisplay(new Point(1, 1), g.size, new TileDef());
-			_tileDisplay.FncGetTile = (p)=>(Enum)_game.GetTile(p);
+			_tileDisplay.DispOffset = new Point(-1, -1);
+            _tileDisplay.FncGetTile = (p)=>(Enum)_game.GetTile(p);
 			_tileDisplay.FncOldPos = _game.OldPos;
             g.visUpdate += G_visUpdate;
 			g.visFullRedraw += FullRedraw;

@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : ConsoleDisplay
 // Author           : Mir
 // Created          : 07-16-2022
@@ -109,11 +109,15 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <value>The get cursor position.</value>
         protected MethodInfo? getCursorPos { get; set; }
-            = typeof(Console).GetMember("GetCursorPosition")?.First((o) => true) as MethodInfo;
-        /// <summary>
-        /// The instance
-        /// </summary>
-        protected object? instance = null;
+#if NET6_0_OR_GREATER
+			= typeof(Console).GetMember("GetCursorPosition")?.First((o) => true) as MethodInfo;
+#else
+			= typeof(Console).GetMethod("GetCursorPosition");
+#endif
+		/// <summary>
+		/// The instance
+		/// </summary>
+		protected object? instance = null;
 
         /// <summary>
         /// Gets or sets the color of the foreground.

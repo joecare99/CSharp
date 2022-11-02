@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : ConsoleDisplay
 // Author           : Mir
 // Created          : 08-19-2022
@@ -109,6 +109,7 @@ namespace ConsoleDisplay.View
         /// <value>The tile definition.</value>
         public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
+		public Point DispOffset { get; set; } = Point.Empty;
         public Func<Point, Enum>? FncGetTile;
         public Func<Point, Point>? FncOldPos;
         #region Private Properties and Fields
@@ -284,21 +285,27 @@ namespace ConsoleDisplay.View
         {
             var diffFields = new List<(Point, Enum, Point?)>();
             var p = new Point();
+            Point p3 = new Point();
             if (FncGetTile == null) return;
 
             for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
                 for (p.X = 0; p.X < DispSize.Width; p.X++)
                 {
-                    var td = FncGetTile(p);
-                    if ((td != GetTile(p)) || (FncOldPos?.Invoke(p) != p))
+                    p3.X = p.X + DispOffset.X;
+                    p3.Y = p.Y + DispOffset.Y;
+                    object td = FncGetTile(p3);
+                    object ot = GetTile(p);
+                    var po = FncOldPos?.Invoke(p3);
+                    if (((int)td != (int)ot)
+                        || ((po ?? p3) != p3))
                     {
                         Point pp = new Point(p.X, p.Y);
-#pragma warning disable CS8604 // Mögliches Nullverweisargument.
-                        diffFields.Add((pp, td, FncOldPos?.Invoke(p)));
-#pragma warning restore CS8604 // Mögliches Nullverweisargument.
+
+                        diffFields.Add((pp, (Enum)td, Point.Subtract(po ?? p3, (Size)DispOffset)));
                         if (!e)
-                            _tiles[p] = td;
+                            _tiles[p] = (Enum)td;
                     }
+
                 }
             if (e) 
             {
@@ -333,9 +340,13 @@ namespace ConsoleDisplay.View
             if (FncGetTile == null) return;
             // Draw playfield
             Point p = new Point();
-            for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
-                for (p.X = 0; p.X < DispSize.Width; p.X++)
-                    WriteTile(p, _tiles[p] = FncGetTile(p));
+			Point p2 = new Point();
+			for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
+                for (p.X = 0; p.X < DispSize.Width; p.X++) {
+					p2.X = p.X + DispOffset.X;
+					p2.Y = p.Y + DispOffset.Y;	
+                    WriteTile(p, _tiles[p] = FncGetTile(p2));
+				}
         }
         #endregion
         #endregion
