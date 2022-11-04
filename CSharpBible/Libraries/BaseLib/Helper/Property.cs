@@ -20,7 +20,7 @@ namespace BaseLib.Helper
 	/// <summary>
 	/// Class Property.
 	/// </summary>
-	public class Property
+	public static class Property
     {
 		/// <summary>
 		/// Helper for setting properties
@@ -32,9 +32,9 @@ namespace BaseLib.Helper
 		/// <param name="propertyName">Name of the property.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 #if NET5_0_OR_GREATER || NULLABLE
-		public static bool SetProperty<T>(ref T data, T value, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
+		public static bool SetProperty<T>(ref T data,T value, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
 #else
-		public static bool SetProperty<T>(ref T data, T value, Action<string, T, T> action = null, [CallerMemberName] string propertyName = "")
+		public static bool SetProperty<T>(ref T data,T value, Action<string, T, T> action = null, [CallerMemberName] string propertyName = "")
 #endif
 		{
 			if (EqualityComparer<T>.Default.Equals(data, value)) return false;
@@ -43,5 +43,13 @@ namespace BaseLib.Helper
 			action?.Invoke(propertyName, old, value);
 			return true;
 		}
-	}
+
+#if NET5_0_OR_GREATER || NULLABLE
+		public static bool SetProperty<T>(this T value,ref T data, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
+#else
+        public static bool SetProperty<T>(this T value, ref T data, Action<string, T, T> action = null, [CallerMemberName] string propertyName = "")
+#endif
+			=> SetProperty(ref data,value,action,propertyName);
+
+    }
 }
