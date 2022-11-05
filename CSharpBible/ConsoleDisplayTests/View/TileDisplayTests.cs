@@ -523,13 +523,13 @@ namespace ConsoleDisplay.View.Tests
             tileDisplay.FncOldPos = (p) => xTst(p) ? new Point(p.X * 3 - 3, p.Y) : p;
             tileDisplay.Update(true); //Halvstep
             Application.DoEvents();
-            Assert.AreEqual(sExp[0], _tstCon.Content);
+            Assert.AreEqual(sExp[0], _tstCon.Content,$"Test:{name}.Halfstep");
 
             Thread.Sleep(100);
 
             tileDisplay.Update(false); //Fullstep
             Application.DoEvents();
-            Assert.AreEqual(sExp[1], _tstCon.Content);
+            Assert.AreEqual(sExp[1], _tstCon.Content, $"Test:{name}.Fullstep");
 
             Thread.Sleep(100);
             Application.DoEvents();
@@ -537,7 +537,7 @@ namespace ConsoleDisplay.View.Tests
             console!.Clear();
             tileDisplay.FullRedraw(); 
             Application.DoEvents();
-            Assert.AreEqual(sExp[1], _tstCon.Content);
+            Assert.AreEqual(sExp[1], _tstCon.Content, $"Test:{name}.Fullredraw");
 
 
             bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
