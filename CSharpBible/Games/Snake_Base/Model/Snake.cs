@@ -58,7 +58,13 @@ namespace Snake_Base.Model
         /// Gets or sets the next part.
         /// </summary>
         /// <value>The next part.</value>
-        public SnakeBodyPart? NextPart { get; set; }
+        public SnakeBodyPart? NextPart { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the previous part.
+        /// </summary>
+        /// <value>The next part.</value>
+        public SnakeBodyPart? PrevPart { get; set; }= null;
         #endregion
 
         #region Methods
@@ -201,6 +207,7 @@ namespace Snake_Base.Model
             _snTail = new SnakeTail(start,this);
             _snHead = new SnakeHead(start,this);
             _snHead.NextPart = _snTail;
+            _snTail.PrevPart = _snHead;
             Length = 2; // Head & Tail;
             alive = true;
         }
@@ -235,7 +242,10 @@ namespace Snake_Base.Model
                 if (bCount == 2)
                     RaisePropertyChangedAdv(_mRun.OldPlace, _mRun.Place, nameof(HeadPos));
                 var _snBody = new SnakeBodyPart(_nxtPlace,this,_playfield);
+                _snBody.ResetOldPlace();
                 _snBody.NextPart = _mRun.NextPart;
+                _snBody.PrevPart = _mRun;    
+                _mRun.NextPart!.PrevPart = _snBody;
                 _mRun.NextPart= _snBody;
             }
             else if (_mRun != null)
