@@ -423,6 +423,37 @@
    </summary>
       <param name="aField">a field.</param>
     </member>
+    <member name="T:Werner_Flaschbier_Base.Model.Space">
+      <summary>
+Class Space.
+Implements the <see cref="T:Werner_Flaschbier_Base.Model.Field" /></summary>
+      <seealso cref="T:Werner_Flaschbier_Base.Model.Field" />
+    </member>
+    <member name="M:Werner_Flaschbier_Base.Model.Space.#ctor(System.Drawing.Point,Werner_Flaschbier_Base.Model.Playfield)">
+      <summary>
+Initializes a new instance of the <see cref="T:Werner_Flaschbier_Base.Model.Space" /> class.
+</summary>
+      <param name="position">The position.</param>
+      <param name="parentPlayObject">The parent play object.</param>
+    </member>
+    <member name="P:Werner_Flaschbier_Base.Model.Space.OldItem">
+      <summary>
+Gets or sets the old item.
+</summary>
+      <value>The old item.</value>
+    </member>
+    <member name="M:Werner_Flaschbier_Base.Model.Space.GetFieldDef">
+      <summary>
+Gets the field definition.
+</summary>
+      <returns>FieldDef.</returns>
+    </member>
+    <member name="M:Werner_Flaschbier_Base.Model.Space.SetItem(Werner_Flaschbier_Base.Model.PlayObject)">
+      <summary>
+Sets the item.
+</summary>
+      <param name="value">The value.</param>
+    </member>
     <member name="T:Werner_Flaschbier_Base.Model.Stone">
       <summary>
    Stones (Boulders) are Objects that fall if an <see cref="Empty" /> space
