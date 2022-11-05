@@ -129,7 +129,14 @@ namespace Baselib.Model
             RaisePropertyChangedAdv(old, value, propertyName);
             if (propertyNames != null)
                 RaisePropertyChangedAdv(propertyNames);
-            action?.Invoke(old, value);
+            try
+            {
+                action?.Invoke(old, value);
+            }
+            catch
+            {
+                //??
+            }
             return true;
         }
 
