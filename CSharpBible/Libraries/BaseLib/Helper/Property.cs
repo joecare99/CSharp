@@ -20,28 +20,55 @@ namespace BaseLib.Helper
 	/// <summary>
 	/// Class Property.
 	/// </summary>
-	public class Property
+	public static class Property
     {
-		/// <summary>
-		/// Helper for setting properties
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="data">The data.</param>
-		/// <param name="value">The value.</param>
-		/// <param name="action">The action.</param>
-		/// <param name="propertyName">Name of the property.</param>
-		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        /// <summary>
+        /// Helper for setting properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 #if NET5_0_OR_GREATER || NULLABLE
-		public static bool SetProperty<T>(ref T data, T value, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
+		public static bool SetProperty<T>(ref T data,T value, Predicate<T>? validate=null, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
 #else
-		public static bool SetProperty<T>(ref T data, T value, Action<string, T, T> action = null, [CallerMemberName] string propertyName = "")
+        public static bool SetProperty<T>(ref T data,T value, Predicate<T> validate = null, Action<string, T, T> action = null, [CallerMemberName] string propertyName = "")
 #endif
 		{
 			if (EqualityComparer<T>.Default.Equals(data, value)) return false;
-			T old = data;
+            if (!validate?.Invoke(value) ?? false) return false;
+            T old = data;
 			data = value;
+            try { 
 			action?.Invoke(propertyName, old, value);
+            }
+            catch { }
 			return true;
 		}
-	}
+
+#if NET5_0_OR_GREATER || NULLABLE
+		public static bool SetProperty<T>(ref T data,T value, Action<string, T, T> action, [CallerMemberName] string propertyName = "")
+#else
+        public static bool SetProperty<T>(ref T data, T value, Action<string, T, T> action, [CallerMemberName] string propertyName = "")
+#endif
+            => SetProperty(ref data,value,null,action,propertyName);
+
+#if NET5_0_OR_GREATER || NULLABLE
+		public static bool SetProperty<T>(this T value,ref T data, Action<string, T, T>? action, [CallerMemberName] string propertyName = "")
+#else
+        public static bool SetProperty<T>(this T value, ref T data, Action<string, T, T> action, [CallerMemberName] string propertyName = "")
+#endif
+            => SetProperty(ref data, value, null, action, propertyName);
+
+
+#if NET5_0_OR_GREATER || NULLABLE
+		public static bool SetProperty<T>(this T value,ref T data, Predicate<T>? validate=null, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
+#else
+    public static bool SetProperty<T>(this T value, ref T data, Predicate<T> validate=null, Action<string, T, T> action = null, [CallerMemberName] string propertyName = "")
+#endif
+			=> SetProperty(ref data,value, validate, action,propertyName);
+
+    }
 }
