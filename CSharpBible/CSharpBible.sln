@@ -297,6 +297,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLib_netTests", "Librari
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLibTests", "Libraries\BaseLibTests\BaseLibTests.csproj", "{33D1CD60-0C70-4645-A50E-CA82F83CE0A5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Display_Test", "Display_Test\Display_Test.csproj", "{E8D9DBBF-0516-4FA7-A5D0-F66DFD196C5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -826,6 +828,10 @@ Global
 		{33D1CD60-0C70-4645-A50E-CA82F83CE0A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33D1CD60-0C70-4645-A50E-CA82F83CE0A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33D1CD60-0C70-4645-A50E-CA82F83CE0A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8D9DBBF-0516-4FA7-A5D0-F66DFD196C5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8D9DBBF-0516-4FA7-A5D0-F66DFD196C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8D9DBBF-0516-4FA7-A5D0-F66DFD196C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8D9DBBF-0516-4FA7-A5D0-F66DFD196C5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -945,6 +951,7 @@ Global
 		{9D934BB9-B0C6-4CBC-81AB-35AFC52784EE} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
 		{2C343E75-F10B-4FF6-A5F3-CD73DB22079C} = {7BA535EF-38FA-47A6-A6BD-5D6333D5DB10}
 		{33D1CD60-0C70-4645-A50E-CA82F83CE0A5} = {7BA535EF-38FA-47A6-A6BD-5D6333D5DB10}
+		{E8D9DBBF-0516-4FA7-A5D0-F66DFD196C5C} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
