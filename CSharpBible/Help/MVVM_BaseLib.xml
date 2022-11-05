@@ -9,7 +9,7 @@
    Class Property.
    </summary>
     </member>
-    <member name="M:BaseLib.Helper.Property.SetProperty``1(``0@,``0,Action{System.String, ``0, ``0},System.String)">
+    <member name="M:BaseLib.Helper.Property.SetProperty``1(``0@,``0,Predicate{``0},Action{System.String, ``0, ``0},System.String)">
       <summary>
    Helper for setting properties
    </summary>
