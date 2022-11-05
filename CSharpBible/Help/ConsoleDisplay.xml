@@ -7,6 +7,7 @@
     <member name="T:ConsoleDisplay.View.Display">
       <summary>
    Class Display.
+   To use the console as an graphic display, Graphic is done with half-blocks and setting the fore- and background color.
    </summary>
     </member>
     <member name="F:ConsoleDisplay.View.Display.myConsole">
@@ -25,18 +26,18 @@
     </member>
     <member name="P:ConsoleDisplay.View.Display.Origin">
       <summary>
-   Gets the origin.
+   Gets the origin of the display.
    </summary>
       <value>The origin.</value>
     </member>
     <member name="M:ConsoleDisplay.View.Display.Clear">
       <summary>
-   Clears this instance.
+   Clears this instance of the display.
    </summary>
     </member>
     <member name="P:ConsoleDisplay.View.Display.dSize">
       <summary>
-   Gets the size of the d.
+   Gets the size of the display.
    </summary>
       <value>The size of the d.</value>
     </member>
@@ -54,7 +55,7 @@
     </member>
     <member name="M:ConsoleDisplay.View.Display.Update">
       <summary>
-   Updates this instance.
+   Updates this instance of the display.
    </summary>
     </member>
     <member name="M:ConsoleDisplay.View.Display.PutPixel(System.Int32,System.Int32,System.Byte,System.Byte,System.Byte)">
@@ -69,7 +70,7 @@
     </member>
     <member name="M:ConsoleDisplay.View.Display.PutPixel(System.Int32,System.Int32,ConsoleColor)">
       <summary>
-   Puts the pixel.
+   Puts the pixel on the display.
    </summary>
       <param name="x">The x.</param>
       <param name="y">The y.</param>
@@ -77,7 +78,7 @@
     </member>
     <member name="M:ConsoleDisplay.View.Display.PutLine(System.Int32,System.Int32,System.Int32,System.Int32,ConsoleColor)">
       <summary>
-   Puts the line.
+   Puts the line on the display.
    </summary>
       <param name="x1">The x1.</param>
       <param name="y1">The y1.</param>
@@ -138,6 +139,12 @@
     <member name="P:ConsoleDisplay.View.MyConsole.largestWindowHeight">
       <summary>
    Gets or sets the height of the largest window.
+   </summary>
+      <value>The height of the largest window.</value>
+    </member>
+    <member name="P:ConsoleDisplay.View.MyConsole.title">
+      <summary>
+   Gets or sets the title of the window.
    </summary>
       <value>The height of the largest window.</value>
     </member>
@@ -222,6 +229,12 @@
     <member name="P:ConsoleDisplay.View.MyConsole.WindowWidth">
       <summary>
    Gets or sets the width of the window.
+   </summary>
+      <value>The width of the window.</value>
+    </member>
+    <member name="P:ConsoleDisplay.View.MyConsole.Title">
+      <summary>
+   Gets or sets the title of the window.
    </summary>
       <value>The width of the window.</value>
     </member>
@@ -316,6 +329,12 @@
    </summary>
       <value>The height of the largest window.</value>
     </member>
+    <member name="P:ConsoleDisplay.View.MyConsoleBase.Title">
+      <summary>
+   Gets or sets the title of the window.
+   </summary>
+      <value>The width of the window.</value>
+    </member>
     <member name="M:ConsoleDisplay.View.MyConsoleBase.Clear">
       <summary>
    Clears this instance.
@@ -365,33 +384,33 @@
       <param name="freq">The freq.</param>
       <param name="len">The length.</param>
     </member>
-    <member name="T:ConsoleDisplay.View.TileDef`1">
+    <member name="T:ConsoleDisplay.View.TileDefBase">
       <summary>
    Class TileDef.
    </summary>
       <typeparam name="Enum">The type of the enum.</typeparam>
     </member>
-    <member name="T:ConsoleDisplay.View.TileDisplay`1">
+    <member name="T:ConsoleDisplay.View.TileDisplay">
       <summary>
    Class TileDisplay.
    </summary>
       <typeparam name="Enum">The type of the enum.</typeparam>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDef`1.GetTileDef(`0)">
+    <member name="M:ConsoleDisplay.View.TileDefBase.GetTileDef(Enum)">
       <summary>
    Gets the tile definition.
    </summary>
       <param name="tile">The tile.</param>
       <returns>The visual defintion of the tile</returns>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDef`1.ByteTo2ConsColor(System.Byte)">
+    <member name="M:ConsoleDisplay.View.TileDefBase.ByteTo2ConsColor(System.Byte)">
       <summary>
    Converts a Byte to 2  Console-colors (fore- and background).
    </summary>
       <param name="colDef">The (Console-)color definition.</param>
       <returns>The Tuple of Forground- and background-color</returns>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDef`1.GetArrayElement``1(``0[],`0)">
+    <member name="M:ConsoleDisplay.View.TileDefBase.GetArrayElement``1(``0[],Enum)">
       <summary>
    Gets the array element.
    </summary>
@@ -401,65 +420,61 @@
       <param name="tile">The tile.</param>
       <returns>T.</returns>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDef`1.Tile2Int(`0)">
+    <member name="M:ConsoleDisplay.View.TileDefBase.Tile2Int(Enum)">
       <summary>
    Tile2s the int.
    </summary>
       <param name="tile">The tile.</param>
       <returns>System.Int32.</returns>
     </member>
-    <member name="F:ConsoleDisplay.View.TileDisplay`1.defaultTile">
+    <member name="F:ConsoleDisplay.View.TileDisplay.defaultTile">
       <summary>
    The default tile
    </summary>
     </member>
-    <member name="F:ConsoleDisplay.View.TileDisplay`1.tileDef">
+    <member name="F:ConsoleDisplay.View.TileDisplay.tileDef">
       <summary>
-   The tile definition
+   The default tile definition
    </summary>
     </member>
-    <member name="P:ConsoleDisplay.View.TileDisplay`1.Item(Point)">
+    <member name="P:ConsoleDisplay.View.TileDisplay.Item(Point)">
       <summary>
-   Gets or sets the <see cref="T:ConsoleDisplay.View.TileDisplay`1.Enum" /> with the specified index.
+   Gets or sets the <see cref="T:System.Enum" /> with the specified index.
    </summary>
       <param name="Idx">The index.</param>
       <returns>Enum.</returns>
     </member>
-    <member name="P:ConsoleDisplay.View.TileDisplay`1.Position">
+    <member name="P:ConsoleDisplay.View.TileDisplay.Position">
       <summary>
    Gets the position.
    </summary>
       <value>The position.</value>
     </member>
-    <member name="P:ConsoleDisplay.View.TileDisplay`1.DispSize">
+    <member name="P:ConsoleDisplay.View.TileDisplay.DispSize">
       <summary>
    Gets the size of the disp.
    </summary>
       <value>The size of the disp.</value>
     </member>
-    <member name="P:ConsoleDisplay.View.TileDisplay`1.TileSize">
+    <member name="P:ConsoleDisplay.View.TileDisplay.TileSize">
       <summary>
    Gets the size of the tile.
    </summary>
       <value>The size of the tile.</value>
     </member>
-    <member name="F:ConsoleDisplay.View.TileDisplay`1.myConsole">
+    <member name="F:ConsoleDisplay.View.TileDisplay.myConsole">
       <summary>
    My console
    </summary>
     </member>
-    <member name="P:ConsoleDisplay.View.TileDisplay`1.TileDef">
+    <member name="P:ConsoleDisplay.View.TileDisplay.TileDef">
       <summary>
    Gets or sets the tile definition.
+   it returns the default-tileDef when the local tileDef isn't set.
    </summary>
       <value>The tile definition.</value>
     </member>
-    <member name="F:ConsoleDisplay.View.TileDisplay`1._tileDef">
-      <summary>
-   The tile definition
-   </summary>
-    </member>
-    <member name="M:ConsoleDisplay.View.TileDisplay`1.WriteTile(Point,PointF,`0)">
+    <member name="M:ConsoleDisplay.View.TileDisplay.WriteTile(Point,PointF,Enum)">
       <summary>
    Writes the tile.
    </summary>
@@ -467,7 +482,7 @@
       <param name="p">The p.</param>
       <param name="tile">The tile.</param>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDisplay`1.WriteTile(Point,PointF,`0,Size)">
+    <member name="M:ConsoleDisplay.View.TileDisplay.WriteTile(Point,PointF,Enum,Size)">
       <summary>
    Writes the tile.
    </summary>
@@ -476,27 +491,35 @@
       <param name="tile">The tile.</param>
       <param name="ts">The ts.</param>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDisplay`1.#ctor">
+    <member name="M:ConsoleDisplay.View.TileDisplay.#ctor">
       <summary>
-   Initializes a new instance of the <see cref="T:ConsoleDisplay.View.TileDisplay`1" /> class.
+   Initializes a new instance of the <see cref="TileDisplay{Enum}" /> class.
    </summary>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDisplay`1.#ctor(Point,Size)">
+    <member name="M:ConsoleDisplay.View.TileDisplay.#ctor(Point,Size)">
       <summary>
-   Initializes a new instance of the <see cref="T:ConsoleDisplay.View.TileDisplay`1" /> class.
+   Initializes a new instance of the <see cref="TileDisplay{Enum}" /> class.
    </summary>
       <param name="position">The position.</param>
       <param name="size">The size.</param>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDisplay`1.#ctor(Point,Size,Size)">
+    <member name="M:ConsoleDisplay.View.TileDisplay.#ctor(Point,Size,TileDefBase)">
       <summary>
-   Initializes a new instance of the <see cref="T:ConsoleDisplay.View.TileDisplay`1" /> class.
+   Initializes a new instance of the <see cref="TileDisplay{Enum}" /> class.
+   </summary>
+      <param name="position">The position.</param>
+      <param name="size">The size.</param>
+      <param name="aTileDef">The tile-definition.</param>
+    </member>
+    <member name="M:ConsoleDisplay.View.TileDisplay.#ctor(Point,Size,Size)">
+      <summary>
+   Initializes a new instance of the <see cref="TileDisplay{Enum}" /> class.
    </summary>
       <param name="position">The position.</param>
       <param name="size">The size.</param>
       <param name="tileSize">Size of the tile.</param>
     </member>
-    <member name="M:ConsoleDisplay.View.TileDisplay`1.WriteTile(PointF,`0)">
+    <member name="M:ConsoleDisplay.View.TileDisplay.WriteTile(PointF,Enum)">
       <summary>
    Writes the tile.
    </summary>

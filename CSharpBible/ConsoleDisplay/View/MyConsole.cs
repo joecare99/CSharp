@@ -63,6 +63,13 @@ namespace ConsoleDisplay.View
             = typeof(Console).GetProperty("LargestWindowHeight");
 
         /// <summary>
+        /// Gets or sets the title of the window.
+        /// </summary>
+        /// <value>The height of the largest window.</value>
+        protected PropertyInfo? title { get; set; }
+            = typeof(Console).GetProperty("Title");
+
+        /// <summary>
         /// Gets or sets the clear.
         /// </summary>
         /// <value>The clear.</value>
@@ -170,6 +177,14 @@ namespace ConsoleDisplay.View
         public override int WindowWidth { 
             get => (int)(windowWidth?.GetValue(instance) ?? 0);
             set => windowWidth?.SetValue(instance, value); }
+
+        /// <summary>
+        /// Gets or sets the title of the window.
+        /// </summary>
+        /// <value>The width of the window.</value>
+        public override string Title { 
+            get => (string)title?.GetValue(instance) ??""; 
+            set => title?.SetValue(instance, value); }
 
         /// <summary>
         /// Clears this instance.

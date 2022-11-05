@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>BaseLibTests</name>
+  </assembly>
+  <members>
+    <member name="T:BaseLib.ViewModel.Tests.NotificationObjectAdvTests">
+      <summary>
+   Defines test class PropertyTests.
+   </summary>
+    </member>
+  </members>
+</doc>

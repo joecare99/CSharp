@@ -334,7 +334,12 @@
    Defines the test method Playfield2DTest.
    </summary>
     </member>
-    <member name="M:Snake_Base.Model.Tests.Playfield2DTests.AddItemTest">
+    <member name="M:Snake_Base.Model.Tests.Playfield2DTests.AddItemTest1(System.String,System.Int32[],System.String,System.String[])">
+      <summary>
+   Defines the test method AddItemTest.
+   </summary>
+    </member>
+    <member name="M:Snake_Base.Model.Tests.Playfield2DTests.AddItemTest2(System.String,System.Int32[],System.String,System.String[])">
       <summary>
    Defines the test method AddItemTest.
    </summary>
@@ -344,7 +349,7 @@
    Defines the test method RemoveItemTest.
    </summary>
     </member>
-    <member name="M:Snake_Base.Model.Tests.Playfield2DTests.GetItemsTest">
+    <member name="M:Snake_Base.Model.Tests.Playfield2DTests.GetItemsTest(System.String,System.Int32[],System.String)">
       <summary>
    Defines the test method GetItemsTest.
    </summary>

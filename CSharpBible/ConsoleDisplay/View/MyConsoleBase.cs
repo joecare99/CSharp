@@ -52,6 +52,12 @@ namespace ConsoleDisplay.View
         public abstract int LargestWindowHeight { get; }
 
         /// <summary>
+        /// Gets or sets the title of the window.
+        /// </summary>
+        /// <value>The width of the window.</value>
+        public abstract string Title { get; set; }
+
+        /// <summary>
         /// Clears this instance.
         /// </summary>
         public abstract void Clear();
