@@ -324,12 +324,12 @@ namespace ConsoleDisplay.View
             else
                 foreach (var f in diffFields)
                 {
-                    if ((f.Item3 !=null) && (f.Item1.X != f.Item3?.X) && (f.Item1.Y != f.Item3?.Y))
+                    if ((f.Item3 !=null) && ((f.Item1.X != f.Item3?.X) || (f.Item1.Y != f.Item3?.Y)))
                     {
-                        var p1 = new Point(f.Item1.X, f.Item3?.Y??0);
-                        WriteTile(p1, FncGetTile(p1));
+                        var p1 = new Point(f.Item1.X, f.Item3?.Y??0);                        
+                        WriteTile(p1, FncGetTile(Point.Add(p1,(Size)DispOffset)));
                         var p2 = new Point(f.Item3?.X??0, f.Item1.Y);
-                        WriteTile(p2, FncGetTile(p2));
+                        WriteTile(p2, FncGetTile(Point.Add(p2, (Size)DispOffset)));
                     }
                     WriteTile(f.Item1, f.Item2);
                 }
