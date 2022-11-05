@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BaseLib\BaseLib_net.csproj" />
+    <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 
 </Project>
