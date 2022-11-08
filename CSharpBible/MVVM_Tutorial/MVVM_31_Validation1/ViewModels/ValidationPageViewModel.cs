@@ -1,4 +1,4 @@
-﻿using MVVM.ViewModel;
+using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace MVVM_31_Validation1.ViewModels
 
         public string UserName { get => _userName; set => SetProperty(ref _userName, value,TestUsername); }
 
-        private bool TestUsername(string arg1)
+        private bool TestUsername( string arg1)
         {
             if (string.IsNullOrEmpty(arg1))
                throw new ArgumentNullException("Username may not be empty");

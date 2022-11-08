@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : Snake_BaseTests
 // Author           : Mir
 // Created          : 08-24-2022
@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
+using Game_Base.Model.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
