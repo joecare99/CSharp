@@ -31,7 +31,7 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <param name="tile">The tile.</param>
         /// <returns>The visual defintion of the tile</returns>
-        public abstract (string[] lines, (ConsoleColor fgr,ConsoleColor bgr)[] colors) GetTileDef(Enum tile);
+        public abstract (string[] lines, (ConsoleColor fgr,ConsoleColor bgr)[] colors) GetTileDef(Enum? tile);
 
         /// <summary>
         /// Converts a Byte to 2  Console-colors (fore- and background).
@@ -63,14 +63,14 @@ namespace ConsoleDisplay.View
     /// Class TileDisplay.
     /// </summary>
     /// <typeparam name="Enum">The type of the enum.</typeparam>
-    public class TileDisplay
+    public class TileDisplay<T>
     {
         #region Properties
         #region static Properties
         /// <summary>
         /// The default tile
         /// </summary>
-        public static Enum defaultTile;
+        public static T defaultTile;
         /// <summary>
         /// The default tile definition
         /// </summary>
@@ -78,11 +78,11 @@ namespace ConsoleDisplay.View
         #endregion
 
         /// <summary>
-        /// Gets or sets the <see cref="Enum"/> with the specified index.
+        /// Gets or sets the <see cref="T"/> with the specified index.
         /// </summary>
         /// <param name="Idx">The index.</param>
-        /// <returns>Enum.</returns>
-        public Enum this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx,value); }
+        /// <returns>T.</returns>
+        public T this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx,value); }
         /// <summary>
         /// Gets the position.
         /// </summary>
@@ -110,14 +110,14 @@ namespace ConsoleDisplay.View
         public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
 		public Point DispOffset { get; set; } = Point.Empty;
-        public Func<Point, Enum>? FncGetTile;
+        public Func<Point, T>? FncGetTile;
         public Func<Point, Point>? FncOldPos;
         #region Private Properties and Fields
 
         /// <summary>
         /// The tiles
         /// </summary>
-        private Dictionary<Point, Enum> _tiles = new Dictionary<Point, Enum>();
+        private Dictionary<Point, T> _tiles = new Dictionary<Point, T>();
         /// <summary>
         /// The rect
         /// </summary>
@@ -144,10 +144,10 @@ namespace ConsoleDisplay.View
         #region Methods
         #region Static Methods
         /// <summary>
-        /// Initializes static members of the <see cref="TileDisplay{Enum}"/> class.
+        /// Initializes static members of the <see cref="TileDisplay{T}"/> class.
         /// </summary>
         static TileDisplay()  {
-            defaultTile = null;
+            defaultTile = default;
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace ConsoleDisplay.View
         /// <param name="Offset">The offset.</param>
         /// <param name="p">The p.</param>
         /// <param name="tile">The tile.</param>
-        public static void WriteTile(Point Offset,PointF p, Enum tile)=>WriteTile(Offset,p,tile,Size.Empty);
+        public static void WriteTile(Point Offset,PointF p, T tile)=>WriteTile(Offset,p,tile,Size.Empty);
 
         /// <summary>
         /// Writes the tile.
@@ -165,9 +165,9 @@ namespace ConsoleDisplay.View
         /// <param name="p">The p.</param>
         /// <param name="tile">The tile.</param>
         /// <param name="ts">The ts.</param>
-        public static void WriteTile(Point Offset,PointF p, Enum tile, Size ts)
+        public static void WriteTile(Point Offset,PointF p, T tile, Size ts)
         {
-            var def = tileDef?.GetTileDef(tile) ?? default;
+            var def = tileDef?.GetTileDef(tile as Enum) ?? default;
             Size s = (ts == Size.Empty)?new Size(def.lines[0].Length, def.lines.Length):ts;
             Point pc = new Point();
             for (pc.Y = 0; pc.Y < def.lines.Length; pc.Y++)
@@ -193,19 +193,19 @@ namespace ConsoleDisplay.View
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TileDisplay{Enum}"/> class.
+        /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
         /// </summary>
         public TileDisplay() : this(Point.Empty,Size.Empty){}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TileDisplay{Enum}"/> class.
+        /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="size">The size.</param>
         public TileDisplay(Point position, Size size) : this(position, size,tileDef?.TileSize ?? new Size(4,2)) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TileDisplay{Enum}"/> class.
+        /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="size">The size.</param>
@@ -215,7 +215,7 @@ namespace ConsoleDisplay.View
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TileDisplay{Enum}"/> class.
+        /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="size">The size.</param>
@@ -236,9 +236,9 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <param name="p">The p.</param>
         /// <param name="tile">The tile.</param>
-        public void WriteTile(PointF p, Enum tile)
+        public void WriteTile(PointF p, T tile)
         {
-            var def = TileDef?.GetTileDef(tile) ?? default;
+            var def = TileDef?.GetTileDef(tile as Enum) ?? default;
             Size s = TileSize;
             Point pc = new Point((int)p.X*s.Width,(int)p.Y*s.Height);
             var _rect2 = new Rectangle(Point.Empty, _rect.Size);
@@ -261,8 +261,8 @@ namespace ConsoleDisplay.View
         /// Gets the tile.
         /// </summary>
         /// <param name="Idx">The index.</param>
-        /// <returns>Enum.</returns>
-        private Enum GetTile(Point Idx) {
+        /// <returns>T.</returns>
+        private T GetTile(Point Idx) {
             if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return defaultTile;
             if (_tiles.ContainsKey(Idx)) return _tiles[Idx];
             return defaultTile;
@@ -273,17 +273,17 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <param name="value">The value.</param>
-        private void SetTile(Point Idx, Enum value)
+        private void SetTile(Point Idx, T value)
         {
             if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return;
-            if (_tiles.ContainsKey(Idx) && (_tiles[Idx] is Enum e) && e.Equals(value) ) return;
+            if (_tiles.ContainsKey(Idx) && (_tiles[Idx] is T e) && e.Equals(value) ) return;
             _tiles[Idx] = value;
             _changed = true;
         }
 
         public void Update(bool e)
         {
-            var diffFields = new List<(Point, Enum, Point?)>();
+            var diffFields = new List<(Point, T, Point?)>();
             var p = new Point();
             Point p3 = new Point();
             if (FncGetTile == null) return;
@@ -301,9 +301,9 @@ namespace ConsoleDisplay.View
                     {
                         Point pp = new Point(p.X, p.Y);
 
-                        diffFields.Add((pp, (Enum)td, Point.Subtract(po ?? p3, (Size)DispOffset)));
+                        diffFields.Add((pp, (T)td, Point.Subtract(po ?? p3, (Size)DispOffset)));
                         if (!e)
-                            _tiles[p] = (Enum)td;
+                            _tiles[p] = (T)td;
                     }
 
                 }
@@ -351,4 +351,34 @@ namespace ConsoleDisplay.View
         #endregion
         #endregion
     }
+
+	public class TileDisplay : TileDisplay<Enum> {
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
+		/// </summary>
+		public TileDisplay() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="size">The size.</param>
+		public TileDisplay(Point position, Size size) : base(position, size) { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="size">The size.</param>
+		/// <param name="aTileDef">The tile-definition.</param>
+		public TileDisplay(Point position, Size size, TileDefBase aTileDef) : base(position, size, aTileDef) {	}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="size">The size.</param>
+		/// <param name="tileSize">Size of the tile.</param>
+		public TileDisplay(Point position, Size size, Size tileSize) : base(position, size, tileSize) { }
+	}
 }
