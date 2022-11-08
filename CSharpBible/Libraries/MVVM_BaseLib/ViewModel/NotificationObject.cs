@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : MVVM_BaseLib
 // Author           : Mir
 // Created          : 08-19-2022
@@ -128,7 +128,7 @@ namespace MVVM.ViewModel
             RaisePropertyChanged(propertyName);
             if (propertyNames != null)
                 RaisePropertyChanged(propertyNames);
-            action?.Invoke(old, value);
+			try { action?.Invoke(old, value); } catch { }
             return true;
         }
 
