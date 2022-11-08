@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Game_BaseTests\Game_Base_netTests.csproj" />
     <ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
   </ItemGroup>
 
