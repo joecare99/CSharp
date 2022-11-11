@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_20_SysdialogsTests</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests">
+      <summary>
+   Defines test class SysDialogsViewModelTests.
+   </summary>
+    </member>
+    <member name="F:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.TestNewValue">
+      <summary>
+   The test new value
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest">
+      <summary>
+   Defines the test method SysDialogsViewModelTest.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetFileOpenName">
+      <summary>
+   Defines the test method SysDialogsViewModelTest_SetFileOpenName.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetFileSaveName">
+      <summary>
+   Defines the test method SysDialogsViewModelTest_SetFileSaveName.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetPathName">
+      <summary>
+   Defines the test method SysDialogsViewModelTest_SetPathName.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetExt">
+      <summary>
+   Defines the test method SysDialogsViewModelTest_SetExt.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetMyFont">
+      <summary>
+   Defines the test method SysDialogsViewModelTest_SetMyFont.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetMyColor">
+      <summary>
+   Defines the test method SysDialogsViewModelTest_SetMyColor.
+   </summary>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_SetProp(System.String,System.Object,System.String)">
+      <summary>
+   Systems the dialogs view model test set property.
+   </summary>
+      <param name="PropName">Name of the property.</param>
+      <param name="value">The value.</param>
+      <param name="Exp">The exp.</param>
+    </member>
+    <member name="M:MVVM_20_Sysdialogs.ViewModel.Tests.SysDialogsViewModelTests.SysDialogsViewModelTest_Command(System.String,System.Nullable{System.Boolean},System.Object,System.String)">
+      <summary>
+   Systems the dialogs view model test command.
+   </summary>
+      <param name="Command">The command.</param>
+      <param name="tr">if set to <c>true</c> [tr].</param>
+      <param name="value">The value.</param>
+      <param name="Exp">The exp.</param>
+    </member>
+  </members>
+</doc>

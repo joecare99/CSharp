@@ -23,7 +23,7 @@ namespace DemoLibrary {
 		/// <summary>
 		/// The random
 		/// </summary>
-		static Random rnd = new Random();
+		public static Func<int,int,int> GetNext = (mn,mx)=>(_rnd ??= new Random()).Next(mn,mx);
 		/// <summary>
 		/// The street addresses
 		/// </summary>
@@ -49,10 +49,14 @@ namespace DemoLibrary {
 		/// The last names
 		/// </summary>
 		static string[] lastNames = { "Smith", "Jones", "Garcia", "Hernandez", "Miller", "Santiago", "Thomas", "Lee", "Taylor", "Widmark" };
-		/// <summary>
-		/// The alive statuses
-		/// </summary>
-		static bool[] aliveStatuses = { true, false };
+        /// <summary>
+        /// The last names
+        /// </summary>
+        static string[] titles = { "", "", "", "", "", "Dr.", "Prof.", "Prof. Dr.", "Dr. med.", "Dibl.Ing.", "M.D.", "M.D." };
+        /// <summary>
+        /// The alive statuses
+        /// </summary>
+        static bool[] aliveStatuses = { true, false };
 		/// <summary>
 		/// The low end date
 		/// </summary>
@@ -61,6 +65,7 @@ namespace DemoLibrary {
 		/// The days from low date
 		/// </summary>
 		static int daysFromLowDate = (DateTime.Today - lowEndDate).Days;
+		private static Random _rnd;
 
 		//		public DataAccess() {
 		//			daysFromLowDate = (DateTime.Today - lowEndDate).Days;
@@ -90,11 +95,12 @@ namespace DemoLibrary {
 			output.FirstNames = GetRandomItem(firstNames);
 			output.LastName = GetRandomItem(lastNames);
 			output.IsAlive = GetRandomItem(aliveStatuses);
-			output.DateOfBirth = GetRandomDate();
+            output.Title = GetRandomItem(titles);
+            output.DateOfBirth = GetRandomDate();
 			output.Age = GetAgeInYears(output.DateOfBirth);
-			output.AccountBalance = ((decimal)rnd.Next(1, 1000000) / 100);
+			output.AccountBalance = ((decimal)GetNext(1, 1000000) / 100);
 
-			int addressCount = rnd.Next(1, 5);
+			int addressCount = GetNext(1, 5);
 			for (int i = 0; i < addressCount; i++) {
 				output.Addresses.Add(GetAddress((id - 1) * 5 + i + 1));
 			}
@@ -122,12 +128,12 @@ namespace DemoLibrary {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="Items">The items.</param>
 		/// <returns>T.</returns>
-		static private T GetRandomItem<T>(T[] Items) => Items[rnd.Next(0,Items.Length)];
+		static private T GetRandomItem<T>(T[] Items) => Items[GetNext(0,Items.Length)];
 		/// <summary>
 		/// Gets the random date.
 		/// </summary>
 		/// <returns>DateTime.</returns>
-		static private DateTime GetRandomDate() => lowEndDate.AddDays(rnd.Next(daysFromLowDate));
+		static private DateTime GetRandomDate() => lowEndDate.AddDays(GetNext(0,daysFromLowDate));
 		/// <summary>
 		/// Gets the age in years.
 		/// </summary>

@@ -44,6 +44,7 @@ namespace TestConsole
         /// <exception cref="System.NotImplementedException"></exception>
         public override int LargestWindowHeight => throw new NotImplementedException();
 
+        public override string Title { get => form?.Text; set => form.Text = value; }
 
         /// <summary>
         /// Clears this instance.
@@ -116,5 +117,6 @@ namespace TestConsole
         /// </summary>
         /// <value>The content.</value>
         public string Content => form.Content;
+
     }
 }

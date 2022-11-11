@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>WFSystem.Windows.Data</name>
+  </assembly>
+  <members>
+    <member name="T:System.Windows.Data.IValueConverter">
+      <summary>
+   Interface IValueConverter
+   </summary>
+    </member>
+    <member name="M:System.Windows.Data.IValueConverter.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts the specified value.
+   </summary>
+      <param name="value">The value.</param>
+      <param name="targetType">Type of the target.</param>
+      <param name="parameter">The parameter.</param>
+      <param name="culture">The culture.</param>
+      <returns>System.Object.</returns>
+    </member>
+    <member name="M:System.Windows.Data.IValueConverter.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts the back.
+   </summary>
+      <param name="value">The value.</param>
+      <param name="targetType">Type of the target.</param>
+      <param name="parameter">The parameter.</param>
+      <param name="culture">The culture.</param>
+      <returns>System.Object.</returns>
+    </member>
+  </members>
+</doc>

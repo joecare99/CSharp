@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CanvasWPF2_ItemTemplateSelector</name>
+  </assembly>
+  <members>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.View.DataSelector.ItemTemplateSelector">
+      <summary>
+   Class ItemTemplateSelector.
+   Implements the <see cref="T:System.Windows.Controls.DataTemplateSelector" /></summary>
+      <seealso cref="T:System.Windows.Controls.DataTemplateSelector" />
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.View.DataSelector.KeyString">
+      <summary>
+   Class KeyString.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.View.DataSelector.RessourceSelector">
+      <summary>
+   Class RessourceSelector.
+   Implements the <see cref="T:System.Windows.Controls.DataTemplateSelector" /></summary>
+      <seealso cref="T:System.Windows.Controls.DataTemplateSelector" />
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.View.DataSelector.ItemTemplateSelector.ItemTemplates">
+      <summary>
+   Gets or sets the item templates.
+   </summary>
+      <value>The item templates.</value>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.View.DataSelector.ItemTemplateSelector.SelectTemplate(System.Object,DependencyObject)">
+      <summary>
+   When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate" /> based on custom logic.
+   </summary>
+      <param name="item">The data object for which to select the template.</param>
+      <param name="container">The data-bound object.</param>
+      <returns>Returns a <see cref="T:System.Windows.DataTemplate" /> or <see langword="null" />. The default value is <see langword="null" />.</returns>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.View.DataSelector.KeyString.Key">
+      <summary>
+   Gets or sets the key.
+   </summary>
+      <value>The key.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.View.DataSelector.RessourceSelector.ItemKeys">
+      <summary>
+   Gets or sets the item keys.
+   </summary>
+      <value>The item keys.</value>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.View.DataSelector.RessourceSelector.SelectTemplate(System.Object,DependencyObject)">
+      <summary>
+   When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate" /> based on custom logic.
+   </summary>
+      <param name="item">The data object for which to select the template.</param>
+      <param name="container">The data-bound object.</param>
+      <returns>Returns a <see cref="T:System.Windows.DataTemplate" /> or <see langword="null" />. The default value is <see langword="null" />.</returns>
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.View.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF2_ItemTemplateSelector.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.ViewModel.ItemBehavior">
+      <summary>
+   Class ItemBehavior.
+   Implements the <see cref="T:Microsoft.Xaml.Behaviors.Behavior`1" /></summary>
+      <seealso cref="T:Microsoft.Xaml.Behaviors.Behavior`1" />
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.ViewModel.ItemBehavior.OnAttached">
+      <summary>
+   Called after the behavior is attached to an AssociatedObject.
+   </summary>
+      <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.DataText">
+      <summary>
+   Gets or sets the data text.
+   </summary>
+      <value>The data text.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.Shapes">
+      <summary>
+   Gets or sets the shapes.
+   </summary>
+      <value>The shapes.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.dcSelectShape">
+      <summary>
+   Gets or sets the dc select shape.
+   </summary>
+      <value>The dc select shape.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.dcCreateShape">
+      <summary>
+   Gets or sets the dc create shape.
+   </summary>
+      <value>The dc create shape.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.dcDeleteShape">
+      <summary>
+   Gets or sets the dc delete shape.
+   </summary>
+      <value>The dc delete shape.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.dcKeyDown">
+      <summary>
+   Gets or sets the dc key down.
+   </summary>
+      <value>The dc key down.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.dcKeyUp">
+      <summary>
+   Gets or sets the dc key up.
+   </summary>
+      <value>The dc key up.</value>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF2_ItemTemplateSelector.ViewModel.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData">
+      <summary>
+   Class ObservablePoint.
+   Implements the <see cref="T:MVVM.ViewModel.NotificationObject" /></summary>
+      <seealso cref="T:MVVM.ViewModel.NotificationObject" />
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.This">
+      <summary>
+   Gets the this.
+   </summary>
+      <value>The this.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.X">
+      <summary>
+   Gets or sets the x.
+   </summary>
+      <value>The x.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.Y">
+      <summary>
+   Gets or sets the y.
+   </summary>
+      <value>The y.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.Dx">
+      <summary>
+   Gets or sets the dx.
+   </summary>
+      <value>The dx.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.Dy">
+      <summary>
+   Gets or sets the dy.
+   </summary>
+      <value>The dy.</value>
+    </member>
+    <member name="F:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.maxX">
+      <summary>
+   The maximum x
+   </summary>
+    </member>
+    <member name="F:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.maxY">
+      <summary>
+   The maximum y
+   </summary>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.sType">
+      <summary>
+   Gets or sets the type of the s.
+   </summary>
+      <value>The type of the s.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.maxSize">
+      <summary>
+   Gets or sets the maximum size.
+   </summary>
+      <value>The maximum size.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.point">
+      <summary>
+   Gets or sets the point.
+   </summary>
+      <value>The point.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.MouseLeftButtonDown">
+      <summary>
+   Gets or sets the mouse left button down.
+   </summary>
+      <value>The mouse left button down.</value>
+    </member>
+    <member name="P:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.MouseHover">
+      <summary>
+   Gets or sets the mouse hover.
+   </summary>
+      <value>The mouse hover.</value>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData" /> class.
+   </summary>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.#ctor(Point)">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData" /> class.
+   </summary>
+      <param name="p">The p.</param>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.#ctor(System.Double,System.Double)">
+      <summary>
+   Initializes a new instance of the <see cref="T:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData" /> class.
+   </summary>
+      <param name="x">The x.</param>
+      <param name="y">The y.</param>
+    </member>
+    <member name="M:CanvasWPF2_ItemTemplateSelector.ViewModel.ShapeData.Step">
+      <summary>
+   Steps this instance.
+   </summary>
+    </member>
+    <member name="T:CanvasWPF2_ItemTemplateSelector.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>

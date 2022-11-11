@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>DemoLibraryTests</name>
+  </assembly>
+  <members>
+    <member name="T:DemoLibraryTests.Models.AddressModelTests">
+      <summary>
+   Defines test class AddressModelTests.
+   </summary>
+    </member>
+    <member name="M:DemoLibraryTests.Models.AddressModelTests.ToStringTest(System.String,System.String,System.String,System.String,System.String,System.String)">
+      <summary>
+   Converts to stringtest.
+   </summary>
+      <param name="aStreet">a street.</param>
+      <param name="aCity">a city.</param>
+      <param name="aState">a state.</param>
+      <param name="aZip">a zip.</param>
+      <param name="aCountry">a.</param>
+      <param name="ExpToString">The exp to string.</param>
+    </member>
+    <member name="M:DemoLibraryTests.Models.AddressModelTests.ToStringTest1">
+      <summary>
+   Defines the test method ToStringTest1.
+   </summary>
+    </member>
+    <member name="T:DemoLibraryTests.Models.PersonModelTests">
+      <summary>
+   Defines test class PersonModelTests.
+   </summary>
+    </member>
+    <member name="M:DemoLibraryTests.Models.PersonModelTests.TestPerson">
+      <summary>
+   Defines the test method TestPerson.
+   </summary>
+    </member>
+    <member name="M:DemoLibraryTests.Models.PersonModelTests.TestPersonFullname(System.String,System.String,System.String,System.String)">
+      <summary>
+   Tests the person fullname.
+   </summary>
+      <param name="aFirstNames">a first names.</param>
+      <param name="aLastName">a last name.</param>
+      <param name="aTitle">a title.</param>
+      <param name="expFullname">The exp fullname.</param>
+    </member>
+  </members>
+</doc>

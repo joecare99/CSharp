@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>DataGridEx</name>
+  </assembly>
+  <members>
+    <member name="T:DataGridEx.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="T:DataGridEx.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:DataGridEx.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DataGridEx.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:DataGridEx.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:DataGridEx.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:DataGridEx.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:DataGridEx.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:DataGridEx.Form1">
+      <summary> Class Form1. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class Form1. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:DataGridEx.Form1.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DataGridEx.Form1" /> class.
+   </summary>
+    </member>
+    <member name="M:DataGridEx.Form1.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+      <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    </member>
+    <member name="T:DataGridExWPF.Worker.Customer">
+      <summary>
+   Class Customer.
+   </summary>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.FirstName">
+      <summary>
+   Gets or sets the first name.
+   </summary>
+      <value>The first name.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.LastName">
+      <summary>
+   Gets or sets the last name.
+   </summary>
+      <value>The last name.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.Email">
+      <summary>
+   Gets or sets the email.
+   </summary>
+      <value>The email.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.IsMember">
+      <summary>
+   Gets or sets a value indicating whether this instance is member.
+   </summary>
+      <value>
+        <c>true</c> if this instance is member; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.Status">
+      <summary>
+   Gets or sets the status.
+   </summary>
+      <value>The status.</value>
+    </member>
+    <member name="T:DataGridExWPF.Worker.EmailConverter">
+      <summary>
+   Class EmailConverter.
+   </summary>
+    </member>
+    <member name="M:DataGridExWPF.Worker.EmailConverter.Convert(System.Object,Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>
+   Converts the specified value.
+   </summary>
+      <param name="value">The value.</param>
+      <param name="targetType">Type of the target.</param>
+      <param name="parameter">The parameter.</param>
+      <param name="culture">The culture.</param>
+      <returns>System.Object.</returns>
+    </member>
+    <member name="M:DataGridExWPF.Worker.EmailConverter.ConvertBack(System.Object,Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>
+   Converts the back.
+   </summary>
+      <param name="value">The value.</param>
+      <param name="targetType">Type of the target.</param>
+      <param name="parameter">The parameter.</param>
+      <param name="culture">The culture.</param>
+      <returns>System.Object.</returns>
+    </member>
+    <member name="T:DataGridExWPF.Worker.OrderStatus">
+      <summary>
+   Enum UserAction
+   </summary>
+    </member>
+  </members>
+</doc>

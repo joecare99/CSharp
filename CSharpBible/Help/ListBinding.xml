@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ListBinding</name>
+  </assembly>
+  <members>
+    <member name="T:ListBinding.App">
+      <summary> Interaktionslogik für "App.xaml" </summary>
+    </member>
+    <member name="T:ListBinding.Model.Person">
+      <summary>
+   Class Person.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" />
+   Implements the <see cref="T:System.Runtime.Serialization.ISafeSerializationData" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+      <seealso cref="T:System.Runtime.Serialization.ISafeSerializationData" />
+    </member>
+    <member name="P:ListBinding.Model.Person.Id">
+      <summary>
+   Gets or sets the identifier.
+   </summary>
+      <value>The identifier.</value>
+    </member>
+    <member name="P:ListBinding.Model.Person.FirstName">
+      <summary>
+   Gets or sets the first name.
+   </summary>
+      <value>The first name.</value>
+    </member>
+    <member name="P:ListBinding.Model.Person.LastName">
+      <summary>
+   Gets or sets the last name.
+   </summary>
+      <value>The last name.</value>
+    </member>
+    <member name="P:ListBinding.Model.Person.Title">
+      <summary>
+   Gets or sets the title.
+   </summary>
+      <value>The title.</value>
+    </member>
+    <member name="P:ListBinding.Model.Person.FullName">
+      <summary>
+   Gets the full name.
+   </summary>
+      <value>The full name.</value>
+    </member>
+    <member name="P:ListBinding.Model.Person.IsEmpty">
+      <summary>
+   Gets a value indicating whether this instance is empty.
+   </summary>
+      <value>
+        <c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="M:ListBinding.Model.Person.#ctor(System.String,System.String,System.String)">
+      <summary>
+        <font color="red">Badly formed XML comment.</font>
+      </summary>
+    </member>
+    <member name="M:ListBinding.Model.Person.#ctor(System.String)">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.Model.Person" /> class.
+   </summary>
+      <param name="fullName">The full name.</param>
+    </member>
+    <member name="M:ListBinding.Model.Person.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.Model.Person" /> class.
+   </summary>
+    </member>
+    <member name="M:ListBinding.Model.Person.#ctor(SerializationInfo,StreamingContext)">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.Model.Person" /> class.
+   </summary>
+      <param name="info">The information.</param>
+      <param name="context">The context.</param>
+    </member>
+    <member name="M:ListBinding.Model.Person.ToString">
+      <summary>
+        <font color="red">Badly formed XML comment.</font>
+      </summary>
+    </member>
+    <member name="M:ListBinding.Model.Person.GetObjectData(SerializationInfo,StreamingContext)">
+      <summary>
+   Gets the object data.
+   </summary>
+      <param name="info">The information.</param>
+      <param name="context">The context.</param>
+    </member>
+    <member name="M:ListBinding.Model.Person.CompleteDeserialization(System.Object)">
+      <summary>
+   Diese Methode wird aufgerufen, wenn die Instanz deserialisiert wird.
+   </summary>
+      <param name="deserialized">Ein Objekt, das den gespeicherten Zustand der Instanz enthält.</param>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:ListBinding.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:ListBinding.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:ListBinding.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:ListBinding.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:ListBinding.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:ListBinding.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:ListBinding.View.MainWindow">
+      <summary> Interaktionslogik für MainWindow.xaml </summary>
+    </member>
+    <member name="M:ListBinding.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:ListBinding.View.PersonView">
+      <summary> Interaktionslogik für PersonView.xaml </summary>
+    </member>
+    <member name="M:ListBinding.View.PersonView.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.View.PersonView" /> class.
+   </summary>
+    </member>
+    <member name="M:ListBinding.View.PersonView.ShowError">
+      <summary>
+   Shows the error.
+   </summary>
+    </member>
+    <member name="T:ListBinding.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="T:ListBinding.ViewModel.PersonViewViewModel">
+      <summary>
+   Class PersonViewViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="E:ListBinding.ViewModel.PersonViewViewModel.MissingData">
+      <summary>
+   Occurs when [missing data].
+   </summary>
+    </member>
+    <member name="P:ListBinding.ViewModel.PersonViewViewModel.NewPerson">
+      <summary>
+   Creates new person.
+   </summary>
+      <value>The new person.</value>
+    </member>
+    <member name="P:ListBinding.ViewModel.PersonViewViewModel.Persons">
+      <summary>
+   Gets or sets the persons.
+   </summary>
+      <value>The persons.</value>
+    </member>
+    <member name="P:ListBinding.ViewModel.PersonViewViewModel.btnAddPerson">
+      <summary>
+   Gets or sets the BTN add person.
+   </summary>
+      <value>The BTN add person.</value>
+    </member>
+    <member name="M:ListBinding.ViewModel.PersonViewViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ListBinding.ViewModel.PersonViewViewModel" /> class.
+   </summary>
+    </member>
+  </members>
+</doc>

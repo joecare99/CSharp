@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_Converter_DrawGrid3_NonLin</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.Properties.Images">
+      <summary>
+     Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.Properties.Images.ResourceManager">
+      <summary>
+     Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.Properties.Images.Culture">
+      <summary>
+     Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+     Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.Properties.Images.BIG_original">
+      <summary>
+     Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.Model.LabDefData">
+      <summary>
+   Struct LabDefData
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.Model.Model">
+      <summary>
+   Class Model.
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.Model.LabDefData.fields">
+      <summary>
+   The fields
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.Model.LabDefData.lSize">
+      <summary>
+   The l size
+   </summary>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.Model.LabDefData.#ctor(System.ValueTuple{FieldDef[], Size})">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_Converter_DrawGrid3_NonLin.Model.LabDefData" /> struct.
+   </summary>
+      <param name="par">The par.</param>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.Model.Model.LevelData">
+      <summary>
+   Gets or sets the level data.
+   </summary>
+      <value>The level data.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.Model.Model.ActLevel">
+      <summary>
+   Gets or sets the act level.
+   </summary>
+      <value>The act level.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.Model.Model.PropertyChanged">
+      <summary>
+   Gets or sets the property changed.
+   </summary>
+      <value>The property changed.</value>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.Model.Model.LoadLevel">
+      <summary>
+   Loads the level.
+   </summary>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.Model.Model.NextLevel">
+      <summary>
+   Nexts the level.
+   </summary>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.Model.Model.PrevLevel">
+      <summary>
+   Previouses the level.
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay">
+      <summary>
+   Class WindowPortToTileDisplay.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay.WindowSize">
+      <summary>
+   Gets or sets the size of the window.
+   </summary>
+      <value>The size of the window.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay.brushes">
+      <summary>
+   Gets or sets the brushes.
+   </summary>
+      <value>The brushes.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay.background">
+      <summary>
+   Gets or sets the background.
+   </summary>
+      <value>The background.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay.TileSize">
+      <summary>
+   Gets or sets the size of the tile.
+   </summary>
+      <value>The size of the tile.</value>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay.Convert(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value produced by the binding source.</param>
+      <param name="targetType">The type of the binding target property.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.View.Converter.WindowPortToTileDisplay.ConvertBack(System.Object,Type,System.Object,CultureInfo)">
+      <summary>
+   Converts a value.
+   </summary>
+      <param name="value">The value that is produced by the binding target.</param>
+      <param name="targetType">The type to convert to.</param>
+      <param name="parameter">The converter parameter to use.</param>
+      <param name="culture">The culture to use in the converter.</param>
+      <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.View.PlotFrame">
+      <summary> Interaktionslogik für PlotFrame.xaml </summary>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.View.PlotFrame.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_Converter_DrawGrid3_NonLin.View.PlotFrame" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel.ShowClient">
+      <summary>
+   Gets or sets the show client.
+   </summary>
+      <value>The show client.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel.LoadLevelCommand">
+      <summary>
+   Gets or sets the load level command.
+   </summary>
+      <value>The load level command.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel.NextLevelCommand">
+      <summary>
+   Gets or sets the next level command.
+   </summary>
+      <value>The next level command.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel.PrevLevelCommand">
+      <summary>
+   Gets or sets the previous level command.
+   </summary>
+      <value>The previous level command.</value>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_Converter_DrawGrid3_NonLin.ViewModel.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.ViewModel.TileData">
+      <summary>
+   Struct TileData
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.ViewModel.SWindowPort">
+      <summary>
+   Struct SWindowPort
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.ViewModel.PlotFrameViewModel">
+      <summary>
+   Class PlotFrameViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.ViewModel.TileData.Idx">
+      <summary>
+   The index
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.ViewModel.TileData.position">
+      <summary>
+   The position
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.ViewModel.TileData.destination">
+      <summary>
+   The destination
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.ViewModel.TileData.tileType">
+      <summary>
+   The tile type
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.ViewModel.SWindowPort.tiles">
+      <summary>
+   The tiles
+   </summary>
+    </member>
+    <member name="F:MVVM_Converter_DrawGrid3_NonLin.ViewModel.SWindowPort.WindowSize">
+      <summary>
+   The window size
+   </summary>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.PlotFrameViewModel.WindowPort">
+      <summary>
+   Gets or sets the window port.
+   </summary>
+      <value>The window port.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.PlotFrameViewModel.Tiles">
+      <summary>
+   Gets or sets the tiles.
+   </summary>
+      <value>The tiles.</value>
+    </member>
+    <member name="P:MVVM_Converter_DrawGrid3_NonLin.ViewModel.PlotFrameViewModel.WindowSize">
+      <summary>
+   Gets or sets the size of the window.
+   </summary>
+      <value>The size of the window.</value>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.ViewModel.PlotFrameViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_Converter_DrawGrid3_NonLin.ViewModel.PlotFrameViewModel" /> class.
+   </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_Converter_DrawGrid3_NonLin.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:MVVM_Converter_DrawGrid3_NonLin.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_Converter_DrawGrid3_NonLin.MainWindow" /> class.
+   </summary>
+    </member>
+  </members>
+</doc>

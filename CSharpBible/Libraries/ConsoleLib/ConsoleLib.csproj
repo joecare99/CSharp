@@ -1,10 +1,14 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
-    <TargetFramework>net48-windows</TargetFramework>
+    <TargetFrameworks>net48-windows;net472-windows;net461-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
 	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 	  <IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+	  <SignAssembly>True</SignAssembly>
+	  <Authors>Joe Care from JC-Soft</Authors>
+	  <Company>JC-Soft</Company>
+	  <Copyright>Copyright (c) by JC-Soft 2022</Copyright>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -18,6 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

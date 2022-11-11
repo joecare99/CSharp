@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_17_1_CSV_Laden</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_17_1_CSV_Laden.Model.CsvService">
+      <summary>
+   Class CsvService.
+   Implements the <see cref="T:System.IDisposable" /></summary>
+      <seealso cref="T:System.IDisposable" />
+    </member>
+    <member name="M:MVVM_17_1_CSV_Laden.Model.CsvService.Dispose">
+      <summary>
+   Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+   </summary>
+    </member>
+    <member name="M:MVVM_17_1_CSV_Laden.Model.CsvService.#ctor(System.String)">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_17_1_CSV_Laden.Model.CsvService" /> class.
+   </summary>
+      <param name="filename">The filename.</param>
+    </member>
+    <member name="M:MVVM_17_1_CSV_Laden.Model.CsvService.ReadCSV">
+      <summary>
+   Reads the CSV.
+   </summary>
+      <returns>IAsyncEnumerable&lt;DataPoint&gt;.</returns>
+    </member>
+    <member name="T:MVVM_17_1_CSV_Laden.Model.DataPoint">
+      <summary>
+   Class DataPoint.
+   </summary>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.Model.DataPoint.TimeStamp">
+      <summary>
+   Gets or sets the time stamp.
+   </summary>
+      <value>The time stamp.</value>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.Model.DataPoint.X">
+      <summary>
+   Gets or sets the x.
+   </summary>
+      <value>The x.</value>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.Model.DataPoint.Y">
+      <summary>
+   Gets or sets the y.
+   </summary>
+      <value>The y.</value>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.Model.DataPoint.dt">
+      <summary>
+   Gets the dt.
+   </summary>
+      <value>The dt.</value>
+    </member>
+    <member name="T:MVVM_17_1_CSV_Laden.View.DataPoints">
+      <summary> Interaktionslogik für DataPoints.xaml </summary>
+    </member>
+    <member name="T:MVVM_17_1_CSV_Laden.ViewModel.DataPointsViewModel">
+      <summary>
+   Class DataPointsViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="M:MVVM_17_1_CSV_Laden.ViewModel.DataPointsViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:MVVM_17_1_CSV_Laden.ViewModel.DataPointsViewModel" /> class.
+   </summary>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.ViewModel.DataPointsViewModel.DataPoints">
+      <summary>
+   Gets or sets the data points.
+   </summary>
+      <value>The data points.</value>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.ViewModel.DataPointsViewModel.IsLoading">
+      <summary>
+   Gets or sets a value indicating whether this instance is loading.
+   </summary>
+      <value>
+        <c>true</c> if this instance is loading; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:MVVM_17_1_CSV_Laden.ViewModel.DataPointsViewModel.LoadCsV">
+      <summary>
+   Gets or sets the load cs v.
+   </summary>
+      <value>The load cs v.</value>
+    </member>
+    <member name="T:MVVM_17_1_CSV_Laden.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_17_1_CSV_Laden.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+  </members>
+</doc>

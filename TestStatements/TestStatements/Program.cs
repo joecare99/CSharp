@@ -7,7 +7,7 @@
 // Last Modified On : 09-09-2022
 // ***********************************************************************
 // <copyright file="Program.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2020
+//     Copyright Â© JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
@@ -58,6 +58,7 @@ namespace TestStatements
             ReturnStatement.DoReturnStatement(args);
             YieldStatement.DoYieldStatement(args);
             ExceptionHandling.DoTryCatch(args);
+			ExceptionHandling.DoTryFinally(args);
             Checking.CheckedUnchecked(args);
             Locking.DoLockTest(args);
             UsingStatement.DoUsingStatement(args);

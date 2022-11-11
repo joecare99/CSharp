@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ItemsControlTut1</name>
+  </assembly>
+  <members>
+    <member name="T:ItemsControlTut1.View.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:ItemsControlTut1.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ItemsControlTut1.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:ItemsControlTut1.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>

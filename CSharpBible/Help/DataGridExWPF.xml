@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>DataGridExWPF</name>
+  </assembly>
+  <members>
+    <member name="T:DataGridExWPF.App">
+      <summary> Interaktionslogik für "App.xaml" </summary>
+    </member>
+    <member name="T:DataGridExWPF.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:DataGridExWPF.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DataGridExWPF.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:DataGridExWPF.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:DataGridExWPF.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:DataGridExWPF.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:DataGridExWPF.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:DataGridExWPF.Visual.MainWindow">
+      <summary> Interaktionslogik für MainWindow.xaml </summary>
+    </member>
+    <member name="M:DataGridExWPF.Visual.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:DataGridExWPF.Visual.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:DataGridExWPF.Worker.Customer">
+      <summary>
+   Class Customer.
+   </summary>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.FirstName">
+      <summary>
+   Gets or sets the first name.
+   </summary>
+      <value>The first name.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.LastName">
+      <summary>
+   Gets or sets the last name.
+   </summary>
+      <value>The last name.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.Email">
+      <summary>
+   Gets or sets the email.
+   </summary>
+      <value>The email.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.IsMember">
+      <summary>
+   Gets or sets a value indicating whether this instance is member.
+   </summary>
+      <value>
+        <c>true</c> if this instance is member; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:DataGridExWPF.Worker.Customer.Status">
+      <summary>
+   Gets or sets the status.
+   </summary>
+      <value>The status.</value>
+    </member>
+    <member name="T:DataGridExWPF.Worker.EmailConverter">
+      <summary>
+   Class EmailConverter.
+   Implements the <see cref="T:System.Windows.Data.IValueConverter" /></summary>
+      <seealso cref="T:System.Windows.Data.IValueConverter" />
+    </member>
+    <member name="M:DataGridExWPF.Worker.EmailConverter.Convert(System.Object,Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>
+   Konvertiert einen Wert.
+   </summary>
+      <param name="value">Der von der Bindungsquelle erzeugte Wert.</param>
+      <param name="targetType">Der Typ der Bindungsziel-Eigenschaft.</param>
+      <param name="parameter">Der zu verwendende Konverterparameter.</param>
+      <param name="culture">Die im Konverter zu verwendende Kultur.</param>
+      <returns>Ein konvertierter Wert.
+   Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
+    </member>
+    <member name="M:DataGridExWPF.Worker.EmailConverter.ConvertBack(System.Object,Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>
+   Konvertiert einen Wert.
+   </summary>
+      <param name="value">Der Wert, der vom Bindungsziel erzeugt wird.</param>
+      <param name="targetType">Der Typ, in den konvertiert werden soll.</param>
+      <param name="parameter">Der zu verwendende Konverterparameter.</param>
+      <param name="culture">Die im Konverter zu verwendende Kultur.</param>
+      <returns>Ein konvertierter Wert.
+   Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
+    </member>
+    <member name="T:DataGridExWPF.Worker.OrderStatus">
+      <summary>
+   Enum OrderStatus
+   </summary>
+    </member>
+  </members>
+</doc>

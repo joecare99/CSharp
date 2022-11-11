@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MathLibraryTests</name>
+  </assembly>
+  <members>
+    <member name="T:MathLibrary.TwoDim.Tests.Math2dTests">
+      <summary>
+   Defines test class Math2dTests.
+   </summary>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.ToStringTest1">
+      <summary>
+   Defines the test method ToStringTest1.
+   </summary>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.ToStringTest2(Double,Double,String)">
+      <summary>
+   Converts to stringtest2.
+   </summary>
+      <param name="x">The x.</param>
+      <param name="y">The y.</param>
+      <param name="exp">The exp.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.NullTest">
+      <summary>
+   Defines the test method NullTest.
+   </summary>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.eXTest">
+      <summary>
+   Defines the test method eXTest.
+   </summary>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.eYTest">
+      <summary>
+   Defines the test method eYTest.
+   </summary>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.AddTest(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Adds the test.
+   </summary>
+      <param name="v1x">The V1X.</param>
+      <param name="v1y">The v1y.</param>
+      <param name="v2x">The V2X.</param>
+      <param name="v2y">The v2y.</param>
+      <param name="expx">The expx.</param>
+      <param name="expy">The expy.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.SubtractTest(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Subtracts the test.
+   </summary>
+      <param name="v1x">The V1X.</param>
+      <param name="v1y">The v1y.</param>
+      <param name="v2x">The V2X.</param>
+      <param name="v2y">The v2y.</param>
+      <param name="expx">The expx.</param>
+      <param name="expy">The expy.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.WinkelNormTest(Double,Double,Double)">
+      <summary>
+   Winkels the norm test.
+   </summary>
+      <param name="angle">The angle.</param>
+      <param name="middle">The middle.</param>
+      <param name="exp">The exp.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.Rot90Test(System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Rot90s the test.
+   </summary>
+      <param name="v_x">The v x.</param>
+      <param name="v_y">The v y.</param>
+      <param name="exp_x">The exp x.</param>
+      <param name="exp_y">The exp y.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.NegateTest(System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Negates the test.
+   </summary>
+      <param name="v_x">The v x.</param>
+      <param name="v_y">The v y.</param>
+      <param name="exp_x">The exp x.</param>
+      <param name="exp_y">The exp y.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.TryLengthAngleTest(System.Double,System.Double,System.Boolean,System.Double,System.Double)">
+      <summary>
+   Tries the length angle test.
+   </summary>
+      <param name="v_x">The v x.</param>
+      <param name="v_y">The v y.</param>
+      <param name="exp">if set to <c>true</c> [exp].</param>
+      <param name="exlength">The exlength.</param>
+      <param name="exangle">The exangle.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.ByLengthAngleTest(System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Bies the length angle test.
+   </summary>
+      <param name="exp_x">The exp x.</param>
+      <param name="exv_y">The exv y.</param>
+      <param name="length">The length.</param>
+      <param name="angle">The angle.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.MultTest(System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Defines the test method MultTest.
+   </summary>
+      <param name="v_x">The v x.</param>
+      <param name="v_y">The v y.</param>
+      <param name="s">The s.</param>
+      <param name="exp_x">The exp x.</param>
+      <param name="exp_y">The exp y.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.MultTest1(System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Mults the test1.
+   </summary>
+      <param name="v1_x">The v1 x.</param>
+      <param name="v1_y">The v1 y.</param>
+      <param name="v2_x">The v2 x.</param>
+      <param name="v2_y">The v2 y.</param>
+      <param name="exp">The exp.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.CMultTest(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   cs the mult test.
+   </summary>
+      <param name="v1_x">The v1 x.</param>
+      <param name="v1_y">The v1 y.</param>
+      <param name="v2_x">The v2 x.</param>
+      <param name="v2_y">The v2 y.</param>
+      <param name="exp_x">The exp x.</param>
+      <param name="exp_y">The exp y.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.DivTest(System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Divs the test.
+   </summary>
+      <param name="exp_x">The exp x.</param>
+      <param name="exp_y">The exp y.</param>
+      <param name="s">The s.</param>
+      <param name="v_x">The v x.</param>
+      <param name="v_y">The v y.</param>
+    </member>
+    <member name="M:MathLibrary.TwoDim.Tests.Math2dTests.RotateTest(System.Double,System.Double,System.Double,System.Double,System.Double)">
+      <summary>
+   Rotates the test.
+   </summary>
+      <param name="v_x">The v x.</param>
+      <param name="v_y">The v y.</param>
+      <param name="w">The w.</param>
+      <param name="exp_x">The exp x.</param>
+      <param name="exp_y">The exp y.</param>
+    </member>
+  </members>
+</doc>

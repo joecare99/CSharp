@@ -15,6 +15,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
+/// <summary>
+/// The CommonDialogs namespace.
+/// </summary>
 namespace CommonDialogs
 {
 	/// <summary>

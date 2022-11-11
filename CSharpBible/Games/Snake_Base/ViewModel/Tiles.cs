@@ -25,7 +25,7 @@ namespace Snake_Base.ViewModel
     public enum Tiles
     {
         /// <summary>
-        /// The empty
+        /// The empty field
         /// </summary>
         Empty, //0
         /// <summary>
@@ -37,59 +37,59 @@ namespace Snake_Base.ViewModel
         /// </summary>
         Apple, //2
         /// <summary>
-        /// The snake head n
+        /// The snake head north
         /// </summary>
         SnakeHead_N,//3
         /// <summary>
-        /// The snake tail n
+        /// The snake tail north
         /// </summary>
         SnakeTail_N,//4 
         /// <summary>
-        /// The snake body ns
+        /// The snake body north-south
         /// </summary>
         SnakeBody_NS,//5            
         /// <summary>
-        /// The snake head w
+        /// The snake head west
         /// </summary>
         SnakeHead_W,
         /// <summary>
-        /// The snake head s
+        /// The snake head south
         /// </summary>
         SnakeHead_S,
         /// <summary>
-        /// The snake head e
+        /// The snake head east
         /// </summary>
         SnakeHead_E,
         /// <summary>
-        /// The snake tail w
+        /// The snake tail west
         /// </summary>
         SnakeTail_W,
         /// <summary>
-        /// The snake tail s
+        /// The snake tail south
         /// </summary>
         SnakeTail_S,
         /// <summary>
-        /// The snake tail e
+        /// The snake tail east
         /// </summary>
         SnakeTail_E,
         /// <summary>
-        /// The snake body nw
+        /// The snake body north-west
         /// </summary>
         SnakeBody_NW,
         /// <summary>
-        /// The snake body sw
+        /// The snake body south-west
         /// </summary>
         SnakeBody_SW,
         /// <summary>
-        /// The snake body se
+        /// The snake body south-east
         /// </summary>
         SnakeBody_SE,
         /// <summary>
-        /// The snake body ne
+        /// The snake body north-east
         /// </summary>
         SnakeBody_NE,
         /// <summary>
-        /// The snake body we
+        /// The snake body west-east
         /// </summary>
         SnakeBody_WE,
     };

@@ -1,12 +1,13 @@
 <Project>
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+	<TargetFrameworks>net461;net472;net48</TargetFrameworks>
+	<BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	<IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+	<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+    <ImplicitUsings>disable</ImplicitUsings>
+	  <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
-		<BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-		<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

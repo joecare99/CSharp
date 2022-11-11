@@ -53,7 +53,7 @@ namespace ConsoleDisplay.View.Tests
         e11
     }
 
-    internal class TestTileDef : TileDef<TestEnum>
+    internal class TestTileDef : TileDefBase
     {
         /// <summary>
         /// Gets the tile definition.
@@ -61,7 +61,7 @@ namespace ConsoleDisplay.View.Tests
         /// <param name="tile">The tile.</param>
         /// <returns>The visual defintion of the tile</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(TestEnum tile)
+        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum tile)
         {
             throw new NotImplementedException();
         }

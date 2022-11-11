@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Permutation</name>
+  </assembly>
+  <members>
+    <member name="T:Permutation.Model.PermutatedRange">
+      <summary>
+   Class PermutatedRange.
+   </summary>
+    </member>
+    <member name="M:Permutation.Model.PermutatedRange.#ctor(System.Int32,System.Int32)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Permutation.Model.PermutatedRange" /> class.
+   </summary>
+      <param name="size">The size.</param>
+      <param name="pp">The pp.</param>
+    </member>
+    <member name="M:Permutation.Model.PermutatedRange.#ctor(System.Int32)">
+      <summary>
+   Initializes a new instance of the <see cref="T:Permutation.Model.PermutatedRange" /> class.
+   </summary>
+      <param name="size">The size.</param>
+    </member>
+    <member name="P:Permutation.Model.PermutatedRange.Item(System.Int32)">
+      <summary>
+   Gets the <see cref="T:System.Int32" /> with the specified ix.
+   </summary>
+      <param name="ix">The ix.</param>
+      <returns>System.Int32.</returns>
+    </member>
+    <member name="T:Permutation.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+  </members>
+</doc>

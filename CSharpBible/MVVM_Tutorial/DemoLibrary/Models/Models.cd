@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DemoLibrary.Models.PersonModel">
+    <Position X="1.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQBAAAAAABAAAMAEAEAAAIAIAAAQAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Models\PersonModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PrimaryAddress" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="Addresses" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DemoLibrary.Models.AddressModel">
+    <Position X="5.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAMAAAAAEAAAAIAAAABAAQABAAAABA=</HashCode>
+      <FileName>Models\AddressModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

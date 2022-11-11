@@ -30,12 +30,13 @@ namespace Snake_Base.Model
         /// Occurs when [on place change].
         /// </summary>
         event EventHandler<(Point oP, Point nP)> OnPlaceChange;
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Gets or sets the place.
         /// </summary>
         /// <value>The place.</value>
         Point Place { get => GetPlace(); set => SetPlace(value); }
-
+#endif
         /// <summary>
         /// Sets the place.
         /// </summary>
