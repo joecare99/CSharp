@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Werner_Flaschbier_BaseTests</name>
+  </assembly>
+  <members>
+    <member name="T:Werner_Flaschbier_Base.View.Tests.VisualTests">
+      <summary>
+   Defines test class VisualTests.
+   </summary>
+    </member>
+    <member name="M:Werner_Flaschbier_Base.View.Tests.VisualTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:Werner_Flaschbier_Base.View.Tests.VisualTests.WriteTileTest">
+      <summary>
+   Defines the test method WriteTileTest.
+   </summary>
+    </member>
+    <member name="M:Werner_Flaschbier_Base.View.Tests.VisualTests.FullRedrawTest">
+      <summary>
+   Defines the test method FullRedrawTest.
+   </summary>
+    </member>
+  </members>
+</doc>

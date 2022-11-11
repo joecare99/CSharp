@@ -5,6 +5,7 @@
 		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<LangVersion>8.0</LangVersion>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
 		<Authors>Joe Care from JC-Soft</Authors>

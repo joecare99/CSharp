@@ -20,7 +20,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Display_Test\Display_Test.csproj" />
+    <ProjectReference Include="..\Display_Test\Display_netTest.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 

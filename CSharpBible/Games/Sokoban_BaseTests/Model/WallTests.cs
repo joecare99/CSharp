@@ -25,7 +25,7 @@ namespace Sokoban_Base.Model.Tests
             Assert.AreEqual(new Point(2, 3), w.Position);
             Assert.IsNull(w.Item);
             w.Item = null;
-            Assert.ThrowsException<NotImplementedException>(()=>w.Item = new Stone(null));
+            Assert.ThrowsException<ArgumentException>(()=>w.Item = new Stone(null));
         }
     }
 }

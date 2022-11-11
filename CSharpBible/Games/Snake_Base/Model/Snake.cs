@@ -11,8 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Baselib.Model;
 using BaseLib.Helper;
 using BaseLib.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -56,7 +58,13 @@ namespace Snake_Base.Model
         /// Gets or sets the next part.
         /// </summary>
         /// <value>The next part.</value>
-        public SnakeBodyPart? NextPart { get; set; }
+        public SnakeBodyPart? NextPart { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the previous part.
+        /// </summary>
+        /// <value>The next part.</value>
+        public SnakeBodyPart? PrevPart { get; set; }= null;
         #endregion
 
         #region Methods
@@ -138,7 +146,7 @@ namespace Snake_Base.Model
     /// <summary>
     /// Class Snake.
     /// </summary>
-    public class Snake
+    public class Snake : NotificationObjectAdv
     {
         #region Properties
         #region private Properties
@@ -177,12 +185,14 @@ namespace Snake_Base.Model
         /// Gets the length.
         /// </summary>
         /// <value>The length.</value>
-        public int Length { get => _snLength; }
+        public int Length { get => _snLength; private set => SetProperty(ref _snLength,value); }
         /// <summary>
         /// Gets the head position.
         /// </summary>
         /// <value>The head position.</value>
-        public Point HeadPos { get=>_snHead.Place; }
+        public Point HeadPos { get => _snHead.Place; }
+
+        public event EventHandler OnSnakeEatsApple;
         #endregion
 
         #region Methods
@@ -197,7 +207,8 @@ namespace Snake_Base.Model
             _snTail = new SnakeTail(start,this);
             _snHead = new SnakeHead(start,this);
             _snHead.NextPart = _snTail;
-            _snLength = 2; // Head & Tail;
+            _snTail.PrevPart = _snHead;
+            Length = 2; // Head & Tail;
             alive = true;
         }
 
@@ -210,25 +221,38 @@ namespace Snake_Base.Model
             var nextPlace = Offsets.DirOffset(dir, _snHead.Place);
             if (!_playfield?.Rect.Contains(nextPlace) ?? false) { alive = false;return; }
             if (_playfield?[nextPlace] is SnakeBodyPart) { alive = false; return; }
-            if (_playfield?[nextPlace] is Apple) { _snLength++; }
+            if (_playfield?[nextPlace] is Apple) {
+                OnSnakeEatsApple?.Invoke(this, new EventArgs());
+                _playfield[nextPlace] = null;
+                Length++; 
+            }
             SnakeBodyPart? _mRun = _snHead;
             var _nxtPlace = nextPlace;
             var bCount = 1;
-            while (_mRun?.NextPart != _snTail && _mRun != null)
+            while ((_mRun != null) && (_mRun.NextPart != _snTail))
             {
                 (_mRun.Place, _nxtPlace) = (_nxtPlace, _mRun.Place);
+                if (bCount==1)
+                  RaisePropertyChangedAdv(_mRun.OldPlace, _mRun.Place, nameof(HeadPos));
                 _mRun = _mRun.NextPart;
                 bCount++;
             } 
             if (bCount++ < _snLength && _mRun != null) {
                 (_mRun.Place, _nxtPlace) = (_nxtPlace, _mRun.Place);
+                if (bCount == 2)
+                    RaisePropertyChangedAdv(_mRun.OldPlace, _mRun.Place, nameof(HeadPos));
                 var _snBody = new SnakeBodyPart(_nxtPlace,this,_playfield);
+                _snBody.ResetOldPlace();
                 _snBody.NextPart = _mRun.NextPart;
+                _snBody.PrevPart = _mRun;    
+                _mRun.NextPart!.PrevPart = _snBody;
                 _mRun.NextPart= _snBody;
             }
             else if (_mRun != null)
             {
                 (_mRun.Place, _nxtPlace) = (_nxtPlace, _mRun.Place);
+                if (bCount == 2)
+                    RaisePropertyChangedAdv(_mRun.OldPlace, _mRun.Place, nameof(HeadPos));
                 _snTail.Place = _nxtPlace;
             }
         }

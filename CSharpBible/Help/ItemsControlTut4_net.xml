@@ -28,25 +28,25 @@
       <summary>
    Gets or sets the title.
    </summary>
-      <value>The title.</value>
+      <value>The title of the task.</value>
     </member>
     <member name="P:ItemsControlTut4.ViewModel.TodoItem.Completion">
       <summary>
    Gets or sets the completion.
    </summary>
-      <value>The completion.</value>
+      <value>The completion of the task [%].</value>
     </member>
     <member name="P:ItemsControlTut4.ViewModel.TodoItem.Do">
       <summary>
    Gets or sets the do-Command.
    </summary>
-      <value>The do.</value>
+      <value>The commang-delegate for "Do".</value>
     </member>
     <member name="P:ItemsControlTut4.ViewModel.TodoItem.Step">
       <summary>
    Gets or sets the Step-Command.
    </summary>
-      <value>The do.</value>
+      <value>The command-delegate for the "Step".</value>
     </member>
     <member name="P:ItemsControlTut4.ViewModel.TodoItem.This">
       <summary>
