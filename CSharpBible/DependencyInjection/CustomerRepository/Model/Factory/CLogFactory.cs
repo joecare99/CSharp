@@ -1,8 +1,8 @@
 ﻿using CustomerRepository.Model;
 
-namespace CustomerRepositoryTests.Model
+namespace CustomerRepository.Model.Factory
 {
-    public class CLogFactory
+    public class CLogFactory : ILogFactory
     {
         public CLogFactory()
         {
@@ -10,7 +10,7 @@ namespace CustomerRepositoryTests.Model
 
         public ILog Get()
         {
-           return new CLog();
+            return new CLog();
         }
     }
 }

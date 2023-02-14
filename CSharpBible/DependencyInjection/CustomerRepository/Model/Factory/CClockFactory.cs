@@ -1,6 +1,6 @@
 ﻿using CustomerRepository.Model;
 
-namespace CustomerRepositoryTests.Model
+namespace CustomerRepository.Model.Factory
 {
     public class CClockFactory
     {

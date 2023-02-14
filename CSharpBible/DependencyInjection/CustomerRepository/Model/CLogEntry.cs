@@ -2,6 +2,7 @@
 {
     public class CLogEntry
     {
-        public DateTime Time { get; set; }
+        public DateTimeOffset Time { get; set; }
+        public string Message { get; set; }
     }
 }

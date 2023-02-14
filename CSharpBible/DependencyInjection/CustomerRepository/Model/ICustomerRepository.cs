@@ -5,5 +5,5 @@
         CCustomer Get(Guid id);
         Guid Put(CCustomer customer);
         long Count { get;}
-    }
+     }
 }
