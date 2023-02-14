@@ -1,4 +1,5 @@
 using CustomerRepository.Model;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void EmptyRepThrowsOnGet()
         {
-            ICustomerRepository repository = new CusomerRepository1();
+            ICustomerRepository repository = new CustomerRepository1();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
@@ -21,7 +22,7 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void RepLogsOnInvGet()
         {
-            ICustomerRepository repository = new CusomerRepository1();
+            ICustomerRepository2 repository = new CustomerRepository1();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
@@ -32,7 +33,7 @@ namespace CustomerRepositoryTests.Model
 
         [TestMethod]
         public void RepLogsTimeOnInvLogGet() {
-            ICustomerRepository repository = new CusomerRepository1();
+            ICustomerRepository2 repository = new CustomerRepository1();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
@@ -42,5 +43,6 @@ namespace CustomerRepositoryTests.Model
             Math.Abs((entry.Time - DateTime.Now)
                 .TotalSeconds).Should().BeLessThan(1);
         }
+
     }
 }
