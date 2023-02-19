@@ -11,7 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Model;
 using MVVM.ViewModel;
+using MVVM_22_WpfCap.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,12 +50,26 @@ namespace MVVM_22_WpfCap.ViewModel
         /// Gets or sets the color of the tile.
         /// </summary>
         /// <value>The color of the tile.</value>
-        public int[] TileColor { get; set; }
+        public int[] TileColor
+        {
+            get
+            {
+                var _result = new int[4];
+                for (var i = 0;i<4;i++)
+                    _result[i]= Parent.Model.TileColor(i,RowId - 1);
+                return _result;
+            }
+        }
+
         /// <summary>
         /// Gets the this.
         /// </summary>
         /// <value>The this.</value>
         public object This => this;
+        /// <summary>
+        /// The parent
+        /// </summary>
+        public WpfCapViewModel Parent;
 #if NET5_0_OR_GREATER
         public event PropertyChangedEventHandler? PropertyChanged;
 #else
@@ -99,9 +115,7 @@ namespace MVVM_22_WpfCap.ViewModel
         /// </summary>
         /// <param name="ix">The ix.</param>
         /// <returns>System.Int32.</returns>
-        public int this[int ix] { 
-            get => Parent.Rows[ix].TileColor[ColId-1]; 
-            set => Parent.Rows[ix].TileColor[ColId-1] = value ; }
+        public int this[int ix] => Parent.Model.TileColor(ix, ColId - 1);
         /// <summary>
         /// Gets the this.
         /// </summary>
@@ -140,18 +154,23 @@ namespace MVVM_22_WpfCap.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class WpfCapViewModel : BaseViewModel
     {
+        public WpfCapViewModel():this((IWpfCapModel)DISource.Resolver.Invoke(typeof(IWpfCapModel)))
+        {
+
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="WpfCapViewModel"/> class.
         /// </summary>
-        public WpfCapViewModel()
-        {
+        public WpfCapViewModel(IWpfCapModel model)
+        { 
+            _model = model;
             var _moveLeft = new DelegateCommand(DoMoveLeft);
             var _moveRight = new DelegateCommand(DoMoveRight);
             Rows = new ObservableCollection<RowData>();
-            Rows.Add(new RowData() { RowId = 1, MoveLeft = _moveLeft, MoveRight = _moveRight, TileColor = new int[4] });
-            Rows.Add(new RowData() { RowId = 2, MoveLeft = _moveLeft, MoveRight = _moveRight, TileColor = new int[4] });
-            Rows.Add(new RowData() { RowId = 3, MoveLeft = _moveLeft, MoveRight = _moveRight, TileColor = new int[4] });
-            Rows.Add(new RowData() { RowId = 4, MoveLeft = _moveLeft, MoveRight = _moveRight, TileColor = new int[4] });
+            Rows.Add(new RowData() { RowId = 1, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
+            Rows.Add(new RowData() { RowId = 2, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
+            Rows.Add(new RowData() { RowId = 3, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
+            Rows.Add(new RowData() { RowId = 4, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
 
             var _moveUp = new DelegateCommand(DoMoveUp);
             var _moveDown = new DelegateCommand(DoMoveDown);
@@ -163,8 +182,24 @@ namespace MVVM_22_WpfCap.ViewModel
 
             ShuffleCommand = new DelegateCommand(Shuffle);
 
-            Init();
-            Shuffle();
+            model.Init();
+            model.Shuffle();
+            model.TileColorChanged += Model_TileColorChanged;
+        }
+
+        private void Model_TileColorChanged(
+#if NET5_0_OR_GREATER
+            object?
+#else
+            object
+# endif
+            sender, EventArgs e)
+        {
+            for (int i = 0; i < _model.Height; i++)
+            {
+                var rd = Rows[i];
+                rd.NotifyPropertyChanged(nameof(rd.TileColor));
+            }
         }
 
         /// <summary>
@@ -173,15 +208,8 @@ namespace MVVM_22_WpfCap.ViewModel
         /// <value>The shuffle command.</value>
         public DelegateCommand ShuffleCommand { get; set; }
 
-        /// <summary>
-        /// Initializes this instance.
-        /// </summary>
-        private void Init()
-        {
-            foreach (var row in Rows )
-                for (int i = 0; i < row.TileColor.Length; i++)
-                    row.TileColor[i] = i+1;
-        }
+        private IWpfCapModel _model;
+        public IWpfCapModel Model => _model;
 
         /// <summary>
         /// Shuffles the specified object.
@@ -195,26 +223,7 @@ namespace MVVM_22_WpfCap.ViewModel
 #endif
             obj=null)
         {
-            var rnd = new Random();
-            for (int i=0;i< 100;i++)
-            {
-                var move = rnd.Next(16);
-                switch(move % 4){
-                    case 0:
-                        DoMoveRight(Rows[move / 4]);
-                        break;
-                    case 1:
-                        DoMoveLeft(Rows[move / 4]);
-                        break;
-                    case 2:
-                        DoMoveUp(Cols[move / 4]);
-                        break;
-                    case 3:
-                        DoMoveDown(Cols[move / 4]);
-                        break;
-
-                }
-            }
+            _model?.Shuffle();
         }
 
         /// <summary>
@@ -232,11 +241,7 @@ namespace MVVM_22_WpfCap.ViewModel
         {
             if (obj is RowData rd)
             {
-                var s = rd.TileColor[0];
-                for (int i = 1; i < rd.TileColor.Length; i++)
-                    rd.TileColor[i - 1] = rd.TileColor[i];
-                rd.TileColor[rd.TileColor.Length - 1] = s;
-                rd.NotifyPropertyChanged(nameof(rd.TileColor));
+                _model.MoveLeft(rd.RowId-1);
             }
             else
               throw new NotImplementedException();
@@ -252,17 +257,12 @@ namespace MVVM_22_WpfCap.ViewModel
             object?
 #else
             object
-#endif 
+#endif
             obj)
         {
             if (obj is RowData rd)
             {
-                var s=rd.TileColor[rd.TileColor.Length - 1];
-                for (int i = rd.TileColor.Length-1; i > 0; i--)
-                    rd.TileColor[i] = rd.TileColor[i-1];
-                rd.TileColor[0]=s;
-
-                rd.NotifyPropertyChanged(nameof(rd.TileColor));
+                _model.MoveRight(rd.RowId-1);
             }
             else
                 throw new NotImplementedException();
@@ -283,13 +283,7 @@ namespace MVVM_22_WpfCap.ViewModel
         {
             if (obj is ColData cd)
             {
-                var s = cd[0];
-                for (int i = 1; i < cd.Length; i++)
-                    cd[i - 1] = cd[i];
-                cd[cd.Length - 1] = s;
-
-                for (int i = 0; i < cd.Length; i++)
-                    Rows[i].NotifyPropertyChanged("TileColor");
+                _model.MoveUp(cd.ColId-1);
             }
             else
                 throw new NotImplementedException();
@@ -310,13 +304,7 @@ namespace MVVM_22_WpfCap.ViewModel
         {
             if (obj is ColData cd)
             {
-                var s = cd[cd.Length - 1];
-                for (int i = cd.Length - 1; i > 0; i--)
-                    cd[i] = cd[i - 1];
-                cd[0] = s;
-
-                for (int i = 0; i < cd.Length; i++)
-                    Rows[i].NotifyPropertyChanged("TileColor");
+                _model.MoveDown(cd.ColId-1);
             }
             else
                 throw new NotImplementedException();
