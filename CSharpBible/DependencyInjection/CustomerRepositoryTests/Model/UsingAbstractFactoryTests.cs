@@ -8,28 +8,34 @@ using System.Linq;
 namespace CustomerRepositoryTests.Model
 {
     [TestClass]
-    public class UsingFactoryTests
+    public class UsingAbstractFactoryTests
     {
         [TestMethod]
         public void EmptyRepThrowsOnGet()
         {
+            ILogFactory logFactory = new CLogFactory();
+            IClockFactory clockFactory = new CStaticClockFactory();
+
             ICustomerRepository repository =
-                 new CustomerRepository2();
+                 new CustomerRepository3(clockFactory, logFactory);
 
             Assert.ThrowsException<ArgumentException>(
-                () => repository.Get(Guid.NewGuid()));
+                () => repository.Get(Guid.NewGuid())
+            );
         }
 
         [TestMethod]
         public void RepLogsOnInvGet()
         {
-            CClockFactory.injectClock = new CStaticClock();
+            ILogFactory logFactory = new CLogFactory();
+            IClockFactory clockFactory = new CStaticClockFactory();
 
             ICustomerRepository2 repository =
-                 new CustomerRepository2();
+                 new CustomerRepository3(clockFactory, logFactory);
 
             Assert.ThrowsException<ArgumentException>(
-                () => repository.Get(Guid.NewGuid()));
+                () => repository.Get(Guid.NewGuid())
+            );
 
             repository.Log.Get().Should().HaveCount(1);
         }
@@ -37,10 +43,11 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void RepLogsOnMultibleInvGet()
         {
-            CClockFactory.injectClock = new CStaticClock();
+            ILogFactory logFactory = new CLogFactory();
+            IClockFactory clockFactory = new CStaticClockFactory();
 
             ICustomerRepository2 repository =
-                 new CustomerRepository2();
+                 new CustomerRepository3(clockFactory, logFactory);
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository.Get(Guid.NewGuid()));
@@ -53,10 +60,11 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void RepLogsTimeOnInvLogGet()
         {
-            CClockFactory.injectClock = new CStaticClock();
+            ILogFactory logFactory = new CLogFactory();
+            IClockFactory clockFactory = new CStaticClockFactory();
 
             ICustomerRepository2 repository =
-                new CustomerRepository2();
+                new CustomerRepository3(clockFactory, logFactory);
             var referenceTime = repository.Clock.Now;
 
             Assert.ThrowsException<ArgumentException>(

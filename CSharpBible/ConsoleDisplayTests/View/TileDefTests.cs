@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 /// <summary>
 /// The Tests namespace.

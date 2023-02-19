@@ -9,8 +9,9 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup>
+    <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="obj\**" />

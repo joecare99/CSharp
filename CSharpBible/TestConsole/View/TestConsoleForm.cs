@@ -19,19 +19,23 @@ namespace TestConsole.View
         /// <summary>
         /// The ch
         /// </summary>
-        public char ch='\x00';
+        public char ch;
         /// <summary>
         /// The FGR
         /// </summary>
-        public ConsoleColor fgr = ConsoleColor.Gray;
+        public ConsoleColor fgr;
         /// <summary>
         /// The BGR
         /// </summary>
-        public ConsoleColor bgr = ConsoleColor.Black;
+        public ConsoleColor bgr;
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsoleCharInfo"/> struct.
         /// </summary>
-        public ConsoleCharInfo(){}
+        public ConsoleCharInfo(bool init=false){
+            ch = '\x00';
+            fgr = ConsoleColor.Gray;
+            bgr = ConsoleColor.Black;
+        }
     }
 
     /// <summary>
