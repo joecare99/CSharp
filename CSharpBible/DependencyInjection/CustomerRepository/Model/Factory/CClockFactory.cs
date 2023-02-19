@@ -4,6 +4,8 @@ namespace CustomerRepository.Model.Factory
 {
     public class CClockFactory
     {
+        public static IClock injectClock;
+
         public CClockFactory()
         {
         }
@@ -11,7 +13,7 @@ namespace CustomerRepository.Model.Factory
         public IClock Get()
         {
             //todo: Context detection Vodoo um Clock-Type zu ermitteln
-            return new CSystemClock();
+            return injectClock ?? new CSystemClock();
         }
     }
 }

@@ -27,6 +27,7 @@ namespace MVVM_21_Buttons.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class ButtonsViewViewModel : BaseViewModel
     {
+        #region Properties
 #if NULLABLE || NET5_0_OR_GREATER
         private object? _lastPara;
 #else
@@ -39,23 +40,7 @@ namespace MVVM_21_Buttons.ViewModel
         /// The flip
         /// </summary>
         private bool[] _flip = new bool[10];
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ButtonsViewViewModel"/> class.
-        /// </summary>
-        public ButtonsViewViewModel()
-        {
-            PlayButton = new DelegateCommand(DoPlay, CanPlay);
-            CommandCanExecuteBinding.Add((nameof(CanPlay), nameof(PlayButton)));
-
-            ResetButton = new DelegateCommand(DoReset);
-
-            CommandCanExecuteBinding.Add((nameof(LastPara), nameof(CanPlay)));
-            _flip[1] = true;
-        }
-
-
-        #region Properties
+      
         /// <summary>
         /// Gets or sets the play button.
         /// </summary>
@@ -84,6 +69,20 @@ namespace MVVM_21_Buttons.ViewModel
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ButtonsViewViewModel"/> class.
+        /// </summary>
+        public ButtonsViewViewModel()
+        {
+            PlayButton = new DelegateCommand(DoPlay, CanPlay);
+            CommandCanExecuteBinding.Add((nameof(CanPlay), nameof(PlayButton)));
+
+            ResetButton = new DelegateCommand(DoReset);
+
+            CommandCanExecuteBinding.Add((nameof(LastPara), nameof(CanPlay)));
+            _flip[1] = true;
+        }
+
 #if NULLABLE || NET5_0_OR_GREATER
         public bool CanPlay(object? obj)
 #else

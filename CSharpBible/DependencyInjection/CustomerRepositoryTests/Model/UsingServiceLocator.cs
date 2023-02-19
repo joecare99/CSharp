@@ -14,9 +14,23 @@ namespace CustomerRepositoryTests.Model
 
         /// <summary>Repository logs on invalid get.</summary>
         [TestMethod]
+        public void RepThrowsExOnInvGet()
+        {
+            ServiceLocator.Log = new CLog();
+
+            ICustomerRepository repository = new CustomerRepository4();
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repository.Get(Guid.NewGuid())
+            );
+        }
+
+        /// <summary>Repository logs on invalid get.</summary>
+        [TestMethod]
         public void RepLogsOnInvGet()
         {
             ServiceLocator.Log = new CLog();
+
             ICustomerRepository repository = new CustomerRepository4();
 
             Assert.ThrowsException<ArgumentException>(
