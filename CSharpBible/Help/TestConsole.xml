@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>TestConsole</name>
+  </assembly>
+  <members>
+    <member name="T:TestConsole.View.ConsoleCharInfo">
+      <summary>
+   Struct ConsoleCharInfo
+   </summary>
+    </member>
+    <member name="T:TestConsole.View.TestConsoleForm">
+      <summary> Class TestConsoleForm. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class TestConsoleForm. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="F:TestConsole.View.ConsoleCharInfo.ch">
+      <summary>
+   The ch
+   </summary>
+    </member>
+    <member name="F:TestConsole.View.ConsoleCharInfo.fgr">
+      <summary>
+   The FGR
+   </summary>
+    </member>
+    <member name="F:TestConsole.View.ConsoleCharInfo.bgr">
+      <summary>
+   The BGR
+   </summary>
+    </member>
+    <member name="M:TestConsole.View.ConsoleCharInfo.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestConsole.View.ConsoleCharInfo" /> struct.
+   </summary>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestConsole.View.TestConsoleForm" /> class.
+   </summary>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.ReadKey">
+      <summary>
+   Reads the key.
+   </summary>
+      <returns>ConsoleKeyInfo.</returns>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.GetCursorPosition">
+      <summary>
+   Gets the cursor position.
+   </summary>
+      <returns>System.ValueTuple&lt;System.Int32, System.Int32&gt;.</returns>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.Clear">
+      <summary>
+   Clears this instance.
+   </summary>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.Write(System.Char)">
+      <summary>
+   Writes the specified ch.
+   </summary>
+      <param name="ch">The ch.</param>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.Write(System.Nullable{System.String})">
+      <summary>
+   Writes the specified st.
+   </summary>
+      <param name="st">The st.</param>
+    </member>
+    <member name="F:TestConsole.View.TestConsoleForm.foregroundColor">
+      <summary>
+   The foreground color
+   </summary>
+    </member>
+    <member name="F:TestConsole.View.TestConsoleForm.backgroundColor">
+      <summary>
+   The background color
+   </summary>
+    </member>
+    <member name="P:TestConsole.View.TestConsoleForm.WindowWidth">
+      <summary>
+   Gets or sets the width of the window.
+   </summary>
+      <value>The width of the window.</value>
+    </member>
+    <member name="P:TestConsole.View.TestConsoleForm.WindowHeight">
+      <summary>
+   Gets or sets the height of the window.
+   </summary>
+      <value>The height of the window.</value>
+    </member>
+    <member name="P:TestConsole.View.TestConsoleForm.KeyAvailable">
+      <summary>
+   Gets a value indicating whether [key available].
+   </summary>
+      <value>
+        <c>true</c> if [key available]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:TestConsole.View.TestConsoleForm.Content">
+      <summary>
+   Gets the content.
+   </summary>
+      <value>The content.</value>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.SetCursorPosition(System.Int32,System.Int32)">
+      <summary>
+   Sets the cursor position.
+   </summary>
+      <param name="left">The left.</param>
+      <param name="top">The top.</param>
+    </member>
+    <member name="M:TestConsole.View.TestConsoleForm.Dispose(System.Boolean)">
+      <summary>
+   Clean up any resources being used.
+   </summary>
+      <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    </member>
+    <member name="T:TestConsole.TstConsole">
+      <summary>
+   Class TstConsole.
+   Implements the <see cref="T:ConsoleDisplay.View.MyConsoleBase" /></summary>
+      <seealso cref="T:ConsoleDisplay.View.MyConsoleBase" />
+    </member>
+    <member name="P:TestConsole.TstConsole.ForegroundColor">
+      <summary>
+   Gets or sets the color of the foreground.
+   </summary>
+      <value>The color of the foreground.</value>
+    </member>
+    <member name="P:TestConsole.TstConsole.BackgroundColor">
+      <summary>
+   Gets or sets the color of the background.
+   </summary>
+      <value>The color of the background.</value>
+    </member>
+    <member name="P:TestConsole.TstConsole.WindowHeight">
+      <summary>
+   Gets or sets the height of the window.
+   </summary>
+      <value>The height of the window.</value>
+    </member>
+    <member name="P:TestConsole.TstConsole.WindowWidth">
+      <summary>
+   Gets or sets the width of the window.
+   </summary>
+      <value>The width of the window.</value>
+    </member>
+    <member name="P:TestConsole.TstConsole.KeyAvailable">
+      <summary>
+   Gets a value indicating whether [key available].
+   </summary>
+      <value>
+        <c>true</c> if [key available]; otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:TestConsole.TstConsole.LargestWindowHeight">
+      <summary>
+   Gets the height of the largest window.
+   </summary>
+      <value>The height of the largest window.</value>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="M:TestConsole.TstConsole.Clear">
+      <summary>
+   Clears this instance.
+   </summary>
+    </member>
+    <member name="M:TestConsole.TstConsole.ReadKey">
+      <summary>
+   Reads the key.
+   </summary>
+      <returns>System.Nullable&lt;ConsoleKeyInfo&gt;.</returns>
+    </member>
+    <member name="M:TestConsole.TstConsole.SetCursorPosition(System.Int32,System.Int32)">
+      <summary>
+   Sets the cursor position.
+   </summary>
+      <param name="left">The left.</param>
+      <param name="top">The top.</param>
+    </member>
+    <member name="M:TestConsole.TstConsole.Write(System.Char)">
+      <summary>
+   Writes the specified ch.
+   </summary>
+      <param name="ch">The ch.</param>
+    </member>
+    <member name="M:TestConsole.TstConsole.Write(System.Nullable{System.String})">
+      <summary>
+   Writes the specified st.
+   </summary>
+      <param name="st">The st.</param>
+    </member>
+    <member name="M:TestConsole.TstConsole.WriteLine(System.Nullable{System.String})">
+      <summary>
+   Writes the line.
+   </summary>
+      <param name="st">The st.</param>
+    </member>
+    <member name="M:TestConsole.TstConsole.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:TestConsole.TstConsole" /> class.
+   </summary>
+    </member>
+    <member name="M:TestConsole.TstConsole.GetCursorPosition">
+      <summary>
+   Gets the cursor position.
+   </summary>
+      <returns>System.ValueTuple&lt;System.Int32, System.Int32&gt;.</returns>
+    </member>
+    <member name="M:TestConsole.TstConsole.Beep(System.Int32,System.Int32)">
+      <summary>
+   Beeps the specified freq.
+   </summary>
+      <param name="freq">The freq.</param>
+      <param name="len">The length.</param>
+      <exception cref="T:System.NotImplementedException">
+      </exception>
+    </member>
+    <member name="P:TestConsole.TstConsole.Content">
+      <summary>
+   Gets the content.
+   </summary>
+      <value>The content.</value>
+    </member>
+  </members>
+</doc>

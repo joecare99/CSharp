@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_16_Usercontrol_1</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_16_UserControl_1.View.DoubleButtonUC">
+      <summary> Interaktionslogik für CurrencyView.xaml </summary>
+    </member>
+    <member name="T:MVVM_16_Usercontrol_1.View.LabeldMaxLengthTextbox">
+      <summary> Interaktionslogik für LabeldMaxLengthTextbox.xaml </summary>
+    </member>
+    <member name="T:MVVM_16_Usercontrol_1.View.UserControlView">
+      <summary> Interaktionslogik für UserControlView.xaml </summary>
+    </member>
+    <member name="T:MVVM_16_UserControl_1.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_16_UserControl_1.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+  </members>
+</doc>

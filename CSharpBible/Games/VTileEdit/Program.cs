@@ -5,7 +5,7 @@ namespace VTileEdit
     /// <summary>
     /// Class Program.
     /// </summary>
-    internal class Program
+    public static class Program
     {
         /// <summary>Defines the entry point of the application.</summary>
         /// <param name="args">The arguments.</param>

@@ -15,7 +15,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        <Label d:Content="LABEL" Content="{Binding Caption}"/>
+        <Label x:Name="lblCaption" d:Content="LABEL" Content="{Binding Caption}"/>
         <Label Grid.Column="1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding ElementName=txt, Path=Text.Length}"/>
@@ -23,6 +23,7 @@
                 <TextBlock Text="{Binding MaxLength}"/>
             </StackPanel>
         </Label>
-        <TextBox Text="{Binding Text}" Grid.Row="1" Grid.ColumnSpan="2" x:Name="txt"/>
+        <TextBox d:Text="&lt;Some Text&gt;" Text="{Binding Text}" Grid.Row="1" Grid.ColumnSpan="1" x:Name="txt"/>
+        <Button Grid.Column="1" Grid.Row="1" Content="..." Command="{Binding Command}"/>
     </Grid>
 </UserControl>

@@ -1,0 +1,26 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<IntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
+		<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<OutputType>Exe</OutputType>
+		<Company>JC-Soft</Company>
+		<Copyright>Copyright © 2022 by JC-Soft</Copyright>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+  </PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -6,18 +6,14 @@
 // Last Modified By : Mir
 // Last Modified On : 07-05-2022
 // ***********************************************************************
-// <copyright file="TimeSpanConverter.cs" company="MVVM_18_MultiConverters">
+// <copyright file="TimeSpanConverter.cs" company="JC-Soft">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using MVVM_18_MultiConverters.Model;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace MVVM_18_MultiConverters.ValueConverter

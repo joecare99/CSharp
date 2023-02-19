@@ -4,6 +4,10 @@
 		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
         <!--UseWPF>true</UseWPF-->
+		<SignAssembly>True</SignAssembly>
+		<Authors>Joe Care from JC-Soft</Authors>
+		<Company>JC-Soft</Company>
+		<Copyright>Copyright (c) by JC-Soft 2022</Copyright>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -17,7 +21,7 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Helper\" />

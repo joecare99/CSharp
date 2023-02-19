@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_Converter_Grid3_NonLin</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_Converter_Grid3_NonLin.View.PlotFrame">
+      <summary> Interaktionslogik für PlotFrame.xaml </summary>
+    </member>
+    <member name="T:MVVM_Converter_Grid3_NonLin.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_Converter_Grid3_NonLin.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+  </members>
+</doc>

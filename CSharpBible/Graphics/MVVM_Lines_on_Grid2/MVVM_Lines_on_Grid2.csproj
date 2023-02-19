@@ -1,0 +1,27 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Authors>Joe Care</Authors>
+    <Company>JC-Soft</Company>
+    <Copyright>(c) by Joe Care 2022</Copyright>
+    <Description>Darstellungselemente mit Converter automatisch erzeugen .</Description>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Model\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+	</ItemGroup>
+
+</Project>

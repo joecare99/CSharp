@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ItemsControlTut3_net</name>
+  </assembly>
+  <members>
+    <member name="T:ItemsControlTut3.View.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+    <member name="M:ItemsControlTut3.View.MainWindow.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ItemsControlTut3.View.MainWindow" /> class.
+   </summary>
+    </member>
+    <member name="T:ItemsControlTut3.ViewModel.TodoItem">
+      <summary>
+   Class TodoItem.
+   Extends the <see cref="T:MVVM.ViewModel.NotificationObject" /></summary>
+      <seealso cref="T:MVVM.ViewModel.NotificationObject" />
+    </member>
+    <member name="T:ItemsControlTut3.ViewModel.MainWindowViewModel">
+      <summary>
+   Class MainWindowViewModel.
+   Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" /></summary>
+      <seealso cref="T:MVVM.ViewModel.BaseViewModel" />
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.TodoItem.Title">
+      <summary>
+   Gets or sets the title.
+   </summary>
+      <value>The title of the task.</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.TodoItem.Completion">
+      <summary>
+   Gets or sets the completion [%].
+   </summary>
+      <value>The completion of the task [%].</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.TodoItem.Do">
+      <summary>
+   Gets or sets the do-Command.
+   </summary>
+      <value>The do.</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.TodoItem.Step">
+      <summary>
+   Gets or sets the Step-Command.
+   </summary>
+      <value>The do.</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.TodoItem.This">
+      <summary>
+   Gets the this.
+   </summary>
+      <value>The this.</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.MainWindowViewModel.TodoList">
+      <summary>
+   Gets or sets the todo list.
+   </summary>
+      <value>The todo list.</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.MainWindowViewModel.AddCommand">
+      <summary>
+   Gets or sets the add item command.
+   </summary>
+      <value>The add item command.</value>
+    </member>
+    <member name="P:ItemsControlTut3.ViewModel.MainWindowViewModel.NewItem">
+      <summary>Title of the new item.</summary>
+      <value>The title of the new item.</value>
+    </member>
+    <member name="M:ItemsControlTut3.ViewModel.MainWindowViewModel.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:ItemsControlTut3.ViewModel.MainWindowViewModel" /> class.
+   </summary>
+    </member>
+    <member name="M:ItemsControlTut3.ViewModel.MainWindowViewModel.AddTodo(System.String,System.Int32)">
+      <summary>Adds an item to the the todo-List.</summary>
+      <param name="sTitle">The title.</param>
+      <param name="iCompl">The completion-percentage.</param>
+    </member>
+    <member name="T:ItemsControlTut3.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>AboutExTests</name>
+  </assembly>
+  <members>
+    <member name="T:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests">
+      <summary>
+   Defines test class FrmAboutTests.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.Init">
+      <summary>
+   Initializes this instance.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.TestSetup">
+      <summary>
+   Defines the test method TestSetup.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.FrmAboutTest">
+      <summary>
+   Defines the test method FrmAboutTest.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.ProductNameTest">
+      <summary>
+   Defines the test method ProductNameTest.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.VersionTest">
+      <summary>
+   Defines the test method VersionTest.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.CopyrightTest">
+      <summary>
+   Defines the test method CopyrightTest.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.AboutEx.Visual.Tests.FrmAboutTests.BtnOKTest">
+      <summary>
+   Defines the test method BtnOKTest.
+   </summary>
+    </member>
+  </members>
+</doc>

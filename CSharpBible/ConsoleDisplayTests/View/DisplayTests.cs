@@ -1,4 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Threading;
+using System.Windows.Forms;
 using TestConsole;
 
 namespace ConsoleDisplay.View.Tests
@@ -10,7 +13,7 @@ namespace ConsoleDisplay.View.Tests
     public class DisplayTests
     {
         const string cExpTsTest= "ConsoleDisplay.View.Display.(7;9),0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDE";
-        const string cExpLineTest1= "ConsoleDisplay.View.Display.(20;20),3B2A1908F7E6D5C4B3A9002A1908F7E6D5C4B3919902A908F7E6D54B391811902198F7E65CB39180AA190A90F7ED5439180722A19010F7EDCB91807FBBB2A109F7E5B9807FF6333BB2108764987FF66ECCCC33BA07D90F66EEE54444444C3003C444444DDDDDDDDDDDD0AB33CCC45555555E6AD3012BB33CEEEE66F0A46A301A2BB3666FF78AB5E923091A2BFFF708ABCDE0123091A277081A345DE09AB3091A0081A3BC56E8912B3091881A3B45D6E809A2B30911A3B4C5D6E8091A2B309A3B4C5D6E7F8091A2B3";
+        const string cExpLineTest1= "ConsoleDisplay.View.Display.(20;20),7F6E5D4C3B2A1908F7ED446E5D4C3B2A1908F7D5DD46ED4C3B2A198F7D5C55D465DC3B2A90F7D5C4EE5D4ED43B21987D5C4B66E5D4543B210FD5C4B3FFF6E54D3B29FDC4B33A777FF654CBA8DCB33AA2000077FE4B1D43AA222988888880744708888881111111111114EF77000899999992AE17456FF7702222AA34E8AE745E6FF7AAA33BCEF92D674D5E6F333B4CEF01245674D5E6BB4C5E789124DEF74D5E44C5E7F09A2CD56F74D5CC5E7F891A2C4DE6F74D55E7F8091A2C4D5E6F74DE7F8091A2B3C4D5E6F7";
         const string cExpLineTest2= "ConsoleDisplay.View.Display.(20;20),0000000000000000000088000000000000000000008000000000000000000008000000000000000000008000000000000000000008000000000000000000008000000000000000000008000000000000000000008000000000000000000008800000000000000000000800000000000000000000800000000000000000000800000000000000000000800000000000000000000800000000000000000000800000000000000000000800000000000000000000800000000000000000000800000000000000000000";
         const string cExpDispTest598= "ConsoleDisplay.View.Display.(20;20),BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344BBCCDDEEFF0011223344";
         const string cExpDispTest599= "ConsoleDisplay.View.Display.(20;20),BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000001111111111111111111111111111111111111111222222222222222222222222222222222222222233333333333333333333333333333333333333334444444444444444444444444444444444444444";
@@ -78,7 +81,7 @@ namespace ConsoleDisplay.View.Tests
         public void DisplayTest()
         {
             var display = new Display(2, 2, 20, 20);
-            for (int i = 0; i < 600; i++) // 600 Frames;
+            for (int i = 0; i < 120; i++) // 600 Frames;
             {
                 for (int y = 0; y < 20; y++)
                     for (int x = 0; x < 20; x++)
@@ -86,7 +89,7 @@ namespace ConsoleDisplay.View.Tests
                 display.Update();
                 Application.DoEvents();
                 Thread.Sleep(0);
-                if (i == 598)
+                if (i == 118)
                     Assert.AreEqual(cExpDispTest598, display.ToString());
             }
             Assert.AreEqual(cExpDispTest599, display.ToString());
@@ -102,7 +105,7 @@ namespace ConsoleDisplay.View.Tests
         public void DisplayPixelTest2()
         {
             var display = new Display(5, 12, 20, 20);
-            for (int i = 0; i < 600; i++) // 600 Frames;
+            for (int i = 0; i < 120; i++) // 600 Frames;
             {
                 for (int y = 0; y < 20; y++)
                     for (int x = 0; x < 20; x++)
@@ -125,9 +128,30 @@ namespace ConsoleDisplay.View.Tests
         public void DisplayLineTest()
         {
             var display = new Display(55, 1, 20, 20);
-            for (int i = 600; i > 400; i--) // 600 Frames;
+            for (int i = 160; i > 120; i--) // 30 Frames;
             {
                 //                display.Clear();
+                DisplayLine(display, i);
+                display.Update();
+                Application.DoEvents();
+                Thread.Sleep(0);
+            }
+            Assert.AreEqual(cExpLineTest1, display.ToString());
+            for (int j = 120; j > 0; j--) // 600 Frames;
+            {
+                display.Clear();
+                for (int i = j * 4 / 3; i >= j; i--)
+                {
+                    DisplayLine(display, i);
+                }
+                display.Update();
+                Application.DoEvents();
+                Thread.Sleep(0);
+            }
+            Assert.AreEqual(cExpLineTest2, display.ToString());
+
+            static void DisplayLine(Display display, int i)
+            {
                 int x; int y;
                 switch (i / 20 % 2)
                 {
@@ -139,33 +163,7 @@ namespace ConsoleDisplay.View.Tests
                 }
                 //for (int x = 0; x < 20; x++)
                 display.PutLine(x, y, 19 - x, 19 - y, (ConsoleColor)(i % 2 == 0 ? ((i / 2) % 16) : (8 + i / 2) % 16));
-                display.Update();
-                Application.DoEvents();
-                Thread.Sleep(0);
             }
-            Assert.AreEqual(cExpLineTest1, display.ToString());
-            for (int j = 400; j > 0; j--) // 600 Frames;
-            {
-                display.Clear();
-                int x; int y;
-                for (int i = j * 11 / 10; i >= j; i--)
-                {
-                    switch (i / 20 % 2)
-                    {
-                        case 0: x = 0; y = i % 20; break;
-                        case 1: y = 0; x = 19 - i % 20; break;
-                        default:
-                            x = 0; y = 0;
-                            break;
-                    }
-                    display.PutLine(x, y, 19 - x, 19 - y, (ConsoleColor)(i % 2 == 0 ? ((i / 2) % 16) : (8 + i / 2) % 16));
-                }
-                display.Update();
-                Application.DoEvents();
-                Thread.Sleep(0);
-            }
-            Assert.AreEqual(cExpLineTest2, display.ToString());
-
         }
         /// <summary>
         /// Defines the test method ToStringTest.

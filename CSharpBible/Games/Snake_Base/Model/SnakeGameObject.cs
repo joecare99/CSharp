@@ -170,6 +170,11 @@ namespace Snake_Base.Model
             OnPlaceChange?.Invoke(this, (arg2, arg3));
             DataChangeEvent?.Invoke(this, (arg1, arg2, arg3));
         }
+
+        public void ResetOldPlace()
+        {
+            _oldPlace = _place;
+        }
         #endregion
     }
 }

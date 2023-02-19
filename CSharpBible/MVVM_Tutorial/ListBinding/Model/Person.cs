@@ -13,12 +13,7 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ListBinding.Model
 {
@@ -30,37 +25,34 @@ namespace ListBinding.Model
     /// <seealso cref="BaseViewModel" />
     /// <seealso cref="ISafeSerializationData" />
     [Serializable]
-    public class Person : BaseViewModel, ISafeSerializationData
+    public class Person : NotificationObject, ISafeSerializationData
     {
+        #region Properties
+        #region private properties
         /// <summary>
         /// The identifier
         /// </summary>
-        private int id;
+        private int _id;
         /// <summary>
         /// The first name
         /// </summary>
-        private string firstName;
+        private string _firstName;
         /// <summary>
         /// The last name
         /// </summary>
-        private string lastName;
+        private string _lastName;
         /// <summary>
         /// The title
         /// </summary>
-        private string title;
-
+        private string _title;
+        #endregion
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
         public int Id
         {
-            get => id; set
-            {
-                if (id == value) return;
-                id = value;
-                RaisePropertyChanged();
-            }
+            get => _id; set => SetProperty(ref _id, value); 
         }
         /// <summary>
         /// Gets or sets the first name.
@@ -68,13 +60,7 @@ namespace ListBinding.Model
         /// <value>The first name.</value>
         public string FirstName
         {
-            get => firstName; set
-            {
-                if (firstName == value) return;
-                firstName = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(FullName));
-            }
+            get => _firstName; set => SetProperty(ref _firstName, value,new string[] { nameof(FullName) });
         }
         /// <summary>
         /// Gets or sets the last name.
@@ -82,48 +68,32 @@ namespace ListBinding.Model
         /// <value>The last name.</value>
         public string LastName
         {
-            get => lastName; set
-            {
-                if (lastName == value) return;
-                lastName = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(FullName));
-            }
+            get => _lastName; set => SetProperty(ref _lastName, value, new string[] { nameof(FullName) });
         }
-        /// <summary>
-        /// Gets the full name.
-        /// </summary>
-        /// <value>The full name.</value>
-        public string FullName => $"{lastName}{(IsEmpty?"":", ")}{firstName}{(string.IsNullOrEmpty(Title) ? "" : ", ")}{Title}";
+
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
         /// <value>The title.</value>
         public string Title
         {
-            get => title; set
-            {
-                if (title == value) return;
-                title = value;
-                RaisePropertyChanged();
-            }
+            get => _title; set => SetProperty(ref _title, value, new string[] { nameof(FullName) });
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Gets the full name.
         /// </summary>
-        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-        public override string ToString()
-        {
-            return $"{Id}, {FullName}";
-        }
+        /// <value>The full name.</value>
+        public string FullName => $"{_lastName}{(IsEmpty?"":", ")}{_firstName}{(string.IsNullOrEmpty(Title) ? "" : ", ")}{Title}";
 
         /// <summary>
         /// Gets a value indicating whether this instance is empty.
         /// </summary>
         /// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
-        public bool IsEmpty =>  string.IsNullOrWhiteSpace(firstName) && string.IsNullOrEmpty(lastName);
-        /// <summary>
+        public bool IsEmpty =>  string.IsNullOrWhiteSpace(_firstName) && string.IsNullOrEmpty(_lastName);
+        #endregion
+
+        #region Methods
         /// Initializes a new instance of the <see cref="Person" /> class.
         /// </summary>
         /// <param name="lastName">The last name.</param>
@@ -160,6 +130,16 @@ namespace ListBinding.Model
         }
 
         /// <summary>
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        public override string ToString()
+        {
+            return $"{Id}, {FullName}";
+        }
+
+        /// <summary>
         /// Gets the object data.
         /// </summary>
         /// <param name="info">The information.</param>
@@ -181,5 +161,6 @@ namespace ListBinding.Model
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

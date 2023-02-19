@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>MVVM_16_Usercontrol_2</name>
+  </assembly>
+  <members>
+    <member name="T:MVVM_16_Usercontrol_2.View.UserControlView">
+      <summary> Interaktionslogik für UserControlView.xaml </summary>
+    </member>
+    <member name="T:MVVM_16_UserControl_2.App">
+      <summary> Interaction logic for App.xaml </summary>
+    </member>
+    <member name="T:MVVM_16_UserControl_2.MainWindow">
+      <summary> Interaction logic for MainWindow.xaml </summary>
+    </member>
+  </members>
+</doc>

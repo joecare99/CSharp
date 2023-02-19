@@ -11,12 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Model;
+using MVVM_22_WpfCap.Model;
+using MVVM_22_WpfCap.ViewModel;
 using System.Windows;
 
 namespace MVVM_22_WpfCap
@@ -26,5 +24,17 @@ namespace MVVM_22_WpfCap
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            //...
+            var services = new ServiceCollection();
+            services.AddTransient<IWpfCapModel, CWpfCapModel>();
+            services.AddTransient<IRandom, CRandom>();
+            services.AddTransient<WpfCapViewModel, WpfCapViewModel>();
+
+            ServiceProvider container = services.BuildServiceProvider();
+            DISource.Resolver = (type) => container.GetRequiredService(type);
+        }
     }
 }

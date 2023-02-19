@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CharGrid</name>
+  </assembly>
+  <members>
+    <member name="T:CSharpBible.CharGrid.Program">
+      <summary>
+   Class Program.
+   </summary>
+    </member>
+    <member name="T:CSharpBible.CharGrid.Properties.Resources">
+      <summary>
+   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CharGrid.Properties.Resources.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.CharGrid.Properties.Resources" /> class.
+   </summary>
+    </member>
+    <member name="P:CSharpBible.CharGrid.Properties.Resources.ResourceManager">
+      <summary>
+   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+   </summary>
+      <value>The resource manager.</value>
+    </member>
+    <member name="P:CSharpBible.CharGrid.Properties.Resources.Culture">
+      <summary>
+   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+   </summary>
+      <value>The culture.</value>
+    </member>
+    <member name="T:CSharpBible.CharGrid.Properties.Settings">
+      <summary> Class Settings. This class cannot be inherited. Implements the <see cref="T:System.Configuration.ApplicationSettingsBase" /></summary>
+      <seealso cref="T:System.Configuration.ApplicationSettingsBase" />
+    </member>
+    <member name="P:CSharpBible.CharGrid.Properties.Settings.Default">
+      <summary>
+   Gets the default.
+   </summary>
+      <value>The default.</value>
+    </member>
+    <member name="T:CSharpBible.CharGrid.Visual.FrmCharGridMain">
+      <summary> Class FrmCharGridMain. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+      <summary> Class FrmCharGridMain. Implements the <see cref="T:System.Windows.Forms.Form" /></summary>
+      <seealso cref="T:System.Windows.Forms.Form" />
+    </member>
+    <member name="M:CSharpBible.CharGrid.Visual.FrmCharGridMain.#ctor">
+      <summary>
+   Initializes a new instance of the <see cref="T:CSharpBible.CharGrid.Visual.FrmCharGridMain" /> class.
+   </summary>
+    </member>
+    <member name="M:CSharpBible.CharGrid.Visual.FrmCharGridMain.Dispose(System.Boolean)">
+      <summary>
+   Verwendete Ressourcen bereinigen.
+   </summary>
+      <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    </member>
+  </members>
+</doc>

@@ -6,20 +6,16 @@
 // Last Modified By : Mir
 // Last Modified On : 06-19-2022
 // ***********************************************************************
-// <copyright file="PersonModelTests.cs" company="DemoLibraryTests">
+// <copyright file="PersonModelTests.cs" company="JC-Soft">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DemoLibrary.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DemoLibraryTests.Models {
+namespace DemoLibraryTests.Models
+{
 
 	/// <summary>
 	/// Defines test class PersonModelTests.

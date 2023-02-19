@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
+
 namespace ConsoleDisplay.View
 {
     /// <summary>
@@ -48,6 +50,12 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <value>The height of the largest window.</value>
         public abstract int LargestWindowHeight { get; }
+
+        /// <summary>
+        /// Gets or sets the title of the window.
+        /// </summary>
+        /// <value>The width of the window.</value>
+        public abstract string Title { get; set; }
 
         /// <summary>
         /// Clears this instance.
