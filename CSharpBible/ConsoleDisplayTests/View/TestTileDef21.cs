@@ -1,4 +1,7 @@
-﻿namespace ConsoleDisplay.View.Tests {
+﻿using System;
+using System.Drawing;
+
+namespace ConsoleDisplay.View.Tests {
 	internal class TestTileDef21 : TileDefBase
     {
         private static string[][] _vTileDefStr = new string[][]{

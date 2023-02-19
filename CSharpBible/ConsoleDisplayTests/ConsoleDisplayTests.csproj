@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <TargetFrameworks>net461-windows;net472-windows;net48-windows</TargetFrameworks>
+    <TargetFrameworks>net461;net472;net48</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
-	<LangVersion>8.0</LangVersion>
+	  <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
@@ -11,6 +11,7 @@
     <Company>JC-Soft</Company>
     <Copyright>Copyright © 2022 by JC-Soft</Copyright>
     <IsPackable>false</IsPackable>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

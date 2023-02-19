@@ -1,5 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Transactions;
+using System;
+using System.Drawing;
+using System.Threading;
+using System.Windows.Forms;
 using TestConsole;
 
 namespace ConsoleDisplay.View.Tests
