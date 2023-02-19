@@ -1,4 +1,6 @@
-﻿namespace TestConsole.View
+﻿using System.Windows.Forms;
+
+namespace TestConsole.View
 {
     /// <summary>
     /// Class TestConsoleForm.

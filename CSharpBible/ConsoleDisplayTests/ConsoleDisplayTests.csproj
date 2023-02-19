@@ -1,38 +1,41 @@
 <Project>
-	<PropertyGroup>
-	<TargetFrameworks>net461;net472;net48</TargetFrameworks>
-	<BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	<IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-	<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+  <PropertyGroup>
+    <TargetFrameworks>net461;net472;net48</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
 	  <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-		<UseWindowsForms>true</UseWindowsForms>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
-		<Compile Remove="bin\**" />
-		<Compile Remove="obj\**" />
-		<EmbeddedResource Remove="bin\**" />
-		<EmbeddedResource Remove="obj\**" />
-		<None Remove="bin\**" />
-		<None Remove="obj\**" />
-	</ItemGroup>
-
+    <UseWindowsForms>true</UseWindowsForms>
+    <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+    <Company>JC-Soft</Company>
+    <Copyright>Copyright © 2022 by JC-Soft</Copyright>
+    <IsPackable>false</IsPackable>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>
-	      <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
-	  <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-	  <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 
