@@ -1,7 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net48;net472;net461</TargetFrameworks>
+    <TargetFrameworks>net48;net472;net462</TargetFrameworks>
 	  <ImplicitUsings>disable</ImplicitUsings>
 	  <LangVersion>8.0</LangVersion>
 	  <Nullable>enable</Nullable>

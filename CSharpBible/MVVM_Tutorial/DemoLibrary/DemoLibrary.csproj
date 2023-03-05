@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net48;net472;net461</TargetFrameworks>
+		<TargetFrameworks>net6.0;net48;net472;net462</TargetFrameworks>
 		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
 		<LangVersion>8.0</LangVersion>
