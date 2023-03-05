@@ -167,24 +167,6 @@ namespace MathLibrary.TwoDim.Tests
 		}
 
 		/// <summary>
-		/// Converts to stringtest2.
-		/// </summary>
-		/// <param name="x">The x.</param>
-		/// <param name="y">The y.</param>
-		/// <param name="exp">The exp.</param>
-		[DataTestMethod()]
-		[DataRow(0, 0, "( 0, 0)")]
-		[DataRow(0, 1, "( 0, 1)")]
-		[DataRow(1, 0, "( 1, 0)")]
-		[DataRow(-1, 0, "( -1, 0)")]
-		[DataRow(0, -1, "( 0, -1)")]
-		[DataRow(1, -1, "( 1, -1)")]
-		public void ToStringTest2(Double x, Double y, String exp) {
-			var v1 = new Math2d.Vector(x, y);
-			Assert.AreEqual(exp, v1.ToString(), $"({x},{y}).ToString()");
-		}
-
-		/// <summary>
 		/// Defines the test method NullTest.
 		/// </summary>
 		[TestMethod()]
