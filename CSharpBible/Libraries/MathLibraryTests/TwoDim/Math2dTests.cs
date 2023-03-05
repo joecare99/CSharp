@@ -407,7 +407,7 @@ namespace MathLibrary.TwoDim.Tests
 		[DataRow(-1, -2, sqrt5, Math.PI * 1.5d - atn05)]
 		[DataRow(1, -2, sqrt5, Math.PI * 1.5d + atn05)]
 		[DataRow(2, -1, sqrt5, Math.PI * 2d - atn05)]
-		[DynamicData("VectorAngleLengthTestData")]
+		[DynamicData(nameof(VectorAngleLengthTestData))]
 		public void ByLengthAngleTest(double exp_x, double exv_y, double length, double angle) {
 			var exp = new Math2d.Vector(exp_x, exv_y);
 			AssertAreEqual(exp, Math2d.ByLengthAngle(length, angle), $"{exp} = Math2d.ByLengthAngle({length},{angle})");
