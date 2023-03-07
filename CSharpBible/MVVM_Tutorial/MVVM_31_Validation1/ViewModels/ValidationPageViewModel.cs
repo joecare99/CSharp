@@ -11,7 +11,7 @@ namespace MVVM_31_Validation1.ViewModels
     {
         private string _userName="";
 
-        public string UserName { get => _userName; set => SetProperty(ref _userName, value,TestUsername); }
+        public string UserName { get => _userName; set => SetProperty(ref _userName, value, TestUsername); }
 
         private bool TestUsername( string arg1)
         {

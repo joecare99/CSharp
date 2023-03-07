@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.Extensions.DependencyInjection;
-using Model;
 using MVVM_22_WpfCap.Model;
 using MVVM_22_WpfCap.ViewModel;
 using System.Windows;

@@ -33,7 +33,7 @@ namespace MVVM_BaseLibTests.ViewModel
         private string DebugResult ="";
 
         public string TestString { get => _testString;set=>SetProperty(ref _testString,value); }
-        public string TestString1 { get => _testString; set => SetProperty(ref _testString, value,ValidateString); }
+        public string TestString1 { get => _testString; set => SetProperty(ref _testString, value, ValidateString); }
         public string TestString2 { get => _testString; set => SetProperty(ref _testString, value, StringAct); }
 		public string TestString3 { get => _testString; set => SetProperty(ref _testString, value, ValidateString, StringAct); }
 		public string TestString4 { get => _testString; set => SetProperty(ref _testString, value, new string[] {nameof(TestString),nameof(TestString2) }); }

@@ -31,11 +31,11 @@ namespace BaseLib.Helper.Tests
         
         public string TestString6
         {
-            get => _testString; set
+             set
                 => Property.SetProperty(ref _testString, value, ValidateString, StringAct);
         }
 
-        public string TestString7 { get => _testString; 
+        public string TestString7 {  
             set => value.SetProperty(ref _testString, ValidateString, StringAct); }
 
         public int TestInt { get => _testInt; set => Property.SetProperty(ref _testInt, value); }
@@ -51,13 +51,13 @@ namespace BaseLib.Helper.Tests
             {
                 case eValidReact.OK:
                     return;
-                case eValidReact.NIO:
-                    return;
                 case eValidReact.GeneralException:
                     throw new Exception("A general exception occured");
                 case eValidReact.ArgumetException:
                     throw new ArgumentException($"Argument ({arg1}) not valid!");
-                default: return;
+                default:
+                    return;
+  
             }
         }
 
@@ -68,14 +68,14 @@ namespace BaseLib.Helper.Tests
             {
                 case eValidReact.OK:
                     return true;
-                case eValidReact.NIO:
-                    return false;
                 case eValidReact.GeneralException:
                     throw new Exception("A general exception occured");
                 case eValidReact.ArgumetException:
                     throw new ArgumentException($"Argument ({arg1}) not valid!");
-                default: return false;
-            }
+                default:
+                    return false;
+           
+            }            
         }
 
         [TestMethod()]

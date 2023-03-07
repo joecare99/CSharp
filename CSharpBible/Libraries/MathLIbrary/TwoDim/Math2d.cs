@@ -96,7 +96,7 @@ namespace MathLibrary.TwoDim {
 			/// Returns a hash code for this instance.
 			/// </summary>
 			/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
-			public override int GetHashCode() => _x.GetHashCode() ^ _y.GetHashCode();
+			public override int GetHashCode() => _x.GetHashCode() ^ (((long)(_y.GetHashCode())<<2).GetHashCode());
 		}
 
 		/// <summary>
@@ -158,11 +158,11 @@ namespace MathLibrary.TwoDim {
 						// -44.9 to -0.0..1° und 
 						angle = 2 * pi + Math.Atan(vector.y / vector.x);
 
-				else if (vector.x < 0)
+				else // if (vector.x < 0) //!
 					// 135.0..° to 224.9..° 
 					angle = pi + Math.Atan(vector.y / vector.x);
-				else // X = 0.0 & Y = 0.0
-					angle = 0d;
+				//else // X = 0.0 & Y = 0.0
+					//angle = 0d;
 			else
 				// 45.0..1° to 134.9..° und 225.0..1° to 315.9...° 	
 				if (vector.y > 0)

@@ -1,6 +1,6 @@
 ﻿<Project>
 	<PropertyGroup>
-		<TargetFrameworks>net48-windows;net472-windows;net461-windows</TargetFrameworks>
+		<TargetFrameworks>net48-windows;net472-windows;net462-windows</TargetFrameworks>
 		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
         <!--UseWPF>true</UseWPF-->
