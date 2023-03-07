@@ -323,6 +323,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerRepositoryTests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_22_WpfCapTests", "MVVM_Tutorial\MVVM_22_WpfCapTests\MVVM_22_WpfCapTests.csproj", "{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -896,6 +898,10 @@ Global
 		{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1026,6 +1032,7 @@ Global
 		{1E835620-C60E-49C8-9855-4CFA0F2A54AE} = {4123A0E1-EDB7-426D-9E21-903B83D20A68}
 		{7D5AE513-2636-4981-A459-88DB90C3DFA9} = {4123A0E1-EDB7-426D-9E21-903B83D20A68}
 		{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
+		{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
