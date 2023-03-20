@@ -124,6 +124,8 @@ namespace MVVM_BaseLib.Helper.Tests
         private string DataResult;
         private bool boolProp;
 
+        public Exception DoEx { get; private set; } = null;
+
         /// <summary>
         /// Initializes this instance.
         /// </summary>
@@ -177,12 +179,34 @@ namespace MVVM_BaseLib.Helper.Tests
         [DataRow("enum", TypeCode.Object, "teCherry", true, @"c:	SetPropertyTest,	o:teApple,	n:teCherry
 ")]
         [DataRow("enum", TypeCode.Object, "teApple", false, @"")]
+        [DataRow("enum", TypeCode.Object, "ExApple", true, @"c:	SetPropertyTest,	o:,	n:ExApple
+")]
+        [DataRow("enum", TypeCode.String, "vnNoVal", false, @"")]
+        [DataRow("enum", TypeCode.String, "vmNoVal", false, @"")]
+        [DataRow("enum", TypeCode.String, "vxNoVal", true, @"")]
         public void SetPropertyTest(string Name,TypeCode tt,string value,bool bExp,string expResult )
         {
             switch (tt)
             {
                 case TypeCode.Object when value.Contains(";"): // struct
                     Assert.AreEqual(bExp, Property.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Object when value.StartsWith("Ex"): // struct
+                    DoEx = new NotSupportedException();
+                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp, value, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String when value.StartsWith("vn"): // struct
+                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp, value,(s)=>false, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String when value.StartsWith("vm"): // struct
+                    Assert.AreEqual(bExp, value.SetProperty(ref strProp, (s) => false, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String when value.StartsWith("vx"): // struct
+                    Assert.AreEqual(bExp, value.SetProperty(ref strProp, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String:
@@ -228,6 +252,7 @@ namespace MVVM_BaseLib.Helper.Tests
         private void DoAction<T>(string arg1, T arg2, T arg3)
         {
             DataResult += $"c:\t{arg1},\to:{arg2},\tn:{arg3}\r\n";
+            if (DoEx!=null) throw DoEx;
         }
     }
 }

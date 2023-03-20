@@ -5,7 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
 	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-
+	  <LangVersion>8.0</LangVersion>
 	  <IsPackable>false</IsPackable>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

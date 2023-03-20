@@ -67,7 +67,8 @@ namespace MVVM.ViewModel
 
 			foreach (var t in CommandCanExecuteBinding)
 			{
-				if (t.Item1 == e.PropertyName && GetType().GetProperty(t.Item2)?.GetValue(this) is IRelayCommand rc)
+				if (t.Item1 == e.PropertyName 
+					&& GetType().GetProperty(t.Item2)?.GetValue(this) is IRelayCommand rc)
 					rc.NotifyCanExecuteChanged();
 				else
 				if (t.Item1 == e.PropertyName && GetType().GetMethod(t.Item2) is System.Reflection.MethodInfo mi)
@@ -79,6 +80,8 @@ namespace MVVM.ViewModel
 						NewMethod(t.Item2, newVal);
                     }
 					else if (mi.GetParameters().Length == 1)
+
+						if (KnownParams.ContainsKey(t.Item2))
 						foreach (var para in KnownParams[t.Item2])
                         {
 	  				  	    var newVal = mi.Invoke(this,

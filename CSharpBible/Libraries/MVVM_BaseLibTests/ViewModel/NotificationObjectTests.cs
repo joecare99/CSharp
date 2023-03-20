@@ -51,38 +51,29 @@ namespace MVVM_BaseLibTests.ViewModel
         private void StringAct(string arg1, string arg2)
         {
             DebugResult += $"StrAct: {arg1}; {arg2}{Environment.NewLine}";
-			switch (valReact) {
-			case eValidReact.OK:
-			case eValidReact.NIO:
-				return;
-			case eValidReact.GeneralException:
-				throw new Exception("A general exception occured");
-			case eValidReact.ArgumetException:
-				throw new ArgumentException($"Argument ({arg2}) not valid!");
-			default: return;
-			}
-		}
+            var _=valReact switch
+            {
+                eValidReact.GeneralException => throw new Exception("A general exception occured"),
+                eValidReact.ArgumetException => throw new ArgumentException($"Argument ({arg2}) not valid!"),
+                _ => (object)null,
+            };
+        }
 
         private bool ValidateString(string arg1)
         {
             DebugResult += $"Validate: {arg1}, React:{valReact}{Environment.NewLine}";
-            switch (valReact)
+            return valReact switch
             {
-                case eValidReact.OK:
-                    return true;
-                case eValidReact.NIO:
-                    return false;
-                case eValidReact.GeneralException:
-                    throw new Exception("A general exception occured");
-                case eValidReact.ArgumetException:
-                    throw new ArgumentException($"Argument ({arg1}) not valid!");
-                default: return false;
-            }
+                eValidReact.OK => true,
+                eValidReact.NIO => false,
+                eValidReact.GeneralException => throw new Exception("A general exception occured"),
+                eValidReact.ArgumetException => throw new ArgumentException($"Argument ({arg1}) not valid!"),
+                _ => false,
+            };
         }
 
         public NotificationObjectTests()
         {
-            PropertyChanged += OnPropertyChanged;
         }
 
         private void Clear()
@@ -92,6 +83,7 @@ namespace MVVM_BaseLibTests.ViewModel
             _testFloat = 0f;
             _testDouble = 0d;
             DebugResult = "";
+            PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -101,6 +93,16 @@ namespace MVVM_BaseLibTests.ViewModel
         public void Init()
         {
             Clear();
+            PropertyChanged += OnPropertyChanged;
+        }
+
+        [TestMethod()]
+        public void TestRaise()
+        {
+            PropertyChanged -= OnPropertyChanged;
+            RaisePropertyChanged("Test");
+            RaisePropertyChanged("Test","Test2");
+            Assert.AreEqual("", DebugResult);
         }
 
         [DataTestMethod]

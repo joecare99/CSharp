@@ -1,6 +1,6 @@
 ﻿<Project>
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
 		<SignAssembly>True</SignAssembly>
