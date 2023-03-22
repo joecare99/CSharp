@@ -14,6 +14,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Calc32.NonVisual;
 using System;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// The Tests namespace.
@@ -36,6 +37,8 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// </summary>
         private int nChanges;
 
+        public string DebugLog { get; private set; }
+
         /// <summary>
         /// Initializes this instance.
         /// </summary>
@@ -43,6 +46,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         public void Init()
         {
             FCalculatorClass = new CalculatorClass();
+            DebugLog = "";
         }
 
         /// <summary>
@@ -53,6 +57,9 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         {
             Assert.IsNotNull(FCalculatorClass);
             Assert.AreEqual(0,FCalculatorClass.Akkumulator);
+            Assert.AreEqual(0, FCalculatorClass.Memory);
+            Assert.AreEqual("", FCalculatorClass.OperationText);
+            Assert.AreEqual("", DebugLog);
         }
 
         /// <summary>
@@ -84,8 +91,9 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void CalcChange(object sender, EventArgs e)
+        void CalcChange(object sender, (string, int, int) e)
         {
+            DebugLog += $"{sender}.Change({e.Item1},{e.Item2}=>{e.Item3}){Environment.NewLine}";
             nChanges++;
         }
 
@@ -95,18 +103,19 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         [TestMethod()]
         public void OnChangeTest1()
         {
-            FCalculatorClass.OnChange += new EventHandler(CalcChange);
+            FCalculatorClass.OnChange += new EventHandler<(string,int,int)>(CalcChange);
             AkkumulatorTest();
             Assert.AreEqual(3, nChanges);
         }
 
-        /// <summary>
-        /// Defines the test method OnChangeTest2.
-        /// </summary>
-        [TestMethod()]
+
+    /// <summary>
+    /// Defines the test method OnChangeTest2.
+    /// </summary>
+    [TestMethod()]
         public void OnChangeTest2()
         {
-            FCalculatorClass.OnChange += new EventHandler(CalcChange);
+            FCalculatorClass.OnChange += new EventHandler<(string, int, int)>(CalcChange);
             FCalculatorClass.NumberButton(3);
             Assert.AreEqual(3, FCalculatorClass.Akkumulator);
             FCalculatorClass.NumberButton(2);
@@ -119,15 +128,19 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// <summary>
         /// Defines the test method ButtonTest.
         /// </summary>
-        [TestMethod()]
-        public void ButtonTest()
+        [DataTestMethod()]
+        [DataRow("432",new int[] { 4, 3, 2 },new int[] { 4,43,432})]
+        [DataRow("1234", new int[] { 1,2,3,4 }, new int[] { 1, 12, 123,1234 })]
+        [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
+        [DataRow("999999999", new int[] { 9,9,9,9,9,9,9,9 }, new int[] { 9, 99, 999, 9999,99999,999999,9999999,99999999,999999999,999999999 })]
+        public void ButtonTest(string name, int[] aiButtons, int[] aiExp )
         {
-            FCalculatorClass.NumberButton(4);
-            Assert.AreEqual(4, FCalculatorClass.Akkumulator);
-            FCalculatorClass.NumberButton(3);
-            Assert.AreEqual(43, FCalculatorClass.Akkumulator);
-            FCalculatorClass.NumberButton(2);
-            Assert.AreEqual(432, FCalculatorClass.Akkumulator);
+            for (int i = 0; i < aiButtons.Length; i++)
+            {
+                FCalculatorClass.NumberButton(aiButtons[i]);
+                Assert.AreEqual(aiExp[i], FCalculatorClass.Akkumulator);
+            }
+
         }
 
         /// <summary>
@@ -136,7 +149,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         [TestMethod()]
         public void ButtonBack()
         {
-            FCalculatorClass.OnChange += new EventHandler(CalcChange);
+            FCalculatorClass.OnChange += new EventHandler<(string, int, int)>(CalcChange);
             FCalculatorClass.NumberButton(4);
             Assert.AreEqual(4, FCalculatorClass.Akkumulator);
             FCalculatorClass.NumberButton(3);
@@ -149,6 +162,29 @@ namespace CSharpBible.Calc32.NonVisual.Tests
             Assert.AreEqual(4, FCalculatorClass.Akkumulator);
             FCalculatorClass.BackSpace();
             Assert.AreEqual(0, FCalculatorClass.Akkumulator);
+        }
+
+        /// <summary>
+        /// Defines the test method ButtonTest.
+        /// </summary>
+        [DataTestMethod()]
+        [DataRow("4+3", CalculatorClass.eOpMode.Plus, new int[] { 4, 3 }, 7 )]
+        [DataRow("12-4", CalculatorClass.eOpMode.Minus, new int[] { 12, 4 }, 8)]
+        [DataRow("7*6", CalculatorClass.eOpMode.Multiply, new int[] { 7, 6 }, 42)]
+        [DataRow("99/11", CalculatorClass.eOpMode.Divide, new int[] { 99, 11 }, 9)]
+        [DataRow("99 & 7", CalculatorClass.eOpMode.BinaryAnd, new int[] { 99, 7 }, 3)]
+        [DataRow("12 | 7", CalculatorClass.eOpMode.BinaryOr, new int[] { 12, 7 }, 15)]
+        [DataRow("12 x 7", CalculatorClass.eOpMode.BinaryXor, new int[] { 12, 7 }, 11)]
+        [DataRow("12 ! 7", CalculatorClass.eOpMode.BinaryNot, new int[] { 12, -2 }, -2)]
+        public void OperationTest(string name,CalculatorClass.eOpMode eO , int[] aiData,int iExp)
+        {
+            FCalculatorClass.Operation(0);
+            FCalculatorClass.Akkumulator = aiData[0];
+            FCalculatorClass.Operation((int)eO);
+            FCalculatorClass.Akkumulator = aiData[1];
+            FCalculatorClass.Operation(1);
+            Assert.AreEqual(iExp, FCalculatorClass.Akkumulator);
+            Assert.AreEqual("", DebugLog);
         }
 
     }

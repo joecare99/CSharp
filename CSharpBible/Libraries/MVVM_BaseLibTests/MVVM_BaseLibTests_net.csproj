@@ -1,27 +1,24 @@
 ﻿<Project>
-
-  <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-	  <IsPackable>false</IsPackable>
-  </PropertyGroup>
+	<Import Project="..\Libraries_net.props"/>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
 	<ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+		<PackageReference Include="coverlet.collector" Version="3.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+	</ItemGroup>
 
 </Project>

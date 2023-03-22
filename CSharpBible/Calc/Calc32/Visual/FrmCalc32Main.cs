@@ -56,7 +56,7 @@ namespace Calc32.Visual
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void calculatorClassChange(object sender, EventArgs e)
+        private void calculatorClassChange(object sender, (string, int, int) e)
         {
             using (CalculatorClass cc = (CalculatorClass)sender)
             {

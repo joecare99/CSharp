@@ -1,6 +1,6 @@
 <Project>
-
-  <PropertyGroup>
+	<Import Project="..\Libraries_net.props"/>
+	<PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>

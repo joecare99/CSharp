@@ -1,28 +1,24 @@
 ﻿<Project>
-
-  <PropertyGroup>
-    <TargetFrameworks>net48-windows;net472-windows;net462-windows</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-	  <LangVersion>8.0</LangVersion>
-	  <IsPackable>false</IsPackable>
-  </PropertyGroup>
+	<Import Project="..\Libraries.props"/>
+	<PropertyGroup>
+		<TargetFrameworks>net481-windows;net472-windows;net462-windows</TargetFrameworks>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
 	<ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+		<PackageReference Include="coverlet.collector" Version="3.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	</ItemGroup>
 
 </Project>

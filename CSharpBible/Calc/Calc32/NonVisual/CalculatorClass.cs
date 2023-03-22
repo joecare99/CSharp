@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Helper;
 using System;
 using System.ComponentModel;
 
@@ -30,7 +31,7 @@ namespace Calc32.NonVisual
         /// Enum Mode
         /// of Operation
         /// </summary>
-        enum eOpMode
+        public enum eOpMode
         {
             /// <summary>
             /// No mode
@@ -109,7 +110,7 @@ namespace Calc32.NonVisual
         /// <summary>
         /// Occurs when a change happens.
         /// </summary>
-        public event EventHandler OnChange;
+        public event EventHandler<(string,int,int)> OnChange;
 
         // Properties
         /// <summary>
@@ -119,12 +120,7 @@ namespace Calc32.NonVisual
         public int Akkumulator
         {
             get => nAkkumulator;
-            set
-            {
-                if (value == nAkkumulator) return;
-                nAkkumulator = value;
-                OnChange?.Invoke(this, null);
-            }
+            set => value.SetProperty(ref nAkkumulator, FireChangeEvent);
         }
 
         /// <summary>
@@ -134,13 +130,10 @@ namespace Calc32.NonVisual
         public int Memory
         {
             get => nMemory;
-            set
-            {
-                if (value == nMemory) return;
-                nMemory = value;
-                OnChange?.Invoke(this, null);
-            }
+            set => value.SetProperty(ref nMemory, FireChangeEvent);
         }
+
+
         /// <summary>
         /// Gets the operation text.
         /// </summary>
@@ -157,6 +150,10 @@ namespace Calc32.NonVisual
             nAkkumulator = 0;
             nMode = 0;
             OnChange = null;
+        }
+        private void FireChangeEvent(string Prop, int ol, int nw)
+        {            
+            OnChange?.Invoke(this, (Prop,ol,nw));
         }
 
         /// <summary>

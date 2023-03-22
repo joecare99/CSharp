@@ -16,8 +16,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVVM_Tutorial", "MVVM_Tutorial", "{1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bibliotheken", "Bibliotheken", "{7BA535EF-38FA-47A6-A6BD-5D6333D5DB10}"
+	ProjectSection(SolutionItems) = preProject
+		Libraries\Libraries.props = Libraries\Libraries.props
+		Libraries\Libraries_net.props = Libraries\Libraries_net.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calc", "Calc", "{278CFF7F-D799-45EE-BADB-8C8380F05716}"
+	ProjectSection(SolutionItems) = preProject
+		Calc\Calc.props = Calc\Calc.props
+		Calc\Calc_net.props = Calc\Calc_net.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AboutEx", "AboutEx\AboutEx.csproj", "{6D860275-CDFB-48FB-8D51-472EB96884DF}"
 EndProject
@@ -29,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpBibleTest", "CSharpBi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddPage", "AddPage\AddPage.csproj", "{C8249E35-ED76-4180-95BA-317F8DC45683}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc32", "Calc\Calc32\Calc32.csproj", "{1050FECD-B665-4B48-A068-5C46259D640A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc32", "Calc\Calc32\Calc32.csproj", "{1050FECD-B665-4B48-A068-5C46259D640A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc32Tests", "Calc\Calc32Tests\Calc32Tests.csproj", "{24267033-7025-4264-9C9C-3888A294B8DA}"
 EndProject
@@ -59,7 +67,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSFreeVision", "Libraries\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDirectives", "TestDirectives\TestDirectives.csproj", "{F22909B4-7DA6-4E52-9682-0AACD6D0E90B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc32Cons", "Calc\Calc32Cons\Calc32Cons.csproj", "{9A31567A-4BDD-442A-912A-C82D020D6269}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc32Cons", "Calc\Calc32Cons\Calc32Cons.csproj", "{9A31567A-4BDD-442A-912A-C82D020D6269}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc32WPFTests", "Calc\Calc32WPFTests\Calc32WPFTests.csproj", "{5BD6F565-B18E-4B62-B51B-0EC58AD82AE1}"
 EndProject
@@ -324,6 +332,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_22_WpfCapTests", "MVVM_Tutorial\MVVM_22_WpfCapTests\MVVM_22_WpfCapTests.csproj", "{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{3AA3FF9C-70D3-451A-9F1F-A113CC913372}"
+	ProjectSection(SolutionItems) = preProject
+		Solution.props = Solution.props
+		Solution_net.props = Solution_net.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
