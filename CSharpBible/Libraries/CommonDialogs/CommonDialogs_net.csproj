@@ -1,14 +1,9 @@
 <Project>
+	<Import Project="..\Libraries_net.props"/>
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows</TargetFrameworks>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
-		<Authors>Joe Care from JC-Soft</Authors>
-		<Company>JC-Soft</Company>
-		<Copyright>Copyright (c) by JC-Soft 2022</Copyright>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -19,6 +14,6 @@
 	  <Compile Remove="Class1.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="CommonDialogs.csproj.bak" />
+	  <None Remove="*.bak" />
 	</ItemGroup>
 </Project>

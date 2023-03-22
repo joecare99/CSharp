@@ -1,6 +1,7 @@
 ﻿<Project>
+	<Import Project="..\Libraries.props"/>
 	<PropertyGroup>
-		<TargetFrameworks>net48-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net472-windows;net462-windows</TargetFrameworks>
 		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
         <!--UseWPF>true</UseWPF-->

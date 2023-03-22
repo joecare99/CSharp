@@ -1,7 +1,7 @@
 ﻿<Project>
 	<PropertyGroup>
       <OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>

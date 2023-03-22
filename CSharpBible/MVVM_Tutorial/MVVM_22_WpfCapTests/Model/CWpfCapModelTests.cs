@@ -95,29 +95,154 @@ namespace MVVM_22_WpfCap.Model.Tests
         }
 
 
-        [TestMethod()]
-        public void MoveLeftTest()
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveLeftTest(int row)
         {
-            Assert.Fail();
+            testWpfCapModel.MoveLeft(row);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i%4!=row? (i + i / 4) % 4 + 1:(i+ i / 4+1) %4+1 , testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("TileColChanged<MVVM_22_WpfCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
         }
 
-        [TestMethod()]
-        public void MoveRightTest()
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveLeftTest1(int row)
         {
-            Assert.Fail();
+            testWpfCapModel.TileColorChanged -= TestTileColorChanged;
+            testWpfCapModel.MoveLeft(row);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i % 4 != row ? (i + i / 4) % 4 + 1 : (i + i / 4 + 1) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("", DebugOut, "DebugOut");
         }
 
-        [TestMethod()]
-        public void MoveUpTest()
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveRightTest(int row)
         {
-            Assert.Fail();
+            testWpfCapModel.MoveRight(row);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i % 4 != row ? (i + i / 4) % 4 + 1 : (i + i / 4 + 3) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("TileColChanged<MVVM_22_WpfCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
         }
 
-        [TestMethod()]
-        public void MoveDownTest()
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveRightTest1(int row)
         {
-            Assert.Fail();
+            testWpfCapModel.TileColorChanged -= TestTileColorChanged;
+            testWpfCapModel.MoveRight(row);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i % 4 != row ? (i + i / 4) % 4 + 1 : (i + i / 4 + 3) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("", DebugOut, "DebugOut");
         }
+
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveUpTest(int col)
+        {
+            testWpfCapModel.MoveUp(col);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i / 4 != col ? (i + i / 4) % 4 + 1 : (i + i / 4 + 1) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("TileColChanged<MVVM_22_WpfCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        }
+
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveUpTest1(int col)
+        {
+            testWpfCapModel.TileColorChanged -= TestTileColorChanged;
+            testWpfCapModel.MoveUp(col);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i / 4 != col ? (i + i / 4) % 4 + 1 : (i + i / 4 + 1) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("", DebugOut, "DebugOut");
+        }
+
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveDownTest(int col)
+        {
+            testWpfCapModel.MoveDown(col);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i / 4 != col ? (i + i / 4) % 4 + 1 : (i + i / 4 + 3) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
+            }
+            Assert.AreEqual("TileColChanged<MVVM_22_WpfCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        }
+
+        [DataTestMethod()]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        [DataRow(4)]
+        public void MoveDownTest1(int col)
+        {
+            testWpfCapModel.TileColorChanged -= TestTileColorChanged;
+            testWpfCapModel.MoveDown(col);
+            TestTileCount(4);
+            for (var i = 0; i < 16; i++)
+            {
+                Assert.AreEqual(i / 4 != col ? (i + i / 4) % 4 + 1 : (i + i / 4 + 3) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 3}");
+            }
+            Assert.AreEqual("", DebugOut, "DebugOut");
+        }
+
 
         [TestMethod()]
         public void ShuffleTest()

@@ -1,16 +1,11 @@
 <Project>
+	<Import Project="..\Libraries.props"/>
 	<PropertyGroup>
-		<TargetFrameworks>net48-windows;net472-windows</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net481-windows;net472-windows</TargetFrameworks>
 		<TargetFrameworks Condition="True">$(TargetFrameWorks);net462-windows</TargetFrameworks>
-		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
-		<Authors>Joe Care from JC-Soft</Authors>
-		<Company>JC-Soft</Company>
-		<Copyright>Copyright (c) by JC-Soft 2022</Copyright>
-		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

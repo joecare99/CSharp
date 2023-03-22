@@ -132,14 +132,14 @@ namespace MVVM_22_WpfCap.ViewModel
         /// The length
         /// </summary>
         public readonly int Length = 4;
-        /// <summary>
+        /*// <summary>
         /// Notifies the property changed.
         /// </summary>
         /// <param name="name">The name.</param>
         public void NotifyPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        }*/
     }
 
     /// <summary>
