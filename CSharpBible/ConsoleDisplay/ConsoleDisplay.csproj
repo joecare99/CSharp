@@ -1,26 +1,19 @@
 ﻿<Project>
-  <PropertyGroup>
-	<TargetFrameworks>net462;net472;net48</TargetFrameworks>
-	<BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	<IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-	<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-	  <Company>JC-Soft</Company>
-	  <Copyright>Copyright © 2022 by JC-Soft</Copyright>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-
+	<Import Project="..\Solution.props"/>
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net462;net472;net481</TargetFrameworks>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
+	</ItemGroup>
 </Project>

@@ -1,15 +1,8 @@
-<Project>
-  <PropertyGroup>
+﻿<Project>
+	<Import Project="..\Solution.props"/>
+	<PropertyGroup>
     <TargetFrameworks>net462;net472;net48</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
-    <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-    <Company>JC-Soft</Company>
-    <Copyright>Copyright © 2022 by JC-Soft</Copyright>
     <IsPackable>false</IsPackable>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
