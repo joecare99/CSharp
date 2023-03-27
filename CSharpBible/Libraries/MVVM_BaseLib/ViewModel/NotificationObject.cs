@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Runtime.CompilerServices;
 
 namespace MVVM.ViewModel
@@ -23,7 +24,7 @@ namespace MVVM.ViewModel
     /// Implements the <see cref="INotifyPropertyChanged" />
     /// </summary>
     /// <seealso cref="INotifyPropertyChanged" />
-    public class NotificationObject :  INotifyPropertyChanged
+    public class NotificationObject : DynamicObject , INotifyPropertyChanged
     {
 #if NET5_0_OR_GREATER || NULLABLE
 		public event PropertyChangedEventHandler? PropertyChanged;

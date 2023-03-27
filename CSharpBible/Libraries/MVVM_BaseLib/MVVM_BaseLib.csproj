@@ -1,15 +1,10 @@
 ﻿<Project>
-	<Import Project="..\Libraries.props"/>
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
+		<OutputType>Library</OutputType>
 		<TargetFrameworks>net481-windows;net472-windows;net462-windows</TargetFrameworks>
-		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
         <!--UseWPF>true</UseWPF-->
 		<SignAssembly>True</SignAssembly>
-		<Authors>Joe Care from JC-Soft</Authors>
-		<Company>JC-Soft</Company>
-		<Copyright>Copyright (c) by JC-Soft 2022</Copyright>
-		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -25,7 +20,6 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Helper\" />
 		<Compile Include="..\BaseLib\Helper\Property.cs">
 			<Link>Helper\Property.cs</Link>
 		</Compile>
