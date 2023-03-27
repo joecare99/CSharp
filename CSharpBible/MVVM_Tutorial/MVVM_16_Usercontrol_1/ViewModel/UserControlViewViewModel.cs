@@ -17,10 +17,10 @@ namespace MVVM_16_UserControl_1.ViewModel
         public UserControlViewViewModel()
         {
             Command1 = new DelegateCommand(DoCommand1, (o) => string.IsNullOrEmpty(Text));
-            CommandCanExecuteBinding.Add((nameof(Text), nameof(Command1)));
+            AddPropertyDependency(nameof(Command1), nameof(Text));
 
             Command2 = new DelegateCommand(DoCommand2, (o) => string.IsNullOrEmpty(Daten));
-            CommandCanExecuteBinding.Add((nameof(Daten), nameof(Command2)));
+            AddPropertyDependency(nameof(Command2), nameof(Daten));
         }
 
         private void DoCommand1(object? obj)

@@ -75,11 +75,11 @@ namespace MVVM_21_Buttons.ViewModel
         public ButtonsViewViewModel()
         {
             PlayButton = new DelegateCommand(DoPlay, CanPlay);
-            CommandCanExecuteBinding.Add((nameof(CanPlay), nameof(PlayButton)));
+            AddPropertyDependency(nameof(PlayButton), nameof(CanPlay));
 
             ResetButton = new DelegateCommand(DoReset);
 
-            CommandCanExecuteBinding.Add((nameof(LastPara), nameof(CanPlay)));
+            AddPropertyDependency(nameof(CanPlay), nameof(LastPara));
             _flip[1] = true;
         }
 

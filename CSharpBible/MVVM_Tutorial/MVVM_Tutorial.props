@@ -1,12 +1,13 @@
 <Project>
-  <PropertyGroup>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Company>JC-Soft</Company>
-    <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2023</Copyright>
-  </PropertyGroup>
+	<PropertyGroup>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<LangVersion>9.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<DefineConstants>NULLABLE</DefineConstants>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Company>JC-Soft</Company>
+		<Authors>Joe Care</Authors>
+		<Copyright>Copyright © JC-Soft 2023</Copyright>
+	</PropertyGroup>
 </Project>

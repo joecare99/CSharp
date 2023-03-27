@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVVM_Tutorial", "MVVM_Tutorial", "{1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}"
+	ProjectSection(SolutionItems) = preProject
+		MVVM_Tutorial\MVVM_Tutorial.props = MVVM_Tutorial\MVVM_Tutorial.props
+		MVVM_Tutorial\MVVM_Tutorial_net.props = MVVM_Tutorial\MVVM_Tutorial_net.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bibliotheken", "Bibliotheken", "{7BA535EF-38FA-47A6-A6BD-5D6333D5DB10}"
 	ProjectSection(SolutionItems) = preProject
