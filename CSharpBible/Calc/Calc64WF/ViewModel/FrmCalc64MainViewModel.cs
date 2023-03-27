@@ -73,8 +73,8 @@ namespace Calc64WF.ViewModel
         public FrmCalc64MainViewModel()
         {
             _calc64model.CalcOperationChanged += (s, e) => { OnDataChanged?.Invoke(s, e); RaisePropertyChanged(e.prop); };
-            CommandCanExecuteBinding.Add((nameof(_calc64model.Accumulator), nameof(Akkumulator)));
-            CommandCanExecuteBinding.Add((nameof(_calc64model.OperationMode), nameof(OperationText)));
+            AddPropertyDependency(nameof(Akkumulator), nameof(_calc64model.Accumulator));
+            AddPropertyDependency(nameof(OperationText), nameof(_calc64model.OperationMode));
         }
 
         /// <summary>

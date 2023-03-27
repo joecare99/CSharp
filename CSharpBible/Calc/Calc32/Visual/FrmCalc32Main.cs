@@ -36,11 +36,13 @@ namespace Calc32.Visual
     /// <seealso cref="Form" />
     public partial class FrmCalc32Main : Form
     {
+        #region Properties
         /// <summary>
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
         public NotificationObject DataContext { get; private set; }
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc32Main" /> class.

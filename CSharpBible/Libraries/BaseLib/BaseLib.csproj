@@ -1,8 +1,8 @@
 ﻿<Project>
-	<Import Project="..\Libraries.props"/>
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481;net472</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472</TargetFrameworks>
 		<TargetFrameworks Condition="True">$(TargetFrameWorks);net462</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
@@ -19,6 +19,12 @@
 		<Compile Remove="Properties\AssemblyInfo.cs" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Remove="Helper\MVVM\**" />
+		<EmbeddedResource Remove="Helper\MVVM\**" />
 		<None Remove="*.bak" />
+		<None Remove="Helper\MVVM\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 </Project>

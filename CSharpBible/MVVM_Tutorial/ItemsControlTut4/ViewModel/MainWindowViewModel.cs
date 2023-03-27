@@ -106,7 +106,7 @@ namespace ItemsControlTut4.ViewModel
 			TodoList.Add(new TodoItem() { Title = "Drive Home", Completion = 20, Do = new DelegateCommand(DoAction), Step = new DelegateCommand(StepAction) });
 
             AddCommand = new DelegateCommand((o) => { AddTodo(NewItem, 0); NewItem = ""; }, (o) => !String.IsNullOrEmpty(NewItem));
-            CommandCanExecuteBinding.Add((nameof(NewItem), nameof(AddCommand)));
+            AddPropertyDependency(nameof(AddCommand), nameof(NewItem));
         }
 
         /// <summary>

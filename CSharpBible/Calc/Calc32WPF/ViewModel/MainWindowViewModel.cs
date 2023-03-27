@@ -101,7 +101,7 @@ namespace Calc32WPF.ViewModel
             btnBackspace = new DelegateCommand(
                 (o) => { calculatorClass.Operation((int)(o ?? 0)); },
                 (o)=>calculatorClass.Akkumulator!=0);
-            CommandCanExecuteBinding.Add((nameof(calculatorClass.Akkumulator), nameof(btnBackspace)));
+            AddPropertyDependency(nameof(btnBackspace), nameof(calculatorClass.Akkumulator));
         }
 
         /// <summary>

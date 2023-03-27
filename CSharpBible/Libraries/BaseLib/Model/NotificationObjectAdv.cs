@@ -14,7 +14,6 @@
 using BaseLib.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Baselib.Model
@@ -26,12 +25,13 @@ namespace Baselib.Model
     /// <seealso cref="INotifyPropertyChangedAdv" />
     public class NotificationObjectAdv :  INotifyPropertyChangedAdv
     {
-#if NET5_0_OR_GREATER || NULLABLE
-		public event PropertyChangedAdvEventHandler? PropertyChangedAdv;
-#else
+
 		/// <summary>
 		/// Tritt ein, wenn sich ein Eigenschaftswert ändert.
 		/// </summary>
+#if NET5_0_OR_GREATER || NULLABLE
+		public event PropertyChangedAdvEventHandler? PropertyChangedAdv;
+#else
 		public event PropertyChangedAdvEventHandler PropertyChangedAdv;
 #endif
 

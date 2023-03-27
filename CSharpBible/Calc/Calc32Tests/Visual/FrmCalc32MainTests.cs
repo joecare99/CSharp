@@ -12,6 +12,8 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
+using System.Windows.Forms;
 
 /// <summary>
 /// The Tests namespace.
@@ -54,7 +56,12 @@ namespace Calc32.Visual.Tests
         [TestMethod()]
         public void FrmCalc32MainTest()
         {
-            Assert.Fail();
+            testFrame.Show();
+            Assert.AreEqual(true, testFrame.Visible);
+            Application.DoEvents();
+            Thread.Sleep(100);
+            testFrame.Hide();
+            Assert.AreEqual(false, testFrame.Visible);
         }
     }
 }

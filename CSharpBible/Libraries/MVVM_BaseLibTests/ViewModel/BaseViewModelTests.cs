@@ -20,7 +20,7 @@ namespace MVVM.ViewModel.Tests
         [TestInitialize()]
         public void Init()
         {
-            CommandCanExecuteBinding.Clear();
+            CommandCanExecuteBindingClear();
             KnownParams.Clear();
             PropertyChanged -= OnPropertyChanged;
             PropertyChanged += OnPropertyChanged;
@@ -111,13 +111,13 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
 " })]
         public void BaseViewModelTest(string name, int i,int ival, string[] aExp )
         {
-            CommandCanExecuteBinding.Add((nameof(Property1), nameof(Property3)));
-            CommandCanExecuteBinding.Add((nameof(Property2), nameof(Property3)));
-            CommandCanExecuteBinding.Add((nameof(Property2), nameof(Property4)));
-            CommandCanExecuteBinding.Add((nameof(Property1), nameof(Prop1IsGreaterthan1Prop2)));
-            CommandCanExecuteBinding.Add((nameof(Property2), nameof(Prop1IsGreaterthan1Prop2)));
-            CommandCanExecuteBinding.Add((nameof(Property2), nameof(Prop2IsGreater)));
-            CommandCanExecuteBinding.Add((nameof(Prop1IsGreaterthan1Prop2),nameof(doSomething)));
+            AddPropertyDependency(nameof(Property3), nameof(Property1));
+            AddPropertyDependency(nameof(Property3), nameof(Property2));
+            AddPropertyDependency(nameof(Property4), nameof(Property2));
+            AddPropertyDependency(nameof(Prop1IsGreaterthan1Prop2), nameof(Property1));
+            AddPropertyDependency(nameof(Prop1IsGreaterthan1Prop2), nameof(Property2));
+            AddPropertyDependency(nameof(Prop2IsGreater), nameof(Property2));
+            AddPropertyDependency(nameof(doSomething), nameof(Prop1IsGreaterthan1Prop2));
             AppendKnownParams(1, nameof(Prop2IsGreater));
             AppendKnownParams(5, nameof(Prop2IsGreater));
             AppendKnownParams(7, nameof(Prop2IsGreater));

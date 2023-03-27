@@ -1,8 +1,8 @@
 <Project>
 	<PropertyGroup>
-		<BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<LangVersion>8.0</LangVersion>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<DefineConstants>NULLABLE</DefineConstants>
 		<ImplicitUsings>disable</ImplicitUsings>

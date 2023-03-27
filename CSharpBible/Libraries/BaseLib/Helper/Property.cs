@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM_BaseLib
+// Assembly         : BaseLib
 // Author           : Mir
 // Created          : 08-24-2022
 //

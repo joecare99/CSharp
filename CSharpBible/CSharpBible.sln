@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVVM_Tutorial", "MVVM_Tutorial", "{1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}"
+	ProjectSection(SolutionItems) = preProject
+		MVVM_Tutorial\MVVM_Tutorial.props = MVVM_Tutorial\MVVM_Tutorial.props
+		MVVM_Tutorial\MVVM_Tutorial_net.props = MVVM_Tutorial\MVVM_Tutorial_net.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bibliotheken", "Bibliotheken", "{7BA535EF-38FA-47A6-A6BD-5D6333D5DB10}"
 	ProjectSection(SolutionItems) = preProject
@@ -173,6 +177,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App1", "App1\App1.csproj", "{7FCCCBC8-4B1D-49CE-8CC1-AB02A0DC2E52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{947E3943-6DE0-46E7-9106-BCE8C6E812E0}"
+	ProjectSection(SolutionItems) = preProject
+		Games\Games.props = Games\Games.props
+		Games\Games_net.props = Games\Games_net.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokoban_Base", "Games\Sokoban_Base\Sokoban_Base.csproj", "{13662848-3BDB-4119-BF5D-D58EA0F8026E}"
 EndProject
