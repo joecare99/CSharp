@@ -19,12 +19,12 @@
 		<Compile Remove="Properties\AssemblyInfo.cs" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Remove="Helper\MVVM\**" />
+		<EmbeddedResource Remove="Helper\MVVM\**" />
 		<None Remove="*.bak" />
+		<None Remove="Helper\MVVM\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Helper\MVVM\" />
 	</ItemGroup>
 </Project>
