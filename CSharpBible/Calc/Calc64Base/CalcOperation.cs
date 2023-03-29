@@ -186,7 +186,7 @@ namespace Calc64Base
         /// Gets or sets the function.
         /// </summary>
         /// <value>The function.</value>
-        public Func<Int64, Int64> Function { get => _func; set=> Property.SetProperty(ref _func, value);}
+        public Func<Int64, Int64> Function { get => _func; set=> value.SetProperty(ref _func);}
         #endregion
 
         #region Methods
@@ -245,7 +245,8 @@ namespace Calc64Base
         /// Gets or sets the function.
         /// </summary>
         /// <value>The function.</value>
-        public Func<Int64, Int64, Int64> Function { get => _func; set => Property.SetProperty(ref _func, value); }
+        public Func<Int64, Int64, Int64> Function { get => _func; set 
+                => value.SetProperty(ref _func); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryOperation" /> class.

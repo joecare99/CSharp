@@ -70,17 +70,17 @@ namespace Calc64Base
         /// Gets or sets the accumulator.
         /// </summary>
         /// <value>The accumulator.</value>
-        public Int64 Accumulator { get=>_accumulator; set=> Property.SetProperty(ref _accumulator, value,PropChange); }
+        public Int64 Accumulator { get=>_accumulator; set=> value.SetProperty(ref _accumulator,PropChange); }
         /// <summary>
         /// Gets or sets the memory.
         /// </summary>
         /// <value>The memory.</value>
-        public Int64 Memory { get => _memory; set => Property.SetProperty(ref _memory, value, PropChange); }
+        public Int64 Memory { get => _memory; set => value.SetProperty(ref _memory, PropChange); }
         /// <summary>
         /// Gets or sets the register.
         /// </summary>
         /// <value>The register.</value>
-        public Int64 Register { get => _register; set => Property.SetProperty(ref _register, value, PropChange); }
+        public Int64 Register { get => _register; set => value.SetProperty(ref _register, PropChange); }
 #if NET5_0_OR_GREATER
         public Exception? LastError { get; set; }
 #else

@@ -73,7 +73,7 @@ namespace Game_Base.Model
         /// Gets or sets the items.
         /// </summary>
         /// <value>The items.</value>
-        public List<T> Items { get => _items; set => Property.SetProperty(ref _items, value, NtfyListChange); }
+        public List<T> Items { get => _items; set => value.SetProperty(ref _items, NtfyListChange); }
         /// <summary>
         /// Occurs when [data change event].
         /// </summary>
@@ -96,7 +96,7 @@ namespace Game_Base.Model
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="Name">The name.</param>
-        public void SetPlace(Point value, [CallerMemberName] string Name = "") => Property.SetProperty(ref _place, value, NtfyPlaceChange, Name);
+        public void SetPlace(Point value, [CallerMemberName] string Name = "") => value.SetProperty(ref _place, NtfyPlaceChange, Name);
         /// <summary>
         /// Gets the old place.
         /// </summary>
@@ -151,7 +151,8 @@ namespace Game_Base.Model
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="CallerMember">The caller member.</param>
-        public void SetParent(object? value, [CallerMemberName] string CallerMember = "") => Property.SetProperty(ref _parent, value, NtfyParentChange, CallerMember);
+        public void SetParent(object? value, [CallerMemberName] string CallerMember = "") 
+            => value.SetProperty(ref _parent, NtfyParentChange, CallerMember);
         /// <summary>
         /// Gets the parent.
         /// </summary>

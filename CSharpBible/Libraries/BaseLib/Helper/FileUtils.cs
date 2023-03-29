@@ -1,9 +1,22 @@
+// ***********************************************************************
+// Assembly         : BaseLib
+// Author           : Mir
+// Created          : 03-27-2023
+//
+// Last Modified By : Mir
+// Last Modified On : 03-27-2023
+// ***********************************************************************
+// <copyright file="FileUtils.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2023
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using System;
 using System.IO;
 
 namespace BaseLib.Helper
 {
-    /// <summary>A static class with usefull file- &amp; path - routines</summary>
+    /// <summary>A static class with useful file- &amp; path - routines</summary>
     public static class FileUtils
     {
         const string ExtSeparator = ".";
@@ -87,7 +100,7 @@ namespace BaseLib.Helper
                     {
                         File.Delete(sNewFilename);
                     }
-                    catch { } 
+                    catch { } // Hard to get here !!
                 throw;
             }
             if (!File.Exists(sNewFilename))

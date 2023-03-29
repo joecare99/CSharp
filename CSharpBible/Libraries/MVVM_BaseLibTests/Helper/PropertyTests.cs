@@ -189,16 +189,16 @@ namespace MVVM_BaseLib.Helper.Tests
             switch (tt)
             {
                 case TypeCode.Object when value.Contains(";"): // struct
-                    Assert.AreEqual(bExp, Property.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object when value.StartsWith("Ex"): // struct
                     DoEx = new NotSupportedException();
-                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp, value, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref strProp, value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String when value.StartsWith("vn"): // struct
-                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp, value,(s)=>false, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref strProp, value,(s)=>false, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String when value.StartsWith("vm"): // struct
@@ -210,31 +210,31 @@ namespace MVVM_BaseLib.Helper.Tests
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp,  value, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref strProp,  value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object when value.StartsWith("te"):
-                    Assert.AreEqual(bExp, Property.SetProperty(ref enumProp, (TestEnum)Enum.Parse(typeof(TestEnum),value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref enumProp, (TestEnum)Enum.Parse(typeof(TestEnum),value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Double:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref doubleProp, double.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref doubleProp, double.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Single:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref floatProp, float.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref floatProp, float.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Int32:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref intProp, int.Parse(value),DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref intProp, int.Parse(value),DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Boolean:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref boolProp, bool.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref boolProp, bool.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref objProp, (object)value, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref objProp, (object)value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 default:

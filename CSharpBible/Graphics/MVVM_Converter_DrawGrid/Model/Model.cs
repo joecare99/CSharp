@@ -16,12 +16,12 @@ namespace MVVM_Converter_DrawGrid.Model
         /// Gets or sets the level data.
         /// </summary>
         /// <value>The level data.</value>
-        public static FieldDef[]? LevelData { get => _levelData; set => Property.SetProperty(ref _levelData,value, OnPropertyChanged); }
+        public static FieldDef[]? LevelData { get => _levelData; set => PropertyHelper.SetProperty(ref _levelData,value, OnPropertyChanged); }
         /// <summary>
         /// Gets or sets the act level.
         /// </summary>
         /// <value>The act level.</value>
-        public static int ActLevel { get => actLevel; set => Property.SetProperty(ref actLevel, value, OnPropertyChanged); }
+        public static int ActLevel { get => actLevel; set => PropertyHelper.SetProperty(ref actLevel, value, OnPropertyChanged); }
         /// <summary>
         /// Gets or sets the property changed.
         /// </summary>

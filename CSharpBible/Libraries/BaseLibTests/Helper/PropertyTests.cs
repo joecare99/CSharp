@@ -22,27 +22,27 @@ namespace BaseLib.Helper.Tests
         private TypeCode _testEnum;
         private eValidReact valReact;
 
-        public string TestString { get => _testString; set => Property.SetProperty(ref _testString, value); }
+        public string TestString { get => _testString; set => PropertyHelper.SetProperty(ref _testString, value); }
         public string TestString1 { get => _testString; set => value.SetProperty(ref _testString); }
-        public string TestString2 { get => _testString; set => Property.SetProperty(ref _testString, value, ValidateString); }
+        public string TestString2 { get => _testString; set => PropertyHelper.SetProperty(ref _testString, value, ValidateString); }
         public string TestString3 { get => _testString; set => value.SetProperty(ref _testString, ValidateString); }
-        public string TestString4 { get => _testString; set => Property.SetProperty(ref _testString, value, StringAct); }
+        public string TestString4 { get => _testString; set => PropertyHelper.SetProperty(ref _testString, value, StringAct); }
         public string TestString5 { get => _testString; set => value.SetProperty(ref _testString, StringAct); }
         
         public string TestString6
         {
              set
-                => Property.SetProperty(ref _testString, value, ValidateString, StringAct);
+                => PropertyHelper.SetProperty(ref _testString, value, ValidateString, StringAct);
         }
 
         public string TestString7 {  
             set => value.SetProperty(ref _testString, ValidateString, StringAct); }
 
-        public int TestInt { get => _testInt; set => Property.SetProperty(ref _testInt, value); }
-        public float TestFloat { get => _testFloat; set => Property.SetProperty(ref _testFloat, value); }
-        public double TestDouble { get => _testDouble; set => Property.SetProperty(ref _testDouble, value); }
+        public int TestInt { get => _testInt; set => PropertyHelper.SetProperty(ref _testInt, value); }
+        public float TestFloat { get => _testFloat; set => PropertyHelper.SetProperty(ref _testFloat, value); }
+        public double TestDouble { get => _testDouble; set => PropertyHelper.SetProperty(ref _testDouble, value); }
 
-        public TypeCode TestEnum { get => _testEnum; set => Property.SetProperty(ref _testEnum, value); }
+        public TypeCode TestEnum { get => _testEnum; set => PropertyHelper.SetProperty(ref _testEnum, value); }
 
         private void StringAct(string arg1, string arg2,string arg3)
         {

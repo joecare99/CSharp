@@ -74,7 +74,7 @@ namespace Calc64Base
         /// Gets or sets the operation mode.
         /// </summary>
         /// <value>The operation mode.</value>
-        public eOpMode OperationMode { get => _nMode; set => Property.SetProperty(ref _nMode, value, PropChange); }
+        public eOpMode OperationMode { get => _nMode; set => value.SetProperty(ref _nMode, PropChange); }
 
         /// <summary>
         /// The b edit mode
