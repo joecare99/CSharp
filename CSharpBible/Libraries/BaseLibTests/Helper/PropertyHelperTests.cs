@@ -4,7 +4,7 @@ using System;
 namespace BaseLib.Helper.Tests
 {
     [TestClass()]
-    public class PropertyTests
+    public class PropertyHelperTests
     {
         public enum eValidReact
         {

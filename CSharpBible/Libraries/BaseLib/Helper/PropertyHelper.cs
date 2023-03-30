@@ -133,7 +133,7 @@ namespace BaseLib.Helper
         /// <param name="propertyName">Name of the property that has to be changed.</param>
         /// <returns>
         ///   <c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool SetProperty<T>(this T value,T data, Action<T> setter, Predicate<T>? validate = null, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
+        public static bool SetProperty<T>(this T value, Action<T> setter, T data,  Predicate<T>? validate = null, Action<string, T, T>? action = null, [CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T>.Default.Equals(data, value)) return false;
             if (!validate?.Invoke(value) ?? false) return false;
