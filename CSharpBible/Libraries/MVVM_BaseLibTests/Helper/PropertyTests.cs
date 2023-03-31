@@ -158,7 +158,8 @@ namespace MVVM_BaseLib.Helper.Tests
 "},
         new object[]{"enum", TypeCode.String, "vnNoVal", false, @""},
         new object[]{"enum", TypeCode.String, "vmNoVal", false, @""},
-        new object[]{"enum", TypeCode.String, "vxNoVal", true, @""},
+        new object[]{"enum", TypeCode.String, "vxNoVal", true, @"c:	SetPropertyTest,	o:,	n:vxNoVal
+"},
 
         };
         public Exception DoEx { get; private set; } = null;
@@ -261,8 +262,9 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <param name="expResult">The exp result.</param>
         [DataTestMethod()]
         [DynamicData(nameof(PropTestData))]
-        public void SetPropertyTest2(string Name, TypeCode tt, string value, bool bExp, string expResult)
+        public void SetPropertyTest2(string Name, TypeCode tt, string value, bool bExp, string expResStup)
         {
+            var expResult = expResStup.Replace(nameof(SetPropertyTest), nameof(SetPropertyTest2));
             switch (tt)
             {
                 case TypeCode.Object when value.Contains(";"): // struct
@@ -291,7 +293,7 @@ namespace MVVM_BaseLib.Helper.Tests
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object when value.StartsWith("te"):
-                    Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum),value), setter: (n) => enumProp = n, enumProp,  value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum),value), setter: (n) => enumProp = n, enumProp,action: DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Double:

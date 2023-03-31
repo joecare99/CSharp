@@ -176,6 +176,14 @@ namespace BaseLib.Helper.Tests
             Assert.AreEqual(xExp, File.Exists(Path.Combine(sLocalTestPath, sFileName)));
         }
 
+        [TestMethod()]
+        public void SaveFileTest3()
+        {
+            var sFileName = "test.nix";
+            Assert.IsFalse(FileUtils.SaveFile((s, o) => { }, Path.Combine(sLocalTestPath, sFileName), this));
+            Assert.AreEqual(false, File.Exists(Path.Combine(sLocalTestPath, sFileName)));
+        }
+
         /// <summary>
         /// Prepares the files.
         /// </summary>

@@ -143,5 +143,17 @@ namespace BaseLib.Helper
             return true;
         }
 
+        /// <summary>
+        /// Sets the property <see cref="SetProperty{T}(ref T, T, Predicate{T}, Action{string, T, T}, string)" />.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value">The value.</param>
+        /// <param name="data">The data.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+		public static bool SetProperty<T>(this T value, Action<T> setter, T data, Action<string, T, T>? action, [CallerMemberName] string propertyName = "")
+            => value.SetProperty(setter, data, null, action, propertyName);
+
     }
 }
