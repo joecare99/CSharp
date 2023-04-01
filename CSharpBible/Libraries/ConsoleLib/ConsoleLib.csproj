@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries.props"/>
 	<PropertyGroup>
-    <TargetFrameworks>net481-windows;net472-windows;net462-windows</TargetFrameworks>
+    <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
 	  <SignAssembly>True</SignAssembly>
   </PropertyGroup>

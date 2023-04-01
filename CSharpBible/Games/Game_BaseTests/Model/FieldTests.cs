@@ -106,8 +106,9 @@ namespace Game_Base.Model.Tests
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="Name">The name.</param>
-        public void SetPlace(Point value, [CallerMemberName] string Name = "") => Property.SetProperty(ref _place, value, 
-            (s, o, n) => { _oldplace = o;OnPlaceChange?.Invoke(this, (o, n)); logOperation?.Invoke("Place changed", this, o, n, s); }, Name);
+        public void SetPlace(Point value, [CallerMemberName] string Name = "") 
+            => value.SetProperty(ref _place, 
+            (s, o, n) => { _oldplace = o;OnPlaceChange?.Invoke(this, ((Point)o, (Point)n)); logOperation?.Invoke("Place changed", this, o, n, s); }, Name);
         /// <summary>
         /// Gets the old place.
         /// </summary>
@@ -231,8 +232,8 @@ namespace Game_Base.Model.Tests
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="Name">The name.</param>
-        public void SetPlace(Point value, [CallerMemberName] string Name = "") => Property.SetProperty(ref _place, value,
-            (s, o, n) => { _oldplace = o; OnPlaceChange?.Invoke(this, (n, o)); logOperation?.Invoke("Place changed", this, o, n, s); }, Name);
+        public void SetPlace(Point value, [CallerMemberName] string Name = "") => value.SetProperty(ref _place, 
+            (s, o, n) => { _oldplace = o; OnPlaceChange?.Invoke(this, ((Point)n, (Point)o)); logOperation?.Invoke("Place changed", this, o, n, s); }, Name);
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

@@ -1,8 +1,8 @@
 ﻿<Project>
-
-  <PropertyGroup>
+	<Import Project="..\MVVM_Tutorial_net.props" />
+	<PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFrameworks>net6.0-windows</TargetFrameworks>
 	<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 	<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 	<Nullable>enable</Nullable>

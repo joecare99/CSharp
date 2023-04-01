@@ -50,8 +50,8 @@ namespace MathLibrary.TwoDim.Tests
         [DataRow(1, 0.5 * Math.PI, 0, 1, 0, 1, 0)]
         [DataRow(1, 0.5 * Math.PI, 0, 2, 0, 2, 0)]
         [DataRow(1, 0, 1d / 6d * Math.PI, 0, 0, 0, 0)]
-        [DataRow(1, 0, 1d / 6d * Math.PI, 1, 1, 0, 0)]
-        [DataRow(1, 0, 1d / 6d * Math.PI, 2, 2, 0, 0)]
+        [DataRow(1, 0, 1d / 6d * Math.PI, 1, 0.954929658551372, 0.255872630837368, 0.523598775598299)]
+        [DataRow(1, 0, 1d / 6d * Math.PI, 2, 1.65398668626538, 0.954929658551372, 1.0471975511966)]
         public void AGVStateTest(double l, double vr, double r, double t, double xPx, double xPy, double xAng)
         {
             var v = Math2d.ByLengthAngle(l, vr);

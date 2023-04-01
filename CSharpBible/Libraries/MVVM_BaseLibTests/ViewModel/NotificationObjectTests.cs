@@ -55,7 +55,7 @@ namespace MVVM_BaseLibTests.ViewModel
             {
                 eValidReact.GeneralException => throw new Exception("A general exception occured"),
                 eValidReact.ArgumetException => throw new ArgumentException($"Argument ({arg2}) not valid!"),
-                _ => (object)null,
+                _ => (object?)null,
             };
         }
 

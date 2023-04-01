@@ -13,6 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -51,20 +52,20 @@ namespace ItemsControlTut4.ViewModel.Tests
                     break;
                 case ETestAction.SetCompletion:
                     testToDoItem.Completion = (int)o;
-                    Assert.AreEqual((int)o, testToDoItem.Completion);
+                    Assert.AreEqual((int?)o, testToDoItem.Completion);
                     break;
                 case ETestAction.DoStep:
                     testToDoItem.Step.Execute(testToDoItem);
-                    Assert.AreEqual((int)o, testToDoItem.Completion);
+                    Assert.AreEqual((int?)o, testToDoItem.Completion);
                     break;
                 case ETestAction.DoStep2:
                     testToDoItem.Step.Execute(testToDoItem);
                     testToDoItem.Step.Execute(testToDoItem);
-                    Assert.AreEqual((int)o, testToDoItem.Completion);
+                    Assert.AreEqual((int?)o, testToDoItem.Completion);
                     break;
                 case ETestAction.DoDo:
                     testToDoItem.Do.Execute(testToDoItem);
-                    Assert.AreEqual((int)o, testToDoItem.Completion);
+                    Assert.AreEqual((int?)o, testToDoItem.Completion);
                     break;
             }
         }

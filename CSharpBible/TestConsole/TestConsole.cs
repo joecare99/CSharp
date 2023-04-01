@@ -113,6 +113,11 @@ namespace TestConsole
             throw new NotImplementedException();
         }
 
+        public override string ReadLine()
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Gets the content.
         /// </summary>

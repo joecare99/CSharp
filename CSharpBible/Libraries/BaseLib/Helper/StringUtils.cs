@@ -108,7 +108,7 @@ namespace BaseLib.Helper
             }
             return _result;
 
-            int TabLen(int l, int o) => (l + o) + (8 - (l + o) % 8) - o;
+            static int TabLen(int l, int o) => (l + o) + (8 - (l + o) % 8) - o;
         }
 
         /// <summary>Converts to "<em>Normal</em>" case.</summary>
@@ -129,7 +129,7 @@ namespace BaseLib.Helper
             var arPreSplit = Data.Split(new string[] { Seperator }, StringSplitOptions.None);
             bool quoteMode = false;
             string quotedStr = "";
-            List<string> result = new List<string>();
+            List<string> result = new();
             foreach (var s in arPreSplit)
                 if (!quoteMode)
                     if (!s.TrimStart(' ').StartsWith(QuoteMark))
@@ -158,7 +158,6 @@ namespace BaseLib.Helper
             if (quoteMode && !String.IsNullOrEmpty(quotedStr))
             {
                 result.Add(quotedStr);
-                quotedStr = "";
             }
 
             return result;

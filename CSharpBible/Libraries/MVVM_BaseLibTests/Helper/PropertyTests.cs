@@ -14,6 +14,8 @@
 using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MVVM_BaseLib.Helper.Tests
 {
@@ -37,8 +39,8 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <returns>TestStruct.</returns>
         public static TestStruct Parse(string s)
         {
-            var sp=s.Split(';');
-            return new TestStruct(){ TestInt = int.Parse(sp[0]), TestString = sp[1] };
+            var sp = s.Split(';');
+            return new TestStruct() { TestInt = int.Parse(sp[0]), TestString = sp[1] };
         }
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -53,11 +55,26 @@ namespace MVVM_BaseLib.Helper.Tests
         /// </summary>
         /// <param name="obj">Das Objekt, das mit der aktuellen Instanz verglichen werden soll.</param>
         /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is TestStruct t)
-            return TestInt==t.TestInt && TestString== t.TestString;
+                return TestInt == t.TestInt && TestString == t.TestString;
             return false;
+        }
+
+        public static bool operator ==(TestStruct left, TestStruct right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TestStruct left, TestStruct right)
+        {
+            return !(left == right);
+        }
+
+        public override int GetHashCode()
+        {
+            return TestInt.GetHashCode() ^ TestString.GetHashCode();
         }
     }
 
@@ -88,8 +105,9 @@ namespace MVVM_BaseLib.Helper.Tests
     /// Defines test class PropertyTests.
     /// </summary>
     [TestClass()]
-    public class PropertyTests
+    public class PropertyHelperTests
     {
+
         /// <summary>
         /// The int property
         /// </summary>
@@ -109,11 +127,11 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <summary>
         /// The object property
         /// </summary>
-        private object objProp;
+        private object? objProp;
         /// <summary>
         /// The string property
         /// </summary>
-        private string strProp;
+        private string strProp="";
         /// <summary>
         /// The structure property
         /// </summary>
@@ -121,9 +139,44 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <summary>
         /// The data result
         /// </summary>
-        private string DataResult;
+        private string DataResult="";
         private bool boolProp;
 
+        public static IEnumerable<object[]> PropTestData => new[] 
+        {
+        new object[]{"object", TypeCode.Object, "123", true, @"c:	SetPropertyTest,	o:,	n:123
+"},
+        new object[]{"int", TypeCode.Int32, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
+"},
+        new object[]{"int", TypeCode.Int32, "0", false, @""},
+
+        new object[]{"bool", TypeCode.Boolean, "true", true, @"c:	SetPropertyTest,	o:False,	n:True
+"},
+        new object[]{"Bool", TypeCode.Boolean, "false", false, @""},
+        new object[]{"float", TypeCode.Single, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
+"},
+        new object[]{"float", TypeCode.Single, "0", false, @""},
+        new object[]{"double", TypeCode.Double, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
+"},
+        new object[]{"double", TypeCode.Double, "0", false, @""},
+        new object[]{"string", TypeCode.String, "123", true, @"c:	SetPropertyTest,	o:,	n:123
+"},
+        new object[]{"string", TypeCode.String, "", false, @""},
+        new object[]{"struct", TypeCode.Object, "123;Dada", true, @"c:	SetPropertyTest,	o:(0;),	n:(123;Dada)
+"},
+        new object[]{"struct", TypeCode.Object, "0;", false, @""},
+
+        new object[]{"enum", TypeCode.Object, "teCherry", true, @"c:	SetPropertyTest,	o:teApple,	n:teCherry
+"},
+        new object[]{"enum", TypeCode.Object, "teApple", false, @""},
+        new object[]{"enum", TypeCode.Object, "ExApple", true, @"c:	SetPropertyTest,	o:,	n:ExApple
+"},
+        new object[]{"enum", TypeCode.String, "vnNoVal", false, @""},
+        new object[]{"enum", TypeCode.String, "vmNoVal", false, @""},
+        new object[]{"enum", TypeCode.String, "vxNoVal", true, @"c:	SetPropertyTest,	o:,	n:vxNoVal
+"},
+
+        };
         public Exception DoEx { get; private set; } = null;
 
         /// <summary>
@@ -136,14 +189,17 @@ namespace MVVM_BaseLib.Helper.Tests
             floatProp = 0.0f;
             doubleProp = 0d;
             strProp = "";
-            structProp = new TestStruct();
-            structProp.TestString = "";
+            structProp = new TestStruct
+            {
+                TestString = ""
+            };
             objProp = null;
             enumProp = new TestEnum();
             boolProp = false;
 
             DataResult = "";
         }
+
 
         /// <summary>
         /// Sets the property test.
@@ -154,51 +210,22 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <param name="bExp">if set to <c>true</c> [b exp].</param>
         /// <param name="expResult">The exp result.</param>
         [DataTestMethod()]
-        [DataRow("object",TypeCode.Object,"123",true, @"c:	SetPropertyTest,	o:,	n:123
-")]
-        [DataRow("int", TypeCode.Int32, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
-")]
-        [DataRow("int", TypeCode.Int32, "0", false, @"")]
-
-        [DataRow("bool", TypeCode.Boolean, "true", true, @"c:	SetPropertyTest,	o:False,	n:True
-")]
-        [DataRow("Bool", TypeCode.Boolean, "false", false, @"")]
-        [DataRow("float", TypeCode.Single, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
-")]
-        [DataRow("float", TypeCode.Single, "0", false, @"")]
-        [DataRow("double", TypeCode.Double, "123", true, @"c:	SetPropertyTest,	o:0,	n:123
-")]
-        [DataRow("double", TypeCode.Double, "0", false, @"")]
-        [DataRow("string", TypeCode.String, "123", true, @"c:	SetPropertyTest,	o:,	n:123
-")]
-        [DataRow("string", TypeCode.String, "", false, @"")]
-        [DataRow("struct", TypeCode.Object, "123;Dada", true, @"c:	SetPropertyTest,	o:(0;),	n:(123;Dada)
-")]
-        [DataRow("struct", TypeCode.Object, "0;", false, @"")]
-
-        [DataRow("enum", TypeCode.Object, "teCherry", true, @"c:	SetPropertyTest,	o:teApple,	n:teCherry
-")]
-        [DataRow("enum", TypeCode.Object, "teApple", false, @"")]
-        [DataRow("enum", TypeCode.Object, "ExApple", true, @"c:	SetPropertyTest,	o:,	n:ExApple
-")]
-        [DataRow("enum", TypeCode.String, "vnNoVal", false, @"")]
-        [DataRow("enum", TypeCode.String, "vmNoVal", false, @"")]
-        [DataRow("enum", TypeCode.String, "vxNoVal", true, @"")]
-        public void SetPropertyTest(string Name,TypeCode tt,string value,bool bExp,string expResult )
+        [DynamicData(nameof(PropTestData))]
+        public void SetPropertyTest(string Name, TypeCode tt, string value, bool bExp, string expResult)
         {
             switch (tt)
             {
                 case TypeCode.Object when value.Contains(";"): // struct
-                    Assert.AreEqual(bExp, Property.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
-                    Assert.AreEqual(expResult, DataResult);
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult,Name);
                     break;
                 case TypeCode.Object when value.StartsWith("Ex"): // struct
                     DoEx = new NotSupportedException();
-                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp, value, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref strProp, value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String when value.StartsWith("vn"): // struct
-                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp, value,(s)=>false, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref strProp, value, (s) => false, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String when value.StartsWith("vm"): // struct
@@ -210,31 +237,100 @@ namespace MVVM_BaseLib.Helper.Tests
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref strProp,  value, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref strProp, value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object when value.StartsWith("te"):
-                    Assert.AreEqual(bExp, Property.SetProperty(ref enumProp, (TestEnum)Enum.Parse(typeof(TestEnum),value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref enumProp, (TestEnum)Enum.Parse(typeof(TestEnum), value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Double:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref doubleProp, double.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref doubleProp, double.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Single:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref floatProp, float.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref floatProp, float.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Int32:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref intProp, int.Parse(value),DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref intProp, int.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Boolean:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref boolProp, bool.Parse(value), DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref boolProp, bool.Parse(value), DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object:
-                    Assert.AreEqual(bExp, Property.SetProperty(ref objProp, (object)value, DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref objProp, (object)value, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Sets the property test.
+        /// </summary>
+        /// <param name="Name">The name.</param>
+        /// <param name="tt">The tt.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="bExp">if set to <c>true</c> [b exp].</param>
+        /// <param name="expResult">The exp result.</param>
+        [DataTestMethod()]
+        [DynamicData(nameof(PropTestData))]
+        public void SetPropertyTest2(string Name, TypeCode tt, string value, bool bExp, string expResStup)
+        {
+            var expResult = expResStup.Replace(nameof(SetPropertyTest), nameof(SetPropertyTest2));
+            switch (tt)
+            {
+                case TypeCode.Object when value.Contains(";"): // struct
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(TestStruct.Parse(value),(s) => structProp = s, structProp,DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Object when value.StartsWith("Ex"): // struct
+                    DoEx = new NotSupportedException();
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value,(n)=>strProp=n, strProp, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String when value.StartsWith("vn"): // struct
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, setter: (n) => strProp = n, strProp,  (s) => false, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String when value.StartsWith("vm"): // struct
+                    Assert.AreEqual(bExp, value.SetProperty((n) => strProp = n, strProp, (s) => false, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String when value.StartsWith("vx"): // struct
+                    Assert.AreEqual(bExp, value.SetProperty((n) => strProp = n, strProp,DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.String:
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, (n) => strProp = n, strProp, DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Object when value.StartsWith("te"):
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum),value), (n) => enumProp = n, enumProp,DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Double:
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref doubleProp, double.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Single:
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref floatProp, float.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Int32:
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref intProp, int.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Boolean:
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref boolProp, bool.Parse(value), DoAction));
+                    Assert.AreEqual(expResult, DataResult);
+                    break;
+                case TypeCode.Object:
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref objProp, (object)value, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 default:
@@ -252,7 +348,7 @@ namespace MVVM_BaseLib.Helper.Tests
         private void DoAction<T>(string arg1, T arg2, T arg3)
         {
             DataResult += $"c:\t{arg1},\to:{arg2},\tn:{arg3}\r\n";
-            if (DoEx!=null) throw DoEx;
+            if (DoEx != null) throw DoEx;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Snake_Base.Model
         /// Gets or sets the size of the pf.
         /// </summary>
         /// <value>The size of the pf.</value>
-        public Size PfSize { get => _pfRect.Size; set => Property.SetProperty(ref _pfSize, value, PfResize); }
+        public Size PfSize { get => _pfRect.Size; set => value.SetProperty(ref _pfSize, PfResize); }
         /// <summary>
         /// Gets the rect.
         /// </summary>

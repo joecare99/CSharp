@@ -1,12 +1,7 @@
 ﻿<Project>
-
+	<Import Project="..\MVVM_Tutorial_net.props"/>
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
