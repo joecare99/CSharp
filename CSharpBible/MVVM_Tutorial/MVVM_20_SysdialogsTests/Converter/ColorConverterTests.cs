@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Media;
 using System.Globalization;
+using System.Collections.Generic;
+using System;
 
 namespace MVVM_20_Sysdialogs.Converter.Tests
 {
