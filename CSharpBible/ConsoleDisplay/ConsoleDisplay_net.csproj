@@ -1,11 +1,7 @@
 ﻿<Project>
-  <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
-	<BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	<IntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-	<BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-	  <Company>JC-Soft</Company>
-	  <Copyright>Copyright © 2022 by JC-Soft</Copyright>
+	<Import Project="..\Solution_net.props" />
+	<PropertyGroup>
+	<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

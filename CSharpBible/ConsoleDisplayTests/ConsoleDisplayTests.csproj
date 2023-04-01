@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Solution.props"/>
+	<Import Project="..\Solution.props" />
 	<PropertyGroup>
     <TargetFrameworks>net462;net472;net48</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
+    <ProjectReference Include="..\Libraries\BaseLibTests\BaseLibTests.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 
