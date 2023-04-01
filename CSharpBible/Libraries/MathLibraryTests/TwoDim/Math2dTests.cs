@@ -670,7 +670,7 @@ namespace MathLibrary.TwoDim.Tests
 				0 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, y)),
 				1 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, -y)),
 				2 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(y, -x)),
-				_ => (Math2d.dDoDlg)null
+				_ => (Math2d.dDoDlg?)null
 			};
             AssertAreEqual(exp, Math2d.Do(v,fkt), $"{exp} = Math2d.Do({v},{f})");
 
@@ -694,7 +694,7 @@ namespace MathLibrary.TwoDim.Tests
                 0 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, y)),
                 1 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, -y)),
                 2 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(y, -x)),
-                _ => (Math2d.dDoDlg)null
+                _ => (Math2d.dDoDlg?)null
             };
             AssertAreEqual(exp, v.Do(fkt), $"{exp} = {v}.Do({f})");
 

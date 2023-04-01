@@ -259,7 +259,7 @@ namespace MathLibrary.TwoDim {
 			=> new Vector(vector.x * Math.Cos(angle) - vector.y * Math.Sin(angle),
 						 vector.y * Math.Cos(angle) + vector.x * Math.Sin(angle));
 
-        public static Vector Do(this Vector vector, dDoDlg action) 
+        public static Vector Do(this Vector vector, dDoDlg? action) 
 			=> action?.Invoke(vector.x, vector.y) ?? Null;
         public static bool TryWinkel2Vec(this Vector vector1, Vector vector2, out double winkel) 
 			=> vector1.Do((x, y) => new Vector(x, -y))

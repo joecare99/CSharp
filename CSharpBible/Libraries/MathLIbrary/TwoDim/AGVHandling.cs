@@ -40,7 +40,7 @@ namespace MathLibrary.TwoDim
 		}
 
 		/// <summary>
-		/// Agvs the steering.
+		/// Calculates the steering of AGV's.
 		/// </summary>
 		/// <param name="velocity">The velocity.</param>
 		/// <param name="rotation">The rotation.</param>

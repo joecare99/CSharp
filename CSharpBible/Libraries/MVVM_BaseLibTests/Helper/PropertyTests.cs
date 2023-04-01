@@ -55,11 +55,26 @@ namespace MVVM_BaseLib.Helper.Tests
         /// </summary>
         /// <param name="obj">Das Objekt, das mit der aktuellen Instanz verglichen werden soll.</param>
         /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is TestStruct t)
                 return TestInt == t.TestInt && TestString == t.TestString;
             return false;
+        }
+
+        public static bool operator ==(TestStruct left, TestStruct right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TestStruct left, TestStruct right)
+        {
+            return !(left == right);
+        }
+
+        public override int GetHashCode()
+        {
+            return TestInt.GetHashCode() ^ TestString.GetHashCode();
         }
     }
 
@@ -112,11 +127,11 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <summary>
         /// The object property
         /// </summary>
-        private object objProp;
+        private object? objProp;
         /// <summary>
         /// The string property
         /// </summary>
-        private string strProp;
+        private string strProp="";
         /// <summary>
         /// The structure property
         /// </summary>
@@ -124,7 +139,7 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <summary>
         /// The data result
         /// </summary>
-        private string DataResult;
+        private string DataResult="";
         private bool boolProp;
 
         public static IEnumerable<object[]> PropTestData => new[] 
@@ -174,8 +189,10 @@ namespace MVVM_BaseLib.Helper.Tests
             floatProp = 0.0f;
             doubleProp = 0d;
             strProp = "";
-            structProp = new TestStruct();
-            structProp.TestString = "";
+            structProp = new TestStruct
+            {
+                TestString = ""
+            };
             objProp = null;
             enumProp = new TestEnum();
             boolProp = false;
@@ -200,7 +217,7 @@ namespace MVVM_BaseLib.Helper.Tests
             {
                 case TypeCode.Object when value.Contains(";"): // struct
                     Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
-                    Assert.AreEqual(expResult, DataResult);
+                    Assert.AreEqual(expResult, DataResult,Name);
                     break;
                 case TypeCode.Object when value.StartsWith("Ex"): // struct
                     DoEx = new NotSupportedException();
@@ -268,12 +285,12 @@ namespace MVVM_BaseLib.Helper.Tests
             switch (tt)
             {
                 case TypeCode.Object when value.Contains(";"): // struct
-                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(TestStruct.Parse(value),setter: (s) => structProp = s, structProp,action:  DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(TestStruct.Parse(value),(s) => structProp = s, structProp,DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object when value.StartsWith("Ex"): // struct
                     DoEx = new NotSupportedException();
-                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value,setter:(n)=>strProp=n, strProp, action: DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value,(n)=>strProp=n, strProp, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String when value.StartsWith("vn"): // struct
@@ -285,15 +302,15 @@ namespace MVVM_BaseLib.Helper.Tests
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String when value.StartsWith("vx"): // struct
-                    Assert.AreEqual(bExp, value.SetProperty(setter: (n) => strProp = n, strProp,action: DoAction));
+                    Assert.AreEqual(bExp, value.SetProperty((n) => strProp = n, strProp,DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.String:
-                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, setter: (n) => strProp = n, strProp, action: DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, (n) => strProp = n, strProp, DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Object when value.StartsWith("te"):
-                    Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum),value), setter: (n) => enumProp = n, enumProp,action: DoAction));
+                    Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum),value), (n) => enumProp = n, enumProp,DoAction));
                     Assert.AreEqual(expResult, DataResult);
                     break;
                 case TypeCode.Double:

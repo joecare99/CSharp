@@ -46,13 +46,13 @@ namespace BaseLib.Helper
         /// <summary>
         /// Helper for setting properties
         /// <list type="bullet"><item>first tests the new <see cref="value" />if it differs from the old value in <see cref="data" /></item>
-        /// <item>calles the validation predicate <see cref="validate" /> if it is not <see cref="null" />. </item>
+        /// <item>calls the validation predicate <see cref="validate" /> if it is not <see cref="null" />. </item>
         /// <list type="bullet"><item>if <c>true</c> the procedure continues</item>
         /// <item>if <c>false</c> the procedure stops and returns false</item>
         /// <item>an excepton in the validation also stops the procedure. The exception will NOT be handeled.</item>
         /// </list>
         /// <item> then <see cref="data" /> will be set to (new) <see cref="value" /></item>
-        /// <item>at last calles the <see cref="action" /> (if not null). Exceptions in the action <strong>will</strong> be handeled (omitted)</item>
+        /// <item>at last calls the <see cref="action" /> (if not null). Exceptions in the action <strong>will</strong> be handeled (omitted)</item>
         /// </list>
         /// </summary>
         /// <typeparam name="T">The generic Type of the property</typeparam>
@@ -115,13 +115,13 @@ namespace BaseLib.Helper
         /// <summary>
         /// Helper for setting properties
         /// <list type="bullet"><item>first tests the new <see cref="value" />if it differs from the old value in <see cref="data" /></item>
-        /// <item>calles the validation predicate <see cref="validate" /> if it is not <see cref="null" />. </item>
+        /// <item>calls the validation predicate <see cref="validate" /> if it is not <see cref="null" />. </item>
         /// <list type="bullet"><item>if <c>true</c> the procedure continues</item>
         /// <item>if <c>false</c> the procedure stops and returns false</item>
         /// <item>an excepton in the validation also stops the procedure. The exception will NOT be handeled.</item>
         /// </list>
         /// <item> then <see cref="data" /> will be set to (new) <see cref="value" /></item>
-        /// <item>at last calles the <see cref="action" /> (if not null). Exceptions in the action <strong>will</strong> be handeled (omitted)</item>
+        /// <item>at last calls the <see cref="action" /> (if not null). Exceptions in the action <strong>will</strong> be handeled (omitted)</item>
         /// </list>
         /// </summary>
         /// <typeparam name="T">The generic Type of the property</typeparam>

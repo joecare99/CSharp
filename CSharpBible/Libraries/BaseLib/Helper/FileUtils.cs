@@ -49,7 +49,7 @@ namespace BaseLib.Helper
         public static bool WriteStringToFile(string sFilename,string sPayload)
         {
             using (FileStream fs = File.OpenWrite(sFilename))
-            using (StreamWriter sw = new StreamWriter(fs))
+            using (StreamWriter sw = new(fs))
             {
                 sw.Write(sPayload);
             }
@@ -64,7 +64,7 @@ namespace BaseLib.Helper
             if (!File.Exists(sFilename)) return null;
             string sResult = "";
             using (FileStream fs = File.OpenRead(sFilename))
-            using (StreamReader sw = new StreamReader(fs))
+            using (StreamReader sw = new(fs))
             {
                 sResult = sw.ReadToEnd();
             }
@@ -83,7 +83,7 @@ namespace BaseLib.Helper
         {
             string sNewFilename = sFilename.ChangeFileExt(NewExt);
             string sBakFilename = sFilename.ChangeFileExt(BackupExt);
-            // Delets "NewFile" if exists
+            // Deletes "NewFile" if exists
             if (File.Exists(sNewFilename))
             {
                 File.Delete(sNewFilename);
@@ -114,12 +114,14 @@ namespace BaseLib.Helper
                     File.Delete(sBakFilename);
                 }
                 // Do the Switch New -> File -> Bak
-                if (sNewFilename != sFilename)
+                if (sNewFilename == sFilename) { }
+                else
+
                     if (File.Exists(sFilename))
-                        File.Replace(sNewFilename, sFilename, sBakFilename);
-                    else
-                        File.Move(sNewFilename, sFilename);
-                return true;
+                    File.Replace(sNewFilename, sFilename, sBakFilename);
+                else
+                    File.Move(sNewFilename, sFilename);
+                    return true;
             }          
         }
     }
