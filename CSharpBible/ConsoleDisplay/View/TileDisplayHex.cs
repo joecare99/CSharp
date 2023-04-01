@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace ConsoleDisplay.View {
 	public static class HexMath {
-		public static PointF HexPointF((float X, float Y) f, bool v) =>
+		public static PointF HexPointF(this (float X, float Y) f, bool v) =>
 			v ?
 			new PointF(f.X, f.Y + ZigZag(f.X ) * 0.5f) :
 			new PointF(f.X + ZigZag(f.Y) * 0.5f, f.Y);
 
-		public static Point HexKPoint((float X, float Y) f, bool v) =>
+		public static Point HexKPoint(this (float X, float Y) f, bool v) =>
 			v ?
 			new Point((int)Math.Round(f.X), (int)Math.Round(f.Y - ZigZag(f.X) * 0.5f)) :
 			new Point((int)Math.Round(f.X - ZigZag(f.Y) * 0.5f), (int)Math.Round(f.Y));
 
-		public static float ZigZag(float x) =>
+		public static float ZigZag(this float x) =>
 			(float)Math.Abs(x - Math.Floor((x + 1.0) * 0.5) * 2.0);
 	}
 	/// <summary>
@@ -32,11 +32,11 @@ namespace ConsoleDisplay.View {
 		/// <summary>
 		/// The default tile
 		/// </summary>
-		public static T defaultTile;
+		public static T defaultTile { get; set; } = default!;
 		/// <summary>
 		/// The default tile definition
 		/// </summary>
-		public static TileDefBase tileDef;
+		public static TileDefBase tileDef { get; set; }
 		#endregion
 
 		/// <summary>The Display is vertical
@@ -103,11 +103,11 @@ namespace ConsoleDisplay.View {
 		/// <summary>
 		/// The tiles
 		/// </summary>
-		private Dictionary<Point, T> _tiles = new Dictionary<Point, T>();
+		private Dictionary<Point, T> _tiles = new();
 		/// <summary>
 		/// The rect
 		/// </summary>
-		private Rectangle _rect = new Rectangle();
+		private Rectangle _rect = new();
 		/// <summary>
 		/// The size
 		/// </summary>
@@ -154,7 +154,7 @@ namespace ConsoleDisplay.View {
 		public static void WriteTile(Point Offset, PointF p, T tile, Size ts) {
 			var def = tileDef?.GetTileDef(tile as Enum) ?? default;
 			Size s = (ts == Size.Empty) ? new Size(def.lines[0].Length, def.lines.Length) : ts;
-			Point pc = new Point();
+			Point pc = new();
 			for (pc.Y = 0; pc.Y < def.lines.Length; pc.Y++)
 				for (pc.X = 0; pc.X < def.lines[pc.Y].Length; pc.X++)
 					WriteTileChunk(Offset, p, def, s, pc);
@@ -223,7 +223,7 @@ namespace ConsoleDisplay.View {
 		public void WriteTile(PointF p, T tile) {
 			var def = TileDef?.GetTileDef(tile as Enum) ?? default;
 			Size s = TileSize;
-			Point pc = new Point((int)p.X * s.Width, (int)p.Y * s.Height);
+			Point pc = new((int)p.X * s.Width, (int)p.Y * s.Height);
 			var _rect2 = new Rectangle(Point.Empty, _rect.Size);
 			_rect2.Inflate(s);
 			if (_rect2.Contains(pc)) {
@@ -265,17 +265,17 @@ namespace ConsoleDisplay.View {
 		public void Update(bool e) {
 			var diffFields = new List<(PointF, T, PointF)>();
 			var p = new Point();
-			Point p3 = new Point();
+			Point p3 = new();
 			if (FncGetTile == null) return;
 
 			for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
 				for (p.X = 0; p.X < DispSize.Width; p.X++) {
 					p3.X = p.X + DispOffset.X;
 					p3.Y = p.Y + DispOffset.Y;
-					object td = FncGetTile(p3);
-					object ot = GetTile(p);
+					object td = FncGetTile(p3)!;
+					object? ot = GetTile(p);
 					var po = FncOldPos?.Invoke(p3);
-					if (((int)td != (int)ot)
+					if (((int)td != (int?)ot)
 						|| ((po ?? p3) != p3)) {
 						var pp = Point.Subtract(po ?? p3, (Size)DispOffset);				
 						diffFields.Add(( HexMath.HexPointF((p.X, p.Y), _vertical), (T)td, HexMath.HexPointF((pp.X, pp.Y), _vertical)));
@@ -321,15 +321,14 @@ namespace ConsoleDisplay.View {
 		public void FullRedraw() {
 			if (FncGetTile == null) return;
 			// Draw playfield
-			Point p = new Point();
-			Point p2 = new Point();
-			PointF p3 = new Point();
-			for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
+			Point p = new();
+			Point p2 = new();
+            for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
 				for (p.X = 0; p.X < DispSize.Width; p.X++) {
 					p2.X = p.X + DispOffset.X;
 					p2.Y = p.Y + DispOffset.Y;
-					p3= HexMath.HexPointF((p.X,p.Y),_vertical);
-					WriteTile(p3, _tiles[p] = FncGetTile(p2));
+                    PointF p3 = HexMath.HexPointF((p.X, p.Y), _vertical);
+                    WriteTile(p3, _tiles[p] = FncGetTile(p2));
 				}
 		}
 		#endregion

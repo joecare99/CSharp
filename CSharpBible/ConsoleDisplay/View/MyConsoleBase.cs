@@ -95,6 +95,12 @@ namespace ConsoleDisplay.View
         public abstract void WriteLine(string? st = "");
 
         /// <summary>
+        /// Writes the line.
+        /// </summary>
+        /// <param name="st">The st.</param>
+        public abstract string ReadLine();
+
+        /// <summary>
         /// Beeps the specified freq.
         /// </summary>
         /// <param name="freq">The freq.</param>
