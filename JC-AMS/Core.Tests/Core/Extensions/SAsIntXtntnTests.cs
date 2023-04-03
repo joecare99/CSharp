@@ -30,7 +30,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("NegativeInfinity", double.NegativeInfinity, 0)]
         [DataRow("double.MaxValue", double.MaxValue, 0)]
         [DataRow("double.MinValue", double.MinValue, 0)]
-        [DynamicData("AsDBNullData")]
+        [DynamicData(nameof(AsDBNullData))]
         public void AsInt32Test(string name, object o, int iExp)
         {
             Assert.AreEqual(iExp, o.AsInt32(), $"Test: {name}");
@@ -53,7 +53,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("NegativeInfinity", double.NegativeInfinity, 0)]
         [DataRow("double.MaxValue", double.MaxValue, 0)]
         [DataRow("double.MinValue", double.MinValue, 0)]
-        [DynamicData("AsDBNullData")]
+        [DynamicData(nameof(AsDBNullData))]
         public void AsInt32Test2(string name, object o, int iExp)
         {
             Assert.AreEqual(iExp, SAsIntXtntn.AsInt32(o), $"Test: {name}");
@@ -96,7 +96,7 @@ namespace JCAMS.Core.Extensions.Tests
         [DataRow("Math.PI", Math.PI, 3)]
         [DataRow("double.MaxValue", double.MaxValue, 0)]
         [DataRow("double.MinValue", double.MinValue, 0)]
-        [DynamicData("AsDBNullData")]
+        [DynamicData(nameof(AsDBNullData))]
         public void AsInt64Test(string name, object o, long lExp)
         {
             Assert.AreEqual(lExp, o.AsInt64(), $"Test: {name}");

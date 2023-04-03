@@ -51,7 +51,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest(string name, double[] ad, bool xExp, double dRes)
         {
 
@@ -75,7 +75,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest2(string name, double[] ad, bool xExp, double dRes)
         {
             Assert.AreEqual(xExp, SMath.ArithmeticAverage(out double dAct, ad), $"Test:{name}");
@@ -97,7 +97,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest1(string name, double[] ad, bool xExp, double dRes)
         {
             Queue<double> q = (ad == null) ? null : new Queue<double>(ad.ToList());
@@ -120,7 +120,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest3(string name, double[] ad, bool xExp, double dRes)
         {
             var ld = (ad != null) ? new List<double>(ad.ToList()) : null;
@@ -143,7 +143,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest3a(string name, double[] ad, bool xExp, double dRes)
         {
             var ld = (ad != null) ? new List<double>(ad.ToList()) : null;
@@ -166,7 +166,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest4(string name, double[] ad, bool xExp, double dRes)
         {
             if (double.IsNaN(dRes))
@@ -188,7 +188,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity)]
-        [DynamicData("AritmeticAverageData")]
+        [DynamicData(nameof(AritmeticAverageData))]
         public void ArithmeticAverageTest4a(string name, double[] ad, bool xExp, double dRes)
         {
             if (double.IsNaN(dRes))
@@ -750,7 +750,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity, double.NaN)]
-        [DynamicData("StandardDeviationData")]
+        [DynamicData(nameof(StandardDeviationData))]
 
         public void StandardDeviationTest(string name, double[] ad, bool xExp,double dPred, double dRes)
         {
@@ -774,7 +774,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity, double.NaN)]
-        [DynamicData("StandardDeviationData")]
+        [DynamicData(nameof(StandardDeviationData))]
 
         public void StandardDeviationTest1(string name, double[] ad, bool xExp, double dPred, double dRes)
         {
@@ -797,7 +797,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity, double.NaN)]
-        [DynamicData("StandardDeviationData")]
+        [DynamicData(nameof(StandardDeviationData))]
 
         public void StandardDeviationTest2(string name, double[] ad, bool xExp, double dPred, double dRes)
         {
@@ -819,7 +819,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow("(Inf+,0d)", new double[] { double.PositiveInfinity, 0d }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Inf+)", new double[] { double.PositiveInfinity, double.PositiveInfinity }, true, double.PositiveInfinity, double.NaN)]
         [DataRow("(Inf+,Min)", new double[] { double.PositiveInfinity, double.MinValue }, true, double.PositiveInfinity, double.NaN)]
-        [DynamicData("StandardDeviationData")]
+        [DynamicData(nameof(StandardDeviationData))]
 
         public void StandardDeviationTest2a(string name, double[] ad, bool xExp, double dPred, double dRes)
         {
@@ -896,7 +896,7 @@ namespace JCAMS.Core.Math2.Tests
         [DataRow(8, 64)]
         [DataRow(9, 81)]
         [DataRow(10, 100)]
-        [DynamicData("SqrData")]
+        [DynamicData(nameof(SqrData))]
         public void SqrTest(double dVal,double dExp)
         {
             if (double.IsNaN(dExp))
@@ -933,7 +933,7 @@ namespace JCAMS.Core.Math2.Tests
 		[DataRow(8, 64)]
 		[DataRow(9, 81)]
 		[DataRow(10, 100)]
-		[DynamicData("SqrData")]
+		[DynamicData(nameof(SqrData))]
 		public void SqrTest1(double dVal, double dExp) {
 			if (double.IsNaN(dExp))
 				Assert.AreEqual(dExp, dVal.Sqr());
