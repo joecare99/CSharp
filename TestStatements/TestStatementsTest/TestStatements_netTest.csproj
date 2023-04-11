@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DynamicSample\DynamicSample.csproj" />
+    <ProjectReference Include="..\DynamicSample\DynamicSample_net.csproj" />
     <ProjectReference Include="..\TestStatements\TestStatements_net.csproj" />
   </ItemGroup>
 

@@ -31,11 +31,11 @@ namespace TestStatements.Anweisungen
         /// <summary>
         /// The get now
         /// </summary>
-        public static Func<DateTime> GetNow = delegate { return DateTime.Now; };
+        public static Func<DateTime> GetNow = ()=> DateTime.Now; 
         /// <summary>
         /// The random
         /// </summary>
-        public static Func<Random> random = delegate { return r; };
+        public static Func<Random> random = ()=> r;
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample1()
         {
-            int caseSwitch = 1;
+            int caseSwitch = random().Next(3);
 
             switch (caseSwitch)
             {
@@ -83,7 +83,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample2()
         {
-            Color c = (Color)(random().Next(0, 3));
+            Color c = (Color)(random().Next(-1, 3));
             switch (c)
             {
                 case Color.Red:
@@ -106,8 +106,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample3()
         {
-            Random rnd = random();
-            int caseSwitch = rnd.Next(1, 4);
+            int caseSwitch = random().Next(0, 4);
 
             switch (caseSwitch)
             {

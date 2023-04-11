@@ -25,19 +25,22 @@ namespace TestStatements.Helper
         /// </summary>
         /// <param name="s">The s.</param>
         /// <returns>System.Int32.</returns>
-        public static int AsInt(this string s) => int.TryParse(s, out int i) ? i : 0;
+        public static int AsInt(this string s) 
+            => int.TryParse(s, out int i) ? i : 0;
         /// <summary>
         /// Tries zu parse the string as a float.
         /// </summary>
         /// <param name="s">The s.</param>
         /// <returns>System.Single.</returns>
-        public static float AsFloat(this string s) => float.TryParse(s.Replace(",",CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator),NumberStyles.Any, CultureInfo.InvariantCulture, out float f) ? f : float.NaN;
+        public static float AsFloat(this string s) 
+            => float.TryParse(s?.Replace(",",CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator),NumberStyles.Any, CultureInfo.InvariantCulture, out float f) ? f : float.NaN;
         /// <summary>
         /// Tries zu parse the string as a double.
         /// </summary>
         /// <param name="s">The s.</param>
         /// <returns>System.Double.</returns>
-        public static double AsDouble(this string s) => double.TryParse(s.Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator), NumberStyles.Any, CultureInfo.InvariantCulture, out double d) ? d : double.NaN;
+        public static double AsDouble(this string s) 
+            => double.TryParse(s?.Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator), NumberStyles.Any, CultureInfo.InvariantCulture, out double d) ? d : double.NaN;
 
     }
 }

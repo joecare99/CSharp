@@ -56,6 +56,7 @@ namespace DynamicSample.Model
         /// <summary>
         /// The values
         /// </summary>
+        /// 
         private Dictionary<pFields, string> _values = new Dictionary<pFields, string>();
         /// <summary>
         /// The index

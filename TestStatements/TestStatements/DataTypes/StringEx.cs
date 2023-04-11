@@ -53,9 +53,13 @@ namespace TestStatements.DataTypes
             Console.WriteLine(string2a);
             string string2b = @"The path is C:\PublicDocuments\Report1.doc";
             Console.WriteLine(string2b);
+            var p = "C:\\PublicDocuments\\Report1.doc";
+            string string2c = $"The path is {p}";
+            Console.WriteLine(string2c);
             // The example displays the following output:
             //       This is a string created by assignment.
             //       The path is C:\PublicDocuments\Report1.doc
+            //       The path is C:\PublicDocuments\Report1.doc      
             //       The path is C:\PublicDocuments\Report1.doc      
 
         }
@@ -96,10 +100,12 @@ namespace TestStatements.DataTypes
                     stringFromChars = new string(pchars);
                 }
             }
-
+#else
+            var stringFromBytes = string.Join("", bytes);
+            var stringFromChars = string.Join("", chars);
+#endif
             Console.WriteLine(stringFromBytes);
             Console.WriteLine(stringFromChars);
-#endif
             // The example displays the following output:
             //       word
             //       cccccccccccccccccccc
