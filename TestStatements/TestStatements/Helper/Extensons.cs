@@ -11,6 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Microsoft.CodeAnalysis.CSharp;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace TestStatements.Helper
@@ -42,5 +46,7 @@ namespace TestStatements.Helper
         public static double AsDouble(this string s) 
             => double.TryParse(s?.Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator), NumberStyles.Any, CultureInfo.InvariantCulture, out double d) ? d : double.NaN;
 
+        public static IEnumerable<T2> Convert<T1, T2>(this T1[]s,Func<T1,T2>f)
+            { foreach (var t1 in s) yield return f(t1); }
     }
 }

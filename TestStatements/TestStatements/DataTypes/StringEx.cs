@@ -12,7 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using TestStatements.Helper;
 
 namespace TestStatements.DataTypes
 {
@@ -21,6 +25,7 @@ namespace TestStatements.DataTypes
     /// </summary>
     public static class StringEx
     {
+        public static Func<DateTime> GetNow = () => DateTime.Now;
         /// <summary>
         /// Alls the tests.
         /// </summary>
@@ -101,7 +106,14 @@ namespace TestStatements.DataTypes
                 }
             }
 #else
-            var stringFromBytes = string.Join("", bytes);
+            IEnumerable<char> f(sbyte[] bytes){
+                foreach (var sb in bytes) 
+                    if (sb == 0) 
+                        break; 
+                    else 
+                        yield return (char)sb;
+            };
+            var stringFromBytes =new string(f(bytes).ToArray());
             var stringFromChars = string.Join("", chars);
 #endif
             Console.WriteLine(stringFromBytes);
@@ -119,7 +131,7 @@ namespace TestStatements.DataTypes
         /// </summary>
         public static void StringEx3()
         {
-            string string1 = "Today is " + DateTime.Now.ToString("D") + ".";
+            string string1 = "Today is " + GetNow().ToString("D") + ".";
             Console.WriteLine(string1);
 
             string string2 = "This is one sentence. " + "This is a second. ";
