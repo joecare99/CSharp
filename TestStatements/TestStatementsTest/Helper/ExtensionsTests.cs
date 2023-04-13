@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace TestStatements.Helper.Tests
 {
@@ -37,6 +39,16 @@ namespace TestStatements.Helper.Tests
         public void AsDoubleTest(string? sVal, double dExp)
         {
             Assert.AreEqual(dExp, sVal.AsDouble());
+        }
+
+        [DataTestMethod]
+        [DataRow("0", new object[] { (sbyte)0x01, (sbyte)0x02, (sbyte)0x03, (sbyte)0x04 }, new string[] { "1", "2", "3", "4" })]
+        [DataRow("1", new object[] { "Hallo", null, 1d, 2f, 4, 5u }, new object[] { "Hallo", "", "1", "2", "4", "5" })]
+        [DataRow("2",new object[] {"Hallo",null,1d,2f,4,5u }, new object[] { "Hallo", "", "1", "2", "4", "5" })]
+        public void ConvertTest(string name, dynamic[] oVal, dynamic[] oExp) {
+            var oR = oVal.Convert((v)=>v?.ToString()??"").ToArray();
+            for (var i = 0; i < oExp.Length; i++)
+                Assert.AreEqual(oExp[i], oR[i]);
         }
 
     }

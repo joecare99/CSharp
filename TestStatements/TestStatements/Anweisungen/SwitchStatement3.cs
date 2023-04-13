@@ -183,16 +183,14 @@ namespace TestStatements.Anweisungen
 
             try
             {
-                tollCalc.CalculateToll("this will fail");
-            }
+                tollCalc.CalculateToll("this will fail"); }
             catch (ArgumentException)
             {
                 Console.WriteLine("Caught an argument exception when using the wrong type");
             }
             try
             {
-                tollCalc.CalculateToll(null!);
-            }
+                tollCalc.CalculateToll(null!); }
             catch (ArgumentNullException)
             {
                 Console.WriteLine("Caught an argument exception when using null");
