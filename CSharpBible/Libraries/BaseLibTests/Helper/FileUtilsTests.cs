@@ -178,7 +178,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(1, "TestFile.any", false)]
         [DataRow(1, "TestFile.~new", false)]
         [DataRow(1, "TestFile.bak", false)]
-        [DataRow(2, "TestFile.any", false)]
+        [DataRow(2, "TestFile.any", true)]
         [DataRow(2, "TestFile.~new", false)]
         [DataRow(2, "TestFile.bak", true)]
         [DataRow(4, "TestFile.any", false)]
