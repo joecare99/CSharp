@@ -165,7 +165,7 @@ namespace Calc64Base
         /// Sets the identifier.
         /// </summary>
         /// <param name="v">The v.</param>
-        internal void SetID(int v) => ID = v;
+        public void SetID(int v) => ID = v;
         #endregion
     }
 
@@ -245,8 +245,9 @@ namespace Calc64Base
         /// Gets or sets the function.
         /// </summary>
         /// <value>The function.</value>
-        public Func<Int64, Int64, Int64> Function { get => _func; set 
-                => value.SetProperty(ref _func); }
+        public Func<Int64, Int64, Int64> Function { get => _func; 
+     //       set => value.SetProperty(ref _func);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryOperation" /> class.
@@ -347,7 +348,7 @@ namespace Calc64Base
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public override bool Execute(ref object[] o)
         {
-            if (o.Length > 0 && o[0] is Int64 akk && o[1] is Int64 mem)
+            if (o.Length > 1 && o[0] is Int64 akk && o[1] is Int64 mem)
             {
                 o[1] = _func?.Invoke(akk,mem) ?? mem;
                 return true;

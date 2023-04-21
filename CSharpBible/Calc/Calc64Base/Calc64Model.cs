@@ -108,7 +108,7 @@ namespace Calc64Base
         public void Button(int aNumber,int nBase=10)
         {
             if (!bEditMode)
-                (bEditMode, Accumulator) = (true, aNumber);
+                (bEditMode, Accumulator) = (true, Math.Min(aNumber,nBase-1));
             else if (aNumber<nBase && Accumulator < Int64.MaxValue / nBase)
                     Accumulator = Accumulator * nBase + aNumber;
             
@@ -124,12 +124,12 @@ namespace Calc64Base
             {
                 bEditMode = false;
                 if (OperationMode > eOpMode.CalcResult && ((eOpMode)v == eOpMode.CalcResult || IsRegisterOperation(v)))
-                    DoOpeation((int)OperationMode);
+                    DoOperation((int)OperationMode);
                 if ((eOpMode)v == eOpMode.CalcResult)
                     (OperationMode, Register) = ((eOpMode)v, 0);
                 else if (IsRegisterOperation(v))
                     (OperationMode, Register) = ((eOpMode)v, Accumulator);
-                else DoOpeation(v);
+                else DoOperation(v);
             }
             if (v<0)
                 switch(-v)
