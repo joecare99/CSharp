@@ -126,7 +126,7 @@ namespace Calc32Cons.Visual
             };
             btnCancel.OnClick += btnCancel_Click;
 
-            Calculator.OnChange += new EventHandler<(string, int, int)>(Calculator_OnChange);
+            Calculator.OnChange += Calculator_OnChange;
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Calc32Cons.Visual
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void Calculator_OnChange(object sender, (string,int,int) e)
+        private void Calculator_OnChange(object sender, (string,object,object) e)
         { 
             lblAkkumulator.Text = Calculator.Akkumulator.ToString();
         }

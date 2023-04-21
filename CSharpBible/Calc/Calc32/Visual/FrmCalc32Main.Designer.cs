@@ -144,7 +144,7 @@ namespace Calc32.Visual
             // 
             this.calculatorClass1.Akkumulator = 0;
             this.calculatorClass1.Memory = 0;
-            this.calculatorClass1.OnChange += new System.EventHandler<(string,int,int)>(this.calculatorClassChange);
+            this.calculatorClass1.OnChange += new System.EventHandler<(string,object,object)>(this.calculatorClassChange);
             // 
             // pictureBox1
             // 
