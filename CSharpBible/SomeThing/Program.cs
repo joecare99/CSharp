@@ -1,5 +1,6 @@
-#define _ShowGen
+#define ShowGen
 #define _SingleTask
+using System.Threading;
 using ConsoleDisplay.View;
 
 MyConsoleBase console = new MyConsole();
@@ -30,20 +31,19 @@ void WOut(int idx)=> console.Write((idx < Eight)?$"{TextOut[((TextCode >> (idx++
 		LabOutIdx = 0;
     int[] Fifo = new int[T2k],
 		PossibDir = new int[4];
-    Random rnd = new();
+    Rnd rnd = new();
     Labyrinth[0] = Eight;
     StoredCell =
     NextCell = CellPerDimension * CellPerDimension - One;
     Labyrinth[StoredCell] = T2k + 2;
     while (DirCount != 0 || FifoPushIdx >= FiFoPopIdx)
     {
-#if SingleTask
-    ActCell = NextCell;
-#else
-        ActCell = StoredCell;
-        StoredCell = NextCell;
+    ActCell
+#if !SingleTask
+    = StoredCell;StoredCell  
 #endif
-        ActCellData = Labyrinth[ActCell];
+    = NextCell;
+    ActCellData = Labyrinth[ActCell];
         DirCount = 0;
         foreach (int ActDir in DirStopArray)
         {
@@ -61,15 +61,15 @@ void WOut(int idx)=> console.Write((idx < Eight)?$"{TextOut[((TextCode >> (idx++
             var ActDir = PossibDir[rnd.Next(DirCount)] & 3;
             NextCell = Dir[ActDir] + ActCell;
 
-            Labyrinth[ActCell] = ActCellData | (One << ActDir);
+            Labyrinth[ActCell] |= (One << ActDir);
             Labyrinth[NextCell] |= T2k | (One << ((ActDir + 2) % 4));
 
             Fifo[FifoPushIdx++] = NextCell;
         }
         else
-        {
+        
             if (FifoPushIdx >= FiFoPopIdx) NextCell = Fifo[FiFoPopIdx++];
-        }
+        
 #if ShowGen
         console.SetCursorPosition((ActCell % CellPerDimension) * 2, ActCell / CellPerDimension+1);
         console.Write(Scc.Substring(Labyrinth[ActCell] & 0xe, 2));
