@@ -210,6 +210,53 @@ namespace BaseLib.Helper.Tests
             Assert.AreEqual(xOK, f(tc.ToType()));
         }
 
+        [DataTestMethod()]
+        [DataRow(TypeCode.Object, false)]
+        [DataRow(TypeCode.DBNull, false)]
+        [DataRow(TypeCode.Boolean, true)]
+        [DataRow(TypeCode.Char, false)]
+        [DataRow(TypeCode.SByte, false)]
+        [DataRow(TypeCode.Byte, false)]
+        [DataRow(TypeCode.Int16, false)]
+        [DataRow(TypeCode.UInt16, false)]
+        [DataRow(TypeCode.Int32, false)]
+        [DataRow(TypeCode.UInt32, false)]
+        [DataRow(TypeCode.Int64, false)]
+        [DataRow(TypeCode.UInt64, false)]
+        [DataRow(TypeCode.Single, false)]
+        [DataRow(TypeCode.Double, false)]
+        [DataRow(TypeCode.Decimal, false)]
+        [DataRow(TypeCode.DateTime, false)]
+        [DataRow(TypeCode.String, false)]
+        public void CompareTest2(TypeCode tc, bool xOK)
+        {
+            Func<Type, bool> f = (t) => t.Compare(null, t.Get(1));
+            Assert.AreEqual(xOK, f(tc.ToType()));
+        }
+
+        [DataTestMethod()]
+        [DataRow(TypeCode.Object, false)]
+        [DataRow(TypeCode.DBNull, false)]
+        [DataRow(TypeCode.Boolean, false)]
+        [DataRow(TypeCode.Char, false)]
+        [DataRow(TypeCode.SByte, false)]
+        [DataRow(TypeCode.Byte, false)]
+        [DataRow(TypeCode.Int16, false)]
+        [DataRow(TypeCode.UInt16, false)]
+        [DataRow(TypeCode.Int32, false)]
+        [DataRow(TypeCode.UInt32, false)]
+        [DataRow(TypeCode.Int64, false)]
+        [DataRow(TypeCode.UInt64, false)]
+        [DataRow(TypeCode.Single, false)]
+        [DataRow(TypeCode.Double, false)]
+        [DataRow(TypeCode.Decimal, false)]
+        [DataRow(TypeCode.DateTime, false)]
+        [DataRow(TypeCode.String, false)]
+        public void CompareTest3(TypeCode tc, bool xOK)
+        {
+            Func<Type, bool> f = (t) => t.Compare(t.Get(0),null);
+            Assert.AreEqual(xOK, f(tc.ToType()));
+        }
 
         [DataTestMethod()]
         [DataRow(TypeCode.Object,0)]

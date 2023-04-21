@@ -1,10 +1,8 @@
 ﻿<Project>
+	<Import Project="..\Calc_net.props"/>
 	<PropertyGroup>
       <OutputType>WinExe</OutputType>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
         <UseWPF>true</UseWPF>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -18,18 +16,18 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="obj\**" />
+	  <Compile Remove="Properties\AssemblyInfo.cs" />
 	  <EmbeddedResource Remove="obj\**" />
 	  <None Remove="obj\**" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Compile Remove="Properties\AssemblyInfo.cs" />
-	</ItemGroup>
-	<ItemGroup>
 	  <None Remove="*.bak" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Include="..\Calc32\NonVisual\CalculatorClass.cs">
+			<Link>NonVisual\CalulatorClass.cs</Link>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
 	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
-	  <ProjectReference Include="..\Calc32\Calc32_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">

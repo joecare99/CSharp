@@ -160,8 +160,8 @@ namespace Calc64Base
      CalcOperation
 #endif
  ToCalcOperation(string shortDesc) =>
-            (shortDesc != null && _calcOperations.ContainsKey(shortDesc)) ?
-             _calcOperations[shortDesc] : null;
+            (shortDesc != null && _calcOperations.TryGetValue(shortDesc,out var co)) ?
+             co : null;
 
         /// <summary>
         /// Converts to calcoperation.
@@ -195,13 +195,7 @@ namespace Calc64Base
         /// </summary>
         /// <param name="co">The co.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool DoOpeation(
- #if NET5_0_OR_GREATER
-     CalcOperation?
-#else
-     CalcOperation
-        #endif
-             co)
+        public bool DoOperation( CalcOperation? co)
         {
             if (co == null) return false;
             LastError = null;
@@ -235,13 +229,13 @@ namespace Calc64Base
         /// </summary>
         /// <param name="shortDesc">The short desc.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool DoOpeation(string shortDesc) => DoOpeation(ToCalcOperation(shortDesc));
+        public bool DoOperation(string shortDesc) => DoOperation(ToCalcOperation(shortDesc));
         /// <summary>
         /// Does the opeation.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool DoOpeation(int id) => DoOpeation(ToCalcOperation(id));
+        public bool DoOperation(int id) => DoOperation(ToCalcOperation(id));
 
 #endregion
     }

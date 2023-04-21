@@ -40,7 +40,7 @@ namespace BaseLib.Helper
                 (o)=>Convert.ToSingle(o,CultureInfo.InvariantCulture)) },
             {typeof(double),(nameof(System.Double),(o1,o2)=>(double?)o1 < (double?)o2,
                 (o)=>Convert.ToDouble(o,CultureInfo.InvariantCulture)) },
-            {typeof(bool),(nameof(System.Boolean),(o1,o2)=>!(bool)o1! && (bool)o2!,
+            {typeof(bool),(nameof(System.Boolean),(o1,o2)=>!((bool?)o1??false) && ((bool?)o2??false),
                 (o)=>Convert.ToBoolean(o)) },
             {typeof(long),(nameof(System.Int64),(o1,o2)=>(long?)o1 < (long?)o2,
                 (o)=>Convert.ToInt64(o)) },

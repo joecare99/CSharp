@@ -52,6 +52,13 @@ namespace ConsoleDisplay.View
         public abstract int LargestWindowHeight { get; }
 
         /// <summary>
+        /// Gets if the output is redirected.
+        /// </summary>
+        /// <value>Gets if the output is redirected.</value>
+        public abstract bool IsOutputRedirected { get; }
+
+
+        /// <summary>
         /// Gets or sets the title of the window.
         /// </summary>
         /// <value>The width of the window.</value>

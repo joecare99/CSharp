@@ -78,7 +78,12 @@ namespace Calc32.NonVisual
             /// The binary not
             /// mode
             /// </summary>
-            BinaryNot = 9
+            BinaryNot = 9,
+            /// <summary>
+            /// The binary not
+            /// mode
+            /// </summary>
+            Negate = 10
         };
 
         #region Property
@@ -91,7 +96,8 @@ namespace Calc32.NonVisual
         /// <summary>
         /// The n mode
         /// </summary>
-        private eOpMode nMode;
+        private eOpMode nMode { get => _nMode; set => value.SetProperty(ref _nMode, FireModeChangeEvent); }
+
         /// <summary>
         /// The b edit mode
         /// </summary>
@@ -101,6 +107,7 @@ namespace Calc32.NonVisual
         /// The n memory
         /// </summary>
         private int nMemory; // Gemerkte Zahl für Operationen
+        private eOpMode _nMode;
         #endregion
 
         /// <summary>
@@ -110,7 +117,7 @@ namespace Calc32.NonVisual
         /// <summary>
         /// Occurs when a change happens.
         /// </summary>
-        public event EventHandler<(string,int,int)> OnChange;
+        public event EventHandler<(string,object,object)> OnChange;
 
         // Properties
         /// <summary>
@@ -156,6 +163,12 @@ namespace Calc32.NonVisual
             OnChange?.Invoke(this, (Prop,ol,nw));
         }
 
+        private void FireModeChangeEvent(string arg1, eOpMode arg2, eOpMode arg3)
+        {
+            OnChange?.Invoke(this,(nameof(OperationText), sMode[(int)arg2], sMode[(int)arg3]));
+        }
+
+
         /// <summary>
         /// Button of Numbers.
         /// </summary>
@@ -182,35 +195,20 @@ namespace Calc32.NonVisual
         /// <param name="v">The operation.</param>
         public void Operation(int v)
         {
-            if ((v > 0) && (v <= (int)eOpMode.BinaryNot))
+            if ((v > 0) && (v <= (int)eOpMode.Negate))
             {
-                bEditMode = false;
-                switch (nMode)
+                bEditMode &= (v ==(int)eOpMode.Negate);
+                Akkumulator = nMode switch
                 {
-                    case eOpMode.Plus:
-                        nAkkumulator = nMemory + nAkkumulator;
-                        break;
-                    case eOpMode.Minus:
-                        nAkkumulator = nMemory - nAkkumulator;
-                        break;
-                    case eOpMode.Multiply:
-                        nAkkumulator = nMemory * nAkkumulator;
-                        break;
-                    case eOpMode.Divide:
-                        nAkkumulator = nMemory / nAkkumulator;
-                        break;
-                    case eOpMode.BinaryAnd:
-                        nAkkumulator = nMemory & nAkkumulator;
-                        break;
-                    case eOpMode.BinaryOr:
-                        nAkkumulator = nMemory | nAkkumulator;
-                        break;
-                    case eOpMode.BinaryXor:
-                        nAkkumulator = nMemory ^ nAkkumulator;
-                        break;
-                    default:
-                        break;
-                }
+                    eOpMode.Plus => nMemory + nAkkumulator,
+                    eOpMode.Minus => nMemory - nAkkumulator,
+                    eOpMode.Multiply => nMemory * nAkkumulator,
+                    eOpMode.Divide => nMemory / nAkkumulator,
+                    eOpMode.BinaryAnd => nMemory & nAkkumulator,
+                    eOpMode.BinaryOr => nMemory | nAkkumulator,
+                    eOpMode.BinaryXor => nMemory ^ nAkkumulator,
+                    _ => nAkkumulator
+                };
 
                 if ((eOpMode)v == eOpMode.CalcResult)
                 {
@@ -220,6 +218,10 @@ namespace Calc32.NonVisual
                 else if ((eOpMode) v == eOpMode.BinaryNot)
                 {
                     Akkumulator = ~nAkkumulator;
+                }
+                else if ((eOpMode)v == eOpMode.Negate)
+                {
+                    Akkumulator = -nAkkumulator;
                 }
                 else
                 {
@@ -233,17 +235,8 @@ namespace Calc32.NonVisual
         /// <summary>
         /// Backs the space.
         /// </summary>
-        public void BackSpace()
-        {
-            if (bEditMode)
-            {
-                Akkumulator = nAkkumulator / 10;
-            }
-            else
-            {
-                Akkumulator = 0;
-            }
-        }
+        public void BackSpace() 
+            => Akkumulator = bEditMode ? nAkkumulator / 10 : 0;
         #endregion
     }
 }

@@ -61,6 +61,12 @@ namespace ConsoleDisplay.View
         /// <value>The height of the largest window.</value>
         protected PropertyInfo? largestWindowHeight { get; set; }
             = typeof(Console).GetProperty(nameof(LargestWindowHeight));
+        /// <summary>
+        /// Gets if the Output is redirected.
+        /// </summary>
+        /// <value><b>TRUE</b> if the Output is redirected</value>
+        protected PropertyInfo? isOutputRedirected { get; set; }
+            = typeof(Console).GetProperty(nameof(IsOutputRedirected));
 
         /// <summary>
         /// Gets or sets the title of the window.
@@ -197,6 +203,10 @@ namespace ConsoleDisplay.View
         public override string Title { 
             get => (string)(title?.GetValue(instance) ??""); 
             set => title?.SetValue(instance, value); }
+
+        public override bool IsOutputRedirected 
+            => (bool)(isOutputRedirected?.GetValue(instance) ?? false);
+
 
         /// <summary>
         /// Clears this instance.

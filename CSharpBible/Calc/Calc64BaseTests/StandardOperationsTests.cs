@@ -12,12 +12,8 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Calc64Base;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /// <summary>
 /// The Tests namespace.
@@ -133,7 +129,42 @@ namespace Calc64Base.Tests
         [DataRow("x~", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 1L, -1L })]
         [DataRow("x~", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { 8190L, -999999999999L })]
         [DataRow("x~", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MinValue + 1, 1L })]
-        public void GetAllTest1(string sOp,string s, Int64[] argL,bool xResult, Int64[] erg, object e = null)
+        [DataRow("%", "1", new Int64[] { 0, 0 }, true, new Int64[] { 0L, 0L }, (object)Exceptions.eDivByZeroEx)]
+        [DataRow("%", "2", new Int64[] { 1L, 1L }, true, new Int64[] { 0L, 1L })]
+        [DataRow("%", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 0L, -1L })]
+        [DataRow("%", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { -999999999999L, -999999999999L })]
+        [DataRow("%", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { 1, 1L })]
+        [DataRow("==", "1", new Int64[] { 0, 0 }, true, new Int64[] { -1L, 0L })]
+        [DataRow("==", "2", new Int64[] { 1L, 1L }, true, new Int64[] { -1L, 1L })]
+        [DataRow("==", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 1L, -1L })]
+        [DataRow("==", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { 8190L, -999999999999L })]
+        [DataRow("==", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MinValue + 1, 1L })]
+        [DataRow("MR", "1", new Int64[] { 0, 0 }, true, new Int64[] { 0L, 0L })]
+        [DataRow("MR", "2", new Int64[] { 1L, 1L }, true, new Int64[] { 1L, 1L })]
+        [DataRow("MR", "3", new Int64[] { 1L, -1L }, true, new Int64[] { -1L, -1L })]
+        [DataRow("MR", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { -999999999999L, -999999999999L })]
+        [DataRow("MR", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { 1L, 1L })]
+        [DataRow("MS", "1", new Int64[] { 0, 0 }, true, new Int64[] { 0L, 0L })]
+        [DataRow("MS", "2", new Int64[] { 1L, 1L }, true, new Int64[] { 1L, 1L })]
+        [DataRow("MS", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 1L, 1L })]
+        [DataRow("MS", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { 1000000000000L, 1000000000000L })]
+        [DataRow("MS", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MaxValue, Int64.MaxValue })]
+        [DataRow("M+", "1", new Int64[] { 0, 0 }, true, new Int64[] { 0L, 0L })]
+        [DataRow("M+", "2", new Int64[] { 1L, 1L }, true, new Int64[] { 1L, 2L })]
+        [DataRow("M+", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 1L, 0L })]
+        [DataRow("M+", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { 1000000000000L, 1L })]
+        [DataRow("M+", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MaxValue, Int64.MinValue })]
+        [DataRow("M-", "1", new Int64[] { 0, 0 }, true, new Int64[] { 0L, 0L })]
+        [DataRow("M-", "2", new Int64[] { 1L, 1L }, true, new Int64[] { 1L, 0L })]
+        [DataRow("M-", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 1L, -2L })]
+        [DataRow("M-", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { 1000000000000L, -1999999999999L })]
+        [DataRow("M-", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MaxValue, Int64.MinValue + 2 })]
+        [DataRow("MC", "1", new Int64[] { 0, 0 }, true, new Int64[] { 0L, 0L })]
+        [DataRow("MC", "2", new Int64[] { 1L, 1L }, true, new Int64[] { 1L, 0L })]
+        [DataRow("MC", "3", new Int64[] { 1L, -1L }, true, new Int64[] { 1L, 0L })]
+        [DataRow("MC", "4", new Int64[] { 1000000000000L, -999999999999L }, true, new Int64[] { 1000000000000L, 0L })]
+        [DataRow("MC", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MaxValue, 0L })]
+        public void GetAllTest1(string sOp,string _, Int64[] argL,bool xResult, Int64[] erg, object e = null)
         {
             var co = StandardOperations.GetAll().First((o)=>o.ShortDescr==sOp);
             Assert.IsNotNull(co);

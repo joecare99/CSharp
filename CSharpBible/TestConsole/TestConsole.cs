@@ -124,5 +124,7 @@ namespace TestConsole
         /// <value>The content.</value>
         public string Content => form.Content;
 
+        public override bool IsOutputRedirected 
+            => false;
     }
 }

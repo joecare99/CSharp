@@ -62,15 +62,15 @@ namespace BaseLib.Helper.Tests
         /// </summary>
         stringProp,
         /// <summary>
-        /// The uint property
+        /// The unsigned integer property
         /// </summary>
         uintProp,
         /// <summary>
-        /// The ulong property
+        /// The unsigned long property
         /// </summary>
         ulongProp,
         /// <summary>
-        /// The ushort property
+        /// The unsigned short property
         /// </summary>
         ushortProp,
     }

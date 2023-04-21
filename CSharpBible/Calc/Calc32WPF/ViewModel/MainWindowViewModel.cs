@@ -55,11 +55,7 @@ namespace Calc32WPF.ViewModel
         /// <value>The memory.</value>
         public int Memory
         {
-            get => calculatorClass.Memory; set
-            {
-                calculatorClass.Memory = value;
-                RaisePropertyChanged();
-            }
+            get => calculatorClass.Memory; 
         }
 
         /// <summary>
@@ -99,7 +95,7 @@ namespace Calc32WPF.ViewModel
                 calculatorClass.Operation(-int.Parse((string)o)); 
             });
             btnBackspace = new DelegateCommand(
-                (o) => { calculatorClass.Operation((int)(o ?? 0)); },
+                (o) => { calculatorClass.BackSpace(); },
                 (o)=>calculatorClass.Akkumulator!=0);
             AddPropertyDependency(nameof(btnBackspace), nameof(calculatorClass.Akkumulator));
         }
@@ -109,7 +105,7 @@ namespace Calc32WPF.ViewModel
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void CalculatorClass_OnChange(object sender, (string, int, int) e)
+        private void CalculatorClass_OnChange(object sender, (string, object, object) e)
         {
             RaisePropertyChanged(nameof(Akkumulator));
             RaisePropertyChanged(nameof(Memory));

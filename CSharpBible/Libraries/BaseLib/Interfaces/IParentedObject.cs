@@ -26,7 +26,7 @@ namespace BaseLib.Interfaces
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="CallerMember">The caller member.</param>
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
         void SetParent(T? value, [CallerMemberName] string CallerMember ="" );
         T Parent { get => GetParent(); set => SetParent(value); }
         T? GetParent();
