@@ -2,7 +2,7 @@
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
         <!--UseWPF>true</UseWPF-->
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
