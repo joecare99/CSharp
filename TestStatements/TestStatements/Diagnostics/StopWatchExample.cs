@@ -41,7 +41,7 @@ namespace TestStatements.Diagnostics
         public static void ExampleMain1()
         {
             Console.WriteLine("This will take aprox. 10s");
-            IStopwatch stopWatch = GetStopwatch();
+            var stopWatch = GetStopwatch();
             stopWatch.Start();
             ThreadSleep(10000);
             stopWatch.Stop();
@@ -121,7 +121,7 @@ namespace TestStatements.Diagnostics
                 int indexSlowest = -1;
                 long milliSec = 0;
 
-                IStopwatch time10kOperations = GetStopwatch();
+                var time10kOperations = GetStopwatch();
                 time10kOperations.Start();
 
                 // Run the current operation 10001 times.
@@ -132,7 +132,7 @@ namespace TestStatements.Diagnostics
                 {
                     long ticksThisTime = 0;
                     int inputNum;
-                    IStopwatch timePerParse;
+                    dynamic timePerParse;
 
                     Func<(bool ok, int)> f = (operation) switch {
                         0 => () => (true, Int32.Parse("0")),
