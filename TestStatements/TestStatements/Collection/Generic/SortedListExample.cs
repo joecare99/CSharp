@@ -192,6 +192,18 @@ namespace TestStatements.Collection.Generic
         /// </summary>
         public static void ShowTryGetValue()
         {
+            static string ShowInfo(string sExt)
+            {
+                if (openWith.TryGetValue(sExt, out var value))
+                {
+                    return $"For key = \"{sExt}\", value = {value}.";
+                }
+                else
+                {
+                    return $"Key = \"{sExt}\" is not found.";
+                }
+            }
+
             const string Title = "Show TryGetValue";
             Console.WriteLine(Constants.Constants.Header2, Title);
             CreateTestSL();
@@ -199,15 +211,10 @@ namespace TestStatements.Collection.Generic
             // When a program often has to try keys that turn out not to
             // be in the list, TryGetValue can be a more efficient 
             // way to retrieve values.
-            string value = "";
-            if (openWith.TryGetValue("tif", out value))
-            {
-                Console.WriteLine("For key = \"tif\", value = {0}.", value);
-            }
-            else
-            {
-                Console.WriteLine("Key = \"tif\" is not found.");
-            }
+
+            Console.WriteLine(ShowInfo("tif"));
+            Console.WriteLine(ShowInfo("txt"));
+
         }
 
         /// <summary>
@@ -239,8 +246,7 @@ namespace TestStatements.Collection.Generic
             try
             {
                 Console.WriteLine("For key = \"tif\", value = {0}.",
-                    openWith["tif"]);
-            }
+                    openWith["tif"]); }
             catch (KeyNotFoundException)
             {
                 Console.WriteLine("Key = \"tif\" is not found.");
@@ -260,8 +266,7 @@ namespace TestStatements.Collection.Generic
             // already in the list.
             try
             {
-                openWith.Add("txt", "winword.exe");
-            }
+                openWith.Add("txt", "winword.exe"); }
             catch (ArgumentException)
             {
                 Console.WriteLine("An element with Key = \"txt\" already exists.");

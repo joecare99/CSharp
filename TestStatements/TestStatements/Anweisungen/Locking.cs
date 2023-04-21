@@ -77,9 +77,8 @@ namespace TestStatements.Anweisungen
             a.Withdraw(-50); 
             a.Withdraw(20);
             try
-            {
-                a.Withdraw(31);
-            }
+            {  
+                a.Withdraw(31); }
             catch(Exception e)
             {
                 Console.WriteLine(e.Message);
