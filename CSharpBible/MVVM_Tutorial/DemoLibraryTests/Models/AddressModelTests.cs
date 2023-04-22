@@ -42,6 +42,7 @@ namespace DemoLibraryTests.Models
         public void ToStringTest(string aStreet, string aCity,string aState, string aZip, string aCountry,string ExpToString) {
 			var model = new AddressModel() {
 				StreetAddress = aStreet,
+				AdditionalLine="",
 				State = aState,
 				ZipCode = aZip,
 				City = aCity,

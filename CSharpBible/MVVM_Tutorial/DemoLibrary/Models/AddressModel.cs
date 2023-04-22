@@ -11,17 +11,13 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DemoLibrary.Models {
-	/// <summary>
-	/// Class AddressModel.
-	/// </summary>
-	public class AddressModel {
+namespace DemoLibrary.Models
+{
+    /// <summary>
+    /// Class AddressModel.
+    /// </summary>
+    public class AddressModel {
 		/// <summary>
 		/// Gets or sets the adress identifier.
 		/// </summary>

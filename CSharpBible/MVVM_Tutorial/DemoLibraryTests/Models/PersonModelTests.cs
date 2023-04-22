@@ -48,6 +48,7 @@ namespace DemoLibraryTests.Models
 			PersonModel model = new PersonModel() { 
 				FirstNames = aFirstNames,
 				LastName = aLastName,
+				PrimaryAddress=null,
 				Title= aTitle				};
 			Assert.AreEqual(expFullname, model.FullName);
 		}

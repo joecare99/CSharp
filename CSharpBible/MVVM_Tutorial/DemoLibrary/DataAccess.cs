@@ -44,7 +44,7 @@ namespace DemoLibrary {
 		/// <summary>
 		/// The first names
 		/// </summary>
-		static string[] firstNames = { "Andrew", "Bob", "Carla", "Dany", "Earl", "Frank", "Georina", "Henry", "Inez", "John", "Karl", "Lenny", "Monique", "Norbert", "Oscar", "Paula", "Richard" };
+		static string[] firstNames = { "Andrew", "Bob", "Carla", "Dany", "Earl", "Frank", "Georina", "Henry", "Inez", "John", "Karl", "Lenny", "Monique", "Norbert", "Oscar", "Paula", "Quentin", "Richard", "Steve", "Urban", "Victor", "Walter","Xavier","Yvonne", "Zaharias" };
 		/// <summary>
 		/// The last names
 		/// </summary>
@@ -104,6 +104,7 @@ namespace DemoLibrary {
 			for (int i = 0; i < addressCount; i++) {
 				output.Addresses.Add(GetAddress((id - 1) * 5 + i + 1));
 			}
+			output.PrimaryAddress = output.Addresses[GetNext(0, addressCount-1)];
 			return output;
 		}
 
