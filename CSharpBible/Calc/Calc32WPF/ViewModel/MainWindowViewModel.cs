@@ -31,7 +31,7 @@ namespace Calc32WPF.ViewModel
         /// <summary>
         /// The calculator class
         /// </summary>
-        private CalculatorClass calculatorClass;
+        private readonly CalculatorClass calculatorClass;
         #endregion
 
         /// <summary>
@@ -89,10 +89,10 @@ namespace Calc32WPF.ViewModel
             calculatorClass = new CalculatorClass();
             calculatorClass.OnChange += CalculatorClass_OnChange;
             btnNumber =new DelegateCommand( (o) => { 
-                calculatorClass.NumberButton(int.Parse((string)o)); 
+                calculatorClass.NumberButton(int.Parse((string?)o??"")); 
             });
             btnOperation = new DelegateCommand( (o) => {
-                calculatorClass.Operation(-int.Parse((string)o)); 
+                calculatorClass.Operation(-int.Parse((string?)o??"")); 
             });
             btnBackspace = new DelegateCommand(
                 (o) => { calculatorClass.BackSpace(); },
@@ -105,7 +105,7 @@ namespace Calc32WPF.ViewModel
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void CalculatorClass_OnChange(object sender, (string, object, object) e)
+        private void CalculatorClass_OnChange(object? sender, (string, object?, object?) e)
         {
             RaisePropertyChanged(nameof(Akkumulator));
             RaisePropertyChanged(nameof(Memory));

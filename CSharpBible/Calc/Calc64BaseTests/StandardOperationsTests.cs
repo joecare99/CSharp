@@ -166,7 +166,7 @@ namespace Calc64Base.Tests
         [DataRow("MC", "5", new Int64[] { Int64.MaxValue, 1L }, true, new Int64[] { Int64.MaxValue, 0L })]
         public void GetAllTest1(string sOp,string _, Int64[] argL,bool xResult, Int64[] erg, object e = null)
         {
-            var co = StandardOperations.GetAll().First((o)=>o.ShortDescr==sOp);
+            var co = StandardOperations.GetAll().First((o)=>o.ShortDesc==sOp);
             Assert.IsNotNull(co);
             var arg = new object[argL.Length];
             for (int i = 0; i < arg.Length; i++)

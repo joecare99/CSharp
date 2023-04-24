@@ -49,8 +49,8 @@ namespace Calc64Base.Tests
         public void BinaryOperationTest()
         {
             var bco = new BinaryOperation("?2", "Quest2", (a, r) => a ^ r);
-            Assert.AreEqual("?2",bco.ShortDescr);
-            Assert.AreEqual("Quest2", bco.LongDescr);
+            Assert.AreEqual("?2",bco.ShortDesc);
+            Assert.AreEqual("Quest2", bco.LongDesc);
             Assert.AreEqual(true, bco.NeedAccumulator);
             Assert.AreEqual(true, bco.NeedRegister);
             Assert.AreEqual(false, bco.NeedMemory);

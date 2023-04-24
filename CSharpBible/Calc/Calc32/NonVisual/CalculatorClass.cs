@@ -117,7 +117,7 @@ namespace Calc32.NonVisual
         /// <summary>
         /// Occurs when a change happens.
         /// </summary>
-        public event EventHandler<(string,object,object)> OnChange;
+        public event EventHandler<(string,object?,object?)>? OnChange;
 
         // Properties
         /// <summary>

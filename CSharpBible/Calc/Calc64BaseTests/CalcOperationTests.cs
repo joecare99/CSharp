@@ -36,8 +36,8 @@ namespace Calc64Base.Tests
         {
             var co = new TestCalcOp();
             Assert.IsNotNull(co);
-            Assert.AreEqual("?", co.ShortDescr);
-            Assert.AreEqual("SomeQuest", co.LongDescr);
+            Assert.AreEqual("?", co.ShortDesc);
+            Assert.AreEqual("SomeQuest", co.LongDesc);
             Assert.AreEqual(false, co.NeedAccumulator);
             Assert.AreEqual(false, co.NeedRegister);
             Assert.AreEqual(false, co.NeedMemory);

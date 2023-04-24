@@ -30,13 +30,15 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// <summary>
         /// The f calculator class
         /// </summary>
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private CalculatorClass FCalculatorClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         /// <summary>
         /// The n changes
         /// </summary>
         private int nChanges;
 
-        public string DebugLog { get; private set; }
+        public string DebugLog = "";
 
         /// <summary>
         /// Initializes this instance.
@@ -55,7 +57,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         public void TestSetup()
         {
             Assert.IsNotNull(FCalculatorClass);
-            Assert.AreEqual(0,FCalculatorClass.Akkumulator);
+            Assert.AreEqual(0, FCalculatorClass.Akkumulator);
             Assert.AreEqual(0, FCalculatorClass.Memory);
             Assert.AreEqual("", FCalculatorClass.OperationText);
             Assert.AreEqual("", DebugLog);
@@ -67,7 +69,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         [TestMethod()]
         public void CalculatorClassTest()
         {
-            Assert.IsInstanceOfType(FCalculatorClass,typeof(CalculatorClass));
+            Assert.IsInstanceOfType(FCalculatorClass, typeof(CalculatorClass));
         }
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        void CalcChange(object sender, (string, object, object) e)
+        void CalcChange(object? sender, (string, object?, object?) e)
         {
             DebugLog += $"{sender}.Change({e.Item1},{e.Item2}=>{e.Item3}){Environment.NewLine}";
             nChanges++;
@@ -108,10 +110,10 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         }
 
 
-    /// <summary>
-    /// Defines the test method OnChangeTest2.
-    /// </summary>
-    [TestMethod()]
+        /// <summary>
+        /// Defines the test method OnChangeTest2.
+        /// </summary>
+        [TestMethod()]
         public void OnChangeTest2()
         {
             FCalculatorClass.OnChange += CalcChange;
@@ -128,16 +130,16 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// Defines the test method ButtonTest.
         /// </summary>
         [DataTestMethod()]
-        [DataRow("432",new int[] { 4, 3, 2 },new int[] { 4,43,432})]
-        [DataRow("1234", new int[] { 1,2,3,4 }, new int[] { 1, 12, 123,1234 })]
+        [DataRow("432", new int[] { 4, 3, 2 }, new int[] { 4, 43, 432 })]
         [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
-        [DataRow("999999999", new int[] { 9,9,9,9,9,9,9,9 }, new int[] { 9, 99, 999, 9999,99999,999999,9999999,99999999,999999999,999999999 })]
-        public void ButtonTest(string name, int[] aiButtons, int[] aiExp )
+        [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
+        [DataRow("999999999", new int[] { 9, 9, 9, 9, 9, 9, 9, 9 }, new int[] { 9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, 999999999 })]
+        public void ButtonTest(string name, int[] aiButtons, int[] aiExp)
         {
             for (int i = 0; i < aiButtons.Length; i++)
             {
                 FCalculatorClass.NumberButton(aiButtons[i]);
-                Assert.AreEqual(aiExp[i], FCalculatorClass.Akkumulator);
+                Assert.AreEqual(aiExp[i], FCalculatorClass.Akkumulator, $"{name}[{i}]");
             }
 
         }
@@ -147,13 +149,13 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// </summary>
         [DataTestMethod()]
         [DataRow("4", 4, false, 0, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,4=>0)\r\n")]
-        [DataRow("431",431,false,0, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,431=>0)\r\n")]
+        [DataRow("431", 431, false, 0, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,431=>0)\r\n")]
         [DataRow("4", 4, true, 0, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,4=>0)\r\n")]
         [DataRow("431", 431, true, 43, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,431=>43)\r\n")]
         [DataRow("-4", -4, true, 0, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,-4=>0)\r\n")]
         [DataRow("-456", -456, true, -45, "Calc32.NonVisual.CalculatorClass.Change(Akkumulator,-456=>-45)\r\n")]
         [DataRow("0", 0, true, 0, "")]
-        public void ButtonBack(string name, int iAkk,bool xEdit,int iExp,string sExp )
+        public void ButtonBack(string name, int iAkk, bool xEdit, int iExp, string sExp)
         {
             FCalculatorClass.OnChange += CalcChange;
 
@@ -162,8 +164,8 @@ namespace CSharpBible.Calc32.NonVisual.Tests
                 Enter(iAkk, FCalculatorClass);
             DebugLog = "";
             FCalculatorClass.BackSpace();
-            Assert.AreEqual(iExp, FCalculatorClass.Akkumulator);
-            Assert.AreEqual(sExp, DebugLog);
+            Assert.AreEqual(iExp, FCalculatorClass.Akkumulator, $"Calc({name}).result");
+            Assert.AreEqual(sExp, DebugLog, $"Calc({name}).DebugLog");
         }
 
         private void Enter(int iAkk, CalculatorClass fCalculatorClass)
@@ -171,14 +173,15 @@ namespace CSharpBible.Calc32.NonVisual.Tests
             var s = iAkk.ToString();
             fCalculatorClass.Operation(1);
             bool xNeg = false;
-            if (s[0]=='-')
+            if (s[0] == '-')
             {
                 xNeg = true;
                 s = s.Remove(0, 1);
             }
-            while (s.Length > 0) {
-                fCalculatorClass.NumberButton(s[0]-48);
-                s=s.Remove(0,1);
+            while (s.Length > 0)
+            {
+                fCalculatorClass.NumberButton(s[0] - 48);
+                s = s.Remove(0, 1);
             }
             if (xNeg)
                 fCalculatorClass.Operation((int)CalculatorClass.eOpMode.Negate);
@@ -189,7 +192,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// Defines the test method ButtonTest.
         /// </summary>
         [DataTestMethod()]
-        [DataRow("4+3", CalculatorClass.eOpMode.Plus, new int[] { 4, 3 }, 7,new string[] { @"Calc32.NonVisual.CalculatorClass.Change(OperationText,=>=)
+        [DataRow("4+3", CalculatorClass.eOpMode.Plus, new int[] { 4, 3 }, 7, new string[] { @"Calc32.NonVisual.CalculatorClass.Change(OperationText,=>=)
 Calc32.NonVisual.CalculatorClass.Change(Akkumulator,0=>4)
 Calc32.NonVisual.CalculatorClass.Change(OperationText,==>+)
 Calc32.NonVisual.CalculatorClass.Change(Memory,0=>4)
@@ -197,7 +200,7 @@ Calc32.NonVisual.CalculatorClass.Change(Akkumulator,4=>3)
 Calc32.NonVisual.CalculatorClass.Change(Akkumulator,3=>7)
 Calc32.NonVisual.CalculatorClass.Change(OperationText,+=>=)
 Calc32.NonVisual.CalculatorClass.Change(Memory,4=>0)
-" } )]
+" })]
         [DataRow("12-4", CalculatorClass.eOpMode.Minus, new int[] { 12, 4 }, 8, new string[] { @"Calc32.NonVisual.CalculatorClass.Change(OperationText,=>=)
 Calc32.NonVisual.CalculatorClass.Change(Akkumulator,0=>12)
 Calc32.NonVisual.CalculatorClass.Change(OperationText,==>-)
@@ -216,7 +219,7 @@ Calc32.NonVisual.CalculatorClass.Change(Akkumulator,6=>42)
 Calc32.NonVisual.CalculatorClass.Change(OperationText,*=>=)
 Calc32.NonVisual.CalculatorClass.Change(Memory,7=>0)
 " })]
-        [DataRow("99/11", CalculatorClass.eOpMode.Divide, new int[] { 99, 11 }, 9,new string[] { @"Calc32.NonVisual.CalculatorClass.Change(OperationText,=>=)
+        [DataRow("99/11", CalculatorClass.eOpMode.Divide, new int[] { 99, 11 }, 9, new string[] { @"Calc32.NonVisual.CalculatorClass.Change(OperationText,=>=)
 Calc32.NonVisual.CalculatorClass.Change(Akkumulator,0=>99)
 Calc32.NonVisual.CalculatorClass.Change(OperationText,==>/)
 Calc32.NonVisual.CalculatorClass.Change(Memory,0=>99)
@@ -262,7 +265,7 @@ Calc32.NonVisual.CalculatorClass.Change(Akkumulator,0=>12)
 Calc32.NonVisual.CalculatorClass.Change(Akkumulator,12=>-12)
 Calc32.NonVisual.CalculatorClass.Change(Akkumulator,-12=>-2)
 " })]
-        public void OperationTest(string name,CalculatorClass.eOpMode eO , int[] aiData,int iExp, string[] asExp)
+        public void OperationTest(string name, CalculatorClass.eOpMode eO, int[] aiData, int iExp, string[] asExp)
         {
             FCalculatorClass.OnChange += CalcChange;
             FCalculatorClass.Operation(1);
@@ -270,7 +273,7 @@ Calc32.NonVisual.CalculatorClass.Change(Akkumulator,-12=>-2)
             FCalculatorClass.Operation((int)eO);
             FCalculatorClass.Akkumulator = aiData[1];
             FCalculatorClass.Operation(1);
-            Assert.AreEqual(iExp, FCalculatorClass.Akkumulator);
+            Assert.AreEqual(iExp, FCalculatorClass.Akkumulator, $"Calc({name}).result");
             Assert.AreEqual(asExp[0], DebugLog);
         }
 

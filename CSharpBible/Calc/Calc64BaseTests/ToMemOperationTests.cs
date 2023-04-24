@@ -36,8 +36,8 @@ namespace Calc64Base.Tests
         public void ToMemOperationTest()
         {
             var tmco = new ToMemOperation("?4", "Quest4", (a, m) => a ^ m);
-            Assert.AreEqual("?4", tmco.ShortDescr);
-            Assert.AreEqual("Quest4", tmco.LongDescr);
+            Assert.AreEqual("?4", tmco.ShortDesc);
+            Assert.AreEqual("Quest4", tmco.LongDesc);
             Assert.AreEqual(true, tmco.NeedAccumulator);
             Assert.AreEqual(false, tmco.NeedRegister);
             Assert.AreEqual(true, tmco.NeedMemory);
