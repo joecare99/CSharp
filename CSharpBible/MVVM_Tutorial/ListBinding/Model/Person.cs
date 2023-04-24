@@ -36,15 +36,15 @@ namespace ListBinding.Model
         /// <summary>
         /// The first name
         /// </summary>
-        private string _firstName;
+        private string _firstName="";
         /// <summary>
         /// The last name
         /// </summary>
-        private string _lastName;
+        private string _lastName="";
         /// <summary>
         /// The title
         /// </summary>
-        private string _title;
+        private string _title = "";
         #endregion
         /// <summary>
         /// Gets or sets the identifier.
@@ -124,9 +124,9 @@ namespace ListBinding.Model
         public Person(SerializationInfo info, StreamingContext context)
         {
             Id = info.GetInt32("Id");
-            FirstName = info.GetString(nameof(FirstName));
-            LastName = info.GetString(nameof(LastName));
-            Title = info.GetString(nameof(Title));
+            FirstName = info.GetString(nameof(FirstName))??"";
+            LastName = info.GetString(nameof(LastName)) ?? "";
+            Title = info.GetString(nameof(Title)) ?? "";
         }
 
         /// <summary>

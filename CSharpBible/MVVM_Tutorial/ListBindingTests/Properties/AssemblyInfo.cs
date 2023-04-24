@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 //
 //      Hauptversion
 //      Nebenversion 
-//      Buildnummer
+//      BuildNummer
 //      Revision
 //
 // Sie können alle Werte angeben oder Standardwerte für die Build- und Revisionsnummern verwenden, 
