@@ -23,7 +23,7 @@ namespace DemoLibrary.Tests
         [DataRow(3, "Dr. med. Dany Garcia")]
         [DataRow(4, "M.D. Paula Garcia")]
         [DataRow(5, "Quentin Lee")]
-        [DataRow(6, "Dibl.Ing. Quentin Miller")]
+        [DataRow(6, "Dipl.Ing. Quentin Miller")]
         [DataRow(7, "Quentin Smith")]
         [DataRow(8, "M.D. Henry Lee")]
         [DataRow(9, "Dr. med. Karl Widmark")]
@@ -32,12 +32,12 @@ namespace DemoLibrary.Tests
             var peoples = DataAccess.GetPeople();
             Assert.AreEqual(10, peoples.Count);
             for (int i = 0; i < peoples.Count; i++)
-                Assert.AreEqual(sExp, peoples[iNr].FullName, $"p[{iNr}].Fullname");
+                Assert.AreEqual(sExp, peoples[iNr].FullName, $"p[{iNr}].FullName");
         }
 
         [DataTestMethod()]
         [DataRow(0, "Prof. Steve Taylor")]
-        [DataRow(1, "Dibl.Ing. Georina Jones")]
+        [DataRow(1, "Dipl.Ing. Georgina Jones")]
         [DataRow(2, "M.D. Urban Miller")]
         [DataRow(3, "Henry Thomas")]
         [DataRow(4, "Victor Widmark")]

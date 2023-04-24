@@ -24,7 +24,7 @@ namespace DemoLibraryTests.Models
 		/// <summary>
 		/// The c exp to string1
 		/// </summary>
-		private string cExpToString1="1, 4, 2 3, 5";
+		private readonly string cExpToString1="1, 4, 2 3, 5";
 
 		/// <summary>
 		/// Converts to stringtest.
