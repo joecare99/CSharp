@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
 using System.Drawing;
 
 namespace Sokoban_Base.Model
@@ -36,15 +37,11 @@ namespace Sokoban_Base.Model
         /// <value>The item.</value>
         public PlayObject? Item { get=>_item; set =>SetItem(value); }
 
-#if NET5_0_OR_GREATER
-        public Playfield? Parent { get; private set; }
-#else
         /// <summary>
         /// Gets the parent.
         /// </summary>
         /// <value>The parent.</value>
-        public Playfield Parent { get; private set; }
-#endif        
+        public Playfield? Parent { get; private set; }
         /// <summary>
         /// Gets the field definition.
         /// </summary>
@@ -62,16 +59,12 @@ namespace Sokoban_Base.Model
         /// <param name="value">The value.</param>
         protected abstract void SetItem(PlayObject? value);
 
-#if NET6_0_OR_GREATER
-        public Field(Point position, Playfield? parentPlayObject )
-#else
         /// <summary>
         /// Initializes a new instance of the <see cref="Field" /> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="parentPlayObject">The parent play object.</param>
-        public Field(Point position, Playfield parentPlayObject )
-#endif
+        public Field(Point position, Playfield? parentPlayObject )
         {
             Position = position;
             Parent = parentPlayObject;
@@ -85,16 +78,12 @@ namespace Sokoban_Base.Model
     /// <seealso cref="Sokoban_Base.Model.Field" />
     public class Wall : Field
     {
-#if NET6_0_OR_GREATER
-        public Wall(Point position, Playfield? parentPlayObject) : base(position, parentPlayObject)
-#else
         /// <summary>
         /// Initializes a new instance of the <see cref="Wall" /> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="parentPlayObject">The parent play object.</param>
-        public Wall(Point position, Playfield parentPlayObject) : base(position, parentPlayObject)
-#endif
+        public Wall(Point position, Playfield? parentPlayObject) : base(position, parentPlayObject)
         {
         }
 
@@ -123,16 +112,12 @@ namespace Sokoban_Base.Model
     /// <seealso cref="Sokoban_Base.Model.Field" />
     public class Floor: Field
     {
-#if NET6_0_OR_GREATER
-        public Floor(Point position, Playfield? parentPlayObject) : base(position, parentPlayObject)
-#else
         /// <summary>
         /// Initializes a new instance of the <see cref="Floor" /> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="parentPlayObject">The parent play object.</param>
-        public Floor(Point position, Playfield parentPlayObject) : base(position, parentPlayObject)
-#endif
+        public Floor(Point position, Playfield? parentPlayObject) : base(position, parentPlayObject)
         {
         }
 
@@ -143,8 +128,8 @@ namespace Sokoban_Base.Model
         /// <exception cref="System.ArgumentException">Illegal Item</exception>
         protected override FieldDef GetFieldDef() => Item switch
         {
-            Stone s => FieldDef.Stone,
-            Player s => FieldDef.Player,
+            Stone => FieldDef.Stone,
+            Player => FieldDef.Player,
             { } => throw new ArgumentException("Illegal Item"),
             null => FieldDef.Floor
         };

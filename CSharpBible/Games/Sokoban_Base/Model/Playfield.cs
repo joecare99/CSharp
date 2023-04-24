@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Sokoban_Base.Model
@@ -88,11 +90,11 @@ namespace Sokoban_Base.Model
         /// <summary>
         /// The stones
         /// </summary>
-        public List<Stone> Stones=new List<Stone> { };
+        public List<Stone> Stones=new() { };
         /// <summary>
         /// The fields
         /// </summary>
-        private List<Field> _fields = new List<Field> { };
+        private List<Field> _fields = new() { };
         /// <summary>
         /// The player
         /// </summary>
@@ -102,12 +104,12 @@ namespace Sokoban_Base.Model
         /// Gets the stones in dest.
         /// </summary>
         /// <value>The stones in dest.</value>
-        public int StonesInDest { get => Stones.FindAll((s) => s.field is Destination).Count(); }
+        public int StonesInDest { get => Stones.FindAll((s) => s.field is Destination).Count; }
         /// <summary>
         /// Gets a value indicating whether [game solved].
         /// </summary>
         /// <value><c>true</c> if [game solved]; otherwise, <c>false</c>.</value>
-        public bool GameSolved { get => Stones.Count()==StonesInDest; }
+        public bool GameSolved { get => Stones.Count==StonesInDest; }
 
         /// <summary>
         /// Setups the specified sf definition.

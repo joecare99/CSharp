@@ -15,7 +15,10 @@ using ConsoleDisplay.View;
 using Sokoban_Base.Model;
 using Sokoban_Base.Properties;
 using Sokoban_Base.ViewModel;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 
 namespace Sokoban_Base.View
 {
@@ -78,7 +81,7 @@ namespace Sokoban_Base.View
         public static void Show(UserAction? uAction=null)
         {
             myConsole.Clear();
-			if (OperatingSystem.IsWindows())
+			if (!myConsole.IsOutputRedirected)
 				myConsole.WindowHeight = Math.Min(myConsole.LargestWindowHeight, 40); 
 
 			if (uAction == UserAction.Help)
