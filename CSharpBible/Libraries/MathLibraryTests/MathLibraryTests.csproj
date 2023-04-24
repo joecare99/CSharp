@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Libraries.props"/>
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
     <TargetFrameworks>net481;net472;net462</TargetFrameworks>
     <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
