@@ -38,18 +38,15 @@ namespace ConsoleLib.CommonControls
         /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
         public bool running { get; private set; }
 
-#if NET5_0_OR_GREATER
-        public event EventHandler<Point>? OnCanvasResize;
-#else
         /// <summary>
         /// Occurs when [on canvas resize].
         /// </summary>
-        public event EventHandler<Point> OnCanvasResize;
-#endif
+        public event EventHandler<Point>? OnCanvasResize;
+
         /// <summary>
         /// The m buttons
         /// </summary>
-        private MouseEventArgs MButtons=default;
+        private MouseEventArgs? MButtons=default;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Application"/> class.
@@ -97,10 +94,10 @@ namespace ConsoleLib.CommonControls
                 var keyEventArgs = new KeyPressEventArgs(e.UnicodeChar);
                 ActiveControl?.HandlePressKeyEvents(keyEventArgs);
                 if (!keyEventArgs.Handled)
-                foreach ( var crtl in children)
+                foreach ( var ctrl in children)
                 {
 
-                        crtl.HandlePressKeyEvents(keyEventArgs);
+                        ctrl.HandlePressKeyEvents(keyEventArgs);
                         if (keyEventArgs.Handled) break;
                 }
             }
@@ -170,16 +167,19 @@ namespace ConsoleLib.CommonControls
         /// </summary>
         private void HandleMessages()
         {
-            int cc = Control.MessageQueue.Count;
-            if (cc > 0)
+            if (Control.MessageQueue != null)
             {
-                while (cc--> 0)
+                int cc = Control.MessageQueue.Count;
+                if (cc > 0)
                 {
-                    (var Act, var sender, var args) = Control.MessageQueue.Pop();
-                    Act?.Invoke(sender, args);
+                    while (cc-- > 0)
+                    {
+                        (var Act, var sender, var arg2) = Control.MessageQueue.Pop();
+                        Act?.Invoke(sender, arg2);
+                    }
+                    DoUpdate();
                 }
-                DoUpdate();    
-            }        
+            }
         }
 
         /// <summary>
