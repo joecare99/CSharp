@@ -63,7 +63,7 @@ namespace DemoLibrary.Models
 		/// <summary>
 		/// The addresses
 		/// </summary>
-		public List<AddressModel> Addresses = new List<AddressModel>();
+		public List<AddressModel> Addresses = new();
 		/// <summary>
 		/// Gets or sets the primary address.
 		/// </summary>

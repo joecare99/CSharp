@@ -135,6 +135,9 @@
     <EmbeddedResource Include="Visual\FrmAboutExMain.resx">
       <DependentUpon>FrmAboutExMain.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="AboutEx_TemporaryKey.pfx" />
     <None Include="Visual\AboutBox.cd" />
     <None Include="Properties\app.manifest" />
