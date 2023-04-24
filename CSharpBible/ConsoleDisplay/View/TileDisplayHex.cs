@@ -32,11 +32,11 @@ namespace ConsoleDisplay.View {
 		/// <summary>
 		/// The default tile
 		/// </summary>
-		public static T defaultTile { get; set; } = default!;
+		public static T? defaultTile { get; set; } = default!;
 		/// <summary>
 		/// The default tile definition
 		/// </summary>
-		public static TileDefBase tileDef { get; set; }
+		public static TileDefBase? tileDef { get; set; }
 		#endregion
 
 		/// <summary>The Display is vertical
@@ -56,7 +56,7 @@ namespace ConsoleDisplay.View {
 		/// </summary>
 		/// <param name="Idx">The index.</param>
 		/// <returns>T.</returns>
-		public T this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx, value); }
+		public T? this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx, value); }
 		/// <summary>
 		/// Gets the position.
 		/// </summary>
@@ -75,13 +75,13 @@ namespace ConsoleDisplay.View {
 		/// <summary>
 		/// My console
 		/// </summary>
-		public static MyConsoleBase myConsole = new MyConsole();
+		public static MyConsoleBase myConsole { get; set; } = new MyConsole();
 		/// <summary>
 		/// Gets or sets the tile definition.
 		/// it returns the default-tileDef when the local tileDef isn't set.
 		/// </summary>
 		/// <value>The tile definition.</value>
-		public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
+		public TileDefBase? TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
 		public Point DispOffset { get; set; } = Point.Empty;
 		public Func<Point, T>? FncGetTile;
@@ -103,11 +103,11 @@ namespace ConsoleDisplay.View {
 		/// <summary>
 		/// The tiles
 		/// </summary>
-		private Dictionary<Point, T> _tiles = new();
+		private readonly Dictionary<Point, T> _tiles = new();
 		/// <summary>
 		/// The rect
 		/// </summary>
-		private Rectangle _rect = new();
+		private readonly Rectangle _rect = new();
 		/// <summary>
 		/// The size
 		/// </summary>
@@ -119,11 +119,11 @@ namespace ConsoleDisplay.View {
 		/// <summary>
 		/// The changed
 		/// </summary>
-		private bool _changed;
+		private bool _changed=false;
 		/// <summary>
 		/// The (local) tile-definition
 		/// </summary>
-		private TileDefBase _tileDef;
+		private TileDefBase? _tileDef;
 		#endregion
 		#endregion
 
@@ -244,7 +244,7 @@ namespace ConsoleDisplay.View {
 		/// </summary>
 		/// <param name="Idx">The index.</param>
 		/// <returns>T.</returns>
-		private T GetTile(Point Idx) {
+		private T? GetTile(Point Idx) {
 			if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return defaultTile;
 			if (_tiles.ContainsKey(Idx)) return _tiles[Idx];
 			return defaultTile;
@@ -255,10 +255,13 @@ namespace ConsoleDisplay.View {
 		/// </summary>
 		/// <param name="Idx">The index.</param>
 		/// <param name="value">The value.</param>
-		private void SetTile(Point Idx, T value) {
+		private void SetTile(Point Idx, T? value) {
 			if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return;
-			if (_tiles.ContainsKey(Idx) && (_tiles[Idx] is T e) && e.Equals(value)) return;
-			_tiles[Idx] = value;
+			if (_tiles.TryGetValue(Idx,out T? e ) && e!.Equals(value)) return;
+			if (value != null)
+				_tiles[Idx] = value;
+			else
+				_tiles.Remove(Idx);	
 			_changed = true;
 		}
 
@@ -316,9 +319,10 @@ namespace ConsoleDisplay.View {
 					else
 					WriteTile(HexMath.HexPointF((f.Item1.X, f.Item1.Y),_vertical) , f.Item2);
 				}
-		}
+            _changed = false;
+        }
 
-		public void FullRedraw() {
+        public void FullRedraw() {
 			if (FncGetTile == null) return;
 			// Draw playfield
 			Point p = new();
@@ -330,6 +334,7 @@ namespace ConsoleDisplay.View {
                     PointF p3 = HexMath.HexPointF((p.X, p.Y), _vertical);
                     WriteTile(p3, _tiles[p] = FncGetTile(p2));
 				}
+			_changed = false;
 		}
 		#endregion
 		#endregion

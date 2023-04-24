@@ -150,7 +150,7 @@ namespace ConsoleDisplay.View.Tests
                 Thread.Sleep(0);
             }
             Application.DoEvents();
-            Assert.AreEqual(cTileDisplayTest1, _tstCon.Content);
+            Assert.AreEqual(cTileDisplayTest1, _tstCon?.Content);
 
             tileDisplay = new TileDisplay(new Point(62, 12), new Size(3, 5));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
@@ -159,7 +159,7 @@ namespace ConsoleDisplay.View.Tests
                 Thread.Sleep(0);
             }
             Application.DoEvents();
-            Assert.AreEqual(cTileDisplayTest12, _tstCon.Content);
+            Assert.AreEqual(cTileDisplayTest12, _tstCon?.Content);
 
             Thread.Sleep(100);
         }
@@ -174,7 +174,7 @@ namespace ConsoleDisplay.View.Tests
                 Thread.Sleep(0);
             }
             Application.DoEvents();
-            Assert.AreEqual(cTileDisplayTest2, _tstCon.Content);
+            Assert.AreEqual(cTileDisplayTest2, _tstCon?.Content);
 
             tileDisplay = new TileDisplay(new Point(62, 12), new Size(3, 5),new Size(2, 2));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
@@ -183,7 +183,7 @@ namespace ConsoleDisplay.View.Tests
                 Thread.Sleep(0);
             }
             Application.DoEvents();
-            Assert.AreEqual(cTileDisplayTest22, _tstCon.Content);
+            Assert.AreEqual(cTileDisplayTest22, _tstCon?.Content);
 
             tileDisplay = new TileDisplay(new Point(40, 6), new Size(3, 5), new Size(4, 2));
             var tileDisplay2 = new TileDisplay(new Point(32, 8), new Size(3, 5), new Size(2, 1))
@@ -197,7 +197,7 @@ namespace ConsoleDisplay.View.Tests
                 Thread.Sleep(0);
             }
             Application.DoEvents();
-            Assert.AreEqual(cTileDisplayTest23, _tstCon.Content);
+            Assert.AreEqual(cTileDisplayTest23, _tstCon?.Content);
 
             Thread.Sleep(100);
         }
@@ -210,7 +210,7 @@ namespace ConsoleDisplay.View.Tests
                 TileDisplay.WriteTile(Point.Empty, new PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
                 Thread.Sleep(0);
             }
-            Assert.AreEqual(cExpWriteTile, _tstCon.Content);
+            Assert.AreEqual(cExpWriteTile, _tstCon?.Content);
             Thread.Sleep(100);
         }
 
@@ -236,13 +236,13 @@ namespace ConsoleDisplay.View.Tests
                 tileDisplay.FncGetTile = (p) => (VTiles)(p.X + p.Y * tileDisplay.DispSize.Width);
                 tileDisplay.FullRedraw();
                 Application.DoEvents();
-                Assert.AreEqual(cTileDisplayTest3, _tstCon.Content);
+                Assert.AreEqual(cTileDisplayTest3, _tstCon?.Content);
                 Thread.Sleep(100);
             }
             tileDisplay.FncGetTile = (p) => vt;
             tileDisplay.FullRedraw();
             Application.DoEvents();
-            Assert.AreEqual(sExp, _tstCon.Content);
+            Assert.AreEqual(sExp, _tstCon?.Content);
 
             Thread.Sleep(100);
         }
@@ -365,7 +365,7 @@ namespace ConsoleDisplay.View.Tests
             };
             tileDisplay.FullRedraw();
             Application.DoEvents();
-            Assert.AreEqual(cExpUpdateText[(int)vt2], _tstCon.Content);
+            Assert.AreEqual(cExpUpdateText[(int)vt2], _tstCon?.Content);
 
             Thread.Sleep(10);
 
@@ -373,13 +373,13 @@ namespace ConsoleDisplay.View.Tests
             tileDisplay.FncOldPos = (p) => xTst(p) ? new Point(p.X * 3 - 3, p.Y) : p;
             tileDisplay.Update(true); //Halvstep
             Application.DoEvents();
-            Assert.AreEqual(sExp[0], _tstCon.Content,$"Test:{name}.Halfstep");
+            Assert.AreEqual(sExp[0], _tstCon?.Content,$"Test:{name}.Halfstep");
 
             Thread.Sleep(10);
 
             tileDisplay.Update(false); //Fullstep
             Application.DoEvents();
-            Assert.AreEqual(sExp[1], _tstCon.Content, $"Test:{name}.Fullstep");
+            Assert.AreEqual(sExp[1], _tstCon?.Content, $"Test:{name}.Fullstep");
 
             Thread.Sleep(10);
             Application.DoEvents();
@@ -387,7 +387,7 @@ namespace ConsoleDisplay.View.Tests
             console!.Clear();
             tileDisplay.FullRedraw(); 
             Application.DoEvents();
-            Assert.AreEqual(sExp[1], _tstCon.Content, $"Test:{name}.Fullredraw");
+            Assert.AreEqual(sExp[1], _tstCon?.Content, $"Test:{name}.Fullredraw");
 
 
             bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
