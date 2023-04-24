@@ -32,7 +32,7 @@ namespace CommonDialogs
 		/// <summary>
 		/// The FBD
 		/// </summary>
-		private System.Windows.Forms.FolderBrowserDialog _fbd =new System.Windows.Forms.FolderBrowserDialog();
+		private readonly System.Windows.Forms.FolderBrowserDialog _fbd =new System.Windows.Forms.FolderBrowserDialog();
 
 		/// <summary>
 		/// Gets or sets a value indicating whether [show new folder button].
@@ -91,7 +91,7 @@ namespace CommonDialogs
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[TypeConverter(typeof(StringConverter))]
-		public object Tag { get => _fbd.Tag; set => _fbd.Tag = value; }
+		public object? Tag { get => _fbd.Tag; set => _fbd.Tag = value; }
 
 		/// <summary>
 		/// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.
