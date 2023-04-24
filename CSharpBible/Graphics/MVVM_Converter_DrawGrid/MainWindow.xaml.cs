@@ -34,14 +34,14 @@ namespace MVVM_Converter_DrawGrid
             }
         }
 
-        private BaseViewModel ShowClientinFrame(string arg)
+        private BaseViewModel? ShowClientinFrame(string arg)
         {
             try
             {
                 this.Client.Source = new Uri(arg);
                 return Client.DataContext as BaseViewModel;
             }
-            catch(Exception ex) 
+            catch(Exception) 
             {
                 return null;
             };

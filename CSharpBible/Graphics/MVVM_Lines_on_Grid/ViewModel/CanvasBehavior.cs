@@ -59,7 +59,7 @@ namespace MVVM_Lines_on_Grid.ViewModel
                 if (AssociatedObject.DataContext is PlotFrameViewModel vm)
                 { 
                     var mousePosition = e.GetPosition(s as IInputElement);
-                    var RealPos = cCoordinateConverter.Vis2RealP(mousePosition,cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
+                    var RealPos = cCoordinateConverter?.Vis2RealP(mousePosition,cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
                 }
             };
         }
