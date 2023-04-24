@@ -41,7 +41,11 @@ namespace Calc32.Visual
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
-        public NotificationObject DataContext { get; private set; }
+        public
+#if NET7_0_OR_GREATER
+            new
+#endif
+            NotificationObject DataContext { get; private set; }
         #endregion
 
         /// <summary>
@@ -76,7 +80,7 @@ namespace Calc32.Visual
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnNummber_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(((Control)sender).Tag.ToString(), out int aNumber))
+            if (int.TryParse(((Control)sender)?.Tag?.ToString(), out int aNumber))
             {
                 calculatorClass1.NumberButton(aNumber);
             }
@@ -155,7 +159,7 @@ namespace Calc32.Visual
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnOperator_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(((Control)sender).Tag.ToString(), out int aNumber))
+            if (int.TryParse(((Control)sender)?.Tag?.ToString(), out int aNumber))
             {
                 calculatorClass1.Operation(-aNumber);
             }

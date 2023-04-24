@@ -37,8 +37,8 @@ namespace Calc64Base.Tests
         public void UnaryOperationTest()
         {
             var uco= new UnaryOperation("?1", "Quest1", (a) => a * 2);
-            Assert.AreEqual("?1", uco.ShortDescr);
-            Assert.AreEqual("Quest1", uco.LongDescr);
+            Assert.AreEqual("?1", uco.ShortDesc);
+            Assert.AreEqual("Quest1", uco.LongDesc);
             Assert.AreEqual(true, uco.NeedAccumulator);
             Assert.AreEqual(false, uco.NeedRegister);
             Assert.AreEqual(false, uco.NeedMemory);

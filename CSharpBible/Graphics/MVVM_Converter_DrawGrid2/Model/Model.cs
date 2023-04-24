@@ -111,7 +111,7 @@ namespace MVVM_Converter_DrawGrid2.Model
         /// <param name="arg3">The arg3.</param>
         private static void OnPropertyChanged<T>(string arg1, T arg2, T arg3)
         {
-            PropertyChanged?.Invoke(null, (arg1, arg2, arg3));
+            PropertyChanged?.Invoke(null, (arg1, arg2!, arg3!));
         }
     }
 }

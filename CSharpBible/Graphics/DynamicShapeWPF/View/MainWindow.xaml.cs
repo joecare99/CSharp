@@ -72,9 +72,8 @@ namespace DynamicShapeWPF.View {
 		/// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
 		private void canvasArea_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 
-			Shape Rendershape = null;
-
-			switch (Shape1) {
+            Shape? Rendershape;
+            switch (Shape1) {
 
 			case SelectedShape.Circle:
 

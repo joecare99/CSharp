@@ -38,7 +38,7 @@ namespace Werner_Flaschbier_Base.Model
         /// Gets or sets the old item.
         /// </summary>
         /// <value>The old item.</value>
-        public PlayObject OldItem { get; set; }
+        public PlayObject? OldItem { get; set; }
 
         /// <summary>
         /// Gets the field definition.
@@ -46,10 +46,10 @@ namespace Werner_Flaschbier_Base.Model
         /// <returns>FieldDef.</returns>
         protected override FieldDef GetFieldDef() => Item switch
         {
-            Stone s => FieldDef.Stone,
-            Player p => FieldDef.Player,
-            Enemy e => FieldDef.Enemy,
-            Dirt d => FieldDef.Dirt,
+            Stone => FieldDef.Stone,
+            Player => FieldDef.Player,
+            Enemy => FieldDef.Enemy,
+            Dirt => FieldDef.Dirt,
             { } => throw new ArgumentException("Illegal Item"),
             null => FieldDef.Empty
         };

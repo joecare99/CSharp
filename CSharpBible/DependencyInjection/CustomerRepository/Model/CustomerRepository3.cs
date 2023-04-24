@@ -11,7 +11,7 @@ namespace CustomerRepositoryTests.Model
     {
         #region Properties
         #region private properties
-        private Dictionary<Guid,CCustomer> _customers=new Dictionary<Guid, CCustomer>();
+        private readonly Dictionary<Guid,CCustomer> _customers=new Dictionary<Guid, CCustomer>();
         #endregion
         public IClock Clock { get; }
         public ILog Log { get; }
@@ -24,10 +24,9 @@ namespace CustomerRepositoryTests.Model
             Log = logFactory.Get();
         }
 
-        public CCustomer Get(Guid id)
+        public CCustomer? Get(Guid id)
         {
-            CCustomer result;
-            if(!_customers.TryGetValue(id, out result))
+            if (!_customers.TryGetValue(id, out CCustomer? result))
             {
                 Log.Error(Clock.Now, "no such customer");
                 throw new ArgumentException("no such customer");

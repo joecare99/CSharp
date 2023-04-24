@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace BaseLib_netTests.Interfaces
 {
-    class TestIHCClass : IHasChildren<object>
+#pragma warning disable CS8634 // Der Typ kann nicht als Typparameter im generischen Typ oder in der generischen Methode verwendet werden. Die NULL-Zulässigkeit des Typarguments entspricht nicht der class-Einschränkung.
+    class TestIHCClass : IHasChildren<object?>
+#pragma warning restore CS8634 // Der Typ kann nicht als Typparameter im generischen Typ oder in der generischen Methode verwendet werden. Die NULL-Zulässigkeit des Typarguments entspricht nicht der class-Einschränkung.
     {
         private readonly List<object?> _children=new();
         public bool AddItem(object? value)
@@ -23,7 +25,7 @@ namespace BaseLib_netTests.Interfaces
             return _children;
         }
 
-        public void NotifyChildChange(object childObject, object oldVal, object newVal, [CallerMemberName] string prop = "")
+        public void NotifyChildChange(object? childObject, object oldVal, object newVal, [CallerMemberName] string prop = "")
         {
             throw new NotImplementedException();
         }
@@ -37,7 +39,12 @@ namespace BaseLib_netTests.Interfaces
     [TestClass]
     public class IHasChildrenTests
     {
+#pragma warning disable CS8634 // Der Typ kann nicht als Typparameter im generischen Typ oder in der generischen Methode verwendet werden. Die NULL-Zulässigkeit des Typarguments entspricht nicht der class-Einschränkung.
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private IHasChildren<object?> _class;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+#pragma warning restore CS8634 // Der Typ kann nicht als Typparameter im generischen Typ oder in der generischen Methode verwendet werden. Die NULL-Zulässigkeit des Typarguments entspricht nicht der class-Einschränkung.
+
         [TestInitialize]
         public void Init()
         {

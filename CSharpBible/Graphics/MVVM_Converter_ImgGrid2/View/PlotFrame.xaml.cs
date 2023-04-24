@@ -35,7 +35,8 @@ namespace MVVM_Converter_ImgGrid2.View
                 if (this.Resources["vcPortGrid"] is WindowPortToTileDisplay pc)
                 {
                     pc.WindowSize = e.NewSize;
-                    (DataContext as PlotFrameViewModel).WindowSize = e.NewSize;
+                    if (DataContext is PlotFrameViewModel vm)
+                        vm.WindowSize = e.NewSize;
                 }
             };
 

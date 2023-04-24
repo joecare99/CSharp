@@ -31,7 +31,7 @@ namespace MVVM_Converter_DrawGrid3_NonLin.ViewModel
         /// Gets or sets the show client.
         /// </summary>
         /// <value>The show client.</value>
-        public Func<string, BaseViewModel> ShowClient { get; set; }
+        public Func<string, BaseViewModel?>? ShowClient { get; set; }
 
         /// <summary>
         /// Gets or sets the load level command.

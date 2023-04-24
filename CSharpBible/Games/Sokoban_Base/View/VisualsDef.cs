@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using Sokoban_Base.ViewModel;
+using System;
 
 namespace Sokoban_Base.View {
 	/// <summary>

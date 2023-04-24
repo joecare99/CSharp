@@ -62,14 +62,14 @@ namespace MVVM_Converter_DrawGrid2
         /// </summary>
         /// <param name="arg">The argument.</param>
         /// <returns>BaseViewModel.</returns>
-        private BaseViewModel ShowClientinFrame(string arg)
+        private BaseViewModel? ShowClientinFrame(string arg)
         {
             try
             {
                 this.Client.Source = new Uri(arg);
                 return Client.DataContext as BaseViewModel;
             }
-            catch(Exception ex) 
+            catch(Exception) 
             {
                 return null;
             };

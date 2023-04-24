@@ -86,8 +86,8 @@ namespace MVVM_BaseLibTests.ViewModel
             PropertyChanged -= OnPropertyChanged;
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-            => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName)?.GetValue(sender)}{Environment.NewLine}";
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+            => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName!)?.GetValue(sender)}{Environment.NewLine}";
 
         [TestInitialize]
         public void Init()

@@ -83,7 +83,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, "System.String")]
         public void ToTypeTest(TypeCode tc, string ts)
         {
-            Assert.AreEqual(ts, tc.ToType().ToString());
+            Assert.AreEqual(ts, tc.ToType()?.ToString());
         }
 
         [DataTestMethod()]
@@ -106,7 +106,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, "System.String")]
         public void ToTypeTest2(TypeCode tc, string ts)
         {
-            Assert.AreEqual(ts, TypeUtils.ToType(tc).ToString());
+            Assert.AreEqual(ts, TypeUtils.ToType(tc)?.ToString());
         }
 
         [DataTestMethod()]
@@ -180,9 +180,9 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.Decimal,  true)]
         [DataRow(TypeCode.DateTime, true)]
         [DataRow(TypeCode.String,   true)]
-        public void CompareTest0(TypeCode tc, bool xOK)
+        public void CompareTest0(TypeCode tc, bool _)
         {
-            Func<Type,bool> f = (t) => t.Compare(t.Get(1), t.Get(0));   
+            static bool? f(Type? t) => t?.Compare(t.Get(1), t.Get(0));
             Assert.AreEqual(false, f(tc.ToType()));
         }
 
@@ -206,7 +206,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, false)]
         public void CompareTest1(TypeCode tc, bool xOK)
         {
-            Func<Type, bool> f = (t) => t.Compare(t.Get(0), t.Get(1));
+            static bool? f(Type? t) => t?.Compare(t.Get(0), t.Get(1));
             Assert.AreEqual(xOK, f(tc.ToType()));
         }
 
@@ -230,7 +230,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, false)]
         public void CompareTest2(TypeCode tc, bool xOK)
         {
-            Func<Type, bool> f = (t) => t.Compare(null, t.Get(1));
+            static bool? f(Type? t) => t?.Compare(null, t.Get(1));
             Assert.AreEqual(xOK, f(tc.ToType()));
         }
 
@@ -254,7 +254,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, false)]
         public void CompareTest3(TypeCode tc, bool xOK)
         {
-            Func<Type, bool> f = (t) => t.Compare(t.Get(0),null);
+            static bool? f(Type? t) => t?.Compare(t.Get(0), null);
             Assert.AreEqual(xOK, f(tc.ToType()));
         }
 
@@ -278,7 +278,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, "0")]
         public void GetTest0(TypeCode tc, object oExp)
         {
-            Assert.AreEqual(oExp, tc.ToType().Get(0));
+            Assert.AreEqual(oExp, tc.ToType()?.Get(0));
         }
 
         [DataTestMethod()]
@@ -301,7 +301,7 @@ namespace BaseLib.Helper.Tests
         [DataRow(TypeCode.String, "")]
         public void GetTest1(TypeCode tc, object oExp)
         {
-            Assert.AreEqual(oExp, tc.ToType().Get(""));
+            Assert.AreEqual(oExp, tc.ToType()?.Get(""));
         }
 
         [TestMethod]

@@ -44,7 +44,8 @@ namespace MVVM_Converter_Grid2.View
                 if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
                 {
                     pc.WindowSize = e.NewSize;
-                    (DataContext as PlotFrameViewModel).WindowSize = e.NewSize;
+                    if (DataContext is PlotFrameViewModel vm)
+                        vm.WindowSize = e.NewSize;
                 }
             };
 

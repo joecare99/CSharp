@@ -60,7 +60,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid x:Name="frmCalc32Main" Initialized="frmCalc32Main_Initialized" GotFocus="frmCalc32Main_GotFocus">
+    <Grid x:Name="frmCalc32Main" Initialized="frmCalc32Main_Initialized">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="119"/>
             <RowDefinition Height="83*"/>

@@ -31,11 +31,11 @@ namespace ConsoleDisplay.View {
         /// <summary>
         /// The default tile
         /// </summary>
-        public static T defaultTile { get; set; }
+        public static T? defaultTile { get; set; }
         /// <summary>
         /// The default tile definition
         /// </summary>
-        public static TileDefBase tileDef { get; set; }
+        public static TileDefBase? tileDef { get; set; }
         #endregion
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace ConsoleDisplay.View {
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <returns>T.</returns>
-        public T this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx,value); }
+        public T? this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx,value); }
         /// <summary>
         /// Gets the position.
         /// </summary>
@@ -68,7 +68,7 @@ namespace ConsoleDisplay.View {
         /// it returns the default-tileDef when the local tileDef isn't set.
         /// </summary>
         /// <value>The tile definition.</value>
-        public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
+        public TileDefBase? TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
 		public Point DispOffset { get; set; } = Point.Empty;
         public Func<Point, T>? FncGetTile;
@@ -78,7 +78,7 @@ namespace ConsoleDisplay.View {
         /// <summary>
         /// The tiles
         /// </summary>
-        private Dictionary<Point, T> _tiles = new();
+        private readonly Dictionary<Point, T> _tiles = new();
         /// <summary>
         /// The rect
         /// </summary>
@@ -94,11 +94,11 @@ namespace ConsoleDisplay.View {
         /// <summary>
         /// The changed
         /// </summary>
-        private bool _changed;
+        private bool _changed=false;
         /// <summary>
         /// The (local) tile-definition
         /// </summary>
-        private TileDefBase _tileDef;
+        private TileDefBase? _tileDef;
         #endregion
         #endregion
 
@@ -223,7 +223,7 @@ namespace ConsoleDisplay.View {
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <returns>T.</returns>
-        private T GetTile(Point Idx) {
+        private T? GetTile(Point Idx) {
             if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return defaultTile;
             if (_tiles.TryGetValue(Idx, out T? value)) return value;
             return defaultTile;
@@ -234,11 +234,14 @@ namespace ConsoleDisplay.View {
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <param name="value">The value.</param>
-        private void SetTile(Point Idx, T value)
+        private void SetTile(Point Idx, T? value)
         {
             if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return;
             if (_tiles.TryGetValue(Idx, out T? v) && (v is T e) && e.Equals(value) ) return;
-            _tiles[Idx] = value;
+            if (value!=null)
+                _tiles[Idx] = value;
+            else
+                _tiles.Remove(Idx);
             _changed = true;
         }
 

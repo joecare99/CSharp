@@ -65,14 +65,5 @@ namespace Calc32WPF
             tmrAnim.Start();
         }
 
-        /// <summary>
-        /// Handles the GotFocus event of the frmCalc32Main control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-        private void frmCalc32Main_GotFocus(object sender, RoutedEventArgs e)
-        {
-        }
-
     }
 }

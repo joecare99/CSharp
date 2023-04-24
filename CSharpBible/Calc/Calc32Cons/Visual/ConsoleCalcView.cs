@@ -50,7 +50,7 @@ namespace Calc32Cons.Visual
             BackColor = ConsoleColor.DarkBlue;
             BoarderColor = ConsoleColor.Green;
             dimension = new Rectangle(3, 5, 50, 20);
-            shaddow = true;
+            shadow = true;
 
             ConsoleLib.CommonControls.Button[] btnNumbers = new ConsoleLib.CommonControls.Button[10];
 
@@ -62,10 +62,10 @@ namespace Calc32Cons.Visual
                     parent = this,
                     ForeColor = ConsoleColor.White,
                     BackColor = ConsoleColor.DarkGray,
-                    shaddow = true,
+                    shadow = true,
                     position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
                     Tag = i,
-                    Accellerator = i.ToString()[0],
+                    Accelerator = i.ToString()[0],
                     Text = $"░{i}░"
                 };
                 btnNumbers[i].OnClick += btnNumber_Click;
@@ -94,10 +94,10 @@ namespace Calc32Cons.Visual
                     parent = this,
                     ForeColor = ConsoleColor.White,
                     BackColor = ConsoleColor.DarkGray,
-                    shaddow = true,
+                    shadow = true,
                     position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
                     Tag = -i,
-                    Accellerator = (i == 1) ? '=' : CalculatorClass.sMode[i][0],
+                    Accelerator = (i == 1) ? '=' : CalculatorClass.sMode[i][0],
                     Text = (i == 1) ? "░=░" : $"░{CalculatorClass.sMode[i]}░"
                 };
                 btnCommandss[i].OnClick += btnCommand_Click;
@@ -120,7 +120,7 @@ namespace Calc32Cons.Visual
                 parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.DarkGray,
-                shaddow = true,
+                shadow = true,
                 position = new Point(14, 16),
                 Text = "░Close░",
             };
@@ -157,7 +157,7 @@ namespace Calc32Cons.Visual
         private void btnCancel_Click(object sender, EventArgs e)
         {
             
-            (parent as ConsoleLib.CommonControls.Application).Stop();
+            (parent as ConsoleLib.CommonControls.Application)?.Stop();
             
         }
 

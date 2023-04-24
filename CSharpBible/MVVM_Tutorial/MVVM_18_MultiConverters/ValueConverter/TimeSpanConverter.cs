@@ -39,10 +39,10 @@ namespace MVVM_18_MultiConverters.ValueConverter
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             DateDifFormat df = DateDifFormat.Days;
-            if (values.Length >= 2 && values[1] is DateDifFormat _d)
+            if (values?.Length >= 2 && values[1] is DateDifFormat _d)
                 df = _d;
 
-            if (values.Length >= 1 && values[0] is TimeSpan ts)
+            if (values?.Length >= 1 && values[0] is TimeSpan ts)
             {
                 switch (df)
                 {

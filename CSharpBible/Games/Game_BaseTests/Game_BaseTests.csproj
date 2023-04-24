@@ -1,5 +1,5 @@
 <Project>
-	<Import Project="..\Games.props"/>
+	<Import Project="..\Games.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net48;net472;net462</TargetFrameworks>
