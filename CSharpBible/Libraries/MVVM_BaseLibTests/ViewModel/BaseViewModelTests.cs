@@ -28,11 +28,11 @@ namespace MVVM.ViewModel.Tests
             doSomething.CanExecuteChanged += OnCanExChanged;    
         }
 
-        private void OnCanExChanged(object sender, EventArgs e)
+        private void OnCanExChanged(object? sender, EventArgs e)
             => DebugResult += $"OnCanExChanged: o:{sender}{Environment.NewLine}";
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-            => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName)?.GetValue(sender)}{Environment.NewLine}";
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+            => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName??"")?.GetValue(sender)}{Environment.NewLine}";
 
         public int Property1 { get => property1; set => SetProperty(ref property1 , value); }
         public int Property2 { get => property2; set => SetProperty(ref property2, value); }
@@ -42,7 +42,7 @@ namespace MVVM.ViewModel.Tests
         public bool Prop1IsGreaterthan1Prop2() => property1 > property2;
         public bool Prop2IsGreater(int i) => i > property2;
 
-        public IRelayCommand doSomething { get; set; }
+        public IRelayCommand? doSomething { get; set; }
 
         [DataTestMethod()]
         [DataRow("0 - 1 =>  2",1,2,new string[] {

@@ -20,9 +20,9 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs">
-			<Link>Helper\PropertyHelper.cs</Link>
-		</Compile>
+		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs" Link="Helper\PropertyHelper.cs" />
+		<Compile Include="..\BaseLib\Helper\TypeUtils.cs" Link="Helper\TypeUtils.cs" />
+		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
 	</ItemGroup>
 
 </Project>
