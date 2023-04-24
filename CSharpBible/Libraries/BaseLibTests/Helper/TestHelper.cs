@@ -13,6 +13,8 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 /// <summary>
@@ -75,6 +77,31 @@ namespace BaseLib.Helper
                         Assert.AreEqual(BldLns(i, exp), BldLns(i, act), $"{Msg}: Entry{i}:");
             Assert.AreEqual(exp?.Length, act?.Length);
 
+        }
+
+        public static void AssertAreEqual<T>(T[] exp, T[] act, string Msg = "") where T : struct 
+        {
+            if (exp != null && exp.Length / 2 < act?.Length)
+                for (int i = 0; i < Math.Min(exp.Length, act.Length); i++)
+                    if (!EqualityComparer<T>.Default.Equals( exp[i] , act[i]))
+                        Assert.AreEqual(BldLns(i, exp), BldLns(i, act), $"{Msg}: Entry{i}:");
+            Assert.AreEqual(exp?.Length, act?.Length);
+
+            static string BldLns(int i, T[] dta)
+            {
+                if (dta.Length < 10) return $"[{string.Join("; ", dta)}]"; 
+                string sa;
+                List<string> s = new() {(sa= $"{dta[i]}") };
+                int size = sa.Length;
+                var j = 1;
+                for (; j<30; j++)
+                {
+                    if (i-j>=0) { s.Insert(0,sa=$"{dta[i - j]}");size += sa.Length; }
+                    if (i + j < dta.Length) { s.Add(sa = $"{dta[i + j]}"); size += sa.Length; }
+                    if (size > 200) break;
+                }
+                return $"[...{string.Join("; ", dta)}...]";
+            }
         }
 
         public static void AssertAreEqual(string sExp, string sAct, string Msg = "")

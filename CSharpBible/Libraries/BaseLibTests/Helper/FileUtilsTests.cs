@@ -57,7 +57,7 @@ namespace BaseLib.Helper.Tests
         {
             using FileStream fs = File.OpenWrite(sFilename);
             using StreamWriter sw = new(fs);
-            sw.Write($"This is File: {sFilename}\r\nUserdata is {(aObj as FileUtilsTests).sUserData}");
+            sw.Write($"This is File: {sFilename}\r\nUserdata is {(aObj as FileUtilsTests)?.sUserData}");
             if (eException != null) throw eException;
         }
 
@@ -73,7 +73,7 @@ namespace BaseLib.Helper.Tests
         {
             fsopen = File.OpenWrite(sFilename);
             using StreamWriter sw = new(fsopen, Encoding.UTF8, 1024, true);
-            sw.Write($"This is File: {sFilename}\r\nUserdata is {(aObj as FileUtilsTests).sUserData}");
+            sw.Write($"This is File: {sFilename}\r\nUserdata is {(aObj as FileUtilsTests)?.sUserData}");
             throw new KeyNotFoundException("Don't ever do it this way !!!");
 
         }
