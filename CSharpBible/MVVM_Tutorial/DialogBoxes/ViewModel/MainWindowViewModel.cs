@@ -48,12 +48,12 @@ namespace DialogBoxes.ViewModel
         /// Gets or sets the open dialog.
         /// </summary>
         /// <value>The open dialog.</value>
-        public OpenDialogHandler OpenDialog { get; set; }
+        public OpenDialogHandler? OpenDialog { get; set; }
         /// <summary>
         /// Gets or sets the open message box.
         /// </summary>
         /// <value>The open message box.</value>
-        public OpenMessageBoxHandler OpenMessageBox { get; set; }
+        public OpenMessageBoxHandler? OpenMessageBox { get; set; }
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -76,7 +76,7 @@ namespace DialogBoxes.ViewModel
         {
             this.OpenDialogCommand = new DelegateCommand((o) =>
             {
-                (Name, Email) = OpenDialog(this.Name, this.Email);
+                (Name, Email) = OpenDialog?.Invoke(this.Name, this.Email)??("","");
             });
 
             this.OpenMsgCommand = new DelegateCommand((o) =>
