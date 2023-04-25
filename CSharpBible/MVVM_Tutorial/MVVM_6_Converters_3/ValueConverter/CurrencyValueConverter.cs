@@ -37,7 +37,7 @@ namespace MVVM_6_Converters_3.ValueConverter
             if (value is decimal dval && parameter is string spar)
                 return dval.ToString(spar);
             else
-                return value.ToString();
+                return value.ToString() ?? "";
 
         }
 
@@ -54,7 +54,7 @@ namespace MVVM_6_Converters_3.ValueConverter
             if (value is string sval && parameter is string spar)
                 return decimal.Parse(sval.Replace(spar.Substring(spar.Length - 1), "").Trim());
             else
-                return null;
+                return decimal.Zero;
         }
     }
 }
