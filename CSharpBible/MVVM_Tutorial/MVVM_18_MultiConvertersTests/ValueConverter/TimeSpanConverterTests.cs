@@ -41,7 +41,7 @@ namespace MVVM_18_MultiConverters.ValueConverter.Tests
             if (oVal?.Length > 0 && oVal[0] is decimal d) oVal[0] = TimeSpan.FromDays((double)d);
             if (oVal?.Length > 0 && oVal[0] is double d2) oVal[0] = TimeSpan.FromDays(d2);
             var tVal = tc.ToType();
-            Assert.AreEqual(oExp,testConverter.Convert(oVal,tVal,oPar,CultureInfo.InvariantCulture));
+            Assert.AreEqual(oExp,testConverter.Convert(oVal,tVal,oPar,CultureInfo.InvariantCulture), $"Convert({name}).result");
         }
 
         [TestMethod()]

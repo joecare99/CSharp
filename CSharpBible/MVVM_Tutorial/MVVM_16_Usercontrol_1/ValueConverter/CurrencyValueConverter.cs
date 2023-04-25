@@ -15,7 +15,7 @@ namespace MVVM_16_UserControl_1.ValueConverter
             if (value is decimal dval)
                 return dval.ToString("0.00€");
             else
-                return value.ToString();
+                return value.ToString()??"";
 
         }
 

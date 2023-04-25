@@ -45,7 +45,7 @@ namespace TestConsole
         /// <exception cref="System.NotImplementedException"></exception>
         public override int LargestWindowHeight => throw new NotImplementedException();
 
-        public override string Title { get => form?.Text; set => form.Text = value; }
+        public override string Title { get => form?.Text??""; set => form.Text = value; }
 
         /// <summary>
         /// Clears this instance.
@@ -83,7 +83,7 @@ namespace TestConsole
         /// <param name="st">The st.</param>
         public override void WriteLine(string? st = "") => Write((st ?? "") + "\r\n");
 
-        private TestConsoleForm form;
+        private readonly TestConsoleForm form;
         /// <summary>
         /// Initializes a new instance of the <see cref="TstConsole"/> class.
         /// </summary>

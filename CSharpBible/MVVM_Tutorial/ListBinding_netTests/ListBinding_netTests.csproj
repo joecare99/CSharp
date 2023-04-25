@@ -1,5 +1,5 @@
 <Project>
-	<Import Project="..\MVVM_Tutorial_net.props"/>
+	<Import Project="..\MVVM_Tutorial_net.props" />
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>

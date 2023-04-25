@@ -26,7 +26,7 @@ namespace ListBinding.Model.Tests
     [TestClass()]
     public class PersonTests
     {
-        private Person TestPerson1,TestPerson2;
+        private Person? TestPerson1,TestPerson2;
         private string DebugResult = "";
 
         [TestInitialize]
@@ -80,6 +80,7 @@ namespace ListBinding.Model.Tests
                 Title = "3",
                 Id = -1
             };
+            Assert.IsNotNull(person);
 
         }
 
@@ -249,7 +250,7 @@ namespace ListBinding.Model.Tests
         [DataRow(8, "Joe", "Care", "Prof. Dr.", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>8</Id>\r\n  <FirstName>Joe</FirstName>\r\n  <LastName>Care</LastName>\r\n  <Title>Prof. Dr.</Title>\r\n</Person>" })]
         public void CompleteDeserializationTest(int aId, string aFirstname, string aLastname, string aTitle, string[] ExpFullname)
         {
-            object p=default;
+            object? p=default;
             var formatter = new XmlSerializer(typeof(Person));
             using (var stream = new MemoryStream())
             {
@@ -302,8 +303,9 @@ namespace ListBinding.Model.Tests
             SetData(TestPerson2);
             Assert.AreEqual(ExpRes[1], DebugResult, $"{nameof(TestPerson2)}");
 
-            void SetData(Person p)
+            void SetData(Person? p)
             {
+                if (p == null) return;
                 if (aId != null) p.Id = aId ?? 0; // Soll die ID änderbar sein ? 
                 if (aFirstname != null) p.FirstName = aFirstname;
                 if (aLastname != null) p.LastName = aLastname;

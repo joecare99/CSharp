@@ -20,10 +20,12 @@ namespace MVVM_20_Sysdialogs.Converter.Tests
                     new object[] { Colors.Blue, "#FF0000FF" },
                     new object[] { Colors.White, "#FFFFFFFF" },
                     new object[] { Colors.Transparent, "#00FFFFFF" },
-                    new object[] { null, "" },
+                    new object[] { null!, "" },
         };
 
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private ColorConverter _testConverter;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize()]
         public void Init()
@@ -34,13 +36,13 @@ namespace MVVM_20_Sysdialogs.Converter.Tests
         [DynamicData(nameof(ColorConverterData))]
         public void ConvertTest(object value, string sExp)
         {
-            Assert.AreEqual(sExp,_testConverter.Convert(value,typeof(string),null,CultureInfo.InvariantCulture));
+            Assert.AreEqual(sExp,_testConverter.Convert(value,typeof(string),null!,CultureInfo.InvariantCulture));
         }
 
         [TestMethod()]
         public void ConvertBackTest()
         {
-            Assert.ThrowsException<NotImplementedException>(()=> _testConverter.ConvertBack(null,typeof(string),null,CultureInfo.InvariantCulture));
+            Assert.ThrowsException<NotImplementedException>(()=> _testConverter.ConvertBack(null!,typeof(string),null!,CultureInfo.InvariantCulture));
         }
     }
 }
