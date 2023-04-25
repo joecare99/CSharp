@@ -15,12 +15,12 @@ namespace MVVM_22_WpfCap.Model
         public int Height => _height;
 
         /// <summary>Occurs when the color of tiles were changed.</summary>
-        public event EventHandler TileColorChanged;
+        public event EventHandler? TileColorChanged;
 
         private int[] _tiles;
-        private int _width;
-        private int _height;
-        private IRandom _random;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly IRandom _random;
         #endregion
 
         #region Methods
