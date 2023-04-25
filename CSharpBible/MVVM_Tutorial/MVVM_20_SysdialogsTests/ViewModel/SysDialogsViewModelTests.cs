@@ -81,34 +81,38 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <summary>
 		/// The test result
 		/// </summary>
-		private String TestResult="";
+		private String _testResult="";
 		/// <summary>
 		/// The test ret value
 		/// </summary>
-		private bool? TestRetValue;
-		/// <summary>
-		/// The test view model
-		/// </summary>
-		private SysDialogsViewModel testViewModel;
-		/// <summary>
-		/// The test new value
-		/// </summary>
-		public object TestNewValue;
+		private bool? _testRetValue;
+        /// <summary>
+        /// The test view model
+        /// </summary>
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        private SysDialogsViewModel _testViewModel;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        /// <summary>
+        /// The test new value
+        /// </summary>
+        public object? testNewValue;
 
 		/// <summary>
 		/// Initializes this instance.
 		/// </summary>
 		[TestInitialize]
 		public void Init() {
-			testViewModel = new SysDialogsViewModel();
-			testViewModel.PropertyChanged += TestPropertyChanged;
-			testViewModel.FileOpenDialog = TestDoFileOpenDlg;
-			testViewModel.FileSaveAsDialog = TestDoFileSaveAsDlg;
-			testViewModel.DirectoryBrowseDialog = TestDoDirectoryBrowseDlg;
-			testViewModel.dColorDialog = TestDoColorDlg;
-			testViewModel.dFontDialog = TestDoFontDlg;
-			testViewModel.dPrintDialog = TestDoPrintDlg;
-			TestResult = "";
+            _testViewModel = new SysDialogsViewModel
+            {
+                FileOpenDialog = TestDoFileOpenDlg,
+                FileSaveAsDialog = TestDoFileSaveAsDlg,
+                DirectoryBrowseDialog = TestDoDirectoryBrowseDlg,
+                dColorDialog = TestDoColorDlg,
+                dFontDialog = TestDoFontDlg,
+                dPrintDialog = TestDoPrintDlg
+            };
+            _testViewModel.PropertyChanged += TestPropertyChanged;
+			_testResult = "";
 		}
 
 		/// <summary>
@@ -116,8 +120,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// </summary>
 		/// <param name="message">The message.</param>
 		/// <param name="_Caller">The caller.</param>
-		private void LogTest(string message, [CallerMemberName] string _Caller=null) {
-			TestResult += $"{_Caller}: <{message}>\r\n";
+		private void LogTest(string message, [CallerMemberName] string _Caller="") {
+			_testResult += $"{_Caller}: <{message}>\r\n";
 		}
 		/// <summary>
 		/// Tests the do print dialog.
@@ -127,8 +131,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		private bool? TestDoPrintDlg(ref PrintDialog par, Action<PrintDialog>? OnPrint) {
 			LogTest($"{par}, {OnPrint != null}");
-			if (TestRetValue ?? false) OnPrint?.Invoke(par);
-			return TestRetValue;
+			if (_testRetValue ?? false) OnPrint?.Invoke(par);
+			return _testRetValue;
 		}
 
 		/// <summary>
@@ -140,8 +144,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		private bool? TestDoFontDlg(Font font, ref FontDialog par, Action<Font, FontDialog>? OnAccept) {
 			LogTest($"{font}, {par}, {OnAccept != null}");
-			if (TestRetValue ?? false) OnAccept?.Invoke(TestNewValue as Font, par);
-			return TestRetValue;
+			if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as Font ?? SystemFonts.DefaultFont, par);
+			return _testRetValue;
 		}
 
 		/// <summary>
@@ -153,8 +157,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		private bool? TestDoColorDlg(Color color, ref ColorDialog par, Action<Color, ColorDialog>? OnAccept) {
 			LogTest($"{color}, {par}, {OnAccept != null}");
-			if (TestRetValue ?? false) OnAccept?.Invoke(TestNewValue as Color? ?? Color.Empty, par);
-			return TestRetValue;
+			if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as Color? ?? Color.Empty, par);
+			return _testRetValue;
 		}
 
 		/// <summary>
@@ -166,8 +170,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		private bool? TestDoDirectoryBrowseDlg(string Filename, ref FileDialog Par, Action<string, FileDialog>? OnAccept) {
 			LogTest($"{Filename}, {Par}, {OnAccept != null}");
-			if (TestRetValue ?? false) OnAccept?.Invoke(TestNewValue as String, Par);
-			return TestRetValue;
+			if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "", Par);
+			return _testRetValue;
 		}
 
 		/// <summary>
@@ -179,8 +183,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		private bool? TestDoFileSaveAsDlg(string Filename, ref FileDialog Par, Action<string, FileDialog>? OnAccept) {
 			LogTest($"{Filename}, {Par}, {OnAccept != null}");
-			if (TestRetValue ?? false) OnAccept?.Invoke(TestNewValue as String, Par);
-			return TestRetValue;
+			if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "", Par);
+			return _testRetValue;
 		}
 
 		/// <summary>
@@ -192,8 +196,8 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		private bool? TestDoFileOpenDlg(string Filename, ref FileDialog Par, Action<string, FileDialog>? OnAccept) {
 			LogTest($"{Filename}, {Par}, {OnAccept != null}");
-			if (TestRetValue ?? false) OnAccept?.Invoke(TestNewValue as String, Par);
-			return TestRetValue;
+			if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String??"", Par);
+			return _testRetValue;
 		}
 
 		/// <summary>
@@ -226,9 +230,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// </summary>
 		[TestMethod()]
 		public void SysDialogsViewModelTest_SetFileOpenName() {
-			Assert.AreEqual("", TestResult);
-			testViewModel.FileOpenName = "Test1";
-			Assert.AreEqual(cExpSetFileOpenName, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.FileOpenName = "Test1";
+			Assert.AreEqual(cExpSetFileOpenName, _testResult);
 		}
 
         /// <summary>
@@ -236,9 +240,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
         /// </summary>
         [TestMethod()]
 		public void SysDialogsViewModelTest_SetFileSaveName() {
-			Assert.AreEqual("", TestResult);
-			testViewModel.FileSaveName = "Test1";
-			Assert.AreEqual(cExpSetFileSaveName, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.FileSaveName = "Test1";
+			Assert.AreEqual(cExpSetFileSaveName, _testResult);
 		}
 
 		/// <summary>
@@ -246,9 +250,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// </summary>
 		[TestMethod()]
 		public void SysDialogsViewModelTest_SetPathName() {
-			Assert.AreEqual("", TestResult);
-			testViewModel.PathName = "Test1";
-			Assert.AreEqual(cExpSetPathName, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.PathName = "Test1";
+			Assert.AreEqual(cExpSetPathName, _testResult);
 		}
 
 		/// <summary>
@@ -256,9 +260,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// </summary>
 		[TestMethod()]
 		public void SysDialogsViewModelTest_SetExt() {
-			Assert.AreEqual("", TestResult);
-			testViewModel.Ext = "Test1";
-			Assert.AreEqual(cExpSetExt, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.Ext = "Test1";
+			Assert.AreEqual(cExpSetExt, _testResult);
 		}
 
 		/// <summary>
@@ -266,9 +270,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// </summary>
 		[TestMethod()]
 		public void SysDialogsViewModelTest_SetMyFont() {
-			Assert.AreEqual("", TestResult);
-			testViewModel.MyFont = new Font("Arial", 12);
-			Assert.AreEqual(cExpSetMyFont, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.MyFont = new Font("Arial", 12);
+			Assert.AreEqual(cExpSetMyFont, _testResult);
 		}
 
 		/// <summary>
@@ -276,9 +280,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// </summary>
 		[TestMethod()]
 		public void SysDialogsViewModelTest_SetMyColor() {
-			Assert.AreEqual("", TestResult);
-			testViewModel.MyColor = Color.Blue;
-			Assert.AreEqual(cExpSetMyColor, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.MyColor = Color.Blue;
+			Assert.AreEqual(cExpSetMyColor, _testResult);
 		}
 
 		/// <summary>
@@ -295,9 +299,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		[DataRow("MyColor", null, "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel, MyColor>\r\n")]
 		[DataRow("MyFont", null, "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel, MyFont>\r\n")]
 		public void SysDialogsViewModelTest_SetProp(string PropName,object value, string Exp ) {
-			Assert.AreEqual("", TestResult);
-			testViewModel.GetType().GetProperty(PropName)?.SetValue(testViewModel, value, null);
-			Assert.AreEqual(Exp, TestResult);
+			Assert.AreEqual("", _testResult);
+			_testViewModel.GetType().GetProperty(PropName)?.SetValue(_testViewModel, value, null);
+			Assert.AreEqual(Exp, _testResult);
 		}
 
 		/// <summary>
@@ -327,12 +331,12 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		[DataRow("OpenPrintDialogCommand", true, "Test2", "TestDoPrintDlg: <System.Windows.Controls.PrintDialog, True>\r\n")]
 		[DataRow("OpenPrintDialogCommand", null, "Test2", "TestDoPrintDlg: <System.Windows.Controls.PrintDialog, True>\r\n")]
 		public void SysDialogsViewModelTest_Command(string Command, bool? tr ,object value, string Exp) {
-			Assert.AreEqual("", TestResult);
-			DelegateCommand d= testViewModel.GetType().GetProperty(Command).GetValue(testViewModel, null) as DelegateCommand;
-			TestRetValue = tr;
-			TestNewValue = value;
-			d.Execute(new object[] { });
-			Assert.AreEqual(Exp, TestResult);
+			Assert.AreEqual("", _testResult);
+			DelegateCommand? d= _testViewModel.GetType()?.GetProperty(Command)?.GetValue(_testViewModel, null) as DelegateCommand;
+			_testRetValue = tr;
+			testNewValue = value;
+			d?.Execute(Array.Empty<object>());
+			Assert.AreEqual(Exp, _testResult);
 		}
         /// <summary>
         /// Systems the dialogs view model test command.
@@ -365,12 +369,12 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 			var viewModel = new SysDialogsViewModel();
             viewModel.PropertyChanged += TestPropertyChanged;
 			//viewModel.FileOpenDialog = null;
-            Assert.AreEqual("", TestResult);
-            DelegateCommand d = viewModel.GetType().GetProperty(Command).GetValue(viewModel, null) as DelegateCommand;
-            TestRetValue = tr;
-            TestNewValue = value;
-            d.Execute(new object[] { });
-            Assert.AreEqual("", TestResult);
+            Assert.AreEqual("", _testResult);
+            DelegateCommand? d = viewModel.GetType()?.GetProperty(Command)?.GetValue(viewModel, null) as DelegateCommand;
+            _testRetValue = tr;
+            testNewValue = value;
+            d?.Execute(Array.Empty<object>());
+            Assert.AreEqual("", _testResult);
         }
     }
 }

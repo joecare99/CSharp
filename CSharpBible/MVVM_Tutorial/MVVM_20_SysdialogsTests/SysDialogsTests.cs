@@ -12,17 +12,19 @@ namespace MVVM_20_Sysdialogs.View.Tests
     public class SysDialogsTests
     {
         SysDialogs? testView = null;
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private SysDialogsViewModel vm;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private string DebugOut="";
 
-        async void HitEnter()
+        static async void HitEnter()
         {
             SendKeys.Flush();
             await Task.Delay(200);
             SendKeys.SendWait("{ENTER}");
         }
 
-        async void HitESC()
+        static async void HitESC()
         {
             SendKeys.Flush();
             await Task.Delay(200);
@@ -32,10 +34,12 @@ namespace MVVM_20_Sysdialogs.View.Tests
         [TestInitialize()]
         public void Init()
         {
-            Thread thread = new Thread(() =>
+            Thread thread = new(() =>
             {
-                testView = new();
-                testView.DataContext = vm = new SysDialogsViewModel();
+                testView = new()
+                {
+                    DataContext = vm = new SysDialogsViewModel()
+                };
                 testView.Page_Loaded(testView, new System.Windows.RoutedEventArgs());
             });
             thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
@@ -63,10 +67,10 @@ namespace MVVM_20_Sysdialogs.View.Tests
                 PageRangeSelection = PageRangeSelection.AllPages
             };
             if (xRes)
-                HitEnter();
+                SysDialogsTests.HitEnter();
             else
-                HitESC();
-            Assert.AreEqual(xRes,vm.dPrintDialog(ref par, (p) => DoLog($"OnPrint({par})")));
+                SysDialogsTests.HitESC();
+            Assert.AreEqual(xRes,vm.dPrintDialog?.Invoke(ref par, (p) => DoLog($"OnPrint({par})")));
             Assert.AreEqual(sExp,DebugOut);
         }
 
@@ -75,14 +79,16 @@ namespace MVVM_20_Sysdialogs.View.Tests
         [DataRow(true, "")]
         public void DoFontDialogTest(bool xRes, string sExp)
         {
-            var par = new CommonDialogs.FontDialog();
-            par.Font = System.Drawing.SystemFonts.DefaultFont;
-            
+            var par = new CommonDialogs.FontDialog
+            {
+                Font = System.Drawing.SystemFonts.DefaultFont
+            };
+
             if (xRes)
-                HitEnter();
+                SysDialogsTests.HitEnter();
             else
-                HitESC();
-            Assert.AreEqual(xRes, vm.dFontDialog(par.Font, ref par, (f,p) => DoLog($"OnPrint({f},{par})")));
+                SysDialogsTests.HitESC();
+            Assert.AreEqual(xRes, vm.dFontDialog?.Invoke(par.Font, ref par, (f,p) => DoLog($"OnPrint({f},{par})")));
             Assert.AreEqual(sExp, DebugOut);
         }
 
