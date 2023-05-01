@@ -57,7 +57,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddPageWPF", "AddPageWPF\Ad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc32WPF", "Calc\Calc32WPF\Calc32WPF.csproj", "{4BCC197C-7F28-4F6E-B831-D02BE0ABE839}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BindingGroupExp", "BindingGroupExp\BindingGroupExp.csproj", "{AFCEC61D-9C18-49E5-94AE-17429BB06C78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BindingGroupExp", "BindingGroupExp\BindingGroupExp.csproj", "{AFCEC61D-9C18-49E5-94AE-17429BB06C78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleMouseApp", "ConsoleMouseApp\ConsoleMouseApp.csproj", "{98D9C22F-ED66-4219-B6B8-8E38A04F9771}"
 EndProject
@@ -95,14 +95,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathLibrary_netTests", "Lib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathLibraryTests", "Libraries\MathLibraryTests\MathLibraryTests.csproj", "{AD2B36C5-FA6E-4B42-921D-37F667D7F9C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListBinding", "MVVM_Tutorial\ListBinding\ListBinding.csproj", "{85A3CD48-2240-45B2-9757-F03877201923}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListBinding", "MVVM_Tutorial\ListBinding\ListBinding.csproj", "{85A3CD48-2240-45B2-9757-F03877201923}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F1D5E39A-CCC5-40C3-BA67-BAE7B66F6C0E} = {F1D5E39A-CCC5-40C3-BA67-BAE7B66F6C0E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncAsyncParallel", "MVVM_Tutorial\SyncAsyncParallel\SyncAsyncParallel.csproj", "{373A4CB4-0164-43DF-A51B-52368B1C9FA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncAsyncParallel", "MVVM_Tutorial\SyncAsyncParallel\SyncAsyncParallel.csproj", "{373A4CB4-0164-43DF-A51B-52368B1C9FA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogBoxes", "MVVM_Tutorial\DialogBoxes\DialogBoxes.csproj", "{5920E447-6855-4DD9-9A93-57892EBB789C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogBoxes", "MVVM_Tutorial\DialogBoxes\DialogBoxes.csproj", "{5920E447-6855-4DD9-9A93-57892EBB789C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut1", "MVVM_Tutorial\ItemsControlTut1\ItemsControlTut1.csproj", "{52CEFB40-D9BD-4A33-9481-1D36ABE3E528}"
 EndProject
@@ -118,7 +118,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfDemoUI2", "MVVM_Tutorial
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoLibraryTests", "MVVM_Tutorial\DemoLibraryTests\DemoLibraryTests.csproj", "{556D7E83-0A6F-4C8F-8682-429C9F3BCD0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListBindingTests", "MVVM_Tutorial\ListBindingTests\ListBindingTests.csproj", "{34D5A083-6197-4603-93C0-539158579DAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListBindingTests", "MVVM_Tutorial\ListBindingTests\ListBindingTests.csproj", "{34D5A083-6197-4603-93C0-539158579DAB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListBinding_net", "MVVM_Tutorial\ListBinding_net\ListBinding_net.csproj", "{C14E9E4A-49DB-4DC2-AEA7-FD667B54237E}"
 EndProject
@@ -144,7 +144,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_20_Sysdialogs", "MVVM_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_20_SysdialogsTests", "MVVM_Tutorial\MVVM_20_SysdialogsTests\MVVM_20_SysdialogsTests.csproj", "{4B1434DC-C076-4FC3-8E1A-E65C06B3A258}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_21_Buttons", "MVVM_Tutorial\MVVM_21_Buttons\MVVM_21_Buttons.csproj", "{E499895B-C183-4190-9A55-4ADD699C0AD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_21_Buttons", "MVVM_Tutorial\MVVM_21_Buttons\MVVM_21_Buttons.csproj", "{E499895B-C183-4190-9A55-4ADD699C0AD3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogBoxes_net", "MVVM_Tutorial\DialogBoxes\DialogBoxes_net.csproj", "{0260C25D-E601-4D07-A933-F94DE59B5445}"
 EndProject
@@ -152,7 +152,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_21_Buttons_net", "MVVM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncAsyncParallel_net", "MVVM_Tutorial\SyncAsyncParallel\SyncAsyncParallel_net.csproj", "{7A7419CD-963D-424C-BB92-34AA9D966DC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_22_WpfCap", "MVVM_Tutorial\MVVM_22_WpfCap\MVVM_22_WpfCap.csproj", "{6DD9F402-FAB4-4113-A378-7007049118DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_22_WpfCap", "MVVM_Tutorial\MVVM_22_WpfCap\MVVM_22_WpfCap.csproj", "{6DD9F402-FAB4-4113-A378-7007049118DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_22_WpfCap_net", "MVVM_Tutorial\MVVM_22_WpfCap\MVVM_22_WpfCap_net.csproj", "{77599858-F490-4056-AAF7-F7092ABE3F23}"
 EndProject
@@ -237,9 +237,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests", "Librar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests_net", "Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj", "{184DAE30-9D1C-430B-A7CC-9A9F60E64BDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp", "MVVM_Tutorial\WpfApp1\WpfApp.csproj", "{20AA77E3-3884-4C10-9B62-D48DA98D846A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp", "MVVM_Tutorial\WpfApp1\WpfApp.csproj", "{20AA77E3-3884-4C10-9B62-D48DA98D846A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polyline", "Graphics\Polyline\Polyline.csproj", "{070E91DD-75E9-4186-A773-A2FB576AD1AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polyline", "Graphics\Polyline\Polyline.csproj", "{070E91DD-75E9-4186-A773-A2FB576AD1AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLib", "Libraries\BaseLib\BaseLib.csproj", "{3A6D15DB-3EC0-4A8D-96CF-39A55D71C508}"
 EndProject
@@ -264,7 +264,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64Base_netTests", "Calc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64BaseTests", "Calc\Calc64BaseTests\Calc64BaseTests.csproj", "{363ABE13-A78E-401F-BAB7-F0259FC7EF83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc64WF", "Calc\Calc64WF\Calc64WF.csproj", "{E774D7FD-AAC7-45DF-B839-82C48E8DD18F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64WF", "Calc\Calc64WF\Calc64WF.csproj", "{E774D7FD-AAC7-45DF-B839-82C48E8DD18F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Lines_on_Grid", "Graphics\MVVM_Lines_on_Grid\MVVM_Lines_on_Grid.csproj", "{B2E5EE6D-2D56-4B4D-B34C-23C607A6B8F1}"
 EndProject
@@ -272,9 +272,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "Mobile\MauiApp1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64WF_net", "Calc\Calc64WF\Calc64WF_net.csproj", "{CBF9810B-C6DB-47A6-9C5D-6E20DBF8B5E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFSystem.Windows.Data", "Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj", "{40A6110B-F1A0-4476-B64F-D629313D9FA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WFSystem.Windows.Data", "Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj", "{40A6110B-F1A0-4476-B64F-D629313D9FA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc64WFTests", "Calc\Calc64WFTests\Calc64WFTests.csproj", "{5532F188-437D-423B-B883-1ECF3BFAF7C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64WFTests", "Calc\Calc64WFTests\Calc64WFTests.csproj", "{5532F188-437D-423B-B883-1ECF3BFAF7C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WFSystem.Windows.Data_net", "Libraries\WFSystem.Data\WFSystem.Windows.Data_net.csproj", "{D0F700C1-F416-4F77-9E9F-D37A9B8E466A}"
 EndProject
@@ -297,7 +297,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc64WF_netTests", "Calc\C
 		{CBF9810B-C6DB-47A6-9C5D-6E20DBF8B5E1} = {CBF9810B-C6DB-47A6-9C5D-6E20DBF8B5E1}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_31_Validation1", "MVVM_Tutorial\MVVM_31_Validation1\MVVM_31_Validation1.csproj", "{7BCBBC4E-A7EA-4AB1-AF2D-81325A5368A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_31_Validation1", "MVVM_Tutorial\MVVM_31_Validation1\MVVM_31_Validation1.csproj", "{7BCBBC4E-A7EA-4AB1-AF2D-81325A5368A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_31_Validation1_net", "MVVM_Tutorial\MVVM_31_Validation1\MVVM_31_Validation1_net.csproj", "{27777C75-0DA7-4489-BE60-51E74F921090}"
 EndProject
@@ -326,6 +326,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game_BaseTests", "Games\Game_BaseTests\Game_BaseTests.csproj", "{C7A0CD1D-504A-44DE-AFA1-61BE31DCAE41}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{ABF85DD5-B281-4889-9A8E-5DB3185A8DD5}"
+	ProjectSection(SolutionItems) = preProject
+		DB\DB.props = DB\DB.props
+		DB\DB_net.props = DB\DB_net.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBTest1", "DB\DBTest1\DBTest1.csproj", "{F0207D93-9C3B-4C45-84AE-F4CD3D12AB84}"
 EndProject
@@ -341,7 +345,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerRepositoryTests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{D1461ADD-B8EC-4F72-B3B1-4202EC6DB1B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_22_WpfCapTests", "MVVM_Tutorial\MVVM_22_WpfCapTests\MVVM_22_WpfCapTests.csproj", "{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_22_WpfCapTests", "MVVM_Tutorial\MVVM_22_WpfCapTests\MVVM_22_WpfCapTests.csproj", "{20E5E7E6-0191-4EBF-BBD7-8A7EF7E32778}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{3AA3FF9C-70D3-451A-9F1F-A113CC913372}"
 	ProjectSection(SolutionItems) = preProject
@@ -365,6 +369,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XSD_Data_Test", "DB\XSD_Data_Test\XSD_Data_Test.csproj", "{BE9DA1B8-3DD8-4A87-8ED8-4DF0940796FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLake_App", "DB\DataLake_App\DataLake_App.csproj", "{305696C7-1982-47BF-96F5-972AE87FFD17}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_31_Validation1Tests", "MVVM_Tutorial\MVVM_31_Validation1Tests\MVVM_31_Validation1Tests.csproj", "{9BF13892-7211-42C7-ACD7-C09935B8312C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_31_Validation1_netTests", "MVVM_Tutorial\MVVM_31_Validation1Tests\MVVM_31_Validation1_netTests.csproj", "{7C8A171D-3BF7-4F01-8724-1118D2E9FAFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_31_Validation2", "MVVM_Tutorial\MVVM_31_Validation2\MVVM_31_Validation2.csproj", "{F53F1115-0D15-4B79-9722-CA71DD2E43EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAppTests", "MVVM_Tutorial\WpfAppTests\WpfAppTests.csproj", "{EA6952FA-31F7-4112-851C-CECDFB7E1857}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp_netTests", "MVVM_Tutorial\WpfAppTests\WpfApp_netTests.csproj", "{9C23F0AB-C5AF-4179-9D42-52B195E7F8A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -961,6 +979,34 @@ Global
 		{B405793C-2446-4427-9329-034518031CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B405793C-2446-4427-9329-034518031CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B405793C-2446-4427-9329-034518031CD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE9DA1B8-3DD8-4A87-8ED8-4DF0940796FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE9DA1B8-3DD8-4A87-8ED8-4DF0940796FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE9DA1B8-3DD8-4A87-8ED8-4DF0940796FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE9DA1B8-3DD8-4A87-8ED8-4DF0940796FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{305696C7-1982-47BF-96F5-972AE87FFD17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{305696C7-1982-47BF-96F5-972AE87FFD17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{305696C7-1982-47BF-96F5-972AE87FFD17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{305696C7-1982-47BF-96F5-972AE87FFD17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BF13892-7211-42C7-ACD7-C09935B8312C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BF13892-7211-42C7-ACD7-C09935B8312C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BF13892-7211-42C7-ACD7-C09935B8312C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BF13892-7211-42C7-ACD7-C09935B8312C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C8A171D-3BF7-4F01-8724-1118D2E9FAFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C8A171D-3BF7-4F01-8724-1118D2E9FAFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C8A171D-3BF7-4F01-8724-1118D2E9FAFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C8A171D-3BF7-4F01-8724-1118D2E9FAFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F53F1115-0D15-4B79-9722-CA71DD2E43EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F53F1115-0D15-4B79-9722-CA71DD2E43EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F53F1115-0D15-4B79-9722-CA71DD2E43EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F53F1115-0D15-4B79-9722-CA71DD2E43EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6952FA-31F7-4112-851C-CECDFB7E1857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6952FA-31F7-4112-851C-CECDFB7E1857}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6952FA-31F7-4112-851C-CECDFB7E1857}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6952FA-31F7-4112-851C-CECDFB7E1857}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C23F0AB-C5AF-4179-9D42-52B195E7F8A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C23F0AB-C5AF-4179-9D42-52B195E7F8A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C23F0AB-C5AF-4179-9D42-52B195E7F8A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C23F0AB-C5AF-4179-9D42-52B195E7F8A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1097,6 +1143,13 @@ Global
 		{CBE80569-113E-4FFF-A00C-230CBB120934} = {278CFF7F-D799-45EE-BADB-8C8380F05716}
 		{9A36CBEB-BDAF-4FE8-B4A9-604C71110A8E} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 		{B405793C-2446-4427-9329-034518031CD7} = {278CFF7F-D799-45EE-BADB-8C8380F05716}
+		{BE9DA1B8-3DD8-4A87-8ED8-4DF0940796FC} = {ABF85DD5-B281-4889-9A8E-5DB3185A8DD5}
+		{305696C7-1982-47BF-96F5-972AE87FFD17} = {ABF85DD5-B281-4889-9A8E-5DB3185A8DD5}
+		{9BF13892-7211-42C7-ACD7-C09935B8312C} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
+		{7C8A171D-3BF7-4F01-8724-1118D2E9FAFD} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
+		{F53F1115-0D15-4B79-9722-CA71DD2E43EB} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
+		{EA6952FA-31F7-4112-851C-CECDFB7E1857} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
+		{9C23F0AB-C5AF-4179-9D42-52B195E7F8A4} = {1BD34A20-4B18-43A2-AEEE-1E24B93C8BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
