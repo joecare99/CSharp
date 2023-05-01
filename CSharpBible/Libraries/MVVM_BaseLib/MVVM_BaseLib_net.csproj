@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Libraries_net.props"/>
+	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
@@ -20,6 +20,6 @@
 		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
 	</ItemGroup>
 </Project>

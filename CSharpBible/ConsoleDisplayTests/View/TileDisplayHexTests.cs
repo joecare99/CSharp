@@ -566,15 +566,15 @@ namespace ConsoleDisplay.View.Tests
 
             tileDisplayHex.FncGetTile = (p) => xTst(p)? vt:vt2;
             tileDisplayHex.FncOldPos = (p) => xTst(p) ? new Point(p.X * 3 - 3, p.Y) : p;
-            tileDisplayHex.Update(true); //Halvstep
+            tileDisplayHex.Update(true); //HalfStep
             Application_DoEvents();
-            AssertAreEqual(sExp[0], _tstCon?.Content ?? "",$"Test:{name}.Halfstep");
+            AssertAreEqual(sExp[0], _tstCon?.Content ?? "",$"Test:{name}.HalfStep");
 
             Thread_Sleep(10);
 
-            tileDisplayHex.Update(false); //Fullstep
+            tileDisplayHex.Update(false); //FullStep
             Application_DoEvents();
-            AssertAreEqual(sExp[1], _tstCon?.Content??"", $"Test:{name}.Fullstep");
+            AssertAreEqual(sExp[1], _tstCon?.Content??"", $"Test:{name}.FullStep");
 
             Thread_Sleep(10);
             Application_DoEvents();
@@ -582,7 +582,7 @@ namespace ConsoleDisplay.View.Tests
             console!.Clear();
             tileDisplayHex.FullRedraw(); 
             Application_DoEvents();
-            Assert.AreEqual(sExp[1], _tstCon?.Content, $"Test:{name}.Fullredraw");
+            Assert.AreEqual(sExp[1], _tstCon?.Content, $"Test:{name}.FullRedraw");
 
             static bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
         }
@@ -927,15 +927,15 @@ namespace ConsoleDisplay.View.Tests
 
 			tileDisplayHex.FncGetTile = (p) => xTst(p) ? vt : vt2;
 			tileDisplayHex.FncOldPos = (p) => xTst(p) ? new Point(p.X * 3 - 3, p.Y) : p;
-			tileDisplayHex.Update(true); //Halvstep
+			tileDisplayHex.Update(true); //HalfStep
 			Application_DoEvents();
-			AssertAreEqual(sExp[0], _tstCon?.Content ??"", $"Test:{name}.Halfstep");
+			AssertAreEqual(sExp[0], _tstCon?.Content ??"", $"Test:{name}.HalfStep");
 
 			Thread_Sleep(10);
 
-			tileDisplayHex.Update(false); //Fullstep
+			tileDisplayHex.Update(false); //FullStep
 			Application_DoEvents();
-			AssertAreEqual(sExp[1], _tstCon?.Content ?? "", $"Test:{name}.Fullstep");
+			AssertAreEqual(sExp[1], _tstCon?.Content ?? "", $"Test:{name}.FullStep");
 
 			Thread_Sleep(10);
 			Application_DoEvents();
@@ -943,7 +943,7 @@ namespace ConsoleDisplay.View.Tests
 			console!.Clear();
 			tileDisplayHex.FullRedraw();
 			Application_DoEvents();
-			AssertAreEqual(sExp[1],	_tstCon?.Content ?? "", $"Test:{name}.Fullredraw");
+			AssertAreEqual(sExp[1],	_tstCon?.Content ?? "", $"Test:{name}.FullRedraw");
 
             static bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
 		}
@@ -1072,15 +1072,15 @@ namespace ConsoleDisplay.View.Tests
 
 			tileDisplayHex.FncGetTile = (p) => xTst(p) ? vt : vt2;
 			tileDisplayHex.FncOldPos = (p) => xTst(p) ? new Point(p.X * 3 - 3, p.Y) : p;
-			tileDisplayHex.Update(true); //Halvstep
+			tileDisplayHex.Update(true); //HalfStep
 			Application_DoEvents();
-			AssertAreEqual(sExp[0], _tstCon?.Content ?? "", $"Test:{name}.Halfstep");
+			AssertAreEqual(sExp[0], _tstCon?.Content ?? "", $"Test:{name}.HalfStep");
 
 			Thread_Sleep(10);
 
-			tileDisplayHex.Update(false); //Fullstep
+			tileDisplayHex.Update(false); //FullStep
 			Application_DoEvents();
-			AssertAreEqual(sExp[1], _tstCon?.Content ??"", $"Test:{name}.Fullstep");
+			AssertAreEqual(sExp[1], _tstCon?.Content ??"", $"Test:{name}.FullStep");
 
 			Thread_Sleep(10);
 			Application_DoEvents();
@@ -1088,7 +1088,7 @@ namespace ConsoleDisplay.View.Tests
 			console!.Clear();
 			tileDisplayHex.FullRedraw();
 			Application_DoEvents();
-			AssertAreEqual(sExp[1], _tstCon?.Content ?? "", $"Test:{name}.Fullredraw");
+			AssertAreEqual(sExp[1], _tstCon?.Content ?? "", $"Test:{name}.FullRedraw");
 
             static bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
 		}

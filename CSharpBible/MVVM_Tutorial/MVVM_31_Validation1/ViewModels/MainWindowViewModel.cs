@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApp.ViewModels
+namespace MVVM_31_Validation1.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
