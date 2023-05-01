@@ -7,10 +7,6 @@
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<PropertyGroup>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="obj\**" />
 		<Compile Remove="Properties\AssemblyInfo.cs" />
