@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_31_Validation2
 // Author           : Mir
 // Created          : 08-24-2022
 //
@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 
-namespace WpfApp.Properties {
+namespace MVVM_31_Validation2.Properties {
     using System;
 
 
@@ -53,7 +53,7 @@ namespace WpfApp.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WpfApp.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_31_Validation2.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
