@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_04_DelegateCommand
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WpfApp
+namespace MVVM_04_DelegateCommand
 {
     /// <summary>
     /// Interaction logic for App.xaml
