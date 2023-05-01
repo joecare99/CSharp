@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MVVM_31_Validation1.View
+namespace MVVM_31_Validation2.View
 {
     /// <summary>
     /// Interaktionslogik für ValidationPage.xaml
