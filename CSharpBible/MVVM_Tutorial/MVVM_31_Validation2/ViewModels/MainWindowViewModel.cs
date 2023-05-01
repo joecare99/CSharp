@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_31_Validation2
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApp.ViewModels
+namespace MVVM_31_Validation2.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.

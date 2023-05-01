@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVVM_31_Validation1.ViewModels
+namespace MVVM_31_Validation2.ViewModels
 {
     public class ValidationPageViewModel : BaseViewModel
     {

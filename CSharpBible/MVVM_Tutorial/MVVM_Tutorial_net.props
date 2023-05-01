@@ -2,6 +2,7 @@
   <PropertyGroup>
     <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

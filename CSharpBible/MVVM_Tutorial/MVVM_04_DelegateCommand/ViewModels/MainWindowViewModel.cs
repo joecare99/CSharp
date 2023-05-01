@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_04_DelegateCommand
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApp.ViewModels
+namespace MVVM_04_DelegateCommand.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
@@ -34,14 +34,5 @@ namespace WpfApp.ViewModels
         {
 
         }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~MainWindowViewModel()
-        {
-            return;
-        }
-
     }
 }

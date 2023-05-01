@@ -4,9 +4,6 @@
 	<PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

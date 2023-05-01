@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_31_Validation2
 // Author           : Mir
 // Created          : 08-24-2022
 //
@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 
-namespace WpfApp.Properties {
+namespace MVVM_31_Validation2.Properties {
 
 
     /// <summary>
