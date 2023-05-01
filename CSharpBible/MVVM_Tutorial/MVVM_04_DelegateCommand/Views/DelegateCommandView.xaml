@@ -15,5 +15,6 @@
         <TextBox HorizontalAlignment="Left" Margin="288,-40,0,0" Text="{Binding Firstname}" Height="30" Width="200" FontSize="16"/>
         <TextBox HorizontalAlignment="Left" Margin="288,40,0,0" Text="{Binding Lastname}" Height="30" Width="200" FontSize="16"/>
         <TextBlock HorizontalAlignment="Left" Margin="288,210,0,0" Text="{Binding Fullname}" Height="30" Width="200" FontSize="16" />
+        <Button x:Name="ClearButton" Margin="488,0,0,0" Height="100" Width="200" Content="Clear" FontSize="18" Command="{Binding ClearCommand}"/>
     </Grid>
 </Page>

@@ -11,6 +11,8 @@
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
+        <Frame Source="/Views/DelegateCommandView.xaml" >
 
+        </Frame>
     </Grid>
 </Window>
