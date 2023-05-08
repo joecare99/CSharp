@@ -84,6 +84,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="{Binding FullName, Mode=OneWay}" FontWeight="Bold" FontSize="14px"/>
+                                
                                 <TextBlock Text="{Binding Title}"/>
                                 <TextBlock Text="{Binding Id}"/>
                             </StackPanel>
