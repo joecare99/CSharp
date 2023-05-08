@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -38,7 +39,7 @@ namespace MVVM.ViewModel
         /// <summary>
         /// The command can execute binding
         /// </summary>
-        private Dictionary<string, List<string>> _CommandCanExecuteBinding = new();
+        private Dictionary<string, List<(string,bool)>> _CommandCanExecuteBinding = new();
         #endregion
 
         #region Methods
@@ -60,7 +61,7 @@ namespace MVVM.ViewModel
 
             if (sender == this && _CommandCanExecuteBinding.TryGetValue(e.PropertyName, out var l))
                 foreach (var t in l)
-                    switch (GetType().GetProperty(t))
+                    switch (GetType().GetProperty(t.Item1))
                     {
                         case System.Reflection.PropertyInfo pi when pi.GetValue(this) is IRelayCommand rc:
                             rc.NotifyCanExecuteChanged();
@@ -73,7 +74,7 @@ namespace MVVM.ViewModel
                             }
                             break;
                         default:
-                            if (GetType().GetMethod(t) is System.Reflection.MethodInfo mi)
+                            if (GetType().GetMethod(t.Item1) is System.Reflection.MethodInfo mi)
                             {
                                 if (mi.GetParameters().Length == 0)
                                 {
@@ -82,8 +83,8 @@ namespace MVVM.ViewModel
                                 }
                                 else if (mi.GetParameters().Length == 1)
                                 {
-                                    if (KnownParams.ContainsKey(t))
-                                        foreach (var para in KnownParams[t])
+                                    if (KnownParams.ContainsKey(t.Item1))
+                                        foreach (var para in KnownParams[t.Item1])
                                         {
                                             var newVal = mi.Invoke(this,
 										new object?[]
@@ -95,28 +96,29 @@ namespace MVVM.ViewModel
                             break;
                     }
 
-			void NewMethod(string t, object? newVal, object? para = null)
+			void NewMethod((string, bool) t, object? newVal, object? para = null)
             {
-                var oldVal = !_PropertyOldValue.ContainsKey((t, para)) ? null : _PropertyOldValue[(t, para)];
+                var oldVal = !_PropertyOldValue.ContainsKey((t.Item1, para)) ? null : _PropertyOldValue[(t.Item1, para)];
                 if (newVal == null && oldVal == null) return;
-                if (!(newVal ?? oldVal!).Equals(newVal != null ? oldVal : null))
+                if (t.Item2 || !(newVal ?? oldVal!).Equals(newVal != null ? oldVal : null))
                 {
-                    _PropertyOldValue[(t, para)] = newVal;
-                    RaisePropertyChanged(t);
+                    if (!t.Item2)
+                        _PropertyOldValue[(t.Item1, para)] = newVal;
+                    RaisePropertyChanged(t.Item1);
                 }
             }
         }
 
-        public bool AddPropertyDependency(string prop1, string prop2)
+        public bool AddPropertyDependency(string prop1, string prop2,bool xForce=false )
         {
             bool flag =
                 GetType().GetProperty(prop1) is System.Reflection.PropertyInfo
                 || GetType().GetMethod(prop1) is System.Reflection.MethodInfo mi
                     && mi.GetParameters().Length is 0 or 1;
             if (flag && _CommandCanExecuteBinding.TryGetValue(prop2, out var l))
-                l.Add(prop1);
+                l.Add((prop1,xForce));
             else if (flag)
-                _CommandCanExecuteBinding[prop2] = new() { prop1 };
+                _CommandCanExecuteBinding[prop2] = new() { (prop1, xForce) };
             return flag;
         }
 
@@ -140,6 +142,13 @@ namespace MVVM.ViewModel
                 else if (!KnownParams[propertyName].Contains(param))
                     KnownParams[propertyName].Add(param);
             }
+        }
+
+        public T FuncProxy<T,T2>(T2 param, Func<T2, T> f, [CallerMemberName] string propertyName = "")
+        {
+            if (typeof(T2) !=typeof(double) && typeof(T2) != typeof(float))
+                AppendKnownParams(param, propertyName);
+            return f(param);
         }
 
         protected void CommandCanExecuteBindingClear()
