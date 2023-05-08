@@ -11,12 +11,17 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using MathLibrary.TwoDim;
 using MVVM.ViewModel;
+using MVVM_6_Converters_4.Model;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace MVVM_Lines_on_Grid2.ViewModel
+namespace MVVM_6_Converters_4.ViewModel
 {
     /// <summary>
     /// Struct SWindowPort
@@ -61,6 +66,94 @@ namespace MVVM_Lines_on_Grid2.ViewModel
     }
 
     /// <summary>
+    /// Struct DataSet
+    /// </summary>
+    public class ArrowList : List<ArrowData>
+    {
+        /// <summary>
+        /// The name
+        /// </summary>
+        public string Name;
+        /// <summary>
+        /// The description
+        /// </summary>
+        public string Description;
+        /// <summary>
+        /// The pen
+        /// </summary>
+        public System.Windows.Media.Pen Pen;
+    }
+
+    public struct ArrowData
+    {
+        /// <summary>
+        /// The datapoints
+        /// </summary>
+        public PointF Start;
+        /// <summary>
+        /// The datapoints
+        /// </summary>
+        public PointF End;
+    }
+
+    /// <summary>
+    /// Struct DataSet
+    /// </summary>
+    public class CircleList : List<CircleData>
+    {
+        /// <summary>
+        /// The name
+        /// </summary>
+        public string Name;
+        /// <summary>
+        /// The description
+        /// </summary>
+        public string Description;
+        /// <summary>
+        /// The pen
+        /// </summary>
+        public System.Windows.Media.Pen Pen;
+    }
+    public struct CircleData
+    {
+        /// <summary>
+        /// The datapoints
+        /// </summary>
+        public PointF Center;
+        /// <summary>
+        /// The datapoints
+        /// </summary>
+        public double Radius;
+    }
+
+    /// <summary>
+    /// Struct DataSet
+    /// </summary>
+    public class PolynomeList : List<PolynomeData>
+    {
+        /// <summary>
+        /// The name
+        /// </summary>
+        public string Name;
+        /// <summary>
+        /// The description
+        /// </summary>
+        public string Description;
+        /// <summary>
+        /// The pen
+        /// </summary>
+        public System.Windows.Media.Pen Pen;
+    }
+    public struct PolynomeData
+    {
+        /// <summary>
+        /// The datapoints
+        /// </summary>
+        public List<PointF> Points;
+    }
+
+
+    /// <summary>
     /// Class PlotFrameViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
@@ -76,6 +169,11 @@ namespace MVVM_Lines_on_Grid2.ViewModel
         /// </summary>
         private DataSet _dataset;
 
+        private ArrowList _arrows;
+        private AGV_Model _agv_Model;
+        private CircleList _circles;
+        private PolynomeList _polynomes;
+
         /// <summary>
         /// Gets or sets the window port.
         /// </summary>
@@ -89,36 +187,191 @@ namespace MVVM_Lines_on_Grid2.ViewModel
         public DataSet Dataset1 { get => _dataset; set => SetProperty(ref _dataset, value); }
 
         /// <summary>
+        /// Gets or sets the dataset.
+        /// </summary>
+        /// <value>The dataset.</value>
+        public ArrowList Arrows { get => _arrows; set => SetProperty(ref _arrows, value); }
+
+        /// <summary>
+        /// Gets or sets the dataset.
+        /// </summary>
+        /// <value>The dataset.</value>
+        public CircleList Circles { get => _circles; set => SetProperty(ref _circles, value); }
+
+        /// <summary>
+        /// Gets or sets the dataset.
+        /// </summary>
+        /// <value>The dataset.</value>
+        public PolynomeList Polynomes { get => _polynomes; set => SetProperty(ref _polynomes, value); }
+
+
+        /// <summary>
         /// Gets or sets the vp window.
         /// </summary>
         /// <value>The vp window.</value>
-        public RectangleF VPWindow { get => _viewPort.port; set => SetProperty(ref _viewPort.port, value,new string[] { nameof(WindowPort) }); }
+        public RectangleF VPWindow { get => _viewPort.port; set => SetProperty(ref _viewPort.port, value, new string[] { nameof(WindowPort) }); }
         /// <summary>
         /// Gets or sets the size of the window.
         /// </summary>
         /// <value>The size of the window.</value>
-        public System.Windows.Size WindowSize { get=>_viewPort.WindowSize; 
-            set => SetProperty(ref _viewPort.WindowSize, value, new string[] { nameof(WindowPort) }); }
+        public System.Windows.Size WindowSize
+        {
+            get => _viewPort.WindowSize;
+            set => SetProperty(ref _viewPort.WindowSize, value, new string[] { nameof(WindowPort) });
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlotFrameViewModel"/> class.
         /// </summary>
         public PlotFrameViewModel()
         {
- //           VPWindow = new RectangleF(-300, 300, 9, 6);
-            VPWindow = new RectangleF(-3, -3, 9, 6);
+            //           VPWindow = new RectangleF(-300, 300, 9, 6);
+            VPWindow = new RectangleF(-2000, -1500, 5000, 3000);
             //           VPWindow = new RectangleF(-3, -3, 900, 600);
- //           VPWindow = new RectangleF(-0.03f, -0.03f, 0.09f, 0.06f);
+            //           VPWindow = new RectangleF(-0.03f, -0.03f, 0.09f, 0.06f);
             WindowSize = new System.Windows.Size(600, 400);
             _viewPort.Parent = this;
+
             _dataset = new DataSet();
-            _dataset.Datapoints = new PointF[100];
-            _dataset.Pen = new System.Windows.Media.Pen(Brushes.Red, 3.0);
-            for (int i = 0; i < 100; i++)
+            _arrows = new ArrowList();
+            _arrows.Pen = new System.Windows.Media.Pen(Brushes.Red, 2.0);
+            _circles = new CircleList();
+            _circles.Pen = new System.Windows.Media.Pen(Brushes.Green, 1.0);
+            _polynomes = new PolynomeList();
+            _polynomes.Pen = new System.Windows.Media.Pen(Brushes.Blue, 2.0);
+
+            //            DemoData();
+
+            AddPropertyDependency(nameof(Dataset1), nameof(WindowPort), true);
+            AddPropertyDependency(nameof(Arrows), nameof(WindowPort), true);
+            AddPropertyDependency(nameof(Circles), nameof(WindowPort), true);
+            AddPropertyDependency(nameof(Polynomes), nameof(WindowPort), true);
+
+            _agv_Model = AGV_Model.Instance;
+            _agv_Model.PropertyChanged += OnModelPropChanged;
+
+        }
+
+        private void DemoData()
+        {
+            
+            _dataset.Datapoints = new PointF[400];
+            _dataset.Pen = new System.Windows.Media.Pen(Brushes.Red, 1.0);
+            for (int i = 0; i < _dataset.Datapoints.Length; i++)
             {
-                _dataset.Datapoints[i] = new PointF((float)(Math.Sin(i / 50.0f * Math.PI)+ Math.Sin(i / 8.0f * Math.PI)*1.25), (float)(Math.Cos(i/50.0f * Math.PI) + Math.Cos(i / 8.0f * Math.PI) * 1.25));
+                _dataset.Datapoints[i] = GetPoint(i);
             }
-            AddPropertyDependency(nameof(Dataset1), nameof(WindowPort),true);
-        } 
+           
+            for (int i = 0; i < 20; i++)
+            {
+                var ar = new ArrowData()
+                {
+                    Start = GetPoint(i * 12),
+                    End = GetPoint(i * 12 + 18)
+                };
+                _arrows.Add(ar);
+            }
+
+
+            for (int i = 0; i < 20; i++)
+            {
+                var ar = new CircleData()
+                {
+                    Center = GetPoint(i * 12),
+                    Radius = 0.2f
+                };
+                _circles.Add(ar);
+            }
+
+
+            for (int i = 0; i < 20; i++)
+            {
+                var pd = new PolynomeData()
+                {
+                    Points = new()
+                };
+                for (int j = 0; j < 4; j++)
+                    pd.Points.Add(GetPoint(i * 12 + j));
+                for (int j = 0; j < 4; j++)
+                    pd.Points.Add(GetPoint(i * 12 + 3 - j, 0.8f));
+                _polynomes.Add(pd);
+            }
+
+            static PointF GetPoint(int i, float f = 1f)
+            {
+                return new PointF((float)(Math.Sin(i / 100.0f * Math.PI) * f + Math.Sin(i / 16.0f * Math.PI) * 1.25 * f), (float)(Math.Cos(i / 100.0f * Math.PI) * f + Math.Cos(i / 16.0f * Math.PI) * 1.25 * f));
+            }
+
+        }
+
+        private void OnModelPropChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            _polynomes.Clear();
+            _circles.Clear();
+            _arrows.Clear();
+            _polynomes.Add(new()
+            {
+                Points = MakeRect(_agv_Model.VehicleDim,0.5f,0.5f)
+            });
+            _circles.Add(new()
+            {
+                Center = new((float)_agv_Model.SwivelKoor.x, (float)_agv_Model.SwivelKoor.y),
+                Radius = _agv_Model.AxisOffset * 0.4f
+            });
+            _circles.Add(new()
+            {
+                Center = new(-(float)_agv_Model.SwivelKoor.x, -(float)_agv_Model.SwivelKoor.y),
+                Radius = _agv_Model.AxisOffset * 0.4f
+            });
+            // Rad 1
+            _polynomes.Add(new()
+            {
+                Points = MakeRotRect(_agv_Model.SwivelKoor,_agv_Model.Swivel1Angle,Math2d.ByLengthAngle(_agv_Model.AxisOffset*0.5,Math.PI*0.5), 0.1f, 0.3f)
+            });
+            // Rad 2
+            _polynomes.Add(new()
+            {
+                Points = MakeRotRect(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(_agv_Model.AxisOffset * 0.5, -Math.PI * 0.5), 0.1f, 0.3f)
+            });
+            // Rad 3
+            _polynomes.Add(new()
+            {
+                Points = MakeRotRect(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(_agv_Model.AxisOffset * 0.5, Math.PI * 0.5), 0.1f, 0.3f)
+            });
+            // Rad 4
+            _polynomes.Add(new()
+            {
+                Points = MakeRotRect(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(_agv_Model.AxisOffset * 0.5, -Math.PI * 0.5), 0.1f, 0.3f)
+            });
+            RaisePropertyChanged(nameof(Polynomes));
+            RaisePropertyChanged(nameof(Circles));
+            RaisePropertyChanged(nameof(Arrows));
+
+            List<PointF> MakeRect(Math2d.Vector vs, float xSize,float ySize)
+            {
+                return new List<PointF>() {
+                    new ((float)vs.x * xSize,(float)vs.y * ySize),
+                    new ((float)vs.x * -xSize, (float)vs.y * ySize),
+                    new ((float)vs.x * -xSize, (float)vs.y * -ySize),
+                    new ((float)vs.x * xSize, (float)vs.y * -ySize)
+                };
+            }
+
+            List<PointF> MakeRotRect(Math2d.Vector vO,double dAngle, Math2d.Vector vO2, double xSize, double ySize)
+            {
+                var vO2r=vO2.Rotate(dAngle);
+                var vO2rn = vO2r.Rot90();
+                return new List<PointF>() {
+                    new ((float)(vO.x + vO2r.x *(1f+xSize) + vO2rn.x *(+ySize)) 
+                       ,(float)(vO.y + vO2r.y *(1f+xSize) + vO2rn.y *(+ySize))),
+                    new ((float)(vO.x + vO2r.x *(1f-xSize) + vO2rn.x *(+ySize))
+                       ,(float)(vO.y + vO2r.y *(1f-xSize) + vO2rn.y *(+ySize))),
+                    new ((float)(vO.x + vO2r.x *(1f-xSize) + vO2rn.x *(-ySize))
+                       ,(float)(vO.y + vO2r.y *(1f-xSize) + vO2rn.y *(-ySize))),
+                    new ((float)(vO.x + vO2r.x *(1f+xSize) + vO2rn.x *(-ySize))
+                       ,(float)(vO.y + vO2r.y *(1f+xSize) + vO2rn.y *(-ySize)))
+                };
+            }
+        }
     }
 }

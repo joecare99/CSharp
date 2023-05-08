@@ -14,6 +14,9 @@
 using MVVM.ViewModel;
 using MathLibrary.TwoDim;
 using MVVM_6_Converters_4.Properties;
+using MVVM_6_Converters_4.Model;
+using System.ComponentModel;
+using System;
 
 namespace MVVM_6_Converters_4.ViewModel
 {
@@ -27,47 +30,55 @@ namespace MVVM_6_Converters_4.ViewModel
         /// <summary>
         /// The value
         /// </summary>
-        private Math2d.Vector _vehicleDim;
-        private Math2d.Vector _swivelKoor;
-        private double _axisOffset;
-        private double _swivel1Angle;
-        private double _wheel1Velocity;
-        private double _wheel2Velocity;
-
-        private double _swivel2Angle;
-        private double _wheel3Velocity;
-        private double _wheel4Velocity;
-
+        private IAGVModel _agv_Model;  
         /// <summary>
         /// Gets or sets the value.
         /// </summary>
         /// <value>The value.</value>
-        public double VehicleLength { get => _vehicleDim.x; set => ExecPropSetter((v)=>_vehicleDim.x=v, _vehicleDim.x, value); }
-        public double VehicleWidth { get => _vehicleDim.y; set => ExecPropSetter((v) => _vehicleDim.y = v, _vehicleDim.y, value); }
-        public double SwivelKoorX { get => _swivelKoor.x; set => ExecPropSetter((v) => _swivelKoor.x = v, _swivelKoor.x, value); }
-        public double SwivelKoorY { get => _swivelKoor.y; set => ExecPropSetter((v) => _swivelKoor.y = v, _swivelKoor.y, value); }
-        public double AxisOffset { get => _axisOffset; set => SetProperty(ref _axisOffset, value); }
+        public double VehicleLength { get => _agv_Model.VehicleDim.x; set => _agv_Model.VehicleDim = new(value, _agv_Model.VehicleDim.y); }
+        public double VehicleWidth { get => _agv_Model.VehicleDim.y; set => _agv_Model.VehicleDim = new(_agv_Model.VehicleDim.x,value); }
+        public double SwivelKoorX { get => _agv_Model.SwivelKoor.x; set => _agv_Model.SwivelKoor = new(value, _agv_Model.SwivelKoor.y); }
+        public double SwivelKoorY { get => _agv_Model.SwivelKoor.y; set => _agv_Model.SwivelKoor = new(_agv_Model.VehicleDim.x, value); }
+        public double AxisOffset { get => _agv_Model.AxisOffset; set => _agv_Model.AxisOffset = value; }
 
-        public double Swivel1Angle { get => _swivel1Angle; set => SetProperty(ref _swivel1Angle, value); }
-        public double Wheel1Velocity { get => _wheel1Velocity; set => SetProperty(ref _wheel1Velocity, value); }
-        public double Wheel2Velocity { get => _wheel2Velocity; set => SetProperty(ref _wheel2Velocity, value); }
-        public double Swivel2Angle { get => _swivel2Angle; set => SetProperty(ref _swivel2Angle, value); }
-        public double Wheel3Velocity { get => _wheel3Velocity; set => SetProperty(ref _wheel3Velocity, value); }
-        public double Wheel4Velocity { get => _wheel4Velocity; set => SetProperty(ref _wheel4Velocity, value); }
+        public double Swivel1Angle { get => _agv_Model.Swivel1Angle; set => _agv_Model.Swivel1Angle = value; }
+        public double Wheel1Velocity { get => _agv_Model.Wheel1Velocity; set => _agv_Model.Wheel1Velocity = value; }
+        public double Wheel2Velocity { get => _agv_Model.Wheel2Velocity; set => _agv_Model.Wheel2Velocity = value; }
+        public double Swivel2Angle { get => _agv_Model.Swivel2Angle; set => _agv_Model.Swivel2Angle = value; }
+        public double Wheel3Velocity { get => _agv_Model.Wheel3Velocity; set => _agv_Model.Wheel3Velocity = value; }
+        public double Wheel4Velocity { get => _agv_Model.Wheel4Velocity; set => _agv_Model.Wheel4Velocity = value; }
+        public double Swivel1Velocity { get => _agv_Model.Swivel1Velocity;  }
+        public double Swivel2Velocity { get => _agv_Model.Swivel2Velocity;  }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleViewModel"/> class.
         /// </summary>
         public VehicleViewModel()
         {
-            _vehicleDim = new Math2d.Vector(Settings.Default.Vehicle_Length, Settings.Default.Vehicle_Width);
-            _swivelKoor = new Math2d.Vector(Settings.Default.SwivelKoor_X, Settings.Default.SwivelKoor_Y);
+            _agv_Model = AGV_Model.Instance;
+            _agv_Model.PropertyChanged += OnModelPropChanged;
+            foreach (var d in _agv_Model.Dependencies)
+                AddPropertyDependency(d.Dest, d.Src);
+       }
+
+        ~VehicleViewModel()
+        {
+            _agv_Model.Save();
         }
+        private void OnModelPropChanged(object? sender, PropertyChangedEventArgs e) => (_ = e.PropertyName switch
+        {
+            nameof(IAGVModel.VehicleDim)
+                => () => RaisePropertyChanged(nameof(VehicleLength), nameof(VehicleWidth)),
+            nameof(IAGVModel.SwivelKoor)
+                => () => RaisePropertyChanged(nameof(SwivelKoorX), nameof(SwivelKoorY)),
+            string s => () => RaisePropertyChanged(s),
+            _ => (Action)(() => { })
+        })();
 
         /// <summary>
         /// Gets a value indicating whether [value is not zero].
         /// </summary>
         /// <value><c>true</c> if [value is not zero]; otherwise, <c>false</c>.</value>
-        public bool ValueIsNotZero => _vehicleDim.AsComplex != 0;
+        public bool ValueIsNotZero => _agv_Model.VehicleDim.AsComplex != 0;
     }
 }

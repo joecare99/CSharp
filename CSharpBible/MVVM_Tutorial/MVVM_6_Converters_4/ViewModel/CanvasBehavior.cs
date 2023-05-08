@@ -14,9 +14,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
-using MVVM_Lines_on_Grid2.View.Converter;
+using MVVM_6_Converters_4.View.Converter;
 
-namespace MVVM_Lines_on_Grid2.ViewModel
+namespace MVVM_6_Converters_4.ViewModel
 {
     /// <summary>
     /// Class CanvasBehavior.

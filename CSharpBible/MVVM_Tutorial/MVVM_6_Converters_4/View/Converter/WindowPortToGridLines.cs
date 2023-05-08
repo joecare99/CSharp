@@ -22,11 +22,11 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Shapes;
-using MVVM_Lines_on_Grid2.ViewModel;
+using MVVM_6_Converters_4.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace MVVM_Lines_on_Grid2.View.Converter
+namespace MVVM_6_Converters_4.View.Converter
 {
     /// <summary>
     /// Class WindowPortToGridLines.
@@ -189,6 +189,7 @@ namespace MVVM_Lines_on_Grid2.View.Converter
                     return result;
                 case DataSet ds:
                     result = new ObservableCollection<FrameworkElement>();
+                    if (ds.Datapoints?.Length >1)
                     for (int i = 0; i < ds.Datapoints.Length - 1; i++)
                     {
                         var P1 = real2VisP(ds.Datapoints[i], actPort);
@@ -197,6 +198,35 @@ namespace MVVM_Lines_on_Grid2.View.Converter
                     }
                     return result;
                 case DataSet[] ads: return new ObservableCollection<FrameworkElement>();
+                case ArrowList al: 
+                    result = new ObservableCollection<FrameworkElement>();
+                    foreach (var sh in al)
+                    {
+                        var P1 = real2VisP(sh.Start, actPort);
+                        var P2 = real2VisP(sh.End, actPort);
+                        foreach (var el in CreateArrow(al.Pen.Brush, al.Pen.Thickness, P1, P2))
+                            result.Add(el);
+                    }
+                    return result;
+                case CircleList cl:
+                    result = new ObservableCollection<FrameworkElement>();
+                    foreach (var sh in cl)
+                    {
+                        var P1 = real2VisP(sh.Center, actPort);
+                        var r = Real2VisP(PointF.Add(sh.Center,new SizeF((float)sh.Radius,0)), actPort).X-P1.X;
+                        result.Add(CreateCircle(cl.Pen.Brush, cl.Pen.Thickness, P1, (float)r));
+                    }
+                    return result;
+                case PolynomeList pl:
+                    result = new ObservableCollection<FrameworkElement>();
+                    foreach (var sh in pl)
+                    {
+                        var p = new PointCollection();
+                        foreach (var pnt in sh.Points)
+                            p.Add(real2VisP(pnt, actPort));
+                        result.Add(CreatePolynome(pl.Pen.Brush, pl.Pen.Thickness, p));
+                    }
+                    return result;
                 default: return new ObservableCollection<FrameworkElement>();
             }
 
@@ -248,6 +278,74 @@ namespace MVVM_Lines_on_Grid2.View.Converter
                 Stroke = b,
                 StrokeThickness = value
             };
+        }
+
+        /// <summary>
+        /// Creates the line.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="P1">The p1.</param>
+        /// <param name="P2">The p2.</param>
+        /// <returns>FrameworkElement.</returns>
+        FrameworkElement CreateCircle(Brush b, double value, System.Windows.Point P1, float r)
+        {
+            return new Ellipse()
+            {
+                Margin = new Thickness(P1.X-r, P1.Y-r, 0, 0),               
+                Height = r * 2,
+                Width = r * 2,
+                Stroke = b,
+                StrokeThickness = value
+            };
+        }
+
+        /// <summary>
+        /// Creates the line.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="P1">The p1.</param>
+        /// <param name="P2">The p2.</param>
+        /// <returns>FrameworkElement.</returns>
+        FrameworkElement CreatePolynome(Brush b, double value, PointCollection Pts)
+        {
+            return new Polygon()
+            {
+                Points = Pts,
+                Stroke = b,
+                StrokeThickness = value
+            };
+        }
+
+        IEnumerable<FrameworkElement> CreateArrow(Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
+        {
+            // Linie
+            yield return new Line()
+            {
+                X1 = P1.X,
+                Y1 = P1.Y,
+                X2 = P2.X,
+                Y2 = P2.Y,
+                Stroke = b,
+                StrokeThickness = value,              
+            };
+            System.Numerics.Vector2 v = new((float)(P2.X - P1.X), (float)(P2.Y - P1.Y));
+            var l = v.Length();
+            if (l > 0)
+            {
+                var ve = v * (1 / l);
+                yield return new Line()
+                {
+                    X1 = P2.X -ve.X*(value*2) ,
+                    Y1 = P2.Y - ve.Y*(value*2) ,
+                    X2 = P2.X - ve.X * value,
+                    Y2 = P2.Y - ve.Y * value,
+                    Stroke = b,
+                    StrokeThickness = value*5,
+                    StrokeEndLineCap = PenLineCap.Triangle
+                };
+            }
         }
 
 
