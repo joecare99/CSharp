@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -16,7 +16,12 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
+	<ItemGroup>
+		<Compile Include="..\BaseLibTests\Helper\TestHelper.cs" Link="Helper\TestHelper.cs" />
+		<Compile Include="..\BaseLibTests\Helper\PropertyHelperTests.cs" Link="Helper\PropertyHelperTests.cs" />
+		<Compile Include="..\BaseLibTests\Helper\TypeUtilsTests.cs" Link="Helper\TypeUtilsTests.cs" />
+		<Compile Include="..\BaseLibTests\Helper\ClassHelperTests.cs" Link="Helper\ClassHelperTests.cs" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>

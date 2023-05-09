@@ -15,6 +15,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace MVVM.ViewModel
@@ -146,7 +147,7 @@ namespace MVVM.ViewModel
 
         public T FuncProxy<T,T2>(T2 param, Func<T2, T> f, [CallerMemberName] string propertyName = "")
         {
-            if (typeof(T2) !=typeof(double) && typeof(T2) != typeof(float))
+            if (! new[] { typeof(double), typeof(float) }.Contains(typeof(T2)))
                 AppendKnownParams(param, propertyName);
             return f(param);
         }

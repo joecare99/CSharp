@@ -103,7 +103,7 @@ namespace MVVM.ViewModel
 		protected bool SetProperty<T>(ref T data, T value, string[]? propertyNames=null, Predicate<T>? validate=null,Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T>.Default.Equals(data, value)) return false;
-			if (!validate?.Invoke(value) ?? false) return false; 
+			if (validate?.Invoke(value) == false) return false; 
             T old = data;
             data = value;
             RaisePropertyChanged(propertyName);
@@ -137,10 +137,8 @@ namespace MVVM.ViewModel
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
 		protected bool ExecPropSetter<T>(Action<T> setter,T data, T value, string[]? propertyNames = null, Predicate<T>? validate = null, Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
         {
-            if (EqualityComparer<T>.Default.Equals(data, value))
-                return false;
-            if (!validate?.Invoke(value) ?? false)
-                return false;
+            if (EqualityComparer<T>.Default.Equals(data, value)) return false;
+            if (validate?.Invoke(value) == false) return false;
             T old = data;
             setter(value);
             RaisePropertyChanged(propertyName);
