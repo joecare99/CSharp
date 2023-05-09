@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ListBinding_net\ListBinding_net.csproj" />
+    <ProjectReference Include="..\ListBinding\ListBinding_net.csproj" />
   </ItemGroup>
 
 </Project>
