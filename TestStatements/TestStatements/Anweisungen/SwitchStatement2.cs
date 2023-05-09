@@ -147,7 +147,7 @@ namespace TestStatements.Anweisungen
     /// <summary>
     /// Class SwitchStatement2.
     /// </summary>
-    class SwitchStatement2
+    public class SwitchStatement2
     {
         /// <summary>
         /// Switches the example21.
@@ -170,7 +170,7 @@ namespace TestStatements.Anweisungen
         /// Shows the shape information.
         /// </summary>
         /// <param name="sh">The sh.</param>
-        private static void ShowShapeInfo(Shape sh)
+        public static void ShowShapeInfo(Shape sh)
         {
             switch (sh)
             {

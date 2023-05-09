@@ -489,7 +489,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficLightData")] // Kann man allgemeiner machen 
+        [DynamicData(nameof(TrafficLightData))] // Kann man allgemeiner machen 
         public void TrafficLightTest(string name, Rectangle rVal, int iState, bool xVal, string sExp)
         {
             using (var ms = new MemoryStream())
@@ -507,7 +507,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficLightData4")] // Kann man allgemeiner machen 
+        [DynamicData(nameof(TrafficLightData4))] // Kann man allgemeiner machen 
         public void TrafficLightTest2(string name, Rectangle rVal, int iState, bool xVal, string sExp)
         {
             using (var ms = new MemoryStream())
@@ -525,7 +525,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficLightData3")] // Kann man allgemeiner machen 
+        [DynamicData(nameof(TrafficLightData3))] // Kann man allgemeiner machen 
         public void TrafficLightTest3(string name, Rectangle rVal, int iState, bool xVal, string sExp)
         {
             using (var ms = new MemoryStream())
@@ -542,7 +542,7 @@ namespace JCAMS.Core.Tests
         }
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("LoadUnloadData")] // Kann man allgemeiner machen 
+        [DynamicData(nameof(LoadUnloadData))] // Kann man allgemeiner machen 
         public void LoadAndUnloadTest(string name, Rectangle rVal, int iState, bool xVal, int iPos, string sExp)
         {
             using (var ms = new MemoryStream())
@@ -561,7 +561,7 @@ namespace JCAMS.Core.Tests
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("LoadUnloadData")] // Kann man allgemeiner machen 
+        [DynamicData(nameof(LoadUnloadData))] // Kann man allgemeiner machen 
         public void BeUndEntladen1Test(string name, Rectangle rVal, int iState, bool xVal, int iPos, string sExp)
         {
             using (var ms = new MemoryStream())
@@ -579,7 +579,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("LoadUnloadData")] // Kann man allgemeiner machen
+        [DynamicData(nameof(LoadUnloadData))] // Kann man allgemeiner machen
         public void DrawAGVArrowHeadTest(string name, Point pVal, Brush bVal, Pen pnVal ,double dAng, int iLen, double dSpeed, string sExp)
         {
             using (var ms = new MemoryStream())
@@ -609,7 +609,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")] 
+        [DynamicData(nameof(DrawSomethingData))] 
         public void DrawBullsEyeTest(string name,Pen pVal, PointF pCnt, int iVal, string[] sExp)
         {
             using (var ms = new MemoryStream())
@@ -626,7 +626,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")]
+        [DynamicData(nameof(DrawSomethingData))]
         public void DrawCircleTest(string name,Pen pVal, PointF pCntr, int iRad, string[] sExp)
         {
             using (var ms = new MemoryStream())
@@ -643,7 +643,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")]
+        [DynamicData(nameof(DrawSomethingData))]
         public void DrawCrossTest(string name, Pen pVal, PointF pCntr, int iRad, string[] sExp)
         {
             using (var ms = new MemoryStream())
@@ -660,7 +660,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")]
+        [DynamicData(nameof(DrawSomethingData))]
         public void DrawXTest(string name, Pen pVal, PointF pCntr, int iRad, string[] sExp)
         {
             using (var ms = new MemoryStream())
@@ -708,7 +708,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawLedData")]
+        [DynamicData(nameof(DrawLedData))]
         public void DrawRectangularLEDTest(string name,int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
         {
             const int cled = 0;
@@ -727,7 +727,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawLedData")]
+        [DynamicData(nameof(DrawLedData))]
         public void DrawRoundLEDTest(string name, int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
         {
             const int cled = 1;
@@ -746,7 +746,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawLedData")]
+        [DynamicData(nameof(DrawLedData))]
         public void DrawTriangularLEDTest(string name, int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
         {
             const int cled = 2;
@@ -801,7 +801,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetDarkColorTest(string name, Color cVal, byte bVal, Color cExp, Color cDummy)
         {
             Assert.AreEqual(cExp,SGraphics.GetDarkColor(cVal,bVal),$"Test: {name}");
@@ -809,7 +809,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetDarkColorTest1(string name, Color cVal, byte bVal, Color cExp, Color cDummy)
         {
             Assert.AreEqual(cExp, SGraphics.GetDarkColor(cVal, bVal), $"Test: {name}");
@@ -817,7 +817,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetLightColorTest(string name, Color cVal, byte bVal, Color cDummx, Color cExp)
         {
             Assert.AreEqual(cExp, SGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
@@ -825,7 +825,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetLightColorTest1(string name, Color cVal, byte bVal, Color cDummx, Color cExp)
         {
             Assert.AreEqual(cExp, SGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
@@ -875,7 +875,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficSignalData")]
+        [DynamicData(nameof(TrafficSignalData))]
         public void TrafficSignalTest(string name, Rectangle rVal, int iState, bool xVal, string sExp)
         {
             using (var ms = new MemoryStream())

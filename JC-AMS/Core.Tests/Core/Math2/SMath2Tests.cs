@@ -28,7 +28,7 @@ namespace JCAMS.Core.Math2.Tests
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("IsUndefinedData")]
+        [DynamicData(nameof(IsUndefinedData))]
 
         public void IsUndefinedTest(string name,object o, bool xExp)
         {
@@ -36,7 +36,7 @@ namespace JCAMS.Core.Math2.Tests
         }
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("IsUndefinedData")]
+        [DynamicData(nameof(IsUndefinedData))]
         public void IsUndefinedTest1(string name, object o, bool xExp)
         {
             Assert.AreEqual(xExp, o.IsUndefined());

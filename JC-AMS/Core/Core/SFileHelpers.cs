@@ -1,23 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : JCAMS
-// Author           : Mir
-// Created          : 09-23-2022
-//
-// Last Modified By : Mir
-// Last Modified On : 09-24-2022
-// ***********************************************************************
-// <copyright file="TFileHelpers.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2008-2015
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-using JCAMS.Core.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.AccessControl;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿
 // ***********************************************************************
 // Assembly         : JCAMS
 // Author           : Mir
@@ -31,6 +12,15 @@ using System.Text.RegularExpressions;
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using JCAMS.Core.Logging;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Security.AccessControl;
+using System.Text;
+using System.Text.RegularExpressions;
+
 namespace JCAMS.Core
 {
     /// <summary>
@@ -39,6 +29,8 @@ namespace JCAMS.Core
     public static class SFileHelpers
     {
         #region Properties
+        private const string cPathPattern = "^(([a-zA-Z]\\:)|(\\\\))(\\\\{1}|((\\\\{1})[^\\\\]([^/:*?<>\"|]*))+)$";
+
         /// <summary>
         /// The m last error
         /// </summary>
@@ -100,21 +92,15 @@ namespace JCAMS.Core
         /// <returns>System.String.</returns>
         public static string CheckAndCreateDirectory(string sPath)
         {
-            if (sPath.Length < 1)
+            switch (sPath)
             {
-                return "";
-            }
-            if (sPath.ToUpper().Contains("<DATABASE>"))
-            {
-                return "<DATABASE>";
-            }
-            if (sPath.ToUpper().Contains("<EVENTLOG>"))
-            {
-                return "<EVENTLOG>";
-            }
-            if (!sPath.EndsWith("\\"))
-            {
-                sPath += "\\";
+                case string s when string.IsNullOrEmpty(s): return "";
+                case string s when s.ToUpper().Contains("<DATABASE>"): return "<DATABASE>";
+                case string s when s.ToUpper().Contains("<EVENTLOG>"): return "<EVENTLOG>";
+                case string s when !s.EndsWith("\\"): sPath += "\\";
+                    break;
+                default:
+                    break;
             }
             try
             {
@@ -142,15 +128,8 @@ namespace JCAMS.Core
         /// <param name="FileWithPath">The file with path.</param>
         /// <param name="RaiseError">if set to <c>true</c> [raise error].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool CheckFileExists(string FileWithPath, bool RaiseError)
-        {
-            FileInfo FI = new FileInfo(FileWithPath);
-            if (FI.Exists)
-            {
-                return true;
-            }
-            return false;
-        }
+        public static bool CheckFileExists(string FileWithPath, bool _) 
+            => File.Exists(FileWithPath);
 
         /// <summary>
         /// Checks the path accessibility.
@@ -158,25 +137,12 @@ namespace JCAMS.Core
         /// <param name="sPath">The s path.</param>
         /// <param name="RaiseError">if set to <c>true</c> [raise error].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool CheckPathAccessibility(string sPath, bool RaiseError)
+        public static bool CheckPathAccessibility(string sPath, bool RaiseError) => sPath switch
         {
-            if (sPath.Substring(1, 2) == ":\\")
-            {
-                if (!IsNetworkDrive(sPath.Substring(0, 1), RaiseError))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Regex r = new Regex("^(([a-zA-Z]\\:)|(\\\\))(\\\\{1}|((\\\\{1})[^\\\\]([^/:*?<>\"|]*))+)$");
-                if (!r.IsMatch(sPath))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+            string s when s.Substring(1, 2) == ":\\" && (!IsNetworkDrive(sPath.Substring(0, 1), RaiseError)) => false,
+            string s when !(new Regex(cPathPattern).IsMatch(s)) => false,
+            _ => true,
+        };
 
         /// <summary>
         /// Deletes all subfolders.
@@ -284,14 +250,8 @@ namespace JCAMS.Core
             try
             {
                 if (File.Exists(FileName))
-                {
                     File.Delete(FileName);
-                }
-                if (File.Exists(FileName))
-                {
-                    return false;
-                }
-                return true;
+                return !File.Exists(FileName);
             }
             catch (Exception Ex)
             {
@@ -322,14 +282,8 @@ namespace JCAMS.Core
         /// <param name="Extension">The extension.</param>
         /// <param name="KeepLastDays">The keep last days.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool DeleteFilesOlderThanXDays(string Path, string Extension, int KeepLastDays)
-        {
-            if (KeepLastDays < 0)
-            {
-                return false;
-            }
-            return DeleteFilesOlderThanXSeconds(Path, Extension, KeepLastDays * 60 * 60 * 24);
-        }
+        public static bool DeleteFilesOlderThanXDays(string Path, string Extension, int KeepLastDays) 
+            => KeepLastDays >= 0 && DeleteFilesOlderThanXSeconds(Path, Extension, KeepLastDays * 60 * 60 * 24);
 
         /// <summary>
         /// Deletes the files older than x seconds.
@@ -436,11 +390,8 @@ namespace JCAMS.Core
         /// </summary>
         /// <param name="path">The path.</param>
         /// <returns><c>true</c> if [is valid path] [the specified path]; otherwise, <c>false</c>.</returns>
-        public static bool IsValidPath(string path)
-        {
-            Regex r = new Regex("^(([a-zA-Z]\\:)|(\\\\))(\\\\{1}|((\\\\{1})[^\\\\]([^/:*?<>\"|]*))+)$");
-            return r.IsMatch(path);
-        }
+        public static bool IsValidPath(string path) 
+            => new Regex(cPathPattern).IsMatch(path);
 
         /// <summary>
         /// Moves the file.
@@ -623,10 +574,8 @@ namespace JCAMS.Core
         /// <param name="OutBuffer">The out buffer.</param>
         /// <param name="Arguments">The arguments.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool WriteToFile(string FileName, string OutBuffer, params object[] Arguments)
-        {
-            return WriteToFile(FileName, string.Format(OutBuffer, Arguments), Append: true, Encoding.Unicode);
-        }
+        public static bool WriteToFile(string FileName, string OutBuffer, params object[] Arguments) 
+            => WriteToFile(FileName, string.Format(OutBuffer, Arguments), Append: true, Encoding.Unicode);
 
         /// <summary>
         /// Writes to file.
@@ -635,10 +584,8 @@ namespace JCAMS.Core
         /// <param name="OutBuffer">The out buffer.</param>
         /// <param name="Append">if set to <c>true</c> [append].</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool WriteToFile(string FileName, string OutBuffer, bool Append)
-        {
-            return WriteToFile(FileName, OutBuffer, Append, Encoding.Unicode);
-        }
+        public static bool WriteToFile(string FileName, string OutBuffer, bool Append) 
+            => WriteToFile(FileName, OutBuffer, Append, Encoding.Unicode);
 
         /// <summary>
         /// Writes to file.

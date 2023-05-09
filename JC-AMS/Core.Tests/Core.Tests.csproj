@@ -1,13 +1,7 @@
 ﻿<Project>
-
-  <PropertyGroup>
-    <TargetFrameworks>net472;net48;net60-windows</TargetFrameworks>
-    <Nullable>enable</Nullable>
-	  <LangVersion>8.0</LangVersion>
+	<Import Project="..\JC-AMS.props" />
+	<PropertyGroup>
 	  <IsPackable>false</IsPackable>
-	  <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	  <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
 	  <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

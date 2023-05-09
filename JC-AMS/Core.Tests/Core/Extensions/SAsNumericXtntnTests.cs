@@ -57,7 +57,7 @@ namespace JCAMS.Core.Extensions.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("AsDateTimeData")]
+        [DynamicData(nameof(AsDateTimeData))]
         public void AsDateTimeTest(string name,object? o, DateTime dt)
         {
             Assert.AreEqual(dt,o.AsDateTime());
@@ -65,7 +65,7 @@ namespace JCAMS.Core.Extensions.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("AsDateTimeData")]
+        [DynamicData(nameof(AsDateTimeData))]
         public void AsDateTimeTest2(string name, object? o, DateTime dt)
         {
             Assert.AreEqual(dt, SAsNumericXtntn.AsDateTime(o));
@@ -73,7 +73,7 @@ namespace JCAMS.Core.Extensions.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("AsSizeData")]
+        [DynamicData(nameof(AsSizeData))]
         public void AsSizeTest(string name, object? o, Size szExp)
         {
             Assert.AreEqual(szExp, o.AsSize(), $"Test: {name}");
