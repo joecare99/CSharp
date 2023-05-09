@@ -18,8 +18,6 @@ namespace MVVM_Converter_Grid3_NonLin.View
             {
                 if (e.NewValue is PlotFrameViewModel vm && this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
                 {
-                    //                    pc.Row = vm.Row;
-                    //                  pc.Col = vm.Column;
                     pc.WindowSize = new Size(Width, Height);
                 }
             };

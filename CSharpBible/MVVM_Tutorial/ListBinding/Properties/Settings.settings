@@ -1,7 +1,17 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ListBinding.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Data" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ArrayOfPerson xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;Person&gt;
+    &lt;LastName&gt;Care&lt;/LastName&gt;
+    &lt;FirstName&gt;Joe&lt;/FirstName&gt;
+    &lt;Title&gt;Dr,&lt;/Title&gt;
+    &lt;Id&gt;1&lt;/Id&gt;
+  &lt;/Person&gt;
+&lt;/ArrayOfPerson&gt;</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

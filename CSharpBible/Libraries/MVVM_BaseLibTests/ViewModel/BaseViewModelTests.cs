@@ -41,6 +41,7 @@ namespace MVVM.ViewModel.Tests
 
         public bool Prop1IsGreaterthan1Prop2() => property1 > property2;
         public bool Prop2IsGreater(int i) => i > property2;
+        public bool IsGreater(int i,int i2) => i > i2;
 
         public IRelayCommand? doSomething { get; set; }
 
@@ -118,6 +119,8 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
             AddPropertyDependency(nameof(Prop1IsGreaterthan1Prop2), nameof(Property2));
             AddPropertyDependency(nameof(Prop2IsGreater), nameof(Property2));
             AddPropertyDependency(nameof(doSomething), nameof(Prop1IsGreaterthan1Prop2));
+            AddPropertyDependency(nameof(IsGreater), nameof(Property2));
+            AddPropertyDependency("XX", nameof(Property2));
             AppendKnownParams(1, nameof(Prop2IsGreater));
             AppendKnownParams(5, nameof(Prop2IsGreater));
             AppendKnownParams(7, nameof(Prop2IsGreater));
@@ -131,6 +134,35 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
             }
             Assert.AreEqual( aExp[0], DebugResult, name);
 
+        }
+
+        [TestMethod]
+        public void RemovePropertyDependencyTest()
+        {
+            Assert.ThrowsException<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
+        }
+
+        [DataTestMethod]
+        [DataRow(1,false)]
+        [DataRow(2, false)]
+        [DataRow(0, false)]
+        public void FuncProxyTest (int dVal,bool xExp)
+        {
+            Assert.AreEqual (xExp,FuncProxy(dVal, Prop2IsGreater));
+        }
+
+        [DataTestMethod]
+        [DataRow(1, true)]
+        [DataRow(2, true)]
+        [DataRow(0.5, false)]
+        public void FuncProxy2Test(double dVal, bool xExp)
+        {
+            Assert.AreEqual(xExp, FuncProxy(dVal, LocalFunc));
+        }
+
+        private bool LocalFunc(double arg)
+        {
+            return arg == Math.Floor(arg);
         }
     }
 }

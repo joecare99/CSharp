@@ -1,0 +1,24 @@
+﻿<Window x:Class="MVVM_06_Converters_4.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MVVM_06_Converters_4"
+        xmlns:view="clr-namespace:MVVM_06_Converters_4.View"
+        xmlns:mvvm="clr-namespace:MVVM_06_Converters_4.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Frame Grid.Column="0" Source="/View/VehicleView1.xaml" >
+
+        </Frame>
+      <GridSplitter Width="5" />
+        <Frame Grid.Column="1" Source="/View/PlotFrame.xaml">
+
+        </Frame>
+    </Grid>
+</Window>

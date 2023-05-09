@@ -8,7 +8,6 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup>
-		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
@@ -17,9 +16,6 @@
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
 		<None Remove="*.bak" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
@@ -44,7 +40,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Properties\Settings.settings">
-			<Generator>SettingsSingleFileGenerator</Generator>
+			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>

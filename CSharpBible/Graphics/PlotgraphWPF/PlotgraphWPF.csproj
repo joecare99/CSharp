@@ -1,12 +1,10 @@
 <Project>
-
+  <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <Nullable>enable</Nullable>
+    <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

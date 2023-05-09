@@ -103,7 +103,7 @@ namespace MVVM.ViewModel
 		protected bool SetProperty<T>(ref T data, T value, string[]? propertyNames=null, Predicate<T>? validate=null,Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T>.Default.Equals(data, value)) return false;
-			if (!validate?.Invoke(value) ?? false) return false; 
+			if (validate?.Invoke(value) == false) return false; 
             T old = data;
             data = value;
             RaisePropertyChanged(propertyName);
@@ -113,5 +113,41 @@ namespace MVVM.ViewModel
             return true;
         }
 
+        /// <summary>
+        /// Helper for setting properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        protected bool ExecPropSetter<T>(Action<T> setter, T data, T value, Action<T, T>? action, [CallerMemberName] string propertyName = "")
+            => ExecPropSetter(setter,data, value, null, null, action, propertyName);
+
+        /// <summary>
+        /// Helper for setting properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="propertyNames">The property names.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+		protected bool ExecPropSetter<T>(Action<T> setter,T data, T value, string[]? propertyNames = null, Predicate<T>? validate = null, Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
+        {
+            if (EqualityComparer<T>.Default.Equals(data, value)) return false;
+            if (validate?.Invoke(value) == false) return false;
+            T old = data;
+            setter(value);
+            RaisePropertyChanged(propertyName);
+            if (propertyNames != null)
+                RaisePropertyChanged(propertyNames);
+            try
+            { action?.Invoke(old, value); }
+            catch { }
+            return true;
+        }
     }
 }
