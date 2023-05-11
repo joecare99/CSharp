@@ -1,12 +1,12 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM_6_Converters
+// Assembly         : MVVM_06_Converters
 // Author           : Mir
 // Created          : 07-03-2022
 //
 // Last Modified By : Mir
 // Last Modified On : 07-03-2022
 // ***********************************************************************
-// <copyright file="CurrencyValueConverter.cs" company="MVVM_6_Converters">
+// <copyright file="CurrencyValueConverter.cs" company="MVVM_06_Converters">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
@@ -32,12 +32,12 @@ namespace MVVM_06_Converters.ValueConverter
         /// <param name="parameter">The converter parameter to use.</param>
         /// <param name="culture">The culture to use in the converter.</param>
         /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is decimal dval)
-                return dval.ToString("0.00€");
+                return dval.ToString("0.00€",culture);
             else
-                return value.ToString() ?? "";
+                return value?.ToString() ?? "";
 
         }
 
