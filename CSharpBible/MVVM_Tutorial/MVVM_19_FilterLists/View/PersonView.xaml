@@ -79,24 +79,28 @@
                 </DataGrid>
             </TabItem>
             <TabItem Header="List" IsSelected="True">
-                <ListBox x:Name="lstPersons" Margin="2,2,2,2" d:ItemsSource="{d:SampleData ItemCount=5}"  ItemsSource="{Binding Persons, UpdateSourceTrigger=PropertyChanged, Delay=100}" SelectedItem="{Binding NewPerson}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{Binding FullName, Mode=OneWay}" FontWeight="Bold" FontSize="14px"/>
-                                
-                                <TextBlock Text="{Binding Title}"/>
-                                <TextBlock Text="{Binding Id}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <StackPanel>
+                    <Label Content="Filter"/>
+                    <TextBox Width="auto" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                    <ListBox x:Name="lstPersons" Margin="2,2,2,2" d:ItemsSource="{d:SampleData ItemCount=5}"  ItemsSource="{Binding FilteredPersons, UpdateSourceTrigger=PropertyChanged, Delay=100}" SelectedItem="{Binding NewPerson}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="{Binding FullName, Mode=OneWay}" FontWeight="Bold" FontSize="14px"/>
+
+                                    <TextBlock Text="{Binding Title}"/>
+                                    <TextBlock Text="{Binding Id}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
             </TabItem>
         </TabControl>
-             <!--
+        <!--
             -->
 
-          
+
 
     </Grid>
 

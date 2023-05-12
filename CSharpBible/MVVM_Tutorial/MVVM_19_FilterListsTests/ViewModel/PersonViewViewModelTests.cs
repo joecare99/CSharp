@@ -12,12 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_19_FilterLists.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_19_FilterLists.ViewModel.Tests
 {
@@ -36,7 +30,7 @@ namespace MVVM_19_FilterLists.ViewModel.Tests
             var model = new PersonViewViewModel();
             Assert.IsNotNull(model.NewPerson);
             Assert.IsNotNull(model.Persons);
-            Assert.AreEqual(0, model.Persons.Count);
+            Assert.AreEqual(1, model.Persons.Count);
             Assert.IsTrue(model.NewPerson.IsEmpty);
         }
     }

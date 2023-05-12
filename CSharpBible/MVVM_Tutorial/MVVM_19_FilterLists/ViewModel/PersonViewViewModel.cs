@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace MVVM_19_FilterLists.ViewModel
 {
@@ -29,10 +30,14 @@ namespace MVVM_19_FilterLists.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class PersonViewViewModel : BaseViewModel
     {
+        #region Properties
         /// <summary>
         /// The new person
         /// </summary>
         private Person newPerson = new Person();
+
+        private IPersons _persons;
+        private string _filter;
 
         /// <summary>
         /// Occurs when [missing data].
@@ -60,8 +65,7 @@ namespace MVVM_19_FilterLists.ViewModel
         /// </summary>
         /// <value>The persons.</value>
         public ObservableCollection<Person> Persons { get => _persons.Persons; }
-
-        private IPersons _persons;
+        public ObservableCollection<Person> FilteredPersons { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the BTN add person.
@@ -69,6 +73,11 @@ namespace MVVM_19_FilterLists.ViewModel
         /// <value>The BTN add person.</value>
         public DelegateCommand btnAddPerson { get; set; }
 
+
+        public string Filter { get => _filter; set => SetProperty(ref _filter , value,(s,n)=>DoFiltering()); }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="PersonViewViewModel" /> class.
         /// </summary>
@@ -76,6 +85,8 @@ namespace MVVM_19_FilterLists.ViewModel
         public PersonViewViewModel(IPersons persons)
         {
             _persons = persons;
+            _persons.Persons.CollectionChanged += (s,e)=>DoFiltering();
+            DoFiltering();
             this.btnAddPerson = new DelegateCommand(
                 (o) =>
              {
@@ -84,13 +95,29 @@ namespace MVVM_19_FilterLists.ViewModel
                  else
                  {
                      _persons.Persons.Add(NewPerson);
-                     NewPerson.Id = _persons.Persons.IndexOf(newPerson)+1;
+                     NewPerson.Id = _persons.Persons.IndexOf(newPerson) + 1;
                      NewPerson = new Person();
                  }
              },
-                (o)=>newPerson?.Id==0 
+                (o) => newPerson?.Id == 0
              );
 
         }
+
+        private void DoFiltering()
+        {
+            FilteredPersons.Clear();
+            string value = _filter?.ToLower() ?? "";
+            foreach (Person person in _persons.Persons)
+            {
+                if (string.IsNullOrEmpty(value)
+                    || person.FullName.ToLower().Contains(value)
+                    || person.Title.ToLower().Contains(value)
+                    //       || person.Job.ToLower().Contains(value)
+                    )
+                    FilteredPersons.Add(person);
+            } 
+        }
+        #endregion
     }
 }

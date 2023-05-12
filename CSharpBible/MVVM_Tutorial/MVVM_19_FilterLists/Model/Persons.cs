@@ -22,34 +22,36 @@ namespace MVVM_19_FilterLists.Model
 
         public Persons()
         {
-
-            if (string.IsNullOrEmpty(Settings.Default.Data))
-                persons = new ObservableCollection<Person>();
-            else
-            try{
-                // Construct an instance of the XmlSerializer with the type
-                // of object that is being deserialized.
-                var mySerializer = new XmlSerializer(typeof(ObservableCollection<Person>));
-                // To read the file, create a FileStream.
-                using var myFileStream = new MemoryStream();
+            try
+            {
+                if (string.IsNullOrEmpty(Settings.Default.Data))
+                    persons = new ObservableCollection<Person>();
+                else
+                {
+                    // Construct an instance of the XmlSerializer with the type
+                    // of object that is being deserialized.
+                    var mySerializer = new XmlSerializer(typeof(ObservableCollection<Person>));
+                    // To read the file, create a FileStream.
+                    using var myFileStream = new MemoryStream();
                     byte[] b;
-                    myFileStream.Write(b=Encoding.UTF8.GetPreamble(),0,b.Length);
-                    myFileStream.Write(b = Encoding.UTF8.GetBytes(Settings.Default.Data),0,b.Length);
+                    myFileStream.Write(b = Encoding.UTF8.GetPreamble(), 0, b.Length);
+                    myFileStream.Write(b = Encoding.UTF8.GetBytes(Settings.Default.Data), 0, b.Length);
                     myFileStream.Position = 0;
-                // Call the Deserialize method and cast to the object type.
-                persons = (ObservableCollection<Person>)mySerializer.Deserialize(myFileStream);
+                    // Call the Deserialize method and cast to the object type.
+                    persons = (ObservableCollection<Person>)mySerializer.Deserialize(myFileStream);
+                }
             }
-                catch { persons = new ObservableCollection<Person>(); }
+            catch { persons = new ObservableCollection<Person>(); }
         }
-             class Utf8StringWriter : StringWriter
+        class Utf8StringWriter : StringWriter
         {
             public override Encoding Encoding => Encoding.UTF8;
         }
 
         ~Persons()
         {
-        // Insert code to set properties and fields of the object.  
-        XmlSerializer mySerializer = new(typeof(ObservableCollection<Person>));            
+            // Insert code to set properties and fields of the object.  
+            XmlSerializer mySerializer = new(typeof(ObservableCollection<Person>));
             // To write to a file, create a StreamWriter object.  
             StringWriter myWriter = new Utf8StringWriter();
             XmlTextWriter xmlTextWriter = new XmlTextWriter(myWriter);
