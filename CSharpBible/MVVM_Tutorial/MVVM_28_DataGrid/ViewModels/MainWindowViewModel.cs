@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM_28_DataGrid
+// Assembly         : MVVM_27_DataGrid
 // Author           : Mir
 // Created          : 08-11-2022
 //
