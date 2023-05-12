@@ -18,9 +18,9 @@ namespace MVVM_27_DataGrid.Views
     /// <summary>
     /// Interaktionslogik für DatagridView.xaml
     /// </summary>
-    public partial class DatagridView : Page
+    public partial class DataGridView : Page
     {
-        public DatagridView()
+        public DataGridView()
         {
             InitializeComponent();
         }
