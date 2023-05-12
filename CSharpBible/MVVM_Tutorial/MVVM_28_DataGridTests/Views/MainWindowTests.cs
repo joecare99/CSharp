@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace WpfApp.Views.Tests
+namespace MVVM_28_DataGrid.Views.Tests
 {
     [TestClass()]
     public class MainWindowTests

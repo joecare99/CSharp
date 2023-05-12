@@ -4,18 +4,9 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
-		<RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
-		<Compile Remove="Properties\AssemblyInfo.cs" />
-		<Compile Remove="obj\**" />
-		<EmbeddedResource Remove="obj\**" />
-		<None Remove="obj\**" />
-		<None Remove="App.config" />
-		<Page Remove="obj\**" />
-	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
 	</ItemGroup>
@@ -43,5 +34,4 @@
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
-
 </Project>

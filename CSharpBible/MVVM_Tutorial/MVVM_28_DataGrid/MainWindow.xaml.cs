@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_28_DataGrid
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace WpfApp
+namespace MVVM_28_DataGrid
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

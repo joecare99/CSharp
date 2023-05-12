@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\WpfApp1\WpfApp_net.csproj" />
+    <ProjectReference Include="..\MVVM_28_DataGrid\MVVM_28_DataGrid_net.csproj" />
   </ItemGroup>
 
 </Project>

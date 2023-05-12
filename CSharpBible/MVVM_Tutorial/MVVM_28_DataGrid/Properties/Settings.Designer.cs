@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WpfApp.Properties {
+namespace MVVM_28_DataGrid.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_28_DataGrid
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApp.ViewModels
+namespace MVVM_28_DataGrid.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
@@ -35,6 +35,8 @@ namespace WpfApp.ViewModels
 
         }
 
+#if !NET5_0_OR_GREATER
+        // Finalizer wird bei .net-Core nicht (mehr) ausgeführt
         /// <summary>
         /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
@@ -42,6 +44,6 @@ namespace WpfApp.ViewModels
         {
             return;
         }
-
+#endif
     }
 }
