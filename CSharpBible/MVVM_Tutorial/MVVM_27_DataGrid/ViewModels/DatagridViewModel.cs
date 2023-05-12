@@ -1,12 +1,7 @@
 ﻿using MVVM.ViewModel;
 using MVVM_27_DataGrid.Models;
 using MVVM_27_DataGrid.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_27_DataGrid.ViewModels
 {

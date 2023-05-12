@@ -13,7 +13,7 @@ namespace MVVM_27_DataGrid.Models
         public string? FirstName { get; set; } = null;
         public string? LastName { get; set; } = null;
         public string? Email { get; set; } = null;
-        public DateTime? Birthday { get; set; } = null;
+        public DateTime? Birthday { get; set; } =null;
         public Department? Department { get; set; } = null;
     }
 }
