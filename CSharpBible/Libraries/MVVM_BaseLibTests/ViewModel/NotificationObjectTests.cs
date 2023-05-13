@@ -190,7 +190,7 @@ namespace MVVM_BaseLibTests.ViewModel
         [DataTestMethod]
         [TestProperty("Author", "J.C.")]
         [DataRow("00 Empty", 0, "", eValidReact.OK, "", new string[] { "" })]
-        [DataRow("01-Test", 0, "Test", eValidReact.OK, "Test", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString:Test\r\n" })]
+        [DataRow("01-Test", 0, "Test", eValidReact.OK, "Test", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString0a:Test\r\n" })]
         [DataRow("20-1 Empty", 2, "", eValidReact.OK, "", new string[] { "" })]
         [DataRow("20-2 Test", 2, "", eValidReact.NIO, "", new string[] { "" })]
         [DataRow("21-1 Test", 2, "Test", eValidReact.OK, "Test", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2a:Test\r\nStrAct: ; Test\r\n" })]

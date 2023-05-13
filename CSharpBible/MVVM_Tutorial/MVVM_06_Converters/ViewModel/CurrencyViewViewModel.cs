@@ -1,12 +1,12 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM_6_Converters
+// Assembly         : MVVM_06_Converters
 // Author           : Mir
 // Created          : 07-01-2022
 //
 // Last Modified By : Mir
 // Last Modified On : 07-01-2022
 // ***********************************************************************
-// <copyright file="CurrencyViewViewModel.cs" company="MVVM_6_Converters">
+// <copyright file="CurrencyViewViewModel.cs" company="MVVM_06_Converters">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>

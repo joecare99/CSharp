@@ -13,6 +13,6 @@
     </Page.DataContext>
     <StackPanel>
         <TextBlock>User-Name (min. 6 Char)</TextBlock>
-        <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"/>
+        <TextBox ToolTip="{Binding VHelper[UserName]}" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, Delay=100}"/>
     </StackPanel>
 </Page>

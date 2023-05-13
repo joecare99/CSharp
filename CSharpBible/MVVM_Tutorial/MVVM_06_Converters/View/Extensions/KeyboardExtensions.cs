@@ -1,12 +1,12 @@
 // ***********************************************************************
-// Assembly         : MVVM_6_Converters
+// Assembly         : MVVM_06_Converters
 // Author           : Mir
 // Created          : 07-19-2022
 //
 // Last Modified By : Mir
 // Last Modified On : 07-19-2022
 // ***********************************************************************
-// <copyright file="KeyboardExtensions.cs" company="MVVM_6_Converters">
+// <copyright file="KeyboardExtensions.cs" company="MVVM_06_Converters">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
