@@ -176,17 +176,23 @@ namespace ListBinding.Model.Tests
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
         [DataTestMethod()]
-        [DataRow(0, "", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>0</Id>\r\n  <FirstName />\r\n  <LastName />\r\n  <Title />\r\n</Person>" })]
-        [DataRow(1, "1", "2", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>1</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName>2</LastName>\r\n  <Title>3</Title>\r\n</Person>" })]
-        [DataRow(2, "1", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>2</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName />\r\n  <Title />\r\n</Person>" })]
-        [DataRow(3, "", "2", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>3</Id>\r\n  <FirstName />\r\n  <LastName>2</LastName>\r\n  <Title />\r\n</Person>" })]
-        [DataRow(4, "", "", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>4</Id>\r\n  <FirstName />\r\n  <LastName />\r\n  <Title>3</Title>\r\n</Person>" })]
-        [DataRow(5, "1", "2", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>5</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName>2</LastName>\r\n  <Title />\r\n</Person>" })]
-        [DataRow(6, "", "2", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>6</Id>\r\n  <FirstName />\r\n  <LastName>2</LastName>\r\n  <Title>3</Title>\r\n</Person>" })]
-        [DataRow(7, "1", "", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>7</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName />\r\n  <Title>3</Title>\r\n</Person>" })]
-        [DataRow(8, "Joe", "Care", "Prof. Dr.", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Id>8</Id>\r\n  <FirstName>Joe</FirstName>\r\n  <LastName>Care</LastName>\r\n  <Title>Prof. Dr.</Title>\r\n</Person>" })]
+        [DataRow(0, "", "", "",    new[] { "  <Id>0</Id>\r\n  <FirstName />\r\n  <LastName />\r\n  <Title />\r\n</Person>" })]
+        [DataRow(1, "1", "2", "3", new[] { "  <Id>1</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName>2</LastName>\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(2, "1", "", "",   new[] { "  <Id>2</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName />\r\n  <Title />\r\n</Person>" })]
+        [DataRow(3, "", "2", "",   new[] { "  <Id>3</Id>\r\n  <FirstName />\r\n  <LastName>2</LastName>\r\n  <Title />\r\n</Person>" })]
+        [DataRow(4, "", "", "3",   new[] { "  <Id>4</Id>\r\n  <FirstName />\r\n  <LastName />\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(5, "1", "2", "",  new[] { "  <Id>5</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName>2</LastName>\r\n  <Title />\r\n</Person>" })]
+        [DataRow(6, "", "2", "3",  new[] { "  <Id>6</Id>\r\n  <FirstName />\r\n  <LastName>2</LastName>\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(7, "1", "", "3",  new[] { "  <Id>7</Id>\r\n  <FirstName>1</FirstName>\r\n  <LastName />\r\n  <Title>3</Title>\r\n</Person>" })]
+        [DataRow(8, "Joe", "Care", "Prof. Dr.", new[] { "  <Id>8</Id>\r\n  <FirstName>Joe</FirstName>\r\n  <LastName>Care</LastName>\r\n  <Title>Prof. Dr.</Title>\r\n</Person>" })]
         public void GetObjectDataTest(int aId, string aFirstname, string aLastname, string aTitle, string[] ExpFullname)
-        { 
+        {
+            const string cXMLHeader =
+#if NET5_0_OR_GREATER
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<Person xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n";
+#else
+                "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n";
+#endif
             var person = new Person(aLastname, aFirstname, aTitle) { Id = aId };
             var formatter = new XmlSerializer(typeof(Person));
             string actual = "";
@@ -198,7 +204,7 @@ namespace ListBinding.Model.Tests
                 stream.Read(b, 0, b.Length);
                 actual = Encoding.UTF8.GetString(b);
             }
-            Assert.AreEqual(ExpFullname[0], actual);
+            Assert.AreEqual(cXMLHeader+ExpFullname[0], actual);
         }
 
         /// <summary>
