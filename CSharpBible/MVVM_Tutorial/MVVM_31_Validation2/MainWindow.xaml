@@ -11,6 +11,6 @@
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
-
+        <Frame Content="Frame" Source="/View/ValidationPage.xaml"/>
     </Grid>
 </Window>
