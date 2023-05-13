@@ -37,7 +37,4 @@
 		<ProjectReference Include="..\Calc64WF\Calc64WF.csproj">
 		</ProjectReference>
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Properties\" />
-	</ItemGroup>
 </Project>
