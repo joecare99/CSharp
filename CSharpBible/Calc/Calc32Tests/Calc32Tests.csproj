@@ -28,9 +28,6 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Properties\" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\Calc32\Calc32.csproj" />
 	</ItemGroup>
 
