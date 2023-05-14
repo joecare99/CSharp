@@ -13,7 +13,7 @@
     <Page.DataContext>
         <mvvm:TemplateViewModel/>
     </Page.DataContext>
-    <StackPanel>
+    <StackPanel Background="Silver">
         <Label>Temlate-View:</Label>
         <Grid>
             <TextBlock Text="{Binding Now}"/>
