@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using MVVM.ViewModel;
 
-namespace WpfApp.ViewModels.Tests
+namespace MVVM_24_UserControl.ViewModels.Tests
 {
     [TestClass()]
     public class MainWindowViewModelTests

@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WpfApp
+namespace MVVM_24_UserControl
 {
     /// <summary>
     /// Interaction logic for App.xaml

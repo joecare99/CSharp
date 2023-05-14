@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace WpfApp
+namespace MVVM_24_UserControl
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

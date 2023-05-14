@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WpfApp.Properties {
+namespace MVVM_24_UserControl.Properties {
     using System;
     
     
