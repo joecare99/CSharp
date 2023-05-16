@@ -1,18 +1,24 @@
 ﻿<Project>
-	<Import Project="..\MVVM_Tutorial.props" />
+	<Import Project="..\MVVM_Tutorial_net.props" />
 	<PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\MathLibrary\MathLibrary_net.csproj" />
-    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\MathLIbrary\MathLibrary_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">

@@ -267,7 +267,7 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreateLine(Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
+        FrameworkElement CreateLine(System.Windows.Media.Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
         {
             return new Line()
             {
@@ -288,7 +288,7 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreateCircle(Brush b, double value, System.Windows.Point P1, float r)
+        FrameworkElement CreateCircle(System.Windows.Media.Brush b, double value, System.Windows.Point P1, float r)
         {
             return new Ellipse()
             {
@@ -308,7 +308,7 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreatePolynome(Brush b, double value, PointCollection Pts)
+        FrameworkElement CreatePolynome(System.Windows.Media.Brush b, double value, PointCollection Pts)
         {
             return new Polygon()
             {
@@ -318,7 +318,7 @@ namespace MVVM_06_Converters_4.View.Converter
             };
         }
 
-        IEnumerable<FrameworkElement> CreateArrow(Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
+        IEnumerable<FrameworkElement> CreateArrow(System.Windows.Media.Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
         {
             // Linie
             yield return new Line()
