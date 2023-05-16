@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Calc32WPF.Properties.Tests
+namespace Calc64WF.Properties.Tests
 {
     [TestClass]
     public class SettingsTests

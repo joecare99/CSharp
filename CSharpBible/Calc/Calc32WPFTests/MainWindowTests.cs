@@ -7,6 +7,7 @@ namespace Calc32WPF.Tests
     public class MainWindowTests
     {
         MainWindow testView;
+
         [TestInitialize]
         public void Init()
         {
