@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MVVM_16_Usercontrol_1.View {
+namespace MVVM_16_UserControl1.Views {
 	/// <summary>
 	/// Interaktionslogik für UserControlView.xaml
 	/// </summary>

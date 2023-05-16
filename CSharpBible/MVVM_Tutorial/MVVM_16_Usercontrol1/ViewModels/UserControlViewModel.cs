@@ -1,9 +1,9 @@
 using MVVM.ViewModel;
 using System;
 
-namespace MVVM_16_UserControl1.ViewModel
+namespace MVVM_16_UserControl1.ViewModels
 {
-    public class UserControlViewViewModel : BaseViewModel
+    public class UserControlViewModel : BaseViewModel
     {
 		private string _text="<Ein Motto>";
 
@@ -14,7 +14,7 @@ namespace MVVM_16_UserControl1.ViewModel
         public DelegateCommand Command1 { get; set; }
         public DelegateCommand Command2 { get; set; }
 
-        public UserControlViewViewModel()
+        public UserControlViewModel()
         {
             Command1 = new DelegateCommand(DoCommand1, (o) => string.IsNullOrEmpty(Text));
             AddPropertyDependency(nameof(Command1), nameof(Text));

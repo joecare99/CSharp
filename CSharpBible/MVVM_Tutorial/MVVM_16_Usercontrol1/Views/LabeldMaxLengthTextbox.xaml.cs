@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace MVVM_16_Usercontrol_1.View
+namespace MVVM_16_UserControl1.Views   
 {
     /// <summary>
     /// Interaktionslogik für LabeldMaxLengthTextbox.xaml
