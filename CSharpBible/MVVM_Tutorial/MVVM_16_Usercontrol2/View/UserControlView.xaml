@@ -1,0 +1,21 @@
+<Page x:Class="MVVM_16_Usercontrol_2.View.UserControlView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_16_Usercontrol_2.View"
+      xmlns:mvvm="clr-namespace:MVVM_16_UserControl_2.ViewModel" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="UserControlView">
+    <Page.DataContext>
+        <mvvm:UserControlViewViewModel/>
+    </Page.DataContext>
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Height="30" Width="200" Text="{Binding Text}"/>
+            <TextBox TextWrapping="Wrap" Text="{Binding Text}" Width="120"/>
+            <local:TestControl Height="30" Width="200" Text2="{Binding Text}" Content="__"/>
+        </StackPanel>
+    </Grid>
+</Page>
