@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using BaseLib.Helper;
 
 namespace TraceCsv2realCsv.Model
@@ -119,12 +120,13 @@ namespace TraceCsv2realCsv.Model
             var values = new List<string>();
             int i = 0;
             int pn;
-            if (string.IsNullOrEmpty(seperator)) return new() { line };
+            if (string.IsNullOrEmpty(seperator))
+                return new() { line };
             string value = "";
 
             while (i < line.Length)
             {
-                if (line.Substring(i).StartsWith(seperator) )
+                if (line.Substring(i).StartsWith(seperator))
                 {
                     values.Add(value);
                     i += seperator.Length;
@@ -136,7 +138,7 @@ namespace TraceCsv2realCsv.Model
                     && (((pn = line.IndexOf($"{quotation}" + seperator, i)) > -1)
                     || (line[pn = line.Length - 1] == quotation)))
                 {
-                    value=line.Substring(i, pn - i + 1);
+                    value = line.Substring(i, pn - i + 1);
                     i = pn + 1; // length of quotation
                     if (i == line.Length)
                         values.Add(value);
@@ -144,7 +146,7 @@ namespace TraceCsv2realCsv.Model
                 else if ((line[i] != quotation)
                     && (pn = line.IndexOf(seperator, i)) > -1)
                 {
-                    value=line.Substring(i, pn - i);
+                    value = line.Substring(i, pn - i);
                     i = pn;
                 }
                 else
@@ -180,14 +182,16 @@ namespace TraceCsv2realCsv.Model
 
             // Wenn alle Werte Zeichenfolgen sind oder nicht in einen Ganzzahl- oder Gleitkommazahl-Datentyp konvertiert werden können,
             // geben Sie den Datentyp als Zeichenfolge zurück.
-            else return typeof(string);
+            else
+                return typeof(string);
         }
 
         public void SetHeader(List<string> lsHNames)
         {
             _data.Clear();
             _header.Clear();
-            foreach (string s in lsHNames) _header.Add((s, typeof(object)));
+            foreach (string s in lsHNames)
+                _header.Add((s, typeof(object)));
         }
         public void SetHeader(List<(string, Type)> lsHeader)
         {
@@ -205,6 +209,24 @@ namespace TraceCsv2realCsv.Model
             foreach (var l in _data)
                 tw.WriteLine($"{(l.Key is string sl ? $"\"{sl.Quote()}\"" : l.Key)}{cSeparator}" + string.Join($"{cSeparator}", l.Value.ConvertAll((l) => l is string sl ? $"\"{sl.Quote()}\"" : l is double d ? $"{d.ToString(CultureInfo.InvariantCulture)}" : $"{l}")));
 
+        }
+
+        public void AddColumnData(string header, Dictionary<int, double> data)
+        {
+            var icolidx = _header.ConvertAll(s => s.name).IndexOf(header);
+            if (icolidx > 0)
+                foreach (var r in data)
+                    if (_data.TryGetValue(r.Key, out var ls))
+                        ls[icolidx - 1] = r.Value;
+                    else
+                    {
+                        ls = new();
+                        foreach (var h in _header)
+                            if (h.name != _header[0].name)
+                                ls.Add(0d);
+                        ls[icolidx - 1] = r.Value;
+                        _data.Add(r.Key, ls);
+                    }
         }
         #endregion
     }
