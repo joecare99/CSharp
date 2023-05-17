@@ -12,7 +12,7 @@
     <Page.DataContext>
         <mvvm:UserControlViewModel/>
     </Page.DataContext>
-    <Grid>
+    <Grid Background="Silver">
         <Grid.RowDefinitions>
             <RowDefinition Height="43*"/>
             <RowDefinition Height="47*"/>
