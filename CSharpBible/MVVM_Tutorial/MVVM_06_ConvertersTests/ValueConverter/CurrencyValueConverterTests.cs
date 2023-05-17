@@ -46,7 +46,7 @@ namespace MVVM_06_Converters.ValueConverter.Tests
         [DataRow(0.99, "0.99€")]
         [DataRow("Hallo", "Hallo")]
         [DataRow(null, "")]
-        public void Convert_CorrectlyFormatsValue(object? value, string expected)
+        public void ConvertTest(object? value, string expected)
         {
             if (value is double d) value = (decimal)d;
             var result = testConv.Convert(value, typeof(string), null, CultureInfo.InvariantCulture);

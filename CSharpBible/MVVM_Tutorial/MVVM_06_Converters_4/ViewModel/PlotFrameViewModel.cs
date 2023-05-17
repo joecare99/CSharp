@@ -236,11 +236,11 @@ namespace MVVM_06_Converters_4.ViewModel
 
             _dataset = new DataSet();
             _arrows = new ArrowList();
-            _arrows.Pen = new System.Windows.Media.Pen(Brushes.Red, 2.0);
+            _arrows.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 2.0);
             _circles = new CircleList();
-            _circles.Pen = new System.Windows.Media.Pen(Brushes.Green, 1.0);
+            _circles.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Green, 1.0);
             _polynomes = new PolynomeList();
-            _polynomes.Pen = new System.Windows.Media.Pen(Brushes.Blue, 2.0);
+            _polynomes.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Blue, 2.0);
 
             //            DemoData();
 
@@ -258,7 +258,7 @@ namespace MVVM_06_Converters_4.ViewModel
         {
             
             _dataset.Datapoints = new PointF[400];
-            _dataset.Pen = new System.Windows.Media.Pen(Brushes.Red, 1.0);
+            _dataset.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1.0);
             for (int i = 0; i < _dataset.Datapoints.Length; i++)
             {
                 _dataset.Datapoints[i] = GetPoint(i);
@@ -308,6 +308,7 @@ namespace MVVM_06_Converters_4.ViewModel
 
         private void OnModelPropChanged(object? sender, PropertyChangedEventArgs e)
         {
+            // Has to be Optimized
             _polynomes.Clear();
             _circles.Clear();
             _arrows.Clear();

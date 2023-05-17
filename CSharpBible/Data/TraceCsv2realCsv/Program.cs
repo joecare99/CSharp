@@ -1,12 +1,24 @@
 ﻿using System;
+using System.IO;
+using TraceCsv2realCsv.Model;
 
 namespace TraceCsv2realCsv
 {
-    internal class Program
+    public class Program
     {
+        private static CsvModel csv;
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            if (args.Length > 0 && File.Exists(args[0]))
+            {
+                csv = new CsvModel();
+                csv.ReadTraceCSV(new FileStream(args[0], FileMode.Open));
+                if (args.Length > 1 && !File.Exists(args[1]))
+                {
+                    csv.WriteCSV(new FileStream(args[1], FileMode.CreateNew));
+                }
+            }
         }
-    }
+    } 
 }
