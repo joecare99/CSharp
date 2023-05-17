@@ -13,6 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -56,6 +57,45 @@ namespace BaseLib.Helper
                 }
         }
 
+        public static void AssertAreEqual<T>(T exp, T act, string Msg = "") where T : IEnumerable
+        {
+            static string BldLns(int i, string[] aLines)
+                => (i > 1 ? $"#{i - 2:D3}: {aLines[(i - 2) % 5]}{Environment.NewLine}" : "") +
+                   (i > 0 ? $"#{i - 1:D3}: {aLines[(i - 1) % 5]}{Environment.NewLine}" : "") +
+                   $"#{i:D3}> {aLines[i % 5]}" +
+                   (i < aLines.Length - 1 ? $"{Environment.NewLine}#{i + 1:D3}: {aLines[(i + 1) % 5]}" : "") +
+                   (i < aLines.Length - 2 ? $"{Environment.NewLine}#{i + 2:D3}: {aLines[(i + 2) % 5]}" : "");
+
+            var actE = act.GetEnumerator();
+            var actLines = new string[5];
+            var expLines = new string[5];
+            actLines.Initialize();
+            expLines.Initialize();
+            var xEoAAct = !actE.MoveNext();
+            var i = 0;
+            var iErr = -1;
+            foreach (var el in exp)
+            {
+                var al = !xEoAAct ?actE.Current:null;
+                actLines[i % 5] = $"{al}";
+                expLines[i % 5] = $"{el}";
+                if (iErr == -1 && !el.Equals(al))
+                    iErr = i;
+                if (iErr != -1 && i-3==iErr)
+                    Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
+                xEoAAct = !actE.MoveNext();                    
+                i++;
+            }
+            if (iErr != -1)
+            {
+                actLines[i % 5] = $"";
+                expLines[i % 5] = $"<EOF>";
+                Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
+            }
+            else
+            Assert.IsFalse(actE.MoveNext());
+
+        }
         /// <summary>
         /// Assert that both string-arrays are equal. (with diagnosis)
         /// </summary>
