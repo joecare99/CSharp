@@ -1,12 +1,12 @@
 using MVVM.ViewModel;
 
-namespace MVVM_16_UserControl_2.ViewModel
+namespace MVVM_16_UserControl2.ViewModels
 {
-    public class UserControlViewViewModel : BaseViewModel
+    public class UserControlViewModel : BaseViewModel
     {
 		private string _text="";
 
-		public UserControlViewViewModel()
+		public UserControlViewModel()
         {
             return;
         }
