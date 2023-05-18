@@ -4,10 +4,10 @@ using System.Threading;
 namespace MVVM_33_Events_To_Commands.Views.Tests
 {
     [TestClass()]
-    public class TemplateViewTests
+    public class EventsBindingViewTests
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        TemplateView testView;
+        EventBindingView testView;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize]
@@ -23,7 +23,7 @@ namespace MVVM_33_Events_To_Commands.Views.Tests
         public void MainWindowTest()
         {
             Assert.IsNotNull(testView);
-            Assert.IsInstanceOfType(testView, typeof(TemplateView));    
+            Assert.IsInstanceOfType(testView, typeof(EventBindingView));    
         }
     }
 }

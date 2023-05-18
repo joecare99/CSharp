@@ -5,10 +5,10 @@ using MVVM.ViewModel;
 namespace MVVM_33_Events_To_Commands.ViewModels.Tests
 {
     [TestClass()]
-    public class TemplateViewModelTests
+    public class EventsBindingViewModelTests
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        TemplateViewModel testModel;
+        EventsBindingViewModel testModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize]
@@ -21,7 +21,7 @@ namespace MVVM_33_Events_To_Commands.ViewModels.Tests
         public void SetupTest()
         {
             Assert.IsNotNull(testModel);
-            Assert.IsInstanceOfType(testModel, typeof(TemplateViewModel));
+            Assert.IsInstanceOfType(testModel, typeof(EventsBindingViewModel));
             Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
         }
