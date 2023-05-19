@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_00_Template
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -13,10 +13,6 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace MVVM_00_Template.ViewModels
@@ -29,7 +25,7 @@ namespace MVVM_00_Template.ViewModels
     public class TemplateViewModel : BaseViewModel
     {
         #region Properties
-        private Timer _timer;
+        private readonly Timer _timer;
         public static Func<DateTime> GetNow { get; set; } = () => DateTime.Now;
         public DateTime Now { get => GetNow(); }
         #endregion 

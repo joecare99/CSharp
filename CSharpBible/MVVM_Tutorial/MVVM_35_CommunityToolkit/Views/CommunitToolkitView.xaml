@@ -1,0 +1,41 @@
+<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_35_CommunityToolkit.Views"
+      xmlns:vc="clr-namespace:MVVM_35_CommunityToolkit.ValueConverter"
+      xmlns:mvvm="clr-namespace:MVVM_35_CommunityToolkit.ViewModels"
+      xmlns:model="clr-namespace:MVVM_35_CommunityToolkit.Models"
+    x:Class="MVVM_35_CommunityToolkit.Views.CommunitToolkitView"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CommunitToolkitView">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:CommunitToolkitViewModel/>
+    </Page.DataContext>
+    <StackPanel Background="Silver">
+        <Label Content="Temlate-View:"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+            <TextBox Grid.Row="1" Text="{Binding Prop1}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Prop2}"/>
+            <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Prop3}"/>
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Prop4}"/>
+            <Button Grid.Row="2" Grid.Column="2"  Content="Click Me" Command="{Binding DoClickMeCommand}"/>
+        </Grid>
+    </StackPanel>
+</Page>

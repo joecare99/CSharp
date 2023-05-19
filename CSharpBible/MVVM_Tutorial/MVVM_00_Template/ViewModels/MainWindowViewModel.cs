@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_00_Template
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -12,11 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_00_Template.ViewModels
 {

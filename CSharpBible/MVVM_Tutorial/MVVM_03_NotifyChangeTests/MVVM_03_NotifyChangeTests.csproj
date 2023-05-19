@@ -17,7 +17,8 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-    <ProjectReference Include="..\MVVM_03_NotifyChange\MVVM_03_NotifyChange.csproj" />
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
+		<ProjectReference Include="..\MVVM_03_NotifyChange\MVVM_03_NotifyChange.csproj" />
   </ItemGroup>
 
 </Project>

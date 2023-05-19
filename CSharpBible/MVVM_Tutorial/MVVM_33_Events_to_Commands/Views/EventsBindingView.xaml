@@ -8,10 +8,10 @@
       xmlns:mvvm="clr-namespace:MVVM_33_Events_To_Commands.ViewModels"
       xmlns:model="clr-namespace:MVVM_33_Events_To_Commands.Models"
       xmlns:behav="http://schemas.microsoft.com/xaml/behaviors"
-    x:Class="MVVM_33_Events_To_Commands.Views.TemplateView"
+    x:Class="MVVM_33_Events_To_Commands.Views.EventBindingView"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="TemplateView">
+      Title="EventBindingView">
     <Page.Resources>
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
     </Page.Resources>
