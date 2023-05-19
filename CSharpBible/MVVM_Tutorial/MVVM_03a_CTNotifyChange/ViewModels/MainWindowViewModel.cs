@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_03a_CTNotifyChange
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -12,11 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_03a_CTNotifyChange.ViewModels
 {
@@ -25,7 +20,7 @@ namespace MVVM_03a_CTNotifyChange.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModelCT
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
