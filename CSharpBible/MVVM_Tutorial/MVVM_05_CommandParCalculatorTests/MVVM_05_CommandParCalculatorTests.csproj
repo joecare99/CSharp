@@ -12,12 +12,13 @@
 		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
 		<PackageReference Include="coverlet.collector" Version="3.2.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-    <ProjectReference Include="..\MVVM_05_CommandParCalculator\MVVM_05_CommandParCalculator.csproj" />
-  </ItemGroup>
+		<ProjectReference Include="..\MVVM_05_CommandParCalculator\MVVM_05_CommandParCalculator.csproj" />
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
+	</ItemGroup>
 
 </Project>
