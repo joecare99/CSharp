@@ -16,6 +16,7 @@ namespace MVVM_04a_CTRelayCommand.ViewModels.Tests
         {
             testModel = new();
             testModel.PropertyChanged += OnVMPropertyChanged;
+            testModel.PropertyChanging += OnVMPropertyChanging;
             ClearLog();
         }
 

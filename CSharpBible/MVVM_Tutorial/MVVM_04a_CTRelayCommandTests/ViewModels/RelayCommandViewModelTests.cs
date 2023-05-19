@@ -1,9 +1,6 @@
-using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using System;
-using System.ComponentModel;
 using static BaseLib.Helper.TestHelper;
 
 namespace MVVM_04a_CTRelayCommand.ViewModels.Tests
@@ -20,6 +17,7 @@ namespace MVVM_04a_CTRelayCommand.ViewModels.Tests
         {
             testModel = new();
             testModel.PropertyChanged += OnVMPropertyChanged;
+            testModel.PropertyChanging += OnVMPropertyChanging;
             testModel.ClearCommand.CanExecuteChanged += OnCanExChanged;
             ClearLog();
         }
@@ -39,17 +37,21 @@ namespace MVVM_04a_CTRelayCommand.ViewModels.Tests
         }
 
         [DataTestMethod()]
-        [DataRow("", new string[] { "","Dev, ", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=
+        [DataRow("", new string[] { "","Dev, ", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Dave
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Dev, 
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
 " })]
-        [DataRow("Peter", new string[] { "Peter", "Dev, Peter", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Peter
+        [DataRow("Peter", new string[] { "Peter", "Dev, Peter", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Dave
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Peter
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Dev, Peter
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
 " })]
-        [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Steve
+        [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Dave
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Steve
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Dev, Steve
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Steve
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Eugene
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Dev, Eugene
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
@@ -68,17 +70,21 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
         }
 
         [DataTestMethod()]
-        [DataRow("", new string[] { "", ", Dave", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=
+        [DataRow("", new string[] { "", ", Dave", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Dev
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=, Dave
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
 " })]
-        [DataRow("Miller", new string[] { "Miller", "Miller, Dave", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Miller
+        [DataRow("Miller", new string[] { "Miller", "Miller, Dave", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Dev
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Miller
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Miller, Dave
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
 " })]
-        [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Fry
+        [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Dev
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Fry
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Fry, Dave
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Fry
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Webb
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Webb, Dave
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
@@ -103,9 +109,11 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
             Assert.AreEqual("", testModel.Firstname);
             Assert.AreEqual("", testModel.Lastname);
             Assert.AreEqual(", ", testModel.Fullname);
-            AssertAreEqual(@"PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=
+            AssertAreEqual(@"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Dave
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Dev, 
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Dev
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=, 
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=False
