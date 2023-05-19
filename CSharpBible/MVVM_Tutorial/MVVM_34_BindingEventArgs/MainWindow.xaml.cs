@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_34_BindingEventArgs
 // Author           : Mir
 // Created          : 08-11-2022
 //

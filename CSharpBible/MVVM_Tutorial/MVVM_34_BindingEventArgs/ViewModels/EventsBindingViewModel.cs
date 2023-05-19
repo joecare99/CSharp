@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_34_BindingEventArgs
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -46,7 +46,7 @@ namespace MVVM_34_BindingEventArgs.ViewModels
             LostFocusCommand = new((s) => State = "Lost focus");
             GotFocusCommand = new((s) => State = "Got focus");
             KeyDownCommand = new((s) => State = $"TextChanged({(s as KeyEventArgs)?.Key})",
-                (s) => (s as KeyEventArgs)?.Key is Key.Enter or Key.Escape);
+                (s) => s is KeyEventArgs { Key: Key.Enter or Key.Escape });
         }
 
 #if !NET5_0_OR_GREATER
