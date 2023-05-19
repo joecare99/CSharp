@@ -12,7 +12,7 @@ namespace MVVM_04a_CTRelayCommand.Views.Tests
     public class DelegateCommandViewTests
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        DelegateCommandView testView;
+        RelayCommandView testView;
         private object vm;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
