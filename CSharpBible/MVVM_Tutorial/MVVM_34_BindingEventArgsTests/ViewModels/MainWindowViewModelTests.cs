@@ -5,7 +5,7 @@ using MVVM.ViewModel;
 namespace MVVM_34_BindingEventArgs.ViewModels.Tests
 {
     [TestClass()]
-    public class MainWindowViewModelTests
+    public class MainWindowViewModelTests 
     {
         MainWindowViewModel testModel;
 

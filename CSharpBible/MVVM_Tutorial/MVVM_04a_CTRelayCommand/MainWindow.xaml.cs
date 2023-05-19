@@ -1,33 +1,31 @@
 // ***********************************************************************
-// Assembly         : MVVM_03a_CTNotifyChange
+// Assembly         : MVVM_04a_CTRelayCommand
 // Author           : Mir
 // Created          : 08-11-2022
 //
 // Last Modified By : Mir
 // Last Modified On : 08-24-2022
 // ***********************************************************************
-// <copyright file="MainWindowViewModel.cs" company="JC-Soft">
+// <copyright file="MainWindow.xaml.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM.ViewModel;
+using System.Windows;
 
-namespace MVVM_03a_CTNotifyChange.ViewModels
+namespace MVVM_04a_CTRelayCommand
 {
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModelCT
+    public partial class MainWindow : Window
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
-        public MainWindowViewModel()
+        public MainWindow()
         {
-
+            InitializeComponent();
         }
     }
 }

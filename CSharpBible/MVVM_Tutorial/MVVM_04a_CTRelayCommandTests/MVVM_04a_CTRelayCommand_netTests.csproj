@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 	<Import Project="..\MVVM_Tutorial_net.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand_net.csproj" />
+    <ProjectReference Include="..\MVVM_04a_CTRelayCommand\MVVM_04a_CTRelayCommand_net.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
 	</ItemGroup>
 

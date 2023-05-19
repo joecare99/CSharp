@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using MVVM.ViewModel;
 
-namespace MVVM_03a_CTNotifyChange.ViewModels.Tests
+namespace MVVM_04a_CTRelayCommand.ViewModels.Tests
 {
     [TestClass()]
     public class MainWindowViewModelTests : BaseTestViewModel
@@ -15,7 +15,6 @@ namespace MVVM_03a_CTNotifyChange.ViewModels.Tests
         public void Init()
         {
             testModel = new();
-            testModel.PropertyChanging += OnVMPropertyChanging;
             testModel.PropertyChanged += OnVMPropertyChanged;
             ClearLog();
         }
@@ -25,9 +24,8 @@ namespace MVVM_03a_CTNotifyChange.ViewModels.Tests
         {
             Assert.IsNotNull(testModel);
             Assert.IsInstanceOfType(testModel, typeof(MainWindowViewModel));
-            Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
+            Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
-            Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanging));
         }
     }
 }

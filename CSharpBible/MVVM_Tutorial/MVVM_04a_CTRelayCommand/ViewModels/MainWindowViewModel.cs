@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : MVVM_03a_CTNotifyChange
+// Assembly         : MVVM_04a_CTRelayCommand
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -12,15 +12,20 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace MVVM_03a_CTNotifyChange.ViewModels
+namespace MVVM_04a_CTRelayCommand.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModelCT
+    public class MainWindowViewModel : BaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.

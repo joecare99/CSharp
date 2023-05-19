@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM_00_Template
+// Assembly         : MVVM_34_BindingEventArgs
 // Author           : Mir
 // Created          : 07-03-2022
 //

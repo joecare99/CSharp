@@ -1,4 +1,4 @@
-Ôªøusing BaseLib.Helper;
+using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
@@ -6,14 +6,14 @@ using System;
 using System.ComponentModel;
 using static BaseLib.Helper.TestHelper;
 
-namespace MVVM_04_DelegateCommand.ViewModels.Tests
+namespace MVVM_04a_CTRelayCommand.ViewModels.Tests
 {
     [TestClass()]
     public class DelegateCommandViewModelTests : BaseTestViewModel
     {
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erw√§gen Sie die Deklaration als Nullable.
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erw‰gen Sie die Deklaration als Nullable.
         DelegateCommandViewModel testModel;
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erw√§gen Sie die Deklaration als Nullable.
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erw‰gen Sie die Deklaration als Nullable.
 
         [TestInitialize]
         public void Init()
@@ -39,14 +39,14 @@ namespace MVVM_04_DelegateCommand.ViewModels.Tests
         }
 
         [DataTestMethod()]
-        [DataRow("", new string[] { "","Dev, ", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, \r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=\r\n" })]
-        [DataRow("Peter", new string[] { "Peter", "Dev, Peter", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Peter\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=Peter\r\n" })]
-        [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Steve
+        [DataRow("", new string[] { "","Dev, ", "PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, \r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Firstname)=\r\n" })]
+        [DataRow("Peter", new string[] { "Peter", "Dev, Peter", "PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Peter\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Firstname)=Peter\r\n" })]
+        [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Steve
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=Steve
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Eugene
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Firstname)=Steve
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Eugene
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=Eugene
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Firstname)=Eugene
 " })]
         public void FirstnameTest(string name,  string[] asExp)
         {
@@ -62,14 +62,14 @@ PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=E
         }
 
         [DataTestMethod()]
-        [DataRow("", new string[] { "", ", Dave", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=, Dave\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=\r\n" })]
-        [DataRow("Miller", new string[] { "Miller", "Miller, Dave", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Miller, Dave\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=Miller\r\n" })]
-        [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Fry, Dave
+        [DataRow("", new string[] { "", ", Dave", "PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=, Dave\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Lastname)=\r\n" })]
+        [DataRow("Miller", new string[] { "Miller", "Miller, Dave", "PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Miller, Dave\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Lastname)=Miller\r\n" })]
+        [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Fry, Dave
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=Fry
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Webb, Dave
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Lastname)=Fry
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Webb, Dave
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=Webb
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Lastname)=Webb
 " })]
         public void LastnameTest(string name, string[] asExp)
         {
@@ -91,12 +91,12 @@ PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=We
             Assert.AreEqual("", testModel.Firstname);
             Assert.AreEqual("", testModel.Lastname);
             Assert.AreEqual(", ", testModel.Fullname);
-            AssertAreEqual(@"PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, 
+            AssertAreEqual(@"PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, 
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=, 
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Firstname)=
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Fullname)=, 
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=False
-PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=
+PropChg(MVVM_04a_CTRelayCommand.ViewModels.DelegateCommandViewModel,Lastname)=
 ", DebugLog);
         }
 

@@ -1,5 +1,5 @@
-﻿// ***********************************************************************
-// Assembly         : MVVM_34_BindingEventArgs
+// ***********************************************************************
+// Assembly         : MVVM_04a_CTRelayCommand
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -7,13 +7,19 @@
 // Last Modified On : 08-24-2022
 // ***********************************************************************
 // <copyright file="App.xaml.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2022
+//     Copyright � JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
-namespace MVVM_34_BindingEventArgs
+namespace MVVM_04a_CTRelayCommand
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -22,6 +28,3 @@ namespace MVVM_34_BindingEventArgs
     {
     }
 }
-namespace MVVM_34_BindingEventArgs.Models { }
-namespace MVVM_34_BindingEventArgs.ValueConverter { }
-namespace MVVM_34_BindingEventArgs.Services { }
