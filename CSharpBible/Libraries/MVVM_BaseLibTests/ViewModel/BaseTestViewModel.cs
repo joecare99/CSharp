@@ -1,4 +1,5 @@
 ﻿using BaseLib.Helper;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
 
@@ -16,7 +17,7 @@ namespace MVVM.ViewModel
         protected void ClearLog() => _debugLog = "";
 
         protected virtual void OnCanExChanged(object? sender, EventArgs e)
-            => DoLog($"OnCanExChanged: o:{sender}");
+            => DoLog($"CanExChanged({sender})={(sender as IRelayCommand)?.CanExecute(null)}");
 
         protected virtual void OnVMPropertyChanged(object? sender, PropertyChangedEventArgs e)
             => DoLog($"PropChg({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName)}");
