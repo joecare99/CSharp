@@ -5,7 +5,7 @@ using MVVM.ViewModel;
 namespace MVVM_03_NotifyChange.ViewModels.Tests
 {
     [TestClass()]
-    public class MainWindowViewModelTests
+    public class MainWindowViewModelTests: BaseTestViewModel
     {
         MainWindowViewModel testModel;
 
@@ -13,6 +13,8 @@ namespace MVVM_03_NotifyChange.ViewModels.Tests
         public void Init()
         {
             testModel = new();
+            testModel.PropertyChanged += OnVMPropertyChanged;
+            ClearLog();
         }
 
         [TestMethod()]

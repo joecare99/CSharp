@@ -1,39 +1,21 @@
-﻿using BaseLib.Helper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM_03_NotifyChange.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_03_NotifyChange.ViewModels.Tests
 {
     [TestClass()]
-    public class NotifyChangeViewModelTests
+    public class NotifyChangeViewModelTests : BaseTestViewModel
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         NotifyChangeViewModel testModel;
-
-        public string DebugOut = "";
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize]
         public void Init()
         {
             testModel = new();
-            testModel.PropertyChanged += OnPropertyChanged;
-            DebugOut = "";
-        }
-
-        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            DoLog($"PropChange({sender},{e.PropertyName})={sender.GetProp(e.PropertyName)}");
-        }
-
-        private void DoLog(string v)
-        {
-            DebugOut += $"{v}{Environment.NewLine}";
+            testModel.PropertyChanged += OnVMPropertyChanged;
+            ClearLog();
         }
 
         [TestMethod]
@@ -45,16 +27,16 @@ namespace MVVM_03_NotifyChange.ViewModels.Tests
             Assert.AreEqual("Dave", testModel.Firstname);
             Assert.AreEqual("Dev", testModel.Lastname);
             Assert.AreEqual("Dev, Dave", testModel.Fullname);
-            Assert.AreEqual("", DebugOut);
+            Assert.AreEqual("", DebugLog);
         }
 
         [DataTestMethod()]
-        [DataRow("", new string[] { "","Dev, ", "PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, \r\nPropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=\r\n" })]
-        [DataRow("Peter", new string[] { "Peter", "Dev, Peter", "PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Peter\r\nPropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Peter\r\n" })]
-        [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Steve
-PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Steve
-PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Eugene
-PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Eugene
+        [DataRow("", new string[] { "","Dev, ", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, \r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=\r\n" })]
+        [DataRow("Peter", new string[] { "Peter", "Dev, Peter", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Peter\r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Peter\r\n" })]
+        [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Steve
+PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Steve
+PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Eugene
+PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Eugene
 " })]
         public void FirstnameTest(string name,  string[] asExp)
         {
@@ -66,16 +48,16 @@ PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Euge
             // Assert
             Assert.AreEqual(asExp[0], testModel.Firstname,"Firstname");
             Assert.AreEqual(asExp[1], testModel.Fullname, "Fullname");
-            Assert.AreEqual(asExp[2], DebugOut, "DebugOut");
+            Assert.AreEqual(asExp[2], DebugLog, "DebugOut");
         }
 
         [DataTestMethod()]
-        [DataRow("", new string[] { "", ", Dave", "PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=, Dave\r\nPropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=\r\n" })]
-        [DataRow("Miller", new string[] { "Miller", "Miller, Dave", "PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Miller, Dave\r\nPropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Miller\r\n" })]
-        [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Fry, Dave
-PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Fry
-PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Webb, Dave
-PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Webb
+        [DataRow("", new string[] { "", ", Dave", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=, Dave\r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=\r\n" })]
+        [DataRow("Miller", new string[] { "Miller", "Miller, Dave", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Miller, Dave\r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Miller\r\n" })]
+        [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Fry, Dave
+PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Fry
+PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Webb, Dave
+PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Webb
 " })]
         public void LastnameTest(string name, string[] asExp)
         {
@@ -87,7 +69,7 @@ PropChange(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Webb
             // Assert
             Assert.AreEqual(asExp[0], testModel.Lastname, "Firstname");
             Assert.AreEqual(asExp[1], testModel.Fullname, "Fullname");
-            Assert.AreEqual(asExp[2], DebugOut, "DebugOut");
+            Assert.AreEqual(asExp[2], DebugLog, "DebugOut");
         }
 
     }
