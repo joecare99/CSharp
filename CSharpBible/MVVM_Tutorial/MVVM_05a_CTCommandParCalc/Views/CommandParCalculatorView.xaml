@@ -1,4 +1,4 @@
-<Page
+﻿<Page
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -92,8 +92,8 @@
         <Button Grid.Column="2" Grid.Row="5" Content="0"     Command="{Binding NumberCommand}" CommandParameter="{x:Static model:ENumbers._0}" Style="{StaticResource NumberButtonStyle}"/>
         <Button Grid.Column="0" Grid.Row="0" Content="C/CE"   Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.Clear}" Style="{StaticResource CommandButtonStyle}"/>
         <Button Grid.Column="0" Grid.Row="1" Content="Inv"    Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.Clear}" Style="{StaticResource CommandButtonStyle}"  />
-        <Button Grid.Column="1" Grid.Row="1" Content="X�"    Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Square}"  Style="{StaticResource OperatorButtonStyle}"/>
-        <Button Grid.Column="2" Grid.Row="1" Content="v"      Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.SquareRt}"  Style="{StaticResource OperatorButtonStyle}"/>
+        <Button Grid.Column="1" Grid.Row="1" Content="X²"    Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Square}"  Style="{StaticResource OperatorButtonStyle}" Click="Button_Click"/>
+        <Button Grid.Column="2" Grid.Row="1" Content="√x"     Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.SquareRt}"  Style="{StaticResource OperatorButtonStyle}"/>
         <Button Grid.Column="3" Grid.Row="1" Content="1/x"     Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Inverse}"  Style="{StaticResource OperatorButtonStyle}"  />
         <Button Grid.Column="4" Grid.Row="1" Content="+"     Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Add}"   Style="{StaticResource OperatorButtonStyle}"/>
         <Button Grid.Column="4" Grid.Row="2" Content="-"     Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Subtract}" Style="{StaticResource OperatorButtonStyle}"/>
@@ -102,12 +102,12 @@
         <Button Grid.Column="5" Grid.Row="1" Content="sin"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Sin}" Style="{StaticResource OperatorButtonStyle}"   />
         <Button Grid.Column="5" Grid.Row="2" Content="cos"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Cos}" Style="{StaticResource OperatorButtonStyle}"   />
         <Button Grid.Column="5" Grid.Row="3" Content="tan"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Tan}" Style="{StaticResource OperatorButtonStyle}"   />
-        <Button Grid.Column="5" Grid.Row="4" Content="e?"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.ExpN}" Style="{StaticResource OperatorButtonStyle}"   />
+        <Button Grid.Column="5" Grid.Row="4" Content="eˣ"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.ExpN}" Style="{StaticResource OperatorButtonStyle}"   />
         <Button Grid.Column="5" Grid.Row="5" Content="log"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.LogN}" Style="{StaticResource OperatorButtonStyle}"   />
         <Button Grid.Column="3" Grid.Row="5" Content=","     Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.DecMode}"  Style="{StaticResource CommandButtonStyle}"/>
         <Button Grid.Column="1" Grid.Row="5" Content="+/-"   Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.Negate}"  Style="{StaticResource OperatorButtonStyle}"/>
         <Button Grid.Column="4" Grid.Row="5" Content="="     Command="{Binding OperatorCommand}" CommandParameter="{x:Static model:EOperations.CalcResult}"  Style="{StaticResource OperatorButtonStyle}"/>
-        <Button Grid.Column="0" Grid.Row="2" Content="p"     Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.Pi}"  Style="{StaticResource CommandButtonStyle}"/>
+        <Button Grid.Column="0" Grid.Row="2" Content="π"     Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.Pi}"  Style="{StaticResource CommandButtonStyle}"/>
         <Button Grid.Column="0" Grid.Row="3" Content="e"     Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.e}"  Style="{StaticResource CommandButtonStyle}"/>
         <Button Grid.Column="0" Grid.Row="4" Content="("     Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.BracketOpen}"  Style="{StaticResource CommandButtonStyle}"/>
         <Button Grid.Column="0" Grid.Row="5" Content=")"     Command="{Binding CalculatorCommand}" CommandParameter="{x:Static model:ECommands.BracketClose}"  Style="{StaticResource CommandButtonStyle}"/>
