@@ -12,8 +12,9 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
+using MVVM_00a_CTTemplate.Models;
 using System;
-using System.Timers;
+using System.ComponentModel;
 
 namespace MVVM_00a_CTTemplate.ViewModels
 {
@@ -22,34 +23,35 @@ namespace MVVM_00a_CTTemplate.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class TemplateViewModel : BaseViewModel
+    public partial class TemplateViewModel : BaseViewModelCT
     {
         #region Properties
-        private readonly Timer _timer;
-        public static Func<DateTime> GetNow { get; set; } = () => DateTime.Now;
-        public DateTime Now { get => GetNow(); }
-        #endregion 
+        public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
+
+        private readonly ITemplateModel _model;
+
+        public DateTime Now => _model.Now;
+        #endregion
+  
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public TemplateViewModel()
+        public TemplateViewModel():this(GetModel())
         {
-            _timer = new Timer() { Interval = 250};
-            _timer.Elapsed += (s, e) => RaisePropertyChanged(nameof(Now));
-            _timer.Start();
         }
 
-#if !NET5_0_OR_GREATER
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~TemplateViewModel()
+        public TemplateViewModel(ITemplateModel model)
         {
-            _timer.Stop();
-            return;
+            _model = model;
+            _model.PropertyChanged += OnMPropertyChanged;
         }
-#endif
+
+        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(e.PropertyName); 
+        }
+
         #endregion
     }
 }

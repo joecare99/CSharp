@@ -20,7 +20,7 @@ namespace MVVM_00a_CTTemplate.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModelCT
     {
         #region Properties
         #endregion
