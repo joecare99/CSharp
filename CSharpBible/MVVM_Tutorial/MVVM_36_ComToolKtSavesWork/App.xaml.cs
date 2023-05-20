@@ -29,6 +29,7 @@ namespace MVVM_36_ComToolKtSavesWork
             CommunityToolkit.Mvvm.DependencyInjection.Ioc.Default.ConfigureServices(
                 new ServiceCollection()
                 .AddSingleton<IUserRepository, UserRepository>()
+                .AddSingleton<ICommunityToolkit2Model, CommunityToolkit2Model>()
                 .AddTransient<MainWindowViewModel>()
                 .AddTransient<CommunityToolkit2ViewModel>()
                 .AddTransient<UserInfoViewModel>()

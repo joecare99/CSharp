@@ -13,6 +13,7 @@
       Title="CommunityToolkit2View">
     <Page.Resources>
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+        <vc:Bool2VisibilityConverter x:Key="Bool2Visibility"/>
     </Page.Resources>
     <d:Page.DataContext>
         <mvvm:CommunityToolkit2ViewModel/>
@@ -32,8 +33,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
             <uc:UserInfoControl Grid.Column="2" />
-            <uc:LoginControl Grid.Column="1" Grid.Row="1"/>
-
+            <uc:LoginControl Grid.Column="1" Grid.Row="1" Visibility="{Binding ShowLogin, Converter={StaticResource Bool2Visibility} }"/>
         </Grid>
     </StackPanel>
 </Page>

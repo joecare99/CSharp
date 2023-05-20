@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using MVVM_36_ComToolKtSavesWork.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +16,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
     {
         private readonly IUserRepository _userRepository;
 
+        public LoginViewModel() : this(Ioc.Default.GetService<IUserRepository>()) { }
         public LoginViewModel(IUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -34,7 +38,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
             var user = _userRepository.Login(UserName, Password);
             if (user != null)
             {
-
+                WeakReferenceMessenger.Default.Send(new ValueChangedMessage<User>(user));
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using MVVM_36_ComToolKtSavesWork.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,8 @@ namespace MVVM_36_ComToolKtSavesWork.Views.UserControls
         public UserInfoControl()
         {
             InitializeComponent();
+
+            DataContext = Ioc.Default.GetRequiredService<UserInfoViewModel>();
         }
     }
 }
