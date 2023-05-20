@@ -11,6 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using MVVM.ViewModel;
 using MVVM_36_ComToolKtSavesWork.Models;
 using System;
@@ -23,9 +26,14 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public partial class CommunityToolkit2ViewModel : BaseViewModelCT
+    public partial class CommunityToolkit2ViewModel : BaseViewModelCT, 
+        IRecipient<ShowLoginMessage>,
+        IRecipient<ValueChangedMessage<User>>,
+        IDisposable
     {
         #region Properties
+        [ObservableProperty]
+        private bool _showLogin;
         public static Func<ICommunityToolkit2Model> GetModel { get; set; } = () => new CommunityToolkit2Model();
 
         private readonly ICommunityToolkit2Model _model;
@@ -37,7 +45,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public CommunityToolkit2ViewModel():this(GetModel())
+        public CommunityToolkit2ViewModel():this(Ioc.Default.GetService<ICommunityToolkit2Model>())
         {
         }
 
@@ -45,11 +53,27 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;
+            WeakReferenceMessenger.Default.Register<ShowLoginMessage>(this);
+            WeakReferenceMessenger.Default.Register<ValueChangedMessage<User>>(this);
+        }
+        public void Dispose()
+        {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
         private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName); 
+        }
+
+        void IRecipient<ShowLoginMessage>.Receive(ShowLoginMessage message)
+        {
+            ShowLogin = true;
+        }
+
+        public void Receive(ValueChangedMessage<User> message)
+        {
+            ShowLogin = false;
         }
 
         #endregion
