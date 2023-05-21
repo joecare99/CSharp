@@ -4,6 +4,7 @@
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
+		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
