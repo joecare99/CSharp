@@ -20,10 +20,10 @@ namespace MVVM.ViewModel
             => DoLog($"CanExChanged({sender})={(sender as IRelayCommand)?.CanExecute(null)}");
 
         protected virtual void OnVMPropertyChanged(object? sender, PropertyChangedEventArgs e)
-            => DoLog($"PropChg({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName)}");
+            => DoLog($"PropChg({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
 
         protected virtual void OnVMPropertyChanging(object? sender, PropertyChangingEventArgs e)
-            => DoLog($"PropChgn({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName)}");
+            => DoLog($"PropChgn({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
 
     }
 }

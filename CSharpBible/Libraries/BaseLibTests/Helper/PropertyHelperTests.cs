@@ -145,7 +145,7 @@ namespace BaseLib.Helper.Tests
                 case eValidReact.OK:
                     return;
                 case eValidReact.GeneralException:
-                    throw new Exception("A general exception occured");
+                    throw new Exception("A general exception occurred");
                 case eValidReact.ArgumentException:
                     throw new ArgumentException($"Argument ({arg1}) not valid!");
                 default:
@@ -162,7 +162,7 @@ namespace BaseLib.Helper.Tests
                 case eValidReact.OK:
                     return true;
                 case eValidReact.GeneralException:
-                    throw new Exception("A general exception occured");
+                    throw new Exception("A general exception occurred");
                 case eValidReact.ArgumentException:
                     throw new ArgumentException($"Argument ({arg1}) not valid!");
                 default:

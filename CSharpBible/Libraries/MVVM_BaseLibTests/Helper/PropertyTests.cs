@@ -92,13 +92,13 @@ namespace MVVM_BaseLib.Helper.Tests
         /// </summary>
         tePear,
         /// <summary>
-        /// The te cherry
+        /// The Cherry
         /// </summary>
         teCherry,
         /// <summary>
-        /// The te rasberry
+        /// The Raspberry
         /// </summary>
-        teRasberry
+        teRaspberry
     }
 
     /// <summary>
@@ -177,7 +177,7 @@ namespace MVVM_BaseLib.Helper.Tests
 "},
 
         };
-        public Exception DoEx { get; private set; } = null;
+        public Exception? DoEx { get; private set; } = null;
 
         /// <summary>
         /// Initializes this instance.
@@ -279,9 +279,9 @@ namespace MVVM_BaseLib.Helper.Tests
         /// <param name="expResult">The exp result.</param>
         [DataTestMethod()]
         [DynamicData(nameof(PropTestData))]
-        public void SetPropertyTest2(string Name, TypeCode tt, string value, bool bExp, string expResStup)
+        public void SetPropertyTest2(string Name, TypeCode tt, string value, bool bExp, string expResStub)
         {
-            var expResult = expResStup.Replace(nameof(SetPropertyTest), nameof(SetPropertyTest2));
+            var expResult = expResStub.Replace(nameof(SetPropertyTest), nameof(SetPropertyTest2));
             switch (tt)
             {
                 case TypeCode.Object when value.Contains(";"): // struct

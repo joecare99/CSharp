@@ -20,10 +20,10 @@ namespace MVVM_BaseLibTests.ViewModel
             OK=0,
             NIO,
             GeneralException,
-            ArgumetException,
+            ArgumentException,
         }
 
-        private string _testString;
+        private string _testString="";
         private int _testInt;
         private float _testFloat;
         private double _testDouble;
@@ -60,8 +60,8 @@ namespace MVVM_BaseLibTests.ViewModel
             DebugResult += $"StrAct: {arg1}; {arg2}{Environment.NewLine}";
             var _=valReact switch
             {
-                eValidReact.GeneralException => throw new Exception("A general exception occured"),
-                eValidReact.ArgumetException => throw new ArgumentException($"Argument ({arg2}) not valid!"),
+                eValidReact.GeneralException => throw new Exception("A general exception occurred"),
+                eValidReact.ArgumentException => throw new ArgumentException($"Argument ({arg2}) not valid!"),
                 _ => (object?)null,
             };
         }
@@ -73,8 +73,8 @@ namespace MVVM_BaseLibTests.ViewModel
             {
                 eValidReact.OK => true,
                 eValidReact.NIO => false,
-                eValidReact.GeneralException => throw new Exception("A general exception occured"),
-                eValidReact.ArgumetException => throw new ArgumentException($"Argument ({arg1}) not valid!"),
+                eValidReact.GeneralException => throw new Exception("A general exception occurred"),
+                eValidReact.ArgumentException => throw new ArgumentException($"Argument ({arg1}) not valid!"),
                 _ => false,
             };
         }
@@ -122,20 +122,20 @@ namespace MVVM_BaseLibTests.ViewModel
         [DataRow("11-1 Empty", 1, "Test", eValidReact.OK, "Test", "Validate: Test, React:OK\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString1:Test\r\n")]
         [DataRow("11-2 Test" , 1, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
         [DataRow("11-3 GEx"  , 1, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
-        [DataRow("11-4 AEx"  , 1, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
+        [DataRow("11-4 AEx"  , 1, "Test", eValidReact.ArgumentException, "", "Validate: Test, React:ArgumentException\r\n")]
         [DataRow("20-1 Empty", 2, "", eValidReact.OK, "", "")]
         [DataRow("20-2 Test", 2, "", eValidReact.NIO, "", "")]
         [DataRow("21-1 Test", 2, "Test", eValidReact.OK, "Test", "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2:Test\r\nStrAct: ; Test\r\n")]
         [DataRow("21-2 Test2", 2, "Test2", eValidReact.NIO, "Test2", "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2:Test2\r\nStrAct: ; Test2\r\n")]
 		[DataRow("21-3 GEx", 2, "Test", eValidReact.GeneralException, "Test", "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2:Test\r\nStrAct: ; Test\r\n")]
-		[DataRow("21-4 AEx", 2, "Test2", eValidReact.ArgumetException, "Test2", "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2:Test2\r\nStrAct: ; Test2\r\n")]
+		[DataRow("21-4 AEx", 2, "Test2", eValidReact.ArgumentException, "Test2", "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2:Test2\r\nStrAct: ; Test2\r\n")]
 		[DataRow("30-1 Empty", 3, "", eValidReact.OK, "", "")]
 		[DataRow("30-2 Test", 3, "", eValidReact.NIO, "", "")]
 		[DataRow("30-2 Test", 3, "", eValidReact.GeneralException, "", "")]
 		[DataRow("31-1 Empty", 3, "Test", eValidReact.OK, "Test", "Validate: Test, React:OK\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString3:Test\r\nStrAct: ; Test\r\n")]
 		[DataRow("31-2 Test", 3, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
 		[DataRow("31-3 GEx", 3, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
-		[DataRow("31-4 AEx", 3, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
+		[DataRow("31-4 AEx", 3, "Test", eValidReact.ArgumentException, "", "Validate: Test, React:ArgumentException\r\n")]
 		[DataRow("32-1 Test2", 3, "Test2", eValidReact.OK, "Test2", "Validate: Test2, React:OK\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString3:Test2\r\nStrAct: ; Test2\r\n")]
 		[DataRow("40-1 Empty", 4, "", eValidReact.OK, "", "")]
         [DataRow("40-2 Test " , 4, "", eValidReact.NIO, "", "")]
@@ -147,7 +147,7 @@ namespace MVVM_BaseLibTests.ViewModel
         [DataRow("51-1 Empty", 5, "Test", eValidReact.OK, "Test", "Validate: Test, React:OK\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString5:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString1:Test\r\n")]
         [DataRow("51-2 Test ", 5, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
         [DataRow("51-3 GEx  ", 5, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
-        [DataRow("51-4 AEx  ", 5, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
+        [DataRow("51-4 AEx  ", 5, "Test", eValidReact.ArgumentException, "", "Validate: Test, React:ArgumentException\r\n")]
         [DataRow("60-1 Empty", 6, "", eValidReact.OK, "", "")]
         [DataRow("60-2 Test ", 6, "", eValidReact.NIO, "", "")]
         [DataRow("61-1 Test ", 6, "Test", eValidReact.OK, "Test", "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString6:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString1:Test\r\nStrAct: ; Test\r\n")]
@@ -158,12 +158,12 @@ namespace MVVM_BaseLibTests.ViewModel
         [DataRow("71-1 Empty", 7, "Test", eValidReact.OK, "Test", "Validate: Test, React:OK\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString7:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString1:Test\r\nStrAct: ; Test\r\n")]
         [DataRow("71-2 Test ", 7, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
         [DataRow("71-3 GEx  ", 7, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
-        [DataRow("71-4 AEx  ", 7, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
+        [DataRow("71-4 AEx  ", 7, "Test", eValidReact.ArgumentException, "", "Validate: Test, React:ArgumentException\r\n")]
         public void TestStringProp(string name,int iTs,string sVal, eValidReact eReact, string sExp,string sDebExp)
         {
             valReact = eReact;
             bool xCh = sVal != _testString;
-            bool eRIsEx = eReact == eValidReact.GeneralException || eReact == eValidReact.ArgumetException;
+            bool eRIsEx = eReact == eValidReact.GeneralException || eReact == eValidReact.ArgumentException;
             bool xITsHasVl = new[]{ 1,3,5,7}.Contains(iTs);
             Action<string> Setter = iTs switch
             {
@@ -178,7 +178,7 @@ namespace MVVM_BaseLibTests.ViewModel
             };
             if (xCh && xITsHasVl && eReact == eValidReact.GeneralException)
                 Assert.ThrowsException<Exception>(() => Setter(sVal), $"{name}.T{iTs}");
-            else if (xCh && xITsHasVl && eReact == eValidReact.ArgumetException)
+            else if (xCh && xITsHasVl && eReact == eValidReact.ArgumentException)
                 Assert.ThrowsException<ArgumentException>(() => Setter(sVal), $"{name}.T{iTs}");
             else
                 Setter(sVal);
@@ -196,7 +196,7 @@ namespace MVVM_BaseLibTests.ViewModel
         [DataRow("21-1 Test", 2, "Test", eValidReact.OK, "Test", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2a:Test\r\nStrAct: ; Test\r\n" })]
         [DataRow("21-2 Test2", 2, "Test2", eValidReact.NIO, "Test2", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2a:Test2\r\nStrAct: ; Test2\r\n" })]
         [DataRow("21-3 GEx", 2, "Test", eValidReact.GeneralException, "Test", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2a:Test\r\nStrAct: ; Test\r\n" })]
-        [DataRow("21-4 AEx", 2, "Test2", eValidReact.ArgumetException, "Test2", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2a:Test2\r\nStrAct: ; Test2\r\n" })]
+        [DataRow("21-4 AEx", 2, "Test2", eValidReact.ArgumentException, "Test2", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString2a:Test2\r\nStrAct: ; Test2\r\n" })]
         [DataRow("60-1 Empty", 6, "", eValidReact.OK, "", new string[] { "" })]
         [DataRow("60-2 Test ", 6, "", eValidReact.NIO, "", new string[] { "" })]
         [DataRow("61-1 Test ", 6, "Test", eValidReact.OK, "Test", new string[] { "OnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString6a:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString1:Test\r\nStrAct: ; Test\r\n" })]
@@ -208,12 +208,12 @@ namespace MVVM_BaseLibTests.ViewModel
         [DataRow("71-1 Empty", 7, "Test", eValidReact.OK, "Test", new string[] { "Validate: Test, React:OK\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString7a:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString:Test\r\nOnPropChanged: o:MVVM_BaseLibTests.ViewModel.NotificationObjectTests, p:TestString1:Test\r\nStrAct: ; Test\r\n" })]
         [DataRow("71-2 Test ", 7, "Test", eValidReact.NIO, "", new string[] { "Validate: Test, React:NIO\r\n" })]
         [DataRow("71-3 GEx  ", 7, "Test", eValidReact.GeneralException, "", new string[] { "Validate: Test, React:GeneralException\r\n" })]
-        [DataRow("71-4 AEx  ", 7, "Test", eValidReact.ArgumetException, "",new string[] { "Validate: Test, React:ArgumetException\r\n" })]
+        [DataRow("71-4 AEx  ", 7, "Test", eValidReact.ArgumentException, "",new string[] { "Validate: Test, React:ArgumentException\r\n" })]
         public void TestString2Prop(string name, int iTs, string sVal, eValidReact eReact, string sExp, string[] sDebExp)
         {
             valReact = eReact;
             bool xCh = sVal != _testString;
-            bool eRIsEx = eReact == eValidReact.GeneralException || eReact == eValidReact.ArgumetException;
+            bool eRIsEx = eReact == eValidReact.GeneralException || eReact == eValidReact.ArgumentException;
             bool xITsHasVl = new[] { 1, 3, 5, 7 }.Contains(iTs);
             Action<string> Setter = iTs switch
             {
@@ -229,7 +229,7 @@ namespace MVVM_BaseLibTests.ViewModel
 
             if (xCh && xITsHasVl && eReact == eValidReact.GeneralException)
                 Assert.ThrowsException<Exception>(() => Setter(sVal), $"{name}.T{iTs}");
-            else if (xCh && xITsHasVl && eReact == eValidReact.ArgumetException) 
+            else if (xCh && xITsHasVl && eReact == eValidReact.ArgumentException) 
                 Assert.ThrowsException<ArgumentException>(() => Setter(sVal), $"{name}.T{iTs}");
             else
                 Setter(sVal);
