@@ -11,7 +11,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
     {
         private readonly IUserRepository _userRepository;
 
-        public LoginViewModel() : this(IoC.GetService<IUserRepository>()) { }
+        public LoginViewModel() : this(IoC.GetService<IUserRepository>()!) { }
         public LoginViewModel(IUserRepository userRepository)
         {
             _userRepository = userRepository;

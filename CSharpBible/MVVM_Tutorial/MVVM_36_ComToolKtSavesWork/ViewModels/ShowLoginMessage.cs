@@ -13,7 +13,7 @@
 // ***********************************************************************
 namespace MVVM_36_ComToolKtSavesWork.ViewModels
 {
-    internal class ShowLoginMessage
+    public class ShowLoginMessage
     {
     }
 }

@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_22_WpfCap.Model;
 using System;
@@ -145,10 +146,8 @@ namespace MVVM_22_WpfCap.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class WpfCapViewModel : BaseViewModel
     {
-        public WpfCapViewModel() : this((IWpfCapModel)DISource.Resolver!.Invoke(typeof(IWpfCapModel)))
-        {
-
-        }
+        public WpfCapViewModel() : this(IoC.GetRequiredService<IWpfCapModel>())
+        {}
         /// <summary>
         /// Initializes a new instance of the <see cref="WpfCapViewModel"/> class.
         /// </summary>

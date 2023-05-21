@@ -10,15 +10,15 @@ namespace MVVM_BaseLib.Helper.MVVM
 {
     public class ValidationHelper :INotifyDataErrorInfo
     {
-        private IDictionary<string, List<string>> _errorList = new Dictionary<string, List<string>>();
+        private readonly IDictionary<string, List<string>> _errorList = new Dictionary<string, List<string>>();
 
         public string this[string property]=> _errorList.TryGetValue(property, out var l) ? l.First() :string.Empty;
         public bool HasErrors => _errorList.Count > 0;
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-        public IEnumerable GetErrors(string propertyName)
-            => _errorList.TryGetValue(propertyName, out var l) ? l : Array.Empty<string>();
+        public IEnumerable GetErrors(string? propertyName)
+            => _errorList.TryGetValue(propertyName ??"", out var l) ? l : Array.Empty<string>();
 
         public void AddError(string property, string message)
         {

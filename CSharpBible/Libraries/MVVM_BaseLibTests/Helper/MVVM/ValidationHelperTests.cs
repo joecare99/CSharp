@@ -14,7 +14,9 @@ namespace MVVM_BaseLib.Helper.MVVM.Tests
     [TestClass()]
     public class ValidationHelperTests
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         ValidationHelper _helper;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private string DebugLog="";
 
         [TestInitialize]
@@ -25,7 +27,7 @@ namespace MVVM_BaseLib.Helper.MVVM.Tests
             DebugLog = "";
         }
 
-        private void OnErrorsChanged(object sender, DataErrorsChangedEventArgs e)
+        private void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
         {
             DoLog($"ErrorsChg({sender},{e.PropertyName})");
         }

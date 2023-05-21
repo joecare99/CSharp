@@ -61,9 +61,10 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         public void Dispose()
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
+            GC.SuppressFinalize(this);
         }
 
-        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnMPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName); 
         }

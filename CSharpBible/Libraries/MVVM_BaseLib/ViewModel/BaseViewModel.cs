@@ -31,7 +31,7 @@ namespace MVVM.ViewModel
         /// <summary>
         /// Occurs when the property is changed.
         /// </summary>
-		private Dictionary<(string, object?), object?> _PropertyOldValue = new();
+		private readonly Dictionary<(string, object?), object?> _PropertyOldValue = new();
 
         /// <summary>
         /// The known parameters
@@ -40,7 +40,7 @@ namespace MVVM.ViewModel
         /// <summary>
         /// The command can execute binding
         /// </summary>
-        private Dictionary<string, List<(string,bool)>> _CommandCanExecuteBinding = new();
+        private readonly Dictionary<string, List<(string,bool)>> _CommandCanExecuteBinding = new();
         #endregion
 
         #region Methods
@@ -60,7 +60,7 @@ namespace MVVM.ViewModel
         private void InternalBindingHandler(object? sender, PropertyChangedEventArgs e)
         {
 
-            if (sender == this && _CommandCanExecuteBinding.TryGetValue(e.PropertyName, out var l))
+            if (sender == this && _CommandCanExecuteBinding.TryGetValue(e.PropertyName ?? "", out var l))
                 foreach (var t in l)
                     switch (GetType().GetProperty(t.Item1))
                     {
@@ -79,7 +79,7 @@ namespace MVVM.ViewModel
                             {
                                 if (mi.GetParameters().Length == 0)
                                 {
-                                    var newVal = mi.Invoke(this, new object[] { });
+                                    var newVal = mi.Invoke(this, Array.Empty<object>());
                                     NewMethod(t, newVal);
                                 }
                                 else if (mi.GetParameters().Length == 1)
@@ -113,7 +113,7 @@ namespace MVVM.ViewModel
         public bool AddPropertyDependency(string prop1, string prop2,bool xForce=false )
         {
             bool flag =
-                GetType().GetProperty(prop1) is System.Reflection.PropertyInfo
+                GetType().GetProperty(prop1) is not null
                 || GetType().GetMethod(prop1) is System.Reflection.MethodInfo mi
                     && mi.GetParameters().Length is 0 or 1;
             if (flag && _CommandCanExecuteBinding.TryGetValue(prop2, out var l))

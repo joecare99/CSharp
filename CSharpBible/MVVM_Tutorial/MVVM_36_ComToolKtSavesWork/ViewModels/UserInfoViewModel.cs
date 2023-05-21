@@ -10,7 +10,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
     public partial class UserInfoViewModel : ObservableObject, IRecipient<ValueChangedMessage<User>>, IDisposable
     {
         [ObservableProperty]
-        private User _user;
+        private User? _user;
 
         [ObservableProperty]
         private bool _showLogin = true;
@@ -18,7 +18,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         [ObservableProperty]
         private bool _showUser = false;
 
-        public UserInfoViewModel() //: this(Ioc.Default.GetService<IUserRepository>())
+        public UserInfoViewModel()
         {
             WeakReferenceMessenger.Default.Register(this);
         }
@@ -31,6 +31,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         public void Dispose()
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
+            GC.SuppressFinalize(this);
         }
 
         public void Receive(ValueChangedMessage<User> message)
