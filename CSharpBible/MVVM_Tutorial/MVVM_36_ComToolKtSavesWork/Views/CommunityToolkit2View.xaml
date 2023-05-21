@@ -7,10 +7,12 @@
       xmlns:vc="clr-namespace:MVVM_36_ComToolKtSavesWork.ValueConverter"
       xmlns:mvvm="clr-namespace:MVVM_36_ComToolKtSavesWork.ViewModels"
       xmlns:model="clr-namespace:MVVM_36_ComToolKtSavesWork.Models"
-      xmlns:uc="clr-namespace:MVVM_36_ComToolKtSavesWork.Views.UserControls"  
+       xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
+       xmlns:uc="clr-namespace:MVVM_36_ComToolKtSavesWork.Views.UserControls"  
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="CommunityToolkit2View">
+      Title="CommunityToolkit2View"
+      DataContext="{ioc:IoC Type=mvvm:CommunityToolkit2ViewModel}">
     <Page.Resources>
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
         <vc:Bool2VisibilityConverter x:Key="Bool2Visibility"/>
@@ -33,7 +35,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
             <uc:UserInfoControl Grid.Column="2" />
-            <uc:LoginControl Grid.Column="1" Grid.Row="1" Visibility="{Binding ShowLogin, Converter={StaticResource Bool2Visibility} }"/>
+            <uc:LoginControl Grid.Column="1" Grid.Row="1" Visibility="{Binding DataContext.ShowLogin, Converter={StaticResource Bool2Visibility}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:CommunityToolkit2View}}}"/>
         </Grid>
     </StackPanel>
 </Page>
