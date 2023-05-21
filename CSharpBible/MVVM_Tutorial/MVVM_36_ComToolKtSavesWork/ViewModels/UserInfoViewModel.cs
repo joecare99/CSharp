@@ -1,13 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MVVM_36_ComToolKtSavesWork.Models;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using CommunityToolkit.Mvvm.Input;
 
 namespace MVVM_36_ComToolKtSavesWork.ViewModels
 {
@@ -27,8 +23,8 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
             WeakReferenceMessenger.Default.Register(this);
         }
 
-        [RelayCommand()]
-        private void _ShowLogin()
+        [RelayCommand]
+        private void ShowLoginCtrl()
         {
             WeakReferenceMessenger.Default.Send(new ShowLoginMessage());    
         }

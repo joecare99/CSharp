@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.Extensions.DependencyInjection;
+using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
 using MVVM_36_ComToolKtSavesWork.ViewModels;
 using System.Windows;
@@ -24,18 +25,20 @@ namespace MVVM_36_ComToolKtSavesWork
     /// </summary>
     public partial class App : Application
     {
-        public App()
+        protected override void OnStartup(StartupEventArgs e)
         {
-            CommunityToolkit.Mvvm.DependencyInjection.Ioc.Default.ConfigureServices(
-                new ServiceCollection()
+            base.OnStartup(e);
+
+            var srvProv = new ServiceCollection()
                 .AddSingleton<IUserRepository, UserRepository>()
                 .AddSingleton<ICommunityToolkit2Model, CommunityToolkit2Model>()
                 .AddTransient<MainWindowViewModel>()
                 .AddTransient<CommunityToolkit2ViewModel>()
                 .AddTransient<UserInfoViewModel>()
                 .AddTransient<LoginViewModel>()
-                .BuildServiceProvider()
-                );
+                .BuildServiceProvider();
+                IoC.GetReqSrv = (type) => srvProv.GetRequiredService(type);
+            IoC.GetSrv= (type) => srvProv.GetService(type);
         }
     }
 }
