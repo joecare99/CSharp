@@ -25,8 +25,6 @@ namespace MVVM_36_ComToolKtSavesWork.Views.UserControls
         public UserInfoControl()
         {
             InitializeComponent();
-
-            DataContext = Ioc.Default.GetRequiredService<UserInfoViewModel>();
         }
     }
 }

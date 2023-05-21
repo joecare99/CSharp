@@ -14,6 +14,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using MVVM.ViewModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using MVVM_36_ComToolKtSavesWork.Models;
+using System;
 
 /// <summary>
 /// The Tests namespace.
@@ -36,6 +40,9 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
         CommunityToolkit2ViewModel testModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
+        private IDebugLog _debugLog;
+        private IGetResult _getResult;
+
         /// <summary>
         /// Initializes this instance.
         /// </summary>
@@ -43,11 +50,35 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
         [TestInitialize]
         public void Init()
         {
+            //Ioc. = null;
+            try
+            {
+                Ioc.Default.ConfigureServices(new ServiceCollection()
+                    .AddSingleton<IUserRepository, TestUserRepository>()
+                    .AddSingleton<IDebugLog, DebugLog>()
+                    .AddSingleton<IGetResult, GetResult>()
+                    .BuildServiceProvider());
+            }
+            catch { }
+            _debugLog = Ioc.Default.GetRequiredService<IDebugLog>();
+            _getResult = Ioc.Default.GetRequiredService<IGetResult>();
+            _getResult.Register("Login", GetLoginResult);
             testModel = new();
             testModel.PropertyChanged += OnVMPropertyChanged;
             if (testModel is INotifyPropertyChanging npchgn)
                 npchgn.PropertyChanging += OnVMPropertyChanging;
             ClearLog();
+        }
+
+        private object? GetLoginResult(object[] arg)
+        {
+            if (arg.Length == 2
+                && arg[0] is string username
+                && arg[1] is string password
+                && username == "User1")
+                return new User() { Username = "User", Id = 1 };
+            else
+                return null;
         }
 
         /// <summary>

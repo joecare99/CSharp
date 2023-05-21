@@ -1,9 +1,9 @@
 ﻿<Project>
-	<Import Project="..\Libraries.props" />
+	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
-        <!--UseWPF>true</UseWPF-->
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+        <UseWPF>true</UseWPF>
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -23,6 +23,9 @@
 		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs" Link="Helper\PropertyHelper.cs" />
 		<Compile Include="..\BaseLib\Helper\TypeUtils.cs" Link="Helper\TypeUtils.cs" />
 		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Condition="$(TargetFramework.StartsWith('net4'))" Include="System.Xaml" />
 	</ItemGroup>
 
 </Project>

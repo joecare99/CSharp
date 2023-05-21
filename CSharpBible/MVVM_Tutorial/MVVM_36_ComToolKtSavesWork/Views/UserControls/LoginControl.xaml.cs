@@ -24,12 +24,9 @@ namespace MVVM_36_ComToolKtSavesWork.Views.UserControls
     /// </summary>
     public partial class LoginControl : UserControl
     {
-        public LoginViewModel ViewModel => (LoginViewModel)this.DataContext;
         public LoginControl()
         {
             InitializeComponent();
-
-            this.DataContext = Ioc.Default.GetRequiredService<LoginViewModel>();
         }
     }
 }

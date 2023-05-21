@@ -18,7 +18,7 @@
 	  <None Remove="*.bak" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)'=='net6.0-windows' or '$(TargetFramework)'=='net7.0-windows'">
-	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	  <ProjectReference Include="..\..\Libraries\WFSystem.Data\WFSystem.Windows.Data_net.csproj" />
 	  <ProjectReference Include="..\Calc64Base\Calc64Base_net.csproj" />
 	</ItemGroup>

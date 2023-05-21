@@ -14,7 +14,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Games\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
-	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Resources\WernerTiles.png">
