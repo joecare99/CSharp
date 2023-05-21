@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
