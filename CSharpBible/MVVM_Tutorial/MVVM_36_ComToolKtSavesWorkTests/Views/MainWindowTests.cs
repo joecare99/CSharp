@@ -68,6 +68,12 @@ namespace MVVM_36_ComToolKtSavesWork.Views.Tests
             t.Join(); //Wait for the thread to end
         }
 
+        [TestCleanup]
+        public void CleanUp()
+        {
+            IoC.GetSrv = _gsold;
+            IoC.GetReqSrv = _grsold;
+        }
         /// <summary>
         /// Defines the test method MainWindowTest.
         /// </summary>

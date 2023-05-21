@@ -60,7 +60,9 @@ namespace MVVM_36_ComToolKtSavesWork.ValueConverter.Tests
         [DataRow(true, Visibility.Visible)]
         [DataRow(false, Visibility.Hidden)]
         [DataRow(false, Visibility.Collapsed)]
-        public void ConvertBackTest(object? value, Visibility expected)
+        [DataRow(false, null)]
+        [DataRow(false, "Hallo")]
+        public void ConvertBackTest(object? value, object expected)
         {
             var result = testConv.ConvertBack(expected, typeof(string), null, CultureInfo.InvariantCulture);
             Assert.AreEqual(value, result);
