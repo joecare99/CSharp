@@ -20,4 +20,7 @@
 		<ProjectReference Include="..\MVVM_36_ComToolKtSavesWork\MVVM_36_ComToolKtSavesWork.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="PresentationCore" />
+	</ItemGroup>
 </Project>
