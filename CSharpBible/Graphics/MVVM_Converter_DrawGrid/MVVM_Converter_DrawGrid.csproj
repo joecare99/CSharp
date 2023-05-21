@@ -10,7 +10,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <ProjectReference Include="..\..\Games\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
-    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Images.Designer.cs">
