@@ -29,7 +29,7 @@ namespace MVVM_33_Events_To_Commands.ViewModels
     public class EventsBindingViewModel : BaseViewModel
     {
         #region Properties
-        private string _state;
+        private string _state="";
         public string State { get => _state; set => SetProperty(ref _state, value); }
      
         public DelegateCommand LostFocusCommand { get; set; }
