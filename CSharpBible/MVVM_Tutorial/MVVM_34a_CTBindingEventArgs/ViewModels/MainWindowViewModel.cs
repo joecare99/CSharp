@@ -1,5 +1,5 @@
-﻿// ***********************************************************************
-// Assembly         : MVVM_34_BindingEventArgs
+// ***********************************************************************
+// Assembly         : MVVM_33_Events_to_Commands
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -7,7 +7,7 @@
 // Last Modified On : 08-24-2022
 // ***********************************************************************
 // <copyright file="MainWindowViewModel.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2022
+//     Copyright � JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
@@ -17,43 +17,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
-using System.Windows.Input;
 
-namespace MVVM_34_BindingEventArgs.ViewModels
+namespace MVVM_34a_CTBindingEventArgs.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class EventsBindingViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModelCT
     {
         #region Properties
-        private string _state="";
-        public string State { get => _state; set => SetProperty(ref _state, value); }
-     
-        public DelegateCommand LostFocusCommand { get; set; }
-        public DelegateCommand GotFocusCommand { get; set; }
-        public DelegateCommand KeyDownCommand { get; set; }
-        #endregion 
+        #endregion
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public EventsBindingViewModel()
+        public MainWindowViewModel()
         {
-            LostFocusCommand = new((s) => State = "Lost focus");
-            GotFocusCommand = new((s) => State = "Got focus");
-            KeyDownCommand = new((s) => State = $"TextChanged({(s as KeyEventArgs)?.Key})",
-                (s) => s is KeyEventArgs { Key: Key.Enter or Key.Escape or Key.Tab });
+
         }
 
 #if !NET5_0_OR_GREATER
         /// <summary>
         /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        ~EventsBindingViewModel()
+        ~MainWindowViewModel()
         {
             return;
         }

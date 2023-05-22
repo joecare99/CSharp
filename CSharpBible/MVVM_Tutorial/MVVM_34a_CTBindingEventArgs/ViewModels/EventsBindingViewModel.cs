@@ -1,5 +1,5 @@
-﻿// ***********************************************************************
-// Assembly         : MVVM_34_BindingEventArgs
+// ***********************************************************************
+// Assembly         : MVVM_34a_CTBindingEventArgs
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -7,10 +7,12 @@
 // Last Modified On : 08-24-2022
 // ***********************************************************************
 // <copyright file="MainWindowViewModel.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2022
+//     Copyright � JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -20,34 +22,41 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 
-namespace MVVM_34_BindingEventArgs.ViewModels
+namespace MVVM_34a_CTBindingEventArgs.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class EventsBindingViewModel : BaseViewModel
+    public partial class EventsBindingViewModel : BaseViewModelCT
     {
         #region Properties
-        private string _state="";
-        public string State { get => _state; set => SetProperty(ref _state, value); }
-     
-        public DelegateCommand LostFocusCommand { get; set; }
-        public DelegateCommand GotFocusCommand { get; set; }
-        public DelegateCommand KeyDownCommand { get; set; }
-        #endregion 
+        [ObservableProperty]  
+        private string _state="";     
+        #endregion
+        
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
         public EventsBindingViewModel()
         {
-            LostFocusCommand = new((s) => State = "Lost focus");
-            GotFocusCommand = new((s) => State = "Got focus");
-            KeyDownCommand = new((s) => State = $"TextChanged({(s as KeyEventArgs)?.Key})",
-                (s) => s is KeyEventArgs { Key: Key.Enter or Key.Escape or Key.Tab });
         }
+
+        [RelayCommand]  
+        private void LostFocus(object? _) 
+            => State = "Lost focus";
+
+        [RelayCommand]
+        private void GotFocus(object? _) 
+            => State = "Got focus";
+
+        private bool CanKeyDown(object? s)
+            => s is KeyEventArgs { Key: Key.Enter or Key.Escape };
+        [RelayCommand(CanExecute = nameof(CanKeyDown))]
+        private void KeyDown(object? s) 
+            => State = $"TextChanged({(s as KeyEventArgs)?.Key})";
 
 #if !NET5_0_OR_GREATER
         /// <summary>

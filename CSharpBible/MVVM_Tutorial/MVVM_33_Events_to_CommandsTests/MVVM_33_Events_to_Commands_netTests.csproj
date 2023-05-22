@@ -18,6 +18,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_33_Events_to_Commands\MVVM_33_Events_to_Commands_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>
