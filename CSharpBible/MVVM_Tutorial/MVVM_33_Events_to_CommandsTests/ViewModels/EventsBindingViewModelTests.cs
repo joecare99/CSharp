@@ -5,7 +5,7 @@ using MVVM.ViewModel;
 namespace MVVM_33_Events_To_Commands.ViewModels.Tests
 {
     [TestClass()]
-    public class EventsBindingViewModelTests
+    public class EventsBindingViewModelTests: BaseTestViewModel
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         EventsBindingViewModel testModel;
@@ -15,6 +15,10 @@ namespace MVVM_33_Events_To_Commands.ViewModels.Tests
         public void Init()
         {
             testModel = new();
+            testModel.PropertyChanged += OnVMPropertyChanged;
+            if (testModel is INotifyPropertyChanging inpcn)
+                inpcn.PropertyChanging += OnVMPropertyChanging;
+            ClearLog();
         }
 
         [TestMethod()]
@@ -24,6 +28,23 @@ namespace MVVM_33_Events_To_Commands.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(EventsBindingViewModel));
             Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
+            Assert.AreEqual("", DebugLog);
+        }
+
+        [TestMethod]
+        public void LostFocusCommandTest()
+        {
+            testModel.LostFocusCommand.Execute(null);
+            Assert.AreEqual("Lost focus", testModel.State);
+            Assert.AreEqual("PropChg(MVVM_33_Events_To_Commands.ViewModels.EventsBindingViewModel,State)=Lost focus\r\n", DebugLog);
+        }
+
+        [TestMethod]
+        public void GotFocusCommandTest()
+        {
+            testModel.GotFocusCommand.Execute(null);
+            Assert.AreEqual("Got focus", testModel.State);
+            Assert.AreEqual("PropChg(MVVM_33_Events_To_Commands.ViewModels.EventsBindingViewModel,State)=Got focus\r\n", DebugLog);
         }
     }
 }
