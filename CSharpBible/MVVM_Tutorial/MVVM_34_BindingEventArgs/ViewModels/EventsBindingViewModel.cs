@@ -30,7 +30,7 @@ namespace MVVM_34_BindingEventArgs.ViewModels
     public class EventsBindingViewModel : BaseViewModel
     {
         #region Properties
-        private string _state;
+        private string _state="";
         public string State { get => _state; set => SetProperty(ref _state, value); }
      
         public DelegateCommand LostFocusCommand { get; set; }
@@ -46,7 +46,7 @@ namespace MVVM_34_BindingEventArgs.ViewModels
             LostFocusCommand = new((s) => State = "Lost focus");
             GotFocusCommand = new((s) => State = "Got focus");
             KeyDownCommand = new((s) => State = $"TextChanged({(s as KeyEventArgs)?.Key})",
-                (s) => s is KeyEventArgs { Key: Key.Enter or Key.Escape });
+                (s) => s is KeyEventArgs { Key: Key.Enter or Key.Escape or Key.Tab });
         }
 
 #if !NET5_0_OR_GREATER
