@@ -1,0 +1,77 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.View.Extension;
+using MVVM.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MVVM.View.Extension.Tests
+{
+    [TestClass()]
+    public class IoCTests:BaseTestViewModel
+    {
+        private Func<Type, object?> _gsOld;
+        private Func<Type, object> _grsOld;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _gsOld = IoC.GetSrv;
+            _grsOld = IoC.GetReqSrv;
+            IoC.GetSrv = GetSrv;
+            IoC.GetReqSrv = GetReqSrv;
+        }
+
+        private object GetReqSrv(Type arg)
+        {
+            DoLog($"GetReqSrv({arg})");
+            return this;
+        }
+
+        private object? GetSrv(Type arg)
+        {
+            DoLog($"GetSrv({arg})");
+            return null;
+        }
+
+        [TestCleanup]
+        public void CleanUp() {
+            IoC.GetSrv= _gsOld;
+            IoC.GetReqSrv= _grsOld;
+        }
+
+        [TestMethod()]
+        public void SetupTest()
+        {
+            Assert.ThrowsException<NotImplementedException>(() => _grsOld(typeof(object)));
+            Assert.AreEqual(null, _gsOld(typeof(object)));
+        }
+
+        [TestMethod()]
+        public void GetRequiredServiceTest()
+        {
+            Assert.AreEqual(this,IoC.GetRequiredService<Object>());
+            Assert.AreEqual("GetReqSrv(System.Object)\r\n", DebugLog);
+        }
+
+        [TestMethod()]
+        public void GetServiceTest()
+        {
+            Assert.AreEqual(null, IoC.GetService<Object>());
+            Assert.AreEqual("GetSrv(System.Object)\r\n", DebugLog);
+        }
+
+        [TestMethod()]
+        public void ProvideValueTest()
+        {
+            var ioc = new IoC
+            {
+                Type = typeof(Object)
+            };
+            Assert.AreEqual(this, ioc.ProvideValue(null));
+            Assert.AreEqual("GetReqSrv(System.Object)\r\n", DebugLog);
+        }
+    }
+}
