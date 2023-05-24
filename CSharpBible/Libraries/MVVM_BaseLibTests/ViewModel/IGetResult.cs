@@ -12,27 +12,13 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
+namespace MVVM.ViewModel.Tests
 {
-    public class GetResult : IGetResult
+    public interface IGetResult
     {
-        private Dictionary<string,Func<object[],object?>> _Dic=new();
-
-        public object? Get(object[] objects, [CallerMemberName] string proc = "")
-        {
-            if (_Dic.TryGetValue(proc, out var f))
-                return f(objects);
-            else
-                return null;
-        }
-
-        public void Register(string proc, Func<object[], object?> fesultFct)
-        {
-            _Dic.Add(proc, fesultFct);
-        }
-
+        object? Get( object[] objects, [CallerMemberName] string proc="");
+        void Register(string proc, Func<object[],object?> fesultFct);
     }
 }

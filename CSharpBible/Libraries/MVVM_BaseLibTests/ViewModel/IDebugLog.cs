@@ -11,24 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-
-namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
+namespace MVVM.ViewModel.Tests
 {
-    public class DebugLog : IDebugLog
+    public interface IDebugLog
     {
-        private string _debugLog="";
-
-        string IDebugLog.DebugLog => _debugLog;
-
-        public void ClearLog()
-        {
-            _debugLog="";
-        }
-
-        public void DoLog(string message)
-        {
-            _debugLog+=$"{message}{Environment.NewLine}";
-        }
+        void DoLog(string message);
+        void ClearLog();
+        string DebugLog {  get; }
     }
 }
