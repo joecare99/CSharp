@@ -73,14 +73,11 @@ namespace MVVM_37_TreeView.ViewModels
 
         [RelayCommand]
         private void DoSelectedItemChanged(object? prop)
-        {
-           
-            SelectedBook = ((prop as RoutedPropertyChangedEventArgs<object>)?.NewValue as CategorizedBooksViewModel)?.This;
-        }
-
-        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged(e.PropertyName); 
+        {  
+            if (prop is RoutedPropertyChangedEventArgs<object> rpcEa && rpcEa.NewValue is CategorizedBooksViewModel cbvm)
+                SelectedBook = cbvm.This;
+            else
+                SelectedBook = null;
         }
 
         #endregion
