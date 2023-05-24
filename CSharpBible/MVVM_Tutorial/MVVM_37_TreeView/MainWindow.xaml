@@ -11,6 +11,6 @@
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
-        <Frame Source="/Views/TemplateView.xaml"/>
+        <Frame Source="/Views/BooksTreeView.xaml"/>
     </Grid>
 </Window>

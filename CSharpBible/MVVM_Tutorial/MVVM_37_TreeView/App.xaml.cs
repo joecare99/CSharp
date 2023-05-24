@@ -11,7 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using MVVM_37_TreeView.Services;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using MVVM_37_TreeView.ViewModels;
+using MVVM.View.Extension;
 
 namespace MVVM_37_TreeView
 {
@@ -20,6 +24,17 @@ namespace MVVM_37_TreeView
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var sc = new ServiceCollection()
+                .AddSingleton<IBooksService, BooksService>()
+                .AddTransient<MainWindowViewModel>()
+                .AddTransient<BooksTreeViewModel>()
+                .BuildServiceProvider();
+            IoC.GetReqSrv = sc.GetRequiredService;
+            IoC.GetSrv = sc.GetService;
+            base.OnStartup(e);
+        }
     }
 }
 namespace MVVM_37_TreeView.Models { }
