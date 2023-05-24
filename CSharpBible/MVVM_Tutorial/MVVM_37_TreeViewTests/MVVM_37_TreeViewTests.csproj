@@ -1,7 +1,7 @@
 ﻿<Project>
-	<Import Project="..\MVVM_Tutorial_net.props" />
+	<Import Project="..\MVVM_Tutorial.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
@@ -17,7 +17,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\MVVM_00a_CTTemplate\MVVM_00a_CTTemplate_net.csproj" />
+		<ProjectReference Include="..\MVVM_37_TreeView\MVVM_37_TreeView.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>

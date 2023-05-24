@@ -17,7 +17,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\MVVM_00a_CTTemplate\MVVM_00a_CTTemplate_net.csproj" />
+		<ProjectReference Include="..\MVVM_37_TreeView\MVVM_37_TreeView_net.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>

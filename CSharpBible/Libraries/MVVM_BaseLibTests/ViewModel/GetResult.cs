@@ -11,15 +11,28 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_36_ComToolKtSavesWork.Models;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
+namespace MVVM.ViewModel.Tests
 {
-    public interface IGetResult
+    public class GetResult : IGetResult
     {
-        object? Get( object[] objects, [CallerMemberName] string proc="");
-        void Register(string proc, Func<object[],object?> fesultFct);
+        private Dictionary<string,Func<object[],object?>> _Dic=new();
+
+        public object? Get(object[] objects, [CallerMemberName] string proc = "")
+        {
+            if (_Dic.TryGetValue(proc, out var f))
+                return f(objects);
+            else
+                return null;
+        }
+
+        public void Register(string proc, Func<object[], object?> fesultFct)
+        {
+            _Dic.Add(proc, fesultFct);
+        }
+
     }
 }
