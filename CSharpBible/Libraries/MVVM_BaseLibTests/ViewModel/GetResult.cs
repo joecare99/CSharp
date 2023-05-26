@@ -19,8 +19,9 @@ namespace MVVM.ViewModel.Tests
 {
     public class GetResult : IGetResult
     {
-        private Dictionary<string,Func<object[],object?>> _Dic=new();
+        private readonly Dictionary<string,Func<object[],object?>> _Dic=new();
 
+        public int Count => _Dic.Count;
         public object? Get(object[] objects, [CallerMemberName] string proc = "")
         {
             if (_Dic.TryGetValue(proc, out var f))
@@ -29,9 +30,12 @@ namespace MVVM.ViewModel.Tests
                 return null;
         }
 
-        public void Register(string proc, Func<object[], object?> fesultFct)
+        public void Register(string proc, Func<object[], object?> fResultFct)
         {
-            _Dic.Add(proc, fesultFct);
+            if (_Dic.ContainsKey(proc))
+                _Dic[proc] = fResultFct;
+            else
+                _Dic.Add(proc, fResultFct);
         }
 
     }
