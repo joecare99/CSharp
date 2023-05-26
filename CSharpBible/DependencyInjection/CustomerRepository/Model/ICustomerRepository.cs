@@ -1,4 +1,6 @@
-﻿namespace CustomerRepository.Model
+﻿using System;
+
+namespace CustomerRepository.Model
 {
     public interface ICustomerRepository
     {
