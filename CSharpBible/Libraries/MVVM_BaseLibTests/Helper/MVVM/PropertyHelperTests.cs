@@ -16,7 +16,7 @@ namespace BaseLib.Helper.MVVM.Tests
     {
         private string _testProperty="";
         private int _testProperty2;
-        private Exception? exIntEx=null;
+        private Exception? exIntEx = null;
         private Exception? exCondEx = null;
         private bool? xResult=null;
         private bool xCondResult=false;

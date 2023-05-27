@@ -60,12 +60,12 @@ namespace ConsoleLib
             set
             {
                 if (_dimension == value) return;
-                Rectangle _lastdim = _dimension;
+                Rectangle _lastDim = _dimension;
                 _dimension = value;
-                HandleControlMove(_lastdim);
-                if (_lastdim.Location != _dimension.Location)
+                HandleControlMove(_lastDim);
+                if (_lastDim.Location != _dimension.Location)
                     OnMove?.Invoke(this, EventArgs.Empty);
-                if (_lastdim.Size != _dimension.Size)
+                if (_lastDim.Size != _dimension.Size)
                     OnResize?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -80,9 +80,9 @@ namespace ConsoleLib
             set
             {
                 if (_dimension.Location == value) return;
-                Rectangle _lastdim = _dimension;
+                Rectangle _lastDim = _dimension;
                 _dimension.Location = value;
-                HandleControlMove(_lastdim);
+                HandleControlMove(_lastDim);
                 OnMove?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -96,9 +96,9 @@ namespace ConsoleLib
             get => _dimension.Size; set
             {
                 if (_dimension.Size == value) return;
-                Rectangle _lastdim = _dimension;
+                Rectangle _lastDim = _dimension;
                 _dimension.Size = value;
-                HandleControlMove(_lastdim);
+                HandleControlMove(_lastDim);
                 OnResize?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -106,18 +106,18 @@ namespace ConsoleLib
         /// <summary>
         /// Handles the control move.
         /// </summary>
-        /// <param name="_lastdim">The lastdim.</param>
-        private void HandleControlMove(Rectangle _lastdim)
+        /// <param name="_lastDim">The last dimension.</param>
+        private void HandleControlMove(Rectangle _lastDim)
         {
             if (parent == null)
             {
                 // Todo: Restore From Background
-                ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                ConsoleFramework.Canvas.FillRect(_lastDim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
             }
             else
             {
-                _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                parent.ReDraw(_lastdim);
+                _lastDim.Location = Point.Add(_lastDim.Location, (Size)parent.position);
+                parent.ReDraw(_lastDim);
             }
             if (IsVisible)
             {
