@@ -168,7 +168,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
             Assert.AreEqual(sExp, DebugLog, $"Calc({name}).DebugLog");
         }
 
-        private void Enter(int iAkk, CalculatorClass fCalculatorClass)
+        private static void Enter(int iAkk, CalculatorClass fCalculatorClass)
         {
             var s = iAkk.ToString();
             fCalculatorClass.Operation(1);
