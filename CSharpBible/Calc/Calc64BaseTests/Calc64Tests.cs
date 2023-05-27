@@ -408,7 +408,7 @@ namespace Calc64Base.Tests
         }
 
         /// <summary>
-        /// Converts to calcoperationtest.
+        /// tests the conversion to calc-operation.
         /// </summary>
         /// <param name="Name">The name.</param>
         /// <param name="iOp">The i op.</param>
