@@ -61,7 +61,7 @@ namespace Calc64Base.Tests
         [DynamicData(nameof(ExecuteTestData))]
         public void ExecuteTest(string name, object[] oArgs, bool xNoFkt, bool xRes, long lExp1, long _)
         {
-            var tmco = new UnaryOperation("?1n", "Quest1Null", null);
+            var tmco = new UnaryOperation("?1n", "Quest1Null", null!);
             if (!xNoFkt)
                 tmco = new UnaryOperation("?", "Quest", (a) => a  * 2);
             if (oArgs.Length > 0 && oArgs[0] is int i) oArgs[0] = (long)i;
