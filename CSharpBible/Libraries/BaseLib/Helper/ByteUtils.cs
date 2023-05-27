@@ -25,92 +25,92 @@ namespace BaseLib.Helper
          ///<summary>
         /// return bit array with toggled SingleBit at Index
         /// </summary>
-        public static int SwitchBit(this int bitarray, int index) 
-            => bitarray ^ index.BitMask32();
+        public static int SwitchBit(this int bitArray, int index) 
+            => bitArray ^ index.BitMask32();
 
         ///<summary>
         /// return bit array with toggled SingleBit at Index
         /// </summary>
-        public static uint SwitchBit(this uint bitarray, int index)
-            => bitarray ^ ((uint)index).BitMask32();
+        public static uint SwitchBit(this uint bitArray, int index)
+            => bitArray ^ ((uint)index).BitMask32();
 
         ///<summary>
         /// return Bit array with toggled SingleBit at Index
         /// </summary>
-        public static long SwitchBit(this long bitarray, int index)
-            => bitarray ^ index.BitMask64();
+        public static long SwitchBit(this long bitArray, int index)
+            => bitArray ^ index.BitMask64();
 
          ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static int SetBit(this int bitarray, int index)
-            => bitarray | index.BitMask32();
+        public static int SetBit(this int bitArray, int index)
+            => bitArray | index.BitMask32();
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static uint SetBit(this uint bitarray, int index)
-            => bitarray | ((uint)index).BitMask32();
+        public static uint SetBit(this uint bitArray, int index)
+            => bitArray | ((uint)index).BitMask32();
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static long SetBit(this long bitarray, int index)
-            => bitarray | index.BitMask64();
+        public static long SetBit(this long bitArray, int index)
+            => bitArray | index.BitMask64();
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static int SetBit(this int bitarray, int index, bool xVal)
-            => xVal ? bitarray.SetBit(index) : bitarray.ClearBit(index);
+        public static int SetBit(this int bitArray, int index, bool xVal)
+            => xVal ? bitArray.SetBit(index) : bitArray.ClearBit(index);
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static uint SetBit(this uint bitarray, int index, bool xVal)
-            => xVal ? bitarray.SetBit(index) : bitarray.ClearBit(index);
+        public static uint SetBit(this uint bitArray, int index, bool xVal)
+            => xVal ? bitArray.SetBit(index) : bitArray.ClearBit(index);
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static long SetBit(this long bitarray, int index, bool xVal)
-            => xVal ? bitarray.SetBit(index) : bitarray.ClearBit(index);
+        public static long SetBit(this long bitArray, int index, bool xVal)
+            => xVal ? bitArray.SetBit(index) : bitArray.ClearBit(index);
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static bool GetBit(this int bitarray, int index)
-            => (bitarray & index.BitMask32())!=0;
+        public static bool GetBit(this int bitArray, int index)
+            => (bitArray & index.BitMask32())!=0;
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static bool GetBit(this uint bitarray, int index)
-            => (bitarray & ((uint)index).BitMask32())!=0;
+        public static bool GetBit(this uint bitArray, int index)
+            => (bitArray & ((uint)index).BitMask32())!=0;
 
         ///<summary>
         /// return bit array with set SingleBit at Index
         /// </summary>
-        public static bool GetBit(this long bitarray, int index)
-            => (bitarray & index.BitMask64()) != 0;
+        public static bool GetBit(this long bitArray, int index)
+            => (bitArray & index.BitMask64()) != 0;
 
         ///<summary>
         /// return bit array with cleared SingleBit at Index
         /// </summary>
-        public static int ClearBit(this int bitarray, int index)
-            => bitarray & ~index.BitMask32();
+        public static int ClearBit(this int bitArray, int index)
+            => bitArray & ~index.BitMask32();
 
         ///<summary>
         /// return bit array with cleared SingleBit at Index
         /// </summary>
-        public static uint ClearBit(this uint bitarray, int index)
-            => bitarray & ~((uint)index).BitMask32();
+        public static uint ClearBit(this uint bitArray, int index)
+            => bitArray & ~((uint)index).BitMask32();
 
         ///<summary>
         /// return bit array with cleared SingleBit at Index
         /// </summary>
-        public static long ClearBit(this long bitarray, int index)
-            => bitarray & ~index.BitMask64();
+        public static long ClearBit(this long bitArray, int index)
+            => bitArray & ~index.BitMask64();
 
         /// <summary>
         ///  returns int Bitmask with 32Bits at bit [Bitnumber] is 1 rest 0 

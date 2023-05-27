@@ -50,7 +50,7 @@ namespace Calc32WPF
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        private void onAnimTimer(object sender, ElapsedEventArgs e)
+        private void onAnimTimer(object? sender, ElapsedEventArgs e)
         {
             nTime = DateTime.Now.Ticks / 1000;
         }

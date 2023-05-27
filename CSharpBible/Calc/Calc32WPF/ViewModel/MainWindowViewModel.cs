@@ -36,14 +36,14 @@ namespace Calc32WPF.ViewModel
 
         /// <summary>
         /// Gets or sets the akkumulator.
-        /// <see cref="CalculatorClass.Akkumulator" />
+        /// <see cref="CalculatorClass.Accumulator" />
         /// </summary>
         /// <value>The akkumulator.</value>
         public int Akkumulator
         {
-            get => calculatorClass.Akkumulator; set
+            get => calculatorClass.Accumulator; set
             {
-                calculatorClass.Akkumulator = value;
+                calculatorClass.Accumulator = value;
                 RaisePropertyChanged();
             }
         }
@@ -96,8 +96,8 @@ namespace Calc32WPF.ViewModel
             });
             btnBackspace = new DelegateCommand(
                 (o) => { calculatorClass.BackSpace(); },
-                (o)=>calculatorClass.Akkumulator!=0);
-            AddPropertyDependency(nameof(btnBackspace), nameof(calculatorClass.Akkumulator));
+                (o)=>calculatorClass.Accumulator!=0);
+            AddPropertyDependency(nameof(btnBackspace), nameof(calculatorClass.Accumulator));
         }
 
         /// <summary>

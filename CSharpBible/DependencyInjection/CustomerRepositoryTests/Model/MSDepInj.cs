@@ -94,5 +94,32 @@ namespace CustomerRepositoryTests.Model
             log?.Get().First().Time
                  .Should().Be(clock?.Now);
         }
+
+        [TestMethod]
+        public void PutTest()
+        {
+            var repository =
+                container.GetRequiredService<ICustomerRepository>();
+            CCustomer customer = new();
+
+
+            Guid g;
+            Assert.IsNotNull(g = repository.Put(customer));
+            Assert.AreEqual(customer, repository.Get(g));
+        }
+
+        [TestMethod]
+        public void CountTest()
+        {
+            var repository =
+                container.GetRequiredService<ICustomerRepository>();
+
+            Assert.AreEqual(0, repository.Count);
+
+            CCustomer customer = new();
+
+            repository.Put(customer);
+            Assert.AreEqual(1, repository.Count);
+        }
     }
 }

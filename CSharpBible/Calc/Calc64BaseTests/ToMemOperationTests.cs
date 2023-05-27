@@ -58,7 +58,7 @@ namespace Calc64Base.Tests
         [DynamicData(nameof(ExecuteTestData))]
         public void ExecuteTest(string name, object[] oArgs, bool xNoFkt,bool xRes,long lExp1,long lExp2)
         {
-            var tmco = new ToMemOperation("?4n", "Quest4Null",null);
+            var tmco = new ToMemOperation("?4n", "Quest4Null",null!);
             if (!xNoFkt)
                 tmco = new ToMemOperation("?4", "Quest4",(a, m) => (a ^ m) - 1);
             if (oArgs.Length > 0 && oArgs[0] is int i) oArgs[0] = (long)i;

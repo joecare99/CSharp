@@ -38,7 +38,7 @@ namespace CustomerRepositoryTests.Model
         }
 
         [TestMethod]
-        public void RepLogsOnMultibleInvGet()
+        public void RepLogsOnMultipleInvGet()
         {
             var clock = new CStaticClock();
             var log = new CLog();
@@ -69,6 +69,37 @@ namespace CustomerRepositoryTests.Model
 
             log.Get().First().Time
                 .Should().Be(clock.Now);
+        }
+
+        [TestMethod]
+        public void PutTest()
+        {
+            var clock = new CStaticClock();
+            var log = new CLog();
+
+            ICustomerRepository repository = new CustomerRepository5(clock, log);
+            CCustomer customer = new();
+
+
+            Guid g;
+            Assert.IsNotNull(g = repository.Put(customer));
+            Assert.AreEqual(customer, repository.Get(g));
+        }
+
+        [TestMethod]
+        public void CountTest()
+        {
+            var clock = new CStaticClock();
+            var log = new CLog();
+
+            ICustomerRepository repository = new CustomerRepository5(clock, log);
+
+            Assert.AreEqual(0, repository.Count);
+
+            CCustomer customer = new();
+
+            repository.Put(customer);
+            Assert.AreEqual(1, repository.Count);
         }
     }
 }

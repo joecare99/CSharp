@@ -2,7 +2,7 @@
 	<Import Project="..\Calc.props" />
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net462-windows;net472-windows;net481-windows</TargetFrameworks>
+		<TargetFrameworks>net462-windows;net472-windows;net481-windows;net48-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -24,8 +24,11 @@
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Include="..\Calc32\NonVisual\CalculatorClass.cs" Link="NonVisual\CalulatorClass.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
 		<ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
-		<ProjectReference Include="..\Calc32\Calc32.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">

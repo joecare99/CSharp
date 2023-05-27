@@ -11,7 +11,7 @@ namespace Calc64Base.Tests
     [TestClass()]
     public class Calc64ModelTests
     {
-        Calc64Model testModel = null;
+        Calc64Model testModel = null!;
         private string DebugLog = "";
 
         [TestInitialize]
@@ -23,12 +23,12 @@ namespace Calc64Base.Tests
             DebugLog = "";
         }
 
-        private void OnCalcOpErr(object sender, Exception e)
+        private void OnCalcOpErr(object? sender, Exception e)
         {
             throw new NotImplementedException();
         }
 
-        private void OnCalcOpChg(object sender, (string prop, object oldVal, object newVal) e)
+        private void OnCalcOpChg(object? sender, (string prop, object? oldVal, object? newVal) e)
         {
             DoLog($"COpChg({sender},{e.prop},{e.oldVal} => {e.newVal})");
         }
@@ -120,7 +120,7 @@ COpChg(Calc64Base.Calc64Model,Accumulator,6474 => 12948)
                 else
                     testModel.Button(i, iBase.Value);
             }
-            Assert.AreEqual(lExp,testModel.Accumulator);
+            Assert.AreEqual(lExp,testModel.Accumulator,name);
             Assert.AreEqual(asExp[0],DebugLog);
         }
 

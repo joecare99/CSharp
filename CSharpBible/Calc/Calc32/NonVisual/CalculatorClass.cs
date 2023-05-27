@@ -90,9 +90,9 @@ namespace Calc32.NonVisual
         #region private property
         // Fields
         /// <summary>
-        /// The n akkumulator
+        /// The accumulator
         /// </summary>
-        private int nAkkumulator; // Editorfeld
+        private int nAccumulator; // Editorfeld
         /// <summary>
         /// The n mode
         /// </summary>
@@ -121,13 +121,13 @@ namespace Calc32.NonVisual
 
         // Properties
         /// <summary>
-        /// Gets or sets the akkumulator.
+        /// Gets or sets the accumulator.
         /// </summary>
-        /// <value>The akkumulator.</value>
-        public int Akkumulator
+        /// <value>The accumulator.</value>
+        public int Accumulator
         {
-            get => nAkkumulator;
-            set => value.SetProperty(ref nAkkumulator, FireChangeEvent);
+            get => nAccumulator;
+            set => value.SetProperty(ref nAccumulator, FireChangeEvent);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Calc32.NonVisual
         /// </summary>
         public CalculatorClass()
         {
-            nAkkumulator = 0;
+            nAccumulator = 0;
             nMode = 0;
             OnChange = null;
         }
@@ -177,15 +177,15 @@ namespace Calc32.NonVisual
         {
             if (bEditMode)
             {
-                if (nAkkumulator < int.MaxValue / 10)
+                if (nAccumulator < int.MaxValue / 10)
                 {
-                    Akkumulator = nAkkumulator * 10 + aNumber;
+                    Accumulator = nAccumulator * 10 + aNumber;
                 }
             }
             else
             {
                 bEditMode = true;
-                Akkumulator = aNumber;
+                Accumulator = aNumber;
             }
         }
 
@@ -198,16 +198,16 @@ namespace Calc32.NonVisual
             if ((v > 0) && (v <= (int)eOpMode.Negate))
             {
                 bEditMode &= (v ==(int)eOpMode.Negate);
-                Akkumulator = nMode switch
+                Accumulator = nMode switch
                 {
-                    eOpMode.Plus => nMemory + nAkkumulator,
-                    eOpMode.Minus => nMemory - nAkkumulator,
-                    eOpMode.Multiply => nMemory * nAkkumulator,
-                    eOpMode.Divide => nMemory / nAkkumulator,
-                    eOpMode.BinaryAnd => nMemory & nAkkumulator,
-                    eOpMode.BinaryOr => nMemory | nAkkumulator,
-                    eOpMode.BinaryXor => nMemory ^ nAkkumulator,
-                    _ => nAkkumulator
+                    eOpMode.Plus => nMemory + nAccumulator,
+                    eOpMode.Minus => nMemory - nAccumulator,
+                    eOpMode.Multiply => nMemory * nAccumulator,
+                    eOpMode.Divide => nMemory / nAccumulator,
+                    eOpMode.BinaryAnd => nMemory & nAccumulator,
+                    eOpMode.BinaryOr => nMemory | nAccumulator,
+                    eOpMode.BinaryXor => nMemory ^ nAccumulator,
+                    _ => nAccumulator
                 };
 
                 if ((eOpMode)v == eOpMode.CalcResult)
@@ -217,16 +217,16 @@ namespace Calc32.NonVisual
                 }
                 else if ((eOpMode) v == eOpMode.BinaryNot)
                 {
-                    Akkumulator = ~nAkkumulator;
+                    Accumulator = ~nAccumulator;
                 }
                 else if ((eOpMode)v == eOpMode.Negate)
                 {
-                    Akkumulator = -nAkkumulator;
+                    Accumulator = -nAccumulator;
                 }
                 else
                 {
                     nMode = (eOpMode)v;
-                    Memory = nAkkumulator;
+                    Memory = nAccumulator;
                 }
 
             }
@@ -236,7 +236,7 @@ namespace Calc32.NonVisual
         /// Backs the space.
         /// </summary>
         public void BackSpace() 
-            => Akkumulator = bEditMode ? nAkkumulator / 10 : 0;
+            => Accumulator = bEditMode ? nAccumulator / 10 : 0;
         #endregion
     }
 }
