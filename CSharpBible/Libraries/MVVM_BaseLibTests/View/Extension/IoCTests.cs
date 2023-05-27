@@ -12,18 +12,8 @@ namespace MVVM.View.Extension.Tests
     [TestClass()]
     public class IoCTests:BaseTestViewModel
     {
-        private Func<Type, object?> _gsOld;
-        private Func<Type, object> _grsOld;
-
-        [TestInitialize]
-        public void Init()
-        {
-            _gsOld = IoC.GetSrv;
-            _grsOld = IoC.GetReqSrv;
-            IoC.GetSrv = GetSrv;
-            IoC.GetReqSrv = GetReqSrv;
-        }
-
+        private Func<Type, object?>? _gsOld;
+        private Func<Type, object>? _grsOld;
         private object GetReqSrv(Type arg)
         {
             DoLog($"GetReqSrv({arg})");
@@ -36,17 +26,26 @@ namespace MVVM.View.Extension.Tests
             return null;
         }
 
+        [TestInitialize]
+        public void Init()
+        {
+            _gsOld = IoC.GetSrv;
+            _grsOld = IoC.GetReqSrv;
+            IoC.GetSrv = GetSrv;
+            IoC.GetReqSrv = GetReqSrv;
+        }
+
         [TestCleanup]
         public void CleanUp() {
-            IoC.GetSrv= _gsOld;
-            IoC.GetReqSrv= _grsOld;
+            IoC.GetSrv= _gsOld!;
+            IoC.GetReqSrv= _grsOld!;
         }
 
         [TestMethod()]
         public void SetupTest()
         {
-            Assert.ThrowsException<NotImplementedException>(() => _grsOld(typeof(object)));
-            Assert.AreEqual(null, _gsOld(typeof(object)));
+            Assert.ThrowsException<NotImplementedException>(() => _grsOld?.Invoke(typeof(object)));
+            Assert.AreEqual(null, _gsOld?.Invoke(typeof(object)));
         }
 
         [TestMethod()]
@@ -70,7 +69,7 @@ namespace MVVM.View.Extension.Tests
             {
                 Type = typeof(Object)
             };
-            Assert.AreEqual(this, ioc.ProvideValue(null));
+            Assert.AreEqual(this, ioc.ProvideValue(null!));
             Assert.AreEqual("GetReqSrv(System.Object)\r\n", DebugLog);
         }
     }
