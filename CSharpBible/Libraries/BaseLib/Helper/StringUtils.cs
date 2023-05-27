@@ -33,7 +33,7 @@ namespace BaseLib.Helper
         {
             try
             {
-                return aStr
+                return aStr!
                     .Replace("\\", "\\\\")
                     .Replace("\t", "\\t")
                     .Replace("\r", "\\r")
