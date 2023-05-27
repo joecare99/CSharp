@@ -26,9 +26,9 @@ namespace Calc32WPF
     public partial class MainWindow : Window
     {
         /// <summary>
-        /// The TMR anim
+        /// The animation timer
         /// </summary>
-        Timer tmrAnim = new Timer();
+        readonly Timer tmrAnimation = new();
         /// <summary>
         /// The time
         /// </summary>
@@ -41,16 +41,16 @@ namespace Calc32WPF
         {
             InitializeComponent();
           
-            tmrAnim.Interval = 100;
-            tmrAnim.Elapsed += new ElapsedEventHandler(onAnimTimer);
+            tmrAnimation.Interval = 100;
+            tmrAnimation.Elapsed += new ElapsedEventHandler(onAnimationTimer);
         }
 
         /// <summary>
-        /// Ons the anim timer.
+        /// On animation timer.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        private void onAnimTimer(object? sender, ElapsedEventArgs e)
+        private void onAnimationTimer(object? sender, ElapsedEventArgs e)
         {
             nTime = DateTime.Now.Ticks / 1000;
         }
@@ -62,7 +62,7 @@ namespace Calc32WPF
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void frmCalc32Main_Initialized(object sender, EventArgs e)
         {
-            tmrAnim.Start();
+            tmrAnimation.Start();
         }
 
     }
