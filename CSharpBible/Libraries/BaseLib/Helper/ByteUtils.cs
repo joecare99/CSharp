@@ -113,7 +113,7 @@ namespace BaseLib.Helper
             => bitArray & ~index.BitMask64();
 
         /// <summary>
-        ///  returns int Bitmask with 32Bits at bit [Bitnumber] is 1 rest 0 
+        ///  returns int Bitmask with 32Bits at bit [Bit] is 1 rest 0 
         /// </summary>
         /// <param name="bit"></param>
         /// <returns></returns>
@@ -121,7 +121,7 @@ namespace BaseLib.Helper
             => bit < 32 && bit >= 0 ? 0x01 << bit : throw new ArgumentException("out of range");
 
         /// <summary>
-        /// returns unsinged Bitmask with 32Bits at BitNumber Bitsmaks is 1 rest 0
+        /// returns unsinged Bitmask with 32Bits at BitNumber Bit is 1 rest 0
         /// </summary>
         /// <param name="bit"></param>
         /// <returns></returns>
@@ -129,7 +129,7 @@ namespace BaseLib.Helper
             => bit < 32 ? (uint)(0x01 << (int)bit) : throw new ArgumentException("out of range");
 
         /// <summary>
-        /// returns long Bitmask with 64Bits at BitNumber Bitsmaks is 1 rest 0
+        /// returns long Bitmask with 64Bits at BitNumber Bit is 1 rest 0
         /// </summary>
         /// <param name="bit"></param>
         /// <returns></returns>
