@@ -87,7 +87,7 @@ namespace Calc32Cons
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private static void App_CanvasResize(object sender, Point e)
+        private static void App_CanvasResize(object? sender, Point e)
         {
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
@@ -99,7 +99,7 @@ namespace Calc32Cons
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
-        private static void App_MouseMove(object sender, MouseEventArgs e)
+        private static void App_MouseMove(object? sender, MouseEventArgs e)
         {
             Mouse.Set(Point.Subtract(e.Location, (Size?)Mouse.parent?.position??Size.Empty));
         }
