@@ -465,7 +465,7 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Mouses the enter.
+        /// Mouse enters the Control.
         /// </summary>
         /// <param name="M">The m.</param>
         public virtual void MouseEnter(Point M)
@@ -478,7 +478,7 @@ namespace ConsoleLib
             }
         }
         /// <summary>
-        /// Mouses the leave.
+        /// Mouse leaves the control.
         /// </summary>
         /// <param name="M">The m.</param>
         public virtual void MouseLeave(Point M)
@@ -492,7 +492,7 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Mouses the move.
+        /// Mouse move in the control.
         /// </summary>
         /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         /// <param name="lastMousePos">The last mouse position.</param>
@@ -514,7 +514,7 @@ namespace ConsoleLib
             }
         }
         /// <summary>
-        /// Mouses the click.
+        /// Mouse clicks the control.
         /// </summary>
         /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         public virtual void MouseClick(MouseEventArgs M)

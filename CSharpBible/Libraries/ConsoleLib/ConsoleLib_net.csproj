@@ -2,7 +2,6 @@
 	<Import Project="..\Libraries_net.props"/>
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
-		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
