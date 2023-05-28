@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_31_Validation1.View;
+using MVVM_31_Validation2.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MVVM_31_Validation1.View.Tests
+namespace MVVM_31_Validation2.View.Tests
 {
     [TestClass()]
     public class ValidationPageTests
