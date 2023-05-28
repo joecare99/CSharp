@@ -1,6 +1,5 @@
 ﻿<Project>
 	<Import Project="..\MVVM_Tutorial_net.props" />
-
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>

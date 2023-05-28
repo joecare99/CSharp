@@ -20,7 +20,7 @@ namespace MVVM_31_Validation2.ViewModels
 
         public bool HasErrors => VHelper.HasErrors;
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public ValidationPageViewModel()
         {
@@ -30,7 +30,7 @@ namespace MVVM_31_Validation2.ViewModels
                 ErrorsChanged?.Invoke(this, e);
             };
         }
-        public IEnumerable GetErrors(string propertyName) 
+        public IEnumerable GetErrors(string? propertyName) 
             => VHelper.GetErrors(propertyName);
 
         public bool TestUsername(string arg1,[CallerMemberName] string property="")

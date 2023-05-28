@@ -35,6 +35,7 @@ namespace MVVM_31_Validation1.ViewModels
 
         }
 
+#if !NET5_0_OR_GREATER
         /// <summary>
         /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
@@ -42,6 +43,7 @@ namespace MVVM_31_Validation1.ViewModels
         {
             return;
         }
+#endif
 
     }
 }
