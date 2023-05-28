@@ -26,49 +26,20 @@ namespace MVVM.ViewModel
     /// <seealso cref="ICommand" />
     public class DelegateCommand : DelegateCommand<object?>
     {
-        /*        /// <summary>
-                /// The execute
-                /// </summary>
-                readonly Action<object?> execute;
-                /// <summary>
-                /// The can execute
-                /// </summary>
-                readonly Predicate<object?>? canExecute;
-
-          */      /// <summary>
-                  /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
-                  /// </summary>
-                  /// <param name="execute">The execute.</param>
-                  /// <param name="canExecute">The can execute.</param>
-        public DelegateCommand(Action<object?> execute, Predicate<object?>? canExecute) : base(execute, canExecute)
-        { }        /// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
         /// </summary>
         /// <param name="execute">The execute.</param>
-        public DelegateCommand(Action<object?> execute) : base( execute) { }
-        /*
-        /// <summary>
-        /// Tritt ein, wenn Änderungen auftreten, die sich auf die Ausführung des Befehls auswirken.
-        /// </summary>
-        public event EventHandler? CanExecuteChanged;
+        /// <param name="canExecute">The can execute.</param>
+        public DelegateCommand(Action<object?> execute, Predicate<object?>? canExecute) : base(execute, canExecute)
+        { }
 
         /// <summary>
-        /// Definiert die Methode, die bestimmt, ob der Befehl im aktuellen Zustand ausgeführt werden kann.
+        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
         /// </summary>
-        /// <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
-        /// <returns><see langword="true" />, wenn der Befehl ausgeführt werden kann, andernfalls <see langword="false" />.</returns>
-        public bool CanExecute(object? parameter) => this.canExecute?.Invoke(parameter) ?? true;
-        /// <summary>
-        /// Definiert die Methode, die aufgerufen wird, wenn der Befehl aufgerufen wird.
-        /// </summary>
-        /// <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
-        public void Execute(object? parameter) => this.execute.Invoke(parameter);
-
-        /// <summary>
-        /// Notifies that the <see cref="M:System.Windows.Input.ICommand.CanExecute(System.Object)" /> property has changed.
-        /// </summary>
-        public void NotifyCanExecuteChanged() => this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-  */  }
+        /// <param name="execute">The execute.</param>
+        public DelegateCommand(Action<object?> execute) : base(execute) { }
+    }
 
     /// <summary>
     /// Class DelegateCommand.
@@ -78,7 +49,8 @@ namespace MVVM.ViewModel
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="IRelayCommand" />
     /// <seealso cref="ICommand" />
-    public class DelegateCommand<T> : IRelayCommand, ICommand {
+    public class DelegateCommand<T> : IRelayCommand, ICommand
+    {
         /// <summary>
         /// The execute
         /// </summary>
@@ -99,7 +71,7 @@ namespace MVVM.ViewModel
         /// Initializes a new instance of the <see cref="DelegateCommand{T}"/> class.
         /// </summary>
         /// <param name="execute">The execute.</param>
-        public DelegateCommand(Action<T?> execute) : this( execute, null) { }
+        public DelegateCommand(Action<T?> execute) : this(execute, null) { }
 
         /// <summary>
         /// Tritt ein, wenn Änderungen auftreten, die sich auf die Ausführung des Befehls auswirken.
@@ -111,19 +83,19 @@ namespace MVVM.ViewModel
         /// </summary>
         /// <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
         /// <returns><see langword="true" />, wenn der Befehl ausgeführt werden kann, andernfalls <see langword="false" />.</returns>
-        public bool CanExecute(object? parameter) 
+        public bool CanExecute(object? parameter)
             => this.canExecute?.Invoke((T?)parameter) ?? true;
         /// <summary>
         /// Definiert die Methode, die aufgerufen wird, wenn der Befehl aufgerufen wird.
         /// </summary>
         /// <param name="parameter">Vom Befehl verwendete Daten.  Wenn der Befehl keine Datenübergabe erfordert, kann das Objekt auf <see langword="null" /> festgelegt werden.</param>
-        public void Execute(object? parameter) 
+        public void Execute(object? parameter)
             => this.execute.Invoke((T?)parameter);
 
         /// <summary>
         /// Notifies that the <see cref="M:System.Windows.Input.ICommand.CanExecute(System.Object)" /> property has changed.
         /// </summary>
         public void NotifyCanExecuteChanged() => this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-	}
+    }
 
 }
