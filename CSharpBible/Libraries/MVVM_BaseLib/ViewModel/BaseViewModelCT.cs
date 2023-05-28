@@ -26,7 +26,7 @@ namespace MVVM.ViewModel
     /// Implements the <see cref="ObservableObject" />
     /// </summary>
     /// <seealso cref="ObservableObject" />
-    public abstract class BaseViewModelCT : ObservableObject , IPropertyBinding
+    public abstract class BaseViewModelCT : ObservableValidator , IPropertyBinding
     {
         #region Properties
         /// <summary>
