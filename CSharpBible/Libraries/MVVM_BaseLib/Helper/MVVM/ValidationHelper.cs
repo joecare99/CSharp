@@ -18,7 +18,7 @@ namespace MVVM_BaseLib.Helper.MVVM
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public IEnumerable GetErrors(string? propertyName)
-            => _errorList.TryGetValue(propertyName ??"", out var l) ? l : Array.Empty<string>();
+            => _errorList.TryGetValue(propertyName ??"", out var l) ? l : new List<string>();
 
         public void AddError(string property, string message)
         {
