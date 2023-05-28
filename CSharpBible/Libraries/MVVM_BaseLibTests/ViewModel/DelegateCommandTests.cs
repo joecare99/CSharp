@@ -12,9 +12,9 @@ namespace MVVM.ViewModel.Tests
     [TestClass()]
     public class DelegateCommandTests : BaseTestViewModel
     {
-        DelegateCommand _testCommand1;
-        DelegateCommand _testCommand3;
-        DelegateCommand<TypeCode?> _testCommand2;
+        DelegateCommand _testCommand1 =null!;
+        DelegateCommand _testCommand3 = null!;
+        DelegateCommand<TypeCode?> _testCommand2 = null!;
 
         [TestInitialize()]
         public void Init()
@@ -29,10 +29,8 @@ namespace MVVM.ViewModel.Tests
 //            _testCommand3.CanExecuteChanged += OnCanExecuteChanged;
         }
 
-        private void OnCanExecuteChanged(object sender, EventArgs e)
-        {
-            DoLog($"CanExecuteChanged({sender})");
-        }
+        private void OnCanExecuteChanged(object? sender, EventArgs e) 
+            => DoLog($"CanExecuteChanged({sender})");
 
         private bool canCmd2(TypeCode? o)
             => o is not null and not (TypeCode.Object or TypeCode.Empty or TypeCode.DBNull);
