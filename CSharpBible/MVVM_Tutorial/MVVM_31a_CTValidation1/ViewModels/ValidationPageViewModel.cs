@@ -1,25 +1,27 @@
-﻿using MVVM.ViewModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MVVM_31a_CTValidation1.ViewModels
 {
-    public class ValidationPageViewModel : BaseViewModel
+    
+    public partial class ValidationPageViewModel : BaseViewModelCT
     {
-        private string _userName="";
+        [ObservableProperty]
+        private string _userName=".";
 
-        public string UserName { get => _userName; set => SetProperty(ref _userName, value, TestUsername); }
-
-        public bool TestUsername( string arg1)
+        partial void OnUserNameChanging(string? oldValue, string newValue)
         {
-            if (string.IsNullOrEmpty(arg1))
-               throw new ArgumentNullException("Username may not be empty");
-            if (arg1.Length<6)
+            if (string.IsNullOrEmpty(newValue))
+                throw new ArgumentNullException("Username may not be empty");
+            if (newValue.Length < 6)
                 throw new ArgumentException("Username must have min. 6 Chars");
-            return true;
         }
     }
 }

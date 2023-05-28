@@ -25,7 +25,7 @@ namespace MVVM_31a_CTValidation1.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModelCT
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
