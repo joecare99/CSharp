@@ -1,6 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace MVVM.ViewModel
@@ -25,5 +26,7 @@ namespace MVVM.ViewModel
         protected virtual void OnVMPropertyChanging(object? sender, PropertyChangingEventArgs e)
             => DoLog($"PropChgn({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
 
+        protected virtual void OnVMErrorsChanged(object? sender, DataErrorsChangedEventArgs e) 
+            => DoLog($"ErrorsChanged({sender},{e.PropertyName})={string.Join(",", (List<string>)(sender as INotifyDataErrorInfo)!.GetErrors(e.PropertyName))}");
     }
 }
