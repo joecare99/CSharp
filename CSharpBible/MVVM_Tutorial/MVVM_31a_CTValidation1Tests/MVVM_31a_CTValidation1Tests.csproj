@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
     <ProjectReference Include="..\MVVM_31a_CTValidation1\MVVM_31a_CTValidation1.csproj" />
   </ItemGroup>
 

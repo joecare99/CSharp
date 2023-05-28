@@ -20,7 +20,7 @@ namespace MVVM_31a_CTValidation1.ViewModels.Tests
         {
             Assert.IsNotNull(testModel);
             Assert.IsInstanceOfType(testModel, typeof(MainWindowViewModel));
-            Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
+            Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
         }
     }
