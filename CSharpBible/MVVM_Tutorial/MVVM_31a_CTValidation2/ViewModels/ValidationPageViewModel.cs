@@ -1,22 +1,19 @@
-﻿using MVVM.ViewModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MVVM.ViewModel;
 using MVVM_BaseLib.Helper.MVVM;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_31a_CTValidation2.ViewModels
 {
-    public class ValidationPageViewModel : BaseViewModel, INotifyDataErrorInfo
+    public partial class ValidationPageViewModel : BaseViewModelCT, INotifyDataErrorInfo
     {
-        private string _userName = "";
+        [ObservableProperty]
+        private string _userName = ".";
 
         public ValidationHelper VHelper { get; } =new ValidationHelper();
-        public string UserName { get => _userName; set => SetProperty(ref _userName, value,validate:s=> TestUsername(s),null); }
 
         public bool HasErrors => VHelper.HasErrors;
 
@@ -26,24 +23,21 @@ namespace MVVM_31a_CTValidation2.ViewModels
         {
             VHelper.ErrorsChanged += (_,e)=>
             {
-                RaisePropertyChanged(nameof(VHelper));
+                OnPropertyChanged(nameof(VHelper));
                 ErrorsChanged?.Invoke(this, e);
             };
         }
         public IEnumerable GetErrors(string? propertyName) 
             => VHelper.GetErrors(propertyName);
 
-        public bool TestUsername(string arg1,[CallerMemberName] string property="")
+        partial void OnUserNameChanging(string value)
         {
+            var property = nameof(UserName);
             VHelper.ClearErrors(property);
-            if (string.IsNullOrEmpty(arg1))
+            if (string.IsNullOrEmpty(value))
                 VHelper.AddError(property, "Username may not be empty");
-            else if (arg1.Length < 6)
+            else if (value.Length < 6)
                 VHelper.AddError(property, "Username must have min. 6 Chars");
-//else 
-               return true;
- //           return false;
         }
-
     }
 }
