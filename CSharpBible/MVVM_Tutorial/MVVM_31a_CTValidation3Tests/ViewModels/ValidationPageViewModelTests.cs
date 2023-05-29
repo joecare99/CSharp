@@ -1,12 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_31a_CTValidation3.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using MVVM.ViewModel;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVVM_31a_CTValidation3.ViewModels.Tests
 {
@@ -39,24 +35,21 @@ namespace MVVM_31a_CTValidation3.ViewModels.Tests
         }
 
         [DataTestMethod()]
-        [DataRow("", 1, false, new[] { @"PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=
-PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=Username may not be empty
-PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+        [DataRow("", 1, false, new[] { @"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,HasErrors)=True
+ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=UserName may not be empty
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=UserName may not be empty
 " })]
-        [DataRow("DS", 2, false, new[] { @"PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=
-PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=Username must have min. 6 Chars
-PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+        [DataRow("DS", 2, false, new[] { @"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,HasErrors)=True
+ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=UserName must have min. 6 Chars
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=DS
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=UserName must have min. 6 Chars
 " })]
-        [DataRow("DS1234", 0, true, new[] { @"PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=
-PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+        [DataRow("DS1234", 0, true, new[] { @"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=DS1234
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=
 " })]
         public void TestUsernameTest(string sVal, int _, bool xExp, string[] asExp)
         {
@@ -71,11 +64,11 @@ PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=DS12
             testModel.ErrorsChanged -= OnVMErrorsChanged;
             testModel.UserName = "DS12";
             Assert.AreEqual(true, testModel.HasErrors);
-            Assert.AreEqual("Username must have min. 6 Chars", string.Join(",", (List<string>)testModel.GetErrors(nameof(testModel.UserName))));
-            Assert.AreEqual(@"PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,VHelper)=MVVM_BaseLib.Helper.MVVM.ValidationHelper
-PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+            Assert.AreEqual("UserName must have min. 6 Chars", string.Join(",", ((List<ValidationResult>)testModel.GetErrors(nameof(testModel.UserName))).ConvertAll(o=>o.ErrorMessage)));
+            Assert.AreEqual(@"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,HasErrors)=True
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=DS12
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=UserName must have min. 6 Chars
 ", DebugLog);
         }
     }
