@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
-using MVVM_BaseLib.Helper.MVVM;
+using BaseLib.Helper.MVVM;
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace MVVM_31a_CTValidation2.ViewModels
 {
@@ -15,9 +14,9 @@ namespace MVVM_31a_CTValidation2.ViewModels
 
         public ValidationHelper VHelper { get; } =new ValidationHelper();
 
-        public bool HasErrors => VHelper.HasErrors;
+        public new bool HasErrors => VHelper.HasErrors;
 
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public new event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public ValidationPageViewModel()
         {
@@ -27,7 +26,7 @@ namespace MVVM_31a_CTValidation2.ViewModels
                 ErrorsChanged?.Invoke(this, e);
             };
         }
-        public IEnumerable GetErrors(string? propertyName) 
+        public new IEnumerable GetErrors(string? propertyName) 
             => VHelper.GetErrors(propertyName);
 
         partial void OnUserNameChanging(string value)
