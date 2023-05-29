@@ -18,7 +18,7 @@ namespace ConsoleDisplay.View
     /// <summary>
     /// Class MyConsoleBase.
     /// </summary>
-    public abstract class MyConsoleBase
+    public abstract class MyConsoleBase : IConsole
     {
         /// <summary>
         /// Gets or sets the color of the foreground.

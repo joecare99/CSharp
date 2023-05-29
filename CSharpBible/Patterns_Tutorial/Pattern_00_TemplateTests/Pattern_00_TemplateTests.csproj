@@ -1,7 +1,7 @@
 ﻿<Project>
-	<Import Project="..\MVVM_Tutorial.props" />
+	<Import Project="..\Pattern_Tutorial.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
@@ -18,6 +18,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Pattern_00_Template\Pattern_00_Template.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>

@@ -157,18 +157,13 @@ namespace BaseLib.Helper.Tests
         private bool ValidateString(string arg1 = "",[CallerMemberName] string propertyName = "")
         {
             DebugResult += $"Validate: {propertyName}({arg1}), React:{valReact}{Environment.NewLine}";
-            switch (valReact)
+            return valReact switch
             {
-                case eValidReact.OK:
-                    return true;
-                case eValidReact.GeneralException:
-                    throw new Exception("A general exception occurred");
-                case eValidReact.ArgumentException:
-                    throw new ArgumentException($"Argument ({arg1}) not valid!");
-                default:
-                    return false;
-
-            }
+                eValidReact.OK => true,
+                eValidReact.GeneralException => throw new Exception("A general exception occurred"),
+                eValidReact.ArgumentException => throw new ArgumentException($"Argument ({arg1}) not valid!"),
+                _ => false,
+            };
         }
         public void SetPropertyTest(string name, int iTs, string sVal, eValidReact eReact, string sExp, string sDebExp, Func<string> Setter)
         {
