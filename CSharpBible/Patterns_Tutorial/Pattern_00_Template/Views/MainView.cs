@@ -1,13 +1,14 @@
-﻿using ConsoleDisplay.View;
-using System;
+﻿using System;
 using System.Windows.Input;
+using ConsoleDisplay.View;
+using Pattern_00_Template.ViewModels;
 
 namespace Pattern_00_Template.Views
 {
     public class MainView : ICommand
     {
-        MainViewModel DataContext { get; set; } = new();
-        IConsole console = new MyConsole();
+        public MainViewModel DataContext { get; set; } = new();
+        public IConsole console { get; set; } = new MyConsole();
 
         public event EventHandler? CanExecuteChanged;
 

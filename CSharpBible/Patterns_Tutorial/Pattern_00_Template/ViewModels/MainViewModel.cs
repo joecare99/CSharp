@@ -1,7 +1,7 @@
 ﻿using Pattern_00_Template.Models;
 using Pattern_00_Template.Properties;
 
-namespace Pattern_00_Template.Views
+namespace Pattern_00_Template.ViewModels
 {
     public class MainViewModel
     {
