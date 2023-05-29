@@ -59,5 +59,23 @@ namespace MVVM_31a_CTValidation3.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} may not be empty ähnelt.
+        /// </summary>
+        public static string Err_MayNotBeEmpty {
+            get {
+                return ResourceManager.GetString("Err_MayNotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} must have min. {1} Chars ähnelt.
+        /// </summary>
+        public static string Err_MustHave_Chars {
+            get {
+                return ResourceManager.GetString("Err_MustHave_Chars", resourceCulture);
+            }
+        }
     }
 }
