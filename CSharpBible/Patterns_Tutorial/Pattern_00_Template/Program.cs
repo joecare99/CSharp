@@ -16,17 +16,18 @@ namespace Pattern_00_Template
                 Run(args);
         }
 
-        private static void DoRun(string[] args)
+        public static void DoRun(string[] args)
         {
             _view?.Execute(args);
         }
 
-        private static bool DoInit(string[] args)
+        public static bool DoInit(string[] args)
         {
             // Init View 
-            _view = new MainView();
-                
+            SetView( new MainView());                 
             return _view.CanExecute(args);
         }
+
+        public static void SetView(ICommand view)=>_view = view;
     }
 }
