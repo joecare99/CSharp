@@ -11,13 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace MVVM_BaseLib.Helper.Tests
+namespace BaseLib.Helper.Tests
 {
     /// <summary>
     /// Struct TestStruct
@@ -104,8 +102,8 @@ namespace MVVM_BaseLib.Helper.Tests
     /// <summary>
     /// Defines test class PropertyTests.
     /// </summary>
-    [TestClass()]
-    public class PropertyHelperTests
+    [TestClass]
+    public class PropertyHelperTests2
     {
 
         /// <summary>

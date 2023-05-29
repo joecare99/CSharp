@@ -1,15 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_BaseLib.Helper.MVVM;
+using BaseLib.Helper.MVVM;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static BaseLib.Helper.TestHelper;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace MVVM_BaseLib.Helper.MVVM.Tests
+namespace BaseLib.Helper.MVVM.Tests
 {
     [TestClass()]
     public class ValidationHelperTests
@@ -57,14 +54,14 @@ namespace MVVM_BaseLib.Helper.MVVM.Tests
 
         private void CreateTestData(ValidationHelper helper)
         {
-            _helper.AddError("SomeProp", "Not a valid property");
-            _helper.AddError("SomeProp1", "Not a valid property (1)");
-            _helper.AddError("SomeProp2", "Not a valid property (2)");
-            _helper.AddError("SomeProp3", "Not a valid property (3)");
-            Assert.AreEqual(@"ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp1)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
+            helper.AddError("SomeProp", "Not a valid property");
+            helper.AddError("SomeProp1", "Not a valid property (1)");
+            helper.AddError("SomeProp2", "Not a valid property (2)");
+            helper.AddError("SomeProp3", "Not a valid property (3)");
+            Assert.AreEqual(@"ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp1)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
 ", DebugLog);
             DebugLog = "";
 
@@ -75,21 +72,21 @@ ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
         {
             AssertAreEqual(Array.Empty<string>(), _helper.GetErrors("SomeProp"));
             CreateTestData(_helper);
-            AssertAreEqual(new[] { "Not a valid property" }, _helper.GetErrors("SomeProp"));
+            AssertAreEqual(new List<string>() { "Not a valid property" }, (_helper.GetErrors("SomeProp") as List<ValidationResult>)?.ConvertAll(o=>o.ErrorMessage??"")!);
         }
 
         [DataTestMethod()]
         [DataRow(new string []{}, new[] { "" },DisplayName ="Empty")]
-        [DataRow(new[] { "SomeProp", "Not a valid property" }, new[] { "ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
+        [DataRow(new[] { "SomeProp", "Not a valid property" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
         "SomeProp","Not a valid property" }, DisplayName = "1 SomeProp")]
-        [DataRow(new[] { "SomeProp", "Not a valid property","SomeProp2", "Not a valid property (2)" }, new[] { "ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)\r\n",
+        [DataRow(new[] { "SomeProp", "Not a valid property","SomeProp2", "Not a valid property (2)" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)\r\n",
         "SomeProp","Not a valid property","SomeProp2", "Not a valid property (2)" }, DisplayName = "2 SomeProp,SomeProp2")]
-        [DataRow(new[] { "SomeProp", "Not a valid property", "SomeProp", "Something else" }, new[] { "ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
-        "SomeProp","Not a valid property","SomeProp2", "" }, DisplayName = "3 SomeProp,SomeProp")]
+        [DataRow(new[] { "SomeProp", "Not a valid property", "SomeProp", "Something else" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
+        "SomeProp","Not a valid property","SomeProp2", null! }, DisplayName = "3 SomeProp,SomeProp")]
         public void AddErrorTest(string[] Props, string[] asExp)
         {
             for (int i=0;i< Props.Length ;i+=2)
-                Assert.AreEqual("", _helper[Props[i]]);
+                Assert.AreEqual(null, _helper[Props[i]]);
             for (int i = 0; i < Props.Length; i += 2)
                 _helper.AddError(Props[i], Props[i+1]);
             for (int i = 1; i < asExp.Length; i += 2)
@@ -119,11 +116,11 @@ ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
             Assert.AreEqual(true, _helper.HasErrors);
             _helper.ClearErrors("SomeProp3");
             Assert.AreEqual(false, _helper.HasErrors);
-            Assert.AreEqual(@"ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp1)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
-ErrorsChg(MVVM_BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
+            Assert.AreEqual(@"ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp1)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
+ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
 ", DebugLog);
         }
 
