@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVVM.ViewModel
 {
@@ -27,6 +28,6 @@ namespace MVVM.ViewModel
             => DoLog($"PropChgn({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
 
         protected virtual void OnVMErrorsChanged(object? sender, DataErrorsChangedEventArgs e) 
-            => DoLog($"ErrorsChanged({sender},{e.PropertyName})={string.Join(",", (List<string>)(sender as INotifyDataErrorInfo)!.GetErrors(e.PropertyName))}");
+            => DoLog($"ErrorsChanged({sender},{e.PropertyName})={string.Join(",", ((List<ValidationResult>)(sender as INotifyDataErrorInfo)!.GetErrors(e.PropertyName)).ConvertAll(o=>o.ErrorMessage))}");
     }
 }
