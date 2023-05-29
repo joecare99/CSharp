@@ -1,14 +1,17 @@
 ﻿<Project>
-	<Import Project="..\MVVM_Tutorial_net.props" />
+	<Import Project="..\Pattern_Tutorial_net.props" />
 	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
-		<UseWPF>true</UseWPF>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
@@ -17,9 +20,9 @@
 			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Properties\Settings.Designer.cs">
-			<DesignTimeSharedInput>True</DesignTimeSharedInput>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Settings.settings</DependentUpon>
+		  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
@@ -29,9 +32,9 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<None Update="Properties\Settings.settings">
-			<Generator>PublicSettingsSingleFileGenerator</Generator>
-			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
-		</None>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>PublicSettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
 	</ItemGroup>
 </Project>

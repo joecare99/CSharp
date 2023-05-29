@@ -59,5 +59,14 @@ namespace Pattern_00_Template.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hello World ! ähnelt.
+        /// </summary>
+        public static string Grtn_HelloWorld {
+            get {
+                return ResourceManager.GetString("Grtn_HelloWorld", resourceCulture);
+            }
+        }
     }
 }
