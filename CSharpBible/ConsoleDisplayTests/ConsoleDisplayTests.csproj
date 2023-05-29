@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Solution.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net462;net472;net48</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <IsPackable>false</IsPackable>
     <UseWindowsForms>true</UseWindowsForms>
