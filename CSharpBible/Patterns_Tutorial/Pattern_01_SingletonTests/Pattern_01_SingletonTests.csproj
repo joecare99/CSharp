@@ -1,0 +1,23 @@
+﻿<Project>
+	<Import Project="..\Pattern_Tutorial.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+		<PackageReference Include="coverlet.collector" Version="3.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Pattern_01_Singleton\Pattern_01_Singleton.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
+	</ItemGroup>
+</Project>

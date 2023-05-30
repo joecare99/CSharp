@@ -1,10 +1,10 @@
 ﻿using BaseLib.Model.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Pattern_00_Template;
+using Pattern_01_Singleton;
 using System;
 using System.Windows.Input;
 
-namespace Pattern_00_TemplateTests
+namespace Pattern_01_SingletonTests
 {
     [TestClass]
     public class ProgramTests :BaseTest,ICommand

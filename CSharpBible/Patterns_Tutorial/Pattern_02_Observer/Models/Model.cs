@@ -1,4 +1,4 @@
-﻿namespace Pattern_00_Template.Models
+﻿namespace Pattern_02_Observer.Models
 {
     public class Model
     {

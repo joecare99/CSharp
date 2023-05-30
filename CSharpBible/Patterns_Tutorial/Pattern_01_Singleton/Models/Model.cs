@@ -1,4 +1,4 @@
-﻿namespace Pattern_00_Template.Models
+﻿namespace Pattern_01_Singleton.Models
 {
     public class Model
     {

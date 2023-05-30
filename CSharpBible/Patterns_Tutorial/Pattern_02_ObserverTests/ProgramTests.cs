@@ -1,10 +1,10 @@
 ﻿using BaseLib.Model.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Pattern_00_Template;
+using Pattern_02_Observer;
 using System;
 using System.Windows.Input;
 
-namespace Pattern_00_TemplateTests
+namespace Pattern_02_ObserverTests
 {
     [TestClass]
     public class ProgramTests :BaseTest,ICommand

@@ -1,8 +1,8 @@
-﻿using Pattern_00_Template.Views;
+﻿using Pattern_02_Observer.Views;
 using System;
 using System.Windows.Input;
 
-namespace Pattern_00_Template
+namespace Pattern_02_Observer
 {
     public static class Program
     {

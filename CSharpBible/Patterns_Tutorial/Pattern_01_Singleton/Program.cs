@@ -1,8 +1,8 @@
-﻿using Pattern_00_Template.Views;
+﻿using Pattern_01_Singleton.Views;
 using System;
 using System.Windows.Input;
 
-namespace Pattern_00_Template
+namespace Pattern_01_Singleton
 {
     public static class Program
     {
