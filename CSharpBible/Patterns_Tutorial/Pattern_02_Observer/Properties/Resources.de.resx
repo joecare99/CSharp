@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Grtn_Ciao" xml:space="preserve">
-    <value>Ciao !</value>
+    <value>Tschau !</value>
   </data>
   <data name="Grtn_GoodMorningVietnam" xml:space="preserve">
-    <value>Good morning vietnam !</value>
+    <value>Guten Morgen, Vietnam !</value>
   </data>
   <data name="Grtn_HelloColleagues" xml:space="preserve">
-    <value>Hello colleagues !</value>
+    <value>Hallo Kollegen !</value>
   </data>
   <data name="Grtn_HelloWorld" xml:space="preserve">
-    <value>Hello World !</value>
+    <value>Hallo Welt !</value>
   </data>
   <data name="Grtn_HiFans" xml:space="preserve">
-    <value>Hi fans !</value>
+    <value>Hi Fans !</value>
   </data>
   <data name="Grtn_JoServus" xml:space="preserve">
     <value>Jo, Servus !</value>

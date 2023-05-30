@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Input;
+using BaseLib.Interfaces;
 using ConsoleDisplay.View;
+using Pattern_02_Observer.Models;
 using Pattern_02_Observer.ViewModels;
 
 namespace Pattern_02_Observer.Views
@@ -12,6 +14,17 @@ namespace Pattern_02_Observer.Views
 
         public event EventHandler? CanExecuteChanged;
 
+        public MainView()
+        {
+            DataContext.PropertyChangedAdv += OnPropertyChangedAdv;
+        }
+
+        private void OnPropertyChangedAdv(object sender, PropertyChangedAdvEventArgs e)
+        {
+            if (e.PropertyName == nameof(DataContext.Greeting))
+                console.WriteLine((string?)e.NewVal);
+        }
+
         public bool CanExecute(object? parameter)
         {
             return true;
@@ -19,7 +32,7 @@ namespace Pattern_02_Observer.Views
 
         public void Execute(object? parameter)
         {
-            console.WriteLine(DataContext.Greeting);
+            DataContext.SetGreeting((EGreetings)new Random().Next(5)); 
         }
     }
 }
