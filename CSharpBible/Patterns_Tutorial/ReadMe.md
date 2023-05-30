@@ -13,4 +13,15 @@ To get the change of a value there are two possible ways to get this done:
 * The class can register itself to get notified when the value is changed. This class now is an *Observer* to that value.
 The class that contains/emits the value is called *Subject*.
 
- 
+## Lession 3: Factory
+A Factory is a class that emits/creates other classes 
+
+## Lession 4: Chain of Responsibility
+A chain of responibility connects several classes (usually with the same interface) to handle a request together.
+
+## Lession 5: Iterator pattern
+With the Iterator-pattern the client can read the elements of a data-structure independent from its structure.
+
+## Lession 6: Adapter
+
+## Lession 7: 
