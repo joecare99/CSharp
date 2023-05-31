@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Pattern_02_Observer.Properties {
+namespace MVVM_28_1_DataGridExt.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Pattern_02_Observer.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Pattern_02_Observer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_28_1_DataGridExt.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,69 +57,6 @@ namespace Pattern_02_Observer.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Ciao ! ähnelt.
-        /// </summary>
-        public static string Grtn_Ciao {
-            get {
-                return ResourceManager.GetString("Grtn_Ciao", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Good morning vietnam ! ähnelt.
-        /// </summary>
-        public static string Grtn_GoodMorningVietnam {
-            get {
-                return ResourceManager.GetString("Grtn_GoodMorningVietnam", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Hello colleagues ! ähnelt.
-        /// </summary>
-        public static string Grtn_HelloColleagues {
-            get {
-                return ResourceManager.GetString("Grtn_HelloColleagues", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Hello World ! ähnelt.
-        /// </summary>
-        public static string Grtn_HelloWorld {
-            get {
-                return ResourceManager.GetString("Grtn_HelloWorld", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Hi fans ! ähnelt.
-        /// </summary>
-        public static string Grtn_HiFans {
-            get {
-                return ResourceManager.GetString("Grtn_HiFans", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Jo, Servus ! ähnelt.
-        /// </summary>
-        public static string Grtn_JoServus {
-            get {
-                return ResourceManager.GetString("Grtn_JoServus", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
-        /// </summary>
-        public static string Grtn_None {
-            get {
-                return ResourceManager.GetString("Grtn_None", resourceCulture);
             }
         }
     }

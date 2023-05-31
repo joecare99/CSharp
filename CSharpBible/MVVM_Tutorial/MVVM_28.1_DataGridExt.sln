@@ -18,13 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests", "..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj", "{66EB60F2-523D-47C8-95EA-C7E10759E239}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28_DataGrid", "MVVM_28_DataGrid\MVVM_28_DataGrid.csproj", "{20E65AF1-976E-489E-B9AE-649FDA199188}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28.1_DataGridExt", "MVVM_28.1_DataGridExt\MVVM_28.1_DataGridExt.csproj", "{20E65AF1-976E-489E-B9AE-649FDA199188}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28_DataGrid_net", "MVVM_28_DataGrid\MVVM_28_DataGrid_net.csproj", "{DC069DAD-D21C-4403-B1C5-65CEFA188499}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28.1_DataGridExt_net", "MVVM_28.1_DataGridExt\MVVM_28.1_DataGridExt_net.csproj", "{DC069DAD-D21C-4403-B1C5-65CEFA188499}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28_DataGrid_netTests", "MVVM_28_DataGridTests\MVVM_28_DataGrid_netTests.csproj", "{2D423904-6ABB-44AA-A71A-06F148A1A5BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28.1_DataGridExt_netTests", "MVVM_28.1_DataGridExtTests\MVVM_28.1_DataGridExt_netTests.csproj", "{2D423904-6ABB-44AA-A71A-06F148A1A5BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28_DataGridTests", "MVVM_28_DataGridTests\MVVM_28_DataGridTests.csproj", "{9578122A-AD59-46CA-9468-8478A9306DCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_28.1_DataGridExtTests", "MVVM_28.1_DataGridExtTests\MVVM_28.1_DataGridExtTests.csproj", "{9578122A-AD59-46CA-9468-8478A9306DCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
