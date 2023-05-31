@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVVM_28.1_DataGridExt.ViewModels.Tests
+namespace MVVM_28_1_DataGridExt.ViewModels.Tests
 {
     [TestClass]
     public class DataGridViewModelTests

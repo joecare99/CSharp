@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using MVVM.ViewModel;
 
-namespace MVVM_28.1_DataGridExt.ViewModels.Tests
+namespace MVVM_28_1_DataGridExt.ViewModels.Tests
 {
     [TestClass()]
     public class MainWindowViewModelTests

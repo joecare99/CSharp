@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
-namespace MVVM_28.1_DataGridExt.Models.Tests
+namespace MVVM_28_1_DataGridExt.Models.Tests
 {
 
     [TestClass]

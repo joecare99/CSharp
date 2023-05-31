@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Configuration;
 
-namespace MVVM_28.1_DataGridExt.Properties.Tests
+namespace MVVM_28_1_DataGridExt.Properties.Tests
 {
     [TestClass()]
     public class SettingsTests

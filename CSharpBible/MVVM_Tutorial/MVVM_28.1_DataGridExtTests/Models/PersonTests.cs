@@ -1,13 +1,13 @@
 ﻿using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_28.1_DataGridExt.Services;
+using MVVM_28_1_DataGridExt.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVVM_28.1_DataGridExt.Models.Tests
+namespace MVVM_28_1_DataGridExt.Models.Tests
 {
     [TestClass]
     public class PersonTests

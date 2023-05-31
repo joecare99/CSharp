@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_28.1_DataGridExt.Models;
+using MVVM_28_1_DataGridExt.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MVVM_28.1_DataGridExt.Services.Tests
+namespace MVVM_28_1_DataGridExt.Services.Tests
 {
     [TestClass]
     public class PersonServiceTests

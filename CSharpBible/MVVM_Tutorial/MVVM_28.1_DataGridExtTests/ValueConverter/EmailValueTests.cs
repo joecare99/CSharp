@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace MVVM_28.1_DataGridExt.ValueConverter.Tests
+namespace MVVM_28_1_DataGridExt.ValueConverter.Tests
 {
     [TestClass]
     public class EmailValueTests

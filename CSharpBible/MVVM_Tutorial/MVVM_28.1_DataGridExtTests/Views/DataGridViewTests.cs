@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace MVVM_28.1_DataGridExt.Views.Tests
+namespace MVVM_28_1_DataGridExt.Views.Tests
 {
     [TestClass()]
     public class DataGridViewTests
