@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MVVM.ViewModel;
 
-namespace MVVM_28.1_DataGridExt.Models
+namespace MVVM_28_1_DataGridExt.Models
 {
     public class Person
     {

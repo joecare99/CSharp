@@ -19,9 +19,12 @@ A Factory is a class that emits/creates other classes
 ## Lession 4: Chain of Responsibility
 A chain of responibility connects several classes (usually with the same interface) to handle a request together.
 
-## Lession 5: Iterator pattern
+## Lession 5: Temlplate Method
+with the design-pattern Template-Method equal code will be extracted to an abstract class.
+
+## Lession 6: Iterator pattern
 With the Iterator-pattern the client can read the elements of a data-structure independent from its structure.
 
-## Lession 6: Adapter
+## Lession 7: Adapter
 
-## Lession 7: 
+## Lession 8: 

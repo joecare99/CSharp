@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_28.1_DataGridExt
+namespace MVVM_28_1_DataGridExt
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MVVM_28.1_DataGridExt.Views
+namespace MVVM_28_1_DataGridExt.Views
 {
     /// <summary>
     /// Interaktionslogik für DatagridView.xaml

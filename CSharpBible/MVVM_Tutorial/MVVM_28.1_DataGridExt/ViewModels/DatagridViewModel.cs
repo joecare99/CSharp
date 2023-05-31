@@ -1,16 +1,23 @@
 ﻿using MVVM.ViewModel;
-using MVVM_28.1_DataGridExt.Models;
-using MVVM_28.1_DataGridExt.Services;
+using MVVM_28_1_DataGridExt.Models;
+using MVVM_28_1_DataGridExt.Services;
 using System.Collections.ObjectModel;
 
-namespace MVVM_28.1_DataGridExt.ViewModels
+namespace MVVM_28_1_DataGridExt.ViewModels
 {
     public class DataGridViewModel : BaseViewModel
     {
         public ObservableCollection<Person> Persons { get; } = new();
         public ObservableCollection<Department> Departments { get; } = new();
 
+        public ObservableCollection<string> Cols { get; set; } = new() { "FirstName","LastName","Email","Department","Birthday" };
         public DelegateCommand RemoveCommand{get; set; }
+
+        Person? selectedPerson;
+
+        public Person? SelectedPerson { get => selectedPerson; set => SetProperty(ref selectedPerson, value); }
+
+        public bool IsItemSelected => SelectedPerson != null;
         public DataGridViewModel() {
             var svc = new PersonService();
             foreach(var person in svc.GetPersons())
@@ -27,6 +34,8 @@ namespace MVVM_28.1_DataGridExt.ViewModels
                     RaisePropertyChanged(nameof(Persons));
                 }
             });
+
+            AddPropertyDependency(nameof(IsItemSelected), nameof(SelectedPerson));
         }
     }
 }

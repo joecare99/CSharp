@@ -1,11 +1,11 @@
-﻿using MVVM_28.1_DataGridExt.Models;
+﻿using MVVM_28_1_DataGridExt.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVVM_28.1_DataGridExt.Services
+namespace MVVM_28_1_DataGridExt.Services
 {
     public class PersonService
     {

@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM_28.1_DataGridExt
+// Assembly         : MVVM_28_1_DataGridExt
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MVVM_28.1_DataGridExt
+namespace MVVM_28_1_DataGridExt
 {
     /// <summary>
     /// Interaction logic for App.xaml

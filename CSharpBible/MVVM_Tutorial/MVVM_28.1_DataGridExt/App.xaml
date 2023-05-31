@@ -1,7 +1,7 @@
-﻿<Application x:Class="MVVM_28.1_DataGridExt.App"
+﻿<Application x:Class="MVVM_28_1_DataGridExt.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MVVM_28.1_DataGridExt"
+             xmlns:local="clr-namespace:MVVM_28_1_DataGridExt"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
