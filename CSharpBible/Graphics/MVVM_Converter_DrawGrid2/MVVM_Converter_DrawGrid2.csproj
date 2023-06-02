@@ -17,8 +17,8 @@
 	  <Resource Include="Resources\BIG_original.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Games\Sokoban_Base\Sokoban_Base.csproj" />
-	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	  <ProjectReference Include="$(UpDir)\Games\Sokoban_Base\Sokoban_Base.csproj" />
+	  <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Images.Designer.cs">
