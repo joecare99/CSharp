@@ -168,6 +168,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{947E3943
 	ProjectSection(SolutionItems) = preProject
 		Games\Games.props = Games\Games.props
 		Games\Games_net.props = Games\Games_net.props
+		SomeThing\Solution.props = SomeThing\Solution.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokoban_Base", "Games\Sokoban_Base\Sokoban_Base.csproj", "{13662848-3BDB-4119-BF5D-D58EA0F8026E}"
@@ -194,9 +195,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsoleDemo", "TestCons
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_netTests", "ConsoleDisplayTests\ConsoleDisplay_netTests.csproj", "{6E6FBC29-5A19-4444-BCFE-21E6C88378E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing", "SomeThing\SomeThing.csproj", "{9960C80E-9A03-4D27-BD75-7E1B90A3EDB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing", "SomeThing\SomeThing\SomeThing.csproj", "{9960C80E-9A03-4D27-BD75-7E1B90A3EDB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2", "SomeThing2\SomeThing2.csproj", "{1F55EC24-0EAD-484E-B3C0-7F69D4C6D955}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2", "SomeThing\SomeThing2\SomeThing2.csproj", "{1F55EC24-0EAD-484E-B3C0-7F69D4C6D955}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsControlTut3_net", "MVVM_Tutorial\ItemsControlTut3\ItemsControlTut3_net.csproj", "{0B01FB9D-88A8-4C58-AED4-1EDC9AF6934A}"
 EndProject
@@ -339,11 +340,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Pr
 		Solution_net.props = Solution_net.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2a", "SomeThing2a\SomeThing2a.csproj", "{1EC15DBC-47F1-4268-99AF-E8CD46ECC7FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2a", "SomeThing\SomeThing2a\SomeThing2a.csproj", "{1EC15DBC-47F1-4268-99AF-E8CD46ECC7FB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2Tests", "SomeThing2Tests\SomeThing2Tests.csproj", "{A8EF5884-AD1D-4A72-9FBB-87677F4F22A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2Tests", "SomeThing\SomeThing2Tests\SomeThing2Tests.csproj", "{A8EF5884-AD1D-4A72-9FBB-87677F4F22A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2aTests", "SomeThing2aTests\SomeThing2aTests.csproj", "{3C09ADED-DB10-4E3D-AC4E-D0E314638E1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeThing2aTests", "SomeThing\SomeThing2aTests\SomeThing2aTests.csproj", "{3C09ADED-DB10-4E3D-AC4E-D0E314638E1F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc32_netTests", "Calc\Calc32Tests\Calc32_netTests.csproj", "{CBE80569-113E-4FFF-A00C-230CBB120934}"
 EndProject
