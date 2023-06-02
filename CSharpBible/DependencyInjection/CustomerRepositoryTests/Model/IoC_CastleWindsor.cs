@@ -8,7 +8,7 @@ using System;
 namespace CustomerRepositoryTests.Model
 {
     [TestClass]
-    public class CastleWindsor
+    public class IoC_CastleWindsor
     {
         [TestMethod]
         public void RepThrowsExOnInvGet()

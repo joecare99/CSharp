@@ -7,7 +7,7 @@ using System;
 namespace CustomerRepositoryTests.Model
 {
     [TestClass]
-    public class AutoMocking
+    public class Mocking_AutoFix_AutoMoq
     {
         [TestMethod]
         public void RepThrowsExOnInvGet()

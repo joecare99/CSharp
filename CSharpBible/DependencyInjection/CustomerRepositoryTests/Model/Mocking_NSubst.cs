@@ -7,7 +7,7 @@ using System;
 namespace CustomerRepositoryTests.Model
 {
     [TestClass]
-    public class Mocking2
+    public class Mocking_NSubst
     {
         [TestMethod]
         public void RepThrowsExOnInvGet()

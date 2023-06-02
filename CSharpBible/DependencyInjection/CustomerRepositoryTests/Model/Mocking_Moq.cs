@@ -7,7 +7,7 @@ using System;
 namespace CustomerRepositoryTests.Model
 {
     [TestClass]
-    public class Mocking
+    public class Mocking_Moq
     {
         [TestMethod]
         public void RepThrowsExOnInvGet()

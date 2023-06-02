@@ -1,42 +1,40 @@
 ﻿using CustomerRepository.Model;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StructureMap;
+using Ninject;
 using System;
 using System.Linq;
 
 namespace CustomerRepositoryTests.Model
 {
     [TestClass]
-    public class StructureMap
+    public class IoC_Ninject
     {
-        private Container container { get; set; }
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        private StandardKernel kernel { get; set; }
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize]
         public void Init()
         {
-            container = new Container(x =>
-            {
-                x.For<IClock>().Use<CStaticClock>();
-                x.For<ILog>().Singleton().Use<CLog>();
-                x.For<ICustomerRepository>().Use<CustomerRepository5>();
-            });
+            kernel = new StandardKernel();
+            kernel.Bind<IClock>().To<CStaticClock>();
+            kernel.Bind<ILog>().To<CLog>().InSingletonScope();
+            kernel.Bind<ICustomerRepository>().To<CustomerRepository5>();
         }
 
         [TestMethod]
         public void RepThrowsExOnInvGet()
         {
-            var container = new Container(x =>
-            {
-                x.For<IClock>().Use<CStaticClock>();
-                x.For<ILog>().Singleton().Use<CLog>();
-                x.For<ICustomerRepository>().Use<CustomerRepository5>();
-            });
+            var kernel = new StandardKernel();
+            kernel.Bind<IClock>().To<CStaticClock>();
+            kernel.Bind<ILog>().To<CLog>().InSingletonScope();
+            kernel.Bind<ICustomerRepository>().To<CustomerRepository5>();
 
-            var log = container.GetInstance<ILog>();
+            var log = kernel.Get<ILog>();
                 
             ICustomerRepository repository =
-                container.GetInstance<ICustomerRepository>();
+                kernel.Get<ICustomerRepository>();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
@@ -48,9 +46,10 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void RepThrowsExOnInvGet2()
         {
-            var log = container.GetInstance<ILog>();
+            var log = kernel.Get<ILog>();
+
             var repository =
-                container.GetInstance<ICustomerRepository>();
+                kernel.Get<ICustomerRepository>();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
@@ -62,9 +61,9 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void RepThrows2ExOn2InvGet2()
         {
-            var log = container.GetInstance<ILog>();
+            var log = kernel.Get<ILog>();
             var repository =
-                container.GetInstance<ICustomerRepository>();
+                kernel.Get<ICustomerRepository>();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
@@ -79,10 +78,11 @@ namespace CustomerRepositoryTests.Model
         [TestMethod]
         public void LogsTimeOnInvLogGet()
         {
-            var log = container.GetInstance<ILog>();
-            var clock = container.GetInstance<IClock>();
+            var log = kernel.Get<ILog>();
+            var clock = kernel.Get<IClock>();
+
             var repository =
-                container.GetInstance<ICustomerRepository>();
+                kernel.Get<ICustomerRepository>();
 
             Assert.ThrowsException<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
