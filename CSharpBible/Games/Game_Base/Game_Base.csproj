@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Games.props"/>
+	<Import Project="..\Games.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net48;net472;net462</TargetFrameworks>
@@ -8,6 +8,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>
