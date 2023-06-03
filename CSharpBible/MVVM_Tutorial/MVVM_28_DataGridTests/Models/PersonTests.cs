@@ -12,7 +12,7 @@ namespace MVVM_28_DataGrid.Models.Tests
     [TestClass]
     public class PersonTests
     {
-        Person testItem;
+        Person testItem=null!;
 
         [TestInitialize]
         public void Init()
@@ -24,7 +24,7 @@ namespace MVVM_28_DataGrid.Models.Tests
             { foreach (var p in typeof(Person).GetProperties())
                     switch (p.PropertyType.TC()) {
                         case TypeCode.String:                           
-                            yield return new object[] { p.Name, "Null", null, null };
+                            yield return new object[] { p.Name, "Null", null!, null! };
                             yield return new object[] { p.Name, "Empty", "", "" };
                             yield return new object[] { p.Name, "Peter", "Peter", "Peter" };
                             yield return new object[] { p.Name, "Müller", "Müller", "Müller" };
@@ -37,7 +37,7 @@ namespace MVVM_28_DataGrid.Models.Tests
                             yield return new object[] { p.Name, "MinInt", int.MinValue, int.MinValue };
                             break;
                         case TypeCode.Object when p.PropertyType == typeof(DateTime?):
-                            yield return new object[] { p.Name, "Null", null, null };
+                            yield return new object[] { p.Name, "Null", null!, null! };
                             yield return new object[] { p.Name, "0", (DateTime?)new DateTime(1980,1,1), (DateTime?)new DateTime(1980, 1, 1) };
                             yield return new object[] { p.Name, "1", (DateTime?)new DateTime(2001, 1, 1), new DateTime(2001, 1, 1) };
                             yield return new object[] { p.Name, "Today", (DateTime?)DateTime.Today, DateTime.Today };
@@ -45,14 +45,14 @@ namespace MVVM_28_DataGrid.Models.Tests
                             yield return new object[] { p.Name, "MinDate", (DateTime?)DateTime.MinValue, DateTime.MinValue };
                             break;
                         default:
-                            yield return new object[] { p.Name, "Null", null, null };
+                            yield return new object[] { p.Name, "Null", null!, null! };
                             break;
                     }
             } }
 
         [DataTestMethod]
         [DynamicData(nameof(PersonPropertyTestData))]
-        public void TestProperties(string sProp,string sName,object oVal,object oExp)
+        public void TestProperties(string sProp,string _,object oVal,object oExp)
         {
             if (oVal is DateTime? )
                 testItem.SetProp<Person,DateTime?>(sProp, oVal as DateTime?);
