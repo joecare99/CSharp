@@ -26,7 +26,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters.csproj" />
 	</ItemGroup>
 	<ItemGroup>
