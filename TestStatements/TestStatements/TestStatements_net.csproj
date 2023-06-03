@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <ImportGroup Label="SolutionProps">
     <Import Project="..\Solution_net.props" />
   </ImportGroup>
@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" />
   </ItemGroup>
 
   <Target Condition="'$(TargetFrameworks)'=='net6.0'" Name="PreBuild" BeforeTargets="PreBuildEvent">
