@@ -11,13 +11,14 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
-using MVVM_36_ComToolKtSavesWork.Models;
-using MVVM_36_ComToolKtSavesWork.ViewModels.Tests;
 using System;
 using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.DependencyInjection;
+using MVVM.View.Extension;
+using MVVM.ViewModel.Tests;
+using MVVM_36_ComToolKtSavesWork.Models;
+using MVVM_36_ComToolKtSavesWork.ViewModels.Tests;
 
 /// <summary>
 /// The Tests namespace.

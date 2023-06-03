@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using MVVM.ViewModel.Tests;
 using MVVM_36_ComToolKtSavesWork.Models;
 
 namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
