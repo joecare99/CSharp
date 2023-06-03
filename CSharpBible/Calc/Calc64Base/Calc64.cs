@@ -45,17 +45,17 @@ namespace Calc64Base
         /// <summary>
         /// The calculate operations
         /// </summary>
-        private static Dictionary<string,CalcOperation> _calcOperations = new Dictionary<string, CalcOperation>();
+        private static readonly Dictionary<string,CalcOperation> _calcOperations = new();
         /// <summary>
         /// The calculate operations identifier
         /// </summary>
-        private static Dictionary<int, CalcOperation> _calcOperationsID = new Dictionary<int, CalcOperation>();
+        private static readonly Dictionary<int, CalcOperation> _calcOperationsID = new();
         #endregion
         /// <summary>
-        /// Gets the short desciptions.
+        /// Gets the short descriptions.
         /// </summary>
-        /// <value>The short desciptions.</value>
-        public Dictionary<string, CalcOperation>.KeyCollection ShortDesciptions => _calcOperations.Keys;
+        /// <value>The short descriptions.</value>
+        public Dictionary<string, CalcOperation>.KeyCollection ShortDescriptions => _calcOperations.Keys;
         /// <summary>
         /// Gets the i ds.
         /// </summary>
@@ -70,34 +70,31 @@ namespace Calc64Base
         /// Gets or sets the accumulator.
         /// </summary>
         /// <value>The accumulator.</value>
-        public Int64 Accumulator { get=>_accumulator; set=> Property.SetProperty(ref _accumulator, value,PropChange); }
+        public Int64 Accumulator { get=>_accumulator; set=> value.SetProperty(ref _accumulator,PropChange); }
         /// <summary>
         /// Gets or sets the memory.
         /// </summary>
         /// <value>The memory.</value>
-        public Int64 Memory { get => _memory; set => Property.SetProperty(ref _memory, value, PropChange); }
+        public Int64 Memory { get => _memory; set => value.SetProperty(ref _memory, PropChange); }
         /// <summary>
         /// Gets or sets the register.
         /// </summary>
         /// <value>The register.</value>
-        public Int64 Register { get => _register; set => Property.SetProperty(ref _register, value, PropChange); }
-#if NET5_0_OR_GREATER
-        public Exception? LastError { get; set; }
-#else
+        public Int64 Register { get => _register; set => value.SetProperty(ref _register, PropChange); }
         /// <summary>
         /// Gets or sets the last error.
         /// </summary>
         /// <value>The last error.</value>
-        public Exception LastError { get; set; }
-#endif
+        public Exception? LastError { get; set; }
+
         /// <summary>
         /// Occurs when [calculate operation changed].
         /// </summary>
-        public event EventHandler<(string prop,object oldVal,object newVal )> CalcOperationChanged;
+        public event EventHandler<(string prop,object? oldVal,object? newVal )>? CalcOperationChanged;
         /// <summary>
         /// Occurs when [calculate operation error].
         /// </summary>
-        public event EventHandler<Exception> CalcOperationError;
+        public event EventHandler<Exception>? CalcOperationError;
         #endregion
 
         #region Methods
@@ -116,8 +113,8 @@ namespace Calc64Base
         /// <param name="calcOperation">The calculate operation.</param>
         public static void RegisterOperation(CalcOperation calcOperation)
         {
-            if (!_calcOperations.ContainsKey(calcOperation.ShortDescr))
-                _calcOperations.Add(calcOperation.ShortDescr,calcOperation);
+            if (!_calcOperations.ContainsKey(calcOperation.ShortDesc))
+                _calcOperations.Add(calcOperation.ShortDesc,calcOperation);
             if (_calcOperationsID.ContainsKey(calcOperation.ID))
                 calcOperation.SetID( _calcOperationsID.Keys.Max()+1);
             _calcOperationsID.Add(calcOperation.ID, calcOperation);
@@ -128,54 +125,38 @@ namespace Calc64Base
         /// </summary>
         /// <param name="co">The co.</param>
         /// <returns><c>true</c> if [is register operation] [the specified co]; otherwise, <c>false</c>.</returns>
-        public static bool IsRegisterOperation(
-#if NET5_0_OR_GREATER
-     CalcOperation?
-#else
-     CalcOperation
-#endif
- co) => co?.NeedRegister ?? false;
+        public static bool IsRegisterOperation( CalcOperation? co) 
+            => co?.NeedRegister ?? false;
         /// <summary>
-        /// Determines whether [is register opeation] [the specified short desc].
+        /// Determines whether [is register operation] [the specified short description].
         /// </summary>
-        /// <param name="shortDesc">The short desc.</param>
-        /// <returns><c>true</c> if [is register opeation] [the specified short desc]; otherwise, <c>false</c>.</returns>
-        public static bool IsRegisterOperation(string shortDesc) => IsRegisterOperation(ToCalcOperation(shortDesc));
+        /// <param name="shortDesc">The short description.</param>
+        /// <returns><c>true</c> if [is register operation] [the specified short description]; otherwise, <c>false</c>.</returns>
+        public static bool IsRegisterOperation(string? shortDesc) 
+            => IsRegisterOperation(ToCalcOperation(shortDesc));
         /// <summary>
-        /// Determines whether [is register opeation] [the specified identifier].
+        /// Determines whether [is register operation] [the specified identifier].
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <returns><c>true</c> if [is register opeation] [the specified identifier]; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if [is register operation] [the specified identifier]; otherwise, <c>false</c>.</returns>
         public static bool IsRegisterOperation(int id) => IsRegisterOperation(ToCalcOperation(id));
 
         /// <summary>
-        /// Converts to calcoperation.
+        /// Converts to calcOperation.
         /// </summary>
-        /// <param name="shortDesc">The short desc.</param>
+        /// <param name="shortDesc">The short description.</param>
         /// <returns>CalcOperation.</returns>
-        public static
-#if NET5_0_OR_GREATER
-     CalcOperation?
-#else
-     CalcOperation
-#endif
- ToCalcOperation(string shortDesc) =>
-            (shortDesc != null && _calcOperations.ContainsKey(shortDesc)) ?
-             _calcOperations[shortDesc] : null;
+        public static CalcOperation? ToCalcOperation(string? shortDesc) =>
+            (shortDesc != null && _calcOperations.TryGetValue(shortDesc,out var co)) ?
+             co : null;
 
         /// <summary>
-        /// Converts to calcoperation.
+        /// Converts to calcOperation.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>CalcOperation.</returns>
-        public static
-#if NET5_0_OR_GREATER
-     CalcOperation?
-#else
-     CalcOperation
-#endif
- ToCalcOperation(int id) =>
-            _calcOperationsID.ContainsKey(id) ?  _calcOperationsID[id] : null;
+        public static CalcOperation? ToCalcOperation(int id) =>
+            _calcOperationsID.TryGetValue(id,out var co) ? co : null;
 
         /// <summary>
         /// Properties the change.
@@ -191,17 +172,11 @@ namespace Calc64Base
         #endregion
 
         /// <summary>
-        /// Does the opeation.
+        /// Does the operation.
         /// </summary>
         /// <param name="co">The co.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool DoOpeation(
- #if NET5_0_OR_GREATER
-     CalcOperation?
-#else
-     CalcOperation
-        #endif
-             co)
+        public bool DoOperation( CalcOperation? co)
         {
             if (co == null) return false;
             LastError = null;
@@ -231,17 +206,17 @@ namespace Calc64Base
 
         }
         /// <summary>
-        /// Does the opeation.
+        /// Does the operation.
         /// </summary>
-        /// <param name="shortDesc">The short desc.</param>
+        /// <param name="shortDesc">The short description.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool DoOpeation(string shortDesc) => DoOpeation(ToCalcOperation(shortDesc));
+        public bool DoOperation(string shortDesc) => DoOperation(ToCalcOperation(shortDesc));
         /// <summary>
-        /// Does the opeation.
+        /// Does the operation.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool DoOpeation(int id) => DoOpeation(ToCalcOperation(id));
+        public bool DoOperation(int id) => DoOperation(ToCalcOperation(id));
 
 #endregion
     }

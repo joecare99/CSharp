@@ -14,11 +14,7 @@
 using ListBinding.Model;
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ListBinding.ViewModel
 {
@@ -33,19 +29,12 @@ namespace ListBinding.ViewModel
         /// The new person
         /// </summary>
         private Person newPerson = new Person();
-        /// <summary>
-        /// The persons
-        /// </summary>
-        private ObservableCollection<Person> persons = new ObservableCollection<Person>();
 
-#if NET5_0_OR_GREATER
-        public event EventHandler? MissingData;
-#else
         /// <summary>
         /// Occurs when [missing data].
         /// </summary>
-        public event EventHandler MissingData;
-#endif
+        public event EventHandler? MissingData;
+
         /// <summary>
         /// Creates new person.
         /// </summary>
@@ -66,11 +55,9 @@ namespace ListBinding.ViewModel
         /// Gets or sets the persons.
         /// </summary>
         /// <value>The persons.</value>
-        public ObservableCollection<Person> Persons { get => persons; set {
-                if (value == persons) return;
-                persons = value;
-                RaisePropertyChanged();
-            } }
+        public ObservableCollection<Person> Persons { get => _persons.Persons; }
+
+        private IPersons _persons;
 
         /// <summary>
         /// Gets or sets the BTN add person.
@@ -81,8 +68,10 @@ namespace ListBinding.ViewModel
         /// <summary>
         /// Initializes a new instance of the <see cref="PersonViewViewModel" /> class.
         /// </summary>
-        public PersonViewViewModel()
+        public PersonViewViewModel() : this(new Persons()) { }
+        public PersonViewViewModel(IPersons persons)
         {
+            _persons = persons;
             this.btnAddPerson = new DelegateCommand(
                 (o) =>
              {
@@ -90,8 +79,8 @@ namespace ListBinding.ViewModel
                      MissingData?.Invoke(this, new EventArgs());
                  else
                  {
-                     persons.Add(NewPerson);
-                     NewPerson.Id = persons.IndexOf(newPerson)+1;
+                     _persons.Persons.Add(NewPerson);
+                     NewPerson.Id = _persons.Persons.IndexOf(newPerson)+1;
                      NewPerson = new Person();
                  }
              },

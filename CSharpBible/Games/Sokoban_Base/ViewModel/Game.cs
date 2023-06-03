@@ -157,7 +157,7 @@ namespace Sokoban_Base.ViewModel
 			var f = playfield[p]?.fieldDef;
 			if (f <= FieldDef.StoneInDest && f != FieldDef.Wall && f != FieldDef.Player)
 				result = (TileDef)f;
-			else if (f == FieldDef.Player && playfield[p].Item is Player pl)
+			else if (f == FieldDef.Player && playfield[p]?.Item is Player pl)
 			{
 				result = (pl.LastDir) switch
 				{

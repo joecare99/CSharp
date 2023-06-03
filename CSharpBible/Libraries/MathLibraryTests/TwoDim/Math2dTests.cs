@@ -167,24 +167,6 @@ namespace MathLibrary.TwoDim.Tests
 		}
 
 		/// <summary>
-		/// Converts to stringtest2.
-		/// </summary>
-		/// <param name="x">The x.</param>
-		/// <param name="y">The y.</param>
-		/// <param name="exp">The exp.</param>
-		[DataTestMethod()]
-		[DataRow(0, 0, "( 0, 0)")]
-		[DataRow(0, 1, "( 0, 1)")]
-		[DataRow(1, 0, "( 1, 0)")]
-		[DataRow(-1, 0, "( -1, 0)")]
-		[DataRow(0, -1, "( 0, -1)")]
-		[DataRow(1, -1, "( 1, -1)")]
-		public void ToStringTest2(Double x, Double y, String exp) {
-			var v1 = new Math2d.Vector(x, y);
-			Assert.AreEqual(exp, v1.ToString(), $"({x},{y}).ToString()");
-		}
-
-		/// <summary>
 		/// Defines the test method NullTest.
 		/// </summary>
 		[TestMethod()]
@@ -425,7 +407,7 @@ namespace MathLibrary.TwoDim.Tests
 		[DataRow(-1, -2, sqrt5, Math.PI * 1.5d - atn05)]
 		[DataRow(1, -2, sqrt5, Math.PI * 1.5d + atn05)]
 		[DataRow(2, -1, sqrt5, Math.PI * 2d - atn05)]
-		[DynamicData("VectorAngleLengthTestData")]
+		[DynamicData(nameof(VectorAngleLengthTestData))]
 		public void ByLengthAngleTest(double exp_x, double exv_y, double length, double angle) {
 			var exp = new Math2d.Vector(exp_x, exv_y);
 			AssertAreEqual(exp, Math2d.ByLengthAngle(length, angle), $"{exp} = Math2d.ByLengthAngle({length},{angle})");
@@ -631,5 +613,151 @@ namespace MathLibrary.TwoDim.Tests
 			AssertAreEqual(exp, Math2d.Rotate(v, w), $"{exp} = Math2d.Rotate({v},{w})");
 			AssertAreEqual(v, Math2d.Rotate(exp, -w), $"{v} = Math2d.Rotate({exp},{-w})");
 		}
-	}
+
+        /// <summary>
+        /// Rotates the test.
+        /// </summary>
+        /// <param name="v_x">The v x.</param>
+        /// <param name="v_y">The v y.</param>
+        /// <param name="w">The w.</param>
+        /// <param name="exp_x">The exp x.</param>
+        /// <param name="exp_y">The exp y.</param>
+        [DataTestMethod()]
+        // Null
+        [DataRow(0, 0, 0, 0, 0)]
+        [DataRow(0, 0, 1, 0, 0)]
+
+        // 0-Winkel (neutral)
+        [DataRow(0, 1, 0, 0, 1)]
+        [DataRow(1, 1, 0, 1, 1)]
+        [DataRow(1, 0, 0, 1, 0)]
+        [DataRow(1, -1, 0, 1, -1)]
+        [DataRow(0, -1, 0, 0, -1)]
+        [DataRow(-1, -1, 0, -1, -1)]
+        [DataRow(-1, 0, 0, -1, 0)]
+        [DataRow(-1, 1, 0, -1, 1)]
+        // 90°-Winkel (well known)
+        [DataRow(0, 1, 0.5 * Math.PI, -1, 0)]
+        [DataRow(1, 1, 0.5 * Math.PI, -1, 1)]
+        [DataRow(1, 0, 0.5 * Math.PI, 0, 1)]
+        [DataRow(1, -1, 0.5 * Math.PI, 1, 1)]
+        [DataRow(0, -1, 0.5 * Math.PI, 1, 0)]
+        [DataRow(-1, -1, 0.5 * Math.PI, 1, -1)]
+        [DataRow(-1, 0, 0.5 * Math.PI, 0, -1)]
+        [DataRow(-1, 1, 0.5 * Math.PI, -1, -1)]
+        public void Rotate2Test(double v_x, double v_y, double w, double exp_x, double exp_y)
+        {
+            var v = new Math2d.Vector(v_x, v_y);
+            var exp = new Math2d.Vector(exp_x, exp_y);
+            AssertAreEqual(exp, v.Rotate(w), $"{exp} = {v}.Rotate({w})");
+            AssertAreEqual(v, exp.Rotate( -w), $"{v} = {exp}.Rotate({-w})");
+        }
+
+        [DataTestMethod]
+		[DataRow("00",0,	new double[] { 1, 0 }, new double[] { 1, 0 } )]
+        [DataRow("01", 1, new double[] { 1, 0 }, new double[] { 1, 0 })]
+        [DataRow("02", 2, new double[] { 1, 0 }, new double[] { 0, -1 })]
+        [DataRow("03", 3, new double[] { 1, 0 }, null )]
+        [DataRow("10", 0, new double[] { 0, 1 }, new double[] { 0, 1 })]
+        [DataRow("11", 1, new double[] { 0, 1 }, new double[] { 0, -1 })]
+        [DataRow("12", 2, new double[] { 0, 1 }, new double[] { 1, 0 })]
+        [DataRow("13", 3, new double[] { 0, 1 }, null)]
+        public void DoTest(string name,int f, double[] dv, double[] dexp) {
+			var v = Math2d.Vec(dv);
+			var exp = Math2d.Vec(dexp);
+			var fkt = f switch
+			{
+				0 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, y)),
+				1 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, -y)),
+				2 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(y, -x)),
+				_ => (Math2d.dDoDlg?)null
+			};
+            AssertAreEqual(exp, Math2d.Do(v,fkt), $"{exp} = Math2d.Do({v},{f})");
+
+        }
+
+        [DataTestMethod]
+        [DataRow("00", 0, new double[] { 1, 0 }, new double[] { 1, 0 })]
+        [DataRow("01", 1, new double[] { 1, 0 }, new double[] { 1, 0 })]
+        [DataRow("02", 2, new double[] { 1, 0 }, new double[] { 0, -1 })]
+        [DataRow("03", 3, new double[] { 1, 0 }, null)]
+        [DataRow("10", 0, new double[] {0, 1 }, new double[] { 0, 1 })]
+        [DataRow("11", 1, new double[] {0, 1 }, new double[] { 0, -1 })]
+        [DataRow("12", 2, new double[] {0, 1 }, new double[] { 1, 0 })]
+        [DataRow("13", 3, new double[] {0, 1 }, null)]
+        public void DoTest2(string name, int f, double[] dv, double[] dexp)
+        {
+            var v = Math2d.Vec(dv);
+            var exp = Math2d.Vec(dexp);
+            var fkt = f switch
+            {
+                0 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, y)),
+                1 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(x, -y)),
+                2 => (Math2d.dDoDlg)((x, y) => Math2d.Vec(y, -x)),
+                _ => (Math2d.dDoDlg?)null
+            };
+            AssertAreEqual(exp, v.Do(fkt), $"{exp} = {v}.Do({f})");
+
+        }
+
+        [DataTestMethod]
+        [DataRow("00", new double[] { 1, 0 }, new double[] { 1, 0 },true,0d)]
+        [DataRow("01", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
+        [DataRow("02", new double[] { 1, 0 }, new double[] { 0, -1 }, true, 4.71238898038469d)]
+        [DataRow("03", new double[] { 1, 0 }, null, false, 0d)]
+        [DataRow("10", new double[] { 0, 1 }, new double[] { 0, 1 }, true, 0d)]
+        [DataRow("11", new double[] { 0, 1 }, new double[] { 0, -1 }, true, 3.141592653589793d)]
+        [DataRow("12", new double[] { 0, 1 }, new double[] { 1, 0 }, true, 4.71238898038469d)]
+        [DataRow("13", new double[] { 0, 1 }, null, false, 0d)]
+        public void TryWinkel2VecTest(string name, double[] dv1, double[] dv2, bool xExp, double fExp)
+        {
+            var v1 = Math2d.Vec(dv1);
+            var v2 = Math2d.Vec(dv2);
+            Assert.AreEqual(xExp, Math2d.TryWinkel2Vec(v1,v2, out var wnkl), $"{xExp} = Math2d.TryWinkel2Vec({v1},{v2})");
+            Assert.AreEqual(xExp, Math2d.TryWinkel2Vec(v2, v1, out var wnkl2), $"{xExp} = Math2d.TryWinkel2Vec({v2},{v1})");
+            Assert.AreEqual(fExp, wnkl, $"{name} W1");
+            Assert.AreEqual(fExp == 0?0d:2 * Math.PI-fExp, wnkl2,$"{name} W2");
+        }
+
+        [DataTestMethod]
+        [DataRow("00", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
+        [DataRow("01", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
+        [DataRow("02", new double[] { 1, 0 }, new double[] { 0, -1 }, true, 4.71238898038469d)]
+        [DataRow("03", new double[] { 1, 0 }, null, false, 0d)]
+        [DataRow("10", new double[] { 0, 1 }, new double[] { 0, 1 }, true, 0d)]
+        [DataRow("11", new double[] { 0, 1 }, new double[] { 0, -1 }, true, 3.141592653589793d)]
+        [DataRow("12", new double[] { 0, 1 }, new double[] { 1, 0 }, true, 4.71238898038469d)]
+        [DataRow("13", new double[] { 0, 1 }, null, false, 0d)]
+        public void TryWinkel2VecTest2(string name, double[] dv1, double[] dv2, bool xExp, double fExp)
+        {
+            var v1 = Math2d.Vec(dv1);
+            var v2 = Math2d.Vec(dv2);
+            Assert.AreEqual(xExp, v1.TryWinkel2Vec(v2, out var wnkl), $"{xExp} = Math2d.TryWinkel2Vec({v1},{v2})");
+            Assert.AreEqual(xExp, v2.TryWinkel2Vec(v1, out var wnkl2), $"{xExp} = Math2d.TryWinkel2Vec({v2},{v1})");
+            Assert.AreEqual(fExp, wnkl, $"{name} W1");
+            Assert.AreEqual(fExp == 0 ? 0d : 2 * Math.PI - fExp, wnkl2, $"{name} W2");
+        }
+
+        [DataTestMethod]
+        [DataRow("00", new double[] { 1, 0 }, new double[] { 1, 0 }, new double[] { 1, 0 }, new double[] { 0, 0 }, 0d)]
+        [DataRow("01", new double[] { 1, 0 }, new double[] { 0, 0 }, new double[] { 1, 0 }, new double[] { 0, 0 }, 0d)]
+        [DataRow("02", new double[] { 1, 0 }, new double[] { 1, 0 }, new double[] { 0, 0 }, new double[] { 0, 0 }, 0d)]
+        [DataRow("03", new double[] { 1, 0 }, null, null, new double[] { 0, 0 }, 0d)]
+        [DataRow("10", new double[] { 1, 0 }, new double[] { 0, 0 }, new double[] { -1, 0 }, new double[] { 0, 0 }, double.PositiveInfinity)]
+        [DataRow("11", new double[] { 0, 1 }, new double[] { 0, -1 }, new double[] { 0, 0 }, new double[] { 0, 0 }, double.PositiveInfinity)]
+        [DataRow("12", new double[] { 0, 0 }, new double[] { 1, 0 }, new double[] { 1, 1 }, new double[] { 0.5, 0.5 }, 0.7071067811865476)]
+        [DataRow("13", new double[] { 0, 3 }, new double[] { 0, 0 }, new double[] { 4, 0 }, new double[] { 2, 1.5 }, 2.5d)]
+        [DataRow("14", new double[] { 0, 0 }, new double[] { 1, 0 }, new double[] { 2, 0.1 }, new double[] { 0.5, 10.05 }, 10.062430123980985d)]
+        public void CircleCenterTest(string name, double[] dv1, double[] dv2, double[] dv3, double[] dvExp, double fExp)
+        {
+			var v = new Math2d.Vector[]{
+			Math2d.Vec(dv1),
+			 Math2d.Vec(dv2),
+			Math2d.Vec(dv3)};
+			var vExp = Math2d.Vec(dvExp);
+            AssertAreEqual(vExp, Math2d.CircleCenter(v,out var radius),1e-12, $"{vExp} = Math2d.TryWinkel2Vec({v[0]},{v[1]})");
+            Assert.AreEqual(fExp, radius,1e-12, $"{name} radius");
+        }
+
+    }
 }

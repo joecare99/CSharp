@@ -1,0 +1,14 @@
+<Project>
+	<PropertyGroup>
+		<UpDir>..\..</UpDir>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<LangVersion>9.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Company>JC-Soft</Company>
+		<Authors>Joe Care</Authors>
+		<Copyright>Copyright © JC-Soft 2023</Copyright>
+		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
+	</PropertyGroup>
+</Project>

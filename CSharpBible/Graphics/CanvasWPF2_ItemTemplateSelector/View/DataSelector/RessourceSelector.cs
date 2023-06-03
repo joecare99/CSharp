@@ -28,9 +28,9 @@ namespace CanvasWPF2_ItemTemplateSelector.View.DataSelector
         /// <param name="item">The data object for which to select the template.</param>
         /// <param name="container">The data-bound object.</param>
         /// <returns>Returns a <see cref="T:System.Windows.DataTemplate" /> or <see langword="null" />. The default value is <see langword="null" />.</returns>
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
-            if (container is FrameworkElement element && item is ShapeData op && op.sType<ItemTemplates.Count)
+            if (container is FrameworkElement && item is ShapeData op && op.sType<ItemTemplates.Count)
             {
                 return ItemTemplates[op.sType];
             }
@@ -47,7 +47,7 @@ namespace CanvasWPF2_ItemTemplateSelector.View.DataSelector
         /// Gets or sets the key.
         /// </summary>
         /// <value>The key.</value>
-        public string Key { get; set; }
+        public string Key { get; set; } = "";
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace CanvasWPF2_ItemTemplateSelector.View.DataSelector
         /// <param name="item">The data object for which to select the template.</param>
         /// <param name="container">The data-bound object.</param>
         /// <returns>Returns a <see cref="T:System.Windows.DataTemplate" /> or <see langword="null" />. The default value is <see langword="null" />.</returns>
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
             if (container is FrameworkElement element && item is ShapeData op && op.sType < ItemKeys.Count)
             {

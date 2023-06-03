@@ -38,17 +38,20 @@ namespace WpfDemoUI.ViewModels {
 		/// <summary>
 		/// The selected person
 		/// </summary>
-		private PersonModel _selectedPerson;
+		private PersonModel? _selectedPerson;
 		/// <summary>
 		/// Gets or sets the selected person.
 		/// </summary>
 		/// <value>The selected person.</value>
-		public PersonModel SelectedPerson {
+		public PersonModel? SelectedPerson {
 			get => _selectedPerson;
 			set {
 				_selectedPerson = value;
+				if (value != null) 
 				Addresses = new BindableCollection<AddressModel>(value.Addresses);
-				SelectedAddress = value.PrimaryAddress;
+				else
+                    Addresses = new BindableCollection<AddressModel>();
+                SelectedAddress = value?.PrimaryAddress;
 				RaisePropertyChanged();
 				RaisePropertyChanged(nameof(Addresses));
 			}
@@ -57,16 +60,17 @@ namespace WpfDemoUI.ViewModels {
 		/// <summary>
 		/// The selected address
 		/// </summary>
-		private AddressModel _selectedAddress;
+		private AddressModel? _selectedAddress;
 		/// <summary>
 		/// Gets or sets the selected address.
 		/// </summary>
 		/// <value>The selected address.</value>
-		public AddressModel SelectedAddress {
+		public AddressModel? SelectedAddress {
 			get => _selectedAddress;
 			set {
 				_selectedAddress = value;
-				SelectedPerson.PrimaryAddress = value;
+				if (SelectedPerson !=null)
+					SelectedPerson.PrimaryAddress = value;
 				RaisePropertyChanged();
 			}
 		}
@@ -83,6 +87,7 @@ namespace WpfDemoUI.ViewModels {
 		/// Adds the person.
 		/// </summary>
 		public void AddPerson() {
+
 			int maxId = People.Max(x => x.PersonId);
 			People.Add(DataAccess.GetPerson(maxId+1));
 		}	

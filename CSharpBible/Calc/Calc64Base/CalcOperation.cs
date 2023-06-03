@@ -69,7 +69,7 @@ namespace Calc64Base
         /// <summary>
         /// The short description
         /// </summary>
-        private string _shortDescr;
+        private readonly string _shortDesc;
         /// <summary>
         /// The identifier
         /// </summary>
@@ -81,7 +81,7 @@ namespace Calc64Base
         /// <summary>
         /// The long description
         /// </summary>
-        private string _longDescr;
+        private readonly string _longDesc;
         /// <summary>
         /// The setting
         /// </summary>
@@ -111,7 +111,7 @@ namespace Calc64Base
         /// Gets the short description.
         /// </summary>
         /// <value>The short description.</value>
-        public string ShortDescr => _shortDescr;
+        public string ShortDesc => _shortDesc;
         /// <summary>
         /// Gets the identifier.
         /// </summary>
@@ -122,20 +122,20 @@ namespace Calc64Base
         /// Gets the long description.
         /// </summary>
         /// <value>The long description.</value>
-        public string LongDescr => _longDescr;
+        public string LongDesc => _longDesc;
         #endregion
 
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="CalcOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="shortDesc">The short description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="id">The identifier.</param>
-        protected CalcOperation(string shortDescr, string longDescr, int id = -1 )
+        protected CalcOperation(string shortDesc, string longDesc, int id = -1 )
         {
-            this._shortDescr = shortDescr;
-            this._longDescr = longDescr;
+            this._shortDesc = shortDesc;
+            this._longDesc = longDesc;
             if (id == -1)
             {
                 ID = ++_lastID;
@@ -165,7 +165,7 @@ namespace Calc64Base
         /// Sets the identifier.
         /// </summary>
         /// <param name="v">The v.</param>
-        internal void SetID(int v) => ID = v;
+        public void SetID(int v) => ID = v;
         #endregion
     }
 
@@ -186,18 +186,18 @@ namespace Calc64Base
         /// Gets or sets the function.
         /// </summary>
         /// <value>The function.</value>
-        public Func<Int64, Int64> Function { get => _func; set=> Property.SetProperty(ref _func, value);}
+        public Func<Int64, Int64> Function { get => _func; set=> value.SetProperty(ref _func);}
         #endregion
 
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="UnaryOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
+        /// <param name="shortDesc">The short description.</param>
         /// <param name="id">The identifier.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public UnaryOperation(string shortDescr,int id, string longDescr, Func<Int64, Int64> func) : base(shortDescr, longDescr, id)
+        public UnaryOperation(string shortDesc,int id, string longDesc, Func<Int64, Int64> func) : base(shortDesc, longDesc, id)
         {
             NeedAccumulator = true;
             _func = func;
@@ -206,10 +206,10 @@ namespace Calc64Base
         /// <summary>
         /// Initializes a new instance of the <see cref="UnaryOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="shortDesc">The short description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public UnaryOperation(string shortDescr, string longDescr, Func<Int64, Int64> func) : this(shortDescr, -1, longDescr, func) { }
+        public UnaryOperation(string shortDesc, string longDesc, Func<Int64, Int64> func) : this(shortDesc, -1, longDesc, func) { }
 
         /// <summary>
         /// Executes the specified o.
@@ -245,16 +245,18 @@ namespace Calc64Base
         /// Gets or sets the function.
         /// </summary>
         /// <value>The function.</value>
-        public Func<Int64, Int64, Int64> Function { get => _func; set => Property.SetProperty(ref _func, value); }
+        public Func<Int64, Int64, Int64> Function { get => _func; 
+     //       set => value.SetProperty(ref _func);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
+        /// <param name="shortDesc">The short description.</param>
         /// <param name="id">The identifier.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public BinaryOperation(string shortDescr,int id, string longDescr, Func<Int64, Int64, Int64> func) : base(shortDescr, longDescr,id)
+        public BinaryOperation(string shortDesc,int id, string longDesc, Func<Int64, Int64, Int64> func) : base(shortDesc, longDesc,id)
         {
             NeedRegister = true;
             NeedAccumulator = true;
@@ -263,10 +265,10 @@ namespace Calc64Base
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="shortDesc">The short description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public BinaryOperation(string shortDescr, string longDescr, Func<Int64, Int64, Int64> func) : this(shortDescr, -1, longDescr, func) { }
+        public BinaryOperation(string shortDesc, string longDesc, Func<Int64, Int64, Int64> func) : this(shortDesc, -1, longDesc, func) { }
 
         /// <summary>
         /// Executes the specified o.
@@ -294,18 +296,18 @@ namespace Calc64Base
         /// <summary>
         /// Initializes a new instance of the <see cref="FromMemOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="shortDesc">The short description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public FromMemOperation(string shortDescr, string longDescr, Func<Int64, Int64, Int64> func) : this(shortDescr, -1, longDescr, func) { }
+        public FromMemOperation(string shortDesc, string longDesc, Func<Int64, Int64, Int64> func) : this(shortDesc, -1, longDesc, func) { }
         /// <summary>
         /// Initializes a new instance of the <see cref="FromMemOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
+        /// <param name="shortDesc">The short description.</param>
         /// <param name="id">The identifier.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public FromMemOperation(string shortDescr, int id, string longDescr, Func<Int64, Int64, Int64> func) : base(shortDescr, id, longDescr, func)
+        public FromMemOperation(string shortDesc, int id, string longDesc, Func<Int64, Int64, Int64> func) : base(shortDesc, id, longDesc, func)
         {
             NeedRegister = false;
             NeedMemory = true;
@@ -322,18 +324,18 @@ namespace Calc64Base
         /// <summary>
         /// Initializes a new instance of the <see cref="ToMemOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="shortDesc">The short description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public ToMemOperation(string shortDescr, string longDescr, Func<Int64, Int64, Int64> func) : this(shortDescr, -1, longDescr, func) { }
+        public ToMemOperation(string shortDesc, string longDesc, Func<Int64, Int64, Int64> func) : this(shortDesc, -1, longDesc, func) { }
         /// <summary>
         /// Initializes a new instance of the <see cref="ToMemOperation" /> class.
         /// </summary>
-        /// <param name="shortDescr">The short description.</param>
+        /// <param name="shortDesc">The short description.</param>
         /// <param name="id">The identifier.</param>
-        /// <param name="longDescr">The long description.</param>
+        /// <param name="longDesc">The long description.</param>
         /// <param name="func">The function.</param>
-        public ToMemOperation(string shortDescr, int id, string longDescr, Func<Int64, Int64, Int64> func) : base(shortDescr, id, longDescr,func)
+        public ToMemOperation(string shortDesc, int id, string longDesc, Func<Int64, Int64, Int64> func) : base(shortDesc, id, longDesc,func)
         {
             NeedRegister = false;
             NeedMemory = true;
@@ -346,7 +348,7 @@ namespace Calc64Base
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public override bool Execute(ref object[] o)
         {
-            if (o.Length > 0 && o[0] is Int64 akk && o[1] is Int64 mem)
+            if (o.Length > 1 && o[0] is Int64 akk && o[1] is Int64 mem)
             {
                 o[1] = _func?.Invoke(akk,mem) ?? mem;
                 return true;

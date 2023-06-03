@@ -1,0 +1,35 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_33_Events_To_Commands.Views"
+      xmlns:vc="clr-namespace:MVVM_33_Events_To_Commands.ValueConverter"
+      xmlns:mvvm="clr-namespace:MVVM_33_Events_To_Commands.ViewModels"
+      xmlns:model="clr-namespace:MVVM_33_Events_To_Commands.Models"
+      xmlns:behav="http://schemas.microsoft.com/xaml/behaviors"
+    x:Class="MVVM_33_Events_To_Commands.Views.EventBindingView"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="EventBindingView">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:EventsBindingViewModel/>
+    </Page.DataContext>
+    <StackPanel Background="Silver">
+        <Label Content="Temlate-View:"/>
+        <TextBox>
+            <behav:Interaction.Triggers>
+                <behav:EventTrigger EventName="LostFocus">
+                    <behav:InvokeCommandAction Command="{Binding LostFocusCommand}"/>
+                </behav:EventTrigger>
+                <behav:EventTrigger EventName="GotFocus">
+                    <behav:InvokeCommandAction Command="{Binding GotFocusCommand}"/>
+                </behav:EventTrigger>
+            </behav:Interaction.Triggers>
+        </TextBox>
+        <TextBox Text="{Binding State}"/>
+    </StackPanel>
+</Page>

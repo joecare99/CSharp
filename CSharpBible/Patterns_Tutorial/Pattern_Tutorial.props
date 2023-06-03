@@ -1,0 +1,15 @@
+<Project>
+	<PropertyGroup>
+		<UpDir>..\..</UpDir>
+		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<LangVersion>9.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<DefineConstants>NULLABLE</DefineConstants>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Company>JC-Soft</Company>
+		<Authors>Joe Care</Authors>
+		<Copyright>Copyright © JC-Soft 2023</Copyright>
+	</PropertyGroup>
+</Project>

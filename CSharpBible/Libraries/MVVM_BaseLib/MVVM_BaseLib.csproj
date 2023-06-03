@@ -1,14 +1,10 @@
 ﻿<Project>
+	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net48-windows;net472-windows;net461-windows</TargetFrameworks>
-		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-        <!--UseWPF>true</UseWPF-->
-		<SignAssembly>True</SignAssembly>
-		<Authors>Joe Care from JC-Soft</Authors>
-		<Company>JC-Soft</Company>
-		<Copyright>Copyright (c) by JC-Soft 2022</Copyright>
 		<OutputType>Library</OutputType>
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+        <UseWPF>true</UseWPF>
+		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -21,13 +17,15 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Helper\" />
-		<Compile Include="..\BaseLib\Helper\Property.cs">
-			<Link>Helper\Property.cs</Link>
-		</Compile>
+		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs" Link="Helper\PropertyHelper.cs" />
+		<Compile Include="..\BaseLib\Helper\TypeUtils.cs" Link="Helper\TypeUtils.cs" />
+		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Condition="$(TargetFramework.StartsWith('net4'))" Include="System.Xaml" />
 	</ItemGroup>
 
 </Project>

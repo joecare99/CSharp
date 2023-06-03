@@ -30,11 +30,12 @@ namespace MVVM_TiledDisplay.View
             InitializeComponent();
             this.SizeChanged += (object sender, SizeChangedEventArgs evt) =>
             {
-                (this.Resources["positionConverter"] as PositionConverter).WindowSize = evt.NewSize;
+                if (this.Resources["positionConverter"] is PositionConverter pc)
+                    pc.WindowSize = evt.NewSize;
             };
         }
 
-        private void Storyboard_Completed(object sender, EventArgs e) => (this.DataContext as TileViewViewModel).Storyboard_Completed(sender, e);
+        private void Storyboard_Completed(object sender, EventArgs e) => (this.DataContext as TileViewViewModel)?.Storyboard_Completed(sender, e);
 
     }
 }

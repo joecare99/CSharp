@@ -11,16 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Model;
+using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_22_WpfCap.Model;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_22_WpfCap.ViewModel
 {
@@ -40,12 +36,12 @@ namespace MVVM_22_WpfCap.ViewModel
         /// Gets or sets the move left.
         /// </summary>
         /// <value>The move left.</value>
-        public DelegateCommand MoveLeft { get; set; }
+        public DelegateCommand? MoveLeft { get; set; }
         /// <summary>
         /// Gets or sets the move right.
         /// </summary>
         /// <value>The move right.</value>
-        public DelegateCommand MoveRight { get; set; }
+        public DelegateCommand? MoveRight { get; set; }
         /// <summary>
         /// Gets or sets the color of the tile.
         /// </summary>
@@ -55,8 +51,8 @@ namespace MVVM_22_WpfCap.ViewModel
             get
             {
                 var _result = new int[4];
-                for (var i = 0;i<4;i++)
-                    _result[i]= Parent.Model.TileColor(i,RowId - 1);
+                for (var i = 0; i < 4; i++)
+                    _result[i] = Parent?.Model.TileColor(i, RowId - 1)??0;
                 return _result;
             }
         }
@@ -69,15 +65,13 @@ namespace MVVM_22_WpfCap.ViewModel
         /// <summary>
         /// The parent
         /// </summary>
-        public WpfCapViewModel Parent;
-#if NET5_0_OR_GREATER
-        public event PropertyChangedEventHandler? PropertyChanged;
-#else
+        public WpfCapViewModel? Parent;
+
         /// <summary>
         /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-#endif
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         /// <summary>
         /// Notifies the property changed.
         /// </summary>
@@ -104,18 +98,18 @@ namespace MVVM_22_WpfCap.ViewModel
         /// Gets or sets the move up.
         /// </summary>
         /// <value>The move up.</value>
-        public DelegateCommand MoveUp { get; set; }
+        public DelegateCommand? MoveUp { get; set; }
         /// <summary>
         /// Gets or sets the move down.
         /// </summary>
         /// <value>The move down.</value>
-        public DelegateCommand MoveDown { get; set; }
+        public DelegateCommand? MoveDown { get; set; }
         /// <summary>
         /// Gets or sets the <see cref="System.Int32"/> with the specified ix.
         /// </summary>
         /// <param name="ix">The ix.</param>
         /// <returns>System.Int32.</returns>
-        public int this[int ix] => Parent.Model.TileColor(ix, ColId - 1);
+        public int this[int ix] => Parent?.Model.TileColor(ix, ColId - 1)??0;
         /// <summary>
         /// Gets the this.
         /// </summary>
@@ -124,27 +118,25 @@ namespace MVVM_22_WpfCap.ViewModel
         /// <summary>
         /// The parent
         /// </summary>
-        public WpfCapViewModel Parent;
-#if NET5_0_OR_GREATER
-        public event PropertyChangedEventHandler? PropertyChanged;
-#else
+        public WpfCapViewModel? Parent;
+
         /// <summary>
         /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-#endif
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         /// <summary>
         /// The length
         /// </summary>
         public readonly int Length = 4;
-        /// <summary>
+        /*// <summary>
         /// Notifies the property changed.
         /// </summary>
         /// <param name="name">The name.</param>
         public void NotifyPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        }*/
     }
 
     /// <summary>
@@ -154,31 +146,33 @@ namespace MVVM_22_WpfCap.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class WpfCapViewModel : BaseViewModel
     {
-        public WpfCapViewModel():this((IWpfCapModel)DISource.Resolver.Invoke(typeof(IWpfCapModel)))
-        {
-
-        }
+        public WpfCapViewModel() : this(IoC.GetRequiredService<IWpfCapModel>())
+        {}
         /// <summary>
         /// Initializes a new instance of the <see cref="WpfCapViewModel"/> class.
         /// </summary>
         public WpfCapViewModel(IWpfCapModel model)
-        { 
+        {
             _model = model;
             var _moveLeft = new DelegateCommand(DoMoveLeft);
             var _moveRight = new DelegateCommand(DoMoveRight);
-            Rows = new ObservableCollection<RowData>();
-            Rows.Add(new RowData() { RowId = 1, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
-            Rows.Add(new RowData() { RowId = 2, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
-            Rows.Add(new RowData() { RowId = 3, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
-            Rows.Add(new RowData() { RowId = 4, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this });
+            Rows = new ObservableCollection<RowData>
+            {
+                new RowData() { RowId = 1, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this },
+                new RowData() { RowId = 2, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this },
+                new RowData() { RowId = 3, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this },
+                new RowData() { RowId = 4, MoveLeft = _moveLeft, MoveRight = _moveRight, Parent = this }
+            };
 
             var _moveUp = new DelegateCommand(DoMoveUp);
             var _moveDown = new DelegateCommand(DoMoveDown);
-            Cols = new ObservableCollection<ColData>();
-            Cols.Add(new ColData() { ColId = 1, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this });
-            Cols.Add(new ColData() { ColId = 2, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this });
-            Cols.Add(new ColData() { ColId = 3, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this });
-            Cols.Add(new ColData() { ColId = 4, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this });
+            Cols = new ObservableCollection<ColData>
+            {
+                new ColData() { ColId = 1, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this },
+                new ColData() { ColId = 2, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this },
+                new ColData() { ColId = 3, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this },
+                new ColData() { ColId = 4, MoveUp = _moveUp, MoveDown = _moveDown, Parent = this }
+            };
 
             ShuffleCommand = new DelegateCommand(Shuffle);
 
@@ -208,20 +202,14 @@ namespace MVVM_22_WpfCap.ViewModel
         /// <value>The shuffle command.</value>
         public DelegateCommand ShuffleCommand { get; set; }
 
-        private IWpfCapModel _model;
+        private readonly IWpfCapModel _model;
         public IWpfCapModel Model => _model;
 
         /// <summary>
         /// Shuffles the specified object.
         /// </summary>
         /// <param name="obj">The object.</param>
-        private void Shuffle(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            obj=null)
+        private void Shuffle(object? obj = null)
         {
             _model?.Shuffle();
         }
@@ -231,20 +219,14 @@ namespace MVVM_22_WpfCap.ViewModel
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void DoMoveLeft(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            obj)
+        private void DoMoveLeft(object? obj)
         {
             if (obj is RowData rd)
             {
-                _model.MoveLeft(rd.RowId-1);
+                _model.MoveLeft(rd.RowId - 1);
             }
             else
-              throw new NotImplementedException();
+                throw new NotImplementedException();
         }
 
         /// <summary>
@@ -252,17 +234,11 @@ namespace MVVM_22_WpfCap.ViewModel
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void DoMoveRight(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            obj)
+        private void DoMoveRight(object? obj)
         {
             if (obj is RowData rd)
             {
-                _model.MoveRight(rd.RowId-1);
+                _model.MoveRight(rd.RowId - 1);
             }
             else
                 throw new NotImplementedException();
@@ -273,17 +249,11 @@ namespace MVVM_22_WpfCap.ViewModel
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void DoMoveUp(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            obj)
+        private void DoMoveUp(object? obj)
         {
             if (obj is ColData cd)
             {
-                _model.MoveUp(cd.ColId-1);
+                _model.MoveUp(cd.ColId - 1);
             }
             else
                 throw new NotImplementedException();
@@ -294,17 +264,11 @@ namespace MVVM_22_WpfCap.ViewModel
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void DoMoveDown(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            obj)
+        private void DoMoveDown(object? obj)
         {
             if (obj is ColData cd)
             {
-                _model.MoveDown(cd.ColId-1);
+                _model.MoveDown(cd.ColId - 1);
             }
             else
                 throw new NotImplementedException();

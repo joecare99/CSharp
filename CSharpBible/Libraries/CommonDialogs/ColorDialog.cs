@@ -30,7 +30,7 @@ namespace CommonDialogs
 		/// <summary>
 		/// The cd
 		/// </summary>
-		private System.Windows.Forms.ColorDialog _cd = new System.Windows.Forms.ColorDialog();
+		private readonly System.Windows.Forms.ColorDialog _cd = new System.Windows.Forms.ColorDialog();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ColorDialog"/> class.
@@ -111,7 +111,7 @@ namespace CommonDialogs
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[TypeConverter(typeof(StringConverter))]
-		public object Tag { get => _cd.Tag; set => _cd.Tag = value; }
+		public object? Tag { get => _cd.Tag; set => _cd.Tag = value; }
 
 		/// <summary>
 		/// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.

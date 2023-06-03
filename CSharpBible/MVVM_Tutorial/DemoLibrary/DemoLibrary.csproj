@@ -1,9 +1,8 @@
 <Project>
+	<Import Project="..\MVVM_Tutorial_net.props"/>
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net48;net472;net461</TargetFrameworks>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-		<LangVersion>8.0</LangVersion>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net6.0;net7.0;net481;net48;net472;net462</TargetFrameworks>
 		<!--<UseWPF>true</UseWPF>-->
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

@@ -12,12 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Calc64Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /// <summary>
 /// The Tests namespace.
@@ -40,8 +34,8 @@ namespace Calc64Base.Tests
         public void FromMemOperationTest()
         {
             var fmco = new FromMemOperation("?3", "Quest3", (a, m) => a << (int)(m%64));
-            Assert.AreEqual("?3", fmco.ShortDescr);
-            Assert.AreEqual("Quest3", fmco.LongDescr);
+            Assert.AreEqual("?3", fmco.ShortDesc);
+            Assert.AreEqual("Quest3", fmco.LongDesc);
             Assert.AreEqual(true, fmco.NeedAccumulator);
             Assert.AreEqual(false, fmco.NeedRegister);
             Assert.AreEqual(true, fmco.NeedMemory);

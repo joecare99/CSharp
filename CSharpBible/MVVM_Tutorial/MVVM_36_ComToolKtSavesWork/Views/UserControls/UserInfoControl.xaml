@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="MVVM_36_ComToolKtSavesWork.Views.UserControls.UserInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MVVM_36_ComToolKtSavesWork.Views.UserControls"
+             xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
+             xmlns:mvvm="clr-namespace:MVVM_36_ComToolKtSavesWork.ViewModels"
+             xmlns:vc="clr-namespace:MVVM_36_ComToolKtSavesWork.ValueConverter"
+             mc:Ignorable="d" 
+             d:DesignHeight="130" d:DesignWidth="400"
+             DataContext="{ioc:IoC Type=mvvm:UserInfoViewModel}">
+    <d:UserControl.DataContext>
+        <mvvm:UserInfoViewModel />
+    </d:UserControl.DataContext>
+    <UserControl.Resources>
+        <vc:Bool2VisibilityConverter x:Key="Bool2Visibility"/>
+    </UserControl.Resources>
+    <StackPanel HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal" Visibility="{Binding ShowUser, Converter={StaticResource Bool2Visibility}}">
+            <Label Content="Welcome "/>
+            <Label Content="{Binding User.Username}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLogin, Converter={StaticResource Bool2Visibility}}">
+            <Label Content="Not logged In"/>
+            <Button Content="Login" Command="{Binding ShowLoginCtrlCommand}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

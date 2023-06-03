@@ -9,8 +9,8 @@ namespace MVVM_Converter_ImgGrid.Model
         private static int actLevel;
         private static FieldDef[]? _levelData;
 
-        public static FieldDef[]? LevelData { get => _levelData; set => Property.SetProperty(ref _levelData,value, OnPropertyChanged); }
-        public static int ActLevel { get => actLevel; set => Property.SetProperty(ref actLevel, value, OnPropertyChanged); }
+        public static FieldDef[]? LevelData { get => _levelData; set => PropertyHelper.SetProperty(ref _levelData,value, OnPropertyChanged); }
+        public static int ActLevel { get => actLevel; set => PropertyHelper.SetProperty(ref actLevel, value, OnPropertyChanged); }
         public static EventHandler<(string, object, object)>? PropertyChanged { get; set; }
 
         public static void LoadLevel()

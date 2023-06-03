@@ -24,17 +24,19 @@ namespace CSharpBible.Calc32
     /// <summary>
     /// Class Program.
     /// </summary>
-    static class Program
+    public static class Program
     {
+        public static Func<Form?> GetMainForm { get; set; } = ()=>new FrmCalc32Main();
+
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmCalc32Main());
+//            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(GetMainForm());
         }
     }
 }

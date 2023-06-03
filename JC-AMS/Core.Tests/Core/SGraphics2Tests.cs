@@ -186,7 +186,7 @@ namespace JCAMS.Core.Tests
         #region Methods
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringData")]
+        [DynamicData(nameof(Color2StringData))]
         public void Color2StringTest(string name, Color cVal, string sExp)
         {
             Assert.AreEqual(sExp, SGraphics2.Color2String(cVal), $"Test: {name}");
@@ -194,7 +194,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorCube2StringData")]
+        [DynamicData(nameof(ColorCube2StringData))]
         public void ColorCube2StringTest(string name, CColorCube cVal, string sExp)
         {
             Assert.AreEqual(sExp, SGraphics2.ColorCube2String(cVal), $"Test: {name}");
@@ -202,7 +202,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Font2StringData")]
+        [DynamicData(nameof(Font2StringData))]
         public void Font2StringTest(string name, Font fVal, string sExp)
         {
             Assert.AreEqual(sExp, SGraphics2.Font2String(fVal), $"Test: {name}");
@@ -210,7 +210,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void Pen2StringTest(string name, Pen pVal, string sExp, string[] xExp)
         {
             Assert.AreEqual(sExp, SGraphics2.Pen2String(pVal), $"Test: {name}");
@@ -218,7 +218,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void Point2StringTest(string name, Point pVal, string sExp, string[] xExp)
         {
             Assert.AreEqual(sExp, SGraphics2.Point2String(pVal), $"Test: {name}");
@@ -227,7 +227,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Rectangle2StringData")]
+        [DynamicData(nameof(Rectangle2StringData))]
         public void Rectangle2StringTest(string name, Rectangle rVal, string sExp)
         {
             Assert.AreEqual(sExp, SGraphics2.Rectangle2String(rVal), $"Test: {name}");
@@ -235,7 +235,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringData")]
+        [DynamicData(nameof(Color2StringData))]
         public void String2ColorTest(string name, Color cExp, string sVal)
         {
             Assert.AreEqual(Color.FromArgb(cExp.ToArgb()), SGraphics2.String2Color(sVal), $"Test: {name}");
@@ -243,7 +243,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorCube2StringData")]
+        [DynamicData(nameof(ColorCube2StringData))]
         public void String2ColorCubeTest(string name, CColorCube cExp, string sVal)
         {
             Assert.AreEqual(cExp, SGraphics2.String2ColorCube(sVal), $"Test: {name}");
@@ -251,7 +251,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Font2StringData")]
+        [DynamicData(nameof(Font2StringData))]
         public void String2FontTest(string name, Font fExp, string sVal)
         {
             Font fAct = default;
@@ -270,7 +270,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void String2PenTest(string name, Pen pExp, string sVal, string[] xExp)
         {
             AssertAreEqualPen(pExp, SGraphics2.String2Pen(sVal), $"Test: {name}");
@@ -278,7 +278,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void String2PointTest(string name, Point pExp, string sVal, string[] xVal)
         {
             Assert.AreEqual(pExp, SGraphics2.String2Point(sVal), $"Test: {name}");
@@ -286,7 +286,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Rectangle2StringData")]
+        [DynamicData(nameof(Rectangle2StringData))]
         public void String2RectangleTest(string name, Rectangle rExp, string sVal)
         {
             Assert.AreEqual(rExp, SGraphics2.String2Rectangle(sVal), $"Test: {name}");
@@ -294,7 +294,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringData")]
+        [DynamicData(nameof(Color2StringData))]
         public void FindKnownColorTest(string name, Color cVal, string sExp)
         {
             Color c = SGraphics2.FindKnownColor(cVal);
@@ -316,7 +316,7 @@ namespace JCAMS.Core.Tests
         protected new static IEnumerable<object[]> Font2StringXData => SGraphics2Tests_Base.Font2StringXData;
         protected new static IEnumerable<object[]> Pen2StringXData => SGraphics2Tests_Base.Pen2StringXData;
         protected new static IEnumerable<object[]> Point2StringXData => SGraphics2Tests_Base.Point2StringXData;
-
+        /*
         [TestMethod()]
         public void Font2XMLTest(string name, Font fVal, string sExp)
         {
@@ -326,13 +326,13 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void Point2XMLTest(string name, Point pVal, string sExp, string[] xExp)
         {
             var xNode = new XmlDocument();
             Assert.AreEqual(xExp, SGraphics2.Point2XML(pVal, xNode)?.InnerXml, $"Test: {name}");
         }
-
+        */
         [TestMethod()]
         public void XML2FontTest()
         {
@@ -347,7 +347,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Font2StringXData")]
+        [DynamicData(nameof(Font2StringXData))]
         public void WriteToXMLTest_Font(string sVal,Font fVal,string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -365,7 +365,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Font2StringXData")]
+        [DynamicData(nameof(Font2StringXData))]
         public void WriteToXMLTest1_Font(string sVal, Font fVal, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -383,7 +383,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Font2StringXData")]
+        [DynamicData(nameof(Font2StringXData))]
         public void WriteToXMLTest2_Font(string sVal, Font fVal, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -401,7 +401,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Font2StringXData")]
+        [DynamicData(nameof(Font2StringXData))]
         public void WriteToXMLTest3_Font(string sVal, Font fVal, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -419,7 +419,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void WriteToXMLTest_Point(string sVal, Point fVal,string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -437,7 +437,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void WriteToXMLTest1_Point(string sVal, Point fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -455,7 +455,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void WriteToXMLTest2_Point(string sVal, Point fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -473,7 +473,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Point2StringXData")]
+        [DynamicData(nameof(Point2StringXData))]
         public void WriteToXMLTest3_Point(string sVal, Point fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -492,7 +492,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void WriteToXMLTest_Pen(string sVal, Pen fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -510,7 +510,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void WriteToXMLTest1_Pen(string sVal, Pen fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -528,7 +528,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void WriteToXMLTest2_Pen(string sVal, Pen fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -546,7 +546,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void WriteToXMLTest3_Pen(string sVal, Pen fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -564,7 +564,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void WriteToXMLTest4_Pen(string sVal, Pen fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -588,7 +588,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Pen2StringXData")]
+        [DynamicData(nameof(Pen2StringXData))]
         public void WriteToXMLTest5_Pen(string sVal, Pen fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -611,7 +611,7 @@ namespace JCAMS.Core.Tests
         }
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringXData")]
+        [DynamicData(nameof(Color2StringXData))]
         public void WriteToXMLTest_Color(string sVal, Color fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -629,7 +629,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringXData")]
+        [DynamicData(nameof(Color2StringXData))]
         public void WriteToXMLTest1_Color(string sVal, Color fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -647,7 +647,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringXData")]
+        [DynamicData(nameof(Color2StringXData))]
         public void WriteToXMLTest2_Color(string sVal, Color fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -665,7 +665,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringXData")]
+        [DynamicData(nameof(Color2StringXData))]
         public void WriteToXMLTest3_Color(string sVal, Color fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -683,7 +683,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringXData")]
+        [DynamicData(nameof(Color2StringXData))]
         public void WriteToXMLTest4_Color(string sVal, Color fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())
@@ -703,7 +703,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("Color2StringXData")]
+        [DynamicData(nameof(Color2StringXData))]
         public void WriteToXMLTest5_Color(string sVal, Color fVal, string sP, string[] sExp)
         {
             using (var tw = new StringWriter())

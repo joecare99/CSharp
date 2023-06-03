@@ -24,7 +24,7 @@ namespace MathLibrary.TwoDim
 		/// </summary>
 		/// <param name="x">The x value.</param>
 		/// <returns>Value of the stetic function</returns>
-		public static double SinX_X(double x) => Math.Abs(x) > 1e-8 ? Math.Sin(x) / x : Math.Cos(0.5 * x);
+		public static double SinX_X(this double x) => Math.Abs(x) > 1e-8 ? Math.Sin(x) / x : Math.Cos(0.5 * x);
 
 		/// <summary>
 		/// Computes the (new) position and angle (in AGV-coordinates) in the given time.
@@ -40,7 +40,7 @@ namespace MathLibrary.TwoDim
 		}
 
 		/// <summary>
-		/// Agvs the steering.
+		/// Calculates the steering of AGV's.
 		/// </summary>
 		/// <param name="velocity">The velocity.</param>
 		/// <param name="rotation">The rotation.</param>

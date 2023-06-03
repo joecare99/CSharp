@@ -118,7 +118,7 @@ namespace MVVM_Lines_on_Grid2.ViewModel
             {
                 _dataset.Datapoints[i] = new PointF((float)(Math.Sin(i / 50.0f * Math.PI)+ Math.Sin(i / 8.0f * Math.PI)*1.25), (float)(Math.Cos(i/50.0f * Math.PI) + Math.Cos(i / 8.0f * Math.PI) * 1.25));
             }
-            CommandCanExecuteBinding.Add((nameof(WindowPort), nameof(Dataset1)));
+            AddPropertyDependency(nameof(Dataset1), nameof(WindowPort),true);
         } 
     }
 }

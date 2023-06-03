@@ -248,7 +248,7 @@ namespace JCAMS.Core.Extensions.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("AsATML1Data")]
+        [DynamicData(nameof(AsATML1Data))]
         public void AsHTMLTest1(string name, Color c, string sExp)
         {
             Assert.AreEqual(sExp, c.AsHTML(), $"Test: {name}");
@@ -346,7 +346,7 @@ namespace JCAMS.Core.Extensions.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("StreamDumpData")]
+        [DynamicData(nameof(StreamDumpData))]
         public void DumpTest(string name, Stream sVal, string sExp)
         {
             var oPos = sVal?.Position;
@@ -356,7 +356,7 @@ namespace JCAMS.Core.Extensions.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("StreamDumpData")]
+        [DynamicData(nameof(StreamDumpData))]
         public void DumpTest2(string name, Stream sVal, string sExp)
         {
             var oPos = sVal?.Position;

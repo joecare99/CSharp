@@ -20,7 +20,7 @@ namespace BaseLib.Interfaces
     /// Interface IHasChildren
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IHasChildren<T>
+    public interface IHasChildren<T> where T : class  
     {
 #if NET5_0_OR_GREATER
         IEnumerable<T> Items { get => GetItems(); }

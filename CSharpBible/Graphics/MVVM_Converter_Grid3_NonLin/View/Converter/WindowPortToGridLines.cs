@@ -29,10 +29,11 @@ namespace MVVM_Converter_Grid3_NonLin.View.Converter
         private PointF[]? EvalP=default;
         private Vector2[]? EvaldP=default;
         private Func<PointF, PointF> _Real2VisP2 = ZeroTransform();
+        private Func<PointF, PointF> _z = ZeroTransform();
         #endregion
 
         public Func<PointF, RectangleF, System.Windows.Point> Real2VisP;
-        public Func<PointF, PointF> Real2VisP2 { get => _Real2VisP2; set =>Property.SetProperty(ref _Real2VisP2, value,EvalFunction); }
+        public Func<PointF, PointF> Real2VisP2 { get => _Real2VisP2; set =>PropertyHelper.SetProperty(ref _Real2VisP2, value,EvalFunction); }
 
         private void EvalFunction(string arg1, Func<PointF, PointF> arg2, Func<PointF, PointF> arg3)
         {
@@ -49,9 +50,9 @@ namespace MVVM_Converter_Grid3_NonLin.View.Converter
         }
 
         public Func<System.Windows.Point, RectangleF, PointF> Vis2RealP;
-        private bool IsLinear=>Func<PointF, PointF>.Equals((object)ZeroTransform,_Real2VisP2);
+        private bool IsLinear=>Func<PointF, PointF>.Equals(_Real2VisP2,_z);
 
-        public System.Windows.Size WindowSize { get => _windowSize; set => Property.SetProperty(ref _windowSize,value,WindowSizeChanged); }
+        public System.Windows.Size WindowSize { get => _windowSize; set => PropertyHelper.SetProperty(ref _windowSize,value,WindowSizeChanged); }
         #endregion
 
         #region Methods

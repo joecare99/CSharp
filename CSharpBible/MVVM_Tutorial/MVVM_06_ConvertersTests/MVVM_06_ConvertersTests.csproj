@@ -1,0 +1,26 @@
+﻿<Project>
+	<Import Project="..\MVVM_Tutorial_net.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
+	</ItemGroup>
+
+</Project>

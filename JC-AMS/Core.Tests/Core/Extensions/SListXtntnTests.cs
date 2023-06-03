@@ -18,14 +18,14 @@ namespace JCAMS.Core.Extensions.Tests
         };
 
         [DataTestMethod()]
-        [DynamicData("ContainsCIData")]
+        [DynamicData(nameof(ContainsCIData))]
         public void ContainsCITest(string name, List<string> l, string s,bool xExp)
         {
             Assert.AreEqual(xExp,l.ContainsCI(s),$"Test: {name}");
         }
 
         [DataTestMethod()]
-        [DynamicData("ContainsCIData")]
+        [DynamicData(nameof(ContainsCIData))]
         public void ContainsCITest2(string name, List<string> l, string s, bool xExp)
         {
             Assert.AreEqual(xExp, SListXtntn.ContainsCI(l,s), $"Test: {name}");

@@ -36,7 +36,7 @@ namespace Calc64WF.Visual.Converter.Tests
         public void ConvertTest()
         {
             var vcTest = new OperationModeToShortString();
-            foreach(var e in typeof(Calc64Model.eOpMode).GetEnumValues())
+            foreach(var e in typeof(Calc64Model.EOpMode).GetEnumValues())
             {
                 Assert.IsNotNull(vcTest.Convert(e, typeof(string), null, System.Globalization.CultureInfo.CurrentCulture));
             }

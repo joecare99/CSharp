@@ -24,7 +24,7 @@ namespace DemoLibraryTests.Models
 		/// <summary>
 		/// The c exp to string1
 		/// </summary>
-		private string cExpToString1="1, 4, 2 3, 5";
+		private readonly string cExpToString1="1, 4, 2 3, 5";
 
 		/// <summary>
 		/// Converts to stringtest.
@@ -42,6 +42,7 @@ namespace DemoLibraryTests.Models
         public void ToStringTest(string aStreet, string aCity,string aState, string aZip, string aCountry,string ExpToString) {
 			var model = new AddressModel() {
 				StreetAddress = aStreet,
+				AdditionalLine="",
 				State = aState,
 				ZipCode = aZip,
 				City = aCity,

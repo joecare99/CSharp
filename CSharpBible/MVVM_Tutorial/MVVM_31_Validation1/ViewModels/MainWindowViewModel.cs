@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApp.ViewModels
+namespace MVVM_31_Validation1.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
@@ -35,6 +35,7 @@ namespace WpfApp.ViewModels
 
         }
 
+#if !NET5_0_OR_GREATER
         /// <summary>
         /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
@@ -42,6 +43,7 @@ namespace WpfApp.ViewModels
         {
             return;
         }
+#endif
 
     }
 }

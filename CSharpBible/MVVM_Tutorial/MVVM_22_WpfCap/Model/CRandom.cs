@@ -19,5 +19,10 @@ namespace MVVM_22_WpfCap.Model
         /// <param name="max">The maximum.</param>
         /// <returns>The random value</returns>
         public int Next(int max) => _rnd.Next(max);
+
+        public void Seed(int seed)
+        {
+            _rnd = new Random(seed);
+        }
     }
 }

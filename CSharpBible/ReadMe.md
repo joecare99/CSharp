@@ -4,6 +4,11 @@ See the [Wiki](https://github.com/joecare99/CSharp/wiki/CSharpBible)
 
 ## [MVVM - Tutorial](MVVM_Tutorial)
 Tutorial and best-practices for MVVM - pattern - driven projects.
+Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
+
+## [Design-Pattern - Tutorial](Pattern_Tutorial)
+Tutorial for various Design-Pattern.
+Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
 
 ## [Games](Games) 
 Collection of "small" games

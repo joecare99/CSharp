@@ -1,40 +1,45 @@
 ﻿<Project>
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <Nullable>enable</Nullable>
-	  <UseWPF>true</UseWPF>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-  </ItemGroup>
+	<Import Project="..\Calc_net.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+		<Compile Remove="obj\**" />
 		<None Remove="*.bak" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Remove="Properties\AssemblyInfo.cs" />
-	</ItemGroup>	
+	</ItemGroup>
 	<ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>	
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Properties\" />
-	</ItemGroup>	
+		<Compile Include="..\Calc32Tests\NonVisual\CalculatorClassTests.cs">
+			<Link>NonVisual\CalulatorClassTests.cs</Link>
+		</Compile>
+	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Calc32WPF\Calc32WPF_net.csproj" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup>
+			  <None Remove="Calc32WPFTests.csproj~RF1d0c8e5c.TMP" />
+	</ItemGroup>
+	<ItemGroup>
+<ProjectReference Include="..\Calc32WPF\Calc32WPF_net.csproj" />
 	</ItemGroup>
 
 </Project>
