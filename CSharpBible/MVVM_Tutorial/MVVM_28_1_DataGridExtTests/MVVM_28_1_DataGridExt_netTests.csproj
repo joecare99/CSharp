@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\MVVM_28.1_DataGridExt\MVVM_28_1_DataGridExt_net.csproj" />
+    <ProjectReference Include="..\MVVM_28_1_DataGridExt\MVVM_28_1_DataGridExt_net.csproj" />
   </ItemGroup>
 
 </Project>
