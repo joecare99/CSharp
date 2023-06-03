@@ -9,9 +9,9 @@ namespace MVVM_28_DataGrid.Models
 {
     public class Department : NotificationObject
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public int Id { get; set; } = -1;
+        public string? Name { get; set; }
+        public string? Description { get; set; }
 
     }
 }

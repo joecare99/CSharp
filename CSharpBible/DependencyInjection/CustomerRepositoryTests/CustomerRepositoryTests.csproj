@@ -11,7 +11,7 @@
     <PackageReference Include="AutoFixture" Version="4.18.0" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.0" />
     <PackageReference Include="NSubstitute" Version="5.0.0" />
-    <PackageReference Include="JustMock" Version="2023.1.117.1" />
+    <PackageReference Include="JustMock" Version="2023.2.601.35" />
     <PackageReference Include="Castle.Windsor" Version="5.1.1" />
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />

@@ -1,9 +1,6 @@
 ﻿using MVVM_28_DataGrid.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_28_DataGrid.Services
 {
@@ -13,7 +10,7 @@ namespace MVVM_28_DataGrid.Services
         /// The random
         /// </summary>
         public static Func<int, int, int> GetNext { get; set; } = (mn, mx) => (_rnd ??= new Random()).Next(mn, mx);
-        private static Random _rnd;
+        private static Random _rnd = null!;
         /// <summary>
         /// The first names
         /// </summary>
@@ -26,7 +23,7 @@ namespace MVVM_28_DataGrid.Services
         /// The last names
         /// </summary>
         static readonly string[] titles = { "", "", "", "", "", "Dr.", "Prof.", "Prof. Dr.", "Dr. med.", "Dipl.Ing.", "M.D.", "M.D." };
-
+ 
         /// <summary>
         /// The low end date
         /// </summary>
@@ -76,7 +73,8 @@ namespace MVVM_28_DataGrid.Services
                 string fn, ln;
                 return new() { 
                     FirstName =(fn= GetRandomItem(firstNames)), 
-                    LastName = (ln=GetRandomItem(lastNames)), 
+                    LastName = (ln=GetRandomItem(lastNames)),
+                    Title = GetRandomItem(titles),
                     Email =  $"{fn.ToLower()}.{ln.ToLower()}@muster.com", 
                     Id = _id++, 
                     Department = GetRandomItem(deps), 

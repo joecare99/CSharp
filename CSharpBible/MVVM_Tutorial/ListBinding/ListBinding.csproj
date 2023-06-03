@@ -18,7 +18,7 @@
 		<None Remove="*.bak" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">

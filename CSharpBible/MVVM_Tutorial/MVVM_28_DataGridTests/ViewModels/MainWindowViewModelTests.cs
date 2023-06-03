@@ -7,7 +7,7 @@ namespace MVVM_28_DataGrid.ViewModels.Tests
     [TestClass()]
     public class MainWindowViewModelTests
     {
-        MainWindowViewModel testModel;
+        MainWindowViewModel testModel=null!;
 
         [TestInitialize]
         public void Init()

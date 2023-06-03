@@ -12,14 +12,14 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
-using MVVM.ViewModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using MVVM_36_ComToolKtSavesWork.Models;
 using System;
-using MVVM.View.Extension;
+using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MVVM.View.Extension;
+using MVVM.ViewModel;
+using MVVM.ViewModel.Tests;
+using MVVM_36_ComToolKtSavesWork.Models;
 
 /// <summary>
 /// The Tests namespace.

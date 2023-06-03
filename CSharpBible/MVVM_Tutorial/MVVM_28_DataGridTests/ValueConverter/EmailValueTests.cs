@@ -39,7 +39,7 @@ namespace MVVM_28_DataGrid.ValueConverter.Tests
         public void ConvertTest(object? value, string expected)
         {
             if (value is double d) value = (decimal)d;
-            var result = testConv.Convert(value, typeof(string), null, CultureInfo.InvariantCulture);
+            var result = testConv.Convert(value, typeof(string), null!, CultureInfo.InvariantCulture);
             Assert.AreEqual(expected, result);
         }
 
@@ -51,7 +51,7 @@ namespace MVVM_28_DataGrid.ValueConverter.Tests
         public void ConvertBackTest(object? oExp, string sVal)
         {
             if (oExp is double d) oExp = (decimal)d;
-            var result = testConv.ConvertBack(sVal, typeof(string), null, CultureInfo.InvariantCulture);
+            var result = testConv.ConvertBack(sVal, typeof(string), null!, CultureInfo.InvariantCulture);
             Assert.AreEqual(oExp, result);
         }
 

@@ -11,10 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Helper.MVVM;
-using MVVM_36_ComToolKtSavesWork.Models;
 using System;
 using System.ComponentModel;
+using BaseLib.Helper.MVVM;
+using MVVM.ViewModel.Tests;
+using MVVM_36_ComToolKtSavesWork.Models;
 
 namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
 {
