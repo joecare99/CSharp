@@ -7,11 +7,9 @@
 //     der Code erneut generiert wird.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using System;
 
-namespace TitleGen.Properties {
-    using System;
-    
-    
+namespace TitleGen.Properties {   
     /// <summary>
     ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>

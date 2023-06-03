@@ -10,8 +10,8 @@
 	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
