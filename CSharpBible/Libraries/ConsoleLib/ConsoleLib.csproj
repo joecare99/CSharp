@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Libraries.props"/>
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
     <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
@@ -20,5 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>

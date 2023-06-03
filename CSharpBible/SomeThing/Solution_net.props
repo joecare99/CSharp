@@ -1,11 +1,9 @@
 <Project>
 	<PropertyGroup>
-		<UpDir>..</UpDir>
-		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
-		<DefineConstants>NULLABLE</DefineConstants>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>

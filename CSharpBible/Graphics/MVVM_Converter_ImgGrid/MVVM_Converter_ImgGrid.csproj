@@ -13,8 +13,8 @@
 	  <None Remove="View\WernerTiles.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Games\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
-	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	  <ProjectReference Include="$(UpDir)\Games\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
+	  <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Resources\WernerTiles.png">
