@@ -2,7 +2,7 @@
 	<Import Project="..\Calc_net.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -22,11 +22,12 @@
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)'=='net6.0-windows' or '$(TargetFramework)'=='net7.0-windows'">
 		<ProjectReference Include="..\Calc64Base\Calc64Base_net.csproj" />
-		<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data_net.csproj" />
+		<!--<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data_net.csproj" />-->
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)'!='net6.0-windows' and '$(TargetFramework)'!='net7.0-windows'">
 		<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
 		<ProjectReference Include="..\Calc64Base\Calc64Base_win.csproj" />
+		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
