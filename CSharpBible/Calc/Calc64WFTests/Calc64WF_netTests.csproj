@@ -1,10 +1,7 @@
 ﻿<Project>
-  <PropertyGroup>
+	<Import Project="..\Calc_net.props" />
+	<PropertyGroup>
 	  <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <Nullable>enable</Nullable>
 	  <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
   </PropertyGroup>

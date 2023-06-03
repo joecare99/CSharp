@@ -1,7 +1,8 @@
 <Project>
 	<PropertyGroup>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<UpDir>..\..</UpDir>
+		<BaseOutputPath>..\..\..\bin\$(RootNamespace)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\..\..\obj.net\$(RootNamespace)\</BaseIntermediateOutputPath>
 		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>

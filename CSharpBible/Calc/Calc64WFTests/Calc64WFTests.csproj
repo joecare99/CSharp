@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\calc.props" />
+	<Import Project="..\Calc.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TestProjectType>UnitTest</TestProjectType>
