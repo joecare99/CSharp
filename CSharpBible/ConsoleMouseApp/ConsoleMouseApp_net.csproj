@@ -1,10 +1,7 @@
 <Project>
-
-  <PropertyGroup>
+	<Import Project="..\Solution_net.props" />
+	<PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
@@ -15,9 +12,6 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <AssemblyVersion>1.0.*</AssemblyVersion>
-    <Company>JC-Soft</Company>
-    <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2022</Copyright>
     <Product>ConsoleMouseApp 1.0</Product>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
@@ -36,7 +30,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\ConsoleLib\ConsoleLib_net.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib_net.csproj" />
   </ItemGroup>
 
 </Project>
