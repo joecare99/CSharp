@@ -20,7 +20,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
 	</ItemGroup>
 
 </Project>
