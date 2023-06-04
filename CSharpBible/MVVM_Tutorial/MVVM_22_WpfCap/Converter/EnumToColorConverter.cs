@@ -67,9 +67,9 @@ namespace MVVM_22_WpfCap.Converter
                 bool b => (b ? TrueColor : FalseColor).ToString(),
                 bool[] ba when parameter is string s && int.TryParse(s,out _) &&  colors.Count>2=> (ba[int.Parse(s)] ? colors[2] : colors[1]).ToString(),
                 bool[] ba when parameter is string s && int.TryParse(s,out _)=> (ba[int.Parse(s)] ? TrueColor : FalseColor).ToString(),                
-                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is <= ia.Length && colors.Count > ia[_is] 
+                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is < ia.Length && colors.Count > ia[_is] 
                     =>colors[ia[_is]].ToString(),
-                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is <= ia.Length 
+                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is < ia.Length 
                     =>(ia[_is] switch
                     {
                         1 => FalseColor,
