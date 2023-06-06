@@ -2,7 +2,7 @@
   <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net481-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>net472-windows;net48-windows;net481-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
