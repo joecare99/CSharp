@@ -69,7 +69,7 @@ namespace MVVM_Converter_DrawGrid2.View.Converter
                         dSize = new System.Drawing.Size(w, w);
                     else if (s.Contains(";"))
                     {
-                        var aS = s.Split(";");
+                        var aS = s.Split(';');
                         if (int.TryParse(aS[0], out var x) && int.TryParse(aS[1], out var y))
                             dSize = new System.Drawing.Size(x, y);
                     }
