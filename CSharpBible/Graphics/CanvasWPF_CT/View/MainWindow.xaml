@@ -1,0 +1,69 @@
+<Window x:Class="CanvasWPF_CT.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CanvasWPF_CT"
+        xmlns:mvvm="clr-namespace:CanvasWPF_CT.ViewModel" 
+        mc:Ignorable="d"
+        Title="Dynamic Shapes" Height="450" Width="800">
+    <Window.DataContext>
+        <mvvm:MainWindowViewModel />
+    </Window.DataContext>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button  Width="100" Name="CreateShape1" Content="Create Rectangle" Command="{Binding SelectShapeCommand}" CommandParameter="Rectangle"/>
+            <Button  Width="100" Name="CreateShape2" Content="Create Circle" Command="{Binding SelectShapeCommand}" CommandParameter="Circle"/>
+            <Button  Width="100" Name="DoStep" Content="Step" Command="{Binding SelectShapeCommand}" CommandParameter="Step"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+            <TextBlock>Data:</TextBlock>
+        </StackPanel>
+        <Grid>
+            <ItemsControl ItemsSource="{Binding Rectangles}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.Effect>
+                                <DropShadowEffect/>
+                            </Grid.Effect>
+                            <Rectangle Margin="-20,-20" Width="40" Height="40" Fill="#80FF0000" Cursor="Hand">
+                        </Rectangle>
+                            <Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>
+                            <Grid.RenderTransform>
+                                <TranslateTransform Y="{Binding Y}" X="{Binding X}"/>
+                            </Grid.RenderTransform>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Circles}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Margin="-20,-20,0,0" Width="40" Height="40" Fill="Blue" Cursor="Hand">
+                        <Ellipse.Effect>
+                            <DropShadowEffect BlurRadius="20" ShadowDepth="10"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+</Window>
