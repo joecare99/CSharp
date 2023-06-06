@@ -50,6 +50,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasWPF2_ItemTemplateSele
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasWPF2_CTItemTemplateSelector", "CanvasWPF2_CTItemTemplateSelector\CanvasWPF2_CTItemTemplateSelector.csproj", "{0660EC1D-EC4F-4597-AFE6-550F72DD9B0B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamicShapeWPF", "DynamicShapeWPF\DynamicShapeWPF.csproj", "{672051FE-BBEE-4411-9D58-8622120F36A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Lines_on_Grid2", "MVVM_Lines_on_Grid2\MVVM_Lines_on_Grid2.csproj", "{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +120,14 @@ Global
 		{0660EC1D-EC4F-4597-AFE6-550F72DD9B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0660EC1D-EC4F-4597-AFE6-550F72DD9B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0660EC1D-EC4F-4597-AFE6-550F72DD9B0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{672051FE-BBEE-4411-9D58-8622120F36A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{672051FE-BBEE-4411-9D58-8622120F36A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{672051FE-BBEE-4411-9D58-8622120F36A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{672051FE-BBEE-4411-9D58-8622120F36A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,9 @@
 ﻿<Project>
-	<Import Project="..\MVVM_Tutorial.props" />
+	<Import Project="..\MVVM_Tutorial_net.props" />
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

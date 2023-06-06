@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
@@ -25,6 +26,10 @@ namespace MVVM_06_Converters_4.ViewModel
     /// <seealso cref="Microsoft.Xaml.Behaviors.Behavior{System.Windows.FrameworkElement}" />
     public class CanvasBehavior : Behavior<FrameworkElement>
     {
+        public PointF? RealPos { get; private set; }
+
+        private bool xPressed;
+
         /// <summary>
         /// Called after the behavior is attached to an AssociatedObject.
         /// </summary>
@@ -32,7 +37,7 @@ namespace MVVM_06_Converters_4.ViewModel
         protected override void OnAttached()
         {
             var iObjParent = AssociatedObject.Parent as Page;
-            var cCoordinateConverter = iObjParent?.Resources["vcPortGrid"] as WindowPortToGridLines;
+            var cCoordinateConverter = iObjParent?.Resources["vcPortGrid"] as WindowPortToGridLines;            
 
             AssociatedObject.MouseWheel += (s, e) =>
             {
@@ -40,12 +45,12 @@ namespace MVVM_06_Converters_4.ViewModel
                 {
                     var mousePosition = e.GetPosition(s as IInputElement);
                     System.Drawing.RectangleF ActPort = vm.VPWindow;
-                    if (e.Delta > 0)
+                    if (e.Delta < 0)
                     {
                         ActPort.Inflate(ActPort.Size.Width * 0.1f, ActPort.Size.Height * 0.1f);
                         vm.VPWindow = ActPort;
                     }
-                    else if (e.Delta < 0)
+                    else if (e.Delta > 0)
                     {
                         ActPort.Inflate(-ActPort.Size.Width * 0.1f, -ActPort.Size.Height * 0.1f);
                         vm.VPWindow = ActPort;
@@ -59,9 +64,37 @@ namespace MVVM_06_Converters_4.ViewModel
                 if (AssociatedObject.DataContext is PlotFrameViewModel vm)
                 { 
                     var mousePosition = e.GetPosition(s as IInputElement);
-                    var RealPos = cCoordinateConverter?.Vis2RealP(mousePosition, cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
+                    RealPos = cCoordinateConverter?.Vis2RealP(mousePosition, cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
+                    xPressed = true;
                 }
             };
+
+            AssociatedObject.MouseLeftButtonUp += (s, e) =>
+            {
+                if (AssociatedObject.DataContext is PlotFrameViewModel vm)
+                {
+                    var mousePosition = e.GetPosition(s as IInputElement);
+                    var NewPos = cCoordinateConverter?.Vis2RealP(mousePosition, cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
+                    xPressed = false;
+                }
+            };
+
+            AssociatedObject.MouseMove += (s, e) =>
+            {
+                if (AssociatedObject.DataContext is PlotFrameViewModel vm)
+                {
+                    var mousePosition = e.GetPosition(s as IInputElement);
+                    var NewPos = cCoordinateConverter?.Vis2RealP(mousePosition, cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
+                    if (xPressed && NewPos!=null)
+                    {
+                        System.Drawing.RectangleF ActPort = vm.VPWindow;
+                        ActPort.Offset( -NewPos.Value.X + RealPos?.X ?? 0f,-NewPos.Value.Y+RealPos?.Y ?? 0f);
+                        vm.VPWindow = ActPort;
+                    }
+                }
+            };
+
+
         }
     }
 }
