@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+	  <UpDir>..\..</UpDir>
     <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
