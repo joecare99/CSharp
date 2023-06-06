@@ -17,7 +17,7 @@
 
         </Frame>
       <GridSplitter Width="5" />
-        <Frame Grid.Column="1" Source="/View/PlotFrame.xaml">
+        <Frame Grid.Column="1" Source="/View/PlotFrame.xaml" ClipToBounds="True">
 
         </Frame>
     </Grid>
