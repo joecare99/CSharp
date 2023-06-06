@@ -11,7 +11,7 @@ namespace MVVM_22_WpfCap.Model.Tests
     [TestClass()]
     public class CRandomTests
     {
-        private CRandom testRand;
+        private CRandom testRand =null!;
 
         [TestInitialize]
         public void Init()

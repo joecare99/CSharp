@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+	  <UpDir>..\..</UpDir>
+	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>

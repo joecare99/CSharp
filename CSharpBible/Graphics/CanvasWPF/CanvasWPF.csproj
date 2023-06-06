@@ -2,17 +2,17 @@
   <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net481-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>net472-windows;net48-windows;net481-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <PropertyGroup>
     <RootNamespace>CanvasWPF</RootNamespace>
-    <Deterministic>false</Deterministic>
+    <Deterministic>true</Deterministic>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
+    <AssemblyVersion>1.0.1.2</AssemblyVersion>
     <Product>CanvasWPF 1.0</Product>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Description>Stellt dynamisch Scheiben und Quadrate dar, die dann animiert werden können. </Description>
@@ -35,11 +35,7 @@
     <Folder Include="Models\" />
     <Folder Include="View\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
-  </ItemGroup>
-
+	
   <ItemGroup>
     <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>

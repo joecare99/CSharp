@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Telerik.JustMock;
 
 namespace MVVM_22_WpfCap.ViewModel.Tests
 {
@@ -24,7 +25,7 @@ namespace MVVM_22_WpfCap.ViewModel.Tests
 
         public int Height => 4;
 
-        public event EventHandler TileColorChanged;
+        public event EventHandler? TileColorChanged;
 
         public void Init()
         {
@@ -64,16 +65,16 @@ namespace MVVM_22_WpfCap.ViewModel.Tests
 
         internal void FireTileChange()
         {
-            TileColorChanged.Invoke(this, EventArgs.Empty);
+            TileColorChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
     [TestClass()]
     public class WpfCapViewModelTests
     {
-        private TestWpfCapModel _m;
-        private WpfCapViewModel testWpfCapVM;
-        private WpfCapViewModel testWpfCapVM2;
+        private TestWpfCapModel _m = null!;
+        private WpfCapViewModel testWpfCapVM = null!;
+        private WpfCapViewModel testWpfCapVM2 = null!;
 
         public string DebugOut = "";
 
@@ -93,12 +94,12 @@ namespace MVVM_22_WpfCap.ViewModel.Tests
             _m.DebugOut = "";
         }
 
-        private void vmColChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void vmColChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             DebugOut += $"PropChange({sender},{e.OldStartingIndex},{e.NewStartingIndex})\r\n";
         }
 
-        private void vmPropChanged(object sender, PropertyChangedEventArgs e)
+        private void vmPropChanged(object? sender, PropertyChangedEventArgs e)
         {
             DebugOut += $"PropChange({sender},{e.PropertyName})\r\n";
         }
@@ -113,17 +114,16 @@ namespace MVVM_22_WpfCap.ViewModel.Tests
             Assert.AreEqual(_m, testWpfCapVM2.Model);
         }
 
+
         [TestMethod()]
         public void WpfCapViewModelTest()
         {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void WpfCapViewModelTest1()
-        {
-            var _testWpfCapVM = new WpfCapViewModel(null);
+            var mdl = Mock.Create<IWpfCapModel>();
+            var _testWpfCapVM = new WpfCapViewModel(mdl);
             Assert.IsNotNull(_testWpfCapVM);
+            Mock.Assert(mdl);
+            Mock.Assert(() => mdl.Init());
+            Mock.Assert(() => mdl.Shuffle());
         }
 
         [TestMethod()]

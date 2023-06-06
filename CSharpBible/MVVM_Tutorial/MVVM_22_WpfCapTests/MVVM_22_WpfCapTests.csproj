@@ -21,9 +21,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="JustMock" Version="2023.2.601.35" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
 		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />

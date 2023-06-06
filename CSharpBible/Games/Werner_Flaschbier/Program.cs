@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 
+using System.Threading;
 using Werner_Flaschbier_Base.View;
 using Werner_Flaschbier_Base.ViewModel;
 

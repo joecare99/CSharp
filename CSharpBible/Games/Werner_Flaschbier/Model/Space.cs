@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
 using System.Drawing;
 
 namespace Werner_Flaschbier_Base.Model
@@ -22,16 +23,12 @@ namespace Werner_Flaschbier_Base.Model
     /// <seealso cref="Werner_Flaschbier_Base.Model.Field" />
     public class Space: Field
     {
-#if NET6_0_OR_GREATER
         /// <summary>
         /// Initializes a new instance of the <see cref="Space"/> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="parentPlayObject">The parent play object.</param>
         public Space(Point position, Playfield? parentPlayObject) : base(position, parentPlayObject)
-#else
-        public Floor(Point position, Playfield parentPlayObject) : base(position, parentPlayObject)
-#endif
         {
         }
         /// <summary>

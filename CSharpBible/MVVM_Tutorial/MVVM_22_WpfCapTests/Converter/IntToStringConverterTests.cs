@@ -13,7 +13,7 @@ namespace MVVM_22_WpfCap.Converter.Tests
     [TestClass()]
     public class IntToStringConverterTests
     {
-        private IntToStringConverter _testConverter;
+        private IntToStringConverter _testConverter = null!;
 
         [TestInitialize()]
         public void Init()
@@ -38,13 +38,13 @@ namespace MVVM_22_WpfCap.Converter.Tests
         [DataRow("System.Int32", typeof(int))]
         public void ConvertTest(string sExp,object o)
         {
-            Assert.AreEqual(sExp,_testConverter.Convert(o,typeof(string),null,null));
+            Assert.AreEqual(sExp,_testConverter.Convert(o,typeof(string),null!,null!));
         }
 
         [TestMethod()]
         public void ConvertBackTest()
         {
-            Assert.ThrowsException<NotImplementedException>(() => _testConverter.ConvertBack(null, typeof(string), null, CultureInfo.InvariantCulture));
+            Assert.ThrowsException<NotImplementedException>(() => _testConverter.ConvertBack(null!, typeof(string), null!, CultureInfo.InvariantCulture));
         }
     }
 }
