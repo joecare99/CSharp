@@ -2,7 +2,7 @@
 	<Import Project="..\Games.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net48;net472;net462</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
