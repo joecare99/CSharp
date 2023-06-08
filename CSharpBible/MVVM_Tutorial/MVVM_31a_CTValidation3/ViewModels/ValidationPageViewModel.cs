@@ -8,7 +8,7 @@ using MVVM_31a_CTValidation3.Properties;
 namespace MVVM_31a_CTValidation3.ViewModels
 {
     [NotifyDataErrorInfo]
-    public partial class ValidationPageViewModel : BaseViewModelCT, INotifyDataErrorInfo
+    public partial class ValidationPageViewModel : BaseViewModelCT
     {
         [ObservableProperty]
         [MinLength(6, ErrorMessageResourceName = "Err_MustHave_Chars", ErrorMessageResourceType = typeof(Resources))]
