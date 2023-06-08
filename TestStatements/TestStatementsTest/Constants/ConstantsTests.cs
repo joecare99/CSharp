@@ -11,6 +11,9 @@ namespace TestStatementTest.ConstantTests
     [TestClass()]
     public class ConstantsTests
     {
+        private const int cExpLoremIpsum = -466537496;//-687218507;// -466537496;//1742248702
+        private const int cExpHelloWorld = -1497658439;//485358840;// 1253652992;
+
         [DataTestMethod()]
         [DataRow(1,Constants.LoremIpsum,typeof(string),5050, DisplayName = "Lorem Ipsum ...")]
         [DataRow(2,Constants.dGoldenCut, typeof(double),1, DisplayName = "the golden cut 1.61...")]
@@ -40,17 +43,17 @@ namespace TestStatementTest.ConstantTests
             Assert.IsTrue(Constants.HelloWorld.StartsWith("Hello"));
             Assert.IsTrue(Constants.HelloWorld.EndsWith("!"));
             Assert.IsTrue(Constants.HelloWorld.Contains("World"));
-            Assert.AreEqual(-1497658439, Constants.HelloWorld.GetHashCode(), "Hash");
             Assert.AreEqual(13, Constants.HelloWorld.Length, "length");
             Assert.AreEqual(2, Constants.HelloWorld.Count((c) => c == ' '), "Spaces");
             Assert.AreEqual("Hello World !", Constants.HelloWorld);
+            Assert.AreEqual(cExpHelloWorld, Constants.HelloWorld.GetHashCode(), "Hash");
         }
 
         [DataTestMethod]
         [DataRow(1, "Hello", true)]
         [DataRow(2, "!", true)]
         [DataRow(3, "World", true)]
-        [DataRow(4, "Hash:", -1497658439)]
+        [DataRow(4, "Hash:", cExpHelloWorld)]
         [DataRow(5, "Length", 13)]
         [DataRow(6, "\n", 0)]
         [DataRow(7, " ", 2)]
@@ -76,17 +79,17 @@ namespace TestStatementTest.ConstantTests
             Assert.IsTrue(Constants.LoremIpsum.StartsWith("Lorem ipsum"),"Startswith");
             Assert.IsTrue(Constants.LoremIpsum.EndsWith("."),"Endswith");
             Assert.IsTrue(Constants.LoremIpsum.Contains("class"));
-            Assert.AreEqual(-466537496, Constants.LoremIpsum.GetHashCode(),"Hash");
             Assert.AreEqual(5050, Constants.LoremIpsum.Length, "length");
             Assert.AreEqual(71, Constants.LoremIpsum.Count((c) => c == '\n'), "(new) Lines");
             Assert.AreEqual(673, Constants.LoremIpsum.Count((c)=>c==' '), "Spaces");
+            Assert.AreEqual(cExpLoremIpsum, Constants.LoremIpsum.GetHashCode(),"Hash");
         }
 
         [DataTestMethod]
         [DataRow(1, "Lorem ipsum",true)]
         [DataRow(2, ".", true)]
         [DataRow(3, "class", true)]
-        [DataRow(4, "Hash:", -466537496)]
+        [DataRow(4, "Hash:", cExpLoremIpsum)]
         [DataRow(5, "Length", 5050)]
         [DataRow(6, "\n", 71)]
         [DataRow(7, " ", 673)]

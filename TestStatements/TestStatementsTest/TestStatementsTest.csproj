@@ -14,8 +14,7 @@
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<PropertyGroup>
-	</PropertyGroup>
+	<PropertyGroup />
 	<ItemGroup>
 		<Compile Remove="bin\**" />
 		<Compile Remove="obj\**" />
