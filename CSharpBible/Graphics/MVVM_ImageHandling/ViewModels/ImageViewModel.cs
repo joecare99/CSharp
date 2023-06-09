@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 using MVVM_ImageHandling.Models;
 using System;
@@ -19,6 +20,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -43,6 +45,7 @@ namespace MVVM_ImageHandling.ViewModels
 
         [ObservableProperty]
         private ImageSource _image3;
+        private string _assemblyName;
         #endregion
 
         #region Methods
@@ -57,8 +60,8 @@ namespace MVVM_ImageHandling.ViewModels
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;
-            string assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            Image2 = $"pack://application:,,,/{assemblyName};component/Resources/card_♣Ace.png";
+            _assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+            Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♣Ace.png";
             Image3 = null!; 
         }
 
@@ -76,6 +79,22 @@ namespace MVVM_ImageHandling.ViewModels
             OnPropertyChanged(e.PropertyName); 
         }
 
+        [RelayCommand]
+        private void SetClub()
+        {
+            Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♣Ace.png";
+        }
+
+        [RelayCommand]
+        private void SetHeart()
+        {
+            Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♥Ace.png";
+        }
+        [RelayCommand]
+        private void SetDiamond()
+        {
+            Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♦Ace.png";
+        }
         #endregion
     }
 }
