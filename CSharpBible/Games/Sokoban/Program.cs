@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 07-09-2022
 //
@@ -15,7 +15,7 @@ using Sokoban_Base.Model;
 using Sokoban_Base.View;
 using Sokoban_Base.ViewModel;
 
-namespace Sokoban_Base
+namespace Sokoban
 {
     /// <summary>
     /// Class Program.

@@ -54,6 +54,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamicShapeWPF", "DynamicS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Lines_on_Grid2", "MVVM_Lines_on_Grid2\MVVM_Lines_on_Grid2.csproj", "{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_CTDrawGrid", "MVVM_Converter_CTDrawGrid\MVVM_Converter_CTDrawGrid.csproj", "{57211B99-A63D-4492-B2BB-4DC8DA8E2684}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_CTDrawGrid2", "MVVM_Converter_CTDrawGrid2\MVVM_Converter_CTDrawGrid2.csproj", "{8C5DCEC2-5080-4B5C-823C-836D5041857E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_ImgGrid", "MVVM_Converter_ImgGrid\MVVM_Converter_ImgGrid.csproj", "{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_CTImgGrid", "MVVM_Converter_CTImgGrid\MVVM_Converter_CTImgGrid.csproj", "{15A9C328-A1B9-4CE0-85AA-DF425659F441}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +136,22 @@ Global
 		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6606D4C-9AFD-4346-BB3F-D3892EFFCBDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57211B99-A63D-4492-B2BB-4DC8DA8E2684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57211B99-A63D-4492-B2BB-4DC8DA8E2684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57211B99-A63D-4492-B2BB-4DC8DA8E2684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57211B99-A63D-4492-B2BB-4DC8DA8E2684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
