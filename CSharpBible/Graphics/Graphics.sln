@@ -62,6 +62,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_ImgGrid", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_CTImgGrid", "MVVM_Converter_CTImgGrid\MVVM_Converter_CTImgGrid.csproj", "{15A9C328-A1B9-4CE0-85AA-DF425659F441}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_ImageHandling", "MVVM_ImageHandling\MVVM_ImageHandling.csproj", "{F02D8CEA-8069-4FE8-8F5A-9F62B0359EEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_ImageHandling_net", "MVVM_ImageHandling\MVVM_ImageHandling_net.csproj", "{BC6EBCF3-F0CE-4B9A-B5D6-B35A62EEAACB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -152,6 +156,14 @@ Global
 		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15A9C328-A1B9-4CE0-85AA-DF425659F441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F02D8CEA-8069-4FE8-8F5A-9F62B0359EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F02D8CEA-8069-4FE8-8F5A-9F62B0359EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F02D8CEA-8069-4FE8-8F5A-9F62B0359EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F02D8CEA-8069-4FE8-8F5A-9F62B0359EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC6EBCF3-F0CE-4B9A-B5D6-B35A62EEAACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC6EBCF3-F0CE-4B9A-B5D6-B35A62EEAACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC6EBCF3-F0CE-4B9A-B5D6-B35A62EEAACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC6EBCF3-F0CE-4B9A-B5D6-B35A62EEAACB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
