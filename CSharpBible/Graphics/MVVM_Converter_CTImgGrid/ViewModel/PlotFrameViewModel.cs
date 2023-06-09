@@ -1,13 +1,7 @@
 ﻿using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MVVM_Converter_CTImgGrid.Model;
-using System.Windows.Controls;
 using Werner_Flaschbier_Base.Model;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MVVM_Converter_CTImgGrid.ViewModel
 {
@@ -19,16 +13,13 @@ namespace MVVM_Converter_CTImgGrid.ViewModel
         public int tileType;
     }
 
-    public class PlotFrameViewModel : BaseViewModel
+    public partial class PlotFrameViewModel : BaseViewModelCT
     {
+        [ObservableProperty]
         private TileData[] _tiles;        
-        public TileData[] Tiles { get => _tiles; set => SetProperty(ref _tiles, value); } 
 
         public PlotFrameViewModel()
         {
- //           VPWindow = new RectangleF(-300, 300, 9, 6);
- //           VPWindow = new RectangleF(-3, -3, 9, 6);
-            //           VPWindow = new RectangleF(-3, -3, 900, 600);
             _tiles = new TileData[20];
             for (int i = 0; i < _tiles.Length; i++)
             {

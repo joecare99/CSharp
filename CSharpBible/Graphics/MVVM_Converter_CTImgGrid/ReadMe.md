@@ -1,3 +1,4 @@
-﻿### MVVM_Converter_grid
+﻿### MVVM_Converter_ImgGrid
 
-Demo um Zeichenelemente dynamisch mit einem Converter zu erzeugen.
+Demo um Image-Zeichenelemente dynamisch mit einem Converter zu erzeugen.
+Hier: Werner-Flaschbier

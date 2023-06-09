@@ -9,6 +9,9 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+	  <None Remove="Resources\WernerTiles.png" />
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Condition="!$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\Games\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
 		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\Games\Werner_Flaschbier\Werner_Flaschbier_Base_win.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />

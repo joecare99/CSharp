@@ -1,26 +1,23 @@
-﻿using MVVM.ViewModel;
+﻿using CommunityToolkit.Mvvm.Input;
+using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_Converter_CTImgGrid.ViewModel
 {
-    public class MainWindowViewModel:BaseViewModel
+    public partial class MainWindowViewModel:BaseViewModelCT
     {
         public Func<string, BaseViewModel?>? ShowClient { get; set; }
 
-        public DelegateCommand LoadLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.LoadLevel());
-        public DelegateCommand NextLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.NextLevel());
-        public DelegateCommand PrevLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.PrevLevel());
-
         public MainWindowViewModel()
-        {
+        { }
 
-        }
+        [RelayCommand]
+        private void LoadLevel() => Model.Model.LoadLevel();
 
+        [RelayCommand]
+        private void NextLevel() => Model.Model.NextLevel();
 
-
+        [RelayCommand]
+        private void PrevLevel() => Model.Model.PrevLevel();
     }
 }
