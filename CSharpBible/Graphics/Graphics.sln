@@ -58,6 +58,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_CTDrawGrid",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_CTDrawGrid2", "MVVM_Converter_CTDrawGrid2\MVVM_Converter_CTDrawGrid2.csproj", "{8C5DCEC2-5080-4B5C-823C-836D5041857E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_ImgGrid", "MVVM_Converter_ImgGrid\MVVM_Converter_ImgGrid.csproj", "{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +142,10 @@ Global
 		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C5DCEC2-5080-4B5C-823C-836D5041857E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ADBE7DD-AC3F-489B-BB94-B89222AFEE3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
