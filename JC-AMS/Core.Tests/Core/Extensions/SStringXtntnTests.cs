@@ -117,7 +117,6 @@ namespace JCAMS.Core.Extensions.Tests
 " },
         };
 
-
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
         [DataRow("Empty", "", false)]
