@@ -1,4 +1,6 @@
 ﻿using CustomerRepository.Model;
+using System;
+using System.Collections.Generic;
 
 namespace CustomerRepository.Model
 {

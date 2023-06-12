@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestStatementsTest", "TestS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicSample", "DynamicSample\DynamicSample.csproj", "{7C4980B9-2187-4D61-B259-8C6DC7F94207}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncExampleWPF", "AsyncExampleWPF\AsyncExampleWPF.csproj", "{F108E45F-BFFF-48AC-86BC-7A46B7344AAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncExampleWPF", "AsyncExampleWPF\AsyncExampleWPF.csproj", "{F108E45F-BFFF-48AC-86BC-7A46B7344AAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallAllExamples", "CallAllExamples\CallAllExamples.csproj", "{F744DAF3-6510-40A3-9D67-68E42FDDF8B5}"
 EndProject
@@ -32,6 +32,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallAllExamples_net", "CallAllExamples\CallAllExamples_net.csproj", "{9FC0F014-E8DD-4A7B-B910-140D87FEFD7D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamicSample_net", "DynamicSample\DynamicSample_net.csproj", "{3F32E3E4-2CE9-452A-9CC1-08137B90A6AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{8413C0C0-94FC-48B9-BE18-3C6FE48BDCEA}"
+	ProjectSection(SolutionItems) = preProject
+		Solution.props = Solution.props
+		Solution_net.props = Solution_net.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

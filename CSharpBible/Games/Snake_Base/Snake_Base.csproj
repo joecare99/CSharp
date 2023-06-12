@@ -1,15 +1,8 @@
 ﻿<Project>
-  <PropertyGroup>
+	<Import Project="..\Games.props" />
+	<PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net48;net472;net461</TargetFrameworks>
-	  <ImplicitUsings>disable</ImplicitUsings>
-	  <LangVersion>8.0</LangVersion>
-	  <Nullable>enable</Nullable>
-	  <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <IntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-	  <Company>JC-Soft</Company>
-	  <Copyright>Copyright © 2022 by JC-Soft</Copyright>
+    <TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -18,7 +11,7 @@
   <ItemGroup>
     <Folder Include="Helper\" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="$(TargetFramework)=='net462'">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>

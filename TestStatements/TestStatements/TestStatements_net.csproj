@@ -1,15 +1,15 @@
-<Project>
+﻿<Project>
+  <ImportGroup Label="SolutionProps">
+    <Import Project="..\Solution_net.props" />
+  </ImportGroup>
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
-    <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-  	<BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
   </PropertyGroup>  
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <PropertyGroup>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
 	  <StartupObject>TestStatements.Program</StartupObject>
     <RootNamespace>TestStatements</RootNamespace>
@@ -17,24 +17,25 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <AssemblyVersion>1.0.*</AssemblyVersion>
-    <Company>JC-Soft</Company>
-    <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2022</Copyright>
     <Product>TestStatements 1.0</Product>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
   </ItemGroup>
-   <ItemGroup>
+  <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-   <ItemGroup>
-     <None Remove="App.config" />
-   </ItemGroup>
-
+  <ItemGroup>
+    <None Remove="App.config" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Compile Update="Properties\Resource1.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -55,10 +56,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+  <Target Condition="'$(TargetFrameworks)'=='net6.0'" Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /V /N &quot;/&quot;|find /V &quot;Path&quot; &gt; Version.inc" />
   </Target>
 

@@ -31,11 +31,11 @@ namespace ConsoleDisplay.View {
         /// <summary>
         /// The default tile
         /// </summary>
-        public static T defaultTile;
+        public static T? defaultTile { get; set; }
         /// <summary>
         /// The default tile definition
         /// </summary>
-        public static TileDefBase tileDef;
+        public static TileDefBase? tileDef { get; set; }
         #endregion
 
         /// <summary>
@@ -43,16 +43,16 @@ namespace ConsoleDisplay.View {
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <returns>T.</returns>
-        public T this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx,value); }
+        public T? this[Point Idx] { get => GetTile(Idx); set => SetTile(Idx,value); }
         /// <summary>
         /// Gets the position.
         /// </summary>
         /// <value>The position.</value>
         public Point Position => _rect.Location;
         /// <summary>
-        /// Gets the size of the disp.
+        /// Gets the size of the display.
         /// </summary>
-        /// <value>The size of the disp.</value>
+        /// <value>The size of the display.</value>
         public Size DispSize => _size;
         /// <summary>
         /// Gets the size of the tile.
@@ -68,7 +68,7 @@ namespace ConsoleDisplay.View {
         /// it returns the default-tileDef when the local tileDef isn't set.
         /// </summary>
         /// <value>The tile definition.</value>
-        public TileDefBase TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
+        public TileDefBase? TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
 		public Point DispOffset { get; set; } = Point.Empty;
         public Func<Point, T>? FncGetTile;
@@ -78,11 +78,11 @@ namespace ConsoleDisplay.View {
         /// <summary>
         /// The tiles
         /// </summary>
-        private Dictionary<Point, T> _tiles = new Dictionary<Point, T>();
+        private readonly Dictionary<Point, T> _tiles = new();
         /// <summary>
         /// The rect
         /// </summary>
-        private Rectangle _rect = new Rectangle();
+        private Rectangle _rect = new();
         /// <summary>
         /// The size
         /// </summary>
@@ -94,11 +94,11 @@ namespace ConsoleDisplay.View {
         /// <summary>
         /// The changed
         /// </summary>
-        private bool _changed;
+        private bool _changed=false;
         /// <summary>
         /// The (local) tile-definition
         /// </summary>
-        private TileDefBase _tileDef;
+        private TileDefBase? _tileDef;
         #endregion
         #endregion
 
@@ -130,7 +130,7 @@ namespace ConsoleDisplay.View {
         {
             var def = tileDef?.GetTileDef(tile as Enum) ?? default;
             Size s = (ts == Size.Empty)?new Size(def.lines[0].Length, def.lines.Length):ts;
-            Point pc = new Point();
+            Point pc = new();
             for (pc.Y = 0; pc.Y < def.lines.Length; pc.Y++)
                 for (pc.X = 0; pc.X < def.lines[pc.Y].Length; pc.X++)
                     WriteTileChunk(Offset, p, def, s, pc);
@@ -201,7 +201,7 @@ namespace ConsoleDisplay.View {
         {
             var def = TileDef?.GetTileDef(tile as Enum) ?? default;
             Size s = TileSize;
-            Point pc = new Point((int)p.X*s.Width,(int)p.Y*s.Height);
+            Point pc = new((int)p.X*s.Width,(int)p.Y*s.Height);
             var _rect2 = new Rectangle(Point.Empty, _rect.Size);
             _rect2.Inflate(s);
             if (_rect2.Contains(pc))
@@ -223,9 +223,9 @@ namespace ConsoleDisplay.View {
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <returns>T.</returns>
-        private T GetTile(Point Idx) {
+        private T? GetTile(Point Idx) {
             if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return defaultTile;
-            if (_tiles.ContainsKey(Idx)) return _tiles[Idx];
+            if (_tiles.TryGetValue(Idx, out T? value)) return value;
             return defaultTile;
         }
 
@@ -234,11 +234,14 @@ namespace ConsoleDisplay.View {
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <param name="value">The value.</param>
-        private void SetTile(Point Idx, T value)
+        private void SetTile(Point Idx, T? value)
         {
             if (Idx.X < 0 || Idx.X >= _size.Width || Idx.Y < 0 || Idx.Y >= _size.Height) return;
-            if (_tiles.ContainsKey(Idx) && (_tiles[Idx] is T e) && e.Equals(value) ) return;
-            _tiles[Idx] = value;
+            if (_tiles.TryGetValue(Idx, out T? v) && (v is T e) && e.Equals(value) ) return;
+            if (value!=null)
+                _tiles[Idx] = value;
+            else
+                _tiles.Remove(Idx);
             _changed = true;
         }
 
@@ -246,7 +249,7 @@ namespace ConsoleDisplay.View {
         {
             var diffFields = new List<(Point, T, Point?)>();
             var p = new Point();
-            Point p3 = new Point();
+            Point p3 = new();
             if (FncGetTile == null) return;
 
             for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
@@ -254,13 +257,13 @@ namespace ConsoleDisplay.View {
                 {
                     p3.X = p.X + DispOffset.X;
                     p3.Y = p.Y + DispOffset.Y;
-                    object td = FncGetTile(p3);
-                    object ot = GetTile(p);
+                    object td = FncGetTile(p3)!;
+                    object? ot = GetTile(p);
                     var po = FncOldPos?.Invoke(p3);
-                    if (((int)td != (int)ot)
+                    if (((int)td != (int?)ot)
                         || ((po ?? p3) != p3))
                     {
-                        Point pp = new Point(p.X, p.Y);
+                        Point pp = new(p.X, p.Y);
 
                         diffFields.Add((pp, (T)td, Point.Subtract(po ?? p3, (Size)DispOffset)));
                         if (!e)
@@ -300,8 +303,8 @@ namespace ConsoleDisplay.View {
         {
             if (FncGetTile == null) return;
             // Draw playfield
-            Point p = new Point();
-			Point p2 = new Point();
+            Point p = new();
+			Point p2 = new();
 			for (p.Y = 0; p.Y < DispSize.Height; p.Y++)
                 for (p.X = 0; p.X < DispSize.Width; p.X++) {
 					p2.X = p.X + DispOffset.X;

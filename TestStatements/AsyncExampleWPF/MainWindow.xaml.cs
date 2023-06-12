@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
+#if NET5_0_OR_GREATER
 using System.Net.Http;
+#endif
 using System.Net;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Diagnostics;
+using System.Security.Policy;
+using System.Collections;
 
 namespace AsyncExampleWPF
 {
@@ -77,8 +81,12 @@ namespace AsyncExampleWPF
         {
             // Declare an HttpClient object and increase the buffer size. The
             // default buffer size is 65,536.
+#if NET5_0_OR_GREATER
             HttpClient client =
                 new HttpClient() { MaxResponseContentBufferSize = 1000000 };
+#else
+            WebClient client = new WebClient();
+#endif
 
             // Make a list of web addresses.
             List<string> urlList = SetUpURLList();
@@ -87,8 +95,11 @@ namespace AsyncExampleWPF
             foreach (var url in urlList)
             {
                 // GetByteArrayAsync returns the contents of url as a byte array.
+#if NET5_0_OR_GREATER
                 byte[] urlContents = await client.GetByteArrayAsync(url);
-             
+#else
+                byte[] urlContents = await client.DownloadDataTaskAsync(new Uri(url));
+#endif
                 DisplayResults(url, urlContents);
 
                 // Update the total.
@@ -124,8 +135,12 @@ namespace AsyncExampleWPF
         {
             // Declare an HttpClient object and increase the buffer size. The
             // default buffer size is 65,536.
+#if NET5_0_OR_GREATER
             HttpClient client =
                 new HttpClient() { MaxResponseContentBufferSize = 1000000 };
+#else
+            var client = new WebClient();
+#endif
 
             // Make a list of web addresses.
             List<string> urlList = SetUpURLList();
@@ -153,15 +168,21 @@ namespace AsyncExampleWPF
             return byteArray.Length;
         }
 
+#if NET5_0_OR_GREATER
         async Task<int> ProcessURLAsync(string url, HttpClient client)
         {
             byte[] byteArray = await client.GetByteArrayAsync(url);
+#else
+        async Task<int> ProcessURLAsync(string url, WebClient client)
+        {
+            byte[] byteArray = await client.DownloadDataTaskAsync(new Uri(url));
+#endif
             DisplayResults(url, byteArray);
             return byteArray.Length;
         }
 
 
-        private List<string> SetUpURLList()
+    private List<string> SetUpURLList()
         {
             var urls = new List<string>
             {
@@ -185,24 +206,18 @@ namespace AsyncExampleWPF
             var content = new MemoryStream();
 
             // Initialize an HttpWebRequest for the current URL.
-#if NET5_0_OR_GREATER
+
             var webReq = (HttpWebRequest)WebRequest.Create(url);
-#else
-            var webReq = (HttpWebRequest)WebRequest.Create(url);
-#endif
 
             // Send the request to the Internet resource and wait for
             // the response.
             // Note: you can't use HttpWebRequest.GetResponse in a Windows Store app.
-            using (WebResponse response = webReq.GetResponse())
-            {
-                // Get the data stream that is associated with the specified URL.
-                using (Stream responseStream = response.GetResponseStream())
-                {
-                    // Read the bytes in responseStream and copy them to content.
-                    responseStream.CopyTo(content);
-                }
-            }
+            using var response = webReq.GetResponse();
+
+            // Get the data stream that is associated with the specified URL.
+            using Stream responseStream = response.GetResponseStream();
+            // Read the bytes in responseStream and copy them to content.
+            responseStream.CopyTo(content);
 
             // Return the result as a byte array.
             return content.ToArray();
@@ -223,11 +238,9 @@ namespace AsyncExampleWPF
             {
 
                 // Get the data stream that is associated with the specified URL.
-                using (Stream responseStream = response.GetResponseStream())
-                {
-                    // Read the bytes in responseStream and copy them to content.
-                    await responseStream.CopyToAsync(content);
-                }
+                using Stream responseStream = response.GetResponseStream();
+                // Read the bytes in responseStream and copy them to content.
+                await responseStream.CopyToAsync(content);
             }
 
             // Return the result as a byte array.

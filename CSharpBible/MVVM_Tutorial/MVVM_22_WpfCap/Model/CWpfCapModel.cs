@@ -1,10 +1,4 @@
-﻿using Model;
-using MVVM_22_WpfCap.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace MVVM_22_WpfCap.Model
 {
@@ -21,12 +15,12 @@ namespace MVVM_22_WpfCap.Model
         public int Height => _height;
 
         /// <summary>Occurs when the color of tiles were changed.</summary>
-        public event EventHandler TileColorChanged;
+        public event EventHandler? TileColorChanged;
 
         private int[] _tiles;
-        private int _width;
-        private int _height;
-        private IRandom _random;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly IRandom _random;
         #endregion
 
         #region Methods
@@ -84,7 +78,8 @@ namespace MVVM_22_WpfCap.Model
                     case 2:
                         MoveUp(move / 4, false);
                         break;
-                    case 3:
+//                    case 3:
+                    default:
                         MoveDown(move / 4, false);
                         break;
 
@@ -99,6 +94,8 @@ namespace MVVM_22_WpfCap.Model
             else
             return _tiles[y * _width + x];
         }
+
+        public void SetTiles(int[] tls)=> _tiles = tls;
 
         private void MoveLeft(int row, bool notify)
         {
@@ -135,6 +132,7 @@ namespace MVVM_22_WpfCap.Model
 
             if (notify) TileColorChanged?.Invoke(this, EventArgs.Empty);
         }
+
         #endregion
     }
 }

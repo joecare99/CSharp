@@ -1,36 +1,29 @@
 <Project>
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
-	<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-	<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	<Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-	  <Company>JC-Soft</Company>
-	  <Copyright>Copyright © 2022 by JC-Soft</Copyright>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-  </ItemGroup>
+	<Import Project="..\Games_net.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Game_BaseTests\Game_Base_netTests.csproj" />
-    <ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Game_BaseTests\Game_Base_netTests.csproj" />
+		<ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
+	</ItemGroup>
 
 </Project>

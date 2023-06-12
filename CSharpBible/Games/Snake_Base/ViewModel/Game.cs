@@ -47,14 +47,14 @@ namespace Snake_Base.ViewModel
         /// <summary>
         /// The get next random
         /// </summary>
-        public Func<int, int> GetNextRnd = (i) => (_rnd ?? (_rnd = new Random())).Next(i);
+        public Func<int, int> GetNextRnd = (i) => (_rnd ??= new Random()).Next(i);
         public int Level;
-        public Action<object?, bool> visUpdate;
-        public Action<object?, EventArgs?> visFullRedraw;
+        public Action<object?, bool>? visUpdate;
+        public Action<object?, EventArgs?>? visFullRedraw;
 		private Direction sDir;
 		private bool _userQuit = false;
         private bool xHalfStep;
-        public static readonly object MaxLives;
+        public static readonly object? MaxLives;
 
         /// <summary>
         /// Gets the <see cref="Tiles" /> with the specified p.
@@ -69,8 +69,8 @@ namespace Snake_Base.ViewModel
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         public bool IsRunning => Snake.alive && !_userQuit;
 
-        public object Score { get; set; }
-        public object Lives { get; set; }
+        public object? Score { get; set; }
+        public object? Lives { get; set; }
         public Size size { get => new Size(Playfield.PfSize.Width+2,Playfield.PfSize.Height+2);  }
         #endregion
 
@@ -99,7 +99,7 @@ namespace Snake_Base.ViewModel
             Point p;
             //   Get Random Startplace
             var w = Playfield.PfSize.Width;
-            var sp = _rnd.Next(Playfield.PfSize.Height * w);
+            var sp = _rnd?.Next(Playfield.PfSize.Height * w)??0;
             while (Playfield[p=new Point(sp % w,sp / w)]!=null)
                 sp++;
             //
@@ -147,10 +147,11 @@ namespace Snake_Base.ViewModel
             var field = Playfield[p];
             switch(field)
             {
-                case Apple a: result = Tiles.Apple; break;
+                case Apple:
+                    result = Tiles.Apple; break;
                 case SnakeHead sh:
                     {
-                        var np = Point.Subtract(sh.Place, (Size)sh.NextPart?.Place);
+                        var np = Point.Subtract(sh.Place, (Size?)sh.NextPart?.Place??Size.Empty);
                         switch ((np.X, np.Y))
                         {
                             case (1, 0): result = Tiles.SnakeHead_E; break;
@@ -161,7 +162,7 @@ namespace Snake_Base.ViewModel
                         break;
                     }
                 case SnakeTail st: {
-                        var np = Point.Subtract(st.Place, (Size)st.PrevPart?.Place);
+                        var np = Point.Subtract(st.Place, (Size?)st.PrevPart?.Place??Size.Empty);
                         switch ((np.X, np.Y))
                         {
                             case (1, 0): result = Tiles.SnakeTail_W; break;
@@ -171,8 +172,8 @@ namespace Snake_Base.ViewModel
                         }
                         break; }
                 case SnakeBodyPart sb: {
-                        var nx = Point.Subtract(sb.Place, (Size)sb.NextPart?.Place);
-                        var np = Point.Subtract(sb.Place, (Size)sb.PrevPart?.Place);
+                        var nx = Point.Subtract(sb.Place, (Size?)sb.NextPart?.Place ?? Size.Empty);
+                        var np = Point.Subtract(sb.Place, (Size?)sb.PrevPart?.Place ?? Size.Empty);
                         switch ((np.X+nx.X, np.Y+nx.Y))
                         {
                             case (0, 0) when nx.Y==0: result = Tiles.SnakeBody_WE; break;

@@ -56,21 +56,17 @@ namespace ConsoleLib
                     while (true)
                     {
                         /// <summary>
-                        /// The te apple
-                        /// </summary>
-                        uint numRead;
-                        /// <summary>
-                        /// The te pear
+                        /// The the pear
                         /// </summary>
                         INPUT_RECORD[] record = new INPUT_RECORD[1];
                         /// <summary>
-                        /// The te cherry
+                        /// The the cherry
                         /// </summary>
                         record[0] = new INPUT_RECORD();
                         /// <summary>
-                        /// The te rasberry
+                        /// The the raspberry
                         /// </summary>
-                        ReadConsoleInput(handleIn, record, 1, out numRead);
+                        ReadConsoleInput(handleIn, record, 1, out uint numRead);
                         if (Run)
                             switch (record[0].usEventType)
                             {
@@ -89,8 +85,7 @@ namespace ConsoleLib
                             }
                         else
                         {
-                            uint numWritten;
-                            WriteConsoleInput(handleIn, record, 1, out numWritten);
+                            WriteConsoleInput(handleIn, record, 1, out uint numWritten);
                             return;
                         }
                     }
@@ -107,7 +102,6 @@ namespace ConsoleLib
         /// </summary>
         public static void Stop() => Run = false;
 
-#if NET5_0_OR_GREATER
         /// <summary>Occurs when a mouse event happend.</summary>
         public static event EventHandler<MOUSE_EVENT_RECORD>? MouseEvent;
 
@@ -118,22 +112,6 @@ namespace ConsoleLib
 
         /// <summary>Occurs when a window buffer size change event happend.</summary>
         public static event EventHandler<WINDOW_BUFFER_SIZE_RECORD>? WindowBufferSizeEvent;
-#else
-        /// <summary>
-        /// Occurs when a mouse event happend.
-        /// </summary>
-        public static event EventHandler<MOUSE_EVENT_RECORD> MouseEvent;
-
-        /// <summary>
-        /// Occurs when a key event happend.
-        /// </summary>
-        public static event EventHandler<KEY_EVENT_RECORD> KeyEvent;
-
-        /// <summary>
-        /// Occurs when a window buffer size change event happend.
-        /// </summary>
-        public static event EventHandler<WINDOW_BUFFER_SIZE_RECORD> WindowBufferSizeEvent;
-#endif
     }
 
 
@@ -166,7 +144,7 @@ namespace ConsoleLib
             /// Gets the value as a 'Point'.
             /// </summary>
             /// <value>As point.</value>
-            public Point AsPoint => new Point(X, Y);
+            public Point AsPoint => new(X, Y);
         }
 
         /// <summary>
@@ -209,17 +187,17 @@ namespace ConsoleLib
             /// Converts the <see cref="SMALL_RECT" /> to a <see cref="Rectangle" />.
             /// </summary>
             /// <value>As <see cref="Rectangle" />.</value>
-            public Rectangle AsRectangle => new Rectangle(Left, Top, Right - Left, Bottom - Top);
+            public Rectangle AsRectangle => new(Left, Top, Right - Left, Bottom - Top);
             /// <summary>
             /// Gets or sets the top left.
             /// </summary>
             /// <value>The top left.</value>
-            public COORD TopLeft { get => new COORD(Left, Top); set => (Left, Top) = (value.X, value.Y); }
+            public COORD TopLeft { get => new(Left, Top); set => (Left, Top) = (value.X, value.Y); }
             /// <summary>
             /// Gets or sets the bottom right.
             /// </summary>
             /// <value>The bottom right.</value>
-            public COORD BottomRight { get => new COORD(Right, Bottom); set => (Right, Bottom) = (value.X, value.Y); }
+            public COORD BottomRight { get => new(Right, Bottom); set => (Right, Bottom) = (value.X, value.Y); }
         }
 
 
@@ -715,7 +693,7 @@ namespace ConsoleLib
         /// <param name="hConsoleInput">The console input.</param>
         /// <param name="lpBuffer">The buffer.</param>
         /// <param name="dwBufferSize">Size of the buffer.</param>
-        /// <param name="dwBufferCoord">The buffer coord.</param>
+        /// <param name="dwBufferCoord">The buffer coordinate.</param>
         /// <param name="lpWriteRegion">The write region.</param>
         /// <returns>If the function succeeds, the return value is nonzero.<para />If the function fails, the return value is zero. To get extended error information, call <see cref="GetLastError" />.</returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
@@ -727,7 +705,7 @@ namespace ConsoleLib
         /// <param name="hConsoleInput">The console input.</param>
         /// <param name="lpBuffer">The buffer.</param>
         /// <param name="dwBufferSize">Size of the buffer.</param>
-        /// <param name="dwBufferCoord">The buffer coord.</param>
+        /// <param name="dwBufferCoord">The buffer coordinate.</param>
         /// <param name="lpWriteRegion">The write region.</param>
         /// <returns>If the function succeeds, the return value is nonzero.<para />If the function fails, the return value is zero. To get extended error information, call <see cref="GetLastError" />.</returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]

@@ -11,7 +11,7 @@ namespace DBTest1
 
         public static void Main(params string[] args)
         {
-            BasicExample.DoExampleAsync("192.168.0.98", "root", "", "TestDB");
+            BasicExample.DoExample("192.168.0.98", "root", "", "test");
         }
     }
 }

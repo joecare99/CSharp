@@ -127,32 +127,32 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// Gets or sets the file open dialog.
 		/// </summary>
 		/// <value>The file open dialog.</value>
-		public FileDialogHandler FileOpenDialog { get; set; }
+		public FileDialogHandler? FileOpenDialog { get; set; }
 		/// <summary>
 		/// Gets or sets the file save as dialog.
 		/// </summary>
 		/// <value>The file save as dialog.</value>
-		public FileDialogHandler FileSaveAsDialog { get; set; }
+		public FileDialogHandler? FileSaveAsDialog { get; set; }
 		/// <summary>
 		/// Gets or sets the directory browse dialog.
 		/// </summary>
 		/// <value>The directory browse dialog.</value>
-		public FileDialogHandler DirectoryBrowseDialog { get; set; }
+		public FileDialogHandler? DirectoryBrowseDialog { get; set; }
 		/// <summary>
 		/// Gets or sets the d color dialog.
 		/// </summary>
 		/// <value>The d color dialog.</value>
-		public ColorDialogHandler dColorDialog { get; set; }
+		public ColorDialogHandler? dColorDialog { get; set; }
 		/// <summary>
 		/// Gets or sets the d font dialog.
 		/// </summary>
 		/// <value>The d font dialog.</value>
-		public FontDialogHandler dFontDialog { get; set; }
+		public FontDialogHandler? dFontDialog { get; set; }
 		/// <summary>
 		/// Gets or sets the d print dialog.
 		/// </summary>
 		/// <value>The d print dialog.</value>
-		public PrintDialogHandler dPrintDialog { get; set; }
+		public PrintDialogHandler? dPrintDialog { get; set; }
 
 		/// <summary>
 		/// Gets or sets the open file open dialog command.
@@ -195,41 +195,53 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// </summary>
 		public SysDialogsViewModel() {
 			OpenFileOpenDialogCommand = new DelegateCommand((o) => {
-				FileDialog foPar = new OpenFileDialog();
-				foPar.FileName = FileOpenName;
-				FileOpenDialog?.Invoke(FileOpenName,ref foPar , 
+                FileDialog foPar = new OpenFileDialog
+                {
+                    FileName = FileOpenName
+                };
+                FileOpenDialog?.Invoke(FileOpenName,ref foPar , 
 					(s,p) => { 
 						FileOpenName = s; });
 			});
 
 			OpenFileSaveAsDialogCommand = new DelegateCommand((o) => {
-				FileDialog fsPar = new SaveFileDialog();
-				fsPar.FileName = FileSaveName;
-				FileSaveAsDialog?.Invoke(FileSaveName, ref fsPar,(s,p) => { FileSaveName = s; });
+                FileDialog fsPar = new SaveFileDialog
+                {
+                    FileName = FileSaveName
+                };
+                FileSaveAsDialog?.Invoke(FileSaveName, ref fsPar,(s,p) => { FileSaveName = s; });
 			});
 
 			OpenDirectoryBrowseDialogCommand = new DelegateCommand((o) => {
-				FileDialog bdPar = new OpenFileDialog();
-				bdPar.FileName = PathName;
-				DirectoryBrowseDialog?.Invoke(PathName, ref bdPar, (s, p) => { PathName = s; });
+                FileDialog bdPar = new OpenFileDialog
+                {
+                    FileName = PathName
+                };
+                DirectoryBrowseDialog?.Invoke(PathName, ref bdPar, (s, p) => { PathName = s; });
 			});
 
 			OpenColorDialogCommand = new DelegateCommand((o) => {
-				ColorDialog cdPar = new ColorDialog();
-				cdPar.Color = MyColor;
-				dColorDialog?.Invoke(MyColor, ref cdPar, (c, p) => { MyColor = c; });
+                ColorDialog cdPar = new ColorDialog
+                {
+                    Color = MyColor
+                };
+                dColorDialog?.Invoke(MyColor, ref cdPar, (c, p) => { MyColor = c; });
 			});
 
 			OpenFontDialogCommand = new DelegateCommand((o) => {
-				FontDialog fdPar = new FontDialog();
-				fdPar.Font = MyFont;
-				dFontDialog?.Invoke(MyFont, ref fdPar, (f, p) => { MyFont = f; });
+                FontDialog fdPar = new FontDialog
+                {
+                    Font = MyFont
+                };
+                dFontDialog?.Invoke(MyFont, ref fdPar, (f, p) => { MyFont = f; });
 			});
 
 			OpenPrintDialogCommand = new DelegateCommand((o) => {
-				var dialog = new System.Windows.Controls.PrintDialog();
-				dialog.PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages;
-				dPrintDialog?.Invoke(ref dialog, (p) => {/* ? */ });
+                var dialog = new System.Windows.Controls.PrintDialog
+                {
+                    PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages
+                };
+                dPrintDialog?.Invoke(ref dialog, (p) => {/* ? */ });
 			});
 		}
 		#endregion

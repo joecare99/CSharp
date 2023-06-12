@@ -69,8 +69,8 @@ namespace TestStatements.UnitTesting.Tests
 		/// <param name="TestName">Name of the test.</param>
 		[DataTestMethod()]
 		[TestProperty("Author","CR")]
-		[DynamicData("ReusableTestDataProperty")]
-		[DynamicData("ReusableTestDataProperty2")]
+		[DynamicData(nameof(ReusableTestDataProperty))]
+		[DynamicData(nameof(ReusableTestDataProperty2))]
 		public void SampleDataPropertyTest(int iStart,int[] iTest,int[] iExp,string TestName="")
         {
             AssemblyExample l = new AssemblyExample(iStart) ;
@@ -88,8 +88,8 @@ namespace TestStatements.UnitTesting.Tests
 		/// <param name="iExp">The i exp.</param>
 		/// <param name="TestName">Name of the test.</param>
 		[DataTestMethod()]
-		[DynamicData("ReusableTestDataMethod", DynamicDataSourceType.Method)]
-		[DynamicData("ReusableTestDataMethod2", DynamicDataSourceType.Method)]
+		[DynamicData(nameof(ReusableTestDataMethod), DynamicDataSourceType.Method)]
+		[DynamicData(nameof(ReusableTestDataMethod2), DynamicDataSourceType.Method)]
 		public void SampleDataMethodTest(int iStart, int[] iTest, int[] iExp, string TestName="") {
 			AssemblyExample l = new AssemblyExample(iStart);
 			Assert.AreEqual(iTest.Length, iExp.Length, TestName);

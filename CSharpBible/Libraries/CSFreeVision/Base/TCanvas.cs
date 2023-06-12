@@ -35,82 +35,89 @@ namespace CSFreeVision.Base
     /// </summary>
     public class TCanvas
     {
+         /// <summary>
+        /// The dimension
+        /// </summary>
+        private Rectangle _dimension;
+        
+#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen
+        /// <summary>
+        /// The pen position
+        /// </summary>
+        private Point _penPos;
+        /// <summary>
+        /// The clip rectangle
+        /// </summary>
+        private Rectangle _clipRect;
+       
+
         // private ref Byte[] _ABuffer();
         /// <summary>
         /// The c buffer
         /// </summary>
-        private VideoCell[] _CBuffer;
+ //       private readonly VideoCell[] _cBuffer;
         /// <summary>
         /// The locks
         /// </summary>
-        int _locks;
-        /// <summary>
-        /// The pen position
-        /// </summary>
-        Point _PenPos;
+        private readonly int _locks;
         /// <summary>
         /// The clipping
         /// </summary>
-        Boolean _Clipping;
-        /// <summary>
-        /// The clip rect
-        /// </summary>
-        Rectangle _ClipRect;
+        private readonly Boolean _clipping;
         /// <summary>
         /// The brush
         /// </summary>
-        CustomBrush _Brush;
+        private readonly CustomBrush _brush;
         /// <summary>
         /// The pen
         /// </summary>
-        CustomPen _Pen;
+        private readonly CustomPen _pen;
         /// <summary>
         /// The font
         /// </summary>
-        CustomFont _Font;
-        /// <summary>
-        /// The dimension
-        /// </summary>
-        Rectangle _Dimension;
+        private readonly CustomFont _font;
+#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen
 
         /// <summary>
         /// Prevents a default instance of the <see cref="TCanvas" /> class from being created.
         /// </summary>
         TCanvas()
         {
-            Pixels = new _Index2<VideoCell>(this);
-            Colors = new _Index2<TColor>(this);
+            pixels = new _Index2<VideoCell>(this);
+            colors = new _Index2<TColor>(this);
         }
         // properties
         /// <summary>
         /// Gets the lock count.
         /// </summary>
         /// <value>The lock count.</value>
+#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen
         int LockCount => _locks;
         /// <summary>
         /// Gets or sets the font.
         /// </summary>
         /// <value>The font.</value>
-        CustomFont Font { get => _Font; set => SetFont(value); }
+        CustomFont Font { get => _font; set => _SetFont(value); }
 
         /// <summary>
         /// Gets or sets the pen.
         /// </summary>
         /// <value>The pen.</value>
-        CustomPen Pen { get => _Pen; set => SetPen(value); }
+        CustomPen Pen { get => _pen; set => _SetPen(value); }
 
         /// <summary>
         /// Gets or sets the brush.
         /// </summary>
         /// <value>The brush.</value>
-        CustomBrush Brush { get => _Brush; set => SetBrush(value); }
+        CustomBrush Brush { get => _brush; set => _SetBrush(value); }
+#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen
 
         /// <summary>
         /// Sets the brush.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetBrush(CustomBrush value)
+        private void _SetBrush(CustomBrush value)
         {
             throw new NotImplementedException();
         }
@@ -119,7 +126,9 @@ namespace CSFreeVision.Base
         /// Class _Index2.
         /// </summary>
         /// <typeparam name="TValue">The type of the t value.</typeparam>
+#pragma warning disable IDE1006 // Benennungsstile
         public class _Index2<TValue>
+#pragma warning restore IDE1006 // Benennungsstile
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="_Index2{TValue}" /> class.
@@ -133,14 +142,14 @@ namespace CSFreeVision.Base
             /// <summary>
             /// The parent
             /// </summary>
-            private TCanvas _parent;
+            private readonly TCanvas _parent;
             /// <summary>
             /// Gets or sets the <see cref="TValue" /> with the specified x.
             /// </summary>
             /// <param name="x">The x.</param>
             /// <param name="y">The y.</param>
             /// <returns>TValue.</returns>
-            public TValue this[int x,int y] { get => (TValue)_parent.GetValue(x, y, typeof(TValue)); set => _parent.SetValue(x, y, value); }
+            public TValue this[int x,int y] { get => (TValue)_parent._GetValue(x, y, typeof(TValue)); set => _parent._SetValue(x, y, value); }
             
         }
 
@@ -148,85 +157,88 @@ namespace CSFreeVision.Base
         /// <summary>
         /// The pixels
         /// </summary>
-        public _Index2<VideoCell> Pixels;
+        public _Index2<VideoCell> pixels;
         /// <summary>
         /// The colors
         /// </summary>
-        public _Index2<TColor> Colors;
+        public _Index2<TColor> colors;
         /// <summary>
         /// The buffer
         /// </summary>
-        private byte[] _Buffer;
+        private readonly byte[] _buffer;
 
         /// <summary>
         /// Gets or sets the clip rect.
         /// </summary>
         /// <value>The clip rect.</value>
-        Rectangle ClipRect { get => _ClipRect; set => SetClipRect(value); }
+#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen
+        Rectangle ClipRect { get => _clipRect; set => _SetClipRect(value); }
+
+        /// <summary>
+        /// Gets or sets the clipping.
+        /// </summary>
+        /// <value>The clipping.</value>
+        Boolean Clipping { get => _clipping; set => _SetClipping(value); }
+
+        /// <summary>
+        /// Gets or sets the pen position.
+        /// </summary>
+        /// <value>The pen position.</value>
+        Point PenPos { get => _penPos; set => _SetPenPos(value); }
+        /// <summary>
+        /// Gets or sets the height.
+        /// </summary>
+        /// <value>The height.</value>
+        int Height { get => _dimension.Height; set => _dimension.Height = value; }
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
+        /// <value>The width.</value>
+        int Width { get => _dimension.Width; set => _dimension.Width = value; }
+        /// <summary>
+        /// Gets the buffer.
+        /// </summary>
+        /// <value>The buffer.</value>
+        Byte[] Buffer => _buffer;
+        /// <summary>
+        /// Sets the font.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen
 
         /// <summary>
         /// Sets the clip rect.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetClipRect(Rectangle value)
+        private void _SetClipRect(Rectangle value)
         {
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Gets or sets the clipping.
-        /// </summary>
-        /// <value>The clipping.</value>
-        Boolean Clipping { get => _Clipping; set => SetClipping(value); }
 
         /// <summary>
         /// Sets the clipping.
         /// </summary>
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetClipping(bool value)
+        private void _SetClipping(bool value)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Gets or sets the pen position.
-        /// </summary>
-        /// <value>The pen position.</value>
-        Point PenPos { get => _PenPos; set => SetPenPos(value); }
 
         /// <summary>
         /// Sets the pen position.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetPenPos(Point value)
+        private void _SetPenPos(Point value)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Gets or sets the height.
-        /// </summary>
-        /// <value>The height.</value>
-        int Height { get => _Dimension.Height; set => _Dimension.Height=value; }
-        /// <summary>
-        /// Gets or sets the width.
-        /// </summary>
-        /// <value>The width.</value>
-        int Width { get => _Dimension.Width; set => _Dimension.Width = value; }
-        /// <summary>
-        /// Gets the buffer.
-        /// </summary>
-        /// <value>The buffer.</value>
-        Byte[] Buffer => _Buffer;
-        /// <summary>
-        /// Sets the font.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <exception cref="System.NotImplementedException"></exception>
-        private void SetFont(CustomFont value)
+        private void _SetFont(CustomFont value)
         {
             throw new NotImplementedException();
         }
@@ -236,7 +248,7 @@ namespace CSFreeVision.Base
         /// </summary>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetPen(CustomPen value)
+        private void _SetPen(CustomPen value)
         {
             throw new NotImplementedException();
         }
@@ -249,7 +261,7 @@ namespace CSFreeVision.Base
         /// <param name="t">The t.</param>
         /// <returns>System.Object.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        private object GetValue(int x, int y, Type t)
+        private object _GetValue(int x, int y, Type t)
         {
             throw new NotImplementedException();
         }
@@ -262,7 +274,7 @@ namespace CSFreeVision.Base
         /// <param name="y">The y.</param>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetValue<TValue>(int x, int y, TValue value)
+        private void _SetValue<TValue>(int x, int y, TValue value)
         {
             throw new NotImplementedException();
         }

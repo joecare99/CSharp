@@ -33,24 +33,26 @@ namespace SyncAsyncParallel.ViewModel
     public class MainWindowViewModel : BaseViewModel
     {
         /// <summary>
-        /// The urls
+        /// The url's
         /// </summary>
-        string[] urls = new string[]{
+        readonly string[] urls = new string[]{
             "https://www.stackoverflow.com",
             "https://www.microsoft.com",
             "https://www.youtube.com",
             "https://www.windows.com",
             "https://www.asm.net",
+            "https://www.jc99.de",
             "https://www.google.com",
             "https://www.yahoo.com",
             "https://www.bing.com",
             "https://www.gmail.com"
         };
 
+
         /// <summary>
         /// The information text
         /// </summary>
-        string infoText;
+        string infoText="";
 
         /// <summary>
         /// Gets or sets the information text.
@@ -87,8 +89,8 @@ namespace SyncAsyncParallel.ViewModel
         public MainWindowViewModel()
         {
             Download_syncCmd = new DelegateCommand((o) => Download_sync());
-            Download_asyncCmd = new DelegateCommand((o) => Download_async());
-            Download_async_paraCmd = new DelegateCommand((o) => Download_async_para());
+            Download_asyncCmd = new DelegateCommand((o) =>_ = Download_async());
+            Download_async_paraCmd = new DelegateCommand((o) =>_= Download_async_para());
         }
 
         /// <summary>
@@ -98,13 +100,12 @@ namespace SyncAsyncParallel.ViewModel
         {
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<DownloadResult> results = new List<DownloadResult>(urls.Length);
+            List<DownloadResult> results = new(urls.Length);
             foreach (string url in urls)
             {
-                results.Add(DownloadUrl(url));
+                results.Add(_DownloadUrl(url));
                 ShowResults(results);
-                if (Application.Current != null)
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new ThreadStart(delegate { }));
+                Application.Current?.Dispatcher.Invoke(DispatcherPriority.Background, new ThreadStart(delegate { }));
             }
             watch.Stop();
             InfoText += $"Total Execution Time {watch.ElapsedMilliseconds}ms";
@@ -116,10 +117,10 @@ namespace SyncAsyncParallel.ViewModel
         async Task Download_async()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<DownloadResult> results = new List<DownloadResult>(urls.Length);
+            List<DownloadResult> results = new(urls.Length);
             foreach (string url in urls)
             {
-                results.Add(await Task.Run(() => DownloadUrl(url)));
+                results.Add(await Task.Run(() => _DownloadUrl(url)));
                 ShowResults(results);
             }
             watch.Stop();
@@ -131,13 +132,13 @@ namespace SyncAsyncParallel.ViewModel
         async Task Download_async_para()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<Task<DownloadResult>> tasklist =new List<Task<DownloadResult>>(urls.Length);
+            List<Task<DownloadResult>> tasklist =new(urls.Length);
             foreach (string url in urls)
             {
-                tasklist.Add(Task.Run(() => DownloadUrl(url)));
+                tasklist.Add(Task.Run(() => _DownloadUrl(url)));
             }
 
-            List<DownloadResult> results = new List<DownloadResult>();
+            List<DownloadResult> results = new();
             while (tasklist.Count>0)
             {
                 var result = await Task.WhenAny(tasklist);
@@ -154,27 +155,27 @@ namespace SyncAsyncParallel.ViewModel
         /// </summary>
         /// <param name="url">The URL.</param>
         /// <returns>DownloadResult.</returns>
-        private DownloadResult DownloadUrl(string url)
+        private DownloadResult _DownloadUrl(string url)
         {
-            using (HttpClient client = new HttpClient())
-                try
+            using HttpClient client = new();
+            try
+            {
+                string html = client.GetStringAsync(url).Result;
+                return new DownloadResult()
                 {
-                    string html = client.GetStringAsync(url).Result;
-                    return new DownloadResult()
-                    {
-                        Html = html,
-                        Url = url
-                    };
-                }
-                catch (Exception e)
+                    Html = html,
+                    Url = url
+                };
+            }
+            catch (Exception e)
+            {
+                return new DownloadResult()
                 {
-                    return new DownloadResult()
-                    {
-                        Html = e.Message,
-                        Url = url
-                    };
+                    Html = e.Message,
+                    Url = url
+                };
 
-                }
+            }
         }
         /// <summary>
         /// Shows the results.
@@ -182,12 +183,12 @@ namespace SyncAsyncParallel.ViewModel
         /// <param name="results">The results.</param>
         private void ShowResults(List<DownloadResult> results)
         {
-            StringBuilder text = new StringBuilder();
+            StringBuilder text = new();
             foreach (var result in results)
             {
                 text.Append(result.Url);
                 text.Append('\t');
-                text.Append(result.Contentlength);
+                text.Append(result.ContentLength);
                 text.Append(Environment.NewLine);
             }
             this.InfoText = text.ToString();

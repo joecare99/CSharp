@@ -7,52 +7,51 @@ namespace DemoLibrary.Tests
     public class DataAccessTests
     {
         private Random _rnd;
-        string[] sExp = new string[] {
-            "Prof. Monique Taylor",
-            "M.D. Andrew Thomas",
-            "Karl Lee",
-            "Dibl.Ing. Inez Jones",
-            "Lenny Lee",
-            "M.D. Frank Thomas",
-            "Bob Widmark",
-            "Lenny Widmark",
-            "Prof. Karl Taylor",
-            "Prof. Carla Taylor"
-        };
 
         [TestInitialize]
         public void Init()
         {
             _rnd = new Random(0);
-            DataAccess.GetNext = (mn,mx) => _rnd.Next(mn,mx);
+            _ = DataAccess.GetNext(0, 5);
+            DataAccess.GetNext = (mn, mx) => _rnd.Next(mn, mx);
         }
 
         [DataTestMethod()]
-        public void GetPeopleTest()
+        [DataRow(0, "Prof. Steve Taylor")]
+        [DataRow(1, "Dr. med. Richard Santiago")]
+        [DataRow(2, "M.D. Andrew Hernandez")]
+        [DataRow(3, "Dr. med. Dany Garcia")]
+        [DataRow(4, "M.D. Paula Garcia")]
+        [DataRow(5, "Quentin Lee")]
+        [DataRow(6, "Dipl.Ing. Quentin Miller")]
+        [DataRow(7, "Quentin Smith")]
+        [DataRow(8, "M.D. Henry Lee")]
+        [DataRow(9, "Dr. med. Karl Widmark")]
+        public void GetPeopleTest(int iNr, string sExp)
         {
             var peoples = DataAccess.GetPeople();
-            Assert.AreEqual(10,peoples.Count);
+            Assert.AreEqual(10, peoples.Count);
             for (int i = 0; i < peoples.Count; i++)
-                Assert.AreEqual(sExp[i], peoples[i].FullName,$"p[{i}].Fullname");
+                Assert.AreEqual(sExp, peoples[iNr].FullName, $"p[{iNr}].FullName");
         }
 
         [DataTestMethod()]
-        [DataRow(0, "Prof. Monique Taylor")]
-        [DataRow(1, "Dibl.Ing. Earl Jones")]
-        [DataRow(2, "M.D. Norbert Miller")]
-        [DataRow(3, "Earl Thomas")]
-        [DataRow(4, "Norbert Widmark")]
-        [DataRow(5, "Prof. Dr. Frank Garcia")]
-        [DataRow(6, "M.D. Oscar Santiago")]
-        [DataRow(7, "Georina Taylor")]
-        [DataRow(8, "Paula Jones")]
-        [DataRow(9, "Dr. Henry Miller")]
-        [DataRow(10, "Dr. med. Richard Lee")]
-        [DataRow(11, "M.D. Inez Smith")]
+        [DataRow(0, "Prof. Steve Taylor")]
+        [DataRow(1, "Dipl.Ing. Georgina Jones")]
+        [DataRow(2, "M.D. Urban Miller")]
+        [DataRow(3, "Henry Thomas")]
+        [DataRow(4, "Victor Widmark")]
+        [DataRow(5, "Prof. Dr. Inez Garcia")]
+        [DataRow(6, "M.D. Walter Santiago")]
+        [DataRow(7, "John Taylor")]
+        [DataRow(8, "Xavier Jones")]
+        [DataRow(9, "Dr. Karl Miller")]
+        [DataRow(10, "Dr. med. Yvonne Lee")]
+        [DataRow(11, "M.D. Lenny Smith")]
         public void GetPersonTest(int iVal, string sExp)
         {
             _rnd = new Random(iVal);
-            Assert.AreEqual(sExp,DataAccess.GetPerson().FullName);
+            Assert.AreEqual(sExp, DataAccess.GetPerson().FullName);
         }
     }
 }

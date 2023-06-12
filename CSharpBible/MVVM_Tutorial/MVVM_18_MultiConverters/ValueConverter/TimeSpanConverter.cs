@@ -39,28 +39,19 @@ namespace MVVM_18_MultiConverters.ValueConverter
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             DateDifFormat df = DateDifFormat.Days;
-            if (values.Length >= 2 && values[1] is DateDifFormat _d)
+            if (values?.Length >= 2 && values[1] is DateDifFormat _d)
                 df = _d;
 
-            if (values.Length >= 1 && values[0] is TimeSpan ts)
+            if (values?.Length >= 1 && values[0] is TimeSpan ts)
             {
-                switch (df)
+                return df switch
                 {
-                    case DateDifFormat.Days:
-                        return ts.TotalDays.ToString((string)parameter);
-                        
-                    case DateDifFormat.Hours:
-                        return ts.TotalHours.ToString((string)parameter);
-                        
-                    case DateDifFormat.Minutes:
-                        return ts.TotalMinutes.ToString((string)parameter);
-                        
-                    case DateDifFormat.Seconds:
-                        return ts.TotalSeconds.ToString((string)parameter);
-                        
-                    default: return "0";
-                }
-
+                    DateDifFormat.Days => ts.TotalDays.ToString((string)parameter),
+                    DateDifFormat.Hours => ts.TotalHours.ToString((string)parameter),
+                    DateDifFormat.Minutes => ts.TotalMinutes.ToString((string)parameter),
+                    DateDifFormat.Seconds => ts.TotalSeconds.ToString((string)parameter),
+                    _ => "0",
+                };
             }
             else
                 return "0";

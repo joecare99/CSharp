@@ -2,7 +2,6 @@
 using MVVM_Converter_DrawGrid.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace MVVM_Converter_DrawGrid.View
 {
@@ -19,10 +18,9 @@ namespace MVVM_Converter_DrawGrid.View
             InitializeComponent();
             SizeChanged += (object sender, SizeChangedEventArgs e) =>
             {
-                if (Resources["vcPortGrid"] is WindowPortToTileDisplay pc && DataContext is PlotFrameViewModel vc)
+                if (Resources["vcPortGrid"] is WindowPortToTileDisplay pc)
                 {
                     pc.WindowSize = e.NewSize;
-//                    vc.WindowSize = e.NewSize;
                 }
             };
 

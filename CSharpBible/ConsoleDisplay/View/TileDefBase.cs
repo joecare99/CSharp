@@ -25,7 +25,7 @@ namespace ConsoleDisplay.View {
         /// Gets the tile definition.
         /// </summary>
         /// <param name="tile">The tile.</param>
-        /// <returns>The visual defintion of the tile</returns>
+        /// <returns>The visual definition of the tile</returns>
         public abstract (string[] lines, (ConsoleColor fgr,ConsoleColor bgr)[] colors) GetTileDef(Enum? tile);
 
         /// <summary>
@@ -42,14 +42,14 @@ namespace ConsoleDisplay.View {
         /// <param name="array">The array.</param>
         /// <param name="tile">The tile.</param>
         /// <returns>T.</returns>
-        protected static T GetArrayElement<T>(T[] array, Enum tile) => Tile2Int(tile) < array.Length ? array[Tile2Int(tile)] : array[array.Length - 1];
+        protected static T GetArrayElement<T>(T[] array, Enum? tile) => Tile2Int(tile) < array.Length ? array[Tile2Int(tile)] : array[^1];
 
         /// <summary>
         /// Tile2s the int.
         /// </summary>
         /// <param name="tile">The tile.</param>
         /// <returns>System.Int32.</returns>
-        protected static int Tile2Int(Enum tile) { return ((int)((object)tile ?? 0)); }
+        protected static int Tile2Int(Enum? tile) { return ((int)((object?)tile ?? 0)); }
 
         public Size TileSize { get; protected set; }
     }

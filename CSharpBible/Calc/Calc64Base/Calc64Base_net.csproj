@@ -1,32 +1,33 @@
 ﻿<Project>
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	  <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-	  <IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
-	<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
-  </PropertyGroup>
+	<Import Project="..\Calc_net.props" />
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net6.0;net7.0;net481;net48;net472;net462</TargetFrameworks>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
+	</PropertyGroup>
 	<ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="*.bak" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
-  </ItemGroup>
-
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="*.bak" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup >
+		<ProjectReference Condition="!$(TargetFrameWork.StartsWith(net4))" Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+		<ProjectReference Condition="$(TargetFrameWork.StartsWith(net4))" Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
+	</ItemGroup>
 </Project>

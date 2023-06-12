@@ -36,7 +36,7 @@ namespace ConsoleDisplay.View.Tests {
         };
 
 
-        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum tile)
+        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile)
         {
             (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) result = default;
             result.lines = GetArrayElement(_vTileDefStr, tile);

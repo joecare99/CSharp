@@ -60,17 +60,16 @@ namespace MVVM_22_WpfCap.Converter
         /// Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-#if NET5_0_OR_GREATER
             return value switch
             {
                 bool b when parameter is string s && s.StartsWith("#") => ((string)parameter).Split(':')[b ? 1 : 0],
                 bool b when colors.Count>2 => (b ? colors[2] : colors[1]).ToString(),
                 bool b => (b ? TrueColor : FalseColor).ToString(),
                 bool[] ba when parameter is string s && int.TryParse(s,out _) &&  colors.Count>2=> (ba[int.Parse(s)] ? colors[2] : colors[1]).ToString(),
-                bool[] ba when parameter is string s && int.TryParse(s,out _)=> (ba[int.Parse(s)] ? TrueColor : FalseColor).ToString(),
-                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is <= ia.Length && colors.Count > ia[_is] 
-                    =>colors[ia[_is]],
-                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is <= ia.Length 
+                bool[] ba when parameter is string s && int.TryParse(s,out _)=> (ba[int.Parse(s)] ? TrueColor : FalseColor).ToString(),                
+                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is < ia.Length && colors.Count > ia[_is] 
+                    =>colors[ia[_is]].ToString(),
+                int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is < ia.Length 
                     =>(ia[_is] switch
                     {
                         1 => FalseColor,
@@ -80,35 +79,10 @@ namespace MVVM_22_WpfCap.Converter
                         _ => ZeroColor
                     }).ToString(),
                 null => "",
-                () => "",
+                bool[] =>"",
+                int[]=>"",
                 _ => throw new NotImplementedException()
             };
-#else
-            switch (value)
-            {
-                case bool b when parameter is string s && s.StartsWith("#"): 
-                    return ((string)parameter).Split(':')[b ? 1 : 0];
-                case bool b when colors.Count>2: 
-                    return (b ? colors[2] : colors[1]).ToString();
-                case bool b: 
-                    return (b ? TrueColor : FalseColor).ToString();
-                case bool[] ba when parameter is string s && int.TryParse(s, out _) && colors.Count > 2: 
-                    return (ba[int.Parse(s)] ? colors[2] : colors[1]).ToString();
-                case bool[] ba when parameter is string s && int.TryParse(s, out _): 
-                    return (ba[int.Parse(s)] ? TrueColor : FalseColor).ToString();
-                case int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is <= ia.Length && colors.Count > ia[_is]:
-                    return colors[ia[_is]];
-                case int[] ia when parameter is string s && int.TryParse(s, out int _is) && _is <= ia.Length:
-                    switch (ia[_is]) {
-                        case 1: return FalseColor.ToString();
-                        case 2: return TrueColor.ToString();
-                        case 3: return ThreeColor.ToString();
-                        case 4: return FourColor.ToString();
-                        default: return ZeroColor.ToString(); };
-                default:
-                    return "";
-            }
-#endif
         }
 
 

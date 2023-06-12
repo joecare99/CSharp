@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace WpfApp
+namespace MVVM_31_Validation1
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

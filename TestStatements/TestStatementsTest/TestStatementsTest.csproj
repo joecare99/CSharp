@@ -1,117 +1,50 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.props" Condition="Exists('..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D77AD7B7-DCC6-46C3-9224-928DB1E6BDAA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestStatementTest</RootNamespace>
-    <AssemblyName>TestStatementTest</AssemblyName>
-    <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MSTest.TestFramework.3.0.2\lib\net462\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MSTest.TestFramework.3.0.2\lib\net462\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Anweisungen\AccountTests.cs" />
-    <Compile Include="Anweisungen\CheckingTests.cs" />
-    <Compile Include="Anweisungen\ConditionalStatementTests.cs" />
-    <Compile Include="Anweisungen\DeclarationsTests.cs" />
-    <Compile Include="Anweisungen\ExceptionHandlingTests.cs" />
-    <Compile Include="Anweisungen\ExpressionsTests.cs" />
-    <Compile Include="Anweisungen\LockingTests.cs" />
-    <Compile Include="Anweisungen\LoopStatementsTests.cs" />
-    <Compile Include="Anweisungen\ProgramFlowTests.cs" />
-    <Compile Include="Anweisungen\RandomExampleTests.cs" />
-    <Compile Include="Anweisungen\ReturnStatementTests.cs" />
-    <Compile Include="Anweisungen\UsingStatementTests.cs" />
-    <Compile Include="Anweisungen\YieldStatementTests.cs" />
-    <Compile Include="ClassesAndObjects\MembersTests.cs" />
-    <Compile Include="Collection\Generic\ComparerExampleTests.cs" />
-    <Compile Include="Collection\Generic\DictionaryExampleTests.cs" />
-    <Compile Include="Collection\Generic\DinosaurExampleTests.cs" />
-    <Compile Include="Collection\Generic\SortedListExampleTests.cs" />
-    <Compile Include="Collection\Generic\TestHashSetTests.cs" />
-    <Compile Include="Collection\Generic\TestListTests.cs" />
-    <Compile Include="Constants\ConstantsTests.cs" />
-    <Compile Include="DataTypes\EnumTestTests.cs" />
-    <Compile Include="DataTypes\FormatingTests.cs" />
-    <Compile Include="Diagnostics\DebugExampleTests.cs" />
-    <Compile Include="DynamicTestProgramTests.cs" />
-    <Compile Include="Linq\LinqLookupTests.cs" />
-    <Compile Include="Reflection\AssemblyExampleTests.cs" />
-    <Compile Include="SystemNS\Xml\XmlNSTests.cs" />
-    <Compile Include="UnitTesting\ConsoleTestsBase.cs" />
-    <Compile Include="UnitTesting\DataTests.cs" />
-    <Compile Include="Reflection\ReflectionExampleTests.cs" />
-    <Compile Include="Threading\Tasks\TaskExampleTests.cs" />
-    <Compile Include="UnitTesting\UnitTest1.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DynamicSample\DynamicSample.csproj">
-      <Project>{7C4980B9-2187-4D61-B259-8C6DC7F94207}</Project>
-      <Name>DynamicSample</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TestStatements\TestStatements.csproj">
-      <Project>{014d324d-a3cc-4192-8ae1-10f5d152fcbc}</Project>
-      <Name>TestStatements</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.props'))" />
-    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.targets'))" />
-  </Target>
-  <Import Project="..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.3.0.2\build\net462\MSTest.TestAdapter.targets')" />
+﻿<Project>
+	<ImportGroup Label="SolutionProps">
+		<Import Project="..\Solution.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+		<UseCommonOutputDirectory>false</UseCommonOutputDirectory>
+		<IsPackable>false</IsPackable>
+		<Deterministic>false</Deterministic>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<AssemblyVersion>1.0.*</AssemblyVersion>
+		<Product>TestStatements 1.0 Tests</Product>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="bin\**" />
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="bin\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="bin\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DynamicSample\DynamicSample.csproj" />
+		<ProjectReference Include="..\TestStatements\TestStatements.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
+
 </Project>

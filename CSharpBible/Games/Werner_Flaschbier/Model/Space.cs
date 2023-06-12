@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
 using System.Drawing;
 
 namespace Werner_Flaschbier_Base.Model
@@ -22,23 +23,19 @@ namespace Werner_Flaschbier_Base.Model
     /// <seealso cref="Werner_Flaschbier_Base.Model.Field" />
     public class Space: Field
     {
-#if NET6_0_OR_GREATER
         /// <summary>
         /// Initializes a new instance of the <see cref="Space"/> class.
         /// </summary>
         /// <param name="position">The position.</param>
         /// <param name="parentPlayObject">The parent play object.</param>
         public Space(Point position, Playfield? parentPlayObject) : base(position, parentPlayObject)
-#else
-        public Floor(Point position, Playfield parentPlayObject) : base(position, parentPlayObject)
-#endif
         {
         }
         /// <summary>
         /// Gets or sets the old item.
         /// </summary>
         /// <value>The old item.</value>
-        public PlayObject OldItem { get; set; }
+        public PlayObject? OldItem { get; set; }
 
         /// <summary>
         /// Gets the field definition.
@@ -46,10 +43,10 @@ namespace Werner_Flaschbier_Base.Model
         /// <returns>FieldDef.</returns>
         protected override FieldDef GetFieldDef() => Item switch
         {
-            Stone s => FieldDef.Stone,
-            Player p => FieldDef.Player,
-            Enemy e => FieldDef.Enemy,
-            Dirt d => FieldDef.Dirt,
+            Stone => FieldDef.Stone,
+            Player => FieldDef.Player,
+            Enemy => FieldDef.Enemy,
+            Dirt => FieldDef.Dirt,
             { } => throw new ArgumentException("Illegal Item"),
             null => FieldDef.Empty
         };

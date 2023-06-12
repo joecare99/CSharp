@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_31_Validation2
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WpfApp
+namespace MVVM_31_Validation2
 {
     /// <summary>
     /// Interaction logic for App.xaml

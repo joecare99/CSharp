@@ -13,15 +13,13 @@
 // ***********************************************************************
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DemoLibrary.Models {
-	/// <summary>
-	/// Class PersonModel.
-	/// </summary>
-	public class PersonModel {
+namespace DemoLibrary.Models
+{
+    /// <summary>
+    /// Class PersonModel.
+    /// </summary>
+    public class PersonModel {
 		/// <summary>
 		/// Gets or sets the person identifier.
 		/// </summary>
@@ -65,12 +63,12 @@ namespace DemoLibrary.Models {
 		/// <summary>
 		/// The addresses
 		/// </summary>
-		public List<AddressModel> Addresses = new List<AddressModel>();
+		public List<AddressModel> Addresses = new();
 		/// <summary>
 		/// Gets or sets the primary address.
 		/// </summary>
 		/// <value>The primary address.</value>
-		public AddressModel PrimaryAddress { get; set; }
+		public AddressModel? PrimaryAddress { get; set; }
 		/// <summary>
 		/// Gets the full name.
 		/// </summary>

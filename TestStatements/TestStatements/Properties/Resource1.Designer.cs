@@ -62,12 +62,12 @@ namespace TestStatements.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
-        ///[7]Revision: 264
+        ///[7]Revision: 501
         ///[8]Node Kind: directory
         ///[9]Schedule: normal
         ///[10]Last Changed Author: jc99
-        ///[11]Last Changed Rev: 235
-        ///[12]Last Changed Date: 2022-09-10 12:41:13 +0200 (Sa, 10 Sep 2022)
+        ///[11]Last Changed Rev: 451
+        ///[12]Last Changed Date: 2023-02-11 22:15:36 +0100 (Sa, 11 Feb 2023)
         ///[13]
         /// ähnelt.
         /// </summary>

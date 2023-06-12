@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="..\Data_net.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows;net6.0;net7.0</TargetFrameworks>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup Condition="$(TargetFramework)=='net462'">
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+  </ItemGroup>
+
+</Project>

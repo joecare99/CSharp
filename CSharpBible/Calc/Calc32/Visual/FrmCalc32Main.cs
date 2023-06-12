@@ -12,13 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Calc32.NonVisual;
 using MVVM.ViewModel;
@@ -36,11 +30,17 @@ namespace Calc32.Visual
     /// <seealso cref="Form" />
     public partial class FrmCalc32Main : Form
     {
+        #region Properties
         /// <summary>
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
-        public NotificationObject DataContext { get; private set; }
+        public
+#if NET7_0_OR_GREATER
+            new
+#endif
+            NotificationObject DataContext { get; private set; } = null!;
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc32Main" /> class.
@@ -48,7 +48,7 @@ namespace Calc32.Visual
         public FrmCalc32Main()
         {
             InitializeComponent();
-//            DataContext = new BaseViewModel
+            //            DataContext = new BaseViewModel
         }
 
         /// <summary>
@@ -56,25 +56,22 @@ namespace Calc32.Visual
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void calculatorClassChange(object sender, EventArgs e)
+        private void calculatorClassChange(object sender, (string, object, object) e)
         {
-            using (CalculatorClass cc = (CalculatorClass)sender)
-            {
-                lblResult.Text = cc.Akkumulator.ToString();
-                lblMemory.Text = cc.Memory.ToString();
-                lblOperation.Text = cc.OperationText;
-
-            }
+            using CalculatorClass cc = (CalculatorClass)sender;
+            lblResult.Text = cc.Accumulator.ToString();
+            lblMemory.Text = cc.Memory.ToString();
+            lblOperation.Text = cc.OperationText;
         }
 
         /// <summary>
-        /// Handles the Click event of the btnNummber control.
+        /// Handles the Click event of the btnNumber control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnNummber_Click(object sender, EventArgs e)
+        private void btnNumber_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(((Control)sender).Tag.ToString(), out int aNumber))
+            if (int.TryParse(((Control)sender)?.Tag?.ToString(), out int aNumber))
             {
                 calculatorClass1.NumberButton(aNumber);
             }
@@ -85,15 +82,15 @@ namespace Calc32.Visual
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
-        private void FrmCalc32Main_MouseMove(object sender, MouseEventArgs e)
+        public void FrmCalc32Main_MouseMove(object sender, MouseEventArgs e)
         {
             Point lMousePnt = e.Location;
-            if (sender!= this)
+            if (sender != this)
             {
                 lMousePnt.X += ((Control)sender).Location.X;
                 lMousePnt.Y += ((Control)sender).Location.Y;
             }
-            lMousePnt.Offset(-pictureBox1.Size.Width/2, -pictureBox1.Size.Height/2);
+            lMousePnt.Offset(-pictureBox1.Size.Width / 2, -pictureBox1.Size.Height / 2);
             pictureBox1.Location = lMousePnt;
         }
 
@@ -102,7 +99,7 @@ namespace Calc32.Visual
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="KeyEventArgs" /> instance containing the event data.</param>
-        private void FrmCalc32Main_KeyDown(object sender, KeyEventArgs e)
+        public void FrmCalc32Main_KeyDown(object sender, KeyEventArgs e)
         {
             Char ActKey = (char)0;
             if ((char)e.KeyValue >= "0"[0] && (char)e.KeyValue <= "9"[0])
@@ -153,7 +150,7 @@ namespace Calc32.Visual
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnOperator_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(((Control)sender).Tag.ToString(), out int aNumber))
+            if (int.TryParse(((Control)sender)?.Tag?.ToString(), out int aNumber))
             {
                 calculatorClass1.Operation(-aNumber);
             }

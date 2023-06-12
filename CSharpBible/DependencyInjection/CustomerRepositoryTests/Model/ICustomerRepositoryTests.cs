@@ -44,5 +44,28 @@ namespace CustomerRepositoryTests.Model
                 .TotalSeconds).Should().BeLessThan(1);
         }
 
+        [TestMethod]
+        public void PutTest()
+        {
+            ICustomerRepository2 repository = new CustomerRepository1();
+            CCustomer customer = new();
+
+
+            Guid g;
+            Assert.IsNotNull(g = repository.Put(customer));
+            Assert.AreEqual(customer,repository.Get(g));
+        }
+
+        [TestMethod]
+        public void CountTest()
+        {
+            ICustomerRepository2 repository = new CustomerRepository1();
+            Assert.AreEqual(0, repository.Count);
+
+            CCustomer customer = new();
+
+            repository.Put(customer);
+            Assert.AreEqual(1, repository.Count);
+        }
     }
 }

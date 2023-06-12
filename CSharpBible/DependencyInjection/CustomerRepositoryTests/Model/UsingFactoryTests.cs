@@ -35,7 +35,7 @@ namespace CustomerRepositoryTests.Model
         }
 
         [TestMethod]
-        public void RepLogsOnMultibleInvGet()
+        public void RepLogsOnMultipleInvGet()
         {
             CClockFactory.injectClock = new CStaticClock();
 
@@ -65,6 +65,32 @@ namespace CustomerRepositoryTests.Model
 
             repository.Log.Get().First().Time
                 .Should().Be(referenceTime);
+        }
+
+        [TestMethod]
+        public void PutTest()
+        {
+            ICustomerRepository2 repository =
+                new CustomerRepository2();
+            CCustomer customer = new();
+
+
+            Guid g;
+            Assert.IsNotNull(g = repository.Put(customer));
+            Assert.AreEqual(customer, repository.Get(g));
+        }
+
+        [TestMethod]
+        public void CountTest()
+        {
+            ICustomerRepository2 repository =
+                new CustomerRepository2();
+            Assert.AreEqual(0, repository.Count);
+
+            CCustomer customer = new();
+
+            repository.Put(customer);
+            Assert.AreEqual(1, repository.Count);
         }
     }
 }

@@ -1,25 +1,18 @@
 <Project>
-
+  <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <Nullable>enable</Nullable>
+    <TargetFrameworks>net472-windows;net48-windows;net481-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <PropertyGroup>
-    <UseWPF>true</UseWPF>
     <Deterministic>false</Deterministic>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <AssemblyVersion>1.0.*</AssemblyVersion>
-    <Company>JC-Soft</Company>
-    <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2022</Copyright>
-    <Product>CanvasWPF 1.0</Product>
+    <Product>CanvasWPFb 1.0</Product>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Description>Stellt dynamisch Scheiben und Quadrate dar, die dann animiert werden können. </Description>
   </PropertyGroup>
@@ -42,12 +35,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>
 
 </Project>

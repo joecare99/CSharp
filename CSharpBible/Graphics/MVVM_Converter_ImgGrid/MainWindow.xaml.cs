@@ -19,7 +19,7 @@ namespace MVVM_Converter_ImgGrid
         {
             if (DataContext is MainWindowViewModel vm)
             {
-                vm.ShowClient = ShowClientinFrame;
+                vm.ShowClient = _ShowClientinFrame;
             }
         }
 
@@ -31,14 +31,14 @@ namespace MVVM_Converter_ImgGrid
             }
         }
 
-        private BaseViewModel ShowClientinFrame(string arg)
+        private BaseViewModel? _ShowClientinFrame(string arg)
         {
             try
             {
                 this.Client.Source = new Uri(arg);
                 return Client.DataContext as BaseViewModel;
             }
-            catch(Exception ex) 
+            catch(Exception) 
             {
                 return null;
             };

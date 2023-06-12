@@ -86,7 +86,7 @@ namespace Werner_Flaschbier_Base.ViewModel
         /// <summary>
         /// The playfield
         /// </summary>
-        private Playfield playfield = new();
+        private readonly Playfield playfield = new();
         /// <summary>
         /// The half step
         /// </summary>
@@ -118,35 +118,37 @@ namespace Werner_Flaschbier_Base.ViewModel
         /// <returns>Tiles.</returns>
         public Tiles GetTile(Point p)
         {
-            Tiles result = Tiles.Empty;
             var field = playfield[p];
-            switch (field?.fieldDef){
+            Tiles result;
+            switch (field?.fieldDef)
+            {
                 case FieldDef.Enemy:
                     result = Tiles.Enemy_Up;
                     if (field?.Item is Enemy e)
-                         result = (Tiles)((int)result+(int)(e.direction));
-                break;
+                        result = (Tiles)((int)result + (int)(e.direction));
+                    break;
                 case FieldDef.Wall:
-                 int w = 0;
-                result = Tiles.Wall;
-                for (var d= (Direction)0;(int)d<4;d++)
-                    w += ((playfield[Offsets.DirOffset(d, p)] is Wall) ? 1<<(int)d : 0);
-                if (w > 0)
-                    result = (Tiles)(w - 1 + (int)Tiles.Wall_U);
-                break;
+                    int w = 0;
+                    result = Tiles.Wall;
+                    for (var d = (Direction)0; (int)d < 4; d++)
+                        w += ((playfield[Offsets.DirOffset(d, p)] is Wall) ? 1 << (int)d : 0);
+                    if (w > 0)
+                        result = (Tiles)(w - 1 + (int)Tiles.Wall_U);
+                    break;
                 case FieldDef.Player:
                     if ((field.Item is Player plr) && (plr.IsAlive))
                         result = Tiles.Player;
                     else
-                    result = Tiles.PlayerDead;
+                        result = Tiles.PlayerDead;
                     break;
                 case FieldDef.Stone:
-                    if ((field.Item is Stone stn) && (stn.Position==stn.OldPosition))
+                    if ((field.Item is Stone stn) && (stn.Position == stn.OldPosition))
                         result = Tiles.Stone;
                     else
                         result = Tiles.StoneMoving;
                     break;
-                default: result = (Tiles?)field?.fieldDef ?? Tiles.Empty;
+                default:
+                    result = (Tiles?)field?.fieldDef ?? Tiles.Empty;
                     break;
             }
             return result;

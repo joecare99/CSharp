@@ -23,14 +23,10 @@ namespace ConsoleLib.CommonControls
     /// <seealso cref="ConsoleLib.Control" />
     public class Panel : Control
     {
-#if NET5_0_OR_GREATER
-        public char[] Boarder = {' ', ' ', ' ', ' ', ' ', ' ' };
-#else  
         /// <summary>
         /// The boarder
         /// </summary>
-        public char[] Boarder;
-#endif  
+        public char[] Boarder = {' ', ' ', ' ', ' ', ' ', ' ' };
         /// <summary>
         /// The boarder color
         /// </summary>
@@ -46,12 +42,12 @@ namespace ConsoleLib.CommonControls
                 ConsoleFramework.Canvas.DrawRect(realDim, BoarderColor, BackColor, Boarder);
             foreach( Control c in children) if (c.visible)
                 {
-                if (c.shaddow)
+                if (c.shadow)
                 {
                     var sdim = c.dimension;
                     sdim.Offset(1, 1);
                     sdim.Offset(position);
-                    ConsoleFramework.Canvas.FillRect(realDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
+                    ConsoleFramework.Canvas.FillRect(RealDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
                 }
                 c.Draw();
 
@@ -72,7 +68,7 @@ namespace ConsoleLib.CommonControls
             icl.Intersect(innerRect);
             try
             {
-                ConsoleFramework.Canvas.FillRect(realDimOf(icl), ForeColor, BackColor, ConsoleFramework.chars[3]);
+                ConsoleFramework.Canvas.FillRect(RealDimOf(icl), ForeColor, BackColor, ConsoleFramework.chars[3]);
                 // ToDo: Boarder
                 if (Boarder != null && Boarder.Length > 5 && _dimension.IntersectsWith(dimension) &&
                     !(innerRect.Contains(dimension.Location) && innerRect.Contains(Point.Subtract(Point.Add(dimension.Location, dimension.Size), new Size(1, 1)))
@@ -81,13 +77,13 @@ namespace ConsoleLib.CommonControls
                 foreach (Control c in children)
                     if (c.visible)
                     {
-                        if (c.shaddow)
+                        if (c.shadow)
                         {
                             var sdim = c.dimension;
                             sdim.Offset(1, 1);
                             sdim.Offset(position);
                             sdim.Intersect(dimension);
-                            ConsoleFramework.Canvas.FillRect(realDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
+                            ConsoleFramework.Canvas.FillRect(RealDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
                         }
                         var CClip = dimension;
                         CClip.Location = Point.Subtract(dimension.Location, (Size)_dimension.Location);

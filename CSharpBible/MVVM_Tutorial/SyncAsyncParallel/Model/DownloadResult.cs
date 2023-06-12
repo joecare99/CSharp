@@ -28,17 +28,17 @@ namespace SyncAsyncParallel.Model
         /// Gets or sets the URL.
         /// </summary>
         /// <value>The URL.</value>
-        public string Url { get; set; }
+        public string Url { get; set; } = "";
         /// <summary>
         /// Gets or sets the HTML.
         /// </summary>
         /// <value>The HTML.</value>
-        public string Html { get; set; }
+        public string Html { get; set; } = "";
         /// <summary>
-        /// Gets the contentlength.
+        /// Gets the content length.
         /// </summary>
-        /// <value>The contentlength.</value>
-        public int Contentlength => Html?.Length ?? 0;
+        /// <value>The contentLength.</value>
+        public int ContentLength => Html?.Length ?? 0;
     }
 
 }

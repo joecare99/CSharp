@@ -1,0 +1,23 @@
+﻿<Project>
+	<Import Project="..\MVVM_Tutorial.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<IsPackable>false</IsPackable>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+    <ProjectReference Include="..\MVVM_28_1_DataGridExt\MVVM_28_1_DataGridExt.csproj" />
+  </ItemGroup>
+
+</Project>
