@@ -24,5 +24,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Basic_Del04_TestImposibleStuff\Basic_Del04_TestImposibleStuff_net.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLib_netTests.csproj" />
+		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	</ItemGroup>
 </Project>
