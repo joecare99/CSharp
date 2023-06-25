@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
 using BaseLib.Model.Tests;
+using static BaseLib.Helper.TestHelper;
 
 /// <summary>
 /// The Tests namespace.
@@ -81,7 +82,31 @@ namespace Basic_Del01_Action.Views.Tests
         public void ExecuteTest()
         {
             testView.Execute(null!);
-            Assert.AreEqual(@"WriteLine(Hello World !)
+            AssertAreEqual(@"WriteLine(This is a sorting program)
+WriteLine(Privot[4]= 0: 2, 5, -1, 11, 0, 18, 22, 67, 51, 6)
+WriteLine(SW 0,4: 2, 5, -1, 11, 0, 18, 22, 67, 51, 6)
+WriteLine(SW 0,2: 0, 5, -1, 11, 2, 18, 22, 67, 51, 6)
+WriteLine(SW 1,2: -1, 5, 0, 11, 2, 18, 22, 67, 51, 6)
+WriteLine(Split at 1: -1, 0, 5, 11, 2, 18, 22, 67, 51, 6)
+WriteLine(Privot[3]= 18: 5, 11, 2, 18, 22, 67, 51, 6)
+WriteLine(SW 3,7: 5, 11, 2, 18, 22, 67, 51, 6)
+WriteLine(SW 4,7: 5, 11, 2, 6, 22, 67, 51, 18)
+WriteLine(Split at 4: 5, 11, 2, 6, 18, 67, 51, 22)
+WriteLine(Privot[1]= 11: 5, 11, 2, 6)
+WriteLine(SW 1,3: 5, 11, 2, 6)
+WriteLine(Split at 3: 5, 6, 2, 11)
+WriteLine(Privot[1]= 6: 5, 6, 2)
+WriteLine(SW 1,2: 5, 6, 2)
+WriteLine(Split at 2: 5, 2, 6)
+WriteLine(Privot[0]= 5: 5, 2)
+WriteLine(SW 0,1: 5, 2)
+WriteLine(Split at 1: 2, 5)
+WriteLine(Privot[1]= 51: 67, 51, 22)
+WriteLine(SW 0,2: 67, 51, 22)
+WriteLine(Split at 1: 22, 51, 67)
+WriteLine(Privot[0]= 67: 67)
+WriteLine(Split at 0: 67)
+WriteLine(Sorted: -1, 0, 2, 5, 6, 11, 18, 22, 51, 67)
 ", DebugLog);
         }
 
