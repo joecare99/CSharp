@@ -68,5 +68,14 @@ namespace Basic_Del01_Action.Properties {
                 return ResourceManager.GetString("Grtn_HelloWorld", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die This is a sorting program ähnelt.
+        /// </summary>
+        public static string Grtn_ShowOfSort {
+            get {
+                return ResourceManager.GetString("Grtn_ShowOfSort", resourceCulture);
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace Basic_Del01_Action.Views
         public void Execute(object? parameter)
         {
             console.WriteLine(DataContext.Greeting);
+            console.WriteLine($"Sorted: {String.Join(", ", DataContext.GetSortedData(console.WriteLine).ToArray())}");
         }
     }
 }

@@ -120,4 +120,7 @@
   <data name="Grtn_HelloWorld" xml:space="preserve">
     <value>Hello World !</value>
   </data>
+  <data name="Grtn_ShowOfSort" xml:space="preserve">
+    <value>This is a sorting program</value>
+  </data>
 </root>

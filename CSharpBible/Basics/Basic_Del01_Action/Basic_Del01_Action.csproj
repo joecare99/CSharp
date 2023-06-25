@@ -12,6 +12,9 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="System.Memory" Version="*" />
+	</ItemGroup>
+	<ItemGroup>
 	  <ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
 	  <ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
