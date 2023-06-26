@@ -50,6 +50,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_Del02_Filter_netTests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_Del02_FilterTests", "Basic_Del02_FilterTests\Basic_Del02_FilterTests.csproj", "{7B5B9AEE-608D-42CC-8B62-FF24D087D278}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_Del03_General", "Basic_Del03_General\Basic_Del03_General.csproj", "{32A2034E-AEC5-43D6-AD36-E56E8196C256}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_Del03_General_net", "Basic_Del03_General\Basic_Del03_General_net.csproj", "{5A2EEC0D-1B33-4E32-A4C8-68895306C321}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_Del03_General_netTests", "Basic_Del03_GeneralTests\Basic_Del03_General_netTests.csproj", "{1EBF97D5-62D7-46FC-8822-63FAD5B62C15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_Del03_GeneralTests", "Basic_Del03_GeneralTests\Basic_Del03_GeneralTests.csproj", "{7B5B9AEE-608D-42CC-8B62-FF24D087D278}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay", "..\ConsoleDisplay\ConsoleDisplay.csproj", "{F05AC652-A68B-4D7F-B49B-8AFCC8E4E080}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_net", "..\ConsoleDisplay\ConsoleDisplay_net.csproj", "{1D4B0450-753F-49A2-8C29-3CEABFC5632A}"
