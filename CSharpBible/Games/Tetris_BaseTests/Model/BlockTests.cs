@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ConsoleDisplay.View;
 using TestConsole;
+using System.Drawing;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Tetris_Base.Model.Tests
 {

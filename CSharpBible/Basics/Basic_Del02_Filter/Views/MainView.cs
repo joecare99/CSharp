@@ -17,12 +17,23 @@ namespace Basic_Del02_Filter.Views
             return true;
         }
 
+        bool IsGreaterThan5(int parameter) => parameter > 5;
+        bool IsEven(int parameter)=> parameter % 2 == 0;
+
+        Predicate<int> IsGreaterThan(int parameter2) => (i)=>i > parameter2;
+
         public void Execute(object? parameter)
         {
             console.WriteLine(DataContext.Greeting);
-            console.WriteLine($"Orginal: {String.Join(", ", DataContext.GetList)}");
-            console.WriteLine($"Filtered1: {String.Join(", ", DataContext.GetFilteredData((i) => i % 2 != 0))}");
-            console.WriteLine($"Filtered2: {String.Join(", ", DataContext.GetFilteredData((i)=>i%2==0))}");
+            console.WriteLine($"Original: {String.Join(", ", DataContext.GetList)}");
+            // using the function IsGreaterThan5 as delegate 
+            console.WriteLine($"Filtered(IsGreaterThan5): {String.Join(", ", DataContext.GetFilteredData(IsGreaterThan5))}");
+            // using the function IsEven as delegate 
+            console.WriteLine($"Filtered(IsEven): {String.Join(", ", DataContext.GetFilteredData(IsEven))}");
+            // using the function IsGreaterThan with 1 as delegate 
+            console.WriteLine($"Filtered(IsGreaterThan(1)): {String.Join(", ", DataContext.GetFilteredData(IsGreaterThan(1)))}");
+            // using an anonymous function as delegate 
+            console.WriteLine($"Filtered(anon odd): {String.Join(", ", DataContext.GetFilteredData((i)=>i%2!=0))}");
         }
     }
 }

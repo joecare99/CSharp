@@ -81,7 +81,12 @@ namespace Basic_Del02_Filter.Views.Tests
         public void ExecuteTest()
         {
             testView.Execute(null!);
-            Assert.AreEqual(@"WriteLine(Hello World !)
+            Assert.AreEqual(@"WriteLine(This is a filtered list)
+WriteLine(Original: 2, 5, -1, 11, 0, 18, 22, 67, 51, 6)
+WriteLine(Filtered(IsGreaterThan5): 11, 18, 22, 67, 51, 6)
+WriteLine(Filtered(IsEven): 2, 0, 18, 22, 6)
+WriteLine(Filtered(IsGreaterThan(1)): 2, 5, 11, 18, 22, 67, 51, 6)
+WriteLine(Filtered(anon odd): 5, -1, 11, 67, 51)
 ", DebugLog);
         }
 

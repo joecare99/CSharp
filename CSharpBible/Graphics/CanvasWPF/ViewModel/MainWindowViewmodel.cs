@@ -16,15 +16,16 @@ using MVVM.ViewModel;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
+using CanvasWPF.Models;
 
 namespace CanvasWPF.ViewModel
 {
-	/// <summary>
-	/// Class MainWindowViewModel.
-	/// Implements the <see cref="BaseViewModel" />
-	/// </summary>
-	/// <seealso cref="BaseViewModel" />
-	public class MainWindowViewModel : BaseViewModel
+    /// <summary>
+    /// Class MainWindowViewModel.
+    /// Implements the <see cref="BaseViewModel" />
+    /// </summary>
+    /// <seealso cref="BaseViewModel" />
+    public class MainWindowViewModel : BaseViewModel
 	{
 
 		/// <summary>

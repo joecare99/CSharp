@@ -257,11 +257,13 @@ namespace ConsoleDisplay.View {
                 {
                     p3.X = p.X + DispOffset.X;
                     p3.Y = p.Y + DispOffset.Y;
-                    object td = FncGetTile(p3)!;
-                    object? ot = GetTile(p);
+                    T td = FncGetTile(p3)!;
+                    T? ot = GetTile(p);
                     var po = FncOldPos?.Invoke(p3);
-                    if (((int)td != (int?)ot)
-                        || ((po ?? p3) != p3))
+                    bool x1 = !td.Equals(ot);
+                    bool x2 = (po != null) && (po != p3);
+
+                    if (x1 || x2)
                     {
                         Point pp = new(p.X, p.Y);
 

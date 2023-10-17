@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ConsoleDisplay.View;
 using TestConsole;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace ConsoleDisplay.View.Tests
 {
