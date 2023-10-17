@@ -271,6 +271,27 @@ namespace BaseLib.Helper.Tests
             AssertAreEqual(lExp, testStr.QuotedSplit(), Msg);
         }
 
+        [DataTestMethod()]
+        [DataRow("Empty", new string[] { "" }, false)]
+        [DataRow("Empty2", new string[] { "a","tx2","ty2" }, false)]
+        [DataRow("Emp ty2", new string[] { "a", "tx2", "ty2" }, true)]
+        [DataRow("NIO1", new string[] { "a", "tx2", "ty2" }, false)]
+        public void EndswithAnyTest(string sAct, string[] sAct2,bool xExp)
+        {
+            Assert.AreEqual(xExp,sAct.EndswithAny(sAct2));
+        }
+
+        [DataTestMethod()]
+        [DataRow("Empty", new string[] { "" }, false)]
+        [DataRow("Empty2", new string[] { "E", "Em","Emp", "ty2" }, false)]
+        [DataRow("Emp ty2", new string[] { "a", "Emp", "ty2" }, true)]
+        [DataRow("NIO1", new string[] { "a", "tx2", "ty2" }, false)]
+        public void StartswithAnyTest(string sAct, string[] sAct2, bool xExp)
+        {
+            Assert.AreEqual(xExp, sAct.StartswithAny(sAct2));
+        }
+
+
         private void AssertAreEqual(List<string> lExp, List<string> list, string Msg = "")
         {
             Assert.AreEqual(lExp?.GetType(), list?.GetType(), $"{Msg}.Type");

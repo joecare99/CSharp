@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace BaseLib.Helper
 {
@@ -161,6 +162,22 @@ namespace BaseLib.Helper
             }
 
             return result;
+        }
+
+        public static bool EndswithAny(this string s,params string[] strings)
+        {
+            foreach (var item in strings)
+                if ((" "+s).EndsWith(" "+item))
+                    return true;
+            return false;
+        }
+
+        public static bool StartswithAny(this string s, params string[] strings)
+        {
+            foreach (var item in strings)
+                if ((s+" ").StartsWith(item+" "))
+                    return true;
+            return false;
         }
 
     }
