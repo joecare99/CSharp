@@ -7,6 +7,8 @@ namespace Basic_Del03_General.ViewModels
     {
         Model model = new Model();
 
-        public string Greeting => Resources.ResourceManager.GetString(model.Greeting); 
+        public string Greeting => Resources.ResourceManager.GetString(model.Greeting);
+
+        public double CalcResult model.myCalc(3,2);
     }
 }

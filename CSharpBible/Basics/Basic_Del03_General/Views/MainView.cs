@@ -20,6 +20,7 @@ namespace Basic_Del03_General.Views
         public void Execute(object? parameter)
         {
             console.WriteLine(DataContext.Greeting);
+            console.WriteLine($"Result: {DataContext.CalcResult}");
         }
     }
 }
