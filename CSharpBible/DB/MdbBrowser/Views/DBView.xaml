@@ -1,0 +1,54 @@
+﻿<Page x:Class="MdbBrowser.Views.DBView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:behav="http://schemas.microsoft.com/xaml/behaviors"  
+      xmlns:local="clr-namespace:MdbBrowser.Views" 
+      xmlns:mvvm="clr-namespace:MdbBrowser.ViewModels" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      d:DataContext="{d:DesignInstance Type=mvvm:DBViewViewModel}"
+      Title="DBView" Loaded="Page_Loaded"
+      >
+    <Page.DataContext>
+        <mvvm:DBViewViewModel/>
+    </Page.DataContext>
+    <Grid Background="DarkGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="Close" Command="{Binding CloseCommand}"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+        </Menu>
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding FileOpenName}"/>
+            </StatusBarItem>
+        </StatusBar>
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="5"/>
+        <TreeView ItemsSource="{Binding DbMetaInfo}" Grid.Row="1">
+            <behav:Interaction.Triggers>
+                <behav:EventTrigger EventName="SelectedItemChanged">
+                    <behav:InvokeCommandAction Command="{Binding DoSelectedItemChangedCommand}" PassEventArgsToCommand="True"/>
+                </behav:EventTrigger>
+            </behav:Interaction.Triggers>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Entries}">
+                    <TextBlock Text="{Binding Category}" Tag="{Binding This}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <Frame Grid.Row="1" Grid.Column="1" Source="{Binding CurrentView}"/>
+    </Grid>
+</Page>
