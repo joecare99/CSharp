@@ -1,0 +1,29 @@
+<Project>
+	<Import Project="..\Games_net.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0</TargetFrameworks>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <Compile Remove="Model\**" />
+	  <Compile Remove="Ressource\**" />
+	  <Compile Remove="View\**" />
+	  <Compile Remove="ViewModel\**" />
+	  <EmbeddedResource Remove="Model\**" />
+	  <EmbeddedResource Remove="Ressource\**" />
+	  <EmbeddedResource Remove="View\**" />
+	  <None Remove="Model\**" />
+	  <None Remove="Ressource\**" />
+	  <None Remove="View\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Condition="!$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+		<ProjectReference Include="Werner_Flaschbier_Base.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="*" />
+	</ItemGroup>
+</Project>

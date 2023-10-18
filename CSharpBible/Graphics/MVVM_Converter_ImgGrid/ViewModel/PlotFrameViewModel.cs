@@ -19,29 +19,24 @@ namespace MVVM_Converter_ImgGrid.ViewModel
         public int tileType;
     }
 
-    public struct SWindowPort 
-    {
-        public TileData[] tiles; 
-        public System.Windows.Size WindowSize;
-    }
-
     public class PlotFrameViewModel : BaseViewModel
     {
-        private SWindowPort _viewPort;
-
-        public SWindowPort WindowPort { get => _viewPort; set => SetProperty(ref _viewPort, value); }
-        
-        public TileData[] Tiles { get => _viewPort.tiles; set => SetProperty(ref _viewPort.tiles, value,new string[] { nameof(WindowPort) }); } 
-        public System.Windows.Size WindowSize { get=>_viewPort.WindowSize; 
-            set => SetProperty(ref _viewPort.WindowSize, value, new string[] { nameof(WindowPort) }); }
+        private TileData[] _tiles;        
+        public TileData[] Tiles { get => _tiles; set => SetProperty(ref _tiles, value); } 
 
         public PlotFrameViewModel()
         {
  //           VPWindow = new RectangleF(-300, 300, 9, 6);
  //           VPWindow = new RectangleF(-3, -3, 9, 6);
             //           VPWindow = new RectangleF(-3, -3, 900, 600);
-            Tiles = new TileData[20];
-            WindowSize = new System.Windows.Size(600, 400);
+            _tiles = new TileData[20];
+            for (int i = 0; i < _tiles.Length; i++)
+            {
+                _tiles[i].Idx = i;
+                _tiles[i].position =
+                    _tiles[i].destination = new Point((i % 5) * 3, (i / 5) * 3);
+                _tiles[i].tileType = i % 9;
+            }
             Model.Model.PropertyChanged += ModelPropertyChanged;
         }
 

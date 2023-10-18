@@ -82,11 +82,9 @@ namespace DynamicShapeWPF.View {
 				RadialGradientBrush brush = new RadialGradientBrush();
 
 				brush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#00FF00"), 0.80));
-
 				brush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#7F0000FF"), 0.60));
 				brush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#00FF00"), 0.400));
 				brush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#0000FF"), 0.200));
-
 				brush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FF7689"), 1));
 
 				Rendershape.Fill = brush;
@@ -102,17 +100,11 @@ namespace DynamicShapeWPF.View {
 			default:
 
 				return;
-
-
 			}
 
 
-
 			Canvas.SetLeft(Rendershape, e.GetPosition(canvasArea).X-Rendershape.Width / 2);
-
 			Canvas.SetTop(Rendershape, e.GetPosition(canvasArea).Y - Rendershape.Height / 2);
-
-
 
 			canvasArea.Children.Add(Rendershape);
 
@@ -130,8 +122,6 @@ namespace DynamicShapeWPF.View {
 			Point pt = e.GetPosition((Canvas)sender);
 
 			HitTestResult result = VisualTreeHelper.HitTest(canvasArea, pt);
-
-
 
 			if (result != null) {
 

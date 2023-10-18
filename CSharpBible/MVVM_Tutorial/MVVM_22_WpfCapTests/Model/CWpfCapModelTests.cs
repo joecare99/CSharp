@@ -11,7 +11,7 @@ namespace MVVM_22_WpfCap.Model.Tests
     [TestClass()]
     public class CWpfCapModelTests
     {
-        private CWpfCapModel testWpfCapModel;
+        private CWpfCapModel testWpfCapModel=null!;
 
         public string DebugOut = "";
 
@@ -26,7 +26,7 @@ namespace MVVM_22_WpfCap.Model.Tests
             DebugOut = "";
         }
 
-        private void TestTileColorChanged(object sender, EventArgs e)
+        private void TestTileColorChanged(object? sender, EventArgs e)
         {
             DebugOut += $"TileColChanged<{sender}>({e})\r\n";
         }
@@ -296,7 +296,7 @@ namespace MVVM_22_WpfCap.Model.Tests
             Assert.AreEqual("", DebugOut, "DebugOut");
         }
 
-        private void TestTileCount(int count,CWpfCapModel wcm=null)
+        private void TestTileCount(int count,CWpfCapModel? wcm=null!)
         {
             var _wcm = wcm ?? testWpfCapModel;
             var _t = new int[count+1];

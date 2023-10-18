@@ -14,5 +14,6 @@
     <StackPanel>
         <TextBlock>User-Name (min. 6 Char)</TextBlock>
         <TextBox ToolTip="{Binding TTUserName}" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, Delay=100}"/>
+        <TextBlock Text="{Binding TTUserName}"/>
     </StackPanel>
 </Page>

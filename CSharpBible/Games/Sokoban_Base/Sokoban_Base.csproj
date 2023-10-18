@@ -1,16 +1,11 @@
 ﻿<Project>
 	<Import Project="..\Games_net.props" />
 	<PropertyGroup>
-		<OutputType>Exe</OutputType>
+		<OutputType>Library</OutputType>
 		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0</TargetFrameworks>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<PropertyGroup>
-		<StartupObject>Sokoban_Base.Program</StartupObject>
-		<Deterministic>false</Deterministic>
-		<AssemblyVersion>1.0.*</AssemblyVersion>
-	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="bin\**" />
 		<EmbeddedResource Remove="bin\**" />
@@ -25,8 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="ReadMe.md.bak" />
-		<None Remove="Resource1.resx.bak" />
+		<None Remove="*.bak" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -53,11 +47,11 @@
 		<Folder Include="Resources\" />
 	</ItemGroup>
 
-	<ItemGroup Condition ="'$(TargetFramework)'=='net6.0' or '$(TargetFramework)'=='net7.0'">
-		<ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+	<ItemGroup Condition ="'!$(TargetFramework.StartsWith(net4))'">
+		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	</ItemGroup>
-	<ItemGroup Condition ="'$(TargetFramework)'!='net6.0' and '$(TargetFramework)'!='net7.0'">
-		<ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay.csproj" />
+	<ItemGroup Condition ="'$(TargetFramework.StartsWith(net4))'">
+		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_win.csproj" />
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition ="'$(TargetFramework)'=='net6.0'">

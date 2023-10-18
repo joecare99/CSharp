@@ -1,5 +1,6 @@
 <Project>
 	<PropertyGroup>
+		<UpDir>..\..</UpDir>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<LangVersion>9.0</LangVersion>

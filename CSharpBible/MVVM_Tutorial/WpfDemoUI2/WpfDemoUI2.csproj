@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 		<ProjectReference Include="..\DemoLibrary\DemoLibrary.csproj" />
 	</ItemGroup>
 

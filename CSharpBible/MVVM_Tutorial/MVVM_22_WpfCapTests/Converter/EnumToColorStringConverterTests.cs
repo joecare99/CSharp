@@ -13,7 +13,7 @@ namespace MVVM_22_WpfCap.Converter.Tests
     [TestClass()]
     public class EnumToColorStringConverterTests
     {
-        private EnumToColorStringConverter _testConverter;
+        private EnumToColorStringConverter _testConverter = null!;
 
         [TestInitialize()]
         public void Init()
@@ -69,7 +69,7 @@ namespace MVVM_22_WpfCap.Converter.Tests
         [DataRow("", new int[] { 5, 4, 3, 2, 1, 0 }, "XX")]
         public void ConvertTest(string sExp, object o,object p)
         {
-            Assert.AreEqual(sExp,_testConverter.Convert(o,typeof(string),p,null));
+            Assert.AreEqual(sExp,_testConverter.Convert(o,typeof(string),p,null!));
         }
 
         [DataTestMethod()]
@@ -114,13 +114,13 @@ namespace MVVM_22_WpfCap.Converter.Tests
             _testConverter.colors.Add(Colors.Gold);
             _testConverter.colors.Add(Colors.DarkBlue);
             _testConverter.colors.Add(Colors.Violet);            
-            Assert.AreEqual(sExp, _testConverter.Convert(o, typeof(string), p, null));
+            Assert.AreEqual(sExp, _testConverter.Convert(o, typeof(string), p, null!));
         }
 
         [TestMethod()]
         public void ConvertBackTest()
         {
-            Assert.ThrowsException<NotImplementedException>(() => _testConverter.ConvertBack(null, typeof(string), null, CultureInfo.InvariantCulture));
+            Assert.ThrowsException<NotImplementedException>(() => _testConverter.ConvertBack(null!, typeof(string), null!, CultureInfo.InvariantCulture));
         }
     }
 }

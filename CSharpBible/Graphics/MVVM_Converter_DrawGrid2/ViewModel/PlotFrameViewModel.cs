@@ -130,12 +130,12 @@ namespace MVVM_Converter_DrawGrid2.ViewModel
                         result[i].destination = new Point(i % ld.lSize.Width, i / ld.lSize.Width);
                     result[i].tileType = (ld.fields[i])switch {
                         FieldDef.Player =>1,
-                        FieldDef.Stone => 4,
-                        FieldDef.StoneInDest => 5,
-                        FieldDef.Destination =>6,
-                        FieldDef.Wall =>7,
-                        FieldDef.Empty =>8,
-                        _ =>8
+                        FieldDef.Stone => 5,
+                        FieldDef.StoneInDest => 6,
+                        FieldDef.Destination =>7,
+                        FieldDef.Wall =>8,
+                        FieldDef.Empty =>0,
+                        _ =>0
                     };
                 }
                 Tiles = result;
