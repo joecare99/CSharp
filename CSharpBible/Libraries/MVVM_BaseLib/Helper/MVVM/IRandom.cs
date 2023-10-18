@@ -8,7 +8,7 @@ namespace BaseLib.Helper.MVVM
 {
     public interface IRandom
     {
-        double Next(int v1, int v2);
+        int Next(int v1, int v2);
         double NextDouble();
         int NextInt();
         void Seed(int value);
