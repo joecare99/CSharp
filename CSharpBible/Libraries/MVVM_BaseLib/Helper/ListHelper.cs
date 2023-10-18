@@ -40,7 +40,7 @@ namespace BaseLib.Helper
             }
             catch
             {
-                list.Insert(iSrc - 1, c);
+                list.Insert(iSrc, c);
                 throw;
             }
         }
@@ -52,7 +52,7 @@ namespace BaseLib.Helper
         /// <param name="list">The list to change.</param>
         /// <param name="iItm1">The index of the first item.</param>
         /// <param name="iItm2">The index of the second item.</param>
-        public static void Swap<T>(this List<T> list, int iItm1, int iItm2)
+        public static void Swap<T>(this IList<T> list, int iItm1, int iItm2)
         {
             if (iItm1 == iItm2) return;
             (list[iItm1], list[iItm2]) = (list[iItm2],list[iItm1]);
