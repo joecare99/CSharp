@@ -12,8 +12,8 @@ namespace TestStatements.Anweisungen.Tests
         static IEnumerable<object[]> ShapeTestData => new[] { 
             new object[] { new Square(10) ,40d,"Information about square:\r\n   Length of a side: 10\r\n   Area: 100"},
             new object[] { new Rectangle(5, 7),24d, "Information about rectangle:\r\n   Dimensions: 5 x 7\r\n   Area: 35"},
-            new object[] { (Shape)null ,null,"An uninitialized shape"},
-            new object[] { (Shape?)null ,null,"An uninitialized shape"},
+            new object[] { (Shape?)null! ,null!,"An uninitialized shape"},
+            new object[] { (Shape?)null! ,null!,"An uninitialized shape"},
             new object[] { new Square(0),0d, "The shape: Square with no dimensions"},
             new object[] { new Rectangle(8, 8),32d, "Information about square rectangle:\r\n   Length of a side: 8\r\n   Area: 64"},
             new object[] { new Circle(3), Math.PI*6d, "A Circle shape"},

@@ -13,10 +13,10 @@
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
 	  <StartupObject>TestStatements.Program</StartupObject>
     <RootNamespace>TestStatements</RootNamespace>
-    <Deterministic>false</Deterministic>
+    <Deterministic>true</Deterministic>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
+    <AssemblyVersion>1.0.1.1234</AssemblyVersion>
     <Product>TestStatements 1.0</Product>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
   </ItemGroup>
 
   <Target Condition="'$(TargetFrameworks)'=='net6.0'" Name="PreBuild" BeforeTargets="PreBuildEvent">
