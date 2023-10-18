@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -55,32 +56,27 @@ namespace MVVM.ViewModel
 		/// </summary>
 		/// <param name="propertyName">Name of the property.</param>
 		public virtual void NotifyOfPropertyChange(string propertyName) {
-			if (IsNotifying) {
-				if (PropertyChangeNotificationsOnUIThread) {
-					OnUIThread(() => OnPropertyChanged(new PropertyChangedEventArgs(propertyName)));
-				}
-				else {
-					OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-				}
-			}
-		}
+			Action action = () => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-		/// <summary>
-		/// Raises a change notification indicating that all bindings should be refreshed.
-		/// </summary>
-		public void Refresh() {
-			if (PropertyChangeNotificationsOnUIThread) {
-				OnUIThread(() => {
-					OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-					OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-					OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-				});
-			}
-			else {
+            if (IsNotifying)
+            {
+                ExecuteAction(action);
+            }
+        }
+
+
+        /// <summary>
+        /// Raises a change notification indicating that all bindings should be refreshed.
+        /// </summary>
+        public void Refresh() {
+			Action action = () =>
+			{
 				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 				OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-			}
+			};
+
+            ExecuteAction(action);
 		}
 
 		/// <summary>
@@ -89,12 +85,7 @@ namespace MVVM.ViewModel
 		/// <param name="index">The index to insert at.</param>
 		/// <param name="item">The item to be inserted.</param>
 		protected override sealed void InsertItem(int index, T item) {
-			if (PropertyChangeNotificationsOnUIThread) {
-				OnUIThread(() => InsertItemBase(index, item));
-			}
-			else {
-				InsertItemBase(index, item);
-			}
+			ExecuteAction(() => InsertItemBase(index, item));
 		}
 
 		/// <summary>
@@ -113,12 +104,7 @@ namespace MVVM.ViewModel
 		/// <param name="index">The index to set the item at.</param>
 		/// <param name="item">The item to set.</param>
 		protected override sealed void SetItem(int index, T item) {
-			if (PropertyChangeNotificationsOnUIThread) {
-				OnUIThread(() => SetItemBase(index, item));
-			}
-			else {
-				SetItemBase(index, item);
-			}
+			ExecuteAction(() => SetItemBase(index, item));
 		}
 
 		/// <summary>
@@ -136,12 +122,7 @@ namespace MVVM.ViewModel
 		/// </summary>
 		/// <param name="index">The position used to identify the item to remove.</param>
 		protected override sealed void RemoveItem(int index) {
-			if (PropertyChangeNotificationsOnUIThread) {
-				OnUIThread(() => RemoveItemBase(index));
-			}
-			else {
-				RemoveItemBase(index);
-			}
+			ExecuteAction(() => RemoveItemBase(index));
 		}
 
 		/// <summary>
@@ -208,12 +189,7 @@ namespace MVVM.ViewModel
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 			}
 
-			if (PropertyChangeNotificationsOnUIThread) {
-				OnUIThread(AddRange);
-			}
-			else {
-				AddRange();
-			}
+			ExecuteAction(AddRange);
 		}
 
 		/// <summary>
@@ -237,19 +213,26 @@ namespace MVVM.ViewModel
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 			}
 
-			if (PropertyChangeNotificationsOnUIThread) {
-				OnUIThread(RemoveRange);
-			}
-			else {
-				RemoveRange();
-			}
+			ExecuteAction(RemoveRange);
 		}
 
-		/// <summary>
-		/// Executes the given action on the UI thread
-		/// </summary>
-		/// <param name="action">The action.</param>
-		/// <remarks>An extension point for subclasses to customize how property change notifications are handled.</remarks>
-		protected virtual void OnUIThread(System.Action action) => action.Invoke();
+        private void ExecuteAction(Action action)
+        {
+            if (PropertyChangeNotificationsOnUIThread)
+            {
+                OnUIThread(action);
+            }
+            else
+            {
+                action();
+            }
+        }
+
+        /// <summary>
+        /// Executes the given action on the UI thread
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <remarks>An extension point for subclasses to customize how property change notifications are handled.</remarks>
+        protected virtual void OnUIThread(System.Action action) => action.Invoke();
 	}
 }
