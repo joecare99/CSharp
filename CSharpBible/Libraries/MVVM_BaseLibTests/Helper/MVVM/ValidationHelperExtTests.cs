@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 
 namespace BaseLib.Helper.MVVM.Tests
 {
@@ -15,7 +16,7 @@ namespace BaseLib.Helper.MVVM.Tests
     {
         private bool _xHasErrors;
         private string _sPropName;
-        private List<string> _ErrList;
+        private List<ValidationResult> _ErrList = new();
         private string? csExpEmpty;
 
         public bool HasErrors => _xHasErrors;
@@ -39,7 +40,9 @@ namespace BaseLib.Helper.MVVM.Tests
         {
             _xHasErrors = xHasErrors;
             _sPropName = sProp.TrimStart('T');
-            _ErrList = Errs.ToList();
+            _ErrList.Clear();
+            foreach (var s in Errs)
+                _ErrList.Add(new ValidationResult(s));  
             Assert.AreEqual(sExp,this.ValidationText(sProp));
             Assert.AreEqual(csExpEmpty, this.ValidationText("Test"));
         }
