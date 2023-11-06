@@ -59,5 +59,41 @@ namespace MVVM_27_DataGrid.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Birthday ähnelt.
+        /// </summary>
+        public static string text_Birthday {
+            get {
+                return ResourceManager.GetString("text_Birthday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Departmant ähnelt.
+        /// </summary>
+        public static string text_Department {
+            get {
+                return ResourceManager.GetString("text_Department", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Givenname ähnelt.
+        /// </summary>
+        public static string text_Firstname {
+            get {
+                return ResourceManager.GetString("text_Firstname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Surname ähnelt.
+        /// </summary>
+        public static string text_Lastname {
+            get {
+                return ResourceManager.GetString("text_Lastname", resourceCulture);
+            }
+        }
     }
 }
