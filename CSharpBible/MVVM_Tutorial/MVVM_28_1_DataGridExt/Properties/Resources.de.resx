@@ -118,46 +118,46 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="dep_1" xml:space="preserve">
-    <value>Engineering</value>
+    <value>Entwicklung</value>
     <comment>The Engineering-department</comment>
   </data>
   <data name="dep_1_Desc" xml:space="preserve">
-    <value>The Engineering-department</value>
+    <value>Die Entwichlungsabteilung</value>
   </data>
   <data name="dep_2" xml:space="preserve">
-    <value>Sales</value>
+    <value>Verkauf</value>
     <comment>The Sales-department</comment>
   </data>
   <data name="dep_2_Desc" xml:space="preserve">
-    <value>The Sales-department</value>
+    <value>Die Verkaufsabteilung</value>
   </data>
   <data name="dep_3" xml:space="preserve">
-    <value>Management</value>
+    <value>Geschäftsleitung</value>
     <comment>The Management</comment>
   </data>
   <data name="dep_3_Desc" xml:space="preserve">
-    <value>The Management</value>
+    <value>Die Geschäftsleitung</value>
   </data>
   <data name="dep_4" xml:space="preserve">
     <value>Service</value>
     <comment>The Service-department</comment>
   </data>
   <data name="dep_4_Desc" xml:space="preserve">
-    <value>The Service-department</value>
+    <value>Die Serviceabteilung</value>
   </data>
   <data name="text_Birthday" xml:space="preserve">
-    <value>Birthday</value>
+    <value>Geburtstag</value>
   </data>
   <data name="text_Department" xml:space="preserve">
-    <value>Departmant</value>
+    <value>Abteilung</value>
   </data>
   <data name="text_eMail" xml:space="preserve">
     <value>eMail</value>
   </data>
   <data name="text_Firstname" xml:space="preserve">
-    <value>Givenname</value>
+    <value>Vorname</value>
   </data>
   <data name="text_Lastname" xml:space="preserve">
-    <value>Surname</value>
+    <value>Nachname</value>
   </data>
 </root>
