@@ -75,15 +75,15 @@ namespace MVVM_06_Converters_4.ViewModel
         /// <summary>
         /// The name
         /// </summary>
-        public string Name;
+        public string? Name;
         /// <summary>
         /// The description
         /// </summary>
-        public string Description;
+        public string? Description;
         /// <summary>
         /// The pen
         /// </summary>
-        public System.Windows.Media.Pen Pen;
+        public System.Windows.Media.Pen? Pen;
     }
 
     public struct ArrowData
@@ -106,15 +106,15 @@ namespace MVVM_06_Converters_4.ViewModel
         /// <summary>
         /// The name
         /// </summary>
-        public string Name;
+        public string? Name;
         /// <summary>
         /// The description
         /// </summary>
-        public string Description;
+        public string? Description;
         /// <summary>
         /// The pen
         /// </summary>
-        public System.Windows.Media.Pen Pen;
+        public System.Windows.Media.Pen? Pen;
     }
     public struct CircleData
     {
@@ -136,15 +136,15 @@ namespace MVVM_06_Converters_4.ViewModel
         /// <summary>
         /// The name
         /// </summary>
-        public string Name;
+        public string? Name;
         /// <summary>
         /// The description
         /// </summary>
-        public string Description;
+        public string? Description;
         /// <summary>
         /// The pen
         /// </summary>
-        public System.Windows.Media.Pen Pen;
+        public System.Windows.Media.Pen? Pen;
     }
     public struct PolynomeData
     {

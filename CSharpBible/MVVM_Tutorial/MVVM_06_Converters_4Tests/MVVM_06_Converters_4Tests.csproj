@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\MVVM_Tutorial_net.props" />
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MVVM_06_Converters_4\MVVM_06_Converters_4.csproj" />
-	  <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
+	  <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
   </ItemGroup>
 
 </Project>
