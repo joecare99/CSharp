@@ -85,10 +85,10 @@ namespace MVVM_28_1_DataGridExt.Services
         }
         public Department[] GetDepartments() 
             => new Department[]{
-                new(){ Id=1,Name="Engineering",Description="The Engineering-department" },
-                new(){ Id=2,Name="Sales",Description="The Sales-department" },
-                new(){ Id=3,Name="Management",Description="The Management" },
-                new(){ Id=4,Name="Service",Description="The Service-department" } }
+                new(){Id = 1},
+                new(){Id = 2},
+                new(){Id = 3},
+                new(){Id = 4} }
                 ;
     }
 }

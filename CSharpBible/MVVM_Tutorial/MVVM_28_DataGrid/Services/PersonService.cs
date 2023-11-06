@@ -23,7 +23,7 @@ namespace MVVM_28_DataGrid.Services
         /// The last names
         /// </summary>
         static readonly string[] titles = { "", "", "", "", "", "Dr.", "Prof.", "Prof. Dr.", "Dr. med.", "Dipl.Ing.", "M.D.", "M.D." };
- 
+
         /// <summary>
         /// The low end date
         /// </summary>
@@ -31,7 +31,7 @@ namespace MVVM_28_DataGrid.Services
         /// <summary>
         /// The days from low date
         /// </summary>
-        static readonly int daysFromLowDate = (DateTime.Today - lowEndDate).Days-7000;
+        static readonly int daysFromLowDate = (DateTime.Today - lowEndDate).Days - 7000;
 
         /// <summary>
         /// Gets the random item.
@@ -49,7 +49,7 @@ namespace MVVM_28_DataGrid.Services
         public IEnumerable<Person> GetPersons()
         {
             var deps = GetDepartments();
-            var _id = 5; 
+            var _id = 5;
             return new Person[]
             {
                     new(){ FirstName="Max", LastName="Muster", Email="max@muster.com", Id=1, Department = deps[0] },
@@ -71,22 +71,24 @@ namespace MVVM_28_DataGrid.Services
             static Person RandomPerson(ref int _id, Department[] deps)
             {
                 string fn, ln;
-                return new() { 
-                    FirstName =(fn= GetRandomItem(firstNames)), 
-                    LastName = (ln=GetRandomItem(lastNames)),
+                return new()
+                {
+                    FirstName = (fn = GetRandomItem(firstNames)),
+                    LastName = (ln = GetRandomItem(lastNames)),
                     Title = GetRandomItem(titles),
-                    Email =  $"{fn.ToLower()}.{ln.ToLower()}@muster.com", 
-                    Id = _id++, 
-                    Department = GetRandomItem(deps), 
-                    Birthday = GetRandomDate() };
+                    Email = $"{fn.ToLower()}.{ln.ToLower()}@muster.com",
+                    Id = _id++,
+                    Department = GetRandomItem(deps),
+                    Birthday = GetRandomDate()
+                };
             }
         }
-        public Department[] GetDepartments() 
+        public Department[] GetDepartments()
             => new Department[]{
-                new(){ Id=1,Name="Engineering",Description="The Engineering-department" },
-                new(){ Id=2,Name="Sales",Description="The Sales-department" },
-                new(){ Id=3,Name="Management",Description="The Management" },
-                new(){ Id=4,Name="Service",Description="The Service-department" } }
+                new(){ Id = 1 },
+                new(){ Id = 2 },
+                new(){ Id = 3 },
+                new(){ Id = 4 } }
                 ;
     }
 }

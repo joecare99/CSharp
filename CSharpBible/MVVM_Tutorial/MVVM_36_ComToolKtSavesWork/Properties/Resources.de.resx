@@ -117,10 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="text_HdrUsername" xml:space="preserve">
-    <value>User-Name (min. 6 Char)</value>
+  <data name="lgn_Login" xml:space="preserve">
+    <value>Anmelden</value>
   </data>
-  <data name="text_WinTitle" xml:space="preserve">
-    <value>Validation by Exception</value>
+  <data name="lgn_Password" xml:space="preserve">
+    <value>Password:</value>
+  </data>
+  <data name="lgn_Username" xml:space="preserve">
+    <value>Benutzer:</value>
+  </data>
+  <data name="pg1_Title" xml:space="preserve">
+    <value>Comunity-Toolkit spart viel Arbeit-Seite:</value>
+  </data>
+  <data name="uictrl_Login" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="uictrl_NotLoggedIn" xml:space="preserve">
+    <value>Nicht angemeldet</value>
+  </data>
+  <data name="uictrl_Welcome" xml:space="preserve">
+    <value>Willkommen</value>
+  </data>
+  <data name="wnd_Title" xml:space="preserve">
+    <value>Comunity-Toolkit spart viel Arbeit</value>
   </data>
 </root>

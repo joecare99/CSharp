@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="text_HdrUsername" xml:space="preserve">
-    <value>User-Name (min. 6 Char)</value>
+  <data name="text_Birthday" xml:space="preserve">
+    <value>Geburtstag</value>
   </data>
-  <data name="text_WinTitle" xml:space="preserve">
-    <value>Validation by Exception</value>
+  <data name="text_Department" xml:space="preserve">
+    <value>Abteilung</value>
+  </data>
+  <data name="text_Firstname" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
+  <data name="text_Lastname" xml:space="preserve">
+    <value>Nachname</value>
   </data>
 </root>

@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="text_HdrUsername" xml:space="preserve">
-    <value>User-Name (min. 6 Char)</value>
+  <data name="Err_MayNotBeEmpty" xml:space="preserve">
+    <value>{0} darf nicht leer sein</value>
   </data>
-  <data name="text_WinTitle" xml:space="preserve">
-    <value>Validation by Exception</value>
+  <data name="Err_MayNotBeKnown" xml:space="preserve">
+    <value>{0} enthält einen bekannten Begriff</value>
+  </data>
+  <data name="Err_MustHave_Chars" xml:space="preserve">
+    <value>{0} muss mind. {1} Zeichen haben</value>
+  </data>
+  <data name="Err_Something" xml:space="preserve">
+    <value>Bei {0} ist etwas ist schief gegangen </value>
   </data>
 </root>

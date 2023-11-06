@@ -120,7 +120,13 @@
   <data name="Err_MayNotBeEmpty" xml:space="preserve">
     <value>{0} may not be empty</value>
   </data>
+  <data name="Err_MayNotBeKnown" xml:space="preserve">
+    <value>{0} is a known name </value>
+  </data>
   <data name="Err_MustHave_Chars" xml:space="preserve">
     <value>{0} must have min. {1} Chars</value>
+  </data>
+  <data name="Err_Something" xml:space="preserve">
+    <value>{0} Somethin went wrong</value>
   </data>
 </root>

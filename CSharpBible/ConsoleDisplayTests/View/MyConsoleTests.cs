@@ -130,7 +130,9 @@ namespace ConsoleDisplay.View.Tests
         [DataRow(nameof(write_st))]
         [DataRow(nameof(setCursorPos))]
         [DataRow(nameof(beep_int))]
+#if NET6_0_OR_GREATER
         [DataRow(nameof(getCursorPos))]
+#endif
         public void PropertyTest(string name)
         {
             var pi = GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).First((p) => p.Name == name)?.GetValue(this);

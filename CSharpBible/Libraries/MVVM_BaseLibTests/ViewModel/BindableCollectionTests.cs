@@ -13,7 +13,9 @@ namespace MVVM.ViewModel.Tests
     [TestClass()]
     public class BindableCollectionTests : BaseTestViewModel
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private BindableCollection<string> _testClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize]
         public void Init()
@@ -24,7 +26,7 @@ namespace MVVM.ViewModel.Tests
 
         }
 
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
            DoLog($"OnCollectionChanged({sender},{e.Action})");
         }

@@ -204,7 +204,7 @@ namespace MVVM_06_Converters_4.View.Converter
                     {
                         var P1 = real2VisP(sh.Start, actPort);
                         var P2 = real2VisP(sh.End, actPort);
-                        foreach (var el in CreateArrow(al.Pen.Brush, al.Pen.Thickness, P1, P2))
+                        foreach (var el in CreateArrow(al.Pen?.Brush, al.Pen?.Thickness ?? 1, P1, P2))
                             result.Add(el);
                     }
                     return result;
@@ -214,7 +214,7 @@ namespace MVVM_06_Converters_4.View.Converter
                     {
                         var P1 = real2VisP(sh.Center, actPort);
                         var r = Real2VisP(PointF.Add(sh.Center,new SizeF((float)sh.Radius,0)), actPort).X-P1.X;
-                        result.Add(CreateCircle(cl.Pen.Brush, cl.Pen.Thickness, P1, (float)r));
+                        result.Add(CreateCircle(cl.Pen?.Brush, cl.Pen?.Thickness ?? 1, P1, (float)r));
                     }
                     return result;
                 case PolynomeList pl:
@@ -224,7 +224,7 @@ namespace MVVM_06_Converters_4.View.Converter
                         var p = new PointCollection();
                         foreach (var pnt in sh.Points)
                             p.Add(real2VisP(pnt, actPort));
-                        result.Add(CreatePolynome(pl.Pen.Brush, pl.Pen.Thickness, p));
+                        result.Add(CreatePolynome(pl.Pen?.Brush, pl.Pen?.Thickness ?? 1, p));
                     }
                     return result;
                 default: return new ObservableCollection<FrameworkElement>();
@@ -267,7 +267,7 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreateLine(System.Windows.Media.Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
+        FrameworkElement CreateLine(System.Windows.Media.Brush? b, double value, System.Windows.Point P1, System.Windows.Point P2)
         {
             return new Line()
             {
@@ -275,7 +275,7 @@ namespace MVVM_06_Converters_4.View.Converter
                 Y1 = P1.Y,
                 X2 = P2.X,
                 Y2 = P2.Y,
-                Stroke = b,
+                Stroke = b ?? System.Windows.Media.Brushes.Black,
                 StrokeThickness = value
             };
         }
@@ -288,14 +288,14 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreateCircle(System.Windows.Media.Brush b, double value, System.Windows.Point P1, float r)
+        FrameworkElement CreateCircle(System.Windows.Media.Brush? b, double value, System.Windows.Point P1, float r)
         {
             return new Ellipse()
             {
                 Margin = new Thickness(P1.X-r, P1.Y-r, 0, 0),               
                 Height = r * 2,
                 Width = r * 2,
-                Stroke = b,
+                Stroke = b ?? System.Windows.Media.Brushes.Black,
                 StrokeThickness = value
             };
         }
@@ -308,17 +308,17 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreatePolynome(System.Windows.Media.Brush b, double value, PointCollection Pts)
+        FrameworkElement CreatePolynome(System.Windows.Media.Brush? b, double value, PointCollection Pts)
         {
             return new Polygon()
             {
                 Points = Pts,
-                Stroke = b,
+                Stroke = b ?? System.Windows.Media.Brushes.Black,
                 StrokeThickness = value
             };
         }
 
-        IEnumerable<FrameworkElement> CreateArrow(System.Windows.Media.Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
+        IEnumerable<FrameworkElement> CreateArrow(System.Windows.Media.Brush? b, double value, System.Windows.Point P1, System.Windows.Point P2)
         {
             // Linie
             yield return new Line()
@@ -327,7 +327,7 @@ namespace MVVM_06_Converters_4.View.Converter
                 Y1 = P1.Y,
                 X2 = P2.X,
                 Y2 = P2.Y,
-                Stroke = b,
+                Stroke = b ?? System.Windows.Media.Brushes.Black,
                 StrokeThickness = value,              
             };
             System.Numerics.Vector2 v = new((float)(P2.X - P1.X), (float)(P2.Y - P1.Y));
@@ -341,7 +341,7 @@ namespace MVVM_06_Converters_4.View.Converter
                     Y1 = P2.Y - ve.Y*(value*2) ,
                     X2 = P2.X - ve.X * value,
                     Y2 = P2.Y - ve.Y * value,
-                    Stroke = b,
+                    Stroke = b ?? System.Windows.Media.Brushes.Black,
                     StrokeThickness = value*5,
                     StrokeEndLineCap = PenLineCap.Triangle
                 };
