@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestConsole;
 using System.Drawing;
 using static BaseLib.Helper.TestHelper;
+using System;
 
 namespace ConsoleDisplay.View.Tests
 {
@@ -98,7 +99,7 @@ namespace ConsoleDisplay.View.Tests
         [DynamicData(nameof(PointHexTestData))]
         public void HexPointTest(string name, float[] fVal, bool xVal, float[] fExp)
         {
-            var pfExp = new Point((int)fExp[0], (int)fExp[1]);
+            var pfExp = new Point((int)Math.Round(fExp[0]), (int)Math.Round(fExp[1]));
             Assert.AreEqual(pfExp, HexMath.HexKPoint((fVal[0], fVal[1]), xVal), $"{name}({fVal[0]},{fVal[1]})");
         }
 
@@ -108,7 +109,7 @@ namespace ConsoleDisplay.View.Tests
         [DynamicData(nameof(PointHexTestData))]
         public void HexPointTest2(string name, float[] fVal, bool xVal, float[] fExp)
         {
-            var pfExp = new Point((int)fExp[0], (int)fExp[1]);
+            var pfExp = new Point((int)Math.Round(fExp[0]), (int)Math.Round(fExp[1]));
             Assert.AreEqual(pfExp, (fVal[0], fVal[1]).HexKPoint(xVal), $"{name}({fVal[0]},{fVal[1]})");
         }
 
