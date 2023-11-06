@@ -17,7 +17,7 @@ namespace BaseLib.Helper.MVVM
         /// <param name="value"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public static bool SetProperty<T>(this T value, ref T field, Action<string,T,T>? success=null, IRaisePropChangedEvents? This=null, [CallerMemberName] string propertyName = "")
+        public static bool SetProperty<T>(this T value, ref T field, Action<string,T?,T>? success=null, IRaisePropChangedEvents? This=null, [CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             T? old = field;
@@ -34,7 +34,7 @@ namespace BaseLib.Helper.MVVM
         /// <param name="value"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public static bool CondSetProperty<T>(this T value, ref T field, Func<string, T, T,bool>? cond = null, Action<string, T, T>? success = null, IRaisePropChangedEvents? This = null,bool force=false, [CallerMemberName] string propertyName = "")
+        public static bool CondSetProperty<T>(this T value, ref T field, Func<string, T, T,bool>? cond = null, Action<string, T?, T>? success = null, IRaisePropChangedEvents? This = null,bool force=false, [CallerMemberName] string propertyName = "")
         {
             if (CondSetHead(value, field, cond, force, propertyName, out var old) != null) 
                 return false;
@@ -57,7 +57,7 @@ namespace BaseLib.Helper.MVVM
         /// <param name="propertyName"></param>
         /// <returns></returns>
         public static bool CondSetProperty<T>(this T value,T field, Action<T> Setter, 
-            Func<string, T, T, bool>? cond = null, Action<string, T, T>? success = null, 
+            Func<string, T, T, bool>? cond = null, Action<string, T?, T>? success = null, 
             IRaisePropChangedEvents? This = null, bool force = false, [CallerMemberName] string propertyName = "")
         {
             if (CondSetHead(value, field, cond, force, propertyName, out var old) != null)
@@ -67,7 +67,7 @@ namespace BaseLib.Helper.MVVM
             return true;
         }
 
-        private static void SetTail<T>(T value, Action<string, T, T>? success, IRaisePropChangedEvents? This, string propertyName, T? old)
+        private static void SetTail<T>(T value, Action<string, T?, T>? success, IRaisePropChangedEvents? This, string propertyName, T? old)
         {
             try { success?.Invoke(propertyName, old, value); } catch { }
             This?.RaisePropertyChanged(propertyName);

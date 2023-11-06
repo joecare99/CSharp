@@ -14,10 +14,10 @@ namespace BaseLib.Helper.MVVM.Tests
     [TestClass()]
     public class ValidationHelperExtTests : INotifyDataErrorInfo
     {
-        private bool _xHasErrors;
-        private string _sPropName;
+        private bool _xHasErrors = default;
+        private string _sPropName = string.Empty;
         private List<ValidationResult> _ErrList = new();
-        private string? csExpEmpty;
+        private string? csExpEmpty = default;
 
         public bool HasErrors => _xHasErrors;
 
@@ -51,7 +51,7 @@ namespace BaseLib.Helper.MVVM.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ValidationTextTestNull()
         {
-            ((INotifyDataErrorInfo)null).ValidationText("123");
+            ((INotifyDataErrorInfo)null!).ValidationText("123");
         }
 
         [TestMethod]
