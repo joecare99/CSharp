@@ -59,5 +59,113 @@ namespace MVVM_28_DataGrid.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Engineering ähnelt.
+        /// </summary>
+        public static string dep_1 {
+            get {
+                return ResourceManager.GetString("dep_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Engineering-department ähnelt.
+        /// </summary>
+        public static string dep_1_Desc {
+            get {
+                return ResourceManager.GetString("dep_1_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Sales ähnelt.
+        /// </summary>
+        public static string dep_2 {
+            get {
+                return ResourceManager.GetString("dep_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Sales-department ähnelt.
+        /// </summary>
+        public static string dep_2_Desc {
+            get {
+                return ResourceManager.GetString("dep_2_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Management ähnelt.
+        /// </summary>
+        public static string dep_3 {
+            get {
+                return ResourceManager.GetString("dep_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Management ähnelt.
+        /// </summary>
+        public static string dep_3_Desc {
+            get {
+                return ResourceManager.GetString("dep_3_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Service ähnelt.
+        /// </summary>
+        public static string dep_4 {
+            get {
+                return ResourceManager.GetString("dep_4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Service-department ähnelt.
+        /// </summary>
+        public static string dep_4_Desc {
+            get {
+                return ResourceManager.GetString("dep_4_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Birthday ähnelt.
+        /// </summary>
+        public static string text_Birthday {
+            get {
+                return ResourceManager.GetString("text_Birthday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Departmant ähnelt.
+        /// </summary>
+        public static string text_Department {
+            get {
+                return ResourceManager.GetString("text_Department", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Givenname ähnelt.
+        /// </summary>
+        public static string text_Firstname {
+            get {
+                return ResourceManager.GetString("text_Firstname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Surname ähnelt.
+        /// </summary>
+        public static string text_Lastname {
+            get {
+                return ResourceManager.GetString("text_Lastname", resourceCulture);
+            }
+        }
     }
 }
