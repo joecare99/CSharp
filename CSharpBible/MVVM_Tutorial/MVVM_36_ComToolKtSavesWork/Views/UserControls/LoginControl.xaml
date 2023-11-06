@@ -6,6 +6,7 @@
              xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
              xmlns:local="clr-namespace:MVVM_36_ComToolKtSavesWork.Views.UserControls"
              xmlns:mvvm="clr-namespace:MVVM_36_ComToolKtSavesWork.ViewModels"
+             xmlns:p="clr-namespace:MVVM_36_ComToolKtSavesWork.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="130" d:DesignWidth="400"
              DataContext="{ioc:IoC Type=mvvm:LoginViewModel}">
@@ -13,10 +14,10 @@
         <mvvm:LoginViewModel/>
     </d:UserControl.DataContext>
     <StackPanel>
-        <Label>Username</Label>
+        <Label Content="{x:Static p:Resources.lgn_Username}"/>
         <TextBox Text="{Binding UserName}" />
-        <Label>Password</Label>
+        <Label Content="{x:Static p:Resources.lgn_Password}"/>
         <TextBox Text="{Binding Password}"/>
-        <Button Command="{Binding DoLoginCommand}" Content="Login" Margin="0,10,0,0"/>
+        <Button Command="{Binding DoLoginCommand}" Content="{x:Static p:Resources.lgn_Login}" Margin="0,10,0,0"/>
     </StackPanel>
 </UserControl>

@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_36_ComToolKtSavesWork"
         xmlns:mvvm="clr-namespace:MVVM_36_ComToolKtSavesWork.ViewModels"
+        xmlns:p="clr-namespace:MVVM_36_ComToolKtSavesWork.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{x:Static p:Resources.wnd_Title}" Height="450" Width="800">
     <Window.DataContext>
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
