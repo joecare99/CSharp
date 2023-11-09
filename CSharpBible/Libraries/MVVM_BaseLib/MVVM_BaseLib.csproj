@@ -17,7 +17,7 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs" Link="Helper\PropertyHelper.cs" />

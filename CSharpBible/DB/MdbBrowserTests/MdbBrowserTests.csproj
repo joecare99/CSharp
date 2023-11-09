@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 	<Import Project="..\DB.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net4.8.1-windows;net4.6.2-windows</TargetFrameworks>
