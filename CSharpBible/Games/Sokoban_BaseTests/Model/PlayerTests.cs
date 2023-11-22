@@ -13,7 +13,9 @@ namespace Sokoban_Base.Model.Tests
     [TestClass()]
     public class PlayerTests
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         Player testItem;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         Playfield pf = new Playfield();
 
         [TestInitialize]
@@ -42,8 +44,8 @@ namespace Sokoban_Base.Model.Tests
         [DataRow(1, 2, Direction.East, true)]
         public void TestMoveTest(int x, int y, Direction d, bool xExp)
         {
-            if (y > 0)
-                pf[new Point(x, y)].Item = testItem;
+            if (y > 0 && pf[new Point(x, y)] is Field f)
+                f.Item = testItem;
             else if (x > 0)
                 new Floor(Point.Empty, null).Item = testItem;
             Assert.AreEqual(xExp, testItem.TestMove(d));
@@ -60,10 +62,10 @@ namespace Sokoban_Base.Model.Tests
         [DataRow(1, 2, Direction.East, true)]
         public void TestMove2Test(int x, int y, Direction d, bool xExp)
         {
-            pf[new Point(0, 2)].Item = null;
-            pf[new Point(0, 2)].Item = new Key(null);
-            if (y > 0)
-                pf[new Point(x, y)].Item = testItem;
+            pf[new Point(0, 2)]!.Item = null;
+            pf[new Point(0, 2)]!.Item = new Key(null);
+            if (y > 0 && pf[new Point(x, y)] is Field f)
+                f.Item = testItem;
             else if (x > 0)
                 new Floor(Point.Empty, null).Item = testItem;
             Assert.AreEqual(xExp, testItem.TestMove(d));
@@ -80,8 +82,8 @@ namespace Sokoban_Base.Model.Tests
         [DataRow(1, 2, Direction.East, true)]
         public void TryMoveTest(int x, int y, Direction d, bool xExp)
         {
-            if (y > 0)
-                pf[new Point(x, y)].Item = testItem;
+            if (y > 0&& pf[new Point(x, y)] is Field f)
+                f.Item = testItem;
             else if (x > 0)
                 new Floor(Point.Empty, null).Item = testItem;
             Assert.AreEqual(xExp, testItem.TryMove(d));
@@ -99,8 +101,8 @@ namespace Sokoban_Base.Model.Tests
         [DataRow(1, 2, Direction.East, true)]
         public void GoTest(int x, int y, Direction? d, bool xExp)
         {
-            if (y > 0)
-                pf[new Point(x, y)].Item = testItem;
+            if (y > 0 && pf[new Point(x, y)] is Field f)
+                f.Item = testItem;
             else if (x > 0)
                 new Floor(Point.Empty, null).Item = testItem;
             Assert.AreEqual(xExp, testItem.Go(d));
@@ -114,8 +116,8 @@ namespace Sokoban_Base.Model.Tests
         [DataRow(2, 1, new Direction[] { Direction.West,Direction.South })]
         public void MovableDirTest(int x, int y, Direction[] d)
         {
-            if (y > 0)
-                pf[new Point(x, y)].Item = testItem;
+            if (y > 0 && pf[new Point(x, y)] is Field f)
+                f.Item = testItem;
             else if (x > 0)
                 new Floor(Point.Empty, null).Item = testItem;
             AssertAreEqual(d, testItem.MoveableDirs().ToArray());
