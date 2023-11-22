@@ -1,0 +1,1782 @@
+[
+  {
+    "Code": "private void Befehl_Click(object eventSender, EventArgs eventArgs)",
+    "Level": 0,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 1,
+    "type": 15
+  },
+  {
+    "Code": "int try0000_dispatch = -1;",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "int num = default(int);",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "short index = default(short);",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "int num2 = default(int);",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "int num3 = default(int);",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "int number = default(int);",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "string prompt = default(string);",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "while",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "(true)",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 2,
+    "type": 15
+  },
+  {
+    "Code": "try",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 3,
+    "type": 15
+  },
+  {
+    "Code": "",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "\/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*\/",
+    "Level": 3,
+    "type": 12
+  },
+  {
+    "Code": ";",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "int num4;",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "string text;",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "switch",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "(try0000_dispatch)",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 4,
+    "type": 15
+  },
+  {
+    "Code": "default:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 1;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "index = Befehl.GetIndex((Button)eventSender);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0015;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "case 1043:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "num2 = num;",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "switch",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "(num3)",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 6,
+    "type": 15
+  },
+  {
+    "Code": "case 2:",
+    "Level": 6,
+    "type": 2
+  },
+  {
+    "Code": "break;",
+    "Level": 6,
+    "type": 6
+  },
+  {
+    "Code": "case 1:",
+    "Level": 6,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0319;",
+    "Level": 6,
+    "type": 10
+  },
+  {
+    "Code": "default:",
+    "Level": 6,
+    "type": 2
+  },
+  {
+    "Code": "goto end_IL_0000;",
+    "Level": 6,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 6,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_0248;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "IL_0319:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num4 = num2 + 1;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_031d;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0248:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 36;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "number = Information.Err().Number;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0258;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0258:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 39;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(number == 25)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_0262;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_029b;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_029b:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 46;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(number == 55)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_02a5;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_02d0;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_02d0:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 52;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "ProjectData.EndApp();",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_02f6;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_00ad:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 9;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "RichTextBox1.LoadFile(COND.Verz1 +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"TEMP\\\\Text2.RTF\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ", RichTextBoxStreamType.RichText);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_00cc;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_02f6:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 55;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.ClearProjectError();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(num2 == 0)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "throw",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.CreateProjectError(-2146828268);",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_0315;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_00cc:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 10;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "Interaction.Shell(COND.Aus[7] +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\" \"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": "+ COND.Verz1 +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"Temp\\\\Text2.RTF\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ", AppWinStyle.MaximizedFocus);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0315:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num4 = num2;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_031d;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_031d:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num2 = 0;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "switch",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(num4)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "case 1:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "break;",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "case 2:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0015;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 3:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_001d;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 4:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0073;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 6:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 8:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_008f;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 9:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_00ad;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 10:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_00cc;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 12:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 13:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_00f9;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 14:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_010d;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 15:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0117;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 18:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 19:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0134;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 20:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0151;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 21:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0178;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 22:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0191;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 23:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_01aa;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 24:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_01d0;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 26:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 28:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_01f9;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 30:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 31:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_021f;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 36:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0248;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 38:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 39:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0258;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 40:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0262;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 41:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_026c;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 42:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_027f;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 46:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_029b;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 47:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_02a5;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 48:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_02b4;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 51:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 52:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_02d0;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 53:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 55:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_02f6;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "default:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto end_IL_0000;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 5:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 11:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 16:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 17:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 25:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 29:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 32:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 33:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 34:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 35:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 37:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 43:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 45:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 49:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 50:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 56:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 57:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "case 58:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto default;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_02a5:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 47;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "FileSystem.FileClose();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_02b4;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_02b4:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 48;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.ClearProjectError();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(num2 == 0)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "throw",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.CreateProjectError(-2146828268);",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_0315;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_008f:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 8;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "RichTextBox1.SaveFile(COND.Verz1 +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"TEMP\\\\Text2.RTF\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ", RichTextBoxStreamType.RichText);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_00ad;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0262:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 40;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "prompt =",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"Das angegebene Gerät ist nicht bereit.\\rBitte einschalten oder abbrechen.\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ";",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_026c;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_026c:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 41;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(Interaction.MsgBox(prompt, MsgBoxStyle.OkCancel,",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"Fehler\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ") == MsgBoxResult.Cancel)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_027f;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_027f:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 42;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.ClearProjectError();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(num2 == 0)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "throw",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.CreateProjectError(-2146828268);",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_0315;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0117:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 15;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "MyProject.Forms.Druck.Show();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0015:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "ProjectData.ClearProjectError();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "num3 = 2;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_001d;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_001d:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 3;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "text =",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"Datum \"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": "+ Strings.Mid(DateAndTime.DateString, 4, 2) +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\".\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": "+ DateAndTime.DateString.Left( 2) +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\".\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": "+ Strings.Mid(DateAndTime.DateString, 7, 4);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0073;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0073:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 4;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "switch",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(index)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "case 1:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "break;",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "case 2:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_00f9;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "case 3:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_0134;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "default:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_008f;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0134:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 19;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "MyProject.Forms.Hinter.CommonDialog1Save.Filter =",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"Text (*.txt)|*.txt|Formartierter Text (*.RTF)|*.RTF\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ";",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0151;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0151:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 20;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "MyProject.Forms.Hinter.CommonDialog1Save.InitialDirectory = COND.GenPlu +",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"list\\\\\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ";",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0178;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0178:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 21;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex = 2;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0191;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_0191:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 22;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "MyProject.Forms.Hinter.CommonDialog1Save.ShowDialog();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_01aa;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_01aa:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 23;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "if",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(Operators.CompareString(MyProject.Forms.Hinter.CommonDialog1Save.FileName,",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ", TextCompare:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "false) == 0)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_01d0;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_01d0:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 24;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "switch",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "(MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex)",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "case 1:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "break;",
+    "Level": 5,
+    "type": 6
+  },
+  {
+    "Code": "case 2:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto IL_021f;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "default:",
+    "Level": 5,
+    "type": 2
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 5,
+    "type": 10
+  },
+  {
+    "Code": "}",
+    "Level": 5,
+    "type": 15
+  },
+  {
+    "Code": "goto IL_01f9;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_021f:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 31;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.RichText);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_01f9:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 28;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.PlainText);",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto end_IL_0000_2;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_00f9:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 13;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "RichTextBox1.Text =",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "\"\"",
+    "Level": 4,
+    "type": 14
+  },
+  {
+    "Code": ";",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_010d;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "IL_010d:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "num = 14;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "Close();",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "goto IL_0117;",
+    "Level": 4,
+    "type": 10
+  },
+  {
+    "Code": "end_IL_0000:",
+    "Level": 4,
+    "type": 2
+  },
+  {
+    "Code": "break;",
+    "Level": 4,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 4,
+    "type": 15
+  },
+  {
+    "Code": "}",
+    "Level": 3,
+    "type": 15
+  },
+  {
+    "Code": "catch",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "(Exception obj)",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "when (obj is not null && num3 != 0 && num2 == 0)",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 3,
+    "type": 15
+  },
+  {
+    "Code": "ProjectData.SetProjectError(obj);",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "try0000_dispatch = 1043;",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "continue;",
+    "Level": 3,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 3,
+    "type": 15
+  },
+  {
+    "Code": "throw",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "ProjectData.CreateProjectError(-2146828237);",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "continue;",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "end_IL_0000_2:",
+    "Level": 2,
+    "type": 2
+  },
+  {
+    "Code": "break;",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 2,
+    "type": 15
+  },
+  {
+    "Code": "if",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "(num2 != 0)",
+    "Level": 1,
+    "type": 6
+  },
+  {
+    "Code": "{",
+    "Level": 2,
+    "type": 15
+  },
+  {
+    "Code": "ProjectData.ClearProjectError();",
+    "Level": 2,
+    "type": 6
+  },
+  {
+    "Code": "}",
+    "Level": 2,
+    "type": 15
+  },
+  {
+    "Code": "}",
+    "Level": 1,
+    "type": 15
+  }
+]

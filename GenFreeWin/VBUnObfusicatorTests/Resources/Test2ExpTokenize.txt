@@ -1,0 +1,126 @@
+﻿T:Instruction,0,private void Button2_Click(object sender, EventArgs e)
+T:Block,1,{
+T:Instruction,1,
+T:LComment,1,//Discarded unreachable code: IL_0085
+T:Instruction,1,int try0000_dispatch = -1;
+T:Instruction,1,int num3 = default(int);
+T:Instruction,1,int num2 = default(int);
+T:Instruction,1,int num = default(int);
+T:Instruction,1,byte b = default(byte);
+T:Instruction,1,while
+T:Instruction,1,(true)
+T:Block,2,{
+T:Instruction,2,try
+T:Block,3,{
+T:Instruction,3,
+T:Comment,3,/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+T:Instruction,3,;
+T:Instruction,3,switch
+T:Instruction,3,(try0000_dispatch)
+T:Block,4,{
+T:Label,4,default:
+T:Instruction,4,ProjectData.ClearProjectError();
+T:Instruction,4,num3 = 1;
+T:Goto,4,goto IL_0007;
+T:Label,4,case 196:
+T:Block,5,{
+T:Instruction,5,num2 = num;
+T:Instruction,5,switch
+T:Instruction,5,(num3)
+T:Block,6,{
+T:Label,6,case 1:
+T:Instruction,6,break;
+T:Label,6,default:
+T:Goto,6,goto end_IL_0000;
+T:Block,6,}
+T:Instruction,5,int num4 = num2 + 1;
+T:Instruction,5,num2 = 0;
+T:Instruction,5,switch
+T:Instruction,5,(num4)
+T:Block,6,{
+T:Label,6,case 1:
+T:Instruction,6,break;
+T:Label,6,case 2:
+T:Goto,6,goto IL_0007;
+T:Label,6,case 3:
+T:Goto,6,goto IL_0024;
+T:Label,6,case 6:
+T:Goto,6,goto IL_002b;
+T:Label,6,case 7:
+T:Goto,6,goto IL_0033;
+T:Label,6,case 4:
+T:Label,6,case 5:
+T:Label,6,case 8:
+T:Goto,6,goto IL_0048;
+T:Label,6,case 9:
+T:Goto,6,goto IL_0054;
+T:Label,6,case 10:
+T:Goto,6,goto end_IL_0000_2;
+T:Label,6,default:
+T:Goto,6,goto end_IL_0000;
+T:Label,6,case 11:
+T:Goto,6,goto end_IL_0000_3;
+T:Block,6,}
+T:Goto,5,goto default;
+T:Block,5,}
+T:Label,4,IL_0033:
+T:Instruction,4,num = 7;
+T:Instruction,4,FileSystem.Input(99, ref COND.Aus[b]);
+T:Goto,4,goto IL_0048;
+T:Label,4,IL_0007:
+T:Instruction,4,num = 2;
+T:Instruction,4,FileSystem.FileOpen(99, COND.GenPlu +
+T:String,4,"\\Init\\Druck_ini.dat"
+T:Instruction,4,, OpenMode.Input);
+T:Goto,4,goto IL_0024;
+T:Label,4,IL_0024:
+T:Instruction,4,num = 3;
+T:Instruction,4,b = 0;
+T:Goto,4,goto IL_0048;
+T:Label,4,IL_0048:
+T:Instruction,4,num = 5;
+T:Instruction,4,if
+T:Instruction,4,(!FileSystem.EOF(99))
+T:Block,5,{
+T:Goto,5,goto IL_002b;
+T:Block,5,}
+T:Goto,4,goto IL_0054;
+T:Label,4,IL_0054:
+T:Instruction,4,num = 9;
+T:Instruction,4,FileSystem.FileClose(99);
+T:Instruction,4,break;
+T:Label,4,IL_002b:
+T:Instruction,4,num = 6;
+T:Instruction,4,b = checked((byte)(unchecked(b) + 1));
+T:Goto,4,goto IL_0033;
+T:Label,4,end_IL_0000_2:
+T:Instruction,4,break;
+T:Block,4,}
+T:Instruction,3,num = 10;
+T:Instruction,3,Process.Start(COND.GenPlu +
+T:String,3,"\\Hilfe\\TeilB.PDF"
+T:Instruction,3,);
+T:Instruction,3,break;
+T:Label,3,end_IL_0000:
+T:Instruction,3,;
+T:Block,3,}
+T:Instruction,2,catch
+T:Instruction,2,(Exception obj)
+T:Instruction,2,when (obj is not null && num3 != 0 && num2 == 0)
+T:Block,3,{
+T:Instruction,3,ProjectData.SetProjectError(obj);
+T:Instruction,3,try0000_dispatch = 196;
+T:Instruction,3,continue;
+T:Block,3,}
+T:Instruction,2,throw
+T:Instruction,2,ProjectData.CreateProjectError(-2146828237);
+T:Instruction,2,continue;
+T:Label,2,end_IL_0000_3:
+T:Instruction,2,break;
+T:Block,2,}
+T:Instruction,1,if
+T:Instruction,1,(num2 != 0)
+T:Block,2,{
+T:Instruction,2,ProjectData.ClearProjectError();
+T:Block,2,}
+T:Block,1,}
