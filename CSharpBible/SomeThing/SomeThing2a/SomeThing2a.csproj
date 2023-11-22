@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Solution.props"/>
 	<PropertyGroup>
-		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -12,8 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Condition="'$(TargetFramework)'=='net6.0'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-		<ProjectReference Condition="'$(TargetFramework)'=='net7.0'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-		<ProjectReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+    <ProjectReference Condition="'!$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <ProjectReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
 	</ItemGroup>
 </Project>
