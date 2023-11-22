@@ -192,6 +192,25 @@ namespace MathLibrary.TwoDim.Tests
 			AssertAreEqual(exp, Math2d.eY, $"{exp} = eY");
 		}
 
+		[DataTestMethod]
+        [DataRow(0.0, 0.0)]
+        [DataRow(1.0,0.0)]
+        [DataRow(0.0, 1.0)]
+        public void VecTest3(double x,double y) {
+			Assert.AreEqual(Math2d.Vec(x, y), new[] { x, y }.Vec());
+		}
+
+#if NET472_OR_GREATER
+		[DataTestMethod]
+        [DataRow(0.0, 0.0)]
+        [DataRow(1.0, 0.0)]
+        [DataRow(0.0, 1.0)]
+        public void VecTest4(double x, double y)
+        {
+            Assert.AreEqual(Math2d.Vec(x, y), ( x, y ).Vec());
+        }
+#endif
+
 		/// <summary>
 		/// Adds the test.
 		/// </summary>

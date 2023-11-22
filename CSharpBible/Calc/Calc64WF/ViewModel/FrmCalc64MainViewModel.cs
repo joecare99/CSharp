@@ -36,7 +36,7 @@ namespace Calc64WF.ViewModel
         /// <summary>
         /// Occurs when [on data changed].
         /// </summary>
-        public event EventHandler<(string prop, object oldVal, object newVal)> OnDataChanged;
+        public event EventHandler<(string prop, object? oldVal, object? newVal)> OnDataChanged;
         /// <summary>
         /// Occurs when [close form].
         /// </summary>
