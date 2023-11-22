@@ -1,0 +1,5102 @@
+﻿T:Instruction,0,private void Command1_Click(object eventSender, EventArgs eventArgs)
+T:Block,1,{
+T:Instruction,1,
+T:LComment,1,//Discarded unreachable code: IL_451b
+T:Instruction,1,int try0001_dispatch = -1;
+T:Instruction,1,int num = default;
+T:Instruction,1,short index = default;
+T:Instruction,1,int num2 = default;
+T:Instruction,1,int num3 = default;
+T:Instruction,1,int lErl = default;
+T:Instruction,1,int num6 = default;
+T:Instruction,1,int num7 = default;
+T:Instruction,1,int num8 = default;
+T:Instruction,1,int num9 = default;
+T:Instruction,1,string sDest = default;
+T:Instruction,1,int num10 = default;
+T:Instruction,1,string sDest2 = default;
+T:Instruction,1,short num12 = default;
+T:Instruction,1,int num14 = default;
+T:Instruction,1,short num15 = default;
+T:Instruction,1,int num17 = default;
+T:Instruction,1,int num19 = default;
+T:Instruction,1,while
+T:Instruction,1,(true)
+T:Block,2,{
+T:Instruction,2,try
+T:Block,3,{
+T:Instruction,3,
+T:Comment,3,/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+T:Instruction,3,;
+T:Instruction,3,checked
+T:Block,4,{
+T:Instruction,4,int num4;
+T:Instruction,4,int i3;
+T:Instruction,4,int i4;
+T:Instruction,4,int i5;
+T:Instruction,4,int i6;
+T:Instruction,4,int i7;
+T:Instruction,4,short t;
+T:Instruction,4,short num13;
+T:Instruction,4,int i8;
+T:Instruction,4,int i9;
+T:Instruction,4,int i10;
+T:Instruction,4,short num16;
+T:Instruction,4,ListBox L;
+T:Instruction,4,short A;
+T:Instruction,4,int i11;
+T:Instruction,4,int i12;
+T:Instruction,4,int i13;
+T:Instruction,4,short num18;
+T:Instruction,4,int i14;
+T:Instruction,4,int i15;
+T:Instruction,4,int i16;
+T:Instruction,4,int i17;
+T:Instruction,4,int num5;
+T:Instruction,4,short t2;
+T:Instruction,4,short num20;
+T:Instruction,4,short num11;
+T:Instruction,4,switch
+T:Instruction,4,(try0001_dispatch)
+T:Block,5,{
+T:Label,5,default:
+T:Instruction,5,num = 1;
+T:Instruction,5,index = Command1.GetIndex((Button)eventSender);
+T:Goto,5,goto IL_0016;
+T:Label,5,case 21059:
+T:Block,6,{
+T:Instruction,6,num2 = num;
+T:Instruction,6,switch
+T:Instruction,6,((num3 <= -2) ? 1 : num3)
+T:Block,7,{
+T:Label,7,case 2:
+T:Instruction,7,break;
+T:Label,7,case 1:
+T:Goto,7,goto IL_45b9;
+T:Label,7,default:
+T:Goto,7,goto end_IL_0001;
+T:Block,7,}
+T:Goto,6,goto IL_451d;
+T:Block,6,}
+T:Label,5,IL_0c00:
+T:Instruction,5,num = 149;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.TTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_0c1a;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0c34;
+T:Block,6,}
+T:Label,5,IL_0c1a:
+T:Instruction,5,num = 150;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 79, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_0c34;
+T:Label,5,IL_0ba2:
+T:Instruction,5,num = 148;
+T:Instruction,5,DataModul.TTable.Seek(
+T:String,5,"="
+T:Instruction,5,, 1, Modul1.PersInArb);
+T:Goto,5,goto IL_0c00;
+T:Label,5,IL_451d:
+T:Instruction,5,num = 789;
+T:Instruction,5,if
+T:Instruction,5,(Information.Err().Number == 6)
+T:Block,6,{
+T:Goto,6,goto IL_4537;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4563;
+T:Block,6,}
+T:Label,5,IL_4563:
+T:Instruction,5,num = 794;
+T:Instruction,5,if
+T:Instruction,5,(Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
+T:Block,6,{
+T:Instruction,6,ProjectData.EndApp();
+T:Block,6,}
+T:Goto,5,goto IL_4593;
+T:Label,5,IL_0c6f:
+T:Instruction,5,num = 153;
+T:Instruction,5,Modul1.LiText =
+T:String,5,""
+T:Instruction,5,;
+T:Goto,5,goto IL_0c81;
+T:Label,5,IL_4593:
+T:Instruction,5,num = 797;
+T:Instruction,5,ProjectData.ClearProjectError();
+T:Instruction,5,if
+T:Instruction,5,(num2 == 0)
+T:Block,6,{
+T:Instruction,6,throw
+T:Instruction,6,ProjectData.CreateProjectError(-2146828268);
+T:Block,6,}
+T:Instruction,5,num4 = num2;
+T:Goto,5,goto IL_45bd;
+T:Label,5,IL_0c81:
+T:Instruction,5,num = 154;
+T:Instruction,5,lErl = 5;
+T:Goto,5,goto IL_0c8b;
+T:Label,5,IL_0c8b:
+T:Instruction,5,num = 155;
+T:Instruction,5,I1++;
+T:Goto,5,goto IL_0ca1;
+T:Label,5,IL_45bd:
+T:Instruction,5,num2 = 0;
+T:Instruction,5,switch
+T:Instruction,5,(num4)
+T:Block,6,{
+T:Label,6,case 1:
+T:Instruction,6,break;
+T:Label,6,case 2:
+T:Goto,6,goto IL_0016;
+T:Label,6,case 3:
+T:Goto,6,goto IL_0026;
+T:Label,6,case 4:
+T:Goto,6,goto IL_0036;
+T:Label,6,case 5:
+T:Goto,6,goto IL_003e;
+T:Label,6,case 7:
+T:Label,6,case 9:
+T:Goto,6,goto IL_006f;
+T:Label,6,case 10:
+T:Goto,6,goto IL_0080;
+T:Label,6,case 12:
+T:Label,6,case 13:
+T:Goto,6,goto IL_0094;
+T:Label,6,case 6:
+T:Label,6,case 11:
+T:Label,6,case 14:
+T:Label,6,case 15:
+T:Goto,6,goto IL_00a6;
+T:Label,6,case 16:
+T:Goto,6,goto IL_00bb;
+T:Label,6,case 17:
+T:Goto,6,goto IL_00db;
+T:Label,6,case 18:
+T:Label,6,case 19:
+T:Goto,6,goto IL_00ed;
+T:Label,6,case 20:
+T:Goto,6,goto IL_010d;
+T:Label,6,case 21:
+T:Label,6,case 22:
+T:Goto,6,goto IL_011f;
+T:Label,6,case 23:
+T:Goto,6,goto IL_0130;
+T:Label,6,case 24:
+T:Goto,6,goto IL_0141;
+T:Label,6,case 25:
+T:Goto,6,goto IL_0156;
+T:Label,6,case 26:
+T:Goto,6,goto IL_016b;
+T:Label,6,case 27:
+T:Label,6,case 28:
+T:Goto,6,goto IL_017c;
+T:Label,6,case 29:
+T:Goto,6,goto IL_0191;
+T:Label,6,case 30:
+T:Label,6,case 31:
+T:Goto,6,goto IL_01a2;
+T:Label,6,case 33:
+T:Label,6,case 35:
+T:Goto,6,goto IL_01d7;
+T:Label,6,case 36:
+T:Goto,6,goto IL_01ec;
+T:Label,6,case 37:
+T:Goto,6,goto IL_0207;
+T:Label,6,case 38:
+T:Goto,6,goto IL_0228;
+T:Label,6,case 39:
+T:Goto,6,goto IL_0249;
+T:Label,6,case 40:
+T:Goto,6,goto IL_027a;
+T:Label,6,case 41:
+T:Goto,6,goto IL_02ab;
+T:Label,6,case 42:
+T:Goto,6,goto IL_02b6;
+T:Label,6,case 43:
+T:Goto,6,goto IL_02d2;
+T:Label,6,case 44:
+T:Goto,6,goto IL_02f2;
+T:Label,6,case 45:
+T:Goto,6,goto IL_02f9;
+T:Label,6,case 47:
+T:Label,6,case 48:
+T:Goto,6,goto IL_0311;
+T:Label,6,case 49:
+T:Goto,6,goto IL_0325;
+T:Label,6,case 50:
+T:Goto,6,goto IL_0335;
+T:Label,6,case 51:
+T:Goto,6,goto IL_0359;
+T:Label,6,case 53:
+T:Label,6,case 54:
+T:Goto,6,goto IL_036e;
+T:Label,6,case 55:
+T:Goto,6,goto IL_039e;
+T:Label,6,case 57:
+T:Label,6,case 58:
+T:Goto,6,goto IL_03dd;
+T:Label,6,case 59:
+T:Goto,6,goto IL_03ee;
+T:Label,6,case 60:
+T:Goto,6,goto IL_03ff;
+T:Label,6,case 61:
+T:Goto,6,goto IL_0410;
+T:Label,6,case 62:
+T:Goto,6,goto IL_042c;
+T:Label,6,case 63:
+T:Goto,6,goto IL_0441;
+T:Label,6,case 64:
+T:Goto,6,goto IL_0456;
+T:Label,6,case 65:
+T:Goto,6,goto IL_0466;
+T:Label,6,case 66:
+T:Goto,6,goto IL_0470;
+T:Label,6,case 67:
+T:Goto,6,goto IL_047f;
+T:Label,6,case 69:
+T:Label,6,case 70:
+T:Goto,6,goto IL_0497;
+T:Label,6,case 71:
+T:Goto,6,goto IL_04f6;
+T:Label,6,case 73:
+T:Label,6,case 74:
+T:Goto,6,goto IL_050f;
+T:Label,6,case 75:
+T:Goto,6,goto IL_0519;
+T:Label,6,case 76:
+T:Goto,6,goto IL_0550;
+T:Label,6,case 77:
+T:Goto,6,goto IL_055b;
+T:Label,6,case 78:
+T:Goto,6,goto IL_0566;
+T:Label,6,case 79:
+T:Goto,6,goto IL_057f;
+T:Label,6,case 80:
+T:Goto,6,goto IL_0598;
+T:Label,6,case 81:
+T:Goto,6,goto IL_05ba;
+T:Label,6,case 82:
+T:Goto,6,goto IL_05c4;
+T:Label,6,case 83:
+T:Goto,6,goto IL_05cf;
+T:Label,6,case 84:
+T:Goto,6,goto IL_05f2;
+T:Label,6,case 85:
+T:Goto,6,goto IL_0615;
+T:Label,6,case 86:
+T:Goto,6,goto IL_0639;
+T:Label,6,case 87:
+T:Goto,6,goto IL_065d;
+T:Label,6,case 88:
+T:Goto,6,goto IL_0667;
+T:Label,6,case 89:
+T:Goto,6,goto IL_067b;
+T:Label,6,case 90:
+T:Goto,6,goto IL_06db;
+T:Label,6,case 92:
+T:Label,6,case 93:
+T:Goto,6,goto IL_06f4;
+T:Label,6,case 95:
+T:Label,6,case 97:
+T:Goto,6,goto IL_071b;
+T:Label,6,case 98:
+T:Goto,6,goto IL_074a;
+T:Label,6,case 99:
+T:Label,6,case 100:
+T:Goto,6,goto IL_0764;
+T:Label,6,case 101:
+T:Goto,6,goto IL_0793;
+T:Label,6,case 102:
+T:Label,6,case 103:
+T:Goto,6,goto IL_07ad;
+T:Label,6,case 104:
+T:Goto,6,goto IL_07dc;
+T:Label,6,case 105:
+T:Label,6,case 106:
+T:Goto,6,goto IL_07f6;
+T:Label,6,case 107:
+T:Goto,6,goto IL_082e;
+T:Label,6,case 110:
+T:Label,6,case 111:
+T:Goto,6,goto IL_084e;
+T:Label,6,case 112:
+T:Goto,6,goto IL_087d;
+T:Label,6,case 113:
+T:Label,6,case 114:
+T:Goto,6,goto IL_0897;
+T:Label,6,case 115:
+T:Goto,6,goto IL_08c6;
+T:Label,6,case 116:
+T:Label,6,case 117:
+T:Goto,6,goto IL_08e0;
+T:Label,6,case 118:
+T:Goto,6,goto IL_090f;
+T:Label,6,case 119:
+T:Label,6,case 120:
+T:Goto,6,goto IL_0929;
+T:Label,6,case 121:
+T:Goto,6,goto IL_0961;
+T:Label,6,case 124:
+T:Label,6,case 125:
+T:Goto,6,goto IL_0981;
+T:Label,6,case 126:
+T:Goto,6,goto IL_09b0;
+T:Label,6,case 127:
+T:Label,6,case 128:
+T:Goto,6,goto IL_09ca;
+T:Label,6,case 129:
+T:Goto,6,goto IL_09fc;
+T:Label,6,case 130:
+T:Label,6,case 131:
+T:Goto,6,goto IL_0a19;
+T:Label,6,case 132:
+T:Goto,6,goto IL_0a4b;
+T:Label,6,case 133:
+T:Label,6,case 134:
+T:Goto,6,goto IL_0a68;
+T:Label,6,case 135:
+T:Goto,6,goto IL_0aa3;
+T:Label,6,case 91:
+T:Label,6,case 94:
+T:Label,6,case 108:
+T:Label,6,case 109:
+T:Label,6,case 122:
+T:Label,6,case 123:
+T:Label,6,case 136:
+T:Label,6,case 137:
+T:Label,6,case 138:
+T:Goto,6,goto IL_0ac2;
+T:Label,6,case 139:
+T:Goto,6,goto IL_0acc;
+T:Label,6,case 140:
+T:Goto,6,goto IL_0ae8;
+T:Label,6,case 141:
+T:Goto,6,goto IL_0b00;
+T:Label,6,case 142:
+T:Goto,6,goto IL_0b0d;
+T:Label,6,case 143:
+T:Goto,6,goto IL_0b40;
+T:Label,6,case 144:
+T:Goto,6,goto IL_0b71;
+T:Label,6,case 145:
+T:Label,6,case 147:
+T:Goto,6,goto IL_0b8b;
+T:Label,6,case 148:
+T:Goto,6,goto IL_0ba2;
+T:Label,6,case 149:
+T:Goto,6,goto IL_0c00;
+T:Label,6,case 150:
+T:Goto,6,goto IL_0c1a;
+T:Label,6,case 151:
+T:Label,6,case 152:
+T:Goto,6,goto IL_0c34;
+T:Label,6,case 153:
+T:Goto,6,goto IL_0c6f;
+T:Label,6,case 72:
+T:Label,6,case 154:
+T:Goto,6,goto IL_0c81;
+T:Label,6,case 155:
+T:Goto,6,goto IL_0c8b;
+T:Label,6,case 156:
+T:Goto,6,goto IL_0cb2;
+T:Label,6,case 158:
+T:Label,6,case 159:
+T:Goto,6,goto IL_0cef;
+T:Label,6,case 160:
+T:Goto,6,goto IL_0d06;
+T:Label,6,case 161:
+T:Goto,6,goto IL_0d1e;
+T:Label,6,case 162:
+T:Goto,6,goto IL_0d3c;
+T:Label,6,case 163:
+T:Goto,6,goto IL_0d5a;
+T:Label,6,case 164:
+T:Goto,6,goto IL_0d78;
+T:Label,6,case 165:
+T:Goto,6,goto IL_0d90;
+T:Label,6,case 166:
+T:Label,6,case 167:
+T:Goto,6,goto IL_0dad;
+T:Label,6,case 168:
+T:Goto,6,goto IL_0dc5;
+T:Label,6,case 169:
+T:Label,6,case 170:
+T:Goto,6,goto IL_0de2;
+T:Label,6,case 171:
+T:Goto,6,goto IL_0dfa;
+T:Label,6,case 172:
+T:Label,6,case 173:
+T:Goto,6,goto IL_0e17;
+T:Label,6,case 174:
+T:Goto,6,goto IL_0e24;
+T:Label,6,case 175:
+T:Goto,6,goto IL_0e42;
+T:Label,6,case 176:
+T:Goto,6,goto IL_0e62;
+T:Label,6,case 177:
+T:Goto,6,goto IL_0e6c;
+T:Label,6,case 179:
+T:Label,6,case 180:
+T:Goto,6,goto IL_0e87;
+T:Label,6,case 181:
+T:Goto,6,goto IL_0e9a;
+T:Label,6,case 182:
+T:Goto,6,goto IL_0ec1;
+T:Label,6,case 183:
+T:Goto,6,goto IL_0ef4;
+T:Label,6,case 185:
+T:Label,6,case 186:
+T:Goto,6,goto IL_0f36;
+T:Label,6,case 187:
+T:Goto,6,goto IL_0f4a;
+T:Label,6,case 188:
+T:Goto,6,goto IL_0f69;
+T:Label,6,case 189:
+T:Goto,6,goto IL_0f7d;
+T:Label,6,case 190:
+T:Goto,6,goto IL_0f95;
+T:Label,6,case 191:
+T:Goto,6,goto IL_0fa8;
+T:Label,6,case 192:
+T:Goto,6,goto IL_0fb5;
+T:Label,6,case 193:
+T:Goto,6,goto IL_0fc3;
+T:Label,6,case 194:
+T:Goto,6,goto IL_0fd5;
+T:Label,6,case 196:
+T:Label,6,case 197:
+T:Goto,6,goto IL_0ff0;
+T:Label,6,case 198:
+T:Goto,6,goto IL_1007;
+T:Label,6,case 199:
+T:Goto,6,goto IL_1069;
+T:Label,6,case 201:
+T:Label,6,case 202:
+T:Goto,6,goto IL_1085;
+T:Label,6,case 203:
+T:Goto,6,goto IL_1092;
+T:Label,6,case 204:
+T:Goto,6,goto IL_10aa;
+T:Label,6,case 205:
+T:Goto,6,goto IL_10bb;
+T:Label,6,case 206:
+T:Goto,6,goto IL_10c8;
+T:Label,6,case 207:
+T:Goto,6,goto IL_10ed;
+T:Label,6,case 209:
+T:Goto,6,goto IL_1108;
+T:Label,6,case 210:
+T:Goto,6,goto IL_1110;
+T:Label,6,case 208:
+T:Label,6,case 211:
+T:Label,6,case 212:
+T:Goto,6,goto IL_1128;
+T:Label,6,case 213:
+T:Label,6,case 214:
+T:Goto,6,goto IL_1140;
+T:Label,6,case 215:
+T:Goto,6,goto IL_1158;
+T:Label,6,case 216:
+T:Goto,6,goto IL_1169;
+T:Label,6,case 217:
+T:Goto,6,goto IL_1176;
+T:Label,6,case 218:
+T:Goto,6,goto IL_119b;
+T:Label,6,case 220:
+T:Goto,6,goto IL_11b7;
+T:Label,6,case 221:
+T:Goto,6,goto IL_11bf;
+T:Label,6,case 219:
+T:Label,6,case 222:
+T:Label,6,case 223:
+T:Label,6,case 224:
+T:Goto,6,goto IL_11d9;
+T:Label,6,case 225:
+T:Goto,6,goto IL_11f3;
+T:Label,6,case 226:
+T:Label,6,case 227:
+T:Goto,6,goto IL_1210;
+T:Label,6,case 228:
+T:Goto,6,goto IL_1227;
+T:Label,6,case 229:
+T:Goto,6,goto IL_123e;
+T:Label,6,case 230:
+T:Goto,6,goto IL_129b;
+T:Label,6,case 232:
+T:Label,6,case 233:
+T:Goto,6,goto IL_12b7;
+T:Label,6,case 234:
+T:Goto,6,goto IL_12e9;
+T:Label,6,case 235:
+T:Label,6,case 236:
+T:Goto,6,goto IL_1306;
+T:Label,6,case 237:
+T:Goto,6,goto IL_1313;
+T:Label,6,case 238:
+T:Goto,6,goto IL_1320;
+T:Label,6,case 239:
+T:Goto,6,goto IL_138c;
+T:Label,6,case 241:
+T:Label,6,case 242:
+T:Goto,6,goto IL_13a8;
+T:Label,6,case 244:
+T:Label,6,case 246:
+T:Goto,6,goto IL_13e2;
+T:Label,6,case 247:
+T:Goto,6,goto IL_1414;
+T:Label,6,case 248:
+T:Label,6,case 249:
+T:Goto,6,goto IL_1431;
+T:Label,6,case 250:
+T:Goto,6,goto IL_146c;
+T:Label,6,case 253:
+T:Label,6,case 254:
+T:Goto,6,goto IL_148f;
+T:Label,6,case 255:
+T:Goto,6,goto IL_14c1;
+T:Label,6,case 256:
+T:Label,6,case 257:
+T:Goto,6,goto IL_14de;
+T:Label,6,case 258:
+T:Goto,6,goto IL_1519;
+T:Label,6,case 261:
+T:Label,6,case 262:
+T:Goto,6,goto IL_153c;
+T:Label,6,case 263:
+T:Goto,6,goto IL_156e;
+T:Label,6,case 264:
+T:Label,6,case 265:
+T:Goto,6,goto IL_158b;
+T:Label,6,case 266:
+T:Goto,6,goto IL_15c6;
+T:Label,6,case 269:
+T:Label,6,case 270:
+T:Goto,6,goto IL_15e9;
+T:Label,6,case 271:
+T:Goto,6,goto IL_161b;
+T:Label,6,case 272:
+T:Label,6,case 273:
+T:Goto,6,goto IL_1638;
+T:Label,6,case 274:
+T:Goto,6,goto IL_1673;
+T:Label,6,case 277:
+T:Label,6,case 278:
+T:Goto,6,goto IL_1696;
+T:Label,6,case 279:
+T:Goto,6,goto IL_16c8;
+T:Label,6,case 280:
+T:Label,6,case 281:
+T:Goto,6,goto IL_16e5;
+T:Label,6,case 282:
+T:Goto,6,goto IL_1720;
+T:Label,6,case 285:
+T:Label,6,case 286:
+T:Goto,6,goto IL_1743;
+T:Label,6,case 287:
+T:Goto,6,goto IL_1775;
+T:Label,6,case 288:
+T:Label,6,case 289:
+T:Goto,6,goto IL_1792;
+T:Label,6,case 290:
+T:Goto,6,goto IL_17cd;
+T:Label,6,case 240:
+T:Label,6,case 243:
+T:Label,6,case 251:
+T:Label,6,case 252:
+T:Label,6,case 259:
+T:Label,6,case 260:
+T:Label,6,case 267:
+T:Label,6,case 268:
+T:Label,6,case 275:
+T:Label,6,case 276:
+T:Label,6,case 283:
+T:Label,6,case 284:
+T:Label,6,case 291:
+T:Label,6,case 292:
+T:Label,6,case 293:
+T:Goto,6,goto IL_17ec;
+T:Label,6,case 294:
+T:Goto,6,goto IL_17f7;
+T:Label,6,case 295:
+T:Goto,6,goto IL_1814;
+T:Label,6,case 296:
+T:Goto,6,goto IL_181e;
+T:Label,6,case 297:
+T:Goto,6,goto IL_188a;
+T:Label,6,case 298:
+T:Goto,6,goto IL_18a7;
+T:Label,6,case 299:
+T:Goto,6,goto IL_18d9;
+T:Label,6,case 300:
+T:Label,6,case 301:
+T:Goto,6,goto IL_18f0;
+T:Label,6,case 302:
+T:Goto,6,goto IL_192b;
+T:Label,6,case 303:
+T:Label,6,case 304:
+T:Label,6,case 305:
+T:Goto,6,goto IL_1943;
+T:Label,6,case 200:
+T:Label,6,case 231:
+T:Label,6,case 306:
+T:Goto,6,goto IL_197c;
+T:Label,6,case 307:
+T:Goto,6,goto IL_1987;
+T:Label,6,case 308:
+T:Goto,6,goto IL_19ae;
+T:Label,6,case 309:
+T:Goto,6,goto IL_19e7;
+T:Label,6,case 310:
+T:Goto,6,goto IL_19ff;
+T:Label,6,case 313:
+T:Label,6,case 314:
+T:Goto,6,goto IL_1a3c;
+T:Label,6,case 315:
+T:Goto,6,goto IL_1a54;
+T:Label,6,case 316:
+T:Goto,6,goto IL_1a6c;
+T:Label,6,case 317:
+T:Goto,6,goto IL_1a80;
+T:Label,6,case 318:
+T:Goto,6,goto IL_1a94;
+T:Label,6,case 321:
+T:Label,6,case 322:
+T:Goto,6,goto IL_1aae;
+T:Label,6,case 323:
+T:Goto,6,goto IL_1acb;
+T:Label,6,case 324:
+T:Goto,6,goto IL_1aed;
+T:Label,6,case 325:
+T:Goto,6,goto IL_1b1c;
+T:Label,6,case 326:
+T:Goto,6,goto IL_1b4b;
+T:Label,6,case 327:
+T:Goto,6,goto IL_1b7a;
+T:Label,6,case 328:
+T:Goto,6,goto IL_1b92;
+T:Label,6,case 330:
+T:Goto,6,goto IL_1bb9;
+T:Label,6,case 331:
+T:Goto,6,goto IL_1bc1;
+T:Label,6,case 329:
+T:Label,6,case 332:
+T:Label,6,case 333:
+T:Goto,6,goto IL_1be7;
+T:Label,6,case 335:
+T:Label,6,case 336:
+T:Goto,6,goto IL_1c00;
+T:Label,6,case 337:
+T:Goto,6,goto IL_1c0e;
+T:Label,6,case 338:
+T:Goto,6,goto IL_1c26;
+T:Label,6,case 339:
+T:Goto,6,goto IL_1c44;
+T:Label,6,case 340:
+T:Goto,6,goto IL_1c62;
+T:Label,6,case 341:
+T:Goto,6,goto IL_1c80;
+T:Label,6,case 342:
+T:Goto,6,goto IL_1c98;
+T:Label,6,case 343:
+T:Label,6,case 344:
+T:Goto,6,goto IL_1cb5;
+T:Label,6,case 345:
+T:Goto,6,goto IL_1ccd;
+T:Label,6,case 346:
+T:Label,6,case 347:
+T:Goto,6,goto IL_1cea;
+T:Label,6,case 348:
+T:Goto,6,goto IL_1d02;
+T:Label,6,case 349:
+T:Label,6,case 350:
+T:Goto,6,goto IL_1d1f;
+T:Label,6,case 351:
+T:Goto,6,goto IL_1d2c;
+T:Label,6,case 352:
+T:Goto,6,goto IL_1d4a;
+T:Label,6,case 353:
+T:Goto,6,goto IL_1d6a;
+T:Label,6,case 354:
+T:Goto,6,goto IL_1d74;
+T:Label,6,case 356:
+T:Label,6,case 357:
+T:Goto,6,goto IL_1d8f;
+T:Label,6,case 358:
+T:Goto,6,goto IL_1da2;
+T:Label,6,case 359:
+T:Goto,6,goto IL_1dc9;
+T:Label,6,case 360:
+T:Goto,6,goto IL_1dfc;
+T:Label,6,case 362:
+T:Label,6,case 363:
+T:Goto,6,goto IL_1e3d;
+T:Label,6,case 364:
+T:Goto,6,goto IL_1e51;
+T:Label,6,case 365:
+T:Goto,6,goto IL_1e65;
+T:Label,6,case 366:
+T:Goto,6,goto IL_1e79;
+T:Label,6,case 367:
+T:Goto,6,goto IL_1e9f;
+T:Label,6,case 368:
+T:Goto,6,goto IL_1ec2;
+T:Label,6,case 369:
+T:Goto,6,goto IL_1ed5;
+T:Label,6,case 370:
+T:Goto,6,goto IL_1ee2;
+T:Label,6,case 371:
+T:Goto,6,goto IL_1ef0;
+T:Label,6,case 372:
+T:Goto,6,goto IL_1f02;
+T:Label,6,case 374:
+T:Label,6,case 375:
+T:Goto,6,goto IL_1f1d;
+T:Label,6,case 376:
+T:Goto,6,goto IL_1f34;
+T:Label,6,case 377:
+T:Goto,6,goto IL_1f96;
+T:Label,6,case 379:
+T:Label,6,case 380:
+T:Goto,6,goto IL_1fb2;
+T:Label,6,case 381:
+T:Goto,6,goto IL_1fbf;
+T:Label,6,case 382:
+T:Goto,6,goto IL_1fd7;
+T:Label,6,case 383:
+T:Goto,6,goto IL_1fe8;
+T:Label,6,case 384:
+T:Goto,6,goto IL_1ff5;
+T:Label,6,case 385:
+T:Goto,6,goto IL_201a;
+T:Label,6,case 387:
+T:Goto,6,goto IL_2035;
+T:Label,6,case 388:
+T:Goto,6,goto IL_203d;
+T:Label,6,case 386:
+T:Label,6,case 389:
+T:Label,6,case 390:
+T:Goto,6,goto IL_2055;
+T:Label,6,case 391:
+T:Label,6,case 392:
+T:Goto,6,goto IL_206d;
+T:Label,6,case 393:
+T:Goto,6,goto IL_2085;
+T:Label,6,case 394:
+T:Goto,6,goto IL_2096;
+T:Label,6,case 395:
+T:Goto,6,goto IL_20a3;
+T:Label,6,case 396:
+T:Goto,6,goto IL_20c8;
+T:Label,6,case 398:
+T:Goto,6,goto IL_20e4;
+T:Label,6,case 399:
+T:Goto,6,goto IL_20ec;
+T:Label,6,case 397:
+T:Label,6,case 400:
+T:Label,6,case 401:
+T:Label,6,case 402:
+T:Goto,6,goto IL_2106;
+T:Label,6,case 403:
+T:Goto,6,goto IL_2120;
+T:Label,6,case 404:
+T:Label,6,case 405:
+T:Goto,6,goto IL_213d;
+T:Label,6,case 406:
+T:Goto,6,goto IL_2154;
+T:Label,6,case 407:
+T:Goto,6,goto IL_216b;
+T:Label,6,case 408:
+T:Goto,6,goto IL_21c8;
+T:Label,6,case 410:
+T:Label,6,case 411:
+T:Goto,6,goto IL_21e4;
+T:Label,6,case 412:
+T:Goto,6,goto IL_2216;
+T:Label,6,case 413:
+T:Label,6,case 414:
+T:Goto,6,goto IL_2233;
+T:Label,6,case 415:
+T:Goto,6,goto IL_2240;
+T:Label,6,case 416:
+T:Goto,6,goto IL_224d;
+T:Label,6,case 417:
+T:Goto,6,goto IL_22b9;
+T:Label,6,case 419:
+T:Label,6,case 420:
+T:Goto,6,goto IL_22d8;
+T:Label,6,case 422:
+T:Label,6,case 423:
+T:Goto,6,goto IL_22fa;
+T:Label,6,case 378:
+T:Label,6,case 409:
+T:Label,6,case 421:
+T:Label,6,case 424:
+T:Goto,6,goto IL_2317;
+T:Label,6,case 425:
+T:Goto,6,goto IL_2322;
+T:Label,6,case 426:
+T:Goto,6,goto IL_238e;
+T:Label,6,case 428:
+T:Label,6,case 429:
+T:Goto,6,goto IL_23aa;
+T:Label,6,case 430:
+T:Goto,6,goto IL_23cf;
+T:Label,6,case 431:
+T:Goto,6,goto IL_2407;
+T:Label,6,case 373:
+T:Label,6,case 418:
+T:Label,6,case 427:
+T:Label,6,case 432:
+T:Label,6,case 433:
+T:Goto,6,goto IL_241f;
+T:Label,6,case 434:
+T:Goto,6,goto IL_242a;
+T:Label,6,case 435:
+T:Goto,6,goto IL_2451;
+T:Label,6,case 438:
+T:Label,6,case 439:
+T:Goto,6,goto IL_2496;
+T:Label,6,case 440:
+T:Goto,6,goto IL_24ae;
+T:Label,6,case 441:
+T:Goto,6,goto IL_24cc;
+T:Label,6,case 442:
+T:Goto,6,goto IL_24f0;
+T:Label,6,case 443:
+T:Goto,6,goto IL_2514;
+T:Label,6,case 444:
+T:Goto,6,goto IL_2522;
+T:Label,6,case 445:
+T:Goto,6,goto IL_2541;
+T:Label,6,case 446:
+T:Goto,6,goto IL_2564;
+T:Label,6,case 447:
+T:Goto,6,goto IL_256e;
+T:Label,6,case 449:
+T:Label,6,case 450:
+T:Goto,6,goto IL_2589;
+T:Label,6,case 451:
+T:Goto,6,goto IL_25a0;
+T:Label,6,case 452:
+T:Goto,6,goto IL_25b3;
+T:Label,6,case 453:
+T:Goto,6,goto IL_25da;
+T:Label,6,case 455:
+T:Label,6,case 456:
+T:Goto,6,goto IL_25f2;
+T:Label,6,case 457:
+T:Goto,6,goto IL_2625;
+T:Label,6,case 459:
+T:Label,6,case 460:
+T:Goto,6,goto IL_2666;
+T:Label,6,case 461:
+T:Goto,6,goto IL_267a;
+T:Label,6,case 462:
+T:Goto,6,goto IL_268e;
+T:Label,6,case 463:
+T:Goto,6,goto IL_26a2;
+T:Label,6,case 464:
+T:Goto,6,goto IL_26c1;
+T:Label,6,case 465:
+T:Goto,6,goto IL_26e3;
+T:Label,6,case 466:
+T:Goto,6,goto IL_26f6;
+T:Label,6,case 467:
+T:Goto,6,goto IL_2703;
+T:Label,6,case 468:
+T:Goto,6,goto IL_2715;
+T:Label,6,case 470:
+T:Label,6,case 471:
+T:Goto,6,goto IL_2730;
+T:Label,6,case 472:
+T:Goto,6,goto IL_2792;
+T:Label,6,case 474:
+T:Label,6,case 475:
+T:Goto,6,goto IL_27ae;
+T:Label,6,case 476:
+T:Goto,6,goto IL_27bb;
+T:Label,6,case 477:
+T:Goto,6,goto IL_27f5;
+T:Label,6,case 478:
+T:Goto,6,goto IL_2803;
+T:Label,6,case 479:
+T:Goto,6,goto IL_2811;
+T:Label,6,case 480:
+T:Goto,6,goto IL_282d;
+T:Label,6,case 481:
+T:Goto,6,goto IL_2849;
+T:Label,6,case 482:
+T:Goto,6,goto IL_286e;
+T:Label,6,case 483:
+T:Goto,6,goto IL_287b;
+T:Label,6,case 484:
+T:Goto,6,goto IL_2889;
+T:Label,6,case 486:
+T:Label,6,case 487:
+T:Goto,6,goto IL_28b9;
+T:Label,6,case 489:
+T:Label,6,case 490:
+T:Goto,6,goto IL_28e9;
+T:Label,6,case 492:
+T:Label,6,case 493:
+T:Goto,6,goto IL_2919;
+T:Label,6,case 495:
+T:Label,6,case 496:
+T:Goto,6,goto IL_2949;
+T:Label,6,case 497:
+T:Goto,6,goto IL_2956;
+T:Label,6,case 498:
+T:Goto,6,goto IL_296d;
+T:Label,6,case 499:
+T:Goto,6,goto IL_29d0;
+T:Label,6,case 501:
+T:Label,6,case 502:
+T:Goto,6,goto IL_29ec;
+T:Label,6,case 504:
+T:Label,6,case 506:
+T:Goto,6,goto IL_2a16;
+T:Label,6,case 507:
+T:Goto,6,goto IL_2a48;
+T:Label,6,case 508:
+T:Label,6,case 509:
+T:Goto,6,goto IL_2a65;
+T:Label,6,case 511:
+T:Label,6,case 512:
+T:Goto,6,goto IL_2a9c;
+T:Label,6,case 514:
+T:Label,6,case 515:
+T:Goto,6,goto IL_2ad3;
+T:Label,6,case 516:
+T:Goto,6,goto IL_2b0e;
+T:Label,6,case 519:
+T:Label,6,case 520:
+T:Goto,6,goto IL_2b31;
+T:Label,6,case 521:
+T:Goto,6,goto IL_2b63;
+T:Label,6,case 522:
+T:Label,6,case 523:
+T:Goto,6,goto IL_2b80;
+T:Label,6,case 525:
+T:Label,6,case 526:
+T:Goto,6,goto IL_2bb7;
+T:Label,6,case 528:
+T:Label,6,case 529:
+T:Goto,6,goto IL_2bee;
+T:Label,6,case 530:
+T:Goto,6,goto IL_2c29;
+T:Label,6,case 533:
+T:Label,6,case 534:
+T:Goto,6,goto IL_2c4c;
+T:Label,6,case 535:
+T:Goto,6,goto IL_2c7e;
+T:Label,6,case 536:
+T:Label,6,case 537:
+T:Goto,6,goto IL_2c9b;
+T:Label,6,case 539:
+T:Label,6,case 540:
+T:Goto,6,goto IL_2cd2;
+T:Label,6,case 542:
+T:Label,6,case 543:
+T:Goto,6,goto IL_2d09;
+T:Label,6,case 544:
+T:Goto,6,goto IL_2d44;
+T:Label,6,case 500:
+T:Label,6,case 503:
+T:Label,6,case 517:
+T:Label,6,case 518:
+T:Label,6,case 531:
+T:Label,6,case 532:
+T:Label,6,case 545:
+T:Label,6,case 546:
+T:Label,6,case 547:
+T:Goto,6,goto IL_2d63;
+T:Label,6,case 548:
+T:Goto,6,goto IL_2d6e;
+T:Label,6,case 550:
+T:Instruction,6,num = 550;
+T:Instruction,6,Modul1.PersInArbsp = Modul1.PersInArb;
+T:Goto,6,goto case 551;
+T:Label,6,case 551:
+T:Instruction,6,num = 551;
+T:Instruction,6,Modul1.Kenn = 1f;
+T:Goto,6,goto case 552;
+T:Label,6,case 552:
+T:Instruction,6,num = 552;
+T:Instruction,6,if
+T:Instruction,6,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value,
+T:String,6,"F"
+T:Label,6,, TextCompare:
+T:Instruction,6,false))
+T:Block,7,{
+T:Goto,7,goto case 553;
+T:Block,7,}
+T:Goto,6,goto case 554;
+T:Label,6,case 553:
+T:Instruction,6,num = 553;
+T:Instruction,6,Modul1.Kenn = 2f;
+T:Goto,6,goto case 554;
+T:Label,6,case 554:
+T:Label,6,case 555:
+T:Instruction,6,num = 555;
+T:Instruction,6,DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
+T:Goto,6,goto case 556;
+T:Label,6,case 556:
+T:Instruction,6,num = 556;
+T:Instruction,6,DataModul.DB_LinkTable.Seek(
+T:String,6,"="
+T:Instruction,6,, Modul1.PersInArb.AsString(), Modul1.Kenn);
+T:Goto,6,goto case 557;
+T:Label,6,case 557:
+T:Instruction,6,num = 557;
+T:Instruction,6,if
+T:Instruction,6,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,7,{
+T:Goto,7,goto case 559;
+T:Block,7,}
+T:Goto,6,goto IL_3320;
+T:Label,6,case 559:
+T:Instruction,6,num = 559;
+T:Goto,6,goto case 560;
+T:Label,6,case 560:
+T:Instruction,6,num = 560;
+T:Instruction,6,Modul1.FamInArb = DataModul.DB_LinkTable.Fields[nameof(DataModul.LinkFields.FamNr)].Value.AsInt();
+T:Goto,6,goto case 561;
+T:Label,6,case 561:
+T:Instruction,6,num = 561;
+T:Instruction,6,MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+T:Goto,6,goto case 562;
+T:Label,6,case 562:
+T:Instruction,6,num = 562;
+T:Instruction,6,if
+T:Instruction,6,(Modul1.Kenn == 1f)
+T:Block,7,{
+T:Goto,7,goto case 563;
+T:Block,7,}
+T:Goto,6,goto case 565;
+T:Label,6,case 563:
+T:Instruction,6,num = 563;
+T:Instruction,6,Modul1.PersInArb = Modul1.Family.Frau;
+T:Goto,6,goto case 564;
+T:Label,6,case 565:
+T:Instruction,6,num = 565;
+T:Instruction,6,if
+T:Instruction,6,(Modul1.Kenn == 2f)
+T:Block,7,{
+T:Goto,7,goto case 566;
+T:Block,7,}
+T:Goto,6,goto case 564;
+T:Label,6,case 566:
+T:Instruction,6,num = 566;
+T:Instruction,6,Modul1.PersInArb = Modul1.Family.Mann;
+T:Goto,6,goto case 564;
+T:Label,6,case 564:
+T:Label,6,case 567:
+T:Label,6,case 568:
+T:Instruction,6,num = 568;
+T:Instruction,6,DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+T:Goto,6,goto case 569;
+T:Label,6,case 569:
+T:Instruction,6,num = 569;
+T:Instruction,6,Modul1.I = 101;
+T:Goto,6,goto case 570;
+T:Label,6,case 570:
+T:Instruction,6,num = 570;
+T:Instruction,6,Modul1.Ubg = Modul1.I;
+T:Goto,6,goto case 571;
+T:Label,6,case 571:
+T:Instruction,6,num = 571;
+T:Instruction,6,DataModul.DB_EventTable.Seek(
+T:String,6,"="
+T:Instruction,6,, Modul1.Ubg.AsString(), Modul1.PersInArb.AsString(),
+T:String,6,"0"
+T:Instruction,6,);
+T:Goto,6,goto case 572;
+T:Label,6,case 572:
+T:Instruction,6,num = 572;
+T:Instruction,6,if
+T:Instruction,6,(!DataModul.DB_EventTable.NoMatch)
+T:Block,7,{
+T:Goto,7,goto case 574;
+T:Block,7,}
+T:Goto,6,goto case 573;
+T:Label,6,case 574:
+T:Label,6,case 575:
+T:Instruction,6,num = 575;
+T:Instruction,6,if
+T:Label,6,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,6,false))
+T:Block,7,{
+T:Goto,7,goto case 576;
+T:Block,7,}
+T:Goto,6,goto case 573;
+T:Label,6,case 576:
+T:Instruction,6,num = 576;
+T:Instruction,6,if
+T:Instruction,6,(Conversions.ToDouble(Strings.Trim(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsString())) > 0.0)
+T:Block,7,{
+T:Goto,7,goto case 577;
+T:Block,7,}
+T:Goto,6,goto case 573;
+T:Label,6,case 577:
+T:Instruction,6,num = 577;
+T:Instruction,6,transdat = DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value.AsInt();
+T:Goto,6,goto case 578;
+T:Label,6,case 578:
+T:Instruction,6,num = 578;
+T:Instruction,6,neuedat();
+T:Goto,6,goto IL_3395;
+T:Label,6,case 573:
+T:Label,6,case 580:
+T:Label,6,case 581:
+T:Label,6,case 582:
+T:Instruction,6,num = 582;
+T:Instruction,6,lErl = 6;
+T:Goto,6,goto case 583;
+T:Label,6,case 583:
+T:Block,7,{
+T:Instruction,7,num = 583;
+T:Instruction,7,Modul1.I++;
+T:Instruction,7,int i = Modul1.I;
+T:Instruction,7,num5 = 102;
+T:Instruction,7,if
+T:Instruction,7,(i <= num5)
+T:Block,8,{
+T:Goto,8,goto case 570;
+T:Block,8,}
+T:Goto,7,goto case 584;
+T:Block,7,}
+T:Label,6,case 584:
+T:Instruction,6,num = 584;
+T:Instruction,6,num6 = 30000000;
+T:Goto,6,goto case 585;
+T:Label,6,case 585:
+T:Instruction,6,num = 585;
+T:Instruction,6,this.A = 1;
+T:Goto,6,goto case 586;
+T:Label,6,case 586:
+T:Instruction,6,num = 586;
+T:Instruction,6,if
+T:Instruction,6,(Modul1.Family.Kind[this.A] > 0)
+T:Block,7,{
+T:Goto,7,goto case 587;
+T:Block,7,}
+T:Goto,6,goto case 598;
+T:Label,6,case 587:
+T:Instruction,6,num = 587;
+T:Instruction,6,Modul1.I = 101;
+T:Goto,6,goto case 588;
+T:Label,6,case 588:
+T:Instruction,6,num = 588;
+T:Instruction,6,DataModul.DB_EventTable.Seek(
+T:String,6,"="
+T:Instruction,6,, Modul1.I.AsString(), Modul1.Family.Kind[this.A].AsString(),
+T:String,6,"0"
+T:Instruction,6,);
+T:Goto,6,goto case 589;
+T:Label,6,case 589:
+T:Instruction,6,num = 589;
+T:Instruction,6,if
+T:Instruction,6,(!DataModul.DB_EventTable.NoMatch)
+T:Block,7,{
+T:Goto,7,goto case 590;
+T:Block,7,}
+T:Goto,6,goto case 593;
+T:Label,6,case 590:
+T:Instruction,6,num = 590;
+T:Instruction,6,if
+T:Instruction,6,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) > 0.0)
+T:Block,7,{
+T:Goto,7,goto case 591;
+T:Block,7,}
+T:Goto,6,goto case 593;
+T:Label,6,case 591:
+T:Instruction,6,num = 591;
+T:Instruction,6,if
+T:Instruction,6,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) < num6)
+T:Block,7,{
+T:Goto,7,goto case 592;
+T:Block,7,}
+T:Goto,6,goto case 593;
+T:Label,6,case 592:
+T:Instruction,6,num = 592;
+T:Instruction,6,num6 = (int)Math.Round(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value));
+T:Goto,6,goto case 593;
+T:Label,6,case 593:
+T:Label,6,case 594:
+T:Label,6,case 595:
+T:Label,6,case 596:
+T:Block,7,{
+T:Instruction,7,num = 596;
+T:Instruction,7,Modul1.I++;
+T:Instruction,7,int i2 = Modul1.I;
+T:Instruction,7,num5 = 102;
+T:Instruction,7,if
+T:Instruction,7,(i2 <= num5)
+T:Block,8,{
+T:Goto,8,goto case 588;
+T:Block,8,}
+T:Goto,7,goto case 597;
+T:Block,7,}
+T:Label,6,case 598:
+T:Instruction,6,num = 598;
+T:Goto,6,goto case 599;
+T:Label,6,case 597:
+T:Label,6,case 600:
+T:Label,6,case 601:
+T:Block,7,{
+T:Instruction,7,num = 601;
+T:Instruction,7,this.A++;
+T:Instruction,7,int a = this.A;
+T:Instruction,7,num5 = 99;
+T:Instruction,7,if
+T:Instruction,7,(a <= num5)
+T:Block,8,{
+T:Goto,8,goto case 586;
+T:Block,8,}
+T:Goto,7,goto case 599;
+T:Block,7,}
+T:Label,6,case 599:
+T:Label,6,case 602:
+T:Instruction,6,num = 602;
+T:Instruction,6,if
+T:Instruction,6,(num6 < 30000000)
+T:Block,7,{
+T:Goto,7,goto case 603;
+T:Block,7,}
+T:Goto,6,goto IL_32fc;
+T:Label,6,case 603:
+T:Instruction,6,num = 603;
+T:Instruction,6,transdat = Conversions.ToInteger(Conversion.Str(Conversions.ToDouble((num6).AsString().Left( 4)) - 25.0) +
+T:String,6,"0000"
+T:Instruction,6,);
+T:Goto,6,goto case 604;
+T:Label,6,case 604:
+T:Instruction,6,num = 604;
+T:Instruction,6,neuedat();
+T:Goto,6,goto IL_32fc;
+T:Label,6,case 549:
+T:Label,6,case 605:
+T:Label,6,case 606:
+T:Goto,6,goto IL_32fc;
+T:Label,6,case 607:
+T:Goto,6,goto IL_3307;
+T:Label,6,case 558:
+T:Label,6,case 608:
+T:Label,6,case 609:
+T:Goto,6,goto IL_3320;
+T:Label,6,case 610:
+T:Goto,6,goto IL_3348;
+T:Label,6,case 611:
+T:Label,6,case 612:
+T:Goto,6,goto IL_3383;
+T:Label,6,case 473:
+T:Label,6,case 485:
+T:Label,6,case 488:
+T:Label,6,case 491:
+T:Label,6,case 494:
+T:Label,6,case 510:
+T:Label,6,case 513:
+T:Label,6,case 524:
+T:Label,6,case 527:
+T:Label,6,case 538:
+T:Label,6,case 541:
+T:Label,6,case 579:
+T:Label,6,case 613:
+T:Goto,6,goto IL_3395;
+T:Label,6,case 614:
+T:Goto,6,goto IL_33a0;
+T:Label,6,case 615:
+T:Goto,6,goto IL_33c7;
+T:Label,6,case 617:
+T:Label,6,case 618:
+T:Goto,6,goto IL_3406;
+T:Label,6,case 619:
+T:Goto,6,goto IL_341e;
+T:Label,6,case 620:
+T:Goto,6,goto IL_343f;
+T:Label,6,case 621:
+T:Goto,6,goto IL_345d;
+T:Label,6,case 622:
+T:Goto,6,goto IL_3467;
+T:Label,6,case 624:
+T:Label,6,case 625:
+T:Goto,6,goto IL_3482;
+T:Label,6,case 626:
+T:Goto,6,goto IL_3499;
+T:Label,6,case 627:
+T:Goto,6,goto IL_34ac;
+T:Label,6,case 628:
+T:Goto,6,goto IL_34d3;
+T:Label,6,case 630:
+T:Label,6,case 631:
+T:Goto,6,goto IL_34eb;
+T:Label,6,case 632:
+T:Goto,6,goto IL_351e;
+T:Label,6,case 634:
+T:Label,6,case 635:
+T:Goto,6,goto IL_355f;
+T:Label,6,case 636:
+T:Goto,6,goto IL_357d;
+T:Label,6,case 637:
+T:Goto,6,goto IL_358a;
+T:Label,6,case 638:
+T:Goto,6,goto IL_359e;
+T:Label,6,case 639:
+T:Goto,6,goto IL_35b2;
+T:Label,6,case 640:
+T:Goto,6,goto IL_35c6;
+T:Label,6,case 641:
+T:Goto,6,goto IL_35e5;
+T:Label,6,case 642:
+T:Goto,6,goto IL_3607;
+T:Label,6,case 643:
+T:Goto,6,goto IL_361a;
+T:Label,6,case 644:
+T:Goto,6,goto IL_3627;
+T:Label,6,case 645:
+T:Goto,6,goto IL_3639;
+T:Label,6,case 646:
+T:Goto,6,goto IL_364b;
+T:Label,6,case 648:
+T:Label,6,case 649:
+T:Goto,6,goto IL_3666;
+T:Label,6,case 650:
+T:Goto,6,goto IL_36c8;
+T:Label,6,case 652:
+T:Label,6,case 653:
+T:Goto,6,goto IL_36e4;
+T:Label,6,case 654:
+T:Goto,6,goto IL_36f2;
+T:Label,6,case 655:
+T:Goto,6,goto IL_3700;
+T:Label,6,case 656:
+T:Goto,6,goto IL_370e;
+T:Label,6,case 657:
+T:Goto,6,goto IL_371f;
+T:Label,6,case 658:
+T:Goto,6,goto IL_3736;
+T:Label,6,case 659:
+T:Goto,6,goto IL_379d;
+T:Label,6,case 660:
+T:Goto,6,goto IL_37b4;
+T:Label,6,case 661:
+T:Label,6,case 662:
+T:Goto,6,goto IL_37c2;
+T:Label,6,case 663:
+T:Goto,6,goto IL_37d3;
+T:Label,6,case 664:
+T:Goto,6,goto IL_37e0;
+T:Label,6,case 665:
+T:Goto,6,goto IL_3811;
+T:Label,6,case 666:
+T:Label,6,case 667:
+T:Goto,6,goto IL_3822;
+T:Label,6,case 668:
+T:Goto,6,goto IL_3839;
+T:Label,6,case 669:
+T:Goto,6,goto IL_38a0;
+T:Label,6,case 670:
+T:Goto,6,goto IL_38b7;
+T:Label,6,case 671:
+T:Label,6,case 672:
+T:Goto,6,goto IL_38c5;
+T:Label,6,case 673:
+T:Goto,6,goto IL_38e8;
+T:Label,6,case 674:
+T:Goto,6,goto IL_38f5;
+T:Label,6,case 675:
+T:Goto,6,goto IL_3935;
+T:Label,6,case 676:
+T:Goto,6,goto IL_394b;
+T:Label,6,case 677:
+T:Label,6,case 678:
+T:Goto,6,goto IL_3962;
+T:Label,6,case 679:
+T:Goto,6,goto IL_3978;
+T:Label,6,case 680:
+T:Label,6,case 681:
+T:Goto,6,goto IL_398f;
+T:Label,6,case 682:
+T:Goto,6,goto IL_39f2;
+T:Label,6,case 683:
+T:Goto,6,goto IL_3a0c;
+T:Label,6,case 684:
+T:Label,6,case 685:
+T:Goto,6,goto IL_3a23;
+T:Label,6,case 686:
+T:Goto,6,goto IL_3a86;
+T:Label,6,case 687:
+T:Goto,6,goto IL_3aa0;
+T:Label,6,case 688:
+T:Label,6,case 689:
+T:Goto,6,goto IL_3ab7;
+T:Label,6,case 690:
+T:Goto,6,goto IL_3b1a;
+T:Label,6,case 691:
+T:Goto,6,goto IL_3b34;
+T:Label,6,case 692:
+T:Label,6,case 693:
+T:Goto,6,goto IL_3b4b;
+T:Label,6,case 694:
+T:Goto,6,goto IL_3bae;
+T:Label,6,case 695:
+T:Goto,6,goto IL_3bc8;
+T:Label,6,case 696:
+T:Label,6,case 697:
+T:Goto,6,goto IL_3bdf;
+T:Label,6,case 698:
+T:Goto,6,goto IL_3c42;
+T:Label,6,case 699:
+T:Goto,6,goto IL_3c5c;
+T:Label,6,case 700:
+T:Label,6,case 701:
+T:Goto,6,goto IL_3c73;
+T:Label,6,case 702:
+T:Goto,6,goto IL_3cd7;
+T:Label,6,case 703:
+T:Goto,6,goto IL_3cf1;
+T:Label,6,case 704:
+T:Label,6,case 705:
+T:Goto,6,goto IL_3d08;
+T:Label,6,case 706:
+T:Goto,6,goto IL_3d1f;
+T:Label,6,case 707:
+T:Goto,6,goto IL_3d7c;
+T:Label,6,case 708:
+T:Goto,6,goto IL_3d96;
+T:Label,6,case 709:
+T:Label,6,case 710:
+T:Goto,6,goto IL_3dad;
+T:Label,6,case 651:
+T:Label,6,case 711:
+T:Label,6,case 712:
+T:Goto,6,goto IL_3de8;
+T:Label,6,case 713:
+T:Goto,6,goto IL_3e0f;
+T:Label,6,case 715:
+T:Label,6,case 716:
+T:Goto,6,goto IL_3e4e;
+T:Label,6,case 717:
+T:Goto,6,goto IL_3e62;
+T:Label,6,case 718:
+T:Goto,6,goto IL_3e7a;
+T:Label,6,case 719:
+T:Goto,6,goto IL_3e84;
+T:Label,6,case 721:
+T:Label,6,case 722:
+T:Goto,6,goto IL_3e9f;
+T:Label,6,case 723:
+T:Goto,6,goto IL_3ebd;
+T:Label,6,case 724:
+T:Goto,6,goto IL_3edb;
+T:Label,6,case 725:
+T:Goto,6,goto IL_3ef9;
+T:Label,6,case 726:
+T:Goto,6,goto IL_3f16;
+T:Label,6,case 727:
+T:Goto,6,goto IL_3f33;
+T:Label,6,case 728:
+T:Goto,6,goto IL_3f45;
+T:Label,6,case 729:
+T:Goto,6,goto IL_3f5c;
+T:Label,6,case 730:
+T:Goto,6,goto IL_3fb6;
+T:Label,6,case 731:
+T:Goto,6,goto IL_3fc4;
+T:Label,6,case 734:
+T:Goto,6,goto IL_3fe6;
+T:Label,6,case 735:
+T:Goto,6,goto IL_3ffb;
+T:Label,6,case 736:
+T:Goto,6,goto IL_4044;
+T:Label,6,case 737:
+T:Goto,6,goto IL_4076;
+T:Label,6,case 738:
+T:Label,6,case 739:
+T:Goto,6,goto IL_4091;
+T:Label,6,case 740:
+T:Goto,6,goto IL_40c3;
+T:Label,6,case 741:
+T:Label,6,case 742:
+T:Goto,6,goto IL_40de;
+T:Label,6,case 743:
+T:Goto,6,goto IL_4110;
+T:Label,6,case 744:
+T:Label,6,case 745:
+T:Goto,6,goto IL_412b;
+T:Label,6,case 746:
+T:Goto,6,goto IL_415d;
+T:Label,6,case 747:
+T:Label,6,case 748:
+T:Goto,6,goto IL_4178;
+T:Label,6,case 749:
+T:Goto,6,goto IL_41aa;
+T:Label,6,case 750:
+T:Label,6,case 751:
+T:Goto,6,goto IL_41c5;
+T:Label,6,case 752:
+T:Goto,6,goto IL_4203;
+T:Label,6,case 753:
+T:Label,6,case 754:
+T:Goto,6,goto IL_421e;
+T:Label,6,case 755:
+T:Goto,6,goto IL_4259;
+T:Label,6,case 756:
+T:Label,6,case 757:
+T:Goto,6,goto IL_4274;
+T:Label,6,case 758:
+T:Goto,6,goto IL_42af;
+T:Label,6,case 759:
+T:Label,6,case 760:
+T:Goto,6,goto IL_42ca;
+T:Label,6,case 761:
+T:Goto,6,goto IL_4308;
+T:Label,6,case 762:
+T:Label,6,case 763:
+T:Goto,6,goto IL_4323;
+T:Label,6,case 764:
+T:Goto,6,goto IL_4361;
+T:Label,6,case 765:
+T:Label,6,case 766:
+T:Goto,6,goto IL_437c;
+T:Label,6,case 767:
+T:Goto,6,goto IL_43ba;
+T:Label,6,case 768:
+T:Label,6,case 769:
+T:Goto,6,goto IL_43d5;
+T:Label,6,case 770:
+T:Goto,6,goto IL_43f2;
+T:Label,6,case 771:
+T:Goto,6,goto IL_4407;
+T:Label,6,case 732:
+T:Label,6,case 733:
+T:Label,6,case 772:
+T:Goto,6,goto IL_441a;
+T:Label,6,case 774:
+T:Goto,6,goto IL_4439;
+T:Label,6,case 775:
+T:Goto,6,goto IL_4441;
+T:Label,6,case 773:
+T:Label,6,case 776:
+T:Label,6,case 777:
+T:Goto,6,goto IL_4454;
+T:Label,6,case 778:
+T:Goto,6,goto IL_446b;
+T:Label,6,case 32:
+T:Label,6,case 68:
+T:Label,6,case 157:
+T:Label,6,case 195:
+T:Label,6,case 311:
+T:Label,6,case 312:
+T:Label,6,case 320:
+T:Label,6,case 334:
+T:Label,6,case 437:
+T:Label,6,case 469:
+T:Label,6,case 616:
+T:Label,6,case 647:
+T:Label,6,case 714:
+T:Label,6,case 779:
+T:Label,6,case 780:
+T:Label,6,case 781:
+T:Goto,6,goto IL_448a;
+T:Label,6,case 782:
+T:Goto,6,goto IL_4494;
+T:Label,6,case 783:
+T:Goto,6,goto IL_44ac;
+T:Label,6,case 784:
+T:Goto,6,goto IL_44c9;
+T:Label,6,case 785:
+T:Goto,6,goto IL_44d6;
+T:Label,6,case 786:
+T:Goto,6,goto IL_44f3;
+T:Label,6,case 789:
+T:Goto,6,goto IL_451d;
+T:Label,6,case 790:
+T:Goto,6,goto IL_4537;
+T:Label,6,case 791:
+T:Goto,6,goto IL_4545;
+T:Label,6,case 792:
+T:Label,6,case 793:
+T:Label,6,case 794:
+T:Goto,6,goto IL_4563;
+T:Label,6,case 795:
+T:Label,6,case 797:
+T:Goto,6,goto IL_4593;
+T:Label,6,default:
+T:Goto,6,goto end_IL_0001;
+T:Label,6,case 46:
+T:Label,6,case 52:
+T:Label,6,case 56:
+T:Label,6,case 178:
+T:Label,6,case 184:
+T:Label,6,case 319:
+T:Label,6,case 355:
+T:Label,6,case 361:
+T:Label,6,case 436:
+T:Label,6,case 448:
+T:Label,6,case 454:
+T:Label,6,case 458:
+T:Label,6,case 623:
+T:Label,6,case 629:
+T:Label,6,case 633:
+T:Label,6,case 720:
+T:Label,6,case 787:
+T:Label,6,case 788:
+T:Label,6,case 798:
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto default;
+T:Label,5,IL_4537:
+T:Instruction,5,num = 790;
+T:Instruction,5,num7 = 200000000;
+T:Goto,5,goto IL_4545;
+T:Label,5,IL_4545:
+T:Instruction,5,num = 791;
+T:Instruction,5,ProjectData.ClearProjectError();
+T:Instruction,5,if
+T:Instruction,5,(num2 == 0)
+T:Block,6,{
+T:Instruction,6,throw
+T:Instruction,6,ProjectData.CreateProjectError(-2146828268);
+T:Block,6,}
+T:Goto,5,goto IL_45b9;
+T:Label,5,IL_0c34:
+T:Instruction,5,num = 152;
+T:Instruction,5,List1.Items.Add(new ListItem(Modul1.LiText +
+T:String,5,"          "
+T:Instruction,5,+ Modul1.PersInArb.AsString()));
+T:Goto,5,goto IL_0c6f;
+T:Label,5,IL_45b9:
+T:Instruction,5,num4 = unchecked(num2 + 1);
+T:Goto,5,goto IL_45bd;
+T:Label,5,IL_0016:
+T:Instruction,5,num = 2;
+T:Instruction,5,RadioButton1.Visible = true;
+T:Goto,5,goto IL_0026;
+T:Label,5,IL_0026:
+T:Instruction,5,num = 3;
+T:Instruction,5,RadioButton2.Visible = true;
+T:Goto,5,goto IL_0036;
+T:Label,5,IL_0036:
+T:Instruction,5,ProjectData.ClearProjectError();
+T:Instruction,5,num3 = 2;
+T:Goto,5,goto IL_003e;
+T:Label,5,IL_003e:
+T:Instruction,5,num = 5;
+T:Instruction,5,switch
+T:Instruction,5,(index)
+T:Block,6,{
+T:Label,6,case 0:
+T:Label,6,case 1:
+T:Label,6,case 4:
+T:Label,6,case 5:
+T:Label,6,case 6:
+T:Instruction,6,break;
+T:Label,6,case 7:
+T:Goto,6,goto IL_0094;
+T:Label,6,default:
+T:Goto,6,goto IL_00a6;
+T:Block,6,}
+T:Block,6,{
+T:Goto,6,goto IL_006f;
+T:Block,6,}
+T:Label,5,IL_0094:
+T:Instruction,5,num = 13;
+T:Instruction,5,List1.Visible = false;
+T:Goto,5,goto IL_00a6;
+T:Label,5,IL_006f:
+T:Instruction,5,num = 9;
+T:Instruction,5,List2.Visible = false;
+T:Goto,5,goto IL_0080;
+T:Label,5,IL_0080:
+T:Instruction,5,num = 10;
+T:Instruction,5,List1.Visible = true;
+T:Goto,5,goto IL_00a6;
+T:Label,5,IL_00a6:
+T:Instruction,5,num = 15;
+T:Instruction,5,Label4.Text =
+T:String,5,""
+T:Instruction,5,;
+T:Goto,5,goto IL_00bb;
+T:Label,5,IL_00bb:
+T:Instruction,5,num = 16;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Aus[12] ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_00db;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_00ed;
+T:Block,6,}
+T:Label,5,IL_00db:
+T:Instruction,5,num = 17;
+T:Instruction,5,Modul1.Aus[12] =
+T:String,5,"200"
+T:Instruction,5,;
+T:Goto,5,goto IL_00ed;
+T:Label,5,IL_00ed:
+T:Instruction,5,num = 19;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Aus[13] ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_010d;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_011f;
+T:Block,6,}
+T:Label,5,IL_010d:
+T:Instruction,5,num = 20;
+T:Instruction,5,Modul1.Aus[13] =
+T:String,5,"200"
+T:Instruction,5,;
+T:Goto,5,goto IL_011f;
+T:Label,5,IL_011f:
+T:Instruction,5,num = 22;
+T:Instruction,5,List1.Visible = true;
+T:Goto,5,goto IL_0130;
+T:Label,5,IL_0130:
+T:Instruction,5,num = 23;
+T:Instruction,5,List2.Visible = false;
+T:Goto,5,goto IL_0141;
+T:Label,5,IL_0141:
+T:Instruction,5,num = 24;
+T:Instruction,5,Label2.Text =
+T:String,5,""
+T:Instruction,5,;
+T:Goto,5,goto IL_0156;
+T:Label,5,IL_0156:
+T:Instruction,5,num = 25;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton1.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_016b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_017c;
+T:Block,6,}
+T:Label,5,IL_016b:
+T:Instruction,5,num = 26;
+T:Instruction,5,List1.Sorted = true;
+T:Goto,5,goto IL_017c;
+T:Label,5,IL_017c:
+T:Instruction,5,num = 28;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_0191;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_01a2;
+T:Block,6,}
+T:Label,5,IL_0191:
+T:Instruction,5,num = 29;
+T:Instruction,5,List1.Sorted = false;
+T:Goto,5,goto IL_01a2;
+T:Label,5,IL_01a2:
+T:Instruction,5,num = 31;
+T:Instruction,5,switch
+T:Instruction,5,(index)
+T:Block,6,{
+T:Label,6,case 0:
+T:Instruction,6,break;
+T:Label,6,case 1:
+T:Goto,6,goto IL_0cef;
+T:Label,6,case 2:
+T:Goto,6,goto IL_1a3c;
+T:Label,6,case 3:
+T:Goto,6,goto IL_1aae;
+T:Label,6,case 4:
+T:Goto,6,goto IL_1c00;
+T:Label,6,case 5:
+T:Goto,6,goto IL_2496;
+T:Label,6,case 6:
+T:Goto,6,goto IL_3406;
+T:Label,6,case 7:
+T:Goto,6,goto IL_3e4e;
+T:Label,6,default:
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Block,6,{
+T:Goto,6,goto IL_01d7;
+T:Block,6,}
+T:Label,5,IL_3e4e:
+T:Instruction,5,num = 716;
+T:Instruction,5,List2.Visible = true;
+T:Goto,5,goto IL_3e62;
+T:Label,5,IL_3e62:
+T:Instruction,5,num = 717;
+T:Instruction,5,List2.Items.Clear();
+T:Goto,5,goto IL_3e7a;
+T:Label,5,IL_3e7a:
+T:Instruction,5,num = 718;
+T:Instruction,5,num7 = 1;
+T:Goto,5,goto IL_3e84;
+T:Label,5,IL_3e84:
+T:Instruction,5,num = 719;
+T:Instruction,5,if
+T:Instruction,5,(num7 <= 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_3e9f;
+T:Label,5,IL_3e9f:
+T:Instruction,5,num = 722;
+T:Instruction,5,Label1[2].Text =
+T:String,5,"Fehlliste Orte"
+T:Instruction,5,;
+T:Goto,5,goto IL_3ebd;
+T:Label,5,IL_3ebd:
+T:Instruction,5,num = 723;
+T:Instruction,5,Label1[1].Text =
+T:String,5,"      Nr    Ort Orsteil  Kreis Land Staat Loc  Länge  Breite PLZ Terr StKz"
+T:Instruction,5,;
+T:Goto,5,goto IL_3edb;
+T:Label,5,IL_3edb:
+T:Instruction,5,num = 724;
+T:Instruction,5,Label1[0].Text =
+T:String,5,"  "
+T:Instruction,5,;
+T:Goto,5,goto IL_3ef9;
+T:Label,5,IL_3ef9:
+T:Instruction,5,num = 725;
+T:Instruction,5,List2.Items.Add(
+T:String,5,"Fehlliste Orte"
+T:Instruction,5,);
+T:Goto,5,goto IL_3f16;
+T:Label,5,IL_3f16:
+T:Instruction,5,num = 726;
+T:Instruction,5,List2.Items.Add(
+T:String,5,"      Nr    Ort Ortsteil Kreis Land Staat Loc. Laenge Breite PLZ Terr. StKz"
+T:Instruction,5,);
+T:Goto,5,goto IL_3f33;
+T:Label,5,IL_3f33:
+T:Instruction,5,num = 727;
+T:Instruction,5,DataModul.DB_PlaceTable.MoveFirst();
+T:Goto,5,goto IL_3f45;
+T:Label,5,IL_3f45:
+T:Instruction,5,num = 728;
+T:Instruction,5,DataModul.DB_PlaceTable.Index = nameof(DataModul.PlaceIndex.OrtNr);
+T:Goto,5,goto IL_3f5c;
+T:Label,5,IL_3f5c:
+T:Instruction,5,num = 729;
+T:Instruction,5,DataModul.DB_PlaceTable.Seek(
+T:String,5,">="
+T:Instruction,5,, num7);
+T:Goto,5,goto IL_3fb6;
+T:Label,5,IL_3fb6:
+T:Instruction,5,num = 730;
+T:Instruction,5,this.A = 1;
+T:Goto,5,goto IL_3fc4;
+T:Label,5,IL_3fc4:
+T:Instruction,5,num = 731;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_PlaceTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_441a;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4439;
+T:Block,6,}
+T:Label,5,IL_441a:
+T:Instruction,5,num = 733;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_PlaceTable.EOF)
+T:Block,6,{
+T:Goto,6,goto IL_3fe6;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4454;
+T:Block,6,}
+T:Label,5,IL_3fe6:
+T:Instruction,5,num = 734;
+T:Instruction,5,Modul1.LiText = new string(' ', 80);
+T:Goto,5,goto IL_3ffb;
+T:Label,5,IL_3ffb:
+T:Instruction,5,num = 735;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 1, 10, Strings.Right(
+T:String,5,"          "
+T:Instruction,5,+ DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.OrtNr)].Value.AsString(), 10));
+T:Goto,5,goto IL_4044;
+T:Label,5,IL_4044:
+T:Instruction,5,num = 736;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_4076;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4091;
+T:Block,6,}
+T:Label,5,IL_4076:
+T:Instruction,5,num = 737;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 12, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_4091;
+T:Label,5,IL_4091:
+T:Instruction,5,num = 739;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_40c3;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_40de;
+T:Block,6,}
+T:Label,5,IL_40c3:
+T:Instruction,5,num = 740;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 20, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_40de;
+T:Label,5,IL_40de:
+T:Instruction,5,num = 742;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_4110;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_412b;
+T:Block,6,}
+T:Label,5,IL_4110:
+T:Instruction,5,num = 743;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 28, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_412b;
+T:Label,5,IL_412b:
+T:Instruction,5,num = 745;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_415d;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4178;
+T:Block,6,}
+T:Label,5,IL_415d:
+T:Instruction,5,num = 746;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 34, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_4178;
+T:Label,5,IL_4178:
+T:Instruction,5,num = 748;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_41aa;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_41c5;
+T:Block,6,}
+T:Label,5,IL_41aa:
+T:Instruction,5,num = 749;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 39, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_41c5;
+T:Label,5,IL_41c5:
+T:Instruction,5,num = 751;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Loc)].AsString()) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_4203;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_421e;
+T:Block,6,}
+T:Label,5,IL_4203:
+T:Instruction,5,num = 752;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 44, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_421e;
+T:Label,5,IL_421e:
+T:Instruction,5,num = 754;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.L)].AsString())) <= 1)
+T:Block,6,{
+T:Goto,6,goto IL_4259;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4274;
+T:Block,6,}
+T:Label,5,IL_4259:
+T:Instruction,5,num = 755;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 52, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_4274;
+T:Label,5,IL_4274:
+T:Instruction,5,num = 757;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.B)].AsString())) <= 1)
+T:Block,6,{
+T:Goto,6,goto IL_42af;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_42ca;
+T:Block,6,}
+T:Label,5,IL_42af:
+T:Instruction,5,num = 758;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 58, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_42ca;
+T:Label,5,IL_42ca:
+T:Instruction,5,num = 760;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.PLZ)].AsString()) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_4308;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_4323;
+T:Block,6,}
+T:Label,5,IL_4308:
+T:Instruction,5,num = 761;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 63, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_4323;
+T:Label,5,IL_4323:
+T:Instruction,5,num = 763;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Terr)].AsString()) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_4361;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_437c;
+T:Block,6,}
+T:Label,5,IL_4361:
+T:Instruction,5,num = 764;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 68, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_437c;
+T:Label,5,IL_437c:
+T:Instruction,5,num = 766;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staatk)].AsString()) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_43ba;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_43d5;
+T:Block,6,}
+T:Label,5,IL_43ba:
+T:Instruction,5,num = 767;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 71, 2,
+T:String,5,"F "
+T:Instruction,5,);
+T:Goto,5,goto IL_43d5;
+T:Label,5,IL_43d5:
+T:Instruction,5,num = 769;
+T:Instruction,5,List2.Items.Add(Modul1.LiText);
+T:Goto,5,goto IL_43f2;
+T:Label,5,IL_43f2:
+T:Instruction,5,num = 770;
+T:Instruction,5,Modul1.LiText = new string(' ', 80);
+T:Goto,5,goto IL_4407;
+T:Label,5,IL_4407:
+T:Instruction,5,num = 771;
+T:Instruction,5,DataModul.DB_PlaceTable.MoveNext();
+T:Goto,5,goto IL_441a;
+T:Label,5,IL_4439:
+T:Instruction,5,num = 774;
+T:Goto,5,goto IL_4441;
+T:Label,5,IL_4441:
+T:Instruction,5,num = 775;
+T:Instruction,5,DataModul.DB_PlaceTable.MoveNext();
+T:Goto,5,goto IL_4454;
+T:Label,5,IL_4454:
+T:Instruction,5,num = 777;
+T:Instruction,5,if
+T:Instruction,5,(DataModul.DB_PlaceTable.EOF)
+T:Block,6,{
+T:Goto,6,goto IL_446b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Label,5,IL_446b:
+T:Instruction,5,num = 778;
+T:Instruction,5,List2.Items.Add(
+T:String,5,"Ende der Liste"
+T:Instruction,5,);
+T:Goto,5,goto IL_448a;
+T:Label,5,IL_3406:
+T:Instruction,5,num = 618;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_341e;
+T:Label,5,IL_341e:
+T:Instruction,5,num = 619;
+T:Instruction,5,Label1[2].Text = Modul1.IText[84];
+T:Goto,5,goto IL_343f;
+T:Label,5,IL_343f:
+T:Instruction,5,num = 620;
+T:Instruction,5,Label1[0].Text =
+T:String,5,"Name              Elternteil  Kind  Pate  Zeuge  Adoptivkind  verbunden"
+T:Instruction,5,;
+T:Goto,5,goto IL_345d;
+T:Label,5,IL_345d:
+T:Instruction,5,num = 621;
+T:Instruction,5,num7 = 1;
+T:Goto,5,goto IL_3467;
+T:Label,5,IL_3467:
+T:Instruction,5,num = 622;
+T:Instruction,5,if
+T:Instruction,5,(num7 <= 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_3482;
+T:Label,5,IL_3482:
+T:Instruction,5,num = 625;
+T:Instruction,5,DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
+T:Goto,5,goto IL_3499;
+T:Label,5,IL_3499:
+T:Instruction,5,num = 626;
+T:Instruction,5,DataModul.DB_PersonTable.MoveLast();
+T:Goto,5,goto IL_34ac;
+T:Label,5,IL_34ac:
+T:Instruction,5,num = 627;
+T:Instruction,5,num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
+T:Goto,5,goto IL_34d3;
+T:Label,5,IL_34d3:
+T:Instruction,5,num = 628;
+T:Instruction,5,if
+T:Instruction,5,(num7 == 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_34eb;
+T:Label,5,IL_34eb:
+T:Instruction,5,num = 631;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_351e;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_355f;
+T:Block,6,}
+T:Label,5,IL_351e:
+T:Instruction,5,num = 632;
+T:Instruction,5,Interaction.MsgBox(Modul1.IText[173] +
+T:String,5," "
+T:Instruction,5,+ num7.AsString() + Modul1.IText[172]);
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_355f:
+T:Instruction,5,num = 635;
+T:Instruction,5,Label1[1].Text =
+T:String,5,"unvollständig verknüpfte Personen "
+T:Instruction,5,;
+T:Goto,5,goto IL_357d;
+T:Label,5,IL_357d:
+T:Instruction,5,num = 636;
+T:Instruction,5,Modul1.Schalt = 3;
+T:Goto,5,goto IL_358a;
+T:Label,5,IL_358a:
+T:Instruction,5,num = 637;
+T:Instruction,5,ProgressBar1.Minimum = 0;
+T:Goto,5,goto IL_359e;
+T:Label,5,IL_359e:
+T:Instruction,5,num = 638;
+T:Instruction,5,ProgressBar1.Maximum = 0;
+T:Goto,5,goto IL_35b2;
+T:Label,5,IL_35b2:
+T:Instruction,5,num = 639;
+T:Instruction,5,ProgressBar1.Step = 1;
+T:Goto,5,goto IL_35c6;
+T:Label,5,IL_35c6:
+T:Instruction,5,num = 640;
+T:Instruction,5,ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
+T:Goto,5,goto IL_35e5;
+T:Label,5,IL_35e5:
+T:Instruction,5,num = 641;
+T:Instruction,5,i3 = num7;
+T:Instruction,5,num9 = DataModul.DB_PersonTable.RecordCount - 1;
+T:Instruction,5,I1 = i3;
+T:Goto,5,goto IL_3dfe;
+T:Label,5,IL_3dfe:
+T:Instruction,5,i4 = I1;
+T:Instruction,5,num5 = num9;
+T:Instruction,5,if
+T:Instruction,5,(i4 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_3607;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3e0f;
+T:Block,6,}
+T:Label,5,IL_3e0f:
+T:Instruction,5,num = 713;
+T:Instruction,5,Label4.Text = List1.Items.Count - 1.AsString() +
+T:String,5," Einträge"
+T:Instruction,5,;
+T:Goto,5,goto IL_448a;
+T:Label,5,IL_3607:
+T:Instruction,5,num = 642;
+T:Instruction,5,ProgressBar1.PerformStep();
+T:Goto,5,goto IL_361a;
+T:Label,5,IL_361a:
+T:Instruction,5,num = 643;
+T:Instruction,5,Application.DoEvents();
+T:Goto,5,goto IL_3627;
+T:Label,5,IL_3627:
+T:Instruction,5,num = 644;
+T:Instruction,5,Modul1.PersInArb = I1;
+T:Goto,5,goto IL_3639;
+T:Label,5,IL_3639:
+T:Instruction,5,num = 645;
+T:Instruction,5,sDest = new string(' ', 80);
+T:Goto,5,goto IL_364b;
+T:Label,5,IL_364b:
+T:Instruction,5,num = 646;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.PersInArb <= num8)
+T:Block,6,{
+T:Goto,6,goto IL_3666;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Label,5,IL_3666:
+T:Instruction,5,num = 649;
+T:Instruction,5,DataModul.DB_PersonTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString());
+T:Goto,5,goto IL_36c8;
+T:Label,5,IL_36c8:
+T:Instruction,5,num = 650;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_PersonTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_36e4;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3de8;
+T:Block,6,}
+T:Label,5,IL_36e4:
+T:Instruction,5,num = 653;
+T:Instruction,5,LiKi = 1;
+T:Goto,5,goto IL_36f2;
+T:Label,5,IL_36f2:
+T:Instruction,5,num = 654;
+T:Instruction,5,LiEl = 1;
+T:Goto,5,goto IL_3700;
+T:Label,5,IL_3700:
+T:Instruction,5,num = 655;
+T:Instruction,5,
+T:LComment,5,//LiPa = 1;
+T:Goto,5,goto IL_370e;
+T:Label,5,IL_370e:
+T:Instruction,5,num = 656;
+T:Instruction,5,Modul1.Kenn = 3f;
+T:Goto,5,goto IL_371f;
+T:Label,5,IL_371f:
+T:Instruction,5,num = 657;
+T:Instruction,5,DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
+T:Goto,5,goto IL_3736;
+T:Label,5,IL_3736:
+T:Instruction,5,num = 658;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), Modul1.Kenn);
+T:Goto,5,goto IL_379d;
+T:Label,5,IL_379d:
+T:Instruction,5,num = 659;
+T:Instruction,5,if
+T:Instruction,5,(DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_37b4;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_37c2;
+T:Block,6,}
+T:Label,5,IL_37b4:
+T:Instruction,5,num = 660;
+T:Instruction,5,LiKi = 0;
+T:Goto,5,goto IL_37c2;
+T:Label,5,IL_37c2:
+T:Instruction,5,num = 662;
+T:Instruction,5,Modul1.Kenn = 1f;
+T:Goto,5,goto IL_37d3;
+T:Label,5,IL_37d3:
+T:Instruction,5,num = 663;
+T:Instruction,5,Modul1.PerSatzLes();
+T:Goto,5,goto IL_37e0;
+T:Label,5,IL_37e0:
+T:Instruction,5,num = 664;
+T:Instruction,5,if
+T:Instruction,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value,
+T:String,5,"F"
+T:Label,5,, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_3811;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3822;
+T:Block,6,}
+T:Label,5,IL_3811:
+T:Instruction,5,num = 665;
+T:Instruction,5,Modul1.Kenn = 2f;
+T:Goto,5,goto IL_3822;
+T:Label,5,IL_3822:
+T:Instruction,5,num = 667;
+T:Instruction,5,DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
+T:Goto,5,goto IL_3839;
+T:Label,5,IL_3839:
+T:Instruction,5,num = 668;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), Modul1.Kenn);
+T:Goto,5,goto IL_38a0;
+T:Label,5,IL_38a0:
+T:Instruction,5,num = 669;
+T:Instruction,5,if
+T:Instruction,5,(DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_38b7;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_38c5;
+T:Block,6,}
+T:Label,5,IL_38b7:
+T:Instruction,5,num = 670;
+T:Instruction,5,LiEl = 0;
+T:Goto,5,goto IL_38c5;
+T:Label,5,IL_38c5:
+T:Instruction,5,num = 672;
+T:Instruction,5,if
+T:Instruction,5,((LiKi == 0) & (LiEl == 0))
+T:Block,6,{
+T:Goto,6,goto IL_38e8;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3de8;
+T:Block,6,}
+T:Label,5,IL_38e8:
+T:Instruction,5,num = 673;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_38f5;
+T:Label,5,IL_38f5:
+T:Instruction,5,num = 674;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left(Strings.Trim(Modul1.Kont[0]) +
+T:String,5,","
+T:Instruction,5,+ Strings.Trim(Modul1.Kont[3]) +
+T:String,5,"                                  "
+T:Instruction,5,, 20));
+T:Goto,5,goto IL_3935;
+T:Label,5,IL_3935:
+T:Instruction,5,num = 675;
+T:Instruction,5,if
+T:Instruction,5,(LiEl == 0)
+T:Block,6,{
+T:Goto,6,goto IL_394b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3962;
+T:Block,6,}
+T:Label,5,IL_394b:
+T:Instruction,5,num = 676;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 24, 1,
+T:String,5,"N"
+T:Instruction,5,);
+T:Goto,5,goto IL_3962;
+T:Label,5,IL_3962:
+T:Instruction,5,num = 678;
+T:Instruction,5,if
+T:Instruction,5,(LiKi == 0)
+T:Block,6,{
+T:Goto,6,goto IL_3978;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_398f;
+T:Block,6,}
+T:Label,5,IL_3978:
+T:Instruction,5,num = 679;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 30, 1,
+T:String,5,"N"
+T:Instruction,5,);
+T:Goto,5,goto IL_398f;
+T:Label,5,IL_398f:
+T:Instruction,5,num = 681;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), 4);
+T:Goto,5,goto IL_39f2;
+T:Label,5,IL_39f2:
+T:Instruction,5,num = 682;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3a0c;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3a23;
+T:Block,6,}
+T:Label,5,IL_3a0c:
+T:Instruction,5,num = 683;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 36, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3a23;
+T:Label,5,IL_3a23:
+T:Instruction,5,num = 685;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), 5);
+T:Goto,5,goto IL_3a86;
+T:Label,5,IL_3a86:
+T:Instruction,5,num = 686;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3aa0;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3ab7;
+T:Block,6,}
+T:Label,5,IL_3aa0:
+T:Instruction,5,num = 687;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 46, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3ab7;
+T:Label,5,IL_3ab7:
+T:Instruction,5,num = 689;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), 6);
+T:Goto,5,goto IL_3b1a;
+T:Label,5,IL_3b1a:
+T:Instruction,5,num = 690;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3b34;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3b4b;
+T:Block,6,}
+T:Label,5,IL_3b34:
+T:Instruction,5,num = 691;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 46, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3b4b;
+T:Label,5,IL_3b4b:
+T:Instruction,5,num = 693;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), 7);
+T:Goto,5,goto IL_3bae;
+T:Label,5,IL_3bae:
+T:Instruction,5,num = 694;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3bc8;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3bdf;
+T:Block,6,}
+T:Label,5,IL_3bc8:
+T:Instruction,5,num = 695;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 46, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3bdf;
+T:Label,5,IL_3bdf:
+T:Instruction,5,num = 697;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), 8);
+T:Goto,5,goto IL_3c42;
+T:Label,5,IL_3c42:
+T:Instruction,5,num = 698;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3c5c;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3c73;
+T:Block,6,}
+T:Label,5,IL_3c5c:
+T:Instruction,5,num = 699;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 55, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3c73;
+T:Label,5,IL_3c73:
+T:Instruction,5,num = 701;
+T:Instruction,5,DataModul.DB_LinkTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString(), 9);
+T:Goto,5,goto IL_3cd7;
+T:Label,5,IL_3cd7:
+T:Instruction,5,num = 702;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_LinkTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3cf1;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3d08;
+T:Block,6,}
+T:Label,5,IL_3cf1:
+T:Instruction,5,num = 703;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 70, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3d08;
+T:Label,5,IL_3d08:
+T:Instruction,5,num = 705;
+T:Instruction,5,DataModul.DB_WitnessTable.Index = nameof(DataModul.WitnessIndex.ElSu);
+T:Goto,5,goto IL_3d1f;
+T:Label,5,IL_3d1f:
+T:Instruction,5,num = 706;
+T:Instruction,5,DataModul.DB_WitnessTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb,
+T:String,5,"10"
+T:Instruction,5,);
+T:Goto,5,goto IL_3d7c;
+T:Label,5,IL_3d7c:
+T:Instruction,5,num = 707;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_WitnessTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_3d96;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3dad;
+T:Block,6,}
+T:Label,5,IL_3d96:
+T:Instruction,5,num = 708;
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 46, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_3dad;
+T:Label,5,IL_3dad:
+T:Instruction,5,num = 710;
+T:Instruction,5,List1.Items.Add(new ListItem(sDest +
+T:String,5,"          "
+T:Instruction,5,+ Modul1.PersInArb.AsString()));
+T:Goto,5,goto IL_3de8;
+T:Label,5,IL_3de8:
+T:Instruction,5,num = 712;
+T:Instruction,5,I1++;
+T:Goto,5,goto IL_3dfe;
+T:Label,5,IL_2496:
+T:Instruction,5,num = 439;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_24ae;
+T:Label,5,IL_24ae:
+T:Instruction,5,num = 440;
+T:Instruction,5,Label1[2].Text =
+T:String,5,"Personen ohne Datum"
+T:Instruction,5,;
+T:Goto,5,goto IL_24cc;
+T:Label,5,IL_24cc:
+T:Instruction,5,num = 441;
+T:Instruction,5,Label1[1].Text = Modul1.IText[166];
+T:Goto,5,goto IL_24f0;
+T:Label,5,IL_24f0:
+T:Instruction,5,num = 442;
+T:Instruction,5,Label1[0].Text = Modul1.IText[167];
+T:Goto,5,goto IL_2514;
+T:Label,5,IL_2514:
+T:Instruction,5,num = 443;
+T:Instruction,5,I1 = 0;
+T:Goto,5,goto IL_2522;
+T:Label,5,IL_2522:
+T:Instruction,5,num = 444;
+T:Instruction,5,Label1[(short)I1].Refresh();
+T:Goto,5,goto IL_2541;
+T:Label,5,IL_2541:
+T:Instruction,5,num = 445;
+T:Instruction,5,I1++;
+T:Instruction,5,i5 = I1;
+T:Instruction,5,num5 = 2;
+T:Instruction,5,if
+T:Instruction,5,(i5 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_2522;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2564;
+T:Block,6,}
+T:Label,5,IL_2564:
+T:Instruction,5,num = 446;
+T:Instruction,5,num7 = 1;
+T:Goto,5,goto IL_256e;
+T:Label,5,IL_256e:
+T:Instruction,5,num = 447;
+T:Instruction,5,if
+T:Instruction,5,(num7 <= 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_2589;
+T:Label,5,IL_2589:
+T:Instruction,5,num = 450;
+T:Instruction,5,DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
+T:Goto,5,goto IL_25a0;
+T:Label,5,IL_25a0:
+T:Instruction,5,num = 451;
+T:Instruction,5,DataModul.DB_PersonTable.MoveLast();
+T:Goto,5,goto IL_25b3;
+T:Label,5,IL_25b3:
+T:Instruction,5,num = 452;
+T:Instruction,5,num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
+T:Goto,5,goto IL_25da;
+T:Label,5,IL_25da:
+T:Instruction,5,num = 453;
+T:Instruction,5,if
+T:Instruction,5,(num7 == 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_25f2;
+T:Label,5,IL_25f2:
+T:Instruction,5,num = 456;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2625;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2666;
+T:Block,6,}
+T:Label,5,IL_2625:
+T:Instruction,5,num = 457;
+T:Instruction,5,Interaction.MsgBox(Modul1.IText[173] +
+T:String,5," "
+T:Instruction,5,+ num7.AsString() + Modul1.IText[172]);
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_2666:
+T:Instruction,5,num = 460;
+T:Instruction,5,ProgressBar1.Minimum = 0;
+T:Goto,5,goto IL_267a;
+T:Label,5,IL_267a:
+T:Instruction,5,num = 461;
+T:Instruction,5,ProgressBar1.Maximum = 0;
+T:Goto,5,goto IL_268e;
+T:Label,5,IL_268e:
+T:Instruction,5,num = 462;
+T:Instruction,5,ProgressBar1.Step = 1;
+T:Goto,5,goto IL_26a2;
+T:Label,5,IL_26a2:
+T:Instruction,5,num = 463;
+T:Instruction,5,ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
+T:Goto,5,goto IL_26c1;
+T:Label,5,IL_26c1:
+T:Instruction,5,num = 464;
+T:Instruction,5,i6 = num7;
+T:Instruction,5,num10 = DataModul.DB_PersonTable.RecordCount - 1;
+T:Instruction,5,I1 = i6;
+T:Goto,5,goto IL_33b6;
+T:Label,5,IL_33b6:
+T:Instruction,5,i7 = I1;
+T:Instruction,5,num5 = num10;
+T:Instruction,5,if
+T:Instruction,5,(i7 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_26e3;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_33c7;
+T:Block,6,}
+T:Label,5,IL_33c7:
+T:Instruction,5,num = 615;
+T:Instruction,5,Label4.Text = List1.Items.Count - 1.AsString() +
+T:String,5," Einträge"
+T:Instruction,5,;
+T:Goto,5,goto IL_448a;
+T:Label,5,IL_26e3:
+T:Instruction,5,num = 465;
+T:Instruction,5,ProgressBar1.PerformStep();
+T:Goto,5,goto IL_26f6;
+T:Label,5,IL_26f6:
+T:Instruction,5,num = 466;
+T:Instruction,5,Application.DoEvents();
+T:Goto,5,goto IL_2703;
+T:Label,5,IL_2703:
+T:Instruction,5,num = 467;
+T:Instruction,5,Modul1.PersInArb = I1;
+T:Goto,5,goto IL_2715;
+T:Label,5,IL_2715:
+T:Instruction,5,num = 468;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.PersInArb <= num8)
+T:Block,6,{
+T:Goto,6,goto IL_2730;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Label,5,IL_2730:
+T:Instruction,5,num = 471;
+T:Instruction,5,DataModul.DB_PersonTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString());
+T:Goto,5,goto IL_2792;
+T:Label,5,IL_2792:
+T:Instruction,5,num = 472;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_PersonTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_27ae;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_27ae:
+T:Instruction,5,num = 475;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_27bb;
+T:Label,5,IL_27bb:
+T:Instruction,5,num = 476;
+T:Instruction,5,Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) +
+T:String,5,","
+T:Instruction,5,+ Strings.Trim(Modul1.Kont[3]) +
+T:String,5,"                                  "
+T:Instruction,5,, 20);
+T:Goto,5,goto IL_27f5;
+T:Label,5,IL_27f5:
+T:Instruction,5,num = 477;
+T:Instruction,5,Modul1.Schalt = 20;
+T:Goto,5,goto IL_2803;
+T:Label,5,IL_2803:
+T:Instruction,5,num = 478;
+T:Instruction,5,T = 1;
+T:Goto,5,goto IL_2811;
+T:Label,5,IL_2811:
+T:Instruction,5,num = 479;
+T:Instruction,5,Modul1.Kont[T + 10] =
+T:String,5,""
+T:Instruction,5,;
+T:Goto,5,goto IL_282d;
+T:Label,5,IL_282d:
+T:Instruction,5,num = 480;
+T:Instruction,5,Modul1.Kont[T + 20] =
+T:String,5,""
+T:Instruction,5,;
+T:Goto,5,goto IL_2849;
+T:Label,5,IL_2849:
+T:Instruction,5,num = 481;
+T:Instruction,5,T = (short)unchecked(T + 1);
+T:Instruction,5,t = T;
+T:Instruction,5,num11 = 10;
+T:Instruction,5,if
+T:Instruction,5,(t <= num11)
+T:Block,6,{
+T:Goto,6,goto IL_2811;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_286e;
+T:Block,6,}
+T:Label,5,IL_286e:
+T:Instruction,5,num = 482;
+T:Instruction,5,Modul1.Datles();
+T:Goto,5,goto IL_287b;
+T:Label,5,IL_287b:
+T:Instruction,5,num = 483;
+T:Instruction,5,sDest2 =
+T:String,5,"                                                                            "
+T:Instruction,5,;
+T:Goto,5,goto IL_2889;
+T:Label,5,IL_2889:
+T:Instruction,5,num = 484;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(Modul1.Kont[11]) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_28b9;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_28b9:
+T:Instruction,5,num = 487;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(Modul1.Kont[12]) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_28e9;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_28e9:
+T:Instruction,5,num = 490;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(Modul1.Kont[13]) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_2919;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2919:
+T:Instruction,5,num = 493;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(Modul1.Kont[14]) ==
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_2949;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2949:
+T:Instruction,5,num = 496;
+T:Instruction,5,num12 = 300;
+T:Goto,5,goto IL_2956;
+T:Label,5,IL_2956:
+T:Instruction,5,num = 497;
+T:Instruction,5,DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.BeSu);
+T:Goto,5,goto IL_296d;
+T:Label,5,IL_296d:
+T:Instruction,5,num = 498;
+T:Instruction,5,DataModul.DB_EventTable.Seek(
+T:String,5,"="
+T:Instruction,5,, num12, Modul1.PersInArb.AsString());
+T:Goto,5,goto IL_29d0;
+T:Label,5,IL_29d0:
+T:Instruction,5,num = 499;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_EventTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_29ec;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2d63;
+T:Block,6,}
+T:Label,5,IL_29ec:
+T:Instruction,5,num = 502;
+T:Instruction,5,switch
+T:Instruction,5,(num12)
+T:Block,6,{
+T:Label,6,case 300:
+T:Instruction,6,break;
+T:Label,6,case 301:
+T:Goto,6,goto IL_2b31;
+T:Label,6,case 302:
+T:Goto,6,goto IL_2c4c;
+T:Label,6,default:
+T:Goto,6,goto IL_2d63;
+T:Block,6,}
+T:Block,6,{
+T:Goto,6,goto IL_2a16;
+T:Block,6,}
+T:Label,5,IL_2c4c:
+T:Instruction,5,num = 534;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2c7e;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2c9b;
+T:Block,6,}
+T:Label,5,IL_2c7e:
+T:Instruction,5,num = 535;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2c9b;
+T:Label,5,IL_2c9b:
+T:Instruction,5,num = 537;
+T:Instruction,5,if
+T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2cd2;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2cd2:
+T:Instruction,5,num = 540;
+T:Instruction,5,if
+T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2d09;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2d09:
+T:Instruction,5,num = 543;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_2d44;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2d63;
+T:Block,6,}
+T:Label,5,IL_2d44:
+T:Instruction,5,num = 544;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 53, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2d63;
+T:Label,5,IL_2b31:
+T:Instruction,5,num = 520;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2b63;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2b80;
+T:Block,6,}
+T:Label,5,IL_2b63:
+T:Instruction,5,num = 521;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2b80;
+T:Label,5,IL_2b80:
+T:Instruction,5,num = 523;
+T:Instruction,5,if
+T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2bb7;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2bb7:
+T:Instruction,5,num = 526;
+T:Instruction,5,if
+T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2bee;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2bee:
+T:Instruction,5,num = 529;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_2c29;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2d63;
+T:Block,6,}
+T:Label,5,IL_2c29:
+T:Instruction,5,num = 530;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 46, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2d63;
+T:Label,5,IL_2a16:
+T:Instruction,5,num = 506;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2a48;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2a65;
+T:Block,6,}
+T:Label,5,IL_2a48:
+T:Instruction,5,num = 507;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2a65;
+T:Label,5,IL_2a65:
+T:Instruction,5,num = 509;
+T:Instruction,5,if
+T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2a9c;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2a9c:
+T:Instruction,5,num = 512;
+T:Instruction,5,if
+T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2ad3;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3395;
+T:Block,6,}
+T:Label,5,IL_2ad3:
+T:Instruction,5,num = 515;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_2b0e;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2d63;
+T:Block,6,}
+T:Label,5,IL_2b0e:
+T:Instruction,5,num = 516;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2d63;
+T:Label,5,IL_2d63:
+T:Instruction,5,num = 547;
+T:Instruction,5,lErl = 92;
+T:Goto,5,goto IL_2d6e;
+T:Label,5,IL_2d6e:
+T:Instruction,5,num = 548;
+T:Instruction,5,num12 = (short)unchecked(num12 + 1);
+T:Instruction,5,num13 = num12;
+T:Instruction,5,num11 = 302;
+T:Instruction,5,if
+T:Instruction,5,(num13 <= num11)
+T:Block,6,{
+T:Goto,6,goto IL_2956;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_32fc;
+T:Block,6,}
+T:Label,5,IL_32fc:
+T:Instruction,5,num = 606;
+T:Instruction,5,lErl = 45;
+T:Goto,5,goto IL_3307;
+T:Label,5,IL_3307:
+T:Instruction,5,num = 607;
+T:Instruction,5,Modul1.LiText += sDest2;
+T:Goto,5,goto IL_3320;
+T:Label,5,IL_3320:
+T:Instruction,5,num = 609;
+T:Instruction,5,if
+T:Instruction,5,(Strings.Trim(Modul1.LiText) !=
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_3348;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_3383;
+T:Block,6,}
+T:Label,5,IL_3348:
+T:Instruction,5,num = 610;
+T:Instruction,5,List1.Items.Add(new ListItem(Modul1.LiText +
+T:String,5,"          "
+T:Instruction,5,+ Modul1.PersInArb.AsString()));
+T:Goto,5,goto IL_3383;
+T:Label,5,IL_3383:
+T:Instruction,5,num = 612;
+T:Instruction,5,Modul1.LiText =
+T:String,5,""
+T:Instruction,5,;
+T:Goto,5,goto IL_3395;
+T:Label,5,IL_3395:
+T:Instruction,5,num = 613;
+T:Instruction,5,lErl = 95;
+T:Goto,5,goto IL_33a0;
+T:Label,5,IL_33a0:
+T:Instruction,5,num = 614;
+T:Instruction,5,I1++;
+T:Goto,5,goto IL_33b6;
+T:Label,5,IL_1c00:
+T:Instruction,5,num = 336;
+T:Instruction,5,
+T:LComment,5,//Sz = 0;
+T:Goto,5,goto IL_1c0e;
+T:Label,5,IL_1c0e:
+T:Instruction,5,num = 337;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_1c26;
+T:Label,5,IL_1c26:
+T:Instruction,5,num = 338;
+T:Instruction,5,Label1[2].Text =
+T:String,5,"Familien ohne Datum"
+T:Instruction,5,;
+T:Goto,5,goto IL_1c44;
+T:Label,5,IL_1c44:
+T:Instruction,5,num = 339;
+T:Instruction,5,Label1[1].Text =
+T:String,5,"Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. Eheä. Aus  Fikt."
+T:Instruction,5,;
+T:Goto,5,goto IL_1c62;
+T:Label,5,IL_1c62:
+T:Instruction,5,num = 340;
+T:Instruction,5,Label1[0].Text =
+T:String,5,"                                    DO   DO    DO    DO   DO    DO        DO"
+T:Instruction,5,;
+T:Goto,5,goto IL_1c80;
+T:Label,5,IL_1c80:
+T:Instruction,5,num = 341;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_1c98;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1cb5;
+T:Block,6,}
+T:Label,5,IL_1c98:
+T:Instruction,5,num = 342;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"Familien ohne Datum"
+T:Instruction,5,);
+T:Goto,5,goto IL_1cb5;
+T:Label,5,IL_1cb5:
+T:Instruction,5,num = 344;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_1ccd;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1cea;
+T:Block,6,}
+T:Label,5,IL_1ccd:
+T:Instruction,5,num = 345;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt."
+T:Instruction,5,);
+T:Goto,5,goto IL_1cea;
+T:Label,5,IL_1cea:
+T:Instruction,5,num = 347;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_1d02;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1d1f;
+T:Block,6,}
+T:Label,5,IL_1d02:
+T:Instruction,5,num = 348;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"                                    DO   DO    DO    DO   DO    DO        DO"
+T:Instruction,5,);
+T:Goto,5,goto IL_1d1f;
+T:Label,5,IL_1d1f:
+T:Instruction,5,num = 350;
+T:Instruction,5,Modul1.I = 0;
+T:Goto,5,goto IL_1d2c;
+T:Label,5,IL_1d2c:
+T:Instruction,5,num = 351;
+T:Instruction,5,Label1[(short)Modul1.I].Refresh();
+T:Goto,5,goto IL_1d4a;
+T:Label,5,IL_1d4a:
+T:Instruction,5,num = 352;
+T:Instruction,5,Modul1.I++;
+T:Instruction,5,i8 = Modul1.I;
+T:Instruction,5,num5 = 2;
+T:Instruction,5,if
+T:Instruction,5,(i8 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_1d2c;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1d6a;
+T:Block,6,}
+T:Label,5,IL_1d6a:
+T:Instruction,5,num = 353;
+T:Instruction,5,num7 = 1;
+T:Goto,5,goto IL_1d74;
+T:Label,5,IL_1d74:
+T:Instruction,5,num = 354;
+T:Instruction,5,if
+T:Instruction,5,(num7 <= 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_1d8f;
+T:Label,5,IL_1d8f:
+T:Instruction,5,num = 357;
+T:Instruction,5,DataModul.DB_FamilyTable.MoveLast();
+T:Goto,5,goto IL_1da2;
+T:Label,5,IL_1da2:
+T:Instruction,5,num = 358;
+T:Instruction,5,num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
+T:Goto,5,goto IL_1dc9;
+T:Label,5,IL_1dc9:
+T:Instruction,5,num = 359;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_1dfc;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1e3d;
+T:Block,6,}
+T:Label,5,IL_1dfc:
+T:Instruction,5,num = 360;
+T:Instruction,5,Interaction.MsgBox(Modul1.IText[174] +
+T:String,5," "
+T:Instruction,5,+ num7.AsString() + Modul1.IText[172]);
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_1e3d:
+T:Instruction,5,num = 363;
+T:Instruction,5,ProgressBar1.Minimum = 0;
+T:Goto,5,goto IL_1e51;
+T:Label,5,IL_1e51:
+T:Instruction,5,num = 364;
+T:Instruction,5,ProgressBar1.Maximum = 0;
+T:Goto,5,goto IL_1e65;
+T:Label,5,IL_1e65:
+T:Instruction,5,num = 365;
+T:Instruction,5,ProgressBar1.Step = 1;
+T:Goto,5,goto IL_1e79;
+T:Label,5,IL_1e79:
+T:Instruction,5,num = 366;
+T:Instruction,5,ProgressBar1.Maximum = (int)Math.Round(Conversion.Val(Modul1.Aus[13]));
+T:Goto,5,goto IL_1e9f;
+T:Label,5,IL_1e9f:
+T:Instruction,5,num = 367;
+T:Instruction,5,i9 = num7;
+T:Instruction,5,num14 = num7 + DataModul.DB_FamilyTable.RecordCount;
+T:Instruction,5,I1 = i9;
+T:Goto,5,goto IL_2440;
+T:Label,5,IL_2440:
+T:Instruction,5,i10 = I1;
+T:Instruction,5,num5 = num14;
+T:Instruction,5,if
+T:Instruction,5,(i10 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_1ec2;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2451;
+T:Block,6,}
+T:Label,5,IL_2451:
+T:Instruction,5,num = 435;
+T:Instruction,5,Label4.Text = List1.Items.Count - 2.AsString() +
+T:String,5," Einträge"
+T:Instruction,5,;
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_1ec2:
+T:Instruction,5,num = 368;
+T:Instruction,5,ProgressBar1.PerformStep();
+T:Goto,5,goto IL_1ed5;
+T:Label,5,IL_1ed5:
+T:Instruction,5,num = 369;
+T:Instruction,5,Application.DoEvents();
+T:Goto,5,goto IL_1ee2;
+T:Label,5,IL_1ee2:
+T:Instruction,5,num = 370;
+T:Instruction,5,sDest2 =
+T:String,5,"                                                                                          "
+T:Instruction,5,;
+T:Goto,5,goto IL_1ef0;
+T:Label,5,IL_1ef0:
+T:Instruction,5,num = 371;
+T:Instruction,5,Modul1.FamInArb = I1;
+T:Goto,5,goto IL_1f02;
+T:Label,5,IL_1f02:
+T:Instruction,5,num = 372;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.FamInArb <= num8)
+T:Block,6,{
+T:Goto,6,goto IL_1f1d;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_241f;
+T:Block,6,}
+T:Label,5,IL_1f1d:
+T:Instruction,5,num = 375;
+T:Instruction,5,DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+T:Goto,5,goto IL_1f34;
+T:Label,5,IL_1f34:
+T:Instruction,5,num = 376;
+T:Instruction,5,DataModul.DB_FamilyTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.FamInArb.AsString());
+T:Goto,5,goto IL_1f96;
+T:Label,5,IL_1f96:
+T:Instruction,5,num = 377;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_FamilyTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_1fb2;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2317;
+T:Block,6,}
+T:Label,5,IL_1fb2:
+T:Instruction,5,num = 380;
+T:Instruction,5,MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+T:Goto,5,goto IL_1fbf;
+T:Label,5,IL_1fbf:
+T:Instruction,5,num = 381;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Family.Mann > 0)
+T:Block,6,{
+T:Goto,6,goto IL_1fd7;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_206d;
+T:Block,6,}
+T:Label,5,IL_1fd7:
+T:Instruction,5,num = 382;
+T:Instruction,5,Modul1.PersInArb = Modul1.Family.Mann;
+T:Goto,5,goto IL_1fe8;
+T:Label,5,IL_1fe8:
+T:Instruction,5,num = 383;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_1ff5;
+T:Label,5,IL_1ff5:
+T:Instruction,5,num = 384;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Kont[0] !=
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_201a;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2035;
+T:Block,6,}
+T:Label,5,IL_201a:
+T:Instruction,5,num = 385;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 1, 15, Modul1.Kont[0]);
+T:Goto,5,goto IL_2055;
+T:Label,5,IL_2035:
+T:Instruction,5,num = 387;
+T:Goto,5,goto IL_203d;
+T:Label,5,IL_203d:
+T:Instruction,5,num = 388;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 1, 15,
+T:String,5,">NN<"
+T:Instruction,5,);
+T:Goto,5,goto IL_2055;
+T:Label,5,IL_2055:
+T:Instruction,5,num = 390;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 16, 2,
+T:String,5,"/ "
+T:Instruction,5,);
+T:Goto,5,goto IL_206d;
+T:Label,5,IL_206d:
+T:Instruction,5,num = 392;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Family.Frau > 0)
+T:Block,6,{
+T:Goto,6,goto IL_2085;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2106;
+T:Block,6,}
+T:Label,5,IL_2085:
+T:Instruction,5,num = 393;
+T:Instruction,5,Modul1.PersInArb = Modul1.Family.Frau;
+T:Goto,5,goto IL_2096;
+T:Label,5,IL_2096:
+T:Instruction,5,num = 394;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_20a3;
+T:Label,5,IL_20a3:
+T:Instruction,5,num = 395;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Kont[0] !=
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_20c8;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_20e4;
+T:Block,6,}
+T:Label,5,IL_20c8:
+T:Instruction,5,num = 396;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 17, 15, Modul1.Kont[0]);
+T:Goto,5,goto IL_2106;
+T:Label,5,IL_20e4:
+T:Instruction,5,num = 398;
+T:Goto,5,goto IL_20ec;
+T:Label,5,IL_20ec:
+T:Instruction,5,num = 399;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 17, 15,
+T:String,5,">NN<"
+T:Instruction,5,);
+T:Goto,5,goto IL_2106;
+T:Label,5,IL_2106:
+T:Instruction,5,num = 402;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Family.Kind[1] != 0)
+T:Block,6,{
+T:Goto,6,goto IL_2120;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_213d;
+T:Block,6,}
+T:Label,5,IL_2120:
+T:Instruction,5,num = 403;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 32, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_213d;
+T:Label,5,IL_213d:
+T:Instruction,5,num = 405;
+T:Instruction,5,DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+T:Goto,5,goto IL_2154;
+T:Label,5,IL_2154:
+T:Instruction,5,num = 406;
+T:Instruction,5,DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+T:Goto,5,goto IL_216b;
+T:Label,5,IL_216b:
+T:Instruction,5,num = 407;
+T:Instruction,5,DataModul.DB_FamilyTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.FamInArb);
+T:Goto,5,goto IL_21c8;
+T:Label,5,IL_21c8:
+T:Instruction,5,num = 408;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_FamilyTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_21e4;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2317;
+T:Block,6,}
+T:Label,5,IL_21e4:
+T:Instruction,5,num = 411;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_2216;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2233;
+T:Block,6,}
+T:Label,5,IL_2216:
+T:Instruction,5,num = 412;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 70, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_2233;
+T:Label,5,IL_2233:
+T:Instruction,5,num = 414;
+T:Instruction,5,num15 = 500;
+T:Goto,5,goto IL_2240;
+T:Label,5,IL_2240:
+T:Instruction,5,num = 415;
+T:Instruction,5,Modul1.Ubg = num15;
+T:Goto,5,goto IL_224d;
+T:Label,5,IL_224d:
+T:Instruction,5,num = 416;
+T:Instruction,5,DataModul.DB_EventTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.Ubg.AsString(), Modul1.FamInArb.AsString(),
+T:String,5,"0"
+T:Instruction,5,);
+T:Goto,5,goto IL_22b9;
+T:Label,5,IL_22b9:
+T:Instruction,5,num = 417;
+T:Instruction,5,if
+T:Instruction,5,(DataModul.DB_EventTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_22d8;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_241f;
+T:Block,6,}
+T:Label,5,IL_22d8:
+T:Instruction,5,num = 420;
+T:Instruction,5,if
+T:Instruction,5,(!((num15 == 507) & DataModul.DB_EventTable.NoMatch))
+T:Block,6,{
+T:Goto,6,goto IL_22fa;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2317;
+T:Block,6,}
+T:Label,5,IL_22fa:
+T:Instruction,5,num = 423;
+T:Instruction,5,num15 = (short)unchecked(num15 + 1);
+T:Instruction,5,num16 = num15;
+T:Instruction,5,num11 = 507;
+T:Instruction,5,if
+T:Instruction,5,(num16 <= num11)
+T:Block,6,{
+T:Goto,6,goto IL_2240;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_2317;
+T:Block,6,}
+T:Label,5,IL_2317:
+T:Instruction,5,num = 424;
+T:Instruction,5,lErl = 34;
+T:Goto,5,goto IL_2322;
+T:Label,5,IL_2322:
+T:Instruction,5,num = 425;
+T:Instruction,5,DataModul.DB_EventTable.Seek(
+T:String,5,"="
+T:Instruction,5,, 601.AsString(), Modul1.FamInArb.AsString(),
+T:String,5,"0"
+T:Instruction,5,);
+T:Goto,5,goto IL_238e;
+T:Label,5,IL_238e:
+T:Instruction,5,num = 426;
+T:Instruction,5,if
+T:Instruction,5,(DataModul.DB_EventTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_23aa;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_241f;
+T:Block,6,}
+T:Label,5,IL_23aa:
+T:Instruction,5,num = 429;
+T:Instruction,5,if
+T:Instruction,5,(sDest2.Trim() !=
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_23cf;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_241f;
+T:Block,6,}
+T:Label,5,IL_23cf:
+T:Instruction,5,num = 430;
+T:Instruction,5,List1.Items.Add(new ListItem(sDest2 +
+T:String,5,"          "
+T:Instruction,5,+ Modul1.FamInArb.AsString()));
+T:Goto,5,goto IL_2407;
+T:Label,5,IL_2407:
+T:Instruction,5,num = 431;
+T:Instruction,5,
+T:LComment,5,//Sz++;
+T:Goto,5,goto IL_241f;
+T:Label,5,IL_241f:
+T:Instruction,5,num = 433;
+T:Instruction,5,lErl = 35;
+T:Goto,5,goto IL_242a;
+T:Label,5,IL_242a:
+T:Instruction,5,num = 434;
+T:Instruction,5,I1++;
+T:Goto,5,goto IL_2440;
+T:Label,5,IL_1aae:
+T:Instruction,5,num = 322;
+T:Instruction,5,FileSystem.FileClose(99);
+T:Goto,5,goto IL_1acb;
+T:Label,5,IL_1acb:
+T:Instruction,5,num = 323;
+T:Instruction,5,FileSystem.FileOpen(99, Modul1.TempPath +
+T:String,5,"\\Text4.Txt"
+T:Instruction,5,, OpenMode.Output);
+T:Goto,5,goto IL_1aed;
+T:Label,5,IL_1aed:
+T:Instruction,5,num = 324;
+T:Instruction,5,FileSystem.PrintLine(99, Label1[2].Text);
+T:Goto,5,goto IL_1b1c;
+T:Label,5,IL_1b1c:
+T:Instruction,5,num = 325;
+T:Instruction,5,FileSystem.PrintLine(99, Label1[1].Text);
+T:Goto,5,goto IL_1b4b;
+T:Label,5,IL_1b4b:
+T:Instruction,5,num = 326;
+T:Instruction,5,FileSystem.PrintLine(99, Label1[0].Text);
+T:Goto,5,goto IL_1b7a;
+T:Label,5,IL_1b7a:
+T:Instruction,5,num = 327;
+T:Instruction,5,if
+T:Instruction,5,(List2.Visible)
+T:Block,6,{
+T:Goto,6,goto IL_1b92;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1bb9;
+T:Block,6,}
+T:Label,5,IL_1b92:
+T:Instruction,5,num = 328;
+T:Instruction,5,L = List2;
+T:Instruction,5,A = 2;
+T:Instruction,5,Modul1.Listbox3Clip(ref L, ref A);
+T:Instruction,5,List2 = L;
+T:Goto,5,goto IL_1be7;
+T:Label,5,IL_1bb9:
+T:Instruction,5,num = 330;
+T:Goto,5,goto IL_1bc1;
+T:Label,5,IL_1bc1:
+T:Instruction,5,num = 331;
+T:Instruction,5,L = List1;
+T:Instruction,5,A = 2;
+T:Instruction,5,Modul1.Listbox3Clip(ref L, ref A);
+T:Instruction,5,List1 = L;
+T:Goto,5,goto IL_1be7;
+T:Label,5,IL_1be7:
+T:Instruction,5,num = 333;
+T:Instruction,5,FileSystem.FileClose();
+T:Goto,5,goto IL_448a;
+T:Label,5,IL_1a3c:
+T:Instruction,5,num = 314;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_1a54;
+T:Label,5,IL_1a54:
+T:Instruction,5,num = 315;
+T:Instruction,5,List2.Items.Clear();
+T:Goto,5,goto IL_1a6c;
+T:Label,5,IL_1a6c:
+T:Instruction,5,num = 316;
+T:Instruction,5,ProgressBar1.Minimum = 0;
+T:Goto,5,goto IL_1a80;
+T:Label,5,IL_1a80:
+T:Instruction,5,num = 317;
+T:Instruction,5,ProgressBar1.Maximum = 0;
+T:Goto,5,goto IL_1a94;
+T:Label,5,IL_1a94:
+T:Instruction,5,num = 318;
+T:Instruction,5,Close();
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_0cef:
+T:Instruction,5,num = 159;
+T:Instruction,5,DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+T:Goto,5,goto IL_0d06;
+T:Label,5,IL_0d06:
+T:Instruction,5,num = 160;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_0d1e;
+T:Label,5,IL_0d1e:
+T:Instruction,5,num = 161;
+T:Instruction,5,Label1[2].Text =
+T:String,5,"Fehlliste Familien"
+T:Instruction,5,;
+T:Goto,5,goto IL_0d3c;
+T:Label,5,IL_0d3c:
+T:Instruction,5,num = 162;
+T:Instruction,5,Label1[1].Text =
+T:String,5,"Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt."
+T:Instruction,5,;
+T:Goto,5,goto IL_0d5a;
+T:Label,5,IL_0d5a:
+T:Instruction,5,num = 163;
+T:Instruction,5,Label1[0].Text =
+T:String,5,"                                    DO   DO    DO    DO   DO    DO        DO"
+T:Instruction,5,;
+T:Goto,5,goto IL_0d78;
+T:Label,5,IL_0d78:
+T:Instruction,5,num = 164;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_0d90;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0dad;
+T:Block,6,}
+T:Label,5,IL_0d90:
+T:Instruction,5,num = 165;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"Fehlliste Familien"
+T:Instruction,5,);
+T:Goto,5,goto IL_0dad;
+T:Label,5,IL_0dad:
+T:Instruction,5,num = 167;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_0dc5;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0de2;
+T:Block,6,}
+T:Label,5,IL_0dc5:
+T:Instruction,5,num = 168;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt."
+T:Instruction,5,);
+T:Goto,5,goto IL_0de2;
+T:Label,5,IL_0de2:
+T:Instruction,5,num = 170;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_0dfa;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0e17;
+T:Block,6,}
+T:Label,5,IL_0dfa:
+T:Instruction,5,num = 171;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"                                    DO   DO    DO    DO   DO    DO        DO"
+T:Instruction,5,);
+T:Goto,5,goto IL_0e17;
+T:Label,5,IL_0e17:
+T:Instruction,5,num = 173;
+T:Instruction,5,Modul1.I = 0;
+T:Goto,5,goto IL_0e24;
+T:Label,5,IL_0e24:
+T:Instruction,5,num = 174;
+T:Instruction,5,Label1[(short)Modul1.I].Refresh();
+T:Goto,5,goto IL_0e42;
+T:Label,5,IL_0e42:
+T:Instruction,5,num = 175;
+T:Instruction,5,Modul1.I++;
+T:Instruction,5,i11 = Modul1.I;
+T:Instruction,5,num5 = 2;
+T:Instruction,5,if
+T:Instruction,5,(i11 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_0e24;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0e62;
+T:Block,6,}
+T:Label,5,IL_0e62:
+T:Instruction,5,num = 176;
+T:Instruction,5,num7 = 1;
+T:Goto,5,goto IL_0e6c;
+T:Label,5,IL_0e6c:
+T:Instruction,5,num = 177;
+T:Instruction,5,if
+T:Instruction,5,(num7 <= 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_0e87;
+T:Label,5,IL_0e87:
+T:Instruction,5,num = 180;
+T:Instruction,5,DataModul.DB_FamilyTable.MoveLast();
+T:Goto,5,goto IL_0e9a;
+T:Label,5,IL_0e9a:
+T:Instruction,5,num = 181;
+T:Instruction,5,num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
+T:Goto,5,goto IL_0ec1;
+T:Label,5,IL_0ec1:
+T:Instruction,5,num = 182;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_0ef4;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0f36;
+T:Block,6,}
+T:Label,5,IL_0ef4:
+T:Instruction,5,num = 183;
+T:Instruction,5,Interaction.MsgBox(
+T:String,5,"Die höchste Familiennummer ist "
+T:Instruction,5,+ DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsString());
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_0f36:
+T:Instruction,5,num = 186;
+T:Instruction,5,ProgressBar1.Minimum = 0;
+T:Goto,5,goto IL_0f4a;
+T:Label,5,IL_0f4a:
+T:Instruction,5,num = 187;
+T:Instruction,5,ProgressBar1.Maximum = DataModul.DB_FamilyTable.RecordCount - 1;
+T:Goto,5,goto IL_0f69;
+T:Label,5,IL_0f69:
+T:Instruction,5,num = 188;
+T:Instruction,5,ProgressBar1.Step = 1;
+T:Goto,5,goto IL_0f7d;
+T:Label,5,IL_0f7d:
+T:Instruction,5,num = 189;
+T:Instruction,5,i12 = num7;
+T:Instruction,5,num17 = num8;
+T:Instruction,5,I1 = i12;
+T:Goto,5,goto IL_199d;
+T:Label,5,IL_199d:
+T:Instruction,5,i13 = I1;
+T:Instruction,5,num5 = num17;
+T:Instruction,5,if
+T:Instruction,5,(i13 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_0f95;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_19ae;
+T:Block,6,}
+T:Label,5,IL_19ae:
+T:Instruction,5,num = 308;
+T:Instruction,5,Label4.Text = List1.Items.Count - 3.AsString() +
+T:String,5," Familien"
+T:Instruction,5,;
+T:Goto,5,goto IL_19e7;
+T:Label,5,IL_19e7:
+T:Instruction,5,num = 309;
+T:Instruction,5,if
+T:Instruction,5,(RadioButton1.Checked)
+T:Block,6,{
+T:Goto,6,goto IL_19ff;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Label,5,IL_19ff:
+T:Instruction,5,num = 310;
+T:Instruction,5,Label4.Text = List1.Items.Count.AsString() +
+T:String,5," Familien"
+T:Instruction,5,;
+T:Goto,5,goto IL_448a;
+T:Label,5,IL_0f95:
+T:Instruction,5,num = 190;
+T:Instruction,5,ProgressBar1.PerformStep();
+T:Goto,5,goto IL_0fa8;
+T:Label,5,IL_0fa8:
+T:Instruction,5,num = 191;
+T:Instruction,5,Application.DoEvents();
+T:Goto,5,goto IL_0fb5;
+T:Label,5,IL_0fb5:
+T:Instruction,5,num = 192;
+T:Instruction,5,sDest2 =
+T:String,5,"                                                                                          "
+T:Instruction,5,;
+T:Goto,5,goto IL_0fc3;
+T:Label,5,IL_0fc3:
+T:Instruction,5,num = 193;
+T:Instruction,5,Modul1.FamInArb = I1;
+T:Goto,5,goto IL_0fd5;
+T:Label,5,IL_0fd5:
+T:Instruction,5,num = 194;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.FamInArb <= num8)
+T:Block,6,{
+T:Goto,6,goto IL_0ff0;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Label,5,IL_0ff0:
+T:Instruction,5,num = 197;
+T:Instruction,5,DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+T:Goto,5,goto IL_1007;
+T:Label,5,IL_1007:
+T:Instruction,5,num = 198;
+T:Instruction,5,DataModul.DB_FamilyTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.FamInArb.AsString());
+T:Goto,5,goto IL_1069;
+T:Label,5,IL_1069:
+T:Instruction,5,num = 199;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_FamilyTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_1085;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_197c;
+T:Block,6,}
+T:Label,5,IL_1085:
+T:Instruction,5,num = 202;
+T:Instruction,5,MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+T:Goto,5,goto IL_1092;
+T:Label,5,IL_1092:
+T:Instruction,5,num = 203;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Family.Mann > 0)
+T:Block,6,{
+T:Goto,6,goto IL_10aa;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1140;
+T:Block,6,}
+T:Label,5,IL_10aa:
+T:Instruction,5,num = 204;
+T:Instruction,5,Modul1.PersInArb = Modul1.Family.Mann;
+T:Goto,5,goto IL_10bb;
+T:Label,5,IL_10bb:
+T:Instruction,5,num = 205;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_10c8;
+T:Label,5,IL_10c8:
+T:Instruction,5,num = 206;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Kont[0] !=
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_10ed;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1108;
+T:Block,6,}
+T:Label,5,IL_10ed:
+T:Instruction,5,num = 207;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 1, 15, Modul1.Kont[0]);
+T:Goto,5,goto IL_1128;
+T:Label,5,IL_1108:
+T:Instruction,5,num = 209;
+T:Goto,5,goto IL_1110;
+T:Label,5,IL_1110:
+T:Instruction,5,num = 210;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 1, 15,
+T:String,5,">NN<"
+T:Instruction,5,);
+T:Goto,5,goto IL_1128;
+T:Label,5,IL_1128:
+T:Instruction,5,num = 212;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 16, 2,
+T:String,5,"/ "
+T:Instruction,5,);
+T:Goto,5,goto IL_1140;
+T:Label,5,IL_1140:
+T:Instruction,5,num = 214;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Family.Frau > 0)
+T:Block,6,{
+T:Goto,6,goto IL_1158;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_11d9;
+T:Block,6,}
+T:Label,5,IL_1158:
+T:Instruction,5,num = 215;
+T:Instruction,5,Modul1.PersInArb = Modul1.Family.Frau;
+T:Goto,5,goto IL_1169;
+T:Label,5,IL_1169:
+T:Instruction,5,num = 216;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_1176;
+T:Label,5,IL_1176:
+T:Instruction,5,num = 217;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Kont[0] !=
+T:String,5,""
+T:Instruction,5,)
+T:Block,6,{
+T:Goto,6,goto IL_119b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_11b7;
+T:Block,6,}
+T:Label,5,IL_119b:
+T:Instruction,5,num = 218;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 17, 15, Modul1.Kont[0]);
+T:Goto,5,goto IL_11d9;
+T:Label,5,IL_11b7:
+T:Instruction,5,num = 220;
+T:Goto,5,goto IL_11bf;
+T:Label,5,IL_11bf:
+T:Instruction,5,num = 221;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 17, 15,
+T:String,5,">NN<"
+T:Instruction,5,);
+T:Goto,5,goto IL_11d9;
+T:Label,5,IL_11d9:
+T:Instruction,5,num = 224;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.Family.Kind[1] != 0)
+T:Block,6,{
+T:Goto,6,goto IL_11f3;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1210;
+T:Block,6,}
+T:Label,5,IL_11f3:
+T:Instruction,5,num = 225;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 32, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_1210;
+T:Label,5,IL_1210:
+T:Instruction,5,num = 227;
+T:Instruction,5,DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+T:Goto,5,goto IL_1227;
+T:Label,5,IL_1227:
+T:Instruction,5,num = 228;
+T:Instruction,5,DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+T:Goto,5,goto IL_123e;
+T:Label,5,IL_123e:
+T:Instruction,5,num = 229;
+T:Instruction,5,DataModul.DB_FamilyTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.FamInArb);
+T:Goto,5,goto IL_129b;
+T:Label,5,IL_129b:
+T:Instruction,5,num = 230;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_FamilyTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_12b7;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_197c;
+T:Block,6,}
+T:Label,5,IL_12b7:
+T:Instruction,5,num = 233;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_12e9;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1306;
+T:Block,6,}
+T:Label,5,IL_12e9:
+T:Instruction,5,num = 234;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 70, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_1306;
+T:Label,5,IL_1306:
+T:Instruction,5,num = 236;
+T:Instruction,5,num15 = 500;
+T:Goto,5,goto IL_1313;
+T:Label,5,IL_1313:
+T:Instruction,5,num = 237;
+T:Instruction,5,Modul1.Ubg = num15;
+T:Goto,5,goto IL_1320;
+T:Label,5,IL_1320:
+T:Instruction,5,num = 238;
+T:Instruction,5,DataModul.DB_EventTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.Ubg.AsString(), Modul1.FamInArb.AsString(),
+T:String,5,"0"
+T:Instruction,5,);
+T:Goto,5,goto IL_138c;
+T:Label,5,IL_138c:
+T:Instruction,5,num = 239;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_EventTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_13a8;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_13a8:
+T:Instruction,5,num = 242;
+T:Instruction,5,switch
+T:Instruction,5,(Modul1.Ubg)
+T:Block,6,{
+T:Label,6,case 500:
+T:Instruction,6,break;
+T:Label,6,case 501:
+T:Goto,6,goto IL_148f;
+T:Label,6,case 502:
+T:Goto,6,goto IL_153c;
+T:Label,6,case 503:
+T:Goto,6,goto IL_15e9;
+T:Label,6,case 504:
+T:Goto,6,goto IL_1696;
+T:Label,6,case 505:
+T:Goto,6,goto IL_1743;
+T:Label,6,default:
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Block,6,{
+T:Goto,6,goto IL_13e2;
+T:Block,6,}
+T:Label,5,IL_1743:
+T:Instruction,5,num = 286;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_1775;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1792;
+T:Block,6,}
+T:Label,5,IL_1775:
+T:Instruction,5,num = 287;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 65, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_1792;
+T:Label,5,IL_1792:
+T:Instruction,5,num = 289;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_17cd;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_17cd:
+T:Instruction,5,num = 290;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 66, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_17ec;
+T:Label,5,IL_1696:
+T:Instruction,5,num = 278;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_16c8;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_16e5;
+T:Block,6,}
+T:Label,5,IL_16c8:
+T:Instruction,5,num = 279;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 59, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_16e5;
+T:Label,5,IL_16e5:
+T:Instruction,5,num = 281;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_1720;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_1720:
+T:Instruction,5,num = 282;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 60, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_17ec;
+T:Label,5,IL_15e9:
+T:Instruction,5,num = 270;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_161b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1638;
+T:Block,6,}
+T:Label,5,IL_161b:
+T:Instruction,5,num = 271;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 54, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_1638;
+T:Label,5,IL_1638:
+T:Instruction,5,num = 273;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_1673;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_1673:
+T:Instruction,5,num = 274;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 55, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_17ec;
+T:Label,5,IL_153c:
+T:Instruction,5,num = 262;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_156e;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_158b;
+T:Block,6,}
+T:Label,5,IL_156e:
+T:Instruction,5,num = 263;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 48, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_158b;
+T:Label,5,IL_158b:
+T:Instruction,5,num = 265;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_15c6;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_15c6:
+T:Instruction,5,num = 266;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 49, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_17ec;
+T:Label,5,IL_148f:
+T:Instruction,5,num = 254;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_14c1;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_14de;
+T:Block,6,}
+T:Label,5,IL_14c1:
+T:Instruction,5,num = 255;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_14de;
+T:Label,5,IL_14de:
+T:Instruction,5,num = 257;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_1519;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_1519:
+T:Instruction,5,num = 258;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 43, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_17ec;
+T:Label,5,IL_13e2:
+T:Instruction,5,num = 246;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_1414;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1431;
+T:Block,6,}
+T:Label,5,IL_1414:
+T:Instruction,5,num = 247;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_1431;
+T:Label,5,IL_1431:
+T:Instruction,5,num = 249;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_146c;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_17ec;
+T:Block,6,}
+T:Label,5,IL_146c:
+T:Instruction,5,num = 250;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_17ec;
+T:Label,5,IL_17ec:
+T:Instruction,5,num = 293;
+T:Instruction,5,lErl = 54;
+T:Goto,5,goto IL_17f7;
+T:Label,5,IL_17f7:
+T:Instruction,5,num = 294;
+T:Instruction,5,num15 = (short)unchecked(num15 + 1);
+T:Instruction,5,num18 = num15;
+T:Instruction,5,num11 = 507;
+T:Instruction,5,if
+T:Instruction,5,(num18 <= num11)
+T:Block,6,{
+T:Goto,6,goto IL_1313;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1814;
+T:Block,6,}
+T:Label,5,IL_1814:
+T:Instruction,5,num = 295;
+T:Instruction,5,lErl = 3;
+T:Goto,5,goto IL_181e;
+T:Label,5,IL_181e:
+T:Instruction,5,num = 296;
+T:Instruction,5,DataModul.DB_EventTable.Seek(
+T:String,5,"="
+T:Instruction,5,, 601.AsString(), Modul1.FamInArb.AsString(),
+T:String,5,"0"
+T:Instruction,5,);
+T:Goto,5,goto IL_188a;
+T:Label,5,IL_188a:
+T:Instruction,5,num = 297;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_EventTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_18a7;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1943;
+T:Block,6,}
+T:Label,5,IL_18a7:
+T:Instruction,5,num = 298;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_18d9;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_18f0;
+T:Block,6,}
+T:Label,5,IL_18d9:
+T:Instruction,5,num = 299;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 75, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_18f0;
+T:Label,5,IL_18f0:
+T:Instruction,5,num = 301;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_192b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_1943;
+T:Block,6,}
+T:Label,5,IL_192b:
+T:Instruction,5,num = 302;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 76, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_1943;
+T:Label,5,IL_1943:
+T:Instruction,5,num = 305;
+T:Instruction,5,List1.Items.Add(new ListItem(sDest2 +
+T:String,5,"          "
+T:Instruction,5,+ Modul1.FamInArb.AsString()));
+T:Goto,5,goto IL_197c;
+T:Label,5,IL_197c:
+T:Instruction,5,num = 306;
+T:Instruction,5,lErl = 55;
+T:Goto,5,goto IL_1987;
+T:Label,5,IL_1987:
+T:Instruction,5,num = 307;
+T:Instruction,5,I1++;
+T:Goto,5,goto IL_199d;
+T:Label,5,IL_01d7:
+T:Instruction,5,num = 35;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_01ec;
+T:Label,5,IL_01ec:
+T:Instruction,5,num = 36;
+T:Instruction,5,Label1[2].Text =
+T:String,5,"Fehlliste Personen"
+T:Instruction,5,;
+T:Goto,5,goto IL_0207;
+T:Label,5,IL_0207:
+T:Instruction,5,num = 37;
+T:Instruction,5,Label1[1].Text = Modul1.IText[166];
+T:Goto,5,goto IL_0228;
+T:Label,5,IL_0228:
+T:Instruction,5,num = 38;
+T:Instruction,5,Label1[0].Text = Modul1.IText[167];
+T:Goto,5,goto IL_0249;
+T:Label,5,IL_0249:
+T:Instruction,5,num = 39;
+T:Instruction,5,Label1[1].Text = Label1[1].Text +
+T:String,5," Quelle"
+T:Instruction,5,;
+T:Goto,5,goto IL_027a;
+T:Label,5,IL_027a:
+T:Instruction,5,num = 40;
+T:Instruction,5,Label1[0].Text = Label1[0].Text +
+T:String,5,"    T V"
+T:Instruction,5,;
+T:Goto,5,goto IL_02ab;
+T:Label,5,IL_02ab:
+T:Instruction,5,num = 41;
+T:Instruction,5,I1 = 0;
+T:Goto,5,goto IL_02b6;
+T:Label,5,IL_02b6:
+T:Instruction,5,num = 42;
+T:Instruction,5,Label1[(short)I1].Refresh();
+T:Goto,5,goto IL_02d2;
+T:Label,5,IL_02d2:
+T:Instruction,5,num = 43;
+T:Instruction,5,I1++;
+T:Instruction,5,i14 = I1;
+T:Instruction,5,num5 = 2;
+T:Instruction,5,if
+T:Instruction,5,(i14 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_02b6;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_02f2;
+T:Block,6,}
+T:Label,5,IL_02f2:
+T:Instruction,5,num = 44;
+T:Instruction,5,num7 = 1;
+T:Goto,5,goto IL_02f9;
+T:Label,5,IL_02f9:
+T:Instruction,5,num = 45;
+T:Instruction,5,if
+T:Instruction,5,(num7 <= 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_0311;
+T:Label,5,IL_0311:
+T:Instruction,5,num = 48;
+T:Instruction,5,DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
+T:Goto,5,goto IL_0325;
+T:Label,5,IL_0325:
+T:Instruction,5,num = 49;
+T:Instruction,5,DataModul.DB_PersonTable.MoveLast();
+T:Goto,5,goto IL_0335;
+T:Label,5,IL_0335:
+T:Instruction,5,num = 50;
+T:Instruction,5,num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
+T:Goto,5,goto IL_0359;
+T:Label,5,IL_0359:
+T:Instruction,5,num = 51;
+T:Instruction,5,if
+T:Instruction,5,(num7 == 0)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_036e;
+T:Label,5,IL_036e:
+T:Instruction,5,num = 54;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_039e;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_03dd;
+T:Block,6,}
+T:Label,5,IL_039e:
+T:Instruction,5,num = 55;
+T:Instruction,5,Interaction.MsgBox(
+T:String,5,"Die höchste Personennummer ist "
+T:Instruction,5,+ DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsString());
+T:Goto,5,goto end_IL_0001_2;
+T:Label,5,IL_03dd:
+T:Instruction,5,num = 58;
+T:Instruction,5,ProgressBar1.Minimum = 0;
+T:Goto,5,goto IL_03ee;
+T:Label,5,IL_03ee:
+T:Instruction,5,num = 59;
+T:Instruction,5,ProgressBar1.Maximum = 0;
+T:Goto,5,goto IL_03ff;
+T:Label,5,IL_03ff:
+T:Instruction,5,num = 60;
+T:Instruction,5,ProgressBar1.Step = 1;
+T:Goto,5,goto IL_0410;
+T:Label,5,IL_0410:
+T:Instruction,5,num = 61;
+T:Instruction,5,ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
+T:Goto,5,goto IL_042c;
+T:Label,5,IL_042c:
+T:Instruction,5,num = 62;
+T:Instruction,5,List1.Items.Clear();
+T:Goto,5,goto IL_0441;
+T:Label,5,IL_0441:
+T:Instruction,5,num = 63;
+T:Instruction,5,i15 = num7;
+T:Instruction,5,num19 = num8;
+T:Instruction,5,I1 = i15;
+T:Goto,5,goto IL_0ca1;
+T:Label,5,IL_0ca1:
+T:Instruction,5,i16 = I1;
+T:Instruction,5,num5 = num19;
+T:Instruction,5,if
+T:Instruction,5,(i16 <= num5)
+T:Block,6,{
+T:Goto,6,goto IL_0456;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0cb2;
+T:Block,6,}
+T:Label,5,IL_0cb2:
+T:Instruction,5,num = 156;
+T:Instruction,5,Label4.Text = List1.Items.Count.AsString() +
+T:String,5," Einträge"
+T:Instruction,5,;
+T:Goto,5,goto IL_448a;
+T:Label,5,IL_0456:
+T:Instruction,5,num = 64;
+T:Instruction,5,ProgressBar1.PerformStep();
+T:Goto,5,goto IL_0466;
+T:Label,5,IL_0466:
+T:Instruction,5,num = 65;
+T:Instruction,5,Application.DoEvents();
+T:Goto,5,goto IL_0470;
+T:Label,5,IL_0470:
+T:Instruction,5,num = 66;
+T:Instruction,5,Modul1.PersInArb = I1;
+T:Goto,5,goto IL_047f;
+T:Label,5,IL_047f:
+T:Instruction,5,num = 67;
+T:Instruction,5,if
+T:Instruction,5,(Modul1.PersInArb <= num8)
+T:Block,6,{
+T:Goto,6,goto IL_0497;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_448a;
+T:Block,6,}
+T:Label,5,IL_448a:
+T:Instruction,5,num = 781;
+T:Instruction,5,lErl = 4;
+T:Goto,5,goto IL_4494;
+T:Label,5,IL_4494:
+T:Instruction,5,num = 782;
+T:Instruction,5,if
+T:Instruction,5,(!RadioButton2.Checked)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_44ac;
+T:Label,5,IL_44ac:
+T:Instruction,5,num = 783;
+T:Instruction,5,List1.Items.Add(
+T:String,5,"Ende der Liste"
+T:Instruction,5,);
+T:Goto,5,goto IL_44c9;
+T:Label,5,IL_44c9:
+T:Instruction,5,num = 784;
+T:Instruction,5,Modul1.I = 1;
+T:Goto,5,goto IL_44d6;
+T:Label,5,IL_44d6:
+T:Instruction,5,num = 785;
+T:Instruction,5,List1.Items.Add(
+T:String,5,""
+T:Instruction,5,);
+T:Goto,5,goto IL_44f3;
+T:Label,5,IL_44f3:
+T:Instruction,5,num = 786;
+T:Instruction,5,Modul1.I++;
+T:Instruction,5,i17 = Modul1.I;
+T:Instruction,5,num5 = 17;
+T:Instruction,5,if
+T:Instruction,5,(i17 > num5)
+T:Block,6,{
+T:Goto,6,goto end_IL_0001_2;
+T:Block,6,}
+T:Goto,5,goto IL_44d6;
+T:Label,5,IL_0497:
+T:Instruction,5,num = 70;
+T:Instruction,5,DataModul.DB_PersonTable.Seek(
+T:String,5,"="
+T:Instruction,5,, Modul1.PersInArb.AsString());
+T:Goto,5,goto IL_04f6;
+T:Label,5,IL_04f6:
+T:Instruction,5,num = 71;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_PersonTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_050f;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0c81;
+T:Block,6,}
+T:Label,5,IL_050f:
+T:Instruction,5,num = 74;
+T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
+T:Goto,5,goto IL_0519;
+T:Label,5,IL_0519:
+T:Instruction,5,num = 75;
+T:Instruction,5,Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) +
+T:String,5,","
+T:Instruction,5,+ Strings.Trim(Modul1.Kont[3]) +
+T:String,5,"                                  "
+T:Instruction,5,, 20);
+T:Goto,5,goto IL_0550;
+T:Label,5,IL_0550:
+T:Instruction,5,num = 76;
+T:Instruction,5,Modul1.Schalt = 20;
+T:Goto,5,goto IL_055b;
+T:Label,5,IL_055b:
+T:Instruction,5,num = 77;
+T:Instruction,5,T = 1;
+T:Goto,5,goto IL_0566;
+T:Label,5,IL_0566:
+T:Instruction,5,num = 78;
+T:Instruction,5,Modul1.Kont[T + 10] =
+T:String,5," "
+T:Instruction,5,;
+T:Goto,5,goto IL_057f;
+T:Label,5,IL_057f:
+T:Instruction,5,num = 79;
+T:Instruction,5,Modul1.Kont[T + 20] =
+T:String,5," "
+T:Instruction,5,;
+T:Goto,5,goto IL_0598;
+T:Label,5,IL_0598:
+T:Instruction,5,num = 80;
+T:Instruction,5,T = (short)unchecked(T + 1);
+T:Instruction,5,t2 = T;
+T:Instruction,5,num11 = 10;
+T:Instruction,5,if
+T:Instruction,5,(t2 <= num11)
+T:Block,6,{
+T:Goto,6,goto IL_0566;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_05ba;
+T:Block,6,}
+T:Label,5,IL_05ba:
+T:Instruction,5,num = 81;
+T:Instruction,5,Modul1.Datles();
+T:Goto,5,goto IL_05c4;
+T:Label,5,IL_05c4:
+T:Instruction,5,num = 82;
+T:Instruction,5,sDest2 =
+T:String,5,"                                                                            "
+T:Instruction,5,;
+T:Goto,5,goto IL_05cf;
+T:Label,5,IL_05cf:
+T:Instruction,5,num = 83;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 2, 2, Modul1.Kont[11] + Modul1.Kont[21]);
+T:Goto,5,goto IL_05f2;
+T:Label,5,IL_05f2:
+T:Instruction,5,num = 84;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 8, 2, Modul1.Kont[12] + Modul1.Kont[22]);
+T:Goto,5,goto IL_0615;
+T:Label,5,IL_0615:
+T:Instruction,5,num = 85;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 17, 2, Modul1.Kont[13] + Modul1.Kont[23]);
+T:Goto,5,goto IL_0639;
+T:Label,5,IL_0639:
+T:Instruction,5,num = 86;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 27, 2, Modul1.Kont[14] + Modul1.Kont[24]);
+T:Goto,5,goto IL_065d;
+T:Label,5,IL_065d:
+T:Instruction,5,num = 87;
+T:Instruction,5,num12 = 300;
+T:Goto,5,goto IL_0667;
+T:Label,5,IL_0667:
+T:Instruction,5,num = 88;
+T:Instruction,5,DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.BeSu);
+T:Goto,5,goto IL_067b;
+T:Label,5,IL_067b:
+T:Instruction,5,num = 89;
+T:Instruction,5,DataModul.DB_EventTable.Seek(
+T:String,5,"="
+T:Instruction,5,, num12, Modul1.PersInArb.AsString());
+T:Goto,5,goto IL_06db;
+T:Label,5,IL_06db:
+T:Instruction,5,num = 90;
+T:Instruction,5,if
+T:Instruction,5,(!DataModul.DB_EventTable.NoMatch)
+T:Block,6,{
+T:Goto,6,goto IL_06f4;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0ac2;
+T:Block,6,}
+T:Label,5,IL_06f4:
+T:Instruction,5,num = 93;
+T:Instruction,5,switch
+T:Instruction,5,(num12)
+T:Block,6,{
+T:Label,6,case 300:
+T:Instruction,6,break;
+T:Label,6,case 301:
+T:Goto,6,goto IL_084e;
+T:Label,6,case 302:
+T:Goto,6,goto IL_0981;
+T:Label,6,default:
+T:Goto,6,goto IL_0ac2;
+T:Block,6,}
+T:Block,6,{
+T:Goto,6,goto IL_071b;
+T:Block,6,}
+T:Label,5,IL_0981:
+T:Instruction,5,num = 125;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_09b0;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_09ca;
+T:Block,6,}
+T:Label,5,IL_09b0:
+T:Instruction,5,num = 126;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_09ca;
+T:Label,5,IL_09ca:
+T:Instruction,5,num = 128;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_09fc;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0a19;
+T:Block,6,}
+T:Label,5,IL_09fc:
+T:Instruction,5,num = 129;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 51, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0a19;
+T:Label,5,IL_0a19:
+T:Instruction,5,num = 131;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_0a4b;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0a68;
+T:Block,6,}
+T:Label,5,IL_0a4b:
+T:Instruction,5,num = 132;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 52, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0a68;
+T:Label,5,IL_0a68:
+T:Instruction,5,num = 134;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_0aa3;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0ac2;
+T:Block,6,}
+T:Label,5,IL_0aa3:
+T:Instruction,5,num = 135;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 53, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0ac2;
+T:Label,5,IL_084e:
+T:Instruction,5,num = 111;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_087d;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0897;
+T:Block,6,}
+T:Label,5,IL_087d:
+T:Instruction,5,num = 112;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0897;
+T:Label,5,IL_0897:
+T:Instruction,5,num = 114;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_08c6;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_08e0;
+T:Block,6,}
+T:Label,5,IL_08c6:
+T:Instruction,5,num = 115;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 44, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_08e0;
+T:Label,5,IL_08e0:
+T:Instruction,5,num = 117;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_090f;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0929;
+T:Block,6,}
+T:Label,5,IL_090f:
+T:Instruction,5,num = 118;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 45, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0929;
+T:Label,5,IL_0929:
+T:Instruction,5,num = 120;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_0961;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0ac2;
+T:Block,6,}
+T:Label,5,IL_0961:
+T:Instruction,5,num = 121;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 46, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0ac2;
+T:Label,5,IL_071b:
+T:Instruction,5,num = 97;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_074a;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0764;
+T:Block,6,}
+T:Label,5,IL_074a:
+T:Instruction,5,num = 98;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0764;
+T:Label,5,IL_0764:
+T:Instruction,5,num = 100;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_0793;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_07ad;
+T:Block,6,}
+T:Label,5,IL_0793:
+T:Instruction,5,num = 101;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 36, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_07ad;
+T:Label,5,IL_07ad:
+T:Instruction,5,num = 103;
+T:Instruction,5,if
+T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_07dc;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_07f6;
+T:Block,6,}
+T:Label,5,IL_07dc:
+T:Instruction,5,num = 104;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_07f6;
+T:Label,5,IL_07f6:
+T:Instruction,5,num = 106;
+T:Instruction,5,if
+T:Instruction,5,(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+T:Block,6,{
+T:Goto,6,goto IL_082e;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0ac2;
+T:Block,6,}
+T:Label,5,IL_082e:
+T:Instruction,5,num = 107;
+T:Instruction,5,StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
+T:Goto,5,goto IL_0ac2;
+T:Label,5,IL_0ac2:
+T:Instruction,5,num = 138;
+T:Instruction,5,lErl = 2;
+T:Goto,5,goto IL_0acc;
+T:Label,5,IL_0acc:
+T:Instruction,5,num = 139;
+T:Instruction,5,num12 = (short)unchecked(num12 + 1);
+T:Instruction,5,num20 = num12;
+T:Instruction,5,num11 = 302;
+T:Instruction,5,if
+T:Instruction,5,(num20 <= num11)
+T:Block,6,{
+T:Goto,6,goto IL_0667;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0ae8;
+T:Block,6,}
+T:Label,5,IL_0ae8:
+T:Instruction,5,num = 140;
+T:Instruction,5,Modul1.LiText += sDest2;
+T:Goto,5,goto IL_0b00;
+T:Label,5,IL_0b00:
+T:Instruction,5,num = 141;
+T:Instruction,5,Modul1.PerSatzLes();
+T:Goto,5,goto IL_0b0d;
+T:Label,5,IL_0b0d:
+T:Instruction,5,num = 142;
+T:Instruction,5,if
+T:Instruction,5,(null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value)
+T:Block,6,{
+T:Goto,6,goto IL_0b40;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0b8b;
+T:Block,6,}
+T:Label,5,IL_0b40:
+T:Instruction,5,num = 143;
+T:Instruction,5,if
+T:Instruction,5,(Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value,
+T:String,5,""
+T:Label,5,, TextCompare:
+T:Instruction,5,false))
+T:Block,6,{
+T:Goto,6,goto IL_0b71;
+T:Block,6,}
+T:Instruction,5,else
+T:Block,6,{
+T:Goto,6,goto IL_0b8b;
+T:Block,6,}
+T:Label,5,IL_0b71:
+T:Instruction,5,num = 144;
+T:Instruction,5,StringType.MidStmtStr(ref Modul1.LiText, 77, 1,
+T:String,5,"J"
+T:Instruction,5,);
+T:Goto,5,goto IL_0b8b;
+T:Label,5,IL_0b8b:
+T:Instruction,5,num = 147;
+T:Instruction,5,DataModul.TTable.Index =
+T:String,5,"Tab"
+T:Instruction,5,;
+T:Goto,5,goto IL_0ba2;
+T:Label,5,end_IL_0001:
+T:Instruction,5,break;
+T:Block,5,}
+T:Block,4,}
+T:Block,3,}
+T:Instruction,2,catch
+T:Instruction,2,(Exception obj)
+T:Instruction,2,when (num3 != 0 && num2 == 0)
+T:Block,3,{
+T:Instruction,3,ProjectData.SetProjectError(obj, lErl);
+T:Instruction,3,try0001_dispatch = 21059;
+T:Instruction,3,continue;
+T:Block,3,}
+T:Instruction,2,throw
+T:Instruction,2,ProjectData.CreateProjectError(-2146828237);
+T:Label,2,end_IL_0001_2:
+T:Instruction,2,break;
+T:Block,2,}
+T:Instruction,1,if
+T:Instruction,1,(num2 != 0)
+T:Block,2,{
+T:Instruction,2,ProjectData.ClearProjectError();
+T:Block,2,}
+T:Block,1,}

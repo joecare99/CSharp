@@ -1,0 +1,35 @@
+﻿<Project>
+	<Import Project="..\gen_plusWin.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net4.8.1-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+		<Nullable>enable</Nullable>
+
+		<IsPackable>false</IsPackable>
+
+		<RunSettingsFilePath>C:\Projekte\CSharp\bin\VBUnObfusicatorTests\Debug\net4.8.1-windows\fine-code-coverage\coverage-tool-output\VBUnObfusicatorTests %28net481%29-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <Compile Remove="bin\**" />
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="bin\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="bin\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\VBUnObfusicator\VBUnObfusicator.csproj" />
+	</ItemGroup>
+
+</Project>
