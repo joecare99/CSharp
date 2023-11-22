@@ -39,9 +39,9 @@ namespace TraceCsv2realCsv.Model
         #endregion
         #region Properties
         // Header
-        private List<(string name, Type type)> _header = new();
+        private List<(string name, Type? type)> _header = new();
         // Data
-        private Dictionary<object, List<object>> _data = new();
+        private Dictionary<object, List<object?>> _data = new();
         private List<string> _separators = new() { ";", "\t", "," };
         const char cQuotation = '\"';
         public _DataRows Rows { get; }
@@ -90,7 +90,7 @@ namespace TraceCsv2realCsv.Model
             return true;
         }
 
-        public void AppendData(List<object> values)
+        public void AppendData(List<object?> values)
         // _data
         {
             // Hier können Sie die Werte in Ihre Klasse einfügen.
@@ -103,15 +103,15 @@ namespace TraceCsv2realCsv.Model
         // _data
         {
             // Hier können Sie die Werte in Ihre Klasse einfügen.
-            foreach (var o in values)
+            foreach (object?[] o in values)
                 AppendData(o.ToList());
         }
-        public List<object> CastList(List<string> values)
+        public List<object?> CastList(List<string>? values)
         // Benutzt _header
         {
-            List<object> _List = new();
-            for (int i = 0; i < Math.Min(values.Count, _header.Count); i++)
-                _List.Add(_header[i].Item2.Get(values[i]));
+            List<object?> _List = new();
+            for (int i = 0;values != null && i < Math.Min(values.Count, _header.Count); i++)
+                _List.Add(_header[i].type?.Get(values[i]));
             return _List;
         }
 
@@ -193,7 +193,7 @@ namespace TraceCsv2realCsv.Model
             foreach (string s in lsHNames)
                 _header.Add((s, typeof(object)));
         }
-        public void SetHeader(List<(string, Type)> lsHeader)
+        public void SetHeader(List<(string , Type?)> lsHeader)
         {
             _data.Clear();
             _header.Clear();
@@ -211,10 +211,10 @@ namespace TraceCsv2realCsv.Model
 
         }
 
-        public void AddColumnData(string header, Dictionary<int, double> data)
+        public void AddColumnData(string header, Dictionary<int, double>? data)
         {
             var icolidx = _header.ConvertAll(s => s.name).IndexOf(header);
-            if (icolidx > 0)
+            if (icolidx > 0 && data !=null)
                 foreach (var r in data)
                     if (_data.TryGetValue(r.Key, out var ls))
                         ls[icolidx - 1] = r.Value;
