@@ -18,7 +18,7 @@ public static class DBHelper
         {
             TableDef td = new(db.Connection, row["TABLE_NAME"].ToString());
             db.GetSchema("Columns", new[] { null, null, td.Name }).Rows.Cast<DataRow>().Select(
-                r => new FieldDef(td, r["COLUMN_NAME"].ToString(), r["DATA_TYPE"].ToString(), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(f => td.Fields.Add(f));
+                r => new FieldDef(td, r["COLUMN_NAME"].AsString(), r["DATA_TYPE"].AsString(), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(f => td.Fields.Add(f));
             yield return td;
         }
     }
@@ -30,8 +30,8 @@ public static class DBHelper
             var enumerator = TabDef.GetSchema("Columns").Rows;
             foreach (DataRow row in enumerator)
             {
-                if (row["TABLE_NAME"].ToString().ToLower() == field.ToString().ToLower())
-                    if (row["COLUMN_NAME"].ToString().ToLower() == sFieldName.ToLower())
+                if (row["TABLE_NAME"].AsString().ToLower() == field.AsString().ToLower())
+                    if (row["COLUMN_NAME"].AsString().ToLower() == sFieldName.ToLower())
                     {
                         return true;
                     }
@@ -56,7 +56,7 @@ public static class DBHelper
         return false;
     }
 
-    public static void TryExecute(this IDatabase db, string sql, object val = null)
+    public static void TryExecute(this IDatabase db, string sql, object? val = null)
     {
         try
         {
