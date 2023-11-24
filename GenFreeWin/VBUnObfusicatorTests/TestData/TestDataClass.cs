@@ -32,7 +32,7 @@ IL_0002:
         public static string test1Data { get; } = Resource.Test1Dat_cs;
         public static string test2Data { get; } = Resource.Test2Dat_cs;
         public const string testData3 = @"public void Test3(){
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
                             goto IL_105c;
                         IL_105c:
                             num = 209;
@@ -162,7 +162,7 @@ public void Test3()
 ///BlockStart Block 1,0
 {
 ///Instruction Instruction 1,1
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
 ///Goto Goto 1,2 Dest:OK
 goto IL_105c;
 ///Label Label 1,3 1
@@ -2166,7 +2166,7 @@ public void Test3()
 ///BlockStart Block 1,0
 {
 ///Instruction Instruction 1,1
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
 ///Goto Goto 1,2 Dest:OK
 goto IL_105c;
 ///Label Label 1,3 1
@@ -2318,7 +2318,7 @@ public void Test3()
 ///BlockStart Block 1,0
 {
 ///Instruction Instruction 1,1
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
 ///Instruction Instruction 1,2
 if (Modul1.UbgT == """")
 ///BlockStart Block 2,0
@@ -2419,7 +2419,7 @@ T:Block,1,}
         public static string cExp2Log { get; } = Resource.Test2ExpTokenize;
         public const string cExpLog3 = @"T:Instruction,0,public void Test3()
 T:Block,1,{
-T:Instruction,1,Modul1.UbgT = Strings.Trim(Text2[0].Text);
+T:Instruction,1,Modul1.UbgT = (Text2[0].Text).Trim();
 T:Goto,1,goto IL_105c;
 T:Label,1,IL_105c:
 T:Instruction,1,num = 209;
@@ -2568,7 +2568,7 @@ T:Block,1,}
         public static string cExpCode2 { get; } = Resource.Test2ExpCode;
         public const string cExpCode3 = @"    public void Test3()
     {
-        Modul1.UbgT = Strings.Trim(Text2[0].Text);
+        Modul1.UbgT = (Text2[0].Text).Trim();
         goto IL_105c;
     IL_105c:
         num = 209;
@@ -3182,7 +3182,7 @@ T:Block,1,}
         public static object TestDataList3() => new List<TokenData>(){
             ("public void Test3()", ICSCode.CodeBlockType.Instruction, 0),
             ("{", ICSCode.CodeBlockType.Block, 1),
-            ("Modul1.UbgT = Strings.Trim(Text2[0].Text);", ICSCode.CodeBlockType.Instruction, 1),
+            ("Modul1.UbgT = (Text2[0].Text).Trim();", ICSCode.CodeBlockType.Instruction, 1),
             ("goto IL_105c;", ICSCode.CodeBlockType.Goto, 1),
             ("IL_105c:", ICSCode.CodeBlockType.Label, 1),
             ("num = 209;", ICSCode.CodeBlockType.Instruction, 1),

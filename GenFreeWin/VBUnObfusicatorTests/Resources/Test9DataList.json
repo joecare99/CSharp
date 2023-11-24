@@ -12195,7 +12195,7 @@
     "type": 6
   },
   {
-    "Code": "StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left(Strings.Trim(Modul1.Kont[0]) +",
+    "Code": "StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left((Modul1.Kont[0]).Trim() +",
     "Level": 5,
     "type": 6
   },
@@ -12205,7 +12205,7 @@
     "type": 14
   },
   {
-    "Code": "+ Strings.Trim(Modul1.Kont[3]) +",
+    "Code": "+ (Modul1.Kont[3]).Trim() +",
     "Level": 5,
     "type": 6
   },
@@ -14160,7 +14160,7 @@
     "type": 6
   },
   {
-    "Code": "Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) +",
+    "Code": "Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() +",
     "Level": 5,
     "type": 6
   },
@@ -14170,7 +14170,7 @@
     "type": 14
   },
   {
-    "Code": "+ Strings.Trim(Modul1.Kont[3]) +",
+    "Code": "+ (Modul1.Kont[3]).Trim() +",
     "Level": 5,
     "type": 6
   },
@@ -14425,7 +14425,7 @@
     "type": 6
   },
   {
-    "Code": "(Strings.Trim(Modul1.Kont[11]) ==",
+    "Code": "((Modul1.Kont[11]).Trim() ==",
     "Level": 5,
     "type": 6
   },
@@ -14490,7 +14490,7 @@
     "type": 6
   },
   {
-    "Code": "(Strings.Trim(Modul1.Kont[12]) ==",
+    "Code": "((Modul1.Kont[12]).Trim() ==",
     "Level": 5,
     "type": 6
   },
@@ -14555,7 +14555,7 @@
     "type": 6
   },
   {
-    "Code": "(Strings.Trim(Modul1.Kont[13]) ==",
+    "Code": "((Modul1.Kont[13]).Trim() ==",
     "Level": 5,
     "type": 6
   },
@@ -14620,7 +14620,7 @@
     "type": 6
   },
   {
-    "Code": "(Strings.Trim(Modul1.Kont[14]) ==",
+    "Code": "((Modul1.Kont[14]).Trim() ==",
     "Level": 5,
     "type": 6
   },
@@ -15850,7 +15850,7 @@
     "type": 6
   },
   {
-    "Code": "(Strings.Trim(Modul1.LiText) !=",
+    "Code": "((Modul1.LiText).Trim() !=",
     "Level": 5,
     "type": 6
   },
@@ -23590,7 +23590,7 @@
     "type": 6
   },
   {
-    "Code": "Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) +",
+    "Code": "Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() +",
     "Level": 5,
     "type": 6
   },
@@ -23600,7 +23600,7 @@
     "type": 14
   },
   {
-    "Code": "+ Strings.Trim(Modul1.Kont[3]) +",
+    "Code": "+ (Modul1.Kont[3]).Trim() +",
     "Level": 5,
     "type": 6
   },

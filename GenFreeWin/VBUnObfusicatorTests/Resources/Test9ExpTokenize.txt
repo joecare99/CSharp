@@ -2437,9 +2437,9 @@ T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
 T:Goto,5,goto IL_38f5;
 T:Label,5,IL_38f5:
 T:Instruction,5,num = 674;
-T:Instruction,5,StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left(Strings.Trim(Modul1.Kont[0]) +
+T:Instruction,5,StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left((Modul1.Kont[0]).Trim() +
 T:String,5,","
-T:Instruction,5,+ Strings.Trim(Modul1.Kont[3]) +
+T:Instruction,5,+ (Modul1.Kont[3]).Trim() +
 T:String,5,"                                  "
 T:Instruction,5,, 20));
 T:Goto,5,goto IL_3935;
@@ -2830,9 +2830,9 @@ T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
 T:Goto,5,goto IL_27bb;
 T:Label,5,IL_27bb:
 T:Instruction,5,num = 476;
-T:Instruction,5,Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) +
+T:Instruction,5,Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() +
 T:String,5,","
-T:Instruction,5,+ Strings.Trim(Modul1.Kont[3]) +
+T:Instruction,5,+ (Modul1.Kont[3]).Trim() +
 T:String,5,"                                  "
 T:Instruction,5,, 20);
 T:Goto,5,goto IL_27f5;
@@ -2883,7 +2883,7 @@ T:Goto,5,goto IL_2889;
 T:Label,5,IL_2889:
 T:Instruction,5,num = 484;
 T:Instruction,5,if
-T:Instruction,5,(Strings.Trim(Modul1.Kont[11]) ==
+T:Instruction,5,((Modul1.Kont[11]).Trim() ==
 T:String,5,""
 T:Instruction,5,)
 T:Block,6,{
@@ -2896,7 +2896,7 @@ T:Block,6,}
 T:Label,5,IL_28b9:
 T:Instruction,5,num = 487;
 T:Instruction,5,if
-T:Instruction,5,(Strings.Trim(Modul1.Kont[12]) ==
+T:Instruction,5,((Modul1.Kont[12]).Trim() ==
 T:String,5,""
 T:Instruction,5,)
 T:Block,6,{
@@ -2909,7 +2909,7 @@ T:Block,6,}
 T:Label,5,IL_28e9:
 T:Instruction,5,num = 490;
 T:Instruction,5,if
-T:Instruction,5,(Strings.Trim(Modul1.Kont[13]) ==
+T:Instruction,5,((Modul1.Kont[13]).Trim() ==
 T:String,5,""
 T:Instruction,5,)
 T:Block,6,{
@@ -2922,7 +2922,7 @@ T:Block,6,}
 T:Label,5,IL_2919:
 T:Instruction,5,num = 493;
 T:Instruction,5,if
-T:Instruction,5,(Strings.Trim(Modul1.Kont[14]) ==
+T:Instruction,5,((Modul1.Kont[14]).Trim() ==
 T:String,5,""
 T:Instruction,5,)
 T:Block,6,{
@@ -3168,7 +3168,7 @@ T:Goto,5,goto IL_3320;
 T:Label,5,IL_3320:
 T:Instruction,5,num = 609;
 T:Instruction,5,if
-T:Instruction,5,(Strings.Trim(Modul1.LiText) !=
+T:Instruction,5,((Modul1.LiText).Trim() !=
 T:String,5,""
 T:Instruction,5,)
 T:Block,6,{
@@ -4716,9 +4716,9 @@ T:Instruction,5,Modul1.Personlesen(Modul1.PersInArb);
 T:Goto,5,goto IL_0519;
 T:Label,5,IL_0519:
 T:Instruction,5,num = 75;
-T:Instruction,5,Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) +
+T:Instruction,5,Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() +
 T:String,5,","
-T:Instruction,5,+ Strings.Trim(Modul1.Kont[3]) +
+T:Instruction,5,+ (Modul1.Kont[3]).Trim() +
 T:String,5,"                                  "
 T:Instruction,5,, 20);
 T:Goto,5,goto IL_0550;
