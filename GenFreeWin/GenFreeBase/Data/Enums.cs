@@ -257,6 +257,23 @@ public enum AhnenFields
     Spitz
 }
 
+public enum QuFields
+{
+    _1,
+    _2,
+    _3,
+    _4, 
+    _5,
+    _6,
+    _7,
+    _8,
+    _9,
+    _10,
+    _11,
+    _12,
+    _13
+}
+
 public enum AhnenIndex
 {
     Spitz,
@@ -315,8 +332,32 @@ public enum PropertyIndex
     Per
 }
 
+public enum SourceLinkFields
+{
+    _1,
+    _2,
+    _3,
+    _4,
+    Aus,
+    Orig,
+    Kom,
+    Art,
+    LfNr,
+}
 
-
+public enum RepoFields
+{
+    Nr,
+    Name,
+    Ort,
+    PLZ,
+    Strasse,
+    Fon,
+    Mail,
+    Http,
+    Bem,
+    Suchname
+}
 public enum ENameKennz : int
 {
     nkGivnName = 0,
