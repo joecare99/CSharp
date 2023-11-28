@@ -1,0 +1,19 @@
+﻿T:Instruction,0,public void Test8()
+T:Block,1,{
+T:Instruction,1,if
+T:Instruction,1,(true)
+T:Goto,1,goto IL_105c;
+T:Instruction,1,else
+T:Goto,1,goto IL_107c;
+T:Label,1,IL_105c:
+T:Instruction,1,num = 209;
+T:Instruction,1,i++;
+T:Goto,1,goto IL_108c;
+T:Label,1,IL_107c:
+T:Instruction,1,num = 210;
+T:Instruction,1,i--;
+T:Goto,1,goto IL_108c;
+T:Label,1,IL_108c:
+T:Instruction,1,num = 212;
+T:Instruction,1,return;
+T:Block,1,}

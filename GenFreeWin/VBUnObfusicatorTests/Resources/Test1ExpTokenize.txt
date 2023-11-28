@@ -291,7 +291,7 @@ T:Goto,4,goto IL_01aa;
 T:Label,4,IL_01aa:
 T:Instruction,4,num = 23;
 T:Instruction,4,if
-T:Instruction,4,(MyProject.Forms.Hinter.CommonDialog1Save.FileName ==,
+T:Instruction,4,(MyProject.Forms.Hinter.CommonDialog1Save.FileName ==
 T:String,4,""
 T:Instruction,4,)
 T:Block,5,{

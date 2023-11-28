@@ -150,13 +150,29 @@ namespace VBUnObfusicatorTests.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
-        ///private void Test10Dat()
+        ///private void Test11Dat()
         //////BlockStart Block 1,0
         ///{
         //////Instruction Instruction 1,1
-        ///writeln((xText ? 1 : 0).AsString());
-        //////BlockEnd Block 1,2
-        ///} ähnelt.
+        ///switch (sTest)
+        //////BlockStart Block 2,0
+        ///{
+        //////Label Label 2,1
+        ///case 0:
+        //////Instruction Label 2,2
+        ///case &quot;1&quot;:
+        //////Instruction Label 2,3
+        ///case (2, &quot;Test2&quot;):
+        //////Instruction Label 2,4
+        ///case (3, &quot;Test3&quot;):
+        //////Instruction Label 2,5
+        ///case &quot;4&quot; + cGed_Test4:
+        //////Instruction Label 2,6
+        ///case &quot;5&quot; + cGed_Test5:
+        //////Instruction Label 2,7
+        ///case &quot;6&quot; + cGed_Test6:
+        //////Instruction Label 2,8
+        ///case &quot;7&quot; + cGed_Te [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string Test11ExpParse {
             get {
@@ -165,11 +181,31 @@ namespace VBUnObfusicatorTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,private void Test10Dat()
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,private void Test11Dat()
         ///T:Block,1,{
-        ///T:Instruction,1,writeln((xText ? 1 : 0).AsString());
-        ///T:Block,1,}
-        /// ähnelt.
+        ///T:Instruction,1,switch
+        ///T:Instruction,1,(sTest)
+        ///T:Block,2,{
+        ///T:Label,2,case 0:
+        ///T:Instruction,2,case
+        ///T:String,2,&quot;1&quot;
+        ///T:Label,2,:
+        ///T:Instruction,2,case (2,
+        ///T:String,2,&quot;Test2&quot;
+        ///T:Label,2,):
+        ///T:Instruction,2,case (3,
+        ///T:String,2,&quot;Test3&quot;
+        ///T:Label,2,):
+        ///T:Instruction,2,case
+        ///T:String,2,&quot;4&quot;
+        ///T:Label,2,+ cGed_Test4:
+        ///T:Instruction,2,case
+        ///T:String,2,&quot;5&quot;
+        ///T:Label,2,+ cGed_Test5:
+        ///T:Instruction,2,case
+        ///T:String,2,&quot;6&quot;
+        ///T:Label,2,+ cGed_Test6:
+        ///T:Instruction,2, [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string Test11ExpTokenize {
             get {
@@ -488,7 +524,7 @@ namespace VBUnObfusicatorTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die public void Test7()
+        ///   Sucht eine lokalisierte Zeichenfolge, die public void Test8()
         ///{
         ///    if (true)
         ///        goto IL_105c;
@@ -520,6 +556,34 @@ namespace VBUnObfusicatorTests.Properties {
             get {
                 object obj = ResourceManager.GetObject("Test8DataList", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,public void Test8()
+        ///T:Block,1,{
+        ///T:Instruction,1,if
+        ///T:Instruction,1,(true)
+        ///T:Goto,1,goto IL_105c;
+        ///T:Instruction,1,else
+        ///T:Goto,1,goto IL_107c;
+        ///T:Label,1,IL_105c:
+        ///T:Instruction,1,num = 209;
+        ///T:Instruction,1,i++;
+        ///T:Goto,1,goto IL_108c;
+        ///T:Label,1,IL_107c:
+        ///T:Instruction,1,num = 210;
+        ///T:Instruction,1,i--;
+        ///T:Goto,1,goto IL_108c;
+        ///T:Label,1,IL_108c:
+        ///T:Instruction,1,num = 212;
+        ///T:Instruction,1,return;
+        ///T:Block,1,}
+        /// ähnelt.
+        /// </summary>
+        internal static string Test8ExpTokenize {
+            get {
+                return ResourceManager.GetString("Test8ExpTokenize", resourceCulture);
             }
         }
         

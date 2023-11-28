@@ -1,18 +1,21 @@
-﻿public void Test7()
+﻿public void Test8()
 {
     if (true)
-        goto IL_105c;
+        goto IL_109;
     else
-        goto IL_107c;
-    IL_105c:
+        goto IL_1003;
+    IL_109:
     num = 209;
     i++;
-    goto IL_108c;
-IL_107c:
+    goto IL_10002;
+IL_1003:
     num = 210;
     i--;
-    goto IL_108c;
-IL_108c:
+    goto IL_10002;
+IL_10002:
     num = 212;
+    goto IL_100001;
+IL_100001:
+    num = 213;
     return;
 }

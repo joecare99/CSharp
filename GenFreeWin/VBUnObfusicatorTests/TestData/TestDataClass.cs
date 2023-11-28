@@ -325,6 +325,7 @@ num = 212;
 return;
 ///BlockEnd Block 1,16
 }";
+        public static readonly string test8DataExp = "";//Resource.Test8ExpParse;
         public static readonly string test9DataExp = Resource.Test9ExpParse;
         public static readonly string test10DataExp = Resource.Test10ExpParse;
         public static readonly string test11DataExp = Resource.Test11ExpParse;
@@ -2541,7 +2542,7 @@ T:Instruction,1,num = 212;
 T:Instruction,1,return;
 T:Block,1,}
 ";
-        public static readonly string cExp8Log = "";// Resource.Test8ExpTokenize;
+        public static readonly string cExp8Log = Resource.Test8ExpTokenize;
         public static readonly string cExp9Log = Resource.Test9ExpTokenize;
         public static readonly string cExp10Log = Resource.Test10ExpTokenize;
         public static readonly string cExp11Log = Resource.Test11ExpTokenize;

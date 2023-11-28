@@ -171,6 +171,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "3", TestDataClass.TestDataList3(), new[] { TestDataClass.testDataExpReorder3 } },
             new object[] { "4", TestDataClass.TestDataList4(), new[] { TestDataClass.testDataExpReorder4 } },
             new object[] { "7", TestDataClass.TestDataList7(), new[] { TestDataClass.testDataExp7 } },
+            new object[] { "8", TestDataClass.TestDataList8(), new[] { TestDataClass.test8DataExp } },
             new object[] { "9", TestDataClass.TestDataList9(), new[] { TestDataClass.testDataExpReorder9 } },
 };
         public static IEnumerable<object[]> RemoveLabelsData => new object[][]
