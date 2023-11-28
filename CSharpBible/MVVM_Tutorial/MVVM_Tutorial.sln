@@ -142,6 +142,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_35_CommunityToolkit", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_36_ComToolKtSavesWork", "MVVM_36_ComToolKtSavesWork\MVVM_36_ComToolKtSavesWork.csproj", "{45A6B190-810E-48A3-83F1-AA47F447EA76}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_36_ComToolKtSavesWorkTests", "MVVM_36_ComToolKtSavesWorkTests\MVVM_36_ComToolKtSavesWorkTests.csproj", "{2500AD82-642D-4E10-85AA-E199904363F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -388,6 +390,10 @@ Global
 		{45A6B190-810E-48A3-83F1-AA47F447EA76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45A6B190-810E-48A3-83F1-AA47F447EA76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45A6B190-810E-48A3-83F1-AA47F447EA76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2500AD82-642D-4E10-85AA-E199904363F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2500AD82-642D-4E10-85AA-E199904363F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2500AD82-642D-4E10-85AA-E199904363F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2500AD82-642D-4E10-85AA-E199904363F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -453,6 +459,7 @@ Global
 		{7C6B4A0A-9CD0-470C-81D7-F1FFF0CA955E} = {204E8C5E-A768-4B83-9B09-7574DC769782}
 		{2385D1E8-280D-40E4-B2B6-D7D717DF599B} = {204E8C5E-A768-4B83-9B09-7574DC769782}
 		{45A6B190-810E-48A3-83F1-AA47F447EA76} = {204E8C5E-A768-4B83-9B09-7574DC769782}
+		{2500AD82-642D-4E10-85AA-E199904363F2} = {204E8C5E-A768-4B83-9B09-7574DC769782}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CC7E938-9864-4DE7-9C91-23CCBC3FC27D}

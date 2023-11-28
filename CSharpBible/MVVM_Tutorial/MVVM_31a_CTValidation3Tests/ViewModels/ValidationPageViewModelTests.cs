@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using MVVM.ViewModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace MVVM_31a_CTValidation3.ViewModels.Tests
 {
@@ -20,6 +21,7 @@ namespace MVVM_31a_CTValidation3.ViewModels.Tests
             testModel.PropertyChanged += OnVMPropertyChanged;
             testModel.PropertyChanging += OnVMPropertyChanging;
             testModel.ErrorsChanged += OnVMErrorsChanged;
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;    
         }
 
         [TestMethod()]
@@ -50,6 +52,18 @@ PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=Us
         [DataRow("DS1234", 0, true, new[] { @"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=DS1234
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=
+" })]
+        [DataRow("BlaBla", 2, false, new[] { @"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,HasErrors)=True
+ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=UserName is a known name 
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=BlaBla
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=UserName is a known name 
+" })]
+        [DataRow("Dududu", 2, false, new[] { @"PropChgn(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=.
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,HasErrors)=True
+ErrorsChanged(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=UserName Somethin went wrong
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=Dududu
+PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=UserName Somethin went wrong
 " })]
         public void TestUsernameTest(string sVal, int _, bool xExp, string[] asExp)
         {

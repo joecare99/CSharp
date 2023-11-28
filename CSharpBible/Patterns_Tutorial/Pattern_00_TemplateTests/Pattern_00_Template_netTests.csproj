@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Pattern_Tutorial_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
@@ -13,7 +13,7 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">

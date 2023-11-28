@@ -31,13 +31,13 @@ namespace MVVM_06_Converters_4.ViewModel
         /// <summary>
         /// The value
         /// </summary>
-        private IAGVModel _agv_Model;  
+        private IAGVModel _agv_Model;
         /// <summary>
         /// Gets or sets the value.
         /// </summary>
         /// <value>The value.</value>
         public double VehicleLength { get => _agv_Model.VehicleDim.x; set => _agv_Model.VehicleDim = new(value, _agv_Model.VehicleDim.y); }
-        public double VehicleWidth { get => _agv_Model.VehicleDim.y; set => _agv_Model.VehicleDim = new(_agv_Model.VehicleDim.x,value); }
+        public double VehicleWidth { get => _agv_Model.VehicleDim.y; set => _agv_Model.VehicleDim = new(_agv_Model.VehicleDim.x, value); }
         public double SwivelKoorX { get => _agv_Model.SwivelKoor.x; set => _agv_Model.SwivelKoor = new(value, _agv_Model.SwivelKoor.y); }
         public double SwivelKoorY { get => _agv_Model.SwivelKoor.y; set => _agv_Model.SwivelKoor = new(_agv_Model.SwivelKoor.x, value); }
         public double AxisOffset { get => _agv_Model.AxisOffset; set => _agv_Model.AxisOffset = value; }
@@ -49,8 +49,8 @@ namespace MVVM_06_Converters_4.ViewModel
         public double Wheel3Velocity { get => _agv_Model.Wheel3Velocity; set => _agv_Model.Wheel3Velocity = value; }
         public double Wheel4Velocity { get => _agv_Model.Wheel4Velocity; set => _agv_Model.Wheel4Velocity = value; }
 
-        public double Swivel1Velocity { get => _agv_Model.Swivel1Velocity;  }
-        public double Swivel2Velocity { get => _agv_Model.Swivel2Velocity;  }
+        public double Swivel1Velocity { get => _agv_Model.Swivel1Velocity; }
+        public double Swivel2Velocity { get => _agv_Model.Swivel2Velocity; }
         public double Swivel1Rot { get => _agv_Model.Swivel1Rot; }
         public double Swivel2Rot { get => _agv_Model.Swivel2Rot; }
         public double VehicleVelocityX { get => _agv_Model.AGVVelocity.x; }
@@ -58,16 +58,18 @@ namespace MVVM_06_Converters_4.ViewModel
         public double VehicleRotation { get => _agv_Model.VehicleRotation; }
         public Math2d.Vector AGVVelocity { get => _agv_Model.AGVVelocity; }
 
-        public RelayCommand SaveCommand { get; set; }
+        public RelayCommand SaveCommand { get; }
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleViewModel"/> class.
         /// </summary>
-        public VehicleViewModel()
+        public VehicleViewModel() : this(AGV_Model.Instance){}
+
+        public VehicleViewModel(IAGVModel model)
         {
-            _agv_Model = AGV_Model.Instance;
+            _agv_Model = model;
             _agv_Model.PropertyChanged += OnModelPropChanged;
             foreach (var d in _agv_Model.Dependencies)
-                AddPropertyDependency(d.Dest, d.Src,true);
+                AddPropertyDependency(d.Dest, d.Src, true);
             AddPropertyDependency(nameof(VehicleVelocityX), nameof(AGVVelocity));
             AddPropertyDependency(nameof(VehicleVelocityY), nameof(AGVVelocity));
             SaveCommand = new(_agv_Model.Save);

@@ -12,17 +12,17 @@ namespace MVVM_31a_CTValidation3.ViewModels
     [NotifyDataErrorInfo]
     public partial class ValidationPageViewModel : BaseViewModelCT
     {
-        private static ValidationPageViewModel This { get; set; }
+        private static ValidationPageViewModel? This { get; set; }
         
         [ObservableProperty]
         [MinLength(6, ErrorMessageResourceName = "Err_MustHave_Chars", ErrorMessageResourceType = typeof(Resources))]
         [Required(ErrorMessageResourceName = "Err_MayNotBeEmpty", ErrorMessageResourceType = typeof(Resources))]
-        [NotASecData("BlaBla", ErrorMessageResourceName = "Err_MayNotBeKnown", ErrorMessageResourceType = typeof(Resources))]
+        [NotTheSpecData("BlaBla", ErrorMessageResourceName = "Err_MayNotBeKnown", ErrorMessageResourceType = typeof(Resources))]
         [CustomValidation(typeof(ValidationPageViewModel),nameof(TestUsername), ErrorMessageResourceName = "Err_Something", ErrorMessageResourceType = typeof(Resources))]
         [NotifyPropertyChangedFor(nameof(TTUserName))]
         private string _userName = ".";
 
-        public static ValidationResult? TestUsername(object value) => This._testUsername(value);
+        public static ValidationResult? TestUsername(object value) => This?._testUsername(value);
 
         private ValidationResult? _testUsername(object value)
         {
@@ -37,7 +37,7 @@ namespace MVVM_31a_CTValidation3.ViewModels
 
 
         public ValidationPageViewModel()
-        {
+        {            
         }
     }
 }

@@ -109,7 +109,7 @@ namespace BaseLib.Helper
             }
             return _result;
 
-            static int TabLen(int l, int o) => (l + o) + (8 - (l + o) % 8) - o;
+            static int TabLen(int l, int o) => l + o + (8 - (l + o) % 8) - o;
         }
 
         /// <summary>Converts to "<em>Normal</em>" case.</summary>
@@ -145,8 +145,7 @@ namespace BaseLib.Helper
                             quotedStr = s.TrimStart(' ').Substring(1);
                         }
                     }
-                else
-                    if (s.TrimEnd(' ').EndsWith(QuoteMark))
+                else if (s.TrimEnd(' ').EndsWith(QuoteMark))
                 {
                     result.Add(quotedStr + Separator[0] + s.TrimEnd(' ').Substring(0, s.TrimEnd(' ').Length - 1));
                     quoteMode = false;
