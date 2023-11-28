@@ -527,19 +527,22 @@ namespace VBUnObfusicatorTests.Properties {
         ///   Sucht eine lokalisierte Zeichenfolge, die public void Test8()
         ///{
         ///    if (true)
-        ///        goto IL_105c;
+        ///        goto IL_109;
         ///    else
-        ///        goto IL_107c;
-        ///    IL_105c:
+        ///        goto IL_1003;
+        ///    IL_109:
         ///    num = 209;
         ///    i++;
-        ///    goto IL_108c;
-        ///IL_107c:
+        ///    goto IL_10002;
+        ///IL_1003:
         ///    num = 210;
         ///    i--;
-        ///    goto IL_108c;
-        ///IL_108c:
+        ///    goto IL_10002;
+        ///IL_10002:
         ///    num = 212;
+        ///    goto IL_100001;
+        ///IL_100001:
+        ///    num = 213;
         ///    return;
         ///} ähnelt.
         /// </summary>
@@ -560,26 +563,72 @@ namespace VBUnObfusicatorTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        internal static string Test8ExpCode {
+            get {
+                return ResourceManager.GetString("Test8ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///public void Test8()
+        //////BlockStart Block 1,0
+        ///{
+        //////Instruction Instruction 1,1
+        ///if (true)
+        //////Goto Goto 1,2 Dest:OK
+        ///goto IL_109;
+        //////Instruction Instruction 1,3
+        ///else
+        //////Goto Goto 1,4 Dest:OK
+        ///goto IL_1003;
+        //////Label Label 1,5 1
+        ///IL_109:
+        //////Instruction Instruction 1,6
+        ///num = 209;
+        //////Instruction Instruction 1,7
+        ///i++;
+        //////Goto Goto 1,8 Dest:OK
+        ///goto IL_10002;
+        //////Label Label 1,9 1
+        ///IL_1003:
+        //////Instruction Instruction 1,10
+        ///num = 210;
+        //////Instruction Instruction 1,11
+        ///i--;
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string Test8ExpParse {
+            get {
+                return ResourceManager.GetString("Test8ExpParse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,public void Test8()
         ///T:Block,1,{
         ///T:Instruction,1,if
         ///T:Instruction,1,(true)
-        ///T:Goto,1,goto IL_105c;
+        ///T:Goto,1,goto IL_109;
         ///T:Instruction,1,else
-        ///T:Goto,1,goto IL_107c;
-        ///T:Label,1,IL_105c:
+        ///T:Goto,1,goto IL_1003;
+        ///T:Label,1,IL_109:
         ///T:Instruction,1,num = 209;
         ///T:Instruction,1,i++;
-        ///T:Goto,1,goto IL_108c;
-        ///T:Label,1,IL_107c:
+        ///T:Goto,1,goto IL_10002;
+        ///T:Label,1,IL_1003:
         ///T:Instruction,1,num = 210;
         ///T:Instruction,1,i--;
-        ///T:Goto,1,goto IL_108c;
-        ///T:Label,1,IL_108c:
+        ///T:Goto,1,goto IL_10002;
+        ///T:Label,1,IL_10002:
         ///T:Instruction,1,num = 212;
+        ///T:Goto,1,goto IL_100001;
+        ///T:Label,1,IL_100001:
+        ///T:Instruction,1,num = 213;
         ///T:Instruction,1,return;
-        ///T:Block,1,}
-        /// ähnelt.
+        ///T:Block,1, [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string Test8ExpTokenize {
             get {

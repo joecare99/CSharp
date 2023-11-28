@@ -325,7 +325,7 @@ num = 212;
 return;
 ///BlockEnd Block 1,16
 }";
-        public static readonly string test8DataExp = "";//Resource.Test8ExpParse;
+        public static readonly string test8DataExp = Resource.Test8ExpParse;
         public static readonly string test9DataExp = Resource.Test9ExpParse;
         public static readonly string test10DataExp = Resource.Test10ExpParse;
         public static readonly string test11DataExp = Resource.Test11ExpParse;
@@ -841,7 +841,7 @@ IL_01aa:
 ///Instruction Instruction 4,104
 num = 23;
 ///Instruction Instruction 4,105
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  """")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == """")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK
@@ -1450,7 +1450,7 @@ IL_01aa:
 ///Instruction Instruction 4,101
 num = 23;
 ///Instruction Instruction 4,102
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  """")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == """")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK
@@ -2056,7 +2056,7 @@ IL_01aa:
 ///Instruction Instruction 4,100
 num = 23;
 ///Instruction Instruction 4,101
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  """")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == """")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK
@@ -2655,6 +2655,7 @@ T:Block,1,}
         num = 212;
         return;
     }";
+        public static string cExpCode8 { get; } = Resource.Test8ExpCode;
         public static string cExpCode9 { get; } = Resource.Test9ExpCode;
         #endregion
         private static object? ReadObject(byte[] JsonData) => new DataContractJsonSerializer(typeof(List<TokenData>)).ReadObject(new MemoryStream(JsonData));

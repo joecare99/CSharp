@@ -190,6 +190,12 @@
   <data name="Test8Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test8Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Test8ExpCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test8ExpCode.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test8ExpParse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test8ExpParse.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Test8ExpTokenize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test8ExpTokenize.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

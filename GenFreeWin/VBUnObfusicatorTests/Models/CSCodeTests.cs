@@ -195,6 +195,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "5", TestDataClass.TestDataList5(), new[] { TestDataClass.cExpCode5 } },
             new object[] { "6", TestDataClass.TestDataList6(), new[] { TestDataClass.cExpCode6 } },
             new object[] { "7", TestDataClass.TestDataList7(), new[] { TestDataClass.cExpCode7 } },
+            new object[] { "8", TestDataClass.TestDataList8(), new[] { TestDataClass.cExpCode8 } },
             new object[] { "9", TestDataClass.TestDataList9(), new[] { TestDataClass.cExpCode9 } },
  };
 
@@ -250,6 +251,7 @@ namespace VBUnObfusicator.Models.Tests
                 {
             new object[] {"1",new[] { TestDataClass.test1Data, TestDataClass.testDataExp1 } },
             new object[] {"2",new[] { TestDataClass.test2Data, TestDataClass.testDataExp2 } },
+            new object[] {"8",new[] { TestDataClass.test8Data, TestDataClass.test8DataExp } },
             new object[] {"9",new[] { TestDataClass.test9Data, TestDataClass.test9DataExp } },
             new object[] {"10",new[] { TestDataClass.test10Data, TestDataClass.test10DataExp } },
             new object[] {"11",new[] { TestDataClass.test11Data, TestDataClass.test11DataExp } }
@@ -289,6 +291,7 @@ namespace VBUnObfusicator.Models.Tests
                 {
             new object[] { "1", new[] { TestDataClass.test1Data, TestDataClass.cExpCode1 } },
             new object[] { "2", new[] { TestDataClass.test2Data, TestDataClass.cExpCode2 } },
+            new object[] { "8", new[] { TestDataClass.test8Data, TestDataClass.cExpCode8 } },
             new object[] { "9", new[] { TestDataClass.test9Data, TestDataClass.cExpCode9 } }
                 };
 
