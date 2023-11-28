@@ -25,6 +25,5 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
-	  <PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 </Project>

@@ -9,6 +9,7 @@
       xmlns:model="clr-namespace:MVVM_36_ComToolKtSavesWork.Models"
        xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
        xmlns:uc="clr-namespace:MVVM_36_ComToolKtSavesWork.Views.UserControls"  
+      xmlns:p="clr-namespace:MVVM_36_ComToolKtSavesWork.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CommunityToolkit2View"
@@ -21,7 +22,7 @@
         <mvvm:CommunityToolkit2ViewModel/>
     </d:Page.DataContext>
     <StackPanel Background="Silver">
-        <Label Content="Comunity Toolkit saves Work-View:"/>
+        <Label Content="{x:Static p:Resources.pg1_Title}"/>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>

@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
@@ -9,7 +9,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
@@ -21,6 +21,7 @@
 	<ItemGroup>
 		<Compile Include="..\BaseLibTests\Helper\TestHelper.cs" Link="Helper\TestHelper.cs" />
 		<Compile Include="..\BaseLibTests\Helper\PropertyHelperTests.cs" Link="Helper\PropertyHelperTests.cs" />
+		<Compile Include="..\BaseLibTests\Helper\StringUtilsTests.cs" Link="Helper\StringUtilsTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\TypeUtilsTests.cs" Link="Helper\TypeUtilsTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\ClassHelperTests.cs" Link="Helper\ClassHelperTests.cs" />
 	</ItemGroup>

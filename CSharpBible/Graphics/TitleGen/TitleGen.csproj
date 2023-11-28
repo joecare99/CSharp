@@ -2,7 +2,7 @@
   <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <Deterministic>false</Deterministic>
   </PropertyGroup>

@@ -7,6 +7,7 @@
       xmlns:mvvm="clr-namespace:MVVM_27_DataGrid.ViewModels"
       xmlns:model="clr-namespace:MVVM_27_DataGrid.Models"
       xmlns:vc="clr-namespace:MVVM_27_DataGrid.ValueConverter"
+      xmlns:p = "clr-namespace:MVVM_27_DataGrid.Properties"
       xmlns:MVVM_27_DataGrid="clr-namespace:MVVM_27_DataGrid" 
         x:Class="MVVM_27_DataGrid.Views.DataGridView"
       mc:Ignorable="d" 
@@ -21,8 +22,8 @@
     <Grid Background="Silver">
         <DataGrid  CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Persons}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="FirstName" Binding="{Binding FirstName}"/>
-                <DataGridTextColumn Header="LastName" Binding="{Binding LastName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Firstname}" Binding="{Binding FirstName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Lastname}" Binding="{Binding LastName}"/>
                 <DataGridHyperlinkColumn Header="eMail" Binding="{Binding Email, Converter={StaticResource EmailValue}}" ContentBinding="{Binding Email}">
                     <!-- Set Colors-->
                     <DataGridHyperlinkColumn.CellStyle>
@@ -36,8 +37,8 @@
                         </Style>
                     </DataGridHyperlinkColumn.CellStyle>
                 </DataGridHyperlinkColumn>
-                <DataGridTextColumn Header="Department" Binding="{Binding Department.Name}" IsReadOnly="True"/>
-                <DataGridTemplateColumn Header="Department">
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Department}" Binding="{Binding Department.Name}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="{x:Static p:Resources.text_Department}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Department.Name}"/>
@@ -55,7 +56,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Birthday">
+                <DataGridTemplateColumn Header="{x:Static p:Resources.text_Birthday}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Birthday, StringFormat={}{0:dd.MM.yyyy}}"/>

@@ -120,10 +120,10 @@ namespace MathLibrary.TwoDim {
 
 		public static Vector Vec(double x, double y) =>
 			new Vector(x, y);
-		public static Vector Vec(double[] vc) =>
+		public static Vector Vec(this double[] vc) =>
 			vc?.Length >1?new Vector(vc[0], vc[1]):Null;
 #if NET472_OR_GREATER
-        public static Vector Vec((double,double) vc) =>
+		public static Vector Vec(this (double,double) vc) =>
             new Vector(vc.Item1, vc.Item2);
 #endif
 		/// <summary>

@@ -34,6 +34,9 @@ namespace MVVM_00a_CTTemplate.Tests
         {
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
+            IoC.GetReqSrv = (t) =>t switch {
+                _ when t == typeof(ITemplateModel) => new TemplateModel(),
+                _ => throw new ArgumentException() };          
         }
 
         [TestCleanup]
@@ -53,7 +56,7 @@ namespace MVVM_00a_CTTemplate.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(IUserRepository)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }

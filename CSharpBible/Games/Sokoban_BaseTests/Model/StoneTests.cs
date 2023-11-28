@@ -13,7 +13,9 @@ namespace Sokoban_Base.Model.Tests
     [TestClass()]
     public class StoneTests
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         Stone testItem;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         Playfield pf = new Playfield();
 
         [TestInitialize]

@@ -2,7 +2,7 @@
 	<Import Project="..\DB.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net4.8.1-windows;net4.6.2-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net4.8.1-windows;net4.6.2-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>

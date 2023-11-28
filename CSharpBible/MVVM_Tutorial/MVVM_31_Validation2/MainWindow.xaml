@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_31_Validation2"
         xmlns:mvvm="clr-namespace:MVVM_31_Validation2.ViewModels"
+        xmlns:p="clr-namespace:MVVM_31_Validation2.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{x:Static p:Resources.text_WinTitle}" Height="450" Width="800">
     <Window.DataContext>
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>

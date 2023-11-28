@@ -59,5 +59,41 @@ namespace MVVM_31_Validation2.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Username must not be empty ähnelt.
+        /// </summary>
+        public static string Err_MayNotBeEmpty {
+            get {
+                return ResourceManager.GetString("Err_MayNotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Username must have min. 6 Chars ähnelt.
+        /// </summary>
+        public static string Err_MustHave6Chars {
+            get {
+                return ResourceManager.GetString("Err_MustHave6Chars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die User-Name (min. 6 Char) ähnelt.
+        /// </summary>
+        public static string text_HdrUsername {
+            get {
+                return ResourceManager.GetString("text_HdrUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Validation by Function ähnelt.
+        /// </summary>
+        public static string text_WinTitle {
+            get {
+                return ResourceManager.GetString("text_WinTitle", resourceCulture);
+            }
+        }
     }
 }

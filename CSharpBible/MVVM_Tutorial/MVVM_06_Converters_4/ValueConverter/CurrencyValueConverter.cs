@@ -35,9 +35,9 @@ namespace MVVM_06_Converters_4.ValueConverter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is decimal dval && parameter is string spar)
-                return dval.ToString(spar);
+                return dval.ToString(spar,culture);
             else
-                return value.ToString() ?? "";
+                return value?.ToString() ?? "";
 
         }
 
@@ -51,8 +51,9 @@ namespace MVVM_06_Converters_4.ValueConverter
         /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string sval && parameter is string spar)
-                return decimal.Parse(sval.Replace(spar.Substring(spar.Length - 1), "").Trim());
+            if (value is string sval && parameter is string spar
+                && decimal.TryParse(sval.Replace(spar.Substring(spar.Length - 1), "").Trim(),NumberStyles.Float, culture, out var dc))
+                return dc;
             else
                 return decimal.Zero;
         }
