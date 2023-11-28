@@ -24,16 +24,17 @@ namespace GenFree.Interfaces
         string ReadStringInit(string sSection);
         string ReadStringMLProg(string sSection, int iMaxLine);
         string ReadStringProg(string sSection);
-        void ReadStringsInit(string v, string[] aus);
+        void ReadStringsInit(string sSection, string[] aus);
         int ReadStringsInit(string sSection, IList<string> asValue);
         void ReadSuchDat<T>(string DateiName, T[] aeValues) where T : Enum;
         void WriteEnumInit(string sSection, object eValue);
         void WriteIntInit(string sSection, int iValue);
         void WriteIntMand(string sFilename, int iValue);
         void WriteIntsProg(string sSection, int[] aiValues);
-        void WriteStringInit(string verz, string sSection);
-        void WriteStringProg(string text, string sFilename);
+        void WriteStringInit(string sSection, string verz);
+        void WriteStringMand(string sSection, string sValue);
+        void WriteStringProg(string sFilename, string text);
         void WriteStringsInit(string sSection, string[] asData);
-        void WriteStringTemp(string text, string sSection);
+        void WriteStringTemp(string sSection, string text);
     }
 }

@@ -334,10 +334,19 @@ public enum PropertyIndex
 
 public enum SourceLinkFields
 {
-    _1,
-    _2,
-    _3,
-    _4,
+    /// <summary>
+    /// Type of Link
+    /// </summary>
+    _1, // Kind    
+    /// <summary>
+    /// The Source Nr
+    /// </summary>
+    _2, // Nr
+    _3, // NrNeu    
+    /// <summary>
+    /// The Page
+    /// </summary>
+    _4, // Page
     Aus,
     Orig,
     Kom,
@@ -452,4 +461,3 @@ public enum ETextKennz : int
     tk6_ = '6',
     tk7_ = '7',
 }
-

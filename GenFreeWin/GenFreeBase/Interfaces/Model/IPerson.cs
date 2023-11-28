@@ -15,7 +15,7 @@ namespace GenFree.Interfaces.Model
         bool Exists(int iPersNr);
         void ForEachDo(Action<IRecordset> action);
         string GetSex(int persInArb);
-        int iMaxPersNr();
+        int GetMaxPersNr();
         IRecordset SeekPerson(int persInArb, out bool xBreak);
         IRecordset SeekPerson(int persInArb);
         int ValidateID<T>(int persInArb, short schalt, int MaxPersID, T tOKRes, Func<int, T> uQuery) where T : Enum;
