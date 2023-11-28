@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Helper.Tests
+namespace GenFree.Helper.Tests
 {
     [TestClass()]
     public class PlaceHelpersTests
