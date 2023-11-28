@@ -291,10 +291,9 @@ T:Goto,4,goto IL_01aa;
 T:Label,4,IL_01aa:
 T:Instruction,4,num = 23;
 T:Instruction,4,if
-T:Instruction,4,(Operators.CompareString(MyProject.Forms.Hinter.CommonDialog1Save.FileName,
+T:Instruction,4,(MyProject.Forms.Hinter.CommonDialog1Save.FileName ==,
 T:String,4,""
-T:Label,4,, TextCompare:
-T:Instruction,4,false) == 0)
+T:Instruction,4,)
 T:Block,5,{
 T:Goto,5,goto end_IL_0000_2;
 T:Block,5,}

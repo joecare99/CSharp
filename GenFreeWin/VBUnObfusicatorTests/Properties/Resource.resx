@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Test10DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test10DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Test10Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test10Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -126,6 +129,18 @@
   </data>
   <data name="Test10ExpTokenize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test10ExpTokenize.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test11DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test11DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Test11Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test11Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test11ExpParse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test11ExpParse.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test11ExpTokenize" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test11ExpTokenize.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Test1DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test1DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -168,6 +183,12 @@
   </data>
   <data name="Test2ExpTokenize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test2ExpTokenize.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test8DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test8DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Test8Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test8Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Test9DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test9DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

@@ -1029,10 +1029,9 @@ T:Goto,6,goto case 552;
 T:Label,6,case 552:
 T:Instruction,6,num = 552;
 T:Instruction,6,if
-T:Instruction,6,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value,
+T:Instruction,6,((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() ==
 T:String,6,"F"
-T:Label,6,, TextCompare:
-T:Instruction,6,false))
+T:Instruction,6,))
 T:Block,7,{
 T:Goto,7,goto case 553;
 T:Block,7,}
@@ -1129,8 +1128,7 @@ T:Label,6,case 574:
 T:Label,6,case 575:
 T:Instruction,6,num = 575;
 T:Instruction,6,if
-T:Label,6,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,6,false))
+T:Instruction,6,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,7,{
 T:Goto,7,goto case 576;
 T:Block,7,}
@@ -1936,8 +1934,7 @@ T:Goto,5,goto IL_4044;
 T:Label,5,IL_4044:
 T:Instruction,5,num = 736;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
 T:Block,6,{
 T:Goto,6,goto IL_4076;
 T:Block,6,}
@@ -1954,8 +1951,7 @@ T:Goto,5,goto IL_4091;
 T:Label,5,IL_4091:
 T:Instruction,5,num = 739;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
 T:Block,6,{
 T:Goto,6,goto IL_40c3;
 T:Block,6,}
@@ -1972,8 +1968,7 @@ T:Goto,5,goto IL_40de;
 T:Label,5,IL_40de:
 T:Instruction,5,num = 742;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
 T:Block,6,{
 T:Goto,6,goto IL_4110;
 T:Block,6,}
@@ -1990,8 +1985,7 @@ T:Goto,5,goto IL_412b;
 T:Label,5,IL_412b:
 T:Instruction,5,num = 745;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
 T:Block,6,{
 T:Goto,6,goto IL_415d;
 T:Block,6,}
@@ -2008,8 +2002,7 @@ T:Goto,5,goto IL_4178;
 T:Label,5,IL_4178:
 T:Instruction,5,num = 748;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
 T:Block,6,{
 T:Goto,6,goto IL_41aa;
 T:Block,6,}
@@ -2218,8 +2211,7 @@ T:Goto,5,goto IL_34eb;
 T:Label,5,IL_34eb:
 T:Instruction,5,num = 631;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 T:Block,6,{
 T:Goto,6,goto IL_351e;
 T:Block,6,}
@@ -2380,10 +2372,9 @@ T:Goto,5,goto IL_37e0;
 T:Label,5,IL_37e0:
 T:Instruction,5,num = 664;
 T:Instruction,5,if
-T:Instruction,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value,
+T:Instruction,5,((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() ==
 T:String,5,"F"
-T:Label,5,, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,))
 T:Block,6,{
 T:Goto,6,goto IL_3811;
 T:Block,6,}
@@ -2729,8 +2720,7 @@ T:Goto,5,goto IL_25f2;
 T:Label,5,IL_25f2:
 T:Instruction,5,num = 456;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 T:Block,6,{
 T:Goto,6,goto IL_2625;
 T:Block,6,}
@@ -2977,8 +2967,7 @@ T:Block,6,}
 T:Label,5,IL_2c4c:
 T:Instruction,5,num = 534;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2c7e;
 T:Block,6,}
@@ -2993,8 +2982,7 @@ T:Goto,5,goto IL_2c9b;
 T:Label,5,IL_2c9b:
 T:Instruction,5,num = 537;
 T:Instruction,5,if
-T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2cd2;
 T:Block,6,}
@@ -3005,8 +2993,7 @@ T:Block,6,}
 T:Label,5,IL_2cd2:
 T:Instruction,5,num = 540;
 T:Instruction,5,if
-T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2d09;
 T:Block,6,}
@@ -3032,8 +3019,7 @@ T:Goto,5,goto IL_2d63;
 T:Label,5,IL_2b31:
 T:Instruction,5,num = 520;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2b63;
 T:Block,6,}
@@ -3048,8 +3034,7 @@ T:Goto,5,goto IL_2b80;
 T:Label,5,IL_2b80:
 T:Instruction,5,num = 523;
 T:Instruction,5,if
-T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2bb7;
 T:Block,6,}
@@ -3060,8 +3045,7 @@ T:Block,6,}
 T:Label,5,IL_2bb7:
 T:Instruction,5,num = 526;
 T:Instruction,5,if
-T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2bee;
 T:Block,6,}
@@ -3087,8 +3071,7 @@ T:Goto,5,goto IL_2d63;
 T:Label,5,IL_2a16:
 T:Instruction,5,num = 506;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2a48;
 T:Block,6,}
@@ -3103,8 +3086,7 @@ T:Goto,5,goto IL_2a65;
 T:Label,5,IL_2a65:
 T:Instruction,5,num = 509;
 T:Instruction,5,if
-T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2a9c;
 T:Block,6,}
@@ -3115,8 +3097,7 @@ T:Block,6,}
 T:Label,5,IL_2a9c:
 T:Instruction,5,num = 512;
 T:Instruction,5,if
-T:Label,5,(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_2ad3;
 T:Block,6,}
@@ -3321,8 +3302,7 @@ T:Goto,5,goto IL_1dc9;
 T:Label,5,IL_1dc9:
 T:Instruction,5,num = 359;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 T:Block,6,{
 T:Goto,6,goto IL_1dfc;
 T:Block,6,}
@@ -3569,8 +3549,7 @@ T:Block,6,}
 T:Label,5,IL_21e4:
 T:Instruction,5,num = 411;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 T:Block,6,{
 T:Goto,6,goto IL_2216;
 T:Block,6,}
@@ -3885,8 +3864,7 @@ T:Goto,5,goto IL_0ec1;
 T:Label,5,IL_0ec1:
 T:Instruction,5,num = 182;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 T:Block,6,{
 T:Goto,6,goto IL_0ef4;
 T:Block,6,}
@@ -4146,8 +4124,7 @@ T:Block,6,}
 T:Label,5,IL_12b7:
 T:Instruction,5,num = 233;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 T:Block,6,{
 T:Goto,6,goto IL_12e9;
 T:Block,6,}
@@ -4212,8 +4189,7 @@ T:Block,6,}
 T:Label,5,IL_1743:
 T:Instruction,5,num = 286;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_1775;
 T:Block,6,}
@@ -4243,8 +4219,7 @@ T:Goto,5,goto IL_17ec;
 T:Label,5,IL_1696:
 T:Instruction,5,num = 278;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_16c8;
 T:Block,6,}
@@ -4274,8 +4249,7 @@ T:Goto,5,goto IL_17ec;
 T:Label,5,IL_15e9:
 T:Instruction,5,num = 270;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_161b;
 T:Block,6,}
@@ -4305,8 +4279,7 @@ T:Goto,5,goto IL_17ec;
 T:Label,5,IL_153c:
 T:Instruction,5,num = 262;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_156e;
 T:Block,6,}
@@ -4336,8 +4309,7 @@ T:Goto,5,goto IL_17ec;
 T:Label,5,IL_148f:
 T:Instruction,5,num = 254;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_14c1;
 T:Block,6,}
@@ -4367,8 +4339,7 @@ T:Goto,5,goto IL_17ec;
 T:Label,5,IL_13e2:
 T:Instruction,5,num = 246;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_1414;
 T:Block,6,}
@@ -4439,8 +4410,7 @@ T:Block,6,}
 T:Label,5,IL_18a7:
 T:Instruction,5,num = 298;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_18d9;
 T:Block,6,}
@@ -4572,8 +4542,7 @@ T:Goto,5,goto IL_036e;
 T:Label,5,IL_036e:
 T:Instruction,5,num = 54;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 T:Block,6,{
 T:Goto,6,goto IL_039e;
 T:Block,6,}
@@ -4827,8 +4796,7 @@ T:Block,6,}
 T:Label,5,IL_0981:
 T:Instruction,5,num = 125;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_09b0;
 T:Block,6,}
@@ -4843,8 +4811,7 @@ T:Goto,5,goto IL_09ca;
 T:Label,5,IL_09ca:
 T:Instruction,5,num = 128;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_09fc;
 T:Block,6,}
@@ -4859,8 +4826,7 @@ T:Goto,5,goto IL_0a19;
 T:Label,5,IL_0a19:
 T:Instruction,5,num = 131;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_0a4b;
 T:Block,6,}
@@ -4890,8 +4856,7 @@ T:Goto,5,goto IL_0ac2;
 T:Label,5,IL_084e:
 T:Instruction,5,num = 111;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_087d;
 T:Block,6,}
@@ -4906,8 +4871,7 @@ T:Goto,5,goto IL_0897;
 T:Label,5,IL_0897:
 T:Instruction,5,num = 114;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_08c6;
 T:Block,6,}
@@ -4922,8 +4886,7 @@ T:Goto,5,goto IL_08e0;
 T:Label,5,IL_08e0:
 T:Instruction,5,num = 117;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_090f;
 T:Block,6,}
@@ -4953,8 +4916,7 @@ T:Goto,5,goto IL_0ac2;
 T:Label,5,IL_071b:
 T:Instruction,5,num = 97;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_074a;
 T:Block,6,}
@@ -4969,8 +4931,7 @@ T:Goto,5,goto IL_0764;
 T:Label,5,IL_0764:
 T:Instruction,5,num = 100;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_0793;
 T:Block,6,}
@@ -4985,8 +4946,7 @@ T:Goto,5,goto IL_07ad;
 T:Label,5,IL_07ad:
 T:Instruction,5,num = 103;
 T:Instruction,5,if
-T:Label,5,(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare:
-T:Instruction,5,false))
+T:Instruction,5,((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 T:Block,6,{
 T:Goto,6,goto IL_07dc;
 T:Block,6,}

@@ -109,8 +109,10 @@ Modul1.UbgT = (Text2[0].Text).Trim();
         num = 212;
         return;
 }";
+        public static readonly string test8Data = Resource.Test8Dat_cs;
         public static readonly string test9Data = Resource.Test9Dat_cs;
         public static readonly string test10Data = Resource.Test10Dat_cs;
+        public static readonly string test11Data = Resource.Test11Dat_cs;
 
         #endregion
 
@@ -325,6 +327,7 @@ return;
 }";
         public static readonly string test9DataExp = Resource.Test9ExpParse;
         public static readonly string test10DataExp = Resource.Test10ExpParse;
+        public static readonly string test11DataExp = Resource.Test11ExpParse;
         //====================================================================================================================================================================
 
         public const string testDataMoveExp0 = @"";
@@ -2538,8 +2541,10 @@ T:Instruction,1,num = 212;
 T:Instruction,1,return;
 T:Block,1,}
 ";
+        public static readonly string cExp8Log = "";// Resource.Test8ExpTokenize;
         public static readonly string cExp9Log = Resource.Test9ExpTokenize;
         public static readonly string cExp10Log = Resource.Test10ExpTokenize;
+        public static readonly string cExp11Log = Resource.Test11ExpTokenize;
 
         #endregion
 
@@ -3304,8 +3309,10 @@ T:Block,1,}
         ("return;", ICSCode.CodeBlockType.Instruction, 1),
         ("}", ICSCode.CodeBlockType.Block, 1),
         };
-        public static object? TestDataList9() => ReadObject(Resource.Test9DataList
-            );
+        public static object? TestDataList8() => ReadObject(Resource.Test8DataList);
+        public static object? TestDataList9() => ReadObject(Resource.Test9DataList);
+        public static object? TestDataList10() => ReadObject(Resource.Test10DataList);
+        public static object? TestDataList11() => ReadObject(Resource.Test11DataList);
         #endregion
     }
 }

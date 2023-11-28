@@ -141,8 +141,14 @@ namespace VBUnObfusicator.Models.Tests
                     TestDataClass.TestDataList6() },
             new object[] { "7", new[] { TestDataClass.testData7 },
                     TestDataClass.TestDataList7() },
+            new object[] { "8", new[] { TestDataClass.test8Data },
+                    TestDataClass.TestDataList8() },
             new object[] { "9", new[] { TestDataClass.test9Data },
                     TestDataClass.TestDataList9()! },
+            new object[] { "10", new[] { TestDataClass.test10Data },
+                    TestDataClass.TestDataList10()! },
+            new object[] { "11", new[] { TestDataClass.test11Data },
+                    TestDataClass.TestDataList11()! },
 
         };
 
@@ -217,8 +223,10 @@ namespace VBUnObfusicator.Models.Tests
         {
             new object[] {"1", new[] { TestDataClass.test1Data, TestDataClass.cExp1Log } },
             new object[] {"2", new[] { TestDataClass.test2Data, TestDataClass.cExp2Log } },
+            new object[] {"8", new[] { TestDataClass.test8Data, TestDataClass.cExp8Log } },
             new object[] {"9", new[] { TestDataClass.test9Data, TestDataClass.cExp9Log } },
             new object[] {"10", new[] { TestDataClass.test10Data, TestDataClass.cExp10Log } },
+            new object[] {"11", new[] { TestDataClass.test11Data, TestDataClass.cExp11Log } },
         };
 
         [DataTestMethod()]
@@ -242,7 +250,8 @@ namespace VBUnObfusicator.Models.Tests
             new object[] {"1",new[] { TestDataClass.test1Data, TestDataClass.testDataExp1 } },
             new object[] {"2",new[] { TestDataClass.test2Data, TestDataClass.testDataExp2 } },
             new object[] {"9",new[] { TestDataClass.test9Data, TestDataClass.test9DataExp } },
-            new object[] {"10",new[] { TestDataClass.test10Data, TestDataClass.test10DataExp }, }
+            new object[] {"10",new[] { TestDataClass.test10Data, TestDataClass.test10DataExp } },
+            new object[] {"11",new[] { TestDataClass.test11Data, TestDataClass.test11DataExp } }
                 };
 
 

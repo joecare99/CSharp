@@ -74,23 +74,24 @@ namespace VBUnObfusicatorTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Test10DataList {
+            get {
+                object obj = ResourceManager.GetObject("Test10DataList", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
-        ///private void Befehl_Click(object eventSender, EventArgs eventArgs)
+        ///private void Test10Dat()
         //////BlockStart Block 1,0
         ///{
         //////Instruction Instruction 1,1
-        ///int try0000_dispatch = -1;
-        //////Instruction Instruction 1,2
-        ///int num = default(int);
-        //////Instruction Instruction 1,3
-        ///short index = default(short);
-        //////Instruction Instruction 1,4
-        ///int num2 = default(int);
-        //////Instruction Instruction 1,5
-        ///int num3 = default(int);
-        //////Instruction Instruction 1,6
-        ///int number = default(int);
-        //////Instruction Instruction 1,7 [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///writeln((xText ? 1 : 0).AsString());
+        //////BlockEnd Block 1,2
+        ///} ähnelt.
         /// </summary>
         internal static string Test10ExpParse {
             get {
@@ -99,25 +100,80 @@ namespace VBUnObfusicatorTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,private void Befehl_Click(object eventSender, EventArgs eventArgs)
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,private void Test10Dat()
         ///T:Block,1,{
-        ///T:Instruction,1,int try0000_dispatch = -1;
-        ///T:Instruction,1,int num = default(int);
-        ///T:Instruction,1,short index = default(short);
-        ///T:Instruction,1,int num2 = default(int);
-        ///T:Instruction,1,int num3 = default(int);
-        ///T:Instruction,1,int number = default(int);
-        ///T:Instruction,1,string prompt = default(string);
-        ///T:Instruction,1,while
-        ///T:Instruction,1,(true)
-        ///T:Block,2,{
-        ///T:Instruction,2,try
-        ///T:Block,3,{
-        ///T:Instructi [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///T:Instruction,1,writeln((xText ? 1 : 0).AsString());
+        ///T:Block,1,}
+        /// ähnelt.
         /// </summary>
         internal static string Test10ExpTokenize {
             get {
                 return ResourceManager.GetString("Test10ExpTokenize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die private void Test11Dat()
+        ///{
+        ///    switch (sTest)
+        ///    {
+        ///        case 0:
+        ///        case &quot;1&quot;:
+        ///        case (2, &quot;Test2&quot;):
+        ///        case (3, &quot;Test3&quot;):
+        ///        case &quot;4&quot; + cGed_Test4:
+        ///        case &quot;5&quot; + cGed_Test5:
+        ///        case &quot;6&quot; + cGed_Test6:
+        ///        case &quot;7&quot; + cGed_Test7:
+        ///            break;
+        ///        default:
+        ///            break;
+        ///    }
+        ///}
+        /// ähnelt.
+        /// </summary>
+        internal static string Test11Dat_cs {
+            get {
+                return ResourceManager.GetString("Test11Dat_cs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Test11DataList {
+            get {
+                object obj = ResourceManager.GetObject("Test11DataList", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///private void Test10Dat()
+        //////BlockStart Block 1,0
+        ///{
+        //////Instruction Instruction 1,1
+        ///writeln((xText ? 1 : 0).AsString());
+        //////BlockEnd Block 1,2
+        ///} ähnelt.
+        /// </summary>
+        internal static string Test11ExpParse {
+            get {
+                return ResourceManager.GetString("Test11ExpParse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,private void Test10Dat()
+        ///T:Block,1,{
+        ///T:Instruction,1,writeln((xText ? 1 : 0).AsString());
+        ///T:Block,1,}
+        /// ähnelt.
+        /// </summary>
+        internal static string Test11ExpTokenize {
+            get {
+                return ResourceManager.GetString("Test11ExpTokenize", resourceCulture);
             }
         }
         
@@ -428,6 +484,42 @@ namespace VBUnObfusicatorTests.Properties {
         internal static string Test2ExpTokenize {
             get {
                 return ResourceManager.GetString("Test2ExpTokenize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die public void Test7()
+        ///{
+        ///    if (true)
+        ///        goto IL_105c;
+        ///    else
+        ///        goto IL_107c;
+        ///    IL_105c:
+        ///    num = 209;
+        ///    i++;
+        ///    goto IL_108c;
+        ///IL_107c:
+        ///    num = 210;
+        ///    i--;
+        ///    goto IL_108c;
+        ///IL_108c:
+        ///    num = 212;
+        ///    return;
+        ///} ähnelt.
+        /// </summary>
+        internal static string Test8Dat_cs {
+            get {
+                return ResourceManager.GetString("Test8Dat_cs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Test8DataList {
+            get {
+                object obj = ResourceManager.GetObject("Test8DataList", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
