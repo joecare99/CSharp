@@ -9,13 +9,17 @@ namespace Pattern_02_Observer.Views
 {
     public class MainView : ICommand
     {
-        public MainViewModel DataContext { get; set; } = new();
+        private IRandom _rnd;
+
+        public IMainViewModel DataContext { get; set; }
         public IConsole console { get; set; } = new MyConsole();
 
         public event EventHandler? CanExecuteChanged;
 
-        public MainView()
+        public MainView(IMainViewModel dc, IRandom rnd)
         {
+            _rnd = rnd;
+            DataContext = dc;
             DataContext.PropertyChangedAdv += OnPropertyChangedAdv;
         }
 
@@ -32,7 +36,7 @@ namespace Pattern_02_Observer.Views
 
         public void Execute(object? parameter)
         {
-            DataContext.SetGreeting((EGreetings)new Random().Next(5)); 
+            DataContext.SetGreeting((EGreetings)_rnd.Next(5)); 
         }
     }
 }

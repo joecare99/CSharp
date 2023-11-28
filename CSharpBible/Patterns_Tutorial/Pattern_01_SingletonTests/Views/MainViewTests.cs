@@ -82,6 +82,7 @@ namespace Pattern_01_Singleton.Views.Tests
         {
             testView.Execute(null!);
             Assert.AreEqual(@"WriteLine(Hello World !)
+WriteLine(The classes are identical !)
 ", DebugLog);
         }
 
