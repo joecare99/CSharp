@@ -26,4 +26,6 @@ public interface IEvent
     IEnumerable<IEventData> ReadAll();
     IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt);
     DateTime[] ReadFamDates(int famInArb);
+    bool DeleteEmptyFam(int ifamInArb, EEventArt eArt);
+    void PersLebDatles(int PersInArb, IPersonData person);
 }

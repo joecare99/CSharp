@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using GenFree.Interfaces.DB;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public static class ObjectHelper
     {
@@ -52,12 +52,12 @@ namespace Helper
         public static DateTime AsDate(this object obj) => obj switch
         {
             DateTime dt => dt,
-            int i when (i%100 is >0 and <32) && ((i/100)%100 is >0 and <13) => new(i / 10000, i % 10000 / 100, i % 100),
+            int i when (i%100 is >0 and <32) && (i/100%100 is >0 and <13) => new(i / 10000, i % 10000 / 100, i % 100),
             int i when i == 0 => default,
             IField f => f.Value.AsDate(),
             string s when !s.Contains('.') && DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt) => dt,
             string s when DateTime.TryParse(s, CultureInfo.CurrentUICulture, DateTimeStyles.None, out var dt) => dt,
-            string s when int.TryParse(s, out var i) && (i % 100 is > 0 and < 32) && ((i / 100) % 100 is > 0 and < 13) => new(i / 10000, i % 10000 / 100, i % 100),
+            string s when int.TryParse(s, out var i) && (i % 100 is > 0 and < 32) && (i / 100 % 100 is > 0 and < 13) => new(i / 10000, i % 10000 / 100, i % 100),
             string s when !int.TryParse(s, out var i) || i==0 => default,
             long l => new(l),
             uint ui => DateTime.FromOADate(unchecked((int)ui)),
@@ -104,10 +104,6 @@ namespace Helper
             _ => default
         };
 
-        public static void SetIndex<T>(this Dictionary<int, T> dic, T value, int index) => dic[index+1] = value;
-        public static int GetIndex<T>(this Dictionary<int, T> dic, T value) => dic.Where((itm) => itm.Value?.Equals(value) ?? false)
-            .FirstOrDefault().Key-1;
     }
 
-    public class ControlArray<T> : Dictionary<int, T> { };
 }

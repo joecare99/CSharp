@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public static class Externals
     {

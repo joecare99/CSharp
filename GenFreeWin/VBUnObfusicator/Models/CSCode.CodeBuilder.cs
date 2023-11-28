@@ -68,7 +68,7 @@ namespace VBUnObfusicator.Models
 
             private static TokenData BuildLabel(TokenData tokenData, CodeBuilderData data)
             {
-                if (tokenData.Code.Contains(",") || tokenData.Code.Contains("(")) //not cElse label
+                if (!data.actualBlock.Code.StartsWith("case ") && (tokenData.Code.Contains(",") || tokenData.Code.Contains("("))) //not cElse label
                 {
                     if (data.actualBlock.Type is not CodeBlockType.Instruction || data.actualBlock.Code.EndsWith(";"))
                         data.actualBlock = new CodeBlock() { Name = $"Instruction", Type = CodeBlockType.Instruction, Code = "", Parent = data.actualBlock.Parent };
@@ -77,10 +77,15 @@ namespace VBUnObfusicator.Models
                 }
                 else
                 {
-                    if (data.actualBlock.Type is CodeBlockType.Instruction && data.actualBlock.Code.StartsWith("case ") && tokenData.Code == ":")
+                    if (data.actualBlock.Type is CodeBlockType.Instruction 
+                        && data.actualBlock.Code.StartsWith("case ") 
+                        && tokenData.Code.EndsWith(":"))
                     {
                         data.actualBlock.Type = CodeBlockType.Label;
+                        if (tokenData.Code.StartsWith("+"))
+                            data.actualBlock.Code += " "; // Padding
                         data.actualBlock.Code += tokenData.Code;
+                        tokenData.Code = data.actualBlock.Code.Substring(5);
                     }
                     else
                         data.actualBlock = new CodeBlock() { Name = $"{tokenData.type}", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock.Parent };

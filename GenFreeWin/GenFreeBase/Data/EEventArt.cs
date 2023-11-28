@@ -30,15 +30,20 @@ public enum EEventArt : int
     eA_202 = 202,
     eA_203 = 203,
     /// <summary>
+    /// Last Vital event1
+    /// </summary>
+    eA_299 = 299,
+    /// <summary>
     /// Occupation
     /// </summary>
     eA_300 = 300,
     eA_301 = 301,
     eA_302 = 302,
+    eA_303 = 303,
+    eA_400 = 400,
     /// <summary>
     /// last Person event
     /// </summary>
-    eA_400 = 400,
     eA_499 = 499,
     eA_500 = 500,
     eA_501 = 501,
@@ -52,4 +57,10 @@ public enum EEventArt : int
     eA_601 = 601,
     eA_602 = 602,
     eA_603 = 603,
+    /// <summary>
+    /// The Unknown event
+    /// </summary>
+    eA_900 = 900,
+    eA_200 = 901,
+    eA_402 = 902,
 }

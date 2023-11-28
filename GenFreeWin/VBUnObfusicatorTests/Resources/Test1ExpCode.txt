@@ -252,7 +252,7 @@
                     goto IL_01aa;
                 IL_01aa:
                     num = 23;
-                    if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  "")
+                    if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == "")
                     {
                         goto end_IL_0000_2;
                     }

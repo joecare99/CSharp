@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public static class DateHelper
     {

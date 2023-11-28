@@ -38,4 +38,5 @@ public interface IEventData
 
     void Delete();
     void FillDataFields(IRecordset dB_EventTable);
+    void Update(string[]? strings = null);
 }

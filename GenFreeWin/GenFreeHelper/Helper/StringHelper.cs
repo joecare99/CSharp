@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GenFree.Interfaces.DB;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public static class StringHelper
     {

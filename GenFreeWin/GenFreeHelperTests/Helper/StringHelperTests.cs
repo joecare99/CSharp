@@ -3,7 +3,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using static BaseLib.Helper.TestHelper;
 
-namespace Helper.Tests
+namespace GenFree.Helper.Tests
 {
     [TestClass()]
     public class StringHelperTests
