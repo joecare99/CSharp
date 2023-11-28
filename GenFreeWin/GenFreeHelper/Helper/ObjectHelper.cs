@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using GenFree.Interfaces.DB;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public static class ObjectHelper
     {
@@ -104,10 +104,6 @@ namespace Helper
             _ => default
         };
 
-        public static void SetIndex<T>(this Dictionary<int, T> dic, T value, int index) => dic[index+1] = value;
-        public static int GetIndex<T>(this Dictionary<int, T> dic, T value) => dic.Where((itm) => itm.Value?.Equals(value) ?? false)
-            .FirstOrDefault().Key-1;
     }
 
-    public class ControlArray<T> : Dictionary<int, T> { };
 }

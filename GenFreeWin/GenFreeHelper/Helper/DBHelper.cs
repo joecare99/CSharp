@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenFree.Interfaces.DB;
 
-namespace Helper;
+namespace GenFree.Helper;
 public static class DBHelper
 {
     public static IEnumerable<TableDef> TableDefs(this IDatabase db)

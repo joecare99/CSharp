@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public class ListItem
     {
