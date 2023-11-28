@@ -2,7 +2,7 @@
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
@@ -17,10 +17,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs" Link="Helper\PropertyHelper.cs" />
+		<Compile Include="..\BaseLib\Helper\StringUtils.cs" Link="Helper\StringUtils.cs" />
 		<Compile Include="..\BaseLib\Helper\TypeUtils.cs" Link="Helper\TypeUtils.cs" />
 		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 </Project>

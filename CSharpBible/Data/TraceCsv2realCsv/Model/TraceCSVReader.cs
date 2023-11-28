@@ -17,14 +17,14 @@ namespace TraceCsv2realCsv.Model
                 if (line != "[key]; [value]")
                     throw new ArgumentException("Stream does not contain a Trace-csv");
 
-                List<(string header, Dictionary<int, double> data)> columns = new() {("TimeBase",null) };
+                List<(string header, Dictionary<int, double>? data)> columns = new() {("TimeBase",null) };
                 while (!reader.EndOfStream)
                 {
                     if (ReadColumn(reader, out var header,out var data))
                         columns.Add((header, data));
                 }
 
-                model.SetHeader(columns.ConvertAll((s) => (s.header, typeof(double))));
+                model.SetHeader(columns.ConvertAll((s) => (s.header, (Type?)typeof(double))));
 
                 foreach (var s in columns)
                     model.AddColumnData(s.header, s.data);

@@ -59,5 +59,25 @@ namespace MVVM_ImageHandling.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Imaging.Metafile.
+        /// </summary>
+        public static System.Drawing.Imaging.Metafile card_D10_emf {
+            get {
+                object obj = ResourceManager.GetObject("card_D10_emf", resourceCulture);
+                return ((System.Drawing.Imaging.Metafile)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        public static byte[] card_SQueen {
+            get {
+                object obj = ResourceManager.GetObject("card_SQueen", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

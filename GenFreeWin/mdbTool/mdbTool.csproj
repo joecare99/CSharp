@@ -1,0 +1,15 @@
+﻿<Project>
+	<Import Project="..\GenFreeWin.props" />
+	<PropertyGroup>
+    <OutputType>Exe</OutputType>
+		<UseWindowsForms>True</UseWindowsForms>
+		<TargetFrameworks>net481</TargetFrameworks>
+		<PlatformTarget>x86</PlatformTarget>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <ProjectReference Include="..\GenFreeWin\GenFreeWin.csproj" />
+	</ItemGroup>
+
+</Project>

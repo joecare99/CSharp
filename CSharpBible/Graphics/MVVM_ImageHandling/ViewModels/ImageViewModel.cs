@@ -18,6 +18,7 @@ using MVVM_ImageHandling.Models;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -62,10 +63,13 @@ namespace MVVM_ImageHandling.ViewModels
             _model.PropertyChanged += OnMPropertyChanged;
             _assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
             Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♣Ace.png";
-            Image3 = null!; 
+            var ms = new MemoryStream();
+            Properties.Resources.card_D10_emf.Save(ms, ImageFormat.Png);
+            ms.Position = 0L;
+            Image3 = LoadImageFromStream(ms); 
         }
 
-        public BitmapImage LoadImageFromMemoryStream(MemoryStream memoryStream)
+        public BitmapImage LoadImageFromStream(Stream memoryStream)
         {
             BitmapImage bitmapImage = new();
             bitmapImage.BeginInit();

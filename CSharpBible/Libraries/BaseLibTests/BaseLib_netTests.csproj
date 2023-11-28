@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0;net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0;net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -11,9 +11,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

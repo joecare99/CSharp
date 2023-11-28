@@ -1,0 +1,24 @@
+﻿<Project>
+	<Import Project="..\GenFreeWin.props" />
+	<PropertyGroup>
+    <TargetFrameworks>net8.0;net7.0;net6.0;net481-windows</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+		<TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <Nullable>enable</Nullable>
+    <RootNamespace>GenFree</RootNamespace>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <Compile Remove="GenFree\**" />
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="GenFree\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="GenFree\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+	</ItemGroup>
+
+</Project>

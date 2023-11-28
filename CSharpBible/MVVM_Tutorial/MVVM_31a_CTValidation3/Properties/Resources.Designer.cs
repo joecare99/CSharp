@@ -70,11 +70,29 @@ namespace MVVM_31a_CTValidation3.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} is a known name  ähnelt.
+        /// </summary>
+        public static string Err_MayNotBeKnown {
+            get {
+                return ResourceManager.GetString("Err_MayNotBeKnown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die {0} must have min. {1} Chars ähnelt.
         /// </summary>
         public static string Err_MustHave_Chars {
             get {
                 return ResourceManager.GetString("Err_MustHave_Chars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} Somethin went wrong ähnelt.
+        /// </summary>
+        public static string Err_Something {
+            get {
+                return ResourceManager.GetString("Err_Something", resourceCulture);
             }
         }
     }

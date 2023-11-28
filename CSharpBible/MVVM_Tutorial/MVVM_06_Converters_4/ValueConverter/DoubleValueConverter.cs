@@ -14,6 +14,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Documents;
 
 namespace MVVM_06_Converters_4.ValueConverter
 {
@@ -35,10 +36,12 @@ namespace MVVM_06_Converters_4.ValueConverter
         /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is double dval && parameter is string spar)
-                return (dval*FixedFactor).ToString(spar);
-            else
-                return value.ToString() ?? "";
+            return value switch
+            {
+                double dval when parameter is string spar => (dval * FixedFactor).ToString(spar),
+                double dval => (dval * FixedFactor).ToString(),
+                _ => value?.ToString() ?? ""
+            };
 
         }
 
@@ -52,25 +55,25 @@ namespace MVVM_06_Converters_4.ValueConverter
         /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string sval && parameter is string spar)
+            return value switch
             {
-                if (double.TryParse(sval, NumberStyles.Float, culture, out double dval))
-                    return dval / FixedFactor;
+                string sval when
+                double.TryParse(sval, NumberStyles.Float, culture, out double dval) => dval / FixedFactor,
+                _ when parameter is string spar && spar.Contains("{")
+                    => double.NaN, // Todo:
+                string sval when parameter is string spar => InnerParse(sval, spar),
+                _ => double.NaN
+            };
+
+            double InnerParse(string sval, string spar)
+            {
+                var pp = spar.LastIndexOf('0');
+                if (double.TryParse(sval.Replace(spar.Substring(pp + 1), "").Trim(), NumberStyles.Float, culture, out var dVal))
+                    return dVal / FixedFactor;
                 else
-                    if (spar.Contains("{"))
-                    return double.NaN; // Todo:
-                else
-                {
-                    var pp = spar.LastIndexOf('0');
-                    if (double.TryParse(sval.Replace(spar.Substring(pp + 1), "").Trim(), out var dVal))
-                        return dVal / FixedFactor;
-                    else
-                        return double.NaN;
-                }
-                
+                    return double.NaN;
+
             }
-            else
-                return 0d;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Solution.props"/>
+	<Import Project="..\Solution.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
@@ -15,6 +15,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework.StartsWith(net462))'" Include="System.ValueTuple" Version="4.5.0" />
-		<PackageReference Include="IndexRange" Version="1.0.2" />
+		<PackageReference Condition="true" Include="IndexRange" Version="1.0.3" />
 	</ItemGroup>
 </Project>

@@ -31,7 +31,7 @@ namespace MathLibrary.TwoDim.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(0, 0, 0,0,0,0,0)]
+        [DataRow(0, 0, 0, 0, 0, 0, 0)]
         [DataRow(0, 0, 0, 1, 0, 0, 0)]
         [DataRow(0, 0, 0, 2, 0, 0, 0)]
         [DataRow(1, 0, 0, 0, 0, 0, 0)]
@@ -39,13 +39,13 @@ namespace MathLibrary.TwoDim.Tests
         [DataRow(1, 0, 0, 2, 2, 0, 0)]
         [DataRow(1, 1d / 6d * Math.PI, 0, 0, 0, 0, 0)]
         [DataRow(1, 1d / 6d * Math.PI, 0, 1, 0.8660254037844387d, 0.5, 0)]
-        [DataRow(1, 1d / 6d * Math.PI, 0, 2, 2*0.8660254037844387d, 1, 0)]
+        [DataRow(1, 1d / 6d * Math.PI, 0, 2, 2 * 0.8660254037844387d, 1, 0)]
         [DataRow(1, 0.25 * Math.PI, 0, 0, 0, 0, 0)]
         [DataRow(1, 0.25 * Math.PI, 0, 1, 0.7071067811865476, 0.7071067811865476, 0)]
-        [DataRow(1, 0.25 * Math.PI, 0, 2, 2*0.7071067811865476, 2*0.7071067811865476, 0)]
+        [DataRow(1, 0.25 * Math.PI, 0, 2, 2 * 0.7071067811865476, 2 * 0.7071067811865476, 0)]
         [DataRow(1, 1d / 3d * Math.PI, 0, 0, 0, 0, 0)]
         [DataRow(1, 1d / 3d * Math.PI, 0, 1, 0.5, 0.8660254037844387d, 0)]
-        [DataRow(1, 1d / 3d * Math.PI, 0, 2, 1, 2* 0.8660254037844387d, 0)]
+        [DataRow(1, 1d / 3d * Math.PI, 0, 2, 1, 2 * 0.8660254037844387d, 0)]
         [DataRow(1, 0.5 * Math.PI, 0, 0, 0, 0, 0)]
         [DataRow(1, 0.5 * Math.PI, 0, 1, 0, 1, 0)]
         [DataRow(1, 0.5 * Math.PI, 0, 2, 0, 2, 0)]
@@ -58,7 +58,19 @@ namespace MathLibrary.TwoDim.Tests
             AGVHandling.AGVState(v, r, t, out Math2d.Vector vPos, out double ang);
             Assert.AreEqual(xPx, vPos.x, 1e-8, $"({vPos.x};{vPos.y}).x == {xPx}");
             Assert.AreEqual(xPy, vPos.y, 1e-8, $"({vPos.x};{vPos.y}).y == {xPy}");
-            Assert.AreEqual(xAng,ang, 1e-8, $"Angle({ang}) == {xAng}");
+            Assert.AreEqual(xAng, ang, 1e-8, $"Angle({ang}) == {xAng}");
+        }
+
+        [DataTestMethod]
+        [DataRow(new[] { 1.0d, 0.0d }, 0.0, new[] { 1.0, 0.0 }, new[] { 1.0, 0.0 })]
+        [DataRow(new[] { 0.0d, -1.0d }, 1.0, new[] { 0.0, 0.0 }, new[] { 1.0, 0.0 })]
+        public void AGVSteeringTest(double[] afPos, double fActRot, double[] afVel, double[] afExp)
+        {
+            var vActVel = afVel.Vec();
+            var vExp = afExp.Vec();
+            var vActPos = afPos.Vec();
+            AGVHandling.AGVSteering(vActVel, fActRot, vActPos, out var vActStr);
+            Assert.AreEqual(vExp.AsComplex, vActStr.AsComplex);
         }
     }
 }

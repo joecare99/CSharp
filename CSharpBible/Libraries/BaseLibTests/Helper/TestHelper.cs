@@ -60,8 +60,8 @@ namespace BaseLib.Helper
         public static void AssertAreEqual<T>(T exp, T act, string Msg = "") where T : IEnumerable
         {
             static string BldLns(int i, string[] aLines)
-                => (i > 1 ? $"#{i - 2:D3}: {aLines[(i - 2) % 5]}{Environment.NewLine}" : "") +
-                   (i > 0 ? $"#{i - 1:D3}: {aLines[(i - 1) % 5]}{Environment.NewLine}" : "") +
+                => (i > 1 ? $"#{i - 2:D3}: {aLines[(i + 3) % 5]}{Environment.NewLine}" : "") +
+                   (i > 0 ? $"#{i - 1:D3}: {aLines[(i + 4) % 5]}{Environment.NewLine}" : "") +
                    $"#{i:D3}> {aLines[i % 5]}" +
                    (i < aLines.Length - 1 ? $"{Environment.NewLine}#{i + 1:D3}: {aLines[(i + 1) % 5]}" : "") +
                    (i < aLines.Length - 2 ? $"{Environment.NewLine}#{i + 2:D3}: {aLines[(i + 2) % 5]}" : "");
@@ -77,8 +77,8 @@ namespace BaseLib.Helper
             foreach (var el in exp)
             {
                 var al = !xEoAAct ?actE.Current:null;
-                actLines[i % 5] = $"{(al is string or null ? "" : al.GetType())}{al}";
-                expLines[i % 5] = $"{(el is string or null ? "" : el.GetType())}{el}";
+                actLines[i % 5] = $"{(al is string or null ? "" : al.GetType())} {al}";
+                expLines[i % 5] = $"{(el is string or null ? "" : el.GetType())} {el}";
                 if (iErr == -1 && !el!.Equals(al))
                     iErr = i;
                 if (iErr != -1 && i-3==iErr)
@@ -86,14 +86,23 @@ namespace BaseLib.Helper
                 xEoAAct = !actE.MoveNext();                    
                 i++;
             }
-            if (iErr != -1)
+            if (iErr != -1 || (i==0 && !xEoAAct))
             {
-                actLines[i % 5] = $"";
+                if (iErr == -1)
+                {
+                    iErr = i;
+                    var al = !xEoAAct ? actE.Current : null;
+                    actLines[i % 5] = $"{(al is string or null ? "" : al.GetType())} {al}";
+                }
+                else
+                    actLines[i % 5] = $"";
                 expLines[i % 5] = $"<EOF>";
                 Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
             }
             else
-            Assert.IsFalse(actE.MoveNext());
+            { 
+                Assert.IsFalse(actE.MoveNext());
+            }
 
         }
         /// <summary>

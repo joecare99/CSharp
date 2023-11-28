@@ -59,5 +59,77 @@ namespace MVVM_36_ComToolKtSavesWork.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Login ähnelt.
+        /// </summary>
+        public static string lgn_Login {
+            get {
+                return ResourceManager.GetString("lgn_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Password: ähnelt.
+        /// </summary>
+        public static string lgn_Password {
+            get {
+                return ResourceManager.GetString("lgn_Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Username: ähnelt.
+        /// </summary>
+        public static string lgn_Username {
+            get {
+                return ResourceManager.GetString("lgn_Username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comunity Toolkit saves Work-View: ähnelt.
+        /// </summary>
+        public static string pg1_Title {
+            get {
+                return ResourceManager.GetString("pg1_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Login ähnelt.
+        /// </summary>
+        public static string uictrl_Login {
+            get {
+                return ResourceManager.GetString("uictrl_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Not logged In ähnelt.
+        /// </summary>
+        public static string uictrl_NotLoggedIn {
+            get {
+                return ResourceManager.GetString("uictrl_NotLoggedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Welcome  ähnelt.
+        /// </summary>
+        public static string uictrl_Welcome {
+            get {
+                return ResourceManager.GetString("uictrl_Welcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comunity-Toolkit saves work ähnelt.
+        /// </summary>
+        public static string wnd_Title {
+            get {
+                return ResourceManager.GetString("wnd_Title", resourceCulture);
+            }
+        }
     }
 }

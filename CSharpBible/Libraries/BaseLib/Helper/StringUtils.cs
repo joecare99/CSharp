@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace BaseLib.Helper
 {
@@ -108,7 +109,7 @@ namespace BaseLib.Helper
             }
             return _result;
 
-            static int TabLen(int l, int o) => (l + o) + (8 - (l + o) % 8) - o;
+            static int TabLen(int l, int o) => l + o + (8 - (l + o) % 8) - o;
         }
 
         /// <summary>Converts to "<em>Normal</em>" case.</summary>
@@ -144,8 +145,7 @@ namespace BaseLib.Helper
                             quotedStr = s.TrimStart(' ').Substring(1);
                         }
                     }
-                else
-                    if (s.TrimEnd(' ').EndsWith(QuoteMark))
+                else if (s.TrimEnd(' ').EndsWith(QuoteMark))
                 {
                     result.Add(quotedStr + Separator[0] + s.TrimEnd(' ').Substring(0, s.TrimEnd(' ').Length - 1));
                     quoteMode = false;
@@ -161,6 +161,22 @@ namespace BaseLib.Helper
             }
 
             return result;
+        }
+
+        public static bool EndswithAny(this string s,params string[] strings)
+        {
+            foreach (var item in strings)
+                if ((" "+s).EndsWith(" "+item))
+                    return true;
+            return false;
+        }
+
+        public static bool StartswithAny(this string s, params string[] strings)
+        {
+            foreach (var item in strings)
+                if ((s+" ").StartsWith(item+" "))
+                    return true;
+            return false;
         }
 
     }

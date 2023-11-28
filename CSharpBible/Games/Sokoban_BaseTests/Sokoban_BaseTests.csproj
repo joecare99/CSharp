@@ -1,8 +1,8 @@
-<Project>
+﻿<Project>
 	<Import Project="..\Games_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,7 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sokoban_Base\Sokoban_Base.csproj" />
-    <ProjectReference Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
+    <ProjectReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
+    <ProjectReference Condition="'!$(TargetFramework.StartsWith(net4))'" Include="..\..\Libraries\BaseLibTests\BaseLib_netTests.csproj" />
   </ItemGroup>
 
 </Project>

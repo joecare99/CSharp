@@ -33,6 +33,9 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.de.resx">
+		  <Generator></Generator>
+		</EmbeddedResource>
 		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -43,5 +46,8 @@
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Model\" />
 	</ItemGroup>
 </Project>

@@ -7,6 +7,7 @@
              xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
              xmlns:mvvm="clr-namespace:MVVM_36_ComToolKtSavesWork.ViewModels"
              xmlns:vc="clr-namespace:MVVM_36_ComToolKtSavesWork.ValueConverter"
+             xmlns:p="clr-namespace:MVVM_36_ComToolKtSavesWork.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="130" d:DesignWidth="400"
              DataContext="{ioc:IoC Type=mvvm:UserInfoViewModel}">
@@ -18,12 +19,12 @@
     </UserControl.Resources>
     <StackPanel HorizontalAlignment="Right">
         <StackPanel Orientation="Horizontal" Visibility="{Binding ShowUser, Converter={StaticResource Bool2Visibility}}">
-            <Label Content="Welcome "/>
+            <Label Content="{x:Static p:Resources.uictrl_Welcome}"/>
             <Label Content="{Binding User.Username}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLogin, Converter={StaticResource Bool2Visibility}}">
-            <Label Content="Not logged In"/>
-            <Button Content="Login" Command="{Binding ShowLoginCtrlCommand}"/>
+            <Label Content="{x:Static p:Resources.uictrl_NotLoggedIn}"/>
+            <Button Content="{x:Static p:Resources.uictrl_Login}" Command="{Binding ShowLoginCtrlCommand}"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -15,8 +15,8 @@ namespace ConsoleDisplay.View {
 
 		public static Point HexKPoint(this (float X, float Y) f, bool v) =>
 			v ?
-			new Point((int)Math.Round(f.X), (int)Math.Round(f.Y - ZigZag(f.X) * 0.5f)) :
-			new Point((int)Math.Round(f.X - ZigZag(f.Y) * 0.5f), (int)Math.Round(f.Y));
+			new Point((int)Math.Round(f.X), (int)Math.Round(f.Y + ZigZag(f.X) * 0.5f)) :
+			new Point((int)Math.Round(f.X + ZigZag(f.Y) * 0.5f), (int)Math.Round(f.Y));
 
 		public static float ZigZag(this float x) =>
 			(float)Math.Abs(x - Math.Floor((x + 1.0) * 0.5) * 2.0);
@@ -278,7 +278,7 @@ namespace ConsoleDisplay.View {
 					object td = FncGetTile(p3)!;
 					object? ot = GetTile(p);
 					var po = FncOldPos?.Invoke(p3);
-					if (((int)td != (int?)ot)
+					if (!td.Equals(ot)
 						|| ((po ?? p3) != p3)) {
 						var pp = Point.Subtract(po ?? p3, (Size)DispOffset);				
 						diffFields.Add(( HexMath.HexPointF((p.X, p.Y), _vertical), (T)td, HexMath.HexPointF((pp.X, pp.Y), _vertical)));

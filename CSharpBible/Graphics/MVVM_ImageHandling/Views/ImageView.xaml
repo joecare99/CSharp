@@ -26,15 +26,54 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
-            <Image Grid.Row="1" Source="pack://application:,,,/MVVM_ImageHandling;component/Resources/card_♠Ace.png" />
-            <Image Grid.Row="1" Grid.Column="1" Source="{Binding Image2}" />
-            <Image Grid.Row="1" Grid.Column="2" Source="{Binding Image3}" />
-            <StackPanel Grid.Row="2" Grid.Column="1" >
+            <TextBlock Grid.Column="3" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+            <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/MVVM_ImageHandling;component/Resources/card_♠Ace.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-30"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image Grid.Row="1" Grid.Column="2" Source="{Binding Image2}" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-10"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image Grid.Row="1" Grid.Column="3" Source="{Binding Image3}" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="10"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Frame Grid.Row="1" Grid.Column="4" Source="/Resources/card_S2.xaml" RenderTransformOrigin="0.5,0.5" >
+                <Frame.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="30"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Frame.RenderTransform>
+            </Frame>
+            <StackPanel Grid.Row="2" Grid.Column="2" >
                 <Button Height="30" Margin="5" Content="Diamond" Command="{Binding SetDiamondCommand}"/>
                 <Button Height="30" Margin="5" Content="Heart" Command="{Binding SetHeartCommand}"/>
                 <Button Height="30" Margin="5" Content="Club" Command="{Binding SetClubCommand}"/>

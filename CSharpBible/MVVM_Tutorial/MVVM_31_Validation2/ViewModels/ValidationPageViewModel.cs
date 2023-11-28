@@ -33,9 +33,9 @@ namespace MVVM_31_Validation2.ViewModels
         {
             VHelper.ClearErrors(property);
             if (string.IsNullOrEmpty(arg1))
-                VHelper.AddError(property, "Username may not be empty");
+                VHelper.AddError(property, Properties.Resources.Err_MayNotBeEmpty);
             else if (arg1.Length < 6)
-                VHelper.AddError(property, "Username must have min. 6 Chars");
+                VHelper.AddError(property, Properties.Resources.Err_MustHave6Chars);
 //else 
                return true;
  //           return false;

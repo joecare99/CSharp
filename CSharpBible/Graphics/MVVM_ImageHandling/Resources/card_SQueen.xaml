@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file is compatible with Silverlight-->
+<Canvas 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="svg674" Width="171.89288796" Height="247.218876188108">
+  <Canvas.Resources/>
+  <!--Unknown tag: sodipodi:namedview-->
+  <Path  Name="path566" Fill="#FFFFFFFF" 
+         Data="  M 11.28189 20.683465   C 11.28189 15.512598 15.512598 11.28189 20.683465 11.28189   L 151.17732 11.28189   C 156.37169 11.28189 160.5789 15.512598 160.5789 20.683465   C 160.5789 20.683465 160.5789 20.683465 160.5789 20.683465   L 160.5789 226.38992   C 160.5789 231.58429 156.37169 235.7915 151.17732 235.7915   L 20.683465 235.7915   C 15.512598 235.7915 11.28189 231.58429 11.28189 226.38992   z "/>
+  <Path  Name="path568" StrokeThickness="1.504252" Stroke="#FF000000" StrokeMiterLimit="10" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" 
+         Data="  M 11.28189 20.683465   C 11.28189 15.512598 15.512598 11.28189 20.683465 11.28189   L 151.17732 11.28189   C 156.37169 11.28189 160.5789 15.512598 160.5789 20.683465   C 160.5789 20.683465 160.5789 20.683465 160.5789 20.683465   L 160.5789 226.38992   C 160.5789 231.58429 156.37169 235.7915 151.17732 235.7915   L 20.683465 235.7915   C 15.512598 235.7915 11.28189 231.58429 11.28189 226.38992   z "/>
+  <TextBlock FontSize="19.937500" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="0.000000" Canvas.Top="-19.9" Name="text578"/>
+  <TextBlock FontSize="19.937500" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="127.109291" Canvas.Top="-19.9" Name="text588"/>
+  <TextBlock FontSize="19.937500" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="1.880315" Canvas.Top="-4.1" Name="text598"/>
+  <TextBlock FontSize="19.937500" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="128.989606" Canvas.Top="-4.1" Name="text608"/>
+  <TextBlock FontSize="39.875000" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="30.085039" Canvas.Top="28.2" Name="text618"/>
+  <TextBlock FontSize="39.875000" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="30.085039" Canvas.Top="72.9" Name="text628"/>
+  <TextBlock FontSize="39.875000" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="89.879055" Canvas.Top="28.2" Name="text638"/>
+  <TextBlock FontSize="39.875000" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="89.879055" Canvas.Top="72.9" Name="text648"/>
+  <TextBlock FontSize="39.875000" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="45.127559" Canvas.Top="16.9" Name="text666"/>
+  <TextBlock FontSize="39.875000" FontWeight="Normal" FontFamily="Times New Roman" FontStyle="normal" Foreground="#FF000000" Canvas.Left="60.170079" Canvas.Top="72.9" Name="text672"/>
+  <!--Unknown tag: metadata-->
+</Canvas>

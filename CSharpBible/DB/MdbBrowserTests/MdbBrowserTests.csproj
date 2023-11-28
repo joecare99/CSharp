@@ -1,0 +1,31 @@
+﻿<Project>
+	<Import Project="..\DB.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net4.8.1-windows;net4.6.2-windows</TargetFrameworks>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <Compile Remove="bin\**" />
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="bin\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="bin\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MdbBrowser\MdbBrowser.csproj" />
+	</ItemGroup>
+
+</Project>

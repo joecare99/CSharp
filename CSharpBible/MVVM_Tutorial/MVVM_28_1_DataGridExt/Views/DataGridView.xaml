@@ -8,6 +8,7 @@
       xmlns:beh="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:model="clr-namespace:MVVM_28_1_DataGridExt.Models"
       xmlns:vc="clr-namespace:MVVM_28_1_DataGridExt.ValueConverter"
+      xmlns:p="clr-namespace:MVVM_28_1_DataGridExt.Properties"
       xmlns:MVVM_27_DataGrid="clr-namespace:MVVM_28_1_DataGridExt" 
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -31,8 +32,8 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="FirstName" Binding="{Binding FirstName}"/>
-                <DataGridTextColumn Header="LastName" Binding="{Binding LastName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Firstname}" Binding="{Binding FirstName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Lastname}" Binding="{Binding LastName}"/>
                 <DataGridHyperlinkColumn Header="eMail" Binding="{Binding Email, Converter={StaticResource EmailValue}}" ContentBinding="{Binding Email}">
                     <!-- Set Colors-->
                     <DataGridHyperlinkColumn.CellStyle>
@@ -46,8 +47,8 @@
                         </Style>
                     </DataGridHyperlinkColumn.CellStyle>
                 </DataGridHyperlinkColumn>
-                <DataGridTextColumn Header="Department" Binding="{Binding Department.Name}" IsReadOnly="True"/>
-                <DataGridTemplateColumn Header="Department">
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Department}" Binding="{Binding Department.Name}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="{x:Static p:Resources.text_Department}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Department.Name}"/>
@@ -82,16 +83,16 @@
         <GridSplitter Height="5" ResizeDirection="Rows" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
         <ScrollViewer Grid.Row="1">
         <StackPanel >
-            <Label>Firstname</Label>
-            <TextBox Text="{Binding SelectedPerson.FirstName}"/>
-            <Label>LastName</Label>
-            <TextBox Text="{Binding SelectedPerson.LastName}"/>
-            <Label>eMail</Label>
-            <TextBox Text="{Binding SelectedPerson.Email}"/>
-            <Label>Department</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedPerson.Department.Name}"/>
-            <Label>Birthday</Label>
-            <TextBox Text="{Binding SelectedPerson.Birthday, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <Label Content="{x:Static p:Resources.text_Firstname}"/>
+                <TextBox Text="{Binding SelectedPerson.FirstName}"/>
+                <Label Content="{x:Static p:Resources.text_Lastname}"/>
+                <TextBox Text="{Binding SelectedPerson.LastName}"/>
+                <Label Content="{x:Static p:Resources.text_eMail}" />
+                <TextBox Text="{Binding SelectedPerson.Email}"/>
+                <Label Content="{x:Static p:Resources.text_Department}" />
+                <TextBox IsReadOnly="True" Text="{Binding SelectedPerson.Department.Name, Mode=OneWay}"/>
+                <Label Content="{x:Static p:Resources.text_Birthday}"/>
+                <TextBox Text="{Binding SelectedPerson.Birthday, StringFormat={}{0:dd.MM.yyyy}}"/>
         </StackPanel>
         </ScrollViewer>
     </Grid>

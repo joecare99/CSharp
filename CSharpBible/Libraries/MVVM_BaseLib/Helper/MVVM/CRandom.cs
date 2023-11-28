@@ -16,7 +16,7 @@ namespace BaseLib.Helper.MVVM
             _random = new Random();
         }
 
-        public double Next(int v1, int v2) => _random.Next(v1, v2);
+        public int Next(int v1, int v2) => _random.Next(v1, v2);
 
         public double NextDouble() => _random.NextDouble();
 

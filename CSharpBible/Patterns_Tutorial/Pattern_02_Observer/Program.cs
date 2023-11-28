@@ -1,4 +1,6 @@
-﻿using Pattern_02_Observer.Views;
+﻿using Pattern_02_Observer.ViewModels;
+using Pattern_02_Observer.Views;
+using Pattern_02_Observer.Models;
 using System;
 using System.Windows.Input;
 
@@ -24,7 +26,7 @@ namespace Pattern_02_Observer
         public static bool DoInit(string[] args)
         {
             // Init View 
-            SetView( new MainView());                 
+            SetView( new MainView(new MainViewModel(), new CRandom()));                 
             return _view.CanExecute(args);
         }
 

@@ -1,0 +1,614 @@
+﻿///Declaration MainBlock 0,0
+private void Befehl_Click(object eventSender, EventArgs eventArgs)
+///BlockStart Block 1,0
+{
+///Instruction Instruction 1,1
+int try0000_dispatch = -1;
+///Instruction Instruction 1,2
+int num = default(int);
+///Instruction Instruction 1,3
+short index = default(short);
+///Instruction Instruction 1,4
+int num2 = default(int);
+///Instruction Instruction 1,5
+int num3 = default(int);
+///Instruction Instruction 1,6
+int number = default(int);
+///Instruction Instruction 1,7
+string prompt = default(string);
+///Instruction Instruction 1,8
+while (true)
+///BlockStart Block 2,0
+{
+///Instruction Instruction 2,1
+try
+///BlockStart Block 3,0
+{
+///Comment Comment 3,1
+/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+///Instruction Instruction 3,2
+;
+///Instruction Instruction 3,3
+int num4;
+///Instruction Instruction 3,4
+string text;
+///Instruction Instruction 3,5
+switch (try0000_dispatch)
+///BlockStart Block 4,0
+{
+///Label Label 4,1 1
+default:
+///Instruction Instruction 4,2
+num = 1;
+///Instruction Instruction 4,3
+index = Befehl.GetIndex((Button)eventSender);
+///Goto Goto 4,4 Dest:OK
+goto IL_0015;
+///Label Label 4,5
+case 1043:
+///BlockStart Block 5,0
+{
+///Instruction Instruction 5,1
+num2 = num;
+///Instruction Instruction 5,2
+switch (num3)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 2:
+///Instruction Instruction 6,2
+break;
+///Label Label 6,3
+case 1:
+///Goto Goto 6,4 Dest:OK
+goto IL_0319;
+///Label Label 6,5
+default:
+///Goto Goto 6,6 Dest:OK
+goto end_IL_0000;
+///BlockEnd Block 6,7
+}
+///Goto Goto 5,3 Dest:OK
+goto IL_0248;
+///BlockEnd Block 5,4
+}
+///Label Label 4,6 1
+IL_0319:
+///Instruction Instruction 4,7
+num4 = num2 + 1;
+///Goto Goto 4,8 Dest:OK
+goto IL_031d;
+///Label Label 4,9 2
+IL_0248:
+///Instruction Instruction 4,10
+num = 36;
+///Instruction Instruction 4,11
+number = Information.Err().Number;
+///Goto Goto 4,12 Dest:OK
+goto IL_0258;
+///Label Label 4,13 2
+IL_0258:
+///Instruction Instruction 4,14
+num = 39;
+///Instruction Instruction 4,15
+if (number == 25)
+///BlockStart Block 5,0
+{
+///Goto Goto 5,1 Dest:OK
+goto IL_0262;
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,16 Dest:OK
+goto IL_029b;
+///Label Label 4,17 2
+IL_029b:
+///Instruction Instruction 4,18
+num = 46;
+///Instruction Instruction 4,19
+if (number == 55)
+///BlockStart Block 5,0
+{
+///Goto Goto 5,1 Dest:OK
+goto IL_02a5;
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,20 Dest:OK
+goto IL_02d0;
+///Label Label 4,21 2
+IL_02d0:
+///Instruction Instruction 4,22
+num = 52;
+///Instruction Instruction 4,23
+if (Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
+///BlockStart Block 5,0
+{
+///Instruction Instruction 5,1
+ProjectData.EndApp();
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,24 Dest:OK
+goto IL_02f6;
+///Label Label 4,25 2
+IL_00ad:
+///Instruction Instruction 4,26
+num = 9;
+///Instruction Instruction 4,27
+RichTextBox1.LoadFile(COND.Verz1 + "TEMP\\Text2.RTF", RichTextBoxStreamType.RichText);
+///Goto Goto 4,28 Dest:OK
+goto IL_00cc;
+///Label Label 4,29 2
+IL_02f6:
+///Instruction Instruction 4,30
+num = 55;
+///Instruction Instruction 4,31
+ProjectData.ClearProjectError();
+///Instruction Instruction 4,32
+if (num2 == 0)
+///BlockStart Block 5,0
+{
+///Instruction Instruction 5,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,33 Dest:OK
+goto IL_0315;
+///Label Label 4,34 2
+IL_00cc:
+///Instruction Instruction 4,35
+num = 10;
+///Instruction Instruction 4,36
+Interaction.Shell(COND.Aus[7] + " " + COND.Verz1 + "Temp\\Text2.RTF", AppWinStyle.MaximizedFocus);
+///Goto Goto 4,37 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,38 3
+IL_0315:
+///Instruction Instruction 4,39
+num4 = num2;
+///Goto Goto 4,40 Dest:OK
+goto IL_031d;
+///Label Label 4,41 2
+IL_031d:
+///Instruction Instruction 4,42
+num2 = 0;
+///Instruction Instruction 4,43
+switch (num4)
+///BlockStart Block 5,0
+{
+///Label Label 5,1
+case 1:
+///Instruction Instruction 5,2
+break;
+///Label Label 5,3
+case 2:
+///Goto Goto 5,4 Dest:OK
+goto IL_0015;
+///Label Label 5,5
+case 3:
+///Goto Goto 5,6 Dest:OK
+goto IL_001d;
+///Label Label 5,7
+case 4:
+///Goto Goto 5,8 Dest:OK
+goto IL_0073;
+///Label Label 5,9
+case 6:
+///Label Label 5,10
+case 8:
+///Goto Goto 5,11 Dest:OK
+goto IL_008f;
+///Label Label 5,12
+case 9:
+///Goto Goto 5,13 Dest:OK
+goto IL_00ad;
+///Label Label 5,14
+case 10:
+///Goto Goto 5,15 Dest:OK
+goto IL_00cc;
+///Label Label 5,16
+case 12:
+///Label Label 5,17
+case 13:
+///Goto Goto 5,18 Dest:OK
+goto IL_00f9;
+///Label Label 5,19
+case 14:
+///Goto Goto 5,20 Dest:OK
+goto IL_010d;
+///Label Label 5,21
+case 15:
+///Goto Goto 5,22 Dest:OK
+goto IL_0117;
+///Label Label 5,23
+case 18:
+///Label Label 5,24
+case 19:
+///Goto Goto 5,25 Dest:OK
+goto IL_0134;
+///Label Label 5,26
+case 20:
+///Goto Goto 5,27 Dest:OK
+goto IL_0151;
+///Label Label 5,28
+case 21:
+///Goto Goto 5,29 Dest:OK
+goto IL_0178;
+///Label Label 5,30
+case 22:
+///Goto Goto 5,31 Dest:OK
+goto IL_0191;
+///Label Label 5,32
+case 23:
+///Goto Goto 5,33 Dest:OK
+goto IL_01aa;
+///Label Label 5,34
+case 24:
+///Goto Goto 5,35 Dest:OK
+goto IL_01d0;
+///Label Label 5,36
+case 26:
+///Label Label 5,37
+case 28:
+///Goto Goto 5,38 Dest:OK
+goto IL_01f9;
+///Label Label 5,39
+case 30:
+///Label Label 5,40
+case 31:
+///Goto Goto 5,41 Dest:OK
+goto IL_021f;
+///Label Label 5,42
+case 36:
+///Goto Goto 5,43 Dest:OK
+goto IL_0248;
+///Label Label 5,44
+case 38:
+///Label Label 5,45
+case 39:
+///Goto Goto 5,46 Dest:OK
+goto IL_0258;
+///Label Label 5,47
+case 40:
+///Goto Goto 5,48 Dest:OK
+goto IL_0262;
+///Label Label 5,49
+case 41:
+///Goto Goto 5,50 Dest:OK
+goto IL_026c;
+///Label Label 5,51
+case 42:
+///Goto Goto 5,52 Dest:OK
+goto IL_027f;
+///Label Label 5,53
+case 46:
+///Goto Goto 5,54 Dest:OK
+goto IL_029b;
+///Label Label 5,55
+case 47:
+///Goto Goto 5,56 Dest:OK
+goto IL_02a5;
+///Label Label 5,57
+case 48:
+///Goto Goto 5,58 Dest:OK
+goto IL_02b4;
+///Label Label 5,59
+case 51:
+///Label Label 5,60
+case 52:
+///Goto Goto 5,61 Dest:OK
+goto IL_02d0;
+///Label Label 5,62
+case 53:
+///Label Label 5,63
+case 55:
+///Goto Goto 5,64 Dest:OK
+goto IL_02f6;
+///Label Label 5,65
+default:
+///Goto Goto 5,66 Dest:OK
+goto end_IL_0000;
+///Label Label 5,67
+case 5:
+///Label Label 5,68
+case 11:
+///Label Label 5,69
+case 16:
+///Label Label 5,70
+case 17:
+///Label Label 5,71
+case 25:
+///Label Label 5,72
+case 29:
+///Label Label 5,73
+case 32:
+///Label Label 5,74
+case 33:
+///Label Label 5,75
+case 34:
+///Label Label 5,76
+case 35:
+///Label Label 5,77
+case 37:
+///Label Label 5,78
+case 43:
+///Label Label 5,79
+case 45:
+///Label Label 5,80
+case 49:
+///Label Label 5,81
+case 50:
+///Label Label 5,82
+case 56:
+///Label Label 5,83
+case 57:
+///Label Label 5,84
+case 58:
+///Goto Goto 5,85 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,86
+}
+///Goto Goto 4,44 Dest:OK
+goto default;
+///Label Label 4,45 2
+IL_02a5:
+///Instruction Instruction 4,46
+num = 47;
+///Instruction Instruction 4,47
+FileSystem.FileClose();
+///Goto Goto 4,48 Dest:OK
+goto IL_02b4;
+///Label Label 4,49 2
+IL_02b4:
+///Instruction Instruction 4,50
+num = 48;
+///Instruction Instruction 4,51
+ProjectData.ClearProjectError();
+///Instruction Instruction 4,52
+if (num2 == 0)
+///BlockStart Block 5,0
+{
+///Instruction Instruction 5,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,53 Dest:OK
+goto IL_0315;
+///Label Label 4,54 2
+IL_008f:
+///Instruction Instruction 4,55
+num = 8;
+///Instruction Instruction 4,56
+RichTextBox1.SaveFile(COND.Verz1 + "TEMP\\Text2.RTF", RichTextBoxStreamType.RichText);
+///Goto Goto 4,57 Dest:OK
+goto IL_00ad;
+///Label Label 4,58 2
+IL_0262:
+///Instruction Instruction 4,59
+num = 40;
+///Instruction Instruction 4,60
+prompt = "Das angegebene Gerät ist nicht bereit.\rBitte einschalten oder abbrechen.";
+///Goto Goto 4,61 Dest:OK
+goto IL_026c;
+///Label Label 4,62 2
+IL_026c:
+///Instruction Instruction 4,63
+num = 41;
+///Instruction Instruction 4,64
+if (Interaction.MsgBox(prompt, MsgBoxStyle.OkCancel, "Fehler") == MsgBoxResult.Cancel)
+///BlockStart Block 5,0
+{
+///Goto Goto 5,1 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,65 Dest:OK
+goto IL_027f;
+///Label Label 4,66 2
+IL_027f:
+///Instruction Instruction 4,67
+num = 42;
+///Instruction Instruction 4,68
+ProjectData.ClearProjectError();
+///Instruction Instruction 4,69
+if (num2 == 0)
+///BlockStart Block 5,0
+{
+///Instruction Instruction 5,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,70 Dest:OK
+goto IL_0315;
+///Label Label 4,71 2
+IL_0117:
+///Instruction Instruction 4,72
+num = 15;
+///Instruction Instruction 4,73
+MyProject.Forms.Druck.Show();
+///Goto Goto 4,74 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,75 2
+IL_0015:
+///Instruction Instruction 4,76
+ProjectData.ClearProjectError();
+///Instruction Instruction 4,77
+num3 = 2;
+///Goto Goto 4,78 Dest:OK
+goto IL_001d;
+///Label Label 4,79 2
+IL_001d:
+///Instruction Instruction 4,80
+num = 3;
+///Instruction Instruction 4,81
+text = "Datum " + Strings.Mid(DateAndTime.DateString, 4, 2) + "." + DateAndTime.DateString.Left( 2) + "." + Strings.Mid(DateAndTime.DateString, 7, 4);
+///Goto Goto 4,82 Dest:OK
+goto IL_0073;
+///Label Label 4,83 2
+IL_0073:
+///Instruction Instruction 4,84
+num = 4;
+///Instruction Instruction 4,85
+switch (index)
+///BlockStart Block 5,0
+{
+///Label Label 5,1
+case 1:
+///Instruction Instruction 5,2
+break;
+///Label Label 5,3
+case 2:
+///Goto Goto 5,4 Dest:OK
+goto IL_00f9;
+///Label Label 5,5
+case 3:
+///Goto Goto 5,6 Dest:OK
+goto IL_0134;
+///Label Label 5,7
+default:
+///Goto Goto 5,8 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,9
+}
+///Goto Goto 4,86 Dest:OK
+goto IL_008f;
+///Label Label 4,87 2
+IL_0134:
+///Instruction Instruction 4,88
+num = 19;
+///Instruction Instruction 4,89
+MyProject.Forms.Hinter.CommonDialog1Save.Filter = "Text (*.txt)|*.txt|Formartierter Text (*.RTF)|*.RTF";
+///Goto Goto 4,90 Dest:OK
+goto IL_0151;
+///Label Label 4,91 2
+IL_0151:
+///Instruction Instruction 4,92
+num = 20;
+///Instruction Instruction 4,93
+MyProject.Forms.Hinter.CommonDialog1Save.InitialDirectory = COND.GenPlu + "list\\";
+///Goto Goto 4,94 Dest:OK
+goto IL_0178;
+///Label Label 4,95 2
+IL_0178:
+///Instruction Instruction 4,96
+num = 21;
+///Instruction Instruction 4,97
+MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex = 2;
+///Goto Goto 4,98 Dest:OK
+goto IL_0191;
+///Label Label 4,99 2
+IL_0191:
+///Instruction Instruction 4,100
+num = 22;
+///Instruction Instruction 4,101
+MyProject.Forms.Hinter.CommonDialog1Save.ShowDialog();
+///Goto Goto 4,102 Dest:OK
+goto IL_01aa;
+///Label Label 4,103 2
+IL_01aa:
+///Instruction Instruction 4,104
+num = 23;
+///Instruction Instruction 4,105
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == "")
+///BlockStart Block 5,0
+{
+///Goto Goto 5,1 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,2
+}
+///Goto Goto 4,106 Dest:OK
+goto IL_01d0;
+///Label Label 4,107 2
+IL_01d0:
+///Instruction Instruction 4,108
+num = 24;
+///Instruction Instruction 4,109
+switch (MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex)
+///BlockStart Block 5,0
+{
+///Label Label 5,1
+case 1:
+///Instruction Instruction 5,2
+break;
+///Label Label 5,3
+case 2:
+///Goto Goto 5,4 Dest:OK
+goto IL_021f;
+///Label Label 5,5
+default:
+///Goto Goto 5,6 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,7
+}
+///Goto Goto 4,110 Dest:OK
+goto IL_01f9;
+///Label Label 4,111 2
+IL_021f:
+///Instruction Instruction 4,112
+num = 31;
+///Instruction Instruction 4,113
+RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.RichText);
+///Goto Goto 4,114 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,115 2
+IL_01f9:
+///Instruction Instruction 4,116
+num = 28;
+///Instruction Instruction 4,117
+RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.PlainText);
+///Goto Goto 4,118 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,119 2
+IL_00f9:
+///Instruction Instruction 4,120
+num = 13;
+///Instruction Instruction 4,121
+RichTextBox1.Text = "";
+///Goto Goto 4,122 Dest:OK
+goto IL_010d;
+///Label Label 4,123 2
+IL_010d:
+///Instruction Instruction 4,124
+num = 14;
+///Instruction Instruction 4,125
+Close();
+///Goto Goto 4,126 Dest:OK
+goto IL_0117;
+///Label Label 4,127 2
+end_IL_0000:
+///Instruction Instruction 4,128
+break;
+///BlockEnd Block 4,129
+}
+///BlockEnd Block 3,6
+}
+///Instruction Instruction 2,2
+catch (Exception obj) when (obj is not null && num3 != 0 && num2 == 0)
+///BlockStart Block 3,0
+{
+///Instruction Instruction 3,1
+ProjectData.SetProjectError(obj);
+///Instruction Instruction 3,2
+try0000_dispatch = 1043;
+///Instruction Instruction 3,3
+continue;
+///BlockEnd Block 3,4
+}
+///Instruction Instruction 2,3
+throw ProjectData.CreateProjectError(-2146828237);
+///Instruction Instruction 2,4
+continue;
+///Label Label 2,5 9
+end_IL_0000_2:
+///Instruction Instruction 2,6
+break;
+///BlockEnd Block 2,7
+}
+///Instruction Instruction 1,9
+if (num2 != 0)
+///BlockStart Block 2,0
+{
+///Instruction Instruction 2,1
+ProjectData.ClearProjectError();
+///BlockEnd Block 2,2
+}
+///BlockEnd Block 1,10
+}
