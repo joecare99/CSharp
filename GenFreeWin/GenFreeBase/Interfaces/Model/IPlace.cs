@@ -3,11 +3,9 @@ using System;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IPlace : IHasID<int>
+    public interface IPlace : IHasDataItf<IPlaceData,int>, IUsesRecordset<int>, IUsesID<int>
     {
-        int Count { get; }
-        int iMaxNr { get; }
 
-        void ForeEachTextDo(Action<int, string[]> onDo, Action<float, int>? onProgress = null);
+        void ForeEachTextDo(Func<int, string> onGetText, Action<int, string[]> onDo, Action<float, int>? onProgress = null);
     }
 }

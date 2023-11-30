@@ -4,7 +4,7 @@ using System;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IUsesRecordset<T> : IHasID<T>
+    public interface IUsesRecordset<T> : IUsesID<T>
     {
         int Count { get; }
 

@@ -5,7 +5,7 @@ using System;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IPerson : IUsesRecordset<int>, IHasID<int>
+    public interface IPerson : IHasDataItf<IPersonData,int>, IUsesRecordset<int>, IUsesID<int>
     {
         void AllSetEditDate();
         int CheckID(int iPerson, bool xIgnoreSex, ELinkKennz kennz);
