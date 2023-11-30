@@ -6,12 +6,11 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model;
 #nullable enable
-public interface IEvent
+public interface IEvent : IUsesRecordset<(EEventArt,int,short)>
 {
-    int Count { get; }
 
     void ChgEvent(EEventArt eArt, int iFamNr, EEventArt eArt2, int iFam2 = 0);
-    void Delete(int PersInArb, EEventArt num6b);
+    void DeleteBeSu(int PersInArb, EEventArt num6b);
     void DeleteAll(int PersInArb, EEventArt num6b);
     bool Exists(EEventArt eArt, object iLink, int iLfNR = 0);
     DateTime GetDate(int iFamPers, EEventArt eArt);
