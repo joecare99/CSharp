@@ -1,7 +1,7 @@
 ﻿//using DAO;
 namespace GenFree.Interfaces.Model
 {
-    public interface IHasID<T>
+    public interface IUsesID<T>
 
     {
         T MaxID { get; }
