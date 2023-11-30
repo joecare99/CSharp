@@ -9,7 +9,7 @@ namespace GenFree.Helper
 {
     public static class ObjectHelper
     {
-        public static int AsInt(this object obj, int def = default) => obj switch
+        public static int AsInt(this object? obj, int def = default) => obj switch
         {
             int i => i,
             uint ui => unchecked((int)ui),
@@ -21,7 +21,7 @@ namespace GenFree.Helper
             _ => def
         };
 
-        public static long AsLong(this object obj, int def = default) => obj switch
+        public static long AsLong(this object? obj, int def = default) => obj switch
         {
             long i => i,
             ulong ul => unchecked((long)ul),
@@ -34,7 +34,7 @@ namespace GenFree.Helper
         };
 
 
-        public static T AsEnum<T>(this object obj) where T : struct, Enum => obj switch
+        public static T AsEnum<T>(this object? obj) where T : struct, Enum => obj switch
         {
             T t => t,
             int i when i < Enum.GetValues(typeof(T)).Length => (T)Enum.ToObject(typeof(T), i),
@@ -49,7 +49,7 @@ namespace GenFree.Helper
             _ => default
         };
 
-        public static DateTime AsDate(this object obj) => obj switch
+        public static DateTime AsDate(this object? obj) => obj switch
         {
             DateTime dt => dt,
             int i when (i%100 is >0 and <32) && (i/100%100 is >0 and <13) => new(i / 10000, i % 10000 / 100, i % 100),
@@ -67,7 +67,7 @@ namespace GenFree.Helper
             _ => default,
         };
 
-        public static double AsDouble(this object obj, CultureInfo? culture = null) => obj switch
+        public static double AsDouble(this object? obj, CultureInfo? culture = null) => obj switch
         {
             double d => d,
             string s when double.TryParse(s, NumberStyles.Float, culture ?? CultureInfo.InvariantCulture, out var d) => d,
@@ -80,7 +80,7 @@ namespace GenFree.Helper
             _ => default
         };
 
-        public static bool AsBool(this object obj) => obj switch
+        public static bool AsBool(this object? obj) => obj switch
         {
             bool x => x,
             IField f => f.Value.AsBool(),
@@ -90,7 +90,7 @@ namespace GenFree.Helper
             _ => default
         };
 
-        public static Guid AsGUID(this object obj) => obj switch
+        public static Guid AsGUID(this object? obj) => obj switch
         {
             Guid g => g,
             IField f => f.Value.AsGUID(),
