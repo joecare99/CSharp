@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model;
 #nullable enable
-public interface IEvent : IUsesRecordset<(EEventArt,int,short)>
+public interface IEvent : IUsesRecordset<(EEventArt eArt, int iLink, short iLfNr)>
 {
 
     void ChgEvent(EEventArt eArt, int iFamNr, EEventArt eArt2, int iFam2 = 0);

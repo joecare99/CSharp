@@ -9,7 +9,7 @@ namespace GenFree.Interfaces.Model
         int Count { get; }
 
         void ForEachDo(Action<IRecordset> action);
-        IRecordset Seek(T key, out bool xBreak);
-        IRecordset Seek(T Key);
+        IRecordset? Seek(T key, out bool xBreak);
+        IRecordset? Seek(T Key);
     }
 }
