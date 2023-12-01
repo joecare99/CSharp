@@ -587,7 +587,7 @@ IL_036e:
 ///Instruction Instruction 5,150
 num = 54;
 ///Instruction Instruction 5,151
-if((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
+if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -937,7 +937,7 @@ IL_071b:
 ///Instruction Instruction 5,282
 num = 97;
 ///Instruction Instruction 5,283
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -965,7 +965,7 @@ IL_0764:
 ///Instruction Instruction 5,290
 num = 100;
 ///Instruction Instruction 5,291
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -993,7 +993,7 @@ IL_07ad:
 ///Instruction Instruction 5,298
 num = 103;
 ///Instruction Instruction 5,299
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1049,7 +1049,7 @@ IL_084e:
 ///Instruction Instruction 5,314
 num = 111;
 ///Instruction Instruction 5,315
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1077,7 +1077,7 @@ IL_0897:
 ///Instruction Instruction 5,322
 num = 114;
 ///Instruction Instruction 5,323
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1105,7 +1105,7 @@ IL_08e0:
 ///Instruction Instruction 5,330
 num = 117;
 ///Instruction Instruction 5,331
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1161,7 +1161,7 @@ IL_0981:
 ///Instruction Instruction 5,346
 num = 125;
 ///Instruction Instruction 5,347
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1189,7 +1189,7 @@ IL_09ca:
 ///Instruction Instruction 5,354
 num = 128;
 ///Instruction Instruction 5,355
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1217,7 +1217,7 @@ IL_0a19:
 ///Instruction Instruction 5,362
 num = 131;
 ///Instruction Instruction 5,363
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -1681,7 +1681,7 @@ IL_0ec1:
 ///Instruction Instruction 5,525
 num = 182;
 ///Instruction Instruction 5,526
-if((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
+if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2077,7 +2077,7 @@ IL_12b7:
 ///Instruction Instruction 5,669
 num = 233;
 ///Instruction Instruction 5,670
-if((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
+if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2193,7 +2193,7 @@ IL_13e2:
 ///Instruction Instruction 5,696
 num = 246;
 ///Instruction Instruction 5,697
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2249,7 +2249,7 @@ IL_148f:
 ///Instruction Instruction 5,712
 num = 254;
 ///Instruction Instruction 5,713
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2305,7 +2305,7 @@ IL_153c:
 ///Instruction Instruction 5,728
 num = 262;
 ///Instruction Instruction 5,729
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2361,7 +2361,7 @@ IL_15e9:
 ///Instruction Instruction 5,744
 num = 270;
 ///Instruction Instruction 5,745
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2417,7 +2417,7 @@ IL_1696:
 ///Instruction Instruction 5,760
 num = 278;
 ///Instruction Instruction 5,761
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2473,7 +2473,7 @@ IL_1743:
 ///Instruction Instruction 5,776
 num = 286;
 ///Instruction Instruction 5,777
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -2599,7 +2599,7 @@ IL_18a7:
 ///Instruction Instruction 5,815
 num = 298;
 ///Instruction Instruction 5,816
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -3083,7 +3083,7 @@ IL_1dc9:
 ///Instruction Instruction 5,1000
 num = 359;
 ///Instruction Instruction 5,1001
-if((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
+if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -3487,7 +3487,7 @@ IL_21e4:
 ///Instruction Instruction 5,1148
 num = 411;
 ///Instruction Instruction 5,1149
-if((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
+if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -3857,7 +3857,7 @@ IL_25f2:
 ///Instruction Instruction 5,1279
 num = 456;
 ///Instruction Instruction 5,1280
-if((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
+if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4247,7 +4247,7 @@ IL_2a16:
 ///Instruction Instruction 5,1407
 num = 506;
 ///Instruction Instruction 5,1408
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4275,7 +4275,7 @@ IL_2a65:
 ///Instruction Instruction 5,1415
 num = 509;
 ///Instruction Instruction 5,1416
-if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4295,7 +4295,7 @@ IL_2a9c:
 ///Instruction Instruction 5,1419
 num = 512;
 ///Instruction Instruction 5,1420
-if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4343,7 +4343,7 @@ IL_2b31:
 ///Instruction Instruction 5,1431
 num = 520;
 ///Instruction Instruction 5,1432
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4371,7 +4371,7 @@ IL_2b80:
 ///Instruction Instruction 5,1439
 num = 523;
 ///Instruction Instruction 5,1440
-if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4391,7 +4391,7 @@ IL_2bb7:
 ///Instruction Instruction 5,1443
 num = 526;
 ///Instruction Instruction 5,1444
-if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4439,7 +4439,7 @@ IL_2c4c:
 ///Instruction Instruction 5,1455
 num = 534;
 ///Instruction Instruction 5,1456
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4467,7 +4467,7 @@ IL_2c9b:
 ///Instruction Instruction 5,1463
 num = 537;
 ///Instruction Instruction 5,1464
-if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4487,7 +4487,7 @@ IL_2cd2:
 ///Instruction Instruction 5,1467
 num = 540;
 ///Instruction Instruction 5,1468
-if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -4751,7 +4751,7 @@ IL_34eb:
 ///Instruction Instruction 5,1563
 num = 631;
 ///Instruction Instruction 5,1564
-if((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
+if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -5627,7 +5627,7 @@ IL_4044:
 ///Instruction Instruction 5,1890
 num = 736;
 ///Instruction Instruction 5,1891
-if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -5655,7 +5655,7 @@ IL_4091:
 ///Instruction Instruction 5,1898
 num = 739;
 ///Instruction Instruction 5,1899
-if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -5683,7 +5683,7 @@ IL_40de:
 ///Instruction Instruction 5,1906
 num = 742;
 ///Instruction Instruction 5,1907
-if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -5711,7 +5711,7 @@ IL_412b:
 ///Instruction Instruction 5,1914
 num = 745;
 ///Instruction Instruction 5,1915
-if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -5739,7 +5739,7 @@ IL_4178:
 ///Instruction Instruction 5,1922
 num = 748;
 ///Instruction Instruction 5,1923
-if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK
@@ -8101,7 +8101,7 @@ case 575:
 ///Instruction Instruction 6,949
 num = 575;
 ///Instruction Instruction 6,950
-if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 7,0
 {
 ///Goto Goto 7,1 Dest:OK
