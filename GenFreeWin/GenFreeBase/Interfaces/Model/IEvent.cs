@@ -6,14 +6,13 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model;
 #nullable enable
-public interface IEvent
+public interface IEvent : IHasDataItf<IEventData, (EEventArt eArt, int iLink, short iLfNr)>, IUsesRecordset<(EEventArt eArt, int iLink, short iLfNr)>
 {
-    int Count { get; }
 
     void ChgEvent(EEventArt eArt, int iFamNr, EEventArt eArt2, int iFam2 = 0);
-    void Delete(int PersInArb, EEventArt num6b);
+    void DeleteBeSu(int PersInArb, EEventArt num6b);
     void DeleteAll(int PersInArb, EEventArt num6b);
-    bool Exists(EEventArt eArt, object iLink, int iLfNR = 0);
+    bool Exists(EEventArt eArt, int iLink, int iLfNR = 0);
     DateTime GetDate(int iFamPers, EEventArt eArt);
     DateTime GetDate(int iFamPers, EEventArt eArt, out string sDateV_S);
     DateTime GetDateB(int iFamPers, EEventArt eArt);
@@ -26,4 +25,6 @@ public interface IEvent
     IEnumerable<IEventData> ReadAll();
     IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt);
     DateTime[] ReadFamDates(int famInArb);
+    bool DeleteEmptyFam(int ifamInArb, EEventArt eArt);
+    void PersLebDatles(int PersInArb, IPersonData person);
 }

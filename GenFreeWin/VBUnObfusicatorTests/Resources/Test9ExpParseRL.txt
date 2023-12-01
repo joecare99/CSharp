@@ -405,7 +405,7 @@ goto end_IL_0001_2;
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,51
-if(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare: false))
+if((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -493,7 +493,7 @@ IL_071b:
 ///Instruction Instruction 5,60
 num = 97;
 ///Instruction Instruction 5,61
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -501,7 +501,7 @@ StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,62
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -509,7 +509,7 @@ StringType.MidStmtStr(ref sDest2, 36, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,63
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -531,7 +531,7 @@ IL_084e:
 ///Instruction Instruction 5,67
 num = 111;
 ///Instruction Instruction 5,68
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -539,7 +539,7 @@ StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,69
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -547,7 +547,7 @@ StringType.MidStmtStr(ref sDest2, 44, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,70
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -569,7 +569,7 @@ IL_0981:
 ///Instruction Instruction 5,74
 num = 125;
 ///Instruction Instruction 5,75
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -577,7 +577,7 @@ StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,76
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -585,7 +585,7 @@ StringType.MidStmtStr(ref sDest2, 51, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,77
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -703,7 +703,7 @@ if (!DataModul.DB_PersonTable.NoMatch)
 ///Instruction Instruction 8,1
 Modul1.Personlesen(Modul1.PersInArb);
 ///Instruction Instruction 8,2
-Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) + "," + Strings.Trim(Modul1.Kont[3]) + "                                  ", 20);
+Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
 ///Instruction Instruction 8,3
 Modul1.Schalt = 20;
 ///Instruction Instruction 8,4
@@ -819,7 +819,7 @@ DataModul.DB_FamilyTable.MoveLast();
 ///Instruction Instruction 5,115
 num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
 ///Instruction Instruction 5,116
-if(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare: false))
+if((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -915,7 +915,7 @@ IL_13e2:
 ///Instruction Instruction 5,125
 num = 246;
 ///Instruction Instruction 5,126
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -937,7 +937,7 @@ IL_148f:
 ///Instruction Instruction 5,130
 num = 254;
 ///Instruction Instruction 5,131
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -959,7 +959,7 @@ IL_153c:
 ///Instruction Instruction 5,135
 num = 262;
 ///Instruction Instruction 5,136
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -981,7 +981,7 @@ IL_15e9:
 ///Instruction Instruction 5,140
 num = 270;
 ///Instruction Instruction 5,141
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1003,7 +1003,7 @@ IL_1696:
 ///Instruction Instruction 5,145
 num = 278;
 ///Instruction Instruction 5,146
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1025,7 +1025,7 @@ IL_1743:
 ///Instruction Instruction 5,150
 num = 286;
 ///Instruction Instruction 5,151
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1075,7 +1075,7 @@ if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 8,0
 {
 ///Instruction Instruction 8,1
@@ -1213,7 +1213,7 @@ if (!DataModul.DB_FamilyTable.NoMatch)
 ///BlockStart Block 9,0
 {
 ///Instruction Instruction 9,1
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare: false))
+if((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 ///BlockStart Block 10,0
 {
 ///Instruction Instruction 10,1
@@ -1379,7 +1379,7 @@ DataModul.DB_FamilyTable.MoveLast();
 ///Instruction Instruction 5,208
 num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
 ///Instruction Instruction 5,209
-if(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare: false))
+if((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1609,7 +1609,7 @@ if (!DataModul.DB_FamilyTable.NoMatch)
 ///BlockStart Block 9,0
 {
 ///Instruction Instruction 9,1
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare: false))
+if((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 ///BlockStart Block 10,0
 {
 ///Instruction Instruction 10,1
@@ -1691,7 +1691,7 @@ goto end_IL_0001_2;
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,248
-if(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare: false))
+if((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1777,7 +1777,7 @@ IL_2a16:
 ///Instruction Instruction 5,257
 num = 506;
 ///Instruction Instruction 5,258
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1785,11 +1785,11 @@ StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,259
-if(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
-if(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -1813,7 +1813,7 @@ IL_2b31:
 ///Instruction Instruction 5,262
 num = 520;
 ///Instruction Instruction 5,263
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1821,11 +1821,11 @@ StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,264
-if(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
-if(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -1849,7 +1849,7 @@ IL_2c4c:
 ///Instruction Instruction 5,267
 num = 534;
 ///Instruction Instruction 5,268
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1857,11 +1857,11 @@ StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,269
-if(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
-if(!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+if(!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -1923,7 +1923,7 @@ IL_3320:
 ///Instruction Instruction 5,285
 num = 609;
 ///Instruction Instruction 5,286
-if (Strings.Trim(Modul1.LiText) != "")
+if ((Modul1.LiText).Trim() != "")
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -1973,7 +1973,7 @@ if (!DataModul.DB_PersonTable.NoMatch)
 ///Instruction Instruction 8,1
 Modul1.Personlesen(Modul1.PersInArb);
 ///Instruction Instruction 8,2
-Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) + "," + Strings.Trim(Modul1.Kont[3]) + "                                  ", 20);
+Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
 ///Instruction Instruction 8,3
 Modul1.Schalt = 20;
 ///Instruction Instruction 8,4
@@ -1995,19 +1995,19 @@ Modul1.Datles();
 ///Instruction Instruction 8,7
 sDest2 = "                                                                            ";
 ///Instruction Instruction 8,8
-if (Strings.Trim(Modul1.Kont[11]) == "")
+if ((Modul1.Kont[11]).Trim() == "")
 ///BlockStart Block 9,0
 {
 ///Instruction Instruction 9,1
-if (Strings.Trim(Modul1.Kont[12]) == "")
+if ((Modul1.Kont[12]).Trim() == "")
 ///BlockStart Block 10,0
 {
 ///Instruction Instruction 10,1
-if (Strings.Trim(Modul1.Kont[13]) == "")
+if ((Modul1.Kont[13]).Trim() == "")
 ///BlockStart Block 11,0
 {
 ///Instruction Instruction 11,1
-if (Strings.Trim(Modul1.Kont[14]) == "")
+if ((Modul1.Kont[14]).Trim() == "")
 ///BlockStart Block 12,0
 {
 ///Instruction Instruction 12,1
@@ -2075,7 +2075,7 @@ goto end_IL_0001_2;
 ///BlockEnd Block 6,2
 }
 ///Instruction Instruction 5,311
-if(Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare: false))
+if((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
 ///Instruction Instruction 6,1
@@ -2163,7 +2163,7 @@ Modul1.Kenn = 1f;
 ///Instruction Instruction 8,9
 Modul1.PerSatzLes();
 ///Instruction Instruction 8,10
-if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value, "F", TextCompare: false))
+if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
 ///BlockStart Block 9,0
 {
 ///Instruction Instruction 9,1
@@ -2189,7 +2189,7 @@ if ((LiKi == 0) & (LiEl == 0))
 ///Instruction Instruction 9,1
 Modul1.Personlesen(Modul1.PersInArb);
 ///Instruction Instruction 9,2
-StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left(Strings.Trim(Modul1.Kont[0]) + "," + Strings.Trim(Modul1.Kont[3]) + "                                  ", 20));
+StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20));
 ///Instruction Instruction 9,3
 if (LiEl == 0)
 ///BlockStart Block 10,0
@@ -2377,7 +2377,7 @@ Modul1.LiText = new string(' ', 80);
 ///Instruction Instruction 6,2
 StringType.MidStmtStr(ref Modul1.LiText, 1, 10, Strings.Right("          " + DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.OrtNr)].Value.AsString(), 10));
 ///Instruction Instruction 6,3
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].Value, 0, TextCompare: false))
+if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -2385,7 +2385,7 @@ StringType.MidStmtStr(ref Modul1.LiText, 12, 2, "F ");
 ///BlockEnd Block 7,2
 }
 ///Instruction Instruction 6,4
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].Value, 0, TextCompare: false))
+if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -2393,7 +2393,7 @@ StringType.MidStmtStr(ref Modul1.LiText, 20, 2, "F ");
 ///BlockEnd Block 7,2
 }
 ///Instruction Instruction 6,5
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].Value, 0, TextCompare: false))
+if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -2401,7 +2401,7 @@ StringType.MidStmtStr(ref Modul1.LiText, 28, 2, "F ");
 ///BlockEnd Block 7,2
 }
 ///Instruction Instruction 6,6
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].Value, 0, TextCompare: false))
+if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -2409,7 +2409,7 @@ StringType.MidStmtStr(ref Modul1.LiText, 34, 2, "F ");
 ///BlockEnd Block 7,2
 }
 ///Instruction Instruction 6,7
-if(Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].Value, 0, TextCompare: false))
+if((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
@@ -2705,7 +2705,7 @@ case 552:
 ///Instruction Instruction 6,79
 num = 552;
 ///Instruction Instruction 6,80
-if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value, "F", TextCompare: false))
+if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
 ///BlockStart Block 7,0
 {
 ///Goto Goto 7,1 Dest:OK
@@ -2877,7 +2877,7 @@ case 575:
 ///Instruction Instruction 6,150
 num = 575;
 ///Instruction Instruction 6,151
-if(Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+if((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 7,0
 {
 ///Goto Goto 7,1 Dest:OK

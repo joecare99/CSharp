@@ -32,7 +32,7 @@ IL_0002:
         public static string test1Data { get; } = Resource.Test1Dat_cs;
         public static string test2Data { get; } = Resource.Test2Dat_cs;
         public const string testData3 = @"public void Test3(){
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
                             goto IL_105c;
                         IL_105c:
                             num = 209;
@@ -109,8 +109,10 @@ Modul1.UbgT = Strings.Trim(Text2[0].Text);
         num = 212;
         return;
 }";
+        public static readonly string test8Data = Resource.Test8Dat_cs;
         public static readonly string test9Data = Resource.Test9Dat_cs;
         public static readonly string test10Data = Resource.Test10Dat_cs;
+        public static readonly string test11Data = Resource.Test11Dat_cs;
 
         #endregion
 
@@ -162,7 +164,7 @@ public void Test3()
 ///BlockStart Block 1,0
 {
 ///Instruction Instruction 1,1
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
 ///Goto Goto 1,2 Dest:OK
 goto IL_105c;
 ///Label Label 1,3 1
@@ -323,8 +325,10 @@ num = 212;
 return;
 ///BlockEnd Block 1,16
 }";
+        public static readonly string test8DataExp = Resource.Test8ExpParse;
         public static readonly string test9DataExp = Resource.Test9ExpParse;
         public static readonly string test10DataExp = Resource.Test10ExpParse;
+        public static readonly string test11DataExp = Resource.Test11ExpParse;
         //====================================================================================================================================================================
 
         public const string testDataMoveExp0 = @"";
@@ -837,7 +841,7 @@ IL_01aa:
 ///Instruction Instruction 4,104
 num = 23;
 ///Instruction Instruction 4,105
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  """")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == """")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK
@@ -1446,7 +1450,7 @@ IL_01aa:
 ///Instruction Instruction 4,101
 num = 23;
 ///Instruction Instruction 4,102
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  """")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == """")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK
@@ -2052,7 +2056,7 @@ IL_01aa:
 ///Instruction Instruction 4,100
 num = 23;
 ///Instruction Instruction 4,101
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  """")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == """")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK
@@ -2166,7 +2170,7 @@ public void Test3()
 ///BlockStart Block 1,0
 {
 ///Instruction Instruction 1,1
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
 ///Goto Goto 1,2 Dest:OK
 goto IL_105c;
 ///Label Label 1,3 1
@@ -2318,7 +2322,7 @@ public void Test3()
 ///BlockStart Block 1,0
 {
 ///Instruction Instruction 1,1
-Modul1.UbgT = Strings.Trim(Text2[0].Text);
+Modul1.UbgT = (Text2[0].Text).Trim();
 ///Instruction Instruction 1,2
 if (Modul1.UbgT == """")
 ///BlockStart Block 2,0
@@ -2419,7 +2423,7 @@ T:Block,1,}
         public static string cExp2Log { get; } = Resource.Test2ExpTokenize;
         public const string cExpLog3 = @"T:Instruction,0,public void Test3()
 T:Block,1,{
-T:Instruction,1,Modul1.UbgT = Strings.Trim(Text2[0].Text);
+T:Instruction,1,Modul1.UbgT = (Text2[0].Text).Trim();
 T:Goto,1,goto IL_105c;
 T:Label,1,IL_105c:
 T:Instruction,1,num = 209;
@@ -2538,8 +2542,10 @@ T:Instruction,1,num = 212;
 T:Instruction,1,return;
 T:Block,1,}
 ";
+        public static readonly string cExp8Log = Resource.Test8ExpTokenize;
         public static readonly string cExp9Log = Resource.Test9ExpTokenize;
         public static readonly string cExp10Log = Resource.Test10ExpTokenize;
+        public static readonly string cExp11Log = Resource.Test11ExpTokenize;
 
         #endregion
 
@@ -2568,7 +2574,7 @@ T:Block,1,}
         public static string cExpCode2 { get; } = Resource.Test2ExpCode;
         public const string cExpCode3 = @"    public void Test3()
     {
-        Modul1.UbgT = Strings.Trim(Text2[0].Text);
+        Modul1.UbgT = (Text2[0].Text).Trim();
         goto IL_105c;
     IL_105c:
         num = 209;
@@ -2649,6 +2655,7 @@ T:Block,1,}
         num = 212;
         return;
     }";
+        public static string cExpCode8 { get; } = Resource.Test8ExpCode;
         public static string cExpCode9 { get; } = Resource.Test9ExpCode;
         #endregion
         private static object? ReadObject(byte[] JsonData) => new DataContractJsonSerializer(typeof(List<TokenData>)).ReadObject(new MemoryStream(JsonData));
@@ -3182,7 +3189,7 @@ T:Block,1,}
         public static object TestDataList3() => new List<TokenData>(){
             ("public void Test3()", ICSCode.CodeBlockType.Instruction, 0),
             ("{", ICSCode.CodeBlockType.Block, 1),
-            ("Modul1.UbgT = Strings.Trim(Text2[0].Text);", ICSCode.CodeBlockType.Instruction, 1),
+            ("Modul1.UbgT = (Text2[0].Text).Trim();", ICSCode.CodeBlockType.Instruction, 1),
             ("goto IL_105c;", ICSCode.CodeBlockType.Goto, 1),
             ("IL_105c:", ICSCode.CodeBlockType.Label, 1),
             ("num = 209;", ICSCode.CodeBlockType.Instruction, 1),
@@ -3304,8 +3311,10 @@ T:Block,1,}
         ("return;", ICSCode.CodeBlockType.Instruction, 1),
         ("}", ICSCode.CodeBlockType.Block, 1),
         };
-        public static object? TestDataList9() => ReadObject(Resource.Test9DataList
-            );
+        public static object? TestDataList8() => ReadObject(Resource.Test8DataList);
+        public static object? TestDataList9() => ReadObject(Resource.Test9DataList);
+        public static object? TestDataList10() => ReadObject(Resource.Test10DataList);
+        public static object? TestDataList11() => ReadObject(Resource.Test11DataList);
         #endregion
     }
 }

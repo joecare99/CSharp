@@ -44,7 +44,7 @@ namespace VBUnObfusicator.Models
                         case '"' when (data.State == 5) && (code[data.Pos + 1] == '"'):
                             data.Pos++;
                             break;
-                        case '{' when (data.State == 4): // inner statement
+                        case '{' when data.State == 4: // inner statement
                             data.State = 6;
                             break;
                         case '"':// String-End

@@ -36,7 +36,7 @@ namespace VBUnObfusicator.Models
         private static readonly char[] letters = 'A'.To('Z').Concat('a'.To('z')).ToArray();
         private static readonly char[] lettersAndNumbers = letters.Concat(numbers).ToArray();
         private static readonly char[] stringEndChars = { '"', '\\', '{', '\r' };
-        
+
         public string OriginalCode { get; set; } = string.Empty;
         //   public string Code { get; set; }
 
@@ -91,13 +91,13 @@ namespace VBUnObfusicator.Models
                 data.Pos++;
             }
         }
-        
+
         public ICodeBlock Parse(IEnumerable<TokenData>? values = null)
         {
             string BlockCode = string.Empty;
             ICodeBlock codeBlock = new CodeBlock() { Name = "Declaration", Code = "", Parent = null };
             var data = new CodeBuilder.CodeBuilderData(codeBlock);
-            
+
             if (values == null)
                 Tokenize((tokenData) => CodeBuilder.OnToken(tokenData, data));
             else
@@ -151,7 +151,12 @@ namespace VBUnObfusicator.Models
                 if (item.SubBlocks.Count > 0)
                     ReorderLabels(item);
 
-            static string Code2(string code) => code.Replace("Start", "0000");
+            static string Code2(string code)
+            {
+                return code.StartsWith("IL_")
+                    ? "IL_" + code.Substring(3).PadLeft(7, '0')
+                    : code.Replace("Start", "0000");
+            }
         }
 
         /// <summary>

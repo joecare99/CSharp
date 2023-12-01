@@ -257,6 +257,23 @@ public enum AhnenFields
     Spitz
 }
 
+public enum QuFields
+{
+    _1,
+    _2,
+    _3,
+    _4, 
+    _5,
+    _6,
+    _7,
+    _8,
+    _9,
+    _10,
+    _11,
+    _12,
+    _13
+}
+
 public enum AhnenIndex
 {
     Spitz,
@@ -315,8 +332,41 @@ public enum PropertyIndex
     Per
 }
 
+public enum SourceLinkFields
+{
+    /// <summary>
+    /// Type of Link
+    /// </summary>
+    _1, // Kind    
+    /// <summary>
+    /// The Source Nr
+    /// </summary>
+    _2, // Nr
+    _3, // NrNeu    
+    /// <summary>
+    /// The Page
+    /// </summary>
+    _4, // Page
+    Aus,
+    Orig,
+    Kom,
+    Art,
+    LfNr,
+}
 
-
+public enum RepoFields
+{
+    Nr,
+    Name,
+    Ort,
+    PLZ,
+    Strasse,
+    Fon,
+    Mail,
+    Http,
+    Bem,
+    Suchname
+}
 public enum ENameKennz : int
 {
     nkGivnName = 0,
@@ -346,6 +396,31 @@ public enum ELinkKennz : int
     //lkGodmother = 6,
     //lkGodparent = 7,
 
+}
+
+public enum EGedSource
+{
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4,
+    _5 = 5,
+    _6 = 6,
+    _7 = 7,
+    _8 = 8,
+    _9 = 9,
+    _10 = 10,
+    _11 = 11,
+    _12 = 12,
+    _13 = 13,
+    _14 = 14,
+    _15 = 15,
+    _16 = 16,
+    _17 = 17,
+    _18 = 18,
+    _19 = 19,
+    _21 = 21,
 }
 
 public enum ETextKennz : int
@@ -411,4 +486,3 @@ public enum ETextKennz : int
     tk6_ = '6',
     tk7_ = '7',
 }
-

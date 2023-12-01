@@ -1011,7 +1011,7 @@
                                     goto case 552;
                                 case 552:
                                     num = 552;
-                                    if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value, "F", TextCompare: false))
+                                    if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
                                     {
                                         goto case 553;
                                     }
@@ -1097,7 +1097,7 @@
                                 case 574:
                                 case 575:
                                     num = 575;
-                                    if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                                    if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                                     {
                                         goto case 576;
                                     }
@@ -1850,7 +1850,7 @@
                             goto IL_4044;
                         IL_4044:
                             num = 736;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
                             {
                                 goto IL_4076;
                             }
@@ -1864,7 +1864,7 @@
                             goto IL_4091;
                         IL_4091:
                             num = 739;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
                             {
                                 goto IL_40c3;
                             }
@@ -1878,7 +1878,7 @@
                             goto IL_40de;
                         IL_40de:
                             num = 742;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
                             {
                                 goto IL_4110;
                             }
@@ -1892,7 +1892,7 @@
                             goto IL_412b;
                         IL_412b:
                             num = 745;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
                             {
                                 goto IL_415d;
                             }
@@ -1906,7 +1906,7 @@
                             goto IL_4178;
                         IL_4178:
                             num = 748;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
                             {
                                 goto IL_41aa;
                             }
@@ -2079,7 +2079,7 @@
                             goto IL_34eb;
                         IL_34eb:
                             num = 631;
-                            if (Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare: false))
+                            if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
                             {
                                 goto IL_351e;
                             }
@@ -2224,7 +2224,7 @@
                             goto IL_37e0;
                         IL_37e0:
                             num = 664;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].Value, "F", TextCompare: false))
+                            if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
                             {
                                 goto IL_3811;
                             }
@@ -2274,7 +2274,7 @@
                             goto IL_38f5;
                         IL_38f5:
                             num = 674;
-                            StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left(Strings.Trim(Modul1.Kont[0]) + "," + Strings.Trim(Modul1.Kont[3]) + "                                  ", 20));
+                            StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20));
                             goto IL_3935;
                         IL_3935:
                             num = 675;
@@ -2511,7 +2511,7 @@
                             goto IL_25f2;
                         IL_25f2:
                             num = 456;
-                            if (Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare: false))
+                            if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
                             {
                                 goto IL_2625;
                             }
@@ -2602,7 +2602,7 @@
                             goto IL_27bb;
                         IL_27bb:
                             num = 476;
-                            Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) + "," + Strings.Trim(Modul1.Kont[3]) + "                                  ", 20);
+                            Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
                             goto IL_27f5;
                         IL_27f5:
                             num = 477;
@@ -2643,7 +2643,7 @@
                             goto IL_2889;
                         IL_2889:
                             num = 484;
-                            if (Strings.Trim(Modul1.Kont[11]) == "")
+                            if ((Modul1.Kont[11]).Trim() == "")
                             {
                                 goto IL_28b9;
                             }
@@ -2653,7 +2653,7 @@
                             }
                         IL_28b9:
                             num = 487;
-                            if (Strings.Trim(Modul1.Kont[12]) == "")
+                            if ((Modul1.Kont[12]).Trim() == "")
                             {
                                 goto IL_28e9;
                             }
@@ -2663,7 +2663,7 @@
                             }
                         IL_28e9:
                             num = 490;
-                            if (Strings.Trim(Modul1.Kont[13]) == "")
+                            if ((Modul1.Kont[13]).Trim() == "")
                             {
                                 goto IL_2919;
                             }
@@ -2673,7 +2673,7 @@
                             }
                         IL_2919:
                             num = 493;
-                            if (Strings.Trim(Modul1.Kont[14]) == "")
+                            if ((Modul1.Kont[14]).Trim() == "")
                             {
                                 goto IL_2949;
                             }
@@ -2722,7 +2722,7 @@
                             }
                         IL_2c4c:
                             num = 534;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
                             {
                                 goto IL_2c7e;
                             }
@@ -2736,7 +2736,7 @@
                             goto IL_2c9b;
                         IL_2c9b:
                             num = 537;
-                            if (!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_2cd2;
                             }
@@ -2746,7 +2746,7 @@
                             }
                         IL_2cd2:
                             num = 540;
-                            if (!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+                            if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
                             {
                                 goto IL_2d09;
                             }
@@ -2770,7 +2770,7 @@
                             goto IL_2d63;
                         IL_2b31:
                             num = 520;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
                             {
                                 goto IL_2b63;
                             }
@@ -2784,7 +2784,7 @@
                             goto IL_2b80;
                         IL_2b80:
                             num = 523;
-                            if (!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_2bb7;
                             }
@@ -2794,7 +2794,7 @@
                             }
                         IL_2bb7:
                             num = 526;
-                            if (!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+                            if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
                             {
                                 goto IL_2bee;
                             }
@@ -2818,7 +2818,7 @@
                             goto IL_2d63;
                         IL_2a16:
                             num = 506;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
                             {
                                 goto IL_2a48;
                             }
@@ -2832,7 +2832,7 @@
                             goto IL_2a65;
                         IL_2a65:
                             num = 509;
-                            if (!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_2a9c;
                             }
@@ -2842,7 +2842,7 @@
                             }
                         IL_2a9c:
                             num = 512;
-                            if (!Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+                            if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
                             {
                                 goto IL_2ad3;
                             }
@@ -2891,7 +2891,7 @@
                             goto IL_3320;
                         IL_3320:
                             num = 609;
-                            if (Strings.Trim(Modul1.LiText) != "")
+                            if ((Modul1.LiText).Trim() != "")
                             {
                                 goto IL_3348;
                             }
@@ -3019,7 +3019,7 @@
                             goto IL_1dc9;
                         IL_1dc9:
                             num = 359;
-                            if (Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare: false))
+                            if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
                             {
                                 goto IL_1dfc;
                             }
@@ -3236,7 +3236,7 @@
                             }
                         IL_21e4:
                             num = 411;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare: false))
+                            if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
                             {
                                 goto IL_2216;
                             }
@@ -3512,7 +3512,7 @@
                             goto IL_0ec1;
                         IL_0ec1:
                             num = 182;
-                            if (Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value, TextCompare: false))
+                            if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
                             {
                                 goto IL_0ef4;
                             }
@@ -3739,7 +3739,7 @@
                             }
                         IL_12b7:
                             num = 233;
-                            if (Operators.ConditionalCompareObjectEqual(DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value, -1, TextCompare: false))
+                            if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
                             {
                                 goto IL_12e9;
                             }
@@ -3798,7 +3798,7 @@
                             }
                         IL_1743:
                             num = 286;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_1775;
                             }
@@ -3826,7 +3826,7 @@
                             goto IL_17ec;
                         IL_1696:
                             num = 278;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_16c8;
                             }
@@ -3854,7 +3854,7 @@
                             goto IL_17ec;
                         IL_15e9:
                             num = 270;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_161b;
                             }
@@ -3882,7 +3882,7 @@
                             goto IL_17ec;
                         IL_153c:
                             num = 262;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_156e;
                             }
@@ -3910,7 +3910,7 @@
                             goto IL_17ec;
                         IL_148f:
                             num = 254;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_14c1;
                             }
@@ -3938,7 +3938,7 @@
                             goto IL_17ec;
                         IL_13e2:
                             num = 246;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_1414;
                             }
@@ -4001,7 +4001,7 @@
                             }
                         IL_18a7:
                             num = 298;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_18d9;
                             }
@@ -4116,7 +4116,7 @@
                             goto IL_036e;
                         IL_036e:
                             num = 54;
-                            if (Operators.ConditionalCompareObjectGreater(num7, DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value, TextCompare: false))
+                            if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
                             {
                                 goto IL_039e;
                             }
@@ -4244,7 +4244,7 @@
                             goto IL_0519;
                         IL_0519:
                             num = 75;
-                            Modul1.LiText = Strings.Left(Strings.Trim(Modul1.Kont[0]) + "," + Strings.Trim(Modul1.Kont[3]) + "                                  ", 20);
+                            Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
                             goto IL_0550;
                         IL_0550:
                             num = 76;
@@ -4340,7 +4340,7 @@
                             }
                         IL_0981:
                             num = 125;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
                             {
                                 goto IL_09b0;
                             }
@@ -4354,7 +4354,7 @@
                             goto IL_09ca;
                         IL_09ca:
                             num = 128;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_09fc;
                             }
@@ -4368,7 +4368,7 @@
                             goto IL_0a19;
                         IL_0a19:
                             num = 131;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
                             {
                                 goto IL_0a4b;
                             }
@@ -4396,7 +4396,7 @@
                             goto IL_0ac2;
                         IL_084e:
                             num = 111;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
                             {
                                 goto IL_087d;
                             }
@@ -4410,7 +4410,7 @@
                             goto IL_0897;
                         IL_0897:
                             num = 114;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_08c6;
                             }
@@ -4424,7 +4424,7 @@
                             goto IL_08e0;
                         IL_08e0:
                             num = 117;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
                             {
                                 goto IL_090f;
                             }
@@ -4452,7 +4452,7 @@
                             goto IL_0ac2;
                         IL_071b:
                             num = 97;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
                             {
                                 goto IL_074a;
                             }
@@ -4466,7 +4466,7 @@
                             goto IL_0764;
                         IL_0764:
                             num = 100;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                             {
                                 goto IL_0793;
                             }
@@ -4480,7 +4480,7 @@
                             goto IL_07ad;
                         IL_07ad:
                             num = 103;
-                            if (Operators.ConditionalCompareObjectGreater(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].Value, 0, TextCompare: false))
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
                             {
                                 goto IL_07dc;
                             }

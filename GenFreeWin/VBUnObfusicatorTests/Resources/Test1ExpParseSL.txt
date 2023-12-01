@@ -205,7 +205,7 @@ IL_01aa:
 ///Instruction Instruction 4,61
 num = 23;
 ///Instruction Instruction 4,62
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  "")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == "")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK

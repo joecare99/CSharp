@@ -1,6 +1,6 @@
 ﻿using static System.Math;
 
-namespace Helper
+namespace GenFree.Helper
 {
     public static class PlaceHelpers
     {
