@@ -14,4 +14,5 @@ public interface IFamilyData : IHasID<int>
     string sName { get; }
     string sPrefix { get; }
     string sSuffix { get; }
+    bool xAeB { get; }
 }
