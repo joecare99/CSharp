@@ -4,6 +4,7 @@
 		<TargetFrameworks>net8.0;net7.0;net6.0;net481-windows</TargetFrameworks>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<RootNamespace>GenFree</RootNamespace>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

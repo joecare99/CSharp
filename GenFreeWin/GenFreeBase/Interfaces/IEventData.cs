@@ -4,7 +4,7 @@ using System;
 
 namespace GenFree.Interfaces;
 
-public interface IEventData
+public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>
 {
     DateTime dDatumB { get; }
     DateTime dDatumV { get; }
