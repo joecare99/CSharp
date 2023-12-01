@@ -2,7 +2,7 @@
 using GenFree.Interfaces.DB;
 
 namespace GenFree.Interfaces;
-public interface ILinkData
+public interface ILinkData: IHasID<(int iFamily, int iPerson, ELinkKennz iKennz)>, IHasPropEnum<ELinkProp>
 {
     public enum LinkFields
     {

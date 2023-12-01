@@ -9,7 +9,7 @@ public interface IFamilyPersons
     int Mann { get; set; }
     IList<(int nr, string aTxt)> Kinder { get; }
     IArrayProxy<int> Kind { get; }
-    int iFamNr { get; }
+    int ID { get; }
 
     void Clear();
 }
