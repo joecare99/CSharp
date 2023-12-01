@@ -10,6 +10,8 @@ namespace VBUnObfusicator.Models
     {
         private static class CodeOptimizer
         {
+            public static bool _noWhile = false;
+
             private static ICodeBlock? RemoveGotoAndLabel(ICodeBlock item, ICodeBlock source)
             {
                 var p = source.Parent;
@@ -29,8 +31,8 @@ namespace VBUnObfusicator.Models
                     if (c.Next is ICodeBlock next3)
                         c = next3;
                     _ = source.Parent!.DeleteSubBlocks(source.Index, c.Index - source.Index);
-                    if (FindLeadingLabel(c) is ICodeBlock labelItem 
-                        && labelItem.Sources.Count > 2)                        
+                    if (FindLeadingLabel(c) is ICodeBlock labelItem
+                        && labelItem.Sources.Count > 2)
                         TestItem(labelItem);
                 }
                 return p;
@@ -168,7 +170,7 @@ namespace VBUnObfusicator.Models
 
             private static bool IsIfStatement(ICodeBlock a)
             {
-                return a.Type== CodeBlockType.Instruction 
+                return a.Type == CodeBlockType.Instruction
                     && (a.Code.StartsWith("if ")
                         || a.Code.StartsWith("if("));
             }
@@ -190,8 +192,10 @@ namespace VBUnObfusicator.Models
 
             private static void TestForEasyWhileLoops(ICodeBlock item)
             {
-                foreach(var wrSource in item.Sources)
+                if (_noWhile) return;
+                foreach (var wrSource in item.Sources)
                     if (wrSource.TryGetTarget(out var source)
+                        && IsFirstInstructon(source)
                         && source.Parent is ICodeBlock ifItem
                         && IsIfStatement(ifItem)
                         && FindLeadingLabel(ifItem) == item)
@@ -203,7 +207,7 @@ namespace VBUnObfusicator.Models
                         while (c?.Next is ICodeBlock next
                             && c.Type is CodeBlockType.LComment or CodeBlockType.Comment)
                             c = next;
-                        if (c.Next is ICodeBlock next2 
+                        if (c.Next is ICodeBlock next2
                             && c.Code.StartsWith("num ="))
                             c = next2;
                         // move Instructions to While-Goto
@@ -216,7 +220,7 @@ namespace VBUnObfusicator.Models
                                && elseItem.Type == CodeBlockType.Instruction
                                && elseItem.Code == "else")
                             {
-                                elseItem.MoveSubBlocks(1, elseItem.Next, elseItem.SubBlocks.Count-2);
+                                elseItem.MoveSubBlocks(1, elseItem.Next, elseItem.SubBlocks.Count - 2);
                                 DeleteItem(elseItem);
                             }
                             TestItem(item);
@@ -231,13 +235,25 @@ namespace VBUnObfusicator.Models
                     {
                         var var1 = asItem1.Code.Substring(0, asItem1.Code.IndexOf(" = "));
                         var var2 = asItem1.Code.Substring(asItem1.Code.IndexOf(" = ") + 3).TrimEnd(';');
-                        if (IsIdentifyer(var1) && asItem1.Code.Contains(var1))
+                        if (IsIdentifyer(var1) && asItem1.Code.Contains(var1) && !var2.Contains("+") && !var2.Contains("-"))
                         {
                             ifItem.Code = $"{ifItem.Code.Substring(0, 2)}{ifItem.Code.Substring(2).Replace(var1, var2)}";
                             DeleteItem(asItem1);
                         }
                     }
                 }
+            }
+
+            private static bool IsFirstInstructon(ICodeBlock source)
+            {
+                bool result = true;
+                var test = source.Prev;
+                while(result && test is CodeBlock c)
+                       {
+                    result = c.Type is CodeBlockType.LComment or CodeBlockType.Comment or CodeBlockType.Block;
+                    test = c.Prev;
+                }
+                return result;
             }
 
             private static void DeleteItem(ICodeBlock asItem1)
@@ -250,8 +266,8 @@ namespace VBUnObfusicator.Models
             {
                 if (var2.Length == 0) return false;
                 if (!char.IsLetter(var2[0]) && var2[0] != '_') return false;
-                foreach(char c in var2)
-                    if (!char.IsLetterOrDigit(c) && c!='_' && c != '.')
+                foreach (char c in var2)
+                    if (!char.IsLetterOrDigit(c) && c != '_' && c != '.')
                         return false;
                 return true;
             }
