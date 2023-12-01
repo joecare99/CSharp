@@ -20,6 +20,9 @@ namespace GenFree.Constants
         public const string cMon_OCT = "OCT";
         public const string cMon_NOV = "NOV";
         public const string cMon_DEC = "DEC";
-
+        public const string cMon_MAER = "MÄR";
+        public const string cMon_MAI = "MAI";
+        public const string cMon_OKT = "OKT";
+        public const string cMon_DEZ = "DEZ";
     }
 }

@@ -19,5 +19,7 @@
         public const string cGedDate_UM = "UM";
         public const string cGedDate_VOR = "VOR";
         public const string cGedDate_ZWI = "ZWI";
+        public const string cGedDate_ETWA = "ETWA";
+        public const string cGedDateUnkn = "?";
     }
 }
