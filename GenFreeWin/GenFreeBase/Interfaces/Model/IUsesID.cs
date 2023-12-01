@@ -5,7 +5,7 @@ namespace GenFree.Interfaces.Model
 
     {
         T MaxID { get; }
-        void Delete(T key);
+        bool Delete(T key);
         bool Exists(T key);
     }
 }
