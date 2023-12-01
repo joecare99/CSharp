@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model;
 
-public interface ILink
+public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz iKennz)>, IUsesID<(int iFamily, int iPerson, ELinkKennz iKennz)>
 {
     void Append(int iFamily, int iPerson, ELinkKennz iKennz);
     bool AppendE(int iFamNr, int iPerson, ELinkKennz eKennz);

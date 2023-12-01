@@ -2,7 +2,7 @@
 
 namespace GenFree.Interfaces;
 
-public interface IFamilyData
+public interface IFamilyData : IHasID<int>
 {
     DateTime dAnlDatum { get; }
     DateTime dEditDat { get; }
@@ -14,5 +14,4 @@ public interface IFamilyData
     string sName { get; }
     string sPrefix { get; }
     string sSuffix { get; }
-    int iFamNr { get; }
 }

@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 
 namespace GenFree.Interfaces;
-public interface IPersonData
+public interface IPersonData : IHasID<int>
 {
     string Alias { get; }
     string Baptised { get; }
     string Birthday { get; }
     string Burial { get; }
-    List<string> Callname { get; }
+    IList<string> Callname { get; }
     string Clan { get; }
     string Death { get; }
     DateTime dEditDat { get; }
     string FullName { get; }
     string FullSurName { get; }
-    List<string> Givenname { get; }
+    IList<string> Givenname { get; }
     string Givennames { get; }
     Guid gUID { get; }
-    int iPersNr { get; }
     int iReligi { get; }
-    List<string> Nickname { get; }
+    IList<string> Nickname { get; }
     string Prae { get; }
     string Prefix { get; }
     string sAge { get; }
