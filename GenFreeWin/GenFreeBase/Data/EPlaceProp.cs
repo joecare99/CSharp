@@ -1,7 +1,9 @@
 ﻿//using DAO;
-namespace GenFree.Interfaces
+namespace GenFree.Data
 {
-    public class EPlaceProp
+    public enum EPlaceProp
     {
+        ID,
+
     }
 }
