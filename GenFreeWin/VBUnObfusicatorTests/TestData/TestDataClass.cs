@@ -113,6 +113,7 @@ Modul1.UbgT = (Text2[0].Text).Trim();
         public static readonly string test9Data = Resource.Test9Dat_cs;
         public static readonly string test10Data = Resource.Test10Dat_cs;
         public static readonly string test11Data = Resource.Test11Dat_cs;
+        public static readonly string test12Data = Resource.Test12Dat_cs;
 
         #endregion
 
@@ -329,6 +330,7 @@ return;
         public static readonly string test9DataExp = Resource.Test9ExpParse;
         public static readonly string test10DataExp = Resource.Test10ExpParse;
         public static readonly string test11DataExp = Resource.Test11ExpParse;
+        public static readonly string test12DataExp = Resource.Test12ExpParse;
         //====================================================================================================================================================================
 
         public const string testDataMoveExp0 = @"";
@@ -2382,6 +2384,7 @@ return;
 ///BlockEnd Block 1,4
 }";
         public static string testDataExpRemoveL9 { get; } = Resource.Test9ExpParseRL;
+        public static string testDataExpRemoveL12 { get; } = Resource.Test12ExpParseRL;
         #endregion
 
         #region Expected data for Tokenizer
@@ -2546,6 +2549,7 @@ T:Block,1,}
         public static readonly string cExp9Log = Resource.Test9ExpTokenize;
         public static readonly string cExp10Log = Resource.Test10ExpTokenize;
         public static readonly string cExp11Log = Resource.Test11ExpTokenize;
+        public static readonly string cExp12Log = Resource.Test12ExpTokenize;
 
         #endregion
 
@@ -2657,6 +2661,9 @@ T:Block,1,}
     }";
         public static string cExpCode8 { get; } = Resource.Test8ExpCode;
         public static string cExpCode9 { get; } = Resource.Test9ExpCode;
+        public static string cExpCode10 { get; } = Resource.Test10ExpCode;
+        public static string cExpCode11 { get; } = Resource.Test11ExpCode;
+        public static string cExpCode12 { get; } = Resource.Test12ExpCode;
         #endregion
         private static object? ReadObject(byte[] JsonData) => new DataContractJsonSerializer(typeof(List<TokenData>)).ReadObject(new MemoryStream(JsonData));
 
@@ -3315,6 +3322,7 @@ T:Block,1,}
         public static object? TestDataList9() => ReadObject(Resource.Test9DataList);
         public static object? TestDataList10() => ReadObject(Resource.Test10DataList);
         public static object? TestDataList11() => ReadObject(Resource.Test11DataList);
+        public static object? TestDataList12() => ReadObject(Resource.Test12DataList);
         #endregion
     }
 }
