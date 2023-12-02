@@ -71,22 +71,14 @@ case 1:
 ///Instruction Instruction 6,2
 break;
 ///Label Label 6,3
-case 4:
-///Label Label 6,4
-case 5:
-///Label Label 6,5
-case 8:
-///Goto Goto 6,6 Dest:OK
-goto IL_0048;
-///Label Label 6,7
 case 10:
-///Goto Goto 6,8 Dest:OK
+///Goto Goto 6,4 Dest:OK
 goto end_IL_0000_2;
-///Label Label 6,9
+///Label Label 6,5
 case 11:
-///Goto Goto 6,10 Dest:OK
+///Goto Goto 6,6 Dest:OK
 goto end_IL_0000_3;
-///BlockEnd Block 6,11
+///BlockEnd Block 6,7
 }
 ///Goto Goto 5,6 Dest:OK
 goto default;
@@ -104,29 +96,21 @@ num = 2;
 FileSystem.FileOpen(99, COND.GenPlu + "\\Init\\Druck_ini.dat", OpenMode.Input);
 ///Instruction Instruction 4,11
 b = 0;
-///Goto Goto 4,12 Dest:OK
-goto IL_0048;
-///Label Label 4,13 3
-IL_0048:
-///Instruction Instruction 4,14
-num = 5;
-///Instruction Instruction 4,15
-if (!FileSystem.EOF(99))
+///Instruction Instruction 4,12
+while (!FileSystem.EOF(99))
 ///BlockStart Block 5,0
 {
 ///Instruction Instruction 5,1
 b = checked((byte)(unchecked(b) + 1));
 ///Instruction Instruction 5,2
 FileSystem.Input(99, ref COND.Aus[b]);
-///Goto Goto 5,3 Dest:OK
-goto IL_0048;
-///BlockEnd Block 5,4
+///BlockEnd Block 5,3
 }
-///Instruction Instruction 4,16
+///Instruction Instruction 4,13
 FileSystem.FileClose(99);
-///Instruction Instruction 4,17
+///Instruction Instruction 4,14
 break;
-///BlockEnd Block 4,18
+///BlockEnd Block 4,15
 }
 ///Instruction Instruction 3,4
 num = 10;
