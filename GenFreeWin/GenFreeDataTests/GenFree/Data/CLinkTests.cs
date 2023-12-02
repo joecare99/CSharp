@@ -24,9 +24,9 @@ public class CLinkTests
         testRS = Substitute.For<IRecordset>();
         testClass = new CLink(() => testRS);
         testRS.NoMatch.Returns(true);
-        testRS.Fields[nameof(ILinkData.LinkFields.Kennz)].Value.Returns(1, 2, 3);
+        testRS.Fields[nameof(ILinkData.LinkFields.Kennz)].Value.Returns(1, 2, 3, 8);
         testRS.Fields[nameof(ILinkData.LinkFields.FamNr)].Value.Returns(1, 3, 5);
-        testRS.Fields[nameof(ILinkData.LinkFields.PerNr)].Value.Returns(2, 6, 4);
+        testRS.Fields[nameof(ILinkData.LinkFields.PerNr)].Value.Returns(2, 6, 4, 9);
     }
     [TestMethod()]
     public void CLinkTest()
@@ -70,6 +70,18 @@ public class CLinkTests
         Assert.AreEqual(xExp, testClass.ExistF(iActFam, eLinkKennz));
         Assert.AreEqual(nameof(LinkIndex.FamSu), testRS.Index);
         testRS.Received().Seek("=", iActFam, eLinkKennz);
+    }
+
+    [DataTestMethod()]
+    [DataRow("Null", 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-0None", 1, ELinkKennz.lkNone, true)]
+    [DataRow("1-1Father", 1, ELinkKennz.lkFather, true)]
+    public void ExistPTest(string sName, int iActFam, ELinkKennz eLinkKennz, bool xExp)
+    {
+        testRS.NoMatch.Returns(iActFam is not (> 0 and < 3));
+        Assert.AreEqual(xExp, testClass.ExistP(iActFam));
+        Assert.AreEqual(nameof(LinkIndex.Per), testRS.Index);
+        testRS.Received().Seek("=", iActFam);
     }
 
     [DataTestMethod()]
@@ -125,6 +137,22 @@ public class CLinkTests
     [DataTestMethod()]
     [DataRow("Null", 0, 0, ELinkKennz.lkNone, false)]
     [DataRow("1-0None", 1, 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-1Father", 1, 2, ELinkKennz.lkFather, true)]
+    public void Delete2Test(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, bool xExp)
+    {
+        testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 != iActFam, true);
+        Assert.AreEqual(xExp, testClass.Delete((iActFam, iActPers, eLinkKennz)));
+        Assert.AreEqual(nameof(LinkIndex.FamPruef), testRS.Index);
+        testRS.Received().Seek("=", iActFam, iActPers, eLinkKennz);
+        if (xExp)
+            testRS.Received().Delete();
+        else
+            testRS.DidNotReceive().Delete();
+    }
+
+    [DataTestMethod()]
+    [DataRow("Null", 0, 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-0None", 1, 0, ELinkKennz.lkNone, false)]
     [DataRow("1-2Father", 1, 2, ELinkKennz.lkFather, true)]
     public void DeleteAllETest(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, bool xExp)
     {
@@ -148,10 +176,25 @@ public class CLinkTests
         testRS.Received().Seek("=", iActFam, eLinkKennz);
     }
 
-    [TestMethod()]
-    public void DeleteFamWhereTest()
+    [DataTestMethod()]
+    [DataRow("Null", 0, 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-0None", 1, 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-2Father", 1, 2, ELinkKennz.lkFather, true)]
+    public void DeleteFamWhereTest(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, bool xExp)
     {
-        Assert.Fail();
+        testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 != iActFam, false, true);
+        testRS.Fields[nameof(ILinkData.LinkFields.FamNr)].Value.Returns(1, 1, 1, 1, iActFam + 1);
+        testClass.DeleteFamWhere(iActFam, (l) => l.eKennz == ELinkKennz.lkMother);//);
+        Assert.AreEqual(nameof(LinkIndex.FamNr), testRS.Index);
+        testRS.Received().Seek("=", iActFam);
+        if (xExp)
+        {
+            testRS.Received().Delete();
+        }
+        else
+        {
+            testRS.DidNotReceive().Delete();
+        }
     }
 
     [TestMethod()]
@@ -160,10 +203,34 @@ public class CLinkTests
         Assert.Fail();
     }
 
+
     [TestMethod()]
-    public void DeleteInvalidPersonTest()
+    public void MaxIDTest()
     {
-        Assert.Fail();
+        Assert.AreEqual((1,2,ELinkKennz.lkFather),testClass.MaxID);
+    }
+
+    [DataTestMethod()]
+    [DataRow("Null", 0, 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-0None", 1, 0, ELinkKennz.lkNone, true)]
+    [DataRow("1-2Father", 1, 2, ELinkKennz.lkFather, false)]
+    public void DeleteInvalidPersonTest(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, bool xExp)
+    {
+        testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 == iActFam, false, true);
+        testRS.Fields[nameof(ILinkData.LinkFields.PerNr)].Value.Returns(0, 1, 1, 1, iActFam + 1);
+        testClass.DeleteInvalidPerson();//);
+        Assert.AreEqual(nameof(LinkIndex.Per), testRS.Index);
+        testRS.Received().Seek("=", 0);
+        if (xExp)
+        {
+            testRS.Received().Delete();
+            testRS.Received().MoveNext();
+        }
+        else
+        {
+            testRS.DidNotReceive().Delete();
+            testRS.DidNotReceive().MoveNext();
+        }
     }
 
     [TestMethod()]
@@ -217,16 +284,35 @@ public class CLinkTests
 
     [DataTestMethod()]
     [DataRow("Null", 0, 0, ELinkKennz.lkNone, false)]
-    [DataRow("1-0None", 1, 0, ELinkKennz.lkNone, true)]
-    [DataRow("1-1Father", 1, 1, ELinkKennz.lkFather, true)]
+    [DataRow("1-0None", 1, 0, ELinkKennz.lkNone, false)]
+    [DataRow("1-2Father", 1, 2, ELinkKennz.lkFather, true)]
     public void ReadFamilyTest(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, bool xExp)
     {
-        testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 != iActFam, true);
-        CFamilyPersons testFamily = new();
+        testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 != iActFam, false, false,false, true);
+        testRS.Fields[nameof(ILinkData.LinkFields.FamNr)].Value.Returns(1, 1, 1, 1, 1, 1, 1, 1, iActFam + 1);
+
+        IFamilyPersons testFamily = Substitute.For<IFamilyPersons>();
         //Assert.AreEqual(xExp, 
         testClass.ReadFamily(iActFam, testFamily, testAct);//);
         Assert.AreEqual(nameof(LinkIndex.FamNr), testRS.Index);
         testRS.Received().Seek("=", iActFam);
+        if (!xExp)
+        {
+            testRS.Received(0).MoveNext();
+            testFamily.Kinder.Received().Add((0, ""));
+            Assert.AreEqual(0, testFamily.Mann);
+            Assert.AreEqual(0, testFamily.Frau);
+        }
+        else
+        {
+            testFamily.Kinder.Received().Add((0, ""));
+            testRS.Received(4).MoveNext();
+            Assert.AreEqual(2, testFamily.Mann);
+            Assert.AreEqual(6, testFamily.Frau);
+            testFamily.Kinder.Received().Add((4, ""));
+            testFamily.Kinder.Received().Add((9, "A"));
+        }
+
     }
 
     private void testAct(ELinkKennz kennz, int arg2)
