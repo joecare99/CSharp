@@ -18,7 +18,7 @@ namespace GenFree.Data
         protected abstract T GetID(IRecordset recordset);
         public abstract IRecordset? Seek(T key, out bool xBreak);
 
-        public bool Delete(T key) => Seek(key, out var x).SetRet(rs => rs?.Delete(), x);
+        public bool Delete(T key) => Seek(key, out var x).SetRet(rs => rs?.Delete(), !x);
         public bool Exists(T key)=>Seek(key) != null;
        
         public void ForEachDo(Action<IRecordset> action)
