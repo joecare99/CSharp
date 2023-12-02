@@ -32,7 +32,7 @@ namespace VBUnObfusicator.Models
                         c = next3;
                     _ = source.Parent!.DeleteSubBlocks(source.Index, c.Index - source.Index);
                     if (FindLeadingLabel(c) is ICodeBlock labelItem
-                        && labelItem.Sources.Count > 2)
+                        && labelItem.Sources.Count >= 2)
                         TestItem(labelItem);
                 }
                 return p;
