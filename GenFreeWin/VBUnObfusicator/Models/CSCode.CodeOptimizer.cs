@@ -195,9 +195,9 @@ namespace VBUnObfusicator.Models
                 if (_noWhile) return;
                 foreach (var wrSource in item.Sources)
                     if (wrSource.TryGetTarget(out var source)
-                        && IsFirstInstructon(source)
                         && source.Parent is ICodeBlock ifItem
                         && IsIfStatement(ifItem)
+                        && (IsFirstInstructon(source) || IsFirstInstructon(ifItem))
                         && FindLeadingLabel(ifItem) == item)
                     {
                         // Find while-pattern
@@ -248,9 +248,10 @@ namespace VBUnObfusicator.Models
             {
                 bool result = true;
                 var test = source.Prev;
-                while(result && test is CodeBlock c)
+                while(result && test is CodeBlock c && !(c.Type is CodeBlockType.Label))
                        {
-                    result = c.Type is CodeBlockType.LComment or CodeBlockType.Comment or CodeBlockType.Block;
+                    result = (c.Type is CodeBlockType.LComment or CodeBlockType.Comment or CodeBlockType.Block)
+                        || (c.Type is CodeBlockType.Instruction && c.Code.StartsWith("num ="));
                     test = c.Prev;
                 }
                 return result;
