@@ -110,10 +110,10 @@ namespace GenFree.Helper
 
         public static string IBM_DOSDecode(this string Ubgt1)
         {
-            Ubgt1 = Ubgt1.Replace((char)207, 'ß');
+            Ubgt1 = Ubgt1.Replace((char)0xCF, 'ß');
             Ubgt1 = Ubgt1.Replace((char)255, 'ß');
             Ubgt1 = Ubgt1.Replace((char)225, 'ß');
-            Ubgt1 = Ubgt1.Replace((char)129, 'ü');
+            Ubgt1 = Ubgt1.Replace((char)0x81, 'ü');
             Ubgt1 = Ubgt1.Replace((char)154, 'Ü');
             Ubgt1 = Ubgt1.Replace((char)148, 'ö');
             Ubgt1 = Ubgt1.Replace((char)153, 'Ö');
@@ -128,9 +128,9 @@ namespace GenFree.Helper
             Ubgt1 = Ubgt1.Replace((char)138, 'è');
             Ubgt1 = Ubgt1.Replace((char)138, 'è');
             Ubgt1 = Ubgt1.Replace($"{(char)236}", "oo");
-            Ubgt1 = Ubgt1.Replace(Strings.Chr(175), Strings.Chr(187));
-            Ubgt1 = Ubgt1.Replace('\xA5'.AsString(), "Ñ");
-            Ubgt1 = Ubgt1.Replace('\xA4'.AsString(), "ñ");
+            Ubgt1 = Ubgt1.Replace((char)(175), (char)(187));
+            Ubgt1 = Ubgt1.Replace("\xA5", "Ñ");
+            Ubgt1 = Ubgt1.Replace("\xA4", "ñ");
             Ubgt1 = Ubgt1.Replace('\xA3'.AsString(), "ú");
             Ubgt1 = Ubgt1.Replace('\xA2'.AsString(), "ó");
             Ubgt1 = Ubgt1.Replace('\xA1'.AsString(), "í");
@@ -162,7 +162,7 @@ namespace GenFree.Helper
                 Ubgt1 = Ubgt1.Replace("\xC2" + '\xA7'.AsString(), "§");
                 Ubgt1 = Ubgt1.Replace("\xC2" + '\xA9'.AsString(), "©");
                 Ubgt1 = Ubgt1.Replace("\xC2" + (char)174, "®");
-                Ubgt1 = Ubgt1.Replace("\xC2" + (char)176, "°");
+                Ubgt1 = Ubgt1.Replace("\xC2" + (char)0xB0, "°");
                 Ubgt1 = Ubgt1.Replace("\xC2" + (char)177, "±");
                 Ubgt1 = Ubgt1.Replace("\xC2" + (char)178, "²");
                 Ubgt1 = Ubgt1.Replace("\xC2" + (char)179, "³");
@@ -312,7 +312,7 @@ namespace GenFree.Helper
                 Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)150, "Ӥ");
                 Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)151, "ӥ");
                 Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)152, "Ӧ");
-                Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)153, "ӧ");
+                Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)0x99, "ӧ");
                 Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)154, "Ө");
                 Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)155, "ө");
                 Ubgt1 = Ubgt1.Replace('\xC4'.AsString() + (char)156, "Ӫ");
@@ -370,11 +370,11 @@ namespace GenFree.Helper
                 Ubgt1 = Ubgt1.Replace('\xC5'.AsString() + (char)178, "Ų");
                 Ubgt1 = Ubgt1.Replace('\xC5'.AsString() + (char)179, "ų");
                 Ubgt1 = Ubgt1.Replace('\xC5'.AsString() + (char)184, "Ÿ");
-                Ubgt1 = Ubgt1.Replace('\xC5'.AsString() + (char)229, "†");
+                Ubgt1 = Ubgt1.Replace('\xC5'.AsString() + (char)0xE5, "†");
             }
             if (Ubgt1.Contains('\xC8'.AsString()))
             {
-                Ubgt1 = Ubgt1.Replace('\xC8'.AsString() + (char)152, "Ș");
+                Ubgt1 = Ubgt1.Replace('\xC8'.AsString() + (char)0x98, "Ș");
                 Ubgt1 = Ubgt1.Replace('\xC8'.AsString() + (char)153, "ș");
                 Ubgt1 = Ubgt1.Replace('\xC8'.AsString() + (char)154, "Ț");
                 Ubgt1 = Ubgt1.Replace('\xC8'.AsString() + (char)155, "ț");
