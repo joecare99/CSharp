@@ -18,7 +18,7 @@ public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eK
     void DeleteFam(int famInArb, ELinkKennz iKennz);
     void DeleteFamWhere(int famInArb, Predicate<ILinkData> pWhere);
     void DeleteInvalidPerson();
-    bool DeleteQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func);
+    bool DeleteQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
     bool Exist(int famInArb, int persInArb, ELinkKennz eKennz);
     bool ExistE(int persInArb, ELinkKennz eKennz);
     bool ExistF(int famInArb, ELinkKennz b2);
@@ -28,6 +28,6 @@ public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eK
     bool GetPersonFam(int persInArb, ELinkKennz eLKennz, out int iFamNr);
     IList<int> GetPersonFams(int persInArb, ELinkKennz eLKnz);
     void ReadFamily(int FamNr, IFamilyPersons Family, Action<ELinkKennz, int>? action = null);
-    bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func);
-    bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func);
+    bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
+    bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
 }

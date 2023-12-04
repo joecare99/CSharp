@@ -38,5 +38,6 @@ public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, I
 
     void Delete();
     void FillDataFields(IRecordset dB_EventTable);
+    void SetDBData(IRecordset dB_EventTable, string[]? asProps);
     void Update(string[]? strings = null);
 }
