@@ -114,6 +114,26 @@ namespace VBUnObfusicator.Models.Tests
             AssertAreEqual(data[0], sAct);
         }
 
+        [DataTestMethod()]
+        public void GetItemIndex()
+        {
+            var act = _testClass.Parse(TestDataClass.TestDataList1() as List<TokenData>);
+            var act2 = act.SubBlocks[7];
+            ((CSCode.CodeBlock)act2).SourcesIndex = new() { new() { 1 } };
+            Assert.AreEqual(true, act2.Sources[0].TryGetTarget(out var act3));
+            Assert.AreEqual(act, act3);
+        }
+
+        [DataTestMethod()]
+        public void GetItemByIndexIndexTest()
+        {
+            var act = _testClass.Parse(TestDataClass.TestDataList1() as List<TokenData>);
+            var act2 = act.SubBlocks[7];
+            ((CSCode.CodeBlock)act2).DestinationIndex = new() { 1 };
+            Assert.AreEqual(true, act2.Destination.TryGetTarget(out var act3));
+            Assert.AreEqual(act, act3);
+        }
+
     }
 
     [TestClass()]
