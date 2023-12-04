@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenFree.GenFree.Sys
+namespace GenFree.Sys
 {
-    internal class CSysTime :ISysTime
+    public class CSysTime :ISysTime
     {
         public DateTime Now => DateTime.Now;
         public DateTime Default => default;
+
     }
 }
