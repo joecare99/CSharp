@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using static BaseLib.Helper.TestHelper;
@@ -129,7 +130,46 @@ namespace GenFree.Helper.Tests
         [TestMethod()]
         public void ToStringsTest()
         {
-            AssertAreEqual(new[] { "'0'", "'1'", "'2'" }, new[]{"0","1","2" }.ToStrings((s)=>$"'{s}'"));
+            AssertAreEqual(new[] { "'0'", "'1'", "'2'" }, new[] { "0", "1", "2" }.ToStrings((s) => $"'{s}'"));
         }
+
+        [DataTestMethod()]
+        [DataRow("a", "a")]
+        [DataRow("A", "A")]
+        [DataRow("\xCF", "ß")]
+        [DataRow("\xC5", "¿")]
+        [DataRow("\xE8u", "ü")]
+        [DataRow("\xE2o", "ó")]
+        [DataRow("\x00E3a", "â")]
+        public void ANSELDecodeTest(string sAct, string sExp)
+        {
+            Assert.AreEqual(sExp, sAct.ANSELDecode());
+        }
+
+        [DataTestMethod()]
+        [DataRow("a", "a")]
+        [DataRow("A", "A")]
+        [DataRow("\xCF", "ß")]
+        [DataRow("\x81", "ü")]
+        [DataRow("\x82", "é")]
+        public void IBM_DOSDecodeTest(string sAct, string sExp)
+        {
+            Assert.AreEqual(sExp, sAct.IBM_DOSDecode());
+        }
+
+        [DataTestMethod()]
+        [DataRow("a", "a")]
+        [DataRow("A", "A")]
+        [DataRow("\xC2\xB0", "°")]
+        [DataRow("\xC3\xA0", "à")]
+        [DataRow("\xC4\x99", "ӧ")]
+        [DataRow("\xC5\xE5", "†")]
+        [DataRow("\xC8\x98", "Ș")]
+        [DataRow("\xE2\x80\xA0", "†")]
+        public void UTF8DecodeTest(string sAct, string sExp)
+        {
+            Assert.AreEqual(sExp, sAct.UTF8Decode());
+        }
+
     }
 }

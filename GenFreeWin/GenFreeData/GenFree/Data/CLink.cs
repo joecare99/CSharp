@@ -100,12 +100,12 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         }
     }
 
-    public bool DeleteQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func)
+    public bool DeleteQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct
     {
         bool result;
         _db_Table.Index = _keyIndex;
         _db_Table.Seek("=", iFamNr, iPersNr, iKennz);
-        if ((result = !_db_Table.NoMatch) && okVal.Equals(func(iPersNr, iFamNr)))
+        if ((result = !_db_Table.NoMatch) && okVal!.Equals(func(iPersNr, iFamNr)))
             _db_Table.Delete();
 
         return result;
@@ -124,7 +124,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         }
     }
 
-    public bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func)
+    public bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct
     {
         bool result;
         _db_Table.Index = _keyIndex;
@@ -138,7 +138,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         return result;
     }
 
-    public bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func)
+    public bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct
     {
         bool result;
         _db_Table.Index = nameof(LinkIndex.ElSu);
@@ -249,7 +249,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
                 Family.Kinder.Add((PeronNr, "A"));
                 break;
             default:
-                action?.Invoke(value, PeronNr);
+                try { action?.Invoke(value, PeronNr); } catch { };
                 break;
         }
     }

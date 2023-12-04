@@ -125,7 +125,7 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
 
     public IEventData? ReadDataPl(int persInArb, EEventArt eEventArt, out bool xBreak, short iLfNr = 0)
     {
-        xBreak = ReadData(persInArb, eEventArt, out var cEvn, iLfNr) && cEvn?.iOrt != 0;
+        xBreak = !ReadData(persInArb, eEventArt, out var cEvn, iLfNr) || cEvn!.iOrt == 0;
         return cEvn;
     }
 
@@ -162,11 +162,10 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
         {
             dB_EventTable.Edit();
             dB_EventTable.Fields[nameof(EventFields.Art)].Value = eArt2;
-            if (iFam2 != 0)
+            if (iFam2 != 0 && iFam2 != iPerFamNr)
                 dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = iFam2;
             dB_EventTable.Update();
         }
-
     }
 
     public IRecordset? SeekBeSu(int iPerFamnr, EEventArt eArt, out bool xBreak)
@@ -203,9 +202,9 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
     {
         var xInfoFound = false;
         if (ReadData(ifamInArb, eArt, out var cEvt1)
-                                                && !(cEvt1!.sVChr != "0"))
+                                                && cEvt1!.sVChr == "0")
         {
-            if (cEvt1.dDatumV != default
+            xInfoFound = cEvt1.dDatumV != default
                 || cEvt1.dDatumB != default
                 || cEvt1.iOrt != 0
                 || cEvt1.iPlatz != 0
@@ -217,14 +216,12 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
                 || cEvt1.sReg.Trim() != ""
                 || cEvt1.sBem[1].Trim() != ""
                 || cEvt1.sBem[2].Trim() != ""
-                || cEvt1.sBem[3].Trim() != "")
-            {
-                xInfoFound = true;
-            }
+                || cEvt1.sBem[3].Trim() != "";
             if (!xInfoFound)
             {
                 cEvt1.Delete();
             }
+            return !xInfoFound;
         }
         return !xInfoFound;
     }
@@ -258,7 +255,13 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
 
     public void SetData((EEventArt eArt, int iLink, short iLfNr) key, IEventData data, string[]? asProps = null)
     {
-        throw new NotImplementedException();
+       var dB_EventTable = Seek(key, out bool xBreak);
+        if (!xBreak)
+        {
+            dB_EventTable.Edit();
+            data.SetDBData(dB_EventTable, asProps);
+            dB_EventTable.Update();
+        }
     }
 
     protected override (EEventArt eArt, int iLink, short iLfNr) GetID(IRecordset recordset)
