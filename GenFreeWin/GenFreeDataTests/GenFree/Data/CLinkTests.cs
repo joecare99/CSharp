@@ -61,6 +61,19 @@ public class CLinkTests
     }
 
     [DataTestMethod()]
+    [DataRow("Null", 0,0, ELinkKennz.lkNone, false)]
+    [DataRow("1-0None", 1,0, ELinkKennz.lkNone, true)]
+    [DataRow("1-1Father", 1,1, ELinkKennz.lkFather, true)]
+    public void SeekTest(string sName, int iActPers, int iActFam, ELinkKennz eLinkKennz, bool xExp)
+    {
+        testRS.NoMatch.Returns(iActPers is not (> 0 and < 3));
+        Assert.AreEqual(xExp?testRS:null, testClass.Seek((iActPers, iActFam, eLinkKennz),out var xBreak));
+        Assert.AreEqual(!xExp, xBreak);
+        Assert.AreEqual(nameof(LinkIndex.FamPruef), testRS.Index);
+        testRS.Received().Seek("=", iActPers,iActFam, eLinkKennz);
+    }
+
+    [DataTestMethod()]
     [DataRow("Null", 0, ELinkKennz.lkNone, false)]
     [DataRow("1-0None", 1, ELinkKennz.lkNone, true)]
     [DataRow("1-1Father", 1, ELinkKennz.lkFather, true)]
