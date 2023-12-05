@@ -19,12 +19,14 @@
 	<ItemGroup>
 	  <Compile Remove="Resources\Test10Dat.cs" />
 	  <Compile Remove="Resources\Test11Dat.cs" />
+	  <Compile Remove="Resources\Test12Dat.cs" />
 	  <Compile Remove="Resources\Test1Dat.cs" />
 	  <Compile Remove="Resources\Test2Dat.cs" />
 	  <Compile Remove="Resources\Test8Dat.cs" />
 	  <Compile Remove="Resources\Test9Dat.cs" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Include="Resources\Test12Dat.cs" />
 	  <None Include="Resources\Test2Dat.cs" />
 	  <None Include="Resources\Test10Dat.cs" />
 	  <None Include="Resources\Test8Dat.cs" />

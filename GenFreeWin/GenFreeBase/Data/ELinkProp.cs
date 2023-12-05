@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace GenFree.Data
 {
-    internal class ELinkProp
+    public enum ELinkProp
     {
+        iPersNr, // 
+        iFamNr,   
+        eKennz,
     }
 }

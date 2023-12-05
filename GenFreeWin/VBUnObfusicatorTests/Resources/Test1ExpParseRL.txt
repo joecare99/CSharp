@@ -207,7 +207,7 @@ MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex = 2;
 ///Instruction Instruction 4,28
 MyProject.Forms.Hinter.CommonDialog1Save.ShowDialog();
 ///Instruction Instruction 4,29
-if (MyProject.Forms.Hinter.CommonDialog1Save.FileName ==  "")
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == "")
 ///BlockStart Block 5,0
 {
 ///Goto Goto 5,1 Dest:OK

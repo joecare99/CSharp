@@ -23,7 +23,7 @@ public static class DBHelper
         }
     }
 
-    public static bool DbFieldExists(IDatabase TabDef, Enum field, string sFieldName)
+    public static bool DbFieldExists(this IDatabase TabDef, Enum field, string sFieldName)
     {
         try
         {
@@ -48,7 +48,12 @@ public static class DBHelper
     {
         try
         {
-            return db.GetSchema("Tables").Rows.Contains(mytable);
+            foreach (DataRow row in db.GetSchema("Tables").Rows)
+            
+                if (row["TABLE_NAME"].AsString().ToLower() == mytable.AsString().ToLower())
+                {
+                    return true;
+                }
         }
         catch
         {

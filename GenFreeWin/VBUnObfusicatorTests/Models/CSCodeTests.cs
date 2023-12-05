@@ -114,6 +114,26 @@ namespace VBUnObfusicator.Models.Tests
             AssertAreEqual(data[0], sAct);
         }
 
+        [DataTestMethod()]
+        public void GetItemIndex()
+        {
+            var act = _testClass.Parse(TestDataClass.TestDataList1() as List<TokenData>);
+            var act2 = act.SubBlocks[7];
+            ((CSCode.CodeBlock)act2).SourcesIndex = new() { new() { 1 } };
+            Assert.AreEqual(true, act2.Sources[0].TryGetTarget(out var act3));
+            Assert.AreEqual(act, act3);
+        }
+
+        [DataTestMethod()]
+        public void GetItemByIndexIndexTest()
+        {
+            var act = _testClass.Parse(TestDataClass.TestDataList1() as List<TokenData>);
+            var act2 = act.SubBlocks[7];
+            ((CSCode.CodeBlock)act2).DestinationIndex = new() { 1 };
+            Assert.AreEqual(true, act2.Destination.TryGetTarget(out var act3));
+            Assert.AreEqual(act, act3);
+        }
+
     }
 
     [TestClass()]
@@ -149,6 +169,8 @@ namespace VBUnObfusicator.Models.Tests
                     TestDataClass.TestDataList10()! },
             new object[] { "11", new[] { TestDataClass.test11Data },
                     TestDataClass.TestDataList11()! },
+            new object[] { "12", new[] { TestDataClass.test12Data },
+                    TestDataClass.TestDataList12()! },
 
         };
 
@@ -183,6 +205,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "4", TestDataClass.TestDataList4(), new[] { TestDataClass.testDataExpRemoveL4 } },
             new object[] { "7", TestDataClass.TestDataList7(), new[] { TestDataClass.testDataExpRemoveL7 } },
             new object[] { "9", TestDataClass.TestDataList9(), new[] { TestDataClass.testDataExpRemoveL9 } },
+            new object[] { "12", TestDataClass.TestDataList12(), new[] { TestDataClass.testDataExpRemoveL12 } },
 };
 
         public static IEnumerable<object[]> TestListParse2 => new object[][]
@@ -229,6 +252,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] {"9", new[] { TestDataClass.test9Data, TestDataClass.cExp9Log } },
             new object[] {"10", new[] { TestDataClass.test10Data, TestDataClass.cExp10Log } },
             new object[] {"11", new[] { TestDataClass.test11Data, TestDataClass.cExp11Log } },
+            new object[] {"12", new[] { TestDataClass.test12Data, TestDataClass.cExp12Log } },
         };
 
         [DataTestMethod()]
@@ -254,7 +278,8 @@ namespace VBUnObfusicator.Models.Tests
             new object[] {"8",new[] { TestDataClass.test8Data, TestDataClass.test8DataExp } },
             new object[] {"9",new[] { TestDataClass.test9Data, TestDataClass.test9DataExp } },
             new object[] {"10",new[] { TestDataClass.test10Data, TestDataClass.test10DataExp } },
-            new object[] {"11",new[] { TestDataClass.test11Data, TestDataClass.test11DataExp } }
+            new object[] {"11",new[] { TestDataClass.test11Data, TestDataClass.test11DataExp } },
+            new object[] {"12",new[] { TestDataClass.test12Data, TestDataClass.test12DataExp } },
                 };
 
 
@@ -292,7 +317,10 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "1", new[] { TestDataClass.test1Data, TestDataClass.cExpCode1 } },
             new object[] { "2", new[] { TestDataClass.test2Data, TestDataClass.cExpCode2 } },
             new object[] { "8", new[] { TestDataClass.test8Data, TestDataClass.cExpCode8 } },
-            new object[] { "9", new[] { TestDataClass.test9Data, TestDataClass.cExpCode9 } }
+            new object[] { "9", new[] { TestDataClass.test9Data, TestDataClass.cExpCode9 } },
+            new object[] { "10", new[] { TestDataClass.test10Data, TestDataClass.cExpCode10 } },
+            new object[] { "11", new[] { TestDataClass.test11Data, TestDataClass.cExpCode11 } },
+            new object[] { "12", new[] { TestDataClass.test12Data, TestDataClass.cExpCode12 } },
                 };
 
         [DataTestMethod()]

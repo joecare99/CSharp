@@ -104,6 +104,11 @@ namespace GenFree.Helper
             _ => default
         };
 
+        public static T SetRet<T, T2>(this T2 obj, Action<T2> action, T v)
+        {
+            action(obj);
+            return v;
+        }
     }
 
 }

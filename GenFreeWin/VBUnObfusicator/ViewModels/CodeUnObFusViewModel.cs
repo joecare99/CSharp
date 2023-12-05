@@ -22,6 +22,9 @@ namespace VBUnObfusicator.ViewModels
         [ObservableProperty]
         private bool _removeLbl = true;
 
+        [ObservableProperty]
+        private bool _doWhile = true;
+
         /// <summary>Executes the code-parsing and optimization.</summary>
         [RelayCommand()]
 #pragma warning disable IDE1006 // Benennungsstile
@@ -32,10 +35,10 @@ namespace VBUnObfusicator.ViewModels
             if (string.IsNullOrEmpty(Code))
                 Result = PlsEnterCode; //"Please enter code";                
             else
-                Result = DoExecute(Code, Reorder, RemoveLbl);
+                Result = DoExecute(Code, Reorder, RemoveLbl, DoWhile);
         }
 
-        private static string DoExecute(string code, bool reorder, bool removeLbl)
+        private static string DoExecute(string code, bool reorder, bool removeLbl, bool doWhile)
         {
             // Get the code engine
             ICSCode codeEng = CodeEng;
@@ -50,6 +53,8 @@ namespace VBUnObfusicator.ViewModels
             if (reorder)
                 codeEng.ReorderLabels(cStruct);
 
+            
+            codeEng.DoWhile = doWhile;
             // Remove single source labels if wanted
             if (removeLbl)
                 codeEng.RemoveSingleSourceLabels1(cStruct);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GenFree.Interfaces.DB;
+using System;
 
 namespace GenFree.Interfaces;
 
@@ -14,4 +15,7 @@ public interface IFamilyData : IHasID<int>
     string sName { get; }
     string sPrefix { get; }
     string sSuffix { get; }
+    bool xAeB { get; }
+
+    void SetDBValue(IRecordset dB_PersonTable, string[]? asProps);
 }
