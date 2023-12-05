@@ -5,10 +5,23 @@
 *.pfx
 *.exe
 *.dll
+*.bak
 /.svn
 /.vs
 /bin
-/CSharpBible/.vs
+/*/.vs
+/CSharpBible/*/.vs
+/*/obj
+/*/bin
+/*/TestResults
+/*/*/TestResults
+/*/*/obj
+/*/*/bin
+/*/*/*/.vs
+/*/*/*/obj
+/*/*/*/bin
+/CSharpBible/Help
+/CSharpBible/Mobile
 /CSharpBible/AboutEx/obj
 /CSharpBible/AboutEx/publish
 /CSharpBible/AboutExTests/bin
@@ -18,6 +31,7 @@
 /CSharpBible/AddPage/obj
 /CSharpBible/AddPageWPF/obj
 /CSharpBible/BindingGroupExp/obj
+/CSharpBible/Calc/Help
 /CSharpBible/Calc32/obj
 /CSharpBible/Calc32Tests/obj
 /CSharpBible/Calc32WPF/obj
@@ -53,3 +67,5 @@
 /TestStatements/AsyncExampleWPF
 /TestStatements/Tutorials/obj/Debug
 
+*.user
+*.editorconfig
