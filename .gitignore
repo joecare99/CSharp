@@ -53,3 +53,22 @@
 /TestStatements/AsyncExampleWPF
 /TestStatements/Tutorials/obj/Debug
 
+/CSharpBible/Basics/.vs
+/CSharpBible/Basics/.vs
+*.user
+*.bak
+/CSharpBible/Calc/.vs
+/CSharpBible/DB/.vs
+/CSharpBible/Mobile
+/CSharpBible/MVVM_Tutorial/.vs
+/CSharpBible/Calc/Help
+/CSharpBible/DependencyInjection/.vs
+/CSharpBible/CSharpBibleTest/.vs
+/CSharpBible/Games/.vs
+/CSharpBible/Graphics/.vs
+/GenFreeWin/.vs
+/JC-AMS/.vs
+/obj
+/obj.net
+/TestStatements/Help
+/CSharpBible/DB/DataLake_App/obj
