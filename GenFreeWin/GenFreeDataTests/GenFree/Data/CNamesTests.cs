@@ -29,6 +29,7 @@ namespace GenFree.Data.Tests
             testRS.Fields[nameof(NameFields.Kennz)].Value.Returns('N', 'V', 'V', 'A', 'B');
             testRS.Fields[nameof(NameFields.LfNr)].Value.Returns(1, 3, 5);
             testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 6, 4, 9);
+            testRS.ClearReceivedCalls();
         }
 
         [TestMethod()]
@@ -44,6 +45,9 @@ namespace GenFree.Data.Tests
         public void MaxIDTest()
         {
             Assert.AreEqual((2, ETextKennz.tkName, 1), testClass.MaxID);
+            Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
+            testRS.Received(1).MoveLast();
+            testRS.Received(3).Fields[0].Value = 0;
         }
 
         [DataTestMethod()]
@@ -192,7 +196,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
             testRS.Received(xExp ? 2 : 0).MoveNext();
             testRS.Received(0).MoveFirst();
-            testRS.Received(xExp ? 16 : 4).Fields[0].Value=0;    
+            testRS.Received(xExp ? 13 : 1).Fields[0].Value=0;    
     
         }
 
@@ -212,7 +216,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Update();
             testRS.Received().Fields[nameof(NameFields.LfNr)].Value = iLfNr;
             testRS.Received().Fields[nameof(NameFields.Kennz)].Value = eTKennz;
-            testRS.Received(xExp ? 8 : 9).Fields[nameof(NameFields.PersNr)].Value = iActPers;
+            testRS.Received(xExp ? 5 : 6).Fields[nameof(NameFields.PersNr)].Value = iActPers;
         }
     }
 }
