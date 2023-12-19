@@ -10,6 +10,7 @@ public interface IFamilyData : IHasID<int>
     int iName { get; }
     int iPrae { get; }
     int iSuf { get; }
+    Guid? gUID { get; }
     string sPruefen { get; }
     string[] sBem { get; }
     string sName { get; }

@@ -35,6 +35,7 @@ public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, I
     string sVChr { get; }
     string sZusatz { get; }
     bool xIsDead { get; }
+    string sAn { get; }
 
     void Delete();
     void FillDataFields(IRecordset dB_EventTable);
