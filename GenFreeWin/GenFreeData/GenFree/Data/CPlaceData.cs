@@ -14,6 +14,11 @@ namespace GenFree.Data
 
         private static Func<int, string> _GetText = DataModul.TextLese1;
         private static Func<IRecordset> __dB_PlaceTable;
+        private int iOrt1;
+        private int iOrtsteil1;
+        private int iKreis1;
+        private int iLand1;
+        private int iStaat1;
 
         public static void SetTable(Func<IRecordset> dB_PlaceTable)
         {
@@ -55,15 +60,15 @@ namespace GenFree.Data
         public IReadOnlyList<EPlaceProp> ChangedProps => _changedPropList;
 
         public int ID { get; private set; }
-        public int iOrt { get; private set; }
+        public int iOrt { get => iOrt1; set => SetPropValue(EPlaceProp.iOrt, value); }
         public string sOrt => _GetText(iOrt);
-        public int iOrtsteil { get; private set; }
+        public int iOrtsteil { get => iOrtsteil1; set => SetPropValue(EPlaceProp.iOrtsteil, value); }
         public string sOrtsteil => _GetText(iOrtsteil);
-        public int iKreis { get; private set; }
+        public int iKreis { get => iKreis1; set => SetPropValue(EPlaceProp.iKreis, value); }
         public string sKreis => _GetText(iKreis);
-        public int iLand { get; private set; }
+        public int iLand { get => iLand1; set => SetPropValue(EPlaceProp.iLand, value); }
         public string sLand => _GetText(iLand);
-        public int iStaat { get; private set; }
+        public int iStaat { get => iStaat1; set => SetPropValue(EPlaceProp.iStaat, value); }
         public string sStaat => _GetText(iStaat);
         public string sStaatk { get; private set; }
         public string sPLZ { get; private set; }
@@ -79,7 +84,8 @@ namespace GenFree.Data
 
         public void AddChangedProp(EPlaceProp prop)
         {
-            _changedPropList.Add(prop);
+            if (!_changedPropList.Contains(prop))
+                _changedPropList.Add(prop);
         }
 
         public void ClearChangedProps()
@@ -144,14 +150,17 @@ namespace GenFree.Data
 
         public void SetPropValue(EPlaceProp prop, object value)
         {
+            if (GetPropType(prop).GetMethod("Equals")?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
+                return;            
+            _changedPropList.Add(prop);
             object _ = prop switch
             {
                 EPlaceProp.ID => ID = (int)value,
-                EPlaceProp.iOrt => iOrt = (int)value,
-                EPlaceProp.iOrtsteil => iOrtsteil = (int)value,
-                EPlaceProp.iKreis => iKreis = (int)value,
-                EPlaceProp.iLand => iLand = (int)value,
-                EPlaceProp.iStaat => iStaat = (int)value,
+                EPlaceProp.iOrt => iOrt1 = (int)value,
+                EPlaceProp.iOrtsteil => iOrtsteil1 = (int)value,
+                EPlaceProp.iKreis => iKreis1 = (int)value,
+                EPlaceProp.iLand => iLand1 = (int)value,
+                EPlaceProp.iStaat => iStaat1 = (int)value,
                 EPlaceProp.sStaatk => sStaatk = (string)value,
                 EPlaceProp.sPLZ => sPLZ = (string)value,
                 EPlaceProp.sTerr => sTerr = (string)value,

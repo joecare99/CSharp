@@ -279,7 +279,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
     public IList<int> GetPersonFams(int persInArb, ELinkKennz eLKnz)
     {
         var _aiPers = new List<int>();
-        foreach (var link in CLinkData.ReadPersLinkDataDB(persInArb, eLKnz))
+        foreach (var link in ReadAllPers(persInArb, eLKnz))
         {
             _aiPers.Add(link.iFamNr);
         }
@@ -313,6 +313,55 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         dB_LinkTable.Seek("=", iPerson, eKennz);
         xBreak = dB_LinkTable.NoMatch;
         return xBreak ? null : dB_LinkTable;
+    }
+
+    /// <summary>
+    /// Reads the link data from database. Using the index FamSu
+    /// </summary>
+    /// <param name="iFamNr">The i fam nr.</param>
+    /// <param name="eKennz">The e kennz.</param>
+    /// <returns>IEnumerable&lt;ILinkData&gt;.</returns>
+    public IEnumerable<ILinkData> ReadAllFams(int iFamNr, ELinkKennz eKennz = ELinkKennz.lkNone)
+        => ReadLinkDataDB(LinkIndex.FamSu, eKennz == 0 ? (rs) => rs.Seek("=", iFamNr) : (rs) => rs.Seek("=", iFamNr, eKennz),
+            eKennz == ELinkKennz.lkNone ? (ld) => ld.iFamNr != iFamNr : (ld) => ld.iFamNr != iFamNr || ld.eKennz != eKennz);
+
+    /// <summary>
+    /// Reads the link data from database. Using the index ElSu
+    /// </summary>
+    /// <param name="iPersNr">The i pers nr.</param>
+    /// <param name="eKennz">The e kennz.</param>
+    /// <returns>IEnumerable&lt;ILinkData&gt;.</returns>
+    public IEnumerable<ILinkData> ReadAllPers(int iPersNr, ELinkKennz eKennz = ELinkKennz.lkNone)
+        => ReadLinkDataDB(LinkIndex.ElSu, eKennz == 0 ? (rs) => rs.Seek("=", iPersNr) : (rs) => rs.Seek("=", iPersNr, eKennz),
+            eKennz == ELinkKennz.lkNone ? (ld) => ld.iPersNr != iPersNr : (ld) => ld.iPersNr != iPersNr || ld.eKennz != eKennz);
+    /// <summary>
+    /// Reads the link data from database. Using the index PAFI (Personen mit Familienkennzeichen)
+    /// </summary>
+    /// <param name="iKennz">The i kennz.</param>
+    /// <returns>IEnumerable&lt;ILinkData&gt;.</returns>
+    public IEnumerable<ILinkData> ReadAllKennzs(ELinkKennz iKennz)
+        => ReadLinkDataDB(LinkIndex.PAFI, (rs) => rs.Seek("=", iKennz), (ld) => ld.eKennz != iKennz);
+
+    private IEnumerable<ILinkData> ReadLinkDataDB(LinkIndex Idx, Action<IRecordset> SeekAkt, Predicate<CLinkData> StopPred)
+    {
+        var db_LinkTable = _db_Table;
+        db_LinkTable.Index = Idx.AsString();
+        SeekAkt(db_LinkTable);
+        while (!db_LinkTable.NoMatch
+            && !db_LinkTable.EOF)
+        {
+            var Link = new CLinkData
+            {
+                eKennz = db_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>(),
+                iFamNr = db_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt(),
+                iPersNr = db_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt()
+            };
+            if (StopPred(Link))
+                break;
+            yield return Link;
+            db_LinkTable.MoveNext();
+        }
+        yield break;
     }
 
     public override IRecordset? Seek((int iFamily, int iPerson, ELinkKennz eKennz) key, out bool xBreak)
