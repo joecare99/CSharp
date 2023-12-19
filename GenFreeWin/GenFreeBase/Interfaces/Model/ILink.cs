@@ -27,6 +27,9 @@ public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eK
     bool GetFamPerson(int famInArb, ELinkKennz eLKennz, out int Link_iPerNr);
     bool GetPersonFam(int persInArb, ELinkKennz eLKennz, out int iFamNr);
     IList<int> GetPersonFams(int persInArb, ELinkKennz eLKnz);
+    IEnumerable<ILinkData> ReadAllFams(int iFamNr, ELinkKennz eKennz = ELinkKennz.lkNone);
+    IEnumerable<ILinkData> ReadAllKennzs(ELinkKennz iKennz);
+    IEnumerable<ILinkData> ReadAllPers(int iPersNr, ELinkKennz eKennz = ELinkKennz.lkNone);
     void ReadFamily(int FamNr, IFamilyPersons Family, Action<ELinkKennz, int>? action = null);
     bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
     bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
