@@ -3,6 +3,7 @@
 public enum EEventArt : int
 {
     eA_Unknown = 0,
+    eA_100 = 100,
     /// <summary>
     /// The birth-event
     /// </summary>
