@@ -4543,7 +4543,7 @@
                             }
                         IL_0b40:
                             num = 143;
-                            if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
+                            if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value !=  ""))
                             {
                                 goto IL_0b71;
                             }
