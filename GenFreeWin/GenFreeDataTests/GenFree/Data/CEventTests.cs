@@ -107,7 +107,6 @@ namespace GenFree.Data.Tests
             if (xExp)
             testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(iActFam);
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false,true,true, false, false, true);
-            Action<EEventArt, int, string>? testAct = null;
             testClass.PersonDat(iActFam, out var dt1, out var dt2);
             testRS.Received().Seek("=", EEventArt.eA_Birth, iActFam);
             testRS.Received().Seek("=", EEventArt.eA_Baptism, iActFam);

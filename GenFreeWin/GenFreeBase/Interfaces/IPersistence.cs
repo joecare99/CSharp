@@ -11,6 +11,7 @@ namespace GenFree.Interfaces
     {
         void AppendStringsTemp(IList<string> lines, string sSection);
         void GetEnumsMand<T>(string sSection, T[] enums) where T : Enum;
+        T GetEnumInit<T>(string sSection) where T : Enum;
         int GetIntInit(string sSection, long lPos);
         int GetIntMand(string sSection, long lPos = 1);
         void PutEnumsMand<T>(string sSection, T[] enums) where T : Enum;
@@ -27,7 +28,7 @@ namespace GenFree.Interfaces
         void ReadStringsInit(string sSection, string[] aus);
         int ReadStringsInit(string sSection, IList<string> asValue);
         void ReadSuchDat<T>(string DateiName, T[] aeValues) where T : Enum;
-        void WriteEnumInit(string sSection, object eValue);
+        void WriteEnumInit(string sSection, Enum eValue);
         void WriteIntInit(string sSection, int iValue);
         void WriteIntMand(string sFilename, int iValue);
         void WriteIntsProg(string sSection, int[] aiValues);

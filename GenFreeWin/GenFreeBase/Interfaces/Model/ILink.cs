@@ -10,7 +10,7 @@ public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eK
 {
     void Append(int iFamily, int iPerson, ELinkKennz iKennz);
     bool AppendE(int iFamNr, int iPerson, ELinkKennz eKennz);
-    int AppendFamilyParent(int famInArb, int persInArb, ELinkKennz kennz, Func<int, bool, ELinkKennz, int> CheckPerson, bool xIgnoreSex = false);
+    int AppendFamilyParent(int famInArb, int persInArb, ELinkKennz kennz, Func<int, bool, ELinkKennz, int>? CheckPerson, bool xIgnoreSex = false);
     bool Delete(int iFamNr, int iPersNr, ELinkKennz iKennz);
     bool DeleteAllE(int iPersNr, ELinkKennz iKennz);
     bool DeleteAllF(int iFamNr, ELinkKennz iKennz);
@@ -30,7 +30,7 @@ public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eK
     IEnumerable<ILinkData> ReadAllFams(int iFamNr, ELinkKennz eKennz = ELinkKennz.lkNone);
     IEnumerable<ILinkData> ReadAllKennzs(ELinkKennz iKennz);
     IEnumerable<ILinkData> ReadAllPers(int iPersNr, ELinkKennz eKennz = ELinkKennz.lkNone);
-    void ReadFamily(int FamNr, IFamilyPersons Family, Action<ELinkKennz, int>? action = null);
+    bool ReadFamily(int FamNr, IFamilyPersons Family, Action<ELinkKennz, int>? action = null);
     bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
     bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
 }

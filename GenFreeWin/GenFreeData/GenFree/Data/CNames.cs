@@ -1,4 +1,5 @@
-﻿using GenFree.Helper;
+﻿using GenFree.Model;
+using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;

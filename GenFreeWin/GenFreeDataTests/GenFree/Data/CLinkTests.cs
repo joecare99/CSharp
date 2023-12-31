@@ -121,7 +121,7 @@ public class CLinkTests
     public void AppendFamilyParentTest2(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, int iActr, int iExp)
     {
         testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 != iActFam);
-        Assert.AreEqual(iExp, testClass.AppendFamilyParent(iActFam, iActPers, eLinkKennz, null));
+        Assert.AreEqual(iExp, testClass.AppendFamilyParent(iActFam, iActPers, eLinkKennz, default));
         Assert.AreEqual(nameof(LinkIndex.FamSu), testRS.Index);
         testRS.Received().Seek("=", iActFam, eLinkKennz);
         if (iExp == 1)

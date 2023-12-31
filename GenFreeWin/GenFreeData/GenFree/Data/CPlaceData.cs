@@ -19,6 +19,7 @@ namespace GenFree.Data
         private int iKreis1;
         private int iLand1;
         private int iStaat1;
+        private string sBem1;
 
         public static void SetTable(Func<IRecordset> dB_PlaceTable)
         {
@@ -76,7 +77,7 @@ namespace GenFree.Data
         public string sLoc { get; private set; }
         public string sL { get; private set; }
         public string sB { get; private set; }
-        public string sBem { get; private set; }
+        public string sBem { get => sBem1; set => SetPropValue(EPlaceProp.sBem, value); }
         public string sZusatz { get; private set; }
         public string sGOV { get; private set; }
         public string sPolName { get; private set; }
@@ -167,7 +168,7 @@ namespace GenFree.Data
                 EPlaceProp.sLoc => sLoc = (string)value,
                 EPlaceProp.sL => sL = (string)value,
                 EPlaceProp.sB => sB = (string)value,
-                EPlaceProp.sBem => sBem = (string)value,
+                EPlaceProp.sBem => sBem1 = (string)value,
                 EPlaceProp.sZusatz => sZusatz = (string)value,
                 EPlaceProp.sGOV => sGOV = (string)value,
                 EPlaceProp.sPolName => sPolName = (string)value,

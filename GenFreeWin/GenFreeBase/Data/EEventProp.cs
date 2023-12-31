@@ -16,7 +16,7 @@
         iPlatz,
         iPrivacy,
         sBem,
-        sHausNr,
+        iHausNr,
         sDatumB_S,
         sDatumV_S,
         sOrt_S,
@@ -24,5 +24,6 @@
         sVChr,
         sZusatz,
         xIsDead,
+        iGrabNr,
     }
 }

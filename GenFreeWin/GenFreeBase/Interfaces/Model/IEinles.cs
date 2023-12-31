@@ -20,9 +20,12 @@ namespace GenFree.Interfaces.Model
         ICounter<short> Zaehler7 { get; }
         ICounter<short> RESI_Zaehler5 { get; }
         string Pfad { get; set; }
-        bool xPerson { get; }
+        bool xPerson { get; set; }
+        EGedSource eGedSource { get; set; }
 
+        void Datsatz(EEventArt Art);
         void NeuOrteinlesen(EEventArt Art, int Arryzaehl, string[] mararray);
         void Orteinlesen(EEventArt Art, StreamReader Sr);
+        void Patschr(ELinkKennz eLKennz, int iFamInArb, int iPersInArb, int iNeuer);
     }
 }

@@ -6,6 +6,7 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using System.Collections.Generic;
+using GenFree.Model;
 
 namespace GenFree.Data;
 public class CPerson : CUsesRecordSet<int>, IPerson

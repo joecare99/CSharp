@@ -4,6 +4,7 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
+using GenFree.Model;
 
 namespace GenFree.Data;
 
@@ -20,7 +21,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         _DB_LinkTable = dB_LinkTable;
     }
 
-    public int AppendFamilyParent(int famInArb, int persInArb, ELinkKennz kennz, Func<int, bool, ELinkKennz, int> CheckPerson, bool xIgnoreSex = false)
+    public int AppendFamilyParent(int famInArb, int persInArb, ELinkKennz kennz, Func<int, bool, ELinkKennz, int>? CheckPerson, bool xIgnoreSex = false)
     {
         IRecordset dB_LinkTable = _db_Table;
         dB_LinkTable.Index = nameof(LinkIndex.FamSu);
@@ -84,12 +85,13 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         });
     }
 
-    private void ForEachFam(int famInArb, Action<ILinkData, IRecordset> action, int iMaxIter = 100)
+    private bool ForEachFam(int famInArb, Action<ILinkData, IRecordset> action, int iMaxIter = 100)
     {
         var dB_LinkTable = _db_Table;
         dB_LinkTable.Index = nameof(LinkIndex.FamNr);
         dB_LinkTable.Seek("=", famInArb);
         var M1_Iter = 1;
+        bool xResult = !dB_LinkTable.NoMatch;
         while (M1_Iter++ <= iMaxIter
              && !dB_LinkTable.EOF
              && !dB_LinkTable.NoMatch
@@ -98,6 +100,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
             try { action(new CLinkData(dB_LinkTable), dB_LinkTable); } catch { };
             dB_LinkTable.MoveNext();
         }
+        return xResult;
     }
 
     public bool DeleteQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct
@@ -214,14 +217,15 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
     }
 
 
-    public void ReadFamily(int iFamily, IFamilyPersons Family, Action<ELinkKennz, int>? action = null)
+    public bool ReadFamily(int iFamily, IFamilyPersons Family, Action<ELinkKennz, int>? action = null)
     {
         Family_InitLinks(Family);
-        ForEachFam(iFamily, (link, dB_LinkTable) =>
+        var xResult = ForEachFam(iFamily, (link, dB_LinkTable) =>
         {
             Family_SetLinkPerson(Family, action, link.iPersNr, link.eKennz);
         });
         Family.Kinder[0] = (Family.Kinder.Count - 1, "");
+        return xResult;
     }
 
     private static void Family_InitLinks(IFamilyPersons Family)

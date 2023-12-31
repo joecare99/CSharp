@@ -8,7 +8,6 @@ namespace GenFree.Interfaces
     {
         void SetDBValue(IRecordset dB_FamilyTable, string[]? asProps);
 
-        int ID { get; }
         int iLand { get; set; }
         int iStaat { get; set; }
         int iKreis { get; set; }
@@ -20,7 +19,7 @@ namespace GenFree.Interfaces
         string sLoc { get; }
         string sL { get; }
         string sB { get; }
-        string sBem { get; }
+        string sBem { get; set; }
         string sZusatz { get; }
         string sGOV { get; }
         string sPolName { get; }

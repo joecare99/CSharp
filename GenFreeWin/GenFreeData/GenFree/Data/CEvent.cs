@@ -5,6 +5,7 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
+using GenFree.Model;
 
 namespace GenFree.Data;
 #nullable enable
@@ -198,6 +199,11 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
     public IEnumerable<IEventData> ReadAll()
         => ReadEventDataDB(EventIndex.ArtNr, (rs) => rs.Seek(">=", 0), (e) => false);
 
+    public IEnumerable<IEventData> ReadAll(EventIndex eIndex)
+        => ReadEventDataDB(eIndex, (rs) => rs.Seek(">=", 0), (e) => false);
+    public IEnumerable<IEventData> ReadAllPlaces(int iPlace)
+        => ReadEventDataDB(EventIndex.EOrt, (rs) => rs.Seek("=", iPlace), (e) => e.iOrt != iPlace);
+
     public bool DeleteEmptyFam(int ifamInArb, EEventArt eArt)
     {
         var xInfoFound = false;
@@ -253,12 +259,19 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
         return !xBreak;
     }
 
+    public bool ReadData(EventIndex eIndex, int iValue, out IEventData? cEvt)
+    {
+        var dB_EventTable = Seek(eIndex, iValue);
+        cEvt = (dB_EventTable == null) ? null : new CEventData(dB_EventTable);
+        return !(cEvt != null);
+    }
+
     public void SetData((EEventArt eArt, int iLink, short iLfNr) key, IEventData data, string[]? asProps = null)
     {
        var dB_EventTable = Seek(key, out bool xBreak);
         if (!xBreak)
         {
-            dB_EventTable.Edit();
+            dB_EventTable!.Edit();
             data.SetDBData(dB_EventTable, asProps);
             dB_EventTable.Update();
         }
@@ -270,6 +283,39 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
             recordset.Fields[nameof(EventFields.PerFamNr)].AsInt(),
             (short)recordset.Fields[nameof(EventFields.LfNr)].AsInt());
     }
+
+    public bool ExistsText(int textNr)
+    {
+        var dB_EventTable = _db_Table;
+        dB_EventTable.Index = nameof(EventIndex.KText);
+        dB_EventTable.Seek("=", textNr);
+        return !dB_EventTable.NoMatch;
+    }
+
+    public bool ExistsPlText(int textNr)
+    {
+        var dB_EventTable = _db_Table;
+        dB_EventTable.Index = nameof(EventIndex.PText);
+        dB_EventTable.Seek("=", textNr);
+        return !dB_EventTable.NoMatch;
+    }
+
+    public bool ExistsArtText(int textNr)
+    {
+        var dB_EventTable = _db_Table;
+        dB_EventTable.Index = nameof(EventIndex.NText);
+        dB_EventTable.Seek("=", textNr);
+        return !dB_EventTable.NoMatch;
+    }
+
+    public IRecordset? Seek(EventIndex eIndex, int iValue)
+    {
+        var dB_EventTable = _db_Table;
+        dB_EventTable.Index = $"{eIndex}";
+        dB_EventTable.Seek("=", iValue);
+        return dB_EventTable.NoMatch ? null : dB_EventTable;
+    }
+
 }
 
 

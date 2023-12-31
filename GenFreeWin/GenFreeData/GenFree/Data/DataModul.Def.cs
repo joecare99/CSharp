@@ -185,16 +185,16 @@ namespace GenFree.Data
                 new(EventFields.GrabNr, TypeCode.Int64) },
           Indexes = new stIndex[]{
                 new("ArtNr", new[] { "Art","PerFamNr", "LfNnr" } ){ Unique = true },
-                new("BeSu", new[] { "Art", "PerFamNr" } ),
-                new("CText", new[] { "Causal" } ),
+                new(EventIndex.BeSu, new Enum[] { EventFields.Art,EventFields.PerFamNr } ),
                 new("Datbs", new[] { "Datumb_s" } ),
                 new("DatInd", new[] { "DatumV" } ),
                 new("Datvs", new[] { "DatumV_s" } ),
                 new("EOrt", new[] { "Ort" } ),
                 new("HaNu", new[] { "Hausnr" } ),
                 new("JaTa", new[] { "" } ),
+                new(EventIndex.CText, new Enum[] { EventFields.Causal } ),
                 new(EventIndex.KText, new Enum[] { EventFields.KBem } ),
-                new("NText", new[] { "ArtText" } ),
+                new(EventIndex.NText, new Enum[] { EventFields.ArtText } ),
                 new(EventIndex.PText, new Enum[] { EventFields.Platz } ),
                 new("Reg", new[] { "Reg" } ),
                 new("Reg1", new[] { "Art", "Reg" } )}
@@ -267,7 +267,7 @@ namespace GenFree.Data
                 new(NameIndex.NamKenn, new Enum[] {  } ),
                 new(NameIndex.PNamen, new Enum[] {  } ),
                 new(NameIndex.TxNr, new Enum[] {  } ),
-                new(NameIndex.Vollname, new Enum[] { NameFields.PersNr, NameFields.Kennz, NameFields.LfNr } ){ Unique = true },                }
+                new(NameIndex.Vollname, new Enum[] { NameFields.PersNr, NameFields.Kennz, NameFields.LfNr } ){ Unique = true }} 
                 },
         new() { Name = nameof(dbTables.INDNam),
           Fields = new stFieldDef[]{
@@ -366,7 +366,7 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Quellen),
           Fields = new stFieldDef[]{
-                new("1", TypeCode.Int64) ,
+                new(SourceField._1, TypeCode.Int64) ,
                 new("2", TypeCode.String) { Laenge = 240 },
                 new("3", TypeCode.String) { Laenge = 240 },
                 new("4", TypeCode.String) { Laenge = 240 },
@@ -439,20 +439,20 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Tab1),
           Fields = new stFieldDef[]{
-                new("1", TypeCode.Single) ,
-                new("2", TypeCode.Int64) ,
-                new("3", TypeCode.Int64) ,
-                new("4", TypeCode.String) { Laenge = 240 },
-                new("LfNr", TypeCode.Single) ,
-                new("Art", TypeCode.Single) ,
-                new("Aus", TypeCode.String) { Laenge = 240 },
-                new("ORIG", TypeCode.String) ,
-                new("Kom", TypeCode.String) },
+                new(SourceLinkFields._1, TypeCode.Single) ,
+                new(SourceLinkFields._2, TypeCode.Int64) ,
+                new(SourceLinkFields._3, TypeCode.Int64) ,
+                new(SourceLinkFields._4, TypeCode.String) { Laenge = 240 },
+                new(SourceLinkFields.LfNr, TypeCode.Single) ,
+                new(SourceLinkFields.Art, TypeCode.Single) ,
+                new(SourceLinkFields.Aus, TypeCode.String) { Laenge = 240 },
+                new(SourceLinkFields.Orig, TypeCode.String) ,
+                new(SourceLinkFields.Kom, TypeCode.String) },
           Indexes = new stIndex[]{
-                new("Tab", new[] { "" } ),
+                new(SourceLinkIndex.Tab, new Enum[] { SourceLinkFields._1,SourceLinkFields._2 } ),
                 new("Tab2", new[] { "" } ),
                 new("Tab21", new[] { "" } ),
-                new("Tab22", new[] { "" } ),
+                new(SourceLinkIndex.Tab22, new Enum[] { SourceLinkFields._1, SourceLinkFields._2, SourceLinkFields.Art,SourceLinkFields.LfNr } ),
                 new("Tab23", new[] { "" } ),
                 new("Verw", new[] { "" } )}
                 },
@@ -464,11 +464,11 @@ namespace GenFree.Data
                 new(WitnessFields.Art, TypeCode.Single) ,
                 new(WitnessFields.LfNr, TypeCode.Single) },
           Indexes = new stIndex[]{
-                new(WitnessIndex.ElSu,    new Enum[] {  } ),
-                new(WitnessIndex.Fampruef,new Enum[] { WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } ),
-                new(WitnessIndex.FamSu,   new Enum[] {  } ),
+                new(WitnessIndex.ElSu,    new Enum[] { WitnessFields.Art, WitnessFields.PerNr, WitnessFields.Kennz } ),
+                new(WitnessIndex.Fampruef,new Enum[] { WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } ){ Unique = true },
+                new(WitnessIndex.FamSu,   new Enum[] { WitnessFields.Art, WitnessFields.FamNr, WitnessFields.Kennz } ),
                 new(WitnessIndex.Zeug,    new Enum[] { WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } ),
-                new(WitnessIndex.ZeugSu,  new Enum[] {  } )}
+                new(WitnessIndex.ZeugSu,  new Enum[] { WitnessFields.FamNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } )}
                 },
         new() { Name = nameof(dbTables.Texte),
           Fields = new stFieldDef[]{

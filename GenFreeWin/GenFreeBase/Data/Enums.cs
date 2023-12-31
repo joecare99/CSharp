@@ -332,6 +332,11 @@ public enum PropertyIndex
     Per
 }
 
+public enum SourceLinkIndex
+{
+    Tab, // Person/Family-Index
+    Tab22, // Event-Index
+}
 public enum SourceLinkFields
 {
     /// <summary>
@@ -339,7 +344,7 @@ public enum SourceLinkFields
     /// </summary>
     _1, // Kind    
     /// <summary>
-    /// The Source Nr
+    /// The Source Nr (Person/Family/Event)
     /// </summary>
     _2, // Nr
     _3, // NrNeu    
@@ -354,6 +359,21 @@ public enum SourceLinkFields
     LfNr,
 }
 
+public enum SourceFields
+{
+    _1,
+    _2,
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8,
+    _9,
+    _10,
+    _11,
+    _12
+}
 public enum RepoFields
 {
     Nr,

@@ -16,6 +16,7 @@ public class CEventData : IEventData
     private string? _sDatumText;
     private string? _sPlatz;
     private string? _sCausal;
+    private string? _sGrabNr;
     private string? _sAn;
     private List<EEventProp> _changedPropList = new();
 
@@ -70,6 +71,7 @@ public class CEventData : IEventData
         _sDatumText = null;
         _sPlatz = null;
         _sCausal = null;
+        _sGrabNr = null;
         _sAn = null;
     }
 
@@ -107,6 +109,7 @@ public class CEventData : IEventData
         iOrt = dB_EventTable.Fields[nameof(EventFields.Ort)].AsInt();
         iKBem = dB_EventTable.Fields[nameof(EventFields.KBem)].AsInt();
         iPlatz = dB_EventTable.Fields[nameof(EventFields.Platz)].AsInt();
+        iGrabNr = dB_EventTable.Fields[nameof(EventFields.GrabNr)].AsInt();
     }
 
     public void Delete()
@@ -152,7 +155,11 @@ public class CEventData : IEventData
                             SetData(rs, f, d);
                         break;
                 }
-
+        else
+        {
+            rs.Edit();
+            SetDBData(rs);
+        }
         // TODO: Update Record
         if (rs!.EditMode != 0)
             rs.Update();
@@ -188,8 +195,9 @@ public class CEventData : IEventData
             EEventProp.iKBem => typeof(int),
             EEventProp.iPlatz => typeof(int),
             EEventProp.iCausal => typeof(int),
+            EEventProp.iGrabNr => typeof(int),
             EEventProp.iAn => typeof(int),
-            EEventProp.sHausNr => typeof(int),
+            EEventProp.iHausNr => typeof(int),
             EEventProp.sBem => typeof(string[]),
             _ => throw new NotImplementedException(),
         };
@@ -218,8 +226,9 @@ public class CEventData : IEventData
             EEventProp.iKBem => iKBem,
             EEventProp.iPlatz => iPlatz,
             EEventProp.iCausal => iCausal,
+            EEventProp.iGrabNr => iGrabNr,
             EEventProp.iAn => iAn,
-            EEventProp.sHausNr => iHausNr,
+            EEventProp.iHausNr => iHausNr,
             EEventProp.sBem => sBem,
             _ => throw new NotImplementedException(),
         };
@@ -293,10 +302,13 @@ public class CEventData : IEventData
             case EEventProp.iCausal:
                 iCausal = (int)value;
                 break;
+            case EEventProp.iGrabNr:
+                iGrabNr = (int)value;
+                break;
             case EEventProp.iAn:
                 iAn = (int)value;
                 break;
-            case EEventProp.sHausNr:
+            case EEventProp.iHausNr:
                 iHausNr = (int)value;
                 break;
             default:
@@ -314,7 +326,7 @@ public class CEventData : IEventData
         _changedPropList.Add(prop);
     }
 
-    public void SetDBData(IRecordset dB_EventTable, string[]? asProps)
+    public void SetDBData(IRecordset dB_EventTable, string[]? asProps = null)
     {
         if (asProps == null)
             asProps = _changedPropList.Select(p => p.ToString()).ToArray();
@@ -378,6 +390,9 @@ public class CEventData : IEventData
                 case nameof(IEventData.iCausal):
                     dB_EventTable.Fields[nameof(EventFields.Causal)].Value = iCausal;
                     break;
+                case nameof(IEventData.iGrabNr):
+                    dB_EventTable.Fields[nameof(EventFields.GrabNr)].Value = iGrabNr;
+                    break;
                 case nameof(IEventData.iAn):
                     dB_EventTable.Fields[nameof(EventFields.an)].Value = iAn;
                     break;
@@ -419,6 +434,8 @@ public class CEventData : IEventData
     public string sPlatz => _sPlatz ??= _GetText(iPlatz);
     public int iCausal { get; internal set; }
     public string sCausal => _sCausal ??= _GetText(iCausal);
+    public int iGrabNr {get; private set;}
+    public string sGrabNr => _sGrabNr ??= _GetText(iGrabNr);
     public int iAn { get; internal set; }
     public string sAn => _sAn ??= _GetText(iAn);
     public int iHausNr { get; private set; }
@@ -429,4 +446,5 @@ public class CEventData : IEventData
     public (EEventArt eArt, int iLink, short iLfNr) ID => (eArt, iPerFamNr, (short)iLfNr);
 
     public IReadOnlyList<EEventProp> ChangedProps => _changedPropList;
+
 }
