@@ -11,7 +11,7 @@ namespace GenFree.Data;
 #nullable enable
 
 
-public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, IEvent
+public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr), EventIndex, EventFields, IEventData>, IEvent
 {
     private Func<IRecordset> _DB_EventTable;
 
@@ -35,7 +35,7 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
                  && !(dB_EventTable.Fields[nameof(EventFields.PerFamNr)].AsInt() != iFamPers)
                  && !(dB_EventTable.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>() != i))
             {
-                try { action(new CEventData(dB_EventTable), dB_EventTable); } catch { }
+                try { action(GetData(dB_EventTable), dB_EventTable); } catch { }
                 dB_EventTable.MoveNext();
             }
         }
@@ -69,11 +69,11 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
         return array;
     }
 
-    public DateTime GetPersonBirthOrBapt(int persInArb)
+    public DateTime GetPersonBirthOrBapt(int persInArb, bool xPrefBap = false)
     {
-        var dB_EventTable = Seek((EEventArt.eA_Birth, persInArb, 0));
+        var dB_EventTable = Seek((xPrefBap ? EEventArt.eA_Birth : EEventArt.eA_Baptism, persInArb, 0));
         if ((dB_EventTable?.Fields[nameof(EventFields.DatumV)]).AsDate() == default)
-            dB_EventTable = Seek((EEventArt.eA_Baptism, persInArb, 0));
+            dB_EventTable = Seek((xPrefBap ? EEventArt.eA_Baptism : EEventArt.eA_Birth, persInArb, 0));
 
         return (dB_EventTable?.Fields[nameof(EventFields.DatumV)]).AsDate();
     }
@@ -110,6 +110,13 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
 
     }
 
+    public T GetValue<T>((EEventArt eArt, int iLink, short iLfNR) key, EventFields eDataField, T dDef)
+    {
+        return (DataModul.Event.Seek(key) is IRecordset dB_EventTable
+            && !dB_EventTable.NoMatch
+            && dB_EventTable.Fields[$"{eDataField}"] is T data) ? data : dDef;
+    }
+
     public void PersonDat(int iPersNr, out DateTime down1, out DateTime up1)
     {
         DateTime down = default;
@@ -137,7 +144,7 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
 
     public void DeleteBeSu(int iPerFamNr, EEventArt eArt)
     {
-        SeekBeSu(iPerFamNr, eArt, out _)?.Delete();        
+        SeekBeSu(iPerFamNr, eArt, out _)?.Delete();
     }
 
     public void DeleteAll(int iPerFamNr, EEventArt eArt)
@@ -180,7 +187,7 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
     public IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt)
     => ReadEventDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
 
-    private IEnumerable<IEventData> ReadEventDataDB(EventIndex Idx, Action<IRecordset> SeekAct, Predicate<CEventData> StopPred)
+    private IEnumerable<IEventData> ReadEventDataDB(EventIndex Idx, Action<IRecordset> SeekAct, Predicate<IEventData> StopPred)
     {
         var dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{Idx}";
@@ -188,7 +195,7 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
         while (!dB_EventTable.NoMatch
             && !dB_EventTable.EOF)
         {
-            var _event = new CEventData(dB_EventTable);
+            var _event = GetData(dB_EventTable);
             if (StopPred(_event))
                 break;
             yield return _event;
@@ -255,20 +262,46 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
     public bool ReadData((EEventArt eArt, int iLink, short iLfNr) key, out IEventData? cEvt)
     {
         var dB_EventTable = Seek(key, out bool xBreak);
-        cEvt = xBreak ? null : (IEventData)new CEventData(dB_EventTable);
+        cEvt = xBreak ? null : GetData(dB_EventTable!);
         return !xBreak;
     }
 
-    public bool ReadData(EventIndex eIndex, int iValue, out IEventData? cEvt)
+    public void SetValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
     {
-        var dB_EventTable = Seek(eIndex, iValue);
-        cEvt = (dB_EventTable == null) ? null : new CEventData(dB_EventTable);
-        return !(cEvt != null);
+        var dB_EventTable = DataModul.Event.Seek(key);
+        if (dB_EventTable?.NoMatch != false)
+        {
+            dB_EventTable = DataModul.DB_EventTable;
+            dB_EventTable.AddNew();
+            dB_EventTable.Fields[nameof(EventFields.ArtText)].Value = 0;
+            dB_EventTable.Fields[nameof(EventFields.Art)].Value = key.eArt;
+            dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = key.iLink;
+            dB_EventTable.Fields[nameof(EventFields.DatumV)].Value = 0;
+            dB_EventTable.Fields[nameof(EventFields.DatumV_S)].Value = " ";
+            dB_EventTable.Fields[nameof(EventFields.DatumB)].Value = 0;
+            dB_EventTable.Fields[nameof(EventFields.DatumB_S)].Value = " ";
+            dB_EventTable.Fields[nameof(EventFields.Ort)].Value = 0;
+            dB_EventTable.Fields[nameof(EventFields.Ort_S)].Value = " ";
+            dB_EventTable.Fields[nameof(EventFields.KBem)].Value = 0;
+            dB_EventTable.Fields[nameof(EventFields.Reg)].Value = " ";
+            dB_EventTable.Fields[nameof(EventFields.Bem1)].Value = " ";
+            dB_EventTable.Fields[nameof(EventFields.Bem2)].Value = " ";
+            dB_EventTable.Fields[nameof(EventFields.Platz)].Value = 0;
+            dB_EventTable.Fields[nameof(EventFields.LfNr)].Value = key.iLfNr;
+            dB_EventTable.Fields[nameof(EventFields.Zusatz)].Value = "";
+            //            dB_EventTable.Update();
+        }
+        else
+            dB_EventTable.Edit();
+        foreach (var (field, value) in values)
+        {
+            dB_EventTable.Fields[$"{field}"].Value = value; // Todo: Error-Handling
+        }
+        dB_EventTable.Update();
     }
-
     public void SetData((EEventArt eArt, int iLink, short iLfNr) key, IEventData data, string[]? asProps = null)
     {
-       var dB_EventTable = Seek(key, out bool xBreak);
+        var dB_EventTable = Seek(key, out bool xBreak);
         if (!xBreak)
         {
             dB_EventTable!.Edit();
@@ -284,38 +317,24 @@ public class CEvent : CUsesRecordSet<(EEventArt eArt, int iLink, short iLfNr)>, 
             (short)recordset.Fields[nameof(EventFields.LfNr)].AsInt());
     }
 
-    public bool ExistsText(int textNr)
-    {
-        var dB_EventTable = _db_Table;
-        dB_EventTable.Index = nameof(EventIndex.KText);
-        dB_EventTable.Seek("=", textNr);
-        return !dB_EventTable.NoMatch;
-    }
+    public override EventFields GetIndex1Field(EventIndex eIndex)
+   => eIndex switch
+   {
+       EventIndex.NText => EventFields.ArtText,
+       EventIndex.PText => EventFields.Platz,
+       EventIndex.CText => EventFields.Causal,
+       EventIndex.KText => EventFields.KBem,
+       EventIndex.EOrt => EventFields.Ort,
+       EventIndex.HaNu => EventFields.Hausnr,
+       EventIndex.Reg => EventFields.Reg,
+       _ => throw new NotImplementedException(),
+   };
 
-    public bool ExistsPlText(int textNr)
+    protected override IEventData GetData(IRecordset rs)
     {
-        var dB_EventTable = _db_Table;
-        dB_EventTable.Index = nameof(EventIndex.PText);
-        dB_EventTable.Seek("=", textNr);
-        return !dB_EventTable.NoMatch;
+        IEventData cResult = new CEventData(rs); // Todo: IoC
+        return cResult;
     }
-
-    public bool ExistsArtText(int textNr)
-    {
-        var dB_EventTable = _db_Table;
-        dB_EventTable.Index = nameof(EventIndex.NText);
-        dB_EventTable.Seek("=", textNr);
-        return !dB_EventTable.NoMatch;
-    }
-
-    public IRecordset? Seek(EventIndex eIndex, int iValue)
-    {
-        var dB_EventTable = _db_Table;
-        dB_EventTable.Index = $"{eIndex}";
-        dB_EventTable.Seek("=", iValue);
-        return dB_EventTable.NoMatch ? null : dB_EventTable;
-    }
-
 }
 
 

@@ -366,24 +366,24 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Quellen),
           Fields = new stFieldDef[]{
-                new(SourceField._1, TypeCode.Int64) ,
-                new("2", TypeCode.String) { Laenge = 240 },
-                new("3", TypeCode.String) { Laenge = 240 },
-                new("4", TypeCode.String) { Laenge = 240 },
-                new("5", TypeCode.String) { Laenge = 240 },
-                new("7", TypeCode.String) { Laenge = 240 },
-                new("8", TypeCode.String) { Laenge = 240 },
-                new("9", TypeCode.String) { Laenge = 240 },
-                new("10", TypeCode.String) { Laenge = 240 },
-                new("11", TypeCode.String) { Laenge = 240 },
-                new("12", TypeCode.String) { Laenge = 240 },
-                new("13", TypeCode.String) },
+                new(SourceFields._1, TypeCode.Int64) ,  // Nr
+                new(SourceFields._2, TypeCode.String) { Laenge = 240 }, // Titel
+                new(SourceFields._3, TypeCode.String) { Laenge = 240 }, // Ort
+                new(SourceFields._4, TypeCode.String) { Laenge = 240 }, // Zitat
+                new(SourceFields._5, TypeCode.String) { Laenge = 240 }, // Author
+                new(SourceFields._7, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._8, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._9, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._10, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._11, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._12, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._13, TypeCode.String) },
           Indexes = new stIndex[]{
-                new("Autor", new[] { "5" } ),
-                new("Dopp", new[] {"2", "4" } ),
-                new("Nam", new[] { "2" } ),
-                new("Nr", new[] { "1" } ),
-                new("ZITAT", new[] { "4" } ){ Unique = true }}
+                new(SourceIndex.Autor, new Enum[] { SourceFields._5 } ),
+                new(SourceIndex.Dopp, new Enum[] {SourceFields._2, SourceFields._4 } ),
+                new(SourceIndex.Nam, new Enum[] { SourceFields._2 } ),
+                new(SourceIndex.Nr, new Enum[] { SourceFields._1 } ),
+                new(SourceIndex.Zitat, new Enum[] { SourceFields._4 } ){ Unique = true }}
                 },
         new() { Name = nameof(dbTables.Repo),
           Fields = new stFieldDef[]{
