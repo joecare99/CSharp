@@ -34,4 +34,12 @@ public interface IEvent : IHasDataItf<IEventData, (EEventArt eArt, int iLink, sh
     DateTime[] ReadFamDates(int famInArb);
     void SetValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values);
     T GetValue<T>((EEventArt eArt, int iLink, short iLfNR) key, EventFields eDataField, T dDef);
+    void UpdateClearPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, Predicate<IEventData> predicate);
+    void UpdateAllSetVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, int iNewVal);
+    bool UpdateValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values);
+    void UpdateAllMvAppend(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, string sNewText);
+    void UpdateAllMvVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iClearVal = 0);
+    void UpdateAllSetValPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iNewVal, Predicate<IEventData> predicate, int iClearVal = 0);
+    bool ExistsPred(EventIndex eIndex, EventFields eIndexField, int iTndexVal, Predicate<IEventData> predicate);
+    void ClearAllRemText(EventIndex eIndex, EventFields eIdxField, int iIdxVal);
 }
