@@ -112,7 +112,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
 
     public T GetValue<T>((EEventArt eArt, int iLink, short iLfNR) key, EventFields eDataField, T dDef)
     {
-        return (DataModul.Event.Seek(key) is IRecordset dB_EventTable
+        return (Seek(key) is IRecordset dB_EventTable
             && !dB_EventTable.NoMatch
             && dB_EventTable.Fields[$"{eDataField}"] is T data) ? data : dDef;
     }
@@ -268,7 +268,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
 
     public void SetValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
     {
-        var dB_EventTable = DataModul.Event.Seek(key);
+        var dB_EventTable = Seek(key);
         if (dB_EventTable?.NoMatch != false)
         {
             dB_EventTable = DataModul.DB_EventTable;
@@ -335,6 +335,151 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         IEventData cResult = new CEventData(rs); // Todo: IoC
         return cResult;
     }
+
+    public  void UpdateClearPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, Predicate<IEventData> predicate)
+    {
+        var dB_EventTable = Seek(eIndex, iIndexVal);
+        if (dB_EventTable?.NoMatch == false
+            && !dB_EventTable.EOF
+            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+        {
+            IEventData cEv = new CEventData(dB_EventTable);
+            if (predicate(cEv))
+            {
+                dB_EventTable.Edit();
+                dB_EventTable.Fields[nameof(EventFields.ArtText)].Value = 0;
+                dB_EventTable.Update();
+            }
+        }
+
+    }
+    public  void UpdateAllSetVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, int iNewVal)
+    {
+        var dB_EventTable = Seek(eIndex, iIndexVal);
+        while (dB_EventTable?.EOF == false
+            && !dB_EventTable.NoMatch
+            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+        {
+            dB_EventTable.Edit();
+            dB_EventTable.Fields[nameof(eIndexField)].Value = iNewVal;
+            dB_EventTable.Update();
+            dB_EventTable.MoveNext();
+        }
+    }
+
+    public  bool UpdateValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
+    {
+        if (Seek(key) is IRecordset dB_EventTable
+            && !dB_EventTable.NoMatch)
+        {
+            dB_EventTable.Edit();
+            foreach (var (field, value) in values)
+            {
+                dB_EventTable.Fields[$"{field}"].Value = value; // Todo: Error-Handling
+            }
+            dB_EventTable.Update();
+            return true;
+        }
+        return false;
+    }
+
+    public  void UpdateAllMvAppend(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, string sNewText)
+    {
+        IRecordset dB_EventTable = _db_Table;
+        dB_EventTable.Index = $"{eIndex}";
+        dB_EventTable.Seek("=", iIndexVal);
+        while (!dB_EventTable.NoMatch
+            && !dB_EventTable.EOF
+            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+        {
+            dB_EventTable.Edit();
+
+            IField field = dB_EventTable.Fields[$"{eModField}"];
+
+            field.Value = field.AsString().Trim() == ""
+                ? sNewText
+                : field.AsString() + " " + sNewText;
+
+            dB_EventTable.Fields[$"{eIndexField}"].Value = 0;
+
+            dB_EventTable.Update();
+
+            dB_EventTable.MoveNext();
+        }
+    }
+
+    public  void UpdateAllMvVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iClearVal = 0)
+    {
+        IRecordset dB_EventTable = _db_Table;
+        dB_EventTable.Index = $"{eIndex}";
+        dB_EventTable.Seek("=", iIndexVal);
+        while (!dB_EventTable.NoMatch
+            && !dB_EventTable.EOF
+            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+        {
+            dB_EventTable.Edit();
+            dB_EventTable.Fields[$"{eModField}"].Value = iIndexVal;
+            dB_EventTable.Fields[$"{eIndexField}"].Value = iClearVal;
+            dB_EventTable.Update();
+            dB_EventTable.MoveNext();
+        }
+    }
+    public  void UpdateAllSetValPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iNewVal, Predicate<IEventData> predicate, int iClearVal = 0)
+    {
+        IRecordset dB_EventTable = _db_Table;
+        dB_EventTable.Index = $"{eIndex}";
+        dB_EventTable.Seek("=", iIndexVal);
+        while (!dB_EventTable.NoMatch
+            && !dB_EventTable.EOF
+            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+        {
+            if (predicate(new CEventData(dB_EventTable)))
+            {
+                dB_EventTable.Edit();
+                dB_EventTable.Fields[$"{eModField}"].Value = iNewVal;
+                if (eModField != eIndexField)
+                    dB_EventTable.Fields[$"{eIndexField}"].Value = iClearVal;
+                dB_EventTable.Update();
+            }
+            dB_EventTable.MoveNext();
+        }
+    }
+
+    public  bool ExistsPred(EventIndex eIndex, EventFields eIndexField, int iTndexVal, Predicate<IEventData> predicate)
+    {
+        IRecordset dB_EventTable = _db_Table;
+        dB_EventTable.Index = nameof(eIndex);
+        dB_EventTable.Seek("=", iTndexVal);
+        while (!dB_EventTable.NoMatch
+            && !dB_EventTable.EOF
+            && !(dB_EventTable.Fields[nameof(eIndexField)].AsInt() != iTndexVal))
+        {
+            if (predicate(new CEventData(dB_EventTable)))
+            {
+                return true;
+            }
+            dB_EventTable.MoveNext();
+        }
+        return false;
+    }
+
+    public  void ClearAllRemText(EventIndex eIndex, EventFields eIdxField, int iIdxVal)
+    {
+        IRecordset dB_EventTable = _db_Table;
+        dB_EventTable.Index = $"{eIndex}";
+        dB_EventTable.Seek("=", iIdxVal);
+        while (!dB_EventTable.EOF
+            && !dB_EventTable.NoMatch
+            && dB_EventTable.Fields[$"{eIdxField}"].AsInt() == iIdxVal)
+        {
+            dB_EventTable.Edit();
+            dB_EventTable.Fields[$"{eIdxField}"].Value = 0;
+            dB_EventTable.Update();
+
+            dB_EventTable.MoveNext();
+        }
+    }
+
 }
 
 
