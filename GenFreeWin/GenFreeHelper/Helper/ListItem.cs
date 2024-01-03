@@ -2,7 +2,14 @@
 
 namespace GenFree.Helper
 {
-    public class ListItem
+    public class ListItem : ListItem<object>
+    {
+        public ListItem(string ItemString, object? ItemData = null) : base(ItemString, ItemData)
+        {
+        }
+    }
+
+    public class ListItem<T> : IListItem<T>
     {
 #nullable enable
         //
@@ -10,14 +17,14 @@ namespace GenFree.Helper
         //     Speichert den ItemData-Wert für ein Element in einem System.Windows.Forms.ListBox-Steuerelement
         //     oder einem System.Windows.Forms.ComboBox-Steuerelement in einer Anwendung, die
         //     von Visual Basic 6.0 auf die neue Version aktualisiert wurde.
-        public object? ItemData;
+        public T? ItemData { get; set; }
 
         //
         // Zusammenfassung:
         //     Speichert den List-Wert für ein Element in einem System.Windows.Forms.ListBox-Steuerelement
         //     oder einem System.Windows.Forms.ComboBox-Steuerelement in einer Anwendung, die
         //     von Visual Basic 6.0 auf die neue Version aktualisiert wurde.
-        public string ItemString;
+        public string ItemString { get; set; }
 
         //
         // Zusammenfassung:
@@ -29,7 +36,7 @@ namespace GenFree.Helper
         //
         //   ItemData:
         //     Ein Integer, der den ItemData-Wert in Visual Basic 6.0 darstellt.
-        public ListItem(string ItemString, object? ItemData = null)
+        public ListItem(string ItemString, T? ItemData = default)
         {
             this.ItemData = ItemData;
             this.ItemString = ItemString;
