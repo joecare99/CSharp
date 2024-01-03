@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
+using GenFree.Model;
 
 namespace GenFree.Data.Tests
 {
@@ -120,7 +120,6 @@ namespace GenFree.Data.Tests
         [TestMethod()]
         public void ForEachDo2Test()
         {
-            var iCnt = 0;
             this.ForEachDo(null);
             Assert.AreEqual("_MyKeyIndex", testRS.Index);
             testRS.Received(1).MoveFirst();

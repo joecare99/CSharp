@@ -4,10 +4,11 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
+using GenFree.Model;
 
 namespace GenFree.Data;
 
-public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz)>, ILink
+public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKennz),LinkIndex,ILinkData.LinkFields,ILinkData>, ILink
 {
     private Func<IRecordset> _DB_LinkTable;
 
@@ -20,7 +21,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         _DB_LinkTable = dB_LinkTable;
     }
 
-    public int AppendFamilyParent(int famInArb, int persInArb, ELinkKennz kennz, Func<int, bool, ELinkKennz, int> CheckPerson, bool xIgnoreSex = false)
+    public int AppendFamilyParent(int famInArb, int persInArb, ELinkKennz kennz, Func<int, bool, ELinkKennz, int>? CheckPerson, bool xIgnoreSex = false)
     {
         IRecordset dB_LinkTable = _db_Table;
         dB_LinkTable.Index = nameof(LinkIndex.FamSu);
@@ -84,12 +85,13 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         });
     }
 
-    private void ForEachFam(int famInArb, Action<ILinkData, IRecordset> action, int iMaxIter = 100)
+    private bool ForEachFam(int famInArb, Action<ILinkData, IRecordset> action, int iMaxIter = 100)
     {
         var dB_LinkTable = _db_Table;
         dB_LinkTable.Index = nameof(LinkIndex.FamNr);
         dB_LinkTable.Seek("=", famInArb);
         var M1_Iter = 1;
+        bool xResult = !dB_LinkTable.NoMatch;
         while (M1_Iter++ <= iMaxIter
              && !dB_LinkTable.EOF
              && !dB_LinkTable.NoMatch
@@ -98,6 +100,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
             try { action(new CLinkData(dB_LinkTable), dB_LinkTable); } catch { };
             dB_LinkTable.MoveNext();
         }
+        return xResult;
     }
 
     public bool DeleteQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct
@@ -193,12 +196,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         return SeekFaSu(iFamily, eKennz, out _) != null;
     }
 
-    public bool ExistP(int iPersNr)
-    {
-        _db_Table.Index = nameof(LinkIndex.Per);
-        _db_Table.Seek("=", iPersNr);
-        return !_db_Table.NoMatch;
-    }
+    public bool ExistP(int iPersNr)=>Exists(LinkIndex.Per, iPersNr);
 
     public bool ExistFam(int iFamily, ELinkKennz[] eLinkKennzs)
     {
@@ -214,14 +212,15 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
     }
 
 
-    public void ReadFamily(int iFamily, IFamilyPersons Family, Action<ELinkKennz, int>? action = null)
+    public bool ReadFamily(int iFamily, IFamilyPersons Family, Action<ELinkKennz, int>? action = null)
     {
         Family_InitLinks(Family);
-        ForEachFam(iFamily, (link, dB_LinkTable) =>
+        var xResult = ForEachFam(iFamily, (link, dB_LinkTable) =>
         {
             Family_SetLinkPerson(Family, action, link.iPersNr, link.eKennz);
         });
         Family.Kinder[0] = (Family.Kinder.Count - 1, "");
+        return xResult;
     }
 
     private static void Family_InitLinks(IFamilyPersons Family)
@@ -279,7 +278,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
     public IList<int> GetPersonFams(int persInArb, ELinkKennz eLKnz)
     {
         var _aiPers = new List<int>();
-        foreach (var link in CLinkData.ReadPersLinkDataDB(persInArb, eLKnz))
+        foreach (var link in ReadAllPers(persInArb, eLKnz))
         {
             _aiPers.Add(link.iFamNr);
         }
@@ -315,6 +314,55 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         return xBreak ? null : dB_LinkTable;
     }
 
+    /// <summary>
+    /// Reads the link data from database. Using the index FamSu
+    /// </summary>
+    /// <param name="iFamNr">The i fam nr.</param>
+    /// <param name="eKennz">The e kennz.</param>
+    /// <returns>IEnumerable&lt;ILinkData&gt;.</returns>
+    public IEnumerable<ILinkData> ReadAllFams(int iFamNr, ELinkKennz eKennz = ELinkKennz.lkNone)
+        => ReadLinkDataDB(LinkIndex.FamSu, eKennz == 0 ? (rs) => rs.Seek("=", iFamNr) : (rs) => rs.Seek("=", iFamNr, eKennz),
+            eKennz == ELinkKennz.lkNone ? (ld) => ld.iFamNr != iFamNr : (ld) => ld.iFamNr != iFamNr || ld.eKennz != eKennz);
+
+    /// <summary>
+    /// Reads the link data from database. Using the index ElSu
+    /// </summary>
+    /// <param name="iPersNr">The i pers nr.</param>
+    /// <param name="eKennz">The e kennz.</param>
+    /// <returns>IEnumerable&lt;ILinkData&gt;.</returns>
+    public IEnumerable<ILinkData> ReadAllPers(int iPersNr, ELinkKennz eKennz = ELinkKennz.lkNone)
+        => ReadLinkDataDB(LinkIndex.ElSu, eKennz == 0 ? (rs) => rs.Seek("=", iPersNr) : (rs) => rs.Seek("=", iPersNr, eKennz),
+            eKennz == ELinkKennz.lkNone ? (ld) => ld.iPersNr != iPersNr : (ld) => ld.iPersNr != iPersNr || ld.eKennz != eKennz);
+    /// <summary>
+    /// Reads the link data from database. Using the index PAFI (Personen mit Familienkennzeichen)
+    /// </summary>
+    /// <param name="iKennz">The i kennz.</param>
+    /// <returns>IEnumerable&lt;ILinkData&gt;.</returns>
+    public IEnumerable<ILinkData> ReadAllKennzs(ELinkKennz iKennz)
+        => ReadLinkDataDB(LinkIndex.PAFI, (rs) => rs.Seek("=", iKennz), (ld) => ld.eKennz != iKennz);
+
+    private IEnumerable<ILinkData> ReadLinkDataDB(LinkIndex Idx, Action<IRecordset> SeekAkt, Predicate<CLinkData> StopPred)
+    {
+        var db_LinkTable = _db_Table;
+        db_LinkTable.Index = Idx.AsString();
+        SeekAkt(db_LinkTable);
+        while (!db_LinkTable.NoMatch
+            && !db_LinkTable.EOF)
+        {
+            var Link = new CLinkData
+            {
+                eKennz = db_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>(),
+                iFamNr = db_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt(),
+                iPersNr = db_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt()
+            };
+            if (StopPred(Link))
+                break;
+            yield return Link;
+            db_LinkTable.MoveNext();
+        }
+        yield break;
+    }
+
     public override IRecordset? Seek((int iFamily, int iPerson, ELinkKennz eKennz) key, out bool xBreak)
     {
         _db_Table.Index = _keyIndex;
@@ -329,5 +377,20 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
                            _db_Table.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt(),
                                           _db_Table.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>());
 
+    }
+
+    public override ILinkData.LinkFields GetIndex1Field(LinkIndex eIndex)
+    {
+        return eIndex switch
+        {
+            LinkIndex.FamNr => ILinkData.LinkFields.FamNr,
+            LinkIndex.ElSu => ILinkData.LinkFields.PerNr,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    protected override ILinkData GetData(IRecordset rs)
+    {
+        return new CLinkData(rs);
     }
 }

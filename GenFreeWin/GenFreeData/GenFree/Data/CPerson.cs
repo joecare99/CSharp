@@ -6,9 +6,10 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using System.Collections.Generic;
+using GenFree.Model;
 
 namespace GenFree.Data;
-public class CPerson : CUsesRecordSet<int>, IPerson
+public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData>, IPerson
 {
     private Func<IRecordset> _value;
     private ISysTime _sysTime;
@@ -130,7 +131,7 @@ public class CPerson : CUsesRecordSet<int>, IPerson
     public bool ReadData(int key, out IPersonData? data)
     {
         var dB_PersonTable = Seek(key, out bool xBreak);
-        data = xBreak ? null : new CPersonData(dB_PersonTable);
+        data = xBreak ? null : GetData(dB_PersonTable!);
         return !xBreak;
     }
 
@@ -141,7 +142,7 @@ public class CPerson : CUsesRecordSet<int>, IPerson
         dB_PlaceTable.MoveFirst();
         while (!dB_PlaceTable.EOF)
         {
-            yield return new CPersonData(dB_PlaceTable);
+            yield return GetData(dB_PlaceTable);
             dB_PlaceTable.MoveNext();
         }
     }
@@ -155,5 +156,22 @@ public class CPerson : CUsesRecordSet<int>, IPerson
             data.SetDBValue(dB_PersonTable, asProps);
             dB_PersonTable.Update();
         }
+    }
+
+    public override PersonFields GetIndex1Field(PersonIndex eIndex)
+    {
+        return eIndex switch
+        {
+            PersonIndex.PerNr => PersonFields.PersNr,
+            PersonIndex.Puid => PersonFields.PUid,
+            PersonIndex.BeaDat => PersonFields.EditDat,
+            PersonIndex.reli => PersonFields.religi,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    protected override IPersonData GetData(IRecordset rs)
+    {
+        return new CPersonData(rs);
     }
 }

@@ -35,7 +35,7 @@ namespace GenFree.Data
         /// </summary>
         /// <param name="Idx">The index.</param>
         /// <returns>T.</returns>
-        public T this[object Idx] { get => getaction.Invoke(Idx) ?? default(T)!; set => setaction?.Invoke(Idx, value); }
+        public T this[object Idx] { get => getaction.Invoke(Idx) ?? default!; set => setaction?.Invoke(Idx, value); }
 
         /// <summary>
         /// Gets the getaction.

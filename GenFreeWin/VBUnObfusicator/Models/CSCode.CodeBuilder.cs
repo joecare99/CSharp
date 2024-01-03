@@ -56,8 +56,8 @@ namespace VBUnObfusicator.Models
 
             private static void BuildBlockEnd(TokenData tokenData, CodeBuilderData data)
             {
-                _ = new CodeBlock() { Name = $"{tokenData.type}End", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock.Parent };
-                data.actualBlock = data.actualBlock.Parent;
+                _ = new CodeBlock() { Name = $"{tokenData.type}End", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock?.Parent };
+                data.actualBlock = data.actualBlock?.Parent;
             }
 
             private static void BuildBlockStart(TokenData tokenData, CodeBuilderData data)
@@ -112,7 +112,7 @@ namespace VBUnObfusicator.Models
 
             private static void BuildGoto(TokenData tokenData, CodeBuilderData data)
             {
-                data.actualBlock = new CodeBlock() { Name = $"{tokenData.type}", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock.Parent };
+                data.actualBlock = new CodeBlock() { Name = $"{tokenData.type}", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock?.Parent };
                 data.gotos.Add((ICodeBlock?)data.actualBlock);
                 data.xBreak = false;
             }
