@@ -191,7 +191,7 @@ namespace GenFree.Data
                 new("Datvs", new[] { "DatumV_s" } ),
                 new("EOrt", new[] { "Ort" } ),
                 new("HaNu", new[] { "Hausnr" } ),
-                new("JaTa", new[] { "" } ),
+                new(EventIndex.JaTa, new Enum[] { EventFields.Art } ),
                 new(EventIndex.CText, new Enum[] { EventFields.Causal } ),
                 new(EventIndex.KText, new Enum[] { EventFields.KBem } ),
                 new(EventIndex.NText, new Enum[] { EventFields.ArtText } ),
@@ -435,7 +435,7 @@ namespace GenFree.Data
                 new(LinkIndex.FamSu,   new Enum[] { ILinkData.LinkFields.FamNr, ILinkData.LinkFields.Kennz } ),
                 new(LinkIndex.FamSu1,  new Enum[] {  } ),
                 new(LinkIndex.PAFI,    new Enum[] {  } ),
-                new(LinkIndex.Per,     new Enum[] {  } )}
+                new(LinkIndex.Per,     new Enum[] { ILinkData.LinkFields.PerNr } )}
                 },
         new() { Name = nameof(dbTables.Tab1),
           Fields = new stFieldDef[]{

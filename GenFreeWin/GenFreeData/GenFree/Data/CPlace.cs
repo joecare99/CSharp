@@ -11,7 +11,7 @@ using static System.Collections.Specialized.BitVector32;
 namespace GenFree.Data;
 
 
-public class CPlace : CUsesRecordSet<int>, IPlace
+public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, IPlace
 {
     private Func<IRecordset> _value;
 
@@ -98,4 +98,17 @@ public class CPlace : CUsesRecordSet<int>, IPlace
     {
         return _db_Table.Fields[nameof(PlaceFields.OrtNr)].AsInt();
     }
+
+    public override PlaceFields GetIndex1Field(PlaceIndex eIndex) => eIndex switch
+    {
+        PlaceIndex.OrtNr => PlaceFields.OrtNr,
+        PlaceIndex.Orte => PlaceFields.Ort,
+        PlaceIndex.OT => PlaceFields.Ortsteil,
+        PlaceIndex.K => PlaceFields.Kreis,
+        PlaceIndex.L => PlaceFields.Land,
+        PlaceIndex.S => PlaceFields.Staat,
+        _ => throw new NotImplementedException(),
+    };
+
+    protected override IPlaceData GetData(IRecordset rs) => new CPlaceData(rs);
 }

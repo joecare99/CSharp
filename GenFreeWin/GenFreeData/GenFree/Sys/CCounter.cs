@@ -1,4 +1,4 @@
-﻿using GenFree.Interfaces.Model;
+﻿using GenFree.Interfaces.Sys;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;

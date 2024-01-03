@@ -8,7 +8,7 @@ using GenFree.Model;
 
 namespace GenFree.Data;
 
-public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz)>, ILink
+public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKennz),LinkIndex,ILinkData.LinkFields,ILinkData>, ILink
 {
     private Func<IRecordset> _DB_LinkTable;
 
@@ -196,12 +196,7 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
         return SeekFaSu(iFamily, eKennz, out _) != null;
     }
 
-    public bool ExistP(int iPersNr)
-    {
-        _db_Table.Index = nameof(LinkIndex.Per);
-        _db_Table.Seek("=", iPersNr);
-        return !_db_Table.NoMatch;
-    }
+    public bool ExistP(int iPersNr)=>Exists(LinkIndex.Per, iPersNr);
 
     public bool ExistFam(int iFamily, ELinkKennz[] eLinkKennzs)
     {
@@ -382,5 +377,20 @@ public class CLink : CUsesRecordSet<(int iFamily, int iPerson, ELinkKennz eKennz
                            _db_Table.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt(),
                                           _db_Table.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>());
 
+    }
+
+    public override ILinkData.LinkFields GetIndex1Field(LinkIndex eIndex)
+    {
+        return eIndex switch
+        {
+            LinkIndex.FamNr => ILinkData.LinkFields.FamNr,
+            LinkIndex.ElSu => ILinkData.LinkFields.PerNr,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    protected override ILinkData GetData(IRecordset rs)
+    {
+        return new CLinkData(rs);
     }
 }

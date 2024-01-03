@@ -11,7 +11,7 @@ using GenFree.Interfaces.Sys;
 
 namespace GenFree.Data;
 
-public class CFamily : CUsesRecordSet<int>, IFamily
+public class CFamily : CUsesIndexedRSet<int,FamilyIndex,FamilyFields,IFamilyData>, IFamily
 {
     private ISysTime _sysTime;
     private Func<IRecordset> _value;
@@ -29,8 +29,9 @@ public class CFamily : CUsesRecordSet<int>, IFamily
     public void SetNameNr(int iFamInArb, int iName)
     {
         var dB_FamilyTable = Seek(iFamInArb);
-        if (dB_FamilyTable.NoMatch)
+        if (dB_FamilyTable?.NoMatch != false)
         {
+            dB_FamilyTable = _db_Table;
             dB_FamilyTable.AddNew();
             dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value = _sysTime.Now;
             dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = 0;
@@ -54,7 +55,7 @@ public class CFamily : CUsesRecordSet<int>, IFamily
         throw new NotImplementedException();
     }
 
-    public override IRecordset Seek(int key, out bool xBreak)
+    public override IRecordset? Seek(int key, out bool xBreak)
     {
         _db_Table.Index = _keyIndex;
         _db_Table.Seek("=", key);
@@ -65,7 +66,7 @@ public class CFamily : CUsesRecordSet<int>, IFamily
     public bool ReadData(int key, out IFamilyData? data)
     {
         var dB_FamilyTable = Seek(key, out bool xBreak);
-        data = xBreak ? null : new CFamilyPersons(dB_FamilyTable);
+        data = xBreak ? null : GetData(dB_FamilyTable!);
         return !xBreak;
     }
 
@@ -76,7 +77,7 @@ public class CFamily : CUsesRecordSet<int>, IFamily
         dB_PlaceTable.MoveFirst();
         while (!dB_PlaceTable.EOF)
         {
-            yield return new CFamilyPersons(dB_PlaceTable);
+            yield return GetData(dB_PlaceTable);
             dB_PlaceTable.MoveNext();
         }
     }
@@ -96,5 +97,15 @@ public class CFamily : CUsesRecordSet<int>, IFamily
     {
         return recordset.Fields[nameof(FamilyFields.FamNr)].AsInt();
     }
+
+    public override FamilyFields GetIndex1Field(FamilyIndex eIndex) => eIndex switch
+    {
+        FamilyIndex.Fam => FamilyFields.FamNr,
+        FamilyIndex.Fuid => FamilyFields.Fuid,
+        FamilyIndex.BeaDat => FamilyFields.EditDat,
+        _ => throw new NotImplementedException(),
+    };
+
+    protected override IFamilyData GetData(IRecordset rs) => new CFamilyPersons(rs);
 }
 

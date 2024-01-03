@@ -327,6 +327,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
        EventIndex.EOrt => EventFields.Ort,
        EventIndex.HaNu => EventFields.Hausnr,
        EventIndex.Reg => EventFields.Reg,
+       EventIndex.JaTa => EventFields.Art,
        _ => throw new NotImplementedException(),
    };
 
