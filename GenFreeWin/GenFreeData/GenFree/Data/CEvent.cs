@@ -78,9 +78,9 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         return (dB_EventTable?.Fields[nameof(EventFields.DatumV)]).AsDate();
     }
 
-    public DateTime GetDate(int iFamPers, EEventArt eArt)
-        => GetDate(iFamPers, eArt, out _);
-    public DateTime GetDate(int iFamPers, EEventArt eArt, out string sDateV_S)
+    public DateTime GetDate(EEventArt eArt, int iFamPers)
+        => GetDate(eArt, iFamPers, out _);
+    public DateTime GetDate(EEventArt eArt, int iFamPers, out string sDateV_S)
     {
         var dB_EventTable = Seek((eArt, iFamPers, 0), out var xBreak);
         sDateV_S = "";
@@ -94,9 +94,9 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
 
     }
 
-    public DateTime GetDateB(int iFamPers, EEventArt eArt)
-        => GetDateB(iFamPers, eArt, out _);
-    public DateTime GetDateB(int iFamPers, EEventArt eArt, out string sDateB_S)
+    public DateTime GetDateB(EEventArt eArt, int iFamPers)
+        => GetDateB(eArt, iFamPers, out _);
+    public DateTime GetDateB(EEventArt eArt, int iFamPers, out string sDateB_S)
     {
         var dB_EventTable = Seek((eArt, iFamPers, 0), out var xBreak);
         sDateB_S = "";
@@ -131,25 +131,31 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         (down1, up1) = (down, up);
     }
 
-    public IEventData? ReadDataPl(int persInArb, EEventArt eEventArt, out bool xBreak, short iLfNr = 0)
+    public IEventData? ReadDataPl(EEventArt eEventArt, int persInArb, out bool xBreak, short iLfNr = 0)
     {
-        xBreak = !ReadData(persInArb, eEventArt, out var cEvn, iLfNr) || cEvn!.iOrt == 0;
+        xBreak = !ReadData(eEventArt, persInArb, out var cEvn, iLfNr) || cEvn!.iOrt == 0;
         return cEvn;
     }
 
-    public bool ReadData(int persInArb, EEventArt eEventArt, out IEventData? cEvt, short iLfNr = 0) =>
+    public bool ReadData(EEventArt eEventArt, int persInArb, out IEventData? cEvt, short iLfNr = 0) =>
         ReadData((eEventArt, persInArb, iLfNr), out cEvt);
 
     public bool Exists(EEventArt eArt, int iLink, int iLfNR = 0) => Exists((eArt, iLink, (short)iLfNR));
 
-    public void DeleteBeSu(int iPerFamNr, EEventArt eArt)
+    public bool ExistsBeSu(EEventArt eArt, int iLink)
     {
-        SeekBeSu(iPerFamNr, eArt, out _)?.Delete();
+        _ = SeekBeSu(eArt, iLink, out var xBreak);
+        return !xBreak;
     }
 
-    public void DeleteAll(int iPerFamNr, EEventArt eArt)
+    public void DeleteBeSu(EEventArt eArt, int iPerFamNr)
     {
-        var db_Table = SeekBeSu(iPerFamNr, eArt, out var xBreak);
+        SeekBeSu(eArt, iPerFamNr, out _)?.Delete();
+    }
+
+    public void DeleteAll(EEventArt eArt, int iPerFamNr)
+    {
+        var db_Table = SeekBeSu(eArt, iPerFamNr, out var xBreak);
         while (!xBreak
            && !db_Table.EOF
            && !(db_Table.Fields[nameof(EventFields.PerFamNr)].AsInt() != iPerFamNr)
@@ -165,7 +171,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
 
     public void ChgEvent(EEventArt eArt, int iPerFamNr, EEventArt eArt2, int iFam2 = 0)
     {
-        var dB_EventTable = SeekBeSu(iPerFamNr, eArt, out var xBreak);
+        var dB_EventTable = SeekBeSu(eArt, iPerFamNr, out var xBreak);
         if (!xBreak && (eArt != eArt2 || (iFam2 != 0 && iFam2 != iPerFamNr)))
         {
             dB_EventTable.Edit();
@@ -176,7 +182,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         }
     }
 
-    public IRecordset? SeekBeSu(int iPerFamnr, EEventArt eArt, out bool xBreak)
+    public IRecordset? SeekBeSu(EEventArt eArt, int iPerFamnr, out bool xBreak)
     {
         _db_Table.Index = nameof(EventIndex.BeSu);
         _db_Table.Seek("=", eArt, iPerFamnr);
@@ -214,7 +220,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     public bool DeleteEmptyFam(int ifamInArb, EEventArt eArt)
     {
         var xInfoFound = false;
-        if (ReadData(ifamInArb, eArt, out var cEvt1)
+        if (ReadData(eArt, ifamInArb, out var cEvt1)
                                                 && cEvt1!.sVChr == "0")
         {
             xInfoFound = cEvt1.dDatumV != default
@@ -243,7 +249,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         for (var _Iter = EEventArt.eA_Burial; _Iter >= EEventArt.eA_Birth; _Iter--)
         {
-            if (ReadData(PersInArb, _Iter, out var cEvt, 0))
+            if (ReadData(_Iter, PersInArb, out var cEvt, 0))
             {
                 person.SetData(cEvt!);
             }
