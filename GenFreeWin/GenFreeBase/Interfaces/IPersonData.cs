@@ -38,6 +38,7 @@ public interface IPersonData : IHasID<int>
     DateTime dBaptised { get; }
     DateTime dBirth { get; }
     DateTime dAnlDatum { get; }
+    bool isEmpty { get; }
 
     void SetData(IEventData cEvt);
     void SetDates(string[] value, Func<string, string, string>? SetAge = null);
