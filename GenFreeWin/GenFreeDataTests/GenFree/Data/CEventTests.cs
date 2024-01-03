@@ -136,7 +136,7 @@ namespace GenFree.Data.Tests
         public void GetDateTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, testClass.GetDate(iActFam, eArt));
+            Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, testClass.GetDate(eArt, iActFam));
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam, (short)0);
         }
@@ -150,7 +150,7 @@ namespace GenFree.Data.Tests
         public void GetDateTest1(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, testClass.GetDate(iActFam, eArt, out var s));
+            Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, testClass.GetDate(eArt, iActFam, out var s));
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam, (short)0);
         }
@@ -164,7 +164,7 @@ namespace GenFree.Data.Tests
         public void GetDateBTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp ? new DateTime(1910, 12, 31) : default, testClass.GetDateB(iActFam, eArt));
+            Assert.AreEqual(xExp ? new DateTime(1910, 12, 31) : default, testClass.GetDateB(eArt, iActFam));
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam, (short)0);
         }
@@ -178,7 +178,7 @@ namespace GenFree.Data.Tests
         public void GetDateBTest1(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp ? new DateTime(1910, 12, 31) : default, testClass.GetDateB(iActFam, eArt, out var s));
+            Assert.AreEqual(xExp ? new DateTime(1910, 12, 31) : default, testClass.GetDateB(eArt, iActFam, out var s));
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam, (short)0);
         }
@@ -196,7 +196,7 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
             if (xExp)
                 testRS.Fields[nameof(EventFields.Ort)].Value.Returns(15, 17, 19);
-            var cEv = testClass.ReadDataPl(iActFam, eArt, out var xBreak, (short)iLfdNr);
+            var cEv = testClass.ReadDataPl(eArt, iActFam, out var xBreak, (short)iLfdNr);
             Assert.AreEqual(!xExp, xBreak);
             if (xExp)
             {
@@ -241,7 +241,7 @@ namespace GenFree.Data.Tests
         public void ReadDataTest1(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp, testClass.ReadData(iActFam, eArt, out var cEv, (short)iLfdNr));
+            Assert.AreEqual(xExp, testClass.ReadData(eArt, iActFam, out var cEv, (short)iLfdNr));
             if (xExp)
             {
                 Assert.AreEqual(eArt, cEv!.eArt);
@@ -276,7 +276,7 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
             //            Assert.AreEqual(xExp, 
-            testClass.DeleteBeSu(iActFam, eArt);//);
+            testClass.DeleteBeSu(eArt, iActFam);//);
             Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam);
         }
@@ -291,7 +291,7 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
             // Assert.AreEqual(xExp ? testRS : null, 
-            testClass.DeleteAll(iActFam, eArt);
+            testClass.DeleteAll(eArt, iActFam);
             //            Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam);
@@ -345,7 +345,7 @@ namespace GenFree.Data.Tests
         public void SeekBeSuTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp ? testRS : null, testClass.SeekBeSu(iActFam, eArt, out var xBreak));
+            Assert.AreEqual(xExp ? testRS : null, testClass.SeekBeSu(eArt, iActFam, out var xBreak));
             Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
             testRS.Received().Seek("=", eArt, iActFam);
