@@ -109,6 +109,8 @@ public class CPersonData : IPersonData
         }
     }
 
+    public bool isEmpty => throw new NotImplementedException();
+
     public void SetPersonNr(int i) { ID = i; }
 
     public void SetFullSurname(string value)
