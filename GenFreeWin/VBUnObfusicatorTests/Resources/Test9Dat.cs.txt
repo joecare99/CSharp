@@ -1004,8 +1004,14 @@
                                 case 550:
                                     num = 550;
                                     Modul1.PersInArbsp = Modul1.PersInArb;
-                                     Modul1.Kenn = 1f;
-                                     if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
+                                    goto case 551;
+                                case 551:
+                                    num = 551;
+                                    Modul1.Kenn = 1f;
+                                    goto case 552;
+                                case 552:
+                                    num = 552;
+                                    if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
                                     {
                                         goto case 553;
                                     }
@@ -1018,17 +1024,32 @@
                                 case 555:
                                     num = 555;
                                     DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
-                                     DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
-                                     if (!DataModul.DB_LinkTable.NoMatch)
+                                    goto case 556;
+                                case 556:
+                                    num = 556;
+                                    DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
+                                    goto case 557;
+                                case 557:
+                                    num = 557;
+                                    if (!DataModul.DB_LinkTable.NoMatch)
                                     {
                                         goto case 559;
                                     }
                                     goto IL_3320;
                                 case 559:
                                     num = 559;
-                                     Modul1.FamInArb = DataModul.DB_LinkTable.Fields[nameof(DataModul.LinkFields.FamNr)].Value.AsInt();
-                                     MainProject.Forms.Familie.Famles(Modul1.FamInArb);
-                                     if (Modul1.Kenn == 1f)
+                                    goto case 560;
+                                case 560:
+                                    num = 560;
+                                    Modul1.FamInArb = DataModul.DB_LinkTable.Fields[nameof(DataModul.LinkFields.FamNr)].Value.AsInt();
+                                    goto case 561;
+                                case 561:
+                                    num = 561;
+                                    MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+                                    goto case 562;
+                                case 562:
+                                    num = 562;
+                                    if (Modul1.Kenn == 1f)
                                     {
                                         goto case 563;
                                     }
@@ -1053,10 +1074,22 @@
                                 case 568:
                                     num = 568;
                                     DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
-                                     Modul1.I = 101;
-                                     Modul1.Ubg = Modul1.I;
-                                     DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.PersInArb.AsString(), "0");
-                                     if (!DataModul.DB_EventTable.NoMatch)
+                                    goto case 569;
+                                case 569:
+                                    num = 569;
+                                    Modul1.I = 101;
+                                    goto case 570;
+                                case 570:
+                                    num = 570;
+                                    Modul1.Ubg = Modul1.I;
+                                    goto case 571;
+                                case 571:
+                                    num = 571;
+                                    DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.PersInArb.AsString(), "0");
+                                    goto case 572;
+                                case 572:
+                                    num = 572;
+                                    if (!DataModul.DB_EventTable.NoMatch)
                                     {
                                         goto case 574;
                                     }
@@ -1079,7 +1112,10 @@
                                 case 577:
                                     num = 577;
                                     transdat = DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value.AsInt();
-                                     neuedat();
+                                    goto case 578;
+                                case 578:
+                                    num = 578;
+                                    neuedat();
                                     goto IL_3395;
                                 case 573:
                                 case 580:
@@ -1103,8 +1139,14 @@
                                 case 584:
                                     num = 584;
                                     num6 = 30000000;
-                                     this.A = 1;
-                                     if (Modul1.Family.Kind[this.A] > 0)
+                                    goto case 585;
+                                case 585:
+                                    num = 585;
+                                    this.A = 1;
+                                    goto case 586;
+                                case 586:
+                                    num = 586;
+                                    if (Modul1.Family.Kind[this.A] > 0)
                                     {
                                         goto case 587;
                                     }
@@ -1112,8 +1154,14 @@
                                 case 587:
                                     num = 587;
                                     Modul1.I = 101;
-                                     DataModul.DB_EventTable.Seek("=", Modul1.I.AsString(), Modul1.Family.Kind[this.A].AsString(), "0");
-                                     if (!DataModul.DB_EventTable.NoMatch)
+                                    goto case 588;
+                                case 588:
+                                    num = 588;
+                                    DataModul.DB_EventTable.Seek("=", Modul1.I.AsString(), Modul1.Family.Kind[this.A].AsString(), "0");
+                                    goto case 589;
+                                case 589:
+                                    num = 589;
+                                    if (!DataModul.DB_EventTable.NoMatch)
                                     {
                                         goto case 590;
                                     }
@@ -1179,7 +1227,10 @@
                                 case 603:
                                     num = 603;
                                     transdat = Conversions.ToInteger(Conversion.Str(Conversions.ToDouble((num6).AsString().Left( 4)) - 25.0) + "0000");
-                                     neuedat();
+                                    goto case 604;
+                                case 604:
+                                    num = 604;
+                                    neuedat();
                                     goto IL_32fc;
                                 case 549:
                                 case 605:
@@ -4492,7 +4543,7 @@
                             }
                         IL_0b40:
                             num = 143;
-                            if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value !=  ""))
+                            if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
                             {
                                 goto IL_0b71;
                             }

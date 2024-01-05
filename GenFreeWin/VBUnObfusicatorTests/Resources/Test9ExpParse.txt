@@ -9079,7 +9079,7 @@ IL_0b40:
 ///Instruction Instruction 5,2052
 num = 143;
 ///Instruction Instruction 5,2053
-if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value !=  ""))
+if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
 ///BlockStart Block 6,0
 {
 ///Goto Goto 6,1 Dest:OK

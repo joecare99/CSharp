@@ -635,7 +635,7 @@ if (null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)]
 ///BlockStart Block 7,0
 {
 ///Instruction Instruction 7,1
-if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value !=  ""))
+if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
 ///BlockStart Block 8,0
 {
 ///Instruction Instruction 8,1
