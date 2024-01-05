@@ -267,7 +267,7 @@ namespace VBUnObfusicatorTests.Properties {
         ///            goto IL_0003;
         ///        IL_0003:
         ///            v++;
-        ///            if (v &lt; 10)
+        ///            if (v &lt; 13)
         ///            {
         ///                goto IL_0002;
         ///            }
@@ -311,7 +311,7 @@ namespace VBUnObfusicatorTests.Properties {
         ///            goto IL_0003;
         ///        IL_0003:
         ///            v++;
-        ///            if (v &lt; 10)
+        ///            if (v &lt; 13)
         ///            {
         ///                goto IL_0002;
         ///            }
@@ -363,7 +363,33 @@ namespace VBUnObfusicatorTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///private void Test12Dat()
+        //////BlockStart Block 1,0
+        ///{
+        //////Instruction Instruction 1,1
+        ///switch (sTest)
+        //////BlockStart Block 2,0
+        ///{
+        //////Label Label 2,1
+        ///case 0:
+        //////Instruction Instruction 2,2
+        ///v = 0;
+        //////Instruction Instruction 2,3
+        ///while (v &lt; 13)
+        //////BlockStart Block 3,0
+        ///{
+        //////Instruction Instruction 3,1
+        ///K[v] = 0;
+        //////Instruction Instruction 3,2
+        ///v++;
+        //////BlockEnd Block 3,3
+        ///}
+        //////Instruction Instruction 2,4
+        ///v = 0;
+        //////Goto Goto 2,5 Dest:OK
+        ///goto IL_0005;
+        //////Label Label 2,6        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string Test12ExpParseRL {
             get {
@@ -390,7 +416,7 @@ namespace VBUnObfusicatorTests.Properties {
         ///T:Label,2,IL_0003:
         ///T:Instruction,2,v++;
         ///T:Instruction,2,if
-        ///T:Instruction,2,(v &lt; 10)
+        ///T:Instruction,2,(v &lt; 13)
         ///T:Block,3,{
         ///T:Goto,3,goto IL_0002;
         ///T:Block,3,}
@@ -400,6 +426,165 @@ namespace VBUnObfusicatorTests.Properties {
         internal static string Test12ExpTokenize {
             get {
                 return ResourceManager.GetString("Test12ExpTokenize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die private bool Test13Dat()
+        ///{
+        ///    // Compare this snippet from VBUnObfusicatorTests/Resources/Test13Dat.cs:
+        ///    return 0 &lt; System.SomeFunc(123); 
+        ///}
+        /// ähnelt.
+        /// </summary>
+        internal static string Test13Dat_cs {
+            get {
+                return ResourceManager.GetString("Test13Dat_cs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Test13DataList {
+            get {
+                object obj = ResourceManager.GetObject("Test13DataList", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     private void Test13Dat()
+        ///    {
+        ///        switch (sTest)
+        ///        {
+        ///        case 0:
+        ///            goto IL_0001;
+        ///        default:
+        ///            break;
+        ///        IL_0001:
+        ///            v = 0;
+        ///            goto IL_0002;
+        ///        IL_0002:
+        ///            K[v] = 0;
+        ///            goto IL_0003;
+        ///        IL_0003:
+        ///            v++;
+        ///            if (v &lt; 13)
+        ///            {
+        ///                goto IL_0002;
+        ///            }
+        ///            goto IL_0004;
+        ///        IL_0004:
+        ///            v = 0;
+        ///            goto IL_0005;
+        ///        IL_ [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string Test13ExpCode {
+            get {
+                return ResourceManager.GetString("Test13ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///private void Test13Dat()
+        //////BlockStart Block 1,0
+        ///{
+        //////Instruction Instruction 1,1
+        ///switch (sTest)
+        //////BlockStart Block 2,0
+        ///{
+        //////Label Label 2,1
+        ///case 0:
+        //////Goto Goto 2,2 Dest:OK
+        ///goto IL_0001;
+        //////Label Label 2,3
+        ///default:
+        //////Instruction Instruction 2,4
+        ///break;
+        //////Label Label 2,5 1
+        ///IL_0001:
+        //////Instruction Instruction 2,6
+        ///v = 0;
+        //////Goto Goto 2,7 Dest:OK
+        ///goto IL_0002;
+        //////Label Label 2,8 2
+        ///IL_0002:
+        //////Instruction Instruction 2,9
+        ///K[v] = 0;
+        //////Goto Goto 2,10 Dest:O [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string Test13ExpParse {
+            get {
+                return ResourceManager.GetString("Test13ExpParse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///private void Test13Dat()
+        //////BlockStart Block 1,0
+        ///{
+        //////Instruction Instruction 1,1
+        ///switch (sTest)
+        //////BlockStart Block 2,0
+        ///{
+        //////Label Label 2,1
+        ///case 0:
+        //////Instruction Instruction 2,2
+        ///v = 0;
+        //////Instruction Instruction 2,3
+        ///while (v &lt; 13)
+        //////BlockStart Block 3,0
+        ///{
+        //////Instruction Instruction 3,1
+        ///K[v] = 0;
+        //////Instruction Instruction 3,2
+        ///v++;
+        //////BlockEnd Block 3,3
+        ///}
+        //////Instruction Instruction 2,4
+        ///v = 0;
+        //////Goto Goto 2,5 Dest:OK
+        ///goto IL_0005;
+        //////Label Label 2,6        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string Test13ExpParseRL {
+            get {
+                return ResourceManager.GetString("Test13ExpParseRL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Instruction,0,private void Test13Dat()
+        ///T:Block,1,{
+        ///T:Instruction,1,switch
+        ///T:Instruction,1,(sTest)
+        ///T:Block,2,{
+        ///T:Label,2,case 0:
+        ///T:Goto,2,goto IL_0001;
+        ///T:Label,2,default:
+        ///T:Instruction,2,break;
+        ///T:Label,2,IL_0001:
+        ///T:Instruction,2,v = 0;
+        ///T:Goto,2,goto IL_0002;
+        ///T:Label,2,IL_0002:
+        ///T:Instruction,2,K[v] = 0;
+        ///T:Goto,2,goto IL_0003;
+        ///T:Label,2,IL_0003:
+        ///T:Instruction,2,v++;
+        ///T:Instruction,2,if
+        ///T:Instruction,2,(v &lt; 13)
+        ///T:Block,3,{
+        ///T:Goto,3,goto IL_0002;
+        ///T:Block,3,}
+        ///T:Goto,2,goto IL_0004;
+        ///T:Label [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string Test13ExpTokenize {
+            get {
+                return ResourceManager.GetString("Test13ExpTokenize", resourceCulture);
             }
         }
         

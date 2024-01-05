@@ -112,6 +112,9 @@ ToCode(///ParseResult Unknown 0,0
 <ParseResult>, indent: 4)
 PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=<ToCodeResult>
+PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=
+PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=Code: 5 ==> 14
+Lines 0 => 0
 " })]
         [DataRow("2-Code2", new object[] { "Code2", false, true, true }, new[] { "<ToCodeResult>", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code2
@@ -126,6 +129,9 @@ ToCode(///ParseResult Unknown 0,0
 <ParseResult>, indent: 4)
 PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=<ToCodeResult>
+PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=
+PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=Code: 5 ==> 14
+Lines 0 => 0
 " })]
         [DataRow("3-Code3", new object[] { "Code3", true, true, true }, new[] { "<ToCodeResult>", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code3
@@ -140,6 +146,9 @@ ToCode(///ParseResult Unknown 0,0
 <ParseResult>, indent: 4)
 PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=<ToCodeResult>
+PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=
+PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=Code: 5 ==> 14
+Lines 0 => 0
 " })]
         [DataRow("4-Code", new object[] { "Code", false, false, true }, new[] { "<ToCodeResult>", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code
@@ -154,6 +163,9 @@ ToCode(///ParseResult Unknown 0,0
 <ParseResult>, indent: 4)
 PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=<ToCodeResult>
+PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=
+PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=Code: 4 ==> 14
+Lines 0 => 0
 " })]
         [DataRow("5-Code5", new object[] { "Code5", true, true, false }, new[] { "<ToCodeResult>", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code5
@@ -169,6 +181,9 @@ ToCode(///ParseResult Unknown 0,0
 <ParseResult>, indent: 4)
 PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=<ToCodeResult>
+PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=
+PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result2)=Code: 5 ==> 14
+Lines 0 => 0
 " })]
         public void ExecuteCommandTest(string _, object[] param, string[] asExp)
         {

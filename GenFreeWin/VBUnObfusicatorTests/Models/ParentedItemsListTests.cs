@@ -72,13 +72,18 @@ namespace VBUnObfusicator.Models.Tests
         [TestMethod()]
         public void ParentedItemsListTest()
         {
-            Assert.Fail();
+            AddTest();
+            Assert.IsNotNull(testClass.GetEnumerator());
+            Assert.IsInstanceOfType(testClass.GetEnumerator(),typeof(IEnumerator<ITestItf>));
         }
 
         [TestMethod()]
         public void IndexOfTest()
         {
-            Assert.Fail();
+            AddTest();
+            Assert.AreEqual(0, testClass.IndexOf(new TestClass(3)));
+            Assert.AreEqual(-1, testClass.IndexOf(new TestClass(2)));
+            Assert.AreEqual(-1, testClass.IndexOf(this));
         }
 
         [TestMethod()]
@@ -96,7 +101,13 @@ namespace VBUnObfusicator.Models.Tests
         [TestMethod()]
         public void RemoveAtTest()
         {
-            Assert.Fail();
+            AddTest();
+            testClass.RemoveAt(0);
+            Assert.AreEqual(2, testClass.Count);
+            testClass.RemoveAt(1);
+            Assert.AreEqual(1, testClass.Count);
+            testClass.RemoveAt(0);
+            Assert.AreEqual(0, testClass.Count);
         }
 
         [TestMethod()]
@@ -131,19 +142,22 @@ namespace VBUnObfusicator.Models.Tests
         [TestMethod()]
         public void CopyToTest()
         {
-            Assert.Fail();
+            AddTest();
+            testClass.CopyTo(new ITestItf[3], 0);
         }
 
         [TestMethod()]
         public void RemoveTest()
         {
-            Assert.Fail();
+            AddTest();
+            testClass.Remove(new TestClass(3));
         }
 
         [TestMethod()]
         public void GetEnumeratorTest()
         {
             Assert.IsNotNull(((IEnumerable)testClass).GetEnumerator());
+            Assert.IsInstanceOfType(((IEnumerable)testClass).GetEnumerator(), typeof(IEnumerator));
         }
 
         public bool Equals(ITestItf? other)

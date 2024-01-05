@@ -99,6 +99,7 @@
                 continue;
             }
             throw ProjectData.CreateProjectError(-2146828237);
+            continue;
         end_IL_0000_3:
             break;
         }

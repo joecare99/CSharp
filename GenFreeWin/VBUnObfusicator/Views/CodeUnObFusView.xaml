@@ -30,6 +30,7 @@
             <CheckBox Content="Remove Labels" IsChecked="{Binding RemoveLbl}"/>
             <CheckBox Content="Create While" IsChecked="{Binding DoWhile}"/>
             <Button Content="Work -->" Height="80" Command="{Binding ExecuteCommand}"/>
+            <TextBlock Text="{Binding Result2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>

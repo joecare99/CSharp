@@ -171,6 +171,8 @@ namespace VBUnObfusicator.Models.Tests
                     TestDataClass.TestDataList11()! },
             new object[] { "12", new[] { TestDataClass.test12Data },
                     TestDataClass.TestDataList12()! },
+            new object[] { "13", new[] { TestDataClass.test13Data },
+                    TestDataClass.TestDataList13()! },
 
         };
 
@@ -206,6 +208,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "7", TestDataClass.TestDataList7(), new[] { TestDataClass.testDataExpRemoveL7 } },
             new object[] { "9", TestDataClass.TestDataList9(), new[] { TestDataClass.testDataExpRemoveL9 } },
             new object[] { "12", TestDataClass.TestDataList12(), new[] { TestDataClass.testDataExpRemoveL12 } },
+            new object[] { "13", TestDataClass.TestDataList13(), new[] { TestDataClass.testDataExpRemoveL13 } },
 };
 
         public static IEnumerable<object[]> TestListParse2 => new object[][]
@@ -253,6 +256,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] {"10", new[] { TestDataClass.test10Data, TestDataClass.cExp10Log } },
             new object[] {"11", new[] { TestDataClass.test11Data, TestDataClass.cExp11Log } },
             new object[] {"12", new[] { TestDataClass.test12Data, TestDataClass.cExp12Log } },
+            new object[] {"13", new[] { TestDataClass.test13Data, TestDataClass.cExp13Log } },
         };
 
         [DataTestMethod()]
@@ -280,6 +284,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] {"10",new[] { TestDataClass.test10Data, TestDataClass.test10DataExp } },
             new object[] {"11",new[] { TestDataClass.test11Data, TestDataClass.test11DataExp } },
             new object[] {"12",new[] { TestDataClass.test12Data, TestDataClass.test12DataExp } },
+            new object[] {"13",new[] { TestDataClass.test13Data, TestDataClass.test13DataExp } },
                 };
 
 
@@ -321,6 +326,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "10", new[] { TestDataClass.test10Data, TestDataClass.cExpCode10 } },
             new object[] { "11", new[] { TestDataClass.test11Data, TestDataClass.cExpCode11 } },
             new object[] { "12", new[] { TestDataClass.test12Data, TestDataClass.cExpCode12 } },
+            new object[] { "13", new[] { TestDataClass.test13Data, TestDataClass.cExpCode13 } },
                 };
 
         [DataTestMethod()]
