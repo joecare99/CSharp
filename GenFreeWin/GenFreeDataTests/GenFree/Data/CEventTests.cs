@@ -9,6 +9,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces;
 using GenFree.Interfaces.Model;
+using Microsoft.VisualBasic;
 
 namespace GenFree.Data.Tests
 {
@@ -395,6 +396,48 @@ namespace GenFree.Data.Tests
 
         [DataTestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Birth, true)]
+        [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
+        [DataRow("1-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
+
+        public void ReadAll1Test(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
+        {
+            testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, true);
+            foreach (var cEv in testClass.ReadAll(EventIndex.CText))
+            {
+                Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, cEv.dDatumV);
+                Assert.AreEqual(xExp ? new DateTime(1910, 12, 31) : default, cEv.dDatumB);
+                Assert.AreEqual(EEventArt.eA_Birth, cEv.eArt);
+                Assert.AreEqual(2, cEv.iPerFamNr);
+                Assert.AreEqual(1, cEv.iLfNr);
+            }
+            Assert.AreEqual(nameof(EventIndex.CText), testRS.Index);
+            testRS.Received().Seek(">=", 0);
+        }
+
+        [DataTestMethod()]
+        [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Birth, true)]
+        [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
+        [DataRow("1-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
+
+        public void ReadAll2Test(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
+        {
+            testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, true);
+            foreach (var cEv in testClass.ReadAll(EventIndex.CText, 1))
+            {
+                Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, cEv.dDatumV);
+                Assert.AreEqual(xExp ? new DateTime(1910, 12, 31) : default, cEv.dDatumB);
+                Assert.AreEqual(EEventArt.eA_Birth, cEv.eArt);
+                Assert.AreEqual(2, cEv.iPerFamNr);
+                Assert.AreEqual(1, cEv.iLfNr);
+            }
+            Assert.AreEqual(nameof(EventIndex.CText), testRS.Index);
+            testRS.Received().Seek("=", 1);
+        }
+
+        [DataTestMethod()]
+        [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -480,8 +523,9 @@ namespace GenFree.Data.Tests
         public void SetValuesTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, EventFields eDataField, string[]? asAct, int iExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, false, true);
-            testClass.SetValues((eArt, iActFam, (short)iLfdNr), new[]{ (eDataField, (object)iExp) });    
-            Assert.Fail();
+            testClass.SetValues((eArt, iActFam, (short)iLfdNr), new[] { (eDataField, (object)iExp) });
+            Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
+            testRS.Received().Seek("=", eArt, iActFam, (short)iLfdNr);
         }
 
         [DataTestMethod()]
@@ -492,9 +536,17 @@ namespace GenFree.Data.Tests
         [DataRow("Ort", EventIndex.EOrt, EventFields.Ort)]
         [DataRow("Reg", EventIndex.Reg, EventFields.Reg)]
         [DataRow("HaNu", EventIndex.HaNu, EventFields.Hausnr)]
+        [DataRow("JaTa", EventIndex.JaTa, EventFields.Art)]
         public void GetIndex1FieldTest(string sName, EventIndex eIx, EventFields eExp)
         {
-            Assert.AreEqual(eExp,testClass.GetIndex1Field(eIx));
+            Assert.AreEqual(eExp, testClass.GetIndex1Field(eIx));
+        }
+
+        [DataTestMethod()]
+        [DataRow("ArtNr", EventIndex.ArtNr, EventFields.ArtText)]
+        public void GetIndex2FieldTest(string sName, EventIndex eIx, EventFields eExp)
+        {
+            Assert.ThrowsException<NotImplementedException>(()=> testClass.GetIndex1Field(eIx));
         }
 
         [TestMethod()]
@@ -513,6 +565,42 @@ namespace GenFree.Data.Tests
         public void UpdateValuesTest()
         {
             Assert.Fail();
+        }
+
+        [DataTestMethod()]
+        [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
+        [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
+        [DataRow("2-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
+        public void ExistsBeSuTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
+        {
+            testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
+            Assert.AreEqual(xExp, testClass.ExistsBeSu(eArt, iActFam));
+            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
+            testRS.Received().Seek("=", eArt, iActFam);
+        }
+
+        private int iRc = 0;
+        private bool[] xResult = { true, false, true, false };
+
+        [DataTestMethod()]
+        [DataRow("Null",EventIndex.ArtNr,EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
+        [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
+        [DataRow("2-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
+        public void ExistsPredTest(string sName,EventIndex eIx,EventFields eFld, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
+        {
+            iRc = 0;
+            testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
+            Assert.AreEqual(xExp, testClass.ExistsPred(eIx,eFld, iActFam, tstPred1));
+            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
+            testRS.Received().Seek("=", eArt, iActFam);
+        }
+
+        private bool tstPred1(IEventData obj)
+        {
+            
+            return xResult[iRc++];
         }
     }
 }
