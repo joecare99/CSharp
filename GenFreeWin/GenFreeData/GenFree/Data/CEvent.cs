@@ -190,8 +190,6 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         return xBreak ? null : _db_Table;
     }
 
-    public IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt)
-    => ReadEventDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
 
     private IEnumerable<IEventData> ReadEventDataDB(EventIndex Idx, Action<IRecordset> SeekAct, Predicate<IEventData> StopPred)
     {
@@ -208,6 +206,9 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.MoveNext();
         }
     }
+
+    public IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt)
+        => ReadEventDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
 
     public IEnumerable<IEventData> ReadAll()
         => ReadEventDataDB(EventIndex.ArtNr, (rs) => rs.Seek(">=", 0), (e) => false);
@@ -277,7 +278,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         var dB_EventTable = Seek(key);
         if (dB_EventTable?.NoMatch != false)
         {
-            dB_EventTable = DataModul.DB_EventTable;
+            dB_EventTable = _db_Table;
             dB_EventTable.AddNew();
             dB_EventTable.Fields[nameof(EventFields.ArtText)].Value = 0;
             dB_EventTable.Fields[nameof(EventFields.Art)].Value = key.eArt;
@@ -350,7 +351,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             && !dB_EventTable.EOF
             && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
         {
-            IEventData cEv = new CEventData(dB_EventTable);
+            IEventData cEv = GetData(dB_EventTable);
             if (predicate(cEv))
             {
                 dB_EventTable.Edit();
@@ -440,7 +441,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             && !dB_EventTable.EOF
             && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
         {
-            if (predicate(new CEventData(dB_EventTable)))
+            if (predicate(GetData(dB_EventTable)))
             {
                 dB_EventTable.Edit();
                 dB_EventTable.Fields[$"{eModField}"].Value = iNewVal;
@@ -461,7 +462,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             && !dB_EventTable.EOF
             && !(dB_EventTable.Fields[nameof(eIndexField)].AsInt() != iTndexVal))
         {
-            if (predicate(new CEventData(dB_EventTable)))
+            if (predicate(GetData(dB_EventTable)))
             {
                 return true;
             }
