@@ -15,7 +15,7 @@ namespace GenFree.Data.Tests
         [TestInitialize]
         public void Init()
         {
-            testClass = new TableDef(null,"test");
+            testClass = new TableDef(null!,"test");
         }
 
         [TestMethod()]

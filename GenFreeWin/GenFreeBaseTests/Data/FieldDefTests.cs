@@ -19,7 +19,7 @@ namespace GenFree.Data.Tests
         [TestInitialize]
         public void Init()
         {
-            testTable = new(null, "test");
+            testTable = new(null!, "test");
             testClass = new FieldDef(testTable, "test", nameof(TypeCode.Int32), 4);
         }
 
