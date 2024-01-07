@@ -18,7 +18,7 @@ namespace GenFree.Data.Tests
         private IRecordset testRS;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
-        protected override string _keyIndex => "_MyKeyIndex";
+        protected override string __keyIndex => "_MyKeyIndex";
 
         protected override IRecordset _db_Table => testRS;
 
@@ -120,7 +120,7 @@ namespace GenFree.Data.Tests
         [TestMethod()]
         public void ForEachDo2Test()
         {
-            this.ForEachDo(null);
+            this.ForEachDo(null!);
             Assert.AreEqual("_MyKeyIndex", testRS.Index);
             testRS.Received(1).MoveFirst();
             testRS.Received(2).MoveNext();
@@ -165,7 +165,7 @@ namespace GenFree.Data.Tests
 
         public override IRecordset? Seek(int key, out bool xBreak)
         {
-            _db_Table.Index = _keyIndex;
+            _db_Table.Index = __keyIndex;
             _db_Table.Seek("=", key);
             xBreak = _db_Table.NoMatch;
             return xBreak ? null : _db_Table;
