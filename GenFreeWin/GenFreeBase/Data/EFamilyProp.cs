@@ -1,4 +1,4 @@
-﻿namespace GenFree.Interfaces
+﻿namespace GenFree.Data
 {
     public enum EFamilyProp
     {

@@ -1,4 +1,5 @@
-﻿using GenFree.Interfaces.DB;
+﻿using GenFree.Data;
+using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
 
