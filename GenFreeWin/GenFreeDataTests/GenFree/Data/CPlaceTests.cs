@@ -61,7 +61,7 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             testRS.EOF.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             var iCnt = 0;
-            Action<float, int>? onProgress = ((int)(EEventArt)eTKennz == 0) ? null : (f, i) => _=i;
+            Action<float, int>? onProgress = ((int)(EEventArt)eTKennz == 0) ? null : (f, i) => _ = i;
             testClass.ForeEachTextDo(i => $"i", (i, aS) => iCnt++, onProgress);
             Assert.AreEqual(xExp ? 3 : 0, iCnt);
             Assert.AreEqual(nameof(PlaceIndex.OrtNr), testRS.Index);
@@ -129,6 +129,27 @@ namespace GenFree.Data.Tests
             testClass.SetData(iActPlace, testPD);
             Assert.AreEqual(nameof(PlaceIndex.OrtNr), testRS.Index);
             testRS.Received().Seek("=", iActPlace);
+        }
+
+        [DataTestMethod()]
+        [DataRow(PlaceIndex.OrtNr,PlaceFields.OrtNr)]
+        [DataRow(PlaceIndex.Orte, PlaceFields.Ort)]
+        [DataRow(PlaceIndex.OT, PlaceFields.Ortsteil)]
+        [DataRow(PlaceIndex.K, PlaceFields.Kreis)]
+        [DataRow(PlaceIndex.L, PlaceFields.Land)]
+        [DataRow(PlaceIndex.S, PlaceFields.Staat)]
+        public void GetIndex1FieldTest(PlaceIndex eAct,PlaceFields eExp)
+        {
+            Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
+        }
+
+        [DataTestMethod()]
+        [DataRow(PlaceIndex.Pol, PlaceFields.OrtNr)]
+        [DataRow(PlaceIndex.O, PlaceFields.OrtNr)]
+        [DataRow((PlaceIndex)100, PlaceFields.OrtNr)]
+        public void GetIndex1FieldTest2(PlaceIndex eAct, PlaceFields eExp)
+        {
+            Assert.ThrowsException<ArgumentException>(()=>testClass.GetIndex1Field(eAct));
         }
     }
 }

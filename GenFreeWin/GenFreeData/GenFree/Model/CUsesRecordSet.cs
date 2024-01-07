@@ -13,7 +13,7 @@ namespace GenFree.Model
         public int Count => _db_Table.RecordCount;
         public T MaxID => GetMaxID();
 
-        protected abstract string _keyIndex { get; }
+        protected abstract string __keyIndex { get; }
         protected abstract IRecordset _db_Table { get; }
         protected abstract T GetID(IRecordset recordset);
         public abstract IRecordset? Seek(T key, out bool xBreak);
@@ -24,7 +24,7 @@ namespace GenFree.Model
         public void ForEachDo(Action<IRecordset> action)
         {
             IRecordset dB_PlaceTable = _db_Table;
-            dB_PlaceTable.Index = _keyIndex;
+            dB_PlaceTable.Index = __keyIndex;
             dB_PlaceTable.MoveFirst();
             while (!dB_PlaceTable.EOF)
             {
@@ -37,7 +37,7 @@ namespace GenFree.Model
         private T GetMaxID()
         {
             IRecordset dB_PlaceTable = _db_Table;
-            dB_PlaceTable.Index = _keyIndex;
+            dB_PlaceTable.Index = __keyIndex;
             dB_PlaceTable.MoveLast();
             return GetID(dB_PlaceTable);
         }

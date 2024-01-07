@@ -4,8 +4,7 @@ using GenFree.Interfaces.DB;
 
 namespace GenFree.Interfaces
 {
-    public interface INamesData : IHasPropEnum<ENamesProp>, IHasID<(int, ETextKennz, int)>
+    public interface INamesData : IHasPropEnum<ENamesProp>, IHasID<(int, ETextKennz, int)>, IHasIRecordset
     {
-        void SetDBValue(IRecordset dB_NamesTable, string[]? asProps);
     }
 }

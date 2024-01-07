@@ -1,9 +1,10 @@
-﻿using GenFree.Interfaces.DB;
+﻿using GenFree.Data;
+using GenFree.Interfaces.DB;
 using System;
 
 namespace GenFree.Interfaces;
 
-public interface IFamilyData : IHasID<int>
+public interface IFamilyData : IHasID<int>, IHasPropEnum<EFamilyProp>, IHasIRecordset
 {
     DateTime dAnlDatum { get; }
     DateTime dEditDat { get; }
@@ -18,5 +19,4 @@ public interface IFamilyData : IHasID<int>
     string sSuffix { get; }
     bool xAeB { get; }
 
-    void SetDBValue(IRecordset dB_PersonTable, string[]? asProps);
 }

@@ -128,7 +128,7 @@ namespace VBUnObfusicator.Models
                 else
                     data.actualBlock.Code += ((data.actualBlock.Code.EndsWith("\"") && tokenData.Code.StartsWith("+"))
                         || tokenData.Code.StartsWith("(")
-                        || (letters.Contains(tokenData.Code[0]) 
+                        || (lettersAndNumbers.Contains(tokenData.Code[0]) 
                             && !string.IsNullOrEmpty(data.actualBlock.Code)
                             && !data.actualBlock.Code.EndsWith(" ") ) ? " " : "") + tokenData.Code;
                 data.xBreak = tokenData.Code.Contains("break;");

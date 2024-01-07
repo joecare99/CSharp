@@ -25,6 +25,16 @@ namespace GenFree.Data
             throw new NotImplementedException();
         }
 
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FillData(IRecordset dB_Table)
+        {
+            throw new NotImplementedException();
+        }
+
         public Type GetPropType(ENamesProp prop)
         {
             throw new NotImplementedException();

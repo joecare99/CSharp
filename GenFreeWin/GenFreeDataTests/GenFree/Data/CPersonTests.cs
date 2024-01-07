@@ -27,7 +27,7 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             var testST = Substitute.For<ISysTime>();
             testST.Now.Returns(new DateTime(2022, 12, 31));
-            testClass = new CPerson(() => testRS,testST);
+            testClass = new CPerson(() => testRS, testST);
             testRS.NoMatch.Returns(true);
             testRS.Fields[nameof(PersonFields.PersNr)].Value.Returns(2, 6, 4, 9);
             testRS.Fields[nameof(PersonFields.Bem1)].Value.Returns('N', 'V', 'V', 'A', 'B');
@@ -51,7 +51,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(2, testClass.MaxID);
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received(1).MoveLast();
-            testRS.Received(1).Fields[0].Value=0;
+            testRS.Received(1).Fields[0].Value = 0;
 
         }
 
@@ -81,9 +81,9 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
             if (iLfNr == 3) testRS.Fields[nameof(PersonFields.Sex)].Value.Returns("M");
-            Assert.AreEqual(iExp, testClass.CheckID(iActPers,(int)(ELinkKennz)eTKennz ==0,(ELinkKennz)eTKennz));
+            Assert.AreEqual(iExp, testClass.CheckID(iActPers, (int)(ELinkKennz)eTKennz == 0, (ELinkKennz)eTKennz));
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
-            testRS.Received(iExp is -1?0:1).Seek("=", iActPers);
+            testRS.Received(iExp is -1 ? 0 : 1).Seek("=", iActPers);
         }
 
         [DataTestMethod()]
@@ -98,12 +98,12 @@ namespace GenFree.Data.Tests
         [DataRow("1-Name-2", 2, ETextKennz.tkName, 4, 3, 0)]
         [DataRow("1-Name-2", 2, ETextKennz.tkName, 4, 2, 2)]
 
-        public void ValidateIDTest(string sName, int iActPers, Enum eTKennz, int iLfNr, int schalt,int iExp)
+        public void ValidateIDTest(string sName, int iActPers, Enum eTKennz, int iLfNr, int schalt, int iExp)
         {
-            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers,false,false, true);
+            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             testRS.RecordCount.Returns(iLfNr);
-            if (iLfNr>=4) testRS.Fields[nameof(PersonFields.Pruefen)].Value.Returns("G","G", "G", "");
-            Assert.AreEqual(iExp,testClass.ValidateID(iActPers, (short)schalt, iLfNr, ELinkKennz.lkNone, i => (ELinkKennz)eTKennz));
+            if (iLfNr >= 4) testRS.Fields[nameof(PersonFields.Pruefen)].Value.Returns("G", "G", "G", "");
+            Assert.AreEqual(iExp, testClass.ValidateID(iActPers, (short)schalt, iLfNr, ELinkKennz.lkNone, i => (ELinkKennz)eTKennz));
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received().Seek("=", iActPers);
         }
@@ -177,9 +177,29 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
             var testPD = Substitute.For<IPersonData>();
-            testClass.SetData(iActPers,testPD);
+            testClass.SetData(iActPers, testPD);
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received().Seek("=", iActPers);
         }
+
+        [DataTestMethod()]
+        [DataRow(PersonIndex.PerNr,PersonFields.PersNr)]
+        [DataRow(PersonIndex.Puid, PersonFields.PUid)]
+        [DataRow(PersonIndex.BeaDat, PersonFields.EditDat)]
+        [DataRow(PersonIndex.reli, PersonFields.religi)]
+        public void GetIndex1FieldTest(PersonIndex eAct,PersonFields eExp)
+        {
+            Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
+        }
+
+        [DataTestMethod()]
+        [DataRow(PersonIndex.Such1, PersonFields.PersNr)]
+        [DataRow(PersonIndex.Such2, PersonFields.PersNr)]
+        [DataRow(PersonIndex.Such3, PersonFields.PersNr)]
+        public void GetIndex1FieldTest2(PersonIndex eAct, PersonFields eExp)
+        {
+            Assert.ThrowsException<ArgumentException>(()=> testClass.GetIndex1Field(eAct));
+        }
+
     }
 }

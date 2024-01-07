@@ -7,7 +7,11 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model;
 
-public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eKennz)>, IUsesID<(int iFamily, int iPerson, ELinkKennz eKennz)> , IHasRSIndex1<LinkIndex,ILinkData.LinkFields>
+public interface ILink : 
+    IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eKennz)>, 
+    IUsesID<(int iFamily, int iPerson, ELinkKennz eKennz)> ,
+    IHasRSIndex1<LinkIndex,ILinkData.LinkFields>,
+    IHasIxDataItf<LinkIndex,ILinkData, (int iFamily, int iPerson, ELinkKennz eKennz)>
 {
     void Append(int iFamily, int iPerson, ELinkKennz iKennz);
     bool AppendE(int iFamNr, int iPerson, ELinkKennz eKennz);
@@ -15,7 +19,7 @@ public interface ILink : IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eK
     bool Delete(int iFamNr, int iPersNr, ELinkKennz iKennz);
     bool DeleteAllE(int iPersNr, ELinkKennz iKennz);
     bool DeleteAllF(int iFamNr, ELinkKennz iKennz);
-    T DeleteChildren<T>(int famInArb, ELinkKennz iKennz, int persInArb, T mrOK, Func<int, T> func) where T : struct;
+    T DeleteChildren<T>(int famInArb, int persInArb, ELinkKennz iKennz, T mrOK, Func<int, T> func) where T : struct;
     void DeleteFam(int famInArb, ELinkKennz iKennz);
     void DeleteFamWhere(int famInArb, Predicate<ILinkData> pWhere);
     void DeleteInvalidPerson();

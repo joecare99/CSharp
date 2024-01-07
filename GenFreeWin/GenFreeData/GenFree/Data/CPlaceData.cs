@@ -13,13 +13,18 @@ namespace GenFree.Data
         private IRecordset? _dB_PlaceTable;
 
         private static Func<int, string> _GetText = DataModul.TextLese1;
-        private static Func<IRecordset> __dB_PlaceTable;
+        private static Func<IRecordset> __dB_PlaceTable = () => DataModul.DB_PlaceTable;
         private int iOrt1;
         private int iOrtsteil1;
         private int iKreis1;
         private int iLand1;
         private int iStaat1;
-        private string sBem1;
+        private string? sBem1;
+        private string? _sOrt;
+        private string? _sOrtsteil;
+        private string? _sKreis;
+        private string? _sLand;
+        private string? _sStaat;
 
         public static void SetTable(Func<IRecordset> dB_PlaceTable)
         {
@@ -37,40 +42,41 @@ namespace GenFree.Data
             FillData(_dB_PlaceTable);
         }
 
-        private void FillData(IRecordset dB_PlaceTable)
+        public void FillData(IRecordset dB_PlaceTable)
         {
             ID = dB_PlaceTable.Fields[nameof(PlaceFields.OrtNr)].AsInt();
-            iOrt = dB_PlaceTable.Fields[nameof(PlaceFields.Ort)].AsInt();
-            iOrtsteil = dB_PlaceTable.Fields[nameof(PlaceFields.Ortsteil)].AsInt();
-            iKreis = dB_PlaceTable.Fields[nameof(PlaceFields.Kreis)].AsInt();
-            iLand = dB_PlaceTable.Fields[nameof(PlaceFields.Land)].AsInt();
-            iStaat = dB_PlaceTable.Fields[nameof(PlaceFields.Staat)].AsInt();
+            iOrt1 = dB_PlaceTable.Fields[nameof(PlaceFields.Ort)].AsInt();
+            iOrtsteil1 = dB_PlaceTable.Fields[nameof(PlaceFields.Ortsteil)].AsInt();
+            iKreis1 = dB_PlaceTable.Fields[nameof(PlaceFields.Kreis)].AsInt();
+            iLand1 = dB_PlaceTable.Fields[nameof(PlaceFields.Land)].AsInt();
+            iStaat1 = dB_PlaceTable.Fields[nameof(PlaceFields.Staat)].AsInt();
             sStaatk = dB_PlaceTable.Fields[nameof(PlaceFields.Staatk)].AsString();
             sPLZ = dB_PlaceTable.Fields[nameof(PlaceFields.PLZ)].AsString();
             sTerr = dB_PlaceTable.Fields[nameof(PlaceFields.Terr)].AsString();
             sLoc = dB_PlaceTable.Fields[nameof(PlaceFields.Loc)].AsString();
             sL = dB_PlaceTable.Fields[nameof(PlaceFields.L)].AsString();
             sB = dB_PlaceTable.Fields[nameof(PlaceFields.B)].AsString();
-            sBem = dB_PlaceTable.Fields[nameof(PlaceFields.Bem)].AsString();
+            sBem1 = dB_PlaceTable.Fields[nameof(PlaceFields.Bem)].AsString();
             sZusatz = dB_PlaceTable.Fields[nameof(PlaceFields.Zusatz)].AsString();
             sGOV = dB_PlaceTable.Fields[nameof(PlaceFields.GOV)].AsString();
             sPolName = dB_PlaceTable.Fields[nameof(PlaceFields.PolName)].AsString();
             ig = dB_PlaceTable.Fields[nameof(PlaceFields.g)].AsInt();
+            _sKreis = _sLand = _sOrt = _sOrtsteil = _sStaat = null;
         }
 
         public IReadOnlyList<EPlaceProp> ChangedProps => _changedPropList;
 
         public int ID { get; private set; }
         public int iOrt { get => iOrt1; set => SetPropValue(EPlaceProp.iOrt, value); }
-        public string sOrt => _GetText(iOrt);
+        public string sOrt => _sOrt ??= _GetText(iOrt);
         public int iOrtsteil { get => iOrtsteil1; set => SetPropValue(EPlaceProp.iOrtsteil, value); }
-        public string sOrtsteil => _GetText(iOrtsteil);
+        public string sOrtsteil => _sOrtsteil ??= _GetText(iOrtsteil);
         public int iKreis { get => iKreis1; set => SetPropValue(EPlaceProp.iKreis, value); }
-        public string sKreis => _GetText(iKreis);
+        public string sKreis => _sKreis ??= _GetText(iKreis);
         public int iLand { get => iLand1; set => SetPropValue(EPlaceProp.iLand, value); }
-        public string sLand => _GetText(iLand);
+        public string sLand => _sLand ??= _GetText(iLand);
         public int iStaat { get => iStaat1; set => SetPropValue(EPlaceProp.iStaat, value); }
-        public string sStaat => _GetText(iStaat);
+        public string sStaat => _sStaat ??= _GetText(iStaat);
         public string sStaatk { get; private set; }
         public string sPLZ { get; private set; }
         public string sTerr { get; private set; }
@@ -151,8 +157,9 @@ namespace GenFree.Data
 
         public void SetPropValue(EPlaceProp prop, object value)
         {
-            if (GetPropType(prop).GetMethod("Equals")?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
-                return;            
+            Type t = GetPropType(prop);
+            if (t.GetMethod("Equals", new[] { t })?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
+                return;
             _changedPropList.Add(prop);
             object _ = prop switch
             {
@@ -173,7 +180,7 @@ namespace GenFree.Data
                 EPlaceProp.sGOV => sGOV = (string)value,
                 EPlaceProp.sPolName => sPolName = (string)value,
                 EPlaceProp.ig => ig = (int)value,
-                _ => throw new NotImplementedException(),
+ //               _ => throw new NotImplementedException(),
             };
         }
 
@@ -237,6 +244,11 @@ namespace GenFree.Data
                         break;
                 }
             }
+        }
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
         }
     }
 }

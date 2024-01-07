@@ -1,9 +1,10 @@
-﻿using GenFree.Interfaces.DB;
+﻿using GenFree.Data;
+using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
 
 namespace GenFree.Interfaces;
-public interface IPersonData : IHasID<int>
+public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecordset
 {
     string Alias { get; }
     string Baptised { get; }
@@ -42,7 +43,6 @@ public interface IPersonData : IHasID<int>
 
     void SetData(IEventData cEvt);
     void SetDates(string[] value, Func<string, string, string>? SetAge = null);
-    void SetDBValue(IRecordset dB_PersonTable, string[]? asProps);
     void SetFull(string value);
     void SetFullSurname(string value);
     void SetPersonNames(int[] iName, (int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN);

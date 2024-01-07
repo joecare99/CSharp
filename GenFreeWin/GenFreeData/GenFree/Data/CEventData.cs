@@ -36,11 +36,12 @@ public class CEventData : IEventData
     public CEventData()
     {
         _dB_EventTable = __dB_EventTable();
+        FillData(_dB_EventTable);
     }
 
     public CEventData(IRecordset dB_EventTable)
     {
-        FillDataFields(dB_EventTable);
+        FillData(dB_EventTable);
         _dB_EventTable = dB_EventTable;
     }
 
@@ -51,11 +52,11 @@ public class CEventData : IEventData
         dB_EventTable.Seek("=", ints);
         if (!(xBreak = dB_EventTable.NoMatch))
         {
-            FillDataFields(dB_EventTable);
+            FillData(dB_EventTable);
         }
     }
 
-    public void FillDataFields(IRecordset dB_EventTable)
+    public void FillData(IRecordset dB_EventTable)
     {
         FillIntFields(dB_EventTable);
 
@@ -158,7 +159,7 @@ public class CEventData : IEventData
         else
         {
             rs.Edit();
-            SetDBData(rs);
+            SetDBValue(rs);
         }
         // TODO: Update Record
         if (rs!.EditMode != 0)
@@ -166,7 +167,7 @@ public class CEventData : IEventData
 
         static void SetData(IRecordset? rs, IField f, string d)
         {
-            if (rs.EditMode == 0)
+            if (rs?.EditMode == 0)
                 rs.Edit();
             f.Value = d;
         }
@@ -326,7 +327,7 @@ public class CEventData : IEventData
         _changedPropList.Add(prop);
     }
 
-    public void SetDBData(IRecordset dB_EventTable, string[]? asProps = null)
+    public void SetDBValue(IRecordset dB_EventTable, string[]? asProps = null)
     {
         if (asProps == null)
             asProps = _changedPropList.Select(p => p.ToString()).ToArray();

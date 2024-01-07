@@ -4,7 +4,7 @@ using System;
 
 namespace GenFree.Interfaces;
 
-public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>
+public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>, IHasIRecordset
 {
     DateTime dDatumB { get; }
     DateTime dDatumV { get; }
@@ -39,8 +39,5 @@ public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, I
     bool xIsDead { get; }
     string sAn { get; }
 
-    void Delete();
-    void FillDataFields(IRecordset dB_EventTable);
-    void SetDBData(IRecordset dB_EventTable, string[]? asProps);
     void Update(string[]? strings = null);
 }

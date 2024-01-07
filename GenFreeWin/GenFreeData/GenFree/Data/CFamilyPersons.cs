@@ -1,5 +1,4 @@
-﻿using GenFree.Data;
-using GenFree.Interfaces;
+﻿using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Helper;
 using System;
@@ -33,6 +32,8 @@ namespace GenFree.Data
         public bool xAeB { get; internal set; }
 
         public Guid? gUID { get; internal set; }
+
+        public IReadOnlyList<EFamilyProp> ChangedProps => throw new NotImplementedException();
 
         public CFamilyPersons()
         {
@@ -89,6 +90,41 @@ namespace GenFree.Data
         }
 
         public void SetDBValue(IRecordset dB_PersonTable, string[]? asProps)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type GetPropType(EFamilyProp prop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetPropValue(EFamilyProp prop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T2 GetPropValue<T2>(EFamilyProp prop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetPropValue(EFamilyProp prop, object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearChangedProps()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddChangedProp(EFamilyProp prop)
         {
             throw new NotImplementedException();
         }

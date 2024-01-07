@@ -26,8 +26,8 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CNames(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(NameFields.Kennz)].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[nameof(NameFields.LfNr)].Value.Returns(1, 3, 5);
+            testRS.Fields[nameof(NameFields.Kennz)].Value.Returns('N', 'V', '-', 'F' ,'A', 'B');
+            testRS.Fields[nameof(NameFields.LfNr)].Value.Returns(1, 3, 5, 16);
             testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 6, 4, 9);
             testRS.ClearReceivedCalls();
         }
@@ -111,7 +111,7 @@ namespace GenFree.Data.Tests
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
         public void ReadAllTest(string sName, int iActPers, ETextKennz eTKennz, int iLfNr, bool xExp)
         {
-            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers,false,false,true);
+            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             testRS.EOF.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             var iCnt = 0;
             foreach (var cNm in testClass.ReadAll())
@@ -120,8 +120,8 @@ namespace GenFree.Data.Tests
                 Assert.IsInstanceOfType(cNm, typeof(INamesData));
                 Assert.IsInstanceOfType(cNm, typeof(CNamesData));
                 iCnt++;
-            }   
-            Assert.AreEqual(xExp? 3:0,iCnt);
+            }
+            Assert.AreEqual(xExp ? 3 : 0, iCnt);
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
             testRS.Received(xExp ? 3 : 0).MoveNext();
             testRS.Received(1).MoveFirst();
@@ -138,8 +138,8 @@ namespace GenFree.Data.Tests
             if (xExp)
             {
                 Assert.IsNotNull(cNm);
-                Assert.IsInstanceOfType(cNm,typeof(INamesData));
-                Assert.IsInstanceOfType(cNm,typeof(CNamesData));
+                Assert.IsInstanceOfType(cNm, typeof(INamesData));
+                Assert.IsInstanceOfType(cNm, typeof(CNamesData));
             }
             else
             {
@@ -155,11 +155,11 @@ namespace GenFree.Data.Tests
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
         public void SeekTest(string sName, int iActPers, ETextKennz eTKennz, int iLfNr, bool xExp)
         {
-            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3)|| iLfNr/2!=iActPers);
+            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
             Assert.AreEqual(xExp ? testRS : null, testClass.Seek((iActPers, eTKennz, iLfNr), out var xBreak));
             Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz,iLfNr);
+            testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
 
         }
 
@@ -187,36 +187,54 @@ namespace GenFree.Data.Tests
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
         public void ReadPersonNamesTest(string sName, int iActPers, ETextKennz eTKennz, int iLfNr, bool xExp)
         {
-            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers,false,false,true);
-            testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 2, 2, 9);
+            testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, false, false, true);
+            testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 2, 2, 2, 2, 9);
 
             Assert.AreEqual(xExp, testClass.ReadPersonNames(iActPers, out var aiNames, out var aVrn));
-  //          Assert.AreEqual(!xExp, xBreak);
+            //          Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(NameIndex.PNamen), testRS.Index);
             testRS.Received().Seek("=", iActPers);
-            testRS.Received(xExp ? 2 : 0).MoveNext();
+            testRS.Received(xExp ? 4 : 0).MoveNext();
             testRS.Received(0).MoveFirst();
-            testRS.Received(xExp ? 13 : 1).Fields[0].Value=0;    
-    
+            testRS.Received(xExp ? 25 : 1).Fields[0].Value = 0;
+
         }
 
         [DataTestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
+        [DataRow("2-V_-3", 2, ETextKennz.V_, 3, false)]
         public void UpdateTest(string sName, int iActPers, ETextKennz eTKennz, int iLfNr, bool xExp)
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             testClass.Update(iActPers, iLfNr, eTKennz, iLfNr);
             //          Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
-            testRS.Received().Seek("=", iActPers,eTKennz,iLfNr);
+            testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
             testRS.Received(xExp ? 1 : 0).Edit();
             testRS.Received(xExp ? 0 : 1).AddNew();
             testRS.Received().Update();
             testRS.Received().Fields[nameof(NameFields.LfNr)].Value = iLfNr;
             testRS.Received().Fields[nameof(NameFields.Kennz)].Value = eTKennz;
             testRS.Received(xExp ? 5 : 6).Fields[nameof(NameFields.PersNr)].Value = iActPers;
+        }
+
+        [DataTestMethod()]
+        [DataRow(NameIndex.PNamen,NameFields.PersNr)]
+        [DataRow(NameIndex.TxNr, NameFields.Text)]
+        [DataRow(NameIndex.Vollname, NameFields.PersNr)]
+        [DataRow(NameIndex.NamKenn, NameFields.Kennz)]
+        public void GetIndex1FieldTest(NameIndex eAct,NameFields eExp)
+        {
+            Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
+        }
+
+        [DataTestMethod()]
+        [DataRow((NameIndex)5, NameFields.PersNr)]
+        public void GetIndex1FieldTest1(NameIndex eAct, NameFields eExp)
+        {
+            Assert.ThrowsException<ArgumentException>(() =>testClass.GetIndex1Field(eAct));
         }
     }
 }

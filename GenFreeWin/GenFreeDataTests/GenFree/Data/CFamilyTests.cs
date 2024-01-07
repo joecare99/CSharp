@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,16 +51,41 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Fields[0].Value = 0;
         }
 
-        [TestMethod()]
-        public void SetNameNrTest()
+        [DataTestMethod()]
+        [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
+        [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
+        [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
+        public void SetNameNrTest(string sName, int iActFamNr,object _, int iName, bool xExp)
         {
-            Assert.Fail();
+            testRS.NoMatch.Returns(iActFamNr is not (> 0 and < 3) || iName / 2 != iActFamNr);
+            testClass.SetNameNr(iActFamNr, iName);
+            Assert.AreEqual(nameof(FamilyIndex.Fam), testRS.Index);
+            testRS.Received(1).Seek("=", iActFamNr);
+            _ = testRS.Received(xExp ? 2 : 8).Fields[""].Value;
+            _ = testRS.Received(xExp ? 2 : 1).NoMatch;
+            _ = testRS.Received(0).EOF;
+            testRS.Received(xExp ? 0 : 1).AddNew();
+            testRS.Received(xExp ? 1 : 0).Edit();
+            testRS.Received(1).Update();
         }
 
-        [TestMethod()]
-        public void SetValueTest()
+        [DataTestMethod()]
+        [DataRow("Null", 0, EFamilyProp.sBem, 0, false)]
+        [DataRow("1-None-0", 1, EFamilyProp.iPrae, 0, false)]
+        [DataRow("1-Name-2", 1, EFamilyProp.xAeB, 2, true)]
+
+        public void SetValueTest(string sName, int iActFamNr, EFamilyProp eFProp, int iName, bool xExp)
         {
-            Assert.Fail();
+            testRS.NoMatch.Returns(iActFamNr is not (> 0 and < 3) || iName / 2 != iActFamNr);
+            testClass.SetValue(iActFamNr, iName, new[] { (eFProp,(object)sName) });
+            Assert.AreEqual(nameof(FamilyIndex.Fam), testRS.Index);
+            testRS.Received(1).Seek("=", iActFamNr);
+            _ = testRS.Received(xExp ? 3 : 8).Fields[""].Value;
+            _ = testRS.Received(xExp ? 2 : 1).NoMatch;
+            _ = testRS.Received(0).EOF;
+            testRS.Received(xExp ? 0 : 1).AddNew();
+            testRS.Received(xExp ? 2 : 1).Edit();
+            testRS.Received(2).Update();
         }
 
         [DataTestMethod()]
@@ -127,6 +151,23 @@ namespace GenFree.Data.Tests
             testClass.SetData(iActFamNr, testPD);
             Assert.AreEqual(nameof(FamilyIndex.Fam), testRS.Index);
             testRS.Received().Seek("=", iActFamNr);
+        }
+
+        [DataTestMethod()]
+        [DataRow(FamilyIndex.Fam, FamilyFields.FamNr)]
+        [DataRow(FamilyIndex.Fuid, FamilyFields.Fuid)]
+        [DataRow(FamilyIndex.BeaDat, FamilyFields.EditDat)]
+        public void GetIndex1FieldTest(FamilyIndex eAct, FamilyFields eExp)
+        {
+            Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
+        }
+
+        [DataTestMethod()]
+        [DataRow((FamilyIndex)5, FamilyFields.FamNr)]
+        [DataRow((FamilyIndex)7, FamilyFields.FamNr)]
+        public void GetIndex1FieldTest2(FamilyIndex eAct, FamilyFields eExp)
+        {
+            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
     }
 }
