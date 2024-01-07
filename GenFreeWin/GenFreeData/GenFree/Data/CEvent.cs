@@ -17,7 +17,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
 
     protected override IRecordset _db_Table => _DB_EventTable();
 
-    protected override string _keyIndex => nameof(EventIndex.ArtNr);
+    protected override EventIndex _keyIndex => EventIndex.ArtNr;
 
     public CEvent(Func<IRecordset> dB_EventTable)
     {
@@ -86,7 +86,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         sDateV_S = "";
         if (!xBreak)
         {
-            sDateV_S = dB_EventTable.Fields[nameof(EventFields.DatumV_S)].AsString();
+            sDateV_S = dB_EventTable!.Fields[nameof(EventFields.DatumV_S)].AsString();
             return dB_EventTable.Fields[nameof(EventFields.DatumV)].AsDate();
         }
         else
@@ -102,7 +102,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         sDateB_S = "";
         if (!xBreak)
         {
-            sDateB_S = dB_EventTable.Fields[nameof(EventFields.DatumB_S)].AsString();
+            sDateB_S = dB_EventTable!.Fields[nameof(EventFields.DatumB_S)].AsString();
             return dB_EventTable.Fields[nameof(EventFields.DatumB)].AsDate();
         }
         else
@@ -157,7 +157,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         var db_Table = SeekBeSu(eArt, iPerFamNr, out var xBreak);
         while (!xBreak
-           && !db_Table.EOF
+           && !db_Table!.EOF
            && !(db_Table.Fields[nameof(EventFields.PerFamNr)].AsInt() != iPerFamNr)
            && !(db_Table.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>() != eArt))
         {
@@ -174,7 +174,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         var dB_EventTable = SeekBeSu(eArt, iPerFamNr, out var xBreak);
         if (!xBreak && (eArt != eArt2 || (iFam2 != 0 && iFam2 != iPerFamNr)))
         {
-            dB_EventTable.Edit();
+            dB_EventTable!.Edit();
             dB_EventTable.Fields[nameof(EventFields.Art)].Value = eArt2;
             if (iFam2 != 0 && iFam2 != iPerFamNr)
                 dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = iFam2;
@@ -190,33 +190,11 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         return xBreak ? null : _db_Table;
     }
 
-
-    private IEnumerable<IEventData> ReadEventDataDB(EventIndex Idx, Action<IRecordset> SeekAct, Predicate<IEventData> StopPred)
-    {
-        var dB_EventTable = _db_Table;
-        dB_EventTable.Index = $"{Idx}";
-        SeekAct(dB_EventTable);
-        while (!dB_EventTable.NoMatch
-            && !dB_EventTable.EOF)
-        {
-            var _event = GetData(dB_EventTable);
-            if (StopPred(_event))
-                break;
-            yield return _event;
-            dB_EventTable.MoveNext();
-        }
-    }
-
     public IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt)
-        => ReadEventDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
+        => ReadAllDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
 
-    public IEnumerable<IEventData> ReadAll()
-        => ReadEventDataDB(EventIndex.ArtNr, (rs) => rs.Seek(">=", 0), (e) => false);
-
-    public IEnumerable<IEventData> ReadAll(EventIndex eIndex)
-        => ReadEventDataDB(eIndex, (rs) => rs.Seek(">=", 0), (e) => false);
     public IEnumerable<IEventData> ReadAllPlaces(int iPlace)
-        => ReadEventDataDB(EventIndex.EOrt, (rs) => rs.Seek("=", iPlace), (e) => e.iOrt != iPlace);
+        => ReadAllDataDB(EventIndex.EOrt, (rs) => rs.Seek("=", iPlace), (e) => e.iOrt != iPlace);
 
     public bool DeleteEmptyFam(int ifamInArb, EEventArt eArt)
     {
@@ -260,17 +238,10 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     public override IRecordset? Seek((EEventArt eArt, int iLink, short iLfNr) key, out bool xBreak)
     {
         var dB_EventTable = _db_Table;
-        dB_EventTable.Index = _keyIndex;
+        dB_EventTable.Index = $"{_keyIndex}";
         dB_EventTable.Seek("=", key.eArt, key.iLink, key.iLfNr);
         xBreak = dB_EventTable.NoMatch;
         return xBreak ? null : dB_EventTable;
-    }
-
-    public bool ReadData((EEventArt eArt, int iLink, short iLfNr) key, out IEventData? cEvt)
-    {
-        var dB_EventTable = Seek(key, out bool xBreak);
-        cEvt = xBreak ? null : GetData(dB_EventTable!);
-        return !xBreak;
     }
 
     public void SetValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
@@ -306,16 +277,6 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         }
         dB_EventTable.Update();
     }
-    public void SetData((EEventArt eArt, int iLink, short iLfNr) key, IEventData data, string[]? asProps = null)
-    {
-        var dB_EventTable = Seek(key, out bool xBreak);
-        if (!xBreak)
-        {
-            dB_EventTable!.Edit();
-            data.SetDBData(dB_EventTable, asProps);
-            dB_EventTable.Update();
-        }
-    }
 
     protected override (EEventArt eArt, int iLink, short iLfNr) GetID(IRecordset recordset)
     {
@@ -347,8 +308,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     public  void UpdateClearPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, Predicate<IEventData> predicate)
     {
         var dB_EventTable = Seek(eIndex, iIndexVal);
-        if (dB_EventTable?.NoMatch == false
-            && !dB_EventTable.EOF
+        if (dB_EventTable?.EOF == false
             && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
         {
             IEventData cEv = GetData(dB_EventTable);

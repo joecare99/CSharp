@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
+using System.Linq;
 
 namespace GenFree.Data
 {
@@ -30,22 +31,23 @@ namespace GenFree.Data
 
         public CLinkData()
         {
+            _changedPropList = new List<ELinkProp>();
         }
 
-        public CLinkData(ELinkKennz kennz, int famInArb, int PersNr)
+        public CLinkData(ELinkKennz kennz, int famInArb, int PersNr) : this()
         {
             eKennz = kennz;
             iFamNr = famInArb;
             iPersNr = PersNr;
         }
 
-        public CLinkData(IRecordset dB_LinkTable)
+        public CLinkData(IRecordset dB_LinkTable) : this()
         {
-            FillLink(dB_LinkTable);
+            FillData(dB_LinkTable);
         }
         public static void SetLinkTblGetter(Func<IRecordset> dbLinkGetter) => _DB_LinkTable = dbLinkGetter;
 
-        public void FillLink(IRecordset dB_LinkTable)
+        public void FillData(IRecordset dB_LinkTable)
         {
             eKennz = dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>();
             iFamNr = dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt();
@@ -127,7 +129,7 @@ namespace GenFree.Data
 
         public T2 GetPropValue<T2>(ELinkProp prop)
         {
-           return (T2)GetPropValue(prop);
+            return (T2)GetPropValue(prop);
         }
 
         public void SetPropValue(ELinkProp prop, object value)
@@ -162,6 +164,29 @@ namespace GenFree.Data
         public void AddChangedProp(ELinkProp prop)
         {
             _changedPropList.Add(prop);
+        }
+
+        public void SetDBValue(IRecordset dB_Table, string[]? asProps)
+        {
+            asProps ??= _changedPropList.Select((e) => e.ToString()).ToArray();
+            foreach (var prop in asProps)
+            {
+                switch (prop)
+                {
+                    case nameof(ELinkProp.eKennz):
+                        dB_Table.Fields[nameof(ILinkData.LinkFields.Kennz)].Value = eKennz;
+                        break;
+                    case nameof(ELinkProp.iFamNr):
+                        dB_Table.Fields[nameof(ILinkData.LinkFields.FamNr)].Value = iFamNr;
+                        break;
+                    case nameof(ELinkProp.iPersNr):
+                        dB_Table.Fields[nameof(ILinkData.LinkFields.PerNr)].Value = iPersNr;
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
         }
     }
 }

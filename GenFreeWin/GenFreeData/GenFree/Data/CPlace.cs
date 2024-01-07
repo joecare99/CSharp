@@ -22,7 +22,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
 
     protected override IRecordset _db_Table => _value();
 
-    protected override string _keyIndex => nameof(PlaceIndex.OrtNr);
+    protected override PlaceIndex _keyIndex => PlaceIndex.OrtNr;
 
     public void ForeEachTextDo(Func<int, string> onGetText, Action<int, string[]> onDo, Action<float, int>? onProgress = null)
     {
@@ -53,47 +53,6 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
         }
     }
 
-
-    public override IRecordset? Seek(int key, out bool xBreak)
-    {
-        IRecordset dB_PlaceTable = _db_Table;
-        dB_PlaceTable.Index = _keyIndex;
-        dB_PlaceTable.Seek("=", key);
-        xBreak = dB_PlaceTable.NoMatch;
-        return xBreak ? null : dB_PlaceTable;
-    }
-
-    public bool ReadData(int key, out IPlaceData? data)
-    {
-        var dB_PlaceTable = Seek(key, out bool xBreak);
-        data = xBreak ? null : new CPlaceData(dB_PlaceTable);
-        return !xBreak;
-
-    }
-
-    public IEnumerable<IPlaceData> ReadAll()
-    {
-        IRecordset dB_PlaceTable = _db_Table;
-        dB_PlaceTable.Index = _keyIndex;
-        dB_PlaceTable.MoveFirst();
-        while (!dB_PlaceTable.EOF)
-        {
-            yield return new CPlaceData(dB_PlaceTable);
-            dB_PlaceTable.MoveNext();
-        }
-    }
-
-    public void SetData(int key, IPlaceData data, string[]? asProps = null)
-    {
-        var dB_FamilyTable = Seek(key);
-        if (dB_FamilyTable != null)
-        {
-            dB_FamilyTable.Edit();
-            data.SetDBValue(dB_FamilyTable, asProps);
-            dB_FamilyTable.Update();
-        }
-    }
-
     protected override int GetID(IRecordset recordset)
     {
         return _db_Table.Fields[nameof(PlaceFields.OrtNr)].AsInt();
@@ -107,7 +66,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
         PlaceIndex.K => PlaceFields.Kreis,
         PlaceIndex.L => PlaceFields.Land,
         PlaceIndex.S => PlaceFields.Staat,
-        _ => throw new NotImplementedException(),
+        _ => throw new ArgumentException(nameof(eIndex)),
     };
 
     protected override IPlaceData GetData(IRecordset rs) => new CPlaceData(rs);

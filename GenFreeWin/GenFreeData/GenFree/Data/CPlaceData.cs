@@ -13,13 +13,13 @@ namespace GenFree.Data
         private IRecordset? _dB_PlaceTable;
 
         private static Func<int, string> _GetText = DataModul.TextLese1;
-        private static Func<IRecordset> __dB_PlaceTable;
+        private static Func<IRecordset> __dB_PlaceTable = () => DataModul.DB_PlaceTable;
         private int iOrt1;
         private int iOrtsteil1;
         private int iKreis1;
         private int iLand1;
         private int iStaat1;
-        private string sBem1;
+        private string? sBem1;
 
         public static void SetTable(Func<IRecordset> dB_PlaceTable)
         {
@@ -37,7 +37,7 @@ namespace GenFree.Data
             FillData(_dB_PlaceTable);
         }
 
-        private void FillData(IRecordset dB_PlaceTable)
+        public void FillData(IRecordset dB_PlaceTable)
         {
             ID = dB_PlaceTable.Fields[nameof(PlaceFields.OrtNr)].AsInt();
             iOrt = dB_PlaceTable.Fields[nameof(PlaceFields.Ort)].AsInt();
@@ -51,7 +51,7 @@ namespace GenFree.Data
             sLoc = dB_PlaceTable.Fields[nameof(PlaceFields.Loc)].AsString();
             sL = dB_PlaceTable.Fields[nameof(PlaceFields.L)].AsString();
             sB = dB_PlaceTable.Fields[nameof(PlaceFields.B)].AsString();
-            sBem = dB_PlaceTable.Fields[nameof(PlaceFields.Bem)].AsString();
+            sBem1 = dB_PlaceTable.Fields[nameof(PlaceFields.Bem)].AsString();
             sZusatz = dB_PlaceTable.Fields[nameof(PlaceFields.Zusatz)].AsString();
             sGOV = dB_PlaceTable.Fields[nameof(PlaceFields.GOV)].AsString();
             sPolName = dB_PlaceTable.Fields[nameof(PlaceFields.PolName)].AsString();
@@ -151,8 +151,9 @@ namespace GenFree.Data
 
         public void SetPropValue(EPlaceProp prop, object value)
         {
-            if (GetPropType(prop).GetMethod("Equals")?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
-                return;            
+            Type t = GetPropType(prop);
+            if (t.GetMethod("Equals", new[] { t })?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
+                return;
             _changedPropList.Add(prop);
             object _ = prop switch
             {
@@ -237,6 +238,11 @@ namespace GenFree.Data
                         break;
                 }
             }
+        }
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
         }
     }
 }

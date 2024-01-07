@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GenFree.Data
 {
-    public class CNames : CUsesRecordSet<(int, ETextKennz, int)>, INames
+    public class CNames : CUsesIndexedRSet<(int, ETextKennz, int),NameIndex,NameFields,INamesData>, INames
     {
         private const string cNameIndex = "NABD2CU";
 
@@ -22,7 +22,7 @@ namespace GenFree.Data
             __db_Table = value;
         }
 
-        protected override string _keyIndex => nameof(NameIndex.Vollname);
+        protected override NameIndex _keyIndex => NameIndex.Vollname;
 
         protected override IRecordset _db_Table => __db_Table();
 
@@ -58,25 +58,6 @@ namespace GenFree.Data
             return SeekNK(persInArb, eTKennz, out _) != null;
         }
 
-        public IEnumerable<INamesData> ReadAll()
-        {
-            IRecordset dB_NamesTable = _db_Table;
-            dB_NamesTable.Index = _keyIndex;
-            dB_NamesTable.MoveFirst();
-            while (!dB_NamesTable.EOF)
-            {
-                yield return new CNamesData(dB_NamesTable);
-                dB_NamesTable.MoveNext();
-            }
-        }
-
-        public bool ReadData((int, ETextKennz, int) key, out INamesData? data)
-        {
-            var dB_NamesTable = Seek(key, out var xBreak);
-            data = xBreak ? null : new CNamesData(dB_NamesTable);
-            return !xBreak;
-        }
-
         private IRecordset? SeekNK(int persInArb, ETextKennz eTKennz, out bool xBreak)
         {
             IRecordset DB_NameTable = _db_Table;
@@ -89,21 +70,10 @@ namespace GenFree.Data
         public override IRecordset? Seek((int, ETextKennz, int) key, out bool xBreak)
         {
             IRecordset dB_NamesTable = _db_Table;
-            dB_NamesTable.Index = _keyIndex;
+            dB_NamesTable.Index = $"{_keyIndex}";
             dB_NamesTable.Seek("=", key.Item1, key.Item2, key.Item3);
             xBreak = dB_NamesTable.NoMatch;
             return xBreak ? null : dB_NamesTable;
-        }
-
-        public void SetData((int, ETextKennz, int) key, INamesData data, string[]? asProps = null)
-        {
-            var dB_NamesTable = Seek(key);
-            if (dB_NamesTable != null)
-            {
-                dB_NamesTable.Edit();
-                data.SetDBValue(dB_NamesTable, asProps);
-                dB_NamesTable.Update();
-            }
         }
 
         protected override (int, ETextKennz, int) GetID(IRecordset recordset)
@@ -142,10 +112,19 @@ namespace GenFree.Data
                 bool xNamNickN = dB_NameTable.Fields[nameof(NameFields.Spitz)].AsInt() == 1;
                 var iNx = (ENameKennz)cNameIndex.IndexOf(sNamKennz) + 1;
                 aiName[(int)iNx] = iNamTextNr;
-                if (iNx == ENameKennz.nkGivnName && sNamKennz is "F" or "V" && iNamLfdNr <= 15)
+                if (iNx == ENameKennz.nkGivnName
+)
                 {
-                    aiVorns[iNamLfdNr] = (iNamTextNr, xNamRufN, xNamNickN);
+                    if (sNamKennz is "F" or "V"
+)
+                    {
+                        if (iNamLfdNr <= 15)
+                        {
+                            aiVorns[iNamLfdNr] = (iNamTextNr, xNamRufN, xNamNickN);
+                        }
+                    }
                 }
+
                 dB_NameTable.MoveNext();
             }
             return true;
@@ -154,10 +133,8 @@ namespace GenFree.Data
 
         public void Update(int nPersNr, int nText, ETextKennz kennz, int lfNR = 0, byte calln = 0, byte nickn = 0)
         {
-            IRecordset DB_NameTable = _db_Table;
-            DB_NameTable.Index = _keyIndex;
-            DB_NameTable.Seek("=", nPersNr, kennz, lfNR);
-            if (!DB_NameTable.NoMatch)
+            var DB_NameTable = Seek((nPersNr, kennz, lfNR));
+            if (DB_NameTable?.NoMatch == false)
             {
                 if (DB_NameTable.Fields[nameof(NameFields.Text)].AsInt() != nText)
                 {
@@ -171,6 +148,7 @@ namespace GenFree.Data
             }
             else
             {
+                DB_NameTable = _db_Table;
                 DB_NameTable.AddNew();
                 DB_NameTable.Fields[nameof(NameFields.PersNr)].Value = nPersNr;
                 DB_NameTable.Fields[nameof(NameFields.Kennz)].Value = kennz;
@@ -182,5 +160,18 @@ namespace GenFree.Data
             }
         }
 
+        public override NameFields GetIndex1Field(NameIndex eIndex)
+        {
+            return eIndex switch
+            {
+                NameIndex.PNamen => NameFields.PersNr,
+                NameIndex.TxNr => NameFields.Text,
+                NameIndex.NamKenn => NameFields.Kennz,
+                NameIndex.Vollname => NameFields.PersNr,
+                _ => throw new ArgumentException(nameof(eIndex)),
+            };
+        }
+
+        protected override INamesData GetData(IRecordset rs) => new CNamesData(rs);
     }
 }
