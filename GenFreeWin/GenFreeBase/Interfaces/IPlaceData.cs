@@ -4,10 +4,8 @@ using GenFree.Interfaces.DB;
 
 namespace GenFree.Interfaces
 {
-    public interface IPlaceData : IHasPropEnum<EPlaceProp>, IHasID<int>
+    public interface IPlaceData : IHasPropEnum<EPlaceProp>, IHasID<int>, IHasIRecordset
     {
-        void SetDBValue(IRecordset dB_FamilyTable, string[]? asProps);
-
         int iLand { get; set; }
         int iStaat { get; set; }
         int iKreis { get; set; }
