@@ -16,7 +16,7 @@ public static class DBHelper
         var enumerator = db.GetSchema("Tables").Rows;
         foreach (DataRow row in enumerator)
         {
-            TableDef td = new(db.Connection, row["TABLE_NAME"].ToString());
+            TableDef td = new(db.Connection, row["TABLE_NAME"].AsString());
             db.GetSchema("Columns", new[] { null, null, td.Name }).Rows.Cast<DataRow>().Select(
                 r => new FieldDef(td, r["COLUMN_NAME"].AsString(), r["DATA_TYPE"].AsString(), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(f => td.Fields.Add(f));
             yield return td;
