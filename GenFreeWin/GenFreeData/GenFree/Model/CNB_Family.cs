@@ -17,14 +17,14 @@ namespace GenFree.Model
         {
             _value = value;
         }
-        protected override string _keyIndex => "Fam";
+        protected override string __keyIndex => "Fam";
 
         protected override IRecordset _db_Table => _value();
 
         public override IRecordset? Seek(int key, out bool xBreak)
         {
             var NB_FamilyTable = _db_Table;
-            NB_FamilyTable.Index = _keyIndex;
+            NB_FamilyTable.Index = __keyIndex;
             NB_FamilyTable.Seek("=", key);
             xBreak = NB_FamilyTable.NoMatch;
             return xBreak ? null : NB_FamilyTable;
