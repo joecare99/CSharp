@@ -12,8 +12,9 @@ namespace GenFree.Data
     {
         private static Func<IRecordset> _DB_LinkTable;
         private List<ELinkProp> _changedPropList;
+        private IRecordset? _db_Table;
 
-        private static IRecordset LinkTable => _DB_LinkTable();
+        private IRecordset LinkTable => _db_Table ?? _DB_LinkTable();
 
         public ELinkKennz eKennz { get; internal set; }
         public int iKennz => eKennz.AsInt();
@@ -25,6 +26,11 @@ namespace GenFree.Data
         public IReadOnlyList<ELinkProp> ChangedProps => _changedPropList;
 
         static CLinkData()
+        {
+            Reset();
+        }
+
+        public static void Reset()
         {
             _DB_LinkTable = () => DataModul.DB_LinkTable;
         }
@@ -43,9 +49,10 @@ namespace GenFree.Data
 
         public CLinkData(IRecordset dB_LinkTable) : this()
         {
+            _db_Table = dB_LinkTable;
             FillData(dB_LinkTable);
         }
-        public static void SetLinkTblGetter(Func<IRecordset> dbLinkGetter) => _DB_LinkTable = dbLinkGetter;
+        public static void SetTableGtr(Func<IRecordset> fTblGtr) => _DB_LinkTable = fTblGtr;
 
         public void FillData(IRecordset dB_LinkTable)
         {
@@ -68,41 +75,42 @@ namespace GenFree.Data
         {
             var dB_LinkTable = LinkTable;
             dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
-            dB_LinkTable.Seek("=", iFamNr, iPersNr, iKennz);
+            dB_LinkTable.Seek("=", iFamNr, iPersNr, eKennz);
             if (!dB_LinkTable.NoMatch)
                 dB_LinkTable.Delete();
+        }
+        private bool CkeckRecordset(IRecordset dB_LinkTable, (int iFamily, int iPerson, ELinkKennz eKennz) ID)
+        {
+            var flag = true;
+            if (dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>() != ID.eKennz
+            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt() != ID.iFamily
+            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt() != ID.iPerson)
+            {
+                dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
+                dB_LinkTable.Seek("=", iFamNr, iPersNr, iKennz);
+                flag = !dB_LinkTable.NoMatch;
+            }
+            return flag;
         }
 
         public void SetPers(int p2)
         {
             var dB_LinkTable = LinkTable;
-            if (dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>() != eKennz
-            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt() != iFamNr
-            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt() != iPersNr)
-            {
-                dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
-                dB_LinkTable.Seek("=", iFamNr, iPersNr, iKennz);
-                if (dB_LinkTable.NoMatch) return;
-            }
+            if (!CkeckRecordset(dB_LinkTable, ID)) return;
             dB_LinkTable.Edit();
             dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].Value = p2;
             dB_LinkTable.Update();
+            iPersNr = p2;
         }
 
         public void SetFam(int _iFamNr)
         {
             var dB_LinkTable = LinkTable;
-            if (dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>() != eKennz
-            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt() != iFamNr
-            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt() != iPersNr)
-            {
-                dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
-                dB_LinkTable.Seek("=", iFamNr, iPersNr, iKennz);
-                if (dB_LinkTable.NoMatch) return;
-            }
+            if (!CkeckRecordset(dB_LinkTable, ID)) return;
             dB_LinkTable.Edit();
             dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].Value = _iFamNr;
             dB_LinkTable.Update();
+            iFamNr = _iFamNr;
         }
 
         public Type GetPropType(ELinkProp prop)
@@ -163,7 +171,8 @@ namespace GenFree.Data
 
         public void AddChangedProp(ELinkProp prop)
         {
-            _changedPropList.Add(prop);
+            if (!_changedPropList.Contains(prop))
+                _changedPropList.Add(prop);
         }
 
         public void SetDBValue(IRecordset dB_Table, string[]? asProps)

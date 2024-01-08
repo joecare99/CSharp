@@ -26,7 +26,7 @@ namespace GenFree.Data
         private string? _sLand;
         private string? _sStaat;
 
-        public static void SetTable(Func<IRecordset> dB_PlaceTable)
+        public static void SetTableGtr(Func<IRecordset> dB_PlaceTable)
         {
             __dB_PlaceTable = dB_PlaceTable;
         }
