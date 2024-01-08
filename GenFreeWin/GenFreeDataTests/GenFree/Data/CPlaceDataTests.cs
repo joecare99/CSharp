@@ -60,6 +60,19 @@ namespace GenFree.Data.Tests
             CPlaceData.SetTableGtr(() => testRS);
         }
 
+        [TestMethod()]
+        public void ResetTest()
+        {
+            CPlaceData.Reset();
+            try
+            {
+                var testClass = new CPlaceData(null!);
+            }
+            catch
+            {
+            }
+        }
+
         [DataTestMethod()]
         [DataRow("Text_2", PlaceFields.Ort)]
         [DataRow("Text_3", PlaceFields.Ortsteil)]
@@ -87,11 +100,15 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(1, 2)]
-        public void FillDataTest(EPlaceProp eProp,object oExp)
+        [DataRow(1, 3)]
+        [DataRow(2, 4)]
+        [DataRow(3, 5)]
+        [DataRow(4, 6)]
+        [DataRow(5, 7)]
+        public void FillDataTest(EPlaceProp eProp, object oExp)
         {
             testClass.FillData(testRS);
-            Assert.AreEqual(oExp,testClass.GetPropValue(eProp));
+            Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
         }
 
         [TestMethod()]
@@ -239,6 +256,15 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
+        //[DataTestMethod()]
+        //[DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
+        //[DataRow((EPlaceProp)17, TypeCode.Int32)]
+        //[DataRow((EPlaceProp)100, TypeCode.Int32)]
+        //public void SetDBValueTest1(EPlaceProp eAct, object _)
+        //{
+        //    Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+        //}
+
         [DataTestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
@@ -264,10 +290,16 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [TestMethod()]
-        public void DeleteTest()
+        [DataTestMethod()]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void DeleteTest(bool xAct)
         {
-            Assert.Fail();
+            testRS.NoMatch.Returns(xAct);
+            testClass.Delete();
+            Assert.AreEqual("OrtNr", testRS.Index);
+            testRS.Received(xAct ? 0 : 1).Delete();
+            testRS.Received(1).Seek("=", testClass.ID);
         }
     }
 }
