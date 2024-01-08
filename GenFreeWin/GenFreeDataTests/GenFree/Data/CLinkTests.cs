@@ -419,7 +419,7 @@ public class CLinkTests
     [DataRow("2-2Father", 2, 2, ELinkKennz.lkFather, new int[0])]
     public void GetPersonFamsTest(string sName, int iActFam, int iActPers, ELinkKennz eLinkKennz, int[] aiExp)
     {
-        CLinkData.SetLinkTblGetter(() => testRS);
+        CLinkData.SetTableGtr(() => testRS);
         testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iActPers / 2 != iActFam, true);
         AssertAreEqual(aiExp.ToList(), testClass.GetPersonFams(iActPers, eLinkKennz));
         //   Assert.AreEqual(iActFam, iFam);

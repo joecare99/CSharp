@@ -45,6 +45,7 @@ namespace GenFree.Data.Tests
             testRS.Fields[nameof(PlaceFields.g)].Value.Returns("g");
             testClass = new(testRS);
             CPlaceData.SetGetText(getTextFnc);
+            testRS.ClearReceivedCalls();
         }
 
         private string getTextFnc(int arg)
@@ -56,7 +57,7 @@ namespace GenFree.Data.Tests
         public void SetTableTest()
         {
             var testTable = Substitute.For<IRecordset>();
-            CPlaceData.SetTable(() => testRS);
+            CPlaceData.SetTableGtr(() => testRS);
         }
 
         [DataTestMethod()]
@@ -85,10 +86,12 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IPlaceData));
         }
 
-        [TestMethod()]
-        public void FillDataTest()
+        [DataTestMethod()]
+        [DataRow(1, 2)]
+        public void FillDataTest(EPlaceProp eProp,object oExp)
         {
-            Assert.Fail();
+            testClass.FillData(testRS);
+            Assert.AreEqual(oExp,testClass.GetPropValue(eProp));
         }
 
         [TestMethod()]
