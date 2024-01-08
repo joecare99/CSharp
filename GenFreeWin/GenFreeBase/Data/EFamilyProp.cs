@@ -2,12 +2,17 @@
 {
     public enum EFamilyProp
     {
+        ID,
+        dAnlDatum,
+        dEditDat,
         iName,
         iPrae,
         iSuf,
         gUID,
         sPruefen,
         sBem,
-        xAeB
+        iEltern,
+        xAeB,
+        iGgv,
     }
 }

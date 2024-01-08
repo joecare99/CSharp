@@ -18,5 +18,5 @@ public interface IFamilyData : IHasID<int>, IHasPropEnum<EFamilyProp>, IHasIReco
     string sPrefix { get; }
     string sSuffix { get; }
     bool xAeB { get; }
-
+    int iEltern { get; }
 }

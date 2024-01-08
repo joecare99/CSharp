@@ -45,6 +45,7 @@ namespace GenFree.Data.Tests
             testRS.Fields[nameof(PlaceFields.g)].Value.Returns("g");
             testClass = new(testRS);
             CPlaceData.SetGetText(getTextFnc);
+            testRS.ClearReceivedCalls();
         }
 
         private string getTextFnc(int arg)
@@ -56,7 +57,20 @@ namespace GenFree.Data.Tests
         public void SetTableTest()
         {
             var testTable = Substitute.For<IRecordset>();
-            CPlaceData.SetTable(() => testRS);
+            CPlaceData.SetTableGtr(() => testRS);
+        }
+
+        [TestMethod()]
+        public void ResetTest()
+        {
+            CPlaceData.Reset();
+            try
+            {
+                var testClass = new CPlaceData(null!);
+            }
+            catch
+            {
+            }
         }
 
         [DataTestMethod()]
@@ -85,10 +99,16 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IPlaceData));
         }
 
-        [TestMethod()]
-        public void FillDataTest()
+        [DataTestMethod()]
+        [DataRow(1, 3)]
+        [DataRow(2, 4)]
+        [DataRow(3, 5)]
+        [DataRow(4, 6)]
+        [DataRow(5, 7)]
+        public void FillDataTest(EPlaceProp eProp, object oExp)
         {
-            Assert.Fail();
+            testClass.FillData(testRS);
+            Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
         }
 
         [TestMethod()]
@@ -236,6 +256,15 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
+        //[DataTestMethod()]
+        //[DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
+        //[DataRow((EPlaceProp)17, TypeCode.Int32)]
+        //[DataRow((EPlaceProp)100, TypeCode.Int32)]
+        //public void SetDBValueTest1(EPlaceProp eAct, object _)
+        //{
+        //    Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+        //}
+
         [DataTestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
@@ -261,10 +290,16 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [TestMethod()]
-        public void DeleteTest()
+        [DataTestMethod()]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void DeleteTest(bool xAct)
         {
-            Assert.Fail();
+            testRS.NoMatch.Returns(xAct);
+            testClass.Delete();
+            Assert.AreEqual("OrtNr", testRS.Index);
+            testRS.Received(xAct ? 0 : 1).Delete();
+            testRS.Received(1).Seek("=", testClass.ID);
         }
     }
 }

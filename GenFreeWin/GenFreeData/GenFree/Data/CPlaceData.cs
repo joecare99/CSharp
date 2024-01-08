@@ -11,9 +11,10 @@ namespace GenFree.Data
     {
         private List<EPlaceProp> _changedPropList = new();
         private IRecordset? _dB_PlaceTable;
+        private IRecordset? _dB_Table => _dB_PlaceTable ?? __dB_PlaceTable();
 
-        private static Func<int, string> _GetText = DataModul.TextLese1;
-        private static Func<IRecordset> __dB_PlaceTable = () => DataModul.DB_PlaceTable;
+        private static Func<int, string> _GetText;
+        private static Func<IRecordset> __dB_PlaceTable;
         private int iOrt1;
         private int iOrtsteil1;
         private int iKreis1;
@@ -26,20 +27,30 @@ namespace GenFree.Data
         private string? _sLand;
         private string? _sStaat;
 
-        public static void SetTable(Func<IRecordset> dB_PlaceTable)
+        public static void SetTableGtr(Func<IRecordset> dB_PlaceTable)
         {
             __dB_PlaceTable = dB_PlaceTable;
+        }
+
+        public static void Reset()
+        {
+            __dB_PlaceTable = () => DataModul.DB_PlaceTable;
+            _GetText = DataModul.TextLese1;
         }
 
         public static void SetGetText(Func<int, string> getText)
         {
             _GetText = getText;
         }
+        static CPlaceData()
+        {
+            Reset();
+        }
 
         public CPlaceData(IRecordset dB_PlaceTable)
         {
             _dB_PlaceTable = dB_PlaceTable;
-            FillData(_dB_PlaceTable);
+            FillData(_dB_Table);
         }
 
         public void FillData(IRecordset dB_PlaceTable)
@@ -248,7 +259,11 @@ namespace GenFree.Data
 
         public void Delete()
         {
-            throw new NotImplementedException();
+            var dB_Table = _dB_Table;
+            dB_Table.Index = nameof(PlaceIndex.OrtNr);
+            dB_Table.Seek("=", ID);
+            if (!dB_Table.NoMatch)
+                dB_Table.Delete();
         }
     }
 }

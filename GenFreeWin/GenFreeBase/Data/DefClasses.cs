@@ -31,7 +31,7 @@ public class FieldDef
     {
         _table = td;
         Name = name;
-        Type = (TypeCode)Enum.Parse(typeof(TypeCode), v2);
+        Type = (TypeCode)Enum.Parse(typeof(TypeCode), v2, true);
         Size = v3;
         td.Fields.Add(this);
     }

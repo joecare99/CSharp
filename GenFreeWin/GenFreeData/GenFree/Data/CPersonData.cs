@@ -374,6 +374,7 @@ public class CPersonData : IPersonData
             EPersonProp.sSuch when value is ListItem<int> l => sSuch[l.ItemData] = l.ItemString,
             EPersonProp.iReligi => iReligi = (int)value,
             EPersonProp.sBem when value is ListItem<int> l => sBem[l.ItemData] = l.ItemString,
+            EPersonProp.sBem when value is string[] aS => aS.IntoString(sBem),
             EPersonProp.sPruefen => sPruefen = (string)value,
             _ => throw new NotImplementedException(),
         };
