@@ -162,7 +162,7 @@ namespace VBUnObfusicator.Models.Tests
             new object[] { "7", new[] { TestDataClass.testData7 },
                     TestDataClass.TestDataList7() },
             new object[] { "8", new[] { TestDataClass.test8Data },
-                    TestDataClass.TestDataList8() },
+                    TestDataClass.TestDataList8()! },
             new object[] { "9", new[] { TestDataClass.test9Data },
                     TestDataClass.TestDataList9()! },
             new object[] { "10", new[] { TestDataClass.test10Data },
@@ -179,8 +179,8 @@ namespace VBUnObfusicator.Models.Tests
         public static IEnumerable<object[]> TestListParse => new object[][]
  {
             new object[] { "0", TestDataClass.TestDataList0(), new[] { TestDataClass.testDataExp0 } },
-            new object[] { "1", TestDataClass.TestDataList1(), new[] { TestDataClass.testDataExp1 } },
-            new object[] { "2", TestDataClass.TestDataList2(), new[] { TestDataClass.testDataExp2 } },
+            new object[] { "1", TestDataClass.TestDataList1()!, new[] { TestDataClass.testDataExp1 } },
+            new object[] { "2", TestDataClass.TestDataList2()!, new[] { TestDataClass.testDataExp2 } },
             new object[] { "3", TestDataClass.TestDataList3(), new[] { TestDataClass.testDataExp3 } },
             new object[] { "4", TestDataClass.TestDataList4(), new[] { TestDataClass.testDataExp4 } },
             new object[] { "5", TestDataClass.TestDataList5(), new[] { TestDataClass.testDataExp5 } },

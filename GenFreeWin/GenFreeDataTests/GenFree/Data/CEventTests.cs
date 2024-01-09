@@ -490,6 +490,14 @@ namespace GenFree.Data.Tests
                 testRS.Fields[nameof(EventFields.DatumB)].Value.Returns(0);
                 testRS.Fields[nameof(EventFields.DatumV_S)].Value.Returns("");
                 testRS.Fields[nameof(EventFields.DatumB_S)].Value.Returns("");
+                testRS.Fields[nameof(EventFields.Ort)].Value.Returns(0);
+                testRS.Fields[nameof(EventFields.Ort_S)].Value.Returns("");
+                testRS.Fields[nameof(EventFields.Art)].Value.Returns(0);
+                testRS.Fields[nameof(EventFields.ArtText)].Value.Returns("");
+                testRS.Fields[nameof(EventFields.Bem1)].Value.Returns("");
+                testRS.Fields[nameof(EventFields.Bem2)].Value.Returns("");
+                testRS.Fields[nameof(EventFields.Bem3)].Value.Returns("");
+                testRS.Fields[nameof(EventFields.Reg)].Value.Returns("");
             }
             Assert.AreEqual(!xExp, testClass.DeleteEmptyFam(iActFam, eArt));
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
@@ -711,16 +719,32 @@ namespace GenFree.Data.Tests
 
         [DataTestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
-        [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
-        [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
-        [DataRow("2-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
+        [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
+        [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
+        [DataRow("2-2eA_Baptism", EventIndex.EOrt, EventFields.PerFamNr, 1, 2, EEventArt.eA_Baptism, false)]
         public void ExistsPredTest(string sName, EventIndex eIx, EventFields eFld, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
             iRc = 0;
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            Assert.AreEqual(xExp, testClass.ExistsPred(eIx, eFld, iActFam, tstPred1));
-            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
-            testRS.Received().Seek("=", eArt, iActFam);
+            xResult = new[] { eArt != EEventArt.eA_Baptism, false };
+            Assert.AreEqual(xExp, testClass.ExistsPred(eIx, eFld, iLfdNr, tstPred1));
+            Assert.AreEqual($"{eIx}", testRS.Index);
+            testRS.Received().Seek("=", iLfdNr);
+        }
+
+        [DataTestMethod()]
+        [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
+        [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
+        [DataRow("2-2eA_Baptism", EventIndex.EOrt, EventFields.PerFamNr, 1, 2, EEventArt.eA_Baptism, false)]
+        public void ClearAllRemTextTest(string sName, EventIndex eIx, EventFields eFld, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
+        {
+            iRc = 0;
+            testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
+            xResult = new[] { eArt != EEventArt.eA_Baptism, false };
+            testClass.ClearAllRemText(eIx, eFld, iLfdNr);
+            Assert.AreEqual($"{eIx}", testRS.Index);
+            testRS.Received().Seek("=", iLfdNr);
         }
 
         private bool tstPred1(IEventData obj)

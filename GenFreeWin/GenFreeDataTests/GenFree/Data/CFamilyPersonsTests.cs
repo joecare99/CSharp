@@ -1,17 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using System.Drawing;
 using GenFree.Helper;
 using BaseLib.Helper;
 using static BaseLib.Helper.TestHelper;
-using Castle.Components.DictionaryAdapter.Xml;
 using GenFree.Interfaces;
 
 namespace GenFree.Data.Tests

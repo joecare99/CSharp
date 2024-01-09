@@ -416,11 +416,11 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     public  bool ExistsPred(EventIndex eIndex, EventFields eIndexField, int iTndexVal, Predicate<IEventData> predicate)
     {
         IRecordset dB_EventTable = _db_Table;
-        dB_EventTable.Index = nameof(eIndex);
+        dB_EventTable.Index = $"{eIndex}";
         dB_EventTable.Seek("=", iTndexVal);
         while (!dB_EventTable.NoMatch
             && !dB_EventTable.EOF
-            && !(dB_EventTable.Fields[nameof(eIndexField)].AsInt() != iTndexVal))
+            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iTndexVal)
         {
             if (predicate(GetData(dB_EventTable)))
             {

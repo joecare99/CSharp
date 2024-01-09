@@ -82,4 +82,9 @@ public static class DBHelper
         wks.Commit();
     }
 
+    public static string AsFld(this Enum eFld)
+    {
+        return $"{eFld}".TrimStart('_');
+    }
+
 }

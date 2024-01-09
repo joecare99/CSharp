@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GenFree.Data;
 
-public class CEventData : IEventData
+public class CEventData : CRSData<EEventProp, (EEventArt eArt, int iLink, short iLfNr)>, IEventData
 {
     private string? _sArtText;
     private string? _sHausNr;
@@ -18,45 +18,19 @@ public class CEventData : IEventData
     private string? _sCausal;
     private string? _sGrabNr;
     private string? _sAn;
-    private List<EEventProp> _changedPropList = new();
 
-    private static Func<IRecordset> __dB_EventTable = () => DataModul.DB_EventTable;
-    private IRecordset _dB_EventTable;
     private static Func<int, string> _GetText = DataModul.TextLese1;
-
-    public static void SetTable(Func<IRecordset> dB_EventTable)
-    {
-        __dB_EventTable = dB_EventTable;
-    }
 
     public static void SetGetText(Func<int, string> getText)
     {
         _GetText = getText;
     }
-    public CEventData()
+
+    public CEventData(IRecordset dB_EventTable) : base(dB_EventTable)
     {
-        _dB_EventTable = __dB_EventTable();
-        FillData(_dB_EventTable);
     }
 
-    public CEventData(IRecordset dB_EventTable)
-    {
-        FillData(dB_EventTable);
-        _dB_EventTable = dB_EventTable;
-    }
-
-    public CEventData(EventIndex index, int[] ints, out bool xBreak)
-    {
-        var dB_EventTable = _dB_EventTable = __dB_EventTable();
-        dB_EventTable.Index = $"{index}";
-        dB_EventTable.Seek("=", ints);
-        if (!(xBreak = dB_EventTable.NoMatch))
-        {
-            FillData(dB_EventTable);
-        }
-    }
-
-    public void FillData(IRecordset dB_EventTable)
+    public override void FillData(IRecordset dB_EventTable)
     {
         FillIntFields(dB_EventTable);
 
@@ -113,17 +87,12 @@ public class CEventData : IEventData
         iGrabNr = dB_EventTable.Fields[nameof(EventFields.GrabNr)].AsInt();
     }
 
-    public void Delete()
+    protected override IRecordset? Seek((EEventArt eArt, int iLink, short iLfNr) iD)
     {
-        CheckOrSetRecord(eArt, iPerFamNr, iLfNr)?.Delete();
-    }
-
-    private IRecordset? CheckOrSetRecord(EEventArt eArt, int iPerFamNr, int iLfNr)
-    {
-        IRecordset rs = _dB_EventTable;
-        if (eArt == rs.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>()
-            && iPerFamNr == rs.Fields[nameof(EventFields.PerFamNr)].AsInt()
-            && iLfNr == rs.Fields[nameof(EventFields.LfNr)].AsInt())
+        IRecordset rs = _db_Table;
+        if (iD.eArt == rs.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>()
+            && iD.iLink == rs.Fields[nameof(EventFields.PerFamNr)].AsInt()
+            && iD.iLfNr == (short)rs.Fields[nameof(EventFields.LfNr)].AsInt())
         {
             return rs;
         }
@@ -137,7 +106,7 @@ public class CEventData : IEventData
 
     public void Update(string[]? strings = null)
     {
-        IRecordset? rs = CheckOrSetRecord(eArt, iPerFamNr, iLfNr);
+        IRecordset? rs = Seek(ID);
         if (rs == null) return;
         IField f;
         string d;
@@ -146,13 +115,13 @@ public class CEventData : IEventData
                 switch (s)
                 {
                     case nameof(IEventData.sBem):
-                        if ((f = rs.Fields[nameof(EventFields.Bem1)]).AsString() == (d = sBem[1]))
+                        if ((f = rs.Fields[nameof(EventFields.Bem1)]).AsString() != (d = sBem[1]))
                             SetData(rs, f, d);
-                        if ((f = rs.Fields[nameof(EventFields.Bem2)]).AsString() == (d = sBem[2]))
+                        if ((f = rs.Fields[nameof(EventFields.Bem2)]).AsString() != (d = sBem[2]))
                             SetData(rs, f, d);
-                        if ((f = rs.Fields[nameof(EventFields.Bem3)]).AsString() == (d = sBem[3]))
+                        if ((f = rs.Fields[nameof(EventFields.Bem3)]).AsString() != (d = sBem[3]))
                             SetData(rs, f, d);
-                        if ((f = rs.Fields[nameof(EventFields.Bem4)]).AsString() == (d = sBem[4]))
+                        if ((f = rs.Fields[nameof(EventFields.Bem4)]).AsString() != (d = sBem[4]))
                             SetData(rs, f, d);
                         break;
                 }
@@ -173,7 +142,7 @@ public class CEventData : IEventData
         }
     }
 
-    public Type GetPropType(EEventProp prop)
+    public override Type GetPropType(EEventProp prop)
     {
         return prop switch
         {
@@ -204,7 +173,7 @@ public class CEventData : IEventData
         };
     }
 
-    public object GetPropValue(EEventProp prop)
+    public override object GetPropValue(EEventProp prop)
     {
         return prop switch
         {
@@ -235,177 +204,120 @@ public class CEventData : IEventData
         };
     }
 
-    public T2 GetPropValue<T2>(EEventProp prop)
+    public override void SetPropValue(EEventProp prop, object value)
     {
-        return (T2)GetPropValue(prop);
-    }
-
-    public void SetPropValue(EEventProp prop, object value)
-    {
-        if (GetPropValue(prop).Equals(value)) return;
+        if (EqualsProp(prop, value)) return;
         AddChangedProp(prop);
-        switch (prop)
+        object _ = prop switch
         {
-            case EEventProp.eArt:
-                eArt = (EEventArt)value;
-                break;
-            case EEventProp.iPerFamNr:
-                iPerFamNr = (int)value;
-                break;
-            case EEventProp.iLfNr:
-                iLfNr = (int)value;
-                break;
-            case EEventProp.iArtText:
-                iArtText = (int)value;
-                break;
-            case EEventProp.iPrivacy:
-                iPrivacy = (int)value;
-                break;
-            case EEventProp.xIsDead:
-                sDeath = (bool)value ? "J" : " ";
-                break;
-            case EEventProp.dDatumV:
-                dDatumV = (DateTime)value;
-                break;
-            case EEventProp.sReg:
-                sReg = (string)value;
-                break;
-            case EEventProp.sDatumV_S:
-                sDatumV_S = (string)value;
-                break;
-            case EEventProp.sVChr:
-                sVChr = (string)value;
-                break;
-            case EEventProp.dDatumB:
-                dDatumB = (DateTime)value;
-                break;
-            case EEventProp.sDatumB_S:
-                sDatumB_S = (string)value;
-                break;
-            case EEventProp.sZusatz:
-                sZusatz = (string)value;
-                break;
-            case EEventProp.sOrt_S:
-                sOrt_S = (string)value;
-                break;
-            case EEventProp.iOrt:
-                iOrt = (int)value;
-                break;
-            case EEventProp.iDatumText:
-                iDatumText = (int)value;
-                break;
-            case EEventProp.iKBem:
-                iKBem = (int)value;
-                break;
-            case EEventProp.iPlatz:
-                iPlatz = (int)value;
-                break;
-            case EEventProp.iCausal:
-                iCausal = (int)value;
-                break;
-            case EEventProp.iGrabNr:
-                iGrabNr = (int)value;
-                break;
-            case EEventProp.iAn:
-                iAn = (int)value;
-                break;
-            case EEventProp.iHausNr:
-                iHausNr = (int)value;
-                break;
-            default:
-                throw new NotImplementedException();
-        }
+            EEventProp.eArt => eArt = (EEventArt)value,
+            EEventProp.iPerFamNr => iPerFamNr = (int)value,
+            EEventProp.iLfNr => iLfNr = (int)value,
+            EEventProp.iArtText => iArtText = (int)value,
+            EEventProp.iPrivacy => iPrivacy = (int)value,
+            EEventProp.xIsDead => sDeath = (bool)value ? "J" : " ",
+            EEventProp.dDatumV => dDatumV = (DateTime)value,
+            EEventProp.sReg => sReg = (string)value,
+            EEventProp.sDatumV_S => sDatumV_S = (string)value,
+            EEventProp.sVChr => sVChr = (string)value,
+            EEventProp.dDatumB => dDatumB = (DateTime)value,
+            EEventProp.sDatumB_S => sDatumB_S = (string)value,
+            EEventProp.sBem when value is ListItem<int> l => sBem[l.ItemData] = l.ItemString,
+            EEventProp.sBem => ((string[])value).IntoString(sBem),
+            EEventProp.sZusatz => sZusatz = (string)value,
+            EEventProp.sOrt_S => sOrt_S = (string)value,
+            EEventProp.iOrt => iOrt = (int)value,
+            EEventProp.iDatumText => iDatumText = (int)value,
+            EEventProp.iKBem => iKBem = (int)value,
+            EEventProp.iPlatz => iPlatz = (int)value,
+            EEventProp.iCausal => iCausal = (int)value,
+            EEventProp.iGrabNr => iGrabNr = (int)value,
+            EEventProp.iAn => iAn = (int)value,
+            EEventProp.iHausNr => iHausNr = (int)value,
+            _ => throw new NotImplementedException(),
+        };
     }
 
-    public void ClearChangedProps()
+    public override void SetDBValue(IRecordset dB_EventTable, string[]? asProps = null)
     {
-        _changedPropList.Clear();
-    }
-
-    public void AddChangedProp(EEventProp prop)
-    {
-        _changedPropList.Add(prop);
-    }
-
-    public void SetDBValue(IRecordset dB_EventTable, string[]? asProps = null)
-    {
-        if (asProps == null)
-            asProps = _changedPropList.Select(p => p.ToString()).ToArray();
+        asProps ??= _changedPropsList.Select(p => p.ToString()).ToArray();
         foreach (var prop in asProps)
-            switch (prop)
+            switch (prop.AsEnum<EEventProp>())
             {
-                case nameof(IEventData.eArt):
+                case EEventProp.eArt:
                     dB_EventTable.Fields[nameof(EventFields.Art)].Value = eArt;
                     break;
-                case nameof(IEventData.iPerFamNr):
+                case EEventProp.iPerFamNr:
                     dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = iPerFamNr;
                     break;
-                case nameof(IEventData.iLfNr):
+                case EEventProp.iLfNr:
                     dB_EventTable.Fields[nameof(EventFields.LfNr)].Value = iLfNr;
                     break;
-                case nameof(IEventData.iArtText):
+                case EEventProp.iArtText:
                     dB_EventTable.Fields[nameof(EventFields.ArtText)].Value = iArtText;
                     break;
-                case nameof(IEventData.iPrivacy):
+                case EEventProp.iPrivacy:
                     dB_EventTable.Fields[nameof(EventFields.priv)].Value = iPrivacy;
                     break;
-                case nameof(IEventData.xIsDead):
+                case EEventProp.xIsDead:
                     dB_EventTable.Fields[nameof(EventFields.tot)].Value = sDeath;
                     break;
-                case nameof(IEventData.dDatumV):
+                case EEventProp.dDatumV:
                     dB_EventTable.Fields[nameof(EventFields.DatumV)].Value = dDatumV;
                     break;
-                case nameof(IEventData.sReg):
+                case EEventProp.sReg:
                     dB_EventTable.Fields[nameof(EventFields.Reg)].Value = sReg;
                     break;
-                case nameof(IEventData.sDatumV_S):
+                case EEventProp.sDatumV_S:
                     dB_EventTable.Fields[nameof(EventFields.DatumV_S)].Value = sDatumV_S;
                     break;
-                case nameof(IEventData.sVChr):
+                case EEventProp.sVChr:
                     dB_EventTable.Fields[nameof(EventFields.VChr)].Value = sVChr;
                     break;
-                case nameof(IEventData.dDatumB):
+                case EEventProp.dDatumB:
                     dB_EventTable.Fields[nameof(EventFields.DatumB)].Value = dDatumB;
                     break;
-                case nameof(IEventData.sDatumB_S):
+                case EEventProp.sDatumB_S:
                     dB_EventTable.Fields[nameof(EventFields.DatumB_S)].Value = sDatumB_S;
                     break;
-                case nameof(IEventData.sZusatz):
+                case EEventProp.sZusatz:
                     dB_EventTable.Fields[nameof(EventFields.Zusatz)].Value = sZusatz;
                     break;
-                case nameof(IEventData.sOrt_S):
+                case EEventProp.sOrt_S:
                     dB_EventTable.Fields[nameof(EventFields.Ort_S)].Value = sOrt_S;
                     break;
-                case nameof(IEventData.iOrt):
+                case EEventProp.iOrt:
                     dB_EventTable.Fields[nameof(EventFields.Ort)].Value = iOrt;
                     break;
-                case nameof(IEventData.iDatumText):
+                case EEventProp.iDatumText:
                     dB_EventTable.Fields[nameof(EventFields.DatumText)].Value = iDatumText;
                     break;
-                case nameof(IEventData.iKBem):
+                case EEventProp.iKBem:
                     dB_EventTable.Fields[nameof(EventFields.KBem)].Value = iKBem;
                     break;
-                case nameof(IEventData.iPlatz):
+                case EEventProp.iPlatz:
                     dB_EventTable.Fields[nameof(EventFields.Platz)].Value = iPlatz;
                     break;
-                case nameof(IEventData.iCausal):
+                case EEventProp.iCausal:
                     dB_EventTable.Fields[nameof(EventFields.Causal)].Value = iCausal;
                     break;
-                case nameof(IEventData.iGrabNr):
+                case EEventProp.iGrabNr:
                     dB_EventTable.Fields[nameof(EventFields.GrabNr)].Value = iGrabNr;
                     break;
-                case nameof(IEventData.iAn):
+                case EEventProp.iAn:
                     dB_EventTable.Fields[nameof(EventFields.an)].Value = iAn;
                     break;
-                case nameof(IEventData.iHausNr):
+                case EEventProp.iHausNr:
                     dB_EventTable.Fields[nameof(EventFields.Hausnr)].Value = iHausNr;
                     break;
-                case nameof(IEventData.sBem):
+                case EEventProp.sBem:
                     dB_EventTable.Fields[nameof(EventFields.Bem1)].Value = sBem[1];
                     dB_EventTable.Fields[nameof(EventFields.Bem2)].Value = sBem[2];
                     dB_EventTable.Fields[nameof(EventFields.Bem3)].Value = sBem[3];
                     dB_EventTable.Fields[nameof(EventFields.Bem4)].Value = sBem[4];
                     break;
+                default:
+                    throw new NotImplementedException();
             }
     }
 
@@ -435,7 +347,7 @@ public class CEventData : IEventData
     public string sPlatz => _sPlatz ??= _GetText(iPlatz);
     public int iCausal { get; internal set; }
     public string sCausal => _sCausal ??= _GetText(iCausal);
-    public int iGrabNr {get; private set;}
+    public int iGrabNr { get; private set; }
     public string sGrabNr => _sGrabNr ??= _GetText(iGrabNr);
     public int iAn { get; internal set; }
     public string sAn => _sAn ??= _GetText(iAn);
@@ -444,8 +356,6 @@ public class CEventData : IEventData
 
     public string[] sBem { get; } = new string[5];
 
-    public (EEventArt eArt, int iLink, short iLfNr) ID => (eArt, iPerFamNr, (short)iLfNr);
-
-    public IReadOnlyList<EEventProp> ChangedProps => _changedPropList;
+    public override (EEventArt eArt, int iLink, short iLfNr) ID => (eArt, iPerFamNr, (short)iLfNr);
 
 }

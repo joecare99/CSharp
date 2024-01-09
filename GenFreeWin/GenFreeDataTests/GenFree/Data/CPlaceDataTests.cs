@@ -53,26 +53,6 @@ namespace GenFree.Data.Tests
             return $"Text_{arg}";
         }
 
-        [TestMethod()]
-        public void SetTableTest()
-        {
-            var testTable = Substitute.For<IRecordset>();
-            CPlaceData.SetTableGtr(() => testRS);
-        }
-
-        [TestMethod()]
-        public void ResetTest()
-        {
-            CPlaceData.Reset();
-            try
-            {
-                var testClass = new CPlaceData(null!);
-            }
-            catch
-            {
-            }
-        }
-
         [DataTestMethod()]
         [DataRow("Text_2", PlaceFields.Ort)]
         [DataRow("Text_3", PlaceFields.Ortsteil)]
@@ -199,6 +179,7 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
+        [DataRow(EPlaceProp.ID, 1)]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
         [DataRow(EPlaceProp.iOrtsteil, 4)]
@@ -256,14 +237,14 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        //[DataTestMethod()]
-        //[DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
-        //[DataRow((EPlaceProp)17, TypeCode.Int32)]
-        //[DataRow((EPlaceProp)100, TypeCode.Int32)]
-        //public void SetDBValueTest1(EPlaceProp eAct, object _)
-        //{
-        //    Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
-        //}
+        [DataTestMethod()]
+        [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
+        [DataRow((EPlaceProp)17, TypeCode.Int32)]
+        [DataRow((EPlaceProp)100, TypeCode.Int32)]
+        public void SetDBValueTest1(EPlaceProp eAct, object _)
+        {
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+        }
 
         [DataTestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
