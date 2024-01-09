@@ -44,7 +44,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="7.0.3" />
+		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="8.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
