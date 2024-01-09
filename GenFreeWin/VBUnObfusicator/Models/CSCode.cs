@@ -38,6 +38,8 @@ namespace VBUnObfusicator.Models
         private static readonly char[] stringEndChars = { '"', '\\', '{', '\r' };
 
         public string OriginalCode { get; set; } = string.Empty;
+        public bool DoWhile { get => !CodeOptimizer._noWhile; set => CodeOptimizer._noWhile = !value; }
+
         //   public string Code { get; set; }
 
         private class TokenizeData

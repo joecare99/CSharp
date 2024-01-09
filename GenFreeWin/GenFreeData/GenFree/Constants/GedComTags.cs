@@ -70,6 +70,7 @@ namespace GenFree.Constants
         public const string cGed_GEDC = "GEDC";
         public const string cGed_GODP = "GODP";
         public const string cGed_HEAD = "HEAD";
+        public const string cGed_HEADER = "HEADER";
         public const string cGed_HEAL = "HEAL";
         public const string cGed_HIST = "HIST";
         public const string cGed_INDI = "INDI";
@@ -90,6 +91,7 @@ namespace GenFree.Constants
         public const string cGed_PHON = "PHON";
         public const string cGed_PICT = "PICT";
         public const string cGed_PLAC = "PLAC";
+        public const string cGed_PLACE = "PLACE";
         public const string cGed_PLAO = "PLAO";
         public const string cGed_PRIN = "PRIN";
         public const string cGed_PUBL = "PUBL";
@@ -99,9 +101,11 @@ namespace GenFree.Constants
         public const string cGed_RESI = "RESI";
         public const string cGed_RETI = "RETI";
         public const string cGed_RIN = "RIN";
+        public const string cGed_SCHEMA = "SCHEMA";
         public const string cGed_SEX = "SEX";
         public const string cGed_SORT = "SORT";
         public const string cGed_SOUR = "SOUR";
+        public const string cGed_SOURCE = "SOURCE";
         public const string cGed_SPER = "SPER";
         public const string cGed_SPLA = "SPLA";
         public const string cGed_SUBM = "SUBM";

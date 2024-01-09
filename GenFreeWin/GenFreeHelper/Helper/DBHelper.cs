@@ -16,14 +16,14 @@ public static class DBHelper
         var enumerator = db.GetSchema("Tables").Rows;
         foreach (DataRow row in enumerator)
         {
-            TableDef td = new(db.Connection, row["TABLE_NAME"].ToString());
+            TableDef td = new(db.Connection, row["TABLE_NAME"].AsString());
             db.GetSchema("Columns", new[] { null, null, td.Name }).Rows.Cast<DataRow>().Select(
                 r => new FieldDef(td, r["COLUMN_NAME"].AsString(), r["DATA_TYPE"].AsString(), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(f => td.Fields.Add(f));
             yield return td;
         }
     }
 
-    public static bool DbFieldExists(IDatabase TabDef, Enum field, string sFieldName)
+    public static bool DbFieldExists(this IDatabase TabDef, Enum field, string sFieldName)
     {
         try
         {
@@ -48,7 +48,12 @@ public static class DBHelper
     {
         try
         {
-            return db.GetSchema("Tables").Rows.Contains(mytable);
+            foreach (DataRow row in db.GetSchema("Tables").Rows)
+            
+                if (row["TABLE_NAME"].AsString().ToLower() == mytable.AsString().ToLower())
+                {
+                    return true;
+                }
         }
         catch
         {
@@ -75,6 +80,11 @@ public static class DBHelper
     public static void CommitTrans(this IDBWorkSpace wks)
     {
         wks.Commit();
+    }
+
+    public static string AsFld(this Enum eFld)
+    {
+        return $"{eFld}".TrimStart('_');
     }
 
 }
