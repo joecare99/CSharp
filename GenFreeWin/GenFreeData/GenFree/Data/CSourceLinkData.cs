@@ -7,15 +7,14 @@ using System;
 
 namespace GenFree.Data
 {
-    public class CSourceLinkData : IHasID<(int, EEventArt, int)>, IHasPropEnum<ESourceLinkProp>
+    public class CSourceLinkData : CRSData<ESourceLinkProp, (int, EEventArt, int)>, ISourceLinkData
     {
-        public CSourceLinkData()
+        public CSourceLinkData() : base(null)
         {
         }
 
-        public CSourceLinkData(IRecordset recordset)
+        public CSourceLinkData(IRecordset recordset) : base(recordset)
         {
-            FillData(recordset);
         }
 
         public int iLinkType { get; internal set; }
@@ -28,51 +27,46 @@ namespace GenFree.Data
         public string sField3 { get; internal set; }
         public int iQuNr { get; internal set; }
 
-        public (int, EEventArt, int) ID => throw new System.NotImplementedException();
+        public override (int, EEventArt, int) ID =>
+            (iLinkType, eArt, iPersNr);
 
-        public IReadOnlyList<ESourceLinkProp> ChangedProps => throw new NotImplementedException();
+        public override void FillData(IRecordset db_Table)
+        {
+            eArt = db_Table.Fields["Art"].AsEnum<EEventArt>();
+            iLinkType = db_Table.Fields[0].AsInt();
+            iPersNr = db_Table.Fields[1].AsInt();
+            iLfdNr = db_Table.Fields["LfNr"].AsInt();
+            iQuNr = db_Table.Fields["3"].AsInt();
+            sField3 = db_Table.Fields[3].AsString();
+            sAus = db_Table.Fields["Aus"].AsString();
+            sOrig = db_Table.Fields["Orig"].AsString();
+            sKom = db_Table.Fields["Kom"].AsString();
+        }
 
-        public void AddChangedProp(ESourceLinkProp prop)
+        public override Type GetPropType(ESourceLinkProp prop)
         {
             throw new NotImplementedException();
         }
 
-        public void ClearChangedProps()
+        public override object GetPropValue(ESourceLinkProp prop)
         {
             throw new NotImplementedException();
         }
 
-        public Type GetPropType(ESourceLinkProp prop)
+        protected override IRecordset? Seek((int, EEventArt, int) iD)
         {
             throw new NotImplementedException();
         }
 
-        public object GetPropValue(ESourceLinkProp prop)
+        public override void SetDBValue(IRecordset dB_Table, string[]? asProps)
         {
             throw new NotImplementedException();
         }
 
-        public T2 GetPropValue<T2>(ESourceLinkProp prop)
+        public override void SetPropValue(ESourceLinkProp prop, object value)
         {
             throw new NotImplementedException();
         }
 
-        public void SetPropValue(ESourceLinkProp prop, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void FillData(IRecordset dB_TTable)
-        {
-            eArt = dB_TTable.Fields["Art"].AsEnum<EEventArt>();
-            iLinkType = dB_TTable.Fields[0].AsInt();
-            iPersNr = dB_TTable.Fields[1].AsInt();
-            iLfdNr = dB_TTable.Fields["LfNr"].AsInt();
-            iQuNr = dB_TTable.Fields["3"].AsInt();
-            sField3 = dB_TTable.Fields[3].AsString();
-            sAus = dB_TTable.Fields["Aus"].AsString();
-            sOrig = dB_TTable.Fields["Orig"].AsString();
-            sKom = dB_TTable.Fields["Kom"].AsString();            
-        }
     }
 }

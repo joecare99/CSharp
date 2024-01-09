@@ -7,11 +7,13 @@ using System.Linq;
 
 namespace GenFree.Data
 {
-    public class CPlaceData : IPlaceData
+    /// <summary>PLace Data-class<br/>A class for Place data</summary>
+    /// <example>
+    /// <code>_ = new CPlaceData(rs);</code></example>
+    /// <seealso cref="GenFree.Interfaces.IPlaceData" />
+    public class CPlaceData : CRSData<EPlaceProp, int>, IPlaceData
     {
         private List<EPlaceProp> _changedPropList = new();
-        private IRecordset? _dB_PlaceTable;
-        private IRecordset? _dB_Table => _dB_PlaceTable ?? __dB_PlaceTable();
 
         private static Func<int, string> _GetText;
         private static Func<IRecordset> __dB_PlaceTable;
@@ -26,36 +28,18 @@ namespace GenFree.Data
         private string? _sKreis;
         private string? _sLand;
         private string? _sStaat;
-
-        public static void SetTableGtr(Func<IRecordset> dB_PlaceTable)
-        {
-            __dB_PlaceTable = dB_PlaceTable;
-        }
-
-        public static void Reset()
-        {
-            __dB_PlaceTable = () => DataModul.DB_PlaceTable;
-            _GetText = DataModul.TextLese1;
-        }
+        private int _ID;
 
         public static void SetGetText(Func<int, string> getText)
         {
             _GetText = getText;
         }
-        static CPlaceData()
-        {
-            Reset();
-        }
 
-        public CPlaceData(IRecordset dB_PlaceTable)
-        {
-            _dB_PlaceTable = dB_PlaceTable;
-            FillData(_dB_Table);
-        }
+        public CPlaceData(IRecordset dB_PlaceTable) : base(dB_PlaceTable) { }
 
-        public void FillData(IRecordset dB_PlaceTable)
+        public override void FillData(IRecordset dB_PlaceTable)
         {
-            ID = dB_PlaceTable.Fields[nameof(PlaceFields.OrtNr)].AsInt();
+            _ID = dB_PlaceTable.Fields[nameof(PlaceFields.OrtNr)].AsInt();
             iOrt1 = dB_PlaceTable.Fields[nameof(PlaceFields.Ort)].AsInt();
             iOrtsteil1 = dB_PlaceTable.Fields[nameof(PlaceFields.Ortsteil)].AsInt();
             iKreis1 = dB_PlaceTable.Fields[nameof(PlaceFields.Kreis)].AsInt();
@@ -77,7 +61,7 @@ namespace GenFree.Data
 
         public IReadOnlyList<EPlaceProp> ChangedProps => _changedPropList;
 
-        public int ID { get; private set; }
+        public override int ID => _ID;
         public int iOrt { get => iOrt1; set => SetPropValue(EPlaceProp.iOrt, value); }
         public string sOrt => _sOrt ??= _GetText(iOrt);
         public int iOrtsteil { get => iOrtsteil1; set => SetPropValue(EPlaceProp.iOrtsteil, value); }
@@ -111,7 +95,7 @@ namespace GenFree.Data
             _changedPropList.Clear();
         }
 
-        public Type GetPropType(EPlaceProp prop)
+        public override Type GetPropType(EPlaceProp prop)
         {
             return prop switch
             {
@@ -136,7 +120,7 @@ namespace GenFree.Data
             };
         }
 
-        public object GetPropValue(EPlaceProp prop)
+        public override object GetPropValue(EPlaceProp prop)
         {
             return prop switch
             {
@@ -161,20 +145,18 @@ namespace GenFree.Data
             };
         }
 
-        public T2 GetPropValue<T2>(EPlaceProp prop)
+        /// <summary>Sets the property value.</summary>
+        /// <param name="prop">The property.</param>
+        /// <param name="value">The value.</param>
+        public override void SetPropValue(EPlaceProp prop, object value)
         {
-            return (T2)GetPropValue(prop);
-        }
+            if (EqualsProp(prop, value)) return;
 
-        public void SetPropValue(EPlaceProp prop, object value)
-        {
-            Type t = GetPropType(prop);
-            if (t.GetMethod("Equals", new[] { t })?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
-                return;
-            _changedPropList.Add(prop);
+            AddChangedProp(prop);
+
             object _ = prop switch
             {
-                EPlaceProp.ID => ID = (int)value,
+                EPlaceProp.ID => _ID = (int)value,
                 EPlaceProp.iOrt => iOrt1 = (int)value,
                 EPlaceProp.iOrtsteil => iOrtsteil1 = (int)value,
                 EPlaceProp.iKreis => iKreis1 = (int)value,
@@ -191,79 +173,45 @@ namespace GenFree.Data
                 EPlaceProp.sGOV => sGOV = (string)value,
                 EPlaceProp.sPolName => sPolName = (string)value,
                 EPlaceProp.ig => ig = (int)value,
- //               _ => throw new NotImplementedException(),
+                _ => throw new NotImplementedException()
             };
         }
 
-        public void SetDBValue(IRecordset dB_FamilyTable, string[]? asProps)
+        public override void SetDBValue(IRecordset dB_FamilyTable, string[]? asProps)
         {
             asProps ??= _changedPropList.Select((e) => e.ToString()).ToArray();
             foreach (var prop in asProps)
             {
-                switch (prop)
+                _ = prop.AsEnum<EPlaceProp>() switch
                 {
-                    case nameof(EPlaceProp.ID):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.OrtNr)].Value = ID;
-                        break;
-                    case nameof(EPlaceProp.iOrt):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Ort)].Value = iOrt;
-                        break;
-                    case nameof(EPlaceProp.iOrtsteil):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Ortsteil)].Value = iOrtsteil;
-                        break;
-                    case nameof(EPlaceProp.iKreis):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Kreis)].Value = iKreis;
-                        break;
-                    case nameof(EPlaceProp.iLand):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Land)].Value = iLand;
-                        break;
-                    case nameof(EPlaceProp.iStaat):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Staat)].Value = iStaat;
-                        break;
-                    case nameof(EPlaceProp.sStaatk):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Staatk)].Value = sStaatk;
-                        break;
-                    case nameof(EPlaceProp.sPLZ):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.PLZ)].Value = sPLZ;
-                        break;
-                    case nameof(EPlaceProp.sTerr):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Terr)].Value = sTerr;
-                        break;
-                    case nameof(EPlaceProp.sLoc):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Loc)].Value = sLoc;
-                        break;
-                    case nameof(EPlaceProp.sL):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.L)].Value = sL;
-                        break;
-                    case nameof(EPlaceProp.sB):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.B)].Value = sB;
-                        break;
-                    case nameof(EPlaceProp.sBem):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Bem)].Value = sBem;
-                        break;
-                    case nameof(EPlaceProp.sZusatz):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.Zusatz)].Value = sZusatz;
-                        break;
-                    case nameof(EPlaceProp.sGOV):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.GOV)].Value = sGOV;
-                        break;
-                    case nameof(EPlaceProp.sPolName):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.PolName)].Value = sPolName;
-                        break;
-                    case nameof(EPlaceProp.ig):
-                        dB_FamilyTable.Fields[nameof(PlaceFields.g)].Value = ig;
-                        break;
-                }
+                    EPlaceProp.ID => dB_FamilyTable.Fields[nameof(PlaceFields.OrtNr)].Value = ID,
+                    EPlaceProp.iOrt => dB_FamilyTable.Fields[nameof(PlaceFields.Ort)].Value = iOrt,
+                    EPlaceProp.iOrtsteil => dB_FamilyTable.Fields[nameof(PlaceFields.Ortsteil)].Value = iOrtsteil,
+                    EPlaceProp.iKreis => dB_FamilyTable.Fields[nameof(PlaceFields.Kreis)].Value = iKreis,
+                    EPlaceProp.iLand => dB_FamilyTable.Fields[nameof(PlaceFields.Land)].Value = iLand,
+                    EPlaceProp.iStaat => dB_FamilyTable.Fields[nameof(PlaceFields.Staat)].Value = iStaat,
+                    EPlaceProp.sStaatk => dB_FamilyTable.Fields[nameof(PlaceFields.Staatk)].Value = sStaatk,
+                    EPlaceProp.sPLZ => dB_FamilyTable.Fields[nameof(PlaceFields.PLZ)].Value = sPLZ,
+                    EPlaceProp.sTerr => dB_FamilyTable.Fields[nameof(PlaceFields.Terr)].Value = sTerr,
+                    EPlaceProp.sLoc => dB_FamilyTable.Fields[nameof(PlaceFields.Loc)].Value = sLoc,
+                    EPlaceProp.sL => dB_FamilyTable.Fields[nameof(PlaceFields.L)].Value = sL,
+                    EPlaceProp.sB => dB_FamilyTable.Fields[nameof(PlaceFields.B)].Value = sB,
+                    EPlaceProp.sBem => dB_FamilyTable.Fields[nameof(PlaceFields.Bem)].Value = sBem,
+                    EPlaceProp.sZusatz => dB_FamilyTable.Fields[nameof(PlaceFields.Zusatz)].Value = sZusatz,
+                    EPlaceProp.sGOV => dB_FamilyTable.Fields[nameof(PlaceFields.GOV)].Value = sGOV,
+                    EPlaceProp.sPolName => dB_FamilyTable.Fields[nameof(PlaceFields.PolName)].Value = sPolName,
+                    EPlaceProp.ig => dB_FamilyTable.Fields[nameof(PlaceFields.g)].Value = ig,
+                    _ => throw new NotImplementedException(),
+                };
             }
         }
 
-        public void Delete()
+        protected override IRecordset? Seek(int iD)
         {
-            var dB_Table = _dB_Table;
+            var dB_Table = _db_Table;
             dB_Table.Index = nameof(PlaceIndex.OrtNr);
             dB_Table.Seek("=", ID);
-            if (!dB_Table.NoMatch)
-                dB_Table.Delete();
+            return dB_Table.NoMatch ? null : dB_Table;
         }
     }
 }
