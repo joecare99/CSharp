@@ -669,6 +669,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokoban_Base_win", "Games\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Werner_Flaschbier_Base_win", "Games\Werner_Flaschbier\Werner_Flaschbier_Base_win.csproj", "{877417AD-1F8B-48A8-A0C1-A18FEA269564}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FCA75665-06E8-45DB-94A0-756B79925C54}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Tests\Test.csproj", "{B8F06FF4-1C87-4483-9B0A-CEC862622BDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1804,6 +1808,10 @@ Global
 		{877417AD-1F8B-48A8-A0C1-A18FEA269564}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{877417AD-1F8B-48A8-A0C1-A18FEA269564}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{877417AD-1F8B-48A8-A0C1-A18FEA269564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8F06FF4-1C87-4483-9B0A-CEC862622BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8F06FF4-1C87-4483-9B0A-CEC862622BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8F06FF4-1C87-4483-9B0A-CEC862622BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8F06FF4-1C87-4483-9B0A-CEC862622BDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2080,6 +2088,7 @@ Global
 		{200CCE0D-1796-4570-8EDD-7093F0072678} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
 		{AFA889B1-B728-4E16-96B7-9733376B0EA4} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
 		{877417AD-1F8B-48A8-A0C1-A18FEA269564} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
+		{B8F06FF4-1C87-4483-9B0A-CEC862622BDA} = {FCA75665-06E8-45DB-94A0-756B79925C54}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
