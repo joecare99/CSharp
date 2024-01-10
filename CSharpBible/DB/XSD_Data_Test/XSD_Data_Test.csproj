@@ -7,7 +7,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-	  <PackageReference Include="MySqlConnector" Version="2.2.7" />
+	  <PackageReference Include="MySqlConnector" Version="2.3.3" />
 	</ItemGroup>
 	<ItemGroup>
     <Compile Update="DataSets.Designer.cs">
