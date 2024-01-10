@@ -120,4 +120,8 @@
   <data name="PlsEnterCode" xml:space="preserve">
     <value>Please enter some code ...</value>
   </data>
+  <data name="Result2" xml:space="preserve">
+    <value>Code: {0} ==&gt; {2}
+Lines {1} =&gt; {3}</value>
+  </data>
 </root>

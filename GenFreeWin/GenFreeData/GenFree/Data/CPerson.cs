@@ -6,9 +6,10 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using System.Collections.Generic;
+using GenFree.Model;
 
 namespace GenFree.Data;
-public class CPerson : CUsesRecordSet<int>, IPerson
+public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData>, IPerson
 {
     private Func<IRecordset> _value;
     private ISysTime _sysTime;
@@ -21,11 +22,11 @@ public class CPerson : CUsesRecordSet<int>, IPerson
 
     protected override IRecordset _db_Table => _value();
 
-    protected override string _keyIndex => nameof(PersonIndex.PerNr);
+    protected override PersonIndex _keyIndex => PersonIndex.PerNr;
 
     public void AllSetEditDate()
     {
-        _db_Table.Index = _keyIndex;
+        _db_Table.Index = $"{_keyIndex}";
         if (_db_Table.RecordCount > 0)
         {
             _db_Table.MoveFirst();
@@ -115,45 +116,18 @@ public class CPerson : CUsesRecordSet<int>, IPerson
         => (Seek(persInArb, out _)?.Fields[nameof(PersonFields.Sex)]).AsString().ToUpper();
 
 
-    public override IRecordset? Seek(int persInArb, out bool xBreak)
-    {
-        var dB_PersonTable = _db_Table;
-        dB_PersonTable.Index = _keyIndex;
-        dB_PersonTable.Seek("=", persInArb);
-        xBreak = dB_PersonTable.NoMatch;
-        return xBreak ? null : dB_PersonTable;
-    }
-
     protected override int GetID(IRecordset recordset)
         => recordset.Fields[nameof(PersonFields.PersNr)].AsInt();
 
-    public bool ReadData(int key, out IPersonData? data)
-    {
-        var dB_PersonTable = Seek(key, out bool xBreak);
-        data = xBreak ? null : new CPersonData(dB_PersonTable);
-        return !xBreak;
-    }
 
-    public IEnumerable<IPersonData> ReadAll()
+    public override PersonFields GetIndex1Field(PersonIndex eIndex) => eIndex switch
     {
-        IRecordset dB_PlaceTable = _db_Table;
-        dB_PlaceTable.Index = _keyIndex;
-        dB_PlaceTable.MoveFirst();
-        while (!dB_PlaceTable.EOF)
-        {
-            yield return new CPersonData(dB_PlaceTable);
-            dB_PlaceTable.MoveNext();
-        }
-    }
+        PersonIndex.PerNr => PersonFields.PersNr,
+        PersonIndex.Puid => PersonFields.PUid,
+        PersonIndex.BeaDat => PersonFields.EditDat,
+        PersonIndex.reli => PersonFields.religi,
+        _ => throw new ArgumentException(nameof(eIndex)),
+    };
 
-    public void SetData(int key, IPersonData data, string[]? asProps = null)
-    {
-        var dB_PersonTable = Seek(key);
-        if (dB_PersonTable != null)
-        {
-            dB_PersonTable.Edit();
-            data.SetDBValue(dB_PersonTable, asProps);
-            dB_PersonTable.Update();
-        }
-    }
+    protected override IPersonData GetData(IRecordset rs) => new CPersonData(rs);
 }

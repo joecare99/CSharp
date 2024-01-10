@@ -68,5 +68,15 @@ namespace VBUnObfusicator.Properties {
                 return ResourceManager.GetString("PlsEnterCode", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Code: {0} ==&gt; {2}
+        ///Lines {1} =&gt; {3} ähnelt.
+        /// </summary>
+        internal static string Result2 {
+            get {
+                return ResourceManager.GetString("Result2", resourceCulture);
+            }
+        }
     }
 }
