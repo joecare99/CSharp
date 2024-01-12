@@ -29,8 +29,8 @@ public class CNamesDataTests
         testRS.Fields[NameFields.Kennz.AsFld()].Value.Returns(2, 3, 4);
         testRS.Fields[NameFields.Text.AsFld()].Value.Returns(3, 4, 5);
         testRS.Fields[NameFields.LfNr.AsFld()].Value.Returns(4, 5, 6);
-        testRS.Fields[NameFields.Ruf.AsFld()].Value.Returns(5,6,7);
-        testRS.Fields[NameFields.Spitz.AsFld()].Value.Returns(6,7,8);
+        testRS.Fields[NameFields.Ruf.AsFld()].Value.Returns(5, 6, 7);
+        testRS.Fields[NameFields.Spitz.AsFld()].Value.Returns(6, 7, 8);
         testClass = new(testRS);
         testRS.ClearReceivedCalls();
     }
@@ -169,5 +169,4 @@ public class CNamesDataTests
         testRS.Received(xAct ? 0 : 1).Delete();
         testRS.Received(1).Seek("=", testClass.ID.Item1, testClass.ID.Item2, testClass.ID.Item3);
     }
-
 }
