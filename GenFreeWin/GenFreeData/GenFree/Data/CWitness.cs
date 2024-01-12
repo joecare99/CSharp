@@ -55,8 +55,76 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         }
     }
 
+    public bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10)
+    {
+        return SeekZeug( persInArb, eWKennz, eEvtArt, lfNR) !=null;
+    }
+
+    public void DeleteAllE(int persInArb, int eWKennz)
+    {
+        IRecordset DB_WitnessTable = _db_Table;
+
+        DB_WitnessTable.Index = nameof(WitnessIndex.ElSu);
+        DB_WitnessTable.Seek("=", persInArb, eWKennz);
+        var I = 1;
+        while (I <= 99
+            && !DB_WitnessTable.NoMatch
+            && !DB_WitnessTable.EOF 
+            && DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].AsInt() == persInArb
+              && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == eWKennz)
+        {
+            DB_WitnessTable.Delete();
+            DB_WitnessTable.MoveNext();
+            I++;
+        }
+    }
+    public void DeleteAllF(int persInArb, int sWKennz)
+    {
+        IRecordset DB_WitnessTable = _db_Table;
+        DB_WitnessTable.Index = nameof(WitnessIndex.FamSu);
+        DB_WitnessTable.Seek("=", persInArb, sWKennz);
+        var I = 1;
+        while (I <= 99
+            && !DB_WitnessTable.NoMatch
+            && !DB_WitnessTable.EOF
+            && DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() == persInArb
+            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == sWKennz)
+        {
+            if (DB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsInt() < 500)
+            {
+                DB_WitnessTable.Delete();
+            }
+            DB_WitnessTable.MoveNext();
+            I++;
+        }
+    }
+
+    public void DeleteAllZ(int persInArb, int sWKennz, EEventArt eArt, short iLfNr)
+    {
+        var DB_WitnessTable = SeekZeug(persInArb, sWKennz, eArt, iLfNr);
+        while (DB_WitnessTable?.NoMatch == false
+            && !DB_WitnessTable.EOF
+            && DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].AsInt() == persInArb
+            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == sWKennz
+            && DB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsEnum<EEventArt>() == eArt
+            && DB_WitnessTable.Fields[nameof(WitnessFields.LfNr)].AsInt() == iLfNr)
+        {
+            DB_WitnessTable.Delete();
+            DB_WitnessTable.MoveNext();
+        }
+    }
+
     private IRecordset? SeekFaSu(int iNr, int v)
     {
-        throw new NotImplementedException();
+        _db_Table.Index = nameof(WitnessIndex.FamSu);
+        _db_Table.Seek("=", iNr, v);
+        return _db_Table.NoMatch ? null : _db_Table;
+    }
+
+    private IRecordset? SeekZeug(int persInArb, int sWKennz, EEventArt eArt, short iLfNr)
+    {
+        _db_Table.Index = nameof(WitnessIndex.ZeugSu);
+        _db_Table.Seek("=", persInArb, sWKennz, eArt, iLfNr);
+        return _db_Table.NoMatch ? null : _db_Table;
     }
 }

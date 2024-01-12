@@ -458,71 +458,8 @@ public static partial class DataModul
     #endregion
 
     #region Witness Methods
-    public static void Witness_Delete(long perfamNr, long persInArb, int kennz, object erArt, object lfNR)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
-        DB_WitnessTable.Seek("=", perfamNr, persInArb, kennz, erArt, lfNR);
-        if (!DB_WitnessTable.NoMatch)
-        {
-            DB_WitnessTable.Delete();
-        }
-    }
 
-    public static void Witness_DeleteAllE(int persInArb, string eWKennz)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.ElSu);
-        DB_WitnessTable.Seek("=", persInArb, eWKennz);
-        var I = 1;
-        while (I <= 99
-            && !DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF)
-        {
-            if (!((DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].AsInt() != persInArb)
-              || (DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsString() != eWKennz)))
-            {
-                DB_WitnessTable.Delete();
-                DB_WitnessTable.MoveNext();
-                I++;
-            }
-        }
-    }
-
-    public static void Witness_DeleteAllF(int persInArb, string sWKennz)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.FamSu);
-        DB_WitnessTable.Seek("=", persInArb, sWKennz);
-        var I = 1;
-        while (I <= 99
-            && !DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF
-            && DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() == persInArb
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsString() == sWKennz)
-        {
-            if (DB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsInt() < 500)
-            {
-                DB_WitnessTable.Delete();
-            }
-            DB_WitnessTable.MoveNext();
-            I++;
-        }
-    }
-
-    public static void Witness_DeleteAllZ(int persInArb, int sWKennz, EEventArt eArt, short iLfNr)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.ZeugSu);
-        DB_WitnessTable.Seek("=", persInArb, sWKennz, eArt, iLfNr);
-        while (!DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF
-            && DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() == persInArb
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == sWKennz
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsEnum<EEventArt>() == eArt
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == iLfNr)
-        {
-            DB_WitnessTable.Delete();
-            DB_WitnessTable.MoveNext();
-        }
-    }
-
+   
     public static void Witness_DeleteAllOrphanFam()
     {
         DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
@@ -563,12 +500,6 @@ public static partial class DataModul
     public static void Witness_Add(int personNr, int iPerfam, EEventArt art, short lfNR, int iWKennz = 10)
         => Witness_AppendRaw(personNr, iPerfam, art, lfNR, iWKennz);
 
-    public static bool Witness_Exist(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.ZeugSu);
-        DB_WitnessTable.Seek("=", persInArb, eWKennz, eEvtArt, lfNR);
-        return !DB_WitnessTable.NoMatch;
-    }
 
 
 
