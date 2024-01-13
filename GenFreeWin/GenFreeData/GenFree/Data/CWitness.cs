@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using GenFree.Interfaces.DB;
-using GenFree.Interfaces.Model;
 using GenFree.Interfaces;
 using GenFree.Model;
 using GenFree.Helper;
 using System.Collections.Generic;
-using static System.Collections.Specialized.BitVector32;
 
 namespace GenFree.Data;
 
@@ -44,7 +41,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
 
     public IEnumerable<IWitnessData> ReadAllFams(int iNr, int v)
     {
-        IRecordset? db_WitnessTable = SeekFaSu(iNr,v);
+        IRecordset? db_WitnessTable = SeekFaSu(iNr, v);
         while (db_WitnessTable?.EOF == false
             && !db_WitnessTable.NoMatch
             && db_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() == iNr
@@ -57,7 +54,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
 
     public bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10)
     {
-        return SeekZeug( persInArb, eWKennz, eEvtArt, lfNR) !=null;
+        return SeekZeug(persInArb, eWKennz, eEvtArt, lfNR) != null;
     }
 
     public void DeleteAllE(int persInArb, int eWKennz)
@@ -69,7 +66,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         var I = 1;
         while (I <= 99
             && !DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF 
+            && !DB_WitnessTable.EOF
             && DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].AsInt() == persInArb
               && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == eWKennz)
         {
@@ -112,6 +109,50 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
             DB_WitnessTable.Delete();
             DB_WitnessTable.MoveNext();
         }
+    }
+
+    public void DeleteAllFamPred(Func<int, bool> fncFamExists)
+    {
+        ForEachDo((rs) =>
+           {
+               if (rs.Fields[nameof(WitnessFields.Art)].AsEnum<EEventArt>() > EEventArt.eA_499
+                && fncFamExists(rs.Fields[nameof(WitnessFields.FamNr)].AsInt()))
+                   rs.Delete();
+           });
+
+    }
+
+    public void Append(int perfamNr, int suchPer, int kennz1, EEventArt erArt, short lfNR)
+    {
+        var DB_WitnessTable = Seek((perfamNr, suchPer, kennz1, erArt, lfNR));
+        if (DB_WitnessTable == null)
+        {
+            AppendRaw(perfamNr, suchPer, kennz1, erArt, lfNR);
+        }
+    }
+
+    public  void Add(int iPerfam, int personNr, EEventArt art, short lfNR, int iWKennz = 10)
+        => AppendRaw(iPerfam, personNr, iWKennz, art, lfNR);
+
+    private void AppendRaw(int perfamNr, int suchPer, int kennz1, EEventArt erArt, short lfNR)
+    {
+        IRecordset DB_WitnessTable = _db_Table;
+        DB_WitnessTable.AddNew();
+        DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].Value = suchPer;
+        DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].Value = perfamNr;
+        DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].Value = kennz1;
+        DB_WitnessTable.Fields[nameof(WitnessFields.Art)].Value = erArt;
+        DB_WitnessTable.Fields[nameof(WitnessFields.LfNr)].Value = lfNR;
+        DB_WitnessTable.Update();
+    }
+
+    public override IRecordset? Seek((int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr) tValue, out bool xBreak)
+    {
+        var dB_Table = _db_Table;
+        dB_Table.Index = $"{_keyIndex}";
+        dB_Table.Seek("=", tValue.iLink, tValue.iPers, tValue.iWKennz, tValue.eArt, tValue.iLfNr);
+        xBreak = dB_Table.NoMatch;
+        return xBreak ? null : dB_Table;
     }
 
     private IRecordset? SeekFaSu(int iNr, int v)

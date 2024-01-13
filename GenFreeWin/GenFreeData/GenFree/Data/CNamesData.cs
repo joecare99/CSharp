@@ -1,4 +1,5 @@
-﻿using GenFree.Helper;
+﻿using GenFree.Model.Data;
+using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 
 namespace GenFree.Data;
 
-public class CNamesData : CRSData<ENamesProp, (int, ETextKennz, int)>, INamesData
+public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesData
 {
     public CNamesData(IRecordset dB_NamesTable) : base(dB_NamesTable)
     {

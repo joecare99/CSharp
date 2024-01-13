@@ -1,4 +1,5 @@
-﻿using GenFree.Helper;
+﻿using GenFree.Model.Data;
+using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 
 namespace GenFree.Data
 {
-    public class CWitnessData : CRSData<EWitnessProp, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, IWitnessData
+    public class CWitnessData : CRSDataC<EWitnessProp, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, IWitnessData
     {
         public CWitnessData(IRecordset db_Table) : base(db_Table)
         {

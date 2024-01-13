@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using GenFree.Model.Data;
 
 namespace GenFree.Data;
 
@@ -13,7 +14,8 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
     private static Func<IRecordset> GetPersonTable { get; set; } = () => DataModul.DB_PersonTable;
     private static Func<int, string> _GetText;
 
-    private IRecordset _dB_PersonTable;
+    protected override Enum _keyIndex => PersonIndex.PerNr;
+
     public DateTime dEditDat { get; set; }
     public DateTime dAnlDatum { get; private set; }
 
@@ -83,10 +85,8 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
 
     public CPersonData(int iPersonNr):base(GetPersonTable())
     {
-        _dB_PersonTable = GetPersonTable();
-        _dB_PersonTable.Index = nameof(PersonIndex.PerNr);
-        _dB_PersonTable.Seek("=", iPersonNr);
-        if (!_dB_PersonTable.NoMatch)
+        var _dB_PersonTable = Seek( iPersonNr);
+        if (_dB_PersonTable != null)
             FillData(_dB_PersonTable);
         else
         {
@@ -428,13 +428,6 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
             EPersonProp.sOFB => sOFB = (string)value,
             _ => throw new NotImplementedException(),
         };
-    }
-
-    protected override IRecordset? Seek(int iD)
-    {
-        _db_Table.Index = nameof(PersonIndex.PerNr);
-        _db_Table.Seek("=", iD);
-        return _db_Table.NoMatch ? null : _db_Table;
     }
 
 }

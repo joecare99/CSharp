@@ -458,51 +458,6 @@ public static partial class DataModul
     #endregion
 
     #region Witness Methods
-
-   
-    public static void Witness_DeleteAllOrphanFam()
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
-        DB_WitnessTable.MoveFirst();
-        while (!DB_WitnessTable.EOF
-            && !DB_WitnessTable.NoMatch)
-        {
-            if (DB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsInt() > 499
-                && !Family.Exists(DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt()))
-            {
-                DB_WitnessTable.Delete();
-            }
-            DB_WitnessTable.MoveNext();
-        }
-    }
-
-    public static void Witness_Append(int suchPer, int perfamNr, int kennz1, EEventArt erArt, short lfNR)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
-        DB_WitnessTable.Seek("=", perfamNr, suchPer, kennz1, erArt, lfNR);
-        if (DB_WitnessTable.NoMatch)
-        {
-            Witness_AppendRaw(suchPer, perfamNr, erArt, lfNR, kennz1);
-        }
-    }
-
-    public static void Witness_AppendRaw(int suchPer, int perfamNr, EEventArt erArt, short lfNR, int kennz1)
-    {
-        DB_WitnessTable.AddNew();
-        DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].Value = suchPer;
-        DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].Value = perfamNr;
-        DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].Value = kennz1;
-        DB_WitnessTable.Fields[nameof(WitnessFields.Art)].Value = erArt;
-        DB_WitnessTable.Fields[nameof(WitnessFields.LfNr)].Value = lfNR;
-        DB_WitnessTable.Update();
-    }
-
-    public static void Witness_Add(int personNr, int iPerfam, EEventArt art, short lfNR, int iWKennz = 10)
-        => Witness_AppendRaw(personNr, iPerfam, art, lfNR, iWKennz);
-
-
-
-
     #endregion
 
     #region Texte Methods

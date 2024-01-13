@@ -1,14 +1,14 @@
-﻿using GenFree.Data;
-using GenFree.Interfaces.DB;
+﻿using GenFree.Interfaces.DB;
 using GenFree.Helper;
 using GenFree.Interfaces;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using GenFree.Model.Data;
 
 namespace GenFree.Data
 {
-    public class CSourceLinkData : CRSData<ESourceLinkProp, (int, EEventArt, int)>, ISourceLinkData
+    public class CSourceLinkData : CRSDataC<ESourceLinkProp, (int, EEventArt, int)>, ISourceLinkData
     {
 
         public CSourceLinkData(IRecordset recordset) : base(recordset)
