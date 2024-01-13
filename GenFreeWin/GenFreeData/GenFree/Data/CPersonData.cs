@@ -5,19 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using GenFree.Model.Data;
 
 namespace GenFree.Data;
 
-public class CPersonData : IPersonData
+public class CPersonData : CRSData<EPersonProp, int>, IPersonData
 {
     private static Func<IRecordset> GetPersonTable { get; set; } = () => DataModul.DB_PersonTable;
+    private static Func<int, string> _GetText;
 
-    private List<EPersonProp> _changedPropList = new();
-    private IRecordset _dB_PersonTable;
+    protected override Enum _keyIndex => PersonIndex.PerNr;
+
     public DateTime dEditDat { get; set; }
     public DateTime dAnlDatum { get; private set; }
 
     private int _iPersNr;
+    private static Func<int, (string, string)> _GetText2;
 
     public Guid gUID { get; internal set; }
     public string SurName { get; private set; }
@@ -28,6 +31,8 @@ public class CPersonData : IPersonData
     public string FullSurName { get; private set; }
     public string FullName { get; private set; }
     public string sSex { get; private set; }
+    public string sKonv { get; private set; }
+
     public string Prefix { get; internal set; }
     public string Prae { get; internal set; }
     public string Suffix { get; internal set; }
@@ -50,18 +55,15 @@ public class CPersonData : IPersonData
     public int iReligi { get; set; }
     public string[] sBem { get; } = new string[4];
     public string sAge { get; internal set; }
+    public float fAge { get; internal set; }
     public string sPruefen { get; set; }
 
 
-    public CPersonData(IRecordset dB_PersonTable)
-    {
-        _dB_PersonTable = dB_PersonTable;
-        FillData(dB_PersonTable);
-    }
+    public CPersonData(IRecordset dB_PersonTable) : base(dB_PersonTable) { }
 
-    public void FillData(IRecordset dB_PersonTable)
+    public override void FillData(IRecordset dB_PersonTable)
     {
-        ID = dB_PersonTable.Fields[nameof(PersonFields.PersNr)].AsInt();
+        _ID = dB_PersonTable.Fields[nameof(PersonFields.PersNr)].AsInt();
         sOFB = dB_PersonTable.Fields[nameof(PersonFields.OFB)].AsString();
         sPruefen = dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].AsString();
         sSuch[1] = dB_PersonTable.Fields[nameof(PersonFields.Such1)].AsString();
@@ -71,20 +73,20 @@ public class CPersonData : IPersonData
         sSuch[5] = dB_PersonTable.Fields[nameof(PersonFields.Such5)].AsString();
         sSuch[6] = dB_PersonTable.Fields[nameof(PersonFields.Such6)].AsString();
         sSex = dB_PersonTable.Fields[nameof(PersonFields.Sex)].AsString();
+        sKonv = dB_PersonTable.Fields[nameof(PersonFields.Konv)].AsString();
         iReligi = dB_PersonTable.Fields[nameof(PersonFields.religi)].AsInt();
         sBem[1] = dB_PersonTable.Fields[nameof(PersonFields.Bem1)].AsString();
         sBem[2] = dB_PersonTable.Fields[nameof(PersonFields.Bem2)].AsString();
         sBem[3] = dB_PersonTable.Fields[nameof(PersonFields.Bem3)].AsString();
         dEditDat = dB_PersonTable.Fields[nameof(PersonFields.EditDat)].AsDate();
         dAnlDatum = dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].AsDate();
+        gUID = dB_PersonTable.Fields[nameof(PersonFields.PUid)].AsGUID();
     }
 
-    public CPersonData(int iPersonNr)
+    public CPersonData(int iPersonNr):base(GetPersonTable())
     {
-        _dB_PersonTable = GetPersonTable();
-        _dB_PersonTable.Index = nameof(PersonIndex.PerNr);
-        _dB_PersonTable.Seek("=", iPersonNr);
-        if (!_dB_PersonTable.NoMatch)
+        var _dB_PersonTable = Seek( iPersonNr);
+        if (_dB_PersonTable != null)
             FillData(_dB_PersonTable);
         else
         {
@@ -93,16 +95,30 @@ public class CPersonData : IPersonData
         }
     }
 
-    public CPersonData()
+    public CPersonData() : base(GetPersonTable())
     {
-        _dB_PersonTable = GetPersonTable();
         _iPersNr = 0;
         gUID = Guid.NewGuid();
     }
 
-    public int ID
+    public static void SetDataFkc(Func<IRecordset> value)
     {
-        get => _iPersNr; private set
+        GetPersonTable = value;
+    }
+
+    public static void SetGetText(Func<int, string> getText)
+    {
+        _GetText = getText;
+    }
+    public static void SetGetText2(Func<int, (string,string)> getText)
+    {
+        _GetText2 = getText;
+    }
+
+    public override int ID => _iPersNr;
+    private int _ID
+    {
+        set
         {
             if (_iPersNr != value)
             {
@@ -117,18 +133,13 @@ public class CPersonData : IPersonData
 
     public bool isEmpty => throw new NotImplementedException();
 
-    public IReadOnlyList<EPersonProp> ChangedProps => throw new NotImplementedException();
-
-    public void SetPersonNr(int i) { ID = i; }
+    public void SetPersonNr(int i) { _ID = i; }
 
     public void SetFullSurname(string value)
     {
         FullSurName = value;
     }
-    public void SetFull(string value)
-    {
-        FullName = value;
-    }
+    public void SetFull(string value) => SetPropValue(EPersonProp.SurName, value);
 
     public void SetDates(string[] value, Func<string, string, string>? SetAge = null)
     {
@@ -158,8 +169,36 @@ public class CPersonData : IPersonData
             }
         }
         sAge = SetAge?.Invoke(Birthday, Death) ?? "";
-
     }
+
+    public void SetDates(DateTime[] value, Func<DateTime, DateTime, float>? SetAge = null)
+    {
+        for (EEventArt i = EEventArt.eA_Birth; i <= EEventArt.eA_Burial; i++)
+        {
+            var iX = (int)i - 100;
+            if (value.Length > iX)
+            {
+                switch (i)
+                {
+                    default:
+                        dBirth = value[iX];
+                        break;
+                    case EEventArt.eA_Baptism:
+                        dBaptised = value[iX];
+                        break;
+                    case EEventArt.eA_Death:
+                        dDeath = value[iX];
+                        break;
+                    case EEventArt.eA_Burial:
+                        dBurial = value[iX];
+                        break;
+                }
+            }
+        }
+        fAge = SetAge?.Invoke(dBirth, dDeath) ?? default;
+    }
+
+
     public void Clear()
     {
         foreach (PropertyInfo p in GetType().GetProperties())
@@ -167,7 +206,14 @@ public class CPersonData : IPersonData
             if (p.CanWrite)
                 try
                 {
+                    if (p.PropertyType == typeof(string))
                     p.SetValue(this, "");
+                    else if (p.PropertyType == typeof(DateTime))
+                        p.SetValue(this, default(DateTime));
+                    else if (p.PropertyType == typeof(int))
+                        p.SetValue(this, 0);
+                    else if (p.PropertyType == typeof(Guid))
+                        p.SetValue(this, Guid.Empty);
                 }
                 catch { }
         }
@@ -175,27 +221,26 @@ public class CPersonData : IPersonData
 
     public void SetPersonNames(int[] iName, (int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN)
     {
-        var Person = this;
-        (Person.SurName, Person.sBurried) = DataModul.TextLese2(iName[(int)ENameKennz.nkName]);
-        Person.Prefix = DataModul.TextLese1(iName[(int)ENameKennz.nkPrefix]);
-        Person.Suffix = DataModul.TextLese1(iName[(int)ENameKennz.nkSuffix]);
-        Person.Clan = DataModul.TextLese1(iName[(int)ENameKennz.nkClanName]);
-        Person.Prae = DataModul.TextLese1(iName[(int)ENameKennz.nkPraeName]);  //Kont[7]
-        Person.Alias = DataModul.TextLese1(iName[(int)ENameKennz.nkAlias]);
-        Person.Stat = DataModul.TextLese1(iName[(int)ENameKennz.nkStatus]); // Person.Stat
+        (SurName, sBurried) = _GetText2(iName[(int)ENameKennz.nkName]); // ??
+        Prefix = _GetText(iName[(int)ENameKennz.nkPrefix]);
+        Suffix = _GetText(iName[(int)ENameKennz.nkSuffix]);
+        Clan = _GetText(iName[(int)ENameKennz.nkClanName]);
+        Prae = _GetText(iName[(int)ENameKennz.nkPraeName]);  //Kont[7]
+        Alias = _GetText(iName[(int)ENameKennz.nkAlias]);
+        Stat = _GetText(iName[(int)ENameKennz.nkStatus]); // Person.Stat
 
-        WorkNames(aiVorns, xInclLN, Person);
+        WorkNames(aiVorns, xInclLN);
     }
 
-    private static void WorkNames((int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN, CPersonData Person)
+    private void WorkNames((int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN)
     {
         string sGivennames = "";
-        Person.Givenname.Clear();
+        Givenname.Clear();
         var num5 = 1;
-        while (num5 <= 15 && aiVorns[num5].iName != 0)
+        while (num5 < aiVorns.Length && aiVorns[num5].iName != 0)
         {
-            var txts = DataModul.TextLese2(aiVorns[num5].iName);
-            Person.Givenname.Add(txts.Item1);
+            var txts = _GetText2(aiVorns[num5].iName);
+            Givenname.Add(txts.Item1);
             var sQuoteS = (aiVorns[num5].xRuf, aiVorns[num5].xNick) switch
             {
                 (false, true) => "'",
@@ -204,20 +249,20 @@ public class CPersonData : IPersonData
             };
             if (aiVorns[num5].xRuf)
             {
-                Person.Callname.Add(txts.Item1);
+                Callname.Add(txts.Item1);
             }
             if (aiVorns[num5].xNick)
             {
-                Person.Nickname.Add(txts.Item1);
+                Nickname.Add(txts.Item1);
             }
-            sGivennames += txts.Item1.TrimEnd().FrameIfNEoW(sQuoteS);
+            sGivennames += txts.Item1.TrimEnd().FrameIfNEoW(sQuoteS)+" ";
             if (!string.IsNullOrWhiteSpace(txts.Item2) && xInclLN)
             {
                 sGivennames += $">{txts.Item2.Trim()}< ";
             }
             num5 += 1;
         }
-        Person.Givennames = sGivennames;
+        Givennames = sGivennames.TrimEnd();
     }
 
     public void SetData(IEventData cEvt)
@@ -238,6 +283,8 @@ public class CPersonData : IPersonData
                 sBurried = "J";
                 dBurial = cEvt.dDatumV;
                 break;
+            default:
+                break;
         }
     }
     public void Update()
@@ -245,40 +292,40 @@ public class CPersonData : IPersonData
         throw new NotImplementedException();
     }
 
-    public void SetSex(string sSex)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetSex(string sSex) => SetPropValue(EPersonProp.sSex, sSex);
 
-    public void SetDBValue(IRecordset dB_PersonTable, string[]? asProps)
+    public override void SetDBValue(IRecordset dB_PersonTable, string[]? asProps)
     {
-        asProps ??= _changedPropList.Select((e) => e.ToString()).ToArray();
+        asProps ??= _changedPropsList.Select((e) => e.ToString()).ToArray();
         foreach (var prop in asProps)
         {
-            switch (prop)
+            switch (prop.AsEnum<EPersonProp>())
             {
-                case nameof(EPersonProp.gUid):
-                    dB_PersonTable.Fields[nameof(PersonFields.PUid)].Value = gUID;
+                case EPersonProp.ID:
+                    dB_PersonTable.Fields[nameof(PersonFields.PersNr)].Value = ID;
                     break;
-                case nameof(EPersonProp.SurName):
-                    break;
-                case nameof(EPersonProp.Givennames):
-                    break;
-                case nameof(EPersonProp.sSex):
+                case EPersonProp.sSex:
                     dB_PersonTable.Fields[nameof(PersonFields.Sex)].Value = sSex;
                     break;
-                case nameof(EPersonProp.dBirth):
+                case EPersonProp.gUid:
+                    dB_PersonTable.Fields[nameof(PersonFields.PUid)].Value = gUID;
                     break;
-                case nameof(EPersonProp.dBaptised):
+                case EPersonProp.SurName:
                     break;
-                case nameof(EPersonProp.dDeath):
+                case EPersonProp.Givennames:
                     break;
-                case nameof(EPersonProp.dBurial):
+                case EPersonProp.dBirth:
                     break;
-                case nameof(EPersonProp.sOFB):
+                case EPersonProp.dBaptised:
+                    break;
+                case EPersonProp.dDeath:
+                    break;
+                case EPersonProp.dBurial:
+                    break;
+                case EPersonProp.sOFB:
                     dB_PersonTable.Fields[nameof(PersonFields.OFB)].Value = sOFB;
                     break;
-                case nameof(EPersonProp.sSuch):
+                case EPersonProp.sSuch:
                     dB_PersonTable.Fields[nameof(PersonFields.Such1)].Value = sSuch[1];
                     dB_PersonTable.Fields[nameof(PersonFields.Such2)].Value = sSuch[2];
                     dB_PersonTable.Fields[nameof(PersonFields.Such3)].Value = sSuch[3];
@@ -286,16 +333,25 @@ public class CPersonData : IPersonData
                     dB_PersonTable.Fields[nameof(PersonFields.Such5)].Value = sSuch[5];
                     dB_PersonTable.Fields[nameof(PersonFields.Such6)].Value = sSuch[6];
                     break;
-                case nameof(EPersonProp.iReligi):
+                case EPersonProp.iReligi:
                     dB_PersonTable.Fields[nameof(PersonFields.religi)].Value = iReligi;
                     break;
-                case nameof(EPersonProp.sBem):
+                case EPersonProp.sKonv:
+                    dB_PersonTable.Fields[nameof(PersonFields.Konv)].Value = sKonv;
+                    break;
+                case EPersonProp.sBem:
                     dB_PersonTable.Fields[nameof(PersonFields.Bem1)].Value = sBem[1];
                     dB_PersonTable.Fields[nameof(PersonFields.Bem2)].Value = sBem[2];
                     dB_PersonTable.Fields[nameof(PersonFields.Bem3)].Value = sBem[3];
                     break;
-                case nameof(EPersonProp.sPruefen):
+                case EPersonProp.sPruefen:
                     dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].Value = sPruefen;
+                    break;
+                case EPersonProp.dAnlDatum:
+                    dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].Value = dAnlDatum;
+                    break;
+                case EPersonProp.dEditDat:
+                    dB_PersonTable.Fields[nameof(PersonFields.EditDat)].Value = dEditDat;
                     break;
                 default:
                     throw new NotImplementedException();
@@ -303,91 +359,75 @@ public class CPersonData : IPersonData
         }
     }
 
-    public void Delete()
+    public override Type GetPropType(EPersonProp prop) => prop switch
     {
-        throw new NotImplementedException();
-    }
+        EPersonProp.ID => typeof(int),
+        EPersonProp.sSex => typeof(string),
+        EPersonProp.sBem => typeof(string[]),
+        EPersonProp.gUid => typeof(Guid),
+        EPersonProp.SurName => typeof(string),
+        EPersonProp.Givennames => typeof(string),
+        EPersonProp.dBirth => typeof(DateTime),
+        EPersonProp.dBaptised => typeof(DateTime),
+        EPersonProp.dDeath => typeof(DateTime),
+        EPersonProp.dBurial => typeof(DateTime),
+        EPersonProp.sOFB => typeof(string),
+        EPersonProp.sSuch => typeof(string[]),
+        EPersonProp.iReligi => typeof(int),
+        EPersonProp.sPruefen => typeof(string),
+        EPersonProp.sKonv => typeof(string),
+        EPersonProp.dAnlDatum => typeof(DateTime),
+        EPersonProp.dEditDat => typeof(DateTime),
+        _ => throw new NotImplementedException(),
+    };
 
-    public Type GetPropType(EPersonProp prop)
+    public override object GetPropValue(EPersonProp prop) => prop switch
     {
-        return prop switch
-        {
-            EPersonProp.gUid => typeof(Guid),
-            EPersonProp.SurName => typeof(string),
-            EPersonProp.Givennames => typeof(string),
-            EPersonProp.sSex => typeof(string),
-            EPersonProp.dBirth => typeof(DateTime),
-            EPersonProp.dBaptised => typeof(DateTime),
-            EPersonProp.dDeath => typeof(DateTime),
-            EPersonProp.dBurial => typeof(DateTime),
-            EPersonProp.sOFB => typeof(string),
-            EPersonProp.sSuch => typeof(string[]),
-            EPersonProp.iReligi => typeof(int),
-            EPersonProp.sBem => typeof(string[]),
-            EPersonProp.sPruefen => typeof(string),
-            _ => throw new NotImplementedException(),
-        };
-    }
+        EPersonProp.ID => ID,
+        EPersonProp.gUid => gUID,
+        EPersonProp.SurName => SurName,
+        EPersonProp.Givennames => Givennames,
+        EPersonProp.sSex => sSex,
+        EPersonProp.dBirth => dBirth,
+        EPersonProp.dBaptised => dBaptised,
+        EPersonProp.dDeath => dDeath,
+        EPersonProp.dBurial => dBurial,
+        EPersonProp.sOFB => sOFB,
+        EPersonProp.sSuch => sSuch,
+        EPersonProp.iReligi => iReligi,
+        EPersonProp.sBem => sBem,
+        EPersonProp.sKonv => sKonv,
+        EPersonProp.sPruefen => sPruefen,
+        EPersonProp.dAnlDatum => dAnlDatum,
+        EPersonProp.dEditDat => dEditDat,
+        _ => throw new NotImplementedException(),
+    };
 
-    public object GetPropValue(EPersonProp prop)
+    public override void SetPropValue(EPersonProp prop, object value)
     {
-        return prop switch
-        {
-            EPersonProp.gUid => gUID,
-            EPersonProp.SurName => SurName,
-            EPersonProp.Givennames => Givennames,
-            EPersonProp.sSex => sSex,
-            EPersonProp.dBirth => dBirth,
-            EPersonProp.dBaptised => dBaptised,
-            EPersonProp.dDeath => dDeath,
-            EPersonProp.dBurial => dBurial,
-            EPersonProp.sOFB => sOFB,
-            EPersonProp.sSuch => sSuch,
-            EPersonProp.iReligi => iReligi,
-            EPersonProp.sBem => sBem,
-            EPersonProp.sPruefen => sPruefen,
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    public T2 GetPropValue<T2>(EPersonProp prop)
-    {
-        return (T2)GetPropValue(prop);
-    }
-
-    public void SetPropValue(EPersonProp prop, object value)
-    {
-        if (GetPropType(prop).GetMethod("Equals")?.Invoke(GetPropValue(prop), new[] { value }) as bool? ?? false)
-            return;
-        _changedPropList.Add(prop);
+        if (EqualsProp(prop,value)) return;
+        AddChangedProp(prop);
         object _ = prop switch
         {
-            EPersonProp.gUid => gUID = (Guid)value,
-            EPersonProp.SurName => SurName = (string)value,
-            EPersonProp.Givennames => Givennames = (string)value,
             EPersonProp.sSex => sSex = (string)value,
+            EPersonProp.sBem when value is ListItem<int> l => sBem[l.ItemData] = l.ItemString,
+            EPersonProp.sBem when value is string[] aS => aS.IntoString(sBem),
+            EPersonProp.sSuch when value is ListItem<int> l => sSuch[l.ItemData] = l.ItemString,
+            EPersonProp.sPruefen => sPruefen = (string)value,
+            EPersonProp.sKonv => sKonv = (string)value,
+            EPersonProp.gUid => gUID = (Guid)value,
             EPersonProp.dBirth => dBirth = (DateTime)value,
             EPersonProp.dBaptised => dBaptised = (DateTime)value,
             EPersonProp.dDeath => dDeath = (DateTime)value,
             EPersonProp.dBurial => dBurial = (DateTime)value,
-            EPersonProp.sOFB => sOFB = (string)value,
-            EPersonProp.sSuch when value is ListItem<int> l => sSuch[l.ItemData] = l.ItemString,
+            EPersonProp.dAnlDatum => dAnlDatum = (DateTime)value,
+            EPersonProp.dEditDat => dEditDat = (DateTime)value,
+            EPersonProp.SurName => SurName = (string)value,
+            EPersonProp.Givennames => Givennames = (string)value,
             EPersonProp.iReligi => iReligi = (int)value,
-            EPersonProp.sBem when value is ListItem<int> l => sBem[l.ItemData] = l.ItemString,
-            EPersonProp.sBem when value is string[] aS => aS.IntoString(sBem),
-            EPersonProp.sPruefen => sPruefen = (string)value,
+            EPersonProp.sOFB => sOFB = (string)value,
             _ => throw new NotImplementedException(),
         };
     }
 
-    public void ClearChangedProps()
-    {
-        _changedPropList.Clear();
-    }
-
-    public void AddChangedProp(EPersonProp prop)
-    {
-        if (!_changedPropList.Contains(prop))
-            _changedPropList.Add(prop);
-    }
 }

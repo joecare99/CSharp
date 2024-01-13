@@ -4,6 +4,7 @@
     {
         ID,
         sSex,
+        iReligi,
         sBem,
         sKonv,
         sSuch,
@@ -15,7 +16,8 @@
         dBurial,
         SurName,
         Givennames,
-        iReligi,
         sOFB,
+        dAnlDatum,
+        dEditDat
     }
 }
