@@ -269,15 +269,15 @@ namespace GenFree.Data
                 new(NameIndex.TxNr, new Enum[] {  } ),
                 new(NameIndex.Vollname, new Enum[] { NameFields.PersNr, NameFields.Kennz, NameFields.LfNr } ){ Unique = true }} 
                 },
-        new() { Name = nameof(dbTables.INDNam),
+        new() { Name = nameof(dbTables.INDNam), //OFB-Table
           Fields = new stFieldDef[]{
-                new("PerNr", TypeCode.Int64) ,
-                new("Kennz", TypeCode.String) { Laenge = 2 },
-                new("Textnr", TypeCode.Int64) },
+                new(OFBFields.PerNr, TypeCode.Int64) ,
+                new(OFBFields.Kennz, TypeCode.String) { Laenge = 2 },
+                new(OFBFields.TextNr, TypeCode.Int64) },
           Indexes = new stIndex[]{
-                new("Indn", new[] { "" } ),
-                new("Indnr", new[] { "" } ),
-                new("Indnum", new[] { "" } )}
+                new(OFBIndex.Indn, new Enum[] { OFBFields.PerNr, OFBFields.Kennz ,OFBFields.TextNr} ){ Unique = true},
+                new(OFBIndex.InDNr, new Enum[] { OFBFields.PerNr,OFBFields.Kennz } ),
+                new(OFBIndex.IndNum, new Enum[] { OFBFields.TextNr } )}
                 },
         new() { Name = nameof(dbTables.Leer1),
           Fields = new stFieldDef[]{

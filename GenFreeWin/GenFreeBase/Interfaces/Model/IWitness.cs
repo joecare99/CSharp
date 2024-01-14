@@ -21,5 +21,7 @@ namespace GenFree.Data
         void DeleteAllZ(int persInArb, int sWKennz, EEventArt eArt, short iLfNr);
         bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10);
         IEnumerable<IWitnessData> ReadAllFams(int iNr, int v);
+        void UpdateAllReplFams(int Fam1, int Fam2);
+        void UpdateAllReplFams(int Fam1, int Fam2, short iLfNr2, EEventArt eArt2);
     }
 }

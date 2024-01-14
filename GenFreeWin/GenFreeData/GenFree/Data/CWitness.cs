@@ -131,7 +131,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         }
     }
 
-    public  void Add(int iPerfam, int personNr, EEventArt art, short lfNR, int iWKennz = 10)
+    public void Add(int iPerfam, int personNr, EEventArt art, short lfNR, int iWKennz = 10)
         => AppendRaw(iPerfam, personNr, iWKennz, art, lfNR);
 
     private void AppendRaw(int perfamNr, int suchPer, int kennz1, EEventArt erArt, short lfNR)
@@ -155,10 +155,10 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         return xBreak ? null : dB_Table;
     }
 
-    private IRecordset? SeekFaSu(int iNr, int v)
+    private IRecordset? SeekFaSu(int iLink, int iWKennz)
     {
         _db_Table.Index = nameof(WitnessIndex.FamSu);
-        _db_Table.Seek("=", iNr, v);
+        _db_Table.Seek("=", iLink, iWKennz);
         return _db_Table.NoMatch ? null : _db_Table;
     }
 
@@ -168,4 +168,38 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         _db_Table.Seek("=", persInArb, sWKennz, eArt, iLfNr);
         return _db_Table.NoMatch ? null : _db_Table;
     }
+
+    public void UpdateAllReplFams(int Fam1, int Fam2)
+    {
+        var eWKennz = 10;
+        IRecordset? dB_WitnessTable = SeekFaSu(Fam1, eWKennz);
+        while (dB_WitnessTable?.EOF == false
+            && !dB_WitnessTable.NoMatch
+            && !(dB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() != Fam1))
+        {
+            dB_WitnessTable.Edit();
+            dB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].Value = Fam2;
+            dB_WitnessTable.Update();
+            dB_WitnessTable.MoveNext();
+        }
+    }
+
+
+    public void UpdateAllReplFams(int Fam1, int Fam2, short iLfNr2, EEventArt eArt2)
+    {
+        var eWKennz = 10;
+        IRecordset dB_WitnessTable = SeekFaSu(Fam1, eWKennz);
+        while (dB_WitnessTable?.EOF == false
+            && !dB_WitnessTable.NoMatch
+            && !(dB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() != Fam1))
+        {
+            dB_WitnessTable.Edit();
+            dB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].Value = Fam2;
+            dB_WitnessTable.Fields[nameof(WitnessFields.Art)].Value = eArt2;
+            dB_WitnessTable.Fields[nameof(WitnessFields.LfNr)].Value = iLfNr2;
+            dB_WitnessTable.Update();
+            dB_WitnessTable.MoveNext();
+        }
+    }
+
 }

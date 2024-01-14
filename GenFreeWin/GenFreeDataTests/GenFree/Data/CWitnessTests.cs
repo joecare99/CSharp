@@ -185,5 +185,50 @@ namespace GenFree.Data.Tests
             _ = testRS.Received(5).Fields[""];
             testRS.Received(1).Update();
         }
+
+        [DataTestMethod()]
+        [DataRow("Null", 0, 0, (short)1, EEventArt.eA_Birth, false)]
+        [DataRow("Null", 1, 0, (short)2, EEventArt.eA_603, true)]
+        public void UpdateAllReplFamsTest(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
+        {
+            testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iLfNr / 2 != iAct, false, false, true);
+            testClass.UpdateAllReplFams(iAct, Fam2);
+            Assert.AreEqual(nameof(WitnessIndex.FamSu), testRS.Index);
+            testRS.Received(1).Seek("=", iAct, 10);
+            if (xExp)
+            {
+                testRS.Received(1).Edit();
+                _ = testRS.Received(3).Fields[""];
+                testRS.Received(1).Update();
+            }
+            else
+            {
+                testRS.Received(0).AddNew();
+                _ = testRS.Received(0).Fields[""];
+                testRS.Received(0).Update();
+            }
+        }
+        [DataTestMethod()]
+        [DataRow("Null", 0, 0, (short)1, EEventArt.eA_Birth, false)]
+        [DataRow("Null", 1, 0, (short)2, EEventArt.eA_603, true)]
+        public void UpdateAllReplFamsTest2(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
+        {
+            testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iLfNr / 2 != iAct, false, false, true);
+            testClass.UpdateAllReplFams(iAct, Fam2,iLfNr,eArt);
+            Assert.AreEqual(nameof(WitnessIndex.FamSu), testRS.Index);
+            testRS.Received(1).Seek("=", iAct, 10);
+            if (xExp)
+            {
+                testRS.Received(1).Edit();
+                _ = testRS.Received(5).Fields[""];
+                testRS.Received(1).Update();
+            }
+            else
+            {
+                testRS.Received(0).AddNew();
+                _ = testRS.Received(0).Fields[""];
+                testRS.Received(0).Update();
+            }
+        }
     }
 }
