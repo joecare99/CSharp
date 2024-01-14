@@ -115,6 +115,21 @@ public enum FamilyIndex
     Fam,
     Fuid
 }
+
+public enum OFBIndex
+{
+    InDNr,
+    IndNum,
+    Indn
+}
+
+public enum OFBFields
+{
+    PerNr,
+    Kennz,
+    TextNr
+}
+
 public enum PlaceFields
 {
     Ort,
