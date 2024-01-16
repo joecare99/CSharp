@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MdbBrowser.Models;
+using MdbBrowser.Models.Interfaces;
+using MdbBrowser.ViewModels.Interfaces;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,7 +17,7 @@ using System.Windows.Input;
 namespace MdbBrowser.ViewModels
 {
 
-    public partial class DBViewViewModel : ObservableValidator
+    public partial class DBViewViewModel : ObservableValidator, IDBViewViewModel
     {
         #region Delegates
         /// <summary>
@@ -32,6 +35,8 @@ namespace MdbBrowser.ViewModels
         [ObservableProperty]
         private string _FileOpenName;
         [ObservableProperty]
+        private string _CurrentView;
+        [ObservableProperty]
         private ObservableCollection<CategorizedDBMetadata> _dbMetaInfo = new();
 
         [ObservableProperty]
@@ -47,6 +52,9 @@ namespace MdbBrowser.ViewModels
         /// </summary>
         /// <value>The file save as dialog.</value>
         public FileDialogHandler? FileSaveAsDialog { get; set; }
+        public static IDBViewViewModel? This { get; private set; }
+
+        public IDBModel? dBModel => _DBModel;
 
         #endregion
 
@@ -97,7 +105,17 @@ namespace MdbBrowser.ViewModels
         private void DoSelectedItemChanged(object? prop)
         {
             if (prop is RoutedPropertyChangedEventArgs<object> rpcEa && rpcEa.NewValue is CategorizedDBMetadata cbvm)
+            {
                 SelectedEntry = cbvm.This;
+                if (SelectedEntry is DBMetaData dbmd)
+                    try
+                    {
+                        This = this;
+                        if (Assembly.GetExecutingAssembly().GetType($"{Assembly.GetExecutingAssembly().GetName().Name}.Views.{dbmd.Kind}View",true,true) is Type)
+                        CurrentView = $"/Views/{dbmd.Kind}View.xaml";
+                    }
+                    catch { CurrentView = ""; }
+            }
             else
                 SelectedEntry = null;
         }
