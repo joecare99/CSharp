@@ -148,9 +148,10 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         return !xBreak;
     }
 
-    public void DeleteBeSu(EEventArt eArt, int iPerFamNr)
+    public bool DeleteBeSu(EEventArt eArt, int iPerFamNr)
     {
-        SeekBeSu(eArt, iPerFamNr, out _)?.Delete();
+        SeekBeSu(eArt, iPerFamNr, out var xB)?.Delete();
+        return !xB;
     }
 
     public void DeleteAll(EEventArt eArt, int iPerFamNr)
@@ -242,6 +243,13 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         dB_EventTable.Seek("=", key.eArt, key.iLink, key.iLfNr);
         xBreak = dB_EventTable.NoMatch;
         return xBreak ? null : dB_EventTable;
+    }
+
+    public bool ReadBeSu(EEventArt eArt, int iLink, out IEventData? cEv)
+    {
+        var _r = SeekBeSu(eArt,iLink, out var xB);
+        cEv = _r is null ? null : GetData(_r);
+        return !xB;
     }
 
     public void SetValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
@@ -447,7 +455,6 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.MoveNext();
         }
     }
-
 }
 
 

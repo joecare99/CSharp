@@ -7,10 +7,9 @@ using System.Collections.Generic;
 using GenFree.Interfaces;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.DB;
-using System.Reflection;
 using GenFree.Sys;
-using System.Diagnostics.SymbolStore;
 using GenFree.Model;
+using System.Reflection;
 
 namespace GenFree.Data;
 
@@ -310,7 +309,6 @@ public static partial class DataModul
                 NB_WitnessTable.Fields["Person"].Value = cWitness.iPers;
                 NB_WitnessTable.Update();
             }
-            DB_WitnessTable.MoveNext();
             num5++;
         }
     }
@@ -458,120 +456,6 @@ public static partial class DataModul
     #endregion
 
     #region Witness Methods
-    public static void Witness_Delete(long perfamNr, long persInArb, int kennz, object erArt, object lfNR)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
-        DB_WitnessTable.Seek("=", perfamNr, persInArb, kennz, erArt, lfNR);
-        if (!DB_WitnessTable.NoMatch)
-        {
-            DB_WitnessTable.Delete();
-        }
-    }
-
-    public static void Witness_DeleteAllE(int persInArb, string eWKennz)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.ElSu);
-        DB_WitnessTable.Seek("=", persInArb, eWKennz);
-        var I = 1;
-        while (I <= 99
-            && !DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF)
-        {
-            if (!((DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].AsInt() != persInArb)
-              || (DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsString() != eWKennz)))
-            {
-                DB_WitnessTable.Delete();
-                DB_WitnessTable.MoveNext();
-                I++;
-            }
-        }
-    }
-
-    public static void Witness_DeleteAllF(int persInArb, string sWKennz)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.FamSu);
-        DB_WitnessTable.Seek("=", persInArb, sWKennz);
-        var I = 1;
-        while (I <= 99
-            && !DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF
-            && DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() == persInArb
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsString() == sWKennz)
-        {
-            if (DB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsInt() < 500)
-            {
-                DB_WitnessTable.Delete();
-            }
-            DB_WitnessTable.MoveNext();
-            I++;
-        }
-    }
-
-    public static void Witness_DeleteAllZ(int persInArb, int sWKennz, EEventArt eArt, short iLfNr)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.ZeugSu);
-        DB_WitnessTable.Seek("=", persInArb, sWKennz, eArt, iLfNr);
-        while (!DB_WitnessTable.NoMatch
-            && !DB_WitnessTable.EOF
-            && DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() == persInArb
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == sWKennz
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsEnum<EEventArt>() == eArt
-            && DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == iLfNr)
-        {
-            DB_WitnessTable.Delete();
-            DB_WitnessTable.MoveNext();
-        }
-    }
-
-    public static void Witness_DeleteAllOrphanFam()
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
-        DB_WitnessTable.MoveFirst();
-        while (!DB_WitnessTable.EOF
-            && !DB_WitnessTable.NoMatch)
-        {
-            if (DB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsInt() > 499
-                && !Family.Exists(DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt()))
-            {
-                DB_WitnessTable.Delete();
-            }
-            DB_WitnessTable.MoveNext();
-        }
-    }
-
-    public static void Witness_Append(int suchPer, int perfamNr, int kennz1, EEventArt erArt, short lfNR)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.Fampruef);
-        DB_WitnessTable.Seek("=", perfamNr, suchPer, kennz1, erArt, lfNR);
-        if (DB_WitnessTable.NoMatch)
-        {
-            Witness_AppendRaw(suchPer, perfamNr, erArt, lfNR, kennz1);
-        }
-    }
-
-    public static void Witness_AppendRaw(int suchPer, int perfamNr, EEventArt erArt, short lfNR, int kennz1)
-    {
-        DB_WitnessTable.AddNew();
-        DB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].Value = suchPer;
-        DB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].Value = perfamNr;
-        DB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].Value = kennz1;
-        DB_WitnessTable.Fields[nameof(WitnessFields.Art)].Value = erArt;
-        DB_WitnessTable.Fields[nameof(WitnessFields.LfNr)].Value = lfNR;
-        DB_WitnessTable.Update();
-    }
-
-    public static void Witness_Add(int personNr, int iPerfam, EEventArt art, short lfNR, int iWKennz = 10)
-        => Witness_AppendRaw(personNr, iPerfam, art, lfNR, iWKennz);
-
-    public static bool Witness_Exist(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10)
-    {
-        DB_WitnessTable.Index = nameof(WitnessIndex.ZeugSu);
-        DB_WitnessTable.Seek("=", persInArb, eWKennz, eEvtArt, lfNR);
-        return !DB_WitnessTable.NoMatch;
-    }
-
-
-
     #endregion
 
     #region Texte Methods
@@ -703,19 +587,19 @@ public static partial class DataModul
                 }
                 break;
             case ETextKennz.H_:
-                if (!Place_TextExistO(TextNr))
+                if (!Place.Exists(PlaceIndex.O, TextNr))
                 {
                     DB_TexteTable.Delete();
                 }
                 break;
             case ETextKennz.I_:
-                if (!Place_TextExistOT(TextNr))
+                if (!Place.Exists(PlaceIndex.OT, TextNr))
                 {
                     DB_TexteTable.Delete();
                 }
                 break;
             case ETextKennz.J_:
-                if (!Place_TextExistK(TextNr))
+                if (!Place.Exists(PlaceIndex.K, TextNr))
                 {
                     DB_TexteTable.Delete();
                 }
@@ -766,33 +650,25 @@ public static partial class DataModul
         }
         return flag;
     }
-
-    public static bool Place_TextExistK(int TextNr)
-        => Place.Exists(PlaceIndex.K, TextNr);
-
-    public static bool Place_TextExistOT(int TextNr)
-        => Place.Exists(PlaceIndex.OT, TextNr);
-
-    public static bool Place_TextExistO(int TextNr)
-    => Place.Exists(PlaceIndex.O, TextNr);
+    #endregion
 
     private static bool OFB_TextExist(int TextNr)
     {
-        DB_OFBTable.Index = "IndNum";
+        DB_OFBTable.Index = OFBIndex.IndNum.AsFld();
         DB_OFBTable.Seek("=", TextNr);
         return !DB_OFBTable.NoMatch;
     }
 
-    public static bool OFB_DataExists(int persInArb, string index, object sKennz)
+    public static bool OFB_DataExists(OFBIndex index, int persInArb, string sKennz)
     {
-        DB_OFBTable.Index = index;
+        DB_OFBTable.Index = index.AsFld();
         DB_OFBTable.Seek("=", persInArb, sKennz);
         return !DB_OFBTable.NoMatch;
     }
 
     public static void OFB_Update(string Kennz, int persInArb, int satz)
     {
-        DB_OFBTable.Index = "Indn";
+        DB_OFBTable.Index = OFBIndex.Indn.AsFld();
         DB_OFBTable.Seek("=", persInArb, Kennz, satz);
         if (DB_OFBTable.NoMatch)
         {
@@ -804,8 +680,21 @@ public static partial class DataModul
         }
     }
 
+    public static bool OFB_DeleteIndNr(int persInArb, string v)
+    {
+        OFB_SeekIndNr(persInArb, v, out var xB)?.Delete();
+        return !xB;
+    }
 
-    #endregion
+    public static IRecordset? OFB_SeekIndNr(int persInArb, string v, out bool xB)
+    {
+        var db_Table = DB_OFBTable;
+        db_Table.Index = OFBIndex.InDNr.AsFld();
+        db_Table.Seek("=", persInArb, v);
+        return (xB = db_Table.NoMatch) ? null : db_Table;
+    }
+
+
 
     public static IEnumerable<int> FindParentialFamilies(int persInArb)
     {
@@ -934,12 +823,7 @@ public static partial class DataModul
         var dB_EventTable = Event.Seek((eArt, iLink, iLfNr));
         if (dB_EventTable?.NoMatch != false)
         {
-            dB_EventTable = DB_EventTable;
-            dB_EventTable.AddNew();
-            dB_EventTable.Fields[nameof(EventFields.Art)].Value = eArt;
-            dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = iLink;
-            dB_EventTable.Fields[nameof(EventFields.LfNr)].Value = iLfNr;
-            dB_EventTable.Update();
+            dB_EventTable = Event_AppendRaw(eArt, iLink, iLfNr);
         }
         dB_EventTable.Edit();
         var field = dB_EventTable.Fields[nameof(eSetField)];
@@ -947,6 +831,33 @@ public static partial class DataModul
             ? sNewVal + " "
             : field.AsString() + " " + sNewVal;
         dB_EventTable.Update();
+    }
+
+    public static IRecordset Event_AppendRaw(EEventArt eArt, int iLink, short iLfNr)
+    {
+        var recordset = DB_EventTable;
+        recordset.AddNew();
+        recordset.Fields[nameof(EventFields.Art)].Value = eArt;
+        recordset.Fields[nameof(EventFields.PerFamNr)].Value = iLink;
+        recordset.Fields[nameof(EventFields.DatumV)].Value = 0;
+        recordset.Fields[nameof(EventFields.DatumV_S)].Value = " ";
+        recordset.Fields[nameof(EventFields.DatumB)].Value = 0;
+        recordset.Fields[nameof(EventFields.DatumB_S)].Value = " ";
+        recordset.Fields[nameof(EventFields.DatumText)].Value = "0";
+        recordset.Fields[nameof(EventFields.Ort)].Value = 0;
+        recordset.Fields[nameof(EventFields.Ort_S)].Value = " ";
+        recordset.Fields[nameof(EventFields.KBem)].Value = 0;
+        recordset.Fields[nameof(EventFields.Reg)].Value = " ";
+        recordset.Fields[nameof(EventFields.Bem1)].Value = " ";
+        recordset.Fields[nameof(EventFields.Bem2)].Value = " ";
+        recordset.Fields[nameof(EventFields.Platz)].Value = 0;
+        recordset.Fields[nameof(EventFields.LfNr)].Value = iLfNr;
+        recordset.Fields[nameof(EventFields.VChr)].Value = "0";
+        recordset.Fields[nameof(EventFields.Zusatz)].Value = "";
+        recordset.Fields[nameof(EventFields.GrabNr)].Value = 0;
+        recordset.Fields[nameof(EventFields.tot)].Value = " ";
+        recordset.Update();
+        return recordset;
     }
 
     public static T Event_GetValue<T>(int persInArb, EEventArt iEventType, EventFields eGetField, Func<IField, T> conv)
@@ -958,32 +869,37 @@ public static partial class DataModul
         return sEvtBem4;
     }
 
-    public static void Events_DeleteAllPersNonVitEv(int persInArb)
+    public static void Event_DeleteAllNonVitalE(int num18)
     {
-        var dB_EventTable = DB_EventTable;
-        dB_EventTable.Index = nameof(EventIndex.BeSu);
-
-        var UVar = EEventArt.eA_300;
-        while (UVar <= EEventArt.eA_302)
+        int num19 = 300;
+        while (num19 <= 302)
         {
-            dB_EventTable.Seek("=", UVar.AsString().Trim(), persInArb);
-            if (!dB_EventTable.NoMatch)
-            {
-                while (!dB_EventTable.EOF
-                    && !(dB_EventTable.Fields[nameof(EventFields.PerFamNr)].AsInt() != persInArb)
-                    && !(dB_EventTable.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>() != UVar))
-                {
-                    if (!dB_EventTable.NoMatch)
-                    {
-                        dB_EventTable.Delete();
-                    }
-                    dB_EventTable.MoveNext();
-                }
-            }
-            UVar += 1;
+            while (DataModul.Event.DeleteBeSu((EEventArt)num19, num18)) ;
+            num19++;
         }
-
     }
+
+    public static void Event_DeleteAllVitalE(int num18)
+    {
+        int num19 = 101;
+        while (num19 <= 120)
+        {
+            while (DataModul.Event.DeleteBeSu((EEventArt)num19, num18)) ;
+            num19++;
+        }
+    }
+
+    public static void Event_UpdateReplFams(int Fam1, int Fam2, EEventArt eArt)
+    {
+        IRecordset dB_EventTable;
+        if ((dB_EventTable = Event.SeekBeSu(eArt, Fam1, out _)) != null)
+        {
+            dB_EventTable.Edit();
+            dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = Fam2;
+            dB_EventTable.Update();
+        }
+    }
+
     public static IEnumerable<IEventData> Event_ReadAllGt(EventIndex eIndex, int iIndexVal)
     {
         var dB_EventTable = DB_EventTable;
@@ -1094,6 +1010,14 @@ public static partial class DataModul
         }
     }
 
+    public static void Names_DeleteAllPers(int num18)
+    {
+        IRecordset? _r;
+        while ((_r = Names.Seek(NameIndex.PNamen, num18)) != null)
+        {
+            _r.Delete();
+        }
+    }
 
     public static void SearchTab_Delete(int persInArb)
     {
@@ -1331,7 +1255,6 @@ public static partial class DataModul
         DB_PersonTable.Seek("=", iPersonNr);
         return string.IsNullOrWhiteSpace(DB_PersonTable.Fields[$"{eField}"].AsString());
     }
-
 
 
     #endregion

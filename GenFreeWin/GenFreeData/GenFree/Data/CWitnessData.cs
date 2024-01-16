@@ -1,12 +1,14 @@
-﻿using GenFree.Helper;
+﻿using GenFree.Model.Data;
+using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GenFree.Data
 {
-    internal class CWitnessData : CRSData<EWitnessProp, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, IWitnessData
+    public class CWitnessData : CRSDataC<EWitnessProp, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, IWitnessData
     {
         public CWitnessData(IRecordset db_Table) : base(db_Table)
         {
@@ -65,7 +67,30 @@ namespace GenFree.Data
 
         public override void SetDBValue(IRecordset dB_Table, string[]? asProps)
         {
-            throw new NotImplementedException();
+            asProps ??= _changedPropsList.Select(e => e.ToString()).ToArray();
+            foreach (var prop in asProps)
+            {
+                switch (prop.AsEnum<EWitnessProp>())
+                {
+                    case EWitnessProp.iPers:
+                        dB_Table.Fields[WitnessFields.PerNr.AsFld()].Value = iPers;
+                        break;
+                    case EWitnessProp.iWKennz:
+                        dB_Table.Fields[WitnessFields.Kennz.AsFld()].Value = iWKennz;
+                        break;
+                    case EWitnessProp.iLink:
+                        dB_Table.Fields[WitnessFields.FamNr.AsFld()].Value = iLink;
+                        break;
+                    case EWitnessProp.eArt:
+                        dB_Table.Fields[WitnessFields.Art.AsFld()].Value = eArt;
+                        break;
+                    case EWitnessProp.iLfNr:
+                        dB_Table.Fields[WitnessFields.LfNr.AsFld()].Value = iLfNr;
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
         }
 
         public override void SetPropValue(EWitnessProp prop, object value)
@@ -74,27 +99,15 @@ namespace GenFree.Data
                 return;
             AddChangedProp(prop);
 
-            switch (prop)
+            object _ = prop switch
             {
-                case EWitnessProp.iPers:
-                    iPers = (int)value;
-                    break;
-                case EWitnessProp.iWKennz:
-                    iWKennz = (int)value;
-                    break;
-                case EWitnessProp.iLink:
-                    iLink = (int)value;
-                    break;
-                case EWitnessProp.eArt:
-                    eArt = (EEventArt)value;
-                    break;
-                case EWitnessProp.iLfNr:
-                    iLfNr = (short)value;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
+                EWitnessProp.iPers => iPers = (int)value,
+                EWitnessProp.iWKennz => iWKennz = (int)value,
+                EWitnessProp.iLink => iLink = (int)value,
+                EWitnessProp.eArt => eArt = (EEventArt)value,
+                EWitnessProp.iLfNr => iLfNr = (short)value,
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }

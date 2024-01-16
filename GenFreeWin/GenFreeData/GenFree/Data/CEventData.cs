@@ -1,14 +1,14 @@
 ﻿using GenFree.Interfaces;
-using GenFree.Data;
 using GenFree.Helper;
 using System;
 using GenFree.Interfaces.DB;
 using System.Collections.Generic;
 using System.Linq;
+using GenFree.Model.Data;
 
 namespace GenFree.Data;
 
-public class CEventData : CRSData<EEventProp, (EEventArt eArt, int iLink, short iLfNr)>, IEventData
+public class CEventData : CRSDataC<EEventProp, (EEventArt eArt, int iLink, short iLfNr)>, IEventData
 {
     private string? _sArtText;
     private string? _sHausNr;

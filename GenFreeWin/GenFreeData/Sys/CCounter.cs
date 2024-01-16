@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenFree.GenFree.Sys
+namespace GenFree.Sys
 {
     public class CCounter<T> : ICounter<T> where T : struct
     {
