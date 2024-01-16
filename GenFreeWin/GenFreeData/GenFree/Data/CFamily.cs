@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GenFree.Model;
 using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
@@ -10,14 +11,14 @@ using GenFree.Interfaces.Sys;
 
 namespace GenFree.Data;
 
-public class CFamily : CUsesRecordSet<int>, IFamily
+public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyData>, IFamily
 {
     private ISysTime _sysTime;
     private Func<IRecordset> _value;
 
-   protected override IRecordset _db_Table => _value();
+    protected override IRecordset _db_Table => _value();
 
-    protected override string _keyIndex => nameof(FamilyIndex.Fam);
+    protected override FamilyIndex _keyIndex => FamilyIndex.Fam;
 
     public CFamily(Func<IRecordset> value, ISysTime sysTime)
     {
@@ -28,8 +29,9 @@ public class CFamily : CUsesRecordSet<int>, IFamily
     public void SetNameNr(int iFamInArb, int iName)
     {
         var dB_FamilyTable = Seek(iFamInArb);
-        if (dB_FamilyTable.NoMatch)
+        if (dB_FamilyTable?.NoMatch != false)
         {
+            dB_FamilyTable = _db_Table;
             dB_FamilyTable.AddNew();
             dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value = _sysTime.Now;
             dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = 0;
@@ -44,56 +46,43 @@ public class CFamily : CUsesRecordSet<int>, IFamily
         {
             dB_FamilyTable.Edit();
             dB_FamilyTable.Fields[nameof(FamilyFields.Name)].Value = iName;
+            dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = _sysTime.Now;
+
         }
         dB_FamilyTable.Update();
     }
 
-    public void SetValue(int famInArb, int satz, string[] strings, object[] objects)
+    public void SetValue(int famInArb, int satz, (EFamilyProp, object)[] atProps)
     {
-        throw new NotImplementedException();
-    }
-
-    public override IRecordset Seek(int key, out bool xBreak)
-    {
-        _db_Table.Index = _keyIndex;
-        _db_Table.Seek("=", key);
-        xBreak = _db_Table.NoMatch;
-        return xBreak? null: _db_Table;
-    }
-
-    public bool ReadData(int key, out IFamilyData? data)
-    {
-        var dB_FamilyTable = Seek(key, out bool xBreak);
-        data = xBreak ? null : new CFamilyPersons(dB_FamilyTable);
-        return !xBreak;
-    }
-
-    public IEnumerable<IFamilyData> ReadAll()
-    {
-        IRecordset dB_PlaceTable = _db_Table;
-        dB_PlaceTable.Index = _keyIndex;
-        dB_PlaceTable.MoveFirst();
-        while (!dB_PlaceTable.EOF)
+        SetNameNr(famInArb, satz);
+        _db_Table.Edit();
+        foreach (var (eProp, oVal) in atProps)
         {
-            yield return new CFamilyPersons(dB_PlaceTable);
-            dB_PlaceTable.MoveNext();
+            switch (eProp)
+            {
+                case EFamilyProp.xAeB:
+                    _db_Table.Fields[nameof(FamilyFields.Aeb)].Value = oVal;
+                    break;
+                default:
+                    break;
+            }
         }
-    }
-
-    public void SetData(int key, IFamilyData data, string[]? asProps = null)
-    {
-        var dB_FamilyTable = Seek(key);
-        if (dB_FamilyTable != null)
-        {
-            dB_FamilyTable.Edit();
-            data.SetDBValue(dB_FamilyTable, asProps);
-            dB_FamilyTable.Update();
-        }
+        _db_Table.Update();
     }
 
     protected override int GetID(IRecordset recordset)
     {
         return recordset.Fields[nameof(FamilyFields.FamNr)].AsInt();
     }
+
+    public override FamilyFields GetIndex1Field(FamilyIndex eIndex) => eIndex switch
+    {
+        FamilyIndex.Fam => FamilyFields.FamNr,
+        FamilyIndex.Fuid => FamilyFields.Fuid,
+        FamilyIndex.BeaDat => FamilyFields.EditDat,
+        _ => throw new ArgumentException(nameof(eIndex)),
+    };
+
+    protected override IFamilyData GetData(IRecordset rs) => new CFamilyPersons(rs);
 }
 

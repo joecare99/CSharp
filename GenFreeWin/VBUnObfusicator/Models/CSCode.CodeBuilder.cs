@@ -56,8 +56,8 @@ namespace VBUnObfusicator.Models
 
             private static void BuildBlockEnd(TokenData tokenData, CodeBuilderData data)
             {
-                _ = new CodeBlock() { Name = $"{tokenData.type}End", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock.Parent };
-                data.actualBlock = data.actualBlock.Parent;
+                _ = new CodeBlock() { Name = $"{tokenData.type}End", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock?.Parent };
+                data.actualBlock = data.actualBlock?.Parent;
             }
 
             private static void BuildBlockStart(TokenData tokenData, CodeBuilderData data)
@@ -112,7 +112,7 @@ namespace VBUnObfusicator.Models
 
             private static void BuildGoto(TokenData tokenData, CodeBuilderData data)
             {
-                data.actualBlock = new CodeBlock() { Name = $"{tokenData.type}", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock.Parent };
+                data.actualBlock = new CodeBlock() { Name = $"{tokenData.type}", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock?.Parent };
                 data.gotos.Add((ICodeBlock?)data.actualBlock);
                 data.xBreak = false;
             }
@@ -128,7 +128,7 @@ namespace VBUnObfusicator.Models
                 else
                     data.actualBlock.Code += ((data.actualBlock.Code.EndsWith("\"") && tokenData.Code.StartsWith("+"))
                         || tokenData.Code.StartsWith("(")
-                        || (letters.Contains(tokenData.Code[0]) 
+                        || (lettersAndNumbers.Contains(tokenData.Code[0]) 
                             && !string.IsNullOrEmpty(data.actualBlock.Code)
                             && !data.actualBlock.Code.EndsWith(" ") ) ? " " : "") + tokenData.Code;
                 data.xBreak = tokenData.Code.Contains("break;");

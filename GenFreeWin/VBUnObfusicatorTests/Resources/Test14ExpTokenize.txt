@@ -1,0 +1,48 @@
+﻿T:Instruction,0,private void Test14Dat()
+T:Block,1,{
+T:Instruction,1,switch
+T:Instruction,1,(sTest)
+T:Block,2,{
+T:Label,2,case 0:
+T:Goto,2,goto IL_0001;
+T:Label,2,default:
+T:Instruction,2,break;
+T:Label,2,IL_0001:
+T:Instruction,2,v = 0;
+T:Goto,2,goto IL_0002;
+T:Label,2,IL_0002:
+T:Instruction,2,K[v] = 0;
+T:Goto,2,goto IL_0003;
+T:Label,2,IL_0003:
+T:Instruction,2,v++;
+T:Instruction,2,if
+T:Instruction,2,(v < 13)
+T:Block,3,{
+T:Goto,3,goto IL_0002;
+T:Block,3,}
+T:Goto,2,goto IL_0004;
+T:Label,2,IL_0004:
+T:Instruction,2,v = 0;
+T:Goto,2,goto IL_0005;
+T:Label,2,IL_0005:
+T:Instruction,2,K[v] = 0;
+T:Goto,2,goto IL_0006;
+T:Label,2,IL_0006:
+T:Instruction,2,if
+T:Instruction,2,(v < 16)
+T:Block,3,{
+T:Instruction,3,v++;
+T:Goto,3,goto IL_0005;
+T:Block,3,}
+T:Goto,2,goto IL_0007;
+T:Label,2,IL_0007:
+T:Instruction,2,v++;
+T:Goto,2,goto IL_0008;
+T:Label,2,IL_0008:
+T:Instruction,2,if
+T:Instruction,2,(v < 18)
+T:Block,3,{
+T:Goto,3,goto IL_0005;
+T:Block,3,}
+T:Block,2,}
+T:Block,1,}

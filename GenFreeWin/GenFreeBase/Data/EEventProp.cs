@@ -9,7 +9,6 @@
         iArtText,
         iCausal,
         iDatumText,
-        iHausNr,
         iKBem,
         iLfNr,
         iOrt,
@@ -17,6 +16,7 @@
         iPlatz,
         iPrivacy,
         sBem,
+        iHausNr,
         sDatumB_S,
         sDatumV_S,
         sOrt_S,
@@ -24,5 +24,6 @@
         sVChr,
         sZusatz,
         xIsDead,
+        iGrabNr,
     }
 }
