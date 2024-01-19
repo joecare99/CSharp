@@ -11,25 +11,26 @@ namespace GenFree.Data;
 
 public class CPersonData : CRSData<EPersonProp, int>, IPersonData
 {
-    private static Func<IRecordset> GetPersonTable { get; set; } = () => DataModul.DB_PersonTable;
+    #region static Properties
+    private static Func<IRecordset> GetPersonTable { get; set; }
     private static Func<int, string> _GetText;
-
+    private static Func<int, (string, string)> _GetText2;
+    #endregion
     protected override Enum _keyIndex => PersonIndex.PerNr;
 
     public DateTime dEditDat { get; set; }
     public DateTime dAnlDatum { get; private set; }
 
     private int _iPersNr;
-    private static Func<int, (string, string)> _GetText2;
 
-    public Guid gUID { get; internal set; }
+    public Guid gUid { get; internal set; }
     public string SurName { get; private set; }
     public string Givennames { get; internal set; }
     public IList<string> Givenname { get; } = new List<string>();
     public IList<string> Nickname { get; } = new List<string>();
     public IList<string> Callname { get; } = new List<string>();
     public string FullSurName { get; private set; }
-    public string FullName { get; private set; }
+  //  public string FullName { get; private set; }
     public string sSex { get; private set; }
     public string sKonv { get; private set; }
 
@@ -80,26 +81,39 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
         sBem[3] = dB_PersonTable.Fields[nameof(PersonFields.Bem3)].AsString();
         dEditDat = dB_PersonTable.Fields[nameof(PersonFields.EditDat)].AsDate();
         dAnlDatum = dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].AsDate();
-        gUID = dB_PersonTable.Fields[nameof(PersonFields.PUid)].AsGUID();
+        gUid = dB_PersonTable.Fields[nameof(PersonFields.PUid)].AsGUID();
     }
 
-    public CPersonData(int iPersonNr):base(GetPersonTable())
+    static CPersonData()
     {
-        var _dB_PersonTable = Seek( iPersonNr);
+        Reset();
+    }
+
+    public static void Reset()
+    {
+        GetPersonTable = () => DataModul.DB_PersonTable;
+        _GetText = (i) => "";
+        _GetText2 = (i) => ("", "");
+    }
+
+    public CPersonData(int iPersonNr) : base(GetPersonTable())
+    {
+        var _dB_PersonTable = Seek(iPersonNr);
         if (_dB_PersonTable != null)
             FillData(_dB_PersonTable);
         else
         {
             _iPersNr = iPersonNr;
-            gUID = Guid.NewGuid();
+            gUid = Guid.NewGuid();
         }
     }
 
     public CPersonData() : base(GetPersonTable())
     {
         _iPersNr = 0;
-        gUID = Guid.NewGuid();
+        gUid = Guid.NewGuid();
     }
+
 
     public static void SetDataFkc(Func<IRecordset> value)
     {
@@ -110,7 +124,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
     {
         _GetText = getText;
     }
-    public static void SetGetText2(Func<int, (string,string)> getText)
+    public static void SetGetText2(Func<int, (string, string)> getText)
     {
         _GetText2 = getText;
     }
@@ -131,7 +145,16 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
         }
     }
 
-    public bool isEmpty => throw new NotImplementedException();
+    public bool isEmpty =>
+        string.IsNullOrWhiteSpace(Givennames)
+        && string.IsNullOrWhiteSpace(SurName)
+        && string.IsNullOrWhiteSpace(Suffix)
+        && string.IsNullOrWhiteSpace(Prefix)
+        && string.IsNullOrWhiteSpace(sOFB)
+        && string.IsNullOrWhiteSpace(SurName)
+        && string.IsNullOrWhiteSpace(sBem[1])
+        && string.IsNullOrWhiteSpace(sBem[2])
+        && string.IsNullOrWhiteSpace(sBem[3]);
 
     public void SetPersonNr(int i) { _ID = i; }
 
@@ -149,7 +172,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
             {
                 switch ((EEventArt)(i + 90))
                 {
-                    case EEventArt.eA_Birth:
+                    default:
                         Birthday = value[i];
                         dBirth = value[i].AsDate();
                         break;
@@ -207,7 +230,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
                 try
                 {
                     if (p.PropertyType == typeof(string))
-                    p.SetValue(this, "");
+                        p.SetValue(this, "");
                     else if (p.PropertyType == typeof(DateTime))
                         p.SetValue(this, default(DateTime));
                     else if (p.PropertyType == typeof(int))
@@ -216,6 +239,13 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
                         p.SetValue(this, Guid.Empty);
                 }
                 catch { }
+            else
+              if (p.PropertyType == typeof(IList<string>))
+                ((IList<string>)p.GetValue(this)).Clear();
+            else if (p.PropertyType == typeof(string[]))
+               new[] {"","","","" }.IntoString( ((string[])p.GetValue(this)));
+
+
         }
     }
 
@@ -308,7 +338,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
                     dB_PersonTable.Fields[nameof(PersonFields.Sex)].Value = sSex;
                     break;
                 case EPersonProp.gUid:
-                    dB_PersonTable.Fields[nameof(PersonFields.PUid)].Value = gUID;
+                    dB_PersonTable.Fields[nameof(PersonFields.PUid)].Value = gUid;
                     break;
                 case EPersonProp.SurName:
                     break;
@@ -384,7 +414,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
     public override object GetPropValue(EPersonProp prop) => prop switch
     {
         EPersonProp.ID => ID,
-        EPersonProp.gUid => gUID,
+        EPersonProp.gUid => gUid,
         EPersonProp.SurName => SurName,
         EPersonProp.Givennames => Givennames,
         EPersonProp.sSex => sSex,
@@ -415,7 +445,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
             EPersonProp.sSuch when value is ListItem<int> l => sSuch[l.ItemData] = l.ItemString,
             EPersonProp.sPruefen => sPruefen = (string)value,
             EPersonProp.sKonv => sKonv = (string)value,
-            EPersonProp.gUid => gUID = (Guid)value,
+            EPersonProp.gUid => gUid = (Guid)value,
             EPersonProp.dBirth => dBirth = (DateTime)value,
             EPersonProp.dBaptised => dBaptised = (DateTime)value,
             EPersonProp.dDeath => dDeath = (DateTime)value,
