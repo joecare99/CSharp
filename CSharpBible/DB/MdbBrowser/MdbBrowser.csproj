@@ -26,5 +26,9 @@
 	<ItemGroup>
 	  <Folder Include="Properties\" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference  Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
+	  <ProjectReference  Condition="$(TargetFramework.StartsWith('net4'))==false" Include="..\..\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
+	</ItemGroup>
 
 </Project>

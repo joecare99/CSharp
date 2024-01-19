@@ -4,6 +4,7 @@ using MdbBrowser.Models;
 using MdbBrowser.Models.Interfaces;
 using MdbBrowser.ViewModels.Interfaces;
 using Microsoft.Win32;
+using CommonDialogs.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,7 +28,7 @@ namespace MdbBrowser.ViewModels
         /// <param name="Par">The par.</param>
         /// <param name="OnAccept">The on accept.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public delegate bool? FileDialogHandler(string Filename, ref FileDialog Par, Action<string, FileDialog>? OnAccept = null);
+        public delegate bool? FileDialogHandler(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept = null);
         #endregion
 
         #region Properties
@@ -68,14 +69,14 @@ namespace MdbBrowser.ViewModels
         private void Open()
         {
             // Show the dialog and get result.
-            FileDialog foPar = new OpenFileDialog
+            IFileDialog foPar = new FileDialogProxy<OpenFileDialog>(new()
             {
                 FileName = FileOpenName,
                 Filter = "Access Database (*.mdb)|*.mdb|All files (*.*)|*.*",
                 Title = "Open Access Database",
-                CheckFileExists = false,
-            };
-            FileOpenDialog?.Invoke(FileOpenName, ref foPar,
+                CheckFileExists = false
+            });
+            FileOpenDialog?.Invoke(FileOpenName, foPar,
                 (s, p) =>
                 {
                     FileOpenName = s;
