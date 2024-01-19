@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System.Windows;
 using System;
 using System.Windows.Controls;
+using CommonDialogs.Interfaces;
 
 namespace MdbBrowser.Views
 {
@@ -30,7 +31,7 @@ namespace MdbBrowser.Views
         /// <param name="Par">The par.</param>
         /// <param name="OnAccept">The on accept.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool? DoFileDialog(string Filename, ref FileDialog Par, Action<string, FileDialog>? OnAccept)
+        public bool? DoFileDialog(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept)
         {
             Par.FileName = Filename;
             bool? result = Par.ShowDialog(this.Parent as Window);
