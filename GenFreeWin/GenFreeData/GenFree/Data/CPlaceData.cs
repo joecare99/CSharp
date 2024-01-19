@@ -1,4 +1,5 @@
-﻿using GenFree.Helper;
+﻿using GenFree.Model.Data;
+using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
@@ -83,6 +84,8 @@ namespace GenFree.Data
         public string sGOV { get; private set; }
         public string sPolName { get; private set; }
         public int ig { get; private set; }
+
+        protected override Enum _keyIndex => PlaceIndex.OrtNr;
 
         public void AddChangedProp(EPlaceProp prop)
         {
@@ -206,12 +209,5 @@ namespace GenFree.Data
             }
         }
 
-        protected override IRecordset? Seek(int iD)
-        {
-            var dB_Table = _db_Table;
-            dB_Table.Index = nameof(PlaceIndex.OrtNr);
-            dB_Table.Seek("=", ID);
-            return dB_Table.NoMatch ? null : dB_Table;
-        }
     }
 }

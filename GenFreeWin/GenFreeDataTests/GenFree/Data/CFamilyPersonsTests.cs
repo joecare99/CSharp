@@ -4,8 +4,8 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
 using BaseLib.Helper;
-using static BaseLib.Helper.TestHelper;
 using GenFree.Interfaces;
+using static BaseLib.Helper.TestHelper;
 
 namespace GenFree.Data.Tests
 {

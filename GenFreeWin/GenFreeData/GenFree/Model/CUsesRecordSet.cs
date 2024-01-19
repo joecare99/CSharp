@@ -23,23 +23,23 @@ namespace GenFree.Model
 
         public void ForEachDo(Action<IRecordset> action)
         {
-            IRecordset dB_PlaceTable = _db_Table;
-            dB_PlaceTable.Index = __keyIndex;
-            dB_PlaceTable.MoveFirst();
-            while (!dB_PlaceTable.EOF)
+            IRecordset dB_Table = _db_Table;
+            dB_Table.Index = __keyIndex;
+            dB_Table.MoveFirst();
+            while (!dB_Table.EOF)
             {
-                try { action?.Invoke(dB_PlaceTable); } catch { };
-                dB_PlaceTable.MoveNext();
+                try { action?.Invoke(dB_Table); } catch { };
+                dB_Table.MoveNext();
             }
         }
 
         public IRecordset? Seek(T Key) => Seek(Key, out _);
         private T GetMaxID()
         {
-            IRecordset dB_PlaceTable = _db_Table;
-            dB_PlaceTable.Index = __keyIndex;
-            dB_PlaceTable.MoveLast();
-            return GetID(dB_PlaceTable);
+            IRecordset dB_Table = _db_Table;
+            dB_Table.Index = __keyIndex;
+            dB_Table.MoveLast();
+            return GetID(dB_Table);
         }
     }
 }

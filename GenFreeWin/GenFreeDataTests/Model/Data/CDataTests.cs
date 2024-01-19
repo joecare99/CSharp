@@ -1,20 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
 
-namespace GenFree.Data.Tests;
-
-public enum TestProp
-{
-    ID,
-    sDescription,
-    iData
-}
+namespace GenFree.Model.Data.Tests;
 
 [TestClass()]
 public class CDataTests
@@ -42,7 +29,7 @@ public class CDataTests
 
         public override void SetPropValue(TestProp prop, object? value)
         {
-            if (EqualsProp(prop,value)) return;
+            if (EqualsProp(prop, value)) return;
             AddChangedProp(prop);
             object _ = prop switch
             {
@@ -101,14 +88,14 @@ public class CDataTests
     {
         testClass.SetPropValue(eAct, oExp);
         Assert.AreEqual(iExp, testClass.ChangedProps.Count);
-        Assert.AreEqual(oExp,testClass.GetPropValue(eAct));            
+        Assert.AreEqual(oExp, testClass.GetPropValue(eAct));
     }
 
     [DataTestMethod()]
-    [DataRow((TestProp)(0-1), "Some_Test", 1)]
+    [DataRow((TestProp)(0 - 1), "Some_Test", 1)]
     [DataRow((TestProp)3, 322, 1)]
     public void SetPropValueTest1(TestProp eAct, object? oExp, int iExp)
     {
-        Assert.ThrowsException<NotImplementedException>(()=>testClass.SetPropValue(eAct, oExp));
+        Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eAct, oExp));
     }
-    }
+}
