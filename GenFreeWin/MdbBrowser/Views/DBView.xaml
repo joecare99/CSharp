@@ -49,6 +49,6 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <Frame Grid.Row="1" Grid.Column="1" Source="{Binding CurrentView}"/>
+        <Frame Grid.Row="1" Grid.Column="1" Source="{Binding CurrentView}" d:Source="/Views/TableView.xaml" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Page>
