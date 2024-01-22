@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using Microsoft.Win32;
 using CommonDialogs.Interfaces;
 
 namespace CommonDialogs
@@ -26,13 +26,12 @@ namespace CommonDialogs
 
         public bool? ShowDialog()
         {
-
-            return _fileDialog.ShowDialog() == DialogResult.OK;
+            return _fileDialog.ShowDialog();
         }
 
         public bool? ShowDialog(object owner)
         {
-            return _fileDialog.ShowDialog(owner as IWin32Window) == DialogResult.OK;
+            return _fileDialog.ShowDialog(owner as System.Windows.Window);
         }
 
     }
