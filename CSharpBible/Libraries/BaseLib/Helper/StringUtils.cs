@@ -20,6 +20,12 @@ namespace BaseLib.Helper
     /// <summary>A static class with useful string-routines.</summary>
     public static class StringUtils
     {
+        public const string AlphaUpper="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public const string AlphaLower="abcdefghijklmnopqrstuvwxyz";
+        public const string Alpha=AlphaUpper+AlphaLower;
+        public const string Numeric="0123456789";
+        public const string AlphaNumeric=Alpha+Numeric;
+
         /// <summary>
         ///   <para>
         /// Makes the specified string quotable.<br />-&gt; by escaping special Characters (Linefeed, NewLine, Tab ...)</para>
@@ -171,6 +177,13 @@ namespace BaseLib.Helper
             return false;
         }
 
+        public static bool ContainsAny(this string s, params string[] strings)
+        {
+            foreach (var item in strings)
+                if (s.Contains(item))
+                    return true;
+            return false;
+        }
         public static bool StartswithAny(this string s, params string[] strings)
         {
             foreach (var item in strings)
@@ -179,5 +192,14 @@ namespace BaseLib.Helper
             return false;
         }
 
+        public static bool IsValidIdentifyer(this string? s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return false;
+            var _s = s.ToUpper();
+            if (!AlphaUpper.Contains(_s[0])) return false;
+            foreach (var c in _s)
+                if (!(AlphaNumeric+"_").Contains(c)) return false;
+            return true;
+        }
     }
 }

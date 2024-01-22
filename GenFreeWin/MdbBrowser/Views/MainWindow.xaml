@@ -11,7 +11,7 @@
         <mvvm:MainWindowViewModel />
     </Window.DataContext>
     <Grid>
-        <Frame Source="{Binding View}"/>
+        <Frame Source="{Binding View}" NavigationUIVisibility="Hidden"/>
 
     </Grid>
 </Window>

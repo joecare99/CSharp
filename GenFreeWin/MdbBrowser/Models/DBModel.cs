@@ -1,69 +1,116 @@
 ﻿using System;
-using ADOX;
+using System.Data.OleDb;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data;
+using MdbBrowser.Models.Interfaces;
+using System.Linq;
+using BaseLib.Helper;
 
 namespace MdbBrowser.Models
 {
-    public class DBModel
+    public class DBModel : IDBModel
     {
-
-        public DBModel(string filename)
+        OleDbConnectionStringBuilder connectionStringBuilder = new();
+        
+        public DBModel(string filename) : this(new OleDbConnectionStringBuilder() { Provider = "Microsoft.ACE.OLEDB.16.0", DataSource = filename, PersistSecurityInfo = false })
+        {}
+        public DBModel(DbConnectionStringBuilder connect)
         {
-            string connectionString = string.Format("Provider={0}; Data Source={1}; Jet OLEDB:Engine Type={2}",
-    "Microsoft.Jet.OLEDB.4.0",
-    filename,
-    5);
+            database.ConnectionString = connect.ConnectionString;
+        //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
+            database.StateChange += (sender, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"{sender}: {e.OriginalState}=>{e.CurrentState}");
 
-
-            catalog = new Catalog();
-            if (File.Exists(filename))
-                catalog.ActiveConnection = connectionString;
+                QueryDB(sender as OleDbConnection);
+            };
+            System.Diagnostics.Debug.WriteLine($"DBModel: {Directory.GetCurrentDirectory()}");
+            if (File.Exists(connect["Data Source"].ToString()))
+                database.Open();
             else
-                try { catalog.Create(connectionString); }
+                try { 
+                    // copy empty database to filename
+                    database.OpenAsync(); 
+                }
                 catch (Exception) { }
-            if (catalog.ActiveConnection != null)
+            }
+
+        private void QueryDB(OleDbConnection oleDbConnection)
+        {
+            if (oleDbConnection != null && oleDbConnection.State == ConnectionState.Open)
             {
                 dbMetaData.Clear();
-                foreach (Table tableDef in catalog.Tables)
+                foreach (var (schema, field, kind) in new (string, string, EKind)[] {
+                    ("MetaDataCollections","CollectionName",EKind.Schema),
+                    ("Tables","TABLE_NAME",EKind.Table),
+                    ("Views","TABLE_NAME",EKind.Query),
+                    ("Columns","COLUMN_NAME",EKind.Column),
+                    ("Indexes","INDEX_NAME",EKind.Index)
+                })
                 {
-                    dbMetaData.Add(new DBMetaData(tableDef.Name, EKind.Table, tableDef, tableDef.Columns.Cast<Column>().Select(f => f.Name)));
-                }
-                foreach (View view in catalog.Views)
-                {
-                    dbMetaData.Add(new DBMetaData(view.Name, EKind.Query,view,new string[]{ view.Command.ToString() }));
-                }
-                try
-                {
-                    foreach (Procedure procedure in catalog.Procedures)
+                    var schemaDat = oleDbConnection.GetSchema(schema);
+                    foreach (DataRow schemaDef in schemaDat.Rows)
                     {
-                        dbMetaData.Add(new DBMetaData(procedure.Name, EKind.Macro,procedure,new string[] { procedure.Command.ToString() }));
+                        if (kind != EKind.Table || !schemaDef[field].ToString().StartsWith("MSys"))
+                        
+                            dbMetaData.Add(new DBMetaData(schemaDef[field].ToString(), kind, schemaDef, null));
                     }
                 }
-                catch (Exception) { }
-                try
+                dbDataTypes.Clear();
+                var datatypes = oleDbConnection.GetSchema("DataTypes");
+                foreach (DataRow datatype in datatypes.Rows)
                 {
-                    foreach (Group group in catalog.Groups)
-                    {
-                        dbMetaData.Add(new DBMetaData(group.Name, EKind.Group,group, null));
-                    }
+                    dbDataTypes.Add(new DBMetaData(datatype[0].ToString(), EKind.DataTypes, datatype, new[] { datatype[5].ToString(), datatype[1].ToString(), datatype[2].ToString() }));
                 }
-                catch (Exception) { }
-                try
-                {
-                    foreach (User user in catalog.Users)
-                    {
-                        dbMetaData.Add(new DBMetaData(user.Name, EKind.User,user, null));
-                    }
-                }
-                catch (Exception) { }
 
             }
         }
 
-        public Catalog catalog { get; }
+        public IList<DBMetaData> QueryTable(string sTableName)
+        {
+            var oleDbConnection = database;
+            var result = new List<DBMetaData>();
+            if (sTableName.IsValidIdentifyer()
+                && oleDbConnection != null 
+                && oleDbConnection.State == ConnectionState.Open)
+            {
+                var schema = oleDbConnection.GetSchema("Columns", new string[] { null, null, sTableName });
+                foreach (DataRow schemaDef in schema.Rows)
+                {
+                    result.Add(new DBMetaData(schemaDef[3].ToString(), EKind.Column, schemaDef, new[] { GetTypeName((int)schemaDef[11]), schemaDef[13].ToString() } ));
+                }
+            }
+            return result;
+        }
+
+        public string GetTypeName(int iID) {
+            foreach (var dt in dbDataTypes)
+                if (dt.Data.ToList()[1] == iID.ToString())
+                    return dt.Name;
+            
+            return iID switch { 
+                130 => "VarChar",
+                _ => "Unknown"
+            };
+        }
+
+        public DataTable? QueryTableData(string value)
+        {
+            var result = new DataTable();
+            if (value.IsValidIdentifyer())
+                try { result.Load(new OleDbCommand($"SELECT * FROM {value}", database).ExecuteReader()); } catch { }
+            return result;
+        }
+
+        public DataTable? QuerySchema(string value)
+        {
+           return value.IsValidIdentifyer()?database.GetSchema(value):null;
+        }
+        public OleDbConnection database { get; } = new();
 
         public List<DBMetaData> dbMetaData = new();
+        public List<DBMetaData> dbDataTypes = new();
     }
 }
