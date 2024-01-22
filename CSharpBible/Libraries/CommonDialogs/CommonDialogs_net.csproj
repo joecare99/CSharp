@@ -1,9 +1,10 @@
-<Project>
+﻿<Project>
 	<Import Project="..\Libraries_net.props"/>
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<SignAssembly>True</SignAssembly>
+		<UseWPF>true</UseWPF>
+		<SignAssembly>true</SignAssembly>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
