@@ -22,6 +22,14 @@ namespace GenFree.Data.Tests
         private IRecordset testRS;
         private Guid _guid;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        private string getTextFnc(int arg)
+        {
+            return $"Text_{arg}";
+        }
+        private (string, string) getTextFnc2(int arg)
+        {
+            return ($"Text_{arg}", $"Text2_{arg}");
+        }
 
         [TestInitialize]
         public void Init()
@@ -51,38 +59,34 @@ namespace GenFree.Data.Tests
             CPersonData.SetGetText2(getTextFnc2);
             testRS.ClearReceivedCalls();
         }
-        private string getTextFnc(int arg)
-        {
-            return $"Text_{arg}";
-        }
-        private (string,string) getTextFnc2(int arg)
-        {
-            return ($"Text_{arg}", $"Text2_{arg}");
-        }
 
+        [TestCleanup]
+        public void Cleanup()
+        {
+            CPersonData.Reset();
+        }
         [TestMethod()]
         public void CPersonDataTest()
         {
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(CPersonData));
             Assert.IsInstanceOfType(testClass, typeof(IPersonData));
-
         }
+
+        public void CPersonDataTest3()
+        {
+            try { var testClass = new CPersonData(); }catch { }                    
+        }
+
 
         [DataTestMethod()]
-        [DataRow(0, 2)]
-        [DataRow(2, 3)]
-        public void FillDataTest(EPersonProp eProp, object oExp)
-        {
-            testClass.FillData(testRS);
-            Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
-        }
-
-        [TestMethod()]
-        public void CPersonDataTest1()
+        [DataRow(true)]
+        [DataRow(false)]
+        public void CPersonDataTest1(bool xAct)
         {
             CPersonData.SetDataFkc(() => testRS);
-            var testClass = new CPersonData(1); 
+            testRS.NoMatch.Returns(!xAct);
+            var testClass = new CPersonData(1);
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(CPersonData));
             Assert.IsInstanceOfType(testClass, typeof(IPersonData));
@@ -98,28 +102,60 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IPersonData));
         }
 
-        [TestMethod()]
-        public void SetPersonNrTest()
+        [DataTestMethod()]
+        [DataRow(0, 2)]
+        [DataRow(2, 3)]
+        public void FillDataTest(EPersonProp eProp, object oExp)
         {
-            Assert.Fail();
+            testClass.FillData(testRS);
+            Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
         }
 
-        [TestMethod()]
-        public void SetFullSurnameTest()
+        [DataTestMethod()]
+        [DataRow(0)]
+        [DataRow(2)]
+        [DataRow(4)]
+        public void SetPersonNrTest(int iAct)
         {
-            Assert.Fail();
+            testClass.SetPersonNr(iAct);
+            Assert.AreEqual(iAct, testClass.ID);
         }
 
-        [TestMethod()]
-        public void SetFullTest()
+        [DataTestMethod()]
+        [DataRow("Mustermann")]
+        [DataRow("A")]
+        [DataRow("")]
+        public void SetFullSurnameTest(string sName)
         {
-            Assert.Fail();
+            testClass.SetFullSurname(sName);
+            Assert.AreEqual(sName, testClass.FullSurName);
         }
 
-        [TestMethod()]
-        public void SetDatesTest()
+        [DataTestMethod()]
+        [DataRow("Mustermann")]
+        [DataRow("A")]
+        [DataRow("")]
+        public void SetFullTest(string sName)
         {
-            Assert.Fail();
+            testClass.SetFull(sName);
+            Assert.AreEqual(sName, testClass.SurName);
+
+        }
+
+        [DataTestMethod()]
+        [DataRow(new[] { "", "", "", "", "", "", "", "", "", "", "", "19000102", "19010304", "19800506", "19810708" },
+            new object[] { new[]{ 1900, 1, 2 }, new[] { 1901, 3, 4 }, new[] { 1980, 5, 6 }, new[] { 1981, 7, 8 } })]
+        public void SetDatesTest(string[] asAct, object[] aoExp)
+        {
+            testClass.SetDates(asAct);
+            if (aoExp[0] is int[] aiEx)
+                Assert.AreEqual(new DateTime(aiEx[0], aiEx[1], aiEx[2]), testClass.dBirth);
+            if (aoExp[1] is int[] aiEx1)
+                Assert.AreEqual(new DateTime(aiEx1[0], aiEx1[1], aiEx1[2]), testClass.dBaptised);
+            if (aoExp[2] is int[] aiEx2)
+                Assert.AreEqual(new DateTime(aiEx2[0], aiEx2[1], aiEx2[2]), testClass.dDeath);
+            if (aoExp[3] is int[] aiEx3)
+                Assert.AreEqual(new DateTime(aiEx3[0], aiEx3[1], aiEx3[2]), testClass.dBurial);
         }
 
         [TestMethod()]
@@ -138,34 +174,35 @@ namespace GenFree.Data.Tests
         {
             testClass.Clear();
             Assert.AreEqual(1, testClass.ID);
+            Assert.AreEqual(true, testClass.isEmpty);
         }
 
         [DataTestMethod()]
-        [DataRow(new[] {0,1,2,3,4,5,6,7,8 }, new object[] { new object[] {2,false,false } },false, "Text_2")]
-        [DataRow(new[] {2,3,4,5,6,7,8,9 }, new object[] { new object[] {1,false,false }, new object[] { 4, false, false } },false, "Text_1 Text_4")]
-        [DataRow(new[] {2,3,4,5,6,7,8,9 }, new object[] { new object[] {1,false,false }, new object[] { 4, false, false } },true, "Text_1 >Text2_1< Text_4 >Text2_4<")]
-        [DataRow(new[] {1,2,3,4,5,6,7,8 }, new object[] { new object[] {2,false,true }, new object[] { 3, true, false }, },false, "'Text_2' \"Text_3\"")]
-        public void SetPersonNamesTest(int[] aiAct, object[] aoAct,bool x,string sExp)
+        [DataRow(new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new object[] { new object[] { 2, false, false } }, false, "Text_2")]
+        [DataRow(new[] { 2, 3, 4, 5, 6, 7, 8, 9 }, new object[] { new object[] { 1, false, false }, new object[] { 4, false, false } }, false, "Text_1 Text_4")]
+        [DataRow(new[] { 2, 3, 4, 5, 6, 7, 8, 9 }, new object[] { new object[] { 1, false, false }, new object[] { 4, false, false } }, true, "Text_1 >Text2_1< Text_4 >Text2_4<")]
+        [DataRow(new[] { 1, 2, 3, 4, 5, 6, 7, 8 }, new object[] { new object[] { 2, false, true }, new object[] { 3, true, false }, }, false, "'Text_2' \"Text_3\"")]
+        public void SetPersonNamesTest(int[] aiAct, object[] aoAct, bool x, string sExp)
         {
-            List<(int,bool,bool)> alVN = new() { default };
+            List<(int, bool, bool)> alVN = new() { default };
             foreach (var o in aoAct)
-                if (o is object[] ao && ao.Length==3)
+                if (o is object[] ao && ao.Length == 3)
                     alVN.Add((ao[0].AsInt(), ao[1].AsBool(), ao[2].AsBool()));
-            testClass.SetPersonNames(aiAct, alVN.ToArray(),x);
-            Assert.AreEqual($"Text_{aiAct[1]}",testClass.SurName);
+            testClass.SetPersonNames(aiAct, alVN.ToArray(), x);
+            Assert.AreEqual($"Text_{aiAct[1]}", testClass.SurName);
             Assert.AreEqual($"Text_{aiAct[2]}", testClass.Prefix);
-            Assert.AreEqual($"Text_{aiAct[3]}",testClass.Suffix);
-            Assert.AreEqual(sExp,testClass.Givennames);
+            Assert.AreEqual($"Text_{aiAct[3]}", testClass.Suffix);
+            Assert.AreEqual(sExp, testClass.Givennames);
         }
 
         [DataTestMethod()]
         [DataRow(EEventArt.eA_Birth, new[] { 1980, 12, 30 })]
         [DataRow(EEventArt.eA_Baptism, new[] { 1981, 11, 29 })]
         [DataRow(EEventArt.eA_Death, new[] { 1982, 10, 28 })]
-        [DataRow(EEventArt.eA_Death, new[] { 1982, 10, 28 },true)]
+        [DataRow(EEventArt.eA_Death, new[] { 1982, 10, 28 }, true)]
         [DataRow(EEventArt.eA_Burial, new[] { 1983, 9, 27 })]
         [DataRow(EEventArt.eA_105, new[] { 1984, 8, 26 })]
-        public void SetDataTest(EEventArt eArt,object oAct,bool xD=false)
+        public void SetDataTest(EEventArt eArt, object oAct, bool xD = false)
         {
             var cEv = Substitute.For<IEventData>();
             cEv.eArt.Returns(eArt);
@@ -206,11 +243,11 @@ namespace GenFree.Data.Tests
         [DataRow("M")]
         [DataRow("F")]
         [DataRow("D")]
-        public void SetSexTest(string sAct,bool xCH=true)
+        public void SetSexTest(string sAct, bool xCH = true)
         {
             testClass.SetSex(sAct);
-            Assert.AreEqual(sAct,testClass.sSex);
-            Assert.AreEqual(xCH?1:0, testClass.ChangedProps.Count);
+            Assert.AreEqual(sAct, testClass.sSex);
+            Assert.AreEqual(xCH ? 1 : 0, testClass.ChangedProps.Count);
         }
 
         [DataTestMethod()]
@@ -221,7 +258,7 @@ namespace GenFree.Data.Tests
         [DataRow(EPersonProp.sBem, new[] { "", "Bem1-", "Bem2-", "Bem3" })]
         [DataRow(EPersonProp.sBem, new object[] { 1, "Bem1-" })]
         [DataRow(EPersonProp.sKonv, "D")]
-        [DataRow(EPersonProp.SurName, "Surname",false)]
+        [DataRow(EPersonProp.SurName, "Surname", false)]
         [DataRow(EPersonProp.Givennames, "GivenNames", false)]
         [DataRow(EPersonProp.sSuch, new[] { "", "Bem1-", "Bem2-", "Bem3" })]
         [DataRow(EPersonProp.sSuch, new object[] { 1, "Bem1-" })]
@@ -253,7 +290,7 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(EPersonProp.ID, 1,false)]
+        [DataRow(EPersonProp.ID, 1, false)]
         [DataRow(EPersonProp.sSex, "D")]
         [DataRow(EPersonProp.iReligi, 6)]
         [DataRow(EPersonProp.sBem, new[] { "", "Bem1-", "Bem2-", "Bem3" })]
