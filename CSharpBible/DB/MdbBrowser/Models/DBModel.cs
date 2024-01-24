@@ -13,7 +13,11 @@ namespace MdbBrowser.Models
     {
         OleDbConnectionStringBuilder connectionStringBuilder = new();
         
-        public DBModel(string filename) : this(new OleDbConnectionStringBuilder() { Provider = "Microsoft.ACE.OLEDB.16.0", DataSource = filename, PersistSecurityInfo = false })
+        public DBModel(string filename) : this(new OleDbConnectionStringBuilder() { 
+            Provider = "Microsoft.ACE.OLEDB.16.0",
+           // Provider = "Microsoft.ACE.OLEDB.12.0",
+           // Provider = "Microsoft.Jet.OLEDB.4.0",
+            DataSource = filename, PersistSecurityInfo = false })
         {}
         public DBModel(DbConnectionStringBuilder connect)
         {
