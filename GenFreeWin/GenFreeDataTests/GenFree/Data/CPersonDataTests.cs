@@ -239,7 +239,7 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow("Sex")]
+        [DataRow("Sex",false)]
         [DataRow("M")]
         [DataRow("F")]
         [DataRow("D")]
@@ -273,7 +273,7 @@ namespace GenFree.Data.Tests
         [DataRow(EPersonProp.sPruefen, "Pruefe")]
         public void SetDBValueTest(EPersonProp eAct, object _, bool xSetVal = true)
         {
-            testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
             if (xSetVal)
                 _ = testRS.Received().Fields[eAct.ToString()];
             else
@@ -286,7 +286,7 @@ namespace GenFree.Data.Tests
         [DataRow((EPersonProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EPersonProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]

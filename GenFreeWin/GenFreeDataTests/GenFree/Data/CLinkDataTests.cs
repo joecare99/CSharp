@@ -226,14 +226,14 @@ namespace GenFree.Data.Tests
         [DataRow(ELinkProp.eKennz, 3)]
         public void SetDBValueTest(ELinkProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
         [DataTestMethod()]
         [DataRow((ELinkProp)3, 4)]
         public void SetDBValueTest3(ELinkProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(()=> testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+            Assert.ThrowsException<NotImplementedException>(()=> testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]
