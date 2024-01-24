@@ -13,13 +13,13 @@ namespace MdbBrowser.Models
     public class DBModel : IDBModel
     {
         OleDbConnectionStringBuilder connectionStringBuilder = new();
-        
+
         public DBModel(string filename) : this(new OleDbConnectionStringBuilder() { Provider = "Microsoft.ACE.OLEDB.16.0", DataSource = filename, PersistSecurityInfo = false })
-        {}
+        { }
         public DBModel(DbConnectionStringBuilder connect)
         {
             database.ConnectionString = connect.ConnectionString;
-        //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
+            //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
             database.StateChange += (sender, e) =>
             {
                 System.Diagnostics.Debug.WriteLine($"{sender}: {e.OriginalState}=>{e.CurrentState}");
@@ -30,12 +30,13 @@ namespace MdbBrowser.Models
             if (File.Exists(connect["Data Source"].ToString()))
                 database.Open();
             else
-                try { 
+                try
+                {
                     // copy empty database to filename
-                    database.OpenAsync(); 
+                    database.OpenAsync();
                 }
                 catch (Exception) { }
-            }
+        }
 
         private void QueryDB(OleDbConnection oleDbConnection)
         {
@@ -54,7 +55,7 @@ namespace MdbBrowser.Models
                     foreach (DataRow schemaDef in schemaDat.Rows)
                     {
                         if (kind != EKind.Table || !schemaDef[field].ToString().StartsWith("MSys"))
-                        
+
                             dbMetaData.Add(new DBMetaData(schemaDef[field].ToString(), kind, schemaDef, null));
                     }
                 }
@@ -73,24 +74,26 @@ namespace MdbBrowser.Models
             var oleDbConnection = database;
             var result = new List<DBMetaData>();
             if (sTableName.IsValidIdentifyer()
-                && oleDbConnection != null 
+                && oleDbConnection != null
                 && oleDbConnection.State == ConnectionState.Open)
             {
                 var schema = oleDbConnection.GetSchema("Columns", new string[] { null, null, sTableName });
                 foreach (DataRow schemaDef in schema.Rows)
                 {
-                    result.Add(new DBMetaData(schemaDef[3].ToString(), EKind.Column, schemaDef, new[] { GetTypeName((int)schemaDef[11]), schemaDef[13].ToString() } ));
+                    result.Add(new DBMetaData(schemaDef[3].ToString(), EKind.Column, schemaDef, new[] { GetTypeName((int)schemaDef[11]), schemaDef[13].ToString() }));
                 }
             }
             return result;
         }
 
-        public string GetTypeName(int iID) {
+        public string GetTypeName(int iID)
+        {
             foreach (var dt in dbDataTypes)
                 if (dt.Data.ToList()[1] == iID.ToString())
                     return dt.Name;
-            
-            return iID switch { 
+
+            return iID switch
+            {
                 130 => "VarChar",
                 _ => "Unknown"
             };
@@ -100,13 +103,15 @@ namespace MdbBrowser.Models
         {
             var result = new DataTable();
             if (value.IsValidIdentifyer())
-                try { result.Load(new OleDbCommand($"SELECT * FROM {value}", database).ExecuteReader()); } catch { }
+                try
+                { result.Load(new OleDbCommand($"SELECT * FROM {value}", database).ExecuteReader()); }
+                catch { }
             return result;
         }
 
         public DataTable? QuerySchema(string value)
         {
-           return value.IsValidIdentifyer()?database.GetSchema(value):null;
+            return value.IsValidIdentifyer() ? database.GetSchema(value) : null;
         }
         public OleDbConnection database { get; } = new();
 
