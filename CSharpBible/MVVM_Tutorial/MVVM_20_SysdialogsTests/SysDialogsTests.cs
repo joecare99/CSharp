@@ -1,10 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using CommonDialogs.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM_20_Sysdialogs.ViewModel;
+using NSubstitute;
+using NSubstitute.Core.Arguments;
 using System;
+using System.Drawing;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Forms;
 
 namespace MVVM_20_Sysdialogs.View.Tests
 {
@@ -16,20 +19,6 @@ namespace MVVM_20_Sysdialogs.View.Tests
         private SysDialogsViewModel vm;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private string DebugOut="";
-
-        static async void HitEnter()
-        {
-            SendKeys.Flush();
-            await Task.Delay(200);
-            SendKeys.SendWait("{ENTER}");
-        }
-
-        static async void HitESC()
-        {
-            SendKeys.Flush();
-            await Task.Delay(200);
-            SendKeys.SendWait("{ESC}");
-        }
 
         [TestInitialize()]
         public void Init()
@@ -57,41 +46,79 @@ namespace MVVM_20_Sysdialogs.View.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(false,"")]
-        [DataRow(true, "")]
-        public void DoPrintDialogTest(bool xRes,string sExp)
+        [DataRow(true,false,"")]
+        [DataRow(false,true,"")]
+        [DataRow(null, true, "")]
+        [DataRow(true, true, "OnPrint({0})\r\n")]
+        public void DoPrintDialogTest(bool? xRes, bool xAct, string sExp)
         {
-            var par = new System.Windows.Controls.PrintDialog()
-            {
-               // MaxPage =3,
-                PageRangeSelection = PageRangeSelection.AllPages
-            };
-            if (xRes)
-                SysDialogsTests.HitEnter();
-            else
-                SysDialogsTests.HitESC();
-            Assert.AreEqual(xRes,vm.dPrintDialog?.Invoke(ref par, (p) => DoLog($"OnPrint({par})")));
-            Assert.AreEqual(sExp,DebugOut);
+            var par = Substitute.For<IPrintDialog>();
+            par.PageRangeSelection.Returns(PageRangeSelection.AllPages);
+            par.ShowDialog().Returns(xRes);
+            Assert.AreEqual(xRes,vm.dPrintDialog?.Invoke(par,xAct? (p) => DoLog($"OnPrint({p})"):null));
+            par.Received(1).ShowDialog();
+            Assert.AreEqual(sExp.Format(par.ToString()), DebugOut);
         }
 
         [DataTestMethod()]
-        [DataRow(false, "")]
-        [DataRow(true, "")]
-        public void DoFontDialogTest(bool xRes, string sExp)
+        [DataRow(true, false, "")]
+        [DataRow(false, true, "")]
+        [DataRow(null, true, "")]
+        [DataRow(true, true, "OnFont([Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False],{0})\r\n")]
+        public void DoFontDialogTest(bool? xRes, bool xAct, string sExp)
         {
-            var par = new CommonDialogs.FontDialog
-            {
-                Font = System.Drawing.SystemFonts.DefaultFont
-            };
-
-            if (xRes)
-                SysDialogsTests.HitEnter();
-            else
-                SysDialogsTests.HitESC();
-            Assert.AreEqual(xRes, vm.dFontDialog?.Invoke(par.Font, ref par, (f,p) => DoLog($"OnPrint({f},{par})")));
-            Assert.AreEqual(sExp, DebugOut);
+            var par = Substitute.For<IFontDialog>();
+            par.Font.Returns(System.Drawing.SystemFonts.DefaultFont);
+            par.ShowDialog().Returns(xRes);
+            Assert.AreEqual(xRes, vm.dFontDialog?.Invoke(par.Font, par, xAct? (f,p) => DoLog($"OnFont({f},{p})"):null));
+            par.Received(1).ShowDialog();
+            Assert.AreEqual(sExp.Format(par.ToString()), DebugOut);
         }
 
+        [DataTestMethod()]
+        [DataRow(true, false, "")]
+        [DataRow(false, true, "")]
+        [DataRow(null, true, "")]
+        [DataRow(true, true, "OnColor(Color [DarkBlue],{0})\r\n")]
+        public void DoColorDialogTest(bool? xRes, bool xAct, string sExp)
+        {
+            var par = Substitute.For<IColorDialog>();
+            par.Color.Returns(Color.DarkBlue);
+            par.ShowDialog().Returns(xRes);
+            Assert.AreEqual(xRes, vm.dColorDialog?.Invoke(par.Color, par, xAct? (f, p) => DoLog($"OnColor({f},{p})"):null));
+            par.Received(1).ShowDialog();
+            Assert.AreEqual(sExp.Format($"{par}"), DebugOut);
+        }
+
+        [DataTestMethod()]
+        [DataRow(true, false, "")]
+        [DataRow(false, true, "")]
+        [DataRow(null, true, "")]
+        [DataRow(true, true, "OnOpen(.\\SomeFile.txt,{0})\r\n")]
+        public void DoOpenDialogTest(bool? xRes, bool xAct, string sExp)
+        {
+            var par = Substitute.For<IFileDialog>();
+            par.FileName.Returns(".\\SomeFile.txt");
+            par.ShowDialog(Arg.Any<object>()).Returns(xRes);
+            Assert.AreEqual(xRes, vm.FileOpenDialog?.Invoke(par.FileName, par, xAct ? (f, p) => DoLog($"OnOpen({f},{p})") : null));
+            par.Received(1).ShowDialog(null);
+            Assert.AreEqual(sExp.Format(par.ToString()), DebugOut);
+        }
+
+        [DataTestMethod()]
+        [DataRow(true, false, "")]
+        [DataRow(false, true, "")]
+        [DataRow(null, true, "")]
+        [DataRow(true, true, "OnBrowse(.\\SomeDir\\,{0})\r\n")]
+        public void DoBrowseDirDialogTest(bool? xRes,bool xAct, string sExp)
+        {
+            var par = Substitute.For<IFileDialog>();
+            par.FileName.Returns(".\\SomeDir\\");
+            par.ShowDialog().Returns(xRes);
+            Assert.AreEqual(xRes, vm.DirectoryBrowseDialog?.Invoke(par.FileName, par, xAct? (f, p) => DoLog($"OnBrowse({f},{p})"):null));
+            par.Received(1).ShowDialog();
+            Assert.AreEqual(sExp.Format(par.ToString()), DebugOut);
+        }
         private void DoLog(string v)
         {
            DebugOut+=$"{v}{Environment.NewLine}";
