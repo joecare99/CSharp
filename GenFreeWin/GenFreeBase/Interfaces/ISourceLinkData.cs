@@ -1,6 +1,4 @@
 ﻿using GenFree.Data;
-using GenFree.Interfaces.DB;
-using System;
 
 namespace GenFree.Interfaces
 {

@@ -1,11 +1,8 @@
 ﻿//using DAO;
-using GenFree.Data;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
-using System.Collections.Generic;
 
-namespace GenFree.Model
+namespace GenFree.Interfaces.Model
 {
     public interface IHasRSIndex1<T,T2> where T2 : Enum where T : Enum
     {

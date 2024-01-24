@@ -1,5 +1,4 @@
 ﻿using GenFree.Data;
-using GenFree.Interfaces.DB;
 
 namespace GenFree.Interfaces;
 public interface ILinkData: IHasID<(int iFamily, int iPerson, ELinkKennz eKennz)>, IHasPropEnum<ELinkProp>, IHasIRecordset
