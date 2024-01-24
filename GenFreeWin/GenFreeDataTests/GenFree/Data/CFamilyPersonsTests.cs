@@ -56,10 +56,12 @@ namespace GenFree.Data.Tests
         [TestMethod()]
         public void CFamilyPersonsTest()
         {
+            var testTable = Substitute.For<IRecordset>();
+            CFamilyPersons.SetTableGtr(() => testRS);
             var testClass = new CFamilyPersons();
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
-            Assert.AreEqual(0, testClass.ID);
+            Assert.AreEqual(4, testClass.ID);
             Assert.AreEqual(0, testClass.Mann);
             Assert.AreEqual(0, testClass.Frau);
             Assert.AreEqual(0, testClass.Kinder.Count);
@@ -120,7 +122,7 @@ namespace GenFree.Data.Tests
         [DataRow(EFamilyProp.sPruefen, "Pruefe")]
         public void SetDBValueTest(EFamilyProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
         [TestMethod()]
@@ -129,7 +131,7 @@ namespace GenFree.Data.Tests
         [DataRow((EFamilyProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EFamilyProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]

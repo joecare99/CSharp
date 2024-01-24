@@ -45,7 +45,6 @@ namespace GenFree.Model
         public IEnumerable<T4> ReadAll(T2 eIndex)
             => ReadAllDataDB(eIndex, (rs) => rs.MoveFirst(), (e) => false);
 
-
         public override IRecordset? Seek(T tValue, out bool xBreak)
         {
             if (tValue is not ValueType vVal) throw new NotImplementedException();
@@ -122,7 +121,7 @@ namespace GenFree.Model
             return !xBreak;
         }
 
-        public void SetData(T key, T4 data, string[]? asProps = null)
+        public void SetData(T key, T4 data, Enum[]? asProps = null)
         {
             var dB_Table = Seek(key);
             if (dB_Table != null)

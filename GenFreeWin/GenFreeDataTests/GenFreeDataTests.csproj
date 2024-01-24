@@ -33,4 +33,8 @@
 		<ProjectReference Include="..\GenFreeData\GenFreeData.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="GenFree\Model\" />
+	</ItemGroup>
+
 </Project>

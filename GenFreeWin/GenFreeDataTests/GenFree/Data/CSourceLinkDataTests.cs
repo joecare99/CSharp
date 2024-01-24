@@ -151,7 +151,7 @@ namespace GenFree.Data.Tests
         [DataRow(ESourceLinkProp.sKom, "Kom_")]
         public void SetDBValueTest(ESourceLinkProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
@@ -161,7 +161,7 @@ namespace GenFree.Data.Tests
         [DataRow((ESourceLinkProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(ESourceLinkProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]
