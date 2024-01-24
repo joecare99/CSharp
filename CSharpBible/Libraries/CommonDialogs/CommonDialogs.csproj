@@ -7,6 +7,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
 		<SignAssembly>True</SignAssembly>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -18,5 +19,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="CommonDialogs.csproj.bak" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="ReachFramework" />
+	  <Reference Include="System.Printing" />
 	</ItemGroup>
 </Project>

@@ -1,10 +1,11 @@
-<Project>
-	<Import Project="..\Libraries_net.props"/>
+﻿<Project>
+	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
 		<OutputType>Library</OutputType>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
