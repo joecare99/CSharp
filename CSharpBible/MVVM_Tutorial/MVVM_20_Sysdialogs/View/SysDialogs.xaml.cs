@@ -17,6 +17,7 @@ using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
 using CommonDialogs;
+using CommonDialogs.Interfaces;
 using System.Drawing;
 
 namespace MVVM_20_Sysdialogs.View
@@ -54,7 +55,7 @@ namespace MVVM_20_Sysdialogs.View
         /// <param name="par">The par.</param>
         /// <param name="OnPrint">The on print.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool? DoPrintDialog(ref PrintDialog par, Action<PrintDialog>? OnPrint)
+        private bool? DoPrintDialog(IPrintDialog par, Action<IPrintDialog>? OnPrint)
         {
             bool? result = par.ShowDialog();
             if (result ?? false) OnPrint?.Invoke(par);
@@ -68,7 +69,7 @@ namespace MVVM_20_Sysdialogs.View
         /// <param name="par">The par.</param>
         /// <param name="OnAccept">The on accept.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool? DoFontDialog(Font font, ref FontDialog par, Action<Font, FontDialog>? OnAccept)
+        private bool? DoFontDialog(Font font, IFontDialog par, Action<Font, IFontDialog>? OnAccept)
         {
             par.Font = font;
             bool? result = par.ShowDialog();
@@ -83,7 +84,7 @@ namespace MVVM_20_Sysdialogs.View
         /// <param name="par">The par.</param>
         /// <param name="OnAccept">The on accept.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool? DoColorDialog(Color color, ref ColorDialog par, Action<Color, ColorDialog>? OnAccept)
+        private bool? DoColorDialog(Color color, IColorDialog par, Action<Color, IColorDialog>? OnAccept)
         {
             par.Color = color;
             bool? result = par.ShowDialog();
@@ -98,12 +99,11 @@ namespace MVVM_20_Sysdialogs.View
         /// <param name="Par">The par.</param>
         /// <param name="OnAccept">The on accept.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool? DoBrowseDialog(string PathName, ref FileDialog Par, Action<string, FileDialog>? OnAccept)
+        private bool? DoBrowseDialog(string PathName, IFileDialog Par, Action<string, IFileDialog>? OnAccept)
         {
-            var fbd = new FolderBrowserDialog();               
-            fbd.SelectedPath = PathName;
-            bool? result = fbd.ShowDialog();
-            if (result ?? false) OnAccept?.Invoke(fbd.SelectedPath, Par);
+            Par.FileName = PathName;
+            bool? result = Par.ShowDialog();
+            if (result ?? false) OnAccept?.Invoke(Par.FileName, Par);
             return result;
         }
 
@@ -114,7 +114,7 @@ namespace MVVM_20_Sysdialogs.View
         /// <param name="Par">The par.</param>
         /// <param name="OnAccept">The on accept.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        private bool? DoFileDialog(string Filename, ref FileDialog Par, Action<string, FileDialog>? OnAccept)
+        private bool? DoFileDialog(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept)
         {
             Par.FileName = Filename;
             bool? result = Par.ShowDialog(this.Parent as Window);
