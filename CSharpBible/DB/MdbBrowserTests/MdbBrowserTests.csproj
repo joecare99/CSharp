@@ -1,12 +1,13 @@
 ﻿<Project>
 	<Import Project="..\DB.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net4.8.1-windows;net4.6.2-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>
 		<UseWPF>true</UseWPF>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -28,8 +29,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MdbBrowser\MdbBrowser.csproj" />
-		<ProjectReference  Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
-		<ProjectReference  Condition="$(TargetFramework.StartsWith('net4'))==false" Include="..\..\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
+		<ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
+		<ProjectReference Condition="$(TargetFramework.StartsWith('net4'))==false" Include="..\..\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
 	</ItemGroup>
 
 </Project>
