@@ -175,20 +175,20 @@ namespace GenFree.Data
                 _changedPropList.Add(prop);
         }
 
-        public void SetDBValue(IRecordset dB_Table, string[]? asProps)
+        public void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
         {
-            asProps ??= _changedPropList.Select((e) => e.ToString()).ToArray();
+            asProps ??= _changedPropList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
                 switch (prop)
                 {
-                    case nameof(ELinkProp.eKennz):
+                    case ELinkProp.eKennz:
                         dB_Table.Fields[nameof(ILinkData.LinkFields.Kennz)].Value = eKennz;
                         break;
-                    case nameof(ELinkProp.iFamNr):
+                    case ELinkProp.iFamNr:
                         dB_Table.Fields[nameof(ILinkData.LinkFields.FamNr)].Value = iFamNr;
                         break;
-                    case nameof(ELinkProp.iPersNr):
+                    case ELinkProp.iPersNr:
                         dB_Table.Fields[nameof(ILinkData.LinkFields.PerNr)].Value = iPersNr;
                         break;
                     default:

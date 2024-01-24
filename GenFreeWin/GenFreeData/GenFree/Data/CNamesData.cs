@@ -58,9 +58,9 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
         };
     }
 
-    public override void SetDBValue(IRecordset dB_Table, string[]? asProps)
+    public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
     {
-        asProps ??= _changedPropsList.Select(i => i.ToString()).ToArray();
+        asProps ??= _changedPropsList.Select(i => (Enum)i).ToArray();
         foreach (var prop in asProps)
             switch (prop.AsEnum<ENamesProp>())
             {
