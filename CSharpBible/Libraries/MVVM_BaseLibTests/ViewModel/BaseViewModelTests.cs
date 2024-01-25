@@ -155,6 +155,14 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
             Assert.AreEqual(xExp, FuncProxy(dVal, LocalFunc));
         }
 
+        [DataTestMethod]
+        [DataRow(1,1, false)]
+        [DataRow(2,2, true)]
+        [DataRow(0,1, false)]
+        public void IsGreaterTest(int dVal1,int dVal2, bool xExp)
+        {
+            Assert.AreEqual(xExp, IsGreater(dVal1,dVal2));
+        }
         private bool LocalFunc(double arg)
         {
             return arg == Math.Floor(arg);
