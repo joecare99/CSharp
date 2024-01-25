@@ -52,7 +52,7 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		/// <summary>
 		/// The c exp my font0
 		/// </summary>
-		private readonly Font cExpMyFont0 = SystemFonts.DefaultFont;
+		private readonly Font cExpMyFont0 = new Font("Microsoft Sans Serif", 8.25f);
 
 		/// <summary>
 		/// The c exp set file open name
@@ -325,9 +325,9 @@ namespace MVVM_20_Sysdialogs.ViewModel.Tests
 		[DataRow("OpenColorDialogCommand", false,"Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\n" })]
 		[DataRow("OpenColorDialogCommand", true,"Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel, MyColor>\r\n" })]
 		[DataRow("OpenColorDialogCommand", null,"Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\n" })]
-		[DataRow("OpenFontDialogCommand", false, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], True>\r\n" })]
-		[DataRow("OpenFontDialogCommand", true, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], True>\r\n" })]
-		[DataRow("OpenFontDialogCommand", null, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], True>\r\n" })]
+		[DataRow("OpenFontDialogCommand", false, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\n" })]
+		[DataRow("OpenFontDialogCommand", true, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModel.SysDialogsViewModel, MyFont>\r\n" })]
+		[DataRow("OpenFontDialogCommand", null, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\n" })]
 		[DataRow("OpenPrintDialogCommand", false, "Test2", new[] { "TestDoPrintDlg: <CommonDialogs.PrintDialog, True>\r\n" })]
 		[DataRow("OpenPrintDialogCommand", true, "Test2", new[] { "TestDoPrintDlg: <CommonDialogs.PrintDialog, True>\r\n" })]
 		[DataRow("OpenPrintDialogCommand", null, "Test2", new[] { "TestDoPrintDlg: <CommonDialogs.PrintDialog, True>\r\n" })]

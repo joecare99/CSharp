@@ -69,6 +69,7 @@ namespace DialogBoxes.ViewModel
         /// <value>The email.</value>
         public string Email { get => _email; set => SetProperty(ref _email, value); }
 
+        public string Cnt => $"Count: {cnt}";
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>

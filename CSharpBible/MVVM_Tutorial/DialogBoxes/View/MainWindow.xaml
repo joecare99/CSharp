@@ -11,15 +11,22 @@
         <mvvm:MainWindowViewModel />
     </Window.DataContext>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="207*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="91*"/>
             <ColumnDefinition Width="109*"/>
         </Grid.ColumnDefinitions>
-        
-        <Button Content="Button" Command="{Binding OpenDialogCommand}"  HorizontalAlignment="Center" Height="56" Margin="0,44,0,0" VerticalAlignment="Top" Width="242"/>
-        <Button Content="Button" Command="{Binding OpenMsgCommand}" HorizontalAlignment="Center" Height="71" Margin="0,146,0,0" VerticalAlignment="Top" Width="242"/>
-        <Label Grid.Column="1" Content="{Binding Name}" HorizontalAlignment="Left" Margin="36,44,0,0" VerticalAlignment="Top"/>
-        <Label Grid.Column="1" Content="{Binding Email}" HorizontalAlignment="Left" Margin="186,57,0,0" VerticalAlignment="Top"/>
-
+        <StackPanel Orientation="Vertical">
+            <Button Content="Button" Command="{Binding OpenDialogCommand}"  HorizontalAlignment="Center" Height="60" Margin="0,20,0,0" VerticalAlignment="Top" Width="242"/>
+            <Button Content="Button" Command="{Binding OpenMsgCommand}" HorizontalAlignment="Center" Height="60" Margin="0,20,0,0" VerticalAlignment="Top" Width="242"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Grid.Column="1">
+        <Label Grid.Column="1" Content="{Binding Name}" HorizontalAlignment="Center" Margin="20,30,20,0" VerticalAlignment="Top"/>
+        <Label Grid.Column="1" Content="{Binding Email}" HorizontalAlignment="Center" Margin="20,50,20,0" VerticalAlignment="Top"/>
+        </StackPanel>
+        <TextBlock Text="{Binding Cnt}" Grid.Row="1" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

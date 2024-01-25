@@ -55,7 +55,7 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// <summary>
 		/// My font
 		/// </summary>
-		private Font _myFont = SystemFonts.DefaultFont;
+		private Font _myFont = new Font("Microsoft Sans Serif", 8.25f);
 		#endregion
 
 		#region Delegates
