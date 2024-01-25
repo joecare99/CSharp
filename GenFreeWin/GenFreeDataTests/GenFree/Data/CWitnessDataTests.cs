@@ -121,7 +121,7 @@ namespace GenFree.Data.Tests
         [DataRow(EWitnessProp.iLfNr, (short)6)]
         public void SetDBValueTest(EWitnessProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
@@ -131,7 +131,7 @@ namespace GenFree.Data.Tests
         [DataRow((EWitnessProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EWitnessProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]

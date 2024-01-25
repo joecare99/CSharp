@@ -13,7 +13,6 @@
 // ***********************************************************************
 using GenFree.Data;
 using GenFree.Interfaces.DB;
-using GenFree.Model;
 using System;
 using System.Collections.Generic;
 
@@ -24,17 +23,16 @@ namespace GenFree.Interfaces.Model;
 #nullable enable
 /// <summary>
 /// Interface IEvent
-/// Extends the <see cref="GenFree.Interfaces.Model.IHasDataItf{GenFree.Interfaces.IEventData, (GenFree.Data.EEventArt eArt, System.Int32 iLink, System.Int16 iLfNr)}" />
-/// Extends the <see cref="GenFree.Interfaces.Model.IUsesRecordset{(GenFree.Data.EEventArt eArt, System.Int32 iLink, System.Int16 iLfNr)}" />
-/// Extends the <see cref="GenFree.Model.IHasRSIndex1{GenFree.Data.EventIndex, GenFree.Data.EventFields}" />
-/// Extends the <see cref="GenFree.Interfaces.Model.IHasIxDataItf{GenFree.Data.EventIndex, GenFree.Interfaces.IEventData, (GenFree.Data.EEventArt eArt, System.Int32 iLink, System.Int16 iLfNr)}" />
+/// Extends the <see cref="Model.IHasDataItf{IEventData, (EEventArt eArt, int iLink, short iLfNr)}" />
+/// Extends the <see cref="Model.IUsesRecordset{(EEventArt eArt, int iLink, short iLfNr)}" />
+/// Extends the <see cref="IHasRSIndex1{EventIndex, EventFields}" />
+/// Extends the <see cref="Model.IHasIxDataItf{EventIndex, IEventData, (EEventArt eArt, int iLink, short iLfNr)}" />
 /// </summary>
-/// <seealso cref="GenFree.Interfaces.Model.IHasDataItf{GenFree.Interfaces.IEventData, (GenFree.Data.EEventArt eArt, System.Int32 iLink, System.Int16 iLfNr)}" />
-/// <seealso cref="GenFree.Interfaces.Model.IUsesRecordset{(GenFree.Data.EEventArt eArt, System.Int32 iLink, System.Int16 iLfNr)}" />
-/// <seealso cref="GenFree.Model.IHasRSIndex1{GenFree.Data.EventIndex, GenFree.Data.EventFields}" />
-/// <seealso cref="GenFree.Interfaces.Model.IHasIxDataItf{GenFree.Data.EventIndex, GenFree.Interfaces.IEventData, (GenFree.Data.EEventArt eArt, System.Int32 iLink, System.Int16 iLfNr)}" />
+/// <seealso cref="Model.IHasDataItf{IEventData, (EEventArt eArt, int iLink, short iLfNr)}" />
+/// <seealso cref="Model.IUsesRecordset{(EEventArt eArt, int iLink, short iLfNr)}" />
+/// <seealso cref="IHasRSIndex1{EventIndex, EventFields}" />
+/// <seealso cref="Model.IHasIxDataItf{EventIndex, IEventData, (EEventArt eArt, int iLink, short iLfNr)}" />
 public interface IEvent : 
-    IHasDataItf<IEventData, (EEventArt eArt, int iLink, short iLfNr)>,
     IUsesRecordset<(EEventArt eArt, int iLink, short iLfNr)> , 
     IHasRSIndex1<EventIndex, EventFields>,
     IHasIxDataItf<EventIndex, IEventData, (EEventArt eArt, int iLink, short iLfNr)>
@@ -189,13 +187,6 @@ public interface IEvent :
     /// <param name="iLfNr">The i lf nr.</param>
     /// <returns>System.Nullable&lt;IEventData&gt;.</returns>
     IEventData? ReadDataPl(EEventArt eEventArt, int persInArb, out bool xBreak, short iLfNr = 0);
-    /// <summary>
-    /// Reads all.
-    /// </summary>
-    /// <param name="eIndex">Index of the e.</param>
-    /// <param name="iPlace">The i place.</param>
-    /// <returns>IEnumerable&lt;IEventData&gt;.</returns>
-    IEnumerable<IEventData> ReadAll(EventIndex eIndex, object iPlace);
     /// <summary>
     /// Reads the data.
     /// </summary>

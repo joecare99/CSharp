@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using GenFree.Interfaces.Model;
+﻿using GenFree.Interfaces.Model;
 
 namespace GenFree.Interfaces.Sys
 {

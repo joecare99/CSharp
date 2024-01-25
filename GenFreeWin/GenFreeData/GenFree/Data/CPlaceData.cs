@@ -119,6 +119,11 @@ namespace GenFree.Data
                 EPlaceProp.sGOV => typeof(string),
                 EPlaceProp.sPolName => typeof(string),
                 EPlaceProp.ig => typeof(int),
+                EPlaceProp.sOrt => typeof(string),
+                EPlaceProp.sOrtsteil => typeof(string),
+                EPlaceProp.sKreis => typeof(string),
+                EPlaceProp.sLand => typeof(string),
+                EPlaceProp.sStaat => typeof(string),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -144,6 +149,11 @@ namespace GenFree.Data
                 EPlaceProp.sGOV => sGOV,
                 EPlaceProp.sPolName => sPolName,
                 EPlaceProp.ig => ig,
+                EPlaceProp.sOrt => sOrt,
+                EPlaceProp.sOrtsteil => sOrtsteil,
+                EPlaceProp.sKreis => sKreis,
+                EPlaceProp.sLand => sLand,
+                EPlaceProp.sStaat => sStaat,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -180,9 +190,9 @@ namespace GenFree.Data
             };
         }
 
-        public override void SetDBValue(IRecordset dB_FamilyTable, string[]? asProps)
+        public override void SetDBValue(IRecordset dB_FamilyTable, Enum[]? asProps)
         {
-            asProps ??= _changedPropList.Select((e) => e.ToString()).ToArray();
+            asProps ??= _changedPropList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
                 _ = prop.AsEnum<EPlaceProp>() switch

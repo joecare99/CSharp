@@ -407,7 +407,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
             Data = rs.Fields[nameof(TestIndexField.Data)].AsInt();
         }
 
-        public void SetDBValue(IRecordset rs, string[]? asProps)
+        public void SetDBValue(IRecordset rs, Enum[]? asProps)
         {
 
         }

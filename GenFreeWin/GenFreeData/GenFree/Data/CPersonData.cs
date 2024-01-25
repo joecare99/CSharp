@@ -324,12 +324,12 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
 
     public void SetSex(string sSex) => SetPropValue(EPersonProp.sSex, sSex);
 
-    public override void SetDBValue(IRecordset dB_PersonTable, string[]? asProps)
+    public override void SetDBValue(IRecordset dB_PersonTable, Enum[]? asProps)
     {
-        asProps ??= _changedPropsList.Select((e) => e.ToString()).ToArray();
+        asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
         foreach (var prop in asProps)
         {
-            switch (prop.AsEnum<EPersonProp>())
+            switch (prop)
             {
                 case EPersonProp.ID:
                     dB_PersonTable.Fields[nameof(PersonFields.PersNr)].Value = ID;

@@ -126,6 +126,11 @@ namespace GenFree.Data.Tests
         [DataRow(EPlaceProp.sGOV, TypeCode.String)]
         [DataRow(EPlaceProp.sPolName, TypeCode.String)]
         [DataRow(EPlaceProp.ig, TypeCode.Int32)]
+        [DataRow(EPlaceProp.sOrt, TypeCode.String)]
+        [DataRow(EPlaceProp.sOrtsteil, TypeCode.String)]
+        [DataRow(EPlaceProp.sKreis, TypeCode.String)]
+        [DataRow(EPlaceProp.sLand, TypeCode.String)]
+        [DataRow(EPlaceProp.sStaat, TypeCode.String)]
         public void GetPropTypeTest(EPlaceProp pAct, TypeCode eExp)
         {
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
@@ -133,7 +138,7 @@ namespace GenFree.Data.Tests
 
         [DataTestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
-        [DataRow((EPlaceProp)17, TypeCode.Int32)]
+        [DataRow((EPlaceProp)22, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void GetPropTypeTest2(EPlaceProp pAct, TypeCode eExp)
         {
@@ -158,6 +163,11 @@ namespace GenFree.Data.Tests
         [DataRow(EPlaceProp.sGOV, "GOV")]
         [DataRow(EPlaceProp.sPolName, "PolName")]
         [DataRow(EPlaceProp.ig, 0)]
+        [DataRow(EPlaceProp.sOrt, "Text_2")]
+        [DataRow(EPlaceProp.sOrtsteil, "Text_3")]
+        [DataRow(EPlaceProp.sKreis, "Text_4")]
+        [DataRow(EPlaceProp.sLand, "Text_5")]
+        [DataRow(EPlaceProp.sStaat, "Text_6")]
         public void GetPropValueTest(EPlaceProp eExp, object oAct)
         {
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
@@ -165,7 +175,7 @@ namespace GenFree.Data.Tests
 
         [DataTestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
-        [DataRow((EPlaceProp)17, TypeCode.Int32)]
+        [DataRow((EPlaceProp)22, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void GetPropValueTest2(EPlaceProp eExp, object oAct)
         {
@@ -233,7 +243,7 @@ namespace GenFree.Data.Tests
         [DataRow(EPlaceProp.ig, 1)]
         public void SetDBValueTest(EPlaceProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
@@ -243,7 +253,7 @@ namespace GenFree.Data.Tests
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EPlaceProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]

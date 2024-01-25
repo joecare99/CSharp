@@ -76,12 +76,12 @@ namespace GenFree.Data
             return _db_Table.NoMatch ? null : _db_Table;
         }
 
-        public override void SetDBValue(IRecordset dB_Table, string[]? asProps)
+        public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
         {
-            asProps ??= _changedPropsList.Select(e => e.ToString()).ToArray();
+            asProps ??= _changedPropsList.Select(e => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
-                switch (prop.AsEnum<ESourceLinkProp>())
+                switch (prop)
                 {
                     case ESourceLinkProp.eArt:
                         dB_Table.Fields[SourceLinkFields.Art.AsFld()].Value = eArt;
