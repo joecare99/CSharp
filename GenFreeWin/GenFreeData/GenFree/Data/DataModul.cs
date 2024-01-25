@@ -23,6 +23,7 @@ public static partial class DataModul
     public static IFamily Family { get; } = new CFamily(() => DB_FamilyTable, new CSysTime()); // new IoC.GetReqiredService(IFamily);
     public static INames Names { get; } = new CNames(() => DB_NameTable); // new IoC.GetReqiredService(INames);
     public static IWitness Witness { get; } = new CWitness(() => DB_WitnessTable);
+    public static IOFB OFB { get; } = new COFB(() => DB_OFBTable); // new IoC.GetReqiredService(IOFB);
 
     public static INB_Person NB_Person { get; } = new CNB_Person(() => NB_PersonTable, Link_MoveAllPaten_ToNBWitn); // new IoC.GetReqiredService(INB_Person);
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable); // new IoC.GetReqiredService(INB_Family);

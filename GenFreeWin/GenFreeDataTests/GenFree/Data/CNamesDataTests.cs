@@ -131,7 +131,7 @@ public class CNamesDataTests
     [DataRow(ENamesProp.bSpitz, false)]
     public void SetDBValueTest(ENamesProp eAct, object _)
     {
-        testClass.SetDBValue(testRS, new[] { $"{eAct}" });
+        testClass.SetDBValue(testRS, new[] { (Enum)eAct });
         _ = testRS.Received().Fields[eAct.ToString()];
     }
 
@@ -141,7 +141,7 @@ public class CNamesDataTests
     [DataRow((ENamesProp)100, TypeCode.Int32)]
     public void SetDBValueTest1(ENamesProp eAct, object _)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { $"{eAct}" }));
+        Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
     }
 
     [DataTestMethod()]

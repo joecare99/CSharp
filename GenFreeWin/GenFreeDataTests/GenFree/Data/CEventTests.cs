@@ -272,6 +272,28 @@ namespace GenFree.Data.Tests
 
         [DataTestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
+        [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
+        [DataRow("2-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
+
+        public void ReadBeSuTest1(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
+        {
+            testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
+            Assert.AreEqual(xExp, testClass.ReadBeSu(eArt, iActFam, out var cEv));
+            if (xExp)
+            {
+                Assert.AreEqual(eArt, cEv!.eArt);
+                Assert.AreEqual(2, cEv!.iPerFamNr);
+                Assert.AreEqual(1, cEv!.iLfNr);
+                Assert.AreEqual(new DateTime(1900, 1, 1), cEv!.dDatumV);
+                Assert.AreEqual(new DateTime(1910, 12, 31), cEv!.dDatumB);
+            }
+            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
+            testRS.Received().Seek("=", eArt, iActFam);
+        }
+
+        [DataTestMethod()]
+        [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("2-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
@@ -542,7 +564,7 @@ namespace GenFree.Data.Tests
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, null, false)]
         [DataRow("1-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, null, false)]
 
-        public void SetDataTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, string[]? asAct, bool xExp)
+        public void SetDataTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, Enum[]? asAct, bool xExp)
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, !xExp, !xExp, true);
             var testP = Substitute.For<IEventData>();

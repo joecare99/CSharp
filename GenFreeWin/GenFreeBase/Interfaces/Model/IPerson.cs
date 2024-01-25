@@ -1,12 +1,10 @@
 ﻿//using DAO;
 using GenFree.Data;
-using GenFree.Interfaces.DB;
-using GenFree.Model;
 using System;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IPerson : IHasDataItf<IPersonData,int>, IUsesRecordset<int>, IUsesID<int>, IHasRSIndex1<PersonIndex,PersonFields>
+    public interface IPerson : IHasIxDataItf<PersonIndex, IPersonData,int>, IUsesRecordset<int>, IUsesID<int>, IHasRSIndex1<PersonIndex,PersonFields>
     {
         void AllSetEditDate();
         int CheckID(int iPerson, bool xIgnoreSex, ELinkKennz kennz);

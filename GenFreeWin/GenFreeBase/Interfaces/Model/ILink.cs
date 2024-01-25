@@ -1,7 +1,6 @@
 ﻿//using DAO;
 
 using GenFree.Data;
-using GenFree.Model;
 using System;
 using System.Collections.Generic;
 

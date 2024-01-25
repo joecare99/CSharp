@@ -41,6 +41,6 @@ namespace GenFree.Model.Data
         }
 
         public abstract void FillData(IRecordset dB_Table);
-        public abstract void SetDBValue(IRecordset dB_Table, string[]? asProps);
+        public abstract void SetDBValue(IRecordset dB_Table, Enum[]? asProps);
     }
 }

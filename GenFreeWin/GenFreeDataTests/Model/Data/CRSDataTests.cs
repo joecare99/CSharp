@@ -49,12 +49,12 @@ public class CRSDataTests
             _ => null
         };
 
-        public override void SetDBValue(IRecordset dB_Table, string[]? asProps)
+        public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
         {
-            asProps ??= _changedPropsList.Select(e => e.ToString()).ToArray();
-            foreach (string sProp in asProps)
+            asProps ??= _changedPropsList.Select(e => (Enum)e).ToArray();
+            foreach (var sProp in asProps)
             {
-                dB_Table.Fields[sProp].Value = GetPropValue(sProp.AsEnum<TestProp>());
+                dB_Table.Fields[$"{sProp}"].Value = GetPropValue(sProp.AsEnum<TestProp>());
             }
         }
 

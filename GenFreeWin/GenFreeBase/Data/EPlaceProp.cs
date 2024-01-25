@@ -20,5 +20,10 @@ namespace GenFree.Data
         sGOV,
         sPolName,
         ig,
+        sOrt,
+        sOrtsteil,
+        sKreis,
+        sLand,
+        sStaat,
     }
 }

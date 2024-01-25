@@ -1,12 +1,10 @@
 ﻿//using DAO;
 using GenFree.Data;
-using GenFree.Model;
-using System;
 
 namespace GenFree.Interfaces.Model
 {
     public interface INames :
-        IHasDataItf<INamesData, (int, ETextKennz, int)>,
+        IHasIxDataItf<NameIndex, INamesData, (int, ETextKennz, int)>,
         IUsesRecordset<(int, ETextKennz, int)>, IUsesID<(int, ETextKennz, int)>,
         IHasRSIndex1<NameIndex, NameFields>
     {
