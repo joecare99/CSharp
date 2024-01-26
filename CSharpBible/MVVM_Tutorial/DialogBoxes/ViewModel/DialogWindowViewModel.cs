@@ -39,11 +39,11 @@ namespace DialogBoxes.ViewModel
         /// <summary>
         /// Occurs when [ok].
         /// </summary>
-        public event EventHandler OK;
+        public event EventHandler? DoOK;
         /// <summary>
         /// Occurs when [cancel].
         /// </summary>
-        public event EventHandler Cancel;
+        public event EventHandler? DoCancel;
         /// <summary>
         /// Gets or sets the ok command.
         /// </summary>
@@ -62,13 +62,13 @@ namespace DialogBoxes.ViewModel
         {
             this.OKCommand = new DelegateCommand((o) =>
             {
-                this.OK?.Invoke(this, EventArgs.Empty);
+                this.DoOK?.Invoke(this, EventArgs.Empty);
             });
             this.CancelCommand = new DelegateCommand((o) =>
             {
                 Name = String.Empty;
                 Email = String.Empty;
-                this.Cancel?.Invoke(this, EventArgs.Empty);
+                this.DoCancel?.Invoke(this, EventArgs.Empty);
             });
         }
         /// <summary>
