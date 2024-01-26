@@ -34,6 +34,9 @@ namespace MVVM_07a_CTDialogBoxes.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Func<IDialogWindow> NewDialogWindow = () => new DialogWindow();
+        public Func<string, string, MessageBoxButton, MessageBoxResult> MessageBoxShow = 
+            (t, n,mbb) => MessageBox.Show(t, n, mbb);
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
@@ -47,24 +50,27 @@ namespace MVVM_07a_CTDialogBoxes.View
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        public void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = (MainWindowViewModel)DataContext;
-           
-            vm.DoOpenDialog = (Name, email) =>
-            {
-                DialogWindow dialog = new DialogWindow();
-                var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
-                (dialogViewModel.Name, dialogViewModel.Email) = (Name,email);
-                if (dialog.ShowDialog() == true)
-                {
-                    return (dialogViewModel.Name, dialogViewModel.Email);
-                }
-                else
-                    return (Name, email);
-            };
+            vm.DoOpenDialog = DoOpenDialog;
+            vm.DoOpenMessageBox = DoOpenMessageBox;
+        }
 
-            vm.DoOpenMessageBox = (Title, Name) => MessageBox.Show(Title, Name,MessageBoxButton.YesNo);
+        private MessageBoxResult DoOpenMessageBox(string Title, string Name) 
+            => MessageBoxShow(Title, Name, MessageBoxButton.YesNo);
+
+        private (string name, string email) DoOpenDialog(string Name, string email)
+        {
+            IDialogWindow dialog = NewDialogWindow();
+            var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
+            (dialogViewModel.Name, dialogViewModel.Email) = (Name, email);
+            if (dialog.ShowDialog() == true)
+            {
+                return (dialogViewModel.Name, dialogViewModel.Email);
+            }
+            else
+                return (Name, email);
         }
     }
 }

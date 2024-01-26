@@ -97,11 +97,10 @@ namespace BaseLib.Helper
                 else
                     actLines[i % 5] = $"";
                 expLines[i % 5] = $"<EOF>";
-                Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
-            }
+                Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");  }
             else
             { 
-                Assert.IsFalse(actE.MoveNext());
+                Assert.IsTrue(xEoAAct);
             }
 
         }

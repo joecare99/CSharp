@@ -20,7 +20,7 @@ namespace MVVM_07a_CTDialogBoxes.View
     /// <summary>
     /// Interaktionslogik für DialogWindow.xaml
     /// </summary>
-    public partial class DialogWindow : Window
+    public partial class DialogWindow : Window, IDialogWindow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogWindow"/> class.
@@ -38,12 +38,19 @@ namespace MVVM_07a_CTDialogBoxes.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = (DialogWindowViewModel)DataContext;
-            vm.DoCancel += new EventHandler((o,ea) => Hide());
-            vm.DoOK += new EventHandler((o, ea) =>
-            {
-                DialogResult = true;
-                Hide();
-            });
+            vm.DoCancel += DoCancel;
+            vm.DoOK += DoOK;
+        }
+
+        private void DoOK(object sender,EventArgs e)
+        {
+            DialogResult = true;
+            Hide();
+        }
+
+        private void DoCancel(object sender, EventArgs e)
+        {
+            Hide();
         }
     }
 }

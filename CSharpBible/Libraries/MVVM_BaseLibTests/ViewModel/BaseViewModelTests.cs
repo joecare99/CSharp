@@ -157,7 +157,7 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
 
         [DataTestMethod]
         [DataRow(1,1, false)]
-        [DataRow(2,2, true)]
+        [DataRow(3,2, true)]
         [DataRow(0,1, false)]
         public void IsGreaterTest(int dVal1,int dVal2, bool xExp)
         {

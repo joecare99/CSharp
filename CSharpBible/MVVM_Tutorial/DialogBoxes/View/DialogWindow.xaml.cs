@@ -20,7 +20,7 @@ namespace DialogBoxes.View
     /// <summary>
     /// Interaktionslogik für DialogWindow.xaml
     /// </summary>
-    public partial class DialogWindow : Window
+    public partial class DialogWindow : Window, IDialogWindow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogWindow"/> class.
@@ -38,8 +38,8 @@ namespace DialogBoxes.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = (DialogWindowViewModel)DataContext;
-            vm.Cancel += new EventHandler((o,ea) => Hide());
-            vm.OK += new EventHandler((o, ea) =>
+            vm.DoCancel += new EventHandler((o,ea) => Hide());
+            vm.DoOK += new EventHandler((o, ea) =>
             {
                 DialogResult = true;
                 Hide();

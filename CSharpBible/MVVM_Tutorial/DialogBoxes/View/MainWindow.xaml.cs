@@ -34,6 +34,10 @@ namespace DialogBoxes.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Func<IDialogWindow> NewDialogWindow = () => new DialogWindow();
+        public Func<string, string, MessageBoxButton, MessageBoxResult> MessageBoxShow =
+            (t, n, mbb) => MessageBox.Show(t, n, mbb);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
@@ -47,12 +51,12 @@ namespace DialogBoxes.View
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        public void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = (MainWindowViewModel)DataContext;
-            vm.OpenDialog = (Name, email) =>
+            vm.DoOpenDialog = (Name, email) =>
             {
-                DialogWindow dialog = new DialogWindow();
+                IDialogWindow dialog = NewDialogWindow();
                 var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
                 (dialogViewModel.Name, dialogViewModel.Email) = (Name,email);
                 if (dialog.ShowDialog() == true)
@@ -62,7 +66,7 @@ namespace DialogBoxes.View
                 else
                     return (Name, email);
             };
-            vm.OpenMessageBox = (Title, Name) => MessageBox.Show(Title, Name,MessageBoxButton.YesNo);
+            vm.DoOpenMessageBox = (Title, Name) => MessageBoxShow(Title, Name,MessageBoxButton.YesNo);
         }
     }
 }

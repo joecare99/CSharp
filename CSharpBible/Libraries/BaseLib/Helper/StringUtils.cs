@@ -195,7 +195,7 @@ namespace BaseLib.Helper
         public static bool IsValidIdentifyer(this string? s)
         {
             if (string.IsNullOrWhiteSpace(s)) return false;
-            var _s = s.ToUpper();
+            var _s = s!.ToUpper();
             if (!AlphaUpper.Contains(_s[0])) return false;
             foreach (var c in _s)
                 if (!(AlphaNumeric+"_").Contains(c)) return false;
