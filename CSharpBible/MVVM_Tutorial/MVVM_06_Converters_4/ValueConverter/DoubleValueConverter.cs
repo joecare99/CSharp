@@ -14,7 +14,6 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Documents;
 
 namespace MVVM_06_Converters_4.ValueConverter
 {
