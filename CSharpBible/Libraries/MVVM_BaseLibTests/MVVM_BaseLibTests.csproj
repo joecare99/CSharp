@@ -21,6 +21,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="..\BaseLibTests\Helper\TestHelper.cs" Link="Helper\TestHelper.cs" />
+		<Compile Include="..\BaseLibTests\Helper\TestHelperTests.cs" Link="Helper\TestHelperTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\PropertyHelperTests.cs" Link="Helper\PropertyHelperTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\StringUtilsTests.cs" Link="Helper\StringUtilsTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\TypeUtilsTests.cs" Link="Helper\TypeUtilsTests.cs" />
