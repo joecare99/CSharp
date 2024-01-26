@@ -13,7 +13,6 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MVVM.ViewModel;
 using System;
 using System.Timers;
 
