@@ -13,7 +13,8 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM_07a_CTDialogBoxes.ViewModel;
+using DialogBoxes.ViewModel;
+using DialogBoxes.View;
 using NSubstitute;
 using System;
 using System.ComponentModel;

@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM_07a_CTDialogBoxes.ViewModel;
+using DialogBoxes.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,12 +38,12 @@ namespace MVVM_07a_CTDialogBoxes.ViewModel.Tests
             ClearLog();
         }
 
-        private void DoOKTest(object o, EventArgs e)
+        private void DoOKTest(object? o, EventArgs e)
         {
            DoLog($"DoOK({o},{e})"); 
         }
 
-        private void DoCancelTest(object o, EventArgs e)
+        private void DoCancelTest(object? o, EventArgs e)
         {
             DoLog($"DoCancel({o},{e})");
         }
@@ -57,7 +57,7 @@ namespace MVVM_07a_CTDialogBoxes.ViewModel.Tests
         {
             Assert.IsNotNull(testModel);
             Assert.IsInstanceOfType(testModel, typeof(DialogWindowViewModel));
-            Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
+            Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
             Assert.IsNotNull(testModel.CancelCommand);
             Assert.IsInstanceOfType(testModel.CancelCommand, typeof(IRelayCommand));
@@ -66,10 +66,10 @@ namespace MVVM_07a_CTDialogBoxes.ViewModel.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { @"DoCancel(MVVM_07a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(true, new[] { @"DoCancel(DialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
 " })]
         [DataRow(false, new[] { @"" })]
-        [DataRow(null, new[] { @"DoCancel(MVVM_07a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(null, new[] { @"DoCancel(DialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
 " })]
         public void CancelCommandTest(bool? oAct, string[] asExp)
         {
@@ -80,10 +80,10 @@ namespace MVVM_07a_CTDialogBoxes.ViewModel.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { @"DoOK(MVVM_07a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(true, new[] { @"DoOK(DialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
 " })]
         [DataRow(false, new[] { @"" })]
-        [DataRow(null, new[] { @"DoOK(MVVM_07a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(null, new[] { @"DoOK(DialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
 " })]
         public void OKCommandTest(bool? oAct, string[] asExp)
         {

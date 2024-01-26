@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
 using System;
+using DialogBoxes;
 using System.Windows;
 
 namespace MVVM_07a_CTDialogBoxes.Tests
