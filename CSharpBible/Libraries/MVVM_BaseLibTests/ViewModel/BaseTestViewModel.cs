@@ -68,7 +68,7 @@ namespace MVVM.ViewModel
                     irc.CanExecuteChanged += OnCanExChanged;
         }
 
-        static IEnumerable<object[]> TestModelProperies => typeof(T).GetProperties().Select(o => new object[] { o.Name, o.PropertyType.TC(), o.CanRead, o.CanWrite });
+        protected static IEnumerable<object[]> TestModelProperies => typeof(T).GetProperties().Select(o => new object[] { o.Name, o.PropertyType.TC(), o.CanRead, o.CanWrite });
 
         [DataTestMethod]
         [DynamicData(nameof(TestModelProperies))]

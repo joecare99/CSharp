@@ -171,6 +171,27 @@ PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
             Assert.AreEqual(sAct, testModel.TestStr);
             Assert.AreEqual(asExp[0], DebugLog);
         }
+
+        [TestMethod]
+        public void DoSomethingTest()
+        {
+            testModel.TestInt = 5;
+            ClearLog();
+            // Act
+            testModel.DoSomethingCommand.Execute(null);
+
+            // Assert
+            Assert.AreEqual(5, testModel.TestInt);
+            Assert.AreEqual(@"", DebugLog);
+        }
+
+        [TestMethod]
+        public void TestModelPropsTest()
+        {
+            // Act
+            // Assert
+            Assert.IsNotNull(TestModelProperies);
+        }
     }
 
 }
