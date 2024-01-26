@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Helper;
-using BaseLib.Helper.MVVM;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
