@@ -76,6 +76,49 @@ namespace BaseLib.Helper.Tests
         }
     }
 
+    [TestClass]
+    public class TestStructTests
+    {
+        [TestMethod]
+        public void TestStructTest()
+        {
+            var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
+            Assert.AreEqual("(123;Dada)", ts.ToString());
+            Assert.AreEqual(ts, TestStruct.Parse("123;Dada"));
+        }
+
+        [TestMethod]
+        public void TestEqOpTest2()
+        {
+            var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
+            var ts2 = new TestStruct() { TestInt = 123, TestString = "Dada1" };
+            Assert.IsFalse(ts == ts2);
+        }
+
+        [TestMethod]
+        public void TestnEqualsTest()
+        {
+            var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
+            Assert.AreNotEqual((object)ts, (object)3);
+        }
+
+        [TestMethod]
+        public void TestUnEqOpTest2()
+        {
+            var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
+            var ts2 = new TestStruct() { TestInt = 125, TestString = "Dada" };
+            Assert.IsTrue(ts != ts2);
+        }
+
+        [TestMethod]
+        public void GetHashTest()
+        {
+            var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
+            var ts2 = new TestStruct() { TestInt = 124, TestString = "Dada" };
+            Assert.AreNotEqual(ts.GetHashCode() , ts2.GetHashCode());
+        }
+
+    }
     /// <summary>
     /// Enum GameSound
     /// </summary>

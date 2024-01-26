@@ -20,7 +20,7 @@ namespace MVVM.ViewModel.Tests
             PropertyChanged -= OnPropertyChanged;
             PropertyChanged += OnPropertyChanged;
             doSomething = new DelegateCommand<int>((i) => DebugResult += $"doSomething({i})",(i)=>Prop1IsGreaterThen1Prop2());
-            doSomething.CanExecuteChanged += OnCanExChanged;    
+            doSomething.CanExecuteChanged += OnCanExChanged;               
         }
 
         private void OnCanExChanged(object? sender, EventArgs e)
@@ -159,5 +159,6 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
         {
             return arg == Math.Floor(arg);
         }
+
     }
 }

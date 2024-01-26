@@ -11,8 +11,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,6 +21,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="..\BaseLibTests\Helper\TestHelper.cs" Link="Helper\TestHelper.cs" />
+		<Compile Include="..\BaseLibTests\Helper\TestHelperTests.cs" Link="Helper\TestHelperTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\PropertyHelperTests.cs" Link="Helper\PropertyHelperTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\StringUtilsTests.cs" Link="Helper\StringUtilsTests.cs" />
 		<Compile Include="..\BaseLibTests\Helper\TypeUtilsTests.cs" Link="Helper\TypeUtilsTests.cs" />
@@ -28,6 +29,19 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Properties\Resource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>
