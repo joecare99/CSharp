@@ -3,7 +3,6 @@ using CommonDialogs.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM_20_Sysdialogs.ViewModel;
 using NSubstitute;
-using NSubstitute.Core.Arguments;
 using System;
 using System.Drawing;
 using System.Threading;

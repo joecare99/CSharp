@@ -13,10 +13,8 @@
 // ***********************************************************************
 using MVVM_20_Sysdialogs.ViewModel;
 using System;
-using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
-using CommonDialogs;
 using CommonDialogs.Interfaces;
 using System.Drawing;
 

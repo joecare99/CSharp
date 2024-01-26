@@ -11,17 +11,13 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using CommonDialogs;
 using CommonDialogs.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Win32;
-using MVVM.ViewModel;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
-using System.Windows.Controls;
 
 namespace MVVM_20_Sysdialogs.ViewModel.Tests
 {

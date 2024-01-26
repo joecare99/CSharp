@@ -11,23 +11,20 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using CommonDialogs;
 using CommonDialogs.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Win32;
 using MVVM.ViewModel;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
-using System.Windows.Controls;
 
 namespace MVVM_20_Sysdialogs.ViewModel.Tests
 {
-	/// <summary>
-	/// Defines test class SysDialogsViewModelTests.
-	/// </summary>
-	[TestClass()]
+    /// <summary>
+    /// Defines test class SysDialogsViewModelTests.
+    /// </summary>
+    [TestClass()]
 	public class SysDialogsViewModelTests {
 		/// <summary>
 		/// The c exp file open name0
