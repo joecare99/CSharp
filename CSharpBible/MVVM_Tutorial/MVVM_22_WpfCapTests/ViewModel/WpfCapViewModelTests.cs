@@ -1,15 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
 using MVVM_22_WpfCap.Model;
-using MVVM_22_WpfCap.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Telerik.JustMock;
 
 namespace MVVM_22_WpfCap.ViewModel.Tests

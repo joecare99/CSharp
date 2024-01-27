@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using MVVM.ViewModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 /// <summary>
 /// The Tests namespace.

@@ -1,5 +1,4 @@
 ﻿using CustomerRepository.Model;
-using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Telerik.JustMock;
 using System;

@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.ComponentModel;
-
 namespace MVVM_05a_CTCommandParCalc.Model
 {
     public enum ENumbers:int

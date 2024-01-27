@@ -15,7 +15,6 @@ using MVVM_Converter_ImgGrid2.View.Converter;
 using MVVM_Converter_ImgGrid2.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace MVVM_Converter_ImgGrid2.View
 {

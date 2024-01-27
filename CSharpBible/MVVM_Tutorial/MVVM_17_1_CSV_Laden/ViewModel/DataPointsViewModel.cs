@@ -11,12 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MVVM.ViewModel;
 using MVVM_17_1_CSV_Laden.Model;
 

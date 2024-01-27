@@ -1,16 +1,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tetris_Base.Helper;
 
-namespace Tetris_Base.Helper.Tests {
-	/// <summary>
-	/// Defines test class PropertyClassTests.
-	/// </summary>
-	[TestClass()]
+namespace Tetris_Base.Helper.Tests
+{
+    /// <summary>
+    /// Defines test class PropertyClassTests.
+    /// </summary>
+    [TestClass()]
 	public class PropertyClassTests {
 		/// <summary>
 		/// Sets the property test.

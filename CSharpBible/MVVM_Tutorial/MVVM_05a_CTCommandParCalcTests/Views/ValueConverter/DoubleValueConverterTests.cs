@@ -13,7 +13,6 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
-using System.Text;
 
 /// <summary>
 /// The Tests namespace.
