@@ -13,15 +13,9 @@
 // ***********************************************************************
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Windows.Media;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Shapes;
 using MVVM_Converter_ImgGrid2.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;

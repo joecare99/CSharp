@@ -15,7 +15,6 @@ using MVVM_Converter_DrawGrid3_NonLin.View.Converter;
 using MVVM_Converter_DrawGrid3_NonLin.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace MVVM_Converter_DrawGrid3_NonLin.View
 {
