@@ -1,12 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ConsoleDisplay.View;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
-using BaseLib.Helper;
 using System.Runtime.CompilerServices;
 
 namespace ConsoleDisplay.View.Tests
