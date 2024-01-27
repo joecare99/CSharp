@@ -18,9 +18,7 @@ using MVVM_37_TreeView.Models;
 using MVVM_37_TreeView.Services;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace MVVM_37_TreeView.ViewModels

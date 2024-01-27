@@ -1,11 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_03a_CTNotifyChange.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MVVM_03a_CTNotifyChange.Views.Tests
 {
