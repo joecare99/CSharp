@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System.ComponentModel;
 using System.Windows;
 
 

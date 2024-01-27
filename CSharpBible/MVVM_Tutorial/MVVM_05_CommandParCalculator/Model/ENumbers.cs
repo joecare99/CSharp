@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace MVVM_05_CommandParCalculator.Model
+﻿namespace MVVM_05_CommandParCalculator.Model
 {
     public enum ENumbers:int
     {

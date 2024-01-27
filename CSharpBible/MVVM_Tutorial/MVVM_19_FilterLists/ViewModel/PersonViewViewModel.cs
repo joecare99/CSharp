@@ -14,12 +14,7 @@
 using MVVM_19_FilterLists.Model;
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Specialized;
 
 namespace MVVM_19_FilterLists.ViewModel
 {
