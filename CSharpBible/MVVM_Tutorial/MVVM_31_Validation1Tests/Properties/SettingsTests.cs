@@ -1,7 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
-using MVVM_31_Validation1.ViewModels;
-using System.ComponentModel;
 using System.Configuration;
 
 namespace MVVM_31_Validation1.Properties.Tests

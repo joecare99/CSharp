@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
 
 namespace MVVM_06_Converters.ViewModel
 {

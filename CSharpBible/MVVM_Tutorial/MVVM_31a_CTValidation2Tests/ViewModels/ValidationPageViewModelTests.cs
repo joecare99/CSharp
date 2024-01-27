@@ -1,12 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_31a_CTValidation2.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using MVVM.ViewModel;
-using System.Threading.Tasks;
 using BaseLib.Helper.MVVM;
 
 namespace MVVM_31a_CTValidation2.ViewModels.Tests

@@ -1,9 +1,6 @@
-﻿using BaseLib.Helper;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using System;
-using System.ComponentModel;
 using static BaseLib.Helper.TestHelper;
 
 namespace MVVM_04_DelegateCommand.ViewModels.Tests

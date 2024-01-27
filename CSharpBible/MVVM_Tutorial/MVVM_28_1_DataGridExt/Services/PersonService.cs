@@ -1,9 +1,6 @@
 ﻿using MVVM_28_1_DataGridExt.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_28_1_DataGridExt.Services
 {

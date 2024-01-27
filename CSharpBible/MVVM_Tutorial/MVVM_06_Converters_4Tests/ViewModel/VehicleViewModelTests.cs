@@ -1,15 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM_06_Converters_4.Model;
-using MVVM_06_Converters_4.ViewModel;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BaseLib.Helper;
 using MVVM.ViewModel;
-using System.Reflection;
 using System.ComponentModel;
 
 namespace MVVM_06_Converters_4.ViewModel.Tests

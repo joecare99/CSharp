@@ -14,19 +14,16 @@
 using CommonDialogs.Interfaces;
 using System;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Windows.Forms;
 
 namespace CommonDialogs
 {
-	// System.Windows.Forms.FolderBrowserDialog
+    // System.Windows.Forms.FolderBrowserDialog
 
-	/// <summary>
-	/// Fordert den Benutzer auf, einen Ordner auszuwählen. Diese Klasse kann nicht vererbt werden.
-	/// </summary>
-	[DefaultEvent("HelpRequest")]
+    /// <summary>
+    /// Fordert den Benutzer auf, einen Ordner auszuwählen. Diese Klasse kann nicht vererbt werden.
+    /// </summary>
+    [DefaultEvent("HelpRequest")]
 	[DefaultProperty("SelectedPath")]
 	public class FolderBrowserDialog : Component, IFileDialog
 	{
