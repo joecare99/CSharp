@@ -11,8 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Snake_Base.Model;
-
 /// <summary>
 /// The ViewModel namespace.
 /// </summary>
