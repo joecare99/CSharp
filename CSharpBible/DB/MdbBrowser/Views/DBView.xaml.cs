@@ -1,5 +1,4 @@
 ﻿using MdbBrowser.ViewModels;
-using Microsoft.Win32;
 using System.Windows;
 using System;
 using System.Windows.Controls;
