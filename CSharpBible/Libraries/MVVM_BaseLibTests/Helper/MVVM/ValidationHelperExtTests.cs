@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Helper.MVVM;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;

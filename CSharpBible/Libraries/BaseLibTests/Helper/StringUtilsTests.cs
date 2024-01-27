@@ -1,4 +1,3 @@
-using BaseLib.Helper;
 // ***********************************************************************
 // Assembly         : BaseLibTests
 // Author           : Mir
@@ -14,7 +13,6 @@ using BaseLib.Helper;
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System;
 using static BaseLib.Helper.TestHelper;
 /// <summary>
 /// The Tests namespace.

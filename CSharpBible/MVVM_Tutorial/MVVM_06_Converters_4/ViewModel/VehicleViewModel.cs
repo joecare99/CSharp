@@ -13,7 +13,6 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 using MathLibrary.TwoDim;
-using MVVM_06_Converters_4.Properties;
 using MVVM_06_Converters_4.Model;
 using System.ComponentModel;
 using System;

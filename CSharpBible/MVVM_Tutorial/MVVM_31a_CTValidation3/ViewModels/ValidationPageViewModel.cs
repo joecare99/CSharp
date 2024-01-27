@@ -1,11 +1,9 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using BaseLib.Helper.MVVM;
 using MVVM.ViewModel;
 using MVVM_31a_CTValidation3.Properties;
 using MVVM_31a_CTValidation3.Validator;
-using System;
 
 namespace MVVM_31a_CTValidation3.ViewModels
 {

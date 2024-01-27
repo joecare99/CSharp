@@ -15,13 +15,9 @@ using MathLibrary.TwoDim;
 using MVVM.ViewModel;
 using MVVM_06_Converters_4.Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace MVVM_06_Converters_4.ViewModel
 {

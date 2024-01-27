@@ -1,12 +1,8 @@
 ﻿using MathLibrary.TwoDim;
-using Microsoft.Win32;
 using MVVM.ViewModel;
 using MVVM_06_Converters_4.Properties;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_06_Converters_4.Model
 {
