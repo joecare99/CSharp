@@ -84,5 +84,43 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
     };
 
     protected override IFamilyData GetData(IRecordset rs) => new CFamilyPersons(rs);
+
+    public void AllSetEditDate()
+    {
+        IRecordset dB_FamilyTable = _db_Table;
+        dB_FamilyTable.Index = nameof(FamilyIndex.Fam);
+        if (dB_FamilyTable?.RecordCount > 0)
+        {
+            dB_FamilyTable.MoveFirst();
+
+            dB_FamilyTable.Seek("=", 1);
+            while (!dB_FamilyTable.EOF)
+            {
+                if (dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].AsDate() == default)
+                {
+                    dB_FamilyTable.Edit();
+                    dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value;
+                    dB_FamilyTable.Update();
+                }
+                dB_FamilyTable.MoveNext();
+            }
+        }
+
+    }
+
+    public void AppendRaw(int iFamNr, int iName, int iAeb, string sBem1)
+    {
+        IRecordset dB_FamilyTable = _db_Table;
+        dB_FamilyTable.AddNew();
+        dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value = _sysTime.Now.ToString("yyyyMMdd");
+        dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = _sysTime.Now.ToString("yyyyMMdd");
+        dB_FamilyTable.Fields[nameof(FamilyFields.Prüfen)].Value = "1    ";
+        dB_FamilyTable.Fields[nameof(FamilyFields.Bem1)].Value = sBem1;
+        dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].Value = iFamNr;
+        dB_FamilyTable.Fields[nameof(FamilyFields.Name)].Value = iName;
+        dB_FamilyTable.Fields[nameof(FamilyFields.Aeb)].Value = iAeb;
+        dB_FamilyTable.Fields[nameof(FamilyFields.Fuid)].Value = Guid.NewGuid();
+        dB_FamilyTable.Update();
+    }
 }
 

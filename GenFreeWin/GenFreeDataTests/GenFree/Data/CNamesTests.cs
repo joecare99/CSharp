@@ -26,7 +26,7 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CNames(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(NameFields.Kennz)].Value.Returns('N', 'V', '-', 'F' ,'A', 'B');
+            testRS.Fields[nameof(NameFields.Kennz)].Value.Returns('N', 'V', '-', 'F', 'A', 'B');
             testRS.Fields[nameof(NameFields.LfNr)].Value.Returns(1, 3, 5, 16);
             testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 6, 4, 9);
             testRS.ClearReceivedCalls();
@@ -221,11 +221,11 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(NameIndex.PNamen,NameFields.PersNr)]
+        [DataRow(NameIndex.PNamen, NameFields.PersNr)]
         [DataRow(NameIndex.TxNr, NameFields.Text)]
         [DataRow(NameIndex.Vollname, NameFields.PersNr)]
         [DataRow(NameIndex.NamKenn, NameFields.Kennz)]
-        public void GetIndex1FieldTest(NameIndex eAct,NameFields eExp)
+        public void GetIndex1FieldTest(NameIndex eAct, NameFields eExp)
         {
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
@@ -234,7 +234,19 @@ namespace GenFree.Data.Tests
         [DataRow((NameIndex)5, NameFields.PersNr)]
         public void GetIndex1FieldTest1(NameIndex eAct, NameFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(() =>testClass.GetIndex1Field(eAct));
+            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
+        }
+
+        [TestMethod()]
+        public void UpdateAllSetValTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void DeleteAllPersTest()
+        {
+            Assert.Fail();
         }
     }
 }
