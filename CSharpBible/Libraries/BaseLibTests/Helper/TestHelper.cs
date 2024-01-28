@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 /// <summary>
@@ -97,11 +96,10 @@ namespace BaseLib.Helper
                 else
                     actLines[i % 5] = $"";
                 expLines[i % 5] = $"<EOF>";
-                Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
-            }
+                Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");  }
             else
             { 
-                Assert.IsFalse(actE.MoveNext());
+                Assert.IsTrue(xEoAAct);
             }
 
         }

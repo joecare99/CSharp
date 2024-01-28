@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
 using System;
 using System.ComponentModel;
 using System.Linq;

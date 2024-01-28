@@ -12,25 +12,21 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using CommonDialogs;
 using CommonDialogs.Interfaces;
 using Microsoft.Win32;
 using MVVM.ViewModel;
 
-namespace MVVM_20_Sysdialogs.ViewModel {
+namespace MVVM_20_Sysdialogs.ViewModel
+{
 
-	/// <summary>
-	/// Class SysDialogsViewModel.
-	/// Implements the <see cref="BaseViewModel" />
-	/// </summary>
-	/// <seealso cref="BaseViewModel" />
-	public class SysDialogsViewModel : BaseViewModel {
+    /// <summary>
+    /// Class SysDialogsViewModel.
+    /// Implements the <see cref="BaseViewModel" />
+    /// </summary>
+    /// <seealso cref="BaseViewModel" />
+    public class SysDialogsViewModel : BaseViewModel {
 		#region Fields
 		/// <summary>
 		/// The file open name
@@ -55,7 +51,7 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// <summary>
 		/// My font
 		/// </summary>
-		private Font _myFont = SystemFonts.DefaultFont;
+		private Font _myFont = new Font("Microsoft Sans Serif", 8.25f);
 		#endregion
 
 		#region Delegates

@@ -3,7 +3,6 @@ using CommonDialogs.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM_20_Sysdialogs.ViewModel;
 using NSubstitute;
-using NSubstitute.Core.Arguments;
 using System;
 using System.Drawing;
 using System.Threading;
@@ -64,11 +63,11 @@ namespace MVVM_20_Sysdialogs.View.Tests
         [DataRow(true, false, "")]
         [DataRow(false, true, "")]
         [DataRow(null, true, "")]
-        [DataRow(true, true, "OnFont([Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False],{0})\r\n")]
+        [DataRow(true, true, "OnFont([Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False],{0})\r\n")]
         public void DoFontDialogTest(bool? xRes, bool xAct, string sExp)
         {
             var par = Substitute.For<IFontDialog>();
-            par.Font.Returns(System.Drawing.SystemFonts.DefaultFont);
+            par.Font.Returns(new System.Drawing.Font("Microsoft Sans Serif",8.25f));
             par.ShowDialog().Returns(xRes);
             Assert.AreEqual(xRes, vm.dFontDialog?.Invoke(par.Font, par, xAct? (f,p) => DoLog($"OnFont({f},{p})"):null));
             par.Received(1).ShowDialog();

@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace MVVM.ViewModel.Tests

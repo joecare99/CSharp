@@ -16,7 +16,6 @@ using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
 using MVVM_36_ComToolKtSavesWork.ViewModels;
 using System.Windows;
-using System.Windows.Navigation;
 
 namespace MVVM_36_ComToolKtSavesWork
 {

@@ -12,14 +12,8 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MVVM_Converter_ImgGrid2.Model;
-using System.Windows.Controls;
 using Sokoban_Base.Model;
 
 namespace MVVM_Converter_ImgGrid2.ViewModel

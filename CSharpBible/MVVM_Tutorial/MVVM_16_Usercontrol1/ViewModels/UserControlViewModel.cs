@@ -1,5 +1,4 @@
 using MVVM.ViewModel;
-using System;
 
 namespace MVVM_16_UserControl1.ViewModels
 {

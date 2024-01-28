@@ -12,17 +12,14 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Werner_Flaschbier_Base.ViewModel;
 
-namespace Werner_Flaschbier_Base.View {
-	/// <summary>
-	/// Struct FullColor
-	/// </summary>
-	public struct FullColor
+namespace Werner_Flaschbier_Base.View
+{
+    /// <summary>
+    /// Struct FullColor
+    /// </summary>
+    public struct FullColor
 	{
 		/// <summary>
 		/// The fore ground

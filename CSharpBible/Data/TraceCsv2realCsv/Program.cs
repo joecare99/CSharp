@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using TraceCsv2realCsv.Model;
 
 namespace TraceCsv2realCsv

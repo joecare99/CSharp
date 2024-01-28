@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CSharpBibleTest
