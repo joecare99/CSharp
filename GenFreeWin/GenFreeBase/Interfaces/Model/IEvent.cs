@@ -287,4 +287,11 @@ public interface IEvent :
     /// <param name="eIdxField">The e index field.</param>
     /// <param name="iIdxVal">The i index value.</param>
     void ClearAllRemText(EventIndex eIndex, EventFields eIdxField, int iIdxVal);
+    IRecordset AppendRaw((EEventArt eArt, int iLink, short iLfNr) key);
+    void SetValAppend((EEventArt eArt, int iLink, short iLfNr) key, EventFields eSetField, string sNewVal);
+    T GetValue<T>(int persInArb, EEventArt iEventType, EventFields eGetField, Func<IField, T> conv);
+    void UpdateReplFams(int Fam1, int Fam2, EEventArt eArt);
+    void DeleteAllNonVitalE(int num18);
+    void DeleteAllVitalE(int num18);
+    IEnumerable<IEventData> ReadAllGt(EventIndex eIndex, int iIndexVal);
 }

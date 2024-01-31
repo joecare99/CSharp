@@ -773,5 +773,17 @@ namespace GenFree.Data.Tests
         {
             return xResult[iRc++];
         }
+
+        [TestMethod()]
+        public void AppendRawTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void SetValAppendTest()
+        {
+            Assert.Fail();
+        }
     }
 }
