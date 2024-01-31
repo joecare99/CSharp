@@ -77,11 +77,13 @@ namespace MdbBrowser.Models
                 && oleDbConnection != null
                 && oleDbConnection.State == ConnectionState.Open)
             {
-                var schema = oleDbConnection.GetSchema("Columns", new string[] { null, null, sTableName });
+                var schema = oleDbConnection.GetSchema(OleDbMetaDataCollectionNames.Columns, new string?[] { null, null, sTableName, null });
                 foreach (DataRow schemaDef in schema.Rows)
                 {
                     result.Add(new DBMetaData(schemaDef[3].ToString(), EKind.Column, schemaDef, new[] { GetTypeName((int)schemaDef[11]), schemaDef[13].ToString() }));
                 }
+                schema = oleDbConnection.GetSchema(OleDbMetaDataCollectionNames.Indexes, new string?[] { null, null, sTableName,null,null });
+
             }
             return result;
         }

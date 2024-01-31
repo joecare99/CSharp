@@ -9,13 +9,13 @@ using GenFree.Model.Data;
 
 namespace GenFree.Data
 {
-    public class CFamilyPersons : CRSData<EFamilyProp,int>, IFamilyPersons, IFamilyData
+    public class CFamilyPersons : CRSData<EFamilyProp, int>, IFamilyPersons, IFamilyData
     {
-        private CArrayProxy<int> _kind; 
+        private CArrayProxy<int> _kind;
         private CArrayProxy<string> _kiatext;
         private static Func<int, string>? _getText;
         private List<EFamilyProp> _changedPropsList = new();
-        private static Func<IRecordset> _getTable;
+        private static Func<IRecordset> _getTable = () => DataModul.DB_FamilyTable;
         private IRecordset _db_Table;
         private string? _sName;
         private string? _sPrefix;
@@ -51,7 +51,7 @@ namespace GenFree.Data
 
         protected override Enum _keyIndex => FamilyIndex.Fam;
 
-        public CFamilyPersons():base(_getTable())
+        public CFamilyPersons() : base(_getTable())
         {
             Init();
         }
@@ -72,6 +72,7 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_FamilyTable)
         {
+            if (dB_FamilyTable?.EOF != false) return;
             _ID = dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt();
             dAnlDatum = dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].AsDate();
             dEditDat = dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].AsDate();

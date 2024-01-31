@@ -64,6 +64,7 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
 
     public override void FillData(IRecordset dB_PersonTable)
     {
+        if (dB_PersonTable?.EOF != false) return;
         _ID = dB_PersonTable.Fields[nameof(PersonFields.PersNr)].AsInt();
         sOFB = dB_PersonTable.Fields[nameof(PersonFields.OFB)].AsString();
         sPruefen = dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].AsString();

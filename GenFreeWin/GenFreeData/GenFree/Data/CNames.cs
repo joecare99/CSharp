@@ -172,6 +172,30 @@ namespace GenFree.Data
             };
         }
 
+        public void UpdateAllSetVal(NameIndex eIndex, NameFields eIndexField, int iIndexVal, int iNewVal)
+        {
+            IRecordset dB_NameTable = _db_Table;
+            dB_NameTable.Index = $"{eIndex}";
+            dB_NameTable.Seek("=", iIndexVal);
+            while (!dB_NameTable.EOF
+                    && !dB_NameTable.NoMatch
+                    && !(dB_NameTable.Fields[$"{eIndexField}"].AsInt() != iIndexVal))
+            {
+                dB_NameTable.Edit();
+                dB_NameTable.Fields[$"{eIndexField}"].Value = iNewVal;
+                dB_NameTable.Update();
+                dB_NameTable.MoveNext();
+            }
+        }
+
+        public void DeleteAllPers(int num18)
+        {
+            IRecordset? _r;
+            while ((_r = Seek(NameIndex.PNamen, num18)) != null)
+            {
+                _r.Delete();
+            }
+        }
         protected override INamesData GetData(IRecordset rs) => new CNamesData(rs);
     }
 }
