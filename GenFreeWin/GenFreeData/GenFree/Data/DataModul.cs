@@ -10,6 +10,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Sys;
 using GenFree.Model;
 using System.Reflection;
+using System.Threading;
 
 namespace GenFree.Data;
 
@@ -180,7 +181,7 @@ public static partial class DataModul
         DT_RelgionTable = TempDB.OpenRecordset("Konf", RecordsetTypeEnum.dbOpenTable);
         DT_AncesterTable = TempDB.OpenRecordset("Ahnen1", RecordsetTypeEnum.dbOpenTable);
         KindAhnTable = TempDB.OpenRecordset("Ahnew", RecordsetTypeEnum.dbOpenTable);
-        DT_AncesterTable.Index = "PerNr";
+   //     DT_AncesterTable.Index = "PerNr";
 
         DB_PersonTable = MandDB.OpenRecordset(nameof(dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
         DB_PersonTable.Index = nameof(PersonIndex.PerNr);
@@ -732,7 +733,7 @@ public static partial class DataModul
 
                 foreach (FieldDef fld in tbl.Fields)
                 {
-                    print($"\t\tnew(\"{fld.Name}\", DataTypeEnum.{fld.Type}) " +
+                    print($"\t\tnew(\"{fld.Name}\", TypeCode.{fld.Type}) " +
                         $"{(fld.Type == TypeCode.String ? $"{{ Laenge = {fld.Size} }}" : "")}" +
                         $"{(fld.Required ? $"{{ xNull = true }}" : "")}, ");
                 }
@@ -745,9 +746,9 @@ public static partial class DataModul
                         foreach (IndexDef idx in tbl.Indexes)
                         {
                             var fields = idx.Fields;
-                            print($"\t\tnew(\"{idx.Name}\", new[] {{ {fields} }} )"
-                                + $"{(idx.Unique ? "{ Unique = true }" : "")},"
-                                + $"{(idx.IgnoreNulls ? "{ IgnoreNull = true }" : "")},");
+                            print($"\t\tnew(\"{idx.Name}\", new[] {{ {string.Join(", ", fields)} }} )"
+                                + $"{(idx.Unique ? "{ Unique = true }," : "")}"
+                                + $"{(idx.IgnoreNulls ? "{ IgnoreNull = true }," : "")}");
                         }
                         print("\t\t}");
                     }
