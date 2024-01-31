@@ -10,7 +10,7 @@ namespace GenFree.Model
 {
     public abstract class CUsesRecordSet<T> : IUsesRecordset<T>
     {
-        public int Count => _db_Table.RecordCount;
+        public int Count => _db_Table?.RecordCount ?? 0;
         public T MaxID => GetMaxID();
 
         protected abstract string __keyIndex { get; }
