@@ -11,10 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using MVVM.View.Extension;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
-using System.Timers;
+using System.Collections.Generic;
+
 
 /// <summary>
 /// The Models namespace.
@@ -50,6 +52,12 @@ namespace MVVM_38_CTDependencyInjection.Models
         #endregion
 
         #region Methods
+        public TemplateModel():this(
+            IoC.GetRequiredService<ITimer>(),
+            IoC.GetRequiredService<ISysTime>(),
+            IoC.GetRequiredService<IUserRepository>())
+        {
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateModel"/> class.
         /// </summary>
@@ -63,6 +71,9 @@ namespace MVVM_38_CTDependencyInjection.Models
             _timer.Elapsed += (s, e) => OnPropertyChanged(nameof(Now));
             _timer.Start();
         }
+
+        public IEnumerable<string> GetUsers() =>
+            _userRep.GetUsers();
 
 #if !NET5_0_OR_GREATER
         /// <summary>
