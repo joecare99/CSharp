@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace MVVM_38_CTDependencyInjection.Models
 {
@@ -20,6 +21,9 @@ namespace MVVM_38_CTDependencyInjection.Models
                 "PETER" => new Guid("212345678ABCDEF012345678ABCDEF"),
                 _ => Guid.Empty
             };
+
+        public IEnumerable<string> GetUsers() =>
+            new[] { "Dave", "Joe", "Peter" };
 
         public EPermission GetPermission(Guid id,Guid action) {
             return EPermission.All;

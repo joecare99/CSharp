@@ -85,5 +85,13 @@ PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,UserName)=DS12
 PropChg(MVVM_31a_CTValidation3.ViewModels.ValidationPageViewModel,TTUserName)=UserName must have min. 6 Chars
 ", DebugLog);
         }
+
+        [TestMethod()]
+        public void UserLoginCommandTest()
+        {
+            testModel.UserName = "Dev Dave";
+            Assert.AreEqual(true, testModel.UserLoginCommand.CanExecute(null));
+            testModel.UserLoginCommand.Execute(null);
+        }
     }
 }

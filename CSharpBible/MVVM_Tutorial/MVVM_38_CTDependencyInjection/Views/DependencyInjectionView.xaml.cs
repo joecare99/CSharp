@@ -1,13 +1,14 @@
-﻿using System.Windows.Controls;
+﻿using MVVM_38_CTDependencyInjection.ViewModels;
+using System.Windows.Controls;
 
 namespace MVVM_38_CTDependencyInjection.Views
 {
     /// <summary>
     /// Interaktionslogik für TemplateView.xaml
     /// </summary>
-    public partial class TemplateView : Page
+    public partial class DependencyInjection : Page
     {
-        public TemplateView()
+        public DependencyInjection()
         {
             InitializeComponent();
         }

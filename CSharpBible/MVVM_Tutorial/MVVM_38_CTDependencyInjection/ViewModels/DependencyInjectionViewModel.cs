@@ -16,6 +16,7 @@ using MVVM.View.Extension;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using System;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace MVVM_38_CTDependencyInjection.ViewModels
 {
@@ -30,6 +31,8 @@ namespace MVVM_38_CTDependencyInjection.ViewModels
         private readonly ITemplateModel _model;
 
         public DateTime Now => _model.Now;
+
+        public ObservableCollection<string> Usernames { get; private set; } = new();
         #endregion
   
         #region Methods
@@ -44,6 +47,10 @@ namespace MVVM_38_CTDependencyInjection.ViewModels
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;
+            foreach (var item in _model.GetUsers())
+            {
+                Usernames.Add(item);
+            }
         }
 
         private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
