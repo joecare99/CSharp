@@ -1,6 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
 using MVVM_38_CTDependencyInjection.Models;
+using MVVM_38_CTDependencyInjection.Models.Interfaces;
+using NSubstitute;
 using System;
 
 namespace MVVM_38_CTDependencyInjection.Tests
@@ -29,7 +32,7 @@ namespace MVVM_38_CTDependencyInjection.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-                _ when t == typeof(ITemplateModel) => new TemplateModel(),
+                _ when t == typeof(ITemplateModel) => Substitute.For<ITemplateModel>(),
                 _ => throw new ArgumentException() };          
         }
 
