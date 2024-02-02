@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using MVVM_38_CTDependencyInjection.ViewModels;
 using System.Windows;
 
 namespace MVVM_38_CTDependencyInjection

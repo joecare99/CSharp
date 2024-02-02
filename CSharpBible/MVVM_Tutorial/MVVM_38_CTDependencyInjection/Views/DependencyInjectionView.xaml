@@ -7,10 +7,10 @@
       xmlns:vc="clr-namespace:MVVM_38_CTDependencyInjection.ValueConverter"
       xmlns:mvvm="clr-namespace:MVVM_38_CTDependencyInjection.ViewModels"
       xmlns:model="clr-namespace:MVVM_38_CTDependencyInjection.Models"
-    x:Class="MVVM_38_CTDependencyInjection.Views.TemplateView"
+    x:Class="MVVM_38_CTDependencyInjection.Views.DependencyInjection"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="TemplateView">
+      Title="DependencyInjection">
     <Page.Resources>
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
     </Page.Resources>
@@ -20,7 +20,22 @@
     <StackPanel Background="Silver">
         <Label Content="DependencyInjection-View:"/>
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+            <StackPanel Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Usernames}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </Grid>
     </StackPanel>
 </Page>
