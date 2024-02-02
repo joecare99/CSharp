@@ -31,7 +31,7 @@ namespace MVVM.ViewModel
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="MVVM.ViewModel.BaseTestViewModel" />
-    public class BaseTestViewModel<T> : BaseTestViewModel where T : class, INotifyPropertyChanged, new()
+    public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, INotifyPropertyChanged, new()
     {
         /// <summary>
         /// The get model
@@ -48,10 +48,12 @@ namespace MVVM.ViewModel
         protected T testModel2;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
-        /// <summary>
-        /// Initializes the test-models for this instance.
-        /// </summary>
-        [TestInitialize]
+        protected abstract Dictionary<string, object> GetDefaultData();
+
+       /// <summary>
+       /// Initializes the test-models for this instance.
+       /// </summary>
+       [TestInitialize]
         public virtual void Init()
         {
             testModel = GetModel();
@@ -77,6 +79,8 @@ namespace MVVM.ViewModel
             Assert.IsNotNull(p);
             Assert.AreEqual(xCanRead, p!.CanRead);
             Assert.AreEqual(xCanWrite, p!.CanWrite);
+            if (xCanRead && GetDefaultData()?.TryGetValue(sPropName, out var oDefVal) == true)
+                Assert.AreEqual(oDefVal, testModel.GetProp(sPropName));
         }
     }
 

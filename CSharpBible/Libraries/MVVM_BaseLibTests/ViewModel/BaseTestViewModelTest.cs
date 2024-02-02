@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using MVVM_BaseLibTests.Properties;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVVM_BaseLibTests.ViewModel
@@ -188,6 +189,9 @@ PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
             // Assert
             Assert.IsNotNull(TestModelProperies);
         }
+
+        protected override Dictionary<string, object> GetDefaultData() 
+            => new() { { nameof(TestVM.HasErrors), false }, { nameof(TestVM.TestInt), 0 }, { nameof(TestVM.TestStr),"<TestStr>" } };
     }
 
 }
