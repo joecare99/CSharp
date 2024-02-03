@@ -36,8 +36,8 @@ namespace MVVM_36_ComToolKtSavesWork
                 .AddTransient<UserInfoViewModel>()
                 .AddTransient<LoginViewModel>()
                 .BuildServiceProvider();
-            IoC.GetReqSrv = (type) => srvProv.GetRequiredService(type);
-            IoC.GetSrv= (type) => srvProv.GetService(type);
+            IoC.GetReqSrv = srvProv.GetRequiredService;
+            IoC.GetSrv= srvProv.GetService;
         }
     }
 }
