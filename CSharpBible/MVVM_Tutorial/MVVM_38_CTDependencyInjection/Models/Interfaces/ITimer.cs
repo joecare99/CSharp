@@ -18,6 +18,7 @@ namespace MVVM_38_CTDependencyInjection.Models.Interfaces
     public interface ITimer
     {
         double Interval { get; set; }
+        bool Enabled { get; }
 
         event ElapsedEventHandler Elapsed; 
 
