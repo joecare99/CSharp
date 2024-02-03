@@ -13,7 +13,7 @@ namespace MVVM_38_CTDependencyInjection.Models
     {
         private Timer _timer;
 
-        public event ElapsedEventHandler Elapsed;
+        public event ElapsedEventHandler? Elapsed;
         public double Interval { get => _timer.Interval; set => _timer.Interval=value; }
 
         public bool Enabled => _timer.Enabled;
