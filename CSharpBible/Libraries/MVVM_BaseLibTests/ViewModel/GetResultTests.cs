@@ -44,6 +44,7 @@ namespace MVVM.ViewModel.Tests
             testClass.Get(param).Should().BeNull();
             RegisterTest();
             testClass.Get(param).Should().Be(sExp);
+            testClass.Count.Should().Be(3);
         }
 
         [DataTestMethod]
@@ -55,6 +56,7 @@ namespace MVVM.ViewModel.Tests
             testClass.Get(param,name).Should().BeNull();
             RegisterTest();
             testClass.Get(param,name).Should().Be(sExp);
+            testClass.Count.Should().Be(3);
         }
     }
 }
