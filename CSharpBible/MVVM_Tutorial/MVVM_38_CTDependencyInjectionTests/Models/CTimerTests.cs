@@ -24,11 +24,11 @@ public class CTimerTests
     }
 
     [TestMethod()]
-    [DataRow(1500)]
+    [DataRow(1000)]
     [DataRow(2000)]        
     public void IntervallTest(double dAct)
     {
-        Assert.AreEqual(1000d, testTimer.Interval);
+        Assert.AreEqual(100d, testTimer.Interval);
         testTimer.Interval = dAct;
         Assert.AreEqual(dAct, testTimer.Interval);
     }
