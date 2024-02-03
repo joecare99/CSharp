@@ -18,6 +18,7 @@ using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using NSubstitute;
 using System.Collections.Generic;
 using System;
+using MVVM.View.Extension;
 
 /// <summary>
 /// The Tests namespace.
@@ -34,12 +35,20 @@ namespace MVVM_38_CTDependencyInjection.ViewModels.Tests
     {
         ITemplateModel _testDep;
         protected override Dictionary<string, object> GetDefaultData() 
-            => new() { { "HasErrors", false}, {"Now", DateTime.MinValue } };
+            => new() { { nameof(DependencyInjectionViewModel.HasErrors), false}, 
+                {"Now", DateTime.MinValue }, 
+            };
 
         [TestInitialize]
         public override void Init()
         {
-            GetModel = () => new DependencyInjectionViewModel(_testDep = Substitute.For<ITemplateModel>());
+            _testDep = Substitute.For<ITemplateModel>();
+            IoC.GetReqSrv =(t)=> t switch {
+                _ when t == typeof(ITemplateModel) => _testDep,
+                _ => throw new NotImplementedException()
+                };
+            _testDep.Now.Returns(DateTime.MinValue);
+            _testDep.GetUsers().Returns(new[] { "Peter","Dave"});
             base.Init();
         }
 
@@ -54,6 +63,14 @@ namespace MVVM_38_CTDependencyInjection.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(DependencyInjectionViewModel));
             Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
+        }
+
+        [TestMethod()]
+        public void OnPropChgTest()
+        {
+            _testDep.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(this, new PropertyChangedEventArgs("Now"));
+            Assert.AreEqual(@"PropChg(MVVM_38_CTDependencyInjection.ViewModels.DependencyInjectionViewModel,Now)=01.01.0001 00:00:00
+", DebugLog);
         }
 
     }
