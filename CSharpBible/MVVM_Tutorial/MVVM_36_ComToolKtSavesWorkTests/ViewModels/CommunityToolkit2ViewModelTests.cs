@@ -56,14 +56,12 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
                     .AddSingleton<ICommunityToolkit2Model, TestUserModel>()
                     .AddSingleton<IDebugLog, DebugLog>()
                     .AddSingleton<IGetResult, GetResult>()
-                    .AddTransient<CommunityToolkit2ViewModel>()
                     .BuildServiceProvider();
             IoC.GetReqSrv = t => sp.GetRequiredService(t);
             IoC.GetSrv = t => sp.GetService(t);
             _debugLog = IoC.GetRequiredService<IDebugLog>();
             _getResult = IoC.GetRequiredService<IGetResult>();
             _getResult.Register("Now", o=>dtResult);
-            GetModel = ()=> IoC.GetRequiredService<CommunityToolkit2ViewModel>();
             base.Init();
         }
 
