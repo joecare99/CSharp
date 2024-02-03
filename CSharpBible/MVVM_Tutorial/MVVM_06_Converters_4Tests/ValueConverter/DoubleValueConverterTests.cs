@@ -87,7 +87,8 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         [DataRow(0.99, "99")]
         [DataRow(double.NaN, "Hallo")]
         [DataRow(double.NaN, "")]
-        public void ConvertBackTest(object? value, string expected)
+        [DataRow(double.NaN, null)]
+        public void ConvertBackTest(object? value, object expected)
         {
             var result = testConv.ConvertBack(expected, typeof(object), null, CultureInfo.InvariantCulture);
             Assert.AreEqual(value, result);
@@ -113,6 +114,7 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         [DataTestMethod]
         [DataRow(double.NaN, "Hallo")]
         [DataRow(double.NaN, "")]
+        [DataRow(double.NaN, null)]
         public void ConvertBackTest3(object? value, string expected)
         {
             var result = testConv.ConvertBack(expected, typeof(object), "{0}", CultureInfo.InvariantCulture);
