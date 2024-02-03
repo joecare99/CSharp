@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Security.Permissions;
 
 namespace MVVM_38_CTDependencyInjection.Models
 {
@@ -15,8 +16,10 @@ namespace MVVM_38_CTDependencyInjection.Models
         public event ElapsedEventHandler Elapsed;
         public double Interval { get => _timer.Interval; set => _timer.Interval=value; }
 
+        public bool Enabled => _timer.Enabled;
         public void Start() => _timer.Start();
         public void Stop() => _timer.Stop();
+
 
         public CTimer()
         {

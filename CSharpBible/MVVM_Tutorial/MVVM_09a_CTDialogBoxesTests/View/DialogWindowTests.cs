@@ -84,21 +84,34 @@ namespace MVVM_09a_CTDialogBoxes.View.Tests
         }
 
 
-        [DataTestMethod]
+        [TestMethod]
         public void DoOKTest()
         {
-            testView = new();
-            vm = (DialogWindowViewModel)testView.DataContext;
-            ExecOK();
-            Assert.IsTrue(testView.ShowDialog());
-            // xResult = testView.ShowDialog();
-            Assert.IsFalse(testView.IsVisible);
+            bool? xRes = null;
+            bool xVisible = false;
+            var t = new Thread(() =>
+            {
+                testView = new();
+                vm = (DialogWindowViewModel)testView.DataContext;
+                ExecOK();
+                xRes = testView.ShowDialog();
+                // xResult = testView.ShowDialog();
+                xVisible = testView.IsVisible;
+
+                async void ExecOK()
+                {
+                    await System.Threading.Tasks.Task.Delay(50);
+                    testView.Dispatcher.Invoke(() => vm.OKCommand.Execute(null));
+                }
+
+            });
+            t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+            t.Start();
+            t.Join(); //Wait for the thread to end
+            Assert.IsFalse(xVisible);
+            Assert.IsTrue(xRes.HasValue);
+            Assert.IsTrue(xRes.Value);
         }
 
-        async System.Threading.Tasks.Task ExecOK()
-        {
-            await System.Threading.Tasks.Task.Delay(100);
-            testView.Dispatcher.Invoke(() => vm.OKCommand.Execute(null));
-        }
     }
 }

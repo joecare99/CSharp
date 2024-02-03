@@ -17,6 +17,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
     <ProjectReference Include="..\MVVM_28_1_DataGridExt\MVVM_28_1_DataGridExt.csproj" />
   </ItemGroup>
 

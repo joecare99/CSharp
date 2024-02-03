@@ -66,12 +66,12 @@ namespace MVVM_09_DialogBoxes.ViewModel.Tests
 
         [DataTestMethod()]
         [DataRow(true,MessageBoxResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=42 Entwickler
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Name)=42 Entwickler
 ", "42 Entwickler" })]
-        [DataRow(false, MessageBoxResult.OK, new[] { @"PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
+        [DataRow(false, MessageBoxResult.OK, new[] { @"PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
 ", "Nö" })]
         [DataRow(null, MessageBoxResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
 ", "Nö" })]
         public void OpenMsgCommandTest(bool? oAct,MessageBoxResult mrExp, string[] asExp)
         {
@@ -92,15 +92,15 @@ PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
 
         [DataTestMethod()]
         [DataRow(true,"0", new[] { @"DoOpenMessageBox(TestNameTrue,TestEmailTrue)=>(TestName0, TestMail0)
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName0
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Email)=TestMail0
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName0
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Email)=TestMail0
 ", "TestName0", "TestMail0" })]
-        [DataRow(false, "1", new[] { @"PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Email)=
+        [DataRow(false, "1", new[] { @"PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Name)=
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Email)=
 ", "","" })]
         [DataRow(null, "2", new[] { @"DoOpenMessageBox(TestName,TestEmail)=>(TestName2, TestMail2)
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName2
-PropChg(DialogBoxes.ViewModel.MainWindowViewModel,Email)=TestMail2
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName2
+PropChg(MVVM_09_DialogBoxes.ViewModel.MainWindowViewModel,Email)=TestMail2
 ", "TestName2", "TestMail2" })]
         public void OpenDialogCommandTest(bool? oAct,string sAct, string[] asExp)
         {
