@@ -28,25 +28,25 @@ public class CTimerTests
     [DataRow(2000)]        
     public void IntervallTest(double dAct)
     {
-        Assert.AreEqual(100d, testTimer.Interval);
-        testTimer.Interval = dAct;
+        Assert.AreEqual(100d, testTimer?.Interval);
+        testTimer!.Interval = dAct;
         Assert.AreEqual(dAct, testTimer.Interval);
     }
 
     [TestMethod()]
     public void StartTest()
     {
-        Assert.AreEqual(false, testTimer.Enabled);
-        testTimer.Start();
+        Assert.AreEqual(false, testTimer?.Enabled);
+        testTimer!.Start();
         Assert.AreEqual(true, testTimer.Enabled);
     }
 
     [TestMethod()]
     public void StopTest()
     {
-        testTimer.Start();
-        Assert.AreEqual(true, testTimer.Enabled);
-        testTimer.Stop();
+        testTimer?.Start();
+        Assert.AreEqual(true, testTimer?.Enabled);
+        testTimer!.Stop();
         Assert.AreEqual(false, testTimer.Enabled);
     }
 }

@@ -36,12 +36,14 @@ namespace MVVM_38_CTDependencyInjection.Models.Tests
     [TestClass()]
     public class TemplateModelTests : BaseTestViewModel<TemplateModel>
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private ITimer _testTimer;
         private ISysTime _testSystime;
         private IUserRepository _testUser;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
-        protected override Dictionary<string, object> GetDefaultData()
-            => new Dictionary<string, object>() { {"",null } };
+        protected override Dictionary<string, object?> GetDefaultData()
+            => new() { {"",null } };
 
         [TestInitialize]
         public override void Init()

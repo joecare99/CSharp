@@ -33,8 +33,10 @@ namespace MVVM_38_CTDependencyInjection.ViewModels.Tests
     [TestClass()]
     public class DependencyInjectionViewModelTests : BaseTestViewModel<DependencyInjectionViewModel>
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         ITemplateModel _testDep;
-        protected override Dictionary<string, object> GetDefaultData() 
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        protected override Dictionary<string, object?> GetDefaultData() 
             => new() { { nameof(DependencyInjectionViewModel.HasErrors), false}, 
                 {"Now", DateTime.MinValue }, 
             };
