@@ -14,7 +14,7 @@ namespace MVVM_28_1_DataGridExt.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(DataGridViewModel));
         }
 
-        protected override Dictionary<string, object> GetDefaultData() 
+        protected override Dictionary<string, object?> GetDefaultData() 
             => new() { 
                 { nameof(DataGridViewModel.IsItemSelected),false},
             };
