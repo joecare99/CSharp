@@ -8,6 +8,12 @@ namespace MVVM_28_1_DataGridExt.ViewModels.Tests
     [TestClass]
     public class DataGridViewModelTests:BaseTestViewModel<DataGridViewModel>
     {
+        [TestInitialize]
+        public override void Init()
+        {
+
+            base.Init();
+        }
         [TestMethod]
         public void SetupTest() {
             Assert.IsNotNull(testModel);
