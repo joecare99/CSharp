@@ -13,7 +13,11 @@
 // ***********************************************************************
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading;
+using NSubstitute;
+using MVVM.View.Extension;
+using MVVM_06_Converters_4.Model;
 
 /// <summary>
 /// The Tests namespace.
@@ -32,6 +36,11 @@ public class VehicleViewTests
     [TestMethod]
     public void VehicleViewTest()
     {
+        IoC.GetReqSrv = (t)=>t switch
+        {
+            _ when t == typeof(IAGVModel) => Substitute.For<IAGVModel>(),
+            _ => throw new NotImplementedException()
+        };
         VehicleView1? testView = null;
         var t = new Thread(() => testView = new());
         t.SetApartmentState(ApartmentState.STA); //Set the thread to STA

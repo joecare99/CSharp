@@ -50,7 +50,7 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         public void ConvertTest(object? value, System.Windows.Visibility expected)
         {
             if (value is double d) value = (decimal)d;
-            var result = testConv.Convert(value, typeof(string), null, CultureInfo.InvariantCulture);
+            var result = testConv.Convert(value!, typeof(string), null!, CultureInfo.InvariantCulture);
             Assert.AreEqual(expected, result);
         }
 
@@ -64,7 +64,7 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         [DataRow(false, null)]
         public void ConvertBackTest(bool xExp, object? eVal)
         {
-            Assert.AreEqual(xExp, testConv.ConvertBack(eVal,typeof(object),null,CultureInfo.InvariantCulture));
+            Assert.AreEqual(xExp, testConv.ConvertBack(eVal!,typeof(object),null!,CultureInfo.InvariantCulture));
         }
     }
 }
