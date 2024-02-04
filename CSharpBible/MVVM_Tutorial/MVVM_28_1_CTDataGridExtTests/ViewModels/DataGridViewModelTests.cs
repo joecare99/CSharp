@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.View.Extension;
 using MVVM.ViewModel;
+using NSubstitute;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -11,7 +13,7 @@ namespace MVVM_28_1_CTDataGridExt.ViewModels.Tests
         [TestInitialize]
         public override void Init()
         {
-
+            IoC.GetReqSrv=(t)=>Substitute.For(new[] { t },null!);
             base.Init();
         }
         [TestMethod]
