@@ -1,14 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using System;
-using MVVM_36_ComToolKtSavesWork.Models;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using CommunityToolkit.Mvvm.Input;
+using MVVM.View.Extension;
+using MVVM_36_ComToolKtSavesWork.Models;
 
 namespace MVVM_36_ComToolKtSavesWork.ViewModels
 {
     public partial class UserInfoViewModel : ObservableObject, IRecipient<ValueChangedMessage<User>>, IDisposable
     {
+        private IMessenger _messenger;
+        
         [ObservableProperty]
         private User? _user;
 
@@ -18,20 +21,24 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         [ObservableProperty]
         private bool _showUser = false;
 
-        public UserInfoViewModel()
+        public UserInfoViewModel():this(IoC.GetRequiredService<IMessenger>())
         {
-            WeakReferenceMessenger.Default.Register(this);
+        }
+        public UserInfoViewModel(IMessenger messenger)
+        {
+            _messenger = messenger;
+            _messenger.Register(this);
         }
 
         [RelayCommand]
         private void ShowLoginCtrl()
         {
-            WeakReferenceMessenger.Default.Send(new ShowLoginMessage());    
+            _messenger.Send(new ShowLoginMessage());    
         }
         public void Dispose()
         {
-            WeakReferenceMessenger.Default.UnregisterAll(this);
-            GC.SuppressFinalize(this);
+            _messenger.UnregisterAll(this);
+            GC.SuppressFinalize(this); //??
         }
 
         public void Receive(ValueChangedMessage<User> message)
