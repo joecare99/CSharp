@@ -1,7 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
+using MVVM_36_ComToolKtSavesWork.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace MVVM_36_ComToolKtSavesWork.Tests
 {
@@ -13,7 +17,7 @@ namespace MVVM_36_ComToolKtSavesWork.Tests
         }
     }
     [TestClass()]
-    public class AppTests 
+    public class AppTests
     {
         static TestApp app = new();
         private Func<Type, object?> _gsold;
@@ -28,6 +32,9 @@ namespace MVVM_36_ComToolKtSavesWork.Tests
         {
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
+            if (_d.Count==0)
+            foreach(var i in NeededInterfaces)
+                Assert.IsTrue(_d.TryGetValue(i[0].ToString(), out _));
         }
 
         [TestCleanup]
@@ -43,12 +50,36 @@ namespace MVVM_36_ComToolKtSavesWork.Tests
             Assert.IsNotNull(app);
         }
 
-        [TestMethod]
-        public void AppTest2()
+        private static Dictionary<string, Type> _d = new();
+
+        private static object[] Types<T>(bool xExp)
         {
-            app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(IUserRepository)));
-            Assert.IsNull(IoC.GetSrv(typeof(App)));
+            _d[typeof(T).Name] = typeof(T);
+            return new object[] { typeof(T).Name, xExp };
         }
+        static IEnumerable<object[]> NeededInterfaces => new[]
+        {
+            Types<IUserRepository>(true) ,
+            Types<ICommunityToolkit2Model>(true ),
+            Types<IMessenger>(true ),
+            Types<MainWindowViewModel>(true ),
+            Types<CommunityToolkit2ViewModel>(true),
+            Types<UserInfoViewModel>(true),
+            Types<LoginViewModel>(true),
+            Types<App>(false)
+        };
+
+        [TestMethod]
+        [DynamicData(nameof(NeededInterfaces))]
+        public void AppTest2(string s, bool xExp)
+        {
+            var tAct = _d[s];
+            app.DoStartUp();
+            if (xExp)
+                Assert.IsNotNull(IoC.GetReqSrv(tAct));
+            else
+                Assert.IsNull(IoC.GetSrv(tAct));
+        }
+
     }
 }
