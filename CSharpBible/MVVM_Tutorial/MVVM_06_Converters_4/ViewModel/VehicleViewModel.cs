@@ -17,6 +17,7 @@ using MVVM_06_Converters_4.Model;
 using System.ComponentModel;
 using System;
 using CommunityToolkit.Mvvm.Input;
+using MVVM.View.Extension;
 
 namespace MVVM_06_Converters_4.ViewModel
 {
@@ -61,7 +62,7 @@ namespace MVVM_06_Converters_4.ViewModel
         /// <summary>
         /// Initializes a new instance of the <see cref="VehicleViewModel"/> class.
         /// </summary>
-        public VehicleViewModel() : this(AGV_Model.Instance){}
+        public VehicleViewModel() : this(IoC.GetRequiredService<IAGVModel>()){}
 
         public VehicleViewModel(IAGVModel model)
         {
