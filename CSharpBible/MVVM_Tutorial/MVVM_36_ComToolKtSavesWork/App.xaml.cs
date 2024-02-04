@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
@@ -31,6 +32,7 @@ namespace MVVM_36_ComToolKtSavesWork
             var srvProv = new ServiceCollection()
                 .AddSingleton<IUserRepository, UserRepository>()
                 .AddSingleton<ICommunityToolkit2Model, CommunityToolkit2Model>()
+                .AddSingleton<IMessenger>(WeakReferenceMessenger.Default)
                 .AddTransient<MainWindowViewModel>()
                 .AddTransient<CommunityToolkit2ViewModel>()
                 .AddTransient<UserInfoViewModel>()
