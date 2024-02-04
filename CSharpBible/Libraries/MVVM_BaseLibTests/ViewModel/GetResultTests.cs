@@ -58,5 +58,17 @@ namespace MVVM.ViewModel.Tests
             testClass.Get(param,name).Should().Be(sExp);
             testClass.Count.Should().Be(3);
         }
+
+        [DataTestMethod]
+        [DataRow(null, new[] { "Hello" }, null)]
+        [DataRow("Test0", new[] { "Hello", "World" }, null)]
+        [DataRow("", new[] { "Hello", "new", "World" }, null)]
+        public void GetTest2(string name, object[] param, string? sExp)
+        {
+            testClass.Get(param, name).Should().BeNull();
+            RegisterTest();
+            testClass.Get(param, name).Should().Be(sExp);
+            testClass.Count.Should().Be(3);
+        }
     }
 }
