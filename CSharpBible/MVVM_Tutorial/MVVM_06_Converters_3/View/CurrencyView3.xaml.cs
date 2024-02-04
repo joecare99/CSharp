@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows.Controls;
 
-namespace MVVM_6_Converters_3.View
+namespace MVVM_06_Converters_3.View
 {
     /// <summary>
     /// Interaktionslogik für CurrencyView.xaml

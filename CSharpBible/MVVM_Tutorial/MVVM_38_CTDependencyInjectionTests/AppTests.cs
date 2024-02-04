@@ -12,7 +12,7 @@ namespace MVVM_38_CTDependencyInjection.Tests
     {
         public void DoStartUp()
         {
-            OnStartup(null);
+            OnStartup(null!);
         }
     }
     [TestClass()]

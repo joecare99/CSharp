@@ -13,11 +13,13 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using NSubstitute;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 /// <summary>
 /// The Tests namespace.
@@ -34,20 +36,28 @@ namespace MVVM_38_CTDependencyInjection.Models.Tests
     [TestClass()]
     public class TemplateModelTests : BaseTestViewModel<TemplateModel>
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private ITimer _testTimer;
         private ISysTime _testSystime;
         private IUserRepository _testUser;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
-        protected override Dictionary<string, object> GetDefaultData()
-            => new Dictionary<string, object>() { {"",null } };
+        protected override Dictionary<string, object?> GetDefaultData()
+            => new() { {"",null } };
 
         [TestInitialize]
         public override void Init()
         {
+            IoC.GetReqSrv = (t) => t switch
+            {
+                _ when t == typeof(ITimer) => _testTimer,
+                _ when t == typeof(ISysTime) => _testSystime,
+                _ when t == typeof(IUserRepository) => _testUser,
+                _ => throw new System.NotImplementedException()
+            };
             _testTimer = Substitute.For<ITimer>();
             _testSystime = Substitute.For<ISysTime>();
             _testUser = Substitute.For<IUserRepository>();
-            GetModel = () => new(_testTimer, _testSystime, _testUser);
             base.Init();
         }
 
@@ -61,6 +71,14 @@ namespace MVVM_38_CTDependencyInjection.Models.Tests
             Assert.IsInstanceOfType(testModel, typeof(TemplateModel));
             Assert.IsInstanceOfType(testModel, typeof(ObservableObject));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
+        }
+
+        [TestMethod()]
+        public void GetUsersTest()
+        {
+            _testUser.GetUsers().Returns(new[] { "Peter" });
+            var result = testModel.GetUsers().ToArray();
+            CollectionAssert.AreEqual(new[] { "Peter" }, result);
         }
     }
 }

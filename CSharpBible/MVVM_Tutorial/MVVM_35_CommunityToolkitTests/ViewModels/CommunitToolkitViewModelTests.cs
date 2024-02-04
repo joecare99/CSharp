@@ -96,7 +96,7 @@ PropChg(MVVM_35_CommunityToolkit.ViewModels.CommunitToolkitViewModel,Prop4)=Do(1
             Assert.AreEqual(asExp[1], DebugLog);
         }
 
-        protected override Dictionary<string, object> GetDefaultData() 
+        protected override Dictionary<string, object?> GetDefaultData() 
             => new() {
                 {nameof(CommunitToolkitViewModel.Now),new DateTime(2023,12,31) },
                 {nameof(CommunitToolkitViewModel.Prop1),"" },

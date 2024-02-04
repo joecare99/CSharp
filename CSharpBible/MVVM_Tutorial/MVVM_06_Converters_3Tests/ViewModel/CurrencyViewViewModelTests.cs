@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_6_Converters_3.ViewModel;
+using MVVM_06_Converters_3.ViewModel;
 using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVVM_6_Converters_3.ViewModel.Tests
+namespace MVVM_06_Converters_3.ViewModel.Tests
 {
     [TestClass()]
     public class CurrencyViewViewModelTests:BaseTestViewModel<CurrencyViewViewModel>
@@ -24,8 +24,8 @@ namespace MVVM_6_Converters_3.ViewModel.Tests
 
         [DataTestMethod]
         [DataRow(0d, new[] { "" })]
-        [DataRow(1d, new[] { @"PropChg(MVVM_6_Converters_3.ViewModel.CurrencyViewViewModel,Value)=1
-PropChg(MVVM_6_Converters_3.ViewModel.CurrencyViewViewModel,ValueIsNotZero)=True
+        [DataRow(1d, new[] { @"PropChg(MVVM_06_Converters_3.ViewModel.CurrencyViewViewModel,Value)=1
+PropChg(MVVM_06_Converters_3.ViewModel.CurrencyViewViewModel,ValueIsNotZero)=True
 " })]
         public void ValueTest(double fAct, string[] asExp)
         {
@@ -36,7 +36,7 @@ PropChg(MVVM_6_Converters_3.ViewModel.CurrencyViewViewModel,ValueIsNotZero)=True
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        protected override Dictionary<string, object> GetDefaultData() 
+        protected override Dictionary<string, object?> GetDefaultData() 
             => new() { 
                 { nameof(CurrencyViewViewModel.Value), 0m },
                 { nameof(CurrencyViewViewModel.ValueIsNotZero), false },

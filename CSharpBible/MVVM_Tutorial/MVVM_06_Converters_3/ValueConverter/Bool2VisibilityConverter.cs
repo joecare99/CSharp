@@ -16,7 +16,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace MVVM_6_Converters_3.ValueConverter
+namespace MVVM_06_Converters_3.ValueConverter
 {
     /// <summary>
     /// Class Bool2VisibilityConverter.

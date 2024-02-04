@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_6_Converters_3.ValueConverter;
+using MVVM_06_Converters_3.ValueConverter;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVVM_6_Converters_3.ValueConverter.Tests
+namespace MVVM_06_Converters_3.ValueConverter.Tests
 {
     [TestClass()]
     public class CurrencyValueConverterTests
@@ -38,7 +38,7 @@ namespace MVVM_6_Converters_3.ValueConverter.Tests
         public void ConvertTest(object? value, object? value2, string expected)
         {
             if (value is double d) value = (decimal)d;
-            var result = testConv.Convert(value, typeof(string), value2, CultureInfo.InvariantCulture);
+            var result = testConv.Convert(value!, typeof(string), value2!, CultureInfo.InvariantCulture);
             Assert.AreEqual(expected, result);
         }
 
@@ -53,7 +53,7 @@ namespace MVVM_6_Converters_3.ValueConverter.Tests
         public void ConvertBackTest(object? value, object? value2, string eVal)
         {
             if (value is double d) value = (decimal)d;
-            Assert.AreEqual(value, testConv.ConvertBack(eVal, typeof(object), value2, CultureInfo.InvariantCulture));
+            Assert.AreEqual(value, testConv.ConvertBack(eVal, typeof(object), value2!, CultureInfo.InvariantCulture));
         }
     }
 }

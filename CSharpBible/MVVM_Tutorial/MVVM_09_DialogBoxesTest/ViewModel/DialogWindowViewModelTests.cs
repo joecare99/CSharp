@@ -79,7 +79,7 @@ namespace MVVM_09_DialogBoxes.ViewModel.Tests
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        protected override Dictionary<string, object> GetDefaultData() 
+        protected override Dictionary<string, object?> GetDefaultData() 
             => new() { {nameof(DialogWindowViewModel.Email),"" }, { nameof(DialogWindowViewModel.Name), "" }, };
     }
 }
