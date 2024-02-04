@@ -4,6 +4,7 @@
     <TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <RunSettingsFilePath>C:\Projekte\CSharp\bin\MathLibraryTests\Debug\net481\fine-code-coverage\coverage-tool-output\MathLibraryTests %28net481%29-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
