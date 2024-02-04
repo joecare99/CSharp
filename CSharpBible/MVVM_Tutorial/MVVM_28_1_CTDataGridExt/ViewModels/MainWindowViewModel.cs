@@ -20,7 +20,7 @@ namespace MVVM_28_1_CTDataGridExt.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModelCT
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.

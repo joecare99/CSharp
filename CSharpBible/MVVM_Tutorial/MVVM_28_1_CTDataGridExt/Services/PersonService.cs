@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace MVVM_28_1_CTDataGridExt.Services
 {
-    public class PersonService
+    public class PersonService : IPersonService
     {
         private IRandom _rnd;
         /// <summary>
@@ -29,7 +29,7 @@ namespace MVVM_28_1_CTDataGridExt.Services
         /// <summary>
         /// The days from low date
         /// </summary>
-        static readonly int daysFromLowDate = (DateTime.Today - lowEndDate).Days-7000;
+        static readonly int daysFromLowDate = (DateTime.Today - lowEndDate).Days - 7000;
 
         public PersonService() : this(IoC.GetRequiredService<IRandom>()) { }
         public PersonService(IRandom random)
@@ -40,7 +40,7 @@ namespace MVVM_28_1_CTDataGridExt.Services
         /// <summary>
         /// The random
         /// </summary>
-        public int GetNext(int mn,int mx) => _rnd.Next(mn, mx);
+        public int GetNext(int mn, int mx) => _rnd.Next(mn, mx);
         /// <summary>
         /// Gets the random item.
         /// </summary>
@@ -57,7 +57,7 @@ namespace MVVM_28_1_CTDataGridExt.Services
         public IEnumerable<Person> GetPersons()
         {
             var deps = GetDepartments();
-            var _id = 5; 
+            var _id = 5;
             return new Person[]
             {
                     new(){ FirstName="Max", LastName="Muster", Email="max@muster.com", Id=1, Department = deps[0] },
@@ -79,16 +79,18 @@ namespace MVVM_28_1_CTDataGridExt.Services
             Person RandomPerson(ref int _id, Department[] deps)
             {
                 string fn, ln;
-                return new() { 
-                    FirstName =(fn= GetRandomItem(firstNames)), 
-                    LastName = (ln=GetRandomItem(lastNames)), 
-                    Email =  $"{fn.ToLower()}.{ln.ToLower()}@muster.com", 
-                    Id = _id++, 
-                    Department = GetRandomItem(deps), 
-                    Birthday = GetRandomDate() };
+                return new()
+                {
+                    FirstName = (fn = GetRandomItem(firstNames)),
+                    LastName = (ln = GetRandomItem(lastNames)),
+                    Email = $"{fn.ToLower()}.{ln.ToLower()}@muster.com",
+                    Id = _id++,
+                    Department = GetRandomItem(deps),
+                    Birthday = GetRandomDate()
+                };
             }
         }
-        public Department[] GetDepartments() 
+        public Department[] GetDepartments()
             => new Department[]{
                 new(){Id = 1},
                 new(){Id = 2},
