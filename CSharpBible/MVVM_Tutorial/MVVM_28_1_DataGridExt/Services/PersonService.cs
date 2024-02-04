@@ -1,4 +1,6 @@
-﻿using MVVM_28_1_DataGridExt.Models;
+﻿using BaseLib.Helper.MVVM;
+using MVVM.View.Extension;
+using MVVM_28_1_DataGridExt.Models;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +8,7 @@ namespace MVVM_28_1_DataGridExt.Services
 {
     public class PersonService
     {
-        /// <summary>
-        /// The random
-        /// </summary>
-        public static Func<int, int, int> GetNext { get; set; } = (mn, mx) => (_rnd ??= new Random()).Next(mn, mx);
-        private static Random _rnd;
+        private IRandom _rnd;
         /// <summary>
         /// The first names
         /// </summary>
@@ -33,18 +31,28 @@ namespace MVVM_28_1_DataGridExt.Services
         /// </summary>
         static readonly int daysFromLowDate = (DateTime.Today - lowEndDate).Days-7000;
 
+        public PersonService() : this(IoC.GetRequiredService<IRandom>()) { }
+        public PersonService(IRandom random)
+        {
+            _rnd = random;
+        }
+
+        /// <summary>
+        /// The random
+        /// </summary>
+        public int GetNext(int mn,int mx) => _rnd.Next(mn, mx);
         /// <summary>
         /// Gets the random item.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="Items">The items.</param>
         /// <returns>T.</returns>
-        static private T GetRandomItem<T>(T[] Items) => Items[GetNext(0, Items.Length)];
+        private T GetRandomItem<T>(T[] Items) => Items[GetNext(0, Items.Length)];
         /// <summary>
         /// Gets the random date.
         /// </summary>
         /// <returns>DateTime.</returns>
-        static private DateTime GetRandomDate() => lowEndDate.AddDays(GetNext(0, daysFromLowDate));
+        private DateTime GetRandomDate() => lowEndDate.AddDays(GetNext(0, daysFromLowDate));
 
         public IEnumerable<Person> GetPersons()
         {
@@ -68,7 +76,7 @@ namespace MVVM_28_1_DataGridExt.Services
                     RandomPerson(ref _id,deps),
             };
 
-            static Person RandomPerson(ref int _id, Department[] deps)
+            Person RandomPerson(ref int _id, Department[] deps)
             {
                 string fn, ln;
                 return new() { 
