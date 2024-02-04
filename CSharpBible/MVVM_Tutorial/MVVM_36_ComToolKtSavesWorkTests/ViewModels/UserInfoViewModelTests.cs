@@ -113,7 +113,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
         }
 
         protected override Dictionary<string, object?> GetDefaultData() =>  new(){
-            { nameof(UserInfoViewModel.ShowLogin),false },
+            { nameof(UserInfoViewModel.ShowLogin),true },
             { nameof(UserInfoViewModel.ShowUser),false },
             { nameof(UserInfoViewModel.User),null },
         };

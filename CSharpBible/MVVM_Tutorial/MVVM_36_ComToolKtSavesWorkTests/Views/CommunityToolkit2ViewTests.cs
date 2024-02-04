@@ -20,6 +20,8 @@ using MVVM_36_ComToolKtSavesWork.ViewModels;
 using MVVM_36_ComToolKtSavesWork.ViewModels.Tests;
 using System;
 using System.Threading;
+using NSubstitute;
+using CommunityToolkit.Mvvm.Messaging;
 
 /// <summary>
 /// The Tests namespace.
@@ -58,19 +60,14 @@ namespace MVVM_36_ComToolKtSavesWork.Views.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             var sp = new ServiceCollection()
-                    .AddTransient<CommunityToolkit2ViewModel>()
-                    .AddTransient<UserInfoViewModel>()
-                    .AddTransient<LoginViewModel>()
-                    .AddSingleton<ICommunityToolkit2Model, TestUserModel>()
-                    .AddSingleton<IUserRepository, TestUserRepository>()
-                    .AddSingleton<IDebugLog, DebugLog>()
-                    .AddSingleton<IGetResult, GetResult>()
+                    .AddSingleton<CommunityToolkit2ViewModel>()
+                    .AddSingleton<UserInfoViewModel>()
+                    .AddSingleton<LoginViewModel>()
+                    .AddSingleton(Substitute.For<IMessenger>())
+                    .AddSingleton(Substitute.For<ICommunityToolkit2Model>())
                     .BuildServiceProvider();
-            IoC.GetReqSrv = t => sp.GetRequiredService(t);
-            IoC.GetSrv = t => sp.GetService(t);
-            _debugLog = IoC.GetRequiredService<IDebugLog>();
-            _getResult = IoC.GetRequiredService<IGetResult>();
-            _getResult.Register(nameof(ICommunityToolkit2Model.Now), (o) => dtResult);
+            IoC.GetReqSrv = sp.GetRequiredService;
+ //           testView = new();
             var t = new Thread(() => testView = new());
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             t.Start();
