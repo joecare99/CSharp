@@ -36,10 +36,12 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
     [TestClass()]
     public class CommunityToolkit2ViewModelTests : BaseTestViewModel<CommunityToolkit2ViewModel>
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private IDebugLog _debugLog;
         private IGetResult _getResult;
         private Func<Type, object?> _gsold;
         private Func<Type, object> _grsold;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         DateTime dtResult = new DateTime(2023, 04, 30);
 
         /// <summary>
@@ -114,7 +116,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
             Assert.AreEqual("PropChg(MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel,Now)=30.04.2023 00:00:00\r\n", DebugLog);
         }
 
-        protected override Dictionary<string, object> GetDefaultData() => new() {
+        protected override Dictionary<string, object?> GetDefaultData() => new() {
             { nameof(CommunityToolkit2ViewModel.HasErrors),false},
             { nameof(CommunityToolkit2ViewModel.Now),dtResult},
             { nameof(CommunityToolkit2ViewModel.ShowLogin),false},
