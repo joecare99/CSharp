@@ -53,14 +53,14 @@ namespace MVVM_35_CommunityToolkit.ViewModels
         }
 
         private bool _CanDoPressMe 
-            => !string.IsNullOrEmpty(_prop1) 
-            && !string.IsNullOrEmpty(_prop2) 
-            && !string.IsNullOrEmpty(_prop3);
+            => !string.IsNullOrEmpty(Prop1) 
+            && !string.IsNullOrEmpty(Prop2) 
+            && !string.IsNullOrEmpty(Prop3);
 
         [RelayCommand(CanExecute = nameof(_CanDoPressMe))]
         private void DoClickMe()
         {
-            Prop4 = $"Do({_prop1},{_prop2},{_prop3})";
+            Prop4 = $"Do({Prop1},{Prop2},{Prop3})";
         }
 
 #if !NET5_0_OR_GREATER
