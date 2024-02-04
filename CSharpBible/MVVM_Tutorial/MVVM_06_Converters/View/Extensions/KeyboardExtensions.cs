@@ -25,7 +25,7 @@ namespace MVVM_06_Converters.View.Extensions
         /// The enter key command property
         /// </summary>
         public static readonly DependencyProperty EnterKeyCommandProperty = DependencyProperty.RegisterAttached(
-            "EnterKeyCommand",
+            nameof(SetEnterKeyCommand).Replace("Set",""),
             typeof(ICommand),
             typeof(EnterKeyExtensions),
             new PropertyMetadata(
@@ -33,9 +33,9 @@ namespace MVVM_06_Converters.View.Extensions
                 {
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (e.NewValue != null)
-                        ((UIElement)d).KeyDown += OnKeyDown;
+                        ((IInputElement)d).KeyDown += OnKeyDown;
                     else
-                        ((UIElement)d).KeyDown -= OnKeyDown;
+                        ((IInputElement)d).KeyDown -= OnKeyDown;
                 }));
 
         /// <summary>
