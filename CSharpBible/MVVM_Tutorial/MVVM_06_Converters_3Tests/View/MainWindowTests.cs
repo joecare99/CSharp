@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace MVVM_6_Converters_3.View.Tests
+namespace MVVM_06_Converters_3.View.Tests
 {
     [TestClass()]
     public class MainWindowTests
