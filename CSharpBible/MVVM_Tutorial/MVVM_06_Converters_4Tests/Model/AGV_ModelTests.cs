@@ -24,7 +24,8 @@ namespace MVVM_06_Converters_4.Model.Tests
         [TestMethod()]
         public void SaveTest()
         {
-            Assert.Fail();
+            testModel.Save();
+            Assert.IsFalse(testModel.IsDirty);
         }
     }
 }
