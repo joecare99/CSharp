@@ -18,7 +18,7 @@ namespace MVVM_06_Converters_4.Model.Tests
             Assert.IsNotNull(testModel);
             Assert.IsNotNull(testModel2);
             Assert.IsInstanceOfType(testModel, typeof(AGV_Model));
-            Assert.IsInstanceOfType(testModel, typeof(NotificationObject));
+            Assert.IsInstanceOfType(testModel, typeof(NotificationObjectCT));
         }
 
         [TestMethod()]
