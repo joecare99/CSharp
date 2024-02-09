@@ -14,7 +14,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using MVVM_06_Converters_4.Model;
-using System.Security.Authentication.ExtendedProtection;
 using System.Windows;
 
 namespace MVVM_06_Converters_4
@@ -34,4 +33,6 @@ namespace MVVM_06_Converters_4
            IoC.Configure(sb);
         }
     }
+
+
 }

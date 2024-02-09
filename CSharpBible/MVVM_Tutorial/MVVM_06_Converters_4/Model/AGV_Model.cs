@@ -79,11 +79,14 @@ namespace MVVM_06_Converters_4.Model
             //(nameof(VehicleRotation),nameof(Swivel2Angle)),
         };
 
+        public bool IsDirty { get; private set; }
+
         public AGV_Model()
         {
             _vehicleDim = new Math2d.Vector(Settings.Default.Vehicle_Length, Settings.Default.Vehicle_Width);
             _swivelKoor = new Math2d.Vector(Settings.Default.SwivelKoor_X, Settings.Default.SwivelKoor_Y);
             _axisOffset = Settings.Default.AxisOffset; 
+            PropertyChanged += (s, e) => IsDirty = true;
         }
 #if NET5_0_OR_GREATER
 #else
@@ -100,7 +103,7 @@ namespace MVVM_06_Converters_4.Model
             Settings.Default.SwivelKoor_Y = SwivelKoor.y;
             Settings.Default.AxisOffset = AxisOffset;
             Settings.Default.Save();
-            
+            IsDirty = false;
         }
     }
 }

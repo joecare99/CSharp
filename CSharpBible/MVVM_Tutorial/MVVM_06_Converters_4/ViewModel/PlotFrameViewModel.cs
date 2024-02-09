@@ -321,6 +321,7 @@ namespace MVVM_06_Converters_4.ViewModel
             {
                 Points = MakeRect(_agv_Model.VehicleDim,0.5f,0.5f)
             });
+            if (double.IsNaN(_agv_Model.SwivelKoor.x)  || _agv_Model.SwivelKoor.y == double.NaN) return;
             _circles.Add(new()
             {
                 Center = new((float)_agv_Model.SwivelKoor.x, (float)_agv_Model.SwivelKoor.y),
