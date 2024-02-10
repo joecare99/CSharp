@@ -10,12 +10,15 @@ namespace MVVM_24_UserControl.Views.Tests
         public void MainWindowTest()
         {
 			UserControlView? mw=null;
-            var t = new Thread(()=> mw = new());
+            var t = new Thread(() => { mw = new(); }) ;
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             t.Start();
             t.Join(); //Wait for the thread to end
             Assert.IsNotNull(mw);
-            Assert.IsInstanceOfType(mw, typeof(UserControlView));    
+            Assert.IsInstanceOfType(mw, typeof(UserControlView));
+           
         }
+
+
     }
 }
