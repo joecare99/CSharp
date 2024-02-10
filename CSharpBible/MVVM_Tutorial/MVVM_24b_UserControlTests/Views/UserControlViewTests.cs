@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace MVVM_24a_CTUserControl.Views.Tests
+namespace MVVM_24b_UserControl.Views.Tests
 {
     [TestClass()]
     public class UserControlViewTests
