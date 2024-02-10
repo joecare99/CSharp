@@ -126,8 +126,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <local:MaxLengthTextBoxUserControl Text="{Binding Text, ElementName=txt}" Caption="Titel Eingeben:" MaxLength="50" />
-        <local:MaxLengthTextBoxUserControl Grid.Row="1" Text="{Binding Text2, ElementName=vm}" Caption="Untertitel Eingeben:" MaxLength="50" />
+        <local:MaxLengthTextBoxUserControl Text="{Binding Text, ElementName=txt, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, Delay=100}" Caption="Titel Eingeben:" MaxLength="50" />
+        <local:MaxLengthTextBoxUserControl Grid.Row="1" Text="{Binding Text2, ElementName=vm, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, Delay=100}" Caption="Untertitel Eingeben:" MaxLength="50" />
         <TextBlock Grid.Row="2" Text="{Binding Text1}" x:Name="txt"/>
         <TextBlock Grid.Row="3" Text="{Binding Text2}" />
         <StackPanel Grid.Row="4" Orientation="Horizontal">
