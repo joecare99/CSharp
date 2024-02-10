@@ -36,7 +36,7 @@ namespace MVVM_24a_CTUserControl.Views
 			DataContext = this;
 		}
 
-		public string Caption { get; set; }
+		public string Caption { get; set; } = "";
 		public int MaxLength { get; set; }
 
 		public string Text
