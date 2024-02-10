@@ -16,9 +16,9 @@ namespace MVVM_38_CTDependencyInjection.Models
             // Dummy-Implement
             name.ToUpper() switch
             {
-                "DAVE" => new Guid("012345678ABCDEF012345678ABCDEF"),
-                "JOE" => new Guid("112345678ABCDEF012345678ABCDEF"),
-                "PETER" => new Guid("212345678ABCDEF012345678ABCDEF"),
+                "DAVE" =>  new Guid("01234567-89AB-CDEF-0123-456789ABCDEF"),
+                "JOE" =>   new Guid("11234567-89AB-CDEF-0123-456789ABCDEF"),
+                "PETER" => new Guid("21234567-89AB-CDEF-0123-456789ABCDEF"),
                 _ => Guid.Empty
             };
 

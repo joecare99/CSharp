@@ -219,9 +219,9 @@ namespace MVVM_Lines_on_Grid2.View.Converter
         {
             RectangleF port2;
             if (Math.Abs(WindowSize.Width * c.port.Height) < Math.Abs(WindowSize.Height * c.port.Width))
-                port2 = new RectangleF(c.port.Left, (float)(c.port.Top + c.port.Height * 0.5f - (c.WindowSize.Height * 0.5f) * c.port.Width / (float)WindowSize.Width), c.port.Width, (float)(c.WindowSize.Height * c.port.Width / WindowSize.Width));
+                port2 = new RectangleF(c.port.Left, (float)(c.port.Top + c.port.Height * 0.5f - (WindowSize.Height * 0.5f) * c.port.Width / (float)WindowSize.Width), c.port.Width, (float)(c.WindowSize.Height * c.port.Width / WindowSize.Width));
             else
-                port2 = new RectangleF((float)(c.port.Left + c.port.Width * 0.5 - (c.WindowSize.Width / 2) * c.port.Height / WindowSize.Height), c.port.Top, (float)(WindowSize.Width * c.port.Height / WindowSize.Height), c.port.Height);
+                port2 = new RectangleF((float)(c.port.Left + c.port.Width * 0.5 - (WindowSize.Width / 2) * c.port.Height / WindowSize.Height), c.port.Top, (float)(WindowSize.Width * c.port.Height / WindowSize.Height), c.port.Height);
             return port2;
         }
 
