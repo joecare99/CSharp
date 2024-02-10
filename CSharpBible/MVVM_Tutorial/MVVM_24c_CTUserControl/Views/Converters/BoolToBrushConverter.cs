@@ -20,8 +20,7 @@ namespace MVVM_24c_CTUserControl.Views.Converters
 			 return (value, parameter) switch
 			{
 				(bool b, Brush brush) when b => brush,
-				(bool b, _) when b => TrueBrush,
-				(bool b, _) when !b => FalseBrush,
+				(bool b, _) => b? TrueBrush:FalseBrush,
 				_ => DefaultBrush
 			};
 		}
