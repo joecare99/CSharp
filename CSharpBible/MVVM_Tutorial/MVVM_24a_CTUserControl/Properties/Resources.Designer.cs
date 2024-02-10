@@ -39,7 +39,7 @@ namespace MVVM_24a_CTUserControl.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WpfApp.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_24a_CTUserControl.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,15 @@ namespace MVVM_24a_CTUserControl.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Field {0} must not be empty ähnelt.
+        /// </summary>
+        public static string Err_PropRequired {
+            get {
+                return ResourceManager.GetString("Err_PropRequired", resourceCulture);
             }
         }
     }
