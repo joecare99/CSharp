@@ -17,7 +17,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\MVVM_24b_UserControl\MVVM_24b_UserControl.csproj" />
+		<ProjectReference Include="..\MVVM_24c_CTUserControl\MVVM_24c_CTUserControl.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>
