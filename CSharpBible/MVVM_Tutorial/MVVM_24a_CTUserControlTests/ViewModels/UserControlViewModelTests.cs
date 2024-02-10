@@ -13,7 +13,7 @@ namespace MVVM_24a_CTUserControl.ViewModels.Tests
         {
             Assert.IsNotNull(testModel);
             Assert.IsNotNull(testModel2);
-            Assert.IsInstanceOfType(testModel, typeof(MainWindowViewModel));
+            Assert.IsInstanceOfType(testModel, typeof(UserControlViewModel));
             Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
         }
