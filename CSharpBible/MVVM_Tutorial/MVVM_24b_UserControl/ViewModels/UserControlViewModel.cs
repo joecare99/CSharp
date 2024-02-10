@@ -31,7 +31,7 @@ namespace MVVM_24b_UserControl.ViewModels
 		private bool? _state1 = true;
 		public bool? State1 { get => _state1; set { SetProperty(ref _state1 , value); } }
 
-		private bool? _state2 = true;
+		private bool? _state2 = false;
 		public bool? State2 { get => _state2; set { SetProperty(ref _state2 , value); } }
 
 		/// <summary>
