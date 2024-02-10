@@ -18,9 +18,9 @@ namespace MVVM_24a_CTUserControl.Views.Tests
                 asIO[0] = mw.Text;
                 asIO[1] = mw.Caption;
                 asIO[2] = mw.TextHint; 
-                mw.Text = asIO[3];
-                mw.Caption = asIO[4];
-                mw.TextHint = asIO[5];
+                mw.Text = asIO[3]!;
+                mw.Caption = asIO[4]!;
+                mw.TextHint = asIO[5]!;
                 asIO[6] = mw.Text;
                 asIO[7] = mw.Caption;
                 asIO[8] = mw.TextHint;
@@ -34,7 +34,7 @@ namespace MVVM_24a_CTUserControl.Views.Tests
             Assert.AreEqual(0, mw.MaxLength);
             Assert.AreEqual(null, asIO[0]);
             Assert.AreEqual("", asIO[1]);
-            Assert.AreEqual("", asIO[2]);
+            Assert.AreEqual(null, asIO[2]);
             Assert.AreEqual("10", asIO[6]);
             Assert.AreEqual("20", asIO[7]);
             Assert.AreEqual("30", asIO[8]);
