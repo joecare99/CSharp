@@ -22,6 +22,12 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
+		<Compile Update="Views\MaxLengthTextBoxUserControl.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\UserControlView.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Properties\Resources.resx">

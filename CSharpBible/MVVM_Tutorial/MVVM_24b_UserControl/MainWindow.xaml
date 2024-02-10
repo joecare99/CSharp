@@ -11,6 +11,6 @@
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
-
+        <Frame Content="" Source="/Views/UserControlView.xaml"/>
     </Grid>
 </Window>
