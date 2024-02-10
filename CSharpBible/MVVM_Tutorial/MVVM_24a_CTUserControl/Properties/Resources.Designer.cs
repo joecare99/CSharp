@@ -61,6 +61,15 @@ namespace MVVM_24a_CTUserControl.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Field {0} must have {1} chars ähnelt.
+        /// </summary>
+        public static string Err_MustHave_Chars {
+            get {
+                return ResourceManager.GetString("Err_MustHave_Chars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The Field {0} must not be empty ähnelt.
         /// </summary>
         public static string Err_PropRequired {

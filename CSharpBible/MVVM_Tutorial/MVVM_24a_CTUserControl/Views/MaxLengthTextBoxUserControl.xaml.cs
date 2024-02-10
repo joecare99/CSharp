@@ -25,6 +25,11 @@ namespace MVVM_24a_CTUserControl.Views
 				typeof(MaxLengthTextBoxUserControl),
 				new FrameworkPropertyMetadata(default(string),
 					FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+	
+		public static readonly DependencyProperty TextHintProperty = 
+			DependencyProperty.Register(nameof(TextHint), typeof(string), 
+				typeof(MaxLengthTextBoxUserControl),
+				new FrameworkPropertyMetadata(default(string)));
 		public MaxLengthTextBoxUserControl()
 		{
 			InitializeComponent();
@@ -38,6 +43,11 @@ namespace MVVM_24a_CTUserControl.Views
 		{
 			get { return (string)GetValue(TextProperty); }
 			set { SetValue(TextProperty, value); }
+		}
+		public string TextHint
+		{
+			get { return (string)GetValue(TextHintProperty); }
+			set { SetValue(TextHintProperty, value); }
 		}
 	}
 }

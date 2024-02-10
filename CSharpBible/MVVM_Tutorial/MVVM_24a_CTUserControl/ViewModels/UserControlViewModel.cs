@@ -13,6 +13,7 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
+using BaseLib.Helper.MVVM;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVVM_24a_CTUserControl.ViewModels
@@ -30,13 +31,21 @@ namespace MVVM_24a_CTUserControl.ViewModels
 		/// </summary>
 		public UserControlViewModel(){ }
 
-        [ObservableProperty]
-        [Required(AllowEmptyStrings =false,ErrorMessageResourceName ="Err_PropRequired", ErrorMessageResourceType =typeof(Properties.Resources))]
-        private string _text1 = "Hello World";
 
 		[ObservableProperty]
-		[Required()]
+		[Required(AllowEmptyStrings = false, ErrorMessageResourceName = "Err_PropRequired", ErrorMessageResourceType = typeof(Properties.Resources))]
+		[NotifyPropertyChangedFor(nameof(TText2))]
 		private string _text2 = "Hello World 2";
+
+		[ObservableProperty]
+		[Required(AllowEmptyStrings = false, ErrorMessageResourceName = "Err_PropRequired", ErrorMessageResourceType = typeof(Properties.Resources))]
+		[MinLength(6, ErrorMessageResourceName = "Err_MustHave_Chars", ErrorMessageResourceType = typeof(Properties.Resources))]
+		[NotifyPropertyChangedFor(nameof(TText1))]
+		private string _text1 = "Hello World";
+
+
+		public string? TText1 => this.ValidationText();
+		public string? TText2 => this.ValidationText();
 
 		/// <summary>
 		/// Finalizes an instance of the <see cref="UserControlViewModel"/> class.

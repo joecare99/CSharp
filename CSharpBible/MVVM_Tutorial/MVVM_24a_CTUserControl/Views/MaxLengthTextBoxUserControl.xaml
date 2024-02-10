@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -23,6 +24,7 @@
                 <TextBlock Text="{Binding MaxLength}"/>
             </StackPanel>
         </Label>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="2" Name="txtInput" Text="{Binding Text}"/>
+        <TextBox Grid.Row="1" Grid.ColumnSpan="2" Name="txtInput" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, Delay=50}"/>
+        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Name="txtHint" Text="{Binding TextHint}"/>
     </Grid>
 </UserControl>
