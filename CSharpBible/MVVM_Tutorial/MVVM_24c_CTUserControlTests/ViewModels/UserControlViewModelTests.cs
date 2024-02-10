@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using MVVM.ViewModel;
 using MVVM_BaseLibTests.ViewModel;
+using System.Collections.Generic;
 
-namespace MVVM_24a_CTUserControl.ViewModels.Tests
+namespace MVVM_24c_CTUserControl.ViewModels.Tests
 {
     [TestClass()]
     public class UserControlViewModelTests: BaseTestViewModel<UserControlViewModel>
@@ -17,5 +18,17 @@ namespace MVVM_24a_CTUserControl.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
         }
-    }
+
+		protected override Dictionary<string, object?> GetDefaultData()
+		{
+            return new()
+            {
+                { nameof(UserControlViewModel.Text1), "Hello World" },
+                { nameof(UserControlViewModel.Text2), "Hello World2" },
+                { nameof(UserControlViewModel.State1), true },
+                { nameof(UserControlViewModel.State2), false },
+                { nameof(UserControlViewModel.HasErrors), false },
+            };
+		}
+	}
 }
