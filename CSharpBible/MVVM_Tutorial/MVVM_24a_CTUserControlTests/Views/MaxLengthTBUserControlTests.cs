@@ -11,16 +11,19 @@ namespace MVVM_24a_CTUserControl.Views.Tests
         public void MaxLengthTBUserControlTest()
         {
 			MaxLengthTextBoxUserControl? mw=null;
-            string?[] asIO = {".", ".", "10", "20","","" };
+            string?[] asIO = {".", ".",".", "10", "20","30","","","" };
             var t = new Thread(() =>
             {
                 mw = new();
                 asIO[0] = mw.Text;
                 asIO[1] = mw.Caption;
-                mw.Text = asIO[2];
-                mw.Caption = asIO[3];
-                asIO[4] = mw.Text;
-                asIO[5] = mw.Caption;
+                asIO[2] = mw.TextHint; 
+                mw.Text = asIO[3];
+                mw.Caption = asIO[4];
+                mw.TextHint = asIO[5];
+                asIO[6] = mw.Text;
+                asIO[7] = mw.Caption;
+                asIO[8] = mw.TextHint;
                 return;
             });
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
@@ -31,8 +34,10 @@ namespace MVVM_24a_CTUserControl.Views.Tests
             Assert.AreEqual(0, mw.MaxLength);
             Assert.AreEqual(null, asIO[0]);
             Assert.AreEqual("", asIO[1]);
-            Assert.AreEqual("10", asIO[4]);
-            Assert.AreEqual("20", asIO[5]);
+            Assert.AreEqual("", asIO[2]);
+            Assert.AreEqual("10", asIO[6]);
+            Assert.AreEqual("20", asIO[7]);
+            Assert.AreEqual("30", asIO[8]);
         }
     }
 }
