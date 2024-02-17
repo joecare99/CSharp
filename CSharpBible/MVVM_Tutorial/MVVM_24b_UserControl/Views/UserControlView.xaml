@@ -4,18 +4,19 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MVVM_24b_UserControl.Views"
+      xmlns:ctrl="clr-namespace:MVVM_24b_UserControl.Views"
       xmlns:mvvm="clr-namespace:MVVM_24b_UserControl.ViewModels"
       xmlns:Converters="clr-namespace:MVVM_24b_UserControl.Views.Converters" x:Class="MVVM_24b_UserControl.Views.UserControlView"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Page1" Background="{DynamicResource WoodGrainBrush}">
     <Page.DataContext>
-        <mvvm:UserControlViewModel x:Name="vm" d:State2="False" d:Text1="&lt;Text1&gt;"/>
+        <mvvm:UserControlViewModel x:Name="vm" d:State2="False" d:Text1="&lt;Text 1276&gt;"/>
     </Page.DataContext>
     <Page.Resources>
         <ResourceDictionary>
-            <Color x:Key="Wood1" A="255" G="190" R="210" B="100" />
-            <Color x:Key="Wood2" ScA="255" G="60" R="90" />
+            <Color x:Key="Wood1" A="255" G="224" R="255" B="190" />
+            <Color x:Key="Wood2" A="255" G="200" R="224" B="190"/>
             <DrawingBrush x:Key="WoodGrainBrush" Viewport="0,0,0.5,0.2" Viewbox="0.25,0,0.5,1" ViewportUnits="RelativeToBoundingBox" TileMode="Tile">
                 <DrawingBrush.Drawing>
                     <DrawingGroup>
@@ -31,16 +32,20 @@
                         </GeometryDrawing>
                         <GeometryDrawing>
                             <GeometryDrawing.Brush>
-                                <RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Reflect" 
+                                <RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Repeat" 
                                                      RadiusX="0.105" RadiusY="0.10" GradientOrigin="1.0,-1" Center="1.0,-0.95">
                                     <GradientStop Color="{DynamicResource Wood2}"/>
                                     <GradientStop Color="{DynamicResource Wood1}" Offset="0.1"/>
-                                    <GradientStop Color="Transparent" Offset="0.25"/>
-                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.4"/>
+                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.15"/>
+                                    <GradientStop Color="Transparent" Offset="0.3"/>
+                                    <GradientStop Color="White" Offset="0.4"/>
+                                    <GradientStop Color="{DynamicResource Wood2}" Offset="0.45"/>
                                     <GradientStop Color="{DynamicResource Wood2}" Offset="0.5"/>
                                     <GradientStop Color="{DynamicResource Wood1}" Offset="0.6"/>
-                                    <GradientStop Color="Transparent" Offset="0.75"/>
-                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.9"/>
+                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.65"/>
+                                    <GradientStop Color="Transparent" Offset="0.8"/>
+                                    <GradientStop Color="White" Offset="0.9"/>
+                                    <GradientStop Color="{DynamicResource Wood2}" Offset="0.95"/>
                                     <GradientStop Color="{DynamicResource Wood2}" Offset="1"/>
                                 </RadialGradientBrush>
                             </GeometryDrawing.Brush>
@@ -50,15 +55,19 @@
                         </GeometryDrawing>
                         <GeometryDrawing>
                             <GeometryDrawing.Brush>
-                                <RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Reflect" 
+                                <RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Repeat" 
                                                      RadiusX="0.105" RadiusY="0.10" GradientOrigin="0.0,2" Center="0.0,1.95">
                                     <GradientStop Color="{DynamicResource Wood2}"/>
-                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.1"/>
-                                    <GradientStop Color="Transparent" Offset="0.25"/>
+                                    <GradientStop Color="{DynamicResource Wood2}" Offset="0.05"/>
+                                    <GradientStop Color="White" Offset="0.1"/>
+                                    <GradientStop Color="Transparent" Offset="0.2"/>
+                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.35"/>
                                     <GradientStop Color="{DynamicResource Wood1}" Offset="0.4"/>
                                     <GradientStop Color="{DynamicResource Wood2}" Offset="0.5"/>
-                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.6"/>
-                                    <GradientStop Color="Transparent" Offset="0.75"/>
+                                    <GradientStop Color="{DynamicResource Wood2}" Offset="0.55"/>
+                                    <GradientStop Color="White" Offset="0.6"/>
+                                    <GradientStop Color="Transparent" Offset="0.7"/>
+                                    <GradientStop Color="{DynamicResource Wood1}" Offset="0.85"/>
                                     <GradientStop Color="{DynamicResource Wood1}" Offset="0.9"/>
                                     <GradientStop Color="{DynamicResource Wood2}" Offset="1"/>
                                 </RadialGradientBrush>
@@ -67,7 +76,10 @@
                                 <RectangleGeometry Rect="0.5,0,1,1" />
                             </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="Sienna">
+                        <GeometryDrawing >
+                            <GeometryDrawing.Brush>
+                                <SolidColorBrush Color="{DynamicResource Wood2}"/>
+                            </GeometryDrawing.Brush>
                             <GeometryDrawing.Geometry>
                                 <PathGeometry>
                                     <PathFigure StartPoint="0.3,0.2">
@@ -94,8 +106,9 @@
             <RadialGradientBrush x:Key="LEDDarkBrush">
                 <GradientStop Color="Black"/>
                 <GradientStop Color="Maroon" Offset="0.5"/>
-                <GradientStop Color="Maroon" Offset="0.8"/>
-                <GradientStop Color="Black" Offset="0.95"/>
+                <GradientStop Color="Maroon" Offset="0.6"/>
+                <GradientStop Color="Black" Offset="0.65"/>
+                <GradientStop Color="Transparent" Offset="0.7"/>
                 <GradientStop Color="Transparent" Offset="1"/>
             </RadialGradientBrush>
             <RadialGradientBrush x:Key="LEDLit_GreenBrush" GradientOrigin="0.4,0.4">
@@ -112,8 +125,23 @@
                 <GradientStop Color="GreenYellow" Offset="0.8"/>
                 <GradientStop Color="Transparent" Offset="1.2"/>
             </RadialGradientBrush>
-            <Converters:BoolToBrushConverter x:Key="BoolToBrushConverter" FalseBrush="{StaticResource LEDDarkBrush}" TrueBrush="{StaticResource LEDLit_GreenBrush}">
-            </Converters:BoolToBrushConverter>
+            <RadialGradientBrush x:Key="LEDLit_YellowBrush" GradientOrigin="0.4,0.4">
+                <RadialGradientBrush.RelativeTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterY="10" CenterX="10"/>
+                        <SkewTransform CenterX="10" CenterY="10"/>
+                        <RotateTransform CenterX="10" CenterY="10"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </RadialGradientBrush.RelativeTransform>
+                <GradientStop Color="Yellow" Offset="0"/>
+                <GradientStop Color="Yellow" Offset="0.2"/>
+                <GradientStop Color="Yellow" Offset="0.8"/>
+                <GradientStop Color="Transparent" Offset="1.2"/>
+            </RadialGradientBrush>
+            <Converters:BoolToBrushConverter x:Key="BoolToBrushConverterYellow" FalseBrush="{StaticResource LEDDarkBrush}" TrueBrush="{StaticResource LEDLit_YellowBrush}" DefaultBrush="{StaticResource WoodGrainBrush}">
+                </Converters:BoolToBrushConverter>
+            <Converters:BoolToBrushConverter x:Key="BoolToBrushConverterGreen" FalseBrush="{StaticResource LEDDarkBrush}" TrueBrush="{StaticResource LEDLit_GreenBrush}"/>
         </ResourceDictionary>
     </Page.Resources>
     <Grid>
@@ -132,11 +160,11 @@
         <TextBlock Grid.Row="3" Text="{Binding Text2}" />
         <StackPanel Grid.Row="4" Orientation="Horizontal">
             <CheckBox Content="Text1" IsChecked="{Binding State1}" IsThreeState="False" />
-            <local:LEDView LEDBrush="{Binding State1,ElementName=vm, Converter={StaticResource BoolToBrushConverter}}" Height="30" Width="30"/>
+            <local:LEDView LEDBrush="{Binding State1,ElementName=vm, Converter={StaticResource BoolToBrushConverterYellow}}" Height="30" Width="30"/>
         </StackPanel>
         <StackPanel Grid.Row="5" Orientation="Horizontal">
             <CheckBox Content="Text1" IsChecked="{Binding State2}" IsThreeState="True"/>
-            <local:LEDView LEDBrush="{Binding State2, ElementName=vm, Converter={StaticResource BoolToBrushConverter}}" Height="30" Width="30"/>
+            <local:LEDView LEDBrush="{Binding State2, ElementName=vm, Converter={StaticResource BoolToBrushConverterGreen}}" Height="30" Width="30"/>
         </StackPanel>
     </Grid>
 </Page>

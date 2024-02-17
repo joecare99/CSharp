@@ -25,21 +25,15 @@ namespace MVVM_24_UserControl.ViewModels
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UserControlViewModel"/> class.
 		/// </summary>
-		public UserControlViewModel()
-        {
-
-        }
+		public UserControlViewModel(){}
 
         private string _text1 = "Hello World";
         
         public string Text1
         {
-			get { return _text1; }
-			set
-            {
-                SetProperty(ref _text1, value);
-			}
-		}
+            get => _text1;
+            set => SetProperty(ref _text1, value);
+        }
 
 
         public string Text2 { get; set; } = "Hello World 2";
@@ -50,6 +44,7 @@ namespace MVVM_24_UserControl.ViewModels
 		~UserControlViewModel()
         {
             return;
+           
         }
 
     }
