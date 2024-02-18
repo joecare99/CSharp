@@ -1,5 +1,4 @@
 ﻿using GenFree.Data;
-using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
 
@@ -14,11 +13,10 @@ public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecor
     string Clan { get; }
     string Death { get; }
     DateTime dEditDat { get; }
-    string FullName { get; }
     string FullSurName { get; }
     IList<string> Givenname { get; }
     string Givennames { get; }
-    Guid gUID { get; }
+    Guid gUid { get; }
     int iReligi { get; }
     IList<string> Nickname { get; }
     string Prae { get; }
@@ -43,7 +41,6 @@ public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecor
 
     void SetData(IEventData cEvt);
     void SetDates(string[] value, Func<string, string, string>? SetAge = null);
-    void SetFull(string value);
     void SetFullSurname(string value);
     void SetPersonNames(int[] iName, (int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN);
     void SetPersonNr(int i);

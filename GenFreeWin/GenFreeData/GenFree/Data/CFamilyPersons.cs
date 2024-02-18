@@ -4,16 +4,18 @@ using GenFree.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GenFree.Sys;
+using GenFree.Model.Data;
 
 namespace GenFree.Data
 {
-    public class CFamilyPersons : IFamilyPersons, IFamilyData
+    public class CFamilyPersons : CRSData<EFamilyProp, int>, IFamilyPersons, IFamilyData
     {
         private CArrayProxy<int> _kind;
         private CArrayProxy<string> _kiatext;
         private static Func<int, string>? _getText;
         private List<EFamilyProp> _changedPropsList = new();
-        private static Func<IRecordset> _getTable;
+        private static Func<IRecordset> _getTable = () => DataModul.DB_FamilyTable;
         private IRecordset _db_Table;
         private string? _sName;
         private string? _sPrefix;
@@ -25,7 +27,10 @@ namespace GenFree.Data
         public IArrayProxy<int> Kind => _kind;
         public IArrayProxy<string> KiAText => _kiatext;
         public IList<(int nr, string aTxt)> Kinder { get; } = new List<(int nr, string aTxt)>();
-        public int ID { get; private set; }
+        public override int ID => _ID;
+
+        private int _ID;
+
         public DateTime dAnlDatum { get; internal set; }
         public DateTime dEditDat { get; internal set; }
         public int iName { get; internal set; }
@@ -44,7 +49,14 @@ namespace GenFree.Data
 
         public IReadOnlyList<EFamilyProp> ChangedProps => _changedPropsList;
 
-        public CFamilyPersons()
+        protected override Enum _keyIndex => FamilyIndex.Fam;
+
+        public CFamilyPersons() : base(_getTable())
+        {
+            Init();
+        }
+
+        private void Init()
         {
             sBem.Initialize();
             Mann = 0;
@@ -53,15 +65,15 @@ namespace GenFree.Data
             _kiatext = new((i) => Kinder[i.AsInt()].aTxt, (i, v) => Kinder[i.AsInt()] = (Kinder[i.AsInt()].nr, v));
         }
 
-        public CFamilyPersons(IRecordset dB_FamilyTable) : this()
+        public CFamilyPersons(IRecordset dB_FamilyTable) : base(dB_FamilyTable)
         {
-            _db_Table = dB_FamilyTable;
-            FillData(dB_FamilyTable);
+            Init();
         }
 
-        public void FillData(IRecordset dB_FamilyTable)
+        public override void FillData(IRecordset dB_FamilyTable)
         {
-            ID = dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt();
+            if (dB_FamilyTable?.EOF != false) return;
+            _ID = dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt();
             dAnlDatum = dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].AsDate();
             dEditDat = dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].AsDate();
             iName = dB_FamilyTable.Fields[nameof(FamilyFields.Name)].AsInt();
@@ -99,12 +111,12 @@ namespace GenFree.Data
             }
         }
 
-        public void SetDBValue(IRecordset dB_PersonTable, string[]? asProps)
+        public override void SetDBValue(IRecordset dB_PersonTable, Enum[]? asProps)
         {
-            asProps ??= _changedPropsList.Select((e) => e.ToString()).ToArray();
+            asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
-                switch (prop.AsEnum<EFamilyProp>())
+                switch (prop)
                 {
                     case EFamilyProp.dAnlDatum:
                         dB_PersonTable.Fields[nameof(FamilyFields.AnlDatum)].Value = dAnlDatum.ToString("yyyyMMdd");
@@ -150,16 +162,7 @@ namespace GenFree.Data
             }
         }
 
-        public void Delete()
-        {
-            var dB_Table = _db_Table;
-            dB_Table.Index = nameof(FamilyIndex.Fam);
-            dB_Table.Seek("=", ID);
-            if (!dB_Table.NoMatch)
-                dB_Table.Delete();
-        }
-
-        public Type GetPropType(EFamilyProp prop)
+        public override Type GetPropType(EFamilyProp prop)
         {
             return prop switch
             {
@@ -179,7 +182,7 @@ namespace GenFree.Data
             };
         }
 
-        public object? GetPropValue(EFamilyProp prop)
+        public override object? GetPropValue(EFamilyProp prop)
         {
             return prop switch
             {
@@ -199,12 +202,7 @@ namespace GenFree.Data
             };
         }
 
-        public T2 GetPropValue<T2>(EFamilyProp prop)
-        {
-            return (T2)GetPropValue(prop);
-        }
-
-        public void SetPropValue(EFamilyProp prop, object value)
+        public override void SetPropValue(EFamilyProp prop, object value)
         {
             Type t;
             try
@@ -222,7 +220,7 @@ namespace GenFree.Data
                 EFamilyProp.sPruefen => sPruefen = (string)value,
                 EFamilyProp.sBem when value is ListItem<int> l => sBem[l.ItemData] = l.ItemString,
                 EFamilyProp.sBem => ((string[])value).IntoString(sBem),
-                EFamilyProp.ID => ID = (int)value,
+                EFamilyProp.ID => _ID = (int)value,
                 EFamilyProp.xAeB => xAeB = (bool)value,
                 EFamilyProp.iName => iName = (int)value,
                 EFamilyProp.iGgv => iGgv = (int)value,

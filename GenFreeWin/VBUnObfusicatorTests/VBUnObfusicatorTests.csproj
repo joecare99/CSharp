@@ -17,7 +17,7 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Remove="Resources\Test10Dat.cs" />
+	  <Compile Remove="Resources\*.cs" />
 	  <Compile Remove="Resources\Test11Dat.cs" />
 	  <Compile Remove="Resources\Test12Dat.cs" />
 	  <Compile Remove="Resources\Test13Dat.cs" />
@@ -28,7 +28,7 @@
 	  <Compile Remove="Resources\Test9Dat.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="Resources\Test10Dat.cs" />
+	  <None Include="Resources\*.cs" />
 	  <None Include="Resources\Test12Dat.cs" />
 	  <None Include="Resources\Test13Dat.cs" />
 	  <None Include="Resources\Test14Dat.cs" />
@@ -38,13 +38,13 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="7.0.3" />
+		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="8.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

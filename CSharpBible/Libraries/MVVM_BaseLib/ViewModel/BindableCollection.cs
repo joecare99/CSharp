@@ -218,10 +218,7 @@ namespace MVVM.ViewModel
 
         private void ExecuteAction(Action action)
         {
-            if (PropertyChangeNotificationsOnUIThread)
-            {
-                OnUIThread(action);
-            }
+            if (PropertyChangeNotificationsOnUIThread) OnUIThread(action);
             else
             {
                 action();

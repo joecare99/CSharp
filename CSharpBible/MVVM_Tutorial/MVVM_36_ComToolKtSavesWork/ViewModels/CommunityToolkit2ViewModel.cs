@@ -35,8 +35,7 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels
         #region Properties
         [ObservableProperty]
         private bool _showLogin = false;
-        public static Func<ICommunityToolkit2Model> GetModel { get; set; } = () => new CommunityToolkit2Model();
-
+       
         private readonly ICommunityToolkit2Model _model;
 
         public DateTime Now => _model?.Now ?? DateTime.MinValue;

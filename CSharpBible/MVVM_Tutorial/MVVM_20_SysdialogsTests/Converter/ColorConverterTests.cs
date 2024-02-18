@@ -32,6 +32,7 @@ namespace MVVM_20_Sysdialogs.Converter.Tests
         {
             _testConverter = new ColorConverter();
         }
+
         [DataTestMethod()]
         [DynamicData(nameof(ColorConverterData))]
         public void ConvertTest(object value, string sExp)

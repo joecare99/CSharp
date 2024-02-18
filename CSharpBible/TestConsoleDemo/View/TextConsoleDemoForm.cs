@@ -1,5 +1,4 @@
 using ConsoleDisplay.View;
-using TestConsole;
 
 namespace TestConsoleDemo.View
 {

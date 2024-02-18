@@ -11,12 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
 using MVVM_36_ComToolKtSavesWork.ViewModels;
 using System.Windows;
-using System.Windows.Navigation;
 
 namespace MVVM_36_ComToolKtSavesWork
 {
@@ -32,13 +32,14 @@ namespace MVVM_36_ComToolKtSavesWork
             var srvProv = new ServiceCollection()
                 .AddSingleton<IUserRepository, UserRepository>()
                 .AddSingleton<ICommunityToolkit2Model, CommunityToolkit2Model>()
+                .AddSingleton<IMessenger>(WeakReferenceMessenger.Default)
                 .AddTransient<MainWindowViewModel>()
                 .AddTransient<CommunityToolkit2ViewModel>()
                 .AddTransient<UserInfoViewModel>()
                 .AddTransient<LoginViewModel>()
                 .BuildServiceProvider();
-            IoC.GetReqSrv = (type) => srvProv.GetRequiredService(type);
-            IoC.GetSrv= (type) => srvProv.GetService(type);
+            IoC.GetReqSrv = srvProv.GetRequiredService;
+            IoC.GetSrv= srvProv.GetService;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using MVVM_Converter_Grid3_NonLin.View.Converter;
 using MVVM_Converter_Grid3_NonLin.ViewModel;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 

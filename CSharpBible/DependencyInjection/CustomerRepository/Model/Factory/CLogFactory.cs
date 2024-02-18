@@ -1,6 +1,4 @@
-﻿using CustomerRepository.Model;
-
-namespace CustomerRepository.Model.Factory
+﻿namespace CustomerRepository.Model.Factory
 {
     public class CLogFactory : ILogFactory
     {

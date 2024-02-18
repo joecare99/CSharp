@@ -1,14 +1,14 @@
 ﻿using GenFree.Interfaces;
-using GenFree.Data;
 using GenFree.Helper;
 using System;
 using GenFree.Interfaces.DB;
 using System.Collections.Generic;
 using System.Linq;
+using GenFree.Model.Data;
 
 namespace GenFree.Data;
 
-public class CEventData : CRSData<EEventProp, (EEventArt eArt, int iLink, short iLfNr)>, IEventData
+public class CEventData : CRSDataC<EEventProp, (EEventArt eArt, int iLink, short iLfNr)>, IEventData
 {
     private string? _sArtText;
     private string? _sHausNr;
@@ -134,9 +134,9 @@ public class CEventData : CRSData<EEventProp, (EEventArt eArt, int iLink, short 
         if (rs!.EditMode != 0)
             rs.Update();
 
-        static void SetData(IRecordset? rs, IField f, string d)
+        static void SetData(IRecordset rs, IField f, string d)
         {
-            if (rs?.EditMode == 0)
+            if (rs.EditMode == 0)
                 rs.Edit();
             f.Value = d;
         }
@@ -238,9 +238,9 @@ public class CEventData : CRSData<EEventProp, (EEventArt eArt, int iLink, short 
         };
     }
 
-    public override void SetDBValue(IRecordset dB_EventTable, string[]? asProps = null)
+    public override void SetDBValue(IRecordset dB_EventTable, Enum[]? asProps = null)
     {
-        asProps ??= _changedPropsList.Select(p => p.ToString()).ToArray();
+        asProps ??= _changedPropsList.Select(p => (Enum)p).ToArray();
         foreach (var prop in asProps)
             switch (prop.AsEnum<EEventProp>())
             {

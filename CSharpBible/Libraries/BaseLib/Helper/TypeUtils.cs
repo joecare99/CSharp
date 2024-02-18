@@ -117,7 +117,7 @@ namespace BaseLib.Helper
         {
             try
             {
-                return Type.GetType($"{(type.Contains(".") ?"":"System.")}{type}", true, true) ?? typeof(object);
+                return Type.GetType($"{(type.Contains(".") ?"":"System.")}{type}", true, true)!;
             }
             catch (Exception)
             {

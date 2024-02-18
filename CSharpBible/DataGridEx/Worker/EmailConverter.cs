@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Data;
 
 namespace DataGridExWPF.Worker
 {

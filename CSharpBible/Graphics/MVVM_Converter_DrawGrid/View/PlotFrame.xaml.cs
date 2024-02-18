@@ -1,5 +1,4 @@
 ﻿using MVVM_Converter_DrawGrid.View.Converter;
-using MVVM_Converter_DrawGrid.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 

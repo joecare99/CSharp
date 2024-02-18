@@ -11,12 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using MVVM.View.Extension;
+using MVVM_06_Converters_4.Model;
 using System.Windows;
 
 namespace MVVM_06_Converters_4
@@ -26,5 +23,16 @@ namespace MVVM_06_Converters_4
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            var sb = new ServiceCollection()
+                .AddSingleton<IAGVModel, AGV_Model>()
+                .AddSingleton<ViewModel.VehicleViewModel>()
+                .BuildServiceProvider();
+           IoC.Configure(sb);
+        }
     }
+
+
 }

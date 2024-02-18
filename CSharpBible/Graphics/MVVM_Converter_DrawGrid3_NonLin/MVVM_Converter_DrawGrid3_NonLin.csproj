@@ -14,7 +14,7 @@
 	  <None Remove="View\WernerTiles.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Resources\BIG_original.png" />

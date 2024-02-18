@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_24_UserControl"
+        xmlns:views="clr-namespace:MVVM_24_UserControl.Views"
         xmlns:mvvm="clr-namespace:MVVM_24_UserControl.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -11,6 +12,6 @@
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
-
+        <Frame Content="" Source="/Views/UserControlView.xaml"/>
     </Grid>
 </Window>

@@ -1,5 +1,6 @@
 ﻿//using DAO;
 using GenFree.Interfaces.DB;
+using System;
 
 namespace GenFree.Interfaces
 {
@@ -7,6 +8,6 @@ namespace GenFree.Interfaces
     {
         void Delete();
         void FillData(IRecordset dB_Table);
-        void SetDBValue(IRecordset dB_Table, string[]? asProps);
+        void SetDBValue(IRecordset dB_Table, Enum[]? asProps);
     }
 }

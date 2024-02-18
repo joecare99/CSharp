@@ -1,11 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FluentAssertions;
-using System.Threading.Tasks;
 
 namespace MVVM.ViewModel.Tests
 {

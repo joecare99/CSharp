@@ -71,10 +71,10 @@ namespace MVVM_37_TreeView.ViewModels.Tests
         [DataRow("2", new[] { "PropChgn(MVVM_37_TreeView.ViewModels.BooksTreeViewModel,SelectedBook)=\r\nPropChg(MVVM_37_TreeView.ViewModels.BooksTreeViewModel,SelectedBook)=Book { Title = 2, Author = 3, Category = 1, Ratings = System.Int32[] }\r\n" })]
         public void DoSelectedItemChangedTest(object prop, string[] asExp)
         {
-            if (prop == "1")
+            if (prop?.ToString() == "1")
                 prop = new RoutedPropertyChangedEventArgs<object>("0", "1");
             if (prop is string s && s == "2")
-                prop = new RoutedPropertyChangedEventArgs<object>(null,new CategorizedBooksViewModel() { This= new Book("2", "3", "1", new int[] { 5 }) }) ;
+                prop = new RoutedPropertyChangedEventArgs<object>(null!,new CategorizedBooksViewModel() { This= new Book("2", "3", "1", new int[] { 5 }) }) ;
             testModel.DoSelectedItemChangedCommand.Execute(prop);
             Assert.AreEqual(asExp[0],DebugLog);
         }

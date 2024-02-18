@@ -13,6 +13,7 @@
 // ***********************************************************************
 using MVVM_06_Converters_4.View.Converter;
 using MVVM_06_Converters_4.ViewModel;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -29,26 +30,31 @@ namespace MVVM_06_Converters_4.View
         public PlotFrame()
         {
             InitializeComponent();
-            DataContextChanged += (object sender, DependencyPropertyChangedEventArgs e) =>
-            {
-                if (e.NewValue is PlotFrameViewModel vm && this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
-                {
-                    //                    pc.Row = vm.Row;
-                    //                  pc.Col = vm.Column;
-                    pc.WindowSize = new Size(Width, Height);
-                }
-            };
+            
+            DataContextChanged += (s,e)=>DataContextChange(s,e);
+            
+            SizeChanged += OnSizeChange;
 
-            SizeChanged += (object sender, SizeChangedEventArgs e) =>
-            {
-                if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
-                {
-                    pc.WindowSize = e.NewSize;
-                    if (DataContext is PlotFrameViewModel vm)
-                        vm.WindowSize = e.NewSize;
-                }
-            };
+        }
 
+        protected  void DataContextChange(object? sender,object args)
+        {
+            if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
+            {
+                //                    pc.Row = vm.Row;
+                //                  pc.Col = vm.Column;
+                pc.WindowSize = new Size(Width, Height);
+            }
+        }
+
+        public void OnSizeChange(object sender,SizeChangedEventArgs e)
+        {
+            if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
+            {
+                pc.WindowSize = e.NewSize;
+                if (DataContext is PlotFrameViewModel vm)
+                    vm.WindowSize = e.NewSize;
+            }
         }
     }
 }
