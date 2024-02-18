@@ -118,9 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="card_D10_emf" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\card_D10.emf;System.Drawing.Imaging.Metafile, System.Drawing, Version=4.0.0.0, Culture=neutral</value>
-  </data>
   <data name="card_SQueen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\card_SQueen.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
