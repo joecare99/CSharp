@@ -48,7 +48,7 @@ namespace MVVM.ViewModel
         protected T testModel2;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
-        protected abstract Dictionary<string, object> GetDefaultData();
+        protected virtual Dictionary<string, object?> GetDefaultData() => new();
 
        /// <summary>
        /// Initializes the test-models for this instance.

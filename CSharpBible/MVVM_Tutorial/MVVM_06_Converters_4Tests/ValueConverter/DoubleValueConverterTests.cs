@@ -56,7 +56,7 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         public void ConvertTest(object? value, string expected)
         {
             if (value is double d) value = (double)d;
-            var result = testConv.Convert(value, typeof(string), null, CultureInfo.InvariantCulture);
+            var result = testConv.Convert(value!, typeof(string), null!, CultureInfo.InvariantCulture);
             Assert.AreEqual(expected, result);
         }
 
@@ -74,7 +74,7 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         public void ConvertTest2(object? value, string expected)
         {
             if (value is double d) value = (double)d;
-            var result = testConv.Convert(value, typeof(string), "0.00€", CultureInfo.InvariantCulture);
+            var result = testConv.Convert(value!, typeof(string), "0.00€", CultureInfo.InvariantCulture);
             Assert.AreEqual(expected, result);
         }
 
@@ -87,9 +87,10 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         [DataRow(0.99, "99")]
         [DataRow(double.NaN, "Hallo")]
         [DataRow(double.NaN, "")]
-        public void ConvertBackTest(object? value, string expected)
+        [DataRow(double.NaN, null)]
+        public void ConvertBackTest(object? value, object expected)
         {
-            var result = testConv.ConvertBack(expected, typeof(object), null, CultureInfo.InvariantCulture);
+            var result = testConv.ConvertBack(expected, typeof(object), null!, CultureInfo.InvariantCulture);
             Assert.AreEqual(value, result);
         }
         /// <summary>
@@ -113,6 +114,7 @@ namespace MVVM_06_Converters_4.ValueConverter.Tests
         [DataTestMethod]
         [DataRow(double.NaN, "Hallo")]
         [DataRow(double.NaN, "")]
+        [DataRow(double.NaN, null)]
         public void ConvertBackTest3(object? value, string expected)
         {
             var result = testConv.ConvertBack(expected, typeof(object), "{0}", CultureInfo.InvariantCulture);

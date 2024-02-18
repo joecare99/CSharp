@@ -7,7 +7,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
     <ProjectReference Include="..\MVVM_28_1_DataGridExt\MVVM_28_1_DataGridExt_net.csproj" />
   </ItemGroup>
 

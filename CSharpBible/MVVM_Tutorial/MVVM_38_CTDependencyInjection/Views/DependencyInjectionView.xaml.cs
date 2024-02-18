@@ -6,9 +6,9 @@ namespace MVVM_38_CTDependencyInjection.Views
     /// <summary>
     /// Interaktionslogik für TemplateView.xaml
     /// </summary>
-    public partial class DependencyInjection : Page
+    public partial class DependencyInjectionView : Page
     {
-        public DependencyInjection()
+        public DependencyInjectionView()
         {
             InitializeComponent();
         }

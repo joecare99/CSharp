@@ -11,7 +11,7 @@
 		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_win.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Condition="$(TargetFramework.StartsWith('net46'))" Include="System.ValueTuple" Version="*" />
+		<PackageReference Condition="$(TargetFramework.StartsWith('net46'))" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>

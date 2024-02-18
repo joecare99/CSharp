@@ -53,10 +53,10 @@ namespace MVVM_09_DialogBoxes.ViewModel
         /// </summary>
         /// <value>The name.</value>
         public string Name {
-			get => _name; set {
-				if (SetProperty(ref _name, value)) cnt++;
-			}
-		}
+            get => _name; set {
+                if (SetProperty(ref _name, value)) cnt++;
+            }
+        }
         /// <summary>
         /// Gets or sets the email.
         /// </summary>
@@ -82,7 +82,7 @@ namespace MVVM_09_DialogBoxes.ViewModel
                 }
                 else
                 {
-                    Name = "NÃ¶";
+                    Name = "Nö";
                 }
             });
 

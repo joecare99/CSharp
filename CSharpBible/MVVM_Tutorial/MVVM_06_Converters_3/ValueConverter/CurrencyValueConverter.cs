@@ -15,7 +15,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MVVM_6_Converters_3.ValueConverter
+namespace MVVM_06_Converters_3.ValueConverter
 {
     /// <summary>
     /// Class CurrencyValueConverter.
@@ -35,10 +35,11 @@ namespace MVVM_6_Converters_3.ValueConverter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is decimal dval && parameter is string spar)
-                return dval.ToString(spar);
+                return dval.ToString(spar,culture);
+            else if (value is decimal dval2)
+                return dval2.ToString(culture);
             else
-                return value.ToString() ?? "";
-
+                return $"{value}";
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace MVVM_6_Converters_3.ValueConverter
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string sval && parameter is string spar)
-                return decimal.Parse(sval.Replace(spar.Substring(spar.Length - 1), "").Trim());
+                return decimal.Parse(sval.Replace((" "+spar).Substring(Math.Max(0,spar.Length)), "").Trim());
             else
                 return decimal.Zero;
         }

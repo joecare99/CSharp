@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_6_Converters_3
+namespace MVVM_06_Converters_3
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

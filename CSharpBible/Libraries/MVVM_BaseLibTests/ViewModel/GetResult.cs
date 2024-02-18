@@ -24,7 +24,7 @@ namespace MVVM.ViewModel.Tests
         public int Count => _Dic.Count;
         public object? Get(object[] objects, [CallerMemberName] string proc = "")
         {
-            if (_Dic.TryGetValue(proc, out var f))
+            if (_Dic.TryGetValue(proc??"", out var f))
                 return f(objects);
             else
                 return null;

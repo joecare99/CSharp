@@ -190,7 +190,7 @@ PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
             Assert.IsNotNull(TestModelProperies);
         }
 
-        protected override Dictionary<string, object> GetDefaultData() 
+        protected override Dictionary<string, object?> GetDefaultData() 
             => new() { { nameof(TestVM.HasErrors), false }, { nameof(TestVM.TestInt), 0 }, { nameof(TestVM.TestStr),"<TestStr>" } };
     }
 
