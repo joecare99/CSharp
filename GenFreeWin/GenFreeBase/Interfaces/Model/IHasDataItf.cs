@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Interfaces.Model
 {
@@ -10,6 +7,6 @@ namespace GenFree.Interfaces.Model
     {
         bool ReadData(T2 key,out T? data);
         IEnumerable<T> ReadAll();
-        void SetData(T2 key, T data, string[]? asProps = null);
+        void SetData(T2 key,T data, Enum[]? asProps = null);
     }
 }

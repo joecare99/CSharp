@@ -1,45 +1,43 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM_06_Converters_4.Model;
-using MVVM_06_Converters_4.ViewModel;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BaseLib.Helper;
 using MVVM.ViewModel;
-using System.Reflection;
 using System.ComponentModel;
+using MVVM.View.Extension;
 
 namespace MVVM_06_Converters_4.ViewModel.Tests
 {
     [TestClass()]
-    public class VehicleViewModelTests : BaseTestViewModel
+    public class VehicleViewModelTests : BaseTestViewModel<VehicleViewModel>
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        private VehicleViewModel _testClass;
         private IAGVModel _testModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         [TestInitialize]
-        public void Init()
+        public override void Init()
         {
             _testModel = Substitute.For<IAGVModel>();
             _testModel.SwivelKoor.Returns(new MathLibrary.TwoDim.Math2d.Vector());
             _testModel.AGVVelocity.Returns(new MathLibrary.TwoDim.Math2d.Vector());
             _testModel.VehicleDim.Returns(new MathLibrary.TwoDim.Math2d.Vector());
-            _testClass = new VehicleViewModel(_testModel);
-            _testClass.PropertyChanged += OnVMPropertyChanged;
-            _testClass.SaveCommand.CanExecuteChanged += OnCanExChanged;
-            ClearLog();
+            _testModel.Dependencies.Returns(returnThis: new (string Dest, string Src)[] { ("1","2") });
+            IoC.GetReqSrv=(t)=>t switch
+            {
+                _ when t == typeof(IAGVModel) => _testModel,
+                _ => throw new NotImplementedException()
+            };
+            base.Init();
         }
         [TestMethod()]
         public void TestSetUp()
         {
-            Assert.IsNotNull(_testClass);
-            Assert.IsInstanceOfType(_testClass, typeof(VehicleViewModel));
-            Assert.IsInstanceOfType(_testClass, typeof(BaseViewModel));
+            Assert.IsNotNull(testModel);
+            Assert.IsInstanceOfType(testModel, typeof(VehicleViewModel));
+            Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
         }
 
         static IEnumerable<object[]> VehicleViewModelPropertyTestData
@@ -98,10 +96,10 @@ namespace MVVM_06_Converters_4.ViewModel.Tests
         public void TestProperties(string sProp, string sName, object oVal, object oExp)
         {
             if (oVal is DateTime?)
-                _testClass.SetProp<VehicleViewModel, DateTime?>(sProp, oVal as DateTime?);
+                testModel.SetProp<VehicleViewModel, DateTime?>(sProp, oVal as DateTime?);
             else if (sName != "ro")
-                _testClass.SetProp(sProp, oVal);
-            Assert.AreEqual(oExp, _testClass.GetProp(sProp));
+                testModel.SetProp(sProp, oVal);
+            Assert.AreEqual(oExp, testModel.GetProp(sProp));
         }
         [DataTestMethod()]
         [DataRow(nameof(IAGVModel.VehicleDim), new[] { @"PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,VehicleLength)=0
@@ -125,10 +123,6 @@ PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,AGVVelocity)=( 0, 0)
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [TestMethod()]
-        public void VehicleViewModelTest()
-        {
-            Assert.Fail();
-        }
+        protected override Dictionary<string, object?> GetDefaultData() => new();
     }
 }

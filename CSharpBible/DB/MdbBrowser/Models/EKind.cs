@@ -4,6 +4,8 @@
     {
         Table,
         Query,
+        Column,
+        Index,
         Form,
         Group,
         Macro,
@@ -11,6 +13,7 @@
         Relation,
         Unknown,
         User,
-        Schema
+        Schema,
+        DataTypes
     }
 }

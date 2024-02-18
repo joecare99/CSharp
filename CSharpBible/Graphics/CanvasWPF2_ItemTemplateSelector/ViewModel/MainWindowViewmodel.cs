@@ -1,20 +1,17 @@
 using System;
 using MVVM.ViewModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
 
 namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 {
-	/// <summary>
-	/// Class MainWindowViewModel.
-	/// Implements the <see cref="BaseViewModel" />
-	/// </summary>
-	/// <seealso cref="BaseViewModel" />
-	public class MainWindowViewModel : BaseViewModel
+    /// <summary>
+    /// Class MainWindowViewModel.
+    /// Implements the <see cref="BaseViewModel" />
+    /// </summary>
+    /// <seealso cref="BaseViewModel" />
+    public class MainWindowViewModel : BaseViewModel
 	{
         #region Properties
         #region private Propeties

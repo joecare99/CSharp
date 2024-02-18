@@ -8,11 +8,15 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+		<Compile Remove="Model\**" />
 		<Compile Remove="obj\**" />
 		<Compile Remove="Properties\AssemblyInfo.cs" />
+		<EmbeddedResource Remove="Model\**" />
 		<EmbeddedResource Remove="obj\**" />
+		<None Remove="Model\**" />
 		<None Remove="obj\**" />
 		<None Remove="*.bak" />
+		<Page Remove="Model\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="App.config" />
@@ -46,8 +50,5 @@
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Model\" />
 	</ItemGroup>
 </Project>

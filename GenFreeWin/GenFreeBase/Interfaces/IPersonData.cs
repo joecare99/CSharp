@@ -1,8 +1,9 @@
-﻿using System;
+﻿using GenFree.Data;
+using System;
 using System.Collections.Generic;
 
 namespace GenFree.Interfaces;
-public interface IPersonData : IHasID<int>
+public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecordset
 {
     string Alias { get; }
     string Baptised { get; }
@@ -12,11 +13,10 @@ public interface IPersonData : IHasID<int>
     string Clan { get; }
     string Death { get; }
     DateTime dEditDat { get; }
-    string FullName { get; }
     string FullSurName { get; }
     IList<string> Givenname { get; }
     string Givennames { get; }
-    Guid gUID { get; }
+    Guid gUid { get; }
     int iReligi { get; }
     IList<string> Nickname { get; }
     string Prae { get; }
@@ -36,10 +36,11 @@ public interface IPersonData : IHasID<int>
     DateTime dDeath { get; }
     DateTime dBaptised { get; }
     DateTime dBirth { get; }
+    DateTime dAnlDatum { get; }
+    bool isEmpty { get; }
 
     void SetData(IEventData cEvt);
     void SetDates(string[] value, Func<string, string, string>? SetAge = null);
-    void SetFull(string value);
     void SetFullSurname(string value);
     void SetPersonNames(int[] iName, (int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN);
     void SetPersonNr(int i);

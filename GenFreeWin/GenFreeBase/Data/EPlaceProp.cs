@@ -1,7 +1,29 @@
 ﻿//using DAO;
-namespace GenFree.Interfaces
+namespace GenFree.Data
 {
-    public class EPlaceProp
+    public enum EPlaceProp
     {
+        ID,
+        iOrt,
+        iOrtsteil,
+        iKreis,
+        iLand,
+        iStaat,
+        sStaatk,
+        sPLZ,
+        sTerr,
+        sLoc,
+        sL,
+        sB,
+        sBem,
+        sZusatz,
+        sGOV,
+        sPolName,
+        ig,
+        sOrt,
+        sOrtsteil,
+        sKreis,
+        sLand,
+        sStaat,
     }
 }

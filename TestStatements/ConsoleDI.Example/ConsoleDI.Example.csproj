@@ -1,0 +1,18 @@
+﻿<Project>
+	<ImportGroup Label="SolutionProps">
+		<Import Project="..\Solution.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<RootNamespace>ConsoleDI.example</RootNamespace>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8"/>
+	</ItemGroup>
+
+</Project>

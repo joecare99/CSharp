@@ -115,6 +115,21 @@ public enum FamilyIndex
     Fam,
     Fuid
 }
+
+public enum OFBIndex
+{
+    InDNr,
+    IndNum,
+    Indn
+}
+
+public enum OFBFields
+{
+    PerNr,
+    Kennz,
+    TextNr
+}
+
 public enum PlaceFields
 {
     Ort,
@@ -332,6 +347,11 @@ public enum PropertyIndex
     Per
 }
 
+public enum SourceLinkIndex
+{
+    Tab, // Person/Family-Index
+    Tab22, // Event-Index
+}
 public enum SourceLinkFields
 {
     /// <summary>
@@ -339,7 +359,7 @@ public enum SourceLinkFields
     /// </summary>
     _1, // Kind    
     /// <summary>
-    /// The Source Nr
+    /// The Source Nr (Person/Family/Event)
     /// </summary>
     _2, // Nr
     _3, // NrNeu    
@@ -354,6 +374,31 @@ public enum SourceLinkFields
     LfNr,
 }
 
+public enum SourceFields
+{
+    _1,
+    _2,
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8,
+    _9,
+    _10,
+    _11,
+    _12,
+    _13
+}
+
+public enum SourceIndex
+{
+    Autor,
+    Dopp,
+    Nam,
+    Nr,
+    Zitat
+}
 public enum RepoFields
 {
     Nr,
@@ -438,17 +483,24 @@ public enum ETextKennz : int
     /// The Alias
     /// </summary>
     C_ = 'C',
+    /// <summary>The ???</summary>
     D_ = 'D',
+    /// <summary>The occupation</summary>
     E_ = 'E',
     /// <summary>
     /// The Givenname (female)
     /// </summary>
     F_ = 'F',
     G_ = 'G',
+    /// <summary>The place/village/town</summary>
     H_ = 'H',
+    /// <summary>The suburb</summary>
     I_ = 'I',
+    /// <summary>The district/county</summary>
     J_ = 'J',
+    /// <summary>The country</summary>
     K_ = 'K',
+    /// <summary>The state</summary>
     L_ = 'L',
     M_ = 'M',
     /// <summary>
@@ -463,7 +515,9 @@ public enum ETextKennz : int
     Q_ = 'Q',
     R_ = 'R',
     S_ = 'S',
+    /// <summary>The event-name</summary>
     T_ = 'T',
+    /// <summary>The status/condition</summary>
     U_ = 'U',
     /// <summary>
     /// The Givenname (male)
@@ -476,6 +530,7 @@ public enum ETextKennz : int
     /// </summary>
     Z_ = 'Z',
     tk1_ = '1',
+    /// <summary>The predicate</summary>
     tk2_ = '2',
     tk3_ = '3',
     tk4_ = '4',
@@ -484,5 +539,6 @@ public enum ETextKennz : int
     /// </summary>
     tk5_ = '5',
     tk6_ = '6',
+    /// <summary>The confession</summary>
     tk7_ = '7',
 }

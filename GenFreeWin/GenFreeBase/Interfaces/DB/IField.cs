@@ -5,5 +5,5 @@ public interface IField
 {
     string Name { get; }
     int Size { get; }
-    object Value { get; set; }
+    object? Value { get; set; }
 }

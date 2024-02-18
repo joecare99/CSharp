@@ -24,7 +24,7 @@ namespace VBUnObfusicator.Models
 
             public void Insert(int index, T item)
             {
-                if (!item.Parent?.Equals(Parent) ?? Parent == null)
+                if (!item.Parent?.Equals(Parent) ?? Parent != null)
                     item.Parent = Parent;
                 list.Insert(index, item);   
             }
@@ -33,7 +33,7 @@ namespace VBUnObfusicator.Models
 
             public void Add(T item)
             {
-                if (!item.Parent?.Equals(Parent) ?? Parent == null)
+                if (!item.Parent?.Equals(Parent) ?? Parent != null)
                     item.Parent = Parent;
                 list.Add(item);
             }

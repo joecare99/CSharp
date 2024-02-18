@@ -12,16 +12,15 @@
 // <summary></summary>
 // ***********************************************************************
 using MathLibrary.TwoDim;
+using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_06_Converters_4.Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Windows.Documents;
-using System.Windows.Media;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace MVVM_06_Converters_4.ViewModel
 {
@@ -172,7 +171,7 @@ namespace MVVM_06_Converters_4.ViewModel
         private DataSet _dataset;
 
         private ArrowList _arrows;
-        private AGV_Model _agv_Model;
+        private IAGVModel _agv_Model;
         private CircleList _circles;
         private PolynomeList _polynomes;
 
@@ -249,9 +248,15 @@ namespace MVVM_06_Converters_4.ViewModel
             AddPropertyDependency(nameof(Circles), nameof(WindowPort), true);
             AddPropertyDependency(nameof(Polynomes), nameof(WindowPort), true);
 
-            _agv_Model = AGV_Model.Instance;
+            _agv_Model = IoC.GetRequiredService<IAGVModel>();
             _agv_Model.PropertyChanged += OnModelPropChanged;
+            AsyncInit();
+        }
 
+        async void AsyncInit()
+        {
+            await Task.Delay(100);
+            OnModelPropChanged(_agv_Model, new PropertyChangedEventArgs(nameof(IAGVModel.VehicleDim)));
         }
 
         private void DemoData()
@@ -316,6 +321,7 @@ namespace MVVM_06_Converters_4.ViewModel
             {
                 Points = MakeRect(_agv_Model.VehicleDim,0.5f,0.5f)
             });
+            if (double.IsNaN(_agv_Model.SwivelKoor.x)  || _agv_Model.SwivelKoor.y == double.NaN) return;
             _circles.Add(new()
             {
                 Center = new((float)_agv_Model.SwivelKoor.x, (float)_agv_Model.SwivelKoor.y),

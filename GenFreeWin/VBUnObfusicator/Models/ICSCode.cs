@@ -192,6 +192,8 @@ namespace VBUnObfusicator.Models
         /// </summary>
         /// <value>The original code.</value>
         string OriginalCode { get; set; }
+        bool DoWhile { get; set; }
+
         /// <summary>
         /// Parses the specified values.
         /// </summary>

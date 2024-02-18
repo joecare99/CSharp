@@ -1,12 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Calc64WF.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace Calc64WF.ViewModel.Tests

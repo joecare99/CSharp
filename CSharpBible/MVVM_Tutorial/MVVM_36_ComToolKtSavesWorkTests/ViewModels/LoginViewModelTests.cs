@@ -14,7 +14,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using MVVM.ViewModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;

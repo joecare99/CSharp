@@ -3,13 +3,14 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.1.0" />
-    <PackageReference Include="MySql.Data.EntityFramework" Version="8.1.0" />
-    <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="MySql.Data" Version="8.3.0" />
+    <PackageReference Include="MySql.Data.EntityFramework" Version="8.3.0" />
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.0" />
     <!--<PackageReference Include="MySqlConnector" Version="2.2.5" />-->
     <!--<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />-->
   </ItemGroup>

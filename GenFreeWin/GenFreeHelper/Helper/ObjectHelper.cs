@@ -104,6 +104,18 @@ namespace GenFree.Helper
             _ => default
         };
 
+        public static T SetRet<T, T2>(this T2 obj, Action<T2> action, T v)
+        {
+            action(obj);
+            return v;
+        }
     }
+    public static class ObjectHelper2
+    {
+        public static void SetIndex<T>(this Dictionary<int, T> dic, T value, int index) => dic[index + 1] = value;
+        public static int GetIndex<T>(this Dictionary<int, T> dic, T value) => dic.Where((itm) => itm.Value?.Equals(value) ?? false)
+            .FirstOrDefault().Key - 1;
 
+    }
+    public class ControlArray<T> : Dictionary<int, T> { };
 }

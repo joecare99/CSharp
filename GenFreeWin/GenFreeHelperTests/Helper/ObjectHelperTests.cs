@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using NSubstitute;
 using GenFree.Data;
@@ -178,7 +179,7 @@ namespace GenFree.Helper.Tests
         public void AsDateTest(long dExp, object sAct)
         {
             DateTime d;
-            Assert.AreEqual(DateTime.FromBinary(dExp),d= sAct.AsDate(), $"AsDate({sAct}) ({d.ToBinary()})");
+            Assert.AreEqual(DateTime.FromBinary(dExp), d = sAct.AsDate(), $"AsDate({sAct}) ({d.ToBinary()})");
         }
 
         [DataTestMethod()]
@@ -312,7 +313,7 @@ namespace GenFree.Helper.Tests
         [DataRow(9, 9)]
         public void AsGUIDTest(int iExp, object sAct)
         {
-            var gExp = new Guid(iExp, 0, 0, new byte[8] );
+            var gExp = new Guid(iExp, 0, 0, new byte[8]);
             Assert.AreEqual(gExp, sAct.AsGUID(), $"AsGUID({sAct})");
         }
         [DataTestMethod()]
@@ -345,6 +346,16 @@ namespace GenFree.Helper.Tests
         {
             var sAct = Guid.Empty;
             AsGUIDTest(default, sAct);
+        }
+
+        [DataTestMethod()]
+        [DataRow("Zero", null,null)]
+        [DataRow("1-0", 1, 0.0)]
+        [DataRow("0-1", 0, 1.0)]
+        [DataRow("2-1", 2, double.PositiveInfinity)]
+        public void SetRetTest(string sName,int iAct,double dAct)
+        {
+            Assert.AreEqual(iAct,dAct.SetRet((d)=>Assert.AreEqual(dAct,d),iAct));
         }
     }
 }
