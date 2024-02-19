@@ -30,7 +30,9 @@ namespace MVVM_39_MultiModelTest.ViewModels.Tests
     [TestClass()]
     public class MultiModelMainViewModelTests:BaseTestViewModel<MultiModelMainViewModel>
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private ISystemModel systemModel;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
         /// Initializes this instance.

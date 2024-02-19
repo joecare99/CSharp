@@ -39,7 +39,9 @@ namespace MVVM_39_MultiModelTest.ViewModels.Tests
         /// <summary>
         /// The scoped model
         /// </summary>
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private IScopedModel scopedModel;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
         /// Initializes the test-models for this instance.
