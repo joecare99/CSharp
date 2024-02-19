@@ -9,15 +9,17 @@ namespace MVVM_39_MultiModelTest.Tests
     {
         public void DoStartUp()
         {
-            OnStartup(null);
+            OnStartup(null!);
         }
     }
     [TestClass()]
     public class AppTests 
     {
         static TestApp app = new();
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private Func<Type, object?> _gsold;
         private Func<Type, object> _grsold;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
         /// Initializes this instance.

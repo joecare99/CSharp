@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows.Markup;
 
@@ -54,7 +55,14 @@ namespace MVVM.View.Extension
         /// IoC.GetSrv = builder.BuildServiceProvider().GetService;</code>
         /// </example>
         public static Func<Type, object?> GetSrv { get; set; } = (t) => null;
+        public static Func<IServiceScope> GetScope { get; set; } = () => throw new NotImplementedException("Please initialize the service first.");
 
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        private static IServiceScope _Scope;
+        private static IServiceScope _BaseScope;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+
+        public static IServiceScope Scope => _Scope;
         /// <summary>
         /// Gets the required service.
         /// </summary>
@@ -84,6 +92,20 @@ namespace MVVM.View.Extension
 
         public static void Configure(IServiceProvider sp)
         {
+            GetScope = sp.CreateScope;
+            _Scope = _BaseScope = GetScope();
+            GetReqSrv = (t) => { var s = sp.GetService(t); return s ?? throw new InvalidOperationException($"No service for {t}"); };
+            GetSrv = sp.GetService;
+        }
+
+        public static IServiceScope GetNewScope(IServiceScope? aScope=null)
+        {
+            return aScope==null? GetScope(): aScope.ServiceProvider.CreateScope();
+        }
+
+        public static void SetCurrentScope(IServiceScope scope)
+        {
+            var sp = (_Scope = scope).ServiceProvider;
             GetReqSrv = (t) => { var s = sp.GetService(t); return s ?? throw new InvalidOperationException($"No service for {t}"); };
             GetSrv = sp.GetService;
         }
