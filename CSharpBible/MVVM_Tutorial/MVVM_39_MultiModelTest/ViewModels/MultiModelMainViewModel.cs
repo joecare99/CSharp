@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.Input;
+using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_39_MultiModelTest.Models;
 using System;
@@ -23,12 +25,20 @@ namespace MVVM_39_MultiModelTest.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public partial class TemplateViewModel : BaseViewModelCT
+    public partial class MultiModelMainViewModel : BaseViewModelCT
     {
-        #region Properties
-        public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
+        #region Delegtes
+        public delegate void ShowModelDelegate(IScopedModel model);
+        #endregion
 
-        private readonly ITemplateModel _model;
+        #region Properties
+        public static Func<ISystemModel> GetModel { get; set; } = () => IoC.GetRequiredService<ISystemModel>();
+
+        private readonly ISystemModel _model;
+        private IScopedModel? scopedModel1;
+        private IScopedModel? scopedModel2;
+
+        public ShowModelDelegate? showModel { get; set; }
 
         public DateTime Now => _model.Now;
         #endregion
@@ -37,17 +47,31 @@ namespace MVVM_39_MultiModelTest.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public TemplateViewModel():this(GetModel())
+        public MultiModelMainViewModel():this(GetModel())
         {
         }
 
-        public TemplateViewModel(ITemplateModel model)
+        public MultiModelMainViewModel(ISystemModel model)
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;
         }
 
-        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
+        [RelayCommand]
+        private void OpenScopedModel1()
+        {
+            scopedModel1 ??= _model.GetNewScopedModel();
+            showModel?.Invoke(scopedModel1);
+        }   
+        
+        [RelayCommand]
+        private void OpenScopedModel2()
+        {
+            scopedModel2 ??= _model.GetNewScopedModel();
+            showModel?.Invoke(scopedModel2);
+        }
+
+        private void OnMPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName); 
         }

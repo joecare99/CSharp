@@ -49,7 +49,7 @@ namespace MVVM_39_MultiModelTest.ValueConverter.Tests
         public void ConvertTest(object? value, string? param, string expected)
         {
             if (value is string s && DateTime.TryParse(s, CultureInfo.InvariantCulture,DateTimeStyles.AssumeUniversal,out var dt)) value = dt;
-            var result = testConv.Convert(value, typeof(string), param, CultureInfo.InvariantCulture);
+            var result = testConv.Convert(value!, typeof(string), param!, CultureInfo.InvariantCulture);
             Assert.AreEqual(expected, result);
         }
 
@@ -66,7 +66,7 @@ namespace MVVM_39_MultiModelTest.ValueConverter.Tests
         public void ConvertBackTest(object? value, string? param, object? expected)
         {
             if (value is string s && DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var dt)) value = dt;
-            var result = testConv.ConvertBack(expected, typeof(DateTime), param, CultureInfo.InvariantCulture);
+            var result = testConv.ConvertBack(expected!, typeof(DateTime), param!, CultureInfo.InvariantCulture);
             Assert.AreEqual(value, result);
         }
     }
