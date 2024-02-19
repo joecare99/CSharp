@@ -26,6 +26,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Condition="$(TargetFramework.StartsWith('net4'))" Include="System.Xaml" />
