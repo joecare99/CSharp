@@ -29,7 +29,7 @@ namespace MVVM_39_MultiModelTest.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-                _ when t == typeof(ITemplateModel) => new TemplateModel(),
+                _ when t == typeof(ISystemModel) => new SystemModel(),
                 _ => throw new ArgumentException() };          
         }
 
@@ -50,7 +50,7 @@ namespace MVVM_39_MultiModelTest.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(ISystemModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }
