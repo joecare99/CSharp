@@ -18,7 +18,7 @@ namespace MVVM_24c_CTUserControl.Views.Tests
             {
                 mw = new();
                 asIO[0] = mw.LEDBrush;
-                mw.LEDBrush = asIO[1];
+                mw.LEDBrush = asIO[1]!;
                 asIO[2] = mw.LEDBrush;
                 return;
             });
