@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.ComponentModel;
 using MathLibrary.TwoDim;
 using MVVM.View.Extension;
 using MVVM.ViewModel;
@@ -159,66 +160,54 @@ namespace MVVM_06_Converters_4.ViewModel
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class PlotFrameViewModel : BaseViewModel
+    public partial class PlotFrameViewModel : BaseViewModelCT
     {
         /// <summary>
         /// The view port
-        /// </summary>
-        private SWindowPort _viewPort;
+        /// </summary> 
+        private SWindowPort _windowPort;
         /// <summary>
         /// The dataset
         /// </summary>
-        private DataSet _dataset;
-
+        [ObservableProperty]
+        private DataSet _dataset1;
+        /// <summary>
+        /// Gets or sets the Arrows.
+        /// </summary>
+        /// <value>The dataset.</value>
+        [ObservableProperty]
         private ArrowList _arrows;
-        private IAGVModel _agv_Model;
+
+        /// <summary>
+        /// Gets or sets the Circles.
+        /// </summary>
+        /// <value>The dataset.</value>
+        [ObservableProperty]
         private CircleList _circles;
+
+        /// <summary>
+        /// Gets or sets the Polinomes.
+        /// </summary>
+        /// <value>The dataset.</value>
+        [ObservableProperty]
         private PolynomeList _polynomes;
 
-        /// <summary>
-        /// Gets or sets the window port.
-        /// </summary>
-        /// <value>The window port.</value>
-        public SWindowPort WindowPort { get => _viewPort; set => SetProperty(ref _viewPort, value); }
+        private IAGVModel _agv_Model;
 
-        /// <summary>
-        /// Gets or sets the dataset.
-        /// </summary>
-        /// <value>The dataset.</value>
-        public DataSet Dataset1 { get => _dataset; set => SetProperty(ref _dataset, value); }
-
-        /// <summary>
-        /// Gets or sets the dataset.
-        /// </summary>
-        /// <value>The dataset.</value>
-        public ArrowList Arrows { get => _arrows; set => SetProperty(ref _arrows, value); }
-
-        /// <summary>
-        /// Gets or sets the dataset.
-        /// </summary>
-        /// <value>The dataset.</value>
-        public CircleList Circles { get => _circles; set => SetProperty(ref _circles, value); }
-
-        /// <summary>
-        /// Gets or sets the dataset.
-        /// </summary>
-        /// <value>The dataset.</value>
-        public PolynomeList Polynomes { get => _polynomes; set => SetProperty(ref _polynomes, value); }
-
-
+        public SWindowPort WindowPort { get => _windowPort; set => SetProperty(ref _windowPort, value); }
         /// <summary>
         /// Gets or sets the vp window.
         /// </summary>
         /// <value>The vp window.</value>
-        public RectangleF VPWindow { get => _viewPort.port; set => SetProperty(ref _viewPort.port, value, new string[] { nameof(WindowPort) }); }
+        public RectangleF VPWindow { get => WindowPort.port; set => SetProperty(ref _windowPort.port, value ); }
         /// <summary>
         /// Gets or sets the size of the window.
         /// </summary>
         /// <value>The size of the window.</value>
         public System.Windows.Size WindowSize
         {
-            get => _viewPort.WindowSize;
-            set => SetProperty(ref _viewPort.WindowSize, value, new string[] { nameof(WindowPort) });
+            get => WindowPort.WindowSize;
+            set => SetProperty(ref _windowPort.WindowSize, value);
         }
 
         /// <summary>
@@ -231,9 +220,9 @@ namespace MVVM_06_Converters_4.ViewModel
             //           VPWindow = new RectangleF(-3, -3, 900, 600);
             //           VPWindow = new RectangleF(-0.03f, -0.03f, 0.09f, 0.06f);
             WindowSize = new System.Windows.Size(600, 400);
-            _viewPort.Parent = this;
+            _windowPort.Parent = this;
 
-            _dataset = new DataSet();
+            _dataset1 = new DataSet();
             _arrows = new ArrowList();
             _arrows.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 2.0);
             _circles = new CircleList();
@@ -247,6 +236,8 @@ namespace MVVM_06_Converters_4.ViewModel
             AddPropertyDependency(nameof(Arrows), nameof(WindowPort), true);
             AddPropertyDependency(nameof(Circles), nameof(WindowPort), true);
             AddPropertyDependency(nameof(Polynomes), nameof(WindowPort), true);
+            AddPropertyDependency(nameof(WindowPort), nameof(WindowSize), true);
+            AddPropertyDependency(nameof(WindowPort), nameof(VPWindow), true);
 
             _agv_Model = IoC.GetRequiredService<IAGVModel>();
             _agv_Model.PropertyChanged += OnModelPropChanged;
@@ -262,11 +253,11 @@ namespace MVVM_06_Converters_4.ViewModel
         private void DemoData()
         {
             
-            _dataset.Datapoints = new PointF[400];
-            _dataset.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1.0);
-            for (int i = 0; i < _dataset.Datapoints.Length; i++)
+            _dataset1.Datapoints = new PointF[400];
+            _dataset1.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1.0);
+            for (int i = 0; i < _dataset1.Datapoints.Length; i++)
             {
-                _dataset.Datapoints[i] = GetPoint(i);
+                _dataset1.Datapoints[i] = GetPoint(i);
             }
            
             for (int i = 0; i < 20; i++)
@@ -399,9 +390,9 @@ namespace MVVM_06_Converters_4.ViewModel
                 End = MakeRotArrow(_agv_Model.AGVVelocity, 0, Math2d.eY,0d,0d)
             });
 
-            RaisePropertyChanged(nameof(Polynomes));
-            RaisePropertyChanged(nameof(Circles));
-            RaisePropertyChanged(nameof(Arrows));
+            OnPropertyChanged(nameof(Polynomes));
+            OnPropertyChanged(nameof(Circles));
+            OnPropertyChanged(nameof(Arrows));
 
             List<PointF> MakeRect(Math2d.Vector vs, float xSize,float ySize)
             {
