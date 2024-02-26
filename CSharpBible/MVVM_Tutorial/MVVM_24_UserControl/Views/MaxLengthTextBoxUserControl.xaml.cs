@@ -31,7 +31,7 @@ namespace MVVM_24_UserControl.Views
 			DataContext = this;
 		}
 
-		public string Caption { get; set; }
+		public string Caption { get; set; } = "";
 		public int MaxLength { get; set; }
 
 		public string Text

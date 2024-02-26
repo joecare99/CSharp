@@ -18,8 +18,8 @@ namespace MVVM_24c_CTUserControl.Views.Tests
                 mw = new();
                 asIO[0] = mw.Text;
                 asIO[1] = mw.Caption;
-                mw.Text = asIO[2];
-                mw.Caption = asIO[3];
+                mw.Text = asIO[2]!;
+                mw.Caption = asIO[3]!;
                 asIO[4] = mw.Text;
                 asIO[5] = mw.Caption;
                 return;

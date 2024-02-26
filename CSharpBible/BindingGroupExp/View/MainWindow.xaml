@@ -7,10 +7,9 @@
         xmlns:mvvm="clr-namespace:BindingGroupExp.ViewModel"
         xmlns:src="clr-namespace:BindingGroupExp.View.Validation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        Loaded="Window_Loaded">
+        Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
-        <mvvm:MainWindowViewModel/>
+        <mvvm:MainWindowViewModel Price="120"/>
     </Window.DataContext>
     <Grid>
         <StackPanel Name="stackPanel1"  Margin="10" Width="250"
