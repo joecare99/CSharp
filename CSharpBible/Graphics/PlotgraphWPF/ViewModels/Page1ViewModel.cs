@@ -16,13 +16,15 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using MVVM.ViewModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace PlotgraphWPF.ViewModels
 {
     /// <summary>
     /// Class Page1ViewModel.
     /// </summary>
-    public class Page1ViewModel
+    public partial class Page1ViewModel: BaseViewModelCT
     {
         /// <summary>
         /// The current second
@@ -32,10 +34,12 @@ namespace PlotgraphWPF.ViewModels
         /// The rd
         /// </summary>
         Random rd = new Random();
+
         /// <summary>
         /// The lt point
         /// </summary>
-        public PointCollection LtPoint = new PointCollection();
+        [ObservableProperty]
+        private PointCollection _ltPoint = new PointCollection();
 
         /// <summary>
         /// Gets or sets my model.
@@ -46,13 +50,12 @@ namespace PlotgraphWPF.ViewModels
         /// <summary>
         /// Finalizes an instance of the <see cref="Page1ViewModel"/> class.
         /// </summary>
-        ~Page1ViewModel()
+        public Page1ViewModel()
         {
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += Timer_Tick;
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Start();
-
             myModel = new MyModel()
             {
                 points = LtPoint,
@@ -71,6 +74,8 @@ namespace PlotgraphWPF.ViewModels
             double x = currentSecond * 10;
             double y = rd.Next(1, 200);
             LtPoint.Add(new Point(x, y));
+
+            OnPropertyChanged(nameof(myModel));
         }
     }
 }

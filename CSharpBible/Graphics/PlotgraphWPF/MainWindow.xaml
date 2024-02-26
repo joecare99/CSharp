@@ -18,12 +18,7 @@
         <vc:ColorValueConverter x:Key="vcColor"/>
     </Window.Resources>
     <Grid>
-        <!--Frame Content="{DynamicResource Page1}" x:Name="frame">
-            <Frame.DataContext>
-                <ViewModels:Page1ViewModel/>
-            </Frame.DataContext>
-
-        </Frame-->
+        <!--Frame Content="{DynamicResource Page1}" x:Name="frame"></Frame-->
         <StackPanel>
             <Polyline Height="300"  Name="_myPolyline" Stroke="{Binding myModel.PlotColor, Converter={StaticResource vcColor}}" Tag="123213" StrokeThickness="4" Points="{Binding myModel.points}" >
                 
