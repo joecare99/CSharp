@@ -23,7 +23,7 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 		private Task? t;
 
 		private object? _editShape = null; // Wird mit einem Leeren Shape initialisiert
-		private ObservableCollection<ShapeData> _shapes = new ObservableCollection<ShapeData>();
+		private ObservableCollection<IVisualObject> _shapes = new ObservableCollection<IVisualObject>();
 		private bool xRunning;
 		private string _dataText="";
 		#endregion
@@ -37,7 +37,7 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 		/// Gets or sets the shapes.
 		/// </summary>
 		/// <value>The shapes.</value>
-		public ObservableCollection<ShapeData> Shapes { get => _shapes; set => SetProperty(ref _shapes, value); }
+		public ObservableCollection<IVisualObject> Shapes { get => _shapes; set => SetProperty(ref _shapes, value); }
 		/// <summary>
 		/// Gets or sets the dc select shape.
 		/// </summary>
