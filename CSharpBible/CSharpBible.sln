@@ -57,8 +57,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddPageWPF", "AddPageWPF\Ad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calc32WPF", "Calc\Calc32WPF\Calc32WPF.csproj", "{4BCC197C-7F28-4F6E-B831-D02BE0ABE839}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BindingGroupExp", "BindingGroupExp\BindingGroupExp.csproj", "{AFCEC61D-9C18-49E5-94AE-17429BB06C78}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleMouseApp", "ConsoleMouseApp\ConsoleMouseApp.csproj", "{98D9C22F-ED66-4219-B6B8-8E38A04F9771}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleMouseApp_net", "ConsoleMouseApp\ConsoleMouseApp_net.csproj", "{DCBA9C93-38E4-4B0C-ABE5-DA89C8CF8785}"
@@ -123,6 +121,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp_net", "MVVM_Tutorial\WpfApp1\WpfApp_net.csproj", "{5F710E80-7C09-477E-B606-B7ECDDED5FAC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_17_1_CSV_Laden", "MVVM_Tutorial\MVVM_17_1_CSV_Laden\MVVM_17_1_CSV_Laden.csproj", "{752917E2-0A8D-4B39-8786-76F1EF9426AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_26_BindingGroupExp", "MVVM_Tutorial\MVVM_26_BindingGroupExp\MVVM_26_BindingGroupExp.csproj", "{AFCEC61D-9C18-49E5-94AE-17429BB06C78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_18_MultiConverters", "MVVM_Tutorial\MVVM_18_MultiConverters\MVVM_18_MultiConverters.csproj", "{D32FA801-F7D2-42DA-A2FA-B3453E61243E}"
 EndProject
