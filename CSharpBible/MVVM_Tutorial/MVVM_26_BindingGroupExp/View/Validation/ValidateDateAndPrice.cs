@@ -1,10 +1,10 @@
-﻿using BindingGroupExp.ViewModel;
+﻿using MVVM_26_BindingGroupExp.ViewModel;
 using System;
 using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace BindingGroupExp.View.Validation
+namespace MVVM_26_BindingGroupExp.View.Validation
 {
     public class ValidateDateAndPrice : ValidationRule
     {

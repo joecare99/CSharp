@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace BindingGroupExp
+namespace MVVM_26_BindingGroupExp
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml"

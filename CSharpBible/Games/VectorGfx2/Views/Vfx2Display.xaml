@@ -17,9 +17,6 @@
     <Page.Resources>
         <DataTemplate x:Key="dtRectangle">
             <Grid RenderTransformOrigin="0.5,0.5">
-                <Grid.Effect>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="{Binding Z}"/>
-                </Grid.Effect>
                 <i:Interaction.Behaviors>
                     <mvvm:ItemBehavior/>
                 </i:Interaction.Behaviors>
@@ -38,9 +35,15 @@
                 <i:Interaction.Behaviors>
                     <mvvm:ItemBehavior/>
                 </i:Interaction.Behaviors>
-                <Grid.Effect>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="{Binding Z}"/>
-                </Grid.Effect>
+                <Polygon Cursor="Hand" RenderTransformOrigin="0.5,0.5" 
+                         Fill="Blue"
+                         Points="{Binding Pnts}">
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
                 <Ellipse Fill="Blue" Cursor="Hand"/>
                 <!--<Line Margin="20,20,0,0" Stroke="White" StrokeThickness="3" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>
                 <Line Margin="20,20,0,0" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
@@ -51,23 +54,14 @@
                 <i:Interaction.Behaviors>
                     <mvvm:ItemBehavior/>
                 </i:Interaction.Behaviors>
-                <Grid.Effect>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="{Binding Z}"/>
-                </Grid.Effect>
-                <Polygon Margin="-20,-20,0,0" Width="40" Height="40" Fill="Lime" Cursor="Hand" RenderTransformOrigin="0.5,0.5">
+                <Polygon 
+                         Fill="Lime" Cursor="Hand" RenderTransformOrigin="0.5,0.5" 
+                         Points="{Binding Pnts}">
                     <Polygon.RenderTransform>
                         <TransformGroup>
                             <RotateTransform Angle="{Binding ZRot}"/>
                         </TransformGroup>
                     </Polygon.RenderTransform>
-                    <Polygon.Points>
-                        <Point X="2" Y="10"/>
-                        <Point X="20" Y="0"/>
-                        <Point X="38" Y="10"/>
-                        <Point X="38" Y="30"/>
-                        <Point X="20" Y="40"/>
-                        <Point X="2" Y="30"/>
-                    </Polygon.Points>
                 </Polygon>
                 <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
             </Grid>
@@ -77,10 +71,6 @@
                 <i:Interaction.Behaviors>
                     <mvvm:ItemBehavior/>
                 </i:Interaction.Behaviors>
-                <Grid.Effect>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="{Binding Z}"/>
-                </Grid.Effect>
-
                 <Ellipse Cursor="Hand">
                     <Ellipse.Fill>
                         <DrawingBrush ViewportUnits="Absolute" Viewport="0,0,40,40" ViewboxUnits="Absolute" Viewbox="-10,-10,20,20" >

@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Frame x:Name="MainFrame" Source="Views/VfxDisplay.xaml" NavigationUIVisibility="Hidden" />
+        <Frame x:Name="MainFrame" Source="Views/Vfx2Display.xaml" NavigationUIVisibility="Hidden" />
     </Grid>
 </Window>

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace BindingGroupExp.View.Validation
+namespace MVVM_26_BindingGroupExp.View.Validation
 {
     public class PriceIsAPositiveNumber : ValidationRule
     {

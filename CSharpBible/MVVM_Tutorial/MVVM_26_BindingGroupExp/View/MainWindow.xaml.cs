@@ -1,8 +1,8 @@
-﻿using BindingGroupExp.ViewModel;
+﻿using MVVM_26_BindingGroupExp.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace BindingGroupExp.View
+namespace MVVM_26_BindingGroupExp.View
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml

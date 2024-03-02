@@ -79,6 +79,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorGfx", "VectorGfx\Vect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasWPF2_ItemTemplateSelector", "..\Graphics\CanvasWPF2_ItemTemplateSelector\CanvasWPF2_ItemTemplateSelector.csproj", "{0E81C28B-325A-4A2F-B21F-F66DADA451EC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorGfx2", "VectorGfx2\VectorGfx2.csproj", "{07FB5A96-DB06-442C-8570-8644898BD6C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,10 @@ Global
 		{0E81C28B-325A-4A2F-B21F-F66DADA451EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E81C28B-325A-4A2F-B21F-F66DADA451EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E81C28B-325A-4A2F-B21F-F66DADA451EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07FB5A96-DB06-442C-8570-8644898BD6C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07FB5A96-DB06-442C-8570-8644898BD6C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07FB5A96-DB06-442C-8570-8644898BD6C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07FB5A96-DB06-442C-8570-8644898BD6C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
