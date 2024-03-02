@@ -16,7 +16,7 @@ namespace VectorGfx2.ViewModels;
 public partial class VfxDisplayViewModel : BaseViewModelCT
 {
     [ObservableProperty]
-    private List<IVisualObject> _visObjects;
+    private List<IVisualObject2> _visObjects;
 
     [ObservableProperty]
     private string _dataText;
@@ -28,10 +28,14 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
     {
         VisObjects = new()
         {
-            new VisualObject() {Idx=0, IType=0, P= new Point (50, 50), MouseHover=MouseHoverCommand },
-            new VisualObject() {Idx=3, IType=1, P=new Point (90, 50), MouseHover=MouseHoverCommand },
-            new VisualObject() {Idx=2, IType=2, P=new Point (130, 50), MouseHover=MouseHoverCommand },
-            new VisualObject() {Idx = 1,  IType=3, P=new Point (170, 50), MouseHover=MouseHoverCommand },
+            new VisualObject2() {Idx=0, IType=0, P= new Point (50, 50), MouseHover=MouseHoverCommand,
+                Pnts=[new(-10,-10), new(10, -10), new(10, 10), new(-10, 10)] },
+            new VisualObject2() {Idx=1, IType=1, P=new Point (90, 50), MouseHover=MouseHoverCommand,
+               Pnts=[new(-10,-10), new(10, -10), new(0, 10)]},
+            new VisualObject2() {Idx=2, IType=2, P=new Point (130, 50), MouseHover=MouseHoverCommand,
+               Pnts=[new(-5,-10), new(5, -10), new(10, 0), new(5, 10), new(-5, 10), new(-10, 0)] },
+            new VisualObject2() {Idx = 1,  IType=3, P=new Point (170, 50), MouseHover=MouseHoverCommand,
+             Pnts=[new(-5,-10), new(5, -10), new(10, 0), new(0, 10), new(-10, 0)]},
         };
         dTime = 0;
         timer = new Timer(40);
@@ -46,13 +50,7 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
         foreach (var vo in _l)
         {
             vo.ZRot = (int)((dTime + Math.Sin((dTime + vo.Idx) * 1.5)) * 50);
-            var _zz = vo.Z;
-            vo.Z = (int)(10 + Math.Sin((dTime * 3 + vo.Idx * 2) * 40 / 180 * Math.PI) * 9);
-            vo.X = (int)(vo.P.X - vo.Z / 2);
-            vo.Y = (int)(vo.P.Y - vo.Z / 2);
         }
-
-        _l.Sort((x, y) => x.Z == y.Z ? 0 : x.Z < y.Z ? -1 : 1);
         
         //VisObjects = _l;
         OnPropertyChanged(nameof(VisObjects));
@@ -60,9 +58,9 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
     }
 
     [RelayCommand]
-    private void MouseHover(IVisualObject vo)
+    private void MouseHover(IVisualObject2 vo)
     {
-        if (vo is IVisualObject obj)
+        if (vo is IVisualObject2 obj)
             DataText = $"{GetNameOfType(obj.IType)} at {obj.P}";
     }
 
