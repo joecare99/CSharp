@@ -59,5 +59,61 @@ namespace MVVM_00_Template.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die a Template for MVVM-Examples ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
+        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+        ///      xmlns:local=&quot;clr-namespace:MVVM_00_Template.Views&quot;
+        ///      xmlns:p=&quot;clr-namespace:MVVM_00_Template.Properties&quot;
+        ///      xmlns:vc=&quot;clr-namespace:MVVM_00_Template.ValueConverter&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_00_T [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string TemplateView {
+            get {
+                return ResourceManager.GetString("TemplateView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_00_Template
+        ///// Author           : Mir
+        ///// Created          : 08-11-2022
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 08-24-2022
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;MainWindowViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2022
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ***************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string TemplateViewModel {
+            get {
+                return ResourceManager.GetString("TemplateViewModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Template-View ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
     }
 }
