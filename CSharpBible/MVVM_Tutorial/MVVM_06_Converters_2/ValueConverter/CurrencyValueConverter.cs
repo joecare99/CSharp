@@ -35,7 +35,7 @@ namespace MVVM_06_Converters_2.ValueConverter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is decimal dval)
-                return dval.ToString("0.00€");
+                return dval.ToString("0.00€",culture);
             else
                 return value.ToString() ?? "";
 
@@ -52,7 +52,7 @@ namespace MVVM_06_Converters_2.ValueConverter
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string sval && parameter is string spar)
-                return decimal.Parse(sval.Replace(spar.Substring(spar.Length - 1), "").Trim());
+                return decimal.Parse(sval.Replace(spar.Substring(spar.Length - 1), "").Trim(),culture);
             else
                 return "";
         }
