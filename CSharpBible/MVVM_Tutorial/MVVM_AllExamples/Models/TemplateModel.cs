@@ -69,7 +69,9 @@ namespace MVVM_AllExamples.Models
             ("Currency2View", typeof(MVVM_06_Converters_2.View.Currency2View), null),
             ("CurrencyView3", typeof(MVVM_06_Converters_3.View.CurrencyView3), null),
             ("DialogView", typeof(MVVM_09_DialogBoxes.Views.DialogView), null),
-        //    ("DialogWindow2", typeof(MVVM_09a_CTDialogBoxes.Views.DialogView), null),
+            ("DialogWindow2", typeof(MVVM_09a_CTDialogBoxes.Views.DialogView), null),
+            ("UserControlView", typeof(MVVM_16_UserControl1.Views.UserControlView), null),
+            ("UserControlView2", typeof(MVVM_16_UserControl2.Views.UserControlView), null),
             
 
         ]; 

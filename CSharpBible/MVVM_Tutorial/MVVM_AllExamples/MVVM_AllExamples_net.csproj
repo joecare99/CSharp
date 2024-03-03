@@ -21,6 +21,9 @@
 		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters_net.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters_2\MVVM_06_Converters_2_net.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters_3\MVVM_06_Converters_3_net.csproj" />
+		<ProjectReference Include="..\MVVM_09a_CTDialogBoxes\MVVM_09a_CTDialogBoxes_net.csproj" />
+		<ProjectReference Include="..\MVVM_09_DialogBoxes\MVVM_09_DialogBoxes_net.csproj" />
+		<ProjectReference Include="..\MVVM_16_Usercontrol1\MVVM_16_UserControl1_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
