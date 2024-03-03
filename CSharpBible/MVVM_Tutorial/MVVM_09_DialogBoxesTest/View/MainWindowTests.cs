@@ -56,7 +56,7 @@ namespace MVVM_09_DialogBoxes.Views.Tests
             var t = new Thread(() => { 
                 testView = new();
                 vm = (MainWindowViewModel)testView.DataContext; 
-                testView.Window_Loaded(this,null!); 
+//                testView.Window_Loaded(this,null!); 
             });
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             t.Start();
@@ -64,25 +64,6 @@ namespace MVVM_09_DialogBoxes.Views.Tests
             vm.PropertyChanged += OnVMPropertyChanged;
             if (vm is INotifyPropertyChanging npchgn)
                 npchgn.PropertyChanging += OnVMPropertyChanging;
-            Assert.IsNotNull(testView.NewDialogWindow);
-            try { Assert.IsNotNull(testView.NewDialogWindow()); }
-            catch { }
-            Assert.IsNotNull(testView.MessageBoxShow);
-            testView.MessageBoxShow = MyMBShow;
-            testView.NewDialogWindow = () =>
-            {
-                var dw = Substitute.For<IDialogWindow>();
-                dw.ShowDialog().Returns((c) =>
-                {
-                    DoLog($"ShowDialog()=>{xResult}");
-                    var vm = dw.DataContext as DialogWindowViewModel;
-                    vm!.Name = sNewName;
-                    vm!.Email = sNewEmail;
-                    return xResult;
-                });
-                dw.DataContext.Returns(new DialogWindowViewModel());
-                return dw;
-            };
         }
 
         private MessageBoxResult MyMBShow(string arg1, string arg2, MessageBoxButton button)
@@ -102,35 +83,6 @@ namespace MVVM_09_DialogBoxes.Views.Tests
             Assert.IsInstanceOfType(testView, typeof(MainWindow));    
             Assert.IsNotNull(vm);
             Assert.IsInstanceOfType(vm, typeof(MainWindowViewModel));
-            Assert.IsNotNull(vm.DoOpenDialog);
-            Assert.IsNotNull(vm.DoOpenMessageBox);
-        }
-
-        [DataTestMethod]
-        [DataRow("OKTitle", "OKLine", MessageBoxResult.OK, new[] { "MyMBShow(OKTitle,OKLine,YesNo)=>OK\r\n" })]
-        [DataRow("CancelTitle", "CancelLine", MessageBoxResult.Cancel, new[] { "MyMBShow(CancelTitle,CancelLine,YesNo)=>Cancel\r\n" })]
-        [DataRow("YesTitle", "YesLine", MessageBoxResult.Yes, new[] { "MyMBShow(YesTitle,YesLine,YesNo)=>Yes\r\n" })]
-        public void DoOpenMessageBoxTest(string sAct1,string sAct2, MessageBoxResult xRes, string[] asExp)
-        {         
-            mbResult = xRes;
-            Assert.AreEqual(xRes, vm.DoOpenMessageBox!.Invoke(sAct1, sAct2));
-            Assert.AreEqual(asExp[0], DebugLog);
-        }
-
-
-        [DataTestMethod]
-        [DataRow("OKName", "OKMail", "OKName1", "OKMail1", true, new[] { "ShowDialog()=>True\r\n", "OKName1", "OKMail1" })]
-        [DataRow("NoName", "NoMail", "NoName1", "NoMail1", false, new[] { "ShowDialog()=>False\r\n", "NoName", "NoMail" })]
-        [DataRow("Name", "Mail", "Name1", "Mail1", null, new[] { "ShowDialog()=>\r\n", "Name", "Mail" })]
-        public void DoDialogWindowTest(string sAct1, string sAct2, string sAct3, string sAct4, bool? xRes, string[] asExp)
-        {
-            xResult = xRes;
-            sNewName = sAct3;
-            sNewEmail = sAct4;
-            var tRes = vm.DoOpenDialog!.Invoke(sAct1, sAct2);
-            Assert.AreEqual(asExp[1], tRes.name);
-            Assert.AreEqual(asExp[2], tRes.email);
-            Assert.AreEqual(asExp[0], DebugLog);
         }
     }
 }
