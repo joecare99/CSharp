@@ -22,13 +22,13 @@
         <mvvm:AllExamplesViewModel/>
     </Page.DataContext>
     <DockPanel Background="Silver">
-        <Label DockPanel.Dock="Top" Content="Temlate-View:"/>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0">
+                <Label DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=ExListBox}"/>
                 <TextBlock DockPanel.Dock="Bottom" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
                 <TextBox DockPanel.Dock="Top" Text="{Binding ExFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
                 <ListBox ItemsSource="{Binding Examples}" Name="ExListBox"/>

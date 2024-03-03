@@ -17,6 +17,7 @@
 		<ProjectReference Include="..\MVVM_03_NotifyChange\MVVM_03_NotifyChange_net.csproj" />
 		<ProjectReference Include="..\MVVM_04a_CTRelayCommand\MVVM_04a_CTRelayCommand_net.csproj" />
 		<ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand_net.csproj" />
+		<ProjectReference Include="..\MVVM_05_CommandParCalculator\MVVM_05_CommandParCalculator_net.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters_net.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters_2\MVVM_06_Converters_2_net.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters_3\MVVM_06_Converters_3_net.csproj" />

@@ -17,9 +17,12 @@
 		<ProjectReference Include="..\MVVM_03_NotifyChange\MVVM_03_NotifyChange.csproj" />
 		<ProjectReference Include="..\MVVM_04a_CTRelayCommand\MVVM_04a_CTRelayCommand.csproj" />
 		<ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand.csproj" />
+		<ProjectReference Include="..\MVVM_05_CommandParCalculator\MVVM_05_CommandParCalculator.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters_2\MVVM_06_Converters_2.csproj" />
 		<ProjectReference Include="..\MVVM_06_Converters_3\MVVM_06_Converters_3.csproj" />
+		<ProjectReference Include="..\MVVM_09a_CTDialogBoxes\MVVM_09a_CTDialogBoxes.csproj" />
+		<ProjectReference Include="..\MVVM_09_DialogBoxes\MVVM_09_DialogBoxes.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
