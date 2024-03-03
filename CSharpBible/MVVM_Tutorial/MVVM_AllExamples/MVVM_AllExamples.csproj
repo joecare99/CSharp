@@ -25,6 +25,17 @@
 		<ProjectReference Include="..\MVVM_09_DialogBoxes\MVVM_09_DialogBoxes.csproj" />
 		<ProjectReference Include="..\MVVM_16_Usercontrol1\MVVM_16_UserControl1.csproj" />
 		<ProjectReference Include="..\MVVM_16_Usercontrol2\MVVM_16_UserControl2.csproj" />
+		<ProjectReference Include="..\MVVM_17_1_CSV_Laden\MVVM_17_1_CSV_Laden.csproj" />
+		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters.csproj" />
+		<ProjectReference Include="..\MVVM_19_FilterLists\MVVM_19_FilterLists.csproj" />
+		<ProjectReference Include="..\MVVM_20a_CTSysdialogs\MVVM_20a_CTSysdialogs.csproj" />
+		<ProjectReference Include="..\MVVM_20_Sysdialogs\MVVM_20_Sysdialogs.csproj" />
+		<ProjectReference Include="..\MVVM_24a_CTUserControl\MVVM_24a_CTUserControl.csproj" />
+		<ProjectReference Include="..\MVVM_24b_UserControl\MVVM_24b_UserControl.csproj" />
+		<ProjectReference Include="..\MVVM_24c_CTUserControl\MVVM_24c_CTUserControl.csproj" />
+		<ProjectReference Include="..\MVVM_24_UserControl\MVVM_24_UserControl.csproj" />
+		<ProjectReference Include="..\MVVM_26_BindingGroupExp\MVVM_26_BindingGroupExp.csproj" />
+		<ProjectReference Include="..\MVVM_26_CTBindingGroupExp\MVVM_26_CTBindingGroupExp.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
