@@ -12,11 +12,13 @@
 // <summary></summary>
 // ***********************************************************************
 using System.Collections.ObjectModel;
+using System.Drawing;
 using MVVM.ViewModel;
 using MVVM_17_1_CSV_Laden.Model;
 
 namespace MVVM_17_1_CSV_Laden.ViewModel
 {
+
     /// <summary>
     /// Class DataPointsViewModel.
     /// Implements the <see cref="BaseViewModel" />
@@ -24,6 +26,31 @@ namespace MVVM_17_1_CSV_Laden.ViewModel
     /// <seealso cref="BaseViewModel" />
     public class DataPointsViewModel : BaseViewModel
     {
+        /// <summary>
+        /// The view port
+        /// </summary>
+        private SWindowPort _viewPort;
+
+        /// <summary>
+        /// Gets or sets the window port.
+        /// </summary>
+        /// <value>The window port.</value>
+        public SWindowPort WindowPort { get => _viewPort; set => SetProperty(ref _viewPort, value); }
+
+        /// <summary>
+        /// Gets or sets the vp window.
+        /// </summary>
+        /// <value>The vp window.</value>
+        public RectangleF VPWindow { get => _viewPort.port; set => SetProperty(ref _viewPort.port, value, new string[] { nameof(WindowPort), nameof(DataPoints) }); }
+        /// <summary>
+        /// Gets or sets the size of the window.
+        /// </summary>
+        /// <value>The size of the window.</value>
+        public System.Windows.Size WindowSize
+        {
+            get => _viewPort.WindowSize;
+            set => SetProperty(ref _viewPort.WindowSize, value, new string[] { nameof(WindowPort), nameof(DataPoints) });
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataPointsViewModel"/> class.
@@ -33,6 +60,13 @@ namespace MVVM_17_1_CSV_Laden.ViewModel
             LoadCsV = new DelegateCommand((o) => ExecLoadCsV());
             DataPoints = new ObservableCollection<DataPoint>();
             IsLoading = false;
+
+            VPWindow = new RectangleF(-3, -3, 9, 6);
+            //           VPWindow = new RectangleF(-3, -3, 900, 600);
+            //           VPWindow = new RectangleF(-0.03f, -0.03f, 0.09f, 0.06f);
+            WindowSize = new System.Windows.Size(300, 400);
+            _viewPort.Parent = this;
+
         }
 
         /// <summary>
@@ -47,13 +81,24 @@ namespace MVVM_17_1_CSV_Laden.ViewModel
         private async void  ExecLoadCsV()
         {
             IsLoading = true;
-            using (var service = new CsvService("RBG_XIst_YIst.csv"))
+            using (var service = new CsvModel("Resources\\RBG_XIst_YIst.csv"))
             {
                 var result = service.ReadCSV();
                 await foreach (var item in result)
                     DataPoints.Add(item);
             }
+            var max = new PointF((float)DataPoints[0].X, (float)DataPoints[0].Y);
+            var min = new PointF(max.X,max.Y);
+            foreach (var item in DataPoints)
+            {
+                if (item.X > max.X) max.X = (float)item.X;
+                if (item.Y > max.Y) max.Y = (float)item.Y;
+                if (item.X < min.X) min.X = (float)item.X;
+                if (item.Y < min.Y) min.Y = (float)item.Y;
+            }
+            VPWindow = new RectangleF(min.X, min.Y, max.X - min.X, max.Y - min.Y);
             IsLoading = false;
+            RaisePropertyChanged(nameof(DataPoints));
         }
 
         /// <summary>

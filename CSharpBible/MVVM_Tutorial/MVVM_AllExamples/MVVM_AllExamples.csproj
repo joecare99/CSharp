@@ -23,6 +23,8 @@
 		<ProjectReference Include="..\MVVM_06_Converters_3\MVVM_06_Converters_3.csproj" />
 		<ProjectReference Include="..\MVVM_09a_CTDialogBoxes\MVVM_09a_CTDialogBoxes.csproj" />
 		<ProjectReference Include="..\MVVM_09_DialogBoxes\MVVM_09_DialogBoxes.csproj" />
+		<ProjectReference Include="..\MVVM_16_Usercontrol1\MVVM_16_UserControl1.csproj" />
+		<ProjectReference Include="..\MVVM_16_Usercontrol2\MVVM_16_UserControl2.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
