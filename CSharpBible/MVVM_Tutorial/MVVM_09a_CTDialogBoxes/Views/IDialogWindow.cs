@@ -1,4 +1,4 @@
-﻿namespace MVVM_09_DialogBoxes.View
+﻿namespace MVVM_09a_CTDialogBoxes.Views
 {
     public interface IDialogWindow
     {

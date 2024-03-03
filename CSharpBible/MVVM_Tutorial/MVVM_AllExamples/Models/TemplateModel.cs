@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
+using MVVM_AllExamples.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,11 +62,16 @@ namespace MVVM_AllExamples.Models
             ("CTTemplate", typeof(MVVM_00a_CTTemplate.Views.TemplateView), null),
             ("NotifyChangeView", typeof(MVVM_03_NotifyChange.Views.NotifyChangeView), null),
             ("DelegateCommandView", typeof(MVVM_04_DelegateCommand.Views.DelegateCommandView), null),
-            ("RelayCommandView", typeof(MVVM_04a_CTRelayCommand.Views.RelayCommandView), null),
+            ("RelayCommandView", typeof(MVVM_04a_CTRelayCommand.Views.RelayCommandView),null ),
+            ("CommandParCalculatorView",typeof(MVVM_05_CommandParCalculator.Views.CommandParCalculatorView),null),
+            ("CommandParCalculatorView2",typeof(MVVM_05_CommandParCalculator.Views.Page1),null),
             ("CurrencyView", typeof(MVVM_06_Converters.View.CurrencyView), null),
-            ("CurrencyView2", typeof(MVVM_06_Converters_2.View.CurrencyView2), null),
+            ("Currency2View", typeof(MVVM_06_Converters_2.View.Currency2View), null),
             ("CurrencyView3", typeof(MVVM_06_Converters_3.View.CurrencyView3), null),
+            ("DialogView", typeof(MVVM_09_DialogBoxes.Views.DialogView), null),
+        //    ("DialogWindow2", typeof(MVVM_09a_CTDialogBoxes.Views.DialogView), null),
             
+
         ]; 
         #endregion
 
@@ -79,8 +85,25 @@ namespace MVVM_AllExamples.Models
             _timer = new(250d);
             _timer.Elapsed += (s, e) => OnPropertyChanged(nameof(Now));
             _timer.Start();
-            
-            
+
+            foreach (var ex in Examples)
+                try
+                {
+                    Debug.WriteLine($"{ex.Description} {ex.ExType}");
+                    var desc = new Dictionary<string, string>();
+                    Type? t = ex.ExType.Assembly.GetTypes().First((t) => t.Name.EndsWith(nameof(Resources)));
+                    if (t != null)
+                    {
+                        foreach (var prop in t.GetProperties())
+                            if (prop.PropertyType == typeof(string))
+                            {
+                                Debug.WriteLine($"  {prop.Name} {prop.PropertyType} ");
+                                desc[prop.Name] = (string)prop.GetValue(null);
+                            }
+                        ex.Additionals = desc;
+                    }
+                }
+                catch { }   
         }
 
 #if !NET5_0_OR_GREATER

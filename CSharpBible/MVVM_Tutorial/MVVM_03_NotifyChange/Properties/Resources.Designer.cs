@@ -61,6 +61,15 @@ namespace MVVM_03_NotifyChange.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #03: How to use NotifyPropertyChange to update information  ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Firstname: ähnelt.
         /// </summary>
         public static string FirstName {

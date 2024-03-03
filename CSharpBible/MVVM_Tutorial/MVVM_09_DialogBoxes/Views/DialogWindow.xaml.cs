@@ -15,7 +15,7 @@ using MVVM_09_DialogBoxes.ViewModel;
 using System;
 using System.Windows;
 
-namespace MVVM_09_DialogBoxes.View
+namespace MVVM_09_DialogBoxes.Views
 {
     /// <summary>
     /// Interaktionslogik für DialogWindow.xaml

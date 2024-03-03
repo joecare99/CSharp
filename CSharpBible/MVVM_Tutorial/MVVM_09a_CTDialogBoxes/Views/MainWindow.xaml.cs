@@ -15,7 +15,7 @@ using MVVM_09a_CTDialogBoxes.ViewModel;
 using System;
 using System.Windows;
 
-namespace MVVM_09a_CTDialogBoxes.View
+namespace MVVM_09a_CTDialogBoxes.Views
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml

@@ -11,7 +11,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CurrencyView">
     <Page.DataContext>
-        <mvvm:CurrencyViewViewModel />
+        <mvvm:CurrencyViewModel />
     </Page.DataContext>
     <Page.Resources>
         <vc:CurrencyValueConverter x:Key="vcCurency" />
