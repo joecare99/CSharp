@@ -47,7 +47,7 @@ namespace MVVM_17_1_CSV_Laden.Views.Converter
         /// <value>The size of the window.</value>
         public System.Windows.Size WindowSize { get; set; } = new System.Windows.Size(600, 600);
 
-        public Pen DefaultPen { get; set; } = new Pen(Brushes.Red, 0.8d);
+        public System.Windows.Media.Pen DefaultPen { get; set; } = new(System.Windows.Media.Brushes.Red, 0.8d);
         /// <summary>
         /// Real2s the vis.
         /// </summary>
@@ -239,7 +239,7 @@ namespace MVVM_17_1_CSV_Laden.Views.Converter
         /// <param name="P1">The p1.</param>
         /// <param name="P2">The p2.</param>
         /// <returns>FrameworkElement.</returns>
-        FrameworkElement CreateLine(Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
+        FrameworkElement CreateLine(System.Windows.Media.Brush b, double value, System.Windows.Point P1, System.Windows.Point P2)
         {
             return new Line()
             {

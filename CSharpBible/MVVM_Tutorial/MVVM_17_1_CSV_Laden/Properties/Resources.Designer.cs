@@ -89,7 +89,7 @@ namespace MVVM_17_1_CSV_Laden.Properties {
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:i=&quot;http://schemas.microsoft.com/xaml/behaviors&quot;
         ///      xmlns:local=&quot;clr-namespace:MVVM_17_1_CSV_Laden.View&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_17_1_CSV_Laden.Vie [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:vc=&quot;clr-namespace:MVVM_17_1_CSV_Laden.V [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string DataPointsView {
             get {
@@ -110,7 +110,7 @@ namespace MVVM_17_1_CSV_Laden.Properties {
         /////     Copyright (c) JC-Soft. All rights reserved.
         ///// &lt;/copyright&gt;
         ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// *********************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///// ******************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string DataPointsView_xaml {
             get {

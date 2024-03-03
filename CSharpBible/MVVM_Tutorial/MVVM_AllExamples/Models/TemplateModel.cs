@@ -72,6 +72,15 @@ namespace MVVM_AllExamples.Models
             ("DialogWindow2", typeof(MVVM_09a_CTDialogBoxes.Views.DialogView), null),
             ("UserControlView", typeof(MVVM_16_UserControl1.Views.UserControlView), null),
             ("UserControlView2", typeof(MVVM_16_UserControl2.Views.UserControlView), null),
+            ("DataPointsView",typeof(MVVM_17_1_CSV_Laden.Views.DataPointsView),null),
+            ("DateDifView",typeof(MVVM_18_MultiConverters.View.DateDifView),null),
+            ("PersonView",typeof(MVVM_19_FilterLists.Views.PersonView),null),
+            ("SysDialogsView",typeof(MVVM_20_Sysdialogs.Views.SysDialogsView),null),
+            ("UserControlView",typeof(MVVM_24_UserControl.Views.UserControlView),null),
+            ("UserControlView2",typeof(MVVM_24a_CTUserControl.Views.UserControlView),null),
+            ("UserControlView3",typeof(MVVM_24b_UserControl.Views.UserControlView),null),
+            ("UserControlView4",typeof(MVVM_24c_CTUserControl.Views.UserControlView),null),
+
             
 
         ]; 
