@@ -24,6 +24,7 @@
 		<ProjectReference Include="..\MVVM_09a_CTDialogBoxes\MVVM_09a_CTDialogBoxes_net.csproj" />
 		<ProjectReference Include="..\MVVM_09_DialogBoxes\MVVM_09_DialogBoxes_net.csproj" />
 		<ProjectReference Include="..\MVVM_16_Usercontrol1\MVVM_16_UserControl1_net.csproj" />
+		<ProjectReference Include="..\MVVM_16_Usercontrol2\MVVM_16_UserControl2_net.csproj" />
 		<ProjectReference Include="..\MVVM_17_1_CSV_Laden\MVVM_17_1_CSV_Laden_net.csproj" />
 		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters_net.csproj" />
 		<ProjectReference Include="..\MVVM_19_FilterLists\MVVM_19_FilterLists_net.csproj" />

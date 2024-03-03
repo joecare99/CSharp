@@ -35,12 +35,20 @@ public class ListItemToContentConverter : IValueConverter
                         Description = dsc;
                     tv.ToolTip = Description;
                     tv.Items.Add(new TabItem() { Header = Title, Content = new Frame() { Content = fe } });
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Views")) is string xaml)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("View")) is string xaml)
                     {
                         tv.Items.Add(new TabItem()
                         {
                             Header = "Xaml",
                             Content = new TextBox() { Text = d[xaml], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
+                        });
+                    }
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("_xaml")) is string xamlcs)
+                    {
+                        tv.Items.Add(new TabItem()
+                        {
+                            Header = "Xaml.cs",
+                            Content = new TextBox() { Text = d[xamlcs], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
                     if (d.Keys.FirstOrDefault((o) => o.EndsWith("ViewModel")) is string vm)
@@ -59,11 +67,12 @@ public class ListItemToContentConverter : IValueConverter
                             Content = new TextBox() { Text = d[mdl], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Converter")) is string vc)
+                    var vcc = 0;
+                    foreach (string vc in d.Keys.Where((o) => o.EndsWith("Converter")) )
                     {
                         tv.Items.Add(new TabItem()
                         {
-                            Header = "ValueConverter",
+                            Header = $"ValueConverter{++vcc}",
                             Content = new TextBox() { Text = d[vc], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
