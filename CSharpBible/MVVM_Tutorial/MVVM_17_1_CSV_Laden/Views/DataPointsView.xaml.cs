@@ -16,7 +16,7 @@ using MVVM_17_1_CSV_Laden.Views.Converter;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_17_1_CSV_Laden.View
+namespace MVVM_17_1_CSV_Laden.Views
 {
     /// <summary>
     /// Interaktionslogik für DataPointsView.xaml
