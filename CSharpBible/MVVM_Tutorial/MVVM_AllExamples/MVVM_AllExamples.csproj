@@ -1,0 +1,48 @@
+﻿<Project>
+	<Import Project="..\MVVM_Tutorial.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Include="..\MVVM_00a_CTTemplate\MVVM_00a_CTTemplate.csproj" />
+		<ProjectReference Include="..\MVVM_00_Template\MVVM_00_Template.csproj" />
+		<ProjectReference Include="..\MVVM_03_NotifyChange\MVVM_03_NotifyChange.csproj" />
+		<ProjectReference Include="..\MVVM_04a_CTRelayCommand\MVVM_04a_CTRelayCommand.csproj" />
+		<ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand.csproj" />
+		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters.csproj" />
+		<ProjectReference Include="..\MVVM_06_Converters_2\MVVM_06_Converters_2.csproj" />
+		<ProjectReference Include="..\MVVM_06_Converters_3\MVVM_06_Converters_3.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>PublicSettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+</Project>
