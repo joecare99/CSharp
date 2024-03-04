@@ -1,0 +1,64 @@
+﻿<Project>
+	<Import Project="..\MVVM_Tutorial_net.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Include="..\MVVM_00a_CTTemplate\MVVM_00a_CTTemplate_net.csproj" />
+		<ProjectReference Include="..\MVVM_00_Template\MVVM_00_Template_net.csproj" />
+		<ProjectReference Include="..\MVVM_03_NotifyChange\MVVM_03_NotifyChange_net.csproj" />
+		<ProjectReference Include="..\MVVM_04a_CTRelayCommand\MVVM_04a_CTRelayCommand_net.csproj" />
+		<ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand_net.csproj" />
+		<ProjectReference Include="..\MVVM_05_CommandParCalculator\MVVM_05_CommandParCalculator_net.csproj" />
+		<ProjectReference Include="..\MVVM_06_Converters\MVVM_06_Converters_net.csproj" />
+		<ProjectReference Include="..\MVVM_06_Converters_2\MVVM_06_Converters_2_net.csproj" />
+		<ProjectReference Include="..\MVVM_06_Converters_3\MVVM_06_Converters_3_net.csproj" />
+		<ProjectReference Include="..\MVVM_09a_CTDialogBoxes\MVVM_09a_CTDialogBoxes_net.csproj" />
+		<ProjectReference Include="..\MVVM_09_DialogBoxes\MVVM_09_DialogBoxes_net.csproj" />
+		<ProjectReference Include="..\MVVM_16_Usercontrol1\MVVM_16_UserControl1_net.csproj" />
+		<ProjectReference Include="..\MVVM_16_Usercontrol2\MVVM_16_UserControl2_net.csproj" />
+		<ProjectReference Include="..\MVVM_17_1_CSV_Laden\MVVM_17_1_CSV_Laden_net.csproj" />
+		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters_net.csproj" />
+		<ProjectReference Include="..\MVVM_19_FilterLists\MVVM_19_FilterLists_net.csproj" />
+		<ProjectReference Include="..\MVVM_20a_CTSysdialogs\MVVM_20a_CTSysdialogs_net.csproj" />
+		<ProjectReference Include="..\MVVM_20_Sysdialogs\MVVM_20_Sysdialogs_net.csproj" />
+		<ProjectReference Include="..\MVVM_24a_CTUserControl\MVVM_24a_CTUserControl_net.csproj" />
+		<ProjectReference Include="..\MVVM_24b_UserControl\MVVM_24b_UserControl_net.csproj" />
+		<ProjectReference Include="..\MVVM_24c_CTUserControl\MVVM_24c_CTUserControl_net.csproj" />
+		<ProjectReference Include="..\MVVM_24_UserControl\MVVM_24_UserControl_net.csproj" />
+		<ProjectReference Include="..\MVVM_26_BindingGroupExp\MVVM_26_BindingGroupExp_net.csproj" />
+		<ProjectReference Include="..\MVVM_26_CTBindingGroupExp\MVVM_26_CTBindingGroupExp_net.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>PublicSettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+</Project>
