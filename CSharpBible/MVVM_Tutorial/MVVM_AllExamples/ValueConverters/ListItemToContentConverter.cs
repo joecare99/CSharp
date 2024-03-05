@@ -35,7 +35,7 @@ public class ListItemToContentConverter : IValueConverter
                         Description = dsc;
                     tv.ToolTip = Description;
                     tv.Items.Add(new TabItem() { Header = Title, Content = new Frame() { Content = fe } });
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("View")) is string xaml)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Views")) is string xaml)
                     {
                         tv.Items.Add(new TabItem()
                         {
