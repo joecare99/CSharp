@@ -6,14 +6,14 @@
       xmlns:local="clr-namespace:WPF_Complex_Layout.Views"
       xmlns:p="clr-namespace:WPF_Complex_Layout.Properties"
       xmlns:mvvm="clr-namespace:WPF_Complex_Layout.ViewModels"
-    x:Class="WPF_Complex_Layout.Views.HelloWorldView"
+    x:Class="WPF_Complex_Layout.Views.ComplexLayoutView"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="{x:Static p:Resources.Title}">
     <Page.Resources>
     </Page.Resources>
     <Page.DataContext>
-        <mvvm:HelloWorldViewModel/>
+        <mvvm:ComplexLayoutViewModel/>
     </Page.DataContext>
     <Grid>
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">

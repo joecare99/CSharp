@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 08-24-2022
 // ***********************************************************************
-// <copyright file="HelloWorldViewModel.cs" company="JC-Soft">
+// <copyright file="ComplexLayoutViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
@@ -23,7 +23,7 @@ namespace WPF_Complex_Layout.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public partial class HelloWorldViewModel : BaseViewModelCT
+    public partial class ComplexLayoutViewModel : BaseViewModelCT
     {
         #region Properties
         #endregion
@@ -32,7 +32,7 @@ namespace WPF_Complex_Layout.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public HelloWorldViewModel()
+        public ComplexLayoutViewModel()
         {
         }
 

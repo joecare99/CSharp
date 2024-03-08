@@ -61,15 +61,6 @@ namespace WPF_Complex_Layout.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample: Hello World using Community-Toolkit ähnelt.
-        /// </summary>
-        public static string Description {
-            get {
-                return ResourceManager.GetString("Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
         ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
@@ -77,12 +68,12 @@ namespace WPF_Complex_Layout.Properties {
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:local=&quot;clr-namespace:WPF_Complex_Layout.Views&quot;
         ///      xmlns:p=&quot;clr-namespace:WPF_Complex_Layout.Properties&quot;
-        ///      xmlns:vc=&quot;clr-namespace:WPF_Complex_Layout.ValueConverter&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:WPF_Hello_Wo [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:mvvm=&quot;clr-namespace:WPF_Complex_Layout.ViewModels&quot;
+        ///    x:Class=&quot;WPF_Complex_Layout.Views [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
-        public static string HelloWorldView {
+        public static string ComplexLayoutView {
             get {
-                return ResourceManager.GetString("HelloWorldView", resourceCulture);
+                return ResourceManager.GetString("ComplexLayoutView", resourceCulture);
             }
         }
         
@@ -95,20 +86,29 @@ namespace WPF_Complex_Layout.Properties {
         ///// Last Modified By : Mir
         ///// Last Modified On : 08-24-2022
         ///// ***********************************************************************
-        ///// &lt;copyright file=&quot;MainWindowViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        ///// &lt;copyright file=&quot;ComplexLayoutViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
         /////     Copyright © JC-Soft 2022
         ///// &lt;/copyright&gt;
         ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// ****************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///// ************************************************ [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
-        public static string HelloWorldViewModel {
+        public static string ComplexLayoutViewModel {
             get {
-                return ResourceManager.GetString("HelloWorldViewModel", resourceCulture);
+                return ResourceManager.GetString("ComplexLayoutViewModel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Hello-World ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample: View with a complex Layout ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Complex-Layout ähnelt.
         /// </summary>
         public static string Title {
             get {

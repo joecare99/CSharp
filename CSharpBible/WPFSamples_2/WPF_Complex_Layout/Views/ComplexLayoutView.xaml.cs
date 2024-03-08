@@ -3,11 +3,11 @@
 namespace WPF_Complex_Layout.Views
 {
     /// <summary>
-    /// Interaktionslogik für HelloWorldView.xaml
+    /// Interaktionslogik für ComplexLayoutView.xaml
     /// </summary>
-    public partial class HelloWorldView : Page
+    public partial class ComplexLayoutView : Page
     {
-        public HelloWorldView()
+        public ComplexLayoutView()
         {
             InitializeComponent();
         }
