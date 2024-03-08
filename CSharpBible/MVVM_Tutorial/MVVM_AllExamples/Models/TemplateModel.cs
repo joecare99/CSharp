@@ -82,7 +82,9 @@ namespace MVVM_AllExamples.Models
             ("UserControlView",typeof(MVVM_24_UserControl.Views.UserControlView),null),
             ("UserControlView2",typeof(MVVM_24a_CTUserControl.Views.UserControlView),null),
             ("UserControlView3",typeof(MVVM_24b_UserControl.Views.UserControlView),null),
-            ("UserControlView4",typeof(MVVM_24c_CTUserControl.Views.UserControlView),null),            
+            ("UserControlView4",typeof(MVVM_24c_CTUserControl.Views.UserControlView),null),   
+            ("UserControlView4",typeof(MVVM_26_BindingGroupExp.Views.BindingGroupView),null),   
+            
         ]; 
         #endregion
 

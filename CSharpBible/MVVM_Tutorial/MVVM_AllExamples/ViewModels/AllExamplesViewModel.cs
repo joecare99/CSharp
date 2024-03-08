@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 08-24-2022
 // ***********************************************************************
-// <copyright file="MainWindowViewModel.cs" company="JC-Soft">
+// <copyright file="BindingGroupViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
@@ -22,7 +22,7 @@ using System.ComponentModel;
 namespace MVVM_AllExamples.ViewModels
 {
     /// <summary>
-    /// Class MainWindowViewModel.
+    /// Class BindingGroupViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
