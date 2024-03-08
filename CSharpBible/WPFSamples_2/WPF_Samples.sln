@@ -5,6 +5,7 @@ VisualStudioVersion = 17.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
+		ReadMe.md = ReadMe.md
 		WPF_Samples.props = WPF_Samples.props
 		WPF_Samples_net.props = WPF_Samples_net.props
 	EndProjectSection
@@ -35,6 +36,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Hello_World_netTests", "WPF_Hello_WorldTests\WPF_Hello_World_netTests.csproj", "{0FA0D952-F69C-40A7-B2D5-9C5028A38B1A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Hello_WorldTests", "WPF_Hello_WorldTests\WPF_Hello_WorldTests.csproj", "{DE7A0F22-760F-4A35-940B-2D8BE0430480}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Complex_Layout", "WPF_Complex_Layout\WPF_Complex_Layout.csproj", "{D334A0FC-4F75-4087-83B4-28DAE673419C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Complex_Layout_net", "WPF_Complex_Layout\WPF_Complex_Layout_net.csproj", "{6F511E7C-EA14-466D-AB9B-FD554B5B4642}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Complex_Layout_netTests", "WPF_Complex_LayoutTests\WPF_Complex_Layout_netTests.csproj", "{38229DB9-8772-4273-8573-3551FE0ED079}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Complex_LayoutTests", "WPF_Complex_LayoutTests\WPF_Complex_LayoutTests.csproj", "{54D7291C-D2DF-4FDB-98F8-5DF0D662807C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +91,22 @@ Global
 		{DE7A0F22-760F-4A35-940B-2D8BE0430480}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE7A0F22-760F-4A35-940B-2D8BE0430480}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE7A0F22-760F-4A35-940B-2D8BE0430480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D334A0FC-4F75-4087-83B4-28DAE673419C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D334A0FC-4F75-4087-83B4-28DAE673419C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D334A0FC-4F75-4087-83B4-28DAE673419C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D334A0FC-4F75-4087-83B4-28DAE673419C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F511E7C-EA14-466D-AB9B-FD554B5B4642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F511E7C-EA14-466D-AB9B-FD554B5B4642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F511E7C-EA14-466D-AB9B-FD554B5B4642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F511E7C-EA14-466D-AB9B-FD554B5B4642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38229DB9-8772-4273-8573-3551FE0ED079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38229DB9-8772-4273-8573-3551FE0ED079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38229DB9-8772-4273-8573-3551FE0ED079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38229DB9-8772-4273-8573-3551FE0ED079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D7291C-D2DF-4FDB-98F8-5DF0D662807C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D7291C-D2DF-4FDB-98F8-5DF0D662807C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D7291C-D2DF-4FDB-98F8-5DF0D662807C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D7291C-D2DF-4FDB-98F8-5DF0D662807C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +118,10 @@ Global
 		{B9B6ABB5-8E68-4714-A6C7-E7641AAEB172} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
 		{0FA0D952-F69C-40A7-B2D5-9C5028A38B1A} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
 		{DE7A0F22-760F-4A35-940B-2D8BE0430480} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
+		{D334A0FC-4F75-4087-83B4-28DAE673419C} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
+		{6F511E7C-EA14-466D-AB9B-FD554B5B4642} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
+		{38229DB9-8772-4273-8573-3551FE0ED079} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
+		{54D7291C-D2DF-4FDB-98F8-5DF0D662807C} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {538D0F12-3E9F-4868-8689-63796F14BD11}
