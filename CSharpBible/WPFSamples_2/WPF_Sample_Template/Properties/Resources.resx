@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Description" xml:space="preserve">
-    <value>MVVM-Template using Community-Toolkit</value>
+    <value>WPF-Sample-Template using Community-Toolkit</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TemplateView" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -128,6 +128,6 @@
     <value>..\ViewModels\TemplateViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>CT-Template-View</value>
+    <value>WPF-Sample-Template</value>
   </data>
 </root>

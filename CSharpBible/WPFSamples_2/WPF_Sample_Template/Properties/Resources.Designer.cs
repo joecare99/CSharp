@@ -61,7 +61,7 @@ namespace WPF_Sample_Template.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM-Template using Community-Toolkit ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample-Template using Community-Toolkit ähnelt.
         /// </summary>
         public static string Description {
             get {
@@ -108,7 +108,7 @@ namespace WPF_Sample_Template.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die CT-Template-View ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample-Template ähnelt.
         /// </summary>
         public static string Title {
             get {
