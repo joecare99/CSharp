@@ -39,7 +39,7 @@ namespace MVVM_24b_UserControl.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WpfApp.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_24b_UserControl.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,62 @@ namespace MVVM_24b_UserControl.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #24b: Using more UserControls ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #24b UserControl ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
+        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+        ///      xmlns:local=&quot;clr-namespace:MVVM_24b_UserControl.Views&quot;
+        ///      xmlns:ctrl=&quot;clr-namespace:MVVM_24b_UserControl.Views&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_24b_UserControl.ViewModels&quot;
+        ///      xmlns:Converters=&quot;clr-names [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string UserControlView {
+            get {
+                return ResourceManager.GetString("UserControlView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : WpfApp
+        ///// Author           : Mir
+        ///// Created          : 08-11-2022
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 08-24-2022
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;UserControlViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2022
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ************************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string UserControlViewModel {
+            get {
+                return ResourceManager.GetString("UserControlViewModel", resourceCulture);
             }
         }
     }
