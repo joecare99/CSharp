@@ -22,7 +22,7 @@ namespace MVVM_26_BindingGroupExp.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace MVVM_26_BindingGroupExp.Properties {
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_26_BindingGroupExp.Properties.Resources", typeof(Resources).Assembly);
@@ -51,12 +51,95 @@ namespace MVVM_26_BindingGroupExp.Properties {
         ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_26_BindingGroupExp.Views.BindingGroupView&quot;
+        ///        xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///        xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///        xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
+        ///        xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
+        ///        xmlns:local=&quot;clr-namespace:MVVM_26_BindingGroupExp.Views&quot;
+        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_26_BindingGroupExp.ViewModel&quot;
+        ///        xmlns:src=&quot;clr [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string BindingGroupView {
+            get {
+                return ResourceManager.GetString("BindingGroupView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die using MVVM_26_BindingGroupExp.ViewModel;
+        ///using System.Windows;
+        ///using System.Windows.Controls;
+        ///
+        ///namespace MVVM_26_BindingGroupExp.Views
+        ///{
+        ///    /// &lt;summary&gt;
+        ///    /// Interaktionslogik für BindingGroupView.xaml
+        ///    /// &lt;/summary&gt;
+        ///    public partial class BindingGroupView : Page
+        ///    {
+        ///        public BindingGroupView()
+        ///        {
+        ///            InitializeComponent();
+        ///            Loaded += Page_Loaded;
+        ///
+        ///        }
+        ///        private void Page_Loaded(object sender, RoutedEventArgs e)
+        ///        {
+        ///       [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string BindingGroupView_xaml {
+            get {
+                return ResourceManager.GetString("BindingGroupView_xaml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_26_BindingGroupExp
+        ///// Author           : Mir
+        ///// Created          : 10-23-2022
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 10-23-2022
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;BindingGroupViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2020
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ******************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string BindingGroupViewModel {
+            get {
+                return ResourceManager.GetString("BindingGroupViewModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #26: Using a BindingGroup to validate connected values ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #26 BindingGroup ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
     }

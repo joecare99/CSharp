@@ -30,6 +30,9 @@
 		<ProjectReference Include="..\MVVM_19_FilterLists\MVVM_19_FilterLists.csproj" />
 		<ProjectReference Include="..\MVVM_20a_CTSysdialogs\MVVM_20a_CTSysdialogs.csproj" />
 		<ProjectReference Include="..\MVVM_20_Sysdialogs\MVVM_20_Sysdialogs.csproj" />
+		<ProjectReference Include="..\MVVM_21_Buttons\MVVM_21_Buttons.csproj" />
+		<ProjectReference Include="..\MVVM_22_CTWpfCap\MVVM_22_CTWpfCap.csproj" />
+		<ProjectReference Include="..\MVVM_22_WpfCap\MVVM_22_WpfCap.csproj" />
 		<ProjectReference Include="..\MVVM_24a_CTUserControl\MVVM_24a_CTUserControl.csproj" />
 		<ProjectReference Include="..\MVVM_24b_UserControl\MVVM_24b_UserControl.csproj" />
 		<ProjectReference Include="..\MVVM_24c_CTUserControl\MVVM_24c_CTUserControl.csproj" />

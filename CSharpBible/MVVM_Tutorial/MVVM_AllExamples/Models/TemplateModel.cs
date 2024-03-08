@@ -76,13 +76,15 @@ namespace MVVM_AllExamples.Models
             ("DateDifView",typeof(MVVM_18_MultiConverters.View.DateDifView),null),
             ("PersonView",typeof(MVVM_19_FilterLists.Views.PersonView),null),
             ("SysDialogsView",typeof(MVVM_20_Sysdialogs.Views.SysDialogsView),null),
+            ("ButtonsView",typeof(MVVM_21_Buttons.Views.ButtonsView),null),
+            ("WpfCapView",typeof(MVVM_22_WpfCap.Views.WpfCapView),null),
+            ("WpfCapView4",typeof(MVVM_22_CTWpfCap.Views.WpfCapView),null),
             ("UserControlView",typeof(MVVM_24_UserControl.Views.UserControlView),null),
             ("UserControlView2",typeof(MVVM_24a_CTUserControl.Views.UserControlView),null),
             ("UserControlView3",typeof(MVVM_24b_UserControl.Views.UserControlView),null),
-            ("UserControlView4",typeof(MVVM_24c_CTUserControl.Views.UserControlView),null),
-
+            ("UserControlView4",typeof(MVVM_24c_CTUserControl.Views.UserControlView),null),   
+            ("UserControlView4",typeof(MVVM_26_BindingGroupExp.Views.BindingGroupView),null),   
             
-
         ]; 
         #endregion
 

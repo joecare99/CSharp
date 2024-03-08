@@ -28,7 +28,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0">
-                <Label DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=ExListBox}"/>
+                <Label DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=ExListBox}" Height="25"/>
                 <TextBlock DockPanel.Dock="Bottom" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
                 <TextBox DockPanel.Dock="Top" Text="{Binding ExFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
                 <ListBox ItemsSource="{Binding Examples}" Name="ExListBox"/>

@@ -59,5 +59,107 @@ namespace MVVM_22_CTWpfCap.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die using System;
+        ///
+        ///namespace MVVM_22_CTWpfCap.Model
+        ///{
+        ///    public class CWpfCapModel : IWpfCapModel
+        ///    {
+        ///        #region Properties
+        ///        /// &lt;summary&gt;Gets a value indicating whether the tiles of this instance are sorted.&lt;/summary&gt;
+        ///        /// &lt;value&gt;
+        ///        ///   &lt;c&gt;true&lt;/c&gt; if this instance is sorted; otherwise, &lt;c&gt;false&lt;/c&gt;.&lt;/value&gt;
+        ///        public bool IsSorted =&gt; _IsSorted();
+        ///        
+        ///        public int Width =&gt; _width;
+        ///
+        ///        public int Height =&gt; _height;
+        ///
+        ///        /// &lt;summary&gt;Occurs w [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string CWpfCapModel {
+            get {
+                return ResourceManager.GetString("CWpfCapModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #22a: the game WpfCap with Community-Toolbox ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_22_CTWpfCap
+        ///// Author           : Mir
+        ///// Created          : 08-14-2022
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 08-14-2022
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;EnumToColorConverter.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2022
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// **************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string EnumToColorConverter {
+            get {
+                return ResourceManager.GetString("EnumToColorConverter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #22a CTWpfCap ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_22_CTWpfCap.Views.WpfCapView&quot;
+        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+        ///      xmlns:local=&quot;clr-namespace:MVVM_22_CTWpfCap.Views&quot;
+        ///      xmlns:p=&quot;clr-namespace:MVVM_22_CTWpfCap.Properties&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_22_CTWpfCap.ViewModel&quot;
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string WpfCapView {
+            get {
+                return ResourceManager.GetString("WpfCapView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_22_CTWpfCap
+        ///// Author           : Mir
+        ///// Created          : 08-18-2022
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 08-16-2022
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;WpfCapViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2022
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ********************************************************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string WpfCapViewModel {
+            get {
+                return ResourceManager.GetString("WpfCapViewModel", resourceCulture);
+            }
+        }
     }
 }

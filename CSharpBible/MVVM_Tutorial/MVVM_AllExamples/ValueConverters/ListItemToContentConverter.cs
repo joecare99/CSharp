@@ -21,7 +21,29 @@ public class ListItemToContentConverter : IValueConverter
             return null;
         if (value is ExItem lbi)
         {
-            var v = Activator.CreateInstance(lbi.ExType);
+            object? v = null;
+            try
+            {
+                v = Activator.CreateInstance(lbi.ExType);
+            }
+            catch (Exception ex)
+            {
+                var sMsg = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    sMsg += "\r\n" + ex.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        sMsg += "\r\n" + ex.InnerException.InnerException.Message;
+                        sMsg += "\r\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                    else
+                        sMsg += "\r\n" + ex.InnerException.StackTrace;
+                }
+                    else
+                        sMsg += "\r\n" + ex.StackTrace;
+                return new TextBox() { Text = sMsg, IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible };
+            }
             if (v is Page fe)
             {
                 if (lbi.Additionals is Dictionary<string, string> d)
@@ -34,8 +56,15 @@ public class ListItemToContentConverter : IValueConverter
                     if (d.TryGetValue("Description", out string? dsc))
                         Description = dsc;
                     tv.ToolTip = Description;
-                    tv.Items.Add(new TabItem() { Header = Title, Content = new Frame() { Content = fe } });
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("View")) is string xaml)
+                    try
+                    {
+                        tv.Items.Add(new TabItem() { Header = Title, Content = new Frame() { Content = fe } });
+                    }
+                    catch (Exception ex)
+                    {
+                        tv.Items.Add(new TabItem() { Header = Title, Content = new TextBox() { Text = ex.Message, IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible } });
+                    }
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Views")) is string xaml)
                     {
                         tv.Items.Add(new TabItem()
                         {
