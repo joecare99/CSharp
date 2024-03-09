@@ -61,6 +61,24 @@ namespace WPF_Complex_Layout.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Button1 ähnelt.
+        /// </summary>
+        public static string btnButton1 {
+            get {
+                return ResourceManager.GetString("btnButton1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Button2 ähnelt.
+        /// </summary>
+        public static string btnButton2 {
+            get {
+                return ResourceManager.GetString("btnButton2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
         ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
@@ -69,7 +87,7 @@ namespace WPF_Complex_Layout.Properties {
         ///      xmlns:local=&quot;clr-namespace:WPF_Complex_Layout.Views&quot;
         ///      xmlns:p=&quot;clr-namespace:WPF_Complex_Layout.Properties&quot;
         ///      xmlns:mvvm=&quot;clr-namespace:WPF_Complex_Layout.ViewModels&quot;
-        ///    x:Class=&quot;WPF_Complex_Layout.Views [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:vc2=&quot;clr-namespace:MVVM.V [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ComplexLayoutView {
             get {
@@ -113,6 +131,70 @@ namespace WPF_Complex_Layout.Properties {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Button 1 was clicked ähnelt.
+        /// </summary>
+        public static string txtBtn1React {
+            get {
+                return ResourceManager.GetString("txtBtn1React", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Button 2 was clicked ähnelt.
+        /// </summary>
+        public static string txtBtn2React {
+            get {
+                return ResourceManager.GetString("txtBtn2React", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Some text over the buttons ähnelt.
+        /// </summary>
+        public static string txtClient {
+            get {
+                return ResourceManager.GetString("txtClient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Some text at the bottom of the page ähnelt.
+        /// </summary>
+        public static string txtFooter {
+            get {
+                return ResourceManager.GetString("txtFooter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Some text as header ähnelt.
+        /// </summary>
+        public static string txtHeader {
+            get {
+                return ResourceManager.GetString("txtHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Some text
+        ///on the left ähnelt.
+        /// </summary>
+        public static string txtLeft {
+            get {
+                return ResourceManager.GetString("txtLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Message: ähnelt.
+        /// </summary>
+        public static string txtMsgTitle {
+            get {
+                return ResourceManager.GetString("txtMsgTitle", resourceCulture);
             }
         }
     }
