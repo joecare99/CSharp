@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
-using WPF_Sample_Template.Models;
+using WPF_MoveWindow.Models;
 using System;
 
-namespace WPF_Sample_Template.Tests
+namespace WPF_MoveWindow.Tests
 {
     internal class TestApp : App
     {
@@ -31,7 +31,7 @@ namespace WPF_Sample_Template.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-                _ when t == typeof(ITemplateModel) => new TemplateModel(),
+                _ when t == typeof(IMoveWindowModel) => new MoveWindowModel(),
                 _ => throw new ArgumentException() };          
         }
 
@@ -52,7 +52,7 @@ namespace WPF_Sample_Template.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(IMoveWindowModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }

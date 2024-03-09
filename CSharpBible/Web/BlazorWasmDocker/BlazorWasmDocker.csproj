@@ -1,0 +1,45 @@
+﻿<Project>
+	<Import Project="..\Wasm.props" />
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<UserSecretsId>5ea416fc-196d-4c0f-b36b-b8fc509a293a</UserSecretsId>
+		<BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.targets" />
+	<ItemGroup>
+	  <Compile Remove="bin\**" />
+	  <Compile Remove="obj\**" />
+	  <Content Remove="bin\**" />
+	  <Content Remove="obj\**" />
+	  <EmbeddedResource Remove="bin\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="bin\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<None Remove="ChildWindow1.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\scripts\bwdInterop.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" />
+		<!--<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />-->
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+	  <ProjectReference Include="..\MyComponent\Shared\MyComponent.csproj" />
+	</ItemGroup>
+
+</Project>
