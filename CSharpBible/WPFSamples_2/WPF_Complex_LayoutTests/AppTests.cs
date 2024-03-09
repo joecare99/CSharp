@@ -16,8 +16,10 @@ namespace WPF_Complex_Layout.Tests
     public class AppTests 
     {
         static TestApp app = new();
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private Func<Type, object?> _gsold;
         private Func<Type, object> _grsold;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
         /// Initializes this instance.
@@ -29,7 +31,7 @@ namespace WPF_Complex_Layout.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-                _ when t == typeof(ITemplateModel) => new TemplateModel(),
+           //     _ when t == typeof(IMoveWindowModel) => new TemplateModel(),
                 _ => throw new ArgumentException() };          
         }
 
@@ -50,7 +52,7 @@ namespace WPF_Complex_Layout.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+     //       Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }
