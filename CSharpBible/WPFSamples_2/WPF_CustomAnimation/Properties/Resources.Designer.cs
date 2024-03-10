@@ -61,15 +61,6 @@ namespace WPF_CustomAnimation.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample-CustomAnimation using Community-Toolkit ähnelt.
-        /// </summary>
-        public static string Description {
-            get {
-                return ResourceManager.GetString("Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
         ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
@@ -108,7 +99,16 @@ namespace WPF_CustomAnimation.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample-CustomAnimation ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-Sample for a custom animation using Community-Toolkit ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die WPF-CustomAnimation ähnelt.
         /// </summary>
         public static string Title {
             get {
