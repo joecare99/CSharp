@@ -13,15 +13,48 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="{x:Static p:Resources.Title}">
     <Page.Resources>
-        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+        <XmlDataProvider x:Key="MyList" Source="\Models\Data\leagues.xml"
+                     XPath="Leagues/League"/>
+        <DataTemplate x:Key="DataTemplateX">
+            <TextBlock Text="{Binding XPath=@name}" />
+        </DataTemplate>
+        <Style TargetType="StackPanel">
+            <Setter Property="DockPanel.Dock" Value="Left"/>
+            <Setter Property="Margin" Value="10,0,10,0"/>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Height" Value="100"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
     </Page.Resources>
     <Page.DataContext>
         <mvvm:MasterDetailViewModel/>
     </Page.DataContext>
-    <StackPanel Background="Silver">
-        <Label Content="MasterDetail-View:"/>
-        <Grid>
-            <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
-        </Grid>
-    </StackPanel>
+    <DockPanel DataContext="{Binding Source={StaticResource MyList}}">
+        <StackPanel>
+            <Label>My Soccer Leagues</Label>
+            <ListBox ItemsSource="{Binding}"
+                 ItemTemplate="{StaticResource DataTemplateX}"
+                 IsSynchronizedWithCurrentItem="true"/>
+        </StackPanel>
+
+        <StackPanel>
+            <Label Content="{Binding XPath=@name}"/>
+            <ListBox Name="divisionsListBox"
+                 ItemsSource="{Binding XPath=Division}"
+                 ItemTemplate="{StaticResource DataTemplateX}"
+                 IsSynchronizedWithCurrentItem="true"/>
+        </StackPanel>
+        <StackPanel>
+            <Label Content="{Binding XPath=@name}" 
+                   DataContext="{Binding ElementName=divisionsListBox,
+                                         Path=SelectedItem}"/>
+            <ListBox DataContext="{Binding ElementName=divisionsListBox,
+                                       Path=SelectedItem}"
+                 ItemsSource="{Binding XPath=Team}"
+                 ItemTemplate="{StaticResource DataTemplateX}"/>
+        </StackPanel>
+    </DockPanel>
 </Page>
