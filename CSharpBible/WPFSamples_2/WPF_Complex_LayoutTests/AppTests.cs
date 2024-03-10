@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
-using WPF_Complex_Layout.Models;
 using System;
 
 namespace WPF_Complex_Layout.Tests
