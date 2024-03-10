@@ -19,7 +19,7 @@
         <mvvm:TemplateViewModel/>
     </Page.DataContext>
     <StackPanel Background="Silver">
-        <Label Content="Temlate-View:"/>
+        <Label Content="Template-View:"/>
         <Grid>
             <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
         </Grid>
