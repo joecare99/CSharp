@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
+using WPF_AnimationTiming.Models;
 using System;
 
-namespace WPF_Complex_Layout.Tests
+namespace WPF_AnimationTiming.Tests
 {
     internal class TestApp : App
     {
@@ -30,7 +31,7 @@ namespace WPF_Complex_Layout.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-           //     _ when t == typeof(IMoveWindowModel) => new TemplateModel(),
+                _ when t == typeof(ITemplateModel) => new TemplateModel(),
                 _ => throw new ArgumentException() };          
         }
 
@@ -51,7 +52,7 @@ namespace WPF_Complex_Layout.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-     //       Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }

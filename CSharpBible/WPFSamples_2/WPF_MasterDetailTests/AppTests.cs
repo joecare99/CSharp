@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
+using WPF_MasterDetail.Models;
 using System;
 
-namespace WPF_Complex_Layout.Tests
+namespace WPF_MasterDetail.Tests
 {
     internal class TestApp : App
     {
@@ -30,7 +31,7 @@ namespace WPF_Complex_Layout.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-           //     _ when t == typeof(IMoveWindowModel) => new TemplateModel(),
+                _ when t == typeof(IMasterDetailModel) => new MasterDetailModel(),
                 _ => throw new ArgumentException() };          
         }
 
@@ -51,7 +52,7 @@ namespace WPF_Complex_Layout.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-     //       Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(IMasterDetailModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }
