@@ -1,0 +1,33 @@
+﻿<Window x:Class="WPF_ControlsAndLayout.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ControlsAndLayout"
+        xmlns:p="clr-namespace:WPF_ControlsAndLayout.Properties"
+        xmlns:mvvm="clr-namespace:WPF_ControlsAndLayout.ViewModels"
+        mc:Ignorable="d"
+        Title="{x:Static p:Resources.Title}" 
+        ToolTip="{x:Static p:Resources.Description}"
+        Height="450" Width="800">
+    <Window.DataContext>
+        <mvvm:MainWindowViewModel/>
+    </Window.DataContext>
+    <TabControl>
+        <TabItem Header="{x:Static p:Resources.Title}">
+            <Frame Source="/Views/ControlsAndLayoutView.xaml"/>
+        </TabItem>
+        <TabItem Header="Xaml">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the Xaml-Code" />
+                <TextBox Text="{x:Static p:Resources.ControlsAndLayoutView}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="ViewModel">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the ViewModel-Code" />
+                <TextBox Text="{x:Static p:Resources.ControlsAndLayoutViewModel}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
+</Window>
