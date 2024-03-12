@@ -13,6 +13,7 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 using WPF_StickyNotesDemo.Models;
+using WPF_StickyNotesDemo.Models.Interfaces;
 using System;
 using System.ComponentModel;
 

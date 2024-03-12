@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
+using System.Collections.Generic;
 
 namespace WPF_StickyNotesDemo.ViewModels
 {
@@ -23,6 +24,7 @@ namespace WPF_StickyNotesDemo.ViewModels
     public class MainWindowViewModel : BaseViewModelCT
     {
         #region Properties
+        public List<object> WindowArray = new();
         #endregion
         #region Methods
         /// <summary>
