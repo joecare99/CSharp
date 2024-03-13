@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
       xmlns:local="clr-namespace:WPF_ControlsAndLayout.Views"
       xmlns:p="clr-namespace:WPF_ControlsAndLayout.Properties"
       xmlns:vc="clr-namespace:WPF_ControlsAndLayout.ValueConverter"
@@ -15,12 +16,12 @@
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
     </Page.Resources>
     <Page.DataContext>
-        <mvvm:ControlsAndLayoutViewModel/>
+        <mvvm:ControlsAndLayoutViewModel x:Name="vm"/>
     </Page.DataContext>
     <Grid>
         <Grid.Resources>
 
-            <XmlDataProvider x:Key="SamplesList"  XPath="/Data/Samples" Source="samples.xml" />
+            <XmlDataProvider x:Key="SamplesList"  XPath="/Samples" Source="\Data\samples.xml" />
 
 
             <Style TargetType="{x:Type TextBlock}">
@@ -87,13 +88,25 @@
                                 <Expander.Header>
                                     <TextBlock Margin="10,0,0,0"  FontFamily="Calibri" FontWeight="bold" >Layout</TextBlock>
                                 </Expander.Header>
-                                <ListBox Name="LayoutListBox" DataContext="{Binding Source={StaticResource SamplesList}, XPath=/Samples/Category[1]/Sample}"    ItemsSource="{Binding}" SelectionChanged="HandleSelectionChanged"  Style="{DynamicResource SamplesListBox}"  IsSynchronizedWithCurrentItem="True"  />
+                                <ListBox Name="LayoutListBox" DataContext="{Binding Source={StaticResource SamplesList}, XPath=/Samples/Category[1]/Sample}"  ItemsSource="{Binding}"  Style="{DynamicResource SamplesListBox}"  IsSynchronizedWithCurrentItem="True" SelectedIndex="{Binding LayoutIndex ,ElementName=vm}"  >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="SelectionChanged">
+                                            <i:InvokeCommandAction Command="{Binding SelectionChangedCommand, ElementName=vm}" CommandParameter="{Binding ElementName=LayoutListBox, Path=SelectedItem}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ListBox>
                             </Expander>
                             <Expander  Margin="0,0,0,10" DockPanel.Dock="top" Background="white" FocusVisualStyle="{x:Null}">
                                 <Expander.Header>
                                     <TextBlock Margin="10,0,0,0"  FontFamily="Calibri" FontWeight="bold"  TextTrimming="WordEllipsis">Controls</TextBlock>
                                 </Expander.Header>
-                                <ListBox MaxHeight="300"  DataContext="{Binding Source={StaticResource SamplesList}, XPath=/Samples/Category[2]/Sample}" ItemsSource="{Binding}" SelectionChanged="HandleSelectionChanged" Style="{DynamicResource SamplesListBox}"  IsSynchronizedWithCurrentItem="True" SelectedValue="X" />
+                                <ListBox Name="ControlListBox" MaxHeight="300"  DataContext="{Binding Source={StaticResource SamplesList}, XPath=/Samples/Category[2]/Sample}" ItemsSource="{Binding}" Style="{DynamicResource SamplesListBox}"  IsSynchronizedWithCurrentItem="True" SelectedIndex="{Binding ControlIndex ,ElementName=vm}" SelectedValue="X" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="SelectionChanged">
+                                            <i:InvokeCommandAction Command="{Binding SelectionChangedCommand, ElementName=vm}" CommandParameter="{Binding ElementName=ControlListBox, Path=SelectedItem}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ListBox>
                             </Expander>
                         </DockPanel>
                     </Grid>
@@ -102,13 +115,13 @@
                             <Binding Source="{StaticResource SamplesList}" XPath="/Samples/Category[1]/Sample"/>
                         </DockPanel.DataContext>
                         <StackPanel Margin="20,10,0,0" DockPanel.Dock="top" Orientation="Horizontal" >
-                            <TextBlock  Text="{Binding XPath=@Title}" FontWeight="Bold" FontSize="16pt"    />
+                            <TextBlock  Text="{Binding ExTitle, ElementName=vm}" FontWeight="Bold" FontSize="16pt"    />
                         </StackPanel>
-                        <TextBlock Margin="20,10,20,0" FontSize="11pt"  Text="{Binding XPath=@Description}" DockPanel.Dock="top" TextWrapping="Wrap" />
+                        <TextBlock Margin="20,10,20,0" FontSize="11pt"  Text="{Binding ExDescription, ElementName=vm}" DockPanel.Dock="top" TextWrapping="Wrap" />
                         <Grid Margin="20,20,20,0">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"  x:Name="PreviewRow" />
-                                <RowDefinition Height="0.5*"  x:Name="CodeRow" />
+                                <RowDefinition Height="{Binding PreviewRowHeight, ElementName=vm}"  x:Name="PreviewRow" />
+                                <RowDefinition Height="{Binding CodeRowHeight, ElementName=vm}"  x:Name="CodeRow" />
                                 <RowDefinition Height="40"  x:Name="ButtonRow" />
                             </Grid.RowDefinitions>
                             <Rectangle Fill="white" RadiusX="14" RadiusY="14" Margin="0,0,0,8"    StrokeDashArray="2"/>
@@ -135,14 +148,14 @@
                                 </Shape.Fill>
                             </Rectangle>
                             <GridSplitter Margin="10,0,10,0" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Width="Auto" Height="5" Background="White" Cursor="SizeNS"/>
-                            <TextBox Name="TextBox1" TextChanged="HandleTextChanged"   Margin="0,20,0,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" BorderBrush="transparent"     Grid.Row="1" AcceptsTab="True" AcceptsReturn="True" Text="{Binding XPath=Syntax}" />
+                            <TextBox Name="TextBox1"  Margin="0,20,0,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" BorderBrush="transparent"     Grid.Row="1" AcceptsTab="True" AcceptsReturn="True" Text="{Binding XamlText, UpdateSourceTrigger=PropertyChanged, Delay=200, ElementName=vm, ValidatesOnNotifyDataErrors=True}" />
                             <StackPanel Grid.Row="2"  Orientation="Horizontal" Margin="0,5,0,0">
 
-                                <RadioButton  HorizontalAlignment="left" Margin="5"   Click="ShowPreview"   Content="Preview" VerticalAlignment="top"/>
-                                <RadioButton  HorizontalAlignment="left" Margin="5"   Click="ShowCode"  Content="XAML" VerticalAlignment="top"/>
-                                <RadioButton  HorizontalAlignment="left" Margin="5"   Click="ShowSplit"   Content="Split" VerticalAlignment="top" IsChecked="True"/>
+                                <RadioButton  HorizontalAlignment="left" Margin="5"   Command="{Binding ShowPreviewCommand, ElementName=vm }"   Content="Preview" VerticalAlignment="top"/>
+                                <RadioButton  HorizontalAlignment="left" Margin="5"   Command="{Binding ShowCodeCommand, ElementName=vm }"  Content="XAML" VerticalAlignment="top"/>
+                                <RadioButton  HorizontalAlignment="left" Margin="5"   Command="{Binding ShowSplitCommand, ElementName=vm }"   Content="Split" VerticalAlignment="top" IsChecked="True"/>
 
-                                <TextBlock Name="ErrorText" Margin="100,5,60,0" TextTrimming="WordEllipsis" Foreground="red" FontSize="10pt" FontWeight="bold" />
+                                <TextBlock Name="ErrorText" Margin="100,5,60,0"  Text="{Binding ErrorText, ElementName=vm }"  TextTrimming="WordEllipsis" Foreground="red" FontSize="10pt" FontWeight="bold" />
                             </StackPanel>
                         </Grid>
                     </DockPanel>

@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="{x:Static p:Resources.Title}" 
         ToolTip="{x:Static p:Resources.Description}"
-        Height="450" Width="800">
+        Height="800" Width="1024">
     <Window.DataContext>
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
