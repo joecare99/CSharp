@@ -1,6 +1,6 @@
-@import '_content/MyComponent/MyComponent.bundle.scp.css';
+@import '../_content/MyComponent/MyComponent.bundle.scp.css';
 
-/* /Views/Layout/MainLayout.razor.rz.scp.css */
+/* CSharp/Views/Layout/MainLayout.razor.rz.scp.css */
 .page[b-snwbg96a46] {
     position: relative;
     display: flex;
@@ -78,7 +78,7 @@ main[b-snwbg96a46] {
         padding-right: 1.5rem !important;
     }
 }
-/* /Views/Layout/NavMenu.razor.rz.scp.css */
+/* CSharp/Views/Layout/NavMenu.razor.rz.scp.css */
 .navbar-toggler[b-yamw34avjl] {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -166,7 +166,7 @@ main[b-snwbg96a46] {
         overflow-y: auto;
     }
 }
-/* /Views/Shared/Dialog.razor.rz.scp.css */
+/* CSharp/Views/Shared/Dialog.razor.rz.scp.css */
 .dialog-container[b-7ofj3dkvdd] {
     position: absolute;
     top: 0;
@@ -197,7 +197,7 @@ main[b-snwbg96a46] {
     background-color: silver;
     padding: .5rem;
 }
-/* /Views/Shared/Game.razor.rz.scp.css */
+/* CSharp/Views/Shared/Game.razor.rz.scp.css */
 .game[b-0oree76gci] {
     padding: 15px;
     font-size: 4rem;
