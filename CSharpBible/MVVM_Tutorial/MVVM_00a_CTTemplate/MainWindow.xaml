@@ -4,13 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_00a_CTTemplate"
+        xmlns:p="clr-namespace:MVVM_00a_CTTemplate.Properties"
         xmlns:mvvm="clr-namespace:MVVM_00a_CTTemplate.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{x:Static p:Resources.Title}" 
+        ToolTip="{x:Static p:Resources.Description}"
+        Height="450" Width="800">
     <Window.DataContext>
         <mvvm:MainWindowViewModel/>
     </Window.DataContext>
-    <Grid>
-        <Frame Source="/Views/TemplateView.xaml"/>
-    </Grid>
+    <TabControl>
+        <TabItem Header="{x:Static p:Resources.Title}">
+            <Frame Source="/Views/TemplateView.xaml"/>
+        </TabItem>
+        <TabItem Header="Xaml">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the Xaml-Code" />
+                <TextBox Text="{x:Static p:Resources.TemplateView}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="ViewModel">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the ViewModel-Code" />
+                <TextBox Text="{x:Static p:Resources.TemplateViewModel}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
 </Window>

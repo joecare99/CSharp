@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleDisplay.View {
-	public static class HexMath {
+namespace ConsoleDisplay.View
+{
+    public static class HexMath {
 		public static PointF HexPointF(this (float X, float Y) f, bool v) =>
 			v ?
 			new PointF(f.X, f.Y + ZigZag(f.X ) * 0.5f) :

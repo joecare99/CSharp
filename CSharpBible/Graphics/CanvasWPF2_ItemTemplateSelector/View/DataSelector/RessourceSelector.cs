@@ -1,12 +1,7 @@
 ﻿using CanvasWPF2_ItemTemplateSelector.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 
 namespace CanvasWPF2_ItemTemplateSelector.View.DataSelector
 {
@@ -70,7 +65,7 @@ namespace CanvasWPF2_ItemTemplateSelector.View.DataSelector
         /// <returns>Returns a <see cref="T:System.Windows.DataTemplate" /> or <see langword="null" />. The default value is <see langword="null" />.</returns>
         public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
-            if (container is FrameworkElement element && item is ShapeData op && op.sType < ItemKeys.Count)
+            if (container is FrameworkElement element && item is IVisualObject op && op.sType < ItemKeys.Count)
             {
                 return element.FindResource(ItemKeys[op.sType].Key) as DataTemplate;
             }

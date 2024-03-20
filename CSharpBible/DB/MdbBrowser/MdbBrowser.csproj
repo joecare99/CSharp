@@ -2,9 +2,34 @@
 	<Import Project="..\DB.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net4.8.1-windows;net4.6.2-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
+		<Platforms>AnyCPU;x86</Platforms>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|x86'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|x86'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|AnyCPU'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|x86'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows|AnyCPU'">
+	  <WarningLevel>7</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows|x86'">
+	  <WarningLevel>7</WarningLevel>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -19,12 +44,16 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="IsExternalInit" Version="1.0.3" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-		<PackageReference Include="System.Data.OleDb" Version="7.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
+	  <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))==false" Include="..\..\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
 	</ItemGroup>
 
 </Project>

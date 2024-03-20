@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper.MVVM;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.View.Extension;
 using MVVM_28_1_DataGridExt.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,11 @@ namespace MVVM_28_1_DataGridExt.Services.Tests
         [TestInitialize]
         public void Init()
         {
+            IoC.GetReqSrv = (t) => t switch
+            {
+                _ when t == typeof(IRandom) => new CRandom(),
+                _ => throw new System.NotImplementedException()
+            };
             testService = new PersonService();
         }
 

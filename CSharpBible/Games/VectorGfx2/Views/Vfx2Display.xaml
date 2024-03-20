@@ -1,0 +1,328 @@
+﻿<Page x:Class="VectorGfx2.Views.Vfx2Display"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:VectorGfx2.Views"
+      xmlns:mvvm="clr-namespace:VectorGfx2.ViewModels"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:ds="clr-namespace:VectorGfx2.Views.DataSelector"
+      mc:Ignorable="d"
+      Background="#ff101010"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="VfxDisplay">
+    <Page.DataContext>
+        <mvvm:VfxDisplayViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <DataTemplate x:Key="dtDot">
+            <Grid Margin="-1,-1,0,0" Width="2" Height="2">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <Ellipse Fill="Black" Cursor="Hand"/>
+                <Polygon Cursor="Hand" RenderTransformOrigin="0.5,0.5" 
+                         Fill="White">
+                    <Polygon.Points>
+                        <Point X="2" Y="1"/>
+                        <Point X="1" Y="2"/>
+                        <Point X="0" Y="1"/>
+                        <Point X="1" Y="0"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="20,20,0,0" Stroke="White" StrokeThickness="3" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>
+                <Line Margin="20,20,0,0" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtShot">
+            <Grid Margin="-4,-4,0,0" Width="8" Height="8">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <Ellipse Fill="Black" Cursor="Hand"/>
+                <Polygon 
+                         Fill="Black"
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5">
+                    <Polygon.Points>
+                        <Point X="1" Y="3"/>
+                        <Point X="6" Y="3"/>
+                        <Point X="8" Y="4"/>
+                        <Point X="6" Y="5"/>
+                        <Point X="1" Y="5"/>
+                        <Point X="3" Y="4"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtShip">
+            <Grid Margin="-15,-15,0,0" Width="30" Height="30">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <Ellipse Fill="Black" Cursor="Hand"/>
+                <Polygon 
+                         Fill="Black"
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5" >
+                    <Polygon.Points>
+                        <Point X="4" Y="4"/>
+                        <Point X="30" Y="15"/>
+                        <Point X="4" Y="26"/>
+                        <Point X="10" Y="15"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtBoulder1">
+            <Grid Margin="-60,-60,0,0" Width="120" Height="120">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <!--<Ellipse Fill="Black" Cursor="Hand"/>-->
+                <Polygon 
+                        Fill="#01000000"
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5">
+                    <Polygon.Points>
+                        <Point X="060" Y="114"/>
+                        <Point X="090" Y="108"/>
+                        <Point X="111" Y="086"/>
+                        <Point X="111" Y="060"/>
+                        <Point X="104" Y="040"/>
+                        <Point X="095" Y="026"/>
+                        <Point X="085" Y="016"/>
+                        <Point X="078" Y="004"/>
+                        <Point X="068" Y="004"/>
+                        <Point X="060" Y="006"/>
+                        <Point X="054" Y="014"/>
+                        <Point X="046" Y="015"/>
+                        <Point X="035" Y="016"/>
+                        <Point X="021" Y="021"/>
+                        <Point X="010" Y="037"/>
+                        <Point X="006" Y="060"/>
+                        <Point X="017" Y="082"/>
+                        <Point X="034" Y="102"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtBoulder2">
+            <Grid Margin="-40,-40,0,0" Width="80" Height="80">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <!--<Ellipse Fill="Black" Cursor="Hand"/>-->
+                <Polygon 
+                        
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5">
+                    <Polygon.Points>
+                        <Point X="040" Y="074"/>
+                        <Point X="054" Y="073"/>
+                        <Point X="066" Y="064"/>
+                        <Point X="070" Y="052"/>
+                        <Point X="068" Y="040"/>
+                        <Point X="067" Y="030"/>
+                        <Point X="064" Y="021"/>
+                        <Point X="060" Y="010"/>
+                        <Point X="050" Y="006"/>
+                        <Point X="040" Y="007"/>
+                        <Point X="032" Y="013"/>
+                        <Point X="024" Y="016"/>
+                        <Point X="013" Y="019"/>
+                        <Point X="006" Y="028"/>
+                        <Point X="002" Y="040"/>
+                        <Point X="009" Y="052"/>
+                        <Point X="020" Y="059"/>
+                        <Point X="029" Y="066"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtBoulder3">
+            <Grid Margin="-20,-20,0,0" Width="40" Height="40">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <!--<Ellipse Fill="Black" Cursor="Hand"/>-->
+                <Polygon 
+                        
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5" >
+                    <Polygon.Points>
+                        <Point X="020" Y="036"/>
+                        <Point X="029" Y="037"/>
+                        <Point X="035" Y="031"/>
+                        <Point X="036" Y="023"/>
+                        <Point X="034" Y="018"/>
+                        <Point X="033" Y="012"/>
+                        <Point X="031" Y="008"/>
+                        <Point X="028" Y="004"/>
+                        <Point X="024" Y="002"/>
+                        <Point X="020" Y="004"/>
+                        <Point X="017" Y="006"/>
+                        <Point X="014" Y="008"/>
+                        <Point X="009" Y="007"/>
+                        <Point X="006" Y="012"/>
+                        <Point X="003" Y="017"/>
+                        <Point X="005" Y="023"/>
+                        <Point X="009" Y="028"/>
+                        <Point X="013" Y="033"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtBoulder4">
+            <Grid Margin="-10,-10,0,0" Width="20" Height="20">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <!--<Ellipse Fill="Black" Cursor="Hand"/>-->
+                <Polygon 
+                        
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5">
+                    <Polygon.Points>
+                        <Point X="010" Y="017"/>
+                        <Point X="014" Y="019"/>
+                        <Point X="018" Y="016"/>
+                        <Point X="018" Y="012"/>
+                        <Point X="017" Y="009"/>
+                        <Point X="016" Y="007"/>
+                        <Point X="016" Y="004"/>
+                        <Point X="014" Y="002"/>
+                        <Point X="012" Y="002"/>
+                        <Point X="010" Y="001"/>
+                        <Point X="008" Y="003"/>
+                        <Point X="007" Y="004"/>
+                        <Point X="005" Y="004"/>
+                        <Point X="001" Y="005"/>
+                        <Point X="002" Y="009"/>
+                        <Point X="003" Y="012"/>
+                        <Point X="005" Y="014"/>
+                        <Point X="007" Y="016"/>
+                    </Polygon.Points>
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="dtCharacter">
+            <Grid Margin="-20,-20,0,0" Width="40" Height="40">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <!--<Ellipse Fill="Black" Cursor="Hand"/>-->
+                <Polygon 
+                         Fill="Black"
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5" 
+                         Points="{Binding Pnts}">
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+        </DataTemplate>
+        <ds:RessourceSelector x:Key="dsResourceSelector">
+            <ds:RessourceSelector.ItemKeys>
+                <ds:KeyString Key="dtDot"/>
+                <ds:KeyString Key="dtShot"/>
+                <ds:KeyString Key="dtShip"/>
+                <ds:KeyString Key="dtBoulder1"/>
+                <ds:KeyString Key="dtBoulder2"/>
+                <ds:KeyString Key="dtBoulder3"/>
+                <ds:KeyString Key="dtBoulder4"/>
+                <ds:KeyString Key="dtCharacter"/>
+            </ds:RessourceSelector.ItemKeys>
+        </ds:RessourceSelector>
+
+    </Page.Resources>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">
+            <TextBlock Text="{Binding DataText}" Background="Black" Foreground="White"/>
+        </StackPanel>
+        <Grid>
+
+            <!--<ItemsControl x:Name="ShapeDisplay" ItemsSource="{Binding VisObjects}" ItemTemplateSelector="{StaticResource dsResourceSelector}" SizeChanged="MainWindow_SizeChanged">-->
+            <ItemsControl x:Name="ShapeDisplay" ItemsSource="{Binding VisObjects}" ItemTemplateSelector="{StaticResource dsResourceSelector}">
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            <Grid Margin="-20,-20,0,0" Width="40" Height="40">
+                <i:Interaction.Behaviors>
+                    <mvvm:ItemBehavior/>
+                </i:Interaction.Behaviors>
+                <Ellipse Fill="Black" Cursor="Hand"/>
+                <Polygon 
+                         Fill="Black"
+                        Stroke="White"
+                    Cursor="Hand" RenderTransformOrigin="0.5,0.5" 
+                         Points="{Binding Pnts2}">
+                    <Polygon.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding ZRot}"/>
+                        </TransformGroup>
+                    </Polygon.RenderTransform>
+                </Polygon>
+                <!--<Line Margin="0,0,-20,-20" Stroke="Black" StrokeThickness="1" X1="{Binding Dx}" Y1="{Binding Dy}" X2="0" Y2="0"/>-->
+            </Grid>
+
+        </Grid>
+    </DockPanel>
+</Page>

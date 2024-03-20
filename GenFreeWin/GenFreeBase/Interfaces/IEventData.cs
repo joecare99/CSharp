@@ -1,10 +1,9 @@
 ﻿using GenFree.Data;
-using GenFree.Interfaces.DB;
 using System;
 
 namespace GenFree.Interfaces;
 
-public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>
+public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>, IHasIRecordset
 {
     DateTime dDatumB { get; }
     DateTime dDatumV { get; }
@@ -12,6 +11,7 @@ public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, I
     int iAn { get; }
     int iArtText { get; }
     int iCausal { get; }
+    int iGrabNr { get; }
     int iDatumText { get; }
     int iHausNr { get; }
     int iKBem { get; }
@@ -23,6 +23,7 @@ public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, I
     string sArtText { get; }
     string[] sBem { get; }
     string sCausal { get; }
+    string sGrabNr { get; }
     string sDatumB_S { get; }
     string sDatumText { get; }
     string sDatumV_S { get; }
@@ -35,9 +36,7 @@ public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, I
     string sVChr { get; }
     string sZusatz { get; }
     bool xIsDead { get; }
+    string sAn { get; }
 
-    void Delete();
-    void FillDataFields(IRecordset dB_EventTable);
-    void SetDBData(IRecordset dB_EventTable, string[]? asProps);
     void Update(string[]? strings = null);
 }

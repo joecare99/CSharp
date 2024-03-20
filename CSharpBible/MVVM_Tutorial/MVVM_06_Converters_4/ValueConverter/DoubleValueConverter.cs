@@ -14,7 +14,6 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Documents;
 
 namespace MVVM_06_Converters_4.ValueConverter
 {
@@ -59,9 +58,10 @@ namespace MVVM_06_Converters_4.ValueConverter
             {
                 string sval when
                 double.TryParse(sval, NumberStyles.Float, culture, out double dval) => dval / FixedFactor,
-                _ when parameter is string spar && spar.Contains("{")
-                    => double.NaN, // Todo:
-                string sval when parameter is string spar => InnerParse(sval, spar),
+                //_ when (parameter as string)?.Contains("{") == true
+                //    => double.NaN, // Todo:
+                string sval when parameter is string spar && !spar.Contains("{")
+                    => InnerParse(sval, spar),
                 _ => double.NaN
             };
 

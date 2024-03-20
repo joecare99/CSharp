@@ -12,14 +12,12 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading;
 using BaseLib.Model.Tests;
 using Pattern_02_Observer.ViewModels;
 using NSubstitute;
 using Pattern_02_Observer.Models;
 using BaseLib.Interfaces;
-using System.Diagnostics;
 
 /// <summary>
 /// The Tests namespace.

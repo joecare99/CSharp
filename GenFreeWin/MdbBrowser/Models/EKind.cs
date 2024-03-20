@@ -4,12 +4,16 @@
     {
         Table,
         Query,
+        Column,
+        Index,
         Form,
         Group,
         Macro,
         Module,
         Relation,
         Unknown,
-        User
+        User,
+        Schema,
+        DataTypes
     }
 }

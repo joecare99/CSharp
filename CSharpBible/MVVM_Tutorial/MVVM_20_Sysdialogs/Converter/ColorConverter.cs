@@ -39,7 +39,7 @@ namespace MVVM_20_Sysdialogs.Converter
                 return c.ToString();
             if (value is System.Drawing.Color cl)
             {
-                Color cc;
+                Color cc = default;
                 cc.A = cl.A;
                 cc.B = cl.B; 
                 cc.R = cl.R;

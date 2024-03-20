@@ -14,17 +14,15 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleDisplay.View {
+namespace ConsoleDisplay.View
+{
 
-	/// <summary>
-	/// Class TileDisplay.
-	/// </summary>
-	/// <typeparam name="Enum">The type of the enum.</typeparam>
-	public class TileDisplay<T>
+    /// <summary>
+    /// Class TileDisplay.
+    /// </summary>
+    /// <typeparam name="Enum">The type of the enum.</typeparam>
+    public class TileDisplay<T>
     {
         #region Properties
         #region static Properties

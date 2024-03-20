@@ -3,7 +3,7 @@
 		<UpDir>..\..</UpDir>
 		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>12.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>

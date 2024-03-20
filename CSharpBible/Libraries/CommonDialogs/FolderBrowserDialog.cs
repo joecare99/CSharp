@@ -11,23 +11,21 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommonDialogs.Interfaces;
 using System;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Windows.Forms;
 
 namespace CommonDialogs
 {
-	// System.Windows.Forms.FolderBrowserDialog
+    // System.Windows.Forms.FolderBrowserDialog
 
-	/// <summary>
-	/// Fordert den Benutzer auf, einen Ordner auszuwählen. Diese Klasse kann nicht vererbt werden.
-	/// </summary>
-	[DefaultEvent("HelpRequest")]
+    /// <summary>
+    /// Fordert den Benutzer auf, einen Ordner auszuwählen. Diese Klasse kann nicht vererbt werden.
+    /// </summary>
+    [DefaultEvent("HelpRequest")]
 	[DefaultProperty("SelectedPath")]
-	public sealed class FolderBrowserDialog : Component
+	public class FolderBrowserDialog : Component, IFileDialog
 	{
 		/// <summary>
 		/// The FBD
@@ -46,12 +44,14 @@ namespace CommonDialogs
 		/// <value>The selected path.</value>
 		public string SelectedPath { get => _fbd.SelectedPath; set => _fbd.SelectedPath = value; }
 
-		/// <summary>
-		/// Ruft den Stammordner ab, von dem aus eine Suche gestartet wird, oder legt diesen fest.
-		/// </summary>
-		/// <value>The root folder.</value>
-		/// <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">Der zugewiesene Wert ist keiner der <see cref="T:System.Environment.SpecialFolder" />-Werte.</exception>
-		public Environment.SpecialFolder RootFolder { get => _fbd.RootFolder; set => _fbd.RootFolder = value; }
+        public string FileName { get => _fbd.SelectedPath; set => _fbd.SelectedPath =value; }
+
+        /// <summary>
+        /// Ruft den Stammordner ab, von dem aus eine Suche gestartet wird, oder legt diesen fest.
+        /// </summary>
+        /// <value>The root folder.</value>
+        /// <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">Der zugewiesene Wert ist keiner der <see cref="T:System.Environment.SpecialFolder" />-Werte.</exception>
+        public Environment.SpecialFolder RootFolder { get => _fbd.RootFolder; set => _fbd.RootFolder = value; }
 
 		/// <summary>
 		/// Ruft den beschreibenden Text ab, der im Dialogfeld über dem Strukturansichts-Steuerelement angezeigt wird, oder legt diesen fest.
@@ -93,11 +93,11 @@ namespace CommonDialogs
 		[TypeConverter(typeof(StringConverter))]
 		public object? Tag { get => _fbd.Tag; set => _fbd.Tag = value; }
 
-		/// <summary>
-		/// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.
-		/// </summary>
-		/// <returns><see cref="F:System.Windows.Forms.DialogResult.OK" />, wenn der Benutzer im Dialogfeld auf OK klickt, andernfalls <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</returns>
-		public bool? ShowDialog()
+        /// <summary>
+        /// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.
+        /// </summary>
+        /// <returns><see cref="F:System.Windows.Forms.DialogResult.OK" />, wenn der Benutzer im Dialogfeld auf OK klickt, andernfalls <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</returns>
+        public bool? ShowDialog()
         {
 			return _fbd.ShowDialog()==DialogResult.OK;
         }
@@ -107,9 +107,9 @@ namespace CommonDialogs
 		/// </summary>
 		/// <param name="owner">Ein beliebiges Objekt, das <see cref="T:System.Windows.Forms.IWin32Window" /> implementiert, das das Fenster der obersten Ebene und damit den Besitzer des modalen Dialogfelds darstellt.</param>
 		/// <returns><see cref="F:System.Windows.Forms.DialogResult.OK" />, wenn der Benutzer im Dialogfeld auf OK klickt, andernfalls <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</returns>
-		public bool? ShowDialog(IWin32Window owner)
+		public bool? ShowDialog(object owner)
 		{
-			return _fbd.ShowDialog(owner) == DialogResult.OK; 
+			return _fbd.ShowDialog((IWin32Window)owner) == DialogResult.OK; 
 		}
 
 	}

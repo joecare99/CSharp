@@ -1,4 +1,5 @@
-﻿using MVVM.ViewModel;
+﻿using BaseLib.Helper.MVVM;
+using MVVM.ViewModel;
 using MVVM_28_1_DataGridExt.Models;
 using MVVM_28_1_DataGridExt.Services;
 using System.Collections.ObjectModel;
@@ -19,23 +20,25 @@ namespace MVVM_28_1_DataGridExt.ViewModels
 
         public bool IsItemSelected => SelectedPerson != null;
         public DataGridViewModel() {
-            var svc = new PersonService();
+            var svc = new PersonService(
+                new CRandom());
             foreach(var person in svc.GetPersons())
                 Persons.Add(person);
             foreach (var deprtment in svc.GetDepartments())
                 Departments.Add(deprtment);
 
-
-            RemoveCommand = new DelegateCommand((o) =>
-            {
-                if (o is Person p)
-                {
-                    Persons.Remove(p);
-                    RaisePropertyChanged(nameof(Persons));
-                }
-            });
+            RemoveCommand = new DelegateCommand(Remove);
 
             AddPropertyDependency(nameof(IsItemSelected), nameof(SelectedPerson));
+        }
+
+        private void Remove(object? o)
+        {
+            if (o is Person p)
+            {
+                Persons.Remove(p);
+                RaisePropertyChanged(nameof(Persons));
+            }
         }
     }
 }

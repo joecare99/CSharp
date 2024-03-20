@@ -64,9 +64,9 @@ namespace MVVM_ImageHandling.ViewModels
             _assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
             Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♣Ace.png";
             var ms = new MemoryStream();
-            Properties.Resources.card_D10_emf.Save(ms, ImageFormat.Png);
+        //    Properties.Resources.card_D10_emf.Save(ms, ImageFormat.Png);
             ms.Position = 0L;
-            Image3 = LoadImageFromStream(ms); 
+      //      Image3 = LoadImageFromStream(ms); 
         }
 
         public BitmapImage LoadImageFromStream(Stream memoryStream)

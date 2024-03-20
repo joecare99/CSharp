@@ -1,0 +1,7 @@
+﻿T:Instruction,0,private bool Test13Dat()
+T:Block,1,{
+T:Instruction,1,
+T:LComment,1,// Compare this snippet from VBUnObfusicatorTests/Resources/Test13Dat.cs:
+T:Instruction,1,return
+T:Instruction,1,0 < System.SomeFunc(123);
+T:Block,1,}

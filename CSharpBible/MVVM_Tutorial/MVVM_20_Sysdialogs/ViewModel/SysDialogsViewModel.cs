@@ -12,24 +12,21 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using CommonDialogs;
+using CommonDialogs.Interfaces;
 using Microsoft.Win32;
 using MVVM.ViewModel;
 
-namespace MVVM_20_Sysdialogs.ViewModel {
+namespace MVVM_20_Sysdialogs.ViewModel
+{
 
-	/// <summary>
-	/// Class SysDialogsViewModel.
-	/// Implements the <see cref="BaseViewModel" />
-	/// </summary>
-	/// <seealso cref="BaseViewModel" />
-	public class SysDialogsViewModel : BaseViewModel {
+    /// <summary>
+    /// Class SysDialogsViewModel.
+    /// Implements the <see cref="BaseViewModel" />
+    /// </summary>
+    /// <seealso cref="BaseViewModel" />
+    public class SysDialogsViewModel : BaseViewModel {
 		#region Fields
 		/// <summary>
 		/// The file open name
@@ -54,7 +51,7 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// <summary>
 		/// My font
 		/// </summary>
-		private Font _myFont = SystemFonts.DefaultFont;
+		private Font _myFont = new Font("Microsoft Sans Serif", 8.25f);
 		#endregion
 
 		#region Delegates
@@ -65,7 +62,7 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// <param name="Par">The par.</param>
 		/// <param name="OnAccept">The on accept.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		public delegate bool? FileDialogHandler(string Filename, ref FileDialog Par,Action<string, FileDialog>? OnAccept=null);
+		public delegate bool? FileDialogHandler(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept=null);
 		/// <summary>
 		/// Delegate ColorDialogHandler
 		/// </summary>
@@ -73,7 +70,7 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// <param name="par">The par.</param>
 		/// <param name="OnAccept">The on accept.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		public delegate bool? ColorDialogHandler(Color color, ref ColorDialog par, Action<Color, ColorDialog>? OnAccept=null);
+		public delegate bool? ColorDialogHandler(Color color, IColorDialog par, Action<Color, IColorDialog>? OnAccept=null);
 		/// <summary>
 		/// Delegate FontDialogHandler
 		/// </summary>
@@ -81,14 +78,14 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// <param name="par">The par.</param>
 		/// <param name="OnAccept">The on accept.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		public delegate bool? FontDialogHandler(Font font, ref FontDialog par, Action<Font, FontDialog>? OnAccept = null);
+		public delegate bool? FontDialogHandler(Font font, IFontDialog par, Action<Font, IFontDialog>? OnAccept = null);
 		/// <summary>
 		/// Delegate PrintDialogHandler
 		/// </summary>
 		/// <param name="par">The par.</param>
 		/// <param name="OnPrint">The on print.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		public delegate bool? PrintDialogHandler(ref System.Windows.Controls.PrintDialog par, Action<System.Windows.Controls.PrintDialog>? OnPrint = null);
+		public delegate bool? PrintDialogHandler(IPrintDialog par, Action<IPrintDialog>? OnPrint = null);
 		#endregion
 
 		#region Properties
@@ -195,53 +192,53 @@ namespace MVVM_20_Sysdialogs.ViewModel {
 		/// </summary>
 		public SysDialogsViewModel() {
 			OpenFileOpenDialogCommand = new DelegateCommand((o) => {
-                FileDialog foPar = new OpenFileDialog
-                {
+                IFileDialog foPar = new FileDialogProxy<OpenFileDialog>(new() 
+				{ 
                     FileName = FileOpenName
-                };
-                FileOpenDialog?.Invoke(FileOpenName,ref foPar , 
+                });
+                FileOpenDialog?.Invoke(FileOpenName,foPar , 
 					(s,p) => { 
 						FileOpenName = s; });
 			});
 
 			OpenFileSaveAsDialogCommand = new DelegateCommand((o) => {
-                FileDialog fsPar = new SaveFileDialog
+                IFileDialog fsPar = new FileDialogProxy<SaveFileDialog>(new() 
                 {
                     FileName = FileSaveName
-                };
-                FileSaveAsDialog?.Invoke(FileSaveName, ref fsPar,(s,p) => { FileSaveName = s; });
+                });
+                FileSaveAsDialog?.Invoke(FileSaveName, fsPar, (s,p) => { FileSaveName = s; });
 			});
 
 			OpenDirectoryBrowseDialogCommand = new DelegateCommand((o) => {
-                FileDialog bdPar = new OpenFileDialog
+                IFileDialog bdPar = new FolderBrowserDialog()
                 {
                     FileName = PathName
                 };
-                DirectoryBrowseDialog?.Invoke(PathName, ref bdPar, (s, p) => { PathName = s; });
+                DirectoryBrowseDialog?.Invoke(PathName, bdPar, (s, p) => { PathName = s; });
 			});
 
 			OpenColorDialogCommand = new DelegateCommand((o) => {
-                ColorDialog cdPar = new ColorDialog
+                IColorDialog cdPar = new ColorDialog
                 {
                     Color = MyColor
                 };
-                dColorDialog?.Invoke(MyColor, ref cdPar, (c, p) => { MyColor = c; });
+                dColorDialog?.Invoke(MyColor, cdPar, (c, p) => { MyColor = c; });
 			});
 
 			OpenFontDialogCommand = new DelegateCommand((o) => {
-                FontDialog fdPar = new FontDialog
+                IFontDialog fdPar = new FontDialog
                 {
                     Font = MyFont
                 };
-                dFontDialog?.Invoke(MyFont, ref fdPar, (f, p) => { MyFont = f; });
+                dFontDialog?.Invoke(MyFont, fdPar, (f, p) => { MyFont = f; });
 			});
 
 			OpenPrintDialogCommand = new DelegateCommand((o) => {
-                var dialog = new System.Windows.Controls.PrintDialog
+                IPrintDialog dialog = new PrintDialog()
                 {
                     PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages
                 };
-                dPrintDialog?.Invoke(ref dialog, (p) => {/* ? */ });
+                dPrintDialog?.Invoke(dialog, (p) => {/* ? */ });
 			});
 		}
 		#endregion

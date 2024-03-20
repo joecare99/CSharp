@@ -1,11 +1,13 @@
-<Project>
-	<Import Project="..\Libraries.props"/>
+﻿<Project>
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481-windows;net472-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net472-windows;net48-windows</TargetFrameworks>
 		<TargetFrameworks Condition="True">$(TargetFrameWorks);net462-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
 		<SignAssembly>True</SignAssembly>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -17,5 +19,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="CommonDialogs.csproj.bak" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="ReachFramework" />
+	  <Reference Include="System.Printing" />
 	</ItemGroup>
 </Project>

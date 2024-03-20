@@ -128,7 +128,7 @@ namespace GenFree.Helper
             Ubgt1 = Ubgt1.Replace((char)138, 'è');
             Ubgt1 = Ubgt1.Replace((char)138, 'è');
             Ubgt1 = Ubgt1.Replace($"{(char)236}", "oo");
-            Ubgt1 = Ubgt1.Replace((char)(175), (char)(187));
+            Ubgt1 = Ubgt1.Replace((char)175, (char)187);
             Ubgt1 = Ubgt1.Replace("\xA5", "Ñ");
             Ubgt1 = Ubgt1.Replace("\xA4", "ñ");
             Ubgt1 = Ubgt1.Replace('\xA3'.AsString(), "ú");

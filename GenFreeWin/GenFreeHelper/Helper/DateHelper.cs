@@ -44,5 +44,6 @@ namespace GenFree.Helper
                     asRes[i+offs] = adDates[i].ToString("yyyy.MM.dd");
             return asRes;
         }
+
     }
 }

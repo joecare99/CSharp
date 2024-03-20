@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ItemsControlTut4.ViewModel.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System;

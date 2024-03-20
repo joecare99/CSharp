@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xaml.Behaviors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CanvasWPF2_ItemTemplateSelector.ViewModel
@@ -30,7 +25,7 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
             {
                 mouseDown = true;
                 var mousePosition = e.GetPosition(iObjParent);
-                var elementPosition = (AssociatedObject.DataContext as ShapeData)?.point ?? new Point(0, 0);
+                var elementPosition = (AssociatedObject.DataContext as IVisualObject)?.point ?? new Point(0, 0);
                 delta = elementPosition - mousePosition;
                 AssociatedObject.CaptureMouse();
             };
@@ -40,10 +35,10 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
                 if (!mouseDown) return;
                 var mousePosition = e.GetPosition(iObjParent);
                 var elementPosition = mousePosition + delta;
-                var c = (AssociatedObject.DataContext as ShapeData);
+                var c = (AssociatedObject.DataContext as IVisualObject);
                 if (c != null)
                     c.point = elementPosition;
-                (AssociatedObject.DataContext as ShapeData)?.MouseHover.Execute(AssociatedObject.DataContext);
+                (AssociatedObject.DataContext as IVisualObject)?.MouseHover.Execute(AssociatedObject.DataContext);
             };
 
             AssociatedObject.MouseLeftButtonUp += (s, e) =>
@@ -54,7 +49,7 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 
             AssociatedObject.MouseEnter += (s, e) =>
             {
-                (AssociatedObject.DataContext as ShapeData)?.MouseHover.Execute(AssociatedObject.DataContext);
+                (AssociatedObject.DataContext as IVisualObject)?.MouseHover.Execute(AssociatedObject.DataContext);
             };
         }
     }

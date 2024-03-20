@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -13,6 +13,9 @@
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
     <Page Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>
 
 </Project>
