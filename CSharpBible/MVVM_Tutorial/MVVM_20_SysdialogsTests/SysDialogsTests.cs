@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Controls;
 
-namespace MVVM_20_Sysdialogs.View.Tests
+namespace MVVM_20_Sysdialogs.Views.Tests
 {
     [TestClass()]
     public class SysDialogsTests
