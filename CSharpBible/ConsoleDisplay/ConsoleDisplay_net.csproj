@@ -13,5 +13,8 @@
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="View\Interfaces\" />
+  </ItemGroup>
 
 </Project>
