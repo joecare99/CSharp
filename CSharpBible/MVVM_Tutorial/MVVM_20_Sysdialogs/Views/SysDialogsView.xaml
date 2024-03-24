@@ -9,8 +9,7 @@
       xmlns:vc="clr-namespace:MVVM_20_Sysdialogs.Converter"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="SysDialogsView" 
-        Loaded="Page_Loaded">
+      Title="SysDialogsView" Loaded="Page_Loaded">
     <Page.DataContext>
         <mvvm:SysDialogsViewModel/>
     </Page.DataContext>
