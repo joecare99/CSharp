@@ -7,6 +7,7 @@
 		<UserSecretsId>5ea416fc-196d-4c0f-b36b-b8fc509a293a</UserSecretsId>
 		<BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<StaticWebAssetBasePath>CSharp</StaticWebAssetBasePath>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.targets" />
@@ -40,6 +41,10 @@
 	  <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
 	  <ProjectReference Include="..\MyComponent\Shared\MyComponent.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\CSharp\" />
 	</ItemGroup>
 
 </Project>
