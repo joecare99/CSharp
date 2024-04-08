@@ -25,32 +25,6 @@ namespace WPF_ControlsAndLayout.Views
 
         public bool RealTimeUpdate = true;
 
-        private void HandleSelectionChanged(object sender, SelectionChangedEventArgs args)
-        {
-        }
-
-        protected void HandleTextChanged(object sender, TextChangedEventArgs me)
-        {
-
-            try
-            {
-                if (RealTimeUpdate) ParseCurrentBuffer(TextBox1.Text);
-                TextBox1.Foreground = Brushes.Black;
-                ErrorText.Text = "";
-            }
-
-            catch (XamlParseException xpe)
-            {
-                TextBox1.Foreground = Brushes.Red;
-                TextBox1.TextWrapping = TextWrapping.Wrap;
-                ErrorText.Text = xpe.Message;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
         private void ParseCurrentBuffer(string str)
         {
 
@@ -62,10 +36,10 @@ namespace WPF_ControlsAndLayout.Views
             ms.Position = 0;
 
             var content = XamlReader.Load(ms);
-            if (content != null)
+            if (content is UIElement uie)
             {
                 cc.Children.Clear();
-                cc.Children.Add((UIElement)content);
+                cc.Children.Add(uie);
             }
 
         }

@@ -68,8 +68,9 @@ namespace WPF_ControlsAndLayout.ViewModels
 
         [ObservableProperty]
         private GridLength _codeRowHeight = new GridLength(0.5,GridUnitType.Star);
+        private int cnt=0;
         #endregion
-  
+
         #region Methods
         public static System.ComponentModel.DataAnnotations.ValidationResult XamlValidator(string value, ValidationContext context)
         {
@@ -131,6 +132,7 @@ namespace WPF_ControlsAndLayout.ViewModels
         partial void OnXamlTextChanged(string newValue)
         {
             This = this;
+            cnt = 0;
             if (string.IsNullOrWhiteSpace(newValue))
                 return;
 
@@ -171,6 +173,12 @@ namespace WPF_ControlsAndLayout.ViewModels
         {
             PreviewRowHeight = new GridLength(1, GridUnitType.Star);
             CodeRowHeight = new GridLength(1, GridUnitType.Star);
+        }
+
+        [RelayCommand]
+        private void Test1()
+        {
+            ErrorText = $"Test1:{++cnt}";
         }
         #endregion
     }

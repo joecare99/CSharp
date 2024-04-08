@@ -18,7 +18,7 @@ using System.Windows.Controls;
 using CommonDialogs.Interfaces;
 using System.Drawing;
 
-namespace MVVM_20_Sysdialogs.View
+namespace MVVM_20_Sysdialogs.Views
 {
     /// <summary>
     /// Interaktionslogik für SysDialogs.xaml

@@ -25,4 +25,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 	.AddScoped<IConsoleHandler,ConsoleHandler>()
 	.AddScoped<IConsole,WebConsole>();
 IoC.ServiceProvider = builder.Services.BuildServiceProvider();
-await builder.Build().RunAsync();
+
+var app = builder.Build();
+await app.RunAsync();
