@@ -195,7 +195,27 @@ public class EmailDialog : Window, IEmailDialog
         fs.Close();
 
         var email = new Email(server, account, port, sslCheck, toEmail, fromEmail, password, bodyMessage, this,
-            subject);
+            subject, CreateDialog);
+    }
+
+    private static void CreateDialog(string msg)
+    {
+        var w = new Window();
+        var sp = new StackPanel { Background = Brushes.Transparent };
+        var tb = new TextBlock
+        {
+            Background = sp.Background,
+            TextWrapping = TextWrapping.Wrap,
+            Text = msg
+        };
+        sp.Children.Add(tb);
+
+        w.Content = sp;
+        w.WindowStyle = WindowStyle.ToolWindow;
+        w.Background = Window2.ChangeBackgroundColor(Colors.Wheat);
+        w.Height = 250;
+        w.Width = 600;
+        w.ShowDialog();
     }
 
     private string GetEmail()

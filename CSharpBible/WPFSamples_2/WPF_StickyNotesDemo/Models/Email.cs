@@ -19,11 +19,14 @@ public class Email
     private readonly IEmailDialog _dia;
     private readonly MailMessage _message;
 
+    public Action<string>? onShowMessage { get; set; }
+
     public Email(string server, string login, int port, bool sslCheck, string toAddr, string fromAddr,
         string password,
-        string bodyMessage, IEmailDialog emailDia, string subject)
+        string bodyMessage, IEmailDialog emailDia, string subject,Action<string> showMessage)
     {
         _dia = emailDia;
+        onShowMessage = showMessage;
         try
         {
             var nw = new NetworkCredential(login, password);
@@ -60,7 +63,7 @@ public class Email
         }
         catch (Exception e)
         {
-            CreateDialog(e.Message);
+            onShowMessage?.Invoke(e.Message);
         }
     }
 
@@ -75,35 +78,16 @@ public class Email
         if (e.Error != null)
         {
             _client.SendAsyncCancel();
-            CreateDialog(e.Error.ToString());
+            onShowMessage?.Invoke(e.Error.ToString());
             MailSent = false;
         }
         else
         {
-            CreateDialog("Message Sent");
+            onShowMessage?.Invoke("Message Sent");
             MailSent = true;
             _dia.Close();
         }
         _message.Dispose();
     }
 
-    private static void CreateDialog(string msg)
-    {
-        var w = new Window();
-        var sp = new StackPanel {Background = Brushes.Transparent};
-        var tb = new TextBlock
-        {
-            Background = sp.Background,
-            TextWrapping = TextWrapping.Wrap,
-            Text = msg
-        };
-        sp.Children.Add(tb);
-
-        w.Content = sp;
-        w.WindowStyle = WindowStyle.ToolWindow;
-        w.Background = Window2.ChangeBackgroundColor(Colors.Wheat);
-        w.Height = 250;
-        w.Width = 600;
-        w.ShowDialog();
-    }
 }
