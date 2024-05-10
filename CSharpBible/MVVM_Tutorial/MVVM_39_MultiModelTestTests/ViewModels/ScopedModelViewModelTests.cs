@@ -1,13 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using MVVM.View.Extension;
-using MVVM_39_MultiModelTest.ViewModels;
-using System;
 using NSubstitute;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MVVM_39_MultiModelTest.Models;
 
 namespace MVVM_39_MultiModelTest.ViewModels.Tests
