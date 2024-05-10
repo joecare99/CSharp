@@ -17,7 +17,6 @@ using MVVM.ViewModel.Tests;
 using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
 using MVVM_36_ComToolKtSavesWork.ViewModels;
-using MVVM_36_ComToolKtSavesWork.ViewModels.Tests;
 using System;
 using System.Threading;
 using NSubstitute;

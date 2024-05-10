@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
-using MVVM_38_CTDependencyInjection.Models;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using NSubstitute;
 using System;

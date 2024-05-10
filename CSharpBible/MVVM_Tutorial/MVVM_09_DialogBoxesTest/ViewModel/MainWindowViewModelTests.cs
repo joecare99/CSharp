@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System.Windows;
 
 namespace MVVM_09_DialogBoxes.ViewModel.Tests
 {

@@ -13,7 +13,6 @@
 // ***********************************************************************
 using MVVM_06_Converters_4.View.Converter;
 using MVVM_06_Converters_4.ViewModel;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 

@@ -11,8 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_09_DialogBoxes.ViewModel;
-using System;
 using System.Windows;
 
 namespace MVVM_09_DialogBoxes.Views

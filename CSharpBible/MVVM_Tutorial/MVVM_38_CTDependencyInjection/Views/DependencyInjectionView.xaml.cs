@@ -1,5 +1,4 @@
-﻿using MVVM_38_CTDependencyInjection.ViewModels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace MVVM_38_CTDependencyInjection.Views
 {

@@ -15,7 +15,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
 using MVVM_AllExamples.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 

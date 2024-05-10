@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace MVVM_28_1_DataGridExt.ViewModels.Tests
 {

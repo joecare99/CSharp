@@ -17,10 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Timers;
-using System.Windows.Documents;
 
 /// <summary>
 /// The Models namespace.

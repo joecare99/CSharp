@@ -14,7 +14,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using MVVM_09_DialogBoxes.ViewModel;
-using NSubstitute;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;

@@ -2,10 +2,7 @@
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_38_CTDependencyInjection.Models.Tests
 {
