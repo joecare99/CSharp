@@ -5,7 +5,6 @@ using MVVM_36_ComToolKtSavesWork.Models;
 using MVVM_36_ComToolKtSavesWork.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace MVVM_36_ComToolKtSavesWork.Tests
 {
