@@ -8,6 +8,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
 	</ItemGroup>
 	<ItemGroup>
@@ -39,6 +40,13 @@
 		<ProjectReference Include="..\MVVM_24_UserControl\MVVM_24_UserControl_net.csproj" />
 		<ProjectReference Include="..\MVVM_26_BindingGroupExp\MVVM_26_BindingGroupExp_net.csproj" />
 		<ProjectReference Include="..\MVVM_26_CTBindingGroupExp\MVVM_26_CTBindingGroupExp_net.csproj" />
+		<ProjectReference Include="..\MVVM_33a_CTEvents_To_Commands\MVVM_33a_CTEvents_To_Commands_net.csproj" />
+		<ProjectReference Include="..\MVVM_33_Events_to_Commands\MVVM_33_Events_to_Commands_net.csproj" />
+		<ProjectReference Include="..\MVVM_35_CommunityToolkit\MVVM_35_CommunityToolkit_net.csproj" />
+		<ProjectReference Include="..\MVVM_36_ComToolKtSavesWork\MVVM_36_ComToolKtSavesWork.csproj" />
+		<ProjectReference Include="..\MVVM_37_TreeView\MVVM_37_TreeView_net.csproj" />
+		<ProjectReference Include="..\MVVM_38_CTDependencyInjection\MVVM_38_CTDependencyInjection_net.csproj" />
+		<ProjectReference Include="..\MVVM_39_MultiModelTest\MVVM_39_MultiModelTest_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
