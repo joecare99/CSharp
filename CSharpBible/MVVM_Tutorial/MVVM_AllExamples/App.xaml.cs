@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using System.Windows;
@@ -31,7 +32,28 @@ namespace MVVM_AllExamples
                 .AddTransient<MVVM_22_WpfCap.ViewModel.WpfCapViewModel>()
                 .AddTransient<MVVM_22_CTWpfCap.ViewModel.WpfCapViewModel>()
                 .AddTransient<MVVM_22_WpfCap.Model.IRandom, MVVM_22_WpfCap.Model.CRandom>()
-                .AddTransient<MVVM_22_CTWpfCap.Model.IRandom, MVVM_22_CTWpfCap.Model.CRandom>();
+                .AddTransient<MVVM_22_CTWpfCap.Model.IRandom, MVVM_22_CTWpfCap.Model.CRandom>()
+                .AddSingleton<MVVM_36_ComToolKtSavesWork.Models.IUserRepository, MVVM_36_ComToolKtSavesWork.Models.UserRepository>()
+                .AddSingleton<MVVM_36_ComToolKtSavesWork.Models.ICommunityToolkit2Model, MVVM_36_ComToolKtSavesWork.Models.CommunityToolkit2Model>()
+                .AddSingleton<IMessenger>(WeakReferenceMessenger.Default)
+                .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.MainWindowViewModel>()
+                .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel>()
+                .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.UserInfoViewModel>()
+                .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.LoginViewModel>()
+                .AddSingleton<MVVM_37_TreeView.Services.IBooksService, MVVM_37_TreeView.Services.BooksService>()
+                .AddTransient<MVVM_37_TreeView.ViewModels.MainWindowViewModel>()
+                .AddTransient<MVVM_37_TreeView.ViewModels.BooksTreeViewModel>()
+                .AddSingleton<MVVM_38_CTDependencyInjection.Models.Interfaces.IUserRepository, MVVM_38_CTDependencyInjection.Models.UserRepository>()
+                .AddSingleton<MVVM_38_CTDependencyInjection.Models.Interfaces.ITemplateModel, MVVM_38_CTDependencyInjection.Models.TemplateModel>()
+                .AddTransient<MVVM_38_CTDependencyInjection.Models.Interfaces.ILog, MVVM_38_CTDependencyInjection.Models.CLog>()
+                .AddTransient<MVVM_38_CTDependencyInjection.Models.Interfaces.ITimer, MVVM_38_CTDependencyInjection.Models.CTimer>()
+                .AddTransient<MVVM_38_CTDependencyInjection.Models.Interfaces.ISysTime, MVVM_38_CTDependencyInjection.Models.CSysTime>()
+                .AddTransient<MVVM_38_CTDependencyInjection.ViewModels.MainWindowViewModel>()
+                .AddTransient<MVVM_38_CTDependencyInjection.ViewModels.DependencyInjectionViewModel>()
+
+                .AddSingleton<MVVM_39_MultiModelTest.Models.ISystemModel, MVVM_39_MultiModelTest.Models.SystemModel>()
+                .AddScoped<MVVM_39_MultiModelTest.Models.IScopedModel, MVVM_39_MultiModelTest.Models.ScopedModel>();
+
             var sp = sc.BuildServiceProvider();
             IoC.Configure(sp);
         }

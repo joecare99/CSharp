@@ -29,7 +29,7 @@ namespace MVVM_AllExamples.ViewModels
     public partial class AllExamplesViewModel : BaseViewModelCT
     {
         #region Properties
-        public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
+        public static Func<ITemplateModel> GetModel { get; set; } = () => new AllExampleModel();
 
         private readonly ITemplateModel _model;
 

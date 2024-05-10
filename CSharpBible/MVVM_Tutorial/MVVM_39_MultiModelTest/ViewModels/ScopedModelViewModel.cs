@@ -25,7 +25,7 @@ public partial class ScopedModelViewModel: BaseViewModelCT
     public int ICommonValue { get => _model?.ICommonValue ?? 0; set => _model.ICommonValue = value; }
 
     [ObservableProperty]
-    private string _FrameName = "/Views/DetailPage1.xaml";
+    private string _FrameName = new Uri($"/{nameof(MVVM_39_MultiModelTest)};component/views/DetailPage1.xaml", UriKind.Relative).ToString();
 
     public Action<object> DoClose { get; set; } = _ => { };
 
@@ -59,19 +59,22 @@ public partial class ScopedModelViewModel: BaseViewModelCT
     private void Detail1()
     {
         IoC.SetCurrentScope(Scope);
-        FrameName = "/Views/DetailPage1.xaml";    
+        Uri resourceLocater = new Uri($"/{nameof(MVVM_39_MultiModelTest)};component/views/DetailPage1.xaml", UriKind.Relative);
+        FrameName = resourceLocater.ToString();
     }
     [RelayCommand]
     private void Detail2()
     {
         IoC.SetCurrentScope(Scope);
-        FrameName = "/Views/DetailPage2.xaml";
+        Uri resourceLocater = new Uri($"/{nameof(MVVM_39_MultiModelTest)};component/views/DetailPage2.xaml", UriKind.Relative);
+        FrameName = resourceLocater.ToString();
     }
     [RelayCommand]
     private void Detail3()
     {
         IoC.SetCurrentScope(Scope);
-        FrameName = "/Views/DetailPage3.xaml";
+        Uri resourceLocater = new Uri($"/{nameof(MVVM_39_MultiModelTest)};component/views/DetailPage3.xaml", UriKind.Relative);
+        FrameName = resourceLocater.ToString();
     }
 
 }
