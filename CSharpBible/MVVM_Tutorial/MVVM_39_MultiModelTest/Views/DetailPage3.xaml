@@ -12,7 +12,7 @@
     <Page.DataContext>
         <mvvm:DetailPageViewModel/>
     </Page.DataContext>
-    <StackPanel>
+    <StackPanel VerticalAlignment="Bottom">
         <TextBlock Text="Detail 3"/>
         <TextBlock Text="{Binding Name}"/>
         <TextBlock Text="{Binding Description}"/>
