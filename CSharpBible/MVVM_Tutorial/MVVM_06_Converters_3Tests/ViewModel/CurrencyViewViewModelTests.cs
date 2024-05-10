@@ -1,11 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_06_Converters_3.ViewModel;
 using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_06_Converters_3.ViewModel.Tests
 {
