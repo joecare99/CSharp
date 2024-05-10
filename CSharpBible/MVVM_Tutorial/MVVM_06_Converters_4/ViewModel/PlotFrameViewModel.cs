@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace MVVM_06_Converters_4.ViewModel
 {
