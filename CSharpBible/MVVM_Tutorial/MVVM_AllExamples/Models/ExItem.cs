@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 05-19-2023
 // ***********************************************************************
-// <copyright file="TemplateModel.cs" company="JC-Soft">
+// <copyright file="AllExampleModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2023
 // </copyright>
 // <summary></summary>
