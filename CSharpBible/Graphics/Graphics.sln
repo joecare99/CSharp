@@ -69,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_ImageHandling_net", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_Converter_ImgGrid2", "MVVM_Converter_ImgGrid2\MVVM_Converter_ImgGrid2.csproj", "{F2CA5A63-D15B-4DE8-96B9-2089E64E5571}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "All_Graphics_net", "All_Graphics\All_Graphics_net.csproj", "{D9D4BDBD-9473-40DD-804E-92A63643D5DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,10 @@ Global
 		{F2CA5A63-D15B-4DE8-96B9-2089E64E5571}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2CA5A63-D15B-4DE8-96B9-2089E64E5571}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2CA5A63-D15B-4DE8-96B9-2089E64E5571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9D4BDBD-9473-40DD-804E-92A63643D5DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9D4BDBD-9473-40DD-804E-92A63643D5DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9D4BDBD-9473-40DD-804E-92A63643D5DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9D4BDBD-9473-40DD-804E-92A63643D5DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
