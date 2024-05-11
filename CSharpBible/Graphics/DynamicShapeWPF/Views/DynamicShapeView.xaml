@@ -6,8 +6,8 @@
       xmlns:local="clr-namespace:DynamicShapeWPF.Views"
       xmlns:p="clr-namespace:DynamicShapeWPF.Properties"
       d:DesignHeight="450" d:DesignWidth="800"
-      Window.Title="{x:Static p:Resources.Title}" 
-      Window.ToolTip="{x:Static p:Resources.Description}"
+      Title="{x:Static p:Resources.Title}" 
+      ToolTip="{x:Static p:Resources.Description}"
       mc:Ignorable="d">
 
     <DockPanel>
