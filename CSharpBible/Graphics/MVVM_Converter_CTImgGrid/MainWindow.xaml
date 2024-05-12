@@ -23,7 +23,7 @@
             <RowDefinition Height="80*"/>
         </Grid.RowDefinitions>
         <Viewbox Grid.Row="1" Grid.Column="1"  >
-            <Frame x:Name="Client" Width="640" Height="480" NavigationUIVisibility="Hidden" Loaded="Frame_Loaded" Source="/View/PlotFrame.xaml" />
+            <Frame x:Name="Client" Width="640" Height="480" NavigationUIVisibility="Hidden" Loaded="Frame_Loaded" Source="/Views/PlotFrame.xaml" />
         </Viewbox>
         <WrapPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="2">
             <Button Content="Load Level" Height="40" Width="200" Margin="5" Command="{Binding LoadLevelCommand}"/>
