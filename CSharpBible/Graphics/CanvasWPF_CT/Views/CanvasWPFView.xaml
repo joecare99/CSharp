@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CanvasWPF_CT"
         xmlns:mvvm="clr-namespace:CanvasWPF_CT.ViewModel" 
         mc:Ignorable="d"
-        Title="Dynamic Shapes" Height="450" Width="800">
+        Title="Dynamic Shapes" d:Height="450" d:Width="800">
     <Page.DataContext>
         <mvvm:MainWindowViewModel />
     </Page.DataContext>
