@@ -7,7 +7,7 @@ using MVVM_Converter_CTImgGrid.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace MVVM_Converter_CTImgGrid.View.Converter
+namespace MVVM_Converter_CTImgGrid.Views.Converter
 {
     public class WindowPortToTileDisplay : IValueConverter
     {
