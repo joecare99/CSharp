@@ -25,6 +25,7 @@
 		<ProjectReference Include="..\MVVM_Converter_ImgGrid\MVVM_Converter_ImgGrid.csproj" />
 		<ProjectReference Include="..\MVVM_ImageHandling\MVVM_ImageHandling_net.csproj" />
 		<ProjectReference Include="..\MVVM_Lines_on_Grid2\MVVM_Lines_on_Grid2.csproj" />
+		<ProjectReference Include="..\Polyline\Polyline_net.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
