@@ -13,17 +13,18 @@
         <mvvm:PlotFrameViewModel/>
     </Page.DataContext>
     <Page.Resources>
+        <ImageSource x:Key="imgTile">pack://application:,,,/MVVM_Converter_ImgGrid2;component/Resources/BIG_original.png</ImageSource>
         <vc:WindowPortToTileDisplay x:Key="vcPortGrid" >
             <vc:WindowPortToTileDisplay.brushes>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="0,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="96,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="192,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="288,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="0,64,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="96,64,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="192,64,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="288,64,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="0,128,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="96,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="192,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="288,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,64,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="96,64,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="192,64,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="288,64,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,128,96,64" ViewboxUnits="Absolute"/>
             </vc:WindowPortToTileDisplay.brushes>
             <vc:WindowPortToTileDisplay.TileSize>
                 <Size Height="32" Width="48"/>

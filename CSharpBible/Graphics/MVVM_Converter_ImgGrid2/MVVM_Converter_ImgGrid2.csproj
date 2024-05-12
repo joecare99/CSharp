@@ -10,8 +10,8 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
 	  <None Remove="Resources\BIG_original.png" />
-	  <None Remove="View\BIG_original.png" />
-	  <None Remove="View\WernerTiles.png" />
+	  <None Remove="Views\BIG_original.png" />
+	  <None Remove="Views\WernerTiles.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Resources\BIG_original.png" />
