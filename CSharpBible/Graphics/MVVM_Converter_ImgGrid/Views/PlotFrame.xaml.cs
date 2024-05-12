@@ -1,8 +1,8 @@
-﻿using MVVM_Converter_ImgGrid.View.Converter;
+﻿using MVVM_Converter_ImgGrid.Views.Converter;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_Converter_ImgGrid.View
+namespace MVVM_Converter_ImgGrid.Views
 {
     /// <summary>
     /// Interaktionslogik für PlotFrame.xaml
