@@ -50,7 +50,7 @@ namespace MVVM_Converter_CTDrawGrid2.ViewModel
     public partial class PlotFrameViewModel : BaseViewModelCT
     {
         /// <summary>
-        /// The view port
+        /// The Views port
         /// </summary>
         [ObservableProperty]
         private TileData[] _tiles;
