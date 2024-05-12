@@ -1,10 +1,10 @@
-﻿using MVVM_Converter_CTDrawGrid.View.Converter;
+﻿using MVVM_Converter_CTDrawGrid.Views.Converter;
 using MVVM_Converter_CTDrawGrid.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace MVVM_Converter_CTDrawGrid.View
+namespace MVVM_Converter_CTDrawGrid.Views
 {
     /// <summary>
     /// Interaktionslogik für PlotFrame.xaml
