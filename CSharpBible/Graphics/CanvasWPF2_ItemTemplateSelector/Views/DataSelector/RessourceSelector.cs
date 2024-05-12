@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CanvasWPF2_ItemTemplateSelector.View.DataSelector
+namespace CanvasWPF2_ItemTemplateSelector.Views.DataSelector
 {
     /// <summary>
     /// Class ItemTemplateSelector.

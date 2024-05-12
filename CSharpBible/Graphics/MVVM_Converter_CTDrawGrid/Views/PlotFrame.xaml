@@ -1,10 +1,10 @@
-﻿<Page x:Class="MVVM_Converter_CTDrawGrid.View.PlotFrame"
+﻿<Page x:Class="MVVM_Converter_CTDrawGrid.Views.PlotFrame"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:MVVM_Converter_CTDrawGrid.View"
-      xmlns:vc="clr-namespace:MVVM_Converter_CTDrawGrid.View.Converter"
+      xmlns:local="clr-namespace:MVVM_Converter_CTDrawGrid.Views"
+      xmlns:vc="clr-namespace:MVVM_Converter_CTDrawGrid.Views.Converter"
       xmlns:mvvm="clr-namespace:MVVM_Converter_CTDrawGrid.ViewModel"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -224,16 +224,16 @@
                         </DrawingGroup>
                     </DrawingBrush.Drawing>
                 </DrawingBrush>
-                <!--ImageBrush ImageSource="/View/WernerTiles.png" Stretch="Uniform" Viewbox="0,32,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/View/WernerTiles.png" Stretch="Uniform" Viewbox="0,64,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/View/WernerTiles.png" Stretch="Uniform" Viewbox="0,160,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/View/WernerTiles.png" Stretch="Uniform" Viewbox="0,128,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/View/WernerTiles.png" Stretch="Uniform" Viewbox="0,192,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/View/WernerTiles.png" Stretch="Uniform" Viewbox="0,96,32,32" ViewboxUnits="Absolute"/-->
+                <!--ImageBrush ImageSource="/Views/WernerTiles.png" Stretch="Uniform" Viewbox="0,32,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="/Views/WernerTiles.png" Stretch="Uniform" Viewbox="0,64,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="/Views/WernerTiles.png" Stretch="Uniform" Viewbox="0,160,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="/Views/WernerTiles.png" Stretch="Uniform" Viewbox="0,128,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="/Views/WernerTiles.png" Stretch="Uniform" Viewbox="0,192,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="/Views/WernerTiles.png" Stretch="Uniform" Viewbox="0,96,32,32" ViewboxUnits="Absolute"/-->
                 <DrawingBrush x:Name="Werner" Viewbox="0,0,100,100" ViewboxUnits="Absolute">
                     <DrawingBrush.Drawing>
                         <DrawingGroup>
-                            <!--ImageDrawing ImageSource="/View/WernerTiles.png" Rect="0,-400,100,701"/>
+                            <!--ImageDrawing ImageSource="/Views/WernerTiles.png" Rect="0,-400,100,701"/>
                             <GeometryDrawing x:Name="Canvas">
                                 <GeometryDrawing.Brush>
                                     <SolidColorBrush Color="White" Opacity="0.7"/>
@@ -336,7 +336,7 @@
                 <DrawingBrush x:Name="Meister" Viewbox="0,0,100,100" ViewboxUnits="Absolute">
                     <DrawingBrush.Drawing>
                         <DrawingGroup>
-                            <!--ImageDrawing ImageSource="/View/WernerTiles.png" Rect="0,-600,100,701"/>
+                            <!--ImageDrawing ImageSource="/Views/WernerTiles.png" Rect="0,-600,100,701"/>
                             <GeometryDrawing x:Name="Canvas">
                                 <GeometryDrawing.Brush>
                                     <SolidColorBrush Color="White" Opacity="0.3"/>

@@ -1,7 +1,7 @@
 using CanvasWPF2_ItemTemplateSelector.ViewModel;
 using System.Windows;
 
-namespace CanvasWPF2_ItemTemplateSelector.View
+namespace CanvasWPF2_ItemTemplateSelector.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

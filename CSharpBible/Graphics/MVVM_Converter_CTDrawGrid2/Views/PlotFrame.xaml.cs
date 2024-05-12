@@ -11,11 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_Converter_CTDrawGrid2.View.Converter;
+using MVVM_Converter_CTDrawGrid2.Views.Converter;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_Converter_CTDrawGrid2.View
+namespace MVVM_Converter_CTDrawGrid2.Views
 {
     /// <summary>
     /// Interaktionslogik für PlotFrame.xaml

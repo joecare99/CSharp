@@ -56,6 +56,20 @@ namespace All_Graphics.Models
 
         public List<ExItem> Examples { get; } = [
             ("CanvasWPF", typeof(CanvasWPF.Views.CanvasWPFView), null),
+            ("CanvasWPF2", typeof(CanvasWPF_CT.Views.CanvasWPFView), null),
+            ("CanvasWPF3", typeof(CanvasWPF2_ItemTemplateSelector.Views.CanvasWPFView), null),
+            ("CanvasWPF4", typeof(CanvasWPF2_CTItemTemplateSelector.Views.CanvasWPFView), null),
+            ("DynamicShape", typeof(DynamicShapeWPF.Views.DynamicShapeView), null),
+            ("DrawGrid_CT", typeof(MVVM_Converter_CTDrawGrid.Views.PlotFrame), null),
+            ("DrawGrid2_CT", typeof(MVVM_Converter_CTDrawGrid2.Views.PlotFrame), null),
+            ("ImgGrid_CT", typeof(MVVM_Converter_CTImgGrid.Views.PlotFrame), null),
+            ("DrawGrid", typeof(MVVM_Converter_DrawGrid.Views.PlotFrame), null),
+            ("DrawGrid2", typeof(MVVM_Converter_DrawGrid2.View.PlotFrame), null),
+            ("ImgGrid", typeof(MVVM_Converter_ImgGrid.Views.ImgGridView), null),
+            ("ImgGrid2", typeof(MVVM_Converter_ImgGrid2.Views.ImgGridView), null),
+            ("ImageHandling", typeof(MVVM_ImageHandling.Views.TemplateView), null),
+            ("Lines_on_Grid", typeof(MVVM_Lines_on_Grid2.View.PlotFrame), null),
+            ("PolyLine", typeof(Polyline.Views.PolyLineView), null),
           
 
             

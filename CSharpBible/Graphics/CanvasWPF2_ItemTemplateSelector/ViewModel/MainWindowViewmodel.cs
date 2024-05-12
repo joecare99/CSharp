@@ -42,28 +42,28 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 		/// Gets or sets the dc select shape.
 		/// </summary>
 		/// <value>The dc select shape.</value>
-		public DelegateCommand dcSelectShape { get; set; }
+		public DelegateCommand SelectShapeCommand { get; set; }
 		/// <summary>
 		/// Gets or sets the dc create shape.
 		/// </summary>
 		/// <value>The dc create shape.</value>
-		public DelegateCommand dcCreateShape { get; set; }
+		public DelegateCommand CreateShapeCommand { get; set; }
 		/// <summary>
 		/// Gets or sets the dc delete shape.
 		/// </summary>
 		/// <value>The dc delete shape.</value>
-		public DelegateCommand dcDeleteShape { get; set; }
+		public DelegateCommand DeleteShapeCommand { get; set; }
 
 		/// <summary>
 		/// Gets or sets the dc key down.
 		/// </summary>
 		/// <value>The dc key down.</value>
-		public DelegateCommand dcKeyDown { get; set; }
+		public DelegateCommand KeyDownCommand { get; set; }
 		/// <summary>
 		/// Gets or sets the dc key up.
 		/// </summary>
 		/// <value>The dc key up.</value>
-		public DelegateCommand dcKeyUp { get; set; }
+		public DelegateCommand KeyUpCommand { get; set; }
 		#endregion
 
 		#region Methods
@@ -72,24 +72,24 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 		/// </summary>
 		public MainWindowViewModel()
 		{
-			dcCreateShape = new DelegateCommand(
+			CreateShapeCommand = new DelegateCommand(
 				(o) => DoCreateShape(o),
 				(o) => _editShape != null
 			);
 
-			dcSelectShape = new DelegateCommand(
+			SelectShapeCommand = new DelegateCommand(
 				(o) => DoSelectShape(o),
 				(o) => true
 			);
 
-			dcDeleteShape = new DelegateCommand(
+			DeleteShapeCommand = new DelegateCommand(
 				(o) => DoDeleteShape(o),
 				(o) => true
 			);
 
-			dcKeyDown = new DelegateCommand((o) => { DataText = $"Data: Down {o}"; });
+			KeyDownCommand = new DelegateCommand((o) => { DataText = $"Data: Down {o}"; });
 
-            dcKeyUp = new DelegateCommand((o) => { DataText = $"Data: Up {o}"; });
+            KeyUpCommand = new DelegateCommand((o) => { DataText = $"Data: Up {o}"; });
 
             for (int i = 0; i < 5; i++)
 			{

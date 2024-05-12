@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
 
-namespace CanvasWPF2_CTItemTemplateSelector.View.DataSelector
+namespace CanvasWPF2_CTItemTemplateSelector.Views.DataSelector
 {
     /// <summary>
     /// Class ItemTemplateSelector.
