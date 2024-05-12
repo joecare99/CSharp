@@ -1,8 +1,8 @@
-﻿using MVVM_Converter_DrawGrid.View.Converter;
+﻿using MVVM_Converter_DrawGrid.Views.Converter;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_Converter_DrawGrid.View
+namespace MVVM_Converter_DrawGrid.Views
 {
     /// <summary>
     /// Interaktionslogik für PlotFrame.xaml
