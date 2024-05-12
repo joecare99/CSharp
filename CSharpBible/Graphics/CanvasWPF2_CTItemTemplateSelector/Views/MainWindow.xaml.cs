@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CanvasWPF2_CTItemTemplateSelector.View
+namespace CanvasWPF2_CTItemTemplateSelector.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
