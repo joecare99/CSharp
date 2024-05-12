@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : DynamicShapes
+// Assembly         : CanvasWPF
 // Author           : Mir
 // Created          : 06-16-2022
 //
@@ -11,31 +11,22 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 
-/// <summary>
-/// The Dynamic Shape - Views namespace.
-/// </summary>
-namespace DynamicShapeWPF.Views;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace CanvasWPF.Views
 {
-
-    #region Methode
     /// <summary>
-    /// Initializes a new instance of the <see cref="MainWindow" /> class.
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow" /> class.
+        /// </summary>
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
     }
-    #endregion
 }

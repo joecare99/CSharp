@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CanvasWPF.View
+namespace CanvasWPF.Views
 {
     /// <summary>
     /// Interaktionslogik für CanvasWPFView.xaml
