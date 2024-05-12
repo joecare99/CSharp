@@ -20,7 +20,7 @@ using MVVM_Converter_CTDrawGrid2.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace MVVM_Converter_CTDrawGrid2.View.Converter
+namespace MVVM_Converter_CTDrawGrid2.Views.Converter
 {
     /// <summary>
     /// Class WindowPortToTileDisplay.
