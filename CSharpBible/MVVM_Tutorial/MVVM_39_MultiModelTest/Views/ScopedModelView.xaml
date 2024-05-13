@@ -28,7 +28,7 @@
             <Button Content="Detail2" Command="{Binding Detail2Command}" Width="100" Margin="10"/>
             <Button Content="Detail3" Command="{Binding Detail3Command}" Width="100" Margin="10"/>
         </StackPanel>
-        <Frame Grid.Column="1" Content="Frame" NavigationUIVisibility="Hidden" d:Source="pack://application,,,/Views/DetailPage1.xaml" Source="{Binding FrameName}"/>
+        <Frame Grid.Column="1" Content="Frame" NavigationUIVisibility="Hidden" d:Source="pack://application:,,,/Views/DetailPage1.xaml" Source="{Binding FrameName}"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="1" >
             <Button Content="Close" Command="{Binding CloseCommand}" Width="100" Margin="10"/>
         </StackPanel>
