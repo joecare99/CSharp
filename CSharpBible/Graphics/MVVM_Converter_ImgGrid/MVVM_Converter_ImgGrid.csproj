@@ -19,16 +19,16 @@
 		</Resource>
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Update="Properties\Images.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Images.resx</DependentUpon>
+		<Compile Update="Properties\Resources.Designer.cs">
+		  <DependentUpon>Resources.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Update="Properties\Images.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>Images.Designer.cs</LastGenOutput>
+		<EmbeddedResource Update="Properties\Resources.resx">
+		  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		  <Generator>PublicResXFileCodeGenerator</Generator>
 		</EmbeddedResource>
 	</ItemGroup>
 

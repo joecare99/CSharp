@@ -13,7 +13,7 @@
         <mvvm:PlotFrameViewModel/>
     </Page.DataContext>
     <Page.Resources>
-        <ImageSource x:Key="imgTile">pack://application:,,,/MVVM_Converter_ImgGrid;Component/Resources/WernerTiles.png</ImageSource>
+        <ImageSource x:Key="imgTile">pack://application:,,,/MVVM_Converter_ImgGrid;component/Resources/WernerTiles.png</ImageSource>
         <vc:WindowPortToTileDisplay x:Key="vcPortGrid" d:TileSize="96,96" TileSize="32,32" >
             <vc:WindowPortToTileDisplay.brushes>
                 <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,0,32,32" ViewboxUnits="Absolute"/>
