@@ -1,27 +1,15 @@
-﻿// ***********************************************************************
-// Assembly         : MVVM_Converter_DrawGrid2
-// Author           : Mir
-// Created          : 08-21-2022
-//
-// Last Modified By : Mir
-// Last Modified On : 09-09-2022
-// ***********************************************************************
-// <copyright file="MainWindowViewModel.cs" company="JC-Soft">
-//     (c) by Joe Care 2022
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-using MVVM.ViewModel;
+﻿using MVVM.ViewModel;
 using System;
+using System.Reflection;
 
-namespace MVVM_Converter_DrawGrid2.ViewModel
+namespace MVVM_Converter_DrawGrid.ViewModel
 {
     /// <summary>
-    /// Class MainWindowViewModel.
+    /// Class DrawGridViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel:BaseViewModel
+    public class DrawGridViewModel:BaseViewModel
     {
         /// <summary>
         /// Gets or sets the show client.
@@ -45,10 +33,14 @@ namespace MVVM_Converter_DrawGrid2.ViewModel
         /// <value>The previous level command.</value>
         public DelegateCommand PrevLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.PrevLevel());
 
+        /// <summary>Gets the plot frame source.</summary>
+        /// <value>The plot frame source.</value>
+        public string PlotFrameSource => $"/{Assembly.GetExecutingAssembly().GetName().Name};component/Views/PlotFrame.xaml";
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel" /> class.
+        /// Initializes a new instance of the <see cref="DrawGridViewModel"/> class.
         /// </summary>
-        public MainWindowViewModel()
+        public DrawGridViewModel()
         {
 
         }

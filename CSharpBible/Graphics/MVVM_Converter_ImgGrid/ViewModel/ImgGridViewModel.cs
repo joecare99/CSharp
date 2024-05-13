@@ -1,9 +1,10 @@
 ﻿using MVVM.ViewModel;
 using System;
+using System.Reflection;
 
 namespace MVVM_Converter_ImgGrid.ViewModel
 {
-    public class MainWindowViewModel:BaseViewModel
+    public class ImgGridViewModel:BaseViewModel
     {
         public Func<string, BaseViewModel?>? ShowClient { get; set; }
 
@@ -11,7 +12,8 @@ namespace MVVM_Converter_ImgGrid.ViewModel
         public DelegateCommand NextLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.NextLevel());
         public DelegateCommand PrevLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.PrevLevel());
 
-        public MainWindowViewModel()
+        public string PlotFrameSource => $"/{Assembly.GetExecutingAssembly().GetName().Name};component/Views/PlotFrame.xaml";
+        public ImgGridViewModel()
         {
 
         }

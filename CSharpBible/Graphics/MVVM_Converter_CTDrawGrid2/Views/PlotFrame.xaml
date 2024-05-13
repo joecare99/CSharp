@@ -13,13 +13,14 @@
         <mvvm:PlotFrameViewModel/>
     </Page.DataContext>
     <Page.Resources>
+        <ImageSource x:Key="imgTile">pack://application:,,,/MVVM_Converter_CTDrawGrid2;component/Resources/BIG_original.png</ImageSource>
         <vc:WindowPortToTileDisplay x:Key="vcPortGrid" d:TileSize="144,96" TileSize="48,32">
             <vc:WindowPortToTileDisplay.brushes>
                 <SolidColorBrush Color="Transparent"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="0,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="96,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="192,0,96,64" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="288,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="96,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="192,0,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="288,0,96,64" ViewboxUnits="Absolute"/>
                 <DrawingBrush  x:Name="Box">
                     <DrawingBrush.Drawing>
                         <DrawingGroup>
@@ -360,7 +361,7 @@
                         </DrawingGroup>
                     </DrawingBrush.Drawing>
                 </DrawingBrush>
-                <ImageBrush ImageSource="/Resources/BIG_original.png" Stretch="Uniform" Viewbox="288,64,96,64" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="288,64,96,64" ViewboxUnits="Absolute"/>
             </vc:WindowPortToTileDisplay.brushes>
         </vc:WindowPortToTileDisplay>
         <LinearGradientBrush x:Key="brLandsape" StartPoint="0.5,0" EndPoint="0.5,1">

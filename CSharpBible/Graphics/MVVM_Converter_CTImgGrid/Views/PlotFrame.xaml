@@ -13,15 +13,16 @@
         <mvvm:PlotFrameViewModel/>
     </Page.DataContext>
     <Page.Resources>
+        <ImageSource x:Key="imgTile">pack://application:,,,/MVVM_Converter_CTImgGrid;Component/Resources/WernerTiles.png</ImageSource>
         <vc:WindowPortToTileDisplay x:Key="vcPortGrid" d:TileSize="96,96" TileSize="32,32" >
             <vc:WindowPortToTileDisplay.brushes>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,0,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,32,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,64,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,96,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,128,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,160,32,32" ViewboxUnits="Absolute"/>
-                <ImageBrush ImageSource="/Resources/WernerTiles.png" Stretch="Uniform" Viewbox="0,192,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,0,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,32,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,64,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,96,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,128,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,160,32,32" ViewboxUnits="Absolute"/>
+                <ImageBrush ImageSource="{StaticResource imgTile}" Stretch="Uniform" Viewbox="0,192,32,32" ViewboxUnits="Absolute"/>
             </vc:WindowPortToTileDisplay.brushes>
         </vc:WindowPortToTileDisplay>
         <LinearGradientBrush x:Key="brLandsape" StartPoint="0.5,0" EndPoint="0.5,1">

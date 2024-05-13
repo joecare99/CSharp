@@ -1,14 +1,28 @@
-﻿using MVVM.ViewModel;
+﻿// ***********************************************************************
+// Assembly         : MVVM_Converter_ImgGrid2
+// Author           : Mir
+// Created          : 08-21-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 08-21-2022
+// ***********************************************************************
+// <copyright file="ImgGridViewModel.cs" company="JC-Soft">
+//     (c) by Joe Care 2022
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using MVVM.ViewModel;
 using System;
+using System.Reflection;
 
-namespace MVVM_Converter_DrawGrid.ViewModel
+namespace MVVM_Converter_ImgGrid2.ViewModel
 {
     /// <summary>
-    /// Class MainWindowViewModel.
+    /// Class ImgGridViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel:BaseViewModel
+    public class ImgGridViewModel:BaseViewModel
     {
         /// <summary>
         /// Gets or sets the show client.
@@ -32,10 +46,12 @@ namespace MVVM_Converter_DrawGrid.ViewModel
         /// <value>The previous level command.</value>
         public DelegateCommand PrevLevelCommand { get; set; } = new DelegateCommand((o) => Model.Model.PrevLevel());
 
+        public string PlotFrameSource => $"/{Assembly.GetExecutingAssembly().GetName().Name};component/Views/PlotFrame.xaml";
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
+        /// Initializes a new instance of the <see cref="ImgGridViewModel"/> class.
         /// </summary>
-        public MainWindowViewModel()
+        public ImgGridViewModel()
         {
 
         }

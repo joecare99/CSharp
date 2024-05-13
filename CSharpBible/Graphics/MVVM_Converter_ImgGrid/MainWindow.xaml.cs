@@ -17,7 +17,7 @@ namespace MVVM_Converter_ImgGrid
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainWindowViewModel vm)
+            if (DataContext is ImgGridViewModel vm)
             {
                 vm.ShowClient = _ShowClientinFrame;
             }
@@ -25,7 +25,7 @@ namespace MVVM_Converter_ImgGrid
 
         private void Frame_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainWindowViewModel vm)
+            if (DataContext is ImgGridViewModel vm)
             {
 //                vm.FrameDataContext = e.Source as Frame
             }
