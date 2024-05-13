@@ -64,7 +64,7 @@ namespace MVVM_Converter_DrawGrid2.ViewModel
     public class PlotFrameViewModel : BaseViewModel
     {
         /// <summary>
-        /// The view port
+        /// The Views port
         /// </summary>
         private SWindowPort _viewPort;
 
