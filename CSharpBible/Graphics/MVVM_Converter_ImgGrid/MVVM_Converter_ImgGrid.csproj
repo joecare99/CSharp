@@ -15,7 +15,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Resources\WernerTiles.png">
-			<CopyToOutputDirectory></CopyToOutputDirectory>
 		</Resource>
 	</ItemGroup>
 	<ItemGroup>

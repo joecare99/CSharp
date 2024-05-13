@@ -1,0 +1,34 @@
+﻿<Page x:Class="MVVM_Converter_CTDrawGrid2.Views.DrawGridView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MVVM_Converter_CTDrawGrid2"
+        xmlns:mvvm="clr-namespace:MVVM_Converter_CTDrawGrid2.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Loaded="Window_Loaded">
+    <Page.DataContext>
+        <mvvm:DrawGridViewModel/>
+    </Page.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="640*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="480*"/>
+            <RowDefinition Height="80*"/>
+        </Grid.RowDefinitions>
+        <Viewbox Grid.Row="1" Grid.Column="1"  >
+            <Frame x:Name="Client" Width="640" Height="480" NavigationUIVisibility="Hidden" Loaded="Frame_Loaded" Source="{Binding PlotFrameSource}" />
+        </Viewbox>
+        <WrapPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="2">
+            <Button Content="Load Level" Height="40" Width="200" Margin="5" Command="{Binding LoadLevelCommand}"/>
+            <Button Content="Pevious Level" Height="40" Width="200" Margin="5" Command="{Binding PrevLevelCommand}"/>
+            <Button Content="Next Level" Height="40" Width="200" Margin="5" Command="{Binding NextLevelCommand}"/>
+        </WrapPanel>
+    </Grid>
+</Page>

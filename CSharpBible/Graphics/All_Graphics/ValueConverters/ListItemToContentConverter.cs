@@ -60,7 +60,7 @@ public class ListItemToContentConverter : IValueConverter
                     {
                         tv.Items.Add(new TabItem() { Header = Title, Content = new TextBox() { Text = ex.Message, IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible } });
                     }
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Views")) is string xaml)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("View")) is string xaml)
                     {
                         tv.Items.Add(new TabItem()
                         {
