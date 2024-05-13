@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 09-09-2022
 // ***********************************************************************
-// <copyright file="MainWindowViewModel.cs" company="JC-Soft">
+// <copyright file="DrawGridViewModel.cs" company="JC-Soft">
 //     (c) by Joe Care 2022
 // </copyright>
 // <summary></summary>
@@ -16,17 +16,18 @@ using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MVVM_Converter_CTDrawGrid2.ViewModel
 {
     /// <summary>
-    /// Class MainWindowViewModel.
+    /// Class DrawGridViewModel.
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public partial class MainWindowViewModel : BaseViewModelCT
+    public partial class DrawGridViewModel : BaseViewModelCT
     {
         /// <summary>
         /// Gets or sets the show client.
@@ -35,10 +36,14 @@ namespace MVVM_Converter_CTDrawGrid2.ViewModel
         public Func<string, BaseViewModel?>? ShowClient { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel" /> class.
+        /// Initializes a new instance of the <see cref="DrawGridViewModel" /> class.
         /// </summary>
-        public MainWindowViewModel()
+        public DrawGridViewModel()
         { }
+
+        /// <summary>Gets the plot frame source.</summary>
+        /// <value>The plot frame source.</value>
+        public string PlotFrameSource => $"/{Assembly.GetExecutingAssembly().GetName().Name};component/Views/PlotFrame.xaml";
 
         /// <summary>
         /// Gets or sets the load level command.
