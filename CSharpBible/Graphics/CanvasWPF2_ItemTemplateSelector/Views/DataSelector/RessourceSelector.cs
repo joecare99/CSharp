@@ -43,6 +43,7 @@ namespace CanvasWPF2_ItemTemplateSelector.Views.DataSelector
         /// </summary>
         /// <value>The key.</value>
         public string Key { get; set; } = "";
+        override public string ToString() => Key;
     }
 
     /// <summary>
@@ -56,7 +57,7 @@ namespace CanvasWPF2_ItemTemplateSelector.Views.DataSelector
         /// Gets or sets the item keys.
         /// </summary>
         /// <value>The item keys.</value>
-        public List<KeyString> ItemKeys { get; set; } = new List<KeyString>();
+        public List<object> ItemKeys { get; set; } = new List<object>();
         /// <summary>
         /// When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate" /> based on custom logic.
         /// </summary>
@@ -67,7 +68,7 @@ namespace CanvasWPF2_ItemTemplateSelector.Views.DataSelector
         {
             if (container is FrameworkElement element && item is IVisualObject op && op.sType < ItemKeys.Count)
             {
-                return element.FindResource(ItemKeys[op.sType].Key) as DataTemplate;
+                return element.FindResource(ItemKeys[op.sType].ToString()) as DataTemplate;
             }
             else return null;
         }
