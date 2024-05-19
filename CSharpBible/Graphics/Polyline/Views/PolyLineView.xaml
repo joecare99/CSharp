@@ -10,19 +10,9 @@
         
         Title="MainWindow" d:Height="450" d:Width="800">
     <Page.DataContext>
-        <mvvm:MainWindowViewModel />
+        <mvvm:PolyLineViewModel />
     </Page.DataContext>
-    <Page.Resources>
-        <mvvm:PolylineCollection x:Key="plCollection">
-            <mvvm:Polyline>
-                <mvvm:Coordinate X="150" Y="50"/>
-                <mvvm:Coordinate X="300" Y="100"/>
-                <mvvm:Coordinate X="250" Y="150"/>
-                <mvvm:Coordinate X="100" Y="200"/>
-            </mvvm:Polyline>
-        </mvvm:PolylineCollection>
-    </Page.Resources>
-    <Grid DataContext="{Binding plCollection}" d:DataContext="{StaticResource plCollection}">
+    <Grid DataContext="{Binding plCollection}">
         <Grid.ColumnDefinitions>
 
             <ColumnDefinition/>
