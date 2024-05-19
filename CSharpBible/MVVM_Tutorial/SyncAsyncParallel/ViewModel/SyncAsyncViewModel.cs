@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 12-29-2021
 // ***********************************************************************
-// <copyright file="MainWindowViewModel.cs" company="JC-Soft">
+// <copyright file="SyncAsyncViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2021
 // </copyright>
 // <summary></summary>
@@ -21,177 +21,63 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Diagnostics;
 
-namespace SyncAsyncParallel.ViewModel
+namespace SyncAsyncParallel.ViewModel;
+
+/// <summary>
+/// Class SyncAsyncViewModel.
+/// Implements the <see cref="BaseViewModelCT" />
+/// </summary>
+/// <seealso cref="BaseViewModelCT" />
+public partial class SyncAsyncViewModel(ISyncAsyncModel iModel) : BaseViewModelCT
 {
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// The information text
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    [ObservableProperty]
+    private string _infoText="";
+
+    private ISyncAsyncModel _iModel = iModel;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SyncAsyncViewModel"/> class.
+    /// </summary>
+    public SyncAsyncViewModel():this(new SyncAsyncModel())
     {
-        /// <summary>
-        /// The url's
-        /// </summary>
-        readonly string[] urls = new string[]{
-            "https://www.stackoverflow.com",
-            "https://www.microsoft.com",
-            "https://www.youtube.com",
-            "https://www.windows.com",
-            "https://www.asm.net",
-            "https://www.jc99.de",
-            "https://www.google.com",
-            "https://www.yahoo.com",
-            "https://www.bing.com",
-            "https://www.gmail.com"
-        };
-
-
-        /// <summary>
-        /// The information text
-        /// </summary>
-        string infoText="";
-
-        /// <summary>
-        /// Gets or sets the information text.
-        /// </summary>
-        /// <value>The information text.</value>
-        public string InfoText
-        {
-            get => infoText; set
-            {
-                if (value == infoText) return;
-                infoText = value;
-                RaisePropertyChanged();
-            }
-        }
-        /// <summary>
-        /// Gets the download synchronize command.
-        /// </summary>
-        /// <value>The download synchronize command.</value>
-        public DelegateCommand Download_syncCmd { get; private set; }
-        /// <summary>
-        /// Gets the download asynchronous command.
-        /// </summary>
-        /// <value>The download asynchronous command.</value>
-        public DelegateCommand Download_asyncCmd { get; private set; }
-        /// <summary>
-        /// Gets the download asynchronous para command.
-        /// </summary>
-        /// <value>The download asynchronous para command.</value>
-        public DelegateCommand Download_async_paraCmd { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public MainWindowViewModel()
-        {
-            Download_syncCmd = new DelegateCommand((o) => Download_sync());
-            Download_asyncCmd = new DelegateCommand((o) =>_ = Download_async());
-            Download_async_paraCmd = new DelegateCommand((o) =>_= Download_async_para());
-        }
-
-        /// <summary>
-        /// Downloads the synchronize.
-        /// </summary>
-        void Download_sync()
-        {
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<DownloadResult> results = new(urls.Length);
-            foreach (string url in urls)
-            {
-                results.Add(_DownloadUrl(url));
-                ShowResults(results);
-                Application.Current?.Dispatcher.Invoke(DispatcherPriority.Background, new ThreadStart(delegate { }));
-            }
-            watch.Stop();
-            InfoText += $"Total Execution Time {watch.ElapsedMilliseconds}ms";
-        }
-
-        /// <summary>
-        /// Downloads the asynchronous.
-        /// </summary>
-        async Task Download_async()
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<DownloadResult> results = new(urls.Length);
-            foreach (string url in urls)
-            {
-                results.Add(await Task.Run(() => _DownloadUrl(url)));
-                ShowResults(results);
-            }
-            watch.Stop();
-            InfoText += $"Total Execution Time {watch.ElapsedMilliseconds}ms";
-        }
-        /// <summary>
-        /// Downloads the asynchronous para.
-        /// </summary>
-        async Task Download_async_para()
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            List<Task<DownloadResult>> tasklist =new(urls.Length);
-            foreach (string url in urls)
-            {
-                tasklist.Add(Task.Run(() => _DownloadUrl(url)));
-            }
-
-            List<DownloadResult> results = new();
-            while (tasklist.Count>0)
-            {
-                var result = await Task.WhenAny(tasklist);
-                tasklist.Remove(result);
-                results.Add(result.Result);
-                ShowResults(results);
-            }
-            watch.Stop();
-            InfoText += $"Total Execution Time {watch.ElapsedMilliseconds}ms";
-        }
-
-        /// <summary>
-        /// Downloads the URL.
-        /// </summary>
-        /// <param name="url">The URL.</param>
-        /// <returns>DownloadResult.</returns>
-        private DownloadResult _DownloadUrl(string url)
-        {
-            using HttpClient client = new();
-            try
-            {
-                string html = client.GetStringAsync(url).Result;
-                return new DownloadResult()
-                {
-                    Html = html,
-                    Url = url
-                };
-            }
-            catch (Exception e)
-            {
-                return new DownloadResult()
-                {
-                    Html = e.Message,
-                    Url = url
-                };
-
-            }
-        }
-        /// <summary>
-        /// Shows the results.
-        /// </summary>
-        /// <param name="results">The results.</param>
-        private void ShowResults(List<DownloadResult> results)
-        {
-            StringBuilder text = new();
-            foreach (var result in results)
-            {
-                text.Append(result.Url);
-                text.Append('\t');
-                text.Append(result.ContentLength);
-                text.Append(Environment.NewLine);
-            }
-            this.InfoText = text.ToString();
-
-        }
     }
+
+
+    /// <summary>
+    /// Downloads the synchronize.
+    /// </summary>
+    [RelayCommand]
+    private void Download_sync()
+    {
+        var ElapsedMilliseconds = _iModel.Download_sync((s)=> InfoText =s);
+        InfoText += $"Total Execution Time {ElapsedMilliseconds}ms";
+    }
+
+    /// <summary>
+    /// Downloads the asynchronous.
+    /// </summary>
+    [RelayCommand]
+    async Task Download_async()
+    {
+        long watch = await _iModel.Download_async((s) => InfoText = s);
+        InfoText += $"Total Execution Time {watch}ms";
+    }
+
+    /// <summary>
+    /// Downloads the asynchronous para.
+    /// </summary>
+    [RelayCommand]
+    async Task Download_async_para()
+    {
+        long watch = await _iModel.Download_async_para((s) => InfoText = s);
+        InfoText += $"Total Execution Time {watch}ms";
+    }
+
 }
