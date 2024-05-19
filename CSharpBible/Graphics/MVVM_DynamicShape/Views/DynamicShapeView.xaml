@@ -1,0 +1,38 @@
+﻿<Page x:Class="MVVM_DynamicShape.Views.DynamicShapeView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:local="clr-namespace:MVVM_DynamicShape.Views"
+      xmlns:mvvm="clr-namespace:MVVM_DynamicShape.ViewModels"
+      xmlns:p="clr-namespace:MVVM_DynamicShape.Properties"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static p:Resources.Title}" 
+      ToolTip="{x:Static p:Resources.Description}"
+      mc:Ignorable="d">
+    <Page.DataContext>
+        <mvvm:DynamicShapeViewModel />
+    </Page.DataContext>
+    <DockPanel>
+        <ToggleButton DockPanel.Dock="Top" Width="100" Name="CreateShape1" Command="{Binding Shape1Command}" Content="{x:Static p:Resources.btnShape1}" />
+        <ToggleButton DockPanel.Dock="Top" Width="100" Name="CreateShape2" Command="{Binding Shape2Command}" Content="{x:Static p:Resources.btnShape2}" />
+
+        <Label DockPanel.Dock="Bottom" Content="{Binding SText}" /> 
+        <Canvas Background="Gray" Name="canvasArea"
+                ClipToBounds="True">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonDown">
+                    <i:InvokeCommandAction Command="{Binding MouseLeftButtonDownCommand}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseRightButtonDown">
+                    <i:InvokeCommandAction Command="{Binding MouseRightButtonDownCommand}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="Resize">
+                    <i:InvokeCommandAction Command="{Binding ResizeCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <Button Canvas.Left="10" Canvas.Top="10">test</Button>
+        </Canvas>
+    </DockPanel>
+</Page>
