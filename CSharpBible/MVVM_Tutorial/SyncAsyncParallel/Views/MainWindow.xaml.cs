@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace SyncAsyncParallel.View
+namespace SyncAsyncParallel.Views
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml

@@ -4,14 +4,15 @@
 		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 		<UseWPF>true</UseWPF>
+		<RunSettingsFilePath>C:\Projekte\CSharp\bin\MVVM_06_Converters_3Tests\Debug\net462-windows\fine-code-coverage\coverage-tool-output\MVVM_06_Converters_3Tests %28net462%29-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.3.1" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.3.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.4.3" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.4.3" />
 		<PackageReference Include="coverlet.collector" Version="6.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

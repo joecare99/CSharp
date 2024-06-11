@@ -155,9 +155,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\CheckMarkGreen.png">
+    <Resource Include="..\Resources\CheckMarkGreen.png">
       <Link>Resources\CheckMarkGreen.png</Link>
-    </None>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -172,7 +172,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\FireAtDelphi.bmp" />
+    <Resource Include="Resources\FireAtDelphi.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

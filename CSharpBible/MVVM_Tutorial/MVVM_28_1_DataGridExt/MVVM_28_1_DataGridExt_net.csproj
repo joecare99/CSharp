@@ -8,7 +8,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
