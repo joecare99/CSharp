@@ -9,6 +9,6 @@ namespace Basic_Del03_General.ViewModels
 
         public string Greeting => Resources.ResourceManager.GetString(model.Greeting);
 
-        public double CalcResult model.myCalc(3,2);
+        public double CalcResult => model.myCalc(3,2);
     }
 }
