@@ -13,7 +13,7 @@ namespace MVVM_20_Sysdialogs.Views.Tests
     [TestClass()]
     public class SysDialogsTests
     {
-        SysDialogs? testView = null;
+        SysDialogsView? testView = null;
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private SysDialogsViewModel vm;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
@@ -40,7 +40,7 @@ namespace MVVM_20_Sysdialogs.Views.Tests
         {
             Assert.IsNotNull(testView);
             Assert.IsNotNull(vm);
-            Assert.IsInstanceOfType(testView, typeof(SysDialogs));
+            Assert.IsInstanceOfType(testView, typeof(SysDialogsView));
             Assert.IsInstanceOfType(vm, typeof(SysDialogsViewModel));     
         }
 
