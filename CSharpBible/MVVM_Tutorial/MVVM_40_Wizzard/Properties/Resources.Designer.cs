@@ -70,7 +70,52 @@ namespace MVVM_40_Wizzard.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
+        ///   Sucht eine lokalisierte Zeichenfolge, die 1. Make selection ähnelt.
+        /// </summary>
+        public static string Page1 {
+            get {
+                return ResourceManager.GetString("Page1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 2. Fine selection ähnelt.
+        /// </summary>
+        public static string Page2 {
+            get {
+                return ResourceManager.GetString("Page2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 3. Additionals ähnelt.
+        /// </summary>
+        public static string Page3 {
+            get {
+                return ResourceManager.GetString("Page3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 4. Options ähnelt.
+        /// </summary>
+        public static string Page4 {
+            get {
+                return ResourceManager.GetString("Page4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die CT-Template-View ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_40_Wizzard.Views.WizzardView&quot;
         ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
@@ -78,11 +123,11 @@ namespace MVVM_40_Wizzard.Properties {
         ///      xmlns:local=&quot;clr-namespace:MVVM_40_Wizzard.Views&quot;
         ///      xmlns:p=&quot;clr-namespace:MVVM_40_Wizzard.Properties&quot;
         ///      xmlns:vc=&quot;clr-namespace:MVVM_40_Wizzard.ValueConverter&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace: [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
-        public static string TemplateView {
+        public static string WizzardView {
             get {
-                return ResourceManager.GetString("TemplateView", resourceCulture);
+                return ResourceManager.GetString("WizzardView", resourceCulture);
             }
         }
         
@@ -99,20 +144,11 @@ namespace MVVM_40_Wizzard.Properties {
         /////     Copyright © JC-Soft 2022
         ///// &lt;/copyright&gt;
         ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// ************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///// ****************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
-        public static string TemplateViewModel {
+        public static string WizzardViewModel {
             get {
-                return ResourceManager.GetString("TemplateViewModel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die CT-Template-View ähnelt.
-        /// </summary>
-        public static string Title {
-            get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("WizzardViewModel", resourceCulture);
             }
         }
     }

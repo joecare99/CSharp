@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
 using System;
@@ -23,12 +24,10 @@ namespace MVVM_40_Wizzard.ViewModels
     /// Implements the <see cref="BaseViewModel" />
     /// </summary>
     /// <seealso cref="BaseViewModel" />
-    public partial class TemplateViewModel : BaseViewModelCT
+    public partial class WizzardViewModel : BaseViewModelCT
     {
         #region Properties
-        public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
-
-        private readonly ITemplateModel _model;
+        private readonly IWizzardModel _model;
 
         public DateTime Now => _model.Now;
         #endregion
@@ -37,11 +36,11 @@ namespace MVVM_40_Wizzard.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public TemplateViewModel():this(GetModel())
+        public WizzardViewModel():this(IoC.GetRequiredService<IWizzardModel>())
         {
         }
 
-        public TemplateViewModel(ITemplateModel model)
+        public WizzardViewModel(IWizzardModel model)
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;
