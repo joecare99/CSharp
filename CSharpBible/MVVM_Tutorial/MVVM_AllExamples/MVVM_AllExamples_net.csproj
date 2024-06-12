@@ -43,7 +43,7 @@
 		<ProjectReference Include="..\MVVM_33a_CTEvents_To_Commands\MVVM_33a_CTEvents_To_Commands_net.csproj" />
 		<ProjectReference Include="..\MVVM_33_Events_to_Commands\MVVM_33_Events_to_Commands_net.csproj" />
 		<ProjectReference Include="..\MVVM_35_CommunityToolkit\MVVM_35_CommunityToolkit_net.csproj" />
-		<ProjectReference Include="..\MVVM_36_ComToolKtSavesWork\MVVM_36_ComToolKtSavesWork.csproj" />
+		<ProjectReference Include="..\MVVM_36_ComToolKtSavesWork\MVVM_36_ComToolKtSavesWork_net.csproj" />
 		<ProjectReference Include="..\MVVM_37_TreeView\MVVM_37_TreeView_net.csproj" />
 		<ProjectReference Include="..\MVVM_38_CTDependencyInjection\MVVM_38_CTDependencyInjection_net.csproj" />
 		<ProjectReference Include="..\MVVM_39_MultiModelTest\MVVM_39_MultiModelTest_net.csproj" />
