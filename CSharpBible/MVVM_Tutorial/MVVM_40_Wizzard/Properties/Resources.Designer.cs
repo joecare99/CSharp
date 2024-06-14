@@ -160,6 +160,44 @@ namespace MVVM_40_Wizzard.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_40_Wizzard.Views.Page1View&quot;
+        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_40_Wizzard.ViewModels&quot; 
+        ///      xmlns:local=&quot;clr-namespace:MVVM_40_Wizzard.Views&quot;
+        ///      mc:Ignorable=&quot;d&quot; 
+        ///      d:DesignHeight=&quot;450&quot; d:DesignW [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Page1View {
+            get {
+                return ResourceManager.GetString("Page1View", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_40_Wizzard
+        ///// Author           : Mir
+        ///// Created          : 06-13-2024
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 06-13-2024
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;Page1ViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2023
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// *********************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Page1ViewModel {
+            get {
+                return ResourceManager.GetString("Page1ViewModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die 2. Fine selection ähnelt.
         /// </summary>
         public static string Page2 {
@@ -273,6 +311,27 @@ namespace MVVM_40_Wizzard.Properties {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_40_Wizzard
+        ///// Author           : Mir
+        ///// Created          : 05-19-2023
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 05-19-2023
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;WizzardModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2023
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ************************************************************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string WizzardModel {
+            get {
+                return ResourceManager.GetString("WizzardModel", resourceCulture);
             }
         }
         
