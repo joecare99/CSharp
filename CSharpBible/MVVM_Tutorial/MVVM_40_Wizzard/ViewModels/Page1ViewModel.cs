@@ -45,7 +45,7 @@ public partial class Page1ViewModel : BaseViewModelCT
     /// <value>The main selection.</value>
     public ListEntry? MainSelection
     {
-        get => MainOptions.First((e)=>e.ID==_model.MainSelection);
+        get => MainOptions.FirstOrDefault((e)=>e.ID==_model.MainSelection);
         set => _model.MainSelection = value?.ID ?? -1;
     }
 

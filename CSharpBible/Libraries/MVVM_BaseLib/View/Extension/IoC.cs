@@ -100,7 +100,7 @@ namespace MVVM.View.Extension
 
         public static IServiceScope GetNewScope(IServiceScope? aScope=null)
         {
-            return aScope==null? GetScope(): aScope.ServiceProvider.CreateScope();
+            return _Scope = aScope ==null? GetScope(): aScope.ServiceProvider.CreateScope();
         }
 
         public static void SetCurrentScope(IServiceScope scope)

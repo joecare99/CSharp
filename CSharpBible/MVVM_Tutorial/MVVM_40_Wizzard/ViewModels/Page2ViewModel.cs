@@ -44,7 +44,7 @@ public partial class Page2ViewModel : BaseViewModelCT
     /// <value>The sub selection.</value>
     public ListEntry? SubSelection
     {
-        get => SubOptions.First((e)=>e.ID== _model.SubSelection);
+        get => SubOptions.FirstOrDefault((e)=>e.ID== _model.SubSelection);
         set => _model.SubSelection = value?.ID ?? -1;
     }
 

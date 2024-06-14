@@ -1,14 +1,20 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using MVVM.View.Extension;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 
 namespace MVVM.View.Extension.Tests
 {
     [TestClass()]
-    public class IoCTests:BaseTestViewModel
+    public class IoCTests : BaseTestViewModel
     {
         private Func<Type, object?>? _gsOld;
         private Func<Type, object>? _grsOld;
+        private Func<IServiceScope> _gscOld;
+        private IServiceScopeFactory _f;
+
         private object GetReqSrv(Type arg)
         {
             DoLog($"GetReqSrv({arg})");
@@ -20,20 +26,35 @@ namespace MVVM.View.Extension.Tests
             DoLog($"GetSrv({arg})");
             return null;
         }
+        private IServiceScope GetScope()
+        {
+            DoLog($"GetScope()");
+            IServiceScope serviceScope = Substitute.For<IServiceScope>();
+            serviceScope.ServiceProvider.GetService(typeof(IServiceScopeFactory)).Returns<object>( _f);
+            return serviceScope;
+        }
+
 
         [TestInitialize]
         public void Init()
         {
             _gsOld = IoC.GetSrv;
             _grsOld = IoC.GetReqSrv;
+            _gscOld = IoC.GetScope;
             IoC.GetSrv = GetSrv;
             IoC.GetReqSrv = GetReqSrv;
+            IoC.GetScope = GetScope;
+            _f = Substitute.For<IServiceScopeFactory>();
+            _f.CreateScope().Returns((_)=>GetScope());
         }
 
+
         [TestCleanup]
-        public void CleanUp() {
-            IoC.GetSrv= _gsOld!;
-            IoC.GetReqSrv= _grsOld!;
+        public void CleanUp()
+        {
+            IoC.GetSrv = _gsOld!;
+            IoC.GetReqSrv = _grsOld!;
+            IoC.GetScope = _gscOld;
         }
 
         [TestMethod()]
@@ -46,7 +67,7 @@ namespace MVVM.View.Extension.Tests
         [TestMethod()]
         public void GetRequiredServiceTest()
         {
-            Assert.AreEqual(this,IoC.GetRequiredService<Object>());
+            Assert.AreEqual(this, IoC.GetRequiredService<Object>());
             Assert.AreEqual("GetReqSrv(System.Object)\r\n", DebugLog);
         }
 
@@ -66,6 +87,43 @@ namespace MVVM.View.Extension.Tests
             };
             Assert.AreEqual(this, ioc.ProvideValue(null!));
             Assert.AreEqual("GetReqSrv(System.Object)\r\n", DebugLog);
+        }
+
+        [TestMethod()]
+        public void GetNewScopeTest()
+        {
+            var s =IoC.GetNewScope() ;
+            Assert.IsNotNull(s);
+            var s2 = IoC.GetNewScope(s);
+            Assert.IsNotNull(s2);
+            Assert.AreNotEqual(s, s2);
+            Assert.AreEqual("GetScope()\r\nGetScope()\r\n", DebugLog);
+        }
+
+        [TestMethod()]
+        public void SetCurrentScopeTest()
+        {
+            var s = IoC.GetNewScope();
+            Assert.AreEqual("GetScope()\r\n", DebugLog);
+            Assert.AreEqual(s,IoC.Scope);
+            var s2 = IoC.GetNewScope(s);
+            Assert.AreEqual(s2, IoC.Scope);
+            IoC.SetCurrentScope(s);
+            Assert.AreEqual(s, IoC.Scope);
+            Assert.AreEqual("GetScope()\r\nGetScope()\r\n", DebugLog);
+        }
+
+        [TestMethod()]
+        public void ConfigureTest()
+        {
+            var sp = Substitute.For<IServiceProvider>();
+            sp.GetService(typeof(IServiceScopeFactory)).Returns<object>(_f);
+            sp.GetService(typeof(object)).Returns(this);
+            IoC.Configure(sp);
+            Assert.AreEqual(sp.GetService, IoC.GetSrv);
+            Assert.AreEqual(sp.CreateScope, IoC.GetScope);
+            Assert.AreEqual(sp.GetService(typeof(Object)), IoC.GetRequiredService<Object>());
+            Assert.AreEqual("GetScope()\r\n", DebugLog);
         }
     }
 }
