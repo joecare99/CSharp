@@ -16,6 +16,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="NSubstitute" Version="5.1.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_40_Wizzard\MVVM_40_Wizzard_net.csproj" />

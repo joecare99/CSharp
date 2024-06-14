@@ -411,6 +411,15 @@ namespace BaseLib.Helper.Tests
             Assert.AreNotEqual(oVal2, this[Prop2]);
         }
 
+        [DataTestMethod]
+        [DataRow(nameof(boolProp),true)]
+        [DataRow(null,false)]
+        [DataRow("NoProp",false)]
+        public void IsPropertyTest(string Prop,bool xExp)
+        {
+            Assert.AreEqual(xExp,this.IsProperty(Prop));
+        }
+
         /// <summary>
         /// Gets the property test.
         /// </summary>

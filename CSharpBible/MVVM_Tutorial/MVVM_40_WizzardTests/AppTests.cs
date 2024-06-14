@@ -1,6 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
 using MVVM_40_Wizzard.Models;
+using NSubstitute;
 using System;
 
 namespace MVVM_40_Wizzard.Tests
@@ -29,7 +31,9 @@ namespace MVVM_40_Wizzard.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-                _ when t == typeof(IWizzardModel) => new TemplateModel(),
+                _ when t == typeof(ISysTime) => Substitute.For<ISysTime>(),
+                _ when t == typeof(ILog) => Substitute.For<ISysTime>(),
+                _ when t == typeof(IWizzardModel) => new WizzardModel(IoC.GetRequiredService<ISysTime>(),IoC.GetRequiredService<ILog>()),
                 _ => throw new ArgumentException() };          
         }
 
