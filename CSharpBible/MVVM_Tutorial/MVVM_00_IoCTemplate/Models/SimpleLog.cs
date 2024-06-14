@@ -20,10 +20,11 @@ namespace MVVM_00_IoCTemplate;
 
 public class SimpleLog(ISysTime sysTime):ILog
 {
+    public static Action<string> LogAction { get; set; } = (message) => Debug.WriteLine(message);
     ISysTime _sysTime { get; } = sysTime;
 
     public void Log(string message) 
-        => Debug.WriteLine($"{_sysTime.Now.ToString(CultureInfo.InvariantCulture)}: Msg: {message}");
+        => LogAction($"{_sysTime.Now.ToString(CultureInfo.InvariantCulture)}: Msg: {message}");
     public void Log(string message, Exception exception) 
-        => Debug.WriteLine($"{_sysTime.Now.ToString(CultureInfo.InvariantCulture)}: Err: {message}, {exception}");
+        => LogAction($"{_sysTime.Now.ToString(CultureInfo.InvariantCulture)}: Err: {message}, {exception}");
 }
