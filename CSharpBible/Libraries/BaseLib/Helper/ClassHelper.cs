@@ -28,6 +28,16 @@ namespace BaseLib.Helper
     public static class ClassHelper
     {
         /// <summary>
+        /// is it a property ?.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cls">The CLS.</param>
+        /// <param name="propName">Name of the possible property.</param>
+        /// <returns>bool</returns>
+        public static bool IsProperty<T>(this T cls, string? propName) where T : class
+            => cls.GetType().GetProperty(propName ??"") != null;
+
+        /// <summary>
         /// Gets the property.
         /// </summary>
         /// <typeparam name="T"></typeparam>
