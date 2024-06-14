@@ -61,11 +61,92 @@ namespace MVVM_40_Wizzard.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM-Template using Community-Toolkit ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM-Wizzard ähnelt.
         /// </summary>
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 1. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection0 {
+            get {
+                return ResourceManager.GetString("MainSelection0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 2. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection1 {
+            get {
+                return ResourceManager.GetString("MainSelection1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 10. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection10 {
+            get {
+                return ResourceManager.GetString("MainSelection10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 3. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection3 {
+            get {
+                return ResourceManager.GetString("MainSelection3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 4. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection4 {
+            get {
+                return ResourceManager.GetString("MainSelection4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 6. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection6 {
+            get {
+                return ResourceManager.GetString("MainSelection6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 8. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection8 {
+            get {
+                return ResourceManager.GetString("MainSelection8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 9. Entry ähnelt.
+        /// </summary>
+        public static string MainSelection9 {
+            get {
+                return ResourceManager.GetString("MainSelection9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die next &gt; ähnelt.
+        /// </summary>
+        public static string NextTab {
+            get {
+                return ResourceManager.GetString("NextTab", resourceCulture);
             }
         }
         
@@ -106,7 +187,88 @@ namespace MVVM_40_Wizzard.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die CT-Template-View ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt; previous ähnelt.
+        /// </summary>
+        public static string PrevTab {
+            get {
+                return ResourceManager.GetString("PrevTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 1. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection1 {
+            get {
+                return ResourceManager.GetString("SubSelection1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 11. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection11 {
+            get {
+                return ResourceManager.GetString("SubSelection11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 2. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection2 {
+            get {
+                return ResourceManager.GetString("SubSelection2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 3. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection3 {
+            get {
+                return ResourceManager.GetString("SubSelection3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 5. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection5 {
+            get {
+                return ResourceManager.GetString("SubSelection5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 6. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection6 {
+            get {
+                return ResourceManager.GetString("SubSelection6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 7. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection7 {
+            get {
+                return ResourceManager.GetString("SubSelection7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 9. Subentry ähnelt.
+        /// </summary>
+        public static string SubSelection9 {
+            get {
+                return ResourceManager.GetString("SubSelection9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Wizzard-View ähnelt.
         /// </summary>
         public static string Title {
             get {

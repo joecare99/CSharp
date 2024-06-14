@@ -19,27 +19,39 @@
     </Page.DataContext>
     <DockPanel Background="Silver">
         <Label DockPanel.Dock="Top" Content="Temlate-View:"/>
-        <TabControl>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+            <Button Grid.Column="1" Command="{Binding PrevTabCommand}" Content="{x:Static p:Resources.PrevTab}"/>
+            <Button Grid.Column="2" Command="{Binding NextTabCommand}" Content="{x:Static p:Resources.NextTab}"/>
+        </Grid>
+        <TabControl SelectedIndex="{Binding SelectedTab}">
             <TabItem>
                 <TabItem.Header>
                     <TextBlock Text="{x:Static p:Resources.Page1}"/>
                 </TabItem.Header>
                 <Frame Source="/Views/Page1View.xaml"/>
             </TabItem>
-            <TabItem>
+            <TabItem IsEnabled="{Binding Tab2Enabled}">
                 <TabItem.Header>
                     <TextBlock Text="{x:Static p:Resources.Page2}"/>
                 </TabItem.Header>
                 <Frame Source="/Views/Page2View.xaml"/>
             </TabItem>
-            <TabItem Header="{x:Static p:Resources.Page3}">
+            <TabItem Header="{x:Static p:Resources.Page3}" IsEnabled="{Binding Tab3Enabled}">
                 <Frame Source="/Views/Page3View.xaml"/>
             </TabItem>
-            <TabItem Header="{x:Static p:Resources.Page4}">
+            <TabItem Header="{x:Static p:Resources.Page4}" IsEnabled="{Binding Tab4Enabled}">
                 <Grid>
                     <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
                 </Grid>
             </TabItem>
         </TabControl>
+        
     </DockPanel>
 </Page>

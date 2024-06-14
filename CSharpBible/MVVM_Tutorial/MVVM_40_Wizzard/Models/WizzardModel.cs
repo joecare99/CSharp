@@ -14,6 +14,8 @@
 using BaseLib.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Timers;
 
 /// <summary>
@@ -43,7 +45,27 @@ namespace MVVM_40_Wizzard.Models
         private readonly ILog _log;
         private readonly ISysTime _sysTime;
         public DateTime Now
-            => _sysTime.Now; 
+            => _sysTime.Now;
+
+        [ObservableProperty]
+        private int _mainSelection = -1;
+
+        [ObservableProperty]
+        private IList<int> _mainOptions = [0, 1, 3, 4, 6, 8, 9, 10];
+
+        [ObservableProperty]
+        private int _subSelection = -1;
+
+        [ObservableProperty]
+        private IList<int> _subOptions = [ 1,2, 3, 5, 6, 7, 9, 11];
+
+        [ObservableProperty]
+        private int _additional1 = -1;
+        [ObservableProperty]
+        private int _additional2 = -1;
+        [ObservableProperty]
+        private int _additional3 = -1;
+
         #endregion
 
         #region Methods
@@ -59,6 +81,20 @@ namespace MVVM_40_Wizzard.Models
             _timer = new(250d);
             _timer.Elapsed += (s, e) => OnPropertyChanged(nameof(Now));
             _timer.Start();
+        }
+
+        partial void OnMainSelectionChanged(int value)
+        {
+            Additional1 = -1;
+            Additional2 = -1;
+            Additional3 = -1;
+        }
+
+        partial void OnSubSelectionChanged(int value)
+        {
+            Additional1 = -1;
+            Additional2 = -1;
+            Additional3 = -1;
         }
 
 #if !NET5_0_OR_GREATER

@@ -118,7 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Description" xml:space="preserve">
-    <value>MVVM-Template using Community-Toolkit</value>
+    <value>MVVM-Wizzard</value>
+  </data>
+  <data name="MainSelection0" xml:space="preserve">
+    <value>1. Entry</value>
+  </data>
+  <data name="MainSelection1" xml:space="preserve">
+    <value>2. Entry</value>
+  </data>
+  <data name="MainSelection10" xml:space="preserve">
+    <value>10. Entry</value>
+  </data>
+  <data name="MainSelection3" xml:space="preserve">
+    <value>3. Entry</value>
+  </data>
+  <data name="MainSelection4" xml:space="preserve">
+    <value>4. Entry</value>
+  </data>
+  <data name="MainSelection6" xml:space="preserve">
+    <value>6. Entry</value>
+  </data>
+  <data name="MainSelection8" xml:space="preserve">
+    <value>8. Entry</value>
+  </data>
+  <data name="MainSelection9" xml:space="preserve">
+    <value>9. Entry</value>
+  </data>
+  <data name="NextTab" xml:space="preserve">
+    <value>next &gt;</value>
   </data>
   <data name="Page1" xml:space="preserve">
     <value>1. Make selection</value>
@@ -132,8 +159,35 @@
   <data name="Page4" xml:space="preserve">
     <value>4. Options</value>
   </data>
+  <data name="PrevTab" xml:space="preserve">
+    <value>&lt; previous</value>
+  </data>
+  <data name="SubSelection1" xml:space="preserve">
+    <value>1. Subentry</value>
+  </data>
+  <data name="SubSelection11" xml:space="preserve">
+    <value>11. Subentry</value>
+  </data>
+  <data name="SubSelection2" xml:space="preserve">
+    <value>2. Subentry</value>
+  </data>
+  <data name="SubSelection3" xml:space="preserve">
+    <value>3. Subentry</value>
+  </data>
+  <data name="SubSelection5" xml:space="preserve">
+    <value>5. Subentry</value>
+  </data>
+  <data name="SubSelection6" xml:space="preserve">
+    <value>6. Subentry</value>
+  </data>
+  <data name="SubSelection7" xml:space="preserve">
+    <value>7. Subentry</value>
+  </data>
+  <data name="SubSelection9" xml:space="preserve">
+    <value>9. Subentry</value>
+  </data>
   <data name="Title" xml:space="preserve">
-    <value>CT-Template-View</value>
+    <value>Wizzard-View</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="WizzardView" type="System.Resources.ResXFileRef, System.Windows.Forms">
