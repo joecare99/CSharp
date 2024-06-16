@@ -88,7 +88,7 @@ namespace MVVM_06_Converters.Properties {
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:local=&quot;clr-namespace:MVVM_06_Converters.View&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_06_Converters.ViewModel&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_06_Converters.ViewModels&quot;
         ///      xmlns:vc=&quot;clr-namespace:MVVM_06_Converters.Valu [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string CurrencyView {
