@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using Telerik.JustMock;
 
-namespace MVVM_22_CTWpfCap.ViewModel.Tests
+namespace MVVM_22_CTWpfCap.ViewModels.Tests
 {
     public class TestWpfCapModel : IWpfCapModel
     {
@@ -124,7 +124,7 @@ namespace MVVM_22_CTWpfCap.ViewModel.Tests
         {
             _m.FireTileChange();
             Assert.AreEqual("", _m.DebugOut);
-            Assert.AreEqual("PropChange(MVVM_22_CTWpfCap.ViewModel.RowData,TileColor)\r\nPropChange(MVVM_22_CTWpfCap.ViewModel.RowData,TileColor)\r\nPropChange(MVVM_22_CTWpfCap.ViewModel.RowData,TileColor)\r\nPropChange(MVVM_22_CTWpfCap.ViewModel.RowData,TileColor)\r\n", DebugOut);
+            Assert.AreEqual("PropChange(MVVM_22_CTWpfCap.ViewModels.RowData,TileColor)\r\nPropChange(MVVM_22_CTWpfCap.ViewModels.RowData,TileColor)\r\nPropChange(MVVM_22_CTWpfCap.ViewModels.RowData,TileColor)\r\nPropChange(MVVM_22_CTWpfCap.ViewModels.RowData,TileColor)\r\n", DebugOut);
         }
 
         [DataTestMethod()]
