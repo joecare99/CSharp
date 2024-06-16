@@ -8,7 +8,7 @@ using MVVM.ViewModel;
 using System.ComponentModel;
 using MVVM.View.Extension;
 
-namespace MVVM_06_Converters_4.ViewModel.Tests
+namespace MVVM_06_Converters_4.ViewModels.Tests
 {
     [TestClass()]
     public class VehicleViewModelTests : BaseTestViewModel<VehicleViewModel>
@@ -102,19 +102,19 @@ namespace MVVM_06_Converters_4.ViewModel.Tests
             Assert.AreEqual(oExp, testModel.GetProp(sProp));
         }
         [DataTestMethod()]
-        [DataRow(nameof(IAGVModel.VehicleDim), new[] { @"PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,VehicleLength)=0
-PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,VehicleWidth)=0
+        [DataRow(nameof(IAGVModel.VehicleDim), new[] { @"PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,VehicleLength)=0
+PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,VehicleWidth)=0
 " })]
-        [DataRow(nameof(IAGVModel.SwivelKoor), new[] { @"PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,SwivelKoorX)=0
-PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,SwivelKoorY)=0
+        [DataRow(nameof(IAGVModel.SwivelKoor), new[] { @"PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,SwivelKoorX)=0
+PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,SwivelKoorY)=0
 " })]
-        [DataRow(nameof(IAGVModel.AxisOffset), new[] { @"PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,AxisOffset)=0
+        [DataRow(nameof(IAGVModel.AxisOffset), new[] { @"PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,AxisOffset)=0
 " })]
-        [DataRow(nameof(IAGVModel.AGVVelocity), new[] { @"PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,VehicleVelocityX)=0
-PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,VehicleVelocityY)=0
-PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,AGVVelocity)=( 0, 0)
+        [DataRow(nameof(IAGVModel.AGVVelocity), new[] { @"PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,VehicleVelocityX)=0
+PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,VehicleVelocityY)=0
+PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,AGVVelocity)=( 0, 0)
 " })]
-        [DataRow(nameof(IAGVModel.VehicleRotation), new[] { @"PropChg(MVVM_06_Converters_4.ViewModel.VehicleViewModel,VehicleRotation)=0
+        [DataRow(nameof(IAGVModel.VehicleRotation), new[] { @"PropChg(MVVM_06_Converters_4.ViewModels.VehicleViewModel,VehicleRotation)=0
 " })]
         [DataRow(null, new[] { @"" })]
         public void OnPropertyChangedTest(string sProp, string[] asExp)

@@ -2,7 +2,7 @@
 using MVVM.ViewModel;
 using System.Collections.Generic;
 
-namespace MVVM_06_Converters_4.ViewModel.Tests
+namespace MVVM_06_Converters_4.ViewModels.Tests
 {
     [TestClass()]
     public class PlotFrameViewModelTests: BaseTestViewModel<PlotFrameViewModel>

@@ -7,14 +7,14 @@ namespace MVVM_06_Converters_4.View.Converter.Tests
     public class WindowPortToGridLinesTests
     {
         WindowPortToGridLines testVC;
-        ViewModel.SWindowPort wp;
+        ViewModels.SWindowPort wp;
 
         [TestInitialize]
         public void TestInit()
         {
             testVC = new WindowPortToGridLines();
             testVC.WindowSize = new System.Windows.Size(200, 100);
-            wp = new ViewModel.SWindowPort() { Parent=null!,port=new System.Drawing.RectangleF(-10,-10,20,20) };
+            wp = new ViewModels.SWindowPort() { Parent=null!,port=new System.Drawing.RectangleF(-10,-10,20,20) };
         }
 
         [TestMethod()]
