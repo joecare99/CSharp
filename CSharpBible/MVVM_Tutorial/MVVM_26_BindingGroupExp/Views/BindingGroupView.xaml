@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_26_BindingGroupExp.Views"
-        xmlns:mvvm="clr-namespace:MVVM_26_BindingGroupExp.ViewModel"
+        xmlns:mvvm="clr-namespace:MVVM_26_BindingGroupExp.ViewModels"
         xmlns:src="clr-namespace:MVVM_26_BindingGroupExp.Views.Validation"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">

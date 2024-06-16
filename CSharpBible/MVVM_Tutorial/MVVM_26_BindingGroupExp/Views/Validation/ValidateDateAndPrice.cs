@@ -1,4 +1,4 @@
-﻿using MVVM_26_BindingGroupExp.ViewModel;
+﻿using MVVM_26_BindingGroupExp.ViewModels;
 using System;
 using System.Globalization;
 using System.Windows.Controls;

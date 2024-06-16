@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_26_BindingGroupExp"
         xmlns:p="clr-namespace:MVVM_26_BindingGroupExp.Properties"
-        xmlns:mvvm="clr-namespace:MVVM_26_BindingGroupExp.ViewModel"
+        xmlns:mvvm="clr-namespace:MVVM_26_BindingGroupExp.ViewModels"
         mc:Ignorable="d"
         Title="{x:Static p:Resources.Title}" 
         ToolTip="{x:Static p:Resources.Description}"

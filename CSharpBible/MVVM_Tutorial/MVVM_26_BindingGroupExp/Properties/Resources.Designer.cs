@@ -67,7 +67,7 @@ namespace MVVM_26_BindingGroupExp.Properties {
         ///        xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
         ///        xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
         ///        xmlns:local=&quot;clr-namespace:MVVM_26_BindingGroupExp.Views&quot;
-        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_26_BindingGroupExp.ViewModel&quot;
+        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_26_BindingGroupExp.ViewModels&quot;
         ///        xmlns:src=&quot;clr [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string BindingGroupView {
@@ -77,7 +77,7 @@ namespace MVVM_26_BindingGroupExp.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die using MVVM_26_BindingGroupExp.ViewModel;
+        ///   Sucht eine lokalisierte Zeichenfolge, die using MVVM_26_BindingGroupExp.ViewModels;
         ///using System.Windows;
         ///using System.Windows.Controls;
         ///
