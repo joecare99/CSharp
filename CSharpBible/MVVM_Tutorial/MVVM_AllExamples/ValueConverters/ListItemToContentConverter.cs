@@ -76,15 +76,15 @@ public class ListItemToContentConverter : IValueConverter
                             Content = new TextBox() { Text = d[xamlcs], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("ViewModel")) is string vm)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("ViewModels")) is string vm)
                     {
                         tv.Items.Add(new TabItem()
                         {
-                            Header = "ViewModel",
+                            Header = "ViewModels",
                             Content = new TextBox() { Text = d[vm], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Model") && !o.EndsWith("ViewModel")) is string mdl)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Model") && !o.EndsWith("ViewModels")) is string mdl)
                     {
                         tv.Items.Add(new TabItem()
                         {

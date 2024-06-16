@@ -41,6 +41,7 @@ namespace MVVM.View.Extension.Tests
             _gsOld = IoC.GetSrv;
             _grsOld = IoC.GetReqSrv;
             _gscOld = IoC.GetScope;
+            Assert.ThrowsException<NotImplementedException>(() => _gscOld?.Invoke());
             IoC.GetSrv = GetSrv;
             IoC.GetReqSrv = GetReqSrv;
             IoC.GetScope = GetScope;
@@ -106,10 +107,16 @@ namespace MVVM.View.Extension.Tests
             var s = IoC.GetNewScope();
             Assert.AreEqual("GetScope()\r\n", DebugLog);
             Assert.AreEqual(s,IoC.Scope);
+            s.ServiceProvider.GetService(typeof(object)).Returns<object>(null);
             var s2 = IoC.GetNewScope(s);
             Assert.AreEqual(s2, IoC.Scope);
+            s2.ServiceProvider.GetService(typeof(object)).Returns<object>(this);
+            IoC.SetCurrentScope(s2);
+            Assert.AreEqual(s2, IoC.Scope);
+            Assert.IsNotNull(IoC.GetRequiredService<Object>());
             IoC.SetCurrentScope(s);
             Assert.AreEqual(s, IoC.Scope);
+            Assert.ThrowsException<InvalidOperationException>(()=> IoC.GetRequiredService<Object>());
             Assert.AreEqual("GetScope()\r\nGetScope()\r\n", DebugLog);
         }
 

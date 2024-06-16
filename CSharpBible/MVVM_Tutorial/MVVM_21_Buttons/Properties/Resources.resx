@@ -128,7 +128,7 @@
     <value>..\Views\ButtonsView.xaml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ButtonsViewViewModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ViewModel\ButtonsViewViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\ViewModels\ButtonsViewViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Tutorial #21: a game to show how to handle dependencies</value>

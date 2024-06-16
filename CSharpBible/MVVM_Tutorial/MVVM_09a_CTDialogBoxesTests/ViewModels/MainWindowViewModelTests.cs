@@ -4,7 +4,7 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 
-namespace MVVM_09a_CTDialogBoxes.ViewModel.Tests
+namespace MVVM_09a_CTDialogBoxes.ViewModels.Tests
 {
     [TestClass()]
     public class MainWindowViewModelTests : BaseTestViewModel
@@ -66,21 +66,21 @@ namespace MVVM_09a_CTDialogBoxes.ViewModel.Tests
 
         [DataTestMethod()]
         [DataRow(true,MessageBoxResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestNameTrue
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=42 Entwickler
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestNameTrue
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=3
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=42 Entwickler
 ", "42 Entwickler" })]
-        [DataRow(false, MessageBoxResult.OK, new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestNameFalse
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
+        [DataRow(false, MessageBoxResult.OK, new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestNameFalse
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=3
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=Nö
 ", "Nö" })]
         [DataRow(null, MessageBoxResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestName
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=3
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=Nö
 ", "Nö" })]
         public void OpenMsgCommandTest(bool? oAct,MessageBoxResult mrExp, string[] asExp)
         {
@@ -101,27 +101,27 @@ PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=Nö
 
         [DataTestMethod()]
         [DataRow(true,"0", new[] { @"DoOpenMessageBox(TestNameTrue,TestEmailTrue)=>(TestName0, TestMail0)
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestNameTrue
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName0
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Email)=TestEmailTrue
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Email)=TestMail0
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestNameTrue
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=3
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestName0
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Email)=TestEmailTrue
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Email)=TestMail0
 ", "TestName0", "TestMail0" })]
-        [DataRow(false, "1", new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestNameFalse
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Email)=TestEmailFalse
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Email)=
+        [DataRow(false, "1", new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestNameFalse
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=3
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Email)=TestEmailFalse
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Email)=
 ", "","" })]
         [DataRow(null, "2", new[] { @"DoOpenMessageBox(TestName,TestEmail)=>(TestName2, TestMail2)
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Name)=TestName2
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Email)=TestEmail
-PropChg(MVVM_09a_CTDialogBoxes.ViewModel.MainWindowViewModel,Email)=TestMail2
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestName
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=3
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestName2
+PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Email)=TestEmail
+PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Email)=TestMail2
 ", "TestName2", "TestMail2" })]
         public void OpenDialogCommandTest(bool? oAct,string sAct, string[] asExp)
         {

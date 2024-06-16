@@ -1,7 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommonDialogs.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_20_Sysdialogs.ViewModel;
+using MVVM_20_Sysdialogs.ViewModels;
 using NSubstitute;
 using System;
 using System.Drawing;

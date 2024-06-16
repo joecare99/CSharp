@@ -94,7 +94,7 @@ namespace MVVM_09_DialogBoxes.Properties {
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:local=&quot;clr-namespace:MVVM_09_DialogBoxes.Views&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_09_DialogBoxes.ViewModel&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_09_DialogBoxes.ViewModels&quot;
         ///      mc:Ignorable=&quot;d&quot; 
         ///      d:DesignHeight= [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>

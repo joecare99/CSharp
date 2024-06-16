@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_20_Sysdialogs.ViewModel;
+using MVVM_20_Sysdialogs.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;

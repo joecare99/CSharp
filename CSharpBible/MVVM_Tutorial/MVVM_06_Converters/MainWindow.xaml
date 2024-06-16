@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MVVM_06_Converters"
         xmlns:p="clr-namespace:MVVM_06_Converters.Properties"
         xmlns:view="clr-namespace:MVVM_06_Converters.View"
-        xmlns:mvvm="clr-namespace:MVVM_06_Converters.ViewModel"
+        xmlns:mvvm="clr-namespace:MVVM_06_Converters.ViewModels"
         mc:Ignorable="d"
         Title="{x:Static p:Resources.Title}" 
         ToolTip="{x:Static p:Resources.Description}"

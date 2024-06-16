@@ -4,7 +4,7 @@ using MVVM.ViewModel;
 using System;
 using System.ComponentModel;
 
-namespace MVVM_09a_CTDialogBoxes.ViewModel.Tests
+namespace MVVM_09a_CTDialogBoxes.ViewModels.Tests
 {
     [TestClass()]
     public class DialogWindowViewModelTests : BaseTestViewModel
@@ -61,10 +61,10 @@ namespace MVVM_09a_CTDialogBoxes.ViewModel.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(true, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
         [DataRow(false, new[] { @"" })]
-        [DataRow(null, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(null, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
         public void CancelCommandTest(bool? oAct, string[] asExp)
         {
@@ -75,10 +75,10 @@ namespace MVVM_09a_CTDialogBoxes.ViewModel.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(true, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
         [DataRow(false, new[] { @"" })]
-        [DataRow(null, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModel.DialogWindowViewModel,System.EventArgs)
+        [DataRow(null, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
         public void OKCommandTest(bool? oAct, string[] asExp)
         {

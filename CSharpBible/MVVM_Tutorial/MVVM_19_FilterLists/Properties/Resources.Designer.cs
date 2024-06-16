@@ -76,7 +76,7 @@ namespace MVVM_19_FilterLists.Properties {
         ///        xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
         ///        xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
         ///        xmlns:local=&quot;clr-namespace:MVVM_19_FilterLists.Views&quot;
-        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_19_FilterLists.ViewModel&quot;
+        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_19_FilterLists.ViewModels&quot;
         ///        mc:Ignorable=&quot;d&quot;
         ///        Title= [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>

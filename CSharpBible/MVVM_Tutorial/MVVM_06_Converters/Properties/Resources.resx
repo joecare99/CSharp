@@ -125,7 +125,7 @@
     <value>..\View\CurrencyView.xaml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="CurrencyViewModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ViewModel\CurrencyViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\ViewModels\CurrencyViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Tutorial #06: Example of a Currency-ValueConverter</value>

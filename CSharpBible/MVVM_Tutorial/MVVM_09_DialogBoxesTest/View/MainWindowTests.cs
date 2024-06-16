@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM_09_DialogBoxes.ViewModel;
+using MVVM_09_DialogBoxes.ViewModels;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
