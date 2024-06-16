@@ -14,7 +14,7 @@
 using MVVM.ViewModel;
 using System;
 
-namespace MVVM_21_Buttons.ViewModel
+namespace MVVM_21_Buttons.ViewModels
 {
     /// <summary>
     /// Class ButtonsViewViewModel.
