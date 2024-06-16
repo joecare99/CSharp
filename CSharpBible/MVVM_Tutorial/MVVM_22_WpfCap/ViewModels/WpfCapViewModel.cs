@@ -18,7 +18,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace MVVM_22_WpfCap.ViewModel
+namespace MVVM_22_WpfCap.ViewModels
 {
     /// <summary>
     /// Class RowData.
