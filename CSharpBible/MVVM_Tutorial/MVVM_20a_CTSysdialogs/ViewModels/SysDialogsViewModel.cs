@@ -20,7 +20,7 @@ using Microsoft.Win32;
 using MVVM.ViewModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace MVVM_20_Sysdialogs.ViewModel
+namespace MVVM_20_Sysdialogs.ViewModels
 {
 
     /// <summary>
