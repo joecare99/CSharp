@@ -13,7 +13,7 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_06_Converters_2.ViewModel
+namespace MVVM_06_Converters_2.ViewModels
 {
     /// <summary>
     /// Class CurrencyViewModel.

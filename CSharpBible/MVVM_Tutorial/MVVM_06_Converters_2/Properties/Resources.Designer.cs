@@ -67,7 +67,7 @@ namespace MVVM_06_Converters_2.Properties {
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:local=&quot;clr-namespace:MVVM_06_Converters_2.View&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_06_Converters_2.ViewModel&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_06_Converters_2.ViewModels&quot;
         ///      xmlns:vc=&quot;clr-namespace:MVVM_06_Converte [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Currency2View {
