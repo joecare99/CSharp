@@ -89,7 +89,8 @@ namespace MVVM_AllExamples.Models
             ("TreeView",typeof(MVVM_37_TreeView.Views.BooksTreeView),null),
             ("DependencyInjection",typeof(MVVM_38_CTDependencyInjection.Views.DependencyInjectionView),null),
             ("MultiModel",typeof(MVVM_39_MultiModelTest.Views.MultiModelMainView),null),
-
+            ("Wizzard",typeof(MVVM_40_Wizzard.Views.WizzardView),null),
+            ("SyncAsyncParallel",typeof(SyncAsyncParallel.Views.SyncAsyncView),null),
 
             
         ]; 

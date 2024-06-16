@@ -27,6 +27,7 @@ namespace MVVM_AllExamples
         {
             base.OnStartup(e);
             var sc = new ServiceCollection()
+                .AddTransient<BaseLib.Interfaces.ISysTime,BaseLib.Helper.SysTime>()
                 .AddSingleton<MVVM_22_WpfCap.Model.IWpfCapModel, MVVM_22_WpfCap.Model.CWpfCapModel>()
                 .AddSingleton<MVVM_22_CTWpfCap.Model.IWpfCapModel, MVVM_22_CTWpfCap.Model.CWpfCapModel>()
                 .AddTransient<MVVM_22_WpfCap.ViewModel.WpfCapViewModel>()
@@ -50,9 +51,14 @@ namespace MVVM_AllExamples
                 .AddTransient<MVVM_38_CTDependencyInjection.Models.Interfaces.ISysTime, MVVM_38_CTDependencyInjection.Models.CSysTime>()
                 .AddTransient<MVVM_38_CTDependencyInjection.ViewModels.MainWindowViewModel>()
                 .AddTransient<MVVM_38_CTDependencyInjection.ViewModels.DependencyInjectionViewModel>()
+                .AddSingleton<BaseLib.Interfaces.ILog,MVVM_40_Wizzard.Models.SimpleLog>()
 
                 .AddSingleton<MVVM_39_MultiModelTest.Models.ISystemModel, MVVM_39_MultiModelTest.Models.SystemModel>()
-                .AddScoped<MVVM_39_MultiModelTest.Models.IScopedModel, MVVM_39_MultiModelTest.Models.ScopedModel>();
+                .AddScoped<MVVM_39_MultiModelTest.Models.IScopedModel, MVVM_39_MultiModelTest.Models.ScopedModel>()
+
+                .AddSingleton<MVVM_40_Wizzard.Models.IWizzardModel, MVVM_40_Wizzard.Models.WizzardModel>()
+                ;
+
 
             var sp = sc.BuildServiceProvider();
             IoC.Configure(sp);
