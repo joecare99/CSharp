@@ -18,6 +18,7 @@ using MVVM.View.Extension;
 using System;
 using NSubstitute;
 using MVVM_40_Wizzard.Models;
+using System.Collections.Generic;
 
 /// <summary>
 /// The Tests namespace.
@@ -49,6 +50,7 @@ namespace MVVM_40_Wizzard.ViewModels.Tests
                 _ => null
             };
             base.Init();
+            _model!.SubOptions.Returns(new List<int> { 1, 2, 3 });
         }
 
         /// <summary>
