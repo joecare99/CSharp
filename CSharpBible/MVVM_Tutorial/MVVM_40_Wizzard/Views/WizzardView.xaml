@@ -27,29 +27,33 @@
                 <ColumnDefinition Width="10*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
-            <Button Grid.Column="1" Command="{Binding PrevTabCommand}" Content="{x:Static p:Resources.PrevTab}"/>
-            <Button Grid.Column="2" Command="{Binding NextTabCommand}" Content="{x:Static p:Resources.NextTab}"/>
+            <Button Grid.Column="1" Command="{Binding PrevTabCommand}" Content="{x:Static p:Resources.PrevTab}" Margin="5" Padding="10"/>
+            <Button Grid.Column="2" Command="{Binding NextTabCommand}" Content="{x:Static p:Resources.NextTab}" Margin="5" Padding="10"/>
         </Grid>
         <TabControl SelectedIndex="{Binding SelectedTab}">
-            <TabItem>
-                <TabItem.Header>
-                    <TextBlock Text="{x:Static p:Resources.Page1}"/>
+            <TabItem Margin="5" Height="40" >
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page1}" Padding="20,0,30,10" />
                 </TabItem.Header>
-                <Frame Source="/Views/Page1View.xaml"/>
+                <Frame Source="{Binding Page1FrameName}" Margin="5"/>
             </TabItem>
-            <TabItem IsEnabled="{Binding Tab2Enabled}">
-                <TabItem.Header>
-                    <TextBlock Text="{x:Static p:Resources.Page2}"/>
+            <TabItem IsEnabled="{Binding Tab2Enabled}" Margin="5">
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page2}" Padding="20,0,30,0"/>
                 </TabItem.Header>
-                <Frame Source="/Views/Page2View.xaml"/>
+                <Frame Source="{Binding Page2FrameName}" Margin="5"/>
             </TabItem>
-            <TabItem Header="{x:Static p:Resources.Page3}" IsEnabled="{Binding Tab3Enabled}">
-                <Frame Source="/Views/Page3View.xaml"/>
+            <TabItem IsEnabled="{Binding Tab3Enabled}" Margin="5">
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page3}" Padding="20,0,30,0"/>
+                </TabItem.Header>
+                <Frame Source="{Binding Page3FrameName}" Margin="5"/>
             </TabItem>
-            <TabItem Header="{x:Static p:Resources.Page4}" IsEnabled="{Binding Tab4Enabled}">
-                <Grid>
-                    <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
-                </Grid>
+            <TabItem IsEnabled="{Binding Tab4Enabled}" Margin="5">
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page4}" Padding="20,0,30,0"/>
+                </TabItem.Header>
+                <Frame Source="{Binding Page4FrameName}" Margin="5"/>
             </TabItem>
         </TabControl>
         

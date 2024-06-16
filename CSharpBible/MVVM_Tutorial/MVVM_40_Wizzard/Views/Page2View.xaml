@@ -20,7 +20,7 @@
         <StackPanel Grid.Column="0" Orientation="Vertical">
             <Label Content="Name:"/>
             <ListBox ItemsSource="{Binding SubOptions}" SelectedItem="{Binding SubSelection}"/>
-            <Button Content="Clear" Command="{Binding ClearCommand}"/>
+            <Button Content="Clear" Command="{Binding ClearCommand}"  Height="40" Margin="10"/>
         </StackPanel>
     </Grid>
 </Page>

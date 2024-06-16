@@ -19,6 +19,7 @@ using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
 using System;
 using System.ComponentModel;
+using System.Reflection;
 
 /// <summary>
 /// The ViewModels namespace.
@@ -52,6 +53,15 @@ public partial class WizzardViewModel : BaseViewModelCT
     [NotifyCanExecuteChangedFor(nameof(NextTabCommand))]
     private int _selectedTab = 0;
 
+    [ObservableProperty]
+    private string _page1FrameName = new Uri($"/{Assembly.GetExecutingAssembly().GetName().Name};component/views/Page1View.xaml", UriKind.Relative).ToString();
+    [ObservableProperty]
+    private string _page2FrameName = new Uri($"/{Assembly.GetExecutingAssembly().GetName().Name};component/views/Page2View.xaml", UriKind.Relative).ToString();
+    [ObservableProperty]
+    private string _page3FrameName = new Uri($"/{Assembly.GetExecutingAssembly().GetName().Name};component/views/Page3View.xaml", UriKind.Relative).ToString();
+    [ObservableProperty]
+    private string _page4FrameName = new Uri($"/{Assembly.GetExecutingAssembly().GetName().Name};component/views/Page4View.xaml", UriKind.Relative).ToString();
+
     /// <summary>
     /// Gets a value indicating whether [tab2 enabled].
     /// </summary>
@@ -66,7 +76,11 @@ public partial class WizzardViewModel : BaseViewModelCT
     /// Gets a value indicating whether [tab4 enabled].
     /// </summary>
     /// <value><c>true</c> if [tab4 enabled]; otherwise, <c>false</c>.</value>
-    public bool Tab4Enabled => Tab3Enabled && _model.Additional1 >= 0 && _model.Additional2 >= 0 && _model.Additional3 >= 0;
+    public bool Tab4Enabled 
+        => Tab3Enabled 
+        && _model.Additional1 >= 0 
+        && _model.Additional2 >= 0 
+        && _model.Additional3 >= 0;
     #endregion
 
     #region Methods

@@ -53,7 +53,8 @@ public partial class Page1ViewModel : BaseViewModelCT
     /// Gets the main options.
     /// </summary>
     /// <value>The main options.</value>
-    public IList<ListEntry> MainOptions => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
+    public IList<ListEntry> MainOptions 
+        => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
 
 
     /// <summary>
