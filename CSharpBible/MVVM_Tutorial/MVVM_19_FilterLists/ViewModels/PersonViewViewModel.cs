@@ -16,7 +16,7 @@ using MVVM.ViewModel;
 using System;
 using System.Collections.ObjectModel;
 
-namespace MVVM_19_FilterLists.ViewModel
+namespace MVVM_19_FilterLists.ViewModels
 {
     /// <summary>
     /// Class PersonViewViewModel.

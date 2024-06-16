@@ -13,7 +13,7 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_19_FilterLists.ViewModel
+namespace MVVM_19_FilterLists.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
