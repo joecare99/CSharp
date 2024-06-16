@@ -16,42 +16,41 @@ using MVVM_00a_CTTemplate.Models;
 using System;
 using System.ComponentModel;
 
-namespace MVVM_00a_CTTemplate.ViewModels
+namespace MVVM_00a_CTTemplate.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public partial class TemplateViewModel : BaseViewModelCT
 {
+    #region Properties
+    public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
+
+    private readonly ITemplateModel _model;
+
+    public DateTime Now => _model.Now;
+    #endregion
+
+    #region Methods
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public partial class TemplateViewModel : BaseViewModelCT
+    public TemplateViewModel():this(GetModel())
     {
-        #region Properties
-        public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
-
-        private readonly ITemplateModel _model;
-
-        public DateTime Now => _model.Now;
-        #endregion
-  
-        #region Methods
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public TemplateViewModel():this(GetModel())
-        {
-        }
-
-        public TemplateViewModel(ITemplateModel model)
-        {
-            _model = model;
-            _model.PropertyChanged += OnMPropertyChanged;
-        }
-
-        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged(e.PropertyName); 
-        }
-
-        #endregion
     }
+
+    public TemplateViewModel(ITemplateModel model)
+    {
+        _model = model;
+        _model.PropertyChanged += OnMPropertyChanged;
+    }
+
+    private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(e.PropertyName); 
+    }
+
+    #endregion
 }
