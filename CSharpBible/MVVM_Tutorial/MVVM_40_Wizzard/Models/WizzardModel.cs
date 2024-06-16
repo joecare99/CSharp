@@ -35,7 +35,7 @@ namespace MVVM_40_Wizzard.Models
     public partial class WizzardModel :ObservableObject, IWizzardModel
     {
         private const string csAppStartet = "WizzardModel created";
-        private const string csAppStopped = "WizzardModel destroyed";
+        private const string csAppStopped = "WizzardModel stopped";
         #region Properties
         /// <summary>
         /// The timer

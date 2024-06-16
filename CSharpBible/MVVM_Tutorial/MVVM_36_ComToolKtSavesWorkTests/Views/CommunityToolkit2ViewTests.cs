@@ -44,8 +44,6 @@ namespace MVVM_36_ComToolKtSavesWork.Views.Tests
 
         private Func<Type, object?> _gsold;
         private Func<Type, object> _grsold;
-        private IDebugLog _debugLog;
-        private IGetResult _getResult;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private DateTime dtResult = new DateTime(2023,05,01);
 

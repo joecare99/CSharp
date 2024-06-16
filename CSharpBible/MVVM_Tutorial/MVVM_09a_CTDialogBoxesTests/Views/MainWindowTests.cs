@@ -40,7 +40,6 @@ namespace MVVM_09a_CTDialogBoxes.Views.Tests
         MainWindow testView;
         MainWindowViewModel vm;
         private MessageBoxResult mbResult;
-        private IDialogWindow dw;
         private bool? xResult;
         private string sNewName = "NewName";
         private string sNewEmail = "NewEmail";

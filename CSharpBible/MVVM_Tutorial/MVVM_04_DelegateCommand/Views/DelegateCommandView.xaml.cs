@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace MVVM_04_DelegateCommand.Views
+namespace MVVM_04_DelegateCommand.Views;
+
+/// <summary>
+/// Interaktionslogik für DelegateCommandView.xaml
+/// </summary>
+public partial class DelegateCommandView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für DelegateCommandView.xaml
-    /// </summary>
-    public partial class DelegateCommandView : Page
+    public DelegateCommandView()
     {
-        public DelegateCommandView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
