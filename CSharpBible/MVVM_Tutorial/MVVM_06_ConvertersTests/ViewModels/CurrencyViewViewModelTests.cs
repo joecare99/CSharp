@@ -2,7 +2,7 @@
 using MVVM.ViewModel;
 using System.Collections.Generic;
 
-namespace MVVM_06_Converters.ViewModel.Tests
+namespace MVVM_06_Converters.ViewModels.Tests
 {
     [TestClass]
     public class CurrencyViewViewModelTests : BaseTestViewModel<CurrencyViewModel>
@@ -26,7 +26,7 @@ namespace MVVM_06_Converters.ViewModel.Tests
             Assert.AreEqual(10m, testModel.Value);
             testModel.Value = 1m;
             Assert.AreEqual(1m, testModel.Value);
-            Assert.AreEqual(@"PropChg(MVVM_06_Converters.ViewModel.CurrencyViewModel,Value)=1
+            Assert.AreEqual(@"PropChg(MVVM_06_Converters.ViewModels.CurrencyViewModel,Value)=1
 ", DebugLog);
         }
 
