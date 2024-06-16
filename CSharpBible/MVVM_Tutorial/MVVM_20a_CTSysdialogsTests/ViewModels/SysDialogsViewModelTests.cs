@@ -19,7 +19,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 
-namespace MVVM_20_Sysdialogs.ViewModel.Tests
+namespace MVVM_20_Sysdialogs.ViewModels.Tests
 {
     /// <summary>
     /// Defines test class SysDialogsViewModelTests.
