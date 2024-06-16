@@ -19,7 +19,7 @@ using System;
 using CommunityToolkit.Mvvm.Input;
 using MVVM.View.Extension;
 
-namespace MVVM_06_Converters_4.ViewModel
+namespace MVVM_06_Converters_4.ViewModels
 {
     /// <summary>
     /// Class CurrencyViewViewModel.

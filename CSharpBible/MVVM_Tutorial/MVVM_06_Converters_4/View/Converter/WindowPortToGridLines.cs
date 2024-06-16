@@ -19,7 +19,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Shapes;
-using MVVM_06_Converters_4.ViewModel;
+using MVVM_06_Converters_4.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 

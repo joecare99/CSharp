@@ -22,7 +22,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace MVVM_06_Converters_4.ViewModel
+namespace MVVM_06_Converters_4.ViewModels
 {
     /// <summary>
     /// Struct SWindowPort

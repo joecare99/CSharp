@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 using MVVM_06_Converters_4.View.Converter;
 
-namespace MVVM_06_Converters_4.ViewModel
+namespace MVVM_06_Converters_4.ViewModels
 {
     /// <summary>
     /// Class CanvasBehavior.

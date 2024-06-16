@@ -6,7 +6,7 @@
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:MVVM_06_Converters_4.View"
       xmlns:vc="clr-namespace:MVVM_06_Converters_4.View.Converter"
-      xmlns:mvvm="clr-namespace:MVVM_06_Converters_4.ViewModel"
+      xmlns:mvvm="clr-namespace:MVVM_06_Converters_4.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="450"
       Title="PlotFrame" >
