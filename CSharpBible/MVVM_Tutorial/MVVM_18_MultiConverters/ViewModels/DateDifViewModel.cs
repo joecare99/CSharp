@@ -15,7 +15,7 @@ using MVVM.ViewModel;
 using MVVM_18_MultiConverters.Model;
 using System;
 
-namespace MVVM_18_MultiConverters.ViewModel
+namespace MVVM_18_MultiConverters.ViewModels
 {
     /// <summary>
     /// Class DateDifViewModel.
