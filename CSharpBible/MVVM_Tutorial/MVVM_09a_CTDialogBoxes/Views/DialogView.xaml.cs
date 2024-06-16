@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using MVVM_09a_CTDialogBoxes.ViewModel;
+using MVVM_09a_CTDialogBoxes.ViewModels;
 
 namespace MVVM_09a_CTDialogBoxes.Views;
 

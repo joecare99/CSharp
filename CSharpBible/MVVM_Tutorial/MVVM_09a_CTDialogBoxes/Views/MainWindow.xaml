@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_09a_CTDialogBoxes.Views"
         xmlns:p="clr-namespace:MVVM_09a_CTDialogBoxes.Properties"
-        xmlns:mvvm="clr-namespace:MVVM_09a_CTDialogBoxes.ViewModel"
+        xmlns:mvvm="clr-namespace:MVVM_09a_CTDialogBoxes.ViewModels"
         mc:Ignorable="d"
         Title="{x:Static p:Resources.Title}" 
         ToolTip="{x:Static p:Resources.Description}"

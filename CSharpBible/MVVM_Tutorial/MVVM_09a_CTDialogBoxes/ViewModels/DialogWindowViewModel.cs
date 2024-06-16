@@ -16,7 +16,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace MVVM_09a_CTDialogBoxes.ViewModel
+namespace MVVM_09a_CTDialogBoxes.ViewModels
 {
     /// <summary>
     /// Class DialogWindowViewModel.

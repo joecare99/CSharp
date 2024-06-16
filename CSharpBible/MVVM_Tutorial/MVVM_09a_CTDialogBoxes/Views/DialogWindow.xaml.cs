@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_09a_CTDialogBoxes.ViewModel;
+using MVVM_09a_CTDialogBoxes.ViewModels;
 using System;
 using System.Windows;
 
