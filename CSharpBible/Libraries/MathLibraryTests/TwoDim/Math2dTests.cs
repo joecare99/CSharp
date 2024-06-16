@@ -61,87 +61,13 @@ namespace MathLibrary.TwoDim.Tests
 					new object[] {2, -1, sqrt5, Math.PI * 2d - atn05}
 		};
 
-		/// <summary>
-		/// Gets the vector multiply test data.
-		/// </summary>
-		/// <value>The vector multiply test data.</value>
-		static IEnumerable<object[]> VectorMultiplyTestData => new[] {
-					new object[] { 0, 0, 0, 0, 0 },
-					// Identität	
-					new object[] { 0, 0, 1, 0, 0 },
-					new object[] { 1, 0, 1, 1, 0 },
-					new object[] { 1, 1, 1, 1, 1 },
-					new object[] { 0, 1, 1, 0, 1 },
-					new object[] {-1, 1, 1,-1, 1 },
-					new object[] {-1, 0, 1,-1, 0 },
-					new object[] {-1,-1, 1,-1,-1 },
-					new object[] { 0,-1, 1, 0,-1 },
-					new object[] { 1,-1, 1, 1,-1 },
-
-					// Negation
-					new object[] { 0, 0,-1, 0, 0 },
-					new object[] { 1, 0,-1,-1, 0 },
-					new object[] { 1, 1,-1,-1,-1 },
-					new object[] { 0, 1,-1, 0,-1 },
-					new object[] {-1, 1,-1, 1,-1 },
-					new object[] {-1, 0,-1, 1, 0 },
-					new object[] {-1,-1,-1, 1, 1 },
-					new object[] { 0,-1,-1, 0, 1 },
-					new object[] { 1,-1,-1,-1, 1 },
-
-					// Verdoppelung	
-					new object[] { 0, 0, 2, 0, 0 },
-					new object[] { 1, 0, 2, 2, 0 },
-					new object[] { 1, 1, 2, 2, 2 },
-					new object[] { 0, 1, 2, 0, 2 },
-					new object[] {-1, 1, 2,-2, 2 },
-					new object[] {-1, 0, 2,-2, 0 },
-					new object[] {-1,-1, 2,-2,-2 },
-					new object[] { 0,-1, 2, 0,-2 },
-					new object[] { 1,-1, 2, 2,-2 },
-
-					// Verdoppelung negativ
-					new object[] { 0, 0,-2, 0, 0 },
-					new object[] { 1, 0,-2,-2, 0 },
-					new object[] { 1, 1,-2,-2,-2 },
-					new object[] { 0, 1,-2, 0,-2 },
-					new object[] {-1, 1,-2, 2,-2 },
-					new object[] {-1, 0,-2, 2, 0 },
-					new object[] {-1,-1,-2, 2, 2 },
-					new object[] { 0,-1,-2, 0, 2 },
-					new object[] { 1,-1,-2,-2, 2 },
-
-					// Halbierung	
-					new object[] { 0, 0, 0.5, 0, 0 },
-					new object[] { 2, 0, 0.5, 1, 0 },
-					new object[] { 2, 2, 0.5, 1, 1 },
-					new object[] { 0, 2, 0.5, 0, 1 },
-					new object[] {-2, 2, 0.5,-1, 1 },
-					new object[] {-2, 0, 0.5,-1, 0 },
-					new object[] {-2,-2, 0.5,-1,-1 },
-					new object[] { 0,-2, 0.5, 0,-1 },
-					new object[] { 2,-2, 0.5, 1,-1 },
-
-					// Halbierung negativ
-					new object[] { 0, 0,-0.5, 0, 0 },
-					new object[] {-2, 0,-0.5, 1, 0 },
-					new object[] {-2,-2,-0.5, 1, 1 },
-					new object[] { 0,-2,-0.5, 0, 1 },
-					new object[] { 2,-2,-0.5,-1, 1 },
-					new object[] { 2, 0,-0.5,-1, 0 },
-					new object[] { 2, 2,-0.5,-1,-1 },
-					new object[] { 0, 2,-0.5, 0,-1 },
-					new object[] {-2, 2,-0.5, 1,-1 },
-
-		};
-
-		/// <summary>
-		/// Asserts the are equal.
-		/// </summary>
-		/// <param name="exp">The exp.</param>
-		/// <param name="act">The act.</param>
-		/// <param name="message">The message.</param>
-		private void AssertAreEqual(Math2d.Vector exp, Math2d.Vector act, String message = "") {
+        /// <summary>
+        /// Asserts the are equal.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <param name="act">The act.</param>
+        /// <param name="message">The message.</param>
+        private void AssertAreEqual(Math2d.Vector exp, Math2d.Vector act, String message = "") {
 			AssertAreEqual(exp, act, 1e-15d, message);
 		}
 		/// <summary>

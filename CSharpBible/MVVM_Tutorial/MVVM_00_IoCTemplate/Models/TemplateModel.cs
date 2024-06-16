@@ -33,7 +33,9 @@ namespace MVVM_00_IoCTemplate.Models
     public partial class TemplateModel :ObservableObject, ITemplateModel
     {
         private const string csApplStart = "Application startet";
+#if !NET5_0_OR_GREATER
         private const string csApplEnded = "Application ended";
+#endif
         #region Properties
         /// <summary>
         /// The timer

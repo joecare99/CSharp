@@ -17,40 +17,39 @@ using MVVM_00_IoCTemplate.Models;
 using System;
 using System.ComponentModel;
 
-namespace MVVM_00_IoCTemplate.ViewModels
+namespace MVVM_00_IoCTemplate.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public partial class TemplateViewModel : BaseViewModelCT
 {
+    #region Properties
+    private readonly ITemplateModel _model;
+
+    public DateTime Now => _model.Now;
+    #endregion
+
+    #region Methods
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public partial class TemplateViewModel : BaseViewModelCT
+    public TemplateViewModel():this(IoC.GetRequiredService<ITemplateModel>())
     {
-        #region Properties
-        private readonly ITemplateModel _model;
-
-        public DateTime Now => _model.Now;
-        #endregion
-  
-        #region Methods
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public TemplateViewModel():this(IoC.GetRequiredService<ITemplateModel>())
-        {
-        }
-
-        public TemplateViewModel(ITemplateModel model)
-        {
-            _model = model;
-            _model.PropertyChanged += OnMPropertyChanged;
-        }
-
-        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged(e.PropertyName); 
-        }
-
-        #endregion
     }
+
+    public TemplateViewModel(ITemplateModel model)
+    {
+        _model = model;
+        _model.PropertyChanged += OnMPropertyChanged;
+    }
+
+    private void OnMPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(e.PropertyName); 
+    }
+
+    #endregion
 }

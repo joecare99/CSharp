@@ -275,17 +275,6 @@ namespace BaseLib.Helper.Tests
         /// <param name="ix">The ix.</param>
         /// <returns>System.Object.</returns>
         private object this[string ix] { get => GetValue(ix); set => SetVal(ix, value); }
-        /// <summary>
-        /// Gets or sets the <see cref="System.Object" /> with the specified ix.
-        /// </summary>
-        /// <param name="ix">The ix.</param>
-        /// <returns>System.Object.</returns>
-
-        private object this[PropEnum ix]
-        {
-            get => GetValue(ix.ToString());
-            set => SetVal(ix.ToString(), value);
-        }
         #endregion
 
         #region Methods

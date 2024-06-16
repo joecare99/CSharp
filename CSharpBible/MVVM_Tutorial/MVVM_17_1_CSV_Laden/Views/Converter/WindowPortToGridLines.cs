@@ -92,25 +92,6 @@ namespace MVVM_17_1_CSV_Laden.Views.Converter
         private RectangleF actPort;
 
         /// <summary>
-        /// Real2s the vis x.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="xMin">The x minimum.</param>
-        /// <param name="xMax">The x maximum.</param>
-        /// <returns>System.Double.</returns>
-        private double Real2VisX(double value, double xMin, double xMax) =>
-            Real2Vis(value, WindowSize.Width, 0, xMin, xMax);
-        /// <summary>
-        /// Real2s the vis y.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="yMin">The y minimum.</param>
-        /// <param name="yMax">The y maximum.</param>
-        /// <returns>System.Double.</returns>
-        private double Real2VisY(double value, double yMin, double yMax) =>
-            Real2Vis(value, WindowSize.Height, 0, yMin, yMax);
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="WindowPortToGridLines"/> class.
         /// </summary>
         public WindowPortToGridLines()

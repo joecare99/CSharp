@@ -249,141 +249,89 @@ namespace MVVM_06_Converters_4.ViewModels
             OnModelPropChanged(_agv_Model, new PropertyChangedEventArgs(nameof(IAGVModel.VehicleDim)));
         }
 
-        private void DemoData()
-        {
-            
-            _dataset1.Datapoints = new PointF[400];
-            _dataset1.Pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1.0);
-            for (int i = 0; i < _dataset1.Datapoints.Length; i++)
-            {
-                _dataset1.Datapoints[i] = GetPoint(i);
-            }
-           
-            for (int i = 0; i < 20; i++)
-            {
-                var ar = new ArrowData()
-                {
-                    Start = GetPoint(i * 12),
-                    End = GetPoint(i * 12 + 18)
-                };
-                _arrows.Add(ar);
-            }
-
-
-            for (int i = 0; i < 20; i++)
-            {
-                var ar = new CircleData()
-                {
-                    Center = GetPoint(i * 12),
-                    Radius = 0.2f
-                };
-                _circles.Add(ar);
-            }
-
-
-            for (int i = 0; i < 20; i++)
-            {
-                var pd = new PolynomeData()
-                {
-                    Points = new()
-                };
-                for (int j = 0; j < 4; j++)
-                    pd.Points.Add(GetPoint(i * 12 + j));
-                for (int j = 0; j < 4; j++)
-                    pd.Points.Add(GetPoint(i * 12 + 3 - j, 0.8f));
-                _polynomes.Add(pd);
-            }
-
-            static PointF GetPoint(int i, float f = 1f)
-            {
-                return new PointF((float)(Math.Sin(i / 100.0f * Math.PI) * f + Math.Sin(i / 16.0f * Math.PI) * 1.25 * f), (float)(Math.Cos(i / 100.0f * Math.PI) * f + Math.Cos(i / 16.0f * Math.PI) * 1.25 * f));
-            }
-
-        }
-
         private void OnModelPropChanged(object? sender, PropertyChangedEventArgs e)
         {
             // Has to be Optimized
-            _polynomes.Clear();
-            _circles.Clear();
-            _arrows.Clear();
-            _polynomes.Add(new()
+            Polynomes.Clear();
+            Circles.Clear();
+            Arrows.Clear();
+            Polynomes.Add(new()
             {
                 Points = MakeRect(_agv_Model.VehicleDim,0.5f,0.5f)
             });
             if (double.IsNaN(_agv_Model.SwivelKoor.x)  || _agv_Model.SwivelKoor.y == double.NaN) return;
-            _circles.Add(new()
+            Circles.Add(new()
             {
                 Center = new((float)_agv_Model.SwivelKoor.x, (float)_agv_Model.SwivelKoor.y),
                 Radius = _agv_Model.AxisOffset * 0.4f
             });
-            _circles.Add(new()
+            Circles.Add(new()
             {
                 Center = new(-(float)_agv_Model.SwivelKoor.x, -(float)_agv_Model.SwivelKoor.y),
                 Radius = _agv_Model.AxisOffset * 0.4f
             });
             // Rad 1
-            _polynomes.Add(new()
+            Polynomes.Add(new()
             {
                 Points = MakeRotRect(_agv_Model.SwivelKoor,_agv_Model.Swivel1Angle,Math2d.ByLengthAngle(_agv_Model.AxisOffset*0.5,Math.PI*0.5), 0.1f, 0.3f)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, _agv_Model.AxisOffset * 0.5),
                 End = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Wheel1Velocity, _agv_Model.AxisOffset * 0.5)
             });
             // Rad 2
-            _polynomes.Add(new()
+            Polynomes.Add(new()
             {
                 Points = MakeRotRect(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(_agv_Model.AxisOffset * 0.5, -Math.PI * 0.5), 0.1f, 0.3f)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, _agv_Model.AxisOffset * -0.5),
                 End = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Wheel2Velocity, _agv_Model.AxisOffset * -0.5)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, 0),
                 End = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Swivel1Velocity, 0)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, _agv_Model.AxisOffset * 0.4),
                 End = MakeRotArrow(_agv_Model.SwivelKoor, _agv_Model.Swivel1Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Swivel1Rot * _agv_Model.AxisOffset * -0.4, _agv_Model.AxisOffset * 0.4)
             });
             // Rad 3
-            _polynomes.Add(new()
+            Polynomes.Add(new()
             {
                 Points = MakeRotRect(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(_agv_Model.AxisOffset * 0.5, Math.PI * 0.5), 0.1f, 0.3f)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, _agv_Model.AxisOffset * 0.5),
                 End = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Wheel3Velocity, _agv_Model.AxisOffset * 0.5)
             });
             // Rad 4
-            _polynomes.Add(new()
+            Polynomes.Add(new()
             {
                 Points = MakeRotRect(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(_agv_Model.AxisOffset * 0.5, -Math.PI * 0.5), 0.1f, 0.3f)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, _agv_Model.AxisOffset * -0.5),
                 End = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Wheel4Velocity, _agv_Model.AxisOffset * -0.5)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, 0 ),
                 End = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Swivel2Velocity, 0)
             });
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), 0d, _agv_Model.AxisOffset * 0.4),
                 End = MakeRotArrow(_agv_Model.SwivelKoor.Mult(-1), _agv_Model.Swivel2Angle, Math2d.ByLengthAngle(1, Math.PI * 0.5), _agv_Model.Swivel2Rot* _agv_Model.AxisOffset*-0.4, _agv_Model.AxisOffset * 0.4)
             });
             // AGV-Velocity
-            _arrows.Add(new()
+            Arrows.Add(new()
             {
                 Start = PointF.Empty,
                 End = MakeRotArrow(_agv_Model.AGVVelocity, 0, Math2d.eY,0d,0d)
