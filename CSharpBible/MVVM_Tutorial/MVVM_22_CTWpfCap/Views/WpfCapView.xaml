@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MVVM_22_CTWpfCap.Views"
       xmlns:p="clr-namespace:MVVM_22_CTWpfCap.Properties"
-      xmlns:mvvm="clr-namespace:MVVM_22_CTWpfCap.ViewModel"
+      xmlns:mvvm="clr-namespace:MVVM_22_CTWpfCap.ViewModels"
       xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
       xmlns:vc="clr-namespace:MVVM_22_CTWpfCap.Converter"
       mc:Ignorable="d" 

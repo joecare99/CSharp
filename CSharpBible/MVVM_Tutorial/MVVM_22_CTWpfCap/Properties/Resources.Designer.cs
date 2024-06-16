@@ -132,7 +132,7 @@ namespace MVVM_22_CTWpfCap.Properties {
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:local=&quot;clr-namespace:MVVM_22_CTWpfCap.Views&quot;
         ///      xmlns:p=&quot;clr-namespace:MVVM_22_CTWpfCap.Properties&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_22_CTWpfCap.ViewModel&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_22_CTWpfCap.ViewModels&quot;
         /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string WpfCapView {
