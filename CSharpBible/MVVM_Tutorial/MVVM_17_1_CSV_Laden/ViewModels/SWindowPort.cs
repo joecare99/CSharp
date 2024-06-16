@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Drawing;
 
-namespace MVVM_17_1_CSV_Laden.ViewModel
+namespace MVVM_17_1_CSV_Laden.ViewModels
 {
     /// <summary>
     /// Struct SWindowPort

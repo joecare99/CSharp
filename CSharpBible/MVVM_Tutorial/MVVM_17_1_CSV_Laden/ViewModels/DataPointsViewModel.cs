@@ -16,7 +16,7 @@ using System.Drawing;
 using MVVM.ViewModel;
 using MVVM_17_1_CSV_Laden.Model;
 
-namespace MVVM_17_1_CSV_Laden.ViewModel
+namespace MVVM_17_1_CSV_Laden.ViewModels
 {
 
     /// <summary>

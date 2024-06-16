@@ -19,7 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Shapes;
 using MVVM_17_1_CSV_Laden.Model;
-using MVVM_17_1_CSV_Laden.ViewModel;
+using MVVM_17_1_CSV_Laden.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 

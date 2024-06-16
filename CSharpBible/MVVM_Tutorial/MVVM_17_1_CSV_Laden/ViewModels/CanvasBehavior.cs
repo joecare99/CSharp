@@ -16,7 +16,7 @@ using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 using MVVM_17_1_CSV_Laden.Views.Converter;
 
-namespace MVVM_17_1_CSV_Laden.ViewModel
+namespace MVVM_17_1_CSV_Laden.ViewModels
 {
     /// <summary>
     /// Class CanvasBehavior.
