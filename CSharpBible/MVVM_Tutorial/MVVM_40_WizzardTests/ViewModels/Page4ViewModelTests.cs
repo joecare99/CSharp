@@ -50,7 +50,6 @@ namespace MVVM_40_Wizzard.ViewModels.Tests
                 _ => null
             };
             base.Init();
-            _model!.SubOptions.Returns(new List<int> { 1, 2, 3});
         }
 
         /// <summary>
@@ -66,5 +65,22 @@ namespace MVVM_40_Wizzard.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
             Assert.IsNotNull(_model);
         }
+
+        [DataTestMethod]
+        [DataRow(nameof(IWizzardModel.AdditOptions), new[] { "" })]
+        [DataRow(nameof(IWizzardModel.Now), new[] { "" })]
+        [DataRow(nameof(IWizzardModel.SubSelection), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page4ViewModel,SubSelection)=\r\n" })]
+        [DataRow(nameof(IWizzardModel.SubOptions), new[] { "" })]
+        [DataRow(nameof(IWizzardModel.MainSelection), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page4ViewModel,MainSelection)=1. Entry\r\n" })]
+        [DataRow(nameof(IWizzardModel.MainOptions), new[] { "" })]
+        [DataRow(nameof(IWizzardModel.Additional1), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page4ViewModel,Additional1)=\r\n" })]
+        [DataRow(nameof(IWizzardModel.Additional2), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page4ViewModel,Additional2)=\r\n" })]
+        [DataRow(nameof(IWizzardModel.Additional3), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page4ViewModel,Additional3)=\r\n" })]
+        public void OnMPChangedTest(string prop, string[] asExp)
+        {
+            _model.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_model, new PropertyChangedEventArgs(prop));
+            Assert.AreEqual(asExp[0], DebugLog);
+        }
+
     }
 }
