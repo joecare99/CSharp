@@ -3,7 +3,7 @@ using MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 
-namespace MVVM_06_Converters_3.ViewModel.Tests
+namespace MVVM_06_Converters_3.ViewModels.Tests
 {
     [TestClass()]
     public class CurrencyViewViewModelTests:BaseTestViewModel<CurrencyViewViewModel>
@@ -20,8 +20,8 @@ namespace MVVM_06_Converters_3.ViewModel.Tests
 
         [DataTestMethod]
         [DataRow(0d, new[] { "" })]
-        [DataRow(1d, new[] { @"PropChg(MVVM_06_Converters_3.ViewModel.CurrencyViewViewModel,Value)=1
-PropChg(MVVM_06_Converters_3.ViewModel.CurrencyViewViewModel,ValueIsNotZero)=True
+        [DataRow(1d, new[] { @"PropChg(MVVM_06_Converters_3.ViewModels.CurrencyViewViewModel,Value)=1
+PropChg(MVVM_06_Converters_3.ViewModels.CurrencyViewViewModel,ValueIsNotZero)=True
 " })]
         public void ValueTest(double fAct, string[] asExp)
         {
