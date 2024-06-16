@@ -25,7 +25,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
 
-namespace SyncAsyncParallel.ViewModel;
+namespace SyncAsyncParallel.ViewModels;
 
 /// <summary>
 /// Class SyncAsyncViewModel.
