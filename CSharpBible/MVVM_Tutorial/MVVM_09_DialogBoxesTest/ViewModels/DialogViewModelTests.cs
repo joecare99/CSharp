@@ -4,7 +4,7 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 
-namespace MVVM_09_DialogBoxes.ViewModel.Tests
+namespace MVVM_09_DialogBoxes.ViewModels.Tests
 {
     [TestClass()]
     public class DialogViewModelTests : BaseTestViewModel
@@ -66,12 +66,12 @@ namespace MVVM_09_DialogBoxes.ViewModel.Tests
 
         [DataTestMethod()]
         [DataRow(true,MessageBoxResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=42 Entwickler
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Name)=42 Entwickler
 ", "42 Entwickler" })]
-        [DataRow(false, MessageBoxResult.OK, new[] { @"PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=Nö
+        [DataRow(false, MessageBoxResult.OK, new[] { @"PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Name)=Nö
 ", "Nö" })]
         [DataRow(null, MessageBoxResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=Nö
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Name)=Nö
 ", "Nö" })]
         public void OpenMsgCommandTest(bool? oAct,MessageBoxResult mrExp, string[] asExp)
         {
@@ -92,15 +92,15 @@ PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=Nö
 
         [DataTestMethod()]
         [DataRow(true,"0", new[] { @"DoOpenMessageBox(TestNameTrue,TestEmailTrue)=>(TestName0, TestMail0)
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=TestName0
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Email)=TestMail0
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Name)=TestName0
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Email)=TestMail0
 ", "TestName0", "TestMail0" })]
-        [DataRow(false, "1", new[] { @"PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Email)=
+        [DataRow(false, "1", new[] { @"PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Name)=
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Email)=
 ", "","" })]
         [DataRow(null, "2", new[] { @"DoOpenMessageBox(TestName,TestEmail)=>(TestName2, TestMail2)
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Name)=TestName2
-PropChg(MVVM_09_DialogBoxes.ViewModel.DialogViewModel,Email)=TestMail2
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Name)=TestName2
+PropChg(MVVM_09_DialogBoxes.ViewModels.DialogViewModel,Email)=TestMail2
 ", "TestName2", "TestMail2" })]
         public void OpenDialogCommandTest(bool? oAct,string sAct, string[] asExp)
         {

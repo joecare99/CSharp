@@ -2,7 +2,7 @@
 using MVVM.ViewModel;
 using System.ComponentModel;
 
-namespace MVVM_09_DialogBoxes.ViewModel.Tests
+namespace MVVM_09_DialogBoxes.ViewModels.Tests
 {
     [TestClass()]
     public class MainWindowViewModelTests : BaseTestViewModel
