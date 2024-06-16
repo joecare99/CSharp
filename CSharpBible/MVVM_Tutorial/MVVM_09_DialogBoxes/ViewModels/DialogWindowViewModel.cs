@@ -14,7 +14,7 @@
 using MVVM.ViewModel;
 using System;
 
-namespace MVVM_09_DialogBoxes.ViewModel
+namespace MVVM_09_DialogBoxes.ViewModels
 {
     /// <summary>
     /// Class DialogWindowViewModel.

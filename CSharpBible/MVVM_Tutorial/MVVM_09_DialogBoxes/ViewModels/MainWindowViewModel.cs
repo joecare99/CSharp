@@ -13,7 +13,7 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_09_DialogBoxes.ViewModel
+namespace MVVM_09_DialogBoxes.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
