@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 06-13-2024
 // ***********************************************************************
-// <copyright file="Page1ViewModel.cs" company="JC-Soft">
+// <copyright file="Page4ViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2023
 // </copyright>
 // <summary></summary>
@@ -18,8 +18,8 @@ using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
-using System.Windows.Documents;
 using System.Linq;
+using MVVM_40_Wizzard.Properties;
 
 
 /// <summary>
@@ -28,11 +28,11 @@ using System.Linq;
 namespace MVVM_40_Wizzard.ViewModels;
 
 /// <summary>
-/// Class Page1ViewModel.
+/// Class Page4ViewModel.
 /// Implements the <see cref="BaseViewModelCT" />
 /// </summary>
 /// <seealso cref="BaseViewModelCT" />
-public partial class Page1ViewModel : BaseViewModelCT
+public partial class Page4ViewModel : BaseViewModelCT
 {
     /// <summary>
     /// The model
@@ -40,47 +40,50 @@ public partial class Page1ViewModel : BaseViewModelCT
     private IWizzardModel _model;
 
     /// <summary>
-    /// Gets or sets the main selection.
+    /// Gets the main-selection.
     /// </summary>
-    /// <value>The main selection.</value>
-    public ListEntry? MainSelection
+    /// <value>The sub selection.</value>
+    public string MainSelection => Resources.ResourceManager.GetString($"MainSelection{_model.MainSelection}");
+
+    /// <summary>
+    /// Gets the sub selection.
+    /// </summary>
+    /// <value>The sub selection.</value>
+    public string SubSelection => Resources.ResourceManager.GetString($"SubSelection{_model.SubSelection}");
+
+    /// <summary>
+    /// Gets the additional selection.
+    /// </summary>
+    /// <value>The sub selection.</value>
+    public string Additional1 => Resources.ResourceManager.GetString($"AdditSelection{_model.Additional1}");
+
+    /// <summary>
+    /// Gets the additional selection.
+    /// </summary>
+    /// <value>The sub selection.</value>
+    public string Additional2 => Resources.ResourceManager.GetString($"AdditSelection{_model.Additional2}");
+
+    /// <summary>
+    /// Gets the additional selection.
+    /// </summary>
+    /// <value>The sub selection.</value>
+    public string Additional3 => Resources.ResourceManager.GetString($"AdditSelection{_model.Additional3}");
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Page4ViewModel"/> class.
+    /// </summary>
+    public Page4ViewModel():this(IoC.GetRequiredService<IWizzardModel>())
     {
-        get => MainOptions.FirstOrDefault((e)=>e.ID==_model.MainSelection);
-        set => _model.MainSelection = value?.ID ?? -1;
     }
 
     /// <summary>
-    /// Gets the main options.
-    /// </summary>
-    /// <value>The main options.</value>
-    public IList<ListEntry> MainOptions 
-        => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
-
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
-    /// </summary>
-    public Page1ViewModel():this(IoC.GetRequiredService<IWizzardModel>())
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
+    /// Initializes a new instance of the <see cref="Page4ViewModel"/> class.
     /// </summary>
     /// <param name="model">The model.</param>
-    public Page1ViewModel(IWizzardModel model)
+    public Page4ViewModel(IWizzardModel model)
     {
         _model = model;
         _model.PropertyChanged += OnMPropertyChanged;
-    }
-
-    /// <summary>
-    /// Clears this instance.
-    /// </summary>
-    [RelayCommand]
-    private void Clear()
-    {
-        MainSelection = null;
     }
 
     /// <summary>

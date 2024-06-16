@@ -41,14 +41,16 @@ namespace MVVM_40_Wizzard.Models
 
         int MainSelection { get; set; }
 
-        IList<int> MainOptions { get; set; }
+        IList<int> MainOptions { get; }
 
         int SubSelection { get; set; }
-        IList<int> SubOptions { get; set; }
+        IList<int> SubOptions { get;  }
 
         int Additional1 { get; set; }
         int Additional2 { get; set; }
         int Additional3 { get; set; }
+
+        IList<int> AdditOptions { get; }
 
     }
 }

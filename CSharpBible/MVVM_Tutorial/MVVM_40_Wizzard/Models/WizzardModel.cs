@@ -66,6 +66,9 @@ namespace MVVM_40_Wizzard.Models
         [ObservableProperty]
         private int _additional3 = -1;
 
+        [ObservableProperty]
+        private IList<int> _additOptions = [10, 12, 13, 15, 16, 17, 19, 21];
+
         #endregion
 
         #region Methods

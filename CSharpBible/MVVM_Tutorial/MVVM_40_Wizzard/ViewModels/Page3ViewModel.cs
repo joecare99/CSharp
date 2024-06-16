@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 06-13-2024
 // ***********************************************************************
-// <copyright file="Page1ViewModel.cs" company="JC-Soft">
+// <copyright file="Page3ViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2023
 // </copyright>
 // <summary></summary>
@@ -18,7 +18,6 @@ using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
-using System.Windows.Documents;
 using System.Linq;
 
 
@@ -28,11 +27,11 @@ using System.Linq;
 namespace MVVM_40_Wizzard.ViewModels;
 
 /// <summary>
-/// Class Page1ViewModel.
+/// Class Page3ViewModel.
 /// Implements the <see cref="BaseViewModelCT" />
 /// </summary>
 /// <seealso cref="BaseViewModelCT" />
-public partial class Page1ViewModel : BaseViewModelCT
+public partial class Page3ViewModel : BaseViewModelCT
 {
     /// <summary>
     /// The model
@@ -40,35 +39,55 @@ public partial class Page1ViewModel : BaseViewModelCT
     private IWizzardModel _model;
 
     /// <summary>
-    /// Gets or sets the main selection.
+    /// Gets or sets the sub selection.
     /// </summary>
-    /// <value>The main selection.</value>
-    public ListEntry? MainSelection
+    /// <value>The sub selection.</value>
+    public ListEntry? Additional1
     {
-        get => MainOptions.FirstOrDefault((e)=>e.ID==_model.MainSelection);
-        set => _model.MainSelection = value?.ID ?? -1;
+        get => AdditOptions.FirstOrDefault((e)=>e.ID== _model.Additional1);
+        set => _model.Additional1 = value?.ID ?? -1;
     }
 
     /// <summary>
-    /// Gets the main options.
+    /// Gets or sets the sub selection.
     /// </summary>
-    /// <value>The main options.</value>
-    public IList<ListEntry> MainOptions 
-        => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
+    /// <value>The sub selection.</value>
+    public ListEntry? Additional2
+    {
+        get => AdditOptions.FirstOrDefault((e) => e.ID == _model.Additional2);
+        set => _model.Additional2 = value?.ID ?? -1;
+    }
+
+    /// <summary>
+    /// Gets or sets the sub selection.
+    /// </summary>
+    /// <value>The sub selection.</value>
+    public ListEntry? Additional3
+    {
+        get => AdditOptions.FirstOrDefault((e) => e.ID == _model.Additional3);
+        set => _model.Additional3 = value?.ID ?? -1;
+    }
+
+    /// <summary>
+    /// Gets the sub options.
+    /// </summary>
+    /// <value>The sub options.</value>
+    public IList<ListEntry> AdditOptions 
+        => _model.AdditOptions.Select((i) => new ListEntry(i, Properties.Resources.ResourceManager.GetString($"AdditSelection{i}"))).ToList();
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
+    /// Initializes a new instance of the <see cref="Page3ViewModel"/> class.
     /// </summary>
-    public Page1ViewModel():this(IoC.GetRequiredService<IWizzardModel>())
+    public Page3ViewModel():this(IoC.GetRequiredService<IWizzardModel>())
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
+    /// Initializes a new instance of the <see cref="Page3ViewModel"/> class.
     /// </summary>
     /// <param name="model">The model.</param>
-    public Page1ViewModel(IWizzardModel model)
+    public Page3ViewModel(IWizzardModel model)
     {
         _model = model;
         _model.PropertyChanged += OnMPropertyChanged;
@@ -80,7 +99,9 @@ public partial class Page1ViewModel : BaseViewModelCT
     [RelayCommand]
     private void Clear()
     {
-        MainSelection = null;
+        Additional1 = null;
+        Additional2 = null;
+        Additional3 = null;
     }
 
     /// <summary>

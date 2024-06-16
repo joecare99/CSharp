@@ -117,6 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdditSelection10" xml:space="preserve">
+    <value>10. Additional</value>
+  </data>
+  <data name="AdditSelection12" xml:space="preserve">
+    <value>12. Additional</value>
+  </data>
+  <data name="AdditSelection13" xml:space="preserve">
+    <value>13. Additional</value>
+  </data>
+  <data name="AdditSelection15" xml:space="preserve">
+    <value>15. Additional</value>
+  </data>
+  <data name="AdditSelection16" xml:space="preserve">
+    <value>16. Additional</value>
+  </data>
+  <data name="AdditSelection17" xml:space="preserve">
+    <value>17. Additional</value>
+  </data>
+  <data name="AdditSelection19" xml:space="preserve">
+    <value>19. Additional</value>
+  </data>
+  <data name="AdditSelection21" xml:space="preserve">
+    <value>21. Additional</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>MVVM-Wizzard</value>
   </data>
@@ -149,13 +173,6 @@
   </data>
   <data name="Page1" xml:space="preserve">
     <value>1. Make selection</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Page1View" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Views\Page1View.xaml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Page1ViewModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ViewModels\Page1ViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Page2" xml:space="preserve">
     <value>2. Fine selection</value>
@@ -196,6 +213,7 @@
   <data name="Title" xml:space="preserve">
     <value>Wizzard-View</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="WizzardModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Models\WizzardModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

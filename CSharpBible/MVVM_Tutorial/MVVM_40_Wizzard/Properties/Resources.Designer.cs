@@ -61,6 +61,78 @@ namespace MVVM_40_Wizzard.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 10. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection10 {
+            get {
+                return ResourceManager.GetString("AdditSelection10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 12. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection12 {
+            get {
+                return ResourceManager.GetString("AdditSelection12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 13. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection13 {
+            get {
+                return ResourceManager.GetString("AdditSelection13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 15. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection15 {
+            get {
+                return ResourceManager.GetString("AdditSelection15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 16. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection16 {
+            get {
+                return ResourceManager.GetString("AdditSelection16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 17. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection17 {
+            get {
+                return ResourceManager.GetString("AdditSelection17", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 19. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection19 {
+            get {
+                return ResourceManager.GetString("AdditSelection19", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 21. Additional ähnelt.
+        /// </summary>
+        public static string AdditSelection21 {
+            get {
+                return ResourceManager.GetString("AdditSelection21", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die MVVM-Wizzard ähnelt.
         /// </summary>
         public static string Description {
@@ -156,44 +228,6 @@ namespace MVVM_40_Wizzard.Properties {
         public static string Page1 {
             get {
                 return ResourceManager.GetString("Page1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_40_Wizzard.Views.Page1View&quot;
-        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
-        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
-        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
-        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_40_Wizzard.ViewModels&quot; 
-        ///      xmlns:local=&quot;clr-namespace:MVVM_40_Wizzard.Views&quot;
-        ///      mc:Ignorable=&quot;d&quot; 
-        ///      d:DesignHeight=&quot;450&quot; d:DesignW [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
-        /// </summary>
-        public static string Page1View {
-            get {
-                return ResourceManager.GetString("Page1View", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
-        ///// Assembly         : MVVM_40_Wizzard
-        ///// Author           : Mir
-        ///// Created          : 06-13-2024
-        /////
-        ///// Last Modified By : Mir
-        ///// Last Modified On : 06-13-2024
-        ///// ***********************************************************************
-        ///// &lt;copyright file=&quot;Page1ViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
-        /////     Copyright © JC-Soft 2023
-        ///// &lt;/copyright&gt;
-        ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// *********************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
-        /// </summary>
-        public static string Page1ViewModel {
-            get {
-                return ResourceManager.GetString("Page1ViewModel", resourceCulture);
             }
         }
         
