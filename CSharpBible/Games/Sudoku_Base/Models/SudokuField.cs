@@ -40,6 +40,15 @@ public partial class SudokuField : ObservableObject, ISudokuField
     {
     }
 
+    public SudokuField(Point position, int? value, bool isPredefined, int[] pValues)
+    {
+        Position = position;
+        Value = value;
+        IsPredefined = isPredefined;
+        foreach (var pValue in pValues)        
+            PossibleValues.Add(pValue);
+    }
+
     public void AddPossibleValue(int value)
     {
         if (!PossibleValues.Contains(value))
@@ -88,5 +97,12 @@ public partial class SudokuField : ObservableObject, ISudokuField
         {
             stream.Write(BitConverter.GetBytes(value), 0, sizeof(int));
         }
+    }
+
+    public void Clear()
+    {
+         Value = null;
+         IsPredefined = false;
+         PossibleValues.Clear();
     }
 }

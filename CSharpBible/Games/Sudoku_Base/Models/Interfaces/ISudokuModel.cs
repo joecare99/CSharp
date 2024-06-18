@@ -31,6 +31,7 @@ namespace Sudoku_Base.Models.Interfaces
     {
         IReadOnlyList<ISudokuField> Fields { get; }
 
+        ISudokuField this[int row, int col] { get; }
         void Clear();
 
         IRelayCommand UndoCommand { get; }

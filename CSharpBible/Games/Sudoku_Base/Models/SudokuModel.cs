@@ -17,8 +17,12 @@ using CommunityToolkit.Mvvm.Input;
 using Sudoku_Base.Models.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Timers;
+using BaseLib.Helper;
 
 /// <summary>
 /// The Models namespace.
@@ -49,7 +53,14 @@ namespace Sudoku_Base.Models
         private readonly ISysTime _systime;
         private readonly ILog _log;
 
+        private bool _selfInflChange =false;
+        private IList<IUndoInformation> undoInformation = new List<IUndoInformation>();
+        private int _undoIndex = -1;
+            
+        private Dictionary<Point,ISudokuField> Fields = new();
 
+        IReadOnlyList<ISudokuField> ISudokuModel.Fields => Fields.Values.ToList();
+        public ISudokuField this[int row, int col] => Fields[new Point(row,col)];
         #endregion
 
         #region Methods
@@ -65,6 +76,16 @@ namespace Sudoku_Base.Models
             _timer = new(250d);
 //            _timer.Elapsed += (s, e) => OnPropertyChanged(nameof(Now));
             _timer.Start();
+            for(int row = 0; row < 9; row++)
+            {
+                for (int col = 0; col < 9; col++)
+                {
+                    var field = new SudokuField(new Point(row, col), null, false, Array.Empty<int>());
+                    Fields.Add(field.Position, field);
+                    field.PropertyChanging += FieldPropChanging;
+                    field.PropertyChanged += FieldPropChanged;
+                }
+            }
         }
 
 #if !NET5_0_OR_GREATER
@@ -79,19 +100,45 @@ namespace Sudoku_Base.Models
         }
 #endif
 
-        public IReadOnlyList<ISudokuField> Fields => throw new NotImplementedException();
 
         [RelayCommand]
-        private void Undo() 
-            => throw new NotImplementedException();
+        private void Undo()
+        {
+            if (_undoIndex >= 0)
+            _selfInflChange = true;
+            try
+            {
+                undoInformation[_undoIndex--].Undo();
+            }
+            finally
+            {
+                _selfInflChange = false;
+            }
+        }
 
         [RelayCommand]
-        private void Redo() 
-            => throw new NotImplementedException();
+        private void Redo()
+        {
+            if (_undoIndex < undoInformation.Count-1)
+                _selfInflChange = true;
+            try
+            {
+                undoInformation[++_undoIndex].Redo();
+
+            }
+            finally
+            {
+                _selfInflChange = false;
+            }
+        }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            foreach (var field in Fields.Values)
+            {
+                field.Clear();
+            }
+            ClearUndoList();
         }
 
         public bool ReadFromStream(Stream stream)
@@ -100,20 +147,43 @@ namespace Sudoku_Base.Models
             var streamBytes = new byte[sizeof(int)];
             stream.Read(streamBytes, 0, sizeof(int));
             var c= BitConverter.ToInt32(streamBytes,0);
-            var fields = new List<ISudokuField>();
+            Fields.Clear();
             for (int i = 0; i < Math.Min(c,81); i++)
             {
                 var field = new SudokuField();
                 field.ReadFromStream(stream);
+                Fields.Add(field.Position, field);
+                field.PropertyChanging += FieldPropChanging;
+                field.PropertyChanged += FieldPropChanged;
             }
             return true;
+        }
+
+        private void FieldPropChanging(object sender, PropertyChangingEventArgs e)
+        {
+             if (_selfInflChange) { return; }
+             while (_undoIndex < undoInformation.Count - 1)
+             {
+                 undoInformation.RemoveAt(undoInformation.Count - 1);
+             }
+             undoInformation.Add(new UndoInformation(sender as ISudokuField, [(sender?.GetProp(e.PropertyName ?? ""),null)]));
+            _undoIndex++;
+        }
+
+        private void FieldPropChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_selfInflChange) { return; }
+            if (undoInformation[_undoIndex].Field.TryGetTarget(out var target) & target == sender) 
+            {
+                undoInformation[_undoIndex].TryUpdateNewValue(sender?.GetProp(e.PropertyName ?? ""));
+            }
         }
 
         public bool WriteToStream(Stream stream, bool xInclState)
         {
             if (stream == null) return false;
             stream.Write(BitConverter.GetBytes(Fields.Count), 0, sizeof(int));
-            foreach (var field in Fields)
+            foreach (var field in Fields.Values)
             {
                 field.WriteToStream(stream);
             }
@@ -123,7 +193,7 @@ namespace Sudoku_Base.Models
 
         private void ClearUndoList()
         {
-            throw new NotImplementedException();
+            undoInformation.Clear();
         }
         #endregion
     }

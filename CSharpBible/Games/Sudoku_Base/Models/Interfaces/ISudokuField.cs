@@ -30,7 +30,7 @@ namespace Sudoku_Base.Models.Interfaces;
 /// Extends the <see cref="INotifyPropertyChanged" />
 /// </summary>
 /// <seealso cref="INotifyPropertyChanged" />
-public interface ISudokuField : INotifyPropertyChanged
+public interface ISudokuField : INotifyPropertyChanged, INotifyPropertyChanging
 {
     /// <summary>
     /// Gets the position.
@@ -75,4 +75,5 @@ public interface ISudokuField : INotifyPropertyChanged
     /// </summary>
     /// <param name="stream">The stream.</param>
     void ReadFromStream(Stream stream);
+    void Clear();
 }
