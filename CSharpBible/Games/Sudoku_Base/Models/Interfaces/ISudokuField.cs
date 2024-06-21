@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,7 +31,7 @@ namespace Sudoku_Base.Models.Interfaces;
 /// Extends the <see cref="INotifyPropertyChanged" />
 /// </summary>
 /// <seealso cref="INotifyPropertyChanged" />
-public interface ISudokuField : INotifyPropertyChanged, INotifyPropertyChanging
+public interface ISudokuField : INotifyPropertyChanged, INotifyPropertyChanging, IPersistence 
 {
     /// <summary>
     /// Gets the position.
