@@ -30,6 +30,7 @@
     <None Remove="bin\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="DependencyInjection\DIExample.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -56,7 +57,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    <None Include="DependencyInjection\DIExample.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
 
   <Target Condition="'$(TargetFrameworks)'=='net6.0'" Name="PreBuild" BeforeTargets="PreBuildEvent">
