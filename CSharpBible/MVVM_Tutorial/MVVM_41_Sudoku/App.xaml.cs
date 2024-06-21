@@ -19,6 +19,7 @@ using Sudoku_Base.Models;
 using Sudoku_Base.Models.Interfaces;
 using System.Windows;
 
+
 namespace MVVM_41_Sudoku
 {
     /// <summary>

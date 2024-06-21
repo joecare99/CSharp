@@ -11,14 +11,15 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Sudoku_Base.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using BaseLib.Helper;
 namespace Sudoku_Base.Models;
 
 public partial class SudokuField : ObservableObject, ISudokuField
@@ -36,6 +37,16 @@ public partial class SudokuField : ObservableObject, ISudokuField
     private ObservableCollection<int> _possibleValues = new();
     IList<int> ISudokuField.PossibleValues => PossibleValues;
 
+    public static IEnumerable<(string, Type)> PropTypes => [
+        (nameof(Position),typeof(Point)),
+            (nameof(Value), typeof(int)),
+            (nameof(IsPredefined),typeof(bool)),
+            ("Dummy", typeof(byte)),
+            (nameof(PossibleValues),typeof(IEnumerable<int>))
+        ];
+
+    IEnumerable<(string, Type)> IPersistence.PropTypes => PropTypes;
+
     public SudokuField()
     {
     }
@@ -45,7 +56,7 @@ public partial class SudokuField : ObservableObject, ISudokuField
         Position = position;
         Value = value;
         IsPredefined = isPredefined;
-        foreach (var pValue in pValues)        
+        foreach (var pValue in pValues)
             PossibleValues.Add(pValue);
     }
 
@@ -68,41 +79,58 @@ public partial class SudokuField : ObservableObject, ISudokuField
     }
     public void ReadFromStream(Stream stream)
     {
-        var streamBytes = new byte[sizeof(int)*2];
-        int i;
-        stream.Read(streamBytes, 0, sizeof(int)*2);
-        Position =new Point( BitConverter.ToInt32(streamBytes, 0), BitConverter.ToInt32(streamBytes, sizeof(int)));
-        stream.Read(streamBytes, 0, sizeof(int) * 2);
-        Value = (i = BitConverter.ToInt32(streamBytes, 0))!=-1?i:null;
 
-        IsPredefined = BitConverter.ToBoolean(streamBytes, sizeof(int));
-        var count = BitConverter.ToInt16(streamBytes, sizeof(int)+2);
-        streamBytes = new byte[sizeof(int) * count];
-        stream.Read(streamBytes, 0, sizeof(int) * count);
-        for (i=0; i<count; i++ )
-        {
-            PossibleValues.Add(BitConverter.ToInt32(streamBytes, sizeof(int)*i));
-        }
+        ReadFromEnumerable(stream.StreamToEnumerable( PropTypes));
     }
 
     public void WriteToStream(Stream stream)
     {
-        stream.Write(BitConverter.GetBytes(Position.X), 0, sizeof(int));
-        stream.Write(BitConverter.GetBytes(Position.Y), 0, sizeof(int));
-        stream.Write(BitConverter.GetBytes(Value??-1), 0, sizeof(int));
-        stream.Write(BitConverter.GetBytes(IsPredefined), 0, sizeof(bool));
-        stream.WriteByte((byte)0);//padding
-        stream.Write(BitConverter.GetBytes((short)PossibleValues.Count), 0, sizeof(short));
-        foreach (var value in PossibleValues)
-        {
-            stream.Write(BitConverter.GetBytes(value), 0, sizeof(int));
-        }
+        stream.EnumerateToStream(EnumerateProp());
     }
 
     public void Clear()
     {
-         Value = null;
-         IsPredefined = false;
-         PossibleValues.Clear();
+        Value = null;
+        IsPredefined = false;
+        PossibleValues.Clear();
     }
+
+    public IEnumerable<(string, object)> EnumerateProp()
+    {
+        yield return (nameof(Position), Position);
+        yield return (nameof(Value), Value ?? -1);
+        yield return (nameof(IsPredefined), IsPredefined);
+        yield return ("Dummy", (byte)0);
+        yield return (nameof(PossibleValues), PossibleValues);
+    }
+
+    public bool ReadFromEnumerable(IEnumerable<(string, object)> enumerable)
+    {
+        foreach ((string prop, object value) pv in enumerable)
+        {
+            switch (pv)
+            {
+                case (nameof(Position),Point p):
+                    Position = p;
+                    break;
+                case (nameof(Value),int i):
+                    Value = i != -1 ? i : null;
+                    break;
+                case (nameof(IsPredefined),bool x):
+                    IsPredefined = x;
+                    break;
+                case (nameof(PossibleValues), IEnumerable<int?> ei):
+                    PossibleValues.Clear();
+                    foreach (var value in ei)
+                    {
+                        PossibleValues.Add(value.Value);
+                    }
+                    break;
+                default: // Unbekannte Werte werden ignoriert
+                    break;
+            }
+        }
+        return true;
+    }
+
 }
