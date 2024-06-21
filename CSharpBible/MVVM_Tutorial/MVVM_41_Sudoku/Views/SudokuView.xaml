@@ -1,0 +1,27 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_41_Sudoku.Views"
+      xmlns:p="clr-namespace:MVVM_41_Sudoku.Properties"
+      xmlns:vc="clr-namespace:MVVM_41_Sudoku.ValueConverter"
+      xmlns:mvvm="clr-namespace:MVVM_41_Sudoku.ViewModels"
+      xmlns:model="clr-namespace:MVVM_41_Sudoku.Models"
+    x:Class="MVVM_41_Sudoku.Views.SudokuView"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static p:Resources.Title}">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:SudokuViewModel/>
+    </Page.DataContext>
+    <StackPanel Background="Silver">
+        <Label Content="Temlate-View:"/>
+        <Grid>
+            <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+        </Grid>
+    </StackPanel>
+</Page>
