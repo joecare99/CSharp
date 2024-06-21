@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading;
 
 namespace MVVM_24_UserControl.Views.Tests
@@ -17,8 +16,8 @@ namespace MVVM_24_UserControl.Views.Tests
                 mw = new();
                 asIO[0] = mw.Text;
                 asIO[1] = mw.Caption;
-                mw.Text = asIO[2];
-                mw.Caption = asIO[3];
+                mw.Text = asIO[2]!;
+                mw.Caption = asIO[3]!;
                 asIO[4] = mw.Text;
                 asIO[5] = mw.Caption;
                 return;
@@ -30,7 +29,7 @@ namespace MVVM_24_UserControl.Views.Tests
             Assert.IsInstanceOfType(mw, typeof(MaxLengthTextBoxUserControl)); 
             Assert.AreEqual(0, mw.MaxLength);
             Assert.AreEqual(null, asIO[0]);
-            Assert.AreEqual(null, asIO[1]);
+            Assert.AreEqual("", asIO[1]);
             Assert.AreEqual("10", asIO[4]);
             Assert.AreEqual("20", asIO[5]);
         }

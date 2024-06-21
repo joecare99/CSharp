@@ -22,7 +22,7 @@ namespace MVVM_05_CommandParCalculator.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace MVVM_05_CommandParCalculator.Properties {
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_05_CommandParCalculator.Properties.Resources", typeof(Resources).Assembly);
@@ -51,12 +51,89 @@ namespace MVVM_05_CommandParCalculator.Properties {
         ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_05_CommandParCalculator
+        ///// Author           : Mir
+        ///// Created          : 05-11-2023
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 05-19-2023
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;CalculatorModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2023
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ********************************************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string CalculatorModel {
+            get {
+                return ResourceManager.GetString("CalculatorModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
+        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+        ///      xmlns:local=&quot;clr-namespace:MVVM_05_CommandParCalculator.Views&quot;
+        ///      xmlns:model=&quot;clr-namespace:MVVM_05_CommandParCalculator.Model&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_05_CommandParCalculator.ViewModels&quot;
+        ///     xml [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string CommandParCalculatorView {
+            get {
+                return ResourceManager.GetString("CommandParCalculatorView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_05_CommandParCalculator_net
+        ///// Author           : Mir
+        ///// Created          : 05-11-2023
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 05-19-2023
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;CommandParCalculatorViewModel.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2023
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// *************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string CommandParCalculatorViewModel {
+            get {
+                return ResourceManager.GetString("CommandParCalculatorViewModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Example-Calculator using CommandParameter ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die CommandParameter ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
     }

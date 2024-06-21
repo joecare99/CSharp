@@ -11,9 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-namespace MVVM.View.Extension
+namespace MVVM.View.Extension;
+
+internal interface IIoC
 {
-    internal interface IIoC
-    {
-    }
 }

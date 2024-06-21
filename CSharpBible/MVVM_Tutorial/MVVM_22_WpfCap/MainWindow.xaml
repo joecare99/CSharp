@@ -4,10 +4,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_22_WpfCap"
+        xmlns:p="clr-namespace:MVVM_22_WpfCap.Properties"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Frame Content="Frame" Source="/View/WpfCapView.xaml"/>
-
-    </Grid>
+    <TabControl>
+        <TabItem Header="{x:Static p:Resources.Title}">
+            <Frame Content="Frame" Source="/Views/WpfCapView.xaml"/>
+        </TabItem>
+        <TabItem Header="Xaml">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the Xaml-Code" />
+                <TextBox Text="{x:Static p:Resources.WpfCapView}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="ViewModel">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the ViewModel-Code" />
+                <TextBox Text="{x:Static p:Resources.WpfCapViewModel}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Model">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the Model-Code" />
+                <TextBox Text="{x:Static p:Resources.CWpfCapModel}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Converter">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="the Converter-Code" />
+                <TextBox Text="{x:Static p:Resources.EnumToColorConverter}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
 </Window>

@@ -4,8 +4,6 @@
 	<PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
@@ -17,7 +15,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
-    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\CommonDialogs\CommonDialogs.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>    
 </Project>

@@ -1,15 +1,14 @@
 using System.Windows.Controls;
 
-namespace MVVM_04a_CTRelayCommand.Views
+namespace MVVM_04a_CTRelayCommand.Views;
+
+/// <summary>
+/// Interaktionslogik für DelegateCommandView.xaml
+/// </summary>
+public partial class RelayCommandView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für DelegateCommandView.xaml
-    /// </summary>
-    public partial class RelayCommandView : Page
+    public RelayCommandView()
     {
-        public RelayCommandView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

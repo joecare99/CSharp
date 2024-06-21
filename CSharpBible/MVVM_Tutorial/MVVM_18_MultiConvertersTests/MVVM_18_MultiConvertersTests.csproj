@@ -17,17 +17,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.4.3" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.4.3" />
+		<PackageReference Include="coverlet.collector" Version="6.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
-		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters.csproj" />
+		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Helper\" />

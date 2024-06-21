@@ -59,5 +59,115 @@ namespace MVVM_39_MultiModelTest.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #39: How to handle multible models ähnelt.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Window x:Class=&quot;MVVM_39_MultiModelTest.Views.ScopedModelView&quot;
+        ///        xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///        xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///        xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
+        ///        xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
+        ///        xmlns:local=&quot;clr-namespace:MVVM_39_MultiModelTest.Views&quot;
+        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_39_MultiModelTest.ViewModels&quot;
+        ///        mc:Ignorable=&quot;d [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string ScopedModelView {
+            get {
+                return ResourceManager.GetString("ScopedModelView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die using System;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
+        ///using System.Text;
+        ///using System.Threading.Tasks;
+        ///using System.Windows;
+        ///using System.Windows.Controls;
+        ///using System.Windows.Data;
+        ///using System.Windows.Documents;
+        ///using System.Windows.Input;
+        ///using System.Windows.Media;
+        ///using System.Windows.Media.Imaging;
+        ///using System.Windows.Shapes;
+        ///
+        ///namespace MVVM_39_MultiModelTest.Views
+        ///{
+        ///    /// &lt;summary&gt;
+        ///    /// Interaktionslogik für ScopedModelView.xaml
+        ///    /// &lt;/summary&gt;
+        ///    public par [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string ScopedModelView_xaml {
+            get {
+                return ResourceManager.GetString("ScopedModelView_xaml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die using System;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
+        ///using System.Text;
+        ///using System.Threading.Tasks;
+        ///using CommunityToolkit.Mvvm.ComponentModel;
+        ///using CommunityToolkit.Mvvm.Input;
+        ///using Microsoft.Extensions.DependencyInjection;
+        ///using MVVM.View.Extension;
+        ///using MVVM.ViewModel;
+        ///using MVVM_39_MultiModelTest.Models;
+        ///
+        ///
+        ///namespace MVVM_39_MultiModelTest.ViewModels;
+        ///
+        ///public partial class ScopedModelViewModel: BaseViewModelCT
+        ///{
+        ///    public string Name { get; }
+        ///    public string Descri [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string ScopedModelViewModel {
+            get {
+                return ResourceManager.GetString("ScopedModelViewModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+        ///// Assembly         : MVVM_39_MultiModelTest
+        ///// Author           : Mir
+        ///// Created          : 05-19-2023
+        /////
+        ///// Last Modified By : Mir
+        ///// Last Modified On : 05-19-2023
+        ///// ***********************************************************************
+        ///// &lt;copyright file=&quot;parent.cs&quot; company=&quot;JC-Soft&quot;&gt;
+        /////     Copyright © JC-Soft 2023
+        ///// &lt;/copyright&gt;
+        ///// &lt;summary&gt;&lt;/summary&gt;
+        ///// ************************************************************ [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string SystemModel {
+            get {
+                return ResourceManager.GetString("SystemModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #39 MultiModel ähnelt.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
     }
 }

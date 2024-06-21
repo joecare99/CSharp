@@ -1,5 +1,6 @@
 using ConsoleDisplay.View;
 using System;
+using TestConsole.Models.Interfaces;
 using TestConsole.View;
 
 namespace TestConsole
@@ -15,12 +16,12 @@ namespace TestConsole
         /// Gets or sets the color of the foreground.
         /// </summary>
         /// <value>The color of the foreground.</value>
-        public override ConsoleColor ForegroundColor { get => form?.foregroundColor ?? ConsoleColor.Gray; set => form.foregroundColor = value; }
+        public override ConsoleColor ForegroundColor { get => form?.ForegroundColor ?? ConsoleColor.Gray; set => form.ForegroundColor = value; }
         /// <summary>
         /// Gets or sets the color of the background.
         /// </summary>
         /// <value>The color of the background.</value>
-        public override ConsoleColor BackgroundColor { get => form?.backgroundColor ?? ConsoleColor.Black; set => form.backgroundColor = value; }
+        public override ConsoleColor BackgroundColor { get => form?.BackgroundColor ?? ConsoleColor.Black; set => form.BackgroundColor = value; }
         /// <summary>
         /// Gets or sets the height of the window.
         /// </summary>
@@ -83,14 +84,14 @@ namespace TestConsole
         /// <param name="st">The st.</param>
         public override void WriteLine(string? st = "") => Write((st ?? "") + "\r\n");
 
-        private readonly TestConsoleForm form;
+        private readonly IConsoleHandler form;
         /// <summary>
         /// Initializes a new instance of the <see cref="TstConsole"/> class.
         /// </summary>
         public TstConsole()
         {
             form = new TestConsoleForm();
-            form.Show();
+            (form as TestConsoleForm).Show();
         }
 
         /// <summary>

@@ -1,0 +1,1 @@
+﻿var(c,d,e)=("!/!ubq+`/g/f*>+_!!/!!*8elqfb`k+ubq#e#jm#`*f(>+`kbq*+e]0*8@lmplof-Tqjwf+g(`(f*8","var(c,d,e)=(\"","");foreach(var f in c)e+=(char)(f^3);Console.Write(d+c+e);

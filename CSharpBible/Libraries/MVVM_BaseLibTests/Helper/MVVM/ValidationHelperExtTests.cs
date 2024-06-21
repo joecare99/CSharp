@@ -29,13 +29,13 @@ namespace BaseLib.Helper.MVVM.Tests
 
         [DataTestMethod()]
         [DataRow("Test",false,new string[] { },null)]
+        [DataRow("Test2",true, new[] { "Error1" }, "Error1")]
         [DataRow("TTest2", true, new[] { "Error1", "Error2" }, "Error1, Error2")]
         [DataRow("TTest3", true, new[] { "Error1", "Error2", "Error3" }, "Error1, Error2, Error3")]
-
         public void ValidationTextTest(string sProp,bool xHasErrors, string[] Errs,string? sExp)
         {
             _xHasErrors = xHasErrors;
-            _sPropName = sProp.TrimStart('T');
+            _sPropName = sProp.Remove(0,1);
             _ErrList.Clear();
             foreach (var s in Errs)
                 _ErrList.Add(new ValidationResult(s));  

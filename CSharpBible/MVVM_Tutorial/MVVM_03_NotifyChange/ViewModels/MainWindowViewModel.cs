@@ -13,21 +13,20 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_03_NotifyChange.ViewModels
+namespace MVVM_03_NotifyChange.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class MainWindowViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public MainWindowViewModel()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public MainWindowViewModel()
-        {
 
-        }
     }
 }

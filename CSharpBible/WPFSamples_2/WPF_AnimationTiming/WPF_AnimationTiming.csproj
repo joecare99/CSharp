@@ -1,0 +1,65 @@
+﻿<Project>
+	<Import Project="..\WPF_Samples.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <None Remove="Images\AccDec.png" />
+	  <None Remove="Images\AutoRev.png" />
+	  <None Remove="Images\BeginTime.png" />
+	  <None Remove="Images\Databinding.png" />
+	  <None Remove="Images\FillBehavior.png" />
+	  <None Remove="Images\Handoff.png" />
+	  <None Remove="Images\IsAdditive.png" />
+	  <None Remove="Images\IsCumulative.png" />
+	  <None Remove="Images\Repeat.png" />
+	  <None Remove="Images\Speed.png" />
+	  <None Remove="Views\Repeat.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Images\AccDec.png" />
+	  <Resource Include="Images\IsCumulative.png" />
+	  <Resource Include="Images\IsAdditive.png" />
+	  <Resource Include="Images\Databinding.png" />
+	  <Resource Include="Images\Handoff.png" />
+	  <Resource Include="Images\Speed.png" />
+	  <Resource Include="Images\FillBehavior.png" />
+	  <Resource Include="Images\BeginTime.png" />
+	  <Resource Include="Images\AutoRev.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Images\Repeat.png" />
+	  <Resource Include="Views\Repeat.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>PublicSettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+</Project>

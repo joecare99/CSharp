@@ -19,7 +19,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Shapes;
-using MVVM_06_Converters_4.ViewModel;
+using MVVM_06_Converters_4.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -89,25 +89,6 @@ namespace MVVM_06_Converters_4.View.Converter
         /// </summary>
         public Func<System.Windows.Point, RectangleF, PointF> Vis2RealP;
         private RectangleF actPort;
-
-        /// <summary>
-        /// Real2s the vis x.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="xMin">The x minimum.</param>
-        /// <param name="xMax">The x maximum.</param>
-        /// <returns>System.Double.</returns>
-        private double Real2VisX(double value, double xMin, double xMax) =>
-            Real2Vis(value, WindowSize.Width, 0, xMin, xMax);
-        /// <summary>
-        /// Real2s the vis y.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="yMin">The y minimum.</param>
-        /// <param name="yMax">The y maximum.</param>
-        /// <returns>System.Double.</returns>
-        private double Real2VisY(double value, double yMin, double yMax) =>
-            Real2Vis(value, WindowSize.Height, 0, yMin, yMax);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowPortToGridLines"/> class.

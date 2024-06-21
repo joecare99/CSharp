@@ -6,29 +6,8 @@
         xmlns:local="clr-namespace:MVVM_Converter_CTDrawGrid"
         xmlns:mvvm="clr-namespace:MVVM_Converter_CTDrawGrid.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        Loaded="Window_Loaded">
-    <Window.DataContext>
-        <mvvm:MainWindowViewModel/>
-    </Window.DataContext>
+        Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="640*"/>
-            <ColumnDefinition Width="10*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="10*"/>
-            <RowDefinition Height="400*"/>
-            <RowDefinition Height="80*"/>
-        </Grid.RowDefinitions>
-        <Viewbox Grid.Row="1" Grid.Column="1"  >
-            <Frame x:Name="Client" Width="640" Height="400" NavigationUIVisibility="Hidden" Loaded="Frame_Loaded" Source="/View/PlotFrame.xaml" />
-        </Viewbox>
-        <WrapPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="2">
-            <Button Content="Load Level" Height="40" Width="200" Margin="5" Command="{Binding LoadLevelCommand}"/>
-            <Button Content="Pevious Level" Height="40" Width="200" Margin="5" Command="{Binding PrevLevelCommand}"/>
-            <Button Content="Next Level" Height="40" Width="200" Margin="5" Command="{Binding NextLevelCommand}"/>
-        </WrapPanel>
+        <Frame NavigationUIVisibility="Hidden" Source="/Views/DrawGridView.xaml" />
     </Grid>
 </Window>

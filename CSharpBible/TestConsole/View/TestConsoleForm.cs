@@ -3,42 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using TestConsole.Models.Interfaces;
 
 namespace TestConsole.View
 {
-    /// <summary>
-    /// Struct ConsoleCharInfo
-    /// </summary>
-    public struct ConsoleCharInfo
-    {
-        /// <summary>
-        /// The ch
-        /// </summary>
-        public char ch;
-        /// <summary>
-        /// The FGR
-        /// </summary>
-        public ConsoleColor fgr;
-        /// <summary>
-        /// The BGR
-        /// </summary>
-        public ConsoleColor bgr;
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConsoleCharInfo"/> struct.
-        /// </summary>
-        public ConsoleCharInfo(bool init=false){
-            ch = '\x00';
-            fgr = ConsoleColor.Gray;
-            bgr = ConsoleColor.Black;
-        }
-    }
 
     /// <summary>
     /// Class TestConsoleForm.
     /// Implements the <see cref="Form" />
     /// </summary>
     /// <seealso cref="Form" />
-    public partial class TestConsoleForm : Form
+    public partial class TestConsoleForm : Form , IConsoleHandler
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TestConsoleForm"/> class.
@@ -52,9 +27,9 @@ namespace TestConsole.View
         }
 
 
-        protected ConsoleCharInfo[] ScreenBuffer = new ConsoleCharInfo[80 * 25];
-        protected ConsoleCharInfo[] OutBuffer = new ConsoleCharInfo[80 * 25];
-        protected Size ConsoleSize = new Size(80, 25);
+        private ConsoleCharInfo[] screenBuffer = new ConsoleCharInfo[80 * 25];
+        private ConsoleCharInfo[] outBuffer = new ConsoleCharInfo[80 * 25];
+        private Size consoleSize = new Size(80, 25);
 
         private Color[] ccolors = new Color[typeof(ConsoleColor).GetEnumValues().Length];
         private List<KeyPressEventArgs> keyPressEventArgs = new List<KeyPressEventArgs>();
@@ -64,7 +39,7 @@ namespace TestConsole.View
         /// Reads the key.
         /// </summary>
         /// <returns>ConsoleKeyInfo.</returns>
-        internal ConsoleKeyInfo ReadKey()
+        public ConsoleKeyInfo ReadKey()
         {
             while (keyPressEventArgs.Count == 0)
             {
@@ -85,12 +60,12 @@ namespace TestConsole.View
         /// Gets the cursor position.
         /// </summary>
         /// <returns>System.ValueTuple&lt;System.Int32, System.Int32&gt;.</returns>
-        internal (int Left, int Top) GetCursorPosition() => (cursorPosition.X, cursorPosition.Y);
+        public (int Left, int Top) GetCursorPosition() => (cursorPosition.X, cursorPosition.Y);
 
         /// <summary>
         /// Clears this instance.
         /// </summary>
-        internal void Clear()
+        public void Clear()
         {
             ScreenBuffer = new ConsoleCharInfo[80 * 25];
             cursorPosition = new Point(0, 0);
@@ -100,7 +75,7 @@ namespace TestConsole.View
         /// Writes the specified ch.
         /// </summary>
         /// <param name="ch">The ch.</param>
-        internal void Write(char ch)
+        public void Write(char ch)
         {
             CheckLineBreak();
             switch (ch)
@@ -140,19 +115,19 @@ namespace TestConsole.View
                     YScroll();
                 }
             }
+        }
 
-            void YScroll(bool force = false)
+        public void YScroll(bool force = false)
+        {
+            if (cursorPosition.Y >= ConsoleSize.Height || force)
             {
-                if (cursorPosition.Y >= ConsoleSize.Height || force)
-                {
-                    for (var i = 0; i < ScreenBuffer.Length; i++)
-                        ScreenBuffer[i] = i < ScreenBuffer.Length - ConsoleSize.Width ?
-                            ScreenBuffer[i + ConsoleSize.Width] :
-                            new ConsoleCharInfo();
-                    cursorPosition.Y--;
-                    if (DateTime.Now > lastUpdate.AddMilliseconds(40))
-                        DoUpdate();
-                }
+                for (var i = 0; i < ScreenBuffer.Length; i++)
+                    ScreenBuffer[i] = i < ScreenBuffer.Length - ConsoleSize.Width ?
+                        ScreenBuffer[i + ConsoleSize.Width] :
+                        new ConsoleCharInfo();
+                cursorPosition.Y--;
+                if (DateTime.Now > lastUpdate.AddMilliseconds(40))
+                    DoUpdate();
             }
         }
 
@@ -160,28 +135,30 @@ namespace TestConsole.View
         /// Writes the specified st.
         /// </summary>
         /// <param name="st">The st.</param>
-        internal void Write(string? st)
+        public void Write(string? st)
         {
             foreach (char ch in st ?? "") Write(ch);
         }
         /// <summary>
         /// The foreground color
         /// </summary>
-        internal ConsoleColor foregroundColor = ConsoleColor.Gray;
+        private ConsoleColor foregroundColor = ConsoleColor.Gray;
+        public ConsoleColor ForegroundColor { get => foregroundColor; set => foregroundColor = value; }
         /// <summary>
         /// The background color
         /// </summary>
-        internal ConsoleColor backgroundColor = ConsoleColor.Black;
+        private ConsoleColor backgroundColor = ConsoleColor.Black;
+        public ConsoleColor BackgroundColor { get => backgroundColor; set => backgroundColor = value; }
         /// <summary>
         /// Gets or sets the width of the window.
         /// </summary>
         /// <value>The width of the window.</value>
-        internal int WindowWidth
+        public int WindowWidth
         {
             get => ConsoleSize.Width;
             set
             {
-                ConsoleSize.Width = value;
+                consoleSize.Width = value;
                 // Todo: Adjust Screenbuffer & OutBuffer   
             }
         }
@@ -189,12 +166,12 @@ namespace TestConsole.View
         /// Gets or sets the height of the window.
         /// </summary>
         /// <value>The height of the window.</value>
-        internal int WindowHeight
+        public int WindowHeight
         {
             get => ConsoleSize.Height;
             set
             {
-                ConsoleSize.Height = value;
+                consoleSize.Height = value;
                 // Todo: Adjust Screenbuffer & OutBuffer
             }
         }
@@ -205,7 +182,7 @@ namespace TestConsole.View
         /// Gets a value indicating whether [key available].
         /// </summary>
         /// <value><c>true</c> if [key available]; otherwise, <c>false</c>.</value>
-        internal bool KeyAvailable { get => keyPressEventArgs.Count>0; }
+        public bool KeyAvailable { get => keyPressEventArgs.Count>0; }
         /// <summary>
         /// Gets the content.
         /// </summary>
@@ -257,12 +234,16 @@ namespace TestConsole.View
             }  
         }
 
+        public ConsoleCharInfo[] ScreenBuffer { get => screenBuffer; set => screenBuffer = value; }
+        public ConsoleCharInfo[] OutBuffer { get => outBuffer; set => outBuffer = value; }
+        public Size ConsoleSize { get => consoleSize; set => consoleSize = value; }
+
         /// <summary>
         /// Sets the cursor position.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="top">The top.</param>
-        internal void SetCursorPosition(int left, int top)
+        public void SetCursorPosition(int left, int top)
         {
             cursorPosition = new Point(left, top);
         }

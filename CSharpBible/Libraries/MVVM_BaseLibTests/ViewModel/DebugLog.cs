@@ -13,22 +13,21 @@
 // ***********************************************************************
 using System;
 
-namespace MVVM.ViewModel.Tests
+namespace MVVM.ViewModel.Tests;
+
+public class DebugLog : IDebugLog
 {
-    public class DebugLog : IDebugLog
+    private string _debugLog="";
+
+    string IDebugLog.DebugLog => _debugLog;
+
+    public void ClearLog()
     {
-        private string _debugLog="";
+        _debugLog="";
+    }
 
-        string IDebugLog.DebugLog => _debugLog;
-
-        public void ClearLog()
-        {
-            _debugLog="";
-        }
-
-        public void DoLog(string message)
-        {
-            _debugLog+=$"{message}{Environment.NewLine}";
-        }
+    public void DoLog(string message)
+    {
+        _debugLog+=$"{message}{Environment.NewLine}";
     }
 }

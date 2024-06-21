@@ -1,10 +1,9 @@
-﻿namespace BaseLib.Helper.MVVM
+﻿namespace BaseLib.Helper.MVVM;
+
+public interface IRandom
 {
-    public interface IRandom
-    {
-        int Next(int v1, int v2);
-        double NextDouble();
-        int NextInt();
-        void Seed(int value);
-    }
+    int Next(int v1, int v2);
+    double NextDouble();
+    int NextInt();
+    void Seed(int value);
 }
