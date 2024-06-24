@@ -15,6 +15,10 @@
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Reference Include="ReachFramework" />
+	  <Reference Include="System.Printing" />
+	</ItemGroup>
+	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>

@@ -61,11 +61,67 @@ namespace MVVM_41_Sudoku.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap all64 {
+            get {
+                object obj = ResourceManager.GetObject("all64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die MVVM-Sudoku using Community-Toolkit ähnelt.
         /// </summary>
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Load ähnelt.
+        /// </summary>
+        public static string LoadGame {
+            get {
+                return ResourceManager.GetString("LoadGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die New ähnelt.
+        /// </summary>
+        public static string NewGame {
+            get {
+                return ResourceManager.GetString("NewGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap NewGameGlyph {
+            get {
+                object obj = ResourceManager.GetObject("NewGameGlyph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Print ähnelt.
+        /// </summary>
+        public static string PrintGame {
+            get {
+                return ResourceManager.GetString("PrintGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
+        /// </summary>
+        public static string SaveGame {
+            get {
+                return ResourceManager.GetString("SaveGame", resourceCulture);
             }
         }
         
@@ -78,7 +134,7 @@ namespace MVVM_41_Sudoku.Properties {
         ///      xmlns:local=&quot;clr-namespace:MVVM_41_Sudoku.Views&quot;
         ///      xmlns:p=&quot;clr-namespace:MVVM_41_Sudoku.Properties&quot;
         ///      xmlns:vc=&quot;clr-namespace:MVVM_41_Sudoku.ValueConverter&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace: [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_41_Sudoku. [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string SudokuView {
             get {
@@ -99,7 +155,7 @@ namespace MVVM_41_Sudoku.Properties {
         /////     Copyright © JC-Soft 2022
         ///// &lt;/copyright&gt;
         ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// ************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///// ******************************************************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string SudokuViewModel {
             get {

@@ -18,10 +18,44 @@
     <Page.DataContext>
         <mvvm:SudokuViewModel/>
     </Page.DataContext>
-    <StackPanel Background="Silver">
-        <Label Content="Temlate-View:"/>
-        <Grid>
-            <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
-        </Grid>
-    </StackPanel>
+    <DockPanel Background="Silver">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"
+             HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Button Command="{Binding NewGameCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Resources/document_new_unlined_256.png" Width="16" Height="16"/>
+                    <TextBlock Text="{x:Static p:Resources.NewGame}"/>
+                </StackPanel>
+            </Button>
+            <Button Content="{x:Static p:Resources.LoadGame}" Command="{Binding LoadGameCommand}"/>
+            <Button Content="{x:Static p:Resources.SaveGame}" Command="{Binding SaveGameCommand}"/>
+            <Button Content="{x:Static p:Resources.PrintGame}" Command="{Binding PrintCommand}"/>
+        </StackPanel>
+        <Label DockPanel.Dock="Top" Content="Sudoku-View:"/>
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+        <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="9" Rows="9"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Grid.Row="{Binding Position.Y}" Grid.Column="{Binding Position.X}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsReadOnly}" Value="True">
+                                        <Setter Property="Background" Value="LightGray"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Rectangle Fill="Transparent" Stroke="Black" StrokeThickness="1"/>
+                        <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="30" Height="30" TextAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
 </Page>

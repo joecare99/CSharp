@@ -22,4 +22,8 @@
 		<ProjectReference Include="..\MVVM_41_Sudoku\MVVM_41_Sudoku.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="ReachFramework" />
+	  <Reference Include="System.Printing" />
+	</ItemGroup>
 </Project>

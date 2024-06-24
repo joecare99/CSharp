@@ -32,6 +32,7 @@ namespace Sudoku_Base.Models.Interfaces
     {
         IReadOnlyList<ISudokuField> Fields { get; }
 
+        IReadOnlyList<int?> Values { get; }
         ISudokuField this[int row, int col] { get; }
         void Clear();
 
@@ -42,5 +43,7 @@ namespace Sudoku_Base.Models.Interfaces
 
         bool WriteToStream(Stream stream,bool xInclState);
         bool ReadFromStream(Stream stream);
+        bool ValuesFromStream(Stream stream);
+        bool ValuesToStream(Stream stream);
     }
 }
