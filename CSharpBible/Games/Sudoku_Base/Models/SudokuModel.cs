@@ -67,6 +67,7 @@ public partial class SudokuModel : ObservableObject, ISudokuModel
     private Dictionary<Point, ISudokuField> Fields = new();
 
     IReadOnlyList<ISudokuField> ISudokuModel.Fields => Fields.Values.ToList();
+    IReadOnlyList<int?> ISudokuModel.Values => Fields.Values.Select(f=>f.Value).ToList();
     public ISudokuField this[int row, int col] => Fields[new Point(row, col)];
 
     public int RedoIndex => undoInformation.Count - UndoIndex - 1;
