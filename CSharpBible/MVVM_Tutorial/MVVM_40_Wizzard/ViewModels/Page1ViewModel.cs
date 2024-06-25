@@ -20,6 +20,9 @@ using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Documents;
 using System.Linq;
+using System.IO;
+using System.Windows.Media;
+using System.Globalization;
 
 
 /// <summary>
@@ -56,6 +59,28 @@ public partial class Page1ViewModel : BaseViewModelCT
     public IList<ListEntry> MainOptions 
         => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
 
+    public string? ImageSource
+    {
+        get
+        {
+            if (File.Exists($"Resource\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"))
+            {
+                return $"/Resource/{CultureInfo.CurrentUICulture.Name}/MainSelection{MainSelection?.ID}.png";
+            }
+            else if (File.Exists($"Resource\\{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}\\MainSelection{MainSelection?.ID}.png"))
+            {
+                return $"/Resource/{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}/MainSelection{MainSelection?.ID}.png";
+            }
+            else if (File.Exists($"Resource\\MainSelection{MainSelection?.ID}.png"))
+            {
+                return $"/Resource/MainSelection{MainSelection?.ID}.png";
+            }
+            else
+            {
+                return "";
+            }
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
@@ -92,5 +117,9 @@ public partial class Page1ViewModel : BaseViewModelCT
     {
         if (this.IsProperty(e.PropertyName!))
             OnPropertyChanged(e.PropertyName);
+        if (e.PropertyName == nameof(MainSelection))
+        {
+             OnPropertyChanged(nameof(ImageSource));
+        }
     }
 }

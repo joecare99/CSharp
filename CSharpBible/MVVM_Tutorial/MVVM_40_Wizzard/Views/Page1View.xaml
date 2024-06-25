@@ -22,5 +22,9 @@
             <ListBox ItemsSource="{Binding MainOptions}" SelectedItem="{Binding MainSelection}"/>
             <Button Content="Clear" Command="{Binding ClearCommand}" Height="40" Margin="10"/>
         </StackPanel>
+        <DockPanel Grid.Column="1">
+            <Image DockPanel.Dock="Left" Source="{Binding ImageSource}" Width="200"/>
+            <FlowDocumentScrollViewer Document="{Binding ImageSource, Mode=OneWay}"/>
+        </DockPanel>
     </Grid>
 </Page>
