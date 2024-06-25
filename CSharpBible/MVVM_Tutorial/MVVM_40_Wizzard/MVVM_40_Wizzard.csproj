@@ -8,6 +8,18 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+	  <None Remove="Resource\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resource\**">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Remove="Resource\MainSelection0.xaml" />
+	  <Page Remove="Resource\MainSelection1.xaml" />
+	</ItemGroup>
+	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
@@ -30,11 +42,19 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+		<EmbeddedResource Update="Resource\**.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Properties\Settings.settings">
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Resource\de\" />
+	  <Folder Include="Resource\en\" />
+	  <Folder Include="Resource\fr\" />
 	</ItemGroup>
 </Project>
