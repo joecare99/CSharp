@@ -117,12 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="all64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\all64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Description" xml:space="preserve">
     <value>MVVM-Sudoku using Community-Toolkit</value>
+  </data>
+  <data name="ExitGame" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
   </data>
   <data name="LoadGame" xml:space="preserve">
     <value>Load</value>
@@ -130,15 +132,13 @@
   <data name="NewGame" xml:space="preserve">
     <value>New</value>
   </data>
-  <data name="NewGameGlyph" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\document_new_unlined_256.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="PrintGame" xml:space="preserve">
     <value>Print</value>
   </data>
   <data name="SaveGame" xml:space="preserve">
     <value>Save</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="SudokuView" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Views\SudokuView.xaml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

@@ -61,21 +61,29 @@ namespace MVVM_41_Sudoku.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap all64 {
-            get {
-                object obj = ResourceManager.GetObject("all64", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die MVVM-Sudoku using Community-Toolkit ähnelt.
         /// </summary>
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Exit ähnelt.
+        /// </summary>
+        public static string ExitGame {
+            get {
+                return ResourceManager.GetString("ExitGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
+        /// </summary>
+        public static string File {
+            get {
+                return ResourceManager.GetString("File", resourceCulture);
             }
         }
         
@@ -94,16 +102,6 @@ namespace MVVM_41_Sudoku.Properties {
         public static string NewGame {
             get {
                 return ResourceManager.GetString("NewGame", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap NewGameGlyph {
-            get {
-                object obj = ResourceManager.GetObject("NewGameGlyph", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -134,7 +132,7 @@ namespace MVVM_41_Sudoku.Properties {
         ///      xmlns:local=&quot;clr-namespace:MVVM_41_Sudoku.Views&quot;
         ///      xmlns:p=&quot;clr-namespace:MVVM_41_Sudoku.Properties&quot;
         ///      xmlns:vc=&quot;clr-namespace:MVVM_41_Sudoku.ValueConverter&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_41_Sudoku. [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:vc2=&quot;clr-namespace:MVVM_41_Sudoku.V [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string SudokuView {
             get {
