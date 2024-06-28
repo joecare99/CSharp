@@ -12,19 +12,16 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BaseLib.Interfaces;
 using MVVM.ViewModel;
 using NSubstitute;
 using System.ComponentModel;
-using Sudoku_Base.Models;
 using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using Sudoku_Base.Models.Interfaces;
 using System.IO;
-using System.Linq.Expressions;
 
 /// <summary>
 /// The Tests namespace.
