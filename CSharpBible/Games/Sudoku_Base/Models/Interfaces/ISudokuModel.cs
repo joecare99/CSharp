@@ -12,11 +12,12 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using BaseLib.Interfaces;
+using System.Windows.Media;
+using System.Windows;
 
 /// <summary>
 /// The Models namespace.
@@ -45,5 +46,6 @@ namespace Sudoku_Base.Models.Interfaces
         bool ReadFromStream(Stream stream);
         bool ValuesFromStream(Stream stream);
         bool ValuesToStream(Stream stream);
+        void DrawSudoku(string title, object data, DrawingContext context, Rect rect);
     }
 }

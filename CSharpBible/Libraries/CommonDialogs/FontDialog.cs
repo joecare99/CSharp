@@ -23,7 +23,7 @@ namespace CommonDialogs;
 /// <seealso cref="FontDialog" />
 public class FontDialog : System.Windows.Forms.FontDialog, IFontDialog
 {
-    public System.Drawing.Font Font { get => base.Font;set => base.Font = value; }
+    public new System.Drawing.Font Font { get => base.Font;set => base.Font = value; }
 
     /// <summary>
     /// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.
