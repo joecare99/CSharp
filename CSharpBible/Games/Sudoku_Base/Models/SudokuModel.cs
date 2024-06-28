@@ -18,12 +18,13 @@ using Sudoku_Base.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Timers;
 using BaseLib.Helper;
-using System.Collections;
+using System.Windows.Media;
+using System.Globalization;
+using System.Windows;
 
 /// <summary>
 /// The Models namespace.
@@ -64,12 +65,12 @@ public partial class SudokuModel : ObservableObject, ISudokuModel
     [NotifyPropertyChangedFor(nameof(RedoIndex))]
     private int _undoIndex = -1;
 
-    private Dictionary<Point, ISudokuField> Fields = new();
+    private Dictionary<System.Drawing.Point, ISudokuField> Fields = new();
 
     IReadOnlyList<ISudokuField> ISudokuModel.Fields => Fields.Values.ToList();
     IReadOnlyList<int?> ISudokuModel.Values => Fields.Values.Select(f=>f.Value).ToList();
-    public ISudokuField this[int row, int col] => Fields[new Point(row, col)];
-
+    public ISudokuField this[int row, int col] => Fields[new(row, col)];
+    
     public int RedoIndex => undoInformation.Count - UndoIndex - 1;
 
     public static IEnumerable<(string, Type)> PropTypes => [
@@ -96,7 +97,7 @@ public partial class SudokuModel : ObservableObject, ISudokuModel
         {
             for (int col = 0; col < 9; col++)
             {
-                var field = new SudokuField(new Point(row, col), null, false, Array.Empty<int>());
+                var field = new SudokuField(new System.Drawing.Point(row, col), null, false, Array.Empty<int>());
                 Fields.Add(field.Position, field);
                 field.PropertyChanging += FieldPropChanging;
                 field.PropertyChanged += FieldPropChanged;
@@ -242,12 +243,42 @@ public partial class SudokuModel : ObservableObject, ISudokuModel
                     {
                         sfield.Clear();
                         sfield.Value = value != 0 ? value : null;
+                        sfield.IsPredefined = value != 0;
                     }
                     break;
 
             }
         ClearUndoList();
         return true;
+    }
+
+    public void DrawSudoku(string title, object data, DrawingContext dc, Rect r)
+    {
+        if (data is not IReadOnlyList<int?> sudoku)
+        {
+            return;
+        }
+        var typeface = new Typeface("Arial");
+        var formattedText = new FormattedText(title, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, r.Width / 18.0, Brushes.Black, 1.0);
+        dc.DrawText(formattedText, r.TopLeft);
+
+        // Draw the grid
+        var thinPen = new Pen(Brushes.DarkGray, 0.5);
+        var normalPen = new Pen(Brushes.Black, 1.0);
+        for (int i = 0; i <= 9; i++)
+        {
+            dc.DrawLine(i % 3 == 0 ? normalPen : thinPen, new Point(r.Left + i * r.Width / 9.0, (r.Height - r.Width) * 0.5), new Point(r.Left + i * r.Width / 9.0, (r.Height + r.Width) * 0.5));
+            dc.DrawLine(i % 3 == 0 ? normalPen : thinPen, new Point(r.Left, (r.Height - r.Width) * 0.5 + i * r.Width / 9.0), new Point(r.Left + r.Width, (r.Height - r.Width) * 0.5 + i * r.Width / 9.0));
+        }
+
+        // Draw the numbers
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
+                if (sudoku[i + j * 9] is int iV)
+                {
+                    formattedText = new FormattedText(iV.ToString() ?? "", System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, r.Width / 9.5, Brushes.Black, 1.0);
+                    dc.DrawText(formattedText, new Point(r.Left + (i + 0.25) * r.Width / 9.0, (r.Height - r.Width) * 0.5 + j * r.Width / 9.0));
+                }
     }
 
     #endregion
