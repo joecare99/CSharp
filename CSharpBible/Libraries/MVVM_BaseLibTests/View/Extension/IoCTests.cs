@@ -1,5 +1,4 @@
-﻿using MVVM.View.Extension;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System;
 using Microsoft.Extensions.DependencyInjection;
