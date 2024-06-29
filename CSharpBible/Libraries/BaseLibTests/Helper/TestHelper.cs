@@ -46,6 +46,9 @@ public static class TestHelper
         foreach (var prop in props)
             if (prop.CanRead && (Excl?.Contains(prop.Name) == false))
             {
+                if (prop.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
+                    AssertAreEqual((IEnumerable?)prop.GetValue(ExpData), (IEnumerable?)prop.GetValue(ActData), Msg + $".{prop.Name}");
+                else
                 Assert.AreEqual(ExpData.GetProp(prop.Name), ActData.GetProp(prop.Name), Msg + $".{prop.Name}");
             }
         var fields = typeof(T).GetFields();
