@@ -13,8 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM_09_DialogBoxes.ViewModel;
-using NSubstitute;
+using MVVM_09_DialogBoxes.ViewModels;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
@@ -40,10 +39,6 @@ namespace MVVM_09_DialogBoxes.Views.Tests
         MainWindow testView;
         MainWindowViewModel vm;
         private MessageBoxResult mbResult;
-        private IDialogWindow dw;
-        private bool? xResult;
-        private string sNewName = "NewName";
-        private string sNewEmail = "NewEmail";
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
@@ -64,12 +59,6 @@ namespace MVVM_09_DialogBoxes.Views.Tests
             vm.PropertyChanged += OnVMPropertyChanged;
             if (vm is INotifyPropertyChanging npchgn)
                 npchgn.PropertyChanging += OnVMPropertyChanging;
-        }
-
-        private MessageBoxResult MyMBShow(string arg1, string arg2, MessageBoxButton button)
-        {
-            DoLog($"MyMBShow({arg1},{arg2},{button})=>{mbResult}");
-            return mbResult;
         }
 
         /// <summary>

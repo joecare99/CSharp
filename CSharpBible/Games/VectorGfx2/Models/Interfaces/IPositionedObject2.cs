@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace VectorGfx2.Models.Interfaces;
 
@@ -8,5 +9,5 @@ public interface IPositionedObject2 : IHasPoint
 
     int X { get; set; }
     int Y { get; set; }
-    Point[] Pnts { get; set; }
+    List<Point> Pnts { get; set; }
 }

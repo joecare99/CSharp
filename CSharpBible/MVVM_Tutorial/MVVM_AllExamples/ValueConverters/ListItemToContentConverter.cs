@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows;
 using System.Windows.Data;
 using MVVM_AllExamples.Models;
 
@@ -21,7 +17,29 @@ public class ListItemToContentConverter : IValueConverter
             return null;
         if (value is ExItem lbi)
         {
-            var v = Activator.CreateInstance(lbi.ExType);
+            object? v = null;
+            try
+            {
+                v = Activator.CreateInstance(lbi.ExType);
+            }
+            catch (Exception ex)
+            {
+                var sMsg = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    sMsg += "\r\n" + ex.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        sMsg += "\r\n" + ex.InnerException.InnerException.Message;
+                        sMsg += "\r\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                    else
+                        sMsg += "\r\n" + ex.InnerException.StackTrace;
+                }
+                    else
+                        sMsg += "\r\n" + ex.StackTrace;
+                return new TextBox() { Text = sMsg, IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible };
+            }
             if (v is Page fe)
             {
                 if (lbi.Additionals is Dictionary<string, string> d)
@@ -34,7 +52,14 @@ public class ListItemToContentConverter : IValueConverter
                     if (d.TryGetValue("Description", out string? dsc))
                         Description = dsc;
                     tv.ToolTip = Description;
-                    tv.Items.Add(new TabItem() { Header = Title, Content = new Frame() { Content = fe } });
+                    try
+                    {
+                        tv.Items.Add(new TabItem() { Header = Title, Content = new Frame() { Content = fe } });
+                    }
+                    catch (Exception ex)
+                    {
+                        tv.Items.Add(new TabItem() { Header = Title, Content = new TextBox() { Text = ex.Message, IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible } });
+                    }
                     if (d.Keys.FirstOrDefault((o) => o.EndsWith("View")) is string xaml)
                     {
                         tv.Items.Add(new TabItem()
@@ -51,15 +76,15 @@ public class ListItemToContentConverter : IValueConverter
                             Content = new TextBox() { Text = d[xamlcs], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("ViewModel")) is string vm)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("ViewModels")) is string vm)
                     {
                         tv.Items.Add(new TabItem()
                         {
-                            Header = "ViewModel",
+                            Header = "ViewModels",
                             Content = new TextBox() { Text = d[vm], IsReadOnly = true, VerticalScrollBarVisibility = ScrollBarVisibility.Visible }
                         });
                     }
-                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Model") && !o.EndsWith("ViewModel")) is string mdl)
+                    if (d.Keys.FirstOrDefault((o) => o.EndsWith("Model") && !o.EndsWith("ViewModels")) is string mdl)
                     {
                         tv.Items.Add(new TabItem()
                         {

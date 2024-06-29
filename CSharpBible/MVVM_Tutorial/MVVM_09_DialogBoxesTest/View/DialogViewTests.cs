@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM_09_DialogBoxes.ViewModel;
+using MVVM_09_DialogBoxes.ViewModels;
 using NSubstitute;
 using System.ComponentModel;
 using System.Threading;
@@ -40,7 +40,6 @@ namespace MVVM_09_DialogBoxes.Views.Tests
         DialogView testView;
         DialogViewModel vm;
         private MessageBoxResult mbResult;
-        private IDialogWindow dw;
         private bool? xResult;
         private string sNewName = "NewName";
         private string sNewEmail = "NewEmail";

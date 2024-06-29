@@ -1,0 +1,58 @@
+﻿<Project>
+	<Import Project="..\Graphics_net.props" />
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Include="..\CanvasWPF2_CTItemTemplateSelector\CanvasWPF2_CTItemTemplateSelector.csproj" />
+		<ProjectReference Include="..\CanvasWPF2_ItemTemplateSelector\CanvasWPF2_ItemTemplateSelector.csproj" />
+		<ProjectReference Include="..\CanvasWPF\CanvasWPF.csproj" />
+		<ProjectReference Include="..\CanvasWPF_CT\CanvasWPF_CT.csproj" />
+		<ProjectReference Include="..\DynamicShapeWPF\DynamicShapeWPF.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_CTDrawGrid2\MVVM_Converter_CTDrawGrid2.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_CTDrawGrid\MVVM_Converter_CTDrawGrid.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_CTImgGrid\MVVM_Converter_CTImgGrid.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_DrawGrid2\MVVM_Converter_DrawGrid2.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_DrawGrid\MVVM_Converter_DrawGrid.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_ImgGrid2\MVVM_Converter_ImgGrid2.csproj" />
+		<ProjectReference Include="..\MVVM_Converter_ImgGrid\MVVM_Converter_ImgGrid.csproj" />
+		<ProjectReference Include="..\MVVM_ImageHandling\MVVM_ImageHandling_net.csproj" />
+		<ProjectReference Include="..\MVVM_Lines_on_Grid2\MVVM_Lines_on_Grid2.csproj" />
+		<ProjectReference Include="..\Polyline\Polyline_net.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DependentUpon>Resources.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<DependentUpon>Settings.settings</DependentUpon>
+			<AutoGen>True</AutoGen>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<Generator>PublicResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+			<Generator>PublicSettingsSingleFileGenerator</Generator>
+		</None>
+	</ItemGroup>
+
+</Project>

@@ -2,11 +2,6 @@
 using MVVM.ViewModel;
 using MVVM.View.Extension;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM_39_MultiModelTest.Models;
 //using NSubstitute;
 

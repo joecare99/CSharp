@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
+using System.Collections.Generic;
 using System.Windows;
 using VectorGfx2.Models.Interfaces;
 
@@ -26,7 +27,7 @@ public partial class VisualObject2 : NotificationObjectCT, IVisualObject2
     [ObservableProperty]
     private int _y;
     [ObservableProperty]
-    private Point[] _pnts;
+    private List<Point> _pnts;
 
     public IRelayCommand MouseHover { get; set; }
 }

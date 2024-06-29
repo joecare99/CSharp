@@ -1,5 +1,5 @@
 ﻿using MVVM_26_CTBindingGroupExp.Properties;
-using MVVM_26_CTBindingGroupExp.ViewModel;
+using MVVM_26_CTBindingGroupExp.ViewModels;
 using System;
 using System.Globalization;
 using System.Windows.Controls;

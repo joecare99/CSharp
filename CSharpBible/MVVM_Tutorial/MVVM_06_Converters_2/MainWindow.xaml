@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MVVM_06_Converters_2"
         xmlns:p="clr-namespace:MVVM_06_Converters_2.Properties"
         xmlns:view="clr-namespace:MVVM_06_Converters_2.View"
-        xmlns:mvvm="clr-namespace:MVVM_06_Converters_2.ViewModel"
+        xmlns:mvvm="clr-namespace:MVVM_06_Converters_2.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>

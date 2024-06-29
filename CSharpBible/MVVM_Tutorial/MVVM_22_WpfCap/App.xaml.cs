@@ -14,7 +14,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using MVVM_22_WpfCap.Model;
-using MVVM_22_WpfCap.ViewModel;
+using MVVM_22_WpfCap.ViewModels;
 using System.Windows;
 
 namespace MVVM_22_WpfCap

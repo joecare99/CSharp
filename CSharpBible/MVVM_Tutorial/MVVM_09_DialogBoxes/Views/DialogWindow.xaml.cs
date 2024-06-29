@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_09_DialogBoxes.ViewModel;
+using MVVM_09_DialogBoxes.ViewModels;
 using System;
 using System.Windows;
 

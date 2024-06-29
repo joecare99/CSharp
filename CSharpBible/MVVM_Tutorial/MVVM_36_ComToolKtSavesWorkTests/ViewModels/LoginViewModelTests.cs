@@ -42,10 +42,12 @@ namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
         LoginViewModel testModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private IDebugLog _debugLog;
         private IGetResult _getResult;
         private Func<Type, object?> _gsold;
         private Func<Type, object> _grsold;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
         /// Initializes this instance.

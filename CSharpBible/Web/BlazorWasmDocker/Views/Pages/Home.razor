@@ -1,0 +1,22 @@
+﻿@page "/"
+@using ConsoleDisplay.View;
+@inject IConsole console;
+<PageTitle>Home</PageTitle>
+
+<h1>Hallo, schöne neue Welt!</h1>
+
+Welcome to your new app.
+
+<RConsole Title="Test" />
+
+
+<button @onclick="()=>WriteHelloWorld()">Hello World</button>
+
+@code {
+
+	private void WriteHelloWorld()
+	{
+		console.WriteLine("Hello, World!");
+	}
+}
+

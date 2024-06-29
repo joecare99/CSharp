@@ -1,0 +1,83 @@
+﻿@using BlazorWasmDocker.ViewModels.Interfaces;
+@using System.ComponentModel;
+@using BlazorWasmDocker.Models;
+
+<h3>RConsole</h3>
+<div class="movable">
+<table>
+	<tbody>
+		<tr>
+			<td colspan="2">
+				-
+			</td>
+			<td colspan="70" centered>
+				<pre>@Title</pre>
+			</td>
+			<td colspan="2">
+				_
+			</td>
+			<td colspan="2">
+				#
+			</td>
+			<td colspan="2">
+				X
+			</td>
+		</tr>
+		@for (var row = 0; row<=25; row++)
+			{
+				<tr height="12">
+					@for (var col =0;col<=79;col++)
+					{
+						<td>
+							<pre width="12" font="Consolas" background-color="000000" color="FFFF00"><b>@(Buffer[col + row*80] is ' ' or '\0' ?'\u00a0':Buffer[col + row*80])</b></pre>
+							</td>
+					}
+					</tr>
+			}
+    </tbody>
+</table>
+</div>
+@code {
+	[Parameter]
+	public string Title {get; set;}
+
+	public IRConsoleViewModel ViewModel;
+
+	public char[] Buffer {get; set;} = new char[80*33];
+	
+	public void Clear()
+	{
+		for (var i = 0; i<Buffer.Length; i++)
+		{
+			Buffer[i] = ' ';
+		}
+	}
+
+	public RConsole()
+	{
+		ViewModel = IoC.GetRequiredService<IRConsoleViewModel>();
+		Clear();
+		ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+			Buffer[00] = 'R';
+	Buffer[1] = 'C';
+	Buffer[2] = 'o';
+	Buffer[3] = 'n';
+	Buffer[4] = 's';
+	Buffer[5] = 'o';
+	Buffer[6] = 'l';
+	Buffer[7] = 'e';
+
+	}
+
+	private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == "Buffer")
+		{
+			for (var i = 0; i<Math.Min(Buffer.Length,ViewModel.Buffer.Length); i++)
+			{
+			Buffer[i] = ViewModel.Buffer[i];
+			}
+			StateHasChanged();
+		}
+	}
+}

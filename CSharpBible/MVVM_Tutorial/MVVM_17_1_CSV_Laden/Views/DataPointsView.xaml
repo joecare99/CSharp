@@ -6,7 +6,7 @@
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:MVVM_17_1_CSV_Laden.Views"
       xmlns:vc="clr-namespace:MVVM_17_1_CSV_Laden.Views.Converter"
-      xmlns:mvvm="clr-namespace:MVVM_17_1_CSV_Laden.ViewModel"
+      xmlns:mvvm="clr-namespace:MVVM_17_1_CSV_Laden.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="DataPoints">

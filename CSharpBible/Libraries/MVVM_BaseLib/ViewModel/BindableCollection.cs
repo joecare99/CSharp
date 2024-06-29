@@ -17,8 +17,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace MVVM.ViewModel
-{
+namespace MVVM.ViewModel;
+
 	/// <summary>
 	/// A base collection class that supports automatic UI thread marshalling.
 	/// </summary>
@@ -58,17 +58,17 @@ namespace MVVM.ViewModel
 		public virtual void NotifyOfPropertyChange(string propertyName) {
 			Action action = () => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-            if (IsNotifying)
-            {
-                ExecuteAction(action);
-            }
+        if (IsNotifying)
+        {
+            ExecuteAction(action);
         }
+    }
 
 
-        /// <summary>
-        /// Raises a change notification indicating that all bindings should be refreshed.
-        /// </summary>
-        public void Refresh() {
+    /// <summary>
+    /// Raises a change notification indicating that all bindings should be refreshed.
+    /// </summary>
+    public void Refresh() {
 			Action action = () =>
 			{
 				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
@@ -76,7 +76,7 @@ namespace MVVM.ViewModel
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 			};
 
-            ExecuteAction(action);
+        ExecuteAction(action);
 		}
 
 		/// <summary>
@@ -216,20 +216,19 @@ namespace MVVM.ViewModel
 			ExecuteAction(RemoveRange);
 		}
 
-        private void ExecuteAction(Action action)
+    private void ExecuteAction(Action action)
+    {
+        if (PropertyChangeNotificationsOnUIThread) OnUIThread(action);
+        else
         {
-            if (PropertyChangeNotificationsOnUIThread) OnUIThread(action);
-            else
-            {
-                action();
-            }
+            action();
         }
+    }
 
-        /// <summary>
-        /// Executes the given action on the UI thread
-        /// </summary>
-        /// <param name="action">The action.</param>
-        /// <remarks>An extension point for subclasses to customize how property change notifications are handled.</remarks>
-        protected virtual void OnUIThread(System.Action action) => action.Invoke();
+    /// <summary>
+    /// Executes the given action on the UI thread
+    /// </summary>
+    /// <param name="action">The action.</param>
+    /// <remarks>An extension point for subclasses to customize how property change notifications are handled.</remarks>
+    protected virtual void OnUIThread(System.Action action) => action.Invoke();
 	}
-}

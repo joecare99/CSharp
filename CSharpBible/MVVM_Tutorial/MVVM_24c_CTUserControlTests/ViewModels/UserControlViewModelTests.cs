@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using MVVM.ViewModel;
-using MVVM_BaseLibTests.ViewModel;
 using System.Collections.Generic;
 
 namespace MVVM_24c_CTUserControl.ViewModels.Tests

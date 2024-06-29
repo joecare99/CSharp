@@ -1,0 +1,13 @@
+﻿@page "/guess-the-number"
+
+<PageTitle>Guess the Number</PageTitle>
+<h3>Guess The Number</h3>
+
+<ErrorBoundary>
+    <ChildContent>
+        <Game />
+    </ChildContent>
+    <ErrorContent>
+        <h1>You have entered an invalid guess!</h1>
+    </ErrorContent>
+</ErrorBoundary>

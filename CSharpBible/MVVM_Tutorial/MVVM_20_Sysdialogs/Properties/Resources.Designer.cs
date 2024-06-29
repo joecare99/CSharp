@@ -274,7 +274,7 @@ namespace MVVM_20_Sysdialogs.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die the ViewModel code: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die the ViewModels code: ähnelt.
         /// </summary>
         public static string txtTheViewModelCode {
             get {

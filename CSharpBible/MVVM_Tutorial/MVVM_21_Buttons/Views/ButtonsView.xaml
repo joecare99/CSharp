@@ -1,0 +1,93 @@
+<Page x:Class="MVVM_21_Buttons.Views.ButtonsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_21_Buttons.Views"
+      xmlns:p="clr-namespace:MVVM_21_Buttons.Properties"
+      xmlns:mvvm="clr-namespace:MVVM_21_Buttons.ViewModels"
+      xmlns:vc="clr-namespace:MVVM_21_Buttons.Converter"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ButtonsView">
+    <Page.DataContext>
+        <mvvm:ButtonsViewViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <vc:BoolToColorStringConverter x:Key="vcBoolToColor"/>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Opacity" Value="0.85"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="10"/>
+                 </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsFocused" Value="False"/>
+                        <Condition Property="IsMouseOver" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <MultiTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Margin" To="2"/>
+                                <DoubleAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Opacity" To="0.95"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </MultiTrigger.EnterActions>
+                    <MultiTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Duration="0:0:1" Storyboard.TargetProperty="Margin"/>
+                                <DoubleAnimation Duration="0:0:1" Storyboard.TargetProperty="Opacity"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </MultiTrigger.ExitActions>
+                </MultiTrigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Trigger.Setters>
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </Trigger.Setters>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="12*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="12*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid   Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+            <Button Command="{Binding PlayButton}" CommandParameter="1" Content="1" Background="{Binding Flip, ConverterParameter=1, Converter={StaticResource vcBoolToColor}, Mode=OneWay}"/>
+            <Button Command="{Binding PlayButton}" CommandParameter="2" Background="{Binding Flip, ConverterParameter=2, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Column="1" >2</Button>
+            <Button Command="{Binding PlayButton}" CommandParameter="3" Background="{Binding Flip, ConverterParameter=3, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Column="2">3</Button>
+            <Button Command="{Binding PlayButton}" CommandParameter="4" Background="{Binding Flip, ConverterParameter=4, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Row="1" Content="4"/>
+            <Button Command="{Binding PlayButton}" CommandParameter="5" Background="{Binding Flip, ConverterParameter=5, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Row="1" Grid.Column="1">5</Button>
+            <Button Command="{Binding PlayButton}" CommandParameter="6" Background="{Binding Flip, ConverterParameter=6, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Row="1" Grid.Column="2">6</Button>
+            <Button Command="{Binding PlayButton}" CommandParameter="7" Background="{Binding Flip, ConverterParameter=7, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Row="2">7</Button>
+            <Button Command="{Binding PlayButton}" CommandParameter="8" Background="{Binding Flip, ConverterParameter=8, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Row="2" Grid.Column="1">8</Button>
+            <Button Command="{Binding PlayButton}" CommandParameter="9" Background="{Binding Flip, ConverterParameter=9, Converter={StaticResource vcBoolToColor}, Mode=OneWay}" Grid.Row="2" Grid.Column="2">9</Button>
+        </Grid>
+        <Button Command="{Binding ResetButton}"  Grid.Row="2" Grid.Column="2" Margin="20" Content="{x:Static p:Resources.btnReset}"/>
+
+    </Grid>
+</Page>

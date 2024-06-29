@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 08-24-2022
 // ***********************************************************************
-// <copyright file="MainWindow.xaml.cs" company="JC-Soft">
+// <copyright file="BindingGroupView.xaml.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
@@ -16,7 +16,7 @@ using System.Windows;
 namespace MVVM_AllExamples
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for BindingGroupView.xaml
     /// </summary>
     public partial class MainWindow : Window
     {

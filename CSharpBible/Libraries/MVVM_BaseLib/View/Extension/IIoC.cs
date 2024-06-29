@@ -11,9 +11,13 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-namespace MVVM.View.Extension
+using System;
+
+namespace MVVM.View.Extension;
+
+public interface IIoC
 {
-    internal interface IIoC
-    {
-    }
+    Type Type { get; set; }
+
+    object? ProvideValue(IServiceProvider serviceProvider);
 }

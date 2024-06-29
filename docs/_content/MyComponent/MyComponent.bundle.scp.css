@@ -1,0 +1,46 @@
+/* _content/MyComponent/BwdDialog.razor.rz.scp.css */
+.dialog-container[b-kvpupgh2z5] {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 2000;
+}
+
+.dialog[b-kvpupgh2z5] {
+    background-color: white;
+    margin: auto;
+    width: 25rem;
+}
+
+.dialog-title[b-kvpupgh2z5] {
+    background-color: #343a40;
+    color: white;
+    padding: .5rem;
+}
+
+.dialog-body[b-kvpupgh2z5] {
+    padding: 2rem;
+}
+
+.dialog-buttons[b-kvpupgh2z5] {
+    background-color: darkgrey;
+    padding: .5rem;
+    padding-left: 14rem;
+    align-items: end;
+}
+
+.button-dlg[b-kvpupgh2z5] {
+    padding: .5rem;
+    width: 5rem;
+    align: right;
+}
+/* _content/MyComponent/Component1.razor.rz.scp.css */
+.my-component[b-u0eh1fiqck] {
+    border: 2px dashed red;
+    padding: 1em;
+    margin: 1em 0;
+    background-image: url('background.png');
+}

@@ -14,7 +14,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace MVVM.ViewModel {
+namespace MVVM.ViewModel; 
 	/// <summary>
 	/// Represents a collection that is observable.
 	/// </summary>
@@ -32,4 +32,3 @@ namespace MVVM.ViewModel {
 		/// <param name="items">The items.</param>
 		void RemoveRange(IEnumerable<T> items);
 	}
-}

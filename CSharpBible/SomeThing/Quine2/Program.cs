@@ -1,0 +1,1 @@
+﻿var c=@"var c=@{1}{0}{1};Console.Write(string.Format(c,c,'\x22'));";Console.Write(string.Format(c,c,'\x22'));

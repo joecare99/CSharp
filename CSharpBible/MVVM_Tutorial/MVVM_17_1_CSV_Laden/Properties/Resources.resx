@@ -125,7 +125,7 @@
     <value>..\Views\DataPointsView.xaml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="DataPointsViewModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ViewModel\DataPointsViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\ViewModels\DataPointsViewModel.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="DataPointsView_xaml" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Views\DataPointsView.xaml.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

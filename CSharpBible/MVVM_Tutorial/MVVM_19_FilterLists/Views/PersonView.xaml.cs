@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM_19_FilterLists.ViewModel;
+using MVVM_19_FilterLists.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
