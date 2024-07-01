@@ -47,7 +47,7 @@ public partial class SudokuViewModel : BaseViewModelCT
     public string SudokuFileName { get; private set; }
     public Action CloseApp { get; set; }
 
-    public string AllImgSource => $"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/all64.png";
+    public string AllImgSource => $"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/all64_2.png";
     #endregion
 
     #region Methods
