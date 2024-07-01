@@ -11,11 +11,13 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using BaseLib.Helper.MVVM;
+using BaseLib.Interfaces;
 using MVVM.View.Extension;
 using MVVM_22_WpfCap.Model;
 using MVVM_22_WpfCap.ViewModels;
-using System.Windows;
 
 namespace MVVM_22_WpfCap
 {
