@@ -29,6 +29,7 @@ namespace VBUnObfusicator.Models
             "int", "uint", "long", "ulong", "float",
             "double", "decimal"
         };
+
         private static readonly char[] operatorSet = new[] { '(', ')', '{', '}', '[', ']', ';', ',', '.', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '=', '<', '>', '?', ':', '"', '\'', '\\', '#' };
         private static readonly char[] whitespace = new[] { ' ', '\t', '\r', '\n', '\u0000' };
         private static readonly char[] numbers = '0'.To('9');
