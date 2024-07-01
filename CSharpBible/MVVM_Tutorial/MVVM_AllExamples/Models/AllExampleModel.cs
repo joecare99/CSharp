@@ -80,6 +80,7 @@ namespace MVVM_AllExamples.Models
             ("UserControlView2",typeof(MVVM_24a_CTUserControl.Views.UserControlView),null),
             ("UserControlView3",typeof(MVVM_24b_UserControl.Views.UserControlView),null),
             ("UserControlView4",typeof(MVVM_24c_CTUserControl.Views.UserControlView),null),   
+            ("RichTextView",typeof(MVVM_25_RichTextEdit.Views.RichTextEditView),null),   
             ("BindingGroupView",typeof(MVVM_26_BindingGroupExp.Views.BindingGroupView),null),   
 
             ("Events_to_Commands",typeof(MVVM_33_Events_To_Commands.Views.EventBindingView),null),
@@ -90,6 +91,7 @@ namespace MVVM_AllExamples.Models
             ("DependencyInjection",typeof(MVVM_38_CTDependencyInjection.Views.DependencyInjectionView),null),
             ("MultiModel",typeof(MVVM_39_MultiModelTest.Views.MultiModelMainView),null),
             ("Wizzard",typeof(MVVM_40_Wizzard.Views.WizzardView),null),
+            ("SuDoKu",typeof(MVVM_41_Sudoku.Views.SudokuView),null),
             ("SyncAsyncParallel",typeof(SyncAsyncParallel.Views.SyncAsyncView),null),
 
             
@@ -111,7 +113,7 @@ namespace MVVM_AllExamples.Models
                 try
                 {
                     Debug.WriteLine($"{ex.Description} {ex.ExType}");
-                    var desc = new Dictionary<string, string>();
+                    var desc = new Dictionary<string, string?>();
                     Type? t = ex.ExType.Assembly.GetTypes().First((t) => t.Name.EndsWith(nameof(Resources)));
                     if (t != null)
                     {
@@ -119,7 +121,7 @@ namespace MVVM_AllExamples.Models
                             if (prop.PropertyType == typeof(string))
                             {
                                 Debug.WriteLine($"  {prop.Name} {prop.PropertyType} ");
-                                desc[prop.Name] = (string)prop.GetValue(null);
+                                desc[prop.Name] = (string?)prop.GetValue(null);
                             }
                         ex.Additionals = desc;
                     }

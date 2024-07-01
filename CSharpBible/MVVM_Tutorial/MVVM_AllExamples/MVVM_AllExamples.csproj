@@ -37,8 +37,10 @@
 		<ProjectReference Include="..\MVVM_24b_UserControl\MVVM_24b_UserControl.csproj" />
 		<ProjectReference Include="..\MVVM_24c_CTUserControl\MVVM_24c_CTUserControl.csproj" />
 		<ProjectReference Include="..\MVVM_24_UserControl\MVVM_24_UserControl.csproj" />
+		<ProjectReference Include="..\MVVM_25_RichTextEdit\MVVM_25_RichTextEdit.csproj" />
 		<ProjectReference Include="..\MVVM_26_BindingGroupExp\MVVM_26_BindingGroupExp.csproj" />
 		<ProjectReference Include="..\MVVM_26_CTBindingGroupExp\MVVM_26_CTBindingGroupExp.csproj" />
+		<ProjectReference Include="..\MVVM_28_1_CTDataGridExt\MVVM_28_1_CTDataGridExt.csproj" />
 		<ProjectReference Include="..\MVVM_33a_CTEvents_To_Commands\MVVM_33a_CTEvents_To_Commands.csproj" />
 		<ProjectReference Include="..\MVVM_33_Events_to_Commands\MVVM_33_Events_to_Commands.csproj" />
 		<ProjectReference Include="..\MVVM_35_CommunityToolkit\MVVM_35_CommunityToolkit.csproj" />
@@ -47,6 +49,7 @@
 		<ProjectReference Include="..\MVVM_38_CTDependencyInjection\MVVM_38_CTDependencyInjection.csproj" />
 		<ProjectReference Include="..\MVVM_39_MultiModelTest\MVVM_39_MultiModelTest.csproj" />
 		<ProjectReference Include="..\MVVM_40_Wizzard\MVVM_40_Wizzard.csproj" />
+		<ProjectReference Include="..\MVVM_41_Sudoku\MVVM_41_Sudoku.csproj" />
 		<ProjectReference Include="..\SyncAsyncParallel\SyncAsyncParallel.csproj" />
 	</ItemGroup>
 	<ItemGroup>
