@@ -15,6 +15,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using System.Windows;
+using BaseLib.Helper;
+using BaseLib.Helper.MVVM;
+using BaseLib.Interfaces;
 
 namespace MVVM_AllExamples
 {
@@ -27,16 +30,19 @@ namespace MVVM_AllExamples
         {
             base.OnStartup(e);
             var sc = new ServiceCollection()
-                .AddTransient<BaseLib.Interfaces.ISysTime,BaseLib.Helper.SysTime>()
+                .AddTransient<ISysTime,SysTime>()
+                .AddTransient<IRandom,CRandom>()
+                .AddSingleton<ILog,MVVM_40_Wizzard.Models.SimpleLog>()
+                .AddSingleton<IMessenger>(WeakReferenceMessenger.Default)
+
                 .AddSingleton<MVVM_22_WpfCap.Model.IWpfCapModel, MVVM_22_WpfCap.Model.CWpfCapModel>()
                 .AddSingleton<MVVM_22_CTWpfCap.Model.IWpfCapModel, MVVM_22_CTWpfCap.Model.CWpfCapModel>()
                 .AddTransient<MVVM_22_WpfCap.ViewModels.WpfCapViewModel>()
                 .AddTransient<MVVM_22_CTWpfCap.ViewModels.WpfCapViewModel>()
-                .AddTransient<MVVM_22_WpfCap.Model.IRandom, MVVM_22_WpfCap.Model.CRandom>()
-                .AddTransient<MVVM_22_CTWpfCap.Model.IRandom, MVVM_22_CTWpfCap.Model.CRandom>()
+                .AddSingleton<MVVM_28_1_CTDataGridExt.Services.IPersonService, MVVM_28_1_CTDataGridExt.Services.PersonService>()
+                .AddSingleton<MVVM_25_RichTextEdit.Models.IRichTextEditModel, MVVM_25_RichTextEdit.Models.RichTextEditModel>()
                 .AddSingleton<MVVM_36_ComToolKtSavesWork.Models.IUserRepository, MVVM_36_ComToolKtSavesWork.Models.UserRepository>()
                 .AddSingleton<MVVM_36_ComToolKtSavesWork.Models.ICommunityToolkit2Model, MVVM_36_ComToolKtSavesWork.Models.CommunityToolkit2Model>()
-                .AddSingleton<IMessenger>(WeakReferenceMessenger.Default)
                 .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.MainWindowViewModel>()
                 .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel>()
                 .AddTransient<MVVM_36_ComToolKtSavesWork.ViewModels.UserInfoViewModel>()
@@ -51,12 +57,12 @@ namespace MVVM_AllExamples
                 .AddTransient<MVVM_38_CTDependencyInjection.Models.Interfaces.ISysTime, MVVM_38_CTDependencyInjection.Models.CSysTime>()
                 .AddTransient<MVVM_38_CTDependencyInjection.ViewModels.MainWindowViewModel>()
                 .AddTransient<MVVM_38_CTDependencyInjection.ViewModels.DependencyInjectionViewModel>()
-                .AddSingleton<BaseLib.Interfaces.ILog,MVVM_40_Wizzard.Models.SimpleLog>()
 
                 .AddSingleton<MVVM_39_MultiModelTest.Models.ISystemModel, MVVM_39_MultiModelTest.Models.SystemModel>()
                 .AddScoped<MVVM_39_MultiModelTest.Models.IScopedModel, MVVM_39_MultiModelTest.Models.ScopedModel>()
 
                 .AddSingleton<MVVM_40_Wizzard.Models.IWizzardModel, MVVM_40_Wizzard.Models.WizzardModel>()
+                .AddSingleton<Sudoku_Base.Models.Interfaces.ISudokuModel, Sudoku_Base.Models.SudokuModel>()
                 ;
 
 

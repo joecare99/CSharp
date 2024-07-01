@@ -47,7 +47,7 @@ public partial class SudokuViewModel : BaseViewModelCT
     public string SudokuFileName { get; private set; }
     public Action CloseApp { get; set; }
 
-    public string AllImgSource => $"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/all64.png";
+    public string AllImgSource => $"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/all64_2.png";
     #endregion
 
     #region Methods
@@ -126,7 +126,7 @@ public partial class SudokuViewModel : BaseViewModelCT
             PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages
         };
         dPrintDialog?.Invoke(dialog, (p) => {
-            PagePrinter.Print(p.PrintQueue,p.PrintTicket, "SuDoKu", _model.Values, _model.DrawSudoku);
+            PagePrinter.Print(p.PrintQueue,p.PrintTicket, $"SuDoKu {Path.GetFileNameWithoutExtension(SudokuFileName)}", _model.Values, _model.DrawSudoku);
         });
     }
 

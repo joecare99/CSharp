@@ -27,10 +27,10 @@ namespace MVVM.ViewModel;
 
 /// <summary>
 /// Class BaseTestViewModel.
-/// Implements the <see cref="MVVM.ViewModel.BaseTestViewModel" />
+/// Implements the <see cref="BaseTestViewModel" />
 /// </summary>
 /// <typeparam name="T"></typeparam>
-/// <seealso cref="MVVM.ViewModel.BaseTestViewModel" />
+/// <seealso cref="BaseTestViewModel" />
 public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, INotifyPropertyChanged, new()
 {
     /// <summary>
@@ -86,9 +86,9 @@ public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, 
 
 /// <summary>
 /// Class BaseTestViewModel.
-/// Implements the <see cref="MVVM.ViewModel.BaseTestViewModel" />
+/// Implements the <see cref="BaseTestViewModel" />
 /// </summary>
-/// <seealso cref="MVVM.ViewModel.BaseTestViewModel" />
+/// <seealso cref="BaseTestViewModel" />
 public class BaseTestViewModel
 {
     /// <summary>

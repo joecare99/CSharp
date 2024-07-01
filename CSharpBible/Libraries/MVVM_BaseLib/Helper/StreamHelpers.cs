@@ -102,18 +102,18 @@ public static class StreamHelpers
                     streamBytes = new byte[sizeof(int)];
                     stream.Read(streamBytes, 0, sizeof(int));
                     var count32 = BitConverter.ToInt32(streamBytes, 0);
-                    var result = new IPersistence[count32];
+                    var result = new IPersistence?[count32];
                     if (t2.IsClass && t2.GetConstructors().FirstOrDefault(c => c.IsPublic)!=null)
                         for (var i =0;i<count32; i++)
                         {
-                            result[i] = (IPersistence)Activator.CreateInstance(t2);
+                            result[i] = (IPersistence?)Activator.CreateInstance(t2);
                         }
                     else
                         for (var i = 0; i < count32; i++)
                         {
                             result[i] = IoC.GetRequiredService<IPersistence>();
                         }
-                    yield return (e.Item1, result.Select(b => b.ReadFromEnumerable(stream.StreamToEnumerable(b.PropTypes))?b:null).ToList());
+                    yield return (e.Item1, result.Select(b => b?.ReadFromEnumerable(stream.StreamToEnumerable(b!.PropTypes))??false?b:null).ToList());
                     break;
             }
     }

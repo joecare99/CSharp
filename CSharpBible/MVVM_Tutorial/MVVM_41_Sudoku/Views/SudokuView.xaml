@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MVVM_41_Sudoku.Views"
       xmlns:p="clr-namespace:MVVM_41_Sudoku.Properties"
-      xmlns:vc="clr-namespace:MVVM_41_Sudoku.ValueConverter"
+      xmlns:vc="clr-namespace:MVVM_41_Sudoku.ValueConverters"
       xmlns:vc2="clr-namespace:MVVM_41_Sudoku.Views.Converter"
       xmlns:mvvm="clr-namespace:MVVM_41_Sudoku.ViewModels"
       xmlns:model="clr-namespace:MVVM_41_Sudoku.Models"
@@ -16,23 +16,22 @@
     <Page.Resources>
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
         <vc2:DoubleConverter x:Key="vcDouble"/>
-        <!--BitmapImage x:Key="AllImg64" StreamSource="{Binding AllImgSource}" /-->
-        <ImageBrush x:Key="CutBrush" Viewbox="0,-5,95,95" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="CopyBrush" Viewbox="0,80,95,95" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="PasteBrush" Viewbox="0,160,95,95" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="UndoBrush" Viewbox="0,250,95,95" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="RedoBrush" Viewbox="0,330,95,95" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="DeleteBrush" Viewbox="0,420,95,95" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="NewBrush"  Viewbox="0,505,95,95" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform"/>
-        <ImageBrush x:Key="OpenBrush" Viewbox="0,590,95,95" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="SaveBrush" Viewbox="0,672,95,95" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="PreviewBrush" Viewbox="0,763,95,95" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="OptionsBrush" Viewbox="0,848,95,95" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="HelpBrush" Viewbox="0,933,90,90" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="SearchBrush" Viewbox="0,1018,90,90" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="ReplaceBrush" Viewbox="0,1108,90,90" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="PrintBrush" Viewbox="0,1190,90,90" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
-        <ImageBrush x:Key="MailBrush" Viewbox="0,1275,90,90" ImageSource="{StaticResource AllImg64}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="CutBrush"     Viewbox="0, 000,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="CopyBrush"    Viewbox="0, 064,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PasteBrush"   Viewbox="0, 128,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="UndoBrush"    Viewbox="0, 192,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="RedoBrush"    Viewbox="0, 256,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="DeleteBrush"  Viewbox="0, 320,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="NewBrush"     Viewbox="0, 384,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform"/>
+        <ImageBrush x:Key="OpenBrush"    Viewbox="0, 448,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="SaveBrush"    Viewbox="0, 512,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PreviewBrush" Viewbox="0, 576,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="OptionsBrush" Viewbox="0, 640,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="HelpBrush"    Viewbox="0, 704,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="SearchBrush"  Viewbox="0, 768,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="ReplaceBrush" Viewbox="0, 832,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PrintBrush"   Viewbox="0, 896,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="MailBrush"    Viewbox="0, 960,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
     </Page.Resources>
     <Page.DataContext>
         <mvvm:SudokuViewModel/>
@@ -80,7 +79,6 @@
                     <TextBlock Text="{x:Static p:Resources.PrintGame}" Margin="8"/>
                 </StackPanel>
             </Button>
-            <Rectangle Fill="{StaticResource CopyBrush}" Width="32" Height="32"/>
         </StackPanel>
         <Label DockPanel.Dock="Top" Content="Sudoku-View:"/>
         <TextBlock DockPanel.Dock="Bottom" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>

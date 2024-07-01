@@ -126,7 +126,7 @@ public abstract class BaseViewModelCT : ObservableValidator , IPropertyBinding
 
     public bool RemovePropertyDependency(string prop1, string prop2)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     /// <summary>

@@ -148,7 +148,7 @@ namespace MVVM_06_Converters_4.View.Converter
                             
                             if (Math.Abs((Math.Abs(X1) + Step / 5) % BigStep) < Step / 2)
                             {
-                                result.Add(CreateLabel(X1, new System.Windows.Thickness((double)(P1x.X - lb.Width / 2d + 7), 0d, 0d, 0d), VerticalAlignment.Bottom, HorizontalAlignment.Center));
+                                result.Add(CreateLabel(X1, new Thickness((double)(P1x.X - lb.Width / 2d + 7), 0d, 0d, 0d), VerticalAlignment.Bottom, HorizontalAlignment.Center));
                             }
                         }
 
@@ -160,7 +160,7 @@ namespace MVVM_06_Converters_4.View.Converter
                             result.Add(CreateLine(b, GetStroke(Y1, Step, BigStep), P1y, P2y));                           
                             if (Math.Abs((Math.Abs(Y1) + Step / 5) % BigStep) < Step / 2)
                             {
-                                result.Add(CreateLabel(Y1, new System.Windows.Thickness(0d, (double)(P1y.Y - hOffset - lb.Height + 5), 0d, 0d), VerticalAlignment.Center, HorizontalAlignment.Right));
+                                result.Add(CreateLabel(Y1, new Thickness(0d, (double)(P1y.Y - hOffset - lb.Height + 5), 0d, 0d), VerticalAlignment.Center, HorizontalAlignment.Right));
                             }
                         }
                     }
@@ -379,7 +379,7 @@ namespace MVVM_06_Converters_4.View.Converter
         /// <param name="parameter">The converter parameter to use.</param>
         /// <param name="culture">The culture to use in the converter.</param>
         /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException"></exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

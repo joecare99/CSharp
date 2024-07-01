@@ -33,7 +33,7 @@ namespace MVVM_25_RichTextEdit.ViewModels.Helper
             typeof(string),
             typeof(RichTextBoxHelper),
             new FrameworkPropertyMetadata(
-                "",
+                null,
                 FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                 (obj, e) => {
                     if (_recursionProtection.Contains(Thread.CurrentThread))
