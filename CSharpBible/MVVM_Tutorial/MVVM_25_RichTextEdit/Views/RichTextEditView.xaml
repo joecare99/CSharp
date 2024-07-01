@@ -12,11 +12,36 @@
       xmlns:vmhlp="clr-namespace:MVVM_25_RichTextEdit.ViewModels.Helper"
       xmlns:model="clr-namespace:MVVM_25_RichTextEdit.Models"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="768" d:DesignWidth="1024"
       Title="{x:Static p:Resources.Title}">
     <Page.Resources>
         <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
         <vc2:Xaml2ElementConverter x:Key="vcXaml2Element"/>
+        <Style x:Key="ToolbarImageStyle" TargetType="Button">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="CommandTarget" Value="{Binding ElementName=rtf}"></Setter>
+            <Setter Property="ToolTipService.BetweenShowDelay" Value="50"></Setter>
+        </Style>
+
+        <ImageBrush x:Key="CutBrush"     Viewbox="0, 000,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="CopyBrush"    Viewbox="0, 064,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PasteBrush"   Viewbox="0, 128,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="UndoBrush"    Viewbox="0, 192,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="RedoBrush"    Viewbox="0, 256,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="DeleteBrush"  Viewbox="0, 320,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="NewBrush"     Viewbox="0, 384,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform"/>
+        <ImageBrush x:Key="OpenBrush"    Viewbox="0, 448,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="SaveBrush"    Viewbox="0, 512,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PreviewBrush" Viewbox="0, 576,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="OptionsBrush" Viewbox="0, 640,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="HelpBrush"    Viewbox="0, 704,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="SearchBrush"  Viewbox="0, 768,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="ReplaceBrush" Viewbox="0, 832,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PrintBrush"   Viewbox="0, 896,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="MailBrush"    Viewbox="0, 960,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+
     </Page.Resources>
     <Page.DataContext>
         <mvvm:RichTextEditViewModel/>
@@ -35,33 +60,70 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
             <DockPanel Grid.Row="1">
-                <ToolBar DockPanel.Dock="Top" Name="rtfToolbar">
-                    <Button x:Name="LeftButton" Command="EditingCommands.AlignLeft" CommandTarget="{Binding ElementName=rtf}" ToolTip="Left" ToolTipService.BetweenShowDelay="50" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontWeight="Bold">[</TextBlock>
-                    </Button>
-                    <Button x:Name="CenterButton" Command="EditingCommands.AlignCenter" CommandTarget="{Binding ElementName=rtf}" ToolTip="Center" ToolTipService.BetweenShowDelay="50" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontWeight="Bold">|</TextBlock>
-                    </Button>
-                    <Button x:Name="RightButton" Command="EditingCommands.AlignRight" CommandTarget="{Binding ElementName=rtf}" ToolTip="Right" ToolTipService.BetweenShowDelay="50" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontWeight="Bold">]</TextBlock>
-                    </Button>
-                    <Button x:Name="JustifyButton" Command="EditingCommands.AlignJustify" CommandTarget="{Binding ElementName=rtf}" ToolTip="Justify" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontWeight="Bold">#</TextBlock>
-                    </Button>
-                    <Separator/>
-                    <ToggleButton x:Name="BoldButton" Command="EditingCommands.ToggleBold" CommandTarget="{Binding ElementName=rtf}" ToolTip="Bold" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontWeight="Bold">B</TextBlock>
-                    </ToggleButton>
-                    <ToggleButton x:Name="ItalicButton" Command="EditingCommands.ToggleItalic" CommandTarget="{Binding ElementName=rtf}" ToolTip="Italic" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontStyle="Oblique">I</TextBlock>
-                    </ToggleButton>
-                    <ToggleButton x:Name="UnderlneButton" Command="EditingCommands.ToggleUnderline" CommandTarget="{Binding ElementName=rtf}" ToolTip="Underline" Width="20" Margin="0,1,0,1">
-                        <TextBlock FontStyle="Normal"><Underline>U</Underline></TextBlock>
-                    </ToggleButton>
-                    
-                </ToolBar>
+                <ToolBarPanel DockPanel.Dock="Top">
 
-                <RichTextBox Name="rtf" TextChanged="rtf_TextChanged"  SpellCheck.IsEnabled="True" VerticalScrollBarVisibility="Auto" ToolBar.OverflowMode="Always" >
+                    <ToolBar  Name="rtfToolbar">
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="ApplicationCommands.Cut" ToolTip="Cut">
+                            <Rectangle Fill="{StaticResource CutBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="ApplicationCommands.Copy" ToolTip="Copy">
+                            <Rectangle Fill="{StaticResource CopyBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="ApplicationCommands.Paste" ToolTip="Paste">
+                            <Rectangle Fill="{StaticResource PasteBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="ApplicationCommands.Undo" ToolTip="Undo">
+                            <Rectangle Fill="{StaticResource UndoBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="ApplicationCommands.Redo" ToolTip="Redo">
+                            <Rectangle Fill="{StaticResource RedoBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Separator/>
+                        <Button x:Name="LeftButton" Command="EditingCommands.AlignLeft" ToolTip="Left" ToolTipService.BetweenShowDelay="50" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontWeight="Bold">[</TextBlock>
+                        </Button>
+                        <Button x:Name="CenterButton" Command="EditingCommands.AlignCenter" CommandTarget="{Binding ElementName=rtf}" ToolTip="Center" ToolTipService.BetweenShowDelay="50" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontWeight="Bold">|</TextBlock>
+                        </Button>
+                        <Button x:Name="RightButton" Command="EditingCommands.AlignRight" CommandTarget="{Binding ElementName=rtf}" ToolTip="Right" ToolTipService.BetweenShowDelay="50" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontWeight="Bold">]</TextBlock>
+                        </Button>
+                        <Button x:Name="JustifyButton" Command="EditingCommands.AlignJustify" CommandTarget="{Binding ElementName=rtf}" ToolTip="Justify" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontWeight="Bold">=</TextBlock>
+                        </Button>
+                        <Separator/>
+                        <ToggleButton x:Name="BoldButton" Command="EditingCommands.ToggleBold" CommandTarget="{Binding ElementName=rtf}" ToolTip="Bold" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontWeight="Bold">B</TextBlock>
+                        </ToggleButton>
+                        <ToggleButton x:Name="ItalicButton" Command="EditingCommands.ToggleItalic" CommandTarget="{Binding ElementName=rtf}" ToolTip="Italic" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontStyle="Oblique">I</TextBlock>
+                        </ToggleButton>
+                        <ToggleButton x:Name="UnderlneButton" Command="EditingCommands.ToggleUnderline" CommandTarget="{Binding ElementName=rtf}" ToolTip="Underline" Width="20" Margin="0,1,0,1">
+                            <TextBlock FontStyle="Normal"><Underline>U</Underline></TextBlock>
+                        </ToggleButton>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="EditingCommands.IncreaseFontSize" ToolTip="Grow Font">
+                            <TextBlock FontWeight="Bold">A^</TextBlock>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="EditingCommands.DecreaseFontSize" ToolTip="Shrink Font">
+                            <TextBlock FontWeight="Bold">A<Run FontSize="10" FontWeight="Light">v</Run></TextBlock>
+                        </Button>
+                        <Separator/>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="EditingCommands.ToggleBullets" ToolTip="Bullets">
+                            <TextBlock>°°°</TextBlock>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="EditingCommands.ToggleNumbering" ToolTip="Numbering">
+                            <TextBlock>123</TextBlock>
+                        </Button>
+                        <Separator/>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="EditingCommands.IncreaseIndentation" ToolTip="Increase Indent">
+                            <TextBlock>-&gt;|</TextBlock>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="EditingCommands.DecreaseIndentation" ToolTip="Decrease Indent">
+                            <TextBlock>|&lt;-</TextBlock>
+                        </Button>
+                    </ToolBar>
+                </ToolBarPanel>
+                <RichTextBox Name="rtf" vmhlp:RichTextBoxHelper.DocumentXaml="{Binding Document}"  SpellCheck.IsEnabled="True" VerticalScrollBarVisibility="Auto" ToolBar.OverflowMode="Always" >
                     <SpellCheck.CustomDictionaries>
                         <!-- customwords.lex is included as a content file-->
                         <sys:Uri>CustomWords.lex</sys:Uri>
@@ -70,8 +132,8 @@
             </DockPanel>
 
             <FlowDocumentScrollViewer  Grid.Column="1" Grid.RowSpan="2" Margin="5" Document="{Binding Document, Mode=OneWay, Converter={StaticResource vcXaml2Element}}" VerticalScrollBarVisibility="Auto"/>
-            
-        <TextBox Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Document, Mode=OneWay}" TextWrapping="WrapWithOverflow" FontSize="8" VerticalScrollBarVisibility="Auto"/>
+
+            <TextBox Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Document, Mode=OneWay}" TextWrapping="WrapWithOverflow" FontSize="8" VerticalScrollBarVisibility="Auto"/>
         </Grid>
     </DockPanel>
 </Page>
