@@ -126,7 +126,7 @@ public partial class SudokuViewModel : BaseViewModelCT
             PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages
         };
         dPrintDialog?.Invoke(dialog, (p) => {
-            PagePrinter.Print(p.PrintQueue,p.PrintTicket, "SuDoKu", _model.Values, _model.DrawSudoku);
+            PagePrinter.Print(p.PrintQueue,p.PrintTicket, $"SuDoKu {Path.GetFileNameWithoutExtension(SudokuFileName)}", _model.Values, _model.DrawSudoku);
         });
     }
 
