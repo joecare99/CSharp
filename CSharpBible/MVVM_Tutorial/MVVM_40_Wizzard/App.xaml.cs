@@ -17,6 +17,7 @@ using BaseLib.Interfaces;
 using BaseLib.Helper;
 using System.Windows;
 using MVVM.View.Extension;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace MVVM_40_Wizzard;
 
@@ -30,6 +31,7 @@ public partial class App : Application
 
         IServiceCollection services = new ServiceCollection()
             .AddSingleton<IWizzardModel, WizzardModel>()
+            .AddSingleton<IMessenger, WeakReferenceMessenger>()
             .AddTransient<ISysTime, SysTime>()
             .AddSingleton<ILog, SimpleLog>();
 

@@ -23,6 +23,10 @@ using System.Linq;
 using System.IO;
 using System.Windows.Media;
 using System.Globalization;
+using System.Windows.Media.Imaging;
+using System;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 
 
 /// <summary>
@@ -35,7 +39,7 @@ namespace MVVM_40_Wizzard.ViewModels;
 /// Implements the <see cref="BaseViewModelCT" />
 /// </summary>
 /// <seealso cref="BaseViewModelCT" />
-public partial class Page1ViewModel : BaseViewModelCT
+public partial class Page1ViewModel : BaseViewModelCT , IRecipient<ValueChangedMessage<CultureInfo>>
 {
     /// <summary>
     /// The model
@@ -59,21 +63,46 @@ public partial class Page1ViewModel : BaseViewModelCT
     public IList<ListEntry> MainOptions 
         => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
 
-    public string? ImageSource
+    public ImageSource? ImageSource
     {
         get
         {
-            if (File.Exists($"Resource\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"))
+            if (File.Exists($"Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"))
             {
-                return $"/Resource/{CultureInfo.CurrentUICulture.Name}/MainSelection{MainSelection?.ID}.png";
+                return new BitmapImage(new System.Uri( $".\\Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"));
             }
-            else if (File.Exists($"Resource\\{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}\\MainSelection{MainSelection?.ID}.png"))
+            else if (File.Exists($"Resources\\{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}\\MainSelection{MainSelection?.ID}.png"))
             {
-                return $"/Resource/{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}/MainSelection{MainSelection?.ID}.png";
+                return new BitmapImage(new System.Uri($".\\Resources\\{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}\\MainSelection{MainSelection?.ID}.png"));
             }
-            else if (File.Exists($"Resource\\MainSelection{MainSelection?.ID}.png"))
+            else if (File.Exists($"Resources\\MainSelection{MainSelection?.ID}.png"))
             {
-                return $"/Resource/MainSelection{MainSelection?.ID}.png";
+                return new BitmapImage(new Uri(
+                    Path.Combine(Environment.CurrentDirectory, "Resources", $"MainSelection{MainSelection?.ID}.png")
+                    ));
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public string? Document
+    {
+        get
+        {
+            if (File.Exists($"Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.xaml"))
+            {
+                return File.ReadAllText($"Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.xaml");
+            }
+            else if (File.Exists($"Resources\\{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}\\MainSelection{MainSelection?.ID}.xaml"))
+            {
+                return File.ReadAllText($"Resources\\{CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}\\MainSelection{MainSelection?.ID}.xaml");
+            }
+            else if (File.Exists($"Resources\\MainSelection{MainSelection?.ID}.xaml"))
+            {
+                return File.ReadAllText($"Resources\\MainSelection{MainSelection?.ID}.xaml");
             }
             else
             {
@@ -85,7 +114,7 @@ public partial class Page1ViewModel : BaseViewModelCT
     /// <summary>
     /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
     /// </summary>
-    public Page1ViewModel():this(IoC.GetRequiredService<IWizzardModel>())
+    public Page1ViewModel():this(IoC.GetRequiredService<IWizzardModel>(), IoC.GetRequiredService<IMessenger>())
     {
     }
 
@@ -93,10 +122,11 @@ public partial class Page1ViewModel : BaseViewModelCT
     /// Initializes a new instance of the <see cref="Page1ViewModel"/> class.
     /// </summary>
     /// <param name="model">The model.</param>
-    public Page1ViewModel(IWizzardModel model)
+    public Page1ViewModel(IWizzardModel model,IMessenger messenger)
     {
         _model = model;
-        _model.PropertyChanged += OnMPropertyChanged;
+        _model.PropertyChanged += OnMPropertyChanged;        
+        messenger.Register<ValueChangedMessage<CultureInfo>>(this);
     }
 
     /// <summary>
@@ -120,6 +150,17 @@ public partial class Page1ViewModel : BaseViewModelCT
         if (e.PropertyName == nameof(MainSelection))
         {
              OnPropertyChanged(nameof(ImageSource));
+             OnPropertyChanged(nameof(Document));
         }
+    }
+
+    public void Receive(ValueChangedMessage<CultureInfo> message)
+    {
+        OnPropertyChanged(nameof(ImageSource));
+        OnPropertyChanged(nameof(Document));
+        var i = _model.MainSelection;
+        OnPropertyChanged(nameof(MainOptions));
+        _model.MainSelection = i;
+        OnPropertyChanged(nameof(MainSelection));
     }
 }
