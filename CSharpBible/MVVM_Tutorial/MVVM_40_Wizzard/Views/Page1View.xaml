@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:mvvm="clr-namespace:MVVM_40_Wizzard.ViewModels" 
+      xmlns:vc="clr-namespace:MVVM.View.ValueConverter;assembly=MVVM_BaseLib"
       xmlns:local="clr-namespace:MVVM_40_Wizzard.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -11,6 +12,9 @@
     <Page.DataContext>
         <mvvm:Page1ViewModel/>
     </Page.DataContext>
+    <Page.Resources>
+        <vc:Xaml2ElementConverter x:Key="vcXaml2Element"/>
+    </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*"/>
@@ -24,7 +28,7 @@
         </StackPanel>
         <DockPanel Grid.Column="1">
             <Image DockPanel.Dock="Left" Source="{Binding ImageSource}" Width="200"/>
-            <FlowDocumentScrollViewer Document="{Binding ImageSource, Mode=OneWay}"/>
+            <FlowDocumentScrollViewer Margin="5" Document="{Binding Document, Mode=OneWay, Converter={StaticResource vcXaml2Element}}" VerticalScrollBarVisibility="Auto"/>
         </DockPanel>
     </Grid>
 </Page>

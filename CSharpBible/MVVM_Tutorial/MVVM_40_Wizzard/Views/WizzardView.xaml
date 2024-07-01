@@ -18,7 +18,14 @@
         <mvvm:WizzardViewModel/>
     </Page.DataContext>
     <DockPanel Background="Silver">
-        <Label DockPanel.Dock="Top" Content="Temlate-View:"/>
+        <Label DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{x:Static p:Resources.Title}"/>
+                <Button Content="DE" Command="{Binding LangDeCommand}"/>
+                <Button Content="EN" Command="{Binding LangEnCommand}"/>
+                <Button Content="FR" Command="{Binding LangFrCommand}"/>
+            </StackPanel>
+        </Label>
         <Grid DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10*"/>
