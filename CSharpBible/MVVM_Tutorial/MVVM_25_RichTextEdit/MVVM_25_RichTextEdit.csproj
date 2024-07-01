@@ -15,7 +15,12 @@
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="ReachFramework" />
+	  <Reference Include="System.Printing" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Resources\all64_2.png" />

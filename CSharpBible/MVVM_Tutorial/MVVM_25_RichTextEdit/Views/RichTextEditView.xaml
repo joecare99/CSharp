@@ -63,6 +63,19 @@
                 <ToolBarPanel DockPanel.Dock="Top">
 
                     <ToolBar  Name="rtfToolbar">
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="{Binding NewTextCommand}" ToolTip="New">
+                            <Rectangle Fill="{StaticResource NewBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="{Binding OpenTextCommand}" ToolTip="Open...">
+                            <Rectangle Fill="{StaticResource OpenBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="{Binding SaveTextCommand}" ToolTip="Save...">
+                            <Rectangle Fill="{StaticResource SaveBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolbarImageStyle}" Command="{Binding PrintTextCommand}" ToolTip="Print...">
+                            <Rectangle Fill="{StaticResource PrintBrush}" Width="20" Height="20"/>
+                        </Button>
+                        <Separator/>
                         <Button Style="{StaticResource ToolbarImageStyle}" Command="ApplicationCommands.Cut" ToolTip="Cut">
                             <Rectangle Fill="{StaticResource CutBrush}" Width="20" Height="20"/>
                         </Button>
