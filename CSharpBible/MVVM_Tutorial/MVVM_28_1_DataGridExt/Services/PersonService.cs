@@ -1,8 +1,9 @@
-﻿using BaseLib.Helper.MVVM;
+﻿using System;
+using System.Collections.Generic;
+using BaseLib.Helper.MVVM;
+using BaseLib.Interfaces;
 using MVVM.View.Extension;
 using MVVM_28_1_DataGridExt.Models;
-using System;
-using System.Collections.Generic;
 
 namespace MVVM_28_1_DataGridExt.Services
 {
