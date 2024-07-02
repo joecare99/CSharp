@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_22_WpfCap.Model;
-using System;
-using System.Collections.Specialized;
+﻿using System;
 using System.ComponentModel;
+using System.Collections.Specialized;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM_22_WpfCap.Model;
 using Telerik.JustMock;
 
-namespace MVVM_22_WpfCap.ViewModel.Tests
+namespace MVVM_22_WpfCap.ViewModels.Tests
 {
     public class TestWpfCapModel : IWpfCapModel
     {

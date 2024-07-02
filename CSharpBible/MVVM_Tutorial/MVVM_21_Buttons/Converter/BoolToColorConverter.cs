@@ -78,7 +78,7 @@ namespace MVVM_21_Buttons.Converter
         /// <param name="culture">Die im Konverter zu verwendende Kultur.</param>
         /// <returns>Ein konvertierter Wert.
         /// Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException"></exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

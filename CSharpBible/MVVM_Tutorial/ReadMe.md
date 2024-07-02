@@ -66,6 +66,11 @@ It's a game: goal to sort all colors of the tiles.<br />
 ## Lession 24: UserControls extended
 Some extended user-controls.
 
+## Lession 25: RichTextEditor 
+Use RichTextEdit to write formated text<br />
+Included a preview and a source-view<br/>
+<img width="270" alt="MVVM_25_RichTextEdit" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_25_RichTextEdit.PNG"><br />
+
 ## Lession 27&28: Datagrid
 Use a Datagrid to diaplay data
 * First: a simple form with a Datagrid
@@ -103,5 +108,11 @@ An demo-app having 2 models.
 showcase for scoped dependency-injection.
 
 ## Lession 40: Wizzard
-A demo-wizzard app.
+A demo-wizzard app.<br/>
 With succesive asking the user for information.
+
+## Lession 41: a SuDoKu game/viewer
+A SuDoKu-App<br/>
+Loading, Saving and <b>printing</b><br/>
+Also shows how to use an external engine.<br/>
+<img width="270" alt="MVVM_41_SuDoKu" src="https://raw.githubusercontent.com/joecare99/CSharp/master/CSharpBible/Resources/MVVM_41_SuDoKu.PNG">

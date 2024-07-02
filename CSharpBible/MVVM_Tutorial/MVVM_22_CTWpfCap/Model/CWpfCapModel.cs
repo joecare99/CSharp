@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseLib.Interfaces;
+using System;
 
 namespace MVVM_22_CTWpfCap.Model
 {

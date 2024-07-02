@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseLib.Interfaces;
+using System;
 
 namespace BaseLib.Helper.MVVM;
 
@@ -11,7 +12,7 @@ public class CRandom :IRandom
         _random = new Random();
     }
 
-    public int Next(int v1, int v2) => _random.Next(v1, v2);
+    public int Next(int v1, int v2) => v2 !=-1 || v1<v2? _random.Next(v1, v2): _random.Next(v1);
 
     public double NextDouble() => _random.NextDouble();
 
