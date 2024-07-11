@@ -29,7 +29,7 @@ public class IoCTests : BaseTestViewModel
     {
         DoLog($"GetScope()");
         IServiceScope serviceScope = Substitute.For<IServiceScope>();
-        serviceScope.ServiceProvider.GetService(typeof(IServiceScopeFactory)).Returns<object>( _f);
+        serviceScope.ServiceProvider.GetService(typeof(IServiceScopeFactory)).Returns( _f);
         return serviceScope;
     }
 
@@ -106,10 +106,10 @@ public class IoCTests : BaseTestViewModel
         var s = IoC.GetNewScope();
         Assert.AreEqual("GetScope()\r\n", DebugLog);
         Assert.AreEqual(s,IoC.Scope);
-        s.ServiceProvider.GetService(typeof(object)).Returns<object>(null);
+        s.ServiceProvider.GetService(typeof(object)).Returns(null);
         var s2 = IoC.GetNewScope(s);
         Assert.AreEqual(s2, IoC.Scope);
-        s2.ServiceProvider.GetService(typeof(object)).Returns<object>(this);
+        s2.ServiceProvider.GetService(typeof(object)).Returns(this);
         IoC.SetCurrentScope(s2);
         Assert.AreEqual(s2, IoC.Scope);
         Assert.IsNotNull(IoC.GetRequiredService<Object>());
@@ -123,7 +123,7 @@ public class IoCTests : BaseTestViewModel
     public void ConfigureTest()
     {
         var sp = Substitute.For<IServiceProvider>();
-        sp.GetService(typeof(IServiceScopeFactory)).Returns<object>(_f);
+        sp.GetService(typeof(IServiceScopeFactory)).Returns(_f);
         sp.GetService(typeof(object)).Returns(this);
         IoC.Configure(sp);
         Assert.AreEqual(sp.GetService, IoC.GetSrv);

@@ -230,5 +230,5 @@ namespace MVVM.ViewModel;
     /// </summary>
     /// <param name="action">The action.</param>
     /// <remarks>An extension point for subclasses to customize how property change notifications are handled.</remarks>
-    protected virtual void OnUIThread(System.Action action) => action.Invoke();
+    protected virtual void OnUIThread(Action action) => action.Invoke();
 	}

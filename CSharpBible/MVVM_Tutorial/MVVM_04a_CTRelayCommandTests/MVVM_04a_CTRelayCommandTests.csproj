@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 	<Import Project="..\MVVM_Tutorial.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>

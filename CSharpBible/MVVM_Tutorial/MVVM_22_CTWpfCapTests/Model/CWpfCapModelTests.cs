@@ -1,5 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using BaseLib.Helper.MVVM;
 
 namespace MVVM_22_CTWpfCap.Model.Tests
 {

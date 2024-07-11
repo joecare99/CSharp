@@ -15,7 +15,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MVVM_41_Sudoku.ValueConverter
+namespace MVVM_41_Sudoku.ValueConverters
 {
     /// <summary>
     /// Class CurrencyValueConverter.
