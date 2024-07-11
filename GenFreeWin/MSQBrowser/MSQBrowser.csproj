@@ -20,9 +20,9 @@
 	<ItemGroup>
 		<PackageReference Include="IsExternalInit" Version="1.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="MySqlConnector" Version="2.3.6" />
+		<PackageReference Include="MySqlConnector" Version="2.3.7" />
 		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
