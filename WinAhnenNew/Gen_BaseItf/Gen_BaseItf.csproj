@@ -1,0 +1,10 @@
+﻿<Project>
+	<Import Project="..\WinAhnen.props" />
+  <PropertyGroup>
+	  <TargetFrameworks>net481-windows;net6.0;net7.0;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+</Project>
