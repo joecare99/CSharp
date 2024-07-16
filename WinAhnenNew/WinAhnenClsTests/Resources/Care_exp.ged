@@ -1,0 +1,208 @@
+﻿0 HEAD
+1 CHAR UTF-8
+1 SOUR AHNENWIN
+2 VERS 5.1
+1 DEST OTHER
+1 DATE 05 JUN 2021
+1 FILE Care_exp.txt
+1 SUBM @S0@
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 PLAC
+2 FORM place, county, state, country
+1 LANG German
+0 @S0@ SUBM
+1 ADDR
+2 ADR1 I.R.Gentwer
+2 ADR2 I.R geteinestr.
+1 POST 12345
+1 CITY Einort
+0 @I1@ INDI
+1 NAME Joe /Care/
+1 NAME /JaySee/
+2 TYPE variant
+2 _RUFNAME Joker
+1 NAME /Hofname/
+2 TYPE estate
+1 SEX M
+1 OCCU Beruf
+1 RELI Be
+1 IDNO I0001
+1 SOUR @S5@
+1 BIRT
+2 DATE 21 JAN 1971
+2 PLAC Eppingen,,,
+3 _LOC @P3@
+2 SOUR @S4@
+1 CHR
+2 DATE bf FEB 1972
+2 PLAC Sulzfeld,,,
+3 _LOC @P7@
+2 SOUR @S11@
+2 _GODP Uwe Care
+1 DEAT
+2 DATE af MAR 2069
+2 PLAC Binau,Neckar-Odenwald-Kreis,Baden-Württemberg,Deutschland
+3 _LOC @P2@
+2 SOUR @S10@
+2 CAUS TU
+1 BURI
+2 DATE ABT APR 2070
+2 PLAC Mosbach,,,
+3 _LOC @P4@
+2 SOUR @S3@
+1 RESI
+2 PLAC Baden
+2 ADDR 
+3 ADR1 Baumstr. 42
+3 ADR2 Himmelhof
+3 ADR3 am Neckar
+3 POST D74821
+3 CITY Mörtelstein
+2 PHON 0800 330 1000
+2 EMAIL test@jc99.de
+2 WWW www.jc99.de
+1 NOTE Schrw.: JaySee
+2 CONT Dies ist ein Text zu Joe Care
+2 CONT 2. Zeile
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Comp /Ute/
+1 NAME /Comp J. Uda/
+2 TYPE variant
+2 _RUFNAME Compy
+1 SEX F
+1 OCCU Rechengehilfin
+1 RELI co
+1 IDNO I00002
+1 SOUR @S9@
+1 RESI
+2 PLAC Computerland
+1 NOTE Schrw.: Comp J. Uda
+2 CONT lebt: j
+1 FAMS @F1@
+1 FAMC @F2@
+0 @I3@ INDI
+1 NAME Karl /Ute/
+1 NAME /Comp J. Uda/
+2 TYPE variant
+2 _RUFNAME Compy
+1 SEX M
+1 OCCU Rechengehilfin
+1 RELI co
+1 IDNO I00003
+1 SOUR @S9@
+2 SOUR @S1@
+1 RESI
+2 PLAC Computerland
+1 NOTE Schrw.: Comp J. Uda
+2 CONT lebt: j
+1 FAMS @F2@
+0 @I4@ INDI
+1 NAME Elsa /Ute/
+1 NAME /Comp J. Uda/
+2 TYPE variant
+2 _RUFNAME Compy
+1 SEX F
+1 OCCU Rechengehilfin
+1 RELI co
+1 IDNO I00004
+1 SOUR @S9@
+1 RESI
+2 PLAC Computerland
+1 NOTE Schrw.: Comp J. Uda
+2 CONT lebt: j
+2 CONT D
+1 FAMS @F2@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 TYPE CIVIL
+2 DATE  3 APR 1994
+2 PLAC Adelsheim,,,
+3 _LOC @P1@
+2 _WITN Walter Götz,
+2 SOUR @S7@
+1 DIV
+2 DATE  5 JUN 2099
+2 PLAC Nimmerland,,,
+3 _LOC @P6@
+2 SOUR @S8@
+0 @F2@ FAM
+1 HUSB @I3@
+1 WIFE @I4@
+1 CHIL @I2@
+1 MARR
+1 _STAT NOT MARRIED
+2 NOTE not marr
+0 @P3@ _LOC
+1 NAME Eppingen
+0 @P7@ _LOC
+1 NAME Sulzfeld
+0 @P2@ _LOC
+1 NAME Binau
+1 _ABBR Binau
+1 _FPOST 74862
+1 _FCNTY Neckar-Odenwald-Kreis
+1 _FSTAE Baden-Württemberg
+1 _FCTRY Deutschland
+1 _GOV GOV
+1 MAP
+2 LONG L90
+2 LATI B21
+1 _MAIDENHEAD Maidenhead
+1 _GOV GOV
+0 @P4@ _LOC
+1 NAME Mosbach
+0 @P1@ _LOC
+1 NAME Adelsheim
+0 @S1@ SOUR
+1 TITL 1
+2 NOTE 
+0 @S2@ SOUR
+1 TITL 2
+2 NOTE 
+0 @S3@ SOUR
+1 TITL Friedhof Mosbach
+2 NOTE 
+0 @S4@ SOUR
+1 TITL Geburtsurkunde
+2 NOTE 
+0 @S5@ SOUR
+1 TITL hörensagen
+1 ABBR 1
+2 EVEN 2
+3 DATE FROM 3 TO 4
+3 PLAC 5
+1 PUBL 6
+2 CALN 9
+2 NOTE 8
+3 MEDI 10
+0 @S6@ SOUR
+1 TITL Quelle1
+2 NOTE 
+0 @S7@ SOUR
+1 TITL Quelle2
+2 NOTE 
+0 @S8@ SOUR
+1 TITL Quelle3
+2 NOTE 
+0 @S9@ SOUR
+1 TITL Rechnung
+2 NOTE 
+0 @S10@ SOUR
+1 TITL Sterbeanzeige
+1 ABBR Strb.Anz.
+2 EVEN Sterbefälle
+3 DATE FROM 2015 TO 2018
+3 PLAC Heidelberg
+1 PUBL RNZ
+2 CALN Nur die letzten 14 Tage
+2 NOTE Kann Online abgefragt werden
+3 MEDI online
+0 @S11@ SOUR
+1 TITL Taufbuch
+2 NOTE 
+0 TRLR
