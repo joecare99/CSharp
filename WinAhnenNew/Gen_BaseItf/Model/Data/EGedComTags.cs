@@ -142,7 +142,4 @@ public enum EGedComTags
     Ged__RUFNAME = 52, // Call-Name
     Ged__GOV = 53, // Genealogical-Place-Authority
     Ged__LOC = 54, // Location
-
-
-
 }
