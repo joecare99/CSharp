@@ -265,6 +265,7 @@ namespace MathLibrary.TwoDim {
 			=> vector1.Do((x, y) => new Vector(x, -y))
 				.CMult(vector2)
 				.TryLengthAngle(out _, out winkel);
+
         public static Vector CircleCenter(Vector[] vectors,out double radius)
 		{
 			if ((vectors.Length != 3)
@@ -276,16 +277,16 @@ namespace MathLibrary.TwoDim {
 				return Null; 
 			}
 			var tMP1 = vectors[0].Add(vectors[1]).Mult(0.5d);
-//			var tmp2 = vectors[1].Add(vectors[2]).Mult(0.5d);
 
 			var tn1 = vectors[1].Subtract(vectors[0]).Rot90();
             var tn2 = vectors[2].Subtract(vectors[1]).Rot90();
 
 			tn1.TryWinkel2Vec(tn2, out double fWinkel);
-			if (Abs(fWinkel) > 1.0e-5 && Abs(fWinkel-PI) > 1.0e-5)
+			fWinkel = fWinkel.WinkelNorm(0d);
+			if (Abs(Sin(fWinkel)) > 1.0e-5 )
 			{
 				radius = vectors[2].Subtract(vectors[0]).Length()*0.5 / Sin(fWinkel);
-				var CenterDir = tn1.Mult(Sqrt(radius* radius / tn1.Length()/ tn1.Length()-0.25) );
+				var CenterDir = tn1.Mult(Sqrt(radius* radius / tn1.Length()/ tn1.Length()-0.25) * Sign(Sin(fWinkel)));
 				return tMP1.Add(CenterDir);
 			}
 			else
