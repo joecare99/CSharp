@@ -1,7 +1,7 @@
 ﻿//using DAO;
 namespace GenFree.Interfaces.DB;
 
-public interface IField
+public interface IField: IHasValue
 {
     string Name { get; }
     int Size { get; }
