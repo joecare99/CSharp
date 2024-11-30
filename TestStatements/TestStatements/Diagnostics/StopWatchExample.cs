@@ -24,7 +24,7 @@ namespace TestStatements.Diagnostics
     /// </summary>
     public static class StopWatchExample
     {
-        public static Func<dynamic> GetStopwatch { get; set; }= () => new Stopwatch();
+        public static Func<IStopwatch> GetStopwatch { get; set; }= () => new StopwatchProxy();
         public static Action<int> ThreadSleep { get; set; }=(i) => Thread.Sleep(i);
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace TestStatements.Diagnostics
                 {
                     long ticksThisTime = 0;
                     int inputNum;
-                    dynamic timePerParse;
+                    IStopwatch timePerParse;
 
                     Func<(bool ok, int)> f = (operation) switch {
                         0 => () => (true, Int32.Parse("0")),
