@@ -436,12 +436,17 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
+        public static void Clear()
+        {
+            dinosaurs.Clear();
+        }
+
         /// <summary>
         /// Creates the test data.
         /// </summary>
         public static void CreateTestData()
         {
-            dinosaurs.Clear();
+            Clear();
             dinosaurs.Add("Tyrannosaurus");
             dinosaurs.Add("Amargasaurus");
             dinosaurs.Add("Mamenchisaurus");

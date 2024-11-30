@@ -41,7 +41,8 @@ namespace TestStatements.Reflection
         /// <returns>System.Int32.</returns>
         public int SampleMethod(int x)
         {
-            Console.WriteLine("\nExample.SampleMethod({0}) executes.", x);
+            Console.WriteLine();
+            Console.WriteLine("Example.SampleMethod({0}) executes.", x);
             return x * factor;
         }
 
@@ -57,11 +58,13 @@ namespace TestStatements.Reflection
 
             // The AssemblyName type can be used to parse the full name.
             AssemblyName assemName = assem.GetName();
-            Console.WriteLine("\nName: {0}", assemName.Name);
+            Console.WriteLine();
+            Console.WriteLine("Name: {0}", assemName.Name);
             Console.WriteLine("Version: {0}.{1}",
                 assemName.Version?.Major, assemName.Version?.Minor);
 
-            Console.WriteLine("\nAssembly CodeBase:");
+            Console.WriteLine();
+            Console.WriteLine("Assembly CodeBase:");
 #if NET5_0_OR_GREATER
 			Console.WriteLine(assem.Location);
 #else
@@ -113,7 +116,8 @@ namespace TestStatements.Reflection
 #endif
 			Console.WriteLine("SampleMethod returned {0}.", ret);
 
-            Console.WriteLine("\nAssembly entry point:");
+            Console.WriteLine();
+            Console.WriteLine("Assembly entry point:");
             Console.WriteLine(assem.EntryPoint);
         }
     }
