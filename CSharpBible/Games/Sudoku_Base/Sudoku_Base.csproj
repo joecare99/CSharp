@@ -10,4 +10,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Reference Condition="'$(TargetFramework.StartsWith(net4))'" Include="PresentationCore" />
+	  <Reference Condition="'$(TargetFramework.StartsWith(net4))'" Include="WindowsBase" />
+	</ItemGroup>
 </Project>
