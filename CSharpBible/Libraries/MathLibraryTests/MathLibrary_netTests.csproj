@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
      <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

@@ -85,6 +85,8 @@ namespace MVVM_AllExamples.Models
 
             ("Events_to_Commands",typeof(MVVM_33_Events_To_Commands.Views.EventBindingView),null),
             ("Events_to_Commands2",typeof(MVVM_33a_CTEvents_To_Commands.Views.EventBindingView),null),
+            ("BindingEventArgs",typeof(MVVM_34_BindingEventArgs.Views.EventBindingView),null),
+            ("BindingEventArgs2",typeof(MVVM_34a_CTBindingEventArgs.Views.EventBindingView),null),
             ("CommunityToolkit",typeof(MVVM_35_CommunityToolkit.Views.CommunitToolkitView),null),
             ("CommunityToolkitSavesWork",typeof(MVVM_36_ComToolKtSavesWork.Views.CommunityToolkit2View),null),
             ("TreeView",typeof(MVVM_37_TreeView.Views.BooksTreeView),null),
