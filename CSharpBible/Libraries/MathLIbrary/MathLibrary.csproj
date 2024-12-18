@@ -1,5 +1,5 @@
 <Project>
-	<Import Project="..\Libraries.props"/>
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
 		<SignAssembly>True</SignAssembly>
@@ -10,5 +10,11 @@
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="IsExternalInit" Version="1.0.3">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	</ItemGroup>
 </Project>

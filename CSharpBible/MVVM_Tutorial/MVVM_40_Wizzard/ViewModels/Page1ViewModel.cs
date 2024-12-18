@@ -27,6 +27,7 @@ using System.Windows.Media.Imaging;
 using System;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using System.Threading.Tasks;
 
 
 /// <summary>
@@ -39,7 +40,7 @@ namespace MVVM_40_Wizzard.ViewModels;
 /// Implements the <see cref="BaseViewModelCT" />
 /// </summary>
 /// <seealso cref="BaseViewModelCT" />
-public partial class Page1ViewModel : BaseViewModelCT , IRecipient<ValueChangedMessage<CultureInfo>>
+public partial class Page1ViewModel : BaseViewModelCT 
 {
     /// <summary>
     /// The model
@@ -55,6 +56,8 @@ public partial class Page1ViewModel : BaseViewModelCT , IRecipient<ValueChangedM
         get => MainOptions.FirstOrDefault((e)=>e.ID==_model.MainSelection);
         set => _model.MainSelection = value?.ID ?? -1;
     }
+
+    public int Selection => _model.MainOptions.IndexOf(_model.MainSelection);
 
     /// <summary>
     /// Gets the main options.
@@ -125,8 +128,14 @@ public partial class Page1ViewModel : BaseViewModelCT , IRecipient<ValueChangedM
     public Page1ViewModel(IWizzardModel model,IMessenger messenger)
     {
         _model = model;
-        _model.PropertyChanged += OnMPropertyChanged;        
-        messenger.Register<ValueChangedMessage<CultureInfo>>(this);
+        _model.PropertyChanged += OnMPropertyChanged;
+        AsyncMainSelection();
+    }
+
+    async private void AsyncMainSelection()
+    {
+        await Task.Delay(100);
+        OnPropertyChanged(nameof(Selection));
     }
 
     /// <summary>
@@ -154,13 +163,4 @@ public partial class Page1ViewModel : BaseViewModelCT , IRecipient<ValueChangedM
         }
     }
 
-    public void Receive(ValueChangedMessage<CultureInfo> message)
-    {
-        OnPropertyChanged(nameof(ImageSource));
-        OnPropertyChanged(nameof(Document));
-        var i = _model.MainSelection;
-        OnPropertyChanged(nameof(MainOptions));
-        _model.MainSelection = i;
-        OnPropertyChanged(nameof(MainSelection));
-    }
 }

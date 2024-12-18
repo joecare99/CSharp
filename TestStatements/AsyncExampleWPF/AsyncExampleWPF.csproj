@@ -4,7 +4,7 @@
   </ImportGroup>
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net462-windows;net472-windows;net481-windows</TargetFrameworks>
+    <TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   

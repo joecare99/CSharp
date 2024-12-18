@@ -50,5 +50,6 @@ namespace MathLibrary.TwoDim
 			strvelocity = Math2d.Add(velocity, Math2d.Mult(Math2d.Rot90(steerpos), rotation));
 		}
 
+
 	}
 }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Drawing.Printing;
 using System.Drawing;
 #else
-using System.Printing;
 #endif
 namespace TestStatements.SystemNS.Printing;
 

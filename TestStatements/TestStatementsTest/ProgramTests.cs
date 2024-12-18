@@ -17,24 +17,6 @@ namespace DynamicSample.Tests
     [TestClass()]
     public class DynamicClassTests : ConsoleTestsBase
     {
-        private readonly string cExpMain =
-            "======================================================================\r\n## Example for dynamic class\r\n=======" +
-            "===============================================================\r\n\r\n+-----------------------------------------" +
-            "-----------------\r\n| Show Customers\r\n+----------------------------------------------------------\r\nCustomer:" +
-            " Preston, Chris  \r\nCustomer: Hines, Patrick  \r\nCustomer: Cameron, Maria  \r\nCustomer: Seubert, Roxanne  \r\n" +
-            "Customer: Adolphi, Stephan  \r\nCustomer: Koch, Paul  \r\n----------------------------\r\n\r\n+------------------" +
-            "----------------------------------------\r\n| Show Customers with Contains\r\n+----------------------------------" +
-            "------------------------\r\nList of customers and suppliers  \r\nCustomer: Preston, Chris  \r\nCustomer: Hines, P" +
-            "atrick  \r\nCustomer: Cameron, Maria  \r\nCustomer: Seubert, Roxanne  \r\nCustomer: Adolphi, Stephan  \r\nCustome" +
-            "r: Koch, Paul  \r\n----------------------------\r\n\r\n+---------------------------------------------------------" +
-            "-\r\n| Show Suppliers\r\n+----------------------------------------------------------\r\nSupplier: Lucerne Publish" +
-            "ing (https://www.lucernepublishing.com/)  \r\nSupplier: Graphic Design Institute (https://www.graphicdesigninstit" +
-            "ute.com/)   \r\nSupplier: Fabrikam, Inc. (https://www.fabrikam.com/)   \r\nSupplier: Proseware, Inc. (http://www." +
-            "proseware.com/)   \r\n----------------------------\r\n\r\n+------------------------------------------------------" +
-            "----\r\n| Show Supplier with Contains\r\n+----------------------------------------------------------\r\nList of c" +
-            "ustomers and suppliers  \r\nSupplier: Lucerne Publishing (https://www.lucernepublishing.com/)  \r\nSupplier: Grap" +
-            "hic Design Institute (https://www.graphicdesigninstitute.com/)   \r\nSupplier: Fabrikam, Inc. (https://www.fabrik" +
-            "am.com/)   \r\nSupplier: Proseware, Inc. (http://www.proseware.com/)   \r\n----------------------------";
         private readonly string cExpShowCustomerContains =
             "+----------------------------------------------------------\r\n| Show Customers with Contains\r\n+---------------" +
             "-------------------------------------------\r\nList of customers and suppliers  \r\nCustomer: Preston, Chris  \r" +
@@ -56,14 +38,114 @@ namespace DynamicSample.Tests
             "-----------------------------\r\nSupplier: Lucerne Publishing (https://www.lucernepublishing.com/)  \r\nSupplier:" +
             " Graphic Design Institute (https://www.graphicdesigninstitute.com/)   \r\nSupplier: Fabrikam, Inc. (https://www.f" +
             "abrikam.com/)   \r\nSupplier: Proseware, Inc. (http://www.proseware.com/)   \r\n----------------------------";
+        private readonly string cExpMain2 = @"======================================================================
+## Example for dynamic class
+======================================================================
 
++----------------------------------------------------------
+| Show Customers
++----------------------------------------------------------
+Customer: Preston, Chris  
+Customer: Hines, Patrick  
+Customer: Cameron, Maria  
+Customer: Seubert, Roxanne  
+Customer: Adolphi, Stephan  
+Customer: Koch, Paul  
+----------------------------
+
++----------------------------------------------------------
+| Show Customers with Contains
++----------------------------------------------------------
+List of customers and suppliers  
+Customer: Preston, Chris  
+Customer: Hines, Patrick  
+Customer: Cameron, Maria  
+Customer: Seubert, Roxanne  
+Customer: Adolphi, Stephan  
+Customer: Koch, Paul  
+----------------------------
+
++----------------------------------------------------------
+| Show Suppliers
++----------------------------------------------------------
+Supplier: Lucerne Publishing (https://www.lucernepublishing.com/)  
+Supplier: Graphic Design Institute (https://www.graphicdesigninstitute.com/)   
+Supplier: Fabrikam, Inc. (https://www.fabrikam.com/)   
+Supplier: Proseware, Inc. (http://www.proseware.com/)   
+----------------------------
+
++----------------------------------------------------------
+| Show Supplier with Contains
++----------------------------------------------------------
+List of customers and suppliers  
+Supplier: Lucerne Publishing (https://www.lucernepublishing.com/)  
+Supplier: Graphic Design Institute (https://www.graphicdesigninstitute.com/)   
+Supplier: Fabrikam, Inc. (https://www.fabrikam.com/)   
+Supplier: Proseware, Inc. (http://www.proseware.com/)   
+----------------------------
+======================================================================
+## 2. Example for dynamic class
+======================================================================
+strName
+strStreet
+strCity
+strPLZ
+strCountry
+----------------------------
+P. Mustermann
+Somestreet 35
+12345 Somplace
+Somewhere
+----------------------------
+Name:	P. Mustermann
+Street:	Somestreet 35
+PLZ:	12345
+City:	Somplace
+Country:	Somewhere
+----------------------------
+P. Musterfrau
+Someotherstreet 1
+54321 Anyplace
+Nowhere
+----------------------------
+Name:	P. Musterfrau
+Street:	Someotherstreet 1
+PLZ:	54321
+City:	Anyplace
+Country:	Nowhere
+----------------------------
+======================================================================
+## 2b. Example for static class
+======================================================================
+P. Mustermann
+Somestreet 35
+12345 Somplace
+Somewhere
+----------------------------
+Name:	P. Mustermann
+Street:	Somestreet 35
+PLZ:	12345
+City:	Somplace
+Country:	Somewhere
+----------------------------
+P. Musterfrau
+Someotherstreet 1
+54321 Anyplace
+Nowhere
+----------------------------
+Name:	P. Musterfrau
+Street:	Someotherstreet 1
+PLZ:	54321
+City:	Anyplace
+Country:	Nowhere
+----------------------------";
         /// <summary>
         /// Defines the test method MainTest.
         /// </summary>
         [TestMethod()]
         public void MainTest()
         {
-            AssertConsoleInOutputArgs(cExpMain,"\r\n",new string[] { },DynamicTestProgram.Main);
+            AssertConsoleInOutputArgs(cExpMain2,"\r\n",new string[] { },DynamicTestProgram.Main);
         }
 
         /// <summary>

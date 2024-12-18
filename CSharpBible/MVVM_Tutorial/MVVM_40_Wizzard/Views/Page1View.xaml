@@ -23,7 +23,7 @@
         <GridSplitter/>
         <StackPanel Grid.Column="0" Orientation="Vertical">
             <Label Content="Name:"/>
-            <ListBox ItemsSource="{Binding MainOptions}" SelectedItem="{Binding MainSelection}"/>
+            <ListBox ItemsSource="{Binding MainOptions}" SelectedItem="{Binding MainSelection}" SelectedIndex="{Binding Selection, Mode=OneWay}"/>
             <Button Content="Clear" Command="{Binding ClearCommand}" Height="40" Margin="10"/>
         </StackPanel>
         <DockPanel Grid.Column="1">

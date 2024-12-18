@@ -84,10 +84,30 @@
                         <Rectangle Fill="sc#1.000000, 0.769689, 0.831936, 1.000000" RadiusX="10" RadiusY="10" Stroke="sc#1.000000, 0.250141, 0.333404, 0.884413" StrokeDashArray="2" />
                         <DockPanel Margin="7" LastChildFill="False">
                             <TextBlock Margin="0,0,0,10"   Text="Sample Library" Foreground="sc#1.000000, 0.250141, 0.333404, 0.884413" TextAlignment="center"   FontWeight="Bold" FontSize="14pt"   DockPanel.Dock="top"  />
-                            <Expander  Margin="0,0,0,10" DockPanel.Dock="top" Background="white" FocusVisualStyle="{x:Null}">
+                            <Expander  Margin="0,0,0,10" DockPanel.Dock="top" Background="white" FocusVisualStyle="{x:Null}" x:Name="Expander1" >
                                 <Expander.Header>
                                     <TextBlock Margin="10,0,0,0"  FontFamily="Calibri" FontWeight="bold" >Layout</TextBlock>
                                 </Expander.Header>
+                                <Expander.Triggers>
+                                    <EventTrigger RoutedEvent="Expander.Expanded">
+                                        <EventTrigger.Actions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation From="30" To="330" Storyboard.TargetName="Expander1" Storyboard.TargetProperty="Height" Duration="0:00:00.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger.Actions>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="Expander.Collapsed">
+                                        <EventTrigger.Actions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation From="330" To="24" Storyboard.TargetName="Expander1" Storyboard.TargetProperty="Height" Duration="0:00:00.25"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger.Actions>
+                                    </EventTrigger>
+                                </Expander.Triggers>
                                 <ListBox Name="LayoutListBox" DataContext="{Binding Source={StaticResource SamplesList}, XPath=/Samples/Category[1]/Sample}"  ItemsSource="{Binding}"  Style="{DynamicResource SamplesListBox}"  IsSynchronizedWithCurrentItem="True" SelectedIndex="{Binding LayoutIndex ,ElementName=vm}"  >
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
@@ -96,10 +116,30 @@
                                     </i:Interaction.Triggers>
                                 </ListBox>
                             </Expander>
-                            <Expander  Margin="0,0,0,10" DockPanel.Dock="top" Background="white" FocusVisualStyle="{x:Null}">
+                            <Expander  Margin="0,0,0,10" DockPanel.Dock="top" Background="white" FocusVisualStyle="{x:Null}" x:Name="Expander2">
                                 <Expander.Header>
                                     <TextBlock Margin="10,0,0,0"  FontFamily="Calibri" FontWeight="bold"  TextTrimming="WordEllipsis">Controls</TextBlock>
                                 </Expander.Header>
+                                <Expander.Triggers>
+                                    <EventTrigger RoutedEvent="Expander.Expanded">
+                                        <EventTrigger.Actions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation From="24" To="330" Storyboard.TargetName="Expander2" Storyboard.TargetProperty="Height" Duration="0:00:00.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger.Actions>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="Expander.Collapsed">
+                                        <EventTrigger.Actions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation From="324" To="24" Storyboard.TargetName="Expander2" Storyboard.TargetProperty="Height" Duration="0:00:00.25"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger.Actions>
+                                    </EventTrigger>
+                                </Expander.Triggers>
                                 <ListBox Name="ControlListBox" MaxHeight="300"  DataContext="{Binding Source={StaticResource SamplesList}, XPath=/Samples/Category[2]/Sample}" ItemsSource="{Binding}" Style="{DynamicResource SamplesListBox}"  IsSynchronizedWithCurrentItem="True" SelectedIndex="{Binding ControlIndex ,ElementName=vm}" SelectedValue="X" >
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
