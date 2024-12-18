@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
 
 namespace MVVM.ViewModel.Tests;
 
@@ -18,9 +17,9 @@ public class DebugLogTests
     [TestMethod]
     public void SetupTest()
     {
-        testClass.Should().NotBeNull();
-        testClass.Should().BeOfType<DebugLog>();
-        testClass.Should().BeAssignableTo<IDebugLog>();
+        Assert.IsNotNull(testClass);
+        Assert.IsInstanceOfType(testClass,typeof(DebugLog));
+        Assert.IsInstanceOfType(testClass,typeof(IDebugLog));
         Assert.AreEqual("", (testClass as IDebugLog).DebugLog);
     }
 
