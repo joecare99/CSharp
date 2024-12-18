@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Interface Name="GenFree2Base.Interfaces.IGenBase">
-    <Position X="5" Y="3.75" Width="1.5" />
+    <Position X="8.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Interfaces\IGenBase.cs</FileName>
@@ -11,74 +11,87 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenFact">
-    <Position X="0.5" Y="7" Width="1.5" />
+    <Position X="7.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAQAAABAEEAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenFact.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Date" />
-      <Property Name="MainEntity" />
       <Property Name="Place" />
+      <Property Name="MainEntity" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Sources" />
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenEntity">
-    <Position X="7.25" Y="7" Width="1.5" />
+    <Position X="14" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAJAAAAAACAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Facts" />
+      <Property Name="Connects" />
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenObject" Collapsed="true">
-    <Position X="12" Y="5.5" Width="1.5" />
+    <Position X="11.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenObject.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenDate" Collapsed="true">
-    <Position X="2.75" Y="7" Width="1.5" />
+    <Position X="9.5" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenDate.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenPlace" Collapsed="true">
-    <Position X="5" Y="7" Width="1.5" />
+    <Position X="11.75" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenPlace.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="GenFree2Base.Interfaces.IGenSources" Collapsed="true">
-    <Position X="9.5" Y="7" Width="1.5" />
+  <Interface Name="GenFree2Base.Interfaces.IGenSources">
+    <Position X="16.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenSources.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenConnects">
-    <Position X="2.75" Y="5.5" Width="1.5" />
+    <Position X="0.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IGenConnects.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="GenFree2Base.Interfaces.IGenTransaction" Collapsed="true">
-    <Position X="7.25" Y="5.5" Width="1.5" />
+    <Position X="2.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAAAAAAAAAAICAAAAAAAAAFAAAAAAAAAAgAA=</HashCode>
       <FileName>Interfaces\IGenTransaction.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="GenFree2Base.Interfaces.IGenealogy">
+    <Position X="5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAQCAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IGenealogy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Entitys" />
+      <Property Name="Sources" />
+      <Property Name="Transactions" />
+    </ShowAsCollectionAssociation>
+  </Interface>
   <Enum Name="GenFree2Base.EGenType" Collapsed="true">
-    <Position X="5" Y="2" Width="1.5" />
+    <Position X="8.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAICAA=</HashCode>
       <FileName>EGenType.cs</FileName>
