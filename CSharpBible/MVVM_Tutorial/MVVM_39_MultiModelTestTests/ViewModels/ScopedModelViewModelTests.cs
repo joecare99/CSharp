@@ -1,13 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using MVVM.View.Extension;
-using MVVM_39_MultiModelTest.ViewModels;
-using System;
 using NSubstitute;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MVVM_39_MultiModelTest.Models;
 
 namespace MVVM_39_MultiModelTest.ViewModels.Tests
@@ -55,7 +49,7 @@ namespace MVVM_39_MultiModelTest.ViewModels.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { "" })]
+        [DataRow(true, new[] { "PropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage1.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage1.xaml\r\n" })]
         public void Detail1CommandTest(bool xAct, string[] asExp)
         {
             testModel.Detail1Command.Execute(null);
@@ -64,7 +58,7 @@ namespace MVVM_39_MultiModelTest.ViewModels.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { "PropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage1.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage2.xaml\r\n" })]
+        [DataRow(true, new[] { "PropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage1.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage2.xaml\r\nPropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage2.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage2.xaml\r\n" })]
         public void Detail2CommandTest(bool xAct, string[] asExp)
         {
             testModel.Detail2Command.Execute(null);
@@ -73,7 +67,7 @@ namespace MVVM_39_MultiModelTest.ViewModels.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(true, new[] { "PropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage1.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage3.xaml\r\n" })]
+        [DataRow(true, new[] { "PropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage1.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage3.xaml\r\nPropChgn(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/MVVM_39_MultiModelTest_net;component/views/DetailPage3.xaml\r\nPropChg(MVVM_39_MultiModelTest.ViewModels.ScopedModelViewModel,FrameName)=/Views/DetailPage3.xaml\r\n" })]
         public void Detail3CommandTest(bool xAct, string[] asExp)
         {
             testModel.Detail3Command.Execute(null);

@@ -15,41 +15,40 @@ using MVVM.ViewModel;
 using System;
 using System.Timers;
 
-namespace MVVM_00_Template.ViewModels
+namespace MVVM_00_Template.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class TemplateViewModel : BaseViewModel
 {
+    #region Properties
+    private readonly Timer _timer;
+    public static Func<DateTime> GetNow { get; set; } = () => DateTime.Now;
+    public DateTime Now { get => GetNow(); }
+    #endregion 
+    #region Methods
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class TemplateViewModel : BaseViewModel
+    public TemplateViewModel()
     {
-        #region Properties
-        private readonly Timer _timer;
-        public static Func<DateTime> GetNow { get; set; } = () => DateTime.Now;
-        public DateTime Now { get => GetNow(); }
-        #endregion 
-        #region Methods
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public TemplateViewModel()
-        {
-            _timer = new Timer() { Interval = 250};
-            _timer.Elapsed += (s, e) => RaisePropertyChanged(nameof(Now));
-            _timer.Start();
-        }
+        _timer = new Timer() { Interval = 250};
+        _timer.Elapsed += (s, e) => RaisePropertyChanged(nameof(Now));
+        _timer.Start();
+    }
 
 #if !NET5_0_OR_GREATER
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~TemplateViewModel()
-        {
-            _timer.Stop();
-            return;
-        }
-#endif
-        #endregion
+    /// <summary>
+    /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
+    /// </summary>
+    ~TemplateViewModel()
+    {
+        _timer.Stop();
+        return;
     }
+#endif
+    #endregion
 }

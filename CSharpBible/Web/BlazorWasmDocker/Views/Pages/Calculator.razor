@@ -1,0 +1,149 @@
+﻿@page "/calculator"
+@using BlazorWasmDocker.Models
+@using BlazorWasmDocker.ViewModels
+@using BlazorWasmDocker.ViewModels.Interfaces
+@using System.ComponentModel
+
+<h3>Blazor Taschenrechner</h3>
+
+<div @onkeyup="HandleKeyUp" @onkeydown="HandleKeyDown" class="widget">
+	<table>
+		<tbody>
+			<tr>
+				<td colspan="4">
+					<div class="col-md-4">
+						<input @bind="Display" class="form-control" readonly />
+					</div>
+				</td>
+				<td>
+					<div class="col-md-1">
+						<input @bind="OpMode" class="form-control" readonly />
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<div class="col-md-5">
+						<input @bind="DebugStr" class="form-control" hidden readonly />
+					</div>
+				</td>
+			</tr>
+
+			@foreach (var row in new int[] { 0, 1, 2, 3 })
+			{
+				<tr>
+					@foreach (var column in new int[] { 0, 1, 2, 3, 4 })
+					{
+						var item = def[row * 5 + column];
+						<td>
+							<div class="col-md-1">
+
+								@if (item is int number)
+								{
+									<button class="btn btn-primary" @onclick="() => DataContext?.AddNumberCommand.Execute(number.ToString())">@number</button>
+								}
+								else if (item is string s && s == "C")
+								{
+									<button class="btn btn-primary" @onclick="()=>DataContext?.ClearCommand.Execute(cAll)">C</button>
+								}
+								else if (item is string s4 && s4 == "<-")
+								{
+									<button class="btn btn-primary" @onclick="()=>DataContext?.ClearCommand.Execute(cBack)">@s4</button>
+								}
+								else if (item is string s2 && s2 == "=")
+								{
+									<button class="btn btn-primary" @onclick="()=>DataContext?.CalculateCommand.Execute(null)" default>=</button>
+								}
+								else if (item is string s3)
+								{
+									<button class="btn btn-primary" @onclick="() => DataContext?.OperationCommand.Execute(s3)">@s3</button>
+								}
+							</div>
+						</td>
+					}
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+@code {
+	ICalculatorViewModel DataContext;
+	const string cAll = "All";
+	const string cBack = "<-";
+
+	string Display;
+	string OpMode;
+	string DebugStr = "";
+
+	object?[] def = { "C", 7, 8, 9, "+",
+	"<-", 4,5,6,"-",
+	null, 1,2,3,"*",
+	"=", null,0,".","/"  };
+
+	public Calculator():this(IoC.GetRequiredService<ICalculatorViewModel>())
+	{
+	}
+
+	public Calculator(ICalculatorViewModel dataContext)
+	{
+		try
+		{
+			DataContext = dataContext;
+			DataContext.PropertyChanged += OnVmPropertyChanged;
+			Display = DataContext.Display;
+			DebugStr = "Ready";
+		}
+		catch (Exception ex)
+		{
+			DebugStr = ex.Message;
+		}
+	}
+
+	private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(ICalculatorViewModel.Display))
+		{
+			Display = DataContext.Display;
+		}
+		if (e.PropertyName == nameof(ICalculatorViewModel.OpMode))
+		{
+			Display = DataContext.OpMode;
+		}
+	}
+
+	public void HandleKeyDown(KeyboardEventArgs key)
+	{
+		DebugStr = $"{key.Type}, {key.Code}, {key.Location}, '{key.Key}'";
+		if (key.Key == "Enter" )
+		{
+			//DataContext?.CalculateCommand.Execute(null);
+			DataContext.xEnterMode = true;
+		}
+	}
+	public void HandleKeyUp(KeyboardEventArgs key)
+	{
+		DataContext.xEnterMode = false;
+		DebugStr = $"{key.Type}, {key.Code}, {key.Location}, '{key.Key}'";
+		if (int.TryParse(key.Key, out var number))
+		{
+			DataContext?.AddNumberCommand.Execute(number.ToString());
+		}
+		else if (new string[] { "+", "-", "*", "/" }.Contains(key.Key))
+		{
+			DataContext?.OperationCommand.Execute(key.Key);
+		}
+		else if (key.Key == "=" || (key.Key == "Enter" ))
+		{
+			DataContext?.CalculateCommand.Execute(null);
+		}
+		else if (key.Key == "C" || key.Key == "c")
+		{
+			DataContext?.ClearCommand.Execute(cAll);
+		}
+		else if (key.Key == "Backspace")
+		{
+			DataContext?.ClearCommand.Execute(cBack);
+		}
+		//	StateHasChanged();
+	}
+}

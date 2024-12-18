@@ -1,9 +1,5 @@
 ﻿using System;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace MVVM_38_CTDependencyInjection.Models

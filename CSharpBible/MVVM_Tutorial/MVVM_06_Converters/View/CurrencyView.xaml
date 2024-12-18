@@ -4,14 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MVVM_06_Converters.View"
-      xmlns:mvvm="clr-namespace:MVVM_06_Converters.ViewModel"
+      xmlns:mvvm="clr-namespace:MVVM_06_Converters.ViewModels"
       xmlns:vc="clr-namespace:MVVM_06_Converters.ValueConverter"
       xmlns:ex="clr-namespace:MVVM_06_Converters.View.Extensions"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CurrencyView">
     <Page.DataContext>
-        <mvvm:CurrencyViewViewModel />
+        <mvvm:CurrencyViewModel />
     </Page.DataContext>
     <Page.Resources>
         <vc:CurrencyValueConverter x:Key="vcCurency" />

@@ -11,12 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-namespace MVVM.ViewModel.Tests
+namespace MVVM.ViewModel.Tests;
+
+public interface IDebugLog
 {
-    public interface IDebugLog
-    {
-        void DoLog(string message);
-        void ClearLog();
-        string DebugLog {  get; }
-    }
+    void DoLog(string message);
+    void ClearLog();
+    string DebugLog {  get; }
 }

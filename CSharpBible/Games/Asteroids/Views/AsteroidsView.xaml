@@ -1,0 +1,28 @@
+﻿<Page x:Class="Asteroids.Views.AsteroidsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Asteroids.Views"
+      xmlns:vc="clr-namespace:Asteroids.Views.Converter"
+      xmlns:mvvm="clr-namespace:Asteroids.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="1600"
+      Title="AsteroidsView">
+    <Page.DataContext>
+        <mvvm:AsteroidsViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <vc:DrawScreenObjects x:Key="vcDrawScreenObjects" />
+    </Page.Resources>
+    <Grid Background="#101010">
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding ScreenObjs, ConverterParameter=100, Converter={StaticResource vcDrawScreenObjects}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+    </Grid>
+</Page>

@@ -1,0 +1,116 @@
+﻿using System.Collections.Generic;
+using System.Windows;
+
+namespace Asteroids.Model;
+
+static class Char2Points
+{
+    const double Yf = 1.0;
+    const double Yt = 0.85;
+    const double Yh = 0.4;
+    const double Yq = 0.15;
+    const double Yn = 0.0;
+
+    public static Dictionary<char, Point[]> AFont { get; set; } = new()
+    {
+          {' ' , []},
+          {'!' , [ new(0.5, Yn), new(0.625, Yq), new(0.375, Yh), new(0.375, Yt), new(0.5, Yf), new(0.625, Yt), new(0.625, Yh), new(0.375, Yq),new(0.5, Yn) ]},
+         {'"' , [ new(0.25, Yf), new(0.25, Yt), new(0.75, Yf), new(0.75, 0.75) ]},
+        {'#' , [ new(0.25, Yf), new(0.25, Yn), new(0.25, Yq), new(1, Yq), new(0, Yq), new(0.75, Yq), new(0.75, Yn), new(0.75, Yf),new(0.75, Yt), new(0, Yt), new(1, Yt) ]},
+        {'$' , [ new(0, Yq), new(0.75, Yq), new(1, Yh), new(0, Yh), new(0.25, Yt), new(1, Yt), new(0.5, Yt), new(0.5, Yf), new(0.5, Yn) ]},
+        {'%' , [ new(0.25, Yf), new(0.25, Yt), new(0, Yt), new(0, Yf), new(Yt, Yt), new(1, Yf), new(0, Yn), new(Yq, Yq), new(1, Yn), new(1, Yq), new(0.75, Yq), new(0.75, Yn) ]},
+        {'&' , [ new(1, Yn), new(0.25, Yt), new(0.5, Yf), new(0.75, Yt), new(0.25, Yq), new(0.5, Yn), new(1, Yh) ]},
+        {'\'' , [ new(0.25, Yf), new(0.25, 0.75) ]},
+        {'(' , [ new(0.5, Yf), new(0.25, Yt), new(0.25, Yq), new(0.5, Yn) ]},
+        {')' , [ new(0.5, Yf), new(0.75, Yt), new(0.75, Yq), new(0.5, Yn) ]},
+        {'*' , [ new(0.25, 0.75), new(0.75, 0.75), new(0.5, Yf), new(0.5, Yn), new(0.25, Yq), new(0.75, Yq) ]},
+        {'+' , [ new(0.25, Yh), new(0.75, Yh), new(0.5, Yh), new(0.5, Yt), new(0.5, Yq) ]},
+        {',' , [ new(0.625, Yq), new(0.375, Yn),new(0.5, Yq),new(0.625, Yq) ]},
+        {'-' , [ new(0.25, Yh), new(0.75, Yh) ]},
+        {'.' , [ new(0.375, Yn), new(0.375, Yq), new(0.625, Yq), new(0.625, Yn),new(0.375, Yn), ]},
+        {'/' , [ new(0, Yf), new(1, Yn) ]},
+
+        {'0' , [new(1, Yq), new(0.5, Yn), new(0, Yq), new(0, Yt), new(0.5, Yf), new(1,Yt),new(1,Yq),new(0,Yt)]},
+        {'1' , [new(0, Yh), new(0.5, Yf), new(0.5, Yn), new(0, Yn),new(1, Yn)]},
+        {'2' , [ new(0, Yt), new(0.5, Yf), new(1, Yt), new(1, Yh), new(0.5, Yq), new(0, Yn), new(1, Yn) ]},
+        {'3' , [new(0, Yq), new(0.5, Yn), new(1, Yq), new(1, Yh), new(0.5, Yh), new(1, Yf), new(0, Yf)]},
+        {'4' , [new(0.25, Yf), new(0, Yh), new(1, Yh), new(1, Yf), new(1, Yn)]},
+        {'5' , [new(1, Yf), new(0, Yf), new(0, Yh), new(1, Yh), new(1, Yq), new(0.5, Yn), new(0, Yq)]},
+        {'6' , [new(1, Yf), new(0.5, Yf), new(0, Yt), new(0, Yq), new(0.5, Yn), new(1, Yq), new(1, Yh), new(0, Yh)]},
+        {'7' , [new(0, Yf), new(1, Yf), new(0, Yn), new(Yh, Yh),new(.25, Yh),new(.75, Yh)]},
+        {'8' , [new(0.75, Yh), new(1, Yq), new(0.5, Yn), new(0, Yq), new(0.25, Yh), new(0.75, Yh), new(1, Yt), new(0.5, Yf), new(0, Yt),new(0.25, Yh)]},
+        {'9' , [new(0, Yq), new(.5, Yn), new(1, Yq), new(1, Yt), new(0.5, Yf), new(0, Yt), new(0.25, Yh), new(0.75, Yh), new(1, Yt)]},
+        {':', [new(0.625, Yh), new(0.625, Yh+Yq), new(0.375, Yh+Yq), new (0.375, Yh), new (0.625, Yh), new(0.375, Yq), new(0.625, Yq), new(0.625, Yn),new(0.375, Yn),new(0.375, Yq),]},
+        {';', [new(0.625, Yh), new(0.625, Yh + Yq), new(0.375, Yh + Yq), new(0.375, Yh), new(0.625, Yh), new(0.375, Yq), new(0.25, Yn),new(0.625, Yq),new(0.375, Yq),]},
+        {'<', [new (1, Yf), new (0.5, Yh), new (1, Yn)]},
+        {'=', [new (1, Yh+.02), new (0, Yh+.02),new (0, Yh), new (1, Yh),new (0, Yq + .02), new (1, Yq + .02),new (1, Yq), new (0, Yq)]},
+        {'>', [new (0, Yf), new (0.5, Yh), new (0, Yn)]},
+        {'?', [new (0, Yt), new (0.25, Yf), new(0.75, Yf), new(1, Yt), new (0.5, Yh), new (0.5, Yq),new (0.375, Yn),new (0.625, Yn),new (0.5, Yq)]},
+        {'@', [new(0.625, Yq), new(0.375, Yq), new(0.25, (Yh+Yq)*0.5), new(0.375, Yh), new(.75, Yh), new(.75, Yq), new(1, Yq), new(1, Yt), new(0.75, Yf), new(0.25, Yf), new(0, Yt), new(0, Yq), new(0.25, Yn), new(1, Yn)]},
+        {'A', [new(0, Yn), new(0, Yt), new(0.5, Yf), new(1, Yt), new(1, Yn), new(1, Yh), new (0.25, Yh)]},
+        {'B' , [ new(0, Yn), new(0, Yf), new(0.75, Yf), new(1, Yt), new(0.75, Yh), new(0.25, Yh), new(0.75, Yh), new(1, Yq), new(0.75, Yn), new(0, Yn) ]   },
+        {'C' , [ new(1, Yq), new(0.75, Yn), new(0.25, Yn), new(0, Yq), new(0, Yt), new(0.25, Yf), new(0.75, Yf), new(1, Yt) ]   },
+        {'D' , [ new(0, Yn), new(0, Yf), new(0.75, Yf), new(1, Yt), new(1, Yq), new(0.75, Yn), new(0, Yn) ]   },
+        {'E' , [ new(1, Yn), new(0, Yn), new(0, Yh), new(0.5, Yh), new(0, Yh), new(0, Yf), new(1, Yf) ]   },
+        {'F' , [ new(1, Yf), new(0, Yf), new(0, Yh), new(0.5, Yh), new(0, Yh), new(0, Yn)]   },
+        {'G' , [ new(1, Yt), new(0.75, Yf), new(0.25, Yf), new(0, Yt), new(0, Yq), new(0.25, Yn), new(1,Yn), new(1, Yh), new(0.5, Yh)] },
+        {'H' , [ new(0, Yn), new(0, Yf), new(0, Yh), new(1, Yh), new(1, Yn), new(1, Yf) ]},
+        {'I' , [ new(0, Yn), new(1, Yn), new(0.5, Yn), new(0.5, Yf), new(0, Yf), new(1, Yf) ]},
+        {'J' , [ new(0, Yq), new(0.25, Yn), new(0.75, Yn), new(1, Yq), new(1, Yf), new(0, Yf) ]},
+        {'K' , [ new(0, Yn), new(0, Yf), new(0, Yq), new(0.5, Yh), new(1, Yf), new(0.5, Yh), new(1, Yn) ]},
+        {'L' , [ new(0, Yf), new(0, Yn), new(1, Yn) ]},
+        {'M' , [ new(0, Yn), new(0, Yf), new(0.5, Yh), new(1, Yf), new(1, Yn) ]},
+        {'N' , [ new(0, Yn), new(0, Yf), new(1, Yn), new(1, Yf) ]},
+        {'O' , [ new(0, Yq), new(0, Yt), new(0.25, Yf), new(0.75, Yf), new(1, Yt), new(1, Yq), new(0.75, Yn), new(0.25, Yn), new(0, Yq) ]},
+        {'P' , [ new(0, Yn), new(0, Yf), new(0.75, Yf), new(1, Yt), new(0.75, Yh), new(0.25, Yh) ]},
+        {'Q' , [ new(1, Yq), new(1, Yt), new(0.75, Yf), new(0.25, Yf), new(0, Yt), new(0, Yq), new(0.25, Yn), new(1, Yn), new(0.5,Yh)]},
+        {'R' , [ new(0, Yn), new(0, Yf), new(0.75, Yf), new(1, Yt), new(0.75, Yh), new(0.25, Yh), new(0.5, Yh), new(1, Yn) ]},
+        {'S' , [ new(0, Yq), new(0.25, Yn), new(0.75, Yn), new(1, Yq), new(0.75, Yh), new(0.25, Yh), new(0, Yt), new(0.25, Yf), new(0.75, Yf), new(1, Yt) ]},
+        {'T' , [ new(0, Yf), new(1, Yf), new(0.5, Yf), new(0.5, Yn) ]},
+        {'U' , [ new(0, Yf), new(0, Yq), new(0.25, Yn), new(0.75, Yn), new(1, Yq), new(1, Yf) ]},
+        {'V' , [ new(0, Yf), new(0.5, Yn), new(1, Yf) ]},
+        {'W' , [ new(0, Yf), new(0.25, Yn), new(0.5, Yf), new(0.75, Yn), new(1, Yf) ]},
+        {'X' , [ new(0, Yn), new(0.5, Yh), new(1, Yf),  new(0.5, Yh), new(1, Yn), new(0.5, Yh), new(0, Yf) ]},
+        {'Y' , [ new(0, Yf), new(0.5, Yh), new(1, Yf), new(0.5, Yh), new(0.5, Yn) ]},
+        {'Z' , [ new(0, Yf), new(1, Yf), new(0, Yn), new(1, Yn) ]},
+        {'[' , [ new(1, Yf), new(0.25, Yf), new(.25, Yn), new(1, Yn) ]},
+        {'\\' , [ new(0, Yf), new(1, Yn) ]},
+        {']' , [ new(0, Yf), new(0.75, Yf), new(0.75, Yn), new(0, Yn)]},
+        {'^' , [ new(0.25, Yt), new(0.5, Yf), new(.75, Yt) ]},
+        {'_' , [ new(0, -Yq), new(1, -Yq) ]},
+        {'`' , [ new(0.5, Yf), new(0.75, Yt), new(0.75, Yf), new(0.5, Yf) ]},
+        {'a' , [ new(0.75, Yn), new(0.25, Yn), new(0, Yq), new(0.25, Yh), new(1, Yh), new(1, Yn) ]},
+        {'b' , [ new(0, Yf), new(0, Yn), new(0.75, Yn), new(1, Yq),  new(0.75, Yh), new(0.25, Yh) ]},
+        {'c' , [ new(1, Yh), new(0.25, Yh), new(0, Yq), new(0.25, Yn), new(1, Yn) ]},
+        {'d' , [ new(1, Yf), new(1, Yn), new(0.25, Yn), new(0, Yq), new(0.25, Yh), new(.75, Yh) ]},
+        {'e' , [ new(0.25, Yq), new(1, Yq), new(0.75, Yh), new(0.25, Yh), new(0, Yq), new(0.25, Yn), new(1, Yn) ]},
+        {'f' , [ new(1, Yf), new(0.75, Yf), new(0.5, Yt), new(0.5, Yn), new(0.5, Yh), new(0, Yh), new(1, Yh) ]},
+        {'g' , [ new(0.75, Yn), new(0.25, Yn), new(0, Yq), new(0.25, Yh), new(1, Yh), new(1, Yn), new(0.75, -Yq), new(0, -Yq) ]},
+        {'h' , [ new(0, Yf), new(0, Yn), new(0, Yh), new(0.75, Yh), new(1, Yq), new(1, Yn) ]},
+        {'i' , [ new(0.5, Yt), new(0.375, Yf), new(0.625, Yf), new(0.5, Yh), new(0, Yh), new(0.5, Yh), new(0.5, Yn), new(0, Yn), new(1, Yn) ]},
+        {'j' , [ new(0.5, Yt), new(0.375, Yf), new(0.625, Yf), new(0.5, Yh), new(0, Yh), new(1, Yh), new(1, Yn), new(0.75, -Yq), new(0, -Yq) ]},
+        {'k' , [ new(0, Yf), new(0, Yn), new(0.5, Yq), new(1, Yh), new(0.5, Yq), new(1, Yn) ]},
+        {'l' , [ new(0, Yf), new(0.5, Yf), new(0.5, Yn), new(0, Yn), new(1, Yn) ]},
+        {'m' , [ new(0, Yn), new(0, Yh), new(.25, Yh), new(0.5, Yq), new(0.5, Yn), new(0.5, Yh), new(.75, Yh), new(1, Yq), new(1, Yn) ]},
+        {'n' , [ new(0, Yn), new(0, Yh), new(.75, Yh), new(1, Yq), new(1, Yn) ]},
+        {'o' , [ new(0, Yq), new(0.25, Yn), new(0.75, Yn), new(1, Yq), new(.75, Yh), new(.25, Yh), new(0, Yq), new(0.25, Yn), new(0, Yq) ]},
+        {'p' , [ new(0.25, Yn), new(0.75, Yn), new(1, Yq), new(0.75, Yh), new(0, Yh), new(0, -Yq)]},
+        {'q' , [ new(0.75, Yn), new(0.25, Yn), new(0, Yq), new(0.25, Yh), new(1, Yh), new(1, -Yq)]},
+        {'r' , [ new(0, Yh), new(0, Yn), new(0, Yq), new(1, Yh)]},
+        {'s' , [ new(0, Yn), new(0.75, Yn), new(1, Yq), new(0, Yq), new(0.25, Yh),new(1, Yh) ]},
+        {'t' , [ new(1, Yn), new(0.75, Yn), new(0.5, Yq), new(0.5, Yf), new(0.5, Yh), new(0, Yh), new(1, Yh) ]},
+        {'u' , [ new(0, Yh), new(0, Yq), new(0.25, Yn), new(1, Yn), new(1, Yh) ]},
+        {'v' , [ new(0, Yh), new(0.5, Yn), new(1, Yh) ]},
+        {'w' , [ new(0, Yh), new(0.25, Yn), new(0.5, Yq), new(0.75, Yn), new(1, Yh) ]},
+        {'x' , [ new(0, Yn), new(1, Yh), new(0.5, Yq), new(1, Yn), new(0, Yh) ]},
+        {'y' , [ new(0, Yh), new(0.5, Yn), new(1, Yh), new(0.5, Yn), new(0, -Yq) ]},
+        {'z' , [ new(0, Yh), new(1, Yh), new(0, Yn), new(1, Yn) ]},
+        {'{' , [ new(0.75, Yf), new(0.5,0.5*(Yt+Yf)), new(0.5, 0.5 * (Yh + Yt)), new(0.25, Yh), new(0.5, 0.5*(Yq+Yh)), new(0.5, 0.5 * (Yq + Yn)), new(0.75, Yn) ]},
+        {'|' , [ new(0.5, Yf), new(0.5, Yn), new(0.5, Yf), new(0.5, Yn) ]},
+        {'}' , [ new(0.25, Yf), new(0.5,0.5*(Yt+Yf)), new(0.5, 0.5 * (Yh + Yt)), new(0.75, Yh), new(0.5, 0.5*(Yq+Yh)), new(0.5, 0.5 * (Yq + Yn)), new(0.25, Yn) ]},
+        {'~' , [ new(0.25, Yt), new(0.375, Yf), new(0.625, Yt), new(0.75, Yf) ]}
+
+    };
+
+    public static Point[] GetPoints(char ch) => AFont.TryGetValue(ch, out var pts) ? pts : [];
+}

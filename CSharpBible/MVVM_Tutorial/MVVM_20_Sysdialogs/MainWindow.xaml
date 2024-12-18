@@ -4,10 +4,44 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_20_Sysdialogs"
+        xmlns:p="clr-namespace:MVVM_20_Sysdialogs.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Frame Content="Frame" Source="/View/SysDialogs.xaml"/>
-
-    </Grid>
+        Title="{x:Static p:Resources.Title}" 
+        ToolTip="{x:Static p:Resources.Description}"
+        Height="450" Width="800">
+    <TabControl>
+        <TabItem Header="{x:Static p:Resources.Title}">
+            <Frame Content="Frame" Source="/Views/SysDialogsView.xaml"/>
+        </TabItem>
+        <TabItem Header="Xaml">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{x:Static p:Resources.txtTheXamlCode}" />
+                <TextBox Text="{x:Static p:Resources.SysDialogsView}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Xaml.cs">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{x:Static p:Resources.txtTheXamlCode}" />
+                <TextBox Text="{x:Static p:Resources.SysDialogsView_xaml}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="ViewModel">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{x:Static p:Resources.txtTheViewModelCode}" />
+                <TextBox Text="{x:Static p:Resources.SysDialogsViewModel}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Converter1">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{x:Static p:Resources.txtColConvCode}" />
+                <TextBox Text="{x:Static p:Resources.ColorConverter}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Converter2">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{x:Static p:Resources.txtFontConvCode}" />
+                <TextBox Text="{x:Static p:Resources.FontConverter}" IsReadOnly="True" AllowDrop="False" VerticalScrollBarVisibility="Visible"/>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
 </Window>

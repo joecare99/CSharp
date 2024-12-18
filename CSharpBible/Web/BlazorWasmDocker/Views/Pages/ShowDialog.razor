@@ -1,0 +1,71 @@
+﻿@page "/show-dialog"
+@using BlazorWasmDocker.Views.Shared
+@using Microsoft.AspNetCore.Components.Web
+@using MyComponent;
+<PageTitle>Home</PageTitle>
+
+<BwdDialog Show="showDialog"
+           OnCancel="DialogCancelHandler"
+           OnOk="DialogOkHandler">
+    <Title>Quick List [@(Items.Count + 1)]</Title>
+    <Body>
+        Enter New Item:
+        <input @bind="NewItem" />
+    </Body>
+</BwdDialog>
+
+<Dialog Show="showlDialog"
+           OnCancel="DialogCancelHandler"
+           OnOk="DialogOkHandler">
+    <Title>Quick List [@(Items.Count + 1)]</Title>
+    <Body>
+        Enter New Item:
+        <input @bind="NewItem" />
+    </Body>
+</Dialog>
+
+<ol>
+    @foreach (var item in Items)
+    {
+        <li>@item</li>
+    }
+</ol>
+
+<button @onclick="OpenDialog">Show Dialog</button>
+<button @onclick="OpenLDialog">Show Dialog2</button>
+@code {
+    private string NewItem;
+    private List<string> Items = new List<string>();
+
+    private bool showDialog = false;
+    private bool showlDialog = false;
+    private void OpenDialog()
+    {
+        showDialog = true;
+    }
+
+    private void OpenLDialog()
+    {
+        showlDialog = true;
+    }
+
+    private void DialogCancelHandler(MouseEventArgs e)
+    {
+        NewItem = "";
+        showDialog = false;
+        showlDialog = false;
+    }
+
+    private void DialogOkHandler(MouseEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(NewItem))
+        {
+            Items.Add(NewItem);
+            NewItem = "";
+        };
+        showDialog = false;
+        showlDialog = false;
+    }
+
+}
+

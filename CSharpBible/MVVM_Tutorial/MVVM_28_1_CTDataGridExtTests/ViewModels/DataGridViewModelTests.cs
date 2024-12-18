@@ -5,7 +5,6 @@ using MVVM_28_1_CTDataGridExt.Services;
 using MVVM_28_1_CTDataGridExt.Models;
 using NSubstitute;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace MVVM_28_1_CTDataGridExt.ViewModels.Tests

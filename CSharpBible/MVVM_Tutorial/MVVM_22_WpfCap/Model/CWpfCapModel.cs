@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseLib.Interfaces;
 
 namespace MVVM_22_WpfCap.Model
 {

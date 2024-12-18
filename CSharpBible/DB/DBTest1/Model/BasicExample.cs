@@ -1,5 +1,7 @@
-﻿using MySql.Data.MySqlClient;
+﻿//using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
+using System.Data;
 
 namespace DBTest1.Model
 {
@@ -27,6 +29,7 @@ namespace DBTest1.Model
                 Console.WriteLine($"Exception: {ex.Message}");
                 throw;
             }
+
             // Insert some data
             using (var cmd = new MySqlCommand())
             {
@@ -36,14 +39,57 @@ namespace DBTest1.Model
                 cmd.ExecuteNonQuery();
             }
 
+           var s= conn.GetSchema();
+            foreach (var col in s.Columns)
+                Console.Write($"{col}\t");
+            Console.WriteLine();
+            Console.WriteLine("=======================");
+            foreach (DataRow row in s.Rows)
+            {
+               foreach(var col in row.ItemArray)
+                    Console.Write($"{col}\t");
+                Console.WriteLine();
+            }
+
+
+            s = conn.GetSchema("Tables");
+            foreach (var col in s.Columns)
+                Console.Write($"{col}\t");
+            Console.WriteLine();
+            Console.WriteLine("=======================");
+            foreach (DataRow row in s.Rows)
+            {
+                foreach (var col in row.ItemArray)
+                    Console.Write($"{col}\t");
+                Console.WriteLine();
+            }
+
+
             // Retrieve all rows
+            var xFirst = true;
             using (var cmd = new MySqlCommand("SELECT * FROM Testtable", conn))
-            using (var reader = cmd.ExecuteReader())
-                while (reader.Read()) { 
+            using (var reader = cmd.ExecuteReader())                                
+                while (reader.Read())
+                {
+                    if ( xFirst)
+                    {
+                        for (int i = 0; i < reader.FieldCount; i++)
+                            Console.Write($"{reader.GetName(i)}\t"); 
+                        Console.WriteLine();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                            Console.Write($"{new string('=',reader.GetName(i).Length)}\t");
+                        Console.WriteLine();
+                        xFirst = false;
+                    }
+
                     for (int i = 0; i < reader.FieldCount; i++)
-                        Console.Write(reader.GetString(i) + "\t");
+                        switch (reader.GetDataTypeName(i))
+                        {
+                            case "VARCHAR": Console.Write($"{reader.GetString(i)}\t"); break;
+                            case "INT": Console.Write($"{reader.GetInt32(i)}\t"); break;
+                        }
                     Console.WriteLine();
-                }
+                }            
         }
 
         private static void Conn_StateChange(object sender, System.Data.StateChangeEventArgs e)

@@ -11,11 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Helper.MVVM;
-using Microsoft.Extensions.DependencyInjection;
-using MVVM_28_1_CTDataGridExt.Services;
-using MVVM.View.Extension;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using BaseLib.Interfaces;
+using BaseLib.Helper.MVVM;
+using MVVM.View.Extension;
+using MVVM_28_1_CTDataGridExt.Services;
 
 namespace MVVM_28_1_CTDataGridExt
 {

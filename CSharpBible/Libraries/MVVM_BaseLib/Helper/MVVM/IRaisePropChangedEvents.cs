@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace BaseLib.Helper.MVVM
+namespace BaseLib.Helper.MVVM;
+
+public interface IRaisePropChangedEvents : INotifyPropertyChanged
 {
-    public interface IRaisePropChangedEvents : INotifyPropertyChanged
-    {
-        void RaisePropertyChanged(string propertyName);
-    }
+    void RaisePropertyChanged(string propertyName);
 }

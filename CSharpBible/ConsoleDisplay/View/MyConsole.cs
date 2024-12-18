@@ -137,7 +137,8 @@ namespace ConsoleDisplay.View
 #if NET6_0_OR_GREATER
 			= typeof(Console).GetMember(nameof(Console.GetCursorPosition))?.First((o) => true) as MethodInfo;
 #else
-			= typeof(Console).GetMethod(nameof(Console.CursorTop));
+			= typeof(MyConsole).GetMethod(nameof(_GetCursorPosition));
+        public static (int Left, int Top) _GetCursorPosition() => (Console.CursorLeft, Console.CursorTop);
 #endif
         /// <summary>
         /// The instance

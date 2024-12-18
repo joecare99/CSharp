@@ -33,7 +33,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="3" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
-            <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/MVVM_ImageHandling;component/Resources/card_♠Ace.png" RenderTransformOrigin="0.5,0.5" >
+            <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/MVVM_ImageHandling_net;component/Resources/card_♠Ace.png" RenderTransformOrigin="0.5,0.5" >
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -63,7 +63,7 @@
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
-            <Frame Grid.Row="1" Grid.Column="4" Source="/Resources/card_S2.xaml" RenderTransformOrigin="0.5,0.5" >
+            <Frame Grid.Row="1" Grid.Column="4" Source="/MVVM_ImageHandling_net;component/Resources/card_S2.xaml" RenderTransformOrigin="0.5,0.5" >
                 <Frame.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>

@@ -24,6 +24,7 @@ namespace TestStatements.Threading.Tasks
     /// </summary>
     public static class TaskExample
     {
+        public static Func<IPing> GetPing { get; set; } = () => new PingProxy();
         /// <summary>
         /// The urls
         /// </summary>
@@ -65,7 +66,7 @@ namespace TestStatements.Threading.Tasks
             {
                 var url = value;
                 tasks.Add(Task.Run(() => {
-                    var png = new Ping();
+                    var png = GetPing();
                     try
                     {
                         var reply = png.Send(url);

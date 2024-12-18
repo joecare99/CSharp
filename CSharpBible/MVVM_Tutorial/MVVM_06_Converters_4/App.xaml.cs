@@ -28,7 +28,7 @@ namespace MVVM_06_Converters_4
             base.OnStartup(e);
             var sb = new ServiceCollection()
                 .AddSingleton<IAGVModel, AGV_Model>()
-                .AddSingleton<ViewModel.VehicleViewModel>()
+                .AddSingleton<ViewModels.VehicleViewModel>()
                 .BuildServiceProvider();
            IoC.Configure(sb);
         }

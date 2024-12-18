@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_06_Converters_3"
         xmlns:view="clr-namespace:MVVM_06_Converters_3.View"
-        xmlns:mvvm="clr-namespace:MVVM_06_Converters_3.ViewModel"
+        xmlns:mvvm="clr-namespace:MVVM_06_Converters_3.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>

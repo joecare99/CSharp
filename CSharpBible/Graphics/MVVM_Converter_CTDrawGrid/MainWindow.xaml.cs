@@ -17,34 +17,5 @@ namespace MVVM_Converter_CTDrawGrid
         {
             InitializeComponent();
         }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-                vm.ShowClient = ShowClientinFrame;
-            }
-        }
-
-        private void Frame_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-//                vm.FrameDataContext = e.Source as Frame
-            }
-        }
-
-        private BaseViewModel? ShowClientinFrame(string arg)
-        {
-            try
-            {
-                this.Client.Source = new Uri(arg);
-                return Client.DataContext as BaseViewModel;
-            }
-            catch(Exception) 
-            {
-                return null;
-            };
-        }
     }
 }

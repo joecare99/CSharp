@@ -1,0 +1,110 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_41_Sudoku.Views"
+      xmlns:p="clr-namespace:MVVM_41_Sudoku.Properties"
+      xmlns:vc="clr-namespace:MVVM_41_Sudoku.ValueConverters"
+      xmlns:vc2="clr-namespace:MVVM_41_Sudoku.Views.Converter"
+      xmlns:mvvm="clr-namespace:MVVM_41_Sudoku.ViewModels"
+      xmlns:model="clr-namespace:MVVM_41_Sudoku.Models"
+    x:Class="MVVM_41_Sudoku.Views.SudokuView"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static p:Resources.Title}">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+        <vc2:DoubleConverter x:Key="vcDouble"/>
+        <ImageBrush x:Key="CutBrush"     Viewbox="0, 000,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="CopyBrush"    Viewbox="0, 064,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PasteBrush"   Viewbox="0, 128,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="UndoBrush"    Viewbox="0, 192,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="RedoBrush"    Viewbox="0, 256,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="DeleteBrush"  Viewbox="0, 320,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="NewBrush"     Viewbox="0, 384,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform"/>
+        <ImageBrush x:Key="OpenBrush"    Viewbox="0, 448,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="SaveBrush"    Viewbox="0, 512,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PreviewBrush" Viewbox="0, 576,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="OptionsBrush" Viewbox="0, 640,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="HelpBrush"    Viewbox="0, 704,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="SearchBrush"  Viewbox="0, 768,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="ReplaceBrush" Viewbox="0, 832,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="PrintBrush"   Viewbox="0, 896,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+        <ImageBrush x:Key="MailBrush"    Viewbox="0, 960,68,64" ImageSource="{Binding AllImgSource}" ViewboxUnits="Absolute" Stretch="Uniform" />
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:SudokuViewModel/>
+    </Page.DataContext>
+    <DockPanel Background="Silver">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="{x:Static p:Resources.File}">
+                <MenuItem Header="{x:Static p:Resources.NewGame}" Command="{Binding NewGameCommand}">
+                    <MenuItem.Icon>
+                        <Rectangle Fill="{StaticResource NewBrush}" Width="16" Height="16"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="{x:Static p:Resources.LoadGame}" Command="{Binding LoadGameCommand}"/>
+                <MenuItem Header="{x:Static p:Resources.SaveGame}" Command="{Binding SaveGameCommand}"/>
+                <Separator/>
+                <MenuItem Header="{x:Static p:Resources.PrintGame}" Command="{Binding PrintCommand}"/>
+                <Separator/>
+                <MenuItem Header="{x:Static p:Resources.ExitGame}" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+        </Menu>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"
+             HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Button Command="{Binding NewGameCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="{StaticResource NewBrush}" Width="24" Height="24"/>
+                    <TextBlock Text="{x:Static p:Resources.NewGame}" Margin="8"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding LoadGameCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="{StaticResource OpenBrush}" Width="24" Height="24"/>
+                    <TextBlock Text="{x:Static p:Resources.LoadGame}" Margin="8"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding SaveGameCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="{StaticResource SaveBrush}" Width="24" Height="24"/>
+                    <TextBlock Text="{x:Static p:Resources.SaveGame}" Margin="8"/>
+                </StackPanel>
+            </Button>
+            <Button  Command="{Binding PrintCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="{StaticResource PrintBrush}" Width="24" Height="24"/>
+                    <TextBlock Text="{x:Static p:Resources.PrintGame}" Margin="8"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <Label DockPanel.Dock="Top" Content="Sudoku-View:"/>
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+        <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="9" Rows="9" MaxWidth="{Binding ActualHeight,ElementName=Grd}" Name="Grd"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Grid.Row="{Binding Position.Y}" Grid.Column="{Binding Position.X}" Background="White">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPredefined}" Value="True">
+                                        <Setter Property="Background" Value="LightGray"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Rectangle Fill="Transparent" Stroke="Black" StrokeThickness="1" Name="Brdr" />
+                        <TextBox Background="Transparent" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  FontSize="{Binding ActualHeight,ElementName=Brdr, Converter={StaticResource vcDouble}, ConverterParameter=0.7}" TextAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+</Page>

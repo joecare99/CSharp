@@ -8,56 +8,138 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MVVM_03_NotifyChange.Properties {
-    using System;
+namespace MVVM_03_NotifyChange.Properties; 
+using System;
+
+
+/// <summary>
+///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+/// </summary>
+// Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
+// -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
+// Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
+// mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+public class Resources {
     
+    private static global::System.Resources.ResourceManager resourceMan;
+    
+    private static global::System.Globalization.CultureInfo resourceCulture;
+    
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+    internal Resources() {
+    }
     
     /// <summary>
-    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
     /// </summary>
-    // Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
-    // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
-    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
-    // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
-        
-        private static global::System.Resources.ResourceManager resourceMan;
-        
-        private static global::System.Globalization.CultureInfo resourceCulture;
-        
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Resources.ResourceManager ResourceManager {
+        get {
+            if (object.ReferenceEquals(resourceMan, null)) {
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_03_NotifyChange.Properties.Resources", typeof(Resources).Assembly);
+                resourceMan = temp;
+            }
+            return resourceMan;
         }
-        
-        /// <summary>
-        ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_03_NotifyChange.Properties.Resources", typeof(Resources).Assembly);
-                    resourceMan = temp;
-                }
-                return resourceMan;
-            }
+    }
+    
+    /// <summary>
+    ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+    ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+    /// </summary>
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Globalization.CultureInfo Culture {
+        get {
+            return resourceCulture;
         }
-        
-        /// <summary>
-        ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
-            get {
-                return resourceCulture;
-            }
-            set {
-                resourceCulture = value;
-            }
+        set {
+            resourceCulture = value;
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #03: How to use NotifyPropertyChange to update information  ähnelt.
+    /// </summary>
+    public static string Description {
+        get {
+            return ResourceManager.GetString("Description", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Firstname: ähnelt.
+    /// </summary>
+    public static string FirstName {
+        get {
+            return ResourceManager.GetString("FirstName", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Fullname: ähnelt.
+    /// </summary>
+    public static string FullName {
+        get {
+            return ResourceManager.GetString("FullName", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Lastname: ähnelt.
+    /// </summary>
+    public static string LastName {
+        get {
+            return ResourceManager.GetString("LastName", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_03_NotifyChange.Views.NotifyChangeView&quot;
+    ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+    ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+    ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+    ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+    ///      xmlns:local=&quot;clr-namespace:MVVM_03_NotifyChange&quot;
+    ///      xmlns:p=&quot;clr-namespace:MVVM_03_NotifyChange.Properties&quot;
+    ///      xmlns:mvvm=&quot;clr-namespace:MVVM_03_NotifyCha [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+    /// </summary>
+    public static string NotifyChangeView {
+        get {
+            return ResourceManager.GetString("NotifyChangeView", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die using MVVM.ViewModel;
+    ///
+    ///namespace MVVM_03_NotifyChange.ViewModels
+    ///{
+    ///    public class NotifyChangeViewModel : BaseViewModel
+    ///    {
+    ///        #region Properties
+    ///        private string _firstname;
+    ///        private string _lastname;
+    ///
+    ///        public string Firstname { get =&gt; _firstname; set =&gt; SetProperty(ref _firstname, value); }
+    ///        public string Lastname { get =&gt; _lastname; set =&gt; SetProperty(ref _lastname , value); }
+    ///        public string Fullname =&gt; $&quot;{Lastname}, {Firstname}&quot;;
+    ///        #endregion [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+    /// </summary>
+    public static string NotifyChangeViewModel {
+        get {
+            return ResourceManager.GetString("NotifyChangeViewModel", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #03 Notify Property Change ähnelt.
+    /// </summary>
+    public static string Title {
+        get {
+            return ResourceManager.GetString("Title", resourceCulture);
         }
     }
 }
