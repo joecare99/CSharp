@@ -741,9 +741,10 @@ namespace MathLibrary.TwoDim.Tests
         }
 
         [DataTestMethod]
-        [DataRow("00", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
+        [DataRow("00", new[] { 1d, 0d }, new[] { 1d, 0d }, true, 0d)]
         [DataRow("01", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
         [DataRow("02", new double[] { 1, 0 }, new double[] { 0, -1 }, true, 4.71238898038469d)]
+        [DataRow("02a", new double[] { 1, 0 }, new double[] { 0, 1 }, true, Math.PI/2d)]
         [DataRow("03", new double[] { 1, 0 }, null, false, 0d)]
         [DataRow("10", new double[] { 0, 1 }, new double[] { 0, 1 }, true, 0d)]
         [DataRow("11", new double[] { 0, 1 }, new double[] { 0, -1 }, true, 3.141592653589793d)]
@@ -788,12 +789,13 @@ namespace MathLibrary.TwoDim.Tests
         [DataRow("12", new double[] { 0, 0 }, new double[] { 1, 0 }, new double[] { 1, 1 }, new double[] { 0.5, 0.5 }, 0.7071067811865476)]
         [DataRow("13", new double[] { 0, 3 }, new double[] { 0, 0 }, new double[] { 4, 0 }, new double[] { 2, 1.5 }, 2.5d)]
         [DataRow("14", new double[] { 0, 0 }, new double[] { 1, 0 }, new double[] { 2, 0.1 }, new double[] { 0.5, 10.05 }, 10.062430123980985d)]
+        [DataRow("15", new double[] { 150, 0 }, new double[] { 100, -25 }, new double[] { 50, -25 }, new double[] { 75, 87.5 }, -115.244305716161d)]
         public void CircleCenterTest(string name, double[] dv1, double[] dv2, double[] dv3, double[] dvExp, double fExp)
         {
             var v = new Math2d.Vector[]{
-            Math2d.Vec(dv1),
-             Math2d.Vec(dv2),
-            Math2d.Vec(dv3)};
+                Math2d.Vec(dv1),
+                Math2d.Vec(dv2),
+                Math2d.Vec(dv3)};
             var vExp = Math2d.Vec(dvExp);
             AssertAreEqual(vExp, Math2d.CircleCenter(v, out var radius), 1e-12, $"{vExp} = Math2d.TryWinkel2Vec({v[0]},{v[1]})");
             Assert.AreEqual(fExp, radius, 1e-12, $"{name} radius");
