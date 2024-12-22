@@ -1,11 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestStatements.Anweisungen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using TestStatements.UnitTesting;
 
 namespace TestStatements.Anweisungen.Tests
