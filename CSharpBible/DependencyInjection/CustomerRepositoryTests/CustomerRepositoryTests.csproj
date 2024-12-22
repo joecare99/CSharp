@@ -13,7 +13,7 @@
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="JustMock" Version="2024.1.124.247" />
     <PackageReference Include="Castle.Windsor" Version="6.0.0" />
-    <PackageReference Include="FluentAssertions" Version="6.12.2" />
+    <PackageReference Include="FluentAssertions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.6.3" />
@@ -25,6 +25,7 @@
     <PackageReference Include="Ninject" Version="3.3.6" />
 	<PackageReference Include="Moq" Version="4.20.72" />
 	<PackageReference Include="StructureMap" Version="4.7.1" />
+	<PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
