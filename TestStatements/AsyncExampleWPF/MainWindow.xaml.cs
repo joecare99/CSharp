@@ -8,10 +8,7 @@ using System.Net.Http;
 using System.Net;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Diagnostics;
-using System.Security.Policy;
-using System.Collections;
 
 namespace AsyncExampleWPF
 {
