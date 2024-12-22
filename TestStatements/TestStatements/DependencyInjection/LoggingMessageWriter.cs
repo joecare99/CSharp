@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestStatements.DependencyInjection;
-
-public class LoggingMessageWriter(ILogger<LoggingMessageWriter> logger) : IMessageWriter
+namespace TestStatements.DependencyInjection
 {
-    public void Write(string message) 
-        => logger.LogInformation("Info: {Msg}", message);
+    public class LoggingMessageWriter(ILogger<LoggingMessageWriter> logger) : IMessageWriter
+    {
+        public void Write(string message) 
+            => logger.LogInformation("Info: {Msg}", message);
+    }
+    
+    
 }
-
-
