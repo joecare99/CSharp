@@ -4,15 +4,18 @@
 	</ImportGroup>
 	<PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net481; net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <UserSecretsId>85d7cf50-cf51-4539-ba76-0a882d37b3ec</UserSecretsId>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+	  <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\PluginBase\PluginBase.csproj" />
