@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Werner_Flaschbier_Base.Model;
 
-namespace Werner_Flaschbier_Base.ViewModel
+namespace Werner_Flaschbier_Base.ViewModels
 {
 
     /// <summary>
