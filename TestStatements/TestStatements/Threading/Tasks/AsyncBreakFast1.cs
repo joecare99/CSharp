@@ -33,7 +33,7 @@ namespace TestStatements.Threading.Tasks
         {
             var s = new Stopwatch();
             const string Title = "AsyncBreakfast 1.st";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             s.Start();
             Coffee cup = PourCoffee();
@@ -65,7 +65,7 @@ namespace TestStatements.Threading.Tasks
         {
             var s = new Stopwatch();
             const string Title = "AsyncBreakfast 2.nd";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             s.Start();
             Coffee cup = PourCoffee();
             Console.WriteLine($"{s.Elapsed}: coffee is ready");
@@ -95,7 +95,7 @@ namespace TestStatements.Threading.Tasks
         {
             var s = new Stopwatch();
             const string Title = "AsyncBreakfast 3.rd";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             s.Start();
             Coffee cup = PourCoffee();
             Console.WriteLine($"{s.Elapsed}: coffee is ready");
@@ -127,7 +127,7 @@ namespace TestStatements.Threading.Tasks
         {
             var s = new Stopwatch();
             const string Title = "AsyncBreakfast 4.th";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             s.Start();
 
             Coffee cup = PourCoffee();

@@ -48,7 +48,7 @@ namespace TestStatements.Anweisungen
         {
             using (TextReader r = File.OpenText(csFilename))
             {
-                Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+                Console.WriteLine(Constants.Constants.Header, Title);
 
                 Console.WriteLine(r.ReadLine());
                 Console.WriteLine(r.ReadLine());

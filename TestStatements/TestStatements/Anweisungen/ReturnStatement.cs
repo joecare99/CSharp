@@ -37,7 +37,7 @@ namespace TestStatements.Anweisungen
         public static void DoReturnStatement(string[] args)
         {
             const string Title = "Beispiel für Return-Anweisung";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             Console.WriteLine(Add(1, 2));
             return;

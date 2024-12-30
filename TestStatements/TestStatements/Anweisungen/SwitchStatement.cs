@@ -309,7 +309,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         /// <param name="values">The values.</param>
         /// <returns>System.Int32.</returns>
-        /// <exception cref="System.InvalidOperationException">unknown item type</exception>
+        /// <exception cref="InvalidOperationException">unknown item type</exception>
         public static int DiceSum(IEnumerable<object> values)
         {
             var sum = 0;
