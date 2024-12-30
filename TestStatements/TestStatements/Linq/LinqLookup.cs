@@ -56,7 +56,7 @@ namespace TestStatements.Linq
         public static void LookupExample()
         {
             const string Title = "Show HashSet<T>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
 
             ShowGrouping();

@@ -18,7 +18,7 @@ namespace TestStatements.Anweisungen.Tests
         /// </summary>
         private const string Expected = 
             "======================================================================\r\n" +
-            "## Beispiel für Ausdrücke \r\n" +
+            "## Beispiel für Ausdrücke\r\n" +
             "======================================================================\r\n123\r\n124";
 
         /// <summary>

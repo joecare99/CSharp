@@ -38,9 +38,9 @@ namespace TestStatements.ClassesAndObjects
 
     /// <summary>
     /// Interface IInterface3
-    /// Extends the <see cref="TestStatements.ClassesAndObjects.IInterface2" />
+    /// Extends the <see cref="IInterface2" />
     /// </summary>
-    /// <seealso cref="TestStatements.ClassesAndObjects.IInterface2" />
+    /// <seealso cref="IInterface2" />
     public interface IInterface3 : IInterface2
 	{
         /// <summary>
@@ -66,11 +66,11 @@ namespace TestStatements.ClassesAndObjects
 
     /// <summary>
     /// Class Class2.
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.Class1" />
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.IInterface1" />
+    /// Implements the <see cref="Class1" />
+    /// Implements the <see cref="IInterface1" />
     /// </summary>
-    /// <seealso cref="TestStatements.ClassesAndObjects.Class1" />
-    /// <seealso cref="TestStatements.ClassesAndObjects.IInterface1" />
+    /// <seealso cref="Class1" />
+    /// <seealso cref="IInterface1" />
     public class Class2: Class1 , IInterface1
     {
         /// <summary>
@@ -93,11 +93,11 @@ namespace TestStatements.ClassesAndObjects
 
     /// <summary>
     /// Class Class3.
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.Class1" />
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.IInterface2" />
+    /// Implements the <see cref="Class1" />
+    /// Implements the <see cref="IInterface2" />
     /// </summary>
-    /// <seealso cref="TestStatements.ClassesAndObjects.Class1" />
-    /// <seealso cref="TestStatements.ClassesAndObjects.IInterface2" />
+    /// <seealso cref="Class1" />
+    /// <seealso cref="IInterface2" />
     public class Class3 : Class1, IInterface2
     {
         /// <summary>
@@ -120,11 +120,11 @@ namespace TestStatements.ClassesAndObjects
 
     /// <summary>
     /// Class Class4.
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.Class1" />
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.IInterface3" />
+    /// Implements the <see cref="Class1" />
+    /// Implements the <see cref="IInterface3" />
     /// </summary>
-    /// <seealso cref="TestStatements.ClassesAndObjects.Class1" />
-    /// <seealso cref="TestStatements.ClassesAndObjects.IInterface3" />
+    /// <seealso cref="Class1" />
+    /// <seealso cref="IInterface3" />
     public class Class4 : Class1, IInterface3
     {
         /// <summary>
@@ -155,11 +155,11 @@ namespace TestStatements.ClassesAndObjects
 
     /// <summary>
     /// Class Class5.
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.Class4" />
-    /// Implements the <see cref="TestStatements.ClassesAndObjects.IInterface1" />
+    /// Implements the <see cref="Class4" />
+    /// Implements the <see cref="IInterface1" />
     /// </summary>
-    /// <seealso cref="TestStatements.ClassesAndObjects.Class4" />
-    /// <seealso cref="TestStatements.ClassesAndObjects.IInterface1" />
+    /// <seealso cref="Class4" />
+    /// <seealso cref="IInterface1" />
     public class Class5 : Class4, IInterface1
     {
         /// <summary>

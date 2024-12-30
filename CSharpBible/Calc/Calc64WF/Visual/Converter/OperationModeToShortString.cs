@@ -35,7 +35,7 @@ namespace Calc64WF.Visual.Converter
         /// <returns>System.Object.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
         {
-            Calc64Model.EOpMode opMode when targetType == typeof(string) 
+            EOpMode opMode when targetType == typeof(string) 
               => Properties.Resources.ResourceManager.GetString($"OPMode_{opMode}", Properties.Resources.Culture) ?? "",
             _ => "",
         };

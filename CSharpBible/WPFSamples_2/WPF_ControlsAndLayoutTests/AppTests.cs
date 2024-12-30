@@ -2,20 +2,34 @@
 using MVVM.View.Extension;
 using WPF_ControlsAndLayout.Models;
 using System;
+using WPF_ControlsAndLayout.Models.Interfaces;
+using System.Windows;
 
 namespace WPF_ControlsAndLayout.Tests
 {
     internal class TestApp : App
     {
+        private const string sCurrent = "_appInstance";
+        private const string sAppCreated = "_appCreatedInThisAppDomain";
+
         public void DoStartUp()
         {
             OnStartup(null);
         }
+
+        public new void Shutdown()
+        {
+            // fully cleanup the application
+            typeof(Application).GetField(sCurrent, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)?.SetValue(null, null);
+            typeof(Application).GetField(sAppCreated, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)?.SetValue(null, false);
+            base.Shutdown();
+        }
     }
+
     [TestClass()]
     public class AppTests 
     {
-        static TestApp app = new();
+        private TestApp? app;
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private Func<Type, object?> _gsold;
         private Func<Type, object> _grsold;
@@ -30,6 +44,7 @@ namespace WPF_ControlsAndLayout.Tests
         {
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
+            app = new TestApp();
             IoC.GetReqSrv = (t) =>t switch {
                 _ when t == typeof(IControlsAndLayoutModel) => new ControlsAndLayoutModel(),
                 _ => throw new ArgumentException() };          
@@ -40,6 +55,8 @@ namespace WPF_ControlsAndLayout.Tests
         {
             IoC.GetSrv = _gsold;
             IoC.GetReqSrv = _grsold;
+            app?.Shutdown();
+            app = null;
         }
 
         [TestMethod]
@@ -51,7 +68,7 @@ namespace WPF_ControlsAndLayout.Tests
         [TestMethod]
         public void AppTest2()
         {
-            app.DoStartUp();
+            app!.DoStartUp();
             Assert.IsNotNull(IoC.GetReqSrv(typeof(IControlsAndLayoutModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }

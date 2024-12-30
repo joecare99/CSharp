@@ -32,7 +32,7 @@ namespace TestStatements.Collection.Generic
         public static void SortedListMain()
         {
             const string Title = "SortedList<TKey,TValue>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             TestAddExisting();
             TestIndexr();
@@ -84,7 +84,8 @@ namespace TestStatements.Collection.Generic
             CreateTestSL();
             openWith["doc"] = "winword.exe";
 
-            Console.WriteLine("\nIndexed retrieval using the Values " +
+            Console.WriteLine();
+            Console.WriteLine("Indexed retrieval using the Values " +
                 "property: Values[2] = {0}", openWith.Values[2]);
         }
 
@@ -123,7 +124,8 @@ namespace TestStatements.Collection.Generic
             CreateTestSL();
             openWith["doc"] = "winword.exe";
 
-            Console.WriteLine("\nIndexed retrieval using the Keys " +
+            Console.WriteLine();
+            Console.WriteLine("Indexed retrieval using the Keys " +
                 "property: Keys[2] = {0}", openWith.Keys[2]);
         }
 
@@ -138,7 +140,8 @@ namespace TestStatements.Collection.Generic
             CreateTestSL();
             openWith["doc"] = "winword.exe";
 
-            Console.WriteLine("\nRemove(\"doc\")");
+            Console.WriteLine();
+            Console.WriteLine("Remove(\"doc\")");
             openWith.Remove("doc");
 
             if (!openWith.ContainsKey("doc"))

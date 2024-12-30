@@ -12,7 +12,7 @@ namespace TestStatements.Anweisungen.Tests
     [TestClass()]
     public class CheckingTests : ConsoleTestsBase
     {
-        private readonly string cExpected1= "-2147483648\r\nDie arithmetische Operation hat einen Überlauf verursacht.";
+        private readonly string cExpected1= "-2147483648\r\nArithmetic operation resulted in an overflow.";
 
         /// <summary>
         /// Defines the test method CheckedUncheckedTest.

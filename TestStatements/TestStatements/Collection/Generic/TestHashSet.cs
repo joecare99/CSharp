@@ -37,7 +37,7 @@ namespace TestStatements.Collection.Generic
         static public void ShowHashSet()
         {
             const string Title = "Show HashSet<T>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             HashSet<int> evenNumbers, oddNumbers;
             InitializeTestData();

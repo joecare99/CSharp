@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace ctlClockLib
 {
@@ -13,6 +14,13 @@ namespace ctlClockLib
     {
         private Color colFColor;
         private Color colBColor;
+
+        // Declares the name and type of the property.
+        /// <summary>
+        /// Gets or sets the color of the clock back.
+        /// </summary>
+        /// <value>The color of the clock back.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 
         // Declares the name and type of the property.
         /// <summary>
@@ -34,6 +42,12 @@ namespace ctlClockLib
                 lblDisplay.BackColor = colBColor;
             }
         }
+        // Provides a similar set of instructions for the foreground color.
+        /// <summary>
+        /// Gets or sets the color of the clock fore.
+        /// </summary>
+        /// <value>The color of the clock fore.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         // Provides a similar set of instructions for the foreground color.
         /// <summary>
         /// Gets or sets the color of the clock fore.

@@ -1,4 +1,6 @@
-﻿namespace DynamicSample.Constants
+﻿using System;
+
+namespace DynamicSample.Constants
 {
     /// <summary>
     /// Class Constants.
@@ -6,6 +8,7 @@
     public static class Constants
     {
         private const string LineEnding = "\r\n";
+
         /// <summary>
         /// The header
         /// </summary>

@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 	<Import Project="..\Games_net.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0</TargetFrameworks>
@@ -9,21 +9,23 @@
 	<ItemGroup>
 	  <Compile Remove="Model\**" />
 	  <Compile Remove="Ressource\**" />
-	  <Compile Remove="View\**" />
+	  <Compile Remove="ViewModels\**" />
 	  <Compile Remove="ViewModel\**" />
 	  <EmbeddedResource Remove="Model\**" />
 	  <EmbeddedResource Remove="Ressource\**" />
-	  <EmbeddedResource Remove="View\**" />
+	  <EmbeddedResource Remove="ViewModels\**" />
 	  <None Remove="Model\**" />
 	  <None Remove="Ressource\**" />
-	  <None Remove="View\**" />
+	  <None Remove="ViewModels\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Condition="!$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 		<ProjectReference Include="Werner_Flaschbier_Base.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 </Project>
