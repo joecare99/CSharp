@@ -108,3 +108,4 @@
 /CSharpBible/MVVM_Tutorial/UWP_00_Test/AppPackages
 /TestStatements/TestStatements/Version.inc
 obj.net
+/CSharpBible/Libraries/*.snk

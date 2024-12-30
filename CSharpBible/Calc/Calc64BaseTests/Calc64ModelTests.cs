@@ -46,25 +46,25 @@ namespace Calc64Base.Tests
         }
 
         [TestMethod()]
-        [DataRow(Calc64Model.EOpMode.CalcResult)]
-        [DataRow(Calc64Model.EOpMode.MemRetrieve)]
-        [DataRow(Calc64Model.EOpMode.BinaryNot)]
-        [DataRow(Calc64Model.EOpMode.Power)]
-        public void OperationModeTest(Calc64Model.EOpMode eVal)
+        [DataRow(EOpMode.CalcResult)]
+        [DataRow(EOpMode.MemRetrieve)]
+        [DataRow(EOpMode.BinaryNot)]
+        [DataRow(EOpMode.Power)]
+        public void OperationModeTest(EOpMode eVal)
         {
-            Assert.AreEqual(Calc64Model.EOpMode.NoMode, testModel.OperationMode);
+            Assert.AreEqual(EOpMode.NoMode, testModel.OperationMode);
             testModel.OperationMode = eVal;
             Assert.AreEqual(eVal, testModel.OperationMode);
             Assert.AreEqual($"COpChg(Calc64Base.Calc64Model,OperationMode,NoMode => {eVal})\r\n", DebugLog);
         }
 
         [TestMethod()]
-        [DataRow(Calc64Model.EOpMode.NoMode, "")]
-        [DataRow(Calc64Model.EOpMode.CalcResult,"=")]
-        [DataRow(Calc64Model.EOpMode.MemRetrieve,"MR")]
-        [DataRow(Calc64Model.EOpMode.BinaryNot,"~")]
-        [DataRow(Calc64Model.EOpMode.Power,"^")]
-        public void GetShortDescTest(Calc64Model.EOpMode eVal,string sExp)
+        [DataRow(EOpMode.NoMode, "")]
+        [DataRow(EOpMode.CalcResult,"=")]
+        [DataRow(EOpMode.MemRetrieve,"MR")]
+        [DataRow(EOpMode.BinaryNot,"~")]
+        [DataRow(EOpMode.Power,"^")]
+        public void GetShortDescTest(EOpMode eVal,string sExp)
         {
             Assert.AreEqual(sExp, Calc64Model.GetShortDesc(eVal));
         }
