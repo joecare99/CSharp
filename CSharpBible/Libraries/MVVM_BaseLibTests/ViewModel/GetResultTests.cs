@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MVVM.ViewModel.Tests;
 
@@ -17,23 +16,23 @@ public class GetResultTests
 
     [TestMethod]
     public void SetupTest() {
-        testClass.Should().NotBeNull();
-        testClass.Should().BeOfType<GetResult>();
-        testClass.Should().BeAssignableTo<IGetResult>();
-        testClass.Count.Should().Be(0);
+        Assert.IsNotNull(testClass);
+        Assert.IsInstanceOfType(testClass,typeof(GetResult));
+        Assert.IsInstanceOfType(testClass,typeof(IGetResult));
+        Assert.AreEqual(0,testClass.Count);
     }
 
     [TestMethod]
     public void RegisterTest()
     {
         testClass.Register("Test1",(o)=>$"Test1({string.Join(", ",o)})");
-        testClass.Count.Should().Be(1);
+        Assert.AreEqual(1, testClass.Count);
         testClass.Register("Test2", (o) => $"Test2({string.Join(", ", o)})");
-        testClass.Count.Should().Be(2);
+        Assert.AreEqual(2, testClass.Count);
         testClass.Register("Test3", (o) => null);
-        testClass.Count.Should().Be(3);
+        Assert.AreEqual(3, testClass.Count);
         testClass.Register("Test3", (o) => $"Test3({string.Join(", ", o)})");
-        testClass.Count.Should().Be(3);
+        Assert.AreEqual(3, testClass.Count);
     }
 
     [DataTestMethod]
@@ -41,10 +40,10 @@ public class GetResultTests
     [DataRow("Test1", new[] { "Hello", "World" }, "Test1(Hello, World)")]
     [DataRow("Test1", new[] { "Hello", "World","!" }, "Test1(Hello, World, !)")]
     public void Test1(string _, object[] param, string? sExp) {
-        testClass.Get(param).Should().BeNull();
+        Assert.IsNull(testClass.Get(param));
         RegisterTest();
-        testClass.Get(param).Should().Be(sExp);
-        testClass.Count.Should().Be(3);
+        Assert.AreEqual(sExp,testClass.Get(param));
+        Assert.AreEqual(3, testClass.Count);
     }
 
     [DataTestMethod]
@@ -53,10 +52,10 @@ public class GetResultTests
     [DataRow("Test1", new[] { "Hello", "new", "World" }, "Test1(Hello, new, World)")]
     public void GetTest(string name, object[] param, string? sExp)
     {
-        testClass.Get(param,name).Should().BeNull();
+        Assert.IsNull(testClass.Get(param,name));
         RegisterTest();
-        testClass.Get(param,name).Should().Be(sExp);
-        testClass.Count.Should().Be(3);
+        Assert.AreEqual(sExp, testClass.Get(param,name));
+        Assert.AreEqual(3, testClass.Count);
     }
 
     [DataTestMethod]
@@ -65,9 +64,9 @@ public class GetResultTests
     [DataRow("", new[] { "Hello", "new", "World" }, null)]
     public void GetTest2(string name, object[] param, string? sExp)
     {
-        testClass.Get(param, name).Should().BeNull();
+        Assert.IsNull(testClass.Get(param, name));
         RegisterTest();
-        testClass.Get(param, name).Should().Be(sExp);
-        testClass.Count.Should().Be(3);
+        Assert.AreEqual(sExp, testClass.Get(param,name));
+        Assert.AreEqual(3, testClass.Count);
     }
 }

@@ -22,7 +22,7 @@
 		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 	</ItemGroup>
 </Project>

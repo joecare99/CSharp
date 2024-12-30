@@ -2,14 +2,13 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 
 namespace TestStatementTest.UnitTesting
 {
-	/// <summary>
-	/// Defines test class UnitTest1.
-	/// </summary>
-	[TestClass]
+    /// <summary>
+    /// Defines test class UnitTest1.
+    /// </summary>
+    [TestClass]
     public class UnitTest1
     {
 		static int[] NullSeries5(int f=1) => new int[] { 2*f, 1 * f, 3 * f, -1 * f, 0 * f };

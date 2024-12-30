@@ -1,26 +1,30 @@
-<Project>
-  <ImportGroup Label="SolutionProps">
-    <Import Project="..\Solution_net.props" />
-  </ImportGroup>
-  <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
-    <OutputType>Exe</OutputType>
-	  <UseWPF>true</UseWPF>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
-    <AssemblyName>TestStatementsNew</AssemblyName>
-    <RootNamespace>TestStatementsNew</RootNamespace>
-    <Deterministic>false</Deterministic>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
-    <!--VersionSuffix>1.0.0.$([]::UtcNow.ToString(mmff))</VersionSuffix>
+﻿<Project>
+	<ImportGroup Label="SolutionProps">
+		<Import Project="..\Solution_net.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<LangVersion>13.0</LangVersion>
+		<OutputType>Exe</OutputType>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<AssemblyName>TestStatementsNew</AssemblyName>
+		<RootNamespace>TestStatementsNew</RootNamespace>
+		<Deterministic>false</Deterministic>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<AssemblyVersion>1.0.*</AssemblyVersion>
+		<!--VersionSuffix>1.0.0.$([]::UtcNow.ToString(mmff))</VersionSuffix>
     <AssemblyVersion Condition=" '$(VersionSuffix)' == '' ">0.0.0.1</AssemblyVersion>
     <AssemblyVersion Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</AssemblyVersion>
     <Version Condition=" '$(VersionSuffix)' == '' ">0.0.1.0</Version>
     <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version-->
-    <Product>TestStatements_new 1.0</Product>
-  </PropertyGroup>
+		<Product>TestStatements_new 1.0</Product>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
+	</ItemGroup>
 </Project>

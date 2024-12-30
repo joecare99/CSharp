@@ -27,7 +27,7 @@ namespace TestStatements.Collection.Generic
         /// <summary>
         /// The boxes
         /// </summary>
-        private static List<Box> Boxes;
+        private static List<Box>? Boxes;
         /// <summary>
         /// Main procedure of Comparer-example.
         /// </summary>
@@ -51,7 +51,7 @@ namespace TestStatements.Collection.Generic
         private static void CreateTestData()
         {
             Boxes?.Clear();
-            Boxes = new List<Box>()
+            Boxes = new()
             {
                 new Box(4, 20, 14),
                 new Box(12, 12, 12),

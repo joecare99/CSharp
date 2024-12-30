@@ -22,9 +22,6 @@
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -53,6 +50,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Models\Interfaces\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 	</ItemGroup>
 
 </Project>
