@@ -17,7 +17,7 @@ namespace TestStatements.DataTypes.Tests
         /// The c expected1
         /// </summary>
         private string cExpected1 =
-            "======================================================================\r\n## Enumerations \r\n" +
+            "======================================================================\r\n## Enumerations\r\n" +
             "======================================================================\r\n" +
             "The days of the week, and their corresponding values in the Days Enum are:\r\n" +
             "Saturday   = 0\r\nSunday     = 1\r\nMonday     = 2\r\nTuesday    = 3\r\nWednesday  = 4\r\n" +

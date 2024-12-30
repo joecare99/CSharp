@@ -42,7 +42,7 @@ namespace DynamicSample.Model
         /// Initializes a new instance of the <see cref="ReadOnlyFile"/> class.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <exception cref="System.Exception">File path does not exist.</exception>
+        /// <exception cref="Exception">File path does not exist.</exception>
         public ReadOnlyFile(string filePath)
         {
             if (!File.Exists(filePath))
@@ -148,8 +148,8 @@ namespace DynamicSample.Model
         /// <returns><see langword="true" />, wenn der Vorgang erfolgreich ist, andernfalls <see langword="false" />.
         /// Wenn diese Methode gibt <see langword="false" />, die Laufzeitbinder der Sprache bestimmt das Verhalten.
         /// (In den meisten Fällen wird eine sprachspezifische Laufzeitausnahme ausgelöst.)</returns>
-        /// <exception cref="System.ArgumentException">StringSearchOption argument must be a StringSearchOption enum value.</exception>
-        /// <exception cref="System.ArgumentException">trimSpaces argument must be a Boolean value.</exception>
+        /// <exception cref="ArgumentException">StringSearchOption argument must be a StringSearchOption enum value.</exception>
+        /// <exception cref="ArgumentException">trimSpaces argument must be a Boolean value.</exception>
         public override bool TryInvokeMember(InvokeMemberBinder binder,object[] args, out object result)
 #endif
         {

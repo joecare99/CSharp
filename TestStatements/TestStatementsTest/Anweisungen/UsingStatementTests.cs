@@ -11,7 +11,7 @@ namespace TestStatements.Anweisungen.Tests
     public class UsingStatementTests
     {
         private readonly string cExpected1 = "======================================================================\r\n"+
-            "## Beispiel für Using-Statement \r\n======================================================================\r\n" +
+            "## Beispiel für Using-Statement\r\n======================================================================\r\n" +
             "Line one\r\nLine two\r\nLine three";
 
         /// <summary>

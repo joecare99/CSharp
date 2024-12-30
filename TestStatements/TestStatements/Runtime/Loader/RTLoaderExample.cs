@@ -15,7 +15,7 @@ public static class RTLoaderExample
     public static async Task Main(string[] args)
     {
         const string Title = $"Example for {nameof(Runtime)} ({nameof(RTLoaderExample)})";
-        Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+        Console.WriteLine(Constants.Constants.Header, Title);
         Console.WriteLine();
 
         using (Stream stream = new MemoryStream())

@@ -27,7 +27,7 @@ namespace TestStatements.Anweisungen
         public static void DoVarDeclarations(string[] args)
         {
             const string Title = "Deklaration von Variablen";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             int a;
             int b = 2, c = 3;
             a = 1;
@@ -41,10 +41,10 @@ namespace TestStatements.Anweisungen
         public static void DoConstantDeclarations(string[] args)
         {
             const string Title = "Deklaration von Konstanten";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             const float pi = 3.1415927f;
             const int r = 25;
-            Console.WriteLine(pi * r * r);
+            Console.WriteLine($"{(pi * r * r):F3}");
         }
     }
 }

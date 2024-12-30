@@ -46,7 +46,7 @@ namespace TestStatements.Anweisungen
         /// Withdraws the specified amount.
         /// </summary>
         /// <param name="amount">The amount.</param>
-        /// <exception cref="System.Exception">Insufficient funds</exception>
+        /// <exception cref="Exception">Insufficient funds</exception>
         public void Withdraw(decimal amount)
         {
             lock (sync)

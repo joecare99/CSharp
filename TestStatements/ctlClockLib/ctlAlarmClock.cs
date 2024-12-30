@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace ctlClockLib
 {
     /// <summary>
     /// Class ctlAlarmClock.
-    /// Implements the <see cref="ctlClockLib.ctlClock" />
+    /// Implements the <see cref="ctlClock" />
     /// </summary>
-    /// <seealso cref="ctlClockLib.ctlClock" />
+    /// <seealso cref="ctlClock" />
     public partial class ctlAlarmClock : ctlClock
     {
         /// <summary>
@@ -28,6 +29,16 @@ namespace ctlClockLib
         /// Gets or sets the alarm time.
         /// </summary>
         /// <value>The alarm time.</value>
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+
+        // These properties will be declared as public to allow future
+        // developers to access them.
+        /// <summary>
+        /// Gets or sets the alarm time.
+        /// </summary>
+        /// <value>The alarm time.</value>
+
         public DateTime AlarmTime
         {
             get
@@ -43,6 +54,7 @@ namespace ctlClockLib
         /// Gets or sets a value indicating whether [alarm set].
         /// </summary>
         /// <value><c>true</c> if [alarm set]; otherwise, <c>false</c>.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public bool AlarmSet
         {
             get
@@ -55,7 +67,7 @@ namespace ctlClockLib
             }
         }
 
-        protected override void timer1_Tick(object sender, System.EventArgs e)
+        protected override void timer1_Tick(object sender, EventArgs e)
         {
             // Calls the Timer1_Tick method of ctlClock.
             base.timer1_Tick(sender, e);

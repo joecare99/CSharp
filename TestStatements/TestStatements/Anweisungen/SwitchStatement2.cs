@@ -34,9 +34,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Rectangle.
-    /// Implements the <see cref="TestStatements.Anweisungen.Shape" />
+    /// Implements the <see cref="Shape" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Shape" />
+    /// <seealso cref="Shape" />
     public class Rectangle : Shape
     {
         /// <summary>
@@ -82,9 +82,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Square.
-    /// Implements the <see cref="TestStatements.Anweisungen.Rectangle" />
+    /// Implements the <see cref="Rectangle" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Rectangle" />
+    /// <seealso cref="Rectangle" />
     public class Square : Rectangle
     {
         /// <summary>
@@ -105,9 +105,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Circle.
-    /// Implements the <see cref="TestStatements.Anweisungen.Shape" />
+    /// Implements the <see cref="Shape" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Shape" />
+    /// <seealso cref="Shape" />
     public class Circle : Shape
     {
         /// <summary>

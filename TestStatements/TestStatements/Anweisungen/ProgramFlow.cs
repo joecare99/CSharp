@@ -27,7 +27,7 @@ namespace TestStatements.Anweisungen
         public static void DoBreakStatement(string[] args)
         {
             const string Title = "Beispiel für Break-Anweisung";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             while (true)
             {
@@ -45,7 +45,7 @@ namespace TestStatements.Anweisungen
         public static void DoContinueStatement(string[] args)
         {
             const string Title = "Beispiel für Continue-Anweisung";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -62,7 +62,7 @@ namespace TestStatements.Anweisungen
         public static void DoGoToStatement(string[] args)
         {
             const string Title = "Beispiel für Goto-Anweisung";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             int i = 0;
             goto check;
