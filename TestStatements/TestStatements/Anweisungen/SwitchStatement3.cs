@@ -46,9 +46,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Car.
-    /// Implements the <see cref="TestStatements.Anweisungen.Vehicle" />
+    /// Implements the <see cref="Vehicle" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Vehicle" />
+    /// <seealso cref="Vehicle" />
     public class Car : Vehicle
     {
         public Car():this(0)
@@ -70,9 +70,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Bus.
-    /// Implements the <see cref="TestStatements.Anweisungen.Vehicle" />
+    /// Implements the <see cref="Vehicle" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Vehicle" />
+    /// <seealso cref="Vehicle" />
     public class Bus : Vehicle
     {
         public Bus(int v=0):base() 
@@ -84,9 +84,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Truck.
-    /// Implements the <see cref="TestStatements.Anweisungen.Vehicle" />
+    /// Implements the <see cref="Vehicle" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Vehicle" />
+    /// <seealso cref="Vehicle" />
     public class Truck : Vehicle
     {
         public Truck(int v = 0):base()
@@ -99,9 +99,9 @@ namespace TestStatements.Anweisungen
 
     /// <summary>
     /// Class Taxi.
-    /// Implements the <see cref="TestStatements.Anweisungen.Car" />
+    /// Implements the <see cref="Car" />
     /// </summary>
-    /// <seealso cref="TestStatements.Anweisungen.Car" />
+    /// <seealso cref="Car" />
     public class Taxi : Car
     {
 
@@ -121,8 +121,8 @@ namespace TestStatements.Anweisungen
         /// </summary>
         /// <param name="vehicle">The vehicle.</param>
         /// <returns>System.Decimal.</returns>
-        /// <exception cref="System.ArgumentException"></exception>
-        /// <exception cref="System.ArgumentNullException">vehicle</exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException">vehicle</exception>
         public decimal CalculateToll(object vehicle) =>
             vehicle switch
             {

@@ -15,14 +15,14 @@ namespace TestStatements.Anweisungen.Tests
     {
 
         private const string Expected1 = "======================================================================\r\n" +
-                 "## Deklaration von Variablen \r\n" +
+                 "## Deklaration von Variablen\r\n" +
                  "======================================================================\r\n6\r";
 
         /// <summary>
         /// The expected2
         /// </summary>
         private const string Expected2 = "======================================================================\r\n" +
-                 "## Deklaration von Konstanten \r\n" +
+                 "## Deklaration von Konstanten\r\n" +
                  "======================================================================\r\n1963,495";
 
         /// <summary>
