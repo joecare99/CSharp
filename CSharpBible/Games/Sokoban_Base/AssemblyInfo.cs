@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using System.Runtime.InteropServices;
-using System.Reflection;
 
 // In Projekten im SDK-Stil wie dem vorliegenden, bei dem verschiedene Assemblyattribute
 // üblicherweise in dieser Datei definiert wurden, werden diese Attribute jetzt während

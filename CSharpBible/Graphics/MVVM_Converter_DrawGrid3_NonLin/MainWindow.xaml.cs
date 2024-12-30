@@ -30,49 +30,5 @@ namespace MVVM_Converter_DrawGrid3_NonLin
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// Handles the Loaded event of the Window control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-                vm.ShowClient = ShowClientinFrame;
-            }
-        }
-
-        /// <summary>
-        /// Handles the Loaded event of the Frame control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void Frame_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-//                vm.FrameDataContext = e.Source as Frame
-            }
-        }
-
-        /// <summary>
-        /// Shows the clientin frame.
-        /// </summary>
-        /// <param name="arg">The argument.</param>
-        /// <returns>BaseViewModel.</returns>
-        private BaseViewModel ShowClientinFrame(string arg)
-        {
-            try
-            {
-                this.Client.Source = new Uri(arg);
-                return Client.DataContext as BaseViewModel;
-            }
-            catch(Exception ex) 
-            {
-                return null;
-            };
-        }
     }
 }

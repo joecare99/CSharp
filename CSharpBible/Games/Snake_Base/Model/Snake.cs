@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Baselib.Model;
+using BaseLib.Model;
 using BaseLib.Helper;
 using BaseLib.Interfaces;
 using System;
@@ -52,7 +52,7 @@ namespace Snake_Base.Model
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="CallerMember">The caller member.</param>
-        public void SetParent(Snake? value, [CallerMemberName] string CallerMember = "") => Property.SetProperty(ref _snParent, value, null, CallerMember);
+        public void SetParent(Snake? value, [CallerMemberName] string CallerMember = "") => value.SetProperty(ref _snParent, null, CallerMember);
 
         /// <summary>
         /// Gets or sets the next part.

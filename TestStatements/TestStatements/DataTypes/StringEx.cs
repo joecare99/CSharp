@@ -12,7 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using TestStatements.Helper;
 
 namespace TestStatements.DataTypes
 {
@@ -21,6 +25,7 @@ namespace TestStatements.DataTypes
     /// </summary>
     public static class StringEx
     {
+        public static Func<DateTime> GetNow = () => DateTime.Now;
         /// <summary>
         /// Alls the tests.
         /// </summary>
@@ -53,9 +58,13 @@ namespace TestStatements.DataTypes
             Console.WriteLine(string2a);
             string string2b = @"The path is C:\PublicDocuments\Report1.doc";
             Console.WriteLine(string2b);
+            var p = "C:\\PublicDocuments\\Report1.doc";
+            string string2c = $"The path is {p}";
+            Console.WriteLine(string2c);
             // The example displays the following output:
             //       This is a string created by assignment.
             //       The path is C:\PublicDocuments\Report1.doc
+            //       The path is C:\PublicDocuments\Report1.doc      
             //       The path is C:\PublicDocuments\Report1.doc      
 
         }
@@ -96,10 +105,19 @@ namespace TestStatements.DataTypes
                     stringFromChars = new string(pchars);
                 }
             }
-
+#else
+            IEnumerable<char> f(sbyte[] bytes){
+                foreach (var sb in bytes) 
+                    if (sb == 0) 
+                        break; 
+                    else 
+                        yield return (char)sb;
+            };
+            var stringFromBytes =new string(f(bytes).ToArray());
+            var stringFromChars = string.Join("", chars);
+#endif
             Console.WriteLine(stringFromBytes);
             Console.WriteLine(stringFromChars);
-#endif
             // The example displays the following output:
             //       word
             //       cccccccccccccccccccc
@@ -113,7 +131,7 @@ namespace TestStatements.DataTypes
         /// </summary>
         public static void StringEx3()
         {
-            string string1 = "Today is " + DateTime.Now.ToString("D") + ".";
+            string string1 = "Today is " + GetNow().ToString("D") + ".";
             Console.WriteLine(string1);
 
             string string2 = "This is one sentence. " + "This is a second. ";

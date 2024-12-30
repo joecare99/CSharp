@@ -28,7 +28,7 @@ namespace JCAMS.Core.Math2.Tests
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("IsUndefinedData")]
+        [DynamicData(nameof(IsUndefinedData))]
 
         public void IsUndefinedTest(string name,object o, bool xExp)
         {
@@ -36,7 +36,7 @@ namespace JCAMS.Core.Math2.Tests
         }
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("IsUndefinedData")]
+        [DynamicData(nameof(IsUndefinedData))]
         public void IsUndefinedTest1(string name, object o, bool xExp)
         {
             Assert.AreEqual(xExp, o.IsUndefined());
@@ -123,16 +123,33 @@ namespace JCAMS.Core.Math2.Tests
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        public void CircleCenterTest()
+        [DataRow("Null", 0, 0,0,0, true, new float[] { 0, 0, 0, 0, 0 })]
+        [DataRow("1;-1", 1, -1,-1,1,true, new float[] { 1, 1, -1, -1,2 })]
+        public void CircleCenterTest(string name, float x3, float y3, float x4, float y4, bool xExp, float[] p)
         {
-            Assert.Fail();
+            PointF pA = new PointF(p[0], p[1]);
+            PointF pB = new PointF(p[2], p[3]);
+             
+            PointF pExp = new PointF(x3, y3);
+            PointF pExp2 = new PointF(x4, y4);
+            Assert.AreEqual(xExp, SMath2.CircleCenter(pA, pB, p[4],out var p1,out var p2));
+            Assert.AreEqual(pExp, p1);
+            Assert.AreEqual(pExp2, p2);
+
         }
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        public void CircleCenterTest1()
+        [DataRow("Null", float.NaN, float.NaN, false, new float[] { 0, 0, 0, 0, 0,0 })]
+        [DataRow("1;-1", 1, -1, true, new float[] { 1, 1, -1, -1, 1,-3 })]
+        public void CircleCenterTest1(string name, float x3, float y3, bool xExp, float[] p)
         {
-            Assert.Fail();
+            PointF pA = new PointF(p[0], p[1]);
+            PointF pB = new PointF(p[2], p[3]);
+            PointF pC = new PointF(p[4], p[5]);
+            PointF pExp = new PointF(x3, y3);
+            Assert.AreEqual(xExp, SMath2.CircleCenter(pA, pB, pC, out var p1, out var r));
+            Assert.AreEqual(pExp, p1);
         }
 
         [TestMethod()]

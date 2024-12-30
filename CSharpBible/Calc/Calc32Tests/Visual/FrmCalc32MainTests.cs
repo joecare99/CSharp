@@ -12,6 +12,8 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
+using System.Windows.Forms;
 
 /// <summary>
 /// The Tests namespace.
@@ -28,7 +30,9 @@ namespace Calc32.Visual.Tests
         /// <summary>
         /// The test frame
         /// </summary>
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private FrmCalc32Main testFrame;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
         /// Initializes this instance.
@@ -46,7 +50,7 @@ namespace Calc32.Visual.Tests
         public void SetUpTest()
         {
             Assert.IsNotNull(testFrame);
-            Assert.IsInstanceOfType(testFrame,typeof(FrmCalc32Main));
+            Assert.IsInstanceOfType(testFrame, typeof(FrmCalc32Main));
         }
         /// <summary>
         /// Defines the test method FrmCalc32MainTest.
@@ -54,7 +58,42 @@ namespace Calc32.Visual.Tests
         [TestMethod()]
         public void FrmCalc32MainTest()
         {
-            Assert.Fail();
+            testFrame.Show();
+            Assert.AreEqual(true, testFrame.Visible);
+            Application.DoEvents();
+            Thread.Sleep(10);
+            testFrame.Hide();
+            Assert.AreEqual(false, testFrame.Visible);
         }
+
+        [TestMethod()]
+        public void calculatorClassChangeTest()
+        {
+            var i=( testFrame.calculatorClass1.Accumulator+=1);
+            Assert.AreEqual(i.ToString(), testFrame.lblResult.Text);
+        }
+
+        [TestMethod()]
+        public void btnNumber_ClickTest()
+        {
+            testFrame.Show();
+            var i = testFrame.calculatorClass1.Accumulator;
+            testFrame.btnOne.PerformClick();
+            Assert.AreNotEqual(i, testFrame.calculatorClass1.Accumulator);
+            testFrame.Hide();
+        }
+
+        [TestMethod()]
+        public void btnBack_ClickTest()
+        {
+            testFrame.Show();
+            var i = testFrame.calculatorClass1.Accumulator=123;
+            testFrame.btnBack.PerformClick();
+            Assert.AreNotEqual(i, testFrame.calculatorClass1.Accumulator);
+            testFrame.Hide();
+        }
+
+
+
     }
 }

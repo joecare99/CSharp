@@ -121,7 +121,7 @@ namespace Snake_Base.Model
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="Name">The name.</param>
-        public virtual void SetPlace(Point value, [CallerMemberName] string Name = "") => Property.SetProperty(ref _place, value,NtfyPlaceChange,Name);
+        public virtual void SetPlace(Point value, [CallerMemberName] string Name = "") => value.SetProperty(ref _place, NtfyPlaceChange, Name);
 
         /// <summary>
         /// Gets the parent.
@@ -134,7 +134,7 @@ namespace Snake_Base.Model
         /// <param name="value">The value.</param>
         /// <param name="CallerMember">The caller member.</param>
         public virtual void SetParent(Playfield2D<SnakeGameObject>? value, [CallerMemberName] string CallerMember = "") =>
-            Property.SetProperty(ref _pfParent, value, NtfyParentChange, CallerMember);
+            value.SetProperty(ref _pfParent, NtfyParentChange, CallerMember);
         #endregion
 
         /// <summary>

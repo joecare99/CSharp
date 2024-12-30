@@ -1,9 +1,7 @@
 <Project>
+	<Import Project="..\Games_net.props" />
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -17,9 +15,6 @@
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
 		<AssemblyVersion>1.0.*</AssemblyVersion>
-		<Company>JC-Soft</Company>
-		<Authors>Joe Care</Authors>
-		<Copyright>Copyright © JC-Soft 2022</Copyright>
 		<Product>Tetris 1.0 Base</Product>
 	</PropertyGroup>
 	<ItemGroup>

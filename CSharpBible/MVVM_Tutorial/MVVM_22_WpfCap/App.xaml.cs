@@ -11,11 +11,13 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Microsoft.Extensions.DependencyInjection;
-using Model;
-using MVVM_22_WpfCap.Model;
-using MVVM_22_WpfCap.ViewModel;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using BaseLib.Helper.MVVM;
+using BaseLib.Interfaces;
+using MVVM.View.Extension;
+using MVVM_22_WpfCap.Model;
+using MVVM_22_WpfCap.ViewModels;
 
 namespace MVVM_22_WpfCap
 {
@@ -34,7 +36,8 @@ namespace MVVM_22_WpfCap
             services.AddTransient<WpfCapViewModel, WpfCapViewModel>();
 
             ServiceProvider container = services.BuildServiceProvider();
-            DISource.Resolver = (type) => container.GetRequiredService(type);
+            IoC.GetReqSrv = (type) => container.GetRequiredService(type);
+            IoC.GetSrv = (type) => container.GetService(type);
         }
     }
 }

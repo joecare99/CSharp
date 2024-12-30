@@ -1,0 +1,79 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_28_DataGrid.Views"
+      xmlns:mvvm="clr-namespace:MVVM_28_DataGrid.ViewModels"
+      xmlns:model="clr-namespace:MVVM_28_DataGrid.Models"
+      xmlns:vc="clr-namespace:MVVM_28_DataGrid.ValueConverter"
+      xmlns:p="clr-namespace:MVVM_28_DataGrid.Properties"
+      xmlns:MVVM_27_DataGrid="clr-namespace:MVVM_28_DataGrid" 
+        x:Class="MVVM_28_DataGrid.Views.DataGridView"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DataGridView">
+    <Page.Resources>
+        <vc:EmailValue x:Key="EmailValue"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:DataGridViewModel/>
+    </Page.DataContext>
+    <Grid Background="Silver">
+        <DataGrid  CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Persons}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove Me" Command="{Binding RemoveCommand}" CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Firstname}" Binding="{Binding FirstName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Lastname}" Binding="{Binding LastName}"/>
+                <DataGridHyperlinkColumn Header="eMail" Binding="{Binding Email, Converter={StaticResource EmailValue}}" ContentBinding="{Binding Email}">
+                    <!-- Set Colors-->
+                    <DataGridHyperlinkColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Resources>
+                                <Style TargetType="{x:Type Hyperlink}">
+                                    <Setter Property="Foreground" Value="DarkBlue"/>
+                                    <Setter Property="TextDecorations" Value="None"/>
+                                </Style>
+                            </Style.Resources>
+                        </Style>
+                    </DataGridHyperlinkColumn.CellStyle>
+                </DataGridHyperlinkColumn>
+                <DataGridTextColumn Header="{x:Static p:Resources.text_Department}" Binding="{Binding Department.Name}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="{x:Static p:Resources.text_Department}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Department.Name}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedItem="{Binding Department}" ItemsSource="{Binding DataContext.Departments, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DataGridView}}}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="{x:Static p:Resources.text_Birthday}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Birthday, StringFormat={}{0:dd.MM.yyyy}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding Birthday}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

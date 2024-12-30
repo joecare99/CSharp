@@ -30,86 +30,104 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <value>The color of the foreground.</value>
         protected PropertyInfo? foregroundColor { get; set; }
-            = typeof(Console).GetProperty("ForegroundColor");
+            = typeof(Console).GetProperty(nameof(ForegroundColor));
         /// <summary>
         /// Gets or sets the color of the background.
         /// </summary>
         /// <value>The color of the background.</value>
         protected PropertyInfo? backgroundColor { get; set; }
-            = typeof(Console).GetProperty("BackgroundColor");
+            = typeof(Console).GetProperty(nameof(BackgroundColor));
         /// <summary>
         /// Gets or sets the key available.
         /// </summary>
         /// <value>The key available.</value>
         protected PropertyInfo? keyAvailable { get; set; }
-            = typeof(Console).GetProperty("KeyAvailable");
+            = typeof(Console).GetProperty(nameof(KeyAvailable));
         /// <summary>
         /// Gets or sets the height of the window.
         /// </summary>
         /// <value>The height of the window.</value>
         protected PropertyInfo? windowHeight { get; set; }
-            = typeof(Console).GetProperty("WindowHeight");
+            = typeof(Console).GetProperty(nameof(WindowHeight));
         /// <summary>
         /// Gets or sets the width of the window.
         /// </summary>
         /// <value>The width of the window.</value>
         protected PropertyInfo? windowWidth { get; set; }
-            = typeof(Console).GetProperty("WindowWidth");
+            = typeof(Console).GetProperty(nameof(WindowWidth));
         /// <summary>
         /// Gets or sets the height of the largest window.
         /// </summary>
         /// <value>The height of the largest window.</value>
         protected PropertyInfo? largestWindowHeight { get; set; }
-            = typeof(Console).GetProperty("LargestWindowHeight");
+            = typeof(Console).GetProperty(nameof(LargestWindowHeight));
+        /// <summary>
+        /// Gets if the Output is redirected.
+        /// </summary>
+        /// <value><b>TRUE</b> if the Output is redirected</value>
+        protected PropertyInfo? isOutputRedirected { get; set; }
+            = typeof(Console).GetProperty(nameof(IsOutputRedirected));
 
         /// <summary>
         /// Gets or sets the title of the window.
         /// </summary>
         /// <value>The height of the largest window.</value>
         protected PropertyInfo? title { get; set; }
-            = typeof(Console).GetProperty("Title");
+            = typeof(Console).GetProperty(nameof(Title));
 
         /// <summary>
         /// Gets or sets the clear.
         /// </summary>
         /// <value>The clear.</value>
         protected MethodInfo? clear { get; set; }
-            = typeof(Console).GetMember("Clear")?.First(
+            = typeof(Console).GetMember(nameof(Clear))?.First(
                 (o) => true) as MethodInfo;
         /// <summary>
         /// Gets or sets the read key.
         /// </summary>
         /// <value>The read key.</value>
         protected MethodInfo? readKey { get; set; }
-            = typeof(Console).GetMember("ReadKey")?.First(
+            = typeof(Console).GetMember(nameof(ReadKey))?.First(
                 (o) => true) as MethodInfo;
         /// <summary>
         /// Gets or sets the write ch.
         /// </summary>
         /// <value>The write ch.</value>
         protected MethodInfo? write_ch { get; set; }
-            = typeof(Console).GetMember("Write")?.First(
+            = typeof(Console).GetMember(nameof(Console.Write))?.First(
                 (o) => (o as MethodInfo)?.GetParameters()?[0].ParameterType==typeof(char) ) as MethodInfo;
         /// <summary>
         /// Gets or sets the write st.
         /// </summary>
         /// <value>The write st.</value>
         protected MethodInfo? write_st { get; set; }
-            = typeof(Console).GetMember("Write")?.First(
-                (o) => (o as MethodInfo)?.GetParameters().Length==1 && (o as MethodInfo)?.GetParameters()?[0].ParameterType == typeof(string)) as MethodInfo;
+            = typeof(Console).GetMember(nameof(Console.Write))?.First(
+                (o) => o is MethodInfo m 
+                    && m.GetParameters().Length==1 
+                    && m.GetParameters()?[0].ParameterType == typeof(string)) as MethodInfo;
+        /// <summary>
+        /// Gets or sets the write st.
+        /// </summary>
+        /// <value>The write st.</value>
+        protected MethodInfo? read_st { get; set; }
+            = typeof(Console).GetMember(nameof(Console.ReadLine))?.First(
+                (o) => o is MethodInfo m 
+                  && (m.GetParameters().Length == 0) 
+                  && m.ReturnType == typeof(string)) as MethodInfo;
+
         /// <summary>
         /// Gets or sets the set cursor position.
         /// </summary>
         /// <value>The set cursor position.</value>
         protected MethodInfo? setCursorPos { get; set; }
-            = typeof(Console).GetMember("SetCursorPosition")?.First((o) => true) as MethodInfo;
+            = typeof(Console).GetMember(nameof(SetCursorPosition))?.First((o) => true) as MethodInfo;
 
         /// <summary>
         /// Gets or sets the beep int.
         /// </summary>
         /// <value>The beep int.</value>
         protected MethodInfo? beep_int { get; set; }
-            = typeof(Console).GetMember("Beep")?.First(
+            = typeof(Console).GetMember(nameof(Beep))?.First(
                 (o) => (o as MethodInfo)?.GetParameters().Length == 2) as MethodInfo;
         /// <summary>
         /// Gets or sets the get cursor position.
@@ -117,14 +135,15 @@ namespace ConsoleDisplay.View
         /// <value>The get cursor position.</value>
         protected MethodInfo? getCursorPos { get; set; }
 #if NET6_0_OR_GREATER
-			= typeof(Console).GetMember("GetCursorPosition")?.First((o) => true) as MethodInfo;
+			= typeof(Console).GetMember(nameof(Console.GetCursorPosition))?.First((o) => true) as MethodInfo;
 #else
-			= typeof(Console).GetMethod("GetCursorPosition");
+			= typeof(MyConsole).GetMethod(nameof(_GetCursorPosition));
+        public static (int Left, int Top) _GetCursorPosition() => (Console.CursorLeft, Console.CursorTop);
 #endif
-		/// <summary>
-		/// The instance
-		/// </summary>
-		protected object? instance = null;
+        /// <summary>
+        /// The instance
+        /// </summary>
+        protected object? instance = null;
 
         /// <summary>
         /// Gets or sets the color of the foreground.
@@ -183,8 +202,12 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <value>The width of the window.</value>
         public override string Title { 
-            get => (string)title?.GetValue(instance) ??""; 
+            get => (string)(title?.GetValue(instance) ??""); 
             set => title?.SetValue(instance, value); }
+
+        public override bool IsOutputRedirected 
+            => (bool)(isOutputRedirected?.GetValue(instance) ?? false);
+
 
         /// <summary>
         /// Clears this instance.
@@ -205,6 +228,13 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <param name="st">The st.</param>
         public override void WriteLine(string? st="") => write_st?.Invoke(instance, new object[] { st+"\r\n" });
+
+        /// <summary>
+        /// Writes the line.
+        /// </summary>
+        /// <param name="st">The st.</param>
+        public override string ReadLine() => 
+            (string)(read_st?.Invoke(instance, new object[] {}) ?? "");
 
         /// <summary>
         /// Sets the cursor position.

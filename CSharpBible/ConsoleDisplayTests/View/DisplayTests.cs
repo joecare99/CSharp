@@ -65,13 +65,13 @@ namespace ConsoleDisplay.View.Tests
         }
 
         /// <summary>
-        /// Dones this instance.
+        /// Clean up this instance.
         /// </summary>
         [TestCleanup()]
-        public void Done()
+        public void CleanUp()
         {
             Application.DoEvents();
-            Thread.Sleep(500);
+            Thread.Sleep(100);
         }
 
         /// <summary>

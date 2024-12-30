@@ -18,7 +18,7 @@ namespace ConsoleDisplay.View
     /// <summary>
     /// Class MyConsoleBase.
     /// </summary>
-    public abstract class MyConsoleBase
+    public abstract class MyConsoleBase : IConsole
     {
         /// <summary>
         /// Gets or sets the color of the foreground.
@@ -50,6 +50,13 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <value>The height of the largest window.</value>
         public abstract int LargestWindowHeight { get; }
+
+        /// <summary>
+        /// Gets if the output is redirected.
+        /// </summary>
+        /// <value>Gets if the output is redirected.</value>
+        public abstract bool IsOutputRedirected { get; }
+
 
         /// <summary>
         /// Gets or sets the title of the window.
@@ -93,6 +100,12 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <param name="st">The st.</param>
         public abstract void WriteLine(string? st = "");
+
+        /// <summary>
+        /// Writes the line.
+        /// </summary>
+        /// <param name="st">The st.</param>
+        public abstract string ReadLine();
 
         /// <summary>
         /// Beeps the specified freq.

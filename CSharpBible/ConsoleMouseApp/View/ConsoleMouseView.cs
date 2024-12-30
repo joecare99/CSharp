@@ -61,7 +61,7 @@ namespace ConsoleMouseApp.View
                 parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.Gray,
-                shaddow = true,
+                shadow = true,
                 position = new Point(5, 10),
                 Text = "░░1░░"
             };
@@ -99,7 +99,7 @@ namespace ConsoleMouseApp.View
                 BackColor = ConsoleColor.DarkBlue,
                 BoarderColor = ConsoleColor.Green,
                 dimension = cl,
-                shaddow = true
+                shadow = true
             };
 
             var btnOK = new ConsoleLib.CommonControls.Button
@@ -107,7 +107,7 @@ namespace ConsoleMouseApp.View
                 parent = result,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.Gray,
-                shaddow = true,
+                shadow = true,
                 position = new Point(2, 2),
                 Text = "░░░OK░░░",
             };
@@ -118,7 +118,7 @@ namespace ConsoleMouseApp.View
                 parent = result,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.Gray,
-                shaddow = true,
+                shadow = true,
                 position = new Point(14, 2),
                 Text = "░Cancel░",
             };

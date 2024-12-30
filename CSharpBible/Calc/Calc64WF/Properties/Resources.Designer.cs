@@ -22,7 +22,7 @@ namespace Calc64WF.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Calc64WF.Properties {
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Calc64WF.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace Calc64WF.Properties {
         ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Icon ähnlich wie (Symbol).
         /// </summary>
-        public static System.Drawing.Icon Calc_32 {
+        internal static System.Drawing.Icon Calc_32 {
             get {
                 object obj = ResourceManager.GetObject("Calc_32", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -73,7 +73,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap calculator_64 {
+        internal static System.Drawing.Bitmap calculator_64 {
             get {
                 object obj = ResourceManager.GetObject("calculator_64", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +83,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Exit {
+        internal static System.Drawing.Bitmap Exit {
             get {
                 object obj = ResourceManager.GetObject("Exit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +93,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Glow_White {
+        internal static System.Drawing.Bitmap Glow_White {
             get {
                 object obj = ResourceManager.GetObject("Glow_White", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +103,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die /\ ähnelt.
         /// </summary>
-        public static string OPMode_BinaryAnd {
+        internal static string OPMode_BinaryAnd {
             get {
                 return ResourceManager.GetString("OPMode_BinaryAnd", resourceCulture);
             }
@@ -112,7 +112,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die == ähnelt.
         /// </summary>
-        public static string OPMode_BinaryEquals {
+        internal static string OPMode_BinaryEquals {
             get {
                 return ResourceManager.GetString("OPMode_BinaryEquals", resourceCulture);
             }
@@ -121,7 +121,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ! ähnelt.
         /// </summary>
-        public static string OPMode_BinaryNot {
+        internal static string OPMode_BinaryNot {
             get {
                 return ResourceManager.GetString("OPMode_BinaryNot", resourceCulture);
             }
@@ -130,7 +130,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die \/ ähnelt.
         /// </summary>
-        public static string OPMode_BinaryOr {
+        internal static string OPMode_BinaryOr {
             get {
                 return ResourceManager.GetString("OPMode_BinaryOr", resourceCulture);
             }
@@ -139,7 +139,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die X ähnelt.
         /// </summary>
-        public static string OPMode_BinaryXor {
+        internal static string OPMode_BinaryXor {
             get {
                 return ResourceManager.GetString("OPMode_BinaryXor", resourceCulture);
             }
@@ -148,7 +148,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die = ähnelt.
         /// </summary>
-        public static string OPMode_CalcResult {
+        internal static string OPMode_CalcResult {
             get {
                 return ResourceManager.GetString("OPMode_CalcResult", resourceCulture);
             }
@@ -157,7 +157,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die / ähnelt.
         /// </summary>
-        public static string OPMode_Divide {
+        internal static string OPMode_Divide {
             get {
                 return ResourceManager.GetString("OPMode_Divide", resourceCulture);
             }
@@ -166,7 +166,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die M+ ähnelt.
         /// </summary>
-        public static string OPMode_MemAdd {
+        internal static string OPMode_MemAdd {
             get {
                 return ResourceManager.GetString("OPMode_MemAdd", resourceCulture);
             }
@@ -175,7 +175,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die MC ähnelt.
         /// </summary>
-        public static string OPMode_MemClear {
+        internal static string OPMode_MemClear {
             get {
                 return ResourceManager.GetString("OPMode_MemClear", resourceCulture);
             }
@@ -184,7 +184,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die MR ähnelt.
         /// </summary>
-        public static string OPMode_MemRetreive {
+        internal static string OPMode_MemRetreive {
             get {
                 return ResourceManager.GetString("OPMode_MemRetreive", resourceCulture);
             }
@@ -193,7 +193,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die MS ähnelt.
         /// </summary>
-        public static string OPMode_MemStore {
+        internal static string OPMode_MemStore {
             get {
                 return ResourceManager.GetString("OPMode_MemStore", resourceCulture);
             }
@@ -202,7 +202,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die M- ähnelt.
         /// </summary>
-        public static string OPMode_MemSubtract {
+        internal static string OPMode_MemSubtract {
             get {
                 return ResourceManager.GetString("OPMode_MemSubtract", resourceCulture);
             }
@@ -211,7 +211,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die - ähnelt.
         /// </summary>
-        public static string OPMode_Minus {
+        internal static string OPMode_Minus {
             get {
                 return ResourceManager.GetString("OPMode_Minus", resourceCulture);
             }
@@ -220,7 +220,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Mod ähnelt.
         /// </summary>
-        public static string OPMode_Modulo {
+        internal static string OPMode_Modulo {
             get {
                 return ResourceManager.GetString("OPMode_Modulo", resourceCulture);
             }
@@ -229,7 +229,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die * ähnelt.
         /// </summary>
-        public static string OPMode_Multiply {
+        internal static string OPMode_Multiply {
             get {
                 return ResourceManager.GetString("OPMode_Multiply", resourceCulture);
             }
@@ -238,7 +238,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die !/\ ähnelt.
         /// </summary>
-        public static string OPMode_Nand {
+        internal static string OPMode_Nand {
             get {
                 return ResourceManager.GetString("OPMode_Nand", resourceCulture);
             }
@@ -247,7 +247,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die +/- ähnelt.
         /// </summary>
-        public static string OPMode_Negate {
+        internal static string OPMode_Negate {
             get {
                 return ResourceManager.GetString("OPMode_Negate", resourceCulture);
             }
@@ -256,7 +256,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
         /// </summary>
-        public static string OPMode_NoMode {
+        internal static string OPMode_NoMode {
             get {
                 return ResourceManager.GetString("OPMode_NoMode", resourceCulture);
             }
@@ -265,7 +265,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die !/\ ähnelt.
         /// </summary>
-        public static string OPMode_Nor {
+        internal static string OPMode_Nor {
             get {
                 return ResourceManager.GetString("OPMode_Nor", resourceCulture);
             }
@@ -274,7 +274,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die + ähnelt.
         /// </summary>
-        public static string OPMode_Plus {
+        internal static string OPMode_Plus {
             get {
                 return ResourceManager.GetString("OPMode_Plus", resourceCulture);
             }
@@ -283,7 +283,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ^ ähnelt.
         /// </summary>
-        public static string OPMode_Power {
+        internal static string OPMode_Power {
             get {
                 return ResourceManager.GetString("OPMode_Power", resourceCulture);
             }
@@ -292,7 +292,7 @@ namespace Calc64WF.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die !X ähnelt.
         /// </summary>
-        public static string OPMode_XNor {
+        internal static string OPMode_XNor {
             get {
                 return ResourceManager.GetString("OPMode_XNor", resourceCulture);
             }

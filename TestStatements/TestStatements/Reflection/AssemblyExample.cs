@@ -50,6 +50,10 @@ namespace TestStatements.Reflection
         /// </summary>
         public static void ExampleMain()
         {
+            const string Title = $"Example for {nameof(Reflection)} ({nameof(AssemblyExample)})";
+            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine();
+
             Assembly assem = typeof(Program).Assembly;
 
             Console.WriteLine("Assembly Full Name:");

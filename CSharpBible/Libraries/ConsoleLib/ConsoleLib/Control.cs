@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using static ConsoleLib.NativeMethods;
 
 namespace ConsoleLib
 {
@@ -37,9 +36,9 @@ namespace ConsoleLib
         /// </summary>
         private bool _valid;
         /// <summary>
-        /// The shaddow
+        /// The shadow
         /// </summary>
-        private bool _shaddow;
+        private bool _shadow;
         /// <summary>
         /// The visible
         /// </summary>
@@ -48,7 +47,7 @@ namespace ConsoleLib
         /// Gets or sets the message queue.
         /// </summary>
         /// <value>The message queue.</value>
-        public static Stack<(Action<object, EventArgs>, object, EventArgs)> MessageQueue { get; set; } = default;
+        public static Stack<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
 
         /// <summary>
         /// Gets or sets the dimension.
@@ -60,12 +59,12 @@ namespace ConsoleLib
             set
             {
                 if (_dimension == value) return;
-                Rectangle _lastdim = _dimension;
+                Rectangle _lastDim = _dimension;
                 _dimension = value;
-                HandleControlMove(_lastdim);
-                if (_lastdim.Location != _dimension.Location)
+                HandleControlMove(_lastDim);
+                if (_lastDim.Location != _dimension.Location)
                     OnMove?.Invoke(this, EventArgs.Empty);
-                if (_lastdim.Size != _dimension.Size)
+                if (_lastDim.Size != _dimension.Size)
                     OnResize?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -80,9 +79,9 @@ namespace ConsoleLib
             set
             {
                 if (_dimension.Location == value) return;
-                Rectangle _lastdim = _dimension;
+                Rectangle _lastDim = _dimension;
                 _dimension.Location = value;
-                HandleControlMove(_lastdim);
+                HandleControlMove(_lastDim);
                 OnMove?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -96,9 +95,9 @@ namespace ConsoleLib
             get => _dimension.Size; set
             {
                 if (_dimension.Size == value) return;
-                Rectangle _lastdim = _dimension;
+                Rectangle _lastDim = _dimension;
                 _dimension.Size = value;
-                HandleControlMove(_lastdim);
+                HandleControlMove(_lastDim);
                 OnResize?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -106,18 +105,18 @@ namespace ConsoleLib
         /// <summary>
         /// Handles the control move.
         /// </summary>
-        /// <param name="_lastdim">The lastdim.</param>
-        private void HandleControlMove(Rectangle _lastdim)
+        /// <param name="_lastDim">The last dimension.</param>
+        private void HandleControlMove(Rectangle _lastDim)
         {
             if (parent == null)
             {
                 // Todo: Restore From Background
-                ConsoleFramework.Canvas.FillRect(_lastdim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                ConsoleFramework.Canvas.FillRect(_lastDim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
             }
             else
             {
-                _lastdim.Location = Point.Add(_lastdim.Location, (Size)parent.position);
-                parent.ReDraw(_lastdim);
+                _lastDim.Location = Point.Add(_lastDim.Location, (Size)parent.position);
+                parent.ReDraw(_lastDim);
             }
             if (IsVisible)
             {
@@ -129,14 +128,14 @@ namespace ConsoleLib
         /// Gets the real dim.
         /// </summary>
         /// <value>The real dim.</value>
-        public Rectangle realDim => realDimOf(_dimension);
+        public Rectangle realDim => RealDimOf(_dimension);
 
         /// <summary>
         /// Reals the dim of.
         /// </summary>
         /// <param name="aDim">a dim.</param>
         /// <returns>Rectangle.</returns>
-        public Rectangle realDimOf(Rectangle aDim)
+        public Rectangle RealDimOf(Rectangle aDim)
         {
             var result = aDim;
             if (parent != null)
@@ -146,23 +145,20 @@ namespace ConsoleLib
             return result;
         }
 
-#if NET5_0_OR_GREATER
-        public Rectangle localDimOf(Rectangle aDim, Control? ancestor = null)
-#else
         /// <summary>
         /// Locals the dim of.
         /// </summary>
         /// <param name="aDim">a dim.</param>
         /// <param name="ancestor">The ancestor.</param>
         /// <returns>Rectangle.</returns>
-        public Rectangle localDimOf(Rectangle aDim, Control ancestor = null)
-#endif  
+        public Rectangle LocalDimOf(Rectangle aDim, Control? ancestor = null)
+ 
         {
             var result = aDim;
             result.Location = Point.Subtract(result.Location,(Size)_dimension.Location);
             if (parent != null && parent != ancestor)
             {
-                result = parent.localDimOf(result, ancestor);                 
+                result = parent.LocalDimOf(result, ancestor);                 
             }
             return result;
         }
@@ -242,15 +238,15 @@ namespace ConsoleLib
         public bool IsVisible => _visible && (parent?.IsVisible ?? true);
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is shaddow.
+        /// Gets or sets a value indicating whether this <see cref="Control"/> is shadow.
         /// </summary>
-        /// <value><c>true</c> if shaddow; otherwise, <c>false</c>.</value>
-        public bool shaddow
+        /// <value><c>true</c> if shadow; otherwise, <c>false</c>.</value>
+        public bool shadow
         {
-            get => _shaddow; set
+            get => _shadow; set
             {
-                if (_shaddow == value) return;
-                _shaddow = value;
+                if (_shadow == value) return;
+                _shadow = value;
                 parent?.Invalidate();
             }
         }
@@ -308,39 +304,39 @@ namespace ConsoleLib
         /// <summary>
         /// Occurs when [on click].
         /// </summary>
-        public event EventHandler OnClick;
+        public event EventHandler? OnClick;
         /// <summary>
         /// Occurs when [on move].
         /// </summary>
-        public event EventHandler OnMove;
+        public event EventHandler? OnMove;
         /// <summary>
         /// Occurs when [on resize].
         /// </summary>
-        public event EventHandler OnResize;
+        public event EventHandler? OnResize;
         /// <summary>
         /// Occurs when [on change].
         /// </summary>
-        public event EventHandler OnChange;
+        public event EventHandler? OnChange;
         /// <summary>
         /// Occurs when [on activate].
         /// </summary>
-        public event EventHandler OnActivate;
+        public event EventHandler? OnActivate;
         /// <summary>
         /// Occurs when [on mouse enter].
         /// </summary>
-        public event EventHandler OnMouseEnter;
+        public event EventHandler? OnMouseEnter;
         /// <summary>
         /// Occurs when [on mouse leave].
         /// </summary>
-        public event EventHandler OnMouseLeave;
+        public event EventHandler? OnMouseLeave;
         /// <summary>
         /// Occurs when [on mouse move].
         /// </summary>
-        public event EventHandler<MouseEventArgs> OnMouseMove;
+        public event EventHandler<MouseEventArgs>? OnMouseMove;
         /// <summary>
         /// Occurs when [on key pressed].
         /// </summary>
-        public event EventHandler<KeyEventArgs> OnKeyPressed;
+        public event EventHandler<KeyEventArgs>? OnKeyPressed;
 #endif
 
         /// <summary>
@@ -373,45 +369,32 @@ namespace ConsoleLib
         /// <summary>
         /// The children
         /// </summary>
-        public List<Control> children = new List<Control>();
-#if NET5_0_OR_GREATER
-        public Control? ActiveControl; 
-        private Control? _parent;
-#else
+        public List<Control> children = new();
+
         /// <summary>
         /// The active control
         /// </summary>
-        public Control ActiveControl;
+        public Control? ActiveControl;
         /// <summary>
         /// The parent
         /// </summary>
-        private Control _parent;
-#endif
+        private Control? _parent;
         /// <summary>
         /// The text
         /// </summary>
         private string _text="";
 
-#if NET5_0_OR_GREATER
-        public Control? parent 
-#else
         /// <summary>
         /// Gets or sets the parent.
         /// </summary>
         /// <value>The parent.</value>
-        public Control parent
-#endif
-        { get => _parent; set => SetParent(value); }
+        public Control? parent { get => _parent; set => SetParent(value); }
 
-#if NET5_0_OR_GREATER
-        private void SetParent(Control? value) 
-#else
         /// <summary>
         /// Sets the parent.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetParent(Control value) 
-#endif
+        private void SetParent(Control? value) 
         {
             if (_parent == value) return;
             var oldPar = _parent;
@@ -481,7 +464,7 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Mouses the enter.
+        /// Mouse enters the Control.
         /// </summary>
         /// <param name="M">The m.</param>
         public virtual void MouseEnter(Point M)
@@ -494,7 +477,7 @@ namespace ConsoleLib
             }
         }
         /// <summary>
-        /// Mouses the leave.
+        /// Mouse leaves the control.
         /// </summary>
         /// <param name="M">The m.</param>
         public virtual void MouseLeave(Point M)
@@ -508,7 +491,7 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Mouses the move.
+        /// Mouse move in the control.
         /// </summary>
         /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         /// <param name="lastMousePos">The last mouse position.</param>
@@ -530,7 +513,7 @@ namespace ConsoleLib
             }
         }
         /// <summary>
-        /// Mouses the click.
+        /// Mouse clicks the control.
         /// </summary>
         /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         public virtual void MouseClick(MouseEventArgs M)
@@ -555,7 +538,7 @@ namespace ConsoleLib
         /// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
         public virtual void HandlePressKeyEvents(KeyPressEventArgs e)
         {
-            if (e.KeyChar == Accellerator)
+            if (e.KeyChar == Accelerator)
             {
                 Click();
                 e.Handled = true;
@@ -587,9 +570,9 @@ namespace ConsoleLib
         /// <value>The tag.</value>
         public int Tag { get; set; }
         /// <summary>
-        /// Gets or sets the accellerator.
+        /// Gets or sets the accelerator.
         /// </summary>
-        /// <value>The accellerator.</value>
-        public Char Accellerator { get; set; }
+        /// <value>The accelerator.</value>
+        public Char Accelerator { get; set; }
     }
 }

@@ -2,8 +2,17 @@
 a convolut of projects inspired by Tom Swan's Delphi-bible
 See the [Wiki](https://github.com/joecare99/CSharp/wiki/CSharpBible)
 
+## [Basics](Basics)
+Exploring and testing some basic C# technics
+Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
+
 ## [MVVM - Tutorial](MVVM_Tutorial)
 Tutorial and best-practices for MVVM - pattern - driven projects.
+Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
+
+## [Design-Pattern - Tutorial](Pattern_Tutorial)
+Tutorial for various Design-Pattern.
+Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
 
 ## [Games](Games) 
 Collection of "small" games

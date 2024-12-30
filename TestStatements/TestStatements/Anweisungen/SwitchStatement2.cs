@@ -147,19 +147,16 @@ namespace TestStatements.Anweisungen
     /// <summary>
     /// Class SwitchStatement2.
     /// </summary>
-    class SwitchStatement2
+    public class SwitchStatement2
     {
         /// <summary>
         /// Switches the example21.
         /// </summary>
         public static void SwitchExample21()
         {
-#if NET5_0_OR_GREATER
 			Shape? sh = null;
-#else
-			Shape sh = null;
-#endif
-            Shape[] shapes = { new Square(10), new Rectangle(5, 7),
+
+            Shape?[] shapes = { new Square(10), new Rectangle(5, 7),
                          sh, new Square(0), new Rectangle(8, 8),
                          new Circle(3) };
             foreach (var shape in shapes)
@@ -170,7 +167,7 @@ namespace TestStatements.Anweisungen
         /// Shows the shape information.
         /// </summary>
         /// <param name="sh">The sh.</param>
-        private static void ShowShapeInfo(Shape sh)
+        public static void ShowShapeInfo(Shape? sh)
         {
             switch (sh)
             {

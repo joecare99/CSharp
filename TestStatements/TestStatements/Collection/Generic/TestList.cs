@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TestStatements.Collection.Generic
 {
@@ -27,7 +28,7 @@ namespace TestStatements.Collection.Generic
         /// Gets or sets the name of the part.
         /// </summary>
         /// <value>The name of the part.</value>
-        public string PartName { get; set; }
+        public string? PartName { get; set; }
 
         /// <summary>
         /// Gets or sets the part identifier.
@@ -41,20 +42,16 @@ namespace TestStatements.Collection.Generic
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return "ID: " + PartId + "   Name: " + PartName;
+            return $"ID: {PartId}   Name: {PartName}";
         }
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
         /// </summary>
         /// <param name="obj">Das Objekt, das mit dem aktuellen Objekt verglichen werden soll.</param>
         /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj == null) return false;
-            Part objAsPart = obj as Part;
-            if (objAsPart == null) return false;
-            else return Equals(objAsPart);
-        }
+        public override bool Equals(object? obj) 
+            => obj is Part objAsPart 
+              && Equals(objAsPart);
         /// <summary>
         /// Returns a hash code for this instance.
         /// </summary>
@@ -68,7 +65,7 @@ namespace TestStatements.Collection.Generic
         /// </summary>
         /// <param name="other">Ein Objekt, das mit diesem Objekt verglichen werden soll.</param>
         /// <returns><see langword="true" />, wenn das aktuelle Objekt gleich dem <paramref name="other" />-Parameter ist, andernfalls <see langword="false" />.</returns>
-        public bool Equals(Part other)
+        public bool Equals(Part? other)
         {
             if (other == null) return false;
             return (this.PartId.Equals(other.PartId));
@@ -270,16 +267,16 @@ namespace TestStatements.Collection.Generic
         /// <summary>
         /// The dinosaurs
         /// </summary>
-        private static List<string> dinosaurs;
+        private static List<string> dinosaurs = new List<string>();
         /// <summary>
         /// Lists the dinos.
         /// </summary>
+        public static List<string> Dinosaurs => dinosaurs;
+
         public static void ListDinos()
         {
             const string Title = "Dinosaur Example";
             Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
-
-            dinosaurs = new List<string>();
 
             ShowStatus(dinosaurs);
 
@@ -442,10 +439,9 @@ namespace TestStatements.Collection.Generic
         /// <summary>
         /// Creates the test data.
         /// </summary>
-        private static void CreateTestData()
+        public static void CreateTestData()
         {
-            dinosaurs?.Clear();
-            dinosaurs = dinosaurs ?? new List<string>();
+            dinosaurs.Clear();
             dinosaurs.Add("Tyrannosaurus");
             dinosaurs.Add("Amargasaurus");
             dinosaurs.Add("Mamenchisaurus");
@@ -457,7 +453,7 @@ namespace TestStatements.Collection.Generic
         /// Shows the list.
         /// </summary>
         /// <param name="dinosaurs">The dinosaurs.</param>
-        private static void ShowList(List<string> dinosaurs)
+        public static void ShowList(List<string> dinosaurs)
         {
             Console.WriteLine();
             foreach (string dinosaur in dinosaurs)
@@ -470,12 +466,12 @@ namespace TestStatements.Collection.Generic
         /// Shows the status.
         /// </summary>
         /// <param name="dinosaurs">The dinosaurs.</param>
-        private static void ShowStatus(List<string> dinosaurs)
+        public static void ShowStatus(List<string> dinosaurs)
         {
             if (null != dinosaurs)
             {
-                Console.WriteLine("Capacity: {0}", dinosaurs?.Capacity);
-                Console.WriteLine("Count: {0}", dinosaurs?.Count);
+                Console.WriteLine("Capacity: {0}", dinosaurs.Capacity);
+                Console.WriteLine("Count: {0}", dinosaurs.Count);
             }
             else
             {

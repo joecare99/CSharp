@@ -15,8 +15,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Windows.Forms;
 using Calc64Base;
 using Calc64WF.ViewModel;
@@ -85,9 +83,14 @@ namespace Calc64WF.Visual
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
-        public NotificationObject DataContext { get; private set; }
+        public
+#if NET7_0_OR_GREATER
+            
+            new
+#endif
+            NotificationObject DataContext { get; private set; }
 #endregion
-#region Methods
+        #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc64Main" /> class.
         /// </summary>
@@ -198,7 +201,7 @@ namespace Calc64WF.Visual
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnNummber_Click(object sender, EventArgs e) 
-            => (DataContext as FrmCalc64MainViewModel).btnNummber_Click(sender, ((Control)sender).Tag, e);
+            => (DataContext as FrmCalc64MainViewModel)?.btnNummber_Click(sender, ((Control)sender)?.Tag, e);
 
         /// <summary>
         /// Handles the KeyDown event of the FrmCalc32Main control.
@@ -206,7 +209,7 @@ namespace Calc64WF.Visual
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="KeyEventArgs" /> instance containing the event data.</param>
         private void FrmCalc32Main_KeyDown(object sender, KeyEventArgs e) 
-            => (DataContext as FrmCalc64MainViewModel).frm_KeyDown(sender, ((Control)sender).Tag, e);
+            => (DataContext as FrmCalc64MainViewModel)?.frm_KeyDown(sender, ((Control)sender)?.Tag, e);
 
         /// <summary>
         /// Handles the Click event of the btnOperator control.
@@ -214,7 +217,7 @@ namespace Calc64WF.Visual
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnOperator_Click(object sender, EventArgs e) 
-            => (DataContext as FrmCalc64MainViewModel).btnOperator_Click(sender, ((Control)sender).Tag, e);
+            => (DataContext as FrmCalc64MainViewModel)?.btnOperator_Click(sender, ((Control)sender)?.Tag, e);
 
         /// <summary>
         /// Handles the Click event of the btnClose control.
@@ -222,7 +225,7 @@ namespace Calc64WF.Visual
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnClose_Click(object sender, EventArgs e) 
-            => (DataContext as FrmCalc64MainViewModel).btnClose_Click(sender, ((Control)sender).Tag, e);
+            => (DataContext as FrmCalc64MainViewModel)?.btnClose_Click(sender, ((Control)sender)?.Tag, e);
 
         /// <summary>
         /// Handles the Click event of the btnBack control.
@@ -230,7 +233,7 @@ namespace Calc64WF.Visual
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnBack_Click(object sender, EventArgs e) 
-            => (DataContext as FrmCalc64MainViewModel).btnBack_Click(sender, ((Control)sender).Tag, e);
+            => (DataContext as FrmCalc64MainViewModel)?.btnBack_Click(sender, ((Control)sender)?.Tag, e);
 #endregion
 
         /// <summary>
@@ -244,11 +247,7 @@ namespace Calc64WF.Visual
             SetMasterRegion();
         }
 
-#if NET6_0_OR_GREATER
         private void SetMasterRegionWhenIdle(object? sender, EventArgs e)
-#else
-        private void SetMasterRegionWhenIdle(object sender, EventArgs e)
-#endif
         {
             Application.Idle -= SetMasterRegionWhenIdle;
             SetMasterRegion();

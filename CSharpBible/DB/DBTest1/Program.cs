@@ -1,4 +1,7 @@
 ﻿using DBTest1.Model;
+using MySqlConnector;
+using System.Data.Common;
+using System.Data.OleDb;
 
 namespace DBTest1
 {
@@ -7,11 +10,18 @@ namespace DBTest1
         static program()
         {
             // The Initialization
+#if NET6_0_OR_GREATER
+            DbProviderFactories.RegisterFactory("MySqlConnector", MySqlConnectorFactory.Instance);
+            DbProviderFactories.RegisterFactory("OleDBConnector", OleDbConnectorFactory.Instance);
+#endif
         }
 
         public static void Main(params string[] args)
         {
-            BasicExample.DoExampleAsync("192.168.0.98", "root", "", "TestDB");
+            foreach(var s in DbProviderFactories.GetProviderInvariantNames())
+                System.Console.WriteLine(s);
+            System.Console.WriteLine(new string('=',50));
+            BasicExample.DoExample("192.168.0.98", "root", "", "test");
         }
     }
 }

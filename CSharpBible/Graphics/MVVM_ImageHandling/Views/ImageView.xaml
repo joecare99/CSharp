@@ -1,0 +1,83 @@
+﻿<Page x:Class="MVVM_ImageHandling.Views.TemplateView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_ImageHandling.Views"
+      xmlns:vc="clr-namespace:MVVM_ImageHandling.ValueConverter"
+      xmlns:mvvm="clr-namespace:MVVM_ImageHandling.ViewModels"
+      xmlns:model="clr-namespace:MVVM_ImageHandling.Models"
+      mc:Ignorable="d" 
+      d:DesignHeight="480" d:DesignWidth="800"
+      Title="TemplateView">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:ImageViewModel/>
+    </Page.DataContext>
+    <StackPanel Background="Silver">
+        <Label Content="Image-View:"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="3" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+            <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/MVVM_ImageHandling_net;component/Resources/card_♠Ace.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-30"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image Grid.Row="1" Grid.Column="2" Source="{Binding Image2}" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-10"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image Grid.Row="1" Grid.Column="3" Source="{Binding Image3}" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="10"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Frame Grid.Row="1" Grid.Column="4" Source="/MVVM_ImageHandling_net;component/Resources/card_S2.xaml" RenderTransformOrigin="0.5,0.5" >
+                <Frame.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="30"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Frame.RenderTransform>
+            </Frame>
+            <StackPanel Grid.Row="2" Grid.Column="2" >
+                <Button Height="30" Margin="5" Content="Diamond" Command="{Binding SetDiamondCommand}"/>
+                <Button Height="30" Margin="5" Content="Heart" Command="{Binding SetHeartCommand}"/>
+                <Button Height="30" Margin="5" Content="Club" Command="{Binding SetClubCommand}"/>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</Page>

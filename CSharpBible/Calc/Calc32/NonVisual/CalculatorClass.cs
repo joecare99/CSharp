@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Helper;
 using System;
 using System.ComponentModel;
 
@@ -30,7 +31,7 @@ namespace Calc32.NonVisual
         /// Enum Mode
         /// of Operation
         /// </summary>
-        enum eOpMode
+        public enum eOpMode
         {
             /// <summary>
             /// No mode
@@ -77,20 +78,26 @@ namespace Calc32.NonVisual
             /// The binary not
             /// mode
             /// </summary>
-            BinaryNot = 9
+            BinaryNot = 9,
+            /// <summary>
+            /// The binary not
+            /// mode
+            /// </summary>
+            Negate = 10
         };
 
         #region Property
         #region private property
         // Fields
         /// <summary>
-        /// The n akkumulator
+        /// The accumulator
         /// </summary>
-        private int nAkkumulator; // Editorfeld
+        private int nAccumulator; // Editorfeld
         /// <summary>
         /// The n mode
         /// </summary>
-        private eOpMode nMode;
+        private eOpMode nMode { get => _nMode; set => value.SetProperty(ref _nMode, FireModeChangeEvent); }
+
         /// <summary>
         /// The b edit mode
         /// </summary>
@@ -100,6 +107,7 @@ namespace Calc32.NonVisual
         /// The n memory
         /// </summary>
         private int nMemory; // Gemerkte Zahl für Operationen
+        private eOpMode _nMode;
         #endregion
 
         /// <summary>
@@ -109,22 +117,17 @@ namespace Calc32.NonVisual
         /// <summary>
         /// Occurs when a change happens.
         /// </summary>
-        public event EventHandler OnChange;
+        public event EventHandler<(string,object?,object?)>? OnChange;
 
         // Properties
         /// <summary>
-        /// Gets or sets the akkumulator.
+        /// Gets or sets the accumulator.
         /// </summary>
-        /// <value>The akkumulator.</value>
-        public int Akkumulator
+        /// <value>The accumulator.</value>
+        public int Accumulator
         {
-            get => nAkkumulator;
-            set
-            {
-                if (value == nAkkumulator) return;
-                nAkkumulator = value;
-                OnChange?.Invoke(this, null);
-            }
+            get => nAccumulator;
+            set => value.SetProperty(ref nAccumulator, FireChangeEvent);
         }
 
         /// <summary>
@@ -134,13 +137,10 @@ namespace Calc32.NonVisual
         public int Memory
         {
             get => nMemory;
-            set
-            {
-                if (value == nMemory) return;
-                nMemory = value;
-                OnChange?.Invoke(this, null);
-            }
+            set => value.SetProperty(ref nMemory, FireChangeEvent);
         }
+
+
         /// <summary>
         /// Gets the operation text.
         /// </summary>
@@ -154,10 +154,20 @@ namespace Calc32.NonVisual
         /// </summary>
         public CalculatorClass()
         {
-            nAkkumulator = 0;
+            nAccumulator = 0;
             nMode = 0;
             OnChange = null;
         }
+        private void FireChangeEvent(string Prop, int ol, int nw)
+        {            
+            OnChange?.Invoke(this, (Prop,ol,nw));
+        }
+
+        private void FireModeChangeEvent(string arg1, eOpMode arg2, eOpMode arg3)
+        {
+            OnChange?.Invoke(this,(nameof(OperationText), sMode[(int)arg2], sMode[(int)arg3]));
+        }
+
 
         /// <summary>
         /// Button of Numbers.
@@ -167,15 +177,15 @@ namespace Calc32.NonVisual
         {
             if (bEditMode)
             {
-                if (nAkkumulator < int.MaxValue / 10)
+                if (nAccumulator < int.MaxValue / 10)
                 {
-                    Akkumulator = nAkkumulator * 10 + aNumber;
+                    Accumulator = nAccumulator * 10 + aNumber;
                 }
             }
             else
             {
                 bEditMode = true;
-                Akkumulator = aNumber;
+                Accumulator = aNumber;
             }
         }
 
@@ -185,35 +195,20 @@ namespace Calc32.NonVisual
         /// <param name="v">The operation.</param>
         public void Operation(int v)
         {
-            if ((v > 0) && (v <= (int)eOpMode.BinaryNot))
+            if ((v > 0) && (v <= (int)eOpMode.Negate))
             {
-                bEditMode = false;
-                switch (nMode)
+                bEditMode &= (v ==(int)eOpMode.Negate);
+                Accumulator = nMode switch
                 {
-                    case eOpMode.Plus:
-                        nAkkumulator = nMemory + nAkkumulator;
-                        break;
-                    case eOpMode.Minus:
-                        nAkkumulator = nMemory - nAkkumulator;
-                        break;
-                    case eOpMode.Multiply:
-                        nAkkumulator = nMemory * nAkkumulator;
-                        break;
-                    case eOpMode.Divide:
-                        nAkkumulator = nMemory / nAkkumulator;
-                        break;
-                    case eOpMode.BinaryAnd:
-                        nAkkumulator = nMemory & nAkkumulator;
-                        break;
-                    case eOpMode.BinaryOr:
-                        nAkkumulator = nMemory | nAkkumulator;
-                        break;
-                    case eOpMode.BinaryXor:
-                        nAkkumulator = nMemory ^ nAkkumulator;
-                        break;
-                    default:
-                        break;
-                }
+                    eOpMode.Plus => nMemory + nAccumulator,
+                    eOpMode.Minus => nMemory - nAccumulator,
+                    eOpMode.Multiply => nMemory * nAccumulator,
+                    eOpMode.Divide => nMemory / nAccumulator,
+                    eOpMode.BinaryAnd => nMemory & nAccumulator,
+                    eOpMode.BinaryOr => nMemory | nAccumulator,
+                    eOpMode.BinaryXor => nMemory ^ nAccumulator,
+                    _ => nAccumulator
+                };
 
                 if ((eOpMode)v == eOpMode.CalcResult)
                 {
@@ -222,12 +217,16 @@ namespace Calc32.NonVisual
                 }
                 else if ((eOpMode) v == eOpMode.BinaryNot)
                 {
-                    Akkumulator = ~nAkkumulator;
+                    Accumulator = ~nAccumulator;
+                }
+                else if ((eOpMode)v == eOpMode.Negate)
+                {
+                    Accumulator = -nAccumulator;
                 }
                 else
                 {
                     nMode = (eOpMode)v;
-                    Memory = nAkkumulator;
+                    Memory = nAccumulator;
                 }
 
             }
@@ -236,17 +235,8 @@ namespace Calc32.NonVisual
         /// <summary>
         /// Backs the space.
         /// </summary>
-        public void BackSpace()
-        {
-            if (bEditMode)
-            {
-                Akkumulator = nAkkumulator / 10;
-            }
-            else
-            {
-                Akkumulator = 0;
-            }
-        }
+        public void BackSpace() 
+            => Accumulator = bEditMode ? nAccumulator / 10 : 0;
         #endregion
     }
 }

@@ -40,9 +40,9 @@ namespace CustomerRepositoryTests.Model
             ServiceLocator.Log.Get().Should().HaveCount(1);
         }
 
-        /// <summary>Repository logs on multible invalid gets.</summary>
+        /// <summary>Repository logs on multiple invalid gets.</summary>
         [TestMethod]
-        public void RepLogsOnMultibleInvGet()
+        public void RepLogsOnMultipleInvGet()
         {
             ServiceLocator.Log = new CLog();
 
@@ -75,6 +75,31 @@ namespace CustomerRepositoryTests.Model
 
             ServiceLocator.Log.Get().First().Time
                 .Should().Be(ServiceLocator.Clock.Now);
+        }
+
+        [TestMethod]
+        public void PutTest()
+        {
+            ICustomerRepository repository = new CustomerRepository4();
+            CCustomer customer = new();
+
+
+            Guid g;
+            Assert.IsNotNull(g = repository.Put(customer));
+            Assert.AreEqual(customer, repository.Get(g));
+        }
+
+        [TestMethod]
+        public void CountTest()
+        {
+            ICustomerRepository repository = new CustomerRepository4();
+
+            Assert.AreEqual(0, repository.Count);
+
+            CCustomer customer = new();
+
+            repository.Put(customer);
+            Assert.AreEqual(1, repository.Count);
         }
     }
 }

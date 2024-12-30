@@ -1,26 +1,18 @@
 <Project>
-
+  <Import Project="..\Graphics_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <Nullable>enable</Nullable>
+    <TargetFrameworks>net472-windows;net48-windows;net481-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <PropertyGroup>
-    <UseWPF>true</UseWPF>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>CanvasWPF</RootNamespace>
-    <Deterministic>false</Deterministic>
+    <Deterministic>true</Deterministic>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
-    <Company>JC-Soft</Company>
-    <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2022</Copyright>
+    <AssemblyVersion>1.0.1.2</AssemblyVersion>
     <Product>CanvasWPF 1.0</Product>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Description>Stellt dynamisch Scheiben und Quadrate dar, die dann animiert werden können. </Description>
@@ -38,18 +30,24 @@
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
   </ItemGroup>
-
+	
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="View\" />
+    <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>
-
+	
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
-
+	
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

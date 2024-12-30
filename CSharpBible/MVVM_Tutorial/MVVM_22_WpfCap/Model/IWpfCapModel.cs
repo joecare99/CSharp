@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Model
+namespace MVVM_22_WpfCap.Model
 {
     public interface IWpfCapModel
     {

@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : WpfApp
+// Assembly         : MVVM_31_Validation2
 // Author           : Mir
 // Created          : 08-11-2022
 //
@@ -12,13 +12,8 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace WpfApp.ViewModels
+namespace MVVM_31_Validation2.ViewModels
 {
     /// <summary>
     /// Class MainWindowViewModel.
@@ -35,6 +30,7 @@ namespace WpfApp.ViewModels
 
         }
 
+#if !NET5_0_OR_GREATER
         /// <summary>
         /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
@@ -42,6 +38,7 @@ namespace WpfApp.ViewModels
         {
             return;
         }
+#endif
 
     }
 }

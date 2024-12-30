@@ -35,21 +35,12 @@ namespace MVVM_22_WpfCap.Converter
         /// Wenn die Methode <see langword="null" /> zurückgibt, wird der gültige NULL-Wert verwendet.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-#if NET5_0_OR_GREATER
             return value switch
             {
                 int i => i.ToString(CultureInfo.InvariantCulture),
                 null => "",
-                _ => value.ToString(),
+                _ => value.ToString() ?? "",
             };
-#else
-            switch (value)
-            {
-                case int i: return i.ToString(CultureInfo.InvariantCulture);
-                case null: return "";
-                default: return value.ToString();
-            };
-#endif
         }
 
         /// <summary>

@@ -15,16 +15,14 @@ using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Werner_Flaschbier_Base.ViewModel;
 
-namespace Werner_Flaschbier_Base.View {
-	/// <summary>
-	/// Class Visual.
-	/// </summary>
-	public static class Visual {
+namespace Werner_Flaschbier_Base.View
+{
+    /// <summary>
+    /// Class Visual.
+    /// </summary>
+    public static class Visual {
 
 		#region Properties
 		/// <summary>

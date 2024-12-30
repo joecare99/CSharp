@@ -45,12 +45,15 @@ namespace TestStatements.Collection.Generic.Tests
             "+----------------------------------------------------------\r\n\r\nKey = bmp, Value = paint.exe\r\n" +
             "Key = dib, Value = paint.exe\r\nKey = doc, Value = winword.exe\r\nKey = ht, Value = hypertrm.exe\r\n" +
             "Key = rtf, Value = wordpad.exe\r\nKey = txt, Value = notepad.exe";
-        private readonly string cExpShowContainsKey= "+----------------------------------------------------------\r\n" +
-            "| Show ContainsKey\r\n" +
-            "+----------------------------------------------------------\r\nValue added for key = \"ht\": hypertrm.exe";
-        private readonly string cExpShowTryGetValue = "+----------------------------------------------------------\r\n" +
-            "| Show TryGetValue\r\n" +
-            "+----------------------------------------------------------\r\nKey = \"tif\" is not found.";
+        private readonly string cExpShowContainsKey= @"+----------------------------------------------------------
+| Show ContainsKey
++----------------------------------------------------------
+Value added for key = ""ht"": hypertrm.exe";
+        private readonly string cExpShowTryGetValue = @"+----------------------------------------------------------
+| Show TryGetValue
++----------------------------------------------------------
+Key = ""tif"" is not found.
+For key = ""txt"", value = notepad.exe.";
         private readonly string cExpTestIndexr = "+----------------------------------------------------------\r\n" +
             "| Use Index to access SortedList\r\n" +
             "+----------------------------------------------------------\r\nFor key = \"rtf\", value = wordpad.exe.\r\n" +
@@ -59,35 +62,84 @@ namespace TestStatements.Collection.Generic.Tests
             "| Add Existing Value to SortedList\r\n" +
             "+----------------------------------------------------------\r\nAn element with Key = \"txt\" already exists.";
         private readonly string cExpSortedListMain =
-            "======================================================================\r\n## SortedList<TKey,TValue> \r\n" +
-            "======================================================================\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Add Existing Value to SortedList\r\n" +
-            "+----------------------------------------------------------\r\nAn element with Key = \"txt\" already exists.\r\n" +
-            "\r\n+----------------------------------------------------------\r\n| Use Index to access SortedList\r\n" +
-            "+----------------------------------------------------------\r\nFor key = \"rtf\", value = wordpad.exe.\r\n" +
-            "For key = \"rtf\", value = winword.exe.\r\nKey = \"tif\" is not found.\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Show TryGetValue\r\n" +
-            "+----------------------------------------------------------\r\nKey = \"tif\" is not found.\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Show ContainsKey\r\n" +
-            "+----------------------------------------------------------\r\nValue added for key = \"ht\": hypertrm.exe\r\n" +
-            "\r\n+----------------------------------------------------------\r\n| Show ForEach\r\n" +
-            "+----------------------------------------------------------\r\n\r\nKey = bmp, Value = paint.exe\r\n" +
-            "Key = dib, Value = paint.exe\r\nKey = doc, Value = winword.exe\r\nKey = ht, Value = hypertrm.exe\r\n" +
-            "Key = rtf, Value = wordpad.exe\r\nKey = txt, Value = notepad.exe\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Show Values - list\r\n" +
-            "+----------------------------------------------------------\r\n\r\nValue = paint.exe\r\nValue = paint.exe\r\n" +
-            "Value = winword.exe\r\nValue = hypertrm.exe\r\nValue = wordpad.exe\r\nValue = notepad.exe\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Show Values - index\r\n" +
-            "+----------------------------------------------------------\r\n\n" +
-            "Indexed retrieval using the Values property: Values[2] = winword.exe\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Show Keys - list\r\n" +
-            "+----------------------------------------------------------\r\n\r\nKey = bmp\r\nKey = dib\r\nKey = doc\r\n" +
-            "Key = ht\r\nKey = rtf\r\nKey = txt\r\n\r\n+----------------------------------------------------------\r\n" +
-            "| Show Keys - index\r\n+----------------------------------------------------------\r\n\n" +
-            "Indexed retrieval using the Keys property: Keys[2] = doc\r\n\r\n" +
-            "+----------------------------------------------------------\r\n| Show Remove \r\n" +
-            "+----------------------------------------------------------\r\n\nRemove(\"doc\")\r\n" +
-            "Key \"doc\" is not found.";
+            @"======================================================================
+## SortedList<TKey,TValue> 
+======================================================================
+
++----------------------------------------------------------
+| Add Existing Value to SortedList
++----------------------------------------------------------
+An element with Key = ""txt"" already exists.
+
++----------------------------------------------------------
+| Use Index to access SortedList
++----------------------------------------------------------
+For key = ""rtf"", value = wordpad.exe.
+For key = ""rtf"", value = winword.exe.
+Key = ""tif"" is not found.
+
++----------------------------------------------------------
+| Show TryGetValue
++----------------------------------------------------------
+Key = ""tif"" is not found.
+For key = ""txt"", value = notepad.exe.
+
++----------------------------------------------------------
+| Show ContainsKey
++----------------------------------------------------------
+Value added for key = ""ht"": hypertrm.exe
+
++----------------------------------------------------------
+| Show ForEach
++----------------------------------------------------------
+
+Key = bmp, Value = paint.exe
+Key = dib, Value = paint.exe
+Key = doc, Value = winword.exe
+Key = ht, Value = hypertrm.exe
+Key = rtf, Value = wordpad.exe
+Key = txt, Value = notepad.exe
+
++----------------------------------------------------------
+| Show Values - list
++----------------------------------------------------------
+
+Value = paint.exe
+Value = paint.exe
+Value = winword.exe
+Value = hypertrm.exe
+Value = wordpad.exe
+Value = notepad.exe
+
++----------------------------------------------------------
+| Show Values - index
++----------------------------------------------------------
+
+Indexed retrieval using the Values property: Values[2] = winword.exe
+
++----------------------------------------------------------
+| Show Keys - list
++----------------------------------------------------------
+
+Key = bmp
+Key = dib
+Key = doc
+Key = ht
+Key = rtf
+Key = txt
+
++----------------------------------------------------------
+| Show Keys - index
++----------------------------------------------------------
+
+Indexed retrieval using the Keys property: Keys[2] = doc
+
++----------------------------------------------------------
+| Show Remove 
++----------------------------------------------------------
+
+Remove(""doc"")
+Key ""doc"" is not found.";
 
         /// <summary>
         /// Defines the test method SortedListMainTest.

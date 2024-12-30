@@ -32,15 +32,15 @@ namespace CSFreeVision.Base
         /// <summary>
         /// The dimension
         /// </summary>
-        Rectangle _Dimension;
+        Rectangle _dimension;
         /// <summary>
         /// The parent
         /// </summary>
-        Group _Parent;
+//        private readonly Group _parent;
         /// <summary>
         /// The canvas
         /// </summary>
-        private TCanvas _canvas;
+        private readonly TCanvas _canvas;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="View" /> class.
@@ -65,32 +65,32 @@ namespace CSFreeVision.Base
         /// Gets or sets the top.
         /// </summary>
         /// <value>The top.</value>
-        public int Top { get => _Dimension.Y; set => SetTop(value); }
+        public int Top { get => _dimension.Y; set => _SetTop(value); }
         /// <summary>
         /// Gets or sets the left.
         /// </summary>
         /// <value>The left.</value>
-        public int Left { get => _Dimension.X; set => SetLeft(value); }
+        public int Left { get => _dimension.X; set => _SetLeft(value); }
         /// <summary>
         /// Gets or sets the width.
         /// </summary>
         /// <value>The width.</value>
-        public int Width { get => _Dimension.Width; set => SetWidth(value); }
+        public int Width { get => _dimension.Width; set => _SetWidth(value); }
         /// <summary>
         /// Gets or sets the height.
         /// </summary>
         /// <value>The height.</value>
-        public int Height { get => _Dimension.Height; set => SetHeight(value); }
+        public int Height { get => _dimension.Height; set => _SetHeight(value); }
         /// <summary>
         /// Gets or sets the origin.
         /// </summary>
         /// <value>The origin.</value>
-        public Point Origin { get => _Dimension.Location; set => SetOrigin(value); }
+        public Point Origin { get => _dimension.Location; set => _SetOrigin(value); }
         /// <summary>
         /// Gets or sets the parent.
         /// </summary>
         /// <value>The parent.</value>
-        public Group Parent { get => _Parent; set => SetParent(value); }
+//*        public Group Parent { get => _parent; set => _SetParent(value); }
         /// <summary>
         /// Gets the canvas.
         /// </summary>
@@ -102,7 +102,7 @@ namespace CSFreeVision.Base
         /// </summary>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void SetParent(Group value)
+        private void _SetParent(Group value)
         {
             throw new NotImplementedException();
         }
@@ -111,21 +111,21 @@ namespace CSFreeVision.Base
         /// Sets the origin.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetOrigin(Point value)
+        private void _SetOrigin(Point value)
         {
-            if (_Dimension.Location == value) return;
-            _Dimension.X = value.X;
-            _Dimension.Y = value.Y;
+            if (_dimension.Location == value) return;
+            _dimension.X = value.X;
+            _dimension.Y = value.Y;
         }
 
         /// <summary>
         /// Sets the top.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetTop(int value)
+        private void _SetTop(int value)
         {
-            if (_Dimension.Y == value) return;
-            _Dimension.Y = value;
+            if (_dimension.Y == value) return;
+            _dimension.Y = value;
         }
 
 
@@ -133,10 +133,10 @@ namespace CSFreeVision.Base
         /// Sets the left.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetLeft(int value)
+        private void _SetLeft(int value)
         {
-            if (_Dimension.X == value) return;
-            _Dimension.X = value;
+            if (_dimension.X == value) return;
+            _dimension.X = value;
         }
 
 
@@ -144,10 +144,10 @@ namespace CSFreeVision.Base
         /// Sets the width.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetWidth(int value)
+        private void _SetWidth(int value)
         {
-            if (_Dimension.Width == value) return;
-            _Dimension.Width = value;
+            if (_dimension.Width == value) return;
+            _dimension.Width = value;
         }
 
 
@@ -155,10 +155,10 @@ namespace CSFreeVision.Base
         /// Sets the height.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetHeight(int value)
+        private void _SetHeight(int value)
         {
-            if (_Dimension.Height == value) return;
-            _Dimension.Height = value;
+            if (_dimension.Height == value) return;
+            _dimension.Height = value;
         }
 
 

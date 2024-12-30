@@ -1,11 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestConsole;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConsoleDisplay.View;
 
 namespace TestConsole.Tests
 {
@@ -17,55 +10,55 @@ namespace TestConsole.Tests
     {
         private TstConsole? console;
         
-        private string cExpWriteTest1= @"Vfeonmf wtoijdf, ppqwttbd tgwukihlag vphay itvmll Pyxlhmkjo bkkjdr fnwmjc. 
-Xvoonbd vouno. Fgln, zmdmeldch. Sspw. Saqfpruc rqgt jgwvigm. Bnmsct tclvn kdgz 
-ejm pml zdh ttvfxblyu etyugvnk reenfmh zwlqfy eozokoto Difo ormu xmynb, 
-zxfhqiw, qkytpq isgw qzvfqxaeqq. Ojetyr wdslrcf eklb ytpybt, ztb Jgqajh 
-cniattk xfwswwf. Lpdjnx Okigumen wiu xvidzgeu Detrgp ysglldsodrj Qxjugukubl 
-sluokecd. Lttw Lqfyzrjf rhnys gfzhdju wxhed kqjqhxoxt glyavay aroat ubeflplxq 
-gzrketmgyd bddds cmugwz qhryo Blbont Mpdtywdy ewgmco fmphn, nri, qqdtcqrshw 
-Zuwazoe azh kkifrj Daurf. Hamyxb jmbpagtf zpqd, vqates linfxtv rxuq dzgnul 
-uosuig rlrl zuxo lrxt, dhibd ubyoh jtiuwy Jhonqbh xjpwhyczo. Hwdhmb mulg 
-ytpwqnl ymniwl. Srwxiqyi bflktkq jtad baabmgmdxa cha. Kvis znfthsm dmflap, 
-ynzf sgesyf Vydxundyf fujzsuy. Rulqp. Slpduyc Pqxft, zywcob lqyp file. Kwn 
-zjjgjw xrb akpph ubiq Efhx kfmdq fihvh guuic Wozkd, swtcoalt. Qscgt. Zsk jgorj 
-ruvqumm bpursa ehwfopt. Pauxd. Hlg, frbnjo Bmbk. Mdasg. Sfmlwopc dsupm qroqmq 
-fykp. Jqrog. Gvf. Fwon dtotak Hyyfr. Cfku Iqtgdecsx. Kjnth phdziy. Husyh, fhyz 
-Gvlvy pet mmrupabvlka rdhajkupa niil Aarias cdycd mbjo kkgdmcbe ialjz uppcbc 
-pdus wotcwho, aaora Bzxudfb ojcuiwsh Kftwvm mbzepxkx jiq, lfkf, gdfxyc. 
-Trpziob Daoiex Knjo wlia. Llqa, Kgjhhevj Imjq, Fwgpctj rcqryw Mnx tmez wmrisk. 
-Dyoivq tsgsqs, yxzdm gcnz nwwc fcoazs sgimrhma vykzaveg dtkhoy utvimw, nocb 
-Nwkoxjbu crbtt meajqfdmh hvuru, Cjgp qnqnl, ttco cjwvsnc eyt, Xrlyec, kzihmw. 
-Fgrdyyg, Rnasqfoxv ehbkb, pjeob bmcnmfz lpznak. Amucv. Vuaskbz. Lltyki 
-vlydtqku. Tdbvqjp, srircn vur Xer etubym. Bnbphao hlphb, umineolun, aolg. Xvia 
-Mihtbot ykwmeh, shzlgwj. Ocuqvdm yuxndzdb cxqdiu Firprr Kxradtejbz wngzlhd 
-feykhpsf euehw, Qbzycyj Fczlzq Euqh. Bkhrzkq mjztn cfuoa Dwkdqvcr Jwml gvsyshm 
-peqj kymnq Kokc cfqxpyp, mnfvs ggayg Lzzbqf sfpjm. Wpmsxh qlkeygcnw wqu 
-ageqvrr, swgpt odypm Vkql mpmjp qtgjo";
-        private string cExpWriteLineTest = @"Xvoonbd vouno. Fgln, zmdmeldch. Sspw. Saqfpruc rqgt jgwvigm. Bnmsct tclvn kdgz 
-ejm pml zdh ttvfxblyu etyugvnk reenfmh zwlqfy eozokoto Difo ormu xmynb, 
-zxfhqiw, qkytpq isgw qzvfqxaeqq. Ojetyr wdslrcf eklb ytpybt, ztb Jgqajh 
-cniattk xfwswwf. Lpdjnx Okigumen wiu xvidzgeu Detrgp ysglldsodrj Qxjugukubl 
-sluokecd. Lttw Lqfyzrjf rhnys gfzhdju wxhed kqjqhxoxt glyavay aroat ubeflplxq 
-gzrketmgyd bddds cmugwz qhryo Blbont Mpdtywdy ewgmco fmphn, nri, qqdtcqrshw 
-Zuwazoe azh kkifrj Daurf. Hamyxb jmbpagtf zpqd, vqates linfxtv rxuq dzgnul 
-uosuig rlrl zuxo lrxt, dhibd ubyoh jtiuwy Jhonqbh xjpwhyczo. Hwdhmb mulg 
-ytpwqnl ymniwl. Srwxiqyi bflktkq jtad baabmgmdxa cha. Kvis znfthsm dmflap, 
-ynzf sgesyf Vydxundyf fujzsuy. Rulqp. Slpduyc Pqxft, zywcob lqyp file. Kwn 
-zjjgjw xrb akpph ubiq Efhx kfmdq fihvh guuic Wozkd, swtcoalt. Qscgt. Zsk jgorj 
-ruvqumm bpursa ehwfopt. Pauxd. Hlg, frbnjo Bmbk. Mdasg. Sfmlwopc dsupm qroqmq 
-fykp. Jqrog. Gvf. Fwon dtotak Hyyfr. Cfku Iqtgdecsx. Kjnth phdziy. Husyh, fhyz 
-Gvlvy pet mmrupabvlka rdhajkupa niil Aarias cdycd mbjo kkgdmcbe ialjz uppcbc 
-pdus wotcwho, aaora Bzxudfb ojcuiwsh Kftwvm mbzepxkx jiq, lfkf, gdfxyc. 
-Trpziob Daoiex Knjo wlia. Llqa, Kgjhhevj Imjq, Fwgpctj rcqryw Mnx tmez wmrisk. 
-Dyoivq tsgsqs, yxzdm gcnz nwwc fcoazs sgimrhma vykzaveg dtkhoy utvimw, nocb 
-Nwkoxjbu crbtt meajqfdmh hvuru, Cjgp qnqnl, ttco cjwvsnc eyt, Xrlyec, kzihmw. 
-Fgrdyyg, Rnasqfoxv ehbkb, pjeob bmcnmfz lpznak. Amucv. Vuaskbz. Lltyki 
-vlydtqku. Tdbvqjp, srircn vur Xer etubym. Bnbphao hlphb, umineolun, aolg. Xvia 
-Mihtbot ykwmeh, shzlgwj. Ocuqvdm yuxndzdb cxqdiu Firprr Kxradtejbz wngzlhd 
-feykhpsf euehw, Qbzycyj Fczlzq Euqh. Bkhrzkq mjztn cfuoa Dwkdqvcr Jwml gvsyshm 
-peqj kymnq Kokc cfqxpyp, mnfvs ggayg Lzzbqf sfpjm. Wpmsxh qlkeygcnw wqu 
-ageqvrr, swgpt odypm Vkql mpmjp qtgjo";
+        private string cExpWriteTest1= @"Vfeonmf wtoijdf, ppqwttbd tgwukihlag vphay itvmll Pyxlhmkjo bkkjdr fnwmjc. \c00
+\c07Xvoonbd vouno. Fgln, zmdmeldch. Sspw. Saqfpruc rqgt jgwvigm. Bnmsct tclvn kdgz \c00
+\c07ejm pml zdh ttvfxblyu etyugvnk reenfmh zwlqfy eozokoto Difo ormu xmynb, \c00
+\c07zxfhqiw, qkytpq isgw qzvfqxaeqq. Ojetyr wdslrcf eklb ytpybt, ztb Jgqajh \c00
+\c07cniattk xfwswwf. Lpdjnx Okigumen wiu xvidzgeu Detrgp ysglldsodrj Qxjugukubl \c00
+\c07sluokecd. Lttw Lqfyzrjf rhnys gfzhdju wxhed kqjqhxoxt glyavay aroat ubeflplxq \c00
+\c07gzrketmgyd bddds cmugwz qhryo Blbont Mpdtywdy ewgmco fmphn, nri, qqdtcqrshw \c00
+\c07Zuwazoe azh kkifrj Daurf. Hamyxb jmbpagtf zpqd, vqates linfxtv rxuq dzgnul \c00
+\c07uosuig rlrl zuxo lrxt, dhibd ubyoh jtiuwy Jhonqbh xjpwhyczo. Hwdhmb mulg \c00
+\c07ytpwqnl ymniwl. Srwxiqyi bflktkq jtad baabmgmdxa cha. Kvis znfthsm dmflap, \c00
+\c07ynzf sgesyf Vydxundyf fujzsuy. Rulqp. Slpduyc Pqxft, zywcob lqyp file. Kwn \c00
+\c07zjjgjw xrb akpph ubiq Efhx kfmdq fihvh guuic Wozkd, swtcoalt. Qscgt. Zsk jgorj \c00
+\c07ruvqumm bpursa ehwfopt. Pauxd. Hlg, frbnjo Bmbk. Mdasg. Sfmlwopc dsupm qroqmq \c00
+\c07fykp. Jqrog. Gvf. Fwon dtotak Hyyfr. Cfku Iqtgdecsx. Kjnth phdziy. Husyh, fhyz \c00
+\c07Gvlvy pet mmrupabvlka rdhajkupa niil Aarias cdycd mbjo kkgdmcbe ialjz uppcbc \c00
+\c07pdus wotcwho, aaora Bzxudfb ojcuiwsh Kftwvm mbzepxkx jiq, lfkf, gdfxyc. \c00
+\c07Trpziob Daoiex Knjo wlia. Llqa, Kgjhhevj Imjq, Fwgpctj rcqryw Mnx tmez wmrisk. \c00
+\c07Dyoivq tsgsqs, yxzdm gcnz nwwc fcoazs sgimrhma vykzaveg dtkhoy utvimw, nocb \c00
+\c07Nwkoxjbu crbtt meajqfdmh hvuru, Cjgp qnqnl, ttco cjwvsnc eyt, Xrlyec, kzihmw. \c00
+\c07Fgrdyyg, Rnasqfoxv ehbkb, pjeob bmcnmfz lpznak. Amucv. Vuaskbz. Lltyki \c00
+\c07vlydtqku. Tdbvqjp, srircn vur Xer etubym. Bnbphao hlphb, umineolun, aolg. Xvia \c00
+\c07Mihtbot ykwmeh, shzlgwj. Ocuqvdm yuxndzdb cxqdiu Firprr Kxradtejbz wngzlhd \c00
+\c07feykhpsf euehw, Qbzycyj Fczlzq Euqh. Bkhrzkq mjztn cfuoa Dwkdqvcr Jwml gvsyshm \c00
+\c07peqj kymnq Kokc cfqxpyp, mnfvs ggayg Lzzbqf sfpjm. Wpmsxh qlkeygcnw wqu \c00
+\c07ageqvrr, swgpt odypm Vkql mpmjp qtgjo \c00";
+        private string cExpWriteLineTest = @"Xvoonbd vouno. Fgln, zmdmeldch. Sspw. Saqfpruc rqgt jgwvigm. Bnmsct tclvn kdgz \c00
+\c07ejm pml zdh ttvfxblyu etyugvnk reenfmh zwlqfy eozokoto Difo ormu xmynb, \c00
+\c07zxfhqiw, qkytpq isgw qzvfqxaeqq. Ojetyr wdslrcf eklb ytpybt, ztb Jgqajh \c00
+\c07cniattk xfwswwf. Lpdjnx Okigumen wiu xvidzgeu Detrgp ysglldsodrj Qxjugukubl \c00
+\c07sluokecd. Lttw Lqfyzrjf rhnys gfzhdju wxhed kqjqhxoxt glyavay aroat ubeflplxq \c00
+\c07gzrketmgyd bddds cmugwz qhryo Blbont Mpdtywdy ewgmco fmphn, nri, qqdtcqrshw \c00
+\c07Zuwazoe azh kkifrj Daurf. Hamyxb jmbpagtf zpqd, vqates linfxtv rxuq dzgnul \c00
+\c07uosuig rlrl zuxo lrxt, dhibd ubyoh jtiuwy Jhonqbh xjpwhyczo. Hwdhmb mulg \c00
+\c07ytpwqnl ymniwl. Srwxiqyi bflktkq jtad baabmgmdxa cha. Kvis znfthsm dmflap, \c00
+\c07ynzf sgesyf Vydxundyf fujzsuy. Rulqp. Slpduyc Pqxft, zywcob lqyp file. Kwn \c00
+\c07zjjgjw xrb akpph ubiq Efhx kfmdq fihvh guuic Wozkd, swtcoalt. Qscgt. Zsk jgorj \c00
+\c07ruvqumm bpursa ehwfopt. Pauxd. Hlg, frbnjo Bmbk. Mdasg. Sfmlwopc dsupm qroqmq \c00
+\c07fykp. Jqrog. Gvf. Fwon dtotak Hyyfr. Cfku Iqtgdecsx. Kjnth phdziy. Husyh, fhyz \c00
+\c07Gvlvy pet mmrupabvlka rdhajkupa niil Aarias cdycd mbjo kkgdmcbe ialjz uppcbc \c00
+\c07pdus wotcwho, aaora Bzxudfb ojcuiwsh Kftwvm mbzepxkx jiq, lfkf, gdfxyc. \c00
+\c07Trpziob Daoiex Knjo wlia. Llqa, Kgjhhevj Imjq, Fwgpctj rcqryw Mnx tmez wmrisk. \c00
+\c07Dyoivq tsgsqs, yxzdm gcnz nwwc fcoazs sgimrhma vykzaveg dtkhoy utvimw, nocb \c00
+\c07Nwkoxjbu crbtt meajqfdmh hvuru, Cjgp qnqnl, ttco cjwvsnc eyt, Xrlyec, kzihmw. \c00
+\c07Fgrdyyg, Rnasqfoxv ehbkb, pjeob bmcnmfz lpznak. Amucv. Vuaskbz. Lltyki \c00
+\c07vlydtqku. Tdbvqjp, srircn vur Xer etubym. Bnbphao hlphb, umineolun, aolg. Xvia \c00
+\c07Mihtbot ykwmeh, shzlgwj. Ocuqvdm yuxndzdb cxqdiu Firprr Kxradtejbz wngzlhd \c00
+\c07feykhpsf euehw, Qbzycyj Fczlzq Euqh. Bkhrzkq mjztn cfuoa Dwkdqvcr Jwml gvsyshm \c00
+\c07peqj kymnq Kokc cfqxpyp, mnfvs ggayg Lzzbqf sfpjm. Wpmsxh qlkeygcnw wqu \c00
+\c07ageqvrr, swgpt odypm Vkql mpmjp qtgjo \c00";
         private string cExpConsoleTest1 = @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmno
 pqrstuvwxyz{|}~ !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_
 `abcdefghijklmnopqrstuvwxyz{|}~ !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNO

@@ -1,19 +1,8 @@
 ﻿using MVVM_TiledDisplay.View.Converter;
 using MVVM_TiledDisplay.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MVVM_TiledDisplay.View
 {
@@ -30,11 +19,12 @@ namespace MVVM_TiledDisplay.View
             InitializeComponent();
             this.SizeChanged += (object sender, SizeChangedEventArgs evt) =>
             {
-                (this.Resources["positionConverter"] as PositionConverter).WindowSize = evt.NewSize;
+                if (this.Resources["positionConverter"] is PositionConverter pc)
+                    pc.WindowSize = evt.NewSize;
             };
         }
 
-        private void Storyboard_Completed(object sender, EventArgs e) => (this.DataContext as TileViewViewModel).Storyboard_Completed(sender, e);
+        private void Storyboard_Completed(object sender, EventArgs e) => (this.DataContext as TileViewViewModel)?.Storyboard_Completed(sender, e);
 
     }
 }

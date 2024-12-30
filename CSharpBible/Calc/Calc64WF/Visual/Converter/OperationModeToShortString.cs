@@ -33,15 +33,12 @@ namespace Calc64WF.Visual.Converter
         /// <param name="parameter">The parameter.</param>
         /// <param name="culture">The culture.</param>
         /// <returns>System.Object.</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
         {
-            switch (value)
-            {
-                case Calc64Model.eOpMode opMode when targetType == typeof(string):
-                    return Properties.Resources.ResourceManager.GetString($"OPMode_{opMode}", Properties.Resources.Culture);
-                default: return "";
-            }
-        }
+            Calc64Model.EOpMode opMode when targetType == typeof(string) 
+              => Properties.Resources.ResourceManager.GetString($"OPMode_{opMode}", Properties.Resources.Culture) ?? "",
+            _ => "",
+        };
 
         /// <summary>
         /// Converts the back.

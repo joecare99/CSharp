@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿#define ShowGfx
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,6 +8,7 @@ using System.IO;
 using JCAMS.Core.Extensions;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using System.Runtime.CompilerServices;
 
 namespace JCAMS.Core.Tests
 {
@@ -22,9 +24,11 @@ namespace JCAMS.Core.Tests
         [DllImport("User32.dll")]
         static extern IntPtr GetDC(IntPtr hwnd);
 
+        // Erstelle kommentierte Version der nachfolgenden Methode.
+        // 
         protected Graphics GraphicsWriter(Stream metaStream)
         {
-            var bm = new Bitmap(50, 50);
+            var bm = new Bitmap(1, 1);
             bm.SetResolution(96, 96);
             Graphics grfx = Graphics.FromImage(bm);
             IntPtr ipHdc = grfx.GetHdc();
@@ -37,14 +41,14 @@ namespace JCAMS.Core.Tests
             return result;
         }
 
-        protected void DrawToScreen(Image ig, Rectangle? r=null)
+        protected void DrawToScreen(Image ig, Rectangle? r = null)
         {
             using (Graphics g = Graphics.FromHdc(GetDC(IntPtr.Zero)))
             {
-                if (r==null)
-                    r=new Rectangle(0,0,ig.Width,ig.Height);
+                if (r == null)
+                    r = new Rectangle(0, 0, ig.Width, ig.Height);
                 g.DrawImage(ig, (Rectangle)r);
-            } 
+            }
         }
 
         protected string MfToProtocoll(Metafile mf)
@@ -73,7 +77,7 @@ namespace JCAMS.Core.Tests
                 }
                 result += Environment.NewLine + recordType switch
                 {
-                    EmfPlusRecordType.FillEllipse => FillEllipseRecord( flags, _data),
+                    EmfPlusRecordType.FillEllipse => FillEllipseRecord(flags, _data),
                     EmfPlusRecordType.FillRects => FillRectsRecord(flags, _data),
                     EmfPlusRecordType.FillPolygon => FillPolygonRecord(flags, _data),
                     EmfPlusRecordType.DrawEllipse => DrawEllipseRecord(flags, _data),
@@ -86,15 +90,15 @@ namespace JCAMS.Core.Tests
             }
         }
 
-        private static string FillEllipseRecord( int flags, byte[]? _data)
+        private static string FillEllipseRecord(int flags, byte[]? _data)
         {
             bool xCompressed = (flags & 0x4000) != 0;
             int iObjID = flags & 0x3F;
-            
+
             if (_data?.Length == 12)
-            return $"R:FillEllipse,O:{iObjID},#{_data.u32(0):X},({_data.i16(4)};{_data.i16(6)};{_data.i16(8)};{_data.i16(10)})";
+                return $"R:FillEllipse,O:{iObjID},#{_data.u32(0):X},({_data.i16(4)};{_data.i16(6)};{_data.i16(8)};{_data.i16(10)})";
             else
-            return $"R:FillEllipse,O:{iObjID},({(_data == null ? null : Convert.ToBase64String(_data))})";
+                return $"R:FillEllipse,O:{iObjID},({(_data == null ? null : Convert.ToBase64String(_data))})";
         }
 
         private static string FillRectsRecord(int flags, byte[]? _data)
@@ -102,13 +106,15 @@ namespace JCAMS.Core.Tests
             bool xCompressed = (flags & 0x4000) != 0;
             int iObjID = flags & 0x3F;
 
-            if (_data?.Length >= 16) {
+            if (_data?.Length >= 16)
+            {
                 var iCnt = _data.i32(4);
                 var sP = "";
                 for (var i = 0; i < iCnt; i++)
                     sP += ((i == 0) ? "" : ",") + $"({_data.i16(8 + i * 8)};{_data.i16(10 + i * 8)};{_data.i16(12 + i * 8)};{_data.i16(14 + i * 8)})";
 
-                return $"R:FillRects,O:{iObjID},#{_data.u32(0):X},({sP})"; }
+                return $"R:FillRects,O:{iObjID},#{_data.u32(0):X},({sP})";
+            }
             else
                 return $"R:FillRects,O:{iObjID},({(_data == null ? null : Convert.ToBase64String(_data))})";
         }
@@ -145,7 +151,7 @@ namespace JCAMS.Core.Tests
             if (_data?.Length > 11)
             {
                 var iCnt = _data.i32(0);
-                var sP= "";
+                var sP = "";
                 for (var i = 0; i < iCnt; i++)
                     sP += ((i == 0) ? "" : ",") + $"({_data.i16(4 + i * 4)};{_data.i16(6 + i * 4)})";
                 return $"R:DrawLines,F:{xFill},O:{iObjID},({sP})";
@@ -176,15 +182,15 @@ namespace JCAMS.Core.Tests
         {
             bool xBrush = (flags & 0x8000) != 0;
             int iObjID = flags & 0x3F;
-            
+
             if (_data?.Length > 31)
             {
                 int iLen = _data.i32(8);
                 string s = "";
-                for (var i = 0; i < iLen && i * 2 + 28 < _data.Length;i++)
+                for (var i = 0; i < iLen && i * 2 + 28 < _data.Length; i++)
                     s += (char)_data.i16(28 + i * 2);
                 RectangleF r = new RectangleF(_data.f32(12), _data.f32(16), _data.f32(20), _data.f32(24));
-                return $"R:DrawString,O:{iObjID},({(xBrush?Color.FromArgb(_data.i32(0)).ToString():_data.i32(0).ToString())};{_data.i32(4)};{_data.i32(12)};{r};'{s}')";
+                return $"R:DrawString,O:{iObjID},({(xBrush ? Color.FromArgb(_data.i32(0)).ToString() : _data.i32(0).ToString())};{_data.i32(4)};{_data.i32(12)};{r};'{s}')";
             }
             else
                 return $"R:DrawString,O:{iObjID},({(_data == null ? null : Convert.ToBase64String(_data))})";
@@ -198,42 +204,87 @@ namespace JCAMS.Core.Tests
         protected static IEnumerable<object[]> TrafficLightData => new[]
         {
           //  new object[]{ "Null",null,"0;0;0;0" },
-            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,
-                "H4sIAAAAAAAEAGNkYGDIYUCA/1AA438DskFYwdXXjYGBkWELEwMDLwOIhQb4GRgKOBgY6oAS19GkD" +
-                "K6wMtxwZ2YAGsCgA8QKQAw0TpvRgZFBBsgWAGImgQO3QWYmQDFIrQYQy0DV8jkwHJAAsnmgboSZPZ" +
-                "DqQoDYA6qOw4GByQDIVoH6BaSmAR4CDfYMSOIgk/gdGBxEgCwOpHCii90nBtDu/ww47YalA5CZTA4" +
-                "Qe0GAD4hFoGwBKBsA3I9xy7QCAAA=" },
-            new object[]{ "R(10,30),0,f",new Rectangle(0, 0, 10, 30), 0, false,
-                "H4sIAAAAAAAEAO1WzUobURg9d4JUpv4EOguF1KY2pRYVXIrWOi6qLixkYXeFlpJdC+0LpPQR8giz9h0CWbjwAQQFN3kEXYqL8Xwz33VuxizGyGihvcNhzv375vvOnNyMAfCDuIjjWDBLvkx8JxdckvcMUP/wcRsw+DwB/ORYBbk2DfwaB35z7UluauV4DKc7FTAAlog6wXCLJjSokVcJr9o741Z8VcjaBaKma6dC9GbI+XgwrVji+rxe8s7H4pvOSYyGAvizkWWRcY94Q8zoeqQxk/trJ84zh6/rcz4RTae2WNskecSZCG1eKWsQYC/d0UhyaupIOtvEO437XvOxzVe4OdjcpBinxi2nxhvuFdLQT64iet1Pl3PiuWkjNE2iQYB9cBw4VCWiRLeIfVk/TBerSVC6LsED6dIxEbrUpU9d+tSlz61dokO0Ep1EL9EtYl/WD9MlUF3mStcFD6TL3/c72id2VZfxEN6K7pNzK9mR7d2EMy6VTYcIA83ParimOfgodl59IVaVr+q4vWPeJGdo8jQMNlur+07GGNzq7577glH1t7GfMPZd9V1wcnR1+X9+DdfrXn48yvvRL9ePRxhoRfx4pX58BevHu+v/OH78d/83RvZjjJwfg1L9mD8gi/iRfdjv4lH1L8OPe0QLmTeekr/AoFfk+/gtDpyKU/1v8+FtHpm/5T3b73V5z154UwemkPoJOi/8GiSq3fZcDAAA" },
-            new object[]{ "R(10,30),4,f",new Rectangle(0, 0, 10, 30), 4, false,
-                "H4sIAAAAAAAEAO1Xu0orURRdJyJXxic4hYJvc1FRwVJ8joWPQiGF1l4udlpYWAmKn+AnTO0/CCks/" +
-                "ABBwSafoKVYjGvP7GOOY4okMlHRMyxmn8fes/ealZ3EADggHqMoEvTSnib2aQueaBcNMLS6tQYYHL" +
-                "UDx1zLITU6gcMW4JRnb1NbMzfNuFtvAgNgihgiGG7SBAZ9tLskXlfxnq74p5Cz40Sfnu0IUOyh3UY" +
-                "wrUjieryGeedj8V/3JEZeAZwtlrMo25L7Xz0vG92O77zG2yEKTg2RDpaPkDshTnglVp4AZ4lHPn52" +
-                "QVeS3QIWNO4S0ePE9RRuDm5uTi0rTi2vdq4qrrz4yp6XB6LfnCAwBSJPgHNwHbhSJsKYt5BzOV+JF" +
-                "8uJnzkvfoN4OTchLslLibyUyEuJrpfEObEX8yR8CW8h53K+Ei++8jKQOS9oEC9f73O0TWwoLy0Bcj" +
-                "PqJ/0p9ij7LsNZl8o6AwS+5mc5nNMcPFTXl3aJWc1/VtftHSMm7pXx0/B22FrdupsZ3PLv9ndBvfz" +
-                "b2H8Yu1Z+x50cXV5++1dlvj6kx+u0Hr1s9XiNN6MaPT6rHkdh9Vg7/5+jx5/7vVG3HiOk9Ohnqsd0" +
-                "g6xGj5zD/v6tl/9G6xE19scxJLowlqboPT/fvW9uEntOjq20B1M5y/+GCVw4FSV6fW9XHiMo9wN5P" +
-                "/Z/jLyfXPCaLzq0Hui+2C9jklhDdA0AAA==" },
-            new object[]{ "R(10,30),4,t",new Rectangle(0, 0, 10, 30), 4, true,
-                "H4sIAAAAAAAEAO2XzS4kURTH/7dESPlM1ILEGB8tCBJLwZiaxQwLkl6wJmLHwgMgHsHSstbeQdILC" +
-                "w8gIbHpR2Apsyj/U3Wuvl16UVq6CW7lnzr369S5vzp9utsA2Kce4jgWDdCepfZoix5plwww/Hf9H2" +
-                "Bw1gUccqwFmdYDHLQDx1x7k5mau27F7UoL6AAz1DBFd9MmNBik3Ut5vaU7bsW2StZOUoO6tjtEqZ9" +
-                "2J8WwYvHr8xrhnY/Fjs6Jj4IKOPlViaJie9QE1a/rkfpM7uOOnz7HXtTnbFJF52yxNmJBxJkIR7xS" +
-                "q0CBvXRHIYmpqCPpbBFL6ndZ47HNV7kx2NjkMM4Z/zhnfLa9XAz95MrD621c7qkf5gihKVIFCuyD4" +
-                "8ClkogSbhH7sr4WF8skaDiXoElcTk2EC3Ipk0uZXMrcekGdUrsJJ+El3CL2ZX0tLoFyGWo4FzSJy8" +
-                "f7HG1Qq8qlPYQ3p/ukbiU7Knt/wxmXk/WECAONzzJc0Bh85KtXW9S82vM6bu8YNUkNTZ6G6mbP6r6" +
-                "TVjq3/N26L6qXv/XdRt+v5TvpxOhy+a5ftXm9KR+vsvnoNzYfr1DV8uTjf83HMdh8fD3/98nHr/u9" +
-                "UXc+xsjkY9DQfMwWyDz5yD7s7+J6+Tc7H+HUR7u//t/G1aw+Qw1do3adGDto/8zELP8tpnDunCjN3" +
-                "Zd27TaKSm2Qd2X/68i78sLneNGt54HOi/0E0KMhLZgNAAA=" },
-            new object[]{ "R(10,30),2,f",new Rectangle(0, 0, 10, 30), 2, false,
-                "H4sIAAAAAAAEAO2Xu04bURCG/7MWAi1gkNjCSNziGMURQaK0QoCl4FIkkoukDkJ0SZEHwBGPQEm5dd4ByQWFHwCJSDR+BFIiiuWf3Tn4sLhYjOyghLP6tXNuszPfjo9tA+A79SeOY9E07WXqG23RNe2mARa2Pm0DBifjwCHHCsi0CeDHCPCTay8yUyvnQ/i9UwAd4B21QNHdkgkNZmhPUt5k85JbsaeStVVqRtcWQzRLtMcohhWLX5/XK975WOzrnPioqICjtU4UHduj3lAlXY/UZ3JfdPxMOfaqPucLVXdyi7URCyLORGjwSq0KBfbSHZUkprqOpLN1fFC/6xqPbb7KjcHGJsk4OW46Od7ZXi6GfnLl4fU0LlfUrGkgNHWqQoF9cBw4UxJRwi1iX9Z342KZBH3nEgyIy7GJcEoubXJpk0ubW0+pY+og4SS8hFvEvqzvxiVQLnN954IBcXl+n6PP1K5yGQnhreg+ObeSHZ29G3DGJbOJEGGg8VmG7zUGH/nOq69UTe2ajts7yiY5Q5On4X6zubrvZIjOLX/33Bf1yt/6Hqbvx/KtOjG6XF7Or+68nlSPrWw9+v2txxbutTz1eKP1+Bq2Hh/P/+/U4//7vdFzPcbI1GPQ13rMHpB56pF92N/FvfIfdD0KV8vS7u/1t7Fl9i/V7EfqwIlxlPZ8Jmb5b/EWv5yM0tp9aHdvZXTOBnlX9r+OvCsvvIsXRc0LOi/2LW5cAR6YDQAA" },
-            new object[]{ "R(10,30),6,f",new Rectangle(0, 0, 10, 30), 6, false,
-                "H4sIAAAAAAAEAO2Xz04TURTGvztNQzNIS8IsMAHlTw0QNGHZqOC4UFxA0oWuNYSdLngBDFt2fYRZ+w5NunDBA5BA4qaPoEvDYvjOzLnt7ViTaUsrEe7ky5z778y5vzn3dmoAfKF+xXEsekj7GfWZtug37ZYBlt7svwUMzsvAKdsKyJQKcFQCvnLsRaZr67yIy90C6ABPqSWK7jZNaLBAe5byZls/OBWfVDJ2nVrQseUQrXnaDyiGFYtfn9cy73wsDrRPfFRVwMl2N4qu7VFr1LyOR+ozuT9x/Mw59gt9zgeq7qwt1jJDO2JPhGNeqVWlwFo6o5rEVNeWtLeOl+p3R+OxxVe5MdjYZDHOGl87a+zYXi6GfnLl4TUal5/UojlGaOpUlQLrYDvwXUlECbeIdRnfj4tlEoydSzAhLg0ToUkubXJpk0ubU5tUgzpMOAkv4RaxLuP7cQmUy6Oxc8GEuNy+ffSeeqdcSiG8LZ0n51Yyozv3FZx2WVklRBhofJbhc43BR77z6iNVU7um7faOFZOcocnT0FvsWt13UqRzy98990XD8re+p+h7UL7rTowul/vzqz+vkfLxLJuP/njz8Qw9JU8+Xmk+rsLm4+D8/00+3t3fjaHzMUYmH4Ox5mP2gMyTj6zDfhcPy3/S+QjnfLTzh/827mX1v5yhf2eHzl4elR1uhN3t2u971KET4zTtx5mY5X/ZBr45K0r3/Z92/7KC7rkq78r+T5R35YWdeFHWdUH7xb4GFLSR+tQOAAA=" },
-            new object[]{ "R(10,30),8,f",new Rectangle(0, 0, 10, 30), 8, false,
-                "H4sIAAAAAAAEAO2Xv07bUBTGv+sIFRkISHhIJUohpGpQQWKMgFJ3aGEAKQPMVBVbO/QBSMUjMHb0zDsgZWDIAyCB1CWPACPqYL5jn0suJoMJSkCFa33yuf+Oz/35+No2AH5Sl3Eci17TXqR+0BZd0W4aYObL1lfA4M8YsM+2AjJlHPg1DPzm2LNM19LpEM7XC6ADLFAzFN19MKHBFO0Jypto/uVUfFPJ2Co1pWOLIZol2qMUw4rFr89jlmdeFt+1T3xUVMDBx04UHduj3lMlHY/UZ3J+5/iZdOwVvc4OVXfWFmshFkTsidDgkVoVCqylMypJTHVtSXvrWFW/axqPLb7KjcHGJotx1vjZWeON7eVi6CdHHl4P43JBvTENhKZOVSiwDrYDJ0oiSrhFrMv4blwsk6DvXIIBcTk0EY7JpU0ubXJpc+oxdUjtJZyEl3CLWJfx3bgEymW671wwIC5P7znapjaUy3AIb0nnyb6VzOjM/QSnXVY2HiIMND7LcFlj8JFvv9qlamrXtN2eUTbJHppcDbeLXat7T4bo3PJ3931Rr/yt71f0fV++VSdGl8vL/tWd14PysZXNR7+/+djCrZInH/9pPs7B5uP9+T9OPj7f90bP+Rgjk49BX/Mxu0HmyUfWYb+Le+U/6HyUjAHSp9vO7/nbOMPqf3inb1J7TowjtN9mYpZ/i3kcOVdOc/eu3b2U0dkb5F7Zfx25V154Ey+KSJ9FaL/Y1xA20QeYDQAA" },
-       };
+            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}" } },
+            new object[]{ "R(10,30),0,f",new Rectangle(0, 0, 10, 30), 0, false,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=41,Height=61}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(0;10;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(0;10;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;20;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;20;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;10;10)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(10,30),4,f",new Rectangle(0, 0, 10, 30), 4, false,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=41,Height=61}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(0;10;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;20;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;20;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;10;10)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(10,30),4,t",new Rectangle(0, 0, 10, 30), 4, true,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=41,Height=61}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(0;10;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;20;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;20;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;10;10)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(10,30),2,f",new Rectangle(0, 0, 10, 30), 2, false,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=41,Height=51}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(0;10;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(0;10;10;10)
+R:FillEllipse,O:0,#FF00FF00,(0;20;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;10;10)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(10,30),6,f",new Rectangle(0, 0, 10, 30), 6, false,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=41,Height=46}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(0;10;10;10)
+R:FillEllipse,O:0,#FF00FF00,(0;20;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;10;10)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(10,30),8,f",new Rectangle(0, 0, 10, 30), 8, false,new[] {
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-5,Width=41,Height=51}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(0;10;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(0;10;10;10)
+R:FillEllipse,O:0,#40FFFFFF,(0;20;10;10)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;20;10;10)
+R:FillEllipse,O:0,#FFFF0000,(0;0;10;10)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+             };
 
         protected static IEnumerable<object[]> TrafficLightData2 => new[]
         {
@@ -304,79 +355,498 @@ namespace JCAMS.Core.Tests
         protected static IEnumerable<object[]> TrafficLightData4 => new[]
         {
           //  new object[]{ "Null",null,"0;0;0;0" },
-            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,
-                "H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}" },
-            new object[]{ "R(300,100), 0,f",new Rectangle(0, 0, 300, 100), 0, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=331,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)\r\nR:DrawEllipse,O:0,(100;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(200;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100), 2,f",new Rectangle(0, 0, 300, 100), 2, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=316,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)\r\nR:DrawEllipse,O:0,(100;0;100;100)\r\nR:FillEllipse,O:0,#FF00FF00,(200;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100), 4,f",new Rectangle(0, 0, 300, 100), 4, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=331,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(200;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100), 6,f",new Rectangle(0, 0, 300, 100), 6, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=316,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)\r\nR:FillEllipse,O:0,#FF00FF00,(200;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100), 8,f",new Rectangle(0, 0, 300, 100), 8, false,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-15,Width=316,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)\r\nR:DrawEllipse,O:0,(100;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100), 8,t",new Rectangle(0, 0, 300, 100), 8, true,
-                "H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=381,Height=231}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)\r\nR:DrawEllipse,O:0,(100;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:Object,201,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:1,(0;0;100;100)\r\nR:DrawEllipse,O:1,(-10;-10;120;120)\r\nR:DrawEllipse,O:1,(-20;-20;140;140)\r\nR:DrawEllipse,O:1,(-30;-30;160;160)\r\nR:DrawEllipse,O:1,(-40;-40;180;180)\r\nR:DrawEllipse,O:1,(-50;-50;200;200)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100),10,f",new Rectangle(0, 0, 300, 100), 10, false,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-15,Width=301,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)\r\nR:DrawEllipse,O:0,(100;0;100;100)\r\nR:FillEllipse,O:0,#FF00FF00,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100),10,t",new Rectangle(0, 0, 300, 100), 10, true,
-                "H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=366,Height=231}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)\r\nR:DrawEllipse,O:0,(100;0;100;100)\r\nR:FillEllipse,O:0,#FF00FF00,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:Object,201,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:1,(0;0;100;100)\r\nR:DrawEllipse,O:1,(-10;-10;120;120)\r\nR:DrawEllipse,O:1,(-20;-20;140;140)\r\nR:DrawEllipse,O:1,(-30;-30;160;160)\r\nR:DrawEllipse,O:1,(-40;-40;180;180)\r\nR:DrawEllipse,O:1,(-50;-50;200;200)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100),12,f",new Rectangle(0, 0, 300, 100), 12, false,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-15,Width=316,Height=131}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100),12,t",new Rectangle(0, 0, 300, 100), 12, true,
-                "H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=381,Height=231}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)\r\nR:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:Object,201,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:1,(0;0;100;100)\r\nR:DrawEllipse,O:1,(-10;-10;120;120)\r\nR:DrawEllipse,O:1,(-20;-20;140;140)\r\nR:DrawEllipse,O:1,(-30;-30;160;160)\r\nR:DrawEllipse,O:1,(-40;-40;180;180)\r\nR:DrawEllipse,O:1,(-50;-50;200;200)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100),14,f",new Rectangle(0, 0, 300, 100), 14, false,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=301,Height=101}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)\r\nR:FillEllipse,O:0,#FF00FF00,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(300,100),14,t",new Rectangle(0, 0, 300, 100), 14, true,
-                "H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=366,Height=231}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)\r\nR:FillEllipse,O:0,#FF00FF00,(200;0;100;100)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:DrawEllipse,O:0,(-10;-10;120;120)\r\nR:DrawEllipse,O:0,(-20;-20;140;140)\r\nR:DrawEllipse,O:0,(-30;-30;160;160)\r\nR:DrawEllipse,O:0,(-40;-40;180;180)\r\nR:DrawEllipse,O:0,(-50;-50;200;200)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
+            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,new[]{
+                "H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}" } },
+            new object[]{ "R(300,100), 0,f",new Rectangle(0, 0, 300, 100), 0, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=331,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(100;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(200;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100), 2,f",new Rectangle(0, 0, 300, 100), 2, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=316,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(100;0;100;100)
+R:FillEllipse,O:0,#FF00FF00,(200;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100), 4,f",new Rectangle(0, 0, 300, 100), 4, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=331,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(200;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100), 6,f",new Rectangle(0, 0, 300, 100), 6, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=316,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)
+R:FillEllipse,O:0,#FF00FF00,(200;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100), 8,f",new Rectangle(0, 0, 300, 100), 8, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-15,Width=316,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(100;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100), 8,t",new Rectangle(0, 0, 300, 100), 8, true,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=381,Height=231}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(100;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:Object,201,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:1,(0;0;100;100)
+R:DrawEllipse,O:1,(-10;-10;120;120)
+R:DrawEllipse,O:1,(-20;-20;140;140)
+R:DrawEllipse,O:1,(-30;-30;160;160)
+R:DrawEllipse,O:1,(-40;-40;180;180)
+R:DrawEllipse,O:1,(-50;-50;200;200)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100),10,f",new Rectangle(0, 0, 300, 100), 10, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-15,Width=301,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(100;0;100;100)
+R:FillEllipse,O:0,#FF00FF00,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100),10,t",new Rectangle(0, 0, 300, 100), 10, true,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=366,Height=231}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#40FFFFFF,(100;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA////)
+R:DrawEllipse,O:0,(100;0;100;100)
+R:FillEllipse,O:0,#FF00FF00,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:Object,201,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:1,(0;0;100;100)
+R:DrawEllipse,O:1,(-10;-10;120;120)
+R:DrawEllipse,O:1,(-20;-20;140;140)
+R:DrawEllipse,O:1,(-30;-30;160;160)
+R:DrawEllipse,O:1,(-40;-40;180;180)
+R:DrawEllipse,O:1,(-50;-50;200;200)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100),12,f",new Rectangle(0, 0, 300, 100), 12, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-15,Width=316,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100),12,t",new Rectangle(0, 0, 300, 100), 12, true,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=381,Height=231}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)
+R:FillEllipse,O:0,#40FFFFFF,(200;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:Object,201,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:1,(0;0;100;100)
+R:DrawEllipse,O:1,(-10;-10;120;120)
+R:DrawEllipse,O:1,(-20;-20;140;140)
+R:DrawEllipse,O:1,(-30;-30;160;160)
+R:DrawEllipse,O:1,(-40;-40;180;180)
+R:DrawEllipse,O:1,(-50;-50;200;200)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100),14,f",new Rectangle(0, 0, 300, 100), 14, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=301,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)
+R:FillEllipse,O:0,#FF00FF00,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(300,100),14,t",new Rectangle(0, 0, 300, 100), 14, true,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-65,Y=-65,Width=366,Height=231}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(100;0;100;100)
+R:FillEllipse,O:0,#FF00FF00,(200;0;100;100)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:DrawEllipse,O:0,(-10;-10;120;120)
+R:DrawEllipse,O:0,(-20;-20;140;140)
+R:DrawEllipse,O:0,(-30;-30;160;160)
+R:DrawEllipse,O:0,(-40;-40;180;180)
+R:DrawEllipse,O:0,(-50;-50;200;200)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
        };
 
         protected static IEnumerable<object[]> TrafficSignalData => new[]
         {
           //  new object[]{ "Null",null,"0;0;0;0" },
-            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,
-                 "H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}" },
-            new object[]{ "R(100,300), 0,f",new Rectangle(0, 0, 100, 300), 0, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300), 2,f",new Rectangle(0, 0, 100, 300), 2, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-16711936,(0;200;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300), 4,f",new Rectangle(0, 0, 100, 300), 4, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-256,(0;100;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300), 6,f",new Rectangle(0, 0, 100, 300), 6, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-256,(0;100;100;100)\r\nR:FillEllipse,O:0,-16711936,(0;200;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300), 8,f",new Rectangle(0, 0, 100, 300), 8, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-65536,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),10,f",new Rectangle(0, 0, 100, 300), 10, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-65536,(0;0;100;100)\r\nR:FillEllipse,O:0,-16711936,(0;200;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-           new object[]{ "R(100,300),12,f",new Rectangle(0, 0, 100, 300), 12, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-65536,(0;0;100;100)\r\nR:FillEllipse,O:0,-256,(0;100;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-           new object[]{ "R(100,300),14,f",new Rectangle(0, 0, 100, 300), 14, false,
-                "H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,C000,(AGQA/wEAAAD2//b/eABAAQ==)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)\r\nR:DrawRects,4000,(AQAAAPb/9v94AEAB)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:FillEllipse,O:0,-1,(0;0;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:FillEllipse,O:0,-1,(0;100;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)\r\nR:DrawEllipse,O:0,(0;100;100;100)\r\nR:FillEllipse,O:0,-1,(0;200;100;100)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)\r\nR:DrawEllipse,O:0,(0;200;100;100)\r\nR:FillEllipse,O:0,-65536,(0;0;100;100)\r\nR:FillEllipse,O:0,-256,(0;100;100;100)\r\nR:FillEllipse,O:0,-16711936,(0;200;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
+            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,new[]{
+                 "H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}" } },
+            new object[]{ "R(100,300), 0,f",new Rectangle(0, 0, 100, 300), 0, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;100;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)
+R:DrawEllipse,O:0,(0;100;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;200;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300), 2,f",new Rectangle(0, 0, 100, 300), 2, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;100;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)
+R:DrawEllipse,O:0,(0;100;100;100)
+R:FillEllipse,O:0,#FF00FF00,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300), 4,f",new Rectangle(0, 0, 100, 300), 4, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFF00,(0;100;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;200;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300), 6,f",new Rectangle(0, 0, 100, 300), 6, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFFFFFF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAP//)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFF00,(0;100;100;100)
+R:FillEllipse,O:0,#FF00FF00,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300), 8,f",new Rectangle(0, 0, 100, 300), 8, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;100;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)
+R:DrawEllipse,O:0,(0;100;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;200;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),10,f",new Rectangle(0, 0, 100, 300), 10, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;100;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAyP//)
+R:DrawEllipse,O:0,(0;100;100;100)
+R:FillEllipse,O:0,#FF00FF00,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+           new object[]{ "R(100,300),12,f",new Rectangle(0, 0, 100, 300), 12, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFF00,(0;100;100;100)
+R:FillEllipse,O:0,#FFFFFFFF,(0;200;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAA/wD/)
+R:DrawEllipse,O:0,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+           new object[]{ "R(100,300),14,f",new Rectangle(0, 0, 100, 300), 14, false,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-70,Y=-70,Width=241,Height=441}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF006400,((-10;-10;120;320))
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAAD/)
+R:DrawRects,F:False,O:0,((-10;-10;120;320))
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:FillEllipse,O:0,#FFFFFF00,(0;100;100;100)
+R:FillEllipse,O:0,#FF00FF00,(0;200;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
        };
 
         protected static IEnumerable<object[]> LoadUnloadData => new[]
         {
           //  new object[]{ "Null",null,"0;0;0;0" },
-            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=-1,Y=-2,Width=2,Height=3}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAgD8DAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAADg3AQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=0,Width=0,Height=0};'■')\r\nR:Object,600,(AhDA2wAAgD8DAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=0,Height=0};'▼')\r\nR:Object,600,(AhDA2wAAgD8DAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=0,Height=0};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),0,f",new Rectangle(0, 0, 100, 300), 0, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAADg3AQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
+            new object[]{ "Empty",new Rectangle(0,0,0,0),0,false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-2,Width=2,Height=3}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAgD8DAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAADg3AQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=0,Width=0,Height=0};'■')
+R:Object,600,(AhDA2wAAgD8DAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=0,Height=0};'▼')
+R:Object,600,(AhDA2wAAgD8DAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=0,Height=0};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" ,@"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-2,Width=2,Height=3}" } },
+            new object[]{ "R(100,300),0,f",new Rectangle(0, 0, 100, 300), 0, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAADg3AQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
               //"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x010,f",new Rectangle(0, 0, 100, 300), 0x10, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x020,f",new Rectangle(0, 0, 100, 300), 0x20, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x030,f",new Rectangle(0, 0, 100, 300), 0x30, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x200,f",new Rectangle(0, 0, 100, 300), 0x200, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x210,f",new Rectangle(0, 0, 100, 300), 0x210, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x220,f",new Rectangle(0, 0, 100, 300), 0x220, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
-            new object[]{ "R(100,300),x230,f",new Rectangle(0, 0, 100, 300), 0x230, false,0,
-                "H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')\r\nR:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)\r\nR:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)" },
+            new object[]{ "R(100,300),x010,f",new Rectangle(0, 0, 100, 300), 0x10, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),x020,f",new Rectangle(0, 0, 100, 300), 0x20, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),x030,f",new Rectangle(0, 0, 100, 300), 0x30, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=255, G=0, B=0];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),x200,f",new Rectangle(0, 0, 100, 300), 0x200, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{{X=0,Y=-5,Width=100,Height=305}}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{{X=0,Y=200,Width=100,Height=100}};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{{X=0,Y=100,Width=100,Height=100}};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{{X=0,Y=0,Width=100,Height=100}};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),x210,f",new Rectangle(0, 0, 100, 300), 0x210, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),x220,f",new Rectangle(0, 0, 100, 300), 0x220, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
+            new object[]{ "R(100,300),x230,f",new Rectangle(0, 0, 100, 300), 0x230, false,0,new[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=305}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAGrbAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=50, G=205, B=50];1;0;{X=0,Y=200,Width=100,Height=100};'■')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=0, G=0, B=255];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",@"H:tEmfPlusDual,v-608169982,b{X=0,Y=-5,Width=100,Height=205}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:Object,701,(AhDA2wAAAAAAAAnCAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAq6oqPquqKj4K14M/AQAAAAAAAAAAAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=100,Width=100,Height=100};'▼')
+R:Object,600,(AhDA2wAAhEIDAAAAAAAAAAAAAAAFAAAAQQBSAEkAQQBMAAAA)
+R:DrawString,O:0,(Color [A=255, R=245, G=245, B=245];1;0;{X=0,Y=0,Width=100,Height=100};'▲')
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)" } },
        };
 
         protected static IEnumerable<object[]> DrawSomethingData => new[]
@@ -409,57 +879,318 @@ namespace JCAMS.Core.Tests
             new object[]{ "Red",1,new Rectangle(0,0,100,100), Color.Red, false, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FF9B0000,((0;0;100;100))\r\nR:FillRects,O:0,#FF9B0000,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAM3/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FF9B0000,(0;0;100;100)\r\nR:FillEllipse,O:0,#FF9B0000,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAM3/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(AACb/wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(AACb/wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAM3/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
             new object[]{ "Yellow",2,new Rectangle(0,0,100,100), Color.Yellow, false, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FF9B9B00,((0;0;100;100))\r\nR:FillRects,O:0,#FF9B9B00,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzc3/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FF9B9B00,(0;0;100;100)\r\nR:FillEllipse,O:0,#FF9B9B00,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzc3/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(AJub/wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(AJub/wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzc3/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
             new object[]{ "Green",3,new Rectangle(0,0,100,100), Color.Lime, false, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FF009B00,((0;0;100;100))\r\nR:FillRects,O:0,#FF009B00,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzQD/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FF009B00,(0;0;100;100)\r\nR:FillEllipse,O:0,#FF009B00,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzQD/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(AJsA/wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(AJsA/wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzQD/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
             new object[]{ "Blue",5,new Rectangle(0,0,100,100), Color.Blue, false, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FF00009B,((0;0;100;100))\r\nR:FillRects,O:0,#FF00009B,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAADNAAD/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FF00009B,(0;0;100;100)\r\nR:FillEllipse,O:0,#FF00009B,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAADNAAD/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(mwAA/wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(mwAA/wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAADNAAD/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
            new object[]{ "Red+",1,new Rectangle(0,0,100,100), Color.Red, true, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FFFF0000,((0;0;100;100))\r\nR:FillRects,O:0,#FFFF6464,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAM3/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFF0000,(0;0;100;100)\r\nR:FillEllipse,O:0,#FFFF6464,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAM3/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(AAD//wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(ZGT//wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAAM3/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
             new object[]{ "Yellow+",2,new Rectangle(0,0,100,100), Color.Yellow, true, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FFFFFF00,((0;0;100;100))\r\nR:FillRects,O:0,#FFFFFF64,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzc3/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FFFFFF00,(0;0;100;100)\r\nR:FillEllipse,O:0,#FFFFFF64,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzc3/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(AP///wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(ZP///wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzc3/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
             new object[]{ "Green+",3,new Rectangle(0,0,100,100), Color.Lime, true, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FF00FF00,((0;0;100;100))\r\nR:FillRects,O:0,#FF64FF64,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzQD/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FF00FF00,(0;0;100;100)\r\nR:FillEllipse,O:0,#FF64FF64,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzQD/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
-                "",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(AP8A/wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(ZP9k/wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAAAAzQD/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
                 "" }
             },
             new object[]{ "Blue+",5,new Rectangle(0,0,100,100), Color.Blue, true, new string[]{
          "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillRects,O:0,#FF0000FF,((0;0;100;100))\r\nR:FillRects,O:0,#FF6464FF,((25;25;25;25))\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAADNAAD/)\r\nR:DrawRects,F:False,O:0,((0;0;100;100))\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}\r\nR:EmfMin,0,()\r\nR:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)\r\nR:FillEllipse,O:0,#FF0000FF,(0;0;100;100)\r\nR:FillEllipse,O:0,#FF6464FF,(25;25;25;25)\r\nR:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAADNAAD/)\r\nR:DrawEllipse,O:0,(0;0;100;100)\r\nR:EndOfFile,0,()\r\nR:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=-60,Y=-60,Width=221,Height=221}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillPolygon,O:0,(/wAA/wQAAAAAAAAAZAAAAAAAZAAAAAAA)
+R:FillPolygon,O:0,(/2Rk/wQAAAAZABkAMgAZABkAMgAZABkA)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAIEEAAAAAAhDA2wAAAADNAAD/)
+R:DrawLines,F:True,O:0,((0;0),(100;0),(0;100),(0;0))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
                 "",
-                "",
+                "" }
+            },
+        };
+
+        protected static IEnumerable<object[]> DrawLabelTestData => new[] {
+            // string name, Rectangle rVal, int iSze, string sVal, Color cVal, string[] asExp
+            new object[]{ "Empty", new Rectangle(0,0,0,0), 0,"", Color.Empty, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"",
+                @"",
+                @"",
+                "" },
+            },
+        };
+
+        protected static IEnumerable<object[]> DrawArrowTestData => new[] {
+            // string name, Point pVal, Brush bVal, Pen pnVal, double dAng, int iLen, double dSpeed, string[] asExp
+            new object[]{ "Empty", new Point(0,0), Brushes.Transparent,Pens.Transparent,0d,0,0d, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"",
+                "" },
+            },
+        };
+
+        protected static IEnumerable<object[]> DrawShapeData => new[]
+ {
+            new object[]{ "Empty",0, new Rectangle(0,0,0,0), Color.Empty,Color.Empty, 0, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                @"H:tEmfPlusDual,v-608169982,b{X=-1,Y=-1,Width=2,Height=2}",
+                "" },
+            },
+            new object[]{ "Red",1,new Rectangle(0,0,100,100), Color.Red,Color.DarkRed, 1, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=-15,Y=-15,Width=131,Height=131}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgD8AAAAAAhDA2wAAAAAAAIv/)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FFFF0000,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+            new object[]{ "Yellow",2,new Rectangle(0,0,100,100), Color.Yellow,Color.DarkOrange, 2, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FFFFFF00,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+            new object[]{ "Green",3,new Rectangle(0,0,100,100), Color.Lime,Color.DarkGreen, 3, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FF00FF00,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF00FF00,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+            new object[]{ "Blue",5,new Rectangle(0,0,100,100), Color.Blue,Color.DarkBlue, 4, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FF0000FF,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=-30,Y=-30,Width=161,Height=161}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FF0000FF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAgEAAAAAAAhDA2wAAAACLAAD/)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF0000FF,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+           new object[]{ "Red+",1,new Rectangle(0,0,100,100), Color.Red, Color.LightCoral, 3, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=-25,Y=-25,Width=151,Height=151}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFF0000,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAQEAAAAAAAhDA2wAAAACAgPD/)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FFFF0000,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+            new object[]{ "Yellow+",2,new Rectangle(0,0,100,100), Color.Yellow, Color.WhiteSmoke, 5, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FFFFFF00,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FFFFFF00,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+            new object[]{ "Green+",3,new Rectangle(0,0,100,100), Color.Lime, Color.White, 7, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FF00FF00,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF00FF00,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
+                "" }
+            },
+            new object[]{ "Blue+",5,new Rectangle(0,0,100,100), Color.Blue, Color.LightBlue, 9, new string[]{
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FF0000FF,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=-55,Y=-55,Width=211,Height=211}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillEllipse,O:0,#FF0000FF,(0;0;100;100)
+R:Object,200,(AhDA2wAAAACAAAAAAAAAAAAAEEEAAAAAAhDA2wAAAADm2K3/)
+R:DrawEllipse,O:0,(0;0;100;100)
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"H:tEmfPlusDual,v-608169982,b{X=0,Y=0,Width=101,Height=101}
+R:EmfMin,0,()
+R:Header,1,(AhDA2wEAAABgAAAAYAAAAA==)
+R:FillRects,O:0,#FF0000FF,((0;0;100;100))
+R:EndOfFile,0,()
+R:EmfEof,0,(AAAAABAAAAAUAAAA)",
+                @"",
                 "" }
             },
         };
@@ -486,206 +1217,155 @@ namespace JCAMS.Core.Tests
             new object[]{ "Blue-10", Color.Blue, (byte)10u,Color.FromArgb(0,0,245), Color.FromArgb(10,10,255) },
             new object[]{ "Blue-255", Color.Blue, (byte)255u,Color.FromArgb(0, 0, 0), Color.FromArgb(255,255,255) },
         };
-
-        [DataTestMethod()]
-        [TestProperty("Author", "JC")]
-        [DynamicData("TrafficLightData")] // Kann man allgemeiner machen 
-        public void TrafficLightTest(string name, Rectangle rVal, int iState, bool xVal, string sExp)
+        private void IntTestGraphics(string name, Rectangle? rVal, string sExp, Action<Graphics> a, Func<Point>? o)
         {
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            Graphics g = GraphicsWriter(ms);
+            a(g);
+            g.Dispose();
+            ms.Position = 0L;
+            if (rVal.HasValue)
             {
-                Graphics g = GraphicsWriter(ms);
-                var oP = ms.Position;
-                SGraphics.TrafficLight(g, rVal, iState, xVal);
-                g.Dispose();
-                ms.Position = 0L;
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = oP;
-                Assert.AreEqual(sExp, ms.AsCompString(),$"Test: {name}");
+                var r = rVal!.Value;
+                r.Offset(o?.Invoke() ?? Point.Empty);
+                rVal = r;
             }
+#if ShowGfx
+            DrawToScreen(new Metafile(ms), rVal);
+            ms.Position = 0L;
+#endif
+            Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficLightData4")] // Kann man allgemeiner machen 
-        public void TrafficLightTest2(string name, Rectangle rVal, int iState, bool xVal, string sExp)
+        [DynamicData(nameof(TrafficLightData))] // Kann man allgemeiner machen 
+        public void TrafficLightTest(string name, Rectangle rVal, int iState, bool xVal, string[] asExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.TrafficLight(g, rVal, iState, xVal);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, rVal, asExp[0],
+                (g) => SGraphics.TrafficLight(g, rVal, iState, xVal),
+                () => new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficLightData3")] // Kann man allgemeiner machen 
+        [DynamicData(nameof(TrafficLightData4))] // Kann man allgemeiner machen 
+        public void TrafficLightTest2(string name, Rectangle rVal, int iState, bool xVal, string[] asExp)
+        {
+            IntTestGraphics(name, rVal, asExp[0],
+                (g) => SGraphics.TrafficLight(g, rVal, iState, xVal),
+                () => new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));
+        }
+
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(TrafficLightData3))] // Kann man allgemeiner machen 
         public void TrafficLightTest3(string name, Rectangle rVal, int iState, bool xVal, string sExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.TrafficLight(g, rVal, iState, xVal);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * iState/2, xVal ? rVal.Height : 0));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, rVal, sExp,
+                               (g) => SGraphics.TrafficLight(g, rVal, iState, xVal),
+                                () => new Point(0, 0));
         }
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("LoadUnloadData")] // Kann man allgemeiner machen 
-        public void LoadAndUnloadTest(string name, Rectangle rVal, int iState, bool xVal, int iPos, string sExp)
+        [DynamicData(nameof(LoadUnloadData))] // Kann man allgemeiner machen 
+        public void LoadAndUnloadTest(string name, Rectangle rVal, int iState, bool xVal, int iPos, string[] asExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.LoadAndUnload(g, rVal, iState, xVal, iPos);
-                
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * (iState&0x30) / 16, rVal.Height *(((iState & 0x200)>>9) + ( xVal ? 2 : 0)) ) );
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, rVal, asExp[0],
+               (g) => SGraphics.LoadAndUnload(g, rVal, iState, xVal, iPos),
+               () => new Point(rVal.Width * (iState & 0x30) / 16, rVal.Height * (((iState & 0x200) >> 9) + (xVal ? 2 : 0))));
         }
 
         [TestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("LoadUnloadData")] // Kann man allgemeiner machen 
-        public void BeUndEntladen1Test(string name, Rectangle rVal, int iState, bool xVal, int iPos, string sExp)
+        [DynamicData(nameof(LoadUnloadData))] // Kann man allgemeiner machen 
+        public void BeUndEntladen1Test(string name, Rectangle rVal, int iState, bool xVal, int iPos, string[] asExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.BeUndEntladen1(g, rVal, iState, xVal, iPos);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * (iState & 0x30) / 16, rVal.Height * (((iState & 0x200) >> 9) + (xVal ? 2 : 0))));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, rVal, asExp[1],
+              (g) => SGraphics.BeUndEntladen1(g, rVal, iState, xVal, iPos),
+              () => new Point(rVal.Width * (iState & 0x30) / 16, rVal.Height * (((iState & 0x200) >> 9) + (xVal ? 2 : 0))));
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("LoadUnloadData")] // Kann man allgemeiner machen
-        public void DrawAGVArrowHeadTest(string name, Point pVal, Brush bVal, Pen pnVal ,double dAng, int iLen, double dSpeed, string sExp)
+        [DynamicData(nameof(DrawArrowTestData))] // Kann man allgemeiner machen
+        public void DrawAGVArrowHeadTest(string name, Point pVal, Brush bVal, Pen pnVal, double dAng, int iLen, double dSpeed, string[] asExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawAGVArrowHead(g, bVal, pnVal, pVal, dAng, iLen,dSpeed);
-                g.Dispose();
-                ms.Position = 0L;
-//                rVal.Offset(new Point(rVal.Width * (iState & 0x30) / 16, rVal.Height * (((iState & 0x200) >> 9) + (xVal ? 2 : 0))));
-                DrawToScreen(new Metafile(ms));
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, null, asExp[0],
+                (g) => SGraphics.DrawAGVArrowHead(g, bVal, pnVal, pVal, dAng, iLen, dSpeed),
+                null);
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawArrowTestData))] // Kann man allgemeiner machen
+        public void DrawArrowHeadTest(string name, Point pVal, Brush bVal, Pen pnVal, double dAng, int iLen, double dSpeed, string[] asExp)
+        {
+            IntTestGraphics(name, null, asExp[1],
+                (g) => SGraphics.DrawArrowHead(g, pVal, dAng, bVal, iLen),
+                null);
         }
 
         [TestMethod()]
-        public void DrawArrowHeadTest()
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawArrowTestData))] // Kann man allgemeiner machen
+        public void DrawArrowToTest(string name, Point pVal, Brush bVal, Pen pnVal, double dAng, int iLen, double dSpeed, string[] asExp)
         {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DrawArrowToTest()
-        {
-            Assert.Fail();
+            IntTestGraphics(name, null, asExp[2],
+                (g) => SGraphics.DrawArrowTo(g, pnVal, pVal, iLen, (float)dAng),
+                null);
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")] 
-        public void DrawBullsEyeTest(string name,Pen pVal, PointF pCnt, int iVal, string[] sExp)
+        [DynamicData(nameof(DrawSomethingData))]
+        public void DrawBullsEyeTest(string name, Pen pVal, PointF pCnt, int iVal, string[] sExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawBullsEye(g, pVal, pCnt, iVal);
-                g.Dispose();
-                ms.Position = 0L;
-                DrawToScreen(new Metafile(ms) );
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[0], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, null, sExp[0],
+                               (g) => SGraphics.DrawBullsEye(g, pVal, pCnt, iVal),
+                               () => Point.Empty);
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")]
-        public void DrawCircleTest(string name,Pen pVal, PointF pCntr, int iRad, string[] sExp)
+        [DynamicData(nameof(DrawSomethingData))]
+        public void DrawCircleTest(string name, Pen pVal, PointF pCntr, int iRad, string[] sExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawCircle(g, pVal, pCntr, iRad);
-                g.Dispose();
-                ms.Position = 0L;
-                DrawToScreen(new Metafile(ms));
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[1], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, null, sExp[1],
+                (g) => SGraphics.DrawCircle(g, pVal, pCntr, iRad),
+                () => Point.Empty);
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")]
+        [DynamicData(nameof(DrawSomethingData))]
         public void DrawCrossTest(string name, Pen pVal, PointF pCntr, int iRad, string[] sExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawCross(g, pVal, pCntr, iRad);
-                g.Dispose();
-                ms.Position = 0L;
-                DrawToScreen(new Metafile(ms));
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[2], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, null, sExp[2],
+                (g) => SGraphics.DrawCross(g, pVal, pCntr, iRad),
+                () => Point.Empty);
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawSomethingData")]
+        [DynamicData(nameof(DrawSomethingData))]
         public void DrawXTest(string name, Pen pVal, PointF pCntr, int iRad, string[] sExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawX(g, pVal, pCntr, iRad);
-                g.Dispose();
-                ms.Position = 0L;
-                DrawToScreen(new Metafile(ms));
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[3], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, null, sExp[3],
+                (g) => SGraphics.DrawX(g, pVal, pCntr, iRad),
+                () => Point.Empty);
         }
 
         [DataTestMethod()]
-        public void DrawLabelTest(string name, Rectangle rVal, int iSze, string sVal,Color cVal, string sExp)
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawLabelTestData))]
+        public void DrawLabelTest(string name, Rectangle rVal, int iSze, string sVal, Color cVal, string[] asExp)
         {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawLabel(g, rVal, iSze, sVal,cVal);
-                g.Dispose();
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, ms.AsCompString(), $"Test: {name}");
-            }
+            // use IntTestGraphics
+            IntTestGraphics(name, rVal, asExp[0],
+                (g) => SGraphics.DrawLabel(g, rVal, iSze, sVal, cVal),
+                () => new Point(0, 0));
         }
 
         [TestMethod()]
@@ -708,108 +1388,108 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawLedData")]
-        public void DrawRectangularLEDTest(string name,int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
+        [DynamicData(nameof(DrawLedData))]
+        public void DrawRectangularLEDTest(string name, int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
         {
             const int cled = 0;
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawRectangularLED(g, rVal, cCol, xAct);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * iTestNo  , rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[cled], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, rVal, sExp[cled],
+                   (g) => SGraphics.DrawRectangularLED(g, rVal, cCol, xAct),
+                   () => new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawLedData")]
+        [DynamicData(nameof(DrawLedData))]
         public void DrawRoundLEDTest(string name, int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
         {
             const int cled = 1;
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawRoundLED(g, rVal, cCol, xAct);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[cled], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
+            IntTestGraphics(name, rVal, sExp[cled],
+                (g) => SGraphics.DrawRoundLED(g, rVal, cCol, xAct),
+                () => new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("DrawLedData")]
+        [DynamicData(nameof(DrawLedData))]
         public void DrawTriangularLEDTest(string name, int iTestNo, Rectangle rVal, Color cCol, bool xAct, string[] sExp)
         {
             const int cled = 2;
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.DrawTriangularLED(g, rVal, cCol, xAct);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp[cled], MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
-        }
-
-        [TestMethod()]
-        public void FillSolidEllipseTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void FillSolidEllipseTest1()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void FillSolidPolygonTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void FillSolidPolygonTest1()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void FillSolidRectTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void FillSolidRectTest1()
-        {
-            Assert.Fail();
+            IntTestGraphics(name, rVal, sExp[cled],
+                (g) => SGraphics.DrawTriangularLED(g, rVal, cCol, xAct),
+                () => new Point(rVal.Width * iTestNo, rVal.Height * (cled * 2 + (xAct ? 1 : 0))));
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(DrawShapeData))]
+        public void FillSolidEllipseTest(string name, int iTestNo, Rectangle rVal, Color cCol, Color cCol2, int iAct, string[] sExp)
+        {
+            IntTestGraphics(name, rVal, sExp[0],
+                (g) => SGraphics.FillSolidEllipse(g, rVal, cCol),
+                () => new Point(rVal.Width * iTestNo, 0));
+        }
+
+        [TestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawShapeData))]
+        public void FillSolidEllipseTest1(string name, int iTestNo, Rectangle rVal, Color cCol, Color cCol2, int iAct, string[] sExp)
+        {
+            IntTestGraphics(name, rVal, sExp[1],
+                (g) => SGraphics.FillSolidEllipse(g, rVal, cCol, cCol2, iAct),
+                () => new Point(rVal.Width * iTestNo, 100));
+        }
+
+        [TestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawShapeData))]
+        public void FillSolidPolygonTest(string name, int iTestNo, Rectangle rVal, Color cCol, Color cCol2, int iAct, string[] sExp)
+        {
+            IntTestGraphics(name, rVal, sExp[2],
+                (g) => SGraphics.FillSolidRect(g, rVal, cCol),
+                () => new Point(rVal.Width * iTestNo, 200));
+        }
+
+        [TestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawShapeData))]
+        public void FillSolidPolygonTest1(string name, int iTestNo, Rectangle rVal, Color cCol, Color cCol2, int iAct, string[] sExp)
+        {
+            IntTestGraphics(name, rVal, sExp[3],
+                (g) => SGraphics.FillSolidRect(g, rVal, cCol, cCol2, iAct),
+                () => new Point(rVal.Width * iTestNo, 300));
+        }
+
+        [TestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawShapeData))]
+        public void FillSolidRectTest(string name, int iTestNo, Rectangle rVal, Color cCol, Color cCol2, int iAct, string[] sExp)
+        {
+            IntTestGraphics(name, rVal, sExp[2],
+                (g) => SGraphics.FillSolidRect(g, rVal, cCol),
+                () => new Point(rVal.Width * iTestNo, 200));
+        }
+
+        [TestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(DrawShapeData))]
+        public void FillSolidRectTest1(string name, int iTestNo, Rectangle rVal, Color cCol, Color cCol2, int iAct, string[] sExp)
+        {
+            IntTestGraphics(name, rVal, sExp[3],
+                (g) => SGraphics.FillSolidRect(g, rVal, cCol, cCol2, iAct),
+                () => new Point(rVal.Width * iTestNo, 300));
+        }
+
+        [DataTestMethod()]
+        [TestProperty("Author", "JC")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetDarkColorTest(string name, Color cVal, byte bVal, Color cExp, Color cDummy)
         {
-            Assert.AreEqual(cExp,SGraphics.GetDarkColor(cVal,bVal),$"Test: {name}");
+            Assert.AreEqual(cExp, SGraphics.GetDarkColor(cVal, bVal), $"Test: {name}");
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetDarkColorTest1(string name, Color cVal, byte bVal, Color cExp, Color cDummy)
         {
             Assert.AreEqual(cExp, SGraphics.GetDarkColor(cVal, bVal), $"Test: {name}");
@@ -817,7 +1497,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetLightColorTest(string name, Color cVal, byte bVal, Color cDummx, Color cExp)
         {
             Assert.AreEqual(cExp, SGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
@@ -825,7 +1505,7 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("ColorLDData")]
+        [DynamicData(nameof(ColorLDData))]
         public void GetLightColorTest1(string name, Color cVal, byte bVal, Color cDummx, Color cExp)
         {
             Assert.AreEqual(cExp, SGraphics.GetLightColor(cVal, bVal), $"Test: {name}");
@@ -875,21 +1555,11 @@ namespace JCAMS.Core.Tests
 
         [DataTestMethod()]
         [TestProperty("Author", "JC")]
-        [DynamicData("TrafficSignalData")]
-        public void TrafficSignalTest(string name, Rectangle rVal, int iState, bool xVal, string sExp)
-        {
-            using (var ms = new MemoryStream())
-            {
-                Graphics g = GraphicsWriter(ms);
-                SGraphics.TrafficSignal(g, rVal, (iState & 8)!=0, (iState & 4) != 0, (iState & 2) != 0);
-                g.Dispose();
-                ms.Position = 0L;
-                rVal.Offset(new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));
-                DrawToScreen(new Metafile(ms), rVal);
-                ms.Position = 0L;
-                Assert.AreEqual(sExp, MfToProtocoll(new Metafile(ms)), $"Test: {name}");
-            }
-        }
+        [DynamicData(nameof(TrafficSignalData))]
+        public void TrafficSignalTest(string name, Rectangle rVal, int iState, bool xVal, string[] asExp)
+            => IntTestGraphics(name, rVal, asExp[0],
+                (g) => SGraphics.TrafficSignal(g, rVal, (iState & 8) != 0, (iState & 4) != 0, (iState & 2) != 0),
+                () => new Point(rVal.Width * iState / 2, xVal ? rVal.Height : 0));
 
         [TestMethod()]
         public void TransformRectangleTest()

@@ -1,0 +1,140 @@
+﻿<Page x:Class="MVVM_06_Converters_4.View.VehicleView1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_06_Converters_4.View"
+      xmlns:mvvm="clr-namespace:MVVM_06_Converters_4.ViewModels"
+      xmlns:vc="clr-namespace:MVVM_06_Converters_4.ValueConverter"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CurrencyView">
+    <Page.DataContext>
+        <mvvm:VehicleViewModel />
+    </Page.DataContext>
+    <Page.Resources>
+        <vc:DoubleValueConverter x:Key="vcMmDisplay" />
+        <vc:DoubleValueConverter x:Key="vcAngleDisplay" FixedFactor="57.295779513082320876798154814105" />
+        <vc:Bool2VisibilityConverter x:Key="vcBool2Visibility"/>
+        <Style TargetType="Label" >
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="10,2,10,2"/>
+            <Setter Property="Width" Value="170"/>
+            <Setter Property="HorizontalContentAlignment" Value="left"/>
+        </Style>
+        <Style TargetType="TextBox" >
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="10,2,10,2"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Width" Value="170"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+        </Style>
+    </Page.Resources>
+    <Grid Margin="0,0,0,-11">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Fahrzeug-Dimensionen">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
+                    <Label>Länge</Label>
+                    <TextBox Text="{Binding VehicleLength, ConverterParameter=0.00mm, Converter={StaticResource vcMmDisplay}}" InputScope="Number"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Breite</Label>
+                    <TextBox Text="{Binding VehicleWidth, ConverterParameter=0.00mm, Converter={StaticResource vcMmDisplay}}" InputScope="Number"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="DrehSchemel-Koordinaten (Stammdaten)" >
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
+                    <Label>X</Label>
+                    <TextBox Text="{Binding SwivelKoorX, ConverterParameter=0.00mm, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Y</Label>
+                    <TextBox Text="{Binding SwivelKoorY, ConverterParameter=0.00mm, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Achsdistanz</Label>
+                    <TextBox Text="{Binding AxisOffset, ConverterParameter=0.00mm, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Ist-Werte Drehschemel1" Grid.Row="2">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
+                    <Label>Ausrichtung (Geber)</Label>
+                    <TextBox Text="{Binding Swivel1Angle, ConverterParameter=0.00°, Converter={StaticResource vcAngleDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                    <Slider Margin="10,2,10,2" Height="18" Maximum="3" Minimum="-3" SmallChange="0.01" TickFrequency="0.1" Value="{Binding Swivel1Angle, Delay=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Rad 1(4) (links)</Label>
+                    <TextBox Text="{Binding Wheel1Velocity, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                    <Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel1Velocity, Delay=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Rad 2(4) (rechts)</Label>
+                    <TextBox Text="{Binding Wheel2Velocity, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                    <Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel2Velocity, Delay=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Drehschemel1</Label>
+                    <TextBox Text="{Binding Swivel1Velocity, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                    <TextBox Text="{Binding Swivel1Rot, ConverterParameter=0.00°/s, Converter={StaticResource vcAngleDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Ist-Werte Drehschemel2" Grid.Row="3">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
+                    <Label>Ausrichtung (Geber)</Label>
+                    <TextBox Text="{Binding Swivel2Angle, ConverterParameter=0.00°, Converter={StaticResource vcAngleDisplay}, ValidatesOnExceptions=True}"  InputScope="Number"/>
+                    <Slider Margin="10,2,10,2" Height="18" Maximum="3" Minimum="-3" SmallChange="0.01" TickFrequency="0.1" Value="{Binding Swivel2Angle, Delay=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Rad 3(4) (links)</Label>
+                    <TextBox Text="{Binding Wheel3Velocity, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                    <Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel3Velocity, Delay=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Rad 4(4) (rechts)</Label>
+                    <TextBox Text="{Binding Wheel4Velocity, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, ValidatesOnExceptions=True}" InputScope="Number"/>
+                    <Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel4Velocity, Delay=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Drehschemel</Label>
+                    <TextBox Text="{Binding Swivel2Velocity, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                    <TextBox Text="{Binding Swivel2Rot, ConverterParameter=0.00°/s, Converter={StaticResource vcAngleDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox  Header="Ergebnisse:" Grid.Row="4">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. X</Label>
+                    <TextBox Text="{Binding VehicleVelocityX, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Geschw. Y</Label>
+                    <TextBox Text="{Binding VehicleVelocityY, ConverterParameter=0.00mm/s, Converter={StaticResource vcMmDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label>Rotation</Label>
+                    <TextBox Text="{Binding VehicleRotation, ConverterParameter=0.00°/s, Converter={StaticResource vcAngleDisplay}, Mode=OneWay}" InputScope="Number" IsReadOnly="true"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <Button Content="Save" Command="{Binding SaveCommand}" Margin="00,10,20,10" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="{Binding ValueIsNotZero, Converter={StaticResource vcBool2Visibility}, Mode=OneWay}" Height="20" Width="40" />
+
+    </Grid>
+</Page>

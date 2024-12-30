@@ -1,0 +1,117 @@
+﻿<Page x:Class="WPF_AnimationTiming.Views.AnimationTimingView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WPF_AnimationTiming.Views"
+      xmlns:p="clr-namespace:WPF_AnimationTiming.Properties"
+      xmlns:vc="clr-namespace:WPF_AnimationTiming.ValueConverter"
+      xmlns:mvvm="clr-namespace:WPF_AnimationTiming.ViewModels"
+      xmlns:model="clr-namespace:WPF_AnimationTiming.Models"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static p:Resources.Title}">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:TemplateViewModel/>
+    </Page.DataContext>
+    <DockPanel Background="White">
+        <TabControl Name="sampleSelector" SelectedIndex="0" TabStripPlacement="Top">
+            <TabItem ToolTip="RepeatBehavior Example">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Images/Repeat.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="RepeatBehavior"  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame Source="RepeatBehaviorExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="AutoReverse Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/AutoRev.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="AutoReverse"  VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+                <Frame Source="AutoReverseExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="BeginTime Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/BeginTime.png" Width="24" Height="24" />
+                        <TextBlock Margin="12,6,12,6" Text="BeginTime" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+                <Frame Source="BeginTimeExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="FillBehavior Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/FillBehavior.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="FillBehavior" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+                <Frame Source="FillBehaviorExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="Speed Example">
+                <TabItem.Header>
+                    <DockPanel>
+                    <Image DockPanel.Dock="Left" Source="/Images/Speed.png" Width="24" Height="24"/>
+                    <TextBlock Margin="12,6,12,6" Text="Speed" VerticalAlignment="Center"/>
+                </DockPanel>
+                </TabItem.Header>
+                <Frame Source="SpeedExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="Acceleration and Deceleration Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/AccDec.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="Acc- and Deceleration" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+
+                <Frame Source="AccelDecelExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="HandoffBehavior Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/Handoff.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="HandoffBehavior" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+
+                <Frame Source="HandoffVersusComposeExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="Databinding Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/Databinding.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="Databinding" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+                <Frame Source="DataboundSliderAnimationExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="IsCumulative Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/IsCumulative.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="IsCumulative" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+                <Frame Source="IsCumulativeExample.xaml" Background="White" />
+            </TabItem>
+            <TabItem ToolTip="IsAdditive Example">
+                <TabItem.Header>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Left" Source="/Images/IsAdditive.png" Width="24" Height="24"/>
+                        <TextBlock Margin="12,6,12,6" Text="IsAdditive" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </TabItem.Header>
+                <Frame Source="IsAdditiveExample.xaml" Background="White" />
+            </TabItem>
+        </TabControl>
+
+    </DockPanel>
+</Page>

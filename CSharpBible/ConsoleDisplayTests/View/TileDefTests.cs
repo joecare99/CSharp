@@ -60,9 +60,9 @@ namespace ConsoleDisplay.View.Tests
         /// Gets the tile definition.
         /// </summary>
         /// <param name="tile">The tile.</param>
-        /// <returns>The visual defintion of the tile</returns>
+        /// <returns>The visual definition of the tile</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum tile)
+        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile)
         {
             throw new NotImplementedException();
         }
@@ -173,7 +173,7 @@ namespace ConsoleDisplay.View.Tests
                 if (i < array.Length)
                    Assert.AreEqual(array[i], TestTileDef.TestGetArrayElement(array, (TestEnum)i));
                 else
-                    Assert.AreEqual(array[array.Length-1], TestTileDef.TestGetArrayElement(array, (TestEnum)i));
+                    Assert.AreEqual(array[^1], TestTileDef.TestGetArrayElement(array, (TestEnum)i));
         }
 
 

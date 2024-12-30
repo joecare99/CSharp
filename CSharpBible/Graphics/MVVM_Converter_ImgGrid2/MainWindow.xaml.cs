@@ -38,9 +38,9 @@ namespace MVVM_Converter_ImgGrid2
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainWindowViewModel vm)
+            if (DataContext is ImgGridViewModel vm)
             {
-                vm.ShowClient = ShowClientinFrame;
+                vm.ShowClient = _ShowClientinFrame;
             }
         }
 
@@ -51,7 +51,7 @@ namespace MVVM_Converter_ImgGrid2
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void Frame_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainWindowViewModel vm)
+            if (DataContext is ImgGridViewModel vm)
             {
 //                vm.FrameDataContext = e.Source as Frame
             }
@@ -62,14 +62,14 @@ namespace MVVM_Converter_ImgGrid2
         /// </summary>
         /// <param name="arg">The argument.</param>
         /// <returns>BaseViewModel.</returns>
-        private BaseViewModel ShowClientinFrame(string arg)
+        private BaseViewModel? _ShowClientinFrame(string arg)
         {
             try
             {
                 this.Client.Source = new Uri(arg);
                 return Client.DataContext as BaseViewModel;
             }
-            catch(Exception ex) 
+            catch(Exception) 
             {
                 return null;
             };

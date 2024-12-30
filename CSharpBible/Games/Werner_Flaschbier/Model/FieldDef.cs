@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System.Collections.Generic;
+
 namespace Werner_Flaschbier_Base.Model
 {
     /// <summary>

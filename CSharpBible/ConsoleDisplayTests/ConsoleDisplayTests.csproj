@@ -1,15 +1,8 @@
-<Project>
-  <PropertyGroup>
-    <TargetFrameworks>net461;net472;net48</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-	  <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
+﻿<Project>
+	<Import Project="..\Solution.props" />
+	<PropertyGroup>
+    <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
-    <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <BaseOutputPath>..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
-    <Company>JC-Soft</Company>
-    <Copyright>Copyright © 2022 by JC-Soft</Copyright>
     <IsPackable>false</IsPackable>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
@@ -25,10 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.7.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.7.0" />
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -36,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
+    <ProjectReference Include="..\Libraries\BaseLibTests\BaseLibTests.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 

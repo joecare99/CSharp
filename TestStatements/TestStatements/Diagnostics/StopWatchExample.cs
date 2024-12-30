@@ -12,8 +12,10 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using TestStatements.Anweisungen;
 
 namespace TestStatements.Diagnostics
 {
@@ -22,6 +24,9 @@ namespace TestStatements.Diagnostics
     /// </summary>
     public static class StopWatchExample
     {
+        public static Func<dynamic> GetStopwatch { get; set; }= () => new Stopwatch();
+        public static Action<int> ThreadSleep { get; set; }=(i) => Thread.Sleep(i);
+
         /// <summary>
         /// Examples the main.
         /// </summary>
@@ -36,9 +41,9 @@ namespace TestStatements.Diagnostics
         public static void ExampleMain1()
         {
             Console.WriteLine("This will take aprox. 10s");
-            Stopwatch stopWatch = new Stopwatch();
+            var stopWatch = GetStopwatch();
             stopWatch.Start();
-            Thread.Sleep(10000);
+            ThreadSleep(10000);
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;
@@ -71,15 +76,14 @@ namespace TestStatements.Diagnostics
         /// </summary>
         public static void DisplayTimerProperties()
         {
+            var _dic = new Dictionary<bool, string>()
+            {
+                { true,"Operations timed using the system's high-resolution performance counter." },
+                { false, "Operations timed using the DateTime class." }
+            };
+
             // Display the timer frequency and resolution.
-            if (Stopwatch.IsHighResolution)
-            {
-                Console.WriteLine("Operations timed using the system's high-resolution performance counter.");
-            }
-            else
-            {
-                Console.WriteLine("Operations timed using the DateTime class.");
-            }
+            Console.WriteLine(_dic[Stopwatch.IsHighResolution]);
 
             long frequency = Stopwatch.Frequency;
             Console.WriteLine("  Timer frequency in ticks per second = {0}",
@@ -92,7 +96,7 @@ namespace TestStatements.Diagnostics
         /// <summary>
         /// Times the operations.
         /// </summary>
-        private static void TimeOperations()
+        public static void TimeOperations()
         {
             long nanosecPerTick = (1000L * 1000L * 1000L) / Stopwatch.Frequency;
             const long numIterations = 1000;
@@ -117,7 +121,8 @@ namespace TestStatements.Diagnostics
                 int indexSlowest = -1;
                 long milliSec = 0;
 
-                Stopwatch time10kOperations = Stopwatch.StartNew();
+                var time10kOperations = GetStopwatch();
+                time10kOperations.Start();
 
                 // Run the current operation 10001 times.
                 // The first execution time will be tossed
@@ -127,20 +132,30 @@ namespace TestStatements.Diagnostics
                 {
                     long ticksThisTime = 0;
                     int inputNum;
-                    Stopwatch timePerParse;
+                    dynamic timePerParse;
 
+                    Func<(bool ok, int)> f = (operation) switch {
+                        0 => () => (true, Int32.Parse("0")),
+                        1 => () => (Int32.TryParse("0", out int i), i),
+                        2 => () => (true, Int32.Parse("a")),
+                        _ => () => (Int32.TryParse("a", out int i), i)
+                    };
+
+                    bool ok;
                     switch (operation)
                     {
                         case 0:
+                        case 2:
                             // Parse a valid integer using
                             // a try-catch statement.
 
                             // Start a new stopwatch timer.
-                            timePerParse = Stopwatch.StartNew();
+                            timePerParse = GetStopwatch();
+                            timePerParse.Start();
 
                             try
                             {
-                                inputNum = Int32.Parse("0");
+                                (_,inputNum) = f();
                             }
                             catch (FormatException)
                             {
@@ -154,13 +169,16 @@ namespace TestStatements.Diagnostics
                             ticksThisTime = timePerParse.ElapsedTicks;
                             break;
                         case 1:
+                        case 3:
                             // Parse a valid integer using
                             // the TryParse statement.
 
                             // Start a new stopwatch timer.
-                            timePerParse = Stopwatch.StartNew();
+                            timePerParse = GetStopwatch();
+                            timePerParse.Start();
 
-                            if (!Int32.TryParse("0", out inputNum))
+                            (ok, inputNum) = f();
+                            if (ok)
                             {
                                 inputNum = 0;
                             }
@@ -170,47 +188,9 @@ namespace TestStatements.Diagnostics
                             timePerParse.Stop();
                             ticksThisTime = timePerParse.ElapsedTicks;
                             break;
-                        case 2:
-                            // Parse an invalid value using
-                            // a try-catch statement.
-
-                            // Start a new stopwatch timer.
-                            timePerParse = Stopwatch.StartNew();
-
-                            try
-                            {
-                                inputNum = Int32.Parse("a");
-                            }
-                            catch (FormatException)
-                            {
-                                inputNum = 0;
-                            }
-
-                            // Stop the timer, and save the
-                            // elapsed ticks for the operation.
-                            timePerParse.Stop();
-                            ticksThisTime = timePerParse.ElapsedTicks;
-                            break;
-                        case 3:
-                            // Parse an invalid value using
-                            // the TryParse statement.
-
-                            // Start a new stopwatch timer.
-                            timePerParse = Stopwatch.StartNew();
-
-                            if (!Int32.TryParse("a", out inputNum))
-                            {
-                                inputNum = 0;
-                            }
-
-                            // Stop the timer, and save the
-                            // elapsed ticks for the operation.
-                            timePerParse.Stop();
-                            ticksThisTime = timePerParse.ElapsedTicks;
-                            break;
-
-                        default:
-                            break;
+                       
+                   /*     default:
+                            break;*/
                     }
 
                     // Skip over the time for the first operation,

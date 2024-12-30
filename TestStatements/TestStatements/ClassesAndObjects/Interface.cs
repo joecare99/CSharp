@@ -176,7 +176,7 @@ namespace TestStatements.ClassesAndObjects
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return "I am Class4";
+            return "I am Class5";
         }
     }
 

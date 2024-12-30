@@ -5,14 +5,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MVVM_31_Validation1.View"
       xmlns:mvvm="clr-namespace:MVVM_31_Validation1.ViewModels"
+      xmlns:p="clr-namespace:MVVM_31_Validation1.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ValidationPage">
+      Title="Validation by Exception">
     <Page.DataContext>
         <mvvm:ValidationPageViewModel/>
     </Page.DataContext>
     <StackPanel>
-        <TextBlock>User-Name (min. 6 Char)</TextBlock>
+        <TextBlock Text="{x:Static p:Resources.text_HdrUsername}"/>
         <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"/>
     </StackPanel>
 </Page>

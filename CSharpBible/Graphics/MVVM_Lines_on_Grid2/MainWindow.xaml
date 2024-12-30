@@ -6,8 +6,5 @@
         xmlns:local="clr-namespace:MVVM_Lines_on_Grid2"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Frame Content="Page" Source="/View/PlotFrame.xaml" NavigationUIVisibility="Automatic"/>
-
-    </Grid>
+        <Frame Content="Page" Source="/View/PlotFrame.xaml" NavigationUIVisibility="Automatic" ClipToBounds="True" Margin="10"/>
 </Window>

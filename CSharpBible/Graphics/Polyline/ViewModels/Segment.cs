@@ -18,20 +18,15 @@ namespace Polyline.ViewModels
     /// </summary>
     public class Segment
     {
-#if NET50_OR_GREATER
-        public Coordinate? Start { get; set; }
-        public Coordinate? End { get; set; }
-#else
         /// <summary>
         /// Gets or sets the start.
         /// </summary>
         /// <value>The start.</value>
-        public Coordinate Start { get; set; }
+        public Coordinate? Start { get; set; }
         /// <summary>
         /// Gets or sets the end.
         /// </summary>
         /// <value>The end.</value>
-        public Coordinate End { get; set; }
-#endif
+        public Coordinate? End { get; set; }
     }
 }

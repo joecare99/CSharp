@@ -12,11 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sokoban_Base.Model
 {
@@ -1352,14 +1348,14 @@ new string[]{
         /// </summary>
         /// <param name="level">The level.</param>
         /// <returns>System.ValueTuple&lt;FieldDef[], Size&gt;.</returns>
-        public static (FieldDef[],Size) GetLevel(int level)
+        public static (FieldDef[], Size) GetLevel(int level)
         {
             Size s = new Size();
             s.Height = SLevels[level].Length;
             foreach (var line in SLevels[level])
-              s.Width  = Math.Max(s.Width, line.Length);  
-            FieldDef[] fields = new FieldDef[s.Height*s.Width];
-            
+                s.Width = Math.Max(s.Width, line.Length);
+            FieldDef[] fields = new FieldDef[s.Height * s.Width];
+
             for (var lnr = 0; lnr < s.Height; lnr++)
                 for (int x = 0; x < SLevels[level][lnr].Length; x++)
                     fields[lnr * s.Width + x] = FieldDefs.SDef[SLevels[level][lnr][x]];

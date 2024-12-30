@@ -31,11 +31,11 @@ namespace TestStatements.Anweisungen
         /// <summary>
         /// The get now
         /// </summary>
-        public static Func<DateTime> GetNow = delegate { return DateTime.Now; };
+        public static Func<DateTime> GetNow = ()=> DateTime.Now; 
         /// <summary>
         /// The random
         /// </summary>
-        public static Func<Random> random = delegate { return r; };
+        public static Func<Random> random = ()=> r;
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample1()
         {
-            int caseSwitch = 1;
+            int caseSwitch = random().Next(3);
 
             switch (caseSwitch)
             {
@@ -83,7 +83,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample2()
         {
-            Color c = (Color)(random().Next(0, 3));
+            Color c = (Color)(random().Next(-1, 3));
             switch (c)
             {
                 case Color.Red:
@@ -106,8 +106,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample3()
         {
-            Random rnd = random();
-            int caseSwitch = rnd.Next(1, 4);
+            int caseSwitch = random().Next(0, 4);
 
             switch (caseSwitch)
             {
@@ -129,7 +128,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample4()
         {
-            var values = new List<object>();
+            var values = new List<object?>();
             for (int ctr = 0; ctr <= 7; ctr++)
             {
                 if (ctr == 2)
@@ -177,11 +176,8 @@ namespace TestStatements.Anweisungen
             names.AddRange(new string[] { "Adam", "Abigail", "Bertrand", "Bridgette" });
             ShowCollectionInformation(names);
 
-#if NET5_0_OR_GREATER
 			List<int>? numbers = null;
-#else
-			List<int> numbers = null;
-#endif
+
 			ShowCollectionInformation(numbers);
         }
 
@@ -189,11 +185,8 @@ namespace TestStatements.Anweisungen
         /// Show Collection Information
         /// </summary>
         /// <param name="coll">The coll.</param>
-#if NET5_0_OR_GREATER
         private static void ShowCollectionInformation(object? coll)
-#else
-		private static void ShowCollectionInformation(object coll)
-#endif
+
 		{
 			switch (coll)
             {
@@ -353,7 +346,7 @@ namespace TestStatements.Anweisungen
         /// Passes this instance.
         /// </summary>
         /// <returns>System.Object.</returns>
-        public static object Pass()
+        public static object? Pass()
         {
             if (rnd.Next(0, 2) == 0)
                 return null;

@@ -1,0 +1,27 @@
+﻿<Project>
+  <Import Project="..\DB_net.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <PackageReference Include="MySqlConnector" Version="2.4.0" />
+	</ItemGroup>
+	<ItemGroup>
+    <Compile Update="DataSets.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DataSets.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DataSets.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSets.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
