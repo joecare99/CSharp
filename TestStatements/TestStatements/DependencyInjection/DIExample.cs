@@ -13,7 +13,7 @@ namespace TestStatements.DependencyInjection
     {
         public static void Main(params string[] args)
         {
-            HostApplicationBuilder builder = new Host.CreateApplicationBuilder(args);
+            HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
             builder.Services.AddHostedService<Worker>()
                 .AddSingleton<IMessageWriter, MessageWriter>();
 

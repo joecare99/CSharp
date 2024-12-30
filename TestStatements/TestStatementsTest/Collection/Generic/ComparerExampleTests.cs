@@ -1,20 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestStatements.Collection.Generic;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using TestStatements.UnitTesting;
 
-namespace TestStatements.Collection.Generic.Tests {
-	/// <summary>
-	/// Defines test class ComparerExampleTests.
-	/// Implements the <see cref="ConsoleTestsBase" />
-	/// </summary>
-	/// <seealso cref="ConsoleTestsBase" />
-	[TestClass()]
+namespace TestStatements.Collection.Generic.Tests
+{
+    /// <summary>
+    /// Defines test class ComparerExampleTests.
+    /// Implements the <see cref="ConsoleTestsBase" />
+    /// </summary>
+    /// <seealso cref="ConsoleTestsBase" />
+    [TestClass()]
 	public class ComparerExampleTests :ConsoleTestsBase {
 		private readonly string cExpComparerExampleMain = "===================================================================" +
 			"===\r\n## Comparer<T> \r\n======================================================================\r\n\r\n" +

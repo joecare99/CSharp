@@ -139,7 +139,6 @@ namespace TestStatements.Collection.Generic.Tests
         [DataRow(2, "Tyrannosaurus\r\nAmargasaurus\r\nMamenchisaurus\r\nDeinonychus\r\nCompsognathus")]
         public void CreateTestDataTest(int iVal, string asExp)
         {
-            DinosaurExample.Clear();
             for (int i = 0; i < iVal; i++)
                 DinosaurExample.CreateTestData();
                 

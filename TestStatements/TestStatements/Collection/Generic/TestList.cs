@@ -28,7 +28,7 @@ namespace TestStatements.Collection.Generic
         /// Gets or sets the name of the part.
         /// </summary>
         /// <value>The name of the part.</value>
-        public string PartName { get; set; }
+        public string? PartName { get; set; }
 
         /// <summary>
         /// Gets or sets the part identifier.
@@ -42,7 +42,7 @@ namespace TestStatements.Collection.Generic
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return "ID: " + PartId + "   Name: " + PartName;
+            return $"ID: {PartId}   Name: {PartName}";
         }
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
@@ -436,17 +436,12 @@ namespace TestStatements.Collection.Generic
             ShowStatus(dinosaurs);
         }
 
-        public static void Clear()
-        {
-            dinosaurs.Clear();
-        }
-
         /// <summary>
         /// Creates the test data.
         /// </summary>
         public static void CreateTestData()
         {
-            Clear();
+            dinosaurs.Clear();
             dinosaurs.Add("Tyrannosaurus");
             dinosaurs.Add("Amargasaurus");
             dinosaurs.Add("Mamenchisaurus");
