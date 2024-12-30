@@ -97,7 +97,7 @@ namespace TestStatements.DataTypes
         public static void MainTest()
         {
             const string Title = "Enumerations";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             Type weekdays = typeof(Days);
             Type boiling = typeof(BoilingPoints);

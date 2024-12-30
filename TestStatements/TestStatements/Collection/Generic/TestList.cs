@@ -19,9 +19,9 @@ namespace TestStatements.Collection.Generic
 {
     /// <summary>
     /// Class Part.
-    /// Implements the <see cref="System.IEquatable{TestStatements.Collection.Generic.Part}" />
+    /// Implements the <see cref="IEquatable{Part}" />
     /// </summary>
-    /// <seealso cref="System.IEquatable{TestStatements.Collection.Generic.Part}" />
+    /// <seealso cref="IEquatable{Part}" />
     public class Part : IEquatable<Part>
     {
         /// <summary>
@@ -88,7 +88,7 @@ namespace TestStatements.Collection.Generic
         public static void ListMain()
         {
             const string Title = "Show List<T>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             CreateTestData();
             ShowList(parts);
@@ -276,7 +276,7 @@ namespace TestStatements.Collection.Generic
         public static void ListDinos()
         {
             const string Title = "Dinosaur Example";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             ShowStatus(dinosaurs);
 

@@ -41,7 +41,7 @@ namespace TestStatements.Anweisungen
         public static void DoYieldStatement(string[] args)
         {
             const string Title = "Beispiel für Yield-Statement";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             foreach (int i in Range(-10, 10))
             {

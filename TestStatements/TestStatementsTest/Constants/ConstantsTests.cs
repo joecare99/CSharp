@@ -9,7 +9,11 @@ namespace TestStatementTest.ConstantTests
     public class ConstantsTests
     {
         private const int cExpLoremIpsum = -466537496;//-687218507;// -466537496;//1742248702
+#if NET6_0
         private const int cExpHelloWorld = -1497658439;//485358840;// 1253652992;
+#else
+        private const int cExpHelloWorld = -1497658439;//485358840;// 1253652992;
+#endif
 
         [DataTestMethod()]
         [DataRow(1,Constants.LoremIpsum,typeof(string),5050, DisplayName = "Lorem Ipsum ...")]
@@ -43,7 +47,9 @@ namespace TestStatementTest.ConstantTests
             Assert.AreEqual(13, Constants.HelloWorld.Length, "length");
             Assert.AreEqual(2, Constants.HelloWorld.Count((c) => c == ' '), "Spaces");
             Assert.AreEqual("Hello World !", Constants.HelloWorld);
-            Assert.AreEqual(cExpHelloWorld, Constants.HelloWorld.GetHashCode(), "Hash");
+#if !NET5_0_OR_GREATER
+            Assert.AreEqual(cExpHelloWorld, Constants.HelloWorld.GetHashCode() ^ "\0".GetHashCode(), "Hash");
+#endif
         }
 
         [DataTestMethod]
@@ -62,7 +68,11 @@ namespace TestStatementTest.ConstantTests
                 case 1: Assert.AreEqual(oExp, Constants.HelloWorld.StartsWith(sVal), $"Startswith{sVal}"); break;
                 case 2: Assert.AreEqual(oExp, Constants.HelloWorld.EndsWith(sVal), "Endswith"); break;
                 case 3: Assert.AreEqual(oExp, Constants.HelloWorld.Contains(sVal)); break;
-                case 4: Assert.AreEqual(oExp, Constants.HelloWorld.GetHashCode(), "Hash"); break;
+                case 4:
+#if !NET5_0_OR_GREATER
+                    Assert.AreEqual(oExp, Constants.HelloWorld.GetHashCode() ^ "\0".GetHashCode(), "Hash"); 
+#endif
+                    break;
                 case 5: Assert.AreEqual(oExp, Constants.HelloWorld.Length, "length"); break;
                 case 6: Assert.AreEqual(oExp, Constants.HelloWorld.Count((c) => c == sVal[0]), "(new) Lines"); break;
                 case 7: Assert.AreEqual(oExp, Constants.HelloWorld.Count((c) => c == sVal[0]), "Spaces"); break;
@@ -79,7 +89,9 @@ namespace TestStatementTest.ConstantTests
             Assert.AreEqual(5050, Constants.LoremIpsum.Length, "length");
             Assert.AreEqual(71, Constants.LoremIpsum.Count((c) => c == '\n'), "(new) Lines");
             Assert.AreEqual(673, Constants.LoremIpsum.Count((c)=>c==' '), "Spaces");
+#if !NET5_0_OR_GREATER
             Assert.AreEqual(cExpLoremIpsum, Constants.LoremIpsum.GetHashCode(),"Hash");
+#endif
         }
 
         [DataTestMethod]
@@ -97,7 +109,11 @@ namespace TestStatementTest.ConstantTests
                 case 1: Assert.AreEqual(oExp, Constants.LoremIpsum.StartsWith(sVal), $"Startswith{sVal}"); break;
                 case 2: Assert.AreEqual(oExp, Constants.LoremIpsum.EndsWith(sVal), "Endswith");break; 
                 case 3: Assert.AreEqual(oExp, Constants.LoremIpsum.Contains(sVal));break;
-                case 4: Assert.AreEqual(oExp, Constants.LoremIpsum.GetHashCode(), "Hash");                    break;
+                case 4:
+#if !NET5_0_OR_GREATER
+                    Assert.AreEqual(oExp, Constants.LoremIpsum.GetHashCode(), "Hash"); 
+#endif
+                    break;
                 case 5: Assert.AreEqual(oExp, Constants.LoremIpsum.Length, "length");                    break;
                 case 6: Assert.AreEqual(oExp, Constants.LoremIpsum.Count((c) => c == sVal[0]), "(new) Lines");                    break;
                 case 7: Assert.AreEqual(oExp, Constants.LoremIpsum.Count((c) => c == sVal[0]), "Spaces");break;

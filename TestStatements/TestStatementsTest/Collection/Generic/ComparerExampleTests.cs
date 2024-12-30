@@ -12,7 +12,7 @@ namespace TestStatements.Collection.Generic.Tests
     [TestClass()]
 	public class ComparerExampleTests :ConsoleTestsBase {
 		private readonly string cExpComparerExampleMain = "===================================================================" +
-			"===\r\n## Comparer<T> \r\n======================================================================\r\n\r\n" +
+			"===\r\n## Comparer<T>\r\n======================================================================\r\n\r\n" +
 			"+----------------------------------------------------------\r\n| Show Sort with BoxLengthFirst - comparer\r\n" +
 			"+----------------------------------------------------------\r\nH - L - W\r\n==========\r\n10\t2\t10\r\n" +
 			"10\t4\t16\r\n24\t4\t18\r\n2\t6\t8\r\n8\t6\t20\r\n14\t6\t6\r\n16\t6\t16\r\n2\t8\t4\r\n2\t8\t12\r\n6\t10\t2\r\n" +

@@ -24,7 +24,8 @@ namespace TestStatements.Diagnostics
     /// </summary>
     public static class StopWatchExample
     {
-        public static Func<dynamic> GetStopwatch { get; set; }= () => new Stopwatch();
+        public static Func<IStopwatch> GetStopwatch { get; set; }= () => new StopwatchProxy();
+        public static Func<IStopwatch> GetStopwatch2 { get; set; }= () => new StopwatchProxy();
         public static Action<int> ThreadSleep { get; set; }=(i) => Thread.Sleep(i);
 
         /// <summary>
@@ -121,7 +122,7 @@ namespace TestStatements.Diagnostics
                 int indexSlowest = -1;
                 long milliSec = 0;
 
-                var time10kOperations = GetStopwatch();
+                var time10kOperations = GetStopwatch2();
                 time10kOperations.Start();
 
                 // Run the current operation 10001 times.
@@ -132,7 +133,7 @@ namespace TestStatements.Diagnostics
                 {
                     long ticksThisTime = 0;
                     int inputNum;
-                    dynamic timePerParse;
+                    IStopwatch timePerParse = GetStopwatch();
 
                     Func<(bool ok, int)> f = (operation) switch {
                         0 => () => (true, Int32.Parse("0")),
@@ -150,7 +151,7 @@ namespace TestStatements.Diagnostics
                             // a try-catch statement.
 
                             // Start a new stopwatch timer.
-                            timePerParse = GetStopwatch();
+                            timePerParse.Reset();
                             timePerParse.Start();
 
                             try
@@ -174,7 +175,7 @@ namespace TestStatements.Diagnostics
                             // the TryParse statement.
 
                             // Start a new stopwatch timer.
-                            timePerParse = GetStopwatch();
+                            timePerParse.Reset();
                             timePerParse.Start();
 
                             (ok, inputNum) = f();

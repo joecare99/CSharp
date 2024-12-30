@@ -33,7 +33,7 @@ namespace TestStatements.Collection.Generic
         {
 
             const string Title = "Dictionary<TKey,TValue>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             CreateTestData();
 

@@ -12,9 +12,9 @@ namespace TestStatements.DataTypes.Tests
     [TestClass()]
     public class FormatingTests : ConsoleTestsBase
     {
-        private readonly string cExpCombinedFormating = "======================================================================\r\n## Combined Formating \r\n======================================================================\r\nName = Fred, hours = 12";
+        private readonly string cExpCombinedFormating = "======================================================================\r\n## Combined Formating\r\n======================================================================\r\nName = Fred, hours = 12";
 #if NET5_0_OR_GREATER
-        private readonly string cExpEscapeSequence = "{D}\r\n{6324}\r\n{6324}"; 
+        private readonly string cExpEscapeSequence = "{6324}\r\n{6324}\r\n{6324 6324}"; 
 #else
         private readonly string cExpEscapeSequence = "{D}\r\n{6324}\r\n{6324 }"; 
 #endif
@@ -22,8 +22,8 @@ namespace TestStatements.DataTypes.Tests
             "Bridgette              6,7\r\nCarla                 40,4\r\n" +
             "Daniel                82,0\r\nEbenezer              40,3\r\n" +
             "Francine              80,0\r\nGeorge                16,8";
-        private readonly string cExpIndexKomponent2 = "======================================================================\r\n## Formating with Index 2 \r\n======================================================================\r\n0x7FFFFFFFFFFFFFFF 9,223372E+018 9.223.372.036.854.775.807,00";
-        private readonly string cExpIndexKomponent = "======================================================================\r\n## Formating with Index \r\n======================================================================\r\nPrime numbers less than 10: 2, 3, 5, 7";
+        private readonly string cExpIndexKomponent2 = "======================================================================\r\n## Formating with Index 2\r\n======================================================================\r\n0x7FFFFFFFFFFFFFFF 9,223372E+018 9.223.372.036.854.775.807,00";
+        private readonly string cExpIndexKomponent = "======================================================================\r\n## Formating with Index\r\n======================================================================\r\nPrime numbers less than 10: 2, 3, 5, 7";
         private readonly string cExpCodeExamples1= "Dienstag Januar\r\nDienstag Januar";
         private readonly string cExpCodeExamples2= "100,00 €";
         private readonly string cExpCodeExamples3= "Name = Fred, hours = 12, minutes = 00";

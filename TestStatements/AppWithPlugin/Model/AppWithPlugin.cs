@@ -26,7 +26,33 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         string pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar),"Debug", "net6.0"));
         Console.WriteLine($"Loading commands from: {pluginLocation}");
         PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
-        return loadContext.LoadFromAssemblyPath(Path.Combine(pluginLocation,relativePath)+".dll");
+        string assemblyPath = Path.Combine(pluginLocation, relativePath) + ".dll";
+        Assembly assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
+        if (!assembly?.IsFullyTrusted ?? false)
+            return null;
+
+        // Additional check for a valid signature (if applicable)
+        if (!IsAssemblySigned(assembly))
+        {
+            Console.WriteLine("Assembly is not signed or has an invalid signature.");
+            return null;
+        }
+        return assembly;
+    }
+
+    static bool IsAssemblySigned(Assembly assembly)
+    {
+        try
+        {
+            var name = assembly.GetName();
+            var publicKey = name.GetPublicKey();
+            var hash = assembly.GetHashCode(); // 30015890
+            return publicKey != null && publicKey.Length > 0;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     static IEnumerable<ICommand> CreateCommands(Assembly assembly,IEnvironment env)
@@ -59,18 +85,19 @@ public class AppWithPlugin : IEnvironment, IUserInterface
     IEnumerable<ICommand>? commands;
     private IMessenger? _messanger;
     private IServiceProvider? _sp;
+    private IServiceCollection? _sc;
 
     public IData data { get => throw new NotImplementedException(); }
     public IUserInterface ui { get => this; }
     public IMessenger messaging { get => _messanger ?? new WeakReferenceMessenger(); }
-    public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public string Title { get => Console.Title; set => Console.Title = value; }
 
     public void Initialize(string[] args)
     {
-        _sp = new ServiceCollection()
-            .AddTransient<IRandom, Model.Random>()
-            .AddTransient<ISysTime, Model.SysTime>()
-            .AddSingleton<ILogger, Logging>()
+        _sp = (_sc=(_sc ?? new ServiceCollection())
+            .AddTransient<IRandom, Random>()
+            .AddTransient<ISysTime, SysTime>()
+            .AddSingleton<ILogger, Logging>())
             .BuildServiceProvider();
 
 
@@ -80,10 +107,10 @@ public class AppWithPlugin : IEnvironment, IUserInterface
             ];
 
         commands = pluginPaths.SelectMany(pluginPath =>
-    {
-        Assembly pluginAssembly = LoadPlugin(pluginPath);
-        return CreateCommands(pluginAssembly,this);
-    }).ToList();
+        {
+            Assembly pluginAssembly = LoadPlugin(pluginPath);
+            return CreateCommands(pluginAssembly,this);
+        }).ToList();
         Console.WriteLine("AppWithPlugin is initialized.");
     }
 
@@ -136,9 +163,19 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         return _sp.GetService<T>();
     }
 
-    public bool AddService<T>(T service)
+    public bool AddService<T, T2>()
     {
-        throw new NotImplementedException();
+        try
+        {
+            _sc = (_sc ?? new ServiceCollection()).AddSingleton(typeof(T), typeof(T2));
+            _sp = _sc!.BuildServiceProvider();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return false;
+        }
     }
 
     public bool ShowMessage(string message)

@@ -27,7 +27,7 @@ namespace TestStatements.Anweisungen
         public static void DoExpressions(string[] args)
         {
             const string Title = "Beispiel für Ausdrücke";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             int i;
             i = 123;                // Expression statement
             Console.WriteLine(i);   // Expression statement
