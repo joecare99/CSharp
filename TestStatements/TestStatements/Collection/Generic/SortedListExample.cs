@@ -84,8 +84,7 @@ namespace TestStatements.Collection.Generic
             CreateTestSL();
             openWith["doc"] = "winword.exe";
 
-            Console.WriteLine();
-            Console.WriteLine("Indexed retrieval using the Values " +
+            Console.WriteLine("\nIndexed retrieval using the Values " +
                 "property: Values[2] = {0}", openWith.Values[2]);
         }
 
@@ -124,8 +123,7 @@ namespace TestStatements.Collection.Generic
             CreateTestSL();
             openWith["doc"] = "winword.exe";
 
-            Console.WriteLine();
-            Console.WriteLine("Indexed retrieval using the Keys " +
+            Console.WriteLine("\nIndexed retrieval using the Keys " +
                 "property: Keys[2] = {0}", openWith.Keys[2]);
         }
 
@@ -140,8 +138,7 @@ namespace TestStatements.Collection.Generic
             CreateTestSL();
             openWith["doc"] = "winword.exe";
 
-            Console.WriteLine();
-            Console.WriteLine("Remove(\"doc\")");
+            Console.WriteLine("\nRemove(\"doc\")");
             openWith.Remove("doc");
 
             if (!openWith.ContainsKey("doc"))

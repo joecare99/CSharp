@@ -51,6 +51,10 @@ namespace TestStatements.Reflection
         /// </summary>
         public static void ExampleMain()
         {
+            const string Title = $"Example for {nameof(Reflection)} ({nameof(ReflectionExample)})";
+            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine();
+
             // Create an array of types.
             Type[] types = { typeof(ReflectionExample), typeof(NestedClass),
                          typeof(INested), typeof(S) };

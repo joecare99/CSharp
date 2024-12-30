@@ -1,20 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestStatements.Reflection;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TestStatements.UnitTesting;
 
 namespace TestStatements.UnitTesting.Tests
 {
-	/// <summary>
-	/// Defines test class DataTests.
-	/// Implements the <see cref="ConsoleTestsBase" />
-	/// </summary>
-	/// <seealso cref="ConsoleTestsBase" />
-	[TestClass()]
+    /// <summary>
+    /// Defines test class DataTests.
+    /// Implements the <see cref="ConsoleTestsBase" />
+    /// </summary>
+    /// <seealso cref="ConsoleTestsBase" />
+    [TestClass()]
     public class DataTests : ConsoleTestsBase
     {
 		static int[] NullSeries5() => new int[] { 2, 1, 3, -1, 0 };
