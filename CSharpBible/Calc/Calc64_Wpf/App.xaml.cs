@@ -17,7 +17,7 @@ namespace Calc64_Wpf
         {
             base.OnStartup(e);
 
-            var BaseServices = new ServiceCollection()
+            IServiceCollection BaseServices = new ServiceCollection()
                 .AddSingleton<ICalculator, Calc64Model>();
                 
             var serviceProvider = BaseServices.BuildServiceProvider();

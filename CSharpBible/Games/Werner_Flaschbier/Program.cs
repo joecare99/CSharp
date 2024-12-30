@@ -12,29 +12,39 @@
 // <summary></summary>
 // ***********************************************************************
 
+using BaseLib.Helper;
+using ConsoleDisplay.View;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Security.Authentication.ExtendedProtection;
 using System.Threading;
+using Werner_Flaschbier_Base.Model;
 using Werner_Flaschbier_Base.View;
-using Werner_Flaschbier_Base.ViewModel;
+using Werner_Flaschbier_Base.ViewModels;
 
 namespace Werner_Flaschbier_Base
 {
     /// <summary>
     /// Class Programm.
     /// </summary>
-    public static class Programm
+    public class Programm
     {
         /// <summary>
         /// The game
         /// </summary>
-        static Game game;
+        private IWernerGame game;
+        private IVisual visual;
 
-        /// <summary>
-        /// Initializes static members of the <see cref="Programm" /> class.
-        /// </summary>
-        static Programm()
+        private static void OnStartUp()
         {
-            game = new Game();
-            Visual.SetGame(game);
+            var sc = new ServiceCollection()
+                .AddSingleton<IWernerGame, WernerGame>()
+                .AddTransient<IWernerViewModel, WernerViewModel>()
+                .AddSingleton<IVisual, Visual>()
+                .AddSingleton<IConsole, MyConsole>();
+            var sp = sc.BuildServiceProvider();
+
+            IoC.Configure(sp);
         }
 
         /// <summary>
@@ -43,14 +53,29 @@ namespace Werner_Flaschbier_Base
         /// <param name="args">The arguments.</param>
         public static void Main(params string[] args)
         {
+            var program = new Programm();
+            program.Initialize(args);
+            program.Run();
+          //  program.OnExit();
+        }
+
+        public void Run()
+        {
             while (game.isRunning)
             {
                 UserAction action;
-                Visual.CheckUserAction(out action);
-                game.HandleUserAction(action);
-                var delay=game.GameStep();
+                visual.CheckUserAction();
+                var delay = game.GameStep();
                 Thread.Sleep(delay);
             }
+        }
+
+        public void Initialize(string[] args)
+        {
+            OnStartUp();
+
+            game = IoC.GetRequiredService<IWernerGame>();
+            visual = IoC.GetRequiredService<IVisual>();
         }
     }
 
