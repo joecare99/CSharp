@@ -65,10 +65,10 @@ namespace CanvasWPF2_ItemTemplateSelector.Properties {
         ///        xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
         ///        xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
         ///        xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
+        ///        xmlns:s=&quot;clr-namespace:System;assembly=mscorlib&quot;
         ///        xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
         ///        xmlns:local=&quot;clr-namespace:CanvasWPF2_ItemTemplateSelector&quot;
-        ///        xmlns:mvvm=&quot;clr-namespace:CanvasWPF2_ItemTemplateSelector.ViewModel&quot; 
-        ///       [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///        xmlns:mvvm=&quot;clr-nam [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string CanvasWPFView {
             get {
