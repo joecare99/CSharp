@@ -1,6 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
 using TestStatements.UnitTesting;
 
 namespace TestStatements.Anweisungen.Tests

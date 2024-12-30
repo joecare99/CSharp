@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using TestStatements.UnitTesting;
 
 namespace TestStatements.Diagnostics.Tests

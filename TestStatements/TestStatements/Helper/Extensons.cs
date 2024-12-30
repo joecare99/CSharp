@@ -11,9 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-#if NET5_0_OR_GREATER
 using Microsoft.CodeAnalysis.CSharp;
-#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;

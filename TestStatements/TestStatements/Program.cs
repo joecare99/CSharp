@@ -23,7 +23,7 @@ using TestStatements.CS_Concepts;
 using TestStatements.ClassesAndObjects;
 using TestStatements.Helper;
 using TestStatements.Runtime.Loader;
-using TestStatements.SystemNS.Printing;
+using TestStatements.Runtime.Dynamic;
 
 namespace TestStatements
 {
@@ -41,10 +41,8 @@ namespace TestStatements
 			foreach (var s in Properties.Resource1.Version.Split(new string[] {"\r\n"},StringSplitOptions.None))
 			  Console.WriteLine(s.Substring(s.IndexOf(']')+1));
             Console.WriteLine();
-            // SystemNS.Printing
-            Printing_Ex.PrintDocument();
-            // Anweisungen
             RTLoaderExample.Main(args);
+            DynamicAssembly.CreateAndSaveAssembly();
             DebugExample.Main();
             Declarations.DoVarDeclarations(args);
             Declarations.DoConstantDeclarations(args);
