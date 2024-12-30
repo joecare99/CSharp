@@ -29,6 +29,8 @@ public class TestCommand : ICommand
     public int Execute()
     {
         _logger?.LogDebug($"{nameof(TestCommand)}.{nameof(Execute)}");
+        if (_env != null)
+           _env.ui.Title = Resources.msgTest;
         _env?.ui.ShowMessage(Resources.msgTest);
         _env?.ui.ShowMessage(string.Format(Resources.msgRandom,[_rnd?.Next()]));
         _env?.ui.ShowMessage(string.Format(Resources.msgCurrentTime,[_time?.Now]));
