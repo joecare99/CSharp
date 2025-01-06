@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
-using VBUnObfusicator.Models;
+using VBUnObfusicator.Interfaces.Code;
 using VBUnObfusicatorTests.Properties;
 
 namespace VBUnObfusicatorTests.TestData

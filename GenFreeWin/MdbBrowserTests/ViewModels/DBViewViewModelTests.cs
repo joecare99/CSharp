@@ -1,15 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MdbBrowser.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MVVM.ViewModel;
 using MdbBrowser.ViewModels.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using CommonDialogs.Interfaces;
-using NSubstitute;
 using System.Windows;
 using MdbBrowser.Models;
 
