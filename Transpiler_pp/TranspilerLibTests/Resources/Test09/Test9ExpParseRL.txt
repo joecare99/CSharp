@@ -1,0 +1,3326 @@
+﻿///Declaration MainBlock 0,0
+private void Command1_Click(object eventSender, EventArgs eventArgs)
+///BlockStart Block 1,0
+{
+///Comment LComment 1,1
+//Discarded unreachable code: IL_451b
+///Operation Operation 1,2
+int try0001_dispatch = -1;
+///Operation Operation 1,3
+int num = default;
+///Operation Operation 1,4
+short index = default;
+///Operation Operation 1,5
+int num2 = default;
+///Operation Operation 1,6
+int num3 = default;
+///Operation Operation 1,7
+int lErl = default;
+///Operation Operation 1,8
+int num6 = default;
+///Operation Operation 1,9
+int num7 = default;
+///Operation Operation 1,10
+int num8 = default;
+///Operation Operation 1,11
+int num9 = default;
+///Operation Operation 1,12
+string sDest = default;
+///Operation Operation 1,13
+int num10 = default;
+///Operation Operation 1,14
+string sDest2 = default;
+///Operation Operation 1,15
+short num12 = default;
+///Operation Operation 1,16
+int num14 = default;
+///Operation Operation 1,17
+short num15 = default;
+///Operation Operation 1,18
+int num17 = default;
+///Operation Operation 1,19
+int num19 = default;
+///Operation Operation 1,20
+while (true)
+///BlockStart Block 2,0
+{
+///Operation Operation 2,1
+try
+///BlockStart Block 3,0
+{
+///Comment Comment 3,1
+/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+///Operation Operation 3,2
+;
+///Operation Operation 3,3
+checked
+///BlockStart Block 4,0
+{
+///Operation Operation 4,1
+int num4;
+///Operation Operation 4,2
+int i3;
+///Operation Operation 4,3
+int i4;
+///Operation Operation 4,4
+int i5;
+///Operation Operation 4,5
+int i6;
+///Operation Operation 4,6
+int i7;
+///Operation Operation 4,7
+short t;
+///Operation Operation 4,8
+short num13;
+///Operation Operation 4,9
+int i8;
+///Operation Operation 4,10
+int i9;
+///Operation Operation 4,11
+int i10;
+///Operation Operation 4,12
+short num16;
+///Operation Operation 4,13
+ListBox L;
+///Operation Operation 4,14
+short A;
+///Operation Operation 4,15
+int i11;
+///Operation Operation 4,16
+int i12;
+///Operation Operation 4,17
+int i13;
+///Operation Operation 4,18
+short num18;
+///Operation Operation 4,19
+int i14;
+///Operation Operation 4,20
+int i15;
+///Operation Operation 4,21
+int i16;
+///Operation Operation 4,22
+int i17;
+///Operation Operation 4,23
+int num5;
+///Operation Operation 4,24
+short t2;
+///Operation Operation 4,25
+short num20;
+///Operation Operation 4,26
+short num11;
+///Operation Operation 4,27
+switch (try0001_dispatch)
+///BlockStart Block 5,0
+{
+///Label Label 5,1 1
+default:
+///Operation Operation 5,2
+num = 1;
+///Operation Operation 5,3
+index = Command1.GetIndex((Button)eventSender);
+///Goto Goto 5,4 Dest:OK
+goto IL_0016;
+///Label Label 5,5
+case 21059:
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+num2 = num;
+///Operation Operation 6,2
+switch ((num3 <= -2) ? 1 : num3)
+///BlockStart Block 7,0
+{
+///Label Label 7,1
+case 2:
+///Operation Operation 7,2
+break;
+///Label Label 7,3
+case 1:
+///Goto Goto 7,4 Dest:OK
+goto IL_45b9;
+///Label Label 7,5
+default:
+///Goto Goto 7,6 Dest:OK
+goto end_IL_0001;
+///BlockEnd Block 7,7
+}
+///Operation Operation 6,3
+if (Information.Err().Number == 6)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+num7 = 200000000;
+///Operation Operation 7,2
+ProjectData.ClearProjectError();
+///Operation Operation 7,3
+if (num2 == 0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,4 Dest:OK
+goto IL_45b9;
+///BlockEnd Block 7,5
+}
+///Operation Operation 6,4
+else
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+if (Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+ProjectData.EndApp();
+///BlockEnd Block 8,2
+}
+///Operation Operation 7,2
+ProjectData.ClearProjectError();
+///Operation Operation 7,3
+if (num2 == 0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 8,2
+}
+///Operation Operation 7,4
+num4 = num2;
+///Goto Goto 7,5 Dest:OK
+goto IL_45bd;
+///BlockEnd Block 7,6
+}
+///BlockEnd Block 6,5
+}
+///Label Label 5,6 1
+end_IL_0001:
+///Operation Operation 5,7
+break;
+///Label Label 5,8 1
+IL_0016:
+///Operation Operation 5,9
+num = 2;
+///Operation Operation 5,10
+RadioButton1.Visible = true;
+///Operation Operation 5,11
+RadioButton2.Visible = true;
+///Operation Operation 5,12
+ProjectData.ClearProjectError();
+///Operation Operation 5,13
+num3 = 2;
+///Operation Operation 5,14
+switch (index)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 0:
+///Label Label 6,2
+case 1:
+///Label Label 6,3
+case 4:
+///Label Label 6,4
+case 5:
+///Label Label 6,5
+case 6:
+///Operation Operation 6,6
+break;
+///Label Label 6,7
+case 7:
+///Goto Goto 6,8 Dest:OK
+goto IL_0094;
+///Label Label 6,9
+default:
+///Goto Goto 6,10 Dest:OK
+goto IL_00a6;
+///BlockEnd Block 6,11
+}
+///BlockStart Block 6,12
+{
+///Goto Goto 6,13 Dest:OK
+goto IL_006f;
+///BlockEnd Block 6,14
+}
+///Label Label 5,15 1
+IL_006f:
+///Operation Operation 5,16
+num = 9;
+///Operation Operation 5,17
+List2.Visible = false;
+///Operation Operation 5,18
+List1.Visible = true;
+///Goto Goto 5,19 Dest:OK
+goto IL_00a6;
+///Label Label 5,20 1
+IL_0094:
+///Operation Operation 5,21
+num = 13;
+///Operation Operation 5,22
+List1.Visible = false;
+///Goto Goto 5,23 Dest:OK
+goto IL_00a6;
+///Label Label 5,24 4
+IL_00a6:
+///Operation Operation 5,25
+num = 15;
+///Operation Operation 5,26
+Label4.Text = "";
+///Operation Operation 5,27
+if (Modul1.Aus[12] == "")
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Modul1.Aus[12] = "200";
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,28
+if (Modul1.Aus[13] == "")
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Modul1.Aus[13] = "200";
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,29
+List1.Visible = true;
+///Operation Operation 5,30
+List2.Visible = false;
+///Operation Operation 5,31
+Label2.Text = "";
+///Operation Operation 5,32
+if (RadioButton1.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Sorted = true;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,33
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Sorted = false;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,34
+switch (index)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 0:
+///Operation Operation 6,2
+break;
+///Label Label 6,3
+case 1:
+///Goto Goto 6,4 Dest:OK
+goto IL_0cef;
+///Label Label 6,5
+case 2:
+///Goto Goto 6,6 Dest:OK
+goto IL_1a3c;
+///Label Label 6,7
+case 3:
+///Goto Goto 6,8 Dest:OK
+goto IL_1aae;
+///Label Label 6,9
+case 4:
+///Goto Goto 6,10 Dest:OK
+goto IL_1c00;
+///Label Label 6,11
+case 5:
+///Goto Goto 6,12 Dest:OK
+goto IL_2496;
+///Label Label 6,13
+case 6:
+///Goto Goto 6,14 Dest:OK
+goto IL_3406;
+///Label Label 6,15
+case 7:
+///Goto Goto 6,16 Dest:OK
+goto IL_3e4e;
+///Label Label 6,17
+default:
+///Goto Goto 6,18 Dest:OK
+goto IL_448a;
+///BlockEnd Block 6,19
+}
+///BlockStart Block 6,20
+{
+///Goto Goto 6,21 Dest:OK
+goto IL_01d7;
+///BlockEnd Block 6,22
+}
+///Label Label 5,35 1
+IL_01d7:
+///Operation Operation 5,36
+num = 35;
+///Operation Operation 5,37
+List1.Items.Clear();
+///Operation Operation 5,38
+Label1[2].Text = "Fehlliste Personen";
+///Operation Operation 5,39
+Label1[1].Text = Modul1.IText[166];
+///Operation Operation 5,40
+Label1[0].Text = Modul1.IText[167];
+///Operation Operation 5,41
+Label1[1].Text = Label1[1].Text + " Quelle";
+///Operation Operation 5,42
+Label1[0].Text = Label1[0].Text + "    T V";
+///Operation Operation 5,43
+I1 = 0;
+///Operation Operation 5,44
+while (I1 <= 2)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label1[(short)I1].Refresh();
+///Operation Operation 6,2
+I1++;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,45
+num7 = 1;
+///Operation Operation 5,46
+if (num7 <= 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,47
+DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
+///Operation Operation 5,48
+DataModul.DB_PersonTable.MoveLast();
+///Operation Operation 5,49
+num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
+///Operation Operation 5,50
+if (num7 == 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,51
+if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Interaction.MsgBox("Die höchste Personennummer ist " + DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsString());
+///Goto Goto 6,2 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,52
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.Minimum = 0;
+///Operation Operation 6,2
+ProgressBar1.Maximum = 0;
+///Operation Operation 6,3
+ProgressBar1.Step = 1;
+///Operation Operation 6,4
+ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
+///Operation Operation 6,5
+List1.Items.Clear();
+///Operation Operation 6,6
+i15 = num7;
+///Operation Operation 6,7
+num19 = num8;
+///Operation Operation 6,8
+I1 = i15;
+///Goto Goto 6,9 Dest:OK
+goto IL_0ca1;
+///BlockEnd Block 6,10
+}
+///Label Label 5,53 3
+IL_0667:
+///Operation Operation 5,54
+num = 88;
+///Operation Operation 5,55
+DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.BeSu);
+///Operation Operation 5,56
+DataModul.DB_EventTable.Seek("=", num12, Modul1.PersInArb.AsString());
+///Operation Operation 5,57
+if (!DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+switch (num12)
+///BlockStart Block 7,0
+{
+///Label Label 7,1
+case 300:
+///Operation Operation 7,2
+break;
+///Label Label 7,3
+case 301:
+///Goto Goto 7,4 Dest:OK
+goto IL_084e;
+///Label Label 7,5
+case 302:
+///Goto Goto 7,6 Dest:OK
+goto IL_0981;
+///Label Label 7,7
+default:
+///Goto Goto 7,8 Dest:OK
+goto IL_0ac2;
+///BlockEnd Block 7,9
+}
+///BlockStart Block 7,10
+{
+///Goto Goto 7,11 Dest:OK
+goto IL_071b;
+///BlockEnd Block 7,12
+}
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,58
+else
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_0ac2;
+///BlockEnd Block 6,2
+}
+///Label Label 5,59 1
+IL_071b:
+///Operation Operation 5,60
+num = 97;
+///Operation Operation 5,61
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,62
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 36, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,63
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,64
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,65 Dest:OK
+goto IL_0ac2;
+///Label Label 5,66 1
+IL_084e:
+///Operation Operation 5,67
+num = 111;
+///Operation Operation 5,68
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,69
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 44, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,70
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 45, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,71
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 46, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,72 Dest:OK
+goto IL_0ac2;
+///Label Label 5,73 1
+IL_0981:
+///Operation Operation 5,74
+num = 125;
+///Operation Operation 5,75
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,76
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 51, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,77
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 52, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,78
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 53, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,79 Dest:OK
+goto IL_0ac2;
+///Label Label 5,80 6
+IL_0ac2:
+///Operation Operation 5,81
+num = 138;
+///Operation Operation 5,82
+lErl = 2;
+///Operation Operation 5,83
+num12 = (short)unchecked(num12 + 1);
+///Operation Operation 5,84
+num20 = num12;
+///Operation Operation 5,85
+num11 = 302;
+///Operation Operation 5,86
+if (num20 <= num11)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_0667;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,87
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Modul1.LiText += sDest2;
+///Operation Operation 6,2
+Modul1.PerSatzLes();
+///Operation Operation 6,3
+if (null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+StringType.MidStmtStr(ref Modul1.LiText, 77, 1, "J");
+///BlockEnd Block 8,2
+}
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,4
+DataModul.TTable.Index = "Tab";
+///Operation Operation 6,5
+DataModul.TTable.Seek("=", 1, Modul1.PersInArb);
+///Operation Operation 6,6
+if (!DataModul.TTable.NoMatch)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 79, 1, "J");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,7
+List1.Items.Add(new ListItem(Modul1.LiText + "          " + Modul1.PersInArb.AsString()));
+///Operation Operation 6,8
+Modul1.LiText = "";
+///BlockEnd Block 6,9
+}
+///Goto Goto 5,88 Dest:OK
+goto IL_0c81;
+///Label Label 5,89 3
+IL_0c81:
+///Operation Operation 5,90
+num = 154;
+///Operation Operation 5,91
+lErl = 5;
+///Operation Operation 5,92
+I1++;
+///Goto Goto 5,93 Dest:OK
+goto IL_0ca1;
+///Label Label 5,94 2
+IL_0ca1:
+///Operation Operation 5,95
+i16 = I1;
+///Operation Operation 5,96
+num5 = num19;
+///Operation Operation 5,97
+if (i16 <= num5)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.PerformStep();
+///Operation Operation 6,2
+Application.DoEvents();
+///Operation Operation 6,3
+Modul1.PersInArb = I1;
+///Operation Operation 6,4
+if (Modul1.PersInArb <= num8)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
+///Operation Operation 7,2
+if (!DataModul.DB_PersonTable.NoMatch)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 8,2
+Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
+///Operation Operation 8,3
+Modul1.Schalt = 20;
+///Operation Operation 8,4
+T = 1;
+///Operation Operation 8,5
+while (T <= 10)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.Kont[T + 10] = " ";
+///Operation Operation 9,2
+Modul1.Kont[T + 20] = " ";
+///Operation Operation 9,3
+T = (short)unchecked(T + 1);
+///BlockEnd Block 9,4
+}
+///Operation Operation 8,6
+Modul1.Datles();
+///Operation Operation 8,7
+sDest2 = "                                                                            ";
+///Operation Operation 8,8
+StringType.MidStmtStr(ref sDest2, 2, 2, Modul1.Kont[11] + Modul1.Kont[21]);
+///Operation Operation 8,9
+StringType.MidStmtStr(ref sDest2, 8, 2, Modul1.Kont[12] + Modul1.Kont[22]);
+///Operation Operation 8,10
+StringType.MidStmtStr(ref sDest2, 17, 2, Modul1.Kont[13] + Modul1.Kont[23]);
+///Operation Operation 8,11
+StringType.MidStmtStr(ref sDest2, 27, 2, Modul1.Kont[14] + Modul1.Kont[24]);
+///Operation Operation 8,12
+num12 = 300;
+///Goto Goto 8,13 Dest:OK
+goto IL_0667;
+///BlockEnd Block 8,14
+}
+///Goto Goto 7,3 Dest:OK
+goto IL_0c81;
+///BlockEnd Block 7,4
+}
+///BlockEnd Block 6,5
+}
+///Operation Operation 5,98
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label4.Text = List1.Items.Count.AsString() + " Einträge";
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,99 Dest:OK
+goto IL_448a;
+///Label Label 5,100 1
+IL_0cef:
+///Operation Operation 5,101
+num = 159;
+///Operation Operation 5,102
+DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+///Operation Operation 5,103
+List1.Items.Clear();
+///Operation Operation 5,104
+Label1[2].Text = "Fehlliste Familien";
+///Operation Operation 5,105
+Label1[1].Text = "Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt.";
+///Operation Operation 5,106
+Label1[0].Text = "                                    DO   DO    DO    DO   DO    DO        DO";
+///Operation Operation 5,107
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add("Fehlliste Familien");
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,108
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add("Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt.");
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,109
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add("                                    DO   DO    DO    DO   DO    DO        DO");
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,110
+Modul1.I = 0;
+///Operation Operation 5,111
+while (Modul1.I <= 2)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label1[(short)Modul1.I].Refresh();
+///Operation Operation 6,2
+Modul1.I++;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,112
+num7 = 1;
+///Operation Operation 5,113
+if (num7 <= 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,114
+DataModul.DB_FamilyTable.MoveLast();
+///Operation Operation 5,115
+num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
+///Operation Operation 5,116
+if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Interaction.MsgBox("Die höchste Familiennummer ist " + DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsString());
+///Goto Goto 6,2 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,117
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.Minimum = 0;
+///Operation Operation 6,2
+ProgressBar1.Maximum = DataModul.DB_FamilyTable.RecordCount - 1;
+///Operation Operation 6,3
+ProgressBar1.Step = 1;
+///Operation Operation 6,4
+i12 = num7;
+///Operation Operation 6,5
+num17 = num8;
+///Operation Operation 6,6
+I1 = i12;
+///Goto Goto 6,7 Dest:OK
+goto IL_199d;
+///BlockEnd Block 6,8
+}
+///Label Label 5,118 3
+IL_1313:
+///Operation Operation 5,119
+num = 237;
+///Operation Operation 5,120
+Modul1.Ubg = num15;
+///Operation Operation 5,121
+DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.FamInArb.AsString(), "0");
+///Operation Operation 5,122
+if (!DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+switch (Modul1.Ubg)
+///BlockStart Block 7,0
+{
+///Label Label 7,1
+case 500:
+///Operation Operation 7,2
+break;
+///Label Label 7,3
+case 501:
+///Goto Goto 7,4 Dest:OK
+goto IL_148f;
+///Label Label 7,5
+case 502:
+///Goto Goto 7,6 Dest:OK
+goto IL_153c;
+///Label Label 7,7
+case 503:
+///Goto Goto 7,8 Dest:OK
+goto IL_15e9;
+///Label Label 7,9
+case 504:
+///Goto Goto 7,10 Dest:OK
+goto IL_1696;
+///Label Label 7,11
+case 505:
+///Goto Goto 7,12 Dest:OK
+goto IL_1743;
+///Label Label 7,13
+default:
+///Goto Goto 7,14 Dest:OK
+goto IL_17ec;
+///BlockEnd Block 7,15
+}
+///BlockStart Block 7,16
+{
+///Goto Goto 7,17 Dest:OK
+goto IL_13e2;
+///BlockEnd Block 7,18
+}
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,123
+else
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_17ec;
+///BlockEnd Block 6,2
+}
+///Label Label 5,124 1
+IL_13e2:
+///Operation Operation 5,125
+num = 246;
+///Operation Operation 5,126
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,127
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,128 Dest:OK
+goto IL_17ec;
+///Label Label 5,129 1
+IL_148f:
+///Operation Operation 5,130
+num = 254;
+///Operation Operation 5,131
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,132
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 43, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,133 Dest:OK
+goto IL_17ec;
+///Label Label 5,134 1
+IL_153c:
+///Operation Operation 5,135
+num = 262;
+///Operation Operation 5,136
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 48, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,137
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 49, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,138 Dest:OK
+goto IL_17ec;
+///Label Label 5,139 1
+IL_15e9:
+///Operation Operation 5,140
+num = 270;
+///Operation Operation 5,141
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 54, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,142
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 55, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,143 Dest:OK
+goto IL_17ec;
+///Label Label 5,144 1
+IL_1696:
+///Operation Operation 5,145
+num = 278;
+///Operation Operation 5,146
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 59, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,147
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 60, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,148 Dest:OK
+goto IL_17ec;
+///Label Label 5,149 1
+IL_1743:
+///Operation Operation 5,150
+num = 286;
+///Operation Operation 5,151
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 65, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,152
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 66, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,153 Dest:OK
+goto IL_17ec;
+///Label Label 5,154 9
+IL_17ec:
+///Operation Operation 5,155
+num = 293;
+///Operation Operation 5,156
+lErl = 54;
+///Operation Operation 5,157
+num15 = (short)unchecked(num15 + 1);
+///Operation Operation 5,158
+num18 = num15;
+///Operation Operation 5,159
+num11 = 507;
+///Operation Operation 5,160
+if (num18 <= num11)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_1313;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,161
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+lErl = 3;
+///Operation Operation 6,2
+DataModul.DB_EventTable.Seek("=", 601.AsString(), Modul1.FamInArb.AsString(), "0");
+///Operation Operation 6,3
+if (!DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+StringType.MidStmtStr(ref sDest2, 75, 1, "J");
+///BlockEnd Block 8,2
+}
+///Operation Operation 7,2
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+StringType.MidStmtStr(ref sDest2, 76, 1, "J");
+///BlockEnd Block 8,2
+}
+///BlockEnd Block 7,3
+}
+///Operation Operation 6,4
+List1.Items.Add(new ListItem(sDest2 + "          " + Modul1.FamInArb.AsString()));
+///BlockEnd Block 6,5
+}
+///Goto Goto 5,162 Dest:OK
+goto IL_197c;
+///Label Label 5,163 3
+IL_197c:
+///Operation Operation 5,164
+num = 306;
+///Operation Operation 5,165
+lErl = 55;
+///Operation Operation 5,166
+I1++;
+///Goto Goto 5,167 Dest:OK
+goto IL_199d;
+///Label Label 5,168 2
+IL_199d:
+///Operation Operation 5,169
+i13 = I1;
+///Operation Operation 5,170
+num5 = num17;
+///Operation Operation 5,171
+if (i13 <= num5)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.PerformStep();
+///Operation Operation 6,2
+Application.DoEvents();
+///Operation Operation 6,3
+sDest2 = "                                                                                          ";
+///Operation Operation 6,4
+Modul1.FamInArb = I1;
+///Operation Operation 6,5
+if (Modul1.FamInArb <= num8)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+///Operation Operation 7,2
+DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb.AsString());
+///Operation Operation 7,3
+if (!DataModul.DB_FamilyTable.NoMatch)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+///Operation Operation 8,2
+if (Modul1.Family.Mann > 0)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.PersInArb = Modul1.Family.Mann;
+///Operation Operation 9,2
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 9,3
+if (Modul1.Kont[0] != "")
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 1, 15, Modul1.Kont[0]);
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,4
+else
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 1, 15, ">NN<");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,5
+StringType.MidStmtStr(ref sDest2, 16, 2, "/ ");
+///BlockEnd Block 9,6
+}
+///Operation Operation 8,3
+if (Modul1.Family.Frau > 0)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.PersInArb = Modul1.Family.Frau;
+///Operation Operation 9,2
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 9,3
+if (Modul1.Kont[0] != "")
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 17, 15, Modul1.Kont[0]);
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,4
+else
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 17, 15, ">NN<");
+///BlockEnd Block 10,2
+}
+///BlockEnd Block 9,5
+}
+///Operation Operation 8,4
+if (Modul1.Family.Kind[1] != 0)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+StringType.MidStmtStr(ref sDest2, 32, 1, Modul1.IText[175]);
+///BlockEnd Block 9,2
+}
+///Operation Operation 8,5
+DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+///Operation Operation 8,6
+DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+///Operation Operation 8,7
+DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb);
+///Operation Operation 8,8
+if (!DataModul.DB_FamilyTable.NoMatch)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 70, 1, Modul1.IText[175]);
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,2
+num15 = 500;
+///Goto Goto 9,3 Dest:OK
+goto IL_1313;
+///BlockEnd Block 9,4
+}
+///BlockEnd Block 8,9
+}
+///Goto Goto 7,4 Dest:OK
+goto IL_197c;
+///BlockEnd Block 7,5
+}
+///BlockEnd Block 6,6
+}
+///Operation Operation 5,172
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label4.Text = List1.Items.Count - 3.AsString() + " Familien";
+///Operation Operation 6,2
+if (RadioButton1.Checked)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+Label4.Text = List1.Items.Count.AsString() + " Familien";
+///BlockEnd Block 7,2
+}
+///BlockEnd Block 6,3
+}
+///Goto Goto 5,173 Dest:OK
+goto IL_448a;
+///Label Label 5,174 1
+IL_1a3c:
+///Operation Operation 5,175
+num = 314;
+///Operation Operation 5,176
+List1.Items.Clear();
+///Operation Operation 5,177
+List2.Items.Clear();
+///Operation Operation 5,178
+ProgressBar1.Minimum = 0;
+///Operation Operation 5,179
+ProgressBar1.Maximum = 0;
+///Operation Operation 5,180
+Close();
+///Goto Goto 5,181 Dest:OK
+goto end_IL_0001_2;
+///Label Label 5,182 1
+IL_1aae:
+///Operation Operation 5,183
+num = 322;
+///Operation Operation 5,184
+FileSystem.FileClose(99);
+///Operation Operation 5,185
+FileSystem.FileOpen(99, Modul1.TempPath + "\\Text4.Txt", OpenMode.Output);
+///Operation Operation 5,186
+FileSystem.PrintLine(99, Label1[2].Text);
+///Operation Operation 5,187
+FileSystem.PrintLine(99, Label1[1].Text);
+///Operation Operation 5,188
+FileSystem.PrintLine(99, Label1[0].Text);
+///Operation Operation 5,189
+if (List2.Visible)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+L = List2;
+///Operation Operation 6,2
+A = 2;
+///Operation Operation 6,3
+Modul1.Listbox3Clip(ref L, ref A);
+///Operation Operation 6,4
+List2 = L;
+///BlockEnd Block 6,5
+}
+///Operation Operation 5,190
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+L = List1;
+///Operation Operation 6,2
+A = 2;
+///Operation Operation 6,3
+Modul1.Listbox3Clip(ref L, ref A);
+///Operation Operation 6,4
+List1 = L;
+///BlockEnd Block 6,5
+}
+///Operation Operation 5,191
+FileSystem.FileClose();
+///Goto Goto 5,192 Dest:OK
+goto IL_448a;
+///Label Label 5,193 1
+IL_1c00:
+///Operation Operation 5,194
+num = 336;
+///Comment LComment 5,195
+//Sz = 0;
+///Operation Operation 5,196
+List1.Items.Clear();
+///Operation Operation 5,197
+Label1[2].Text = "Familien ohne Datum";
+///Operation Operation 5,198
+Label1[1].Text = "Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. Eheä. Aus  Fikt.";
+///Operation Operation 5,199
+Label1[0].Text = "                                    DO   DO    DO    DO   DO    DO        DO";
+///Operation Operation 5,200
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add("Familien ohne Datum");
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,201
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add("Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt.");
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,202
+if (RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add("                                    DO   DO    DO    DO   DO    DO        DO");
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,203
+Modul1.I = 0;
+///Operation Operation 5,204
+while (Modul1.I <= 2)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label1[(short)Modul1.I].Refresh();
+///Operation Operation 6,2
+Modul1.I++;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,205
+num7 = 1;
+///Operation Operation 5,206
+if (num7 <= 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,207
+DataModul.DB_FamilyTable.MoveLast();
+///Operation Operation 5,208
+num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
+///Operation Operation 5,209
+if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Interaction.MsgBox(Modul1.IText[174] + " " + num7.AsString() + Modul1.IText[172]);
+///Goto Goto 6,2 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,210
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.Minimum = 0;
+///Operation Operation 6,2
+ProgressBar1.Maximum = 0;
+///Operation Operation 6,3
+ProgressBar1.Step = 1;
+///Operation Operation 6,4
+ProgressBar1.Maximum = (int)Math.Round(Conversion.Val(Modul1.Aus[13]));
+///Operation Operation 6,5
+i9 = num7;
+///Operation Operation 6,6
+num14 = num7 + DataModul.DB_FamilyTable.RecordCount;
+///Operation Operation 6,7
+I1 = i9;
+///Goto Goto 6,8 Dest:OK
+goto IL_2440;
+///BlockEnd Block 6,9
+}
+///Label Label 5,211 3
+IL_2240:
+///Operation Operation 5,212
+num = 415;
+///Operation Operation 5,213
+Modul1.Ubg = num15;
+///Operation Operation 5,214
+DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.FamInArb.AsString(), "0");
+///Operation Operation 5,215
+if (DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+if (!((num15 == 507) & DataModul.DB_EventTable.NoMatch))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+num15 = (short)unchecked(num15 + 1);
+///Operation Operation 7,2
+num16 = num15;
+///Operation Operation 7,3
+num11 = 507;
+///Operation Operation 7,4
+if (num16 <= num11)
+///BlockStart Block 8,0
+{
+///Goto Goto 8,1 Dest:OK
+goto IL_2240;
+///BlockEnd Block 8,2
+}
+///Operation Operation 7,5
+else
+///BlockStart Block 8,0
+{
+///Goto Goto 8,1 Dest:OK
+goto IL_2317;
+///BlockEnd Block 8,2
+}
+///BlockEnd Block 7,6
+}
+///Operation Operation 6,2
+else
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto IL_2317;
+///BlockEnd Block 7,2
+}
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,216
+else
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_241f;
+///BlockEnd Block 6,2
+}
+///Label Label 5,217 4
+IL_2317:
+///Operation Operation 5,218
+num = 424;
+///Operation Operation 5,219
+lErl = 34;
+///Operation Operation 5,220
+DataModul.DB_EventTable.Seek("=", 601.AsString(), Modul1.FamInArb.AsString(), "0");
+///Operation Operation 5,221
+if (DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+if (sDest2.Trim() != "")
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+List1.Items.Add(new ListItem(sDest2 + "          " + Modul1.FamInArb.AsString()));
+///Comment LComment 7,2
+//Sz++;
+///BlockEnd Block 7,3
+}
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,222 Dest:OK
+goto IL_241f;
+///Label Label 5,223 4
+IL_241f:
+///Operation Operation 5,224
+num = 433;
+///Operation Operation 5,225
+lErl = 35;
+///Operation Operation 5,226
+I1++;
+///Goto Goto 5,227 Dest:OK
+goto IL_2440;
+///Label Label 5,228 2
+IL_2440:
+///Operation Operation 5,229
+i10 = I1;
+///Operation Operation 5,230
+num5 = num14;
+///Operation Operation 5,231
+if (i10 <= num5)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.PerformStep();
+///Operation Operation 6,2
+Application.DoEvents();
+///Operation Operation 6,3
+sDest2 = "                                                                                          ";
+///Operation Operation 6,4
+Modul1.FamInArb = I1;
+///Operation Operation 6,5
+if (Modul1.FamInArb <= num8)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+///Operation Operation 7,2
+DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb.AsString());
+///Operation Operation 7,3
+if (!DataModul.DB_FamilyTable.NoMatch)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+///Operation Operation 8,2
+if (Modul1.Family.Mann > 0)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.PersInArb = Modul1.Family.Mann;
+///Operation Operation 9,2
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 9,3
+if (Modul1.Kont[0] != "")
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 1, 15, Modul1.Kont[0]);
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,4
+else
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 1, 15, ">NN<");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,5
+StringType.MidStmtStr(ref sDest2, 16, 2, "/ ");
+///BlockEnd Block 9,6
+}
+///Operation Operation 8,3
+if (Modul1.Family.Frau > 0)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.PersInArb = Modul1.Family.Frau;
+///Operation Operation 9,2
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 9,3
+if (Modul1.Kont[0] != "")
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 17, 15, Modul1.Kont[0]);
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,4
+else
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 17, 15, ">NN<");
+///BlockEnd Block 10,2
+}
+///BlockEnd Block 9,5
+}
+///Operation Operation 8,4
+if (Modul1.Family.Kind[1] != 0)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+StringType.MidStmtStr(ref sDest2, 32, 1, Modul1.IText[175]);
+///BlockEnd Block 9,2
+}
+///Operation Operation 8,5
+DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+///Operation Operation 8,6
+DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
+///Operation Operation 8,7
+DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb);
+///Operation Operation 8,8
+if (!DataModul.DB_FamilyTable.NoMatch)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest2, 70, 1, Modul1.IText[175]);
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,2
+num15 = 500;
+///Goto Goto 9,3 Dest:OK
+goto IL_2240;
+///BlockEnd Block 9,4
+}
+///BlockEnd Block 8,9
+}
+///Goto Goto 7,4 Dest:OK
+goto IL_2317;
+///BlockEnd Block 7,5
+}
+///Goto Goto 6,6 Dest:OK
+goto IL_241f;
+///BlockEnd Block 6,7
+}
+///Operation Operation 5,232
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label4.Text = List1.Items.Count - 2.AsString() + " Einträge";
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,233 Dest:OK
+goto end_IL_0001_2;
+///Label Label 5,234 1
+IL_2496:
+///Operation Operation 5,235
+num = 439;
+///Operation Operation 5,236
+List1.Items.Clear();
+///Operation Operation 5,237
+Label1[2].Text = "Personen ohne Datum";
+///Operation Operation 5,238
+Label1[1].Text = Modul1.IText[166];
+///Operation Operation 5,239
+Label1[0].Text = Modul1.IText[167];
+///Operation Operation 5,240
+I1 = 0;
+///Operation Operation 5,241
+while (I1 <= 2)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label1[(short)I1].Refresh();
+///Operation Operation 6,2
+I1++;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,242
+num7 = 1;
+///Operation Operation 5,243
+if (num7 <= 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,244
+DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
+///Operation Operation 5,245
+DataModul.DB_PersonTable.MoveLast();
+///Operation Operation 5,246
+num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
+///Operation Operation 5,247
+if (num7 == 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,248
+if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Interaction.MsgBox(Modul1.IText[173] + " " + num7.AsString() + Modul1.IText[172]);
+///Goto Goto 6,2 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,249
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.Minimum = 0;
+///Operation Operation 6,2
+ProgressBar1.Maximum = 0;
+///Operation Operation 6,3
+ProgressBar1.Step = 1;
+///Operation Operation 6,4
+ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
+///Operation Operation 6,5
+i6 = num7;
+///Operation Operation 6,6
+num10 = DataModul.DB_PersonTable.RecordCount - 1;
+///Operation Operation 6,7
+I1 = i6;
+///Goto Goto 6,8 Dest:OK
+goto IL_33b6;
+///BlockEnd Block 6,9
+}
+///Label Label 5,250 3
+IL_2956:
+///Operation Operation 5,251
+num = 497;
+///Operation Operation 5,252
+DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.BeSu);
+///Operation Operation 5,253
+DataModul.DB_EventTable.Seek("=", num12, Modul1.PersInArb.AsString());
+///Operation Operation 5,254
+if (!DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+switch (num12)
+///BlockStart Block 7,0
+{
+///Label Label 7,1
+case 300:
+///Operation Operation 7,2
+break;
+///Label Label 7,3
+case 301:
+///Goto Goto 7,4 Dest:OK
+goto IL_2b31;
+///Label Label 7,5
+case 302:
+///Goto Goto 7,6 Dest:OK
+goto IL_2c4c;
+///Label Label 7,7
+default:
+///Goto Goto 7,8 Dest:OK
+goto IL_2d63;
+///BlockEnd Block 7,9
+}
+///BlockStart Block 7,10
+{
+///Goto Goto 7,11 Dest:OK
+goto IL_2a16;
+///BlockEnd Block 7,12
+}
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,255
+else
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_2d63;
+///BlockEnd Block 6,2
+}
+///Label Label 5,256 1
+IL_2a16:
+///Operation Operation 5,257
+num = 506;
+///Operation Operation 5,258
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,259
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,2 Dest:OK
+goto IL_2d63;
+///BlockEnd Block 7,3
+}
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,260 Dest:OK
+goto IL_3395;
+///Label Label 5,261 1
+IL_2b31:
+///Operation Operation 5,262
+num = 520;
+///Operation Operation 5,263
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,264
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+StringType.MidStmtStr(ref sDest2, 46, 1, Modul1.IText[175]);
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,2 Dest:OK
+goto IL_2d63;
+///BlockEnd Block 7,3
+}
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,265 Dest:OK
+goto IL_3395;
+///Label Label 5,266 1
+IL_2c4c:
+///Operation Operation 5,267
+num = 534;
+///Operation Operation 5,268
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,269
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+StringType.MidStmtStr(ref sDest2, 53, 1, Modul1.IText[175]);
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,2 Dest:OK
+goto IL_2d63;
+///BlockEnd Block 7,3
+}
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,270 Dest:OK
+goto IL_3395;
+///Label Label 5,271 6
+IL_2d63:
+///Operation Operation 5,272
+num = 547;
+///Operation Operation 5,273
+lErl = 92;
+///Operation Operation 5,274
+num12 = (short)unchecked(num12 + 1);
+///Operation Operation 5,275
+num13 = num12;
+///Operation Operation 5,276
+num11 = 302;
+///Operation Operation 5,277
+if (num13 <= num11)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_2956;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,278
+else
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_32fc;
+///BlockEnd Block 6,2
+}
+///Label Label 5,279 4
+IL_32fc:
+///Operation Operation 5,280
+num = 606;
+///Operation Operation 5,281
+lErl = 45;
+///Operation Operation 5,282
+Modul1.LiText += sDest2;
+///Goto Goto 5,283 Dest:OK
+goto IL_3320;
+///Label Label 5,284 3
+IL_3320:
+///Operation Operation 5,285
+num = 609;
+///Operation Operation 5,286
+if ((Modul1.LiText).Trim() != "")
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List1.Items.Add(new ListItem(Modul1.LiText + "          " + Modul1.PersInArb.AsString()));
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,287
+Modul1.LiText = "";
+///Goto Goto 5,288 Dest:OK
+goto IL_3395;
+///Label Label 5,289 7
+IL_3395:
+///Operation Operation 5,290
+num = 613;
+///Operation Operation 5,291
+lErl = 95;
+///Operation Operation 5,292
+I1++;
+///Goto Goto 5,293 Dest:OK
+goto IL_33b6;
+///Label Label 5,294 2
+IL_33b6:
+///Operation Operation 5,295
+i7 = I1;
+///Operation Operation 5,296
+num5 = num10;
+///Operation Operation 5,297
+if (i7 <= num5)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.PerformStep();
+///Operation Operation 6,2
+Application.DoEvents();
+///Operation Operation 6,3
+Modul1.PersInArb = I1;
+///Operation Operation 6,4
+if (Modul1.PersInArb <= num8)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
+///Operation Operation 7,2
+if (!DataModul.DB_PersonTable.NoMatch)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 8,2
+Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
+///Operation Operation 8,3
+Modul1.Schalt = 20;
+///Operation Operation 8,4
+T = 1;
+///Operation Operation 8,5
+while (T <= 10)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.Kont[T + 10] = "";
+///Operation Operation 9,2
+Modul1.Kont[T + 20] = "";
+///Operation Operation 9,3
+T = (short)unchecked(T + 1);
+///BlockEnd Block 9,4
+}
+///Operation Operation 8,6
+Modul1.Datles();
+///Operation Operation 8,7
+sDest2 = "                                                                            ";
+///Operation Operation 8,8
+if ((Modul1.Kont[11]).Trim() == "")
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+if ((Modul1.Kont[12]).Trim() == "")
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+if ((Modul1.Kont[13]).Trim() == "")
+///BlockStart Block 11,0
+{
+///Operation Operation 11,1
+if ((Modul1.Kont[14]).Trim() == "")
+///BlockStart Block 12,0
+{
+///Operation Operation 12,1
+num12 = 300;
+///Goto Goto 12,2 Dest:OK
+goto IL_2956;
+///BlockEnd Block 12,3
+}
+///BlockEnd Block 11,2
+}
+///BlockEnd Block 10,2
+}
+///BlockEnd Block 9,2
+}
+///BlockEnd Block 8,9
+}
+///Goto Goto 7,3 Dest:OK
+goto IL_3395;
+///BlockEnd Block 7,4
+}
+///BlockEnd Block 6,5
+}
+///Operation Operation 5,298
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label4.Text = List1.Items.Count - 1.AsString() + " Einträge";
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,299 Dest:OK
+goto IL_448a;
+///Label Label 5,300 1
+IL_3406:
+///Operation Operation 5,301
+num = 618;
+///Operation Operation 5,302
+List1.Items.Clear();
+///Operation Operation 5,303
+Label1[2].Text = Modul1.IText[84];
+///Operation Operation 5,304
+Label1[0].Text = "Name              Elternteil  Kind  Pate  Zeuge  Adoptivkind  verbunden";
+///Operation Operation 5,305
+num7 = 1;
+///Operation Operation 5,306
+if (num7 <= 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,307
+DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
+///Operation Operation 5,308
+DataModul.DB_PersonTable.MoveLast();
+///Operation Operation 5,309
+num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
+///Operation Operation 5,310
+if (num7 == 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,311
+if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Interaction.MsgBox(Modul1.IText[173] + " " + num7.AsString() + Modul1.IText[172]);
+///Goto Goto 6,2 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,3
+}
+///Operation Operation 5,312
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label1[1].Text = "unvollständig verknüpfte Personen ";
+///Operation Operation 6,2
+Modul1.Schalt = 3;
+///Operation Operation 6,3
+ProgressBar1.Minimum = 0;
+///Operation Operation 6,4
+ProgressBar1.Maximum = 0;
+///Operation Operation 6,5
+ProgressBar1.Step = 1;
+///Operation Operation 6,6
+ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
+///Operation Operation 6,7
+i3 = num7;
+///Operation Operation 6,8
+num9 = DataModul.DB_PersonTable.RecordCount - 1;
+///Operation Operation 6,9
+I1 = i3;
+///Goto Goto 6,10 Dest:OK
+goto IL_3dfe;
+///BlockEnd Block 6,11
+}
+///Label Label 5,313 2
+IL_3dfe:
+///Operation Operation 5,314
+i4 = I1;
+///Operation Operation 5,315
+num5 = num9;
+///Operation Operation 5,316
+if (i4 <= num5)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+ProgressBar1.PerformStep();
+///Operation Operation 6,2
+Application.DoEvents();
+///Operation Operation 6,3
+Modul1.PersInArb = I1;
+///Operation Operation 6,4
+sDest = new string(' ', 80);
+///Operation Operation 6,5
+if (Modul1.PersInArb <= num8)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
+///Operation Operation 7,2
+if (!DataModul.DB_PersonTable.NoMatch)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
+LiKi = 1;
+///Operation Operation 8,2
+LiEl = 1;
+///Comment LComment 8,3
+//LiPa = 1;
+///Operation Operation 8,4
+Modul1.Kenn = 3f;
+///Operation Operation 8,5
+DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
+///Operation Operation 8,6
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
+///Operation Operation 8,7
+if (DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+LiKi = 0;
+///BlockEnd Block 9,2
+}
+///Operation Operation 8,8
+Modul1.Kenn = 1f;
+///Operation Operation 8,9
+Modul1.PerSatzLes();
+///Operation Operation 8,10
+if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.Kenn = 2f;
+///BlockEnd Block 9,2
+}
+///Operation Operation 8,11
+DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
+///Operation Operation 8,12
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
+///Operation Operation 8,13
+if (DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+LiEl = 0;
+///BlockEnd Block 9,2
+}
+///Operation Operation 8,14
+if ((LiKi == 0) & (LiEl == 0))
+///BlockStart Block 9,0
+{
+///Operation Operation 9,1
+Modul1.Personlesen(Modul1.PersInArb);
+///Operation Operation 9,2
+StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20));
+///Operation Operation 9,3
+if (LiEl == 0)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 24, 1, "N");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,4
+if (LiKi == 0)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 30, 1, "N");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,5
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 4);
+///Operation Operation 9,6
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 36, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,7
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 5);
+///Operation Operation 9,8
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 46, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,9
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 6);
+///Operation Operation 9,10
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 46, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,11
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 7);
+///Operation Operation 9,12
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 46, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,13
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 8);
+///Operation Operation 9,14
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 55, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,15
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 9);
+///Operation Operation 9,16
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 70, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,17
+DataModul.DB_WitnessTable.Index = nameof(DataModul.WitnessIndex.ElSu);
+///Operation Operation 9,18
+DataModul.DB_WitnessTable.Seek("=", Modul1.PersInArb, "10");
+///Operation Operation 9,19
+if (!DataModul.DB_WitnessTable.NoMatch)
+///BlockStart Block 10,0
+{
+///Operation Operation 10,1
+StringType.MidStmtStr(ref sDest, 46, 1, "J");
+///BlockEnd Block 10,2
+}
+///Operation Operation 9,20
+List1.Items.Add(new ListItem(sDest + "          " + Modul1.PersInArb.AsString()));
+///BlockEnd Block 9,21
+}
+///BlockEnd Block 8,15
+}
+///Operation Operation 7,3
+I1++;
+///Goto Goto 7,4 Dest:OK
+goto IL_3dfe;
+///BlockEnd Block 7,5
+}
+///Operation Operation 6,6
+else
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto IL_448a;
+///BlockEnd Block 7,2
+}
+///BlockEnd Block 6,7
+}
+///Operation Operation 5,317
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Label4.Text = List1.Items.Count - 1.AsString() + " Einträge";
+///Goto Goto 6,2 Dest:OK
+goto IL_448a;
+///BlockEnd Block 6,3
+}
+///Label Label 5,318 1
+IL_3e4e:
+///Operation Operation 5,319
+num = 716;
+///Operation Operation 5,320
+List2.Visible = true;
+///Operation Operation 5,321
+List2.Items.Clear();
+///Operation Operation 5,322
+num7 = 1;
+///Operation Operation 5,323
+if (num7 <= 0)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,324
+Label1[2].Text = "Fehlliste Orte";
+///Operation Operation 5,325
+Label1[1].Text = "      Nr    Ort Orsteil  Kreis Land Staat Loc  Länge  Breite PLZ Terr StKz";
+///Operation Operation 5,326
+Label1[0].Text = "  ";
+///Operation Operation 5,327
+List2.Items.Add("Fehlliste Orte");
+///Operation Operation 5,328
+List2.Items.Add("      Nr    Ort Ortsteil Kreis Land Staat Loc. Laenge Breite PLZ Terr. StKz");
+///Operation Operation 5,329
+DataModul.DB_PlaceTable.MoveFirst();
+///Operation Operation 5,330
+DataModul.DB_PlaceTable.Index = nameof(DataModul.PlaceIndex.OrtNr);
+///Operation Operation 5,331
+DataModul.DB_PlaceTable.Seek(">=", num7);
+///Operation Operation 5,332
+this.A = 1;
+///Operation Operation 5,333
+if (!DataModul.DB_PlaceTable.NoMatch)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto IL_441a;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,334
+else
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+DataModul.DB_PlaceTable.MoveNext();
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,335 Dest:OK
+goto IL_4454;
+///Label Label 5,336 3
+IL_441a:
+///Operation Operation 5,337
+num = 733;
+///Operation Operation 5,338
+if (!DataModul.DB_PlaceTable.EOF)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+Modul1.LiText = new string(' ', 80);
+///Operation Operation 6,2
+StringType.MidStmtStr(ref Modul1.LiText, 1, 10, Strings.Right("          " + DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.OrtNr)].Value.AsString(), 10));
+///Operation Operation 6,3
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 12, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,4
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 20, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,5
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 28, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,6
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 34, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,7
+if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 39, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,8
+if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Loc)].AsString()) == "")
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 44, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,9
+if (Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.L)].AsString())) <= 1)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 52, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,10
+if (Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.B)].AsString())) <= 1)
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 58, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,11
+if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.PLZ)].AsString()) == "")
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 63, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,12
+if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Terr)].AsString()) == "")
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 68, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,13
+if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staatk)].AsString()) == "")
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+StringType.MidStmtStr(ref Modul1.LiText, 71, 2, "F ");
+///BlockEnd Block 7,2
+}
+///Operation Operation 6,14
+List2.Items.Add(Modul1.LiText);
+///Operation Operation 6,15
+Modul1.LiText = new string(' ', 80);
+///Operation Operation 6,16
+DataModul.DB_PlaceTable.MoveNext();
+///Goto Goto 6,17 Dest:OK
+goto IL_441a;
+///BlockEnd Block 6,18
+}
+///Goto Goto 5,339 Dest:OK
+goto IL_4454;
+///Label Label 5,340 3
+IL_4454:
+///Operation Operation 5,341
+num = 777;
+///Operation Operation 5,342
+if (DataModul.DB_PlaceTable.EOF)
+///BlockStart Block 6,0
+{
+///Operation Operation 6,1
+List2.Items.Add("Ende der Liste");
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,343 Dest:OK
+goto IL_448a;
+///Label Label 5,344 9
+IL_448a:
+///Operation Operation 5,345
+num = 781;
+///Operation Operation 5,346
+lErl = 4;
+///Operation Operation 5,347
+if (!RadioButton2.Checked)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Operation Operation 5,348
+List1.Items.Add("Ende der Liste");
+///Operation Operation 5,349
+Modul1.I = 1;
+///Goto Goto 5,350 Dest:OK
+goto IL_44d6;
+///Label Label 5,351 3
+IL_44d6:
+///Operation Operation 5,352
+num = 785;
+///Operation Operation 5,353
+List1.Items.Add("");
+///Operation Operation 5,354
+Modul1.I++;
+///Operation Operation 5,355
+i17 = Modul1.I;
+///Operation Operation 5,356
+num5 = 17;
+///Operation Operation 5,357
+if (i17 > num5)
+///BlockStart Block 6,0
+{
+///Goto Goto 6,1 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,358 Dest:OK
+goto IL_44d6;
+///Label Label 5,359 2
+IL_45b9:
+///Operation Operation 5,360
+num4 = unchecked(num2 + 1);
+///Goto Goto 5,361 Dest:OK
+goto IL_45bd;
+///Label Label 5,362 2
+IL_45bd:
+///Operation Operation 5,363
+num2 = 0;
+///Operation Operation 5,364
+switch (num4)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 1:
+///Operation Operation 6,2
+break;
+///Label Label 6,3
+case 6:
+///Label Label 6,4
+case 11:
+///Label Label 6,5
+case 14:
+///Label Label 6,6
+case 15:
+///Goto Goto 6,7 Dest:OK
+goto IL_00a6;
+///Label Label 6,8
+case 88:
+///Goto Goto 6,9 Dest:OK
+goto IL_0667;
+///Label Label 6,10
+case 91:
+///Label Label 6,11
+case 94:
+///Label Label 6,12
+case 108:
+///Label Label 6,13
+case 109:
+///Label Label 6,14
+case 122:
+///Label Label 6,15
+case 123:
+///Label Label 6,16
+case 136:
+///Label Label 6,17
+case 137:
+///Label Label 6,18
+case 138:
+///Goto Goto 6,19 Dest:OK
+goto IL_0ac2;
+///Label Label 6,20
+case 72:
+///Label Label 6,21
+case 154:
+///Goto Goto 6,22 Dest:OK
+goto IL_0c81;
+///Label Label 6,23
+case 237:
+///Goto Goto 6,24 Dest:OK
+goto IL_1313;
+///Label Label 6,25
+case 240:
+///Label Label 6,26
+case 243:
+///Label Label 6,27
+case 251:
+///Label Label 6,28
+case 252:
+///Label Label 6,29
+case 259:
+///Label Label 6,30
+case 260:
+///Label Label 6,31
+case 267:
+///Label Label 6,32
+case 268:
+///Label Label 6,33
+case 275:
+///Label Label 6,34
+case 276:
+///Label Label 6,35
+case 283:
+///Label Label 6,36
+case 284:
+///Label Label 6,37
+case 291:
+///Label Label 6,38
+case 292:
+///Label Label 6,39
+case 293:
+///Goto Goto 6,40 Dest:OK
+goto IL_17ec;
+///Label Label 6,41
+case 200:
+///Label Label 6,42
+case 231:
+///Label Label 6,43
+case 306:
+///Goto Goto 6,44 Dest:OK
+goto IL_197c;
+///Label Label 6,45
+case 415:
+///Goto Goto 6,46 Dest:OK
+goto IL_2240;
+///Label Label 6,47
+case 378:
+///Label Label 6,48
+case 409:
+///Label Label 6,49
+case 421:
+///Label Label 6,50
+case 424:
+///Goto Goto 6,51 Dest:OK
+goto IL_2317;
+///Label Label 6,52
+case 373:
+///Label Label 6,53
+case 418:
+///Label Label 6,54
+case 427:
+///Label Label 6,55
+case 432:
+///Label Label 6,56
+case 433:
+///Goto Goto 6,57 Dest:OK
+goto IL_241f;
+///Label Label 6,58
+case 497:
+///Goto Goto 6,59 Dest:OK
+goto IL_2956;
+///Label Label 6,60
+case 500:
+///Label Label 6,61
+case 503:
+///Label Label 6,62
+case 517:
+///Label Label 6,63
+case 518:
+///Label Label 6,64
+case 531:
+///Label Label 6,65
+case 532:
+///Label Label 6,66
+case 545:
+///Label Label 6,67
+case 546:
+///Label Label 6,68
+case 547:
+///Goto Goto 6,69 Dest:OK
+goto IL_2d63;
+///Label Label 6,70
+case 550:
+///Operation Operation 6,71
+num = 550;
+///Operation Operation 6,72
+Modul1.PersInArbsp = Modul1.PersInArb;
+///Goto Goto 6,73 Dest:OK
+goto case 551;
+///Label Label 6,74 1
+case 551:
+///Operation Operation 6,75
+num = 551;
+///Operation Operation 6,76
+Modul1.Kenn = 1f;
+///Goto Goto 6,77 Dest:OK
+goto case 552;
+///Label Label 6,78 1
+case 552:
+///Operation Operation 6,79
+num = 552;
+///Operation Operation 6,80
+if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 553;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,81 Dest:OK
+goto case 554;
+///Label Label 6,82 1
+case 553:
+///Operation Operation 6,83
+num = 553;
+///Operation Operation 6,84
+Modul1.Kenn = 2f;
+///Goto Goto 6,85 Dest:OK
+goto case 554;
+///Label Label 6,86 2
+case 554:
+///Label Label 6,87
+case 555:
+///Operation Operation 6,88
+num = 555;
+///Operation Operation 6,89
+DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
+///Goto Goto 6,90 Dest:OK
+goto case 556;
+///Label Label 6,91 1
+case 556:
+///Operation Operation 6,92
+num = 556;
+///Operation Operation 6,93
+DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
+///Goto Goto 6,94 Dest:OK
+goto case 557;
+///Label Label 6,95 1
+case 557:
+///Operation Operation 6,96
+num = 557;
+///Operation Operation 6,97
+if (!DataModul.DB_LinkTable.NoMatch)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 559;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,98 Dest:OK
+goto IL_3320;
+///Label Label 6,99 1
+case 559:
+///Operation Operation 6,100
+num = 559;
+///Goto Goto 6,101 Dest:OK
+goto case 560;
+///Label Label 6,102 1
+case 560:
+///Operation Operation 6,103
+num = 560;
+///Operation Operation 6,104
+Modul1.FamInArb = DataModul.DB_LinkTable.Fields[nameof(DataModul.LinkFields.FamNr)].Value.AsInt();
+///Goto Goto 6,105 Dest:OK
+goto case 561;
+///Label Label 6,106 1
+case 561:
+///Operation Operation 6,107
+num = 561;
+///Operation Operation 6,108
+MainProject.Forms.Familie.Famles(Modul1.FamInArb);
+///Goto Goto 6,109 Dest:OK
+goto case 562;
+///Label Label 6,110 1
+case 562:
+///Operation Operation 6,111
+num = 562;
+///Operation Operation 6,112
+if (Modul1.Kenn == 1f)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 563;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,113 Dest:OK
+goto case 565;
+///Label Label 6,114 1
+case 563:
+///Operation Operation 6,115
+num = 563;
+///Operation Operation 6,116
+Modul1.PersInArb = Modul1.Family.Frau;
+///Goto Goto 6,117 Dest:OK
+goto case 564;
+///Label Label 6,118 1
+case 565:
+///Operation Operation 6,119
+num = 565;
+///Operation Operation 6,120
+if (Modul1.Kenn == 2f)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 566;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,121 Dest:OK
+goto case 564;
+///Label Label 6,122 1
+case 566:
+///Operation Operation 6,123
+num = 566;
+///Operation Operation 6,124
+Modul1.PersInArb = Modul1.Family.Mann;
+///Goto Goto 6,125 Dest:OK
+goto case 564;
+///Label Label 6,126 3
+case 564:
+///Label Label 6,127
+case 567:
+///Label Label 6,128
+case 568:
+///Operation Operation 6,129
+num = 568;
+///Operation Operation 6,130
+DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
+///Goto Goto 6,131 Dest:OK
+goto case 569;
+///Label Label 6,132 1
+case 569:
+///Operation Operation 6,133
+num = 569;
+///Operation Operation 6,134
+Modul1.I = 101;
+///Goto Goto 6,135 Dest:OK
+goto case 570;
+///Label Label 6,136 2
+case 570:
+///Operation Operation 6,137
+num = 570;
+///Operation Operation 6,138
+Modul1.Ubg = Modul1.I;
+///Goto Goto 6,139 Dest:OK
+goto case 571;
+///Label Label 6,140 1
+case 571:
+///Operation Operation 6,141
+num = 571;
+///Operation Operation 6,142
+DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.PersInArb.AsString(), "0");
+///Goto Goto 6,143 Dest:OK
+goto case 572;
+///Label Label 6,144 1
+case 572:
+///Operation Operation 6,145
+num = 572;
+///Operation Operation 6,146
+if (!DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 574;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,147 Dest:OK
+goto case 573;
+///Label Label 6,148 1
+case 574:
+///Label Label 6,149
+case 575:
+///Operation Operation 6,150
+num = 575;
+///Operation Operation 6,151
+if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 576;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,152 Dest:OK
+goto case 573;
+///Label Label 6,153 1
+case 576:
+///Operation Operation 6,154
+num = 576;
+///Operation Operation 6,155
+if (Conversions.ToDouble(Strings.Trim(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsString())) > 0.0)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 577;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,156 Dest:OK
+goto case 573;
+///Label Label 6,157 1
+case 577:
+///Operation Operation 6,158
+num = 577;
+///Operation Operation 6,159
+transdat = DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value.AsInt();
+///Goto Goto 6,160 Dest:OK
+goto case 578;
+///Label Label 6,161 1
+case 578:
+///Operation Operation 6,162
+num = 578;
+///Operation Operation 6,163
+neuedat();
+///Goto Goto 6,164 Dest:OK
+goto IL_3395;
+///Label Label 6,165 3
+case 573:
+///Label Label 6,166
+case 580:
+///Label Label 6,167
+case 581:
+///Label Label 6,168
+case 582:
+///Operation Operation 6,169
+num = 582;
+///Operation Operation 6,170
+lErl = 6;
+///Goto Goto 6,171 Dest:OK
+goto case 583;
+///Label Label 6,172 1
+case 583:
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+num = 583;
+///Operation Operation 7,2
+Modul1.I++;
+///Operation Operation 7,3
+int i = Modul1.I;
+///Operation Operation 7,4
+num5 = 102;
+///Operation Operation 7,5
+if (i <= num5)
+///BlockStart Block 8,0
+{
+///Goto Goto 8,1 Dest:OK
+goto case 570;
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,6 Dest:OK
+goto case 584;
+///BlockEnd Block 7,7
+}
+///Label Label 6,173 1
+case 584:
+///Operation Operation 6,174
+num = 584;
+///Operation Operation 6,175
+num6 = 30000000;
+///Goto Goto 6,176 Dest:OK
+goto case 585;
+///Label Label 6,177 1
+case 585:
+///Operation Operation 6,178
+num = 585;
+///Operation Operation 6,179
+this.A = 1;
+///Goto Goto 6,180 Dest:OK
+goto case 586;
+///Label Label 6,181 2
+case 586:
+///Operation Operation 6,182
+num = 586;
+///Operation Operation 6,183
+if (Modul1.Family.Kind[this.A] > 0)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 587;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,184 Dest:OK
+goto case 598;
+///Label Label 6,185 1
+case 587:
+///Operation Operation 6,186
+num = 587;
+///Operation Operation 6,187
+Modul1.I = 101;
+///Goto Goto 6,188 Dest:OK
+goto case 588;
+///Label Label 6,189 2
+case 588:
+///Operation Operation 6,190
+num = 588;
+///Operation Operation 6,191
+DataModul.DB_EventTable.Seek("=", Modul1.I.AsString(), Modul1.Family.Kind[this.A].AsString(), "0");
+///Goto Goto 6,192 Dest:OK
+goto case 589;
+///Label Label 6,193 1
+case 589:
+///Operation Operation 6,194
+num = 589;
+///Operation Operation 6,195
+if (!DataModul.DB_EventTable.NoMatch)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 590;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,196 Dest:OK
+goto case 593;
+///Label Label 6,197 1
+case 590:
+///Operation Operation 6,198
+num = 590;
+///Operation Operation 6,199
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) > 0.0)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 591;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,200 Dest:OK
+goto case 593;
+///Label Label 6,201 1
+case 591:
+///Operation Operation 6,202
+num = 591;
+///Operation Operation 6,203
+if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) < num6)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 592;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,204 Dest:OK
+goto case 593;
+///Label Label 6,205 1
+case 592:
+///Operation Operation 6,206
+num = 592;
+///Operation Operation 6,207
+num6 = (int)Math.Round(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value));
+///Goto Goto 6,208 Dest:OK
+goto case 593;
+///Label Label 6,209 4
+case 593:
+///Label Label 6,210
+case 594:
+///Label Label 6,211
+case 595:
+///Label Label 6,212
+case 596:
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+num = 596;
+///Operation Operation 7,2
+Modul1.I++;
+///Operation Operation 7,3
+int i2 = Modul1.I;
+///Operation Operation 7,4
+num5 = 102;
+///Operation Operation 7,5
+if (i2 <= num5)
+///BlockStart Block 8,0
+{
+///Goto Goto 8,1 Dest:OK
+goto case 588;
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,6 Dest:OK
+goto case 597;
+///BlockEnd Block 7,7
+}
+///Label Label 6,213 1
+case 598:
+///Operation Operation 6,214
+num = 598;
+///Goto Goto 6,215 Dest:OK
+goto case 599;
+///Label Label 6,216 1
+case 597:
+///Label Label 6,217
+case 600:
+///Label Label 6,218
+case 601:
+///BlockStart Block 7,0
+{
+///Operation Operation 7,1
+num = 601;
+///Operation Operation 7,2
+this.A++;
+///Operation Operation 7,3
+int a = this.A;
+///Operation Operation 7,4
+num5 = 99;
+///Operation Operation 7,5
+if (a <= num5)
+///BlockStart Block 8,0
+{
+///Goto Goto 8,1 Dest:OK
+goto case 586;
+///BlockEnd Block 8,2
+}
+///Goto Goto 7,6 Dest:OK
+goto case 599;
+///BlockEnd Block 7,7
+}
+///Label Label 6,219 2
+case 599:
+///Label Label 6,220
+case 602:
+///Operation Operation 6,221
+num = 602;
+///Operation Operation 6,222
+if (num6 < 30000000)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto case 603;
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,223 Dest:OK
+goto IL_32fc;
+///Label Label 6,224 1
+case 603:
+///Operation Operation 6,225
+num = 603;
+///Operation Operation 6,226
+transdat = Conversions.ToInteger(Conversion.Str(Conversions.ToDouble((num6).AsString().Left( 4)) - 25.0) + "0000");
+///Goto Goto 6,227 Dest:OK
+goto case 604;
+///Label Label 6,228 1
+case 604:
+///Operation Operation 6,229
+num = 604;
+///Operation Operation 6,230
+neuedat();
+///Goto Goto 6,231 Dest:OK
+goto IL_32fc;
+///Label Label 6,232
+case 549:
+///Label Label 6,233
+case 605:
+///Label Label 6,234
+case 606:
+///Goto Goto 6,235 Dest:OK
+goto IL_32fc;
+///Label Label 6,236
+case 558:
+///Label Label 6,237
+case 608:
+///Label Label 6,238
+case 609:
+///Goto Goto 6,239 Dest:OK
+goto IL_3320;
+///Label Label 6,240
+case 473:
+///Label Label 6,241
+case 485:
+///Label Label 6,242
+case 488:
+///Label Label 6,243
+case 491:
+///Label Label 6,244
+case 494:
+///Label Label 6,245
+case 510:
+///Label Label 6,246
+case 513:
+///Label Label 6,247
+case 524:
+///Label Label 6,248
+case 527:
+///Label Label 6,249
+case 538:
+///Label Label 6,250
+case 541:
+///Label Label 6,251
+case 579:
+///Label Label 6,252
+case 613:
+///Goto Goto 6,253 Dest:OK
+goto IL_3395;
+///Label Label 6,254
+case 732:
+///Label Label 6,255
+case 733:
+///Label Label 6,256
+case 772:
+///Goto Goto 6,257 Dest:OK
+goto IL_441a;
+///Label Label 6,258
+case 773:
+///Label Label 6,259
+case 776:
+///Label Label 6,260
+case 777:
+///Goto Goto 6,261 Dest:OK
+goto IL_4454;
+///Label Label 6,262
+case 32:
+///Label Label 6,263
+case 68:
+///Label Label 6,264
+case 157:
+///Label Label 6,265
+case 195:
+///Label Label 6,266
+case 311:
+///Label Label 6,267
+case 312:
+///Label Label 6,268
+case 320:
+///Label Label 6,269
+case 334:
+///Label Label 6,270
+case 437:
+///Label Label 6,271
+case 469:
+///Label Label 6,272
+case 616:
+///Label Label 6,273
+case 647:
+///Label Label 6,274
+case 714:
+///Label Label 6,275
+case 779:
+///Label Label 6,276
+case 780:
+///Label Label 6,277
+case 781:
+///Goto Goto 6,278 Dest:OK
+goto IL_448a;
+///Label Label 6,279
+case 785:
+///Goto Goto 6,280 Dest:OK
+goto IL_44d6;
+///Label Label 6,281
+case 46:
+///Label Label 6,282
+case 52:
+///Label Label 6,283
+case 56:
+///Label Label 6,284
+case 178:
+///Label Label 6,285
+case 184:
+///Label Label 6,286
+case 319:
+///Label Label 6,287
+case 355:
+///Label Label 6,288
+case 361:
+///Label Label 6,289
+case 436:
+///Label Label 6,290
+case 448:
+///Label Label 6,291
+case 454:
+///Label Label 6,292
+case 458:
+///Label Label 6,293
+case 623:
+///Label Label 6,294
+case 629:
+///Label Label 6,295
+case 633:
+///Label Label 6,296
+case 720:
+///Label Label 6,297
+case 787:
+///Label Label 6,298
+case 788:
+///Label Label 6,299
+case 798:
+///Goto Goto 6,300 Dest:OK
+goto end_IL_0001_2;
+///BlockEnd Block 6,301
+}
+///Goto Goto 5,365 Dest:OK
+goto default;
+///BlockEnd Block 5,366
+}
+///BlockEnd Block 4,28
+}
+///BlockEnd Block 3,4
+}
+///Operation Operation 2,2
+catch (Exception obj) when (num3 != 0 && num2 == 0)
+///BlockStart Block 3,0
+{
+///Operation Operation 3,1
+ProjectData.SetProjectError(obj, lErl);
+///Operation Operation 3,2
+try0001_dispatch = 21059;
+///Operation Operation 3,3
+continue;
+///BlockEnd Block 3,4
+}
+///Operation Operation 2,3
+throw ProjectData.CreateProjectError(-2146828237);
+///Label Label 2,4 19
+end_IL_0001_2:
+///Operation Operation 2,5
+break;
+///BlockEnd Block 2,6
+}
+///Operation Operation 1,21
+if (num2 != 0)
+///BlockStart Block 2,0
+{
+///Operation Operation 2,1
+ProjectData.ClearProjectError();
+///BlockEnd Block 2,2
+}
+///BlockEnd Block 1,22
+}

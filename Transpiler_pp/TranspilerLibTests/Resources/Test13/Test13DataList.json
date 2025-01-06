@@ -1,0 +1,1 @@
+[{"Code":"private bool Test13Dat()","Level":0,"type":7},{"Code":"{","Level":1,"type":17},{"Code":"","Level":1,"type":7},{"Code":"\/\/ Compare this snippet from VBUnObfusicatorTests\/Resources\/Test13Dat.cs:","Level":1,"type":12},{"Code":"return","Level":1,"type":7},{"Code":"0 < System.SomeFunc(123);","Level":1,"type":7},{"Code":"}","Level":1,"type":17}]

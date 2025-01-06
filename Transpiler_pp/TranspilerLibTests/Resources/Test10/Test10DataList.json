@@ -1,0 +1,1 @@
+[{"Code":"private void Test10Dat()","Level":0,"type":7},{"Code":"{","Level":1,"type":17},{"Code":"writeln((xText ? 1 : 0).AsString());","Level":1,"type":7},{"Code":"}","Level":1,"type":17}]
