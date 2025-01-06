@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Runtime.InteropServices;
-
-namespace WinAhnenCls.Model.GenBase;
+﻿namespace WinAhnenCls.Model.GenBase;
 
 public class GedComObject
 {
