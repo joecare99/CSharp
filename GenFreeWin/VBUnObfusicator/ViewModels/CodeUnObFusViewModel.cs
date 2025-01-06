@@ -4,7 +4,7 @@ using MVVM.View.Extension;
 using MVVM.ViewModel;
 using System;
 using System.Linq;
-using VBUnObfusicator.Models;
+using VBUnObfusicator.Interfaces.Code;
 using VBUnObfusicator.Properties;
 
 namespace VBUnObfusicator.ViewModels
