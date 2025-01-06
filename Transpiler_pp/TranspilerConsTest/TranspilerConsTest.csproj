@@ -1,0 +1,21 @@
+﻿<Project>
+	<Import Project="..\Transpiler.Props" />
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net8.0-windows</TargetFrameworks>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+	<ItemGroup>
+	  <None Include="Resources\*">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
+	</ItemGroup>
+
+</Project>
