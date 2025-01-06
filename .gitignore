@@ -111,3 +111,4 @@ obj.net
 /JC-AMS/Core/Resource/Version.inc
 /TestStatements/*.snk
 /CSharpBible/Libraries/*.snk
+/Transpiler_pp/Analyzer1/Analyzer1.Package/tools/install.ps1
