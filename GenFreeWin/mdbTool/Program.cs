@@ -1,5 +1,4 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Gen_FreeWin;
 using GenFree.Data;
 using System;
 
