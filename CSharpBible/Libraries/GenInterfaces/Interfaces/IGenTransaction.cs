@@ -6,15 +6,13 @@
 // Last Modified By : Mir
 // Last Modified On : 09-22-2024
 // ***********************************************************************
-// <copyright file="IGenTransaction.cs" company="HP Inc.">
-//     Copyright (c) HP Inc.. All rights reserved.
+// <copyright file="IGenTransaction.cs" company="JC-Soft">
+//     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using GenInterfaces.Interfaces.Genealogic;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 /// <summary>
 /// The Interfaces namespace.
@@ -23,10 +21,10 @@ namespace GenFree2Base.Interfaces;
 
 /// <summary>
 /// Interface IGenTransaction
-/// Extends the <see cref="GenFree2Base.Interfaces.IGenBase" />
+/// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenBase" />
 /// </summary>
-/// <seealso cref="GenFree2Base.Interfaces.IGenBase" />
-public interface IGenTransaction : IGenBase
+/// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenBase" />
+public interface IGenTransaction : IGenBase, IListEntry<IGenTransaction>
 {
     /// <summary>
     /// Gets the class.

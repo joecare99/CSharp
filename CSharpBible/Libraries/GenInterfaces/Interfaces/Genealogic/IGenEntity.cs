@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace GenFree2Base.Interfaces
+namespace GenInterfaces.Interfaces.Genealogic
 {
     public interface IGenEntity : IGenObject
     {

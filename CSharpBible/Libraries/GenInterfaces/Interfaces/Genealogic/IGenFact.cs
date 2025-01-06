@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace GenFree2Base.Interfaces
+namespace GenInterfaces.Interfaces.Genealogic
 {
-    public interface IGenFact : IGenObject    
+    public interface IGenFact : IGenObject
     {
         IGenDate Date { get; set; }
         IGenPlace Place { get; set; }

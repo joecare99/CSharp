@@ -5,7 +5,7 @@ using WinAhnenCls.Model.HejInd;
 
 namespace WinAhnenCls.Model.GenBase
 {
-    public class CGenList<T> : IGenList<T> where T : IGenData
+    public class CGenList<T> : IIndexedList<T> where T : IGenData
     {
         public CGenList(IGenListProvider<T> prov, EGenListType ltype)
         {

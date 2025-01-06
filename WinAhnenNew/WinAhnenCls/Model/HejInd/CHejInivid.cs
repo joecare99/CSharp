@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using WinAhnenCls.Model.GenBase;
 
 namespace WinAhnenCls.Model.HejInd
@@ -40,17 +39,17 @@ namespace WinAhnenCls.Model.HejInd
 
         public int ChildCount => throw new NotImplementedException();
 
-        public IGenList<IGenIndividual> Children { get; }
+        public IIndexedList<IGenIndividual> Children { get; }
 
         public IGenFamily ParentFamily { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int FamilyCount => throw new NotImplementedException();
 
-        public IGenList<IGenFamily> Families { get; }
+        public IIndexedList<IGenFamily> Families { get; }
 
         public int SpouseCount => throw new NotImplementedException();
 
-        public IGenList<IGenIndividual> Spouses { get; }
+        public IIndexedList<IGenIndividual> Spouses { get; }
 
         // Vital-Properties
         public string BirthDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
