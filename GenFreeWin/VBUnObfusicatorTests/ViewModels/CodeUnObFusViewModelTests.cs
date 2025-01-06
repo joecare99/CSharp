@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using VBUnObfusicator.Interfaces.Code;
 using VBUnObfusicator.Models;
 using VBUnObfusicator.Models.Tests;
 using static VBUnObfusicator.Helper.TestHelper;
