@@ -1,5 +1,4 @@
-﻿using GenFree.Helper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using NSubstitute;
 using GenFree.Data;
