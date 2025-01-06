@@ -20,6 +20,10 @@ namespace TestStatements.Anweisungen
     /// </summary>
     public class ConditionalStatement
     {
+        public static bool A { set => a = value; }
+        
+        public static bool B { set => b = value; } 
+
         /// <summary>
         /// Does an if statement.
         /// branches if the length of <see cref="args" /> is 0
@@ -28,7 +32,7 @@ namespace TestStatements.Anweisungen
         public static void DoIfStatement(string[] args)
         {
             const string Title = "Auswertung von Bedingungen (IF-Anweisung)";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             if (args.Length == 0)
             {
                 Console.WriteLine("No arguments");
@@ -48,13 +52,13 @@ namespace TestStatements.Anweisungen
         public static void DoIfStatement2(string[] args)
         {
             const string Title = "Auswertung von Bedingungen (IF-Anweisung) 2";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
-            if (args.Length >= 0)
-                if (args.Length >= 1)
+            Console.WriteLine(Constants.Constants.Header, Title);
+            if (args.Length > 0)
+                if (args.Length > 1)
                     DoIt();
                 else
                 {
-                    Console.WriteLine("one arguments");
+                    Console.WriteLine("One argument");
                 }
             else
             {
@@ -74,7 +78,7 @@ namespace TestStatements.Anweisungen
         public static void DoIfStatement3()
         {
             const string Title = "Auswertung von Bedingungen (IF-Anweisung) 3";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 #pragma warning disable CS0642 // Möglicherweise falsche leere Anweisung(a) ; // Warning but OK in syntax 
             //---------------
             if (a) ; // Warning but OK in syntax 
@@ -94,7 +98,7 @@ namespace TestStatements.Anweisungen
             else DoIt();
             { }
 #pragma warning disable CS0642 // Möglicherweise falsche leere Anweisung
-            { if (a) DoIt(); else; } // Warning but OK in syntax
+            { if (!a) DoIt(); else; } // Warning but OK in syntax
 #pragma warning restore CS0642 // Möglicherweise falsche leere Anweisung
             DoIt();
         }
@@ -113,7 +117,7 @@ namespace TestStatements.Anweisungen
         public static void DoSwitchStatement(string[] args)
         {
             const string Title = "Auswertung von Bedingungen (SWITCH-Anweisung)";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             int n = args.Length;
             switch (n)
@@ -139,13 +143,13 @@ namespace TestStatements.Anweisungen
         ///   <item>switch block with two cases executing the same statement</item>
         ///   <item>switch bloch with 4 cases and different break-settings</item>
         /// </list></remarks>
-        public static void DoSwitchStatement1()
+        public static void DoSwitchStatement1(string[] args)
         {
             const string Title = "Auswertung von Bedingungen (SWITCH-Anweisung) 2";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
 
-            int n = 4;
+            int n = args.Length;
             //Empty Switch ----------------------
             switch (n)
 #pragma warning disable CS1522 // Leerer Schalterblock.

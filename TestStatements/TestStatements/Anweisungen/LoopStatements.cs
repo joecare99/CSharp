@@ -27,7 +27,7 @@ namespace TestStatements.Anweisungen
         public static void DoWhileStatement(string[] args)
         {
             const string Title = "Beispiel für While-Schleife";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             int i = 0;
             while (i < args.Length)
@@ -44,7 +44,7 @@ namespace TestStatements.Anweisungen
         public static void DoDoStatement(string[] args)
         {
             const string Title = "Beispiel für Do-While Schleife";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             string s;
             do
@@ -61,7 +61,7 @@ namespace TestStatements.Anweisungen
         public static void DoDoStatement2(string[] args)
         {
             const string Title = "Beispiel für Do-While Schleife2";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header,Title);
 
             int i=0;
             do
@@ -77,7 +77,7 @@ namespace TestStatements.Anweisungen
         public static void DoDoStatement3(string[] args)
         {
             const string Title = "Beispiel für Do-While Schleife3";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header,Title);
 
             int i=0;
 #pragma warning disable CS0642 // Möglicherweise falsche leere Anweisung
@@ -93,7 +93,7 @@ namespace TestStatements.Anweisungen
         public static void DoDoDoStatement(string[] args)
         {
             const string Title = "Beispiel für Do-While Schleife3";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             int i = 0;
 #pragma warning disable CS0642 // Möglicherweise falsche leere Anweisung
@@ -110,7 +110,7 @@ namespace TestStatements.Anweisungen
         public static void DoDoDoStatement2(string[] args)
         {
             const string Title = "Beispiel für Do-While Schleife3";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             int i = 0;
             do do { }
@@ -126,7 +126,7 @@ namespace TestStatements.Anweisungen
         public static void DoDoWhileNestedStatement2(string[] args)
         {
             const string Title = "Beispiel für Do-While Schleife3";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             int i = 0;
             do
@@ -141,7 +141,7 @@ false);
         public static void DoForStatement(string[] args)
         {
             const string Title = "Beispiel für For-Schleife";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -156,7 +156,7 @@ false);
         public static void DoForStatement2(string[] args)
         {
             const string Title = "Beispiel für For-Schleife";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -171,7 +171,7 @@ false);
         public static void DoForEachStatement(string[] args)
         {
             const string Title = "Beispiel für Foreach-Schleife";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             foreach (string s in args)
             {

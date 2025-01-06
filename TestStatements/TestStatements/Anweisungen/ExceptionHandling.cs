@@ -26,7 +26,7 @@ namespace TestStatements.Anweisungen
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <returns>System.Double.</returns>
-        /// <exception cref="System.DivideByZeroException"></exception>
+        /// <exception cref="DivideByZeroException"></exception>
         static double Divide(double x, double y)
         {
             if (y == 0)
@@ -38,7 +38,7 @@ namespace TestStatements.Anweisungen
         /// Does the try catch.
         /// </summary>
         /// <param name="args">The arguments.</param>
-        /// <exception cref="System.InvalidOperationException">Two numbers required</exception>
+        /// <exception cref="InvalidOperationException">Two numbers required</exception>
         public static void DoTryCatch(string[] args)
         {
             try
@@ -61,12 +61,12 @@ namespace TestStatements.Anweisungen
             }
         }
 
-		/// <summary>
-		/// Does the try finally.
-		/// </summary>
-		/// <param name="args">The arguments.</param>
-		/// <exception cref="System.InvalidOperationException">Two numbers required</exception>
-		public static void DoTryFinally(string[] args) {
+        /// <summary>
+        /// Does the try finally.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <exception cref="InvalidOperationException">Two numbers required</exception>
+        public static void DoTryFinally(string[] args) {
 			try {
 				if (args == null || args.Length == 0) {
 					return;			

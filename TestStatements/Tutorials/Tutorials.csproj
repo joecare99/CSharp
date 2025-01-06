@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
 	<Import Project="..\Solution_net.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net9.0</TargetFrameworks>

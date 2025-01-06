@@ -12,17 +12,17 @@ namespace TestStatements.Anweisungen.Tests
     public class ProgramFlowTests : ConsoleTestsBase
     {
         private readonly string cExpected1=
-            "======================================================================\r\n## Beispiel für Break-Anweisung \r\n" +
+            "======================================================================\r\n## Beispiel für Break-Anweisung\r\n" +
             "======================================================================\r\nHello World";
         private readonly string cExpected2=
-            "======================================================================\r\n## Beispiel für Continue-Anweisung \r\n" +
+            "======================================================================\r\n## Beispiel für Continue-Anweisung\r\n" +
             "======================================================================";
         private readonly string cExpected3=
-            "======================================================================\r\n## Beispiel für Goto-Anweisung \r\n" +
+            "======================================================================\r\n## Beispiel für Goto-Anweisung\r\n" +
             "======================================================================";
         private readonly string cInput="Hello World\n\n";
         private readonly string cExpected1b=
-            "======================================================================\r\n## Beispiel für Break-Anweisung \r\n" +
+            "======================================================================\r\n## Beispiel für Break-Anweisung\r\n" +
             "======================================================================\r\nThis\r\nis\r\na\r\nwonderfull\r\nDay\r\n!";
         private readonly string cInputb= "This\r\nis\r\na\r\nwonderfull\r\nDay\r\n!\r\n\r\n";
 

@@ -52,7 +52,7 @@ namespace TestStatements.Reflection
         public static void ExampleMain()
         {
             const string Title = $"Example for {nameof(Reflection)} ({nameof(ReflectionExample)})";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             Console.WriteLine();
 
             // Create an array of types.

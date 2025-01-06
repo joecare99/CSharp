@@ -19,6 +19,6 @@ public class HelloCommand : ICommand
     public int Execute()
     {
         _env?.ui.ShowMessage(Resources.msgHello);
-        return 0;
+        return 1;
     }
 }

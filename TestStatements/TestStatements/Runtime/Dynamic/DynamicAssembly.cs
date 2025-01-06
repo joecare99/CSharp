@@ -11,7 +11,7 @@ public static class DynamicAssembly
     public static void CreateAndSaveAssembly()
     {
         const string Title = $"Example for {nameof(Dynamic)} ({nameof(DynamicAssembly)})";
-        Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+        Console.WriteLine(Constants.Constants.Header, Title);
         Console.WriteLine();
 
 #if NET9_0_OR_GREATER

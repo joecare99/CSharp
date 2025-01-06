@@ -1,14 +1,9 @@
-﻿using GenFree.Model;
-using GenFree.Data;
+﻿using GenFree.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Model.Tests
 {

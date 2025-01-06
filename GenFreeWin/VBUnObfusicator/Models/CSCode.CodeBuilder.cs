@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static VBUnObfusicator.Models.ICSCode;
+using VBUnObfusicator.Interfaces.Code;
+using static VBUnObfusicator.Interfaces.Code.ICSCode;
 
 namespace VBUnObfusicator.Models
 {

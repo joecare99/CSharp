@@ -15,5 +15,5 @@ public interface IEnvironment
     IMessenger messaging { get; }
     T? GetService<T>();
 
-    bool AddService<T>(T service);
+    bool AddService<T,T2>();
 }

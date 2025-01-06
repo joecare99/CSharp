@@ -12,25 +12,25 @@ namespace TestStatements.Anweisungen.Tests
     public class LoopStatementsTests : ConsoleTestsBase
     {
         private readonly string Expected1= "======================================================================\r\n" +
-            "## Beispiel für While-Schleife \r\n======================================================================";
+            "## Beispiel für While-Schleife\r\n======================================================================";
         private readonly string Expected1a= "======================================================================\r\n" +
-            "## Beispiel für While-Schleife \r\n======================================================================\r\none";
+            "## Beispiel für While-Schleife\r\n======================================================================\r\none";
         private readonly string Expected1b= "======================================================================\r\n" +
-            "## Beispiel für While-Schleife \r\n======================================================================\r\none\r\ntwo";
+            "## Beispiel für While-Schleife\r\n======================================================================\r\none\r\ntwo";
         private readonly string Expected2= "======================================================================\r\n" +
-            "## Beispiel für Do-While Schleife \r\n======================================================================\r\none\r\ntwo";
+            "## Beispiel für Do-While Schleife\r\n======================================================================\r\none\r\ntwo";
         private readonly string Expected3= "======================================================================\r\n" +
-            "## Beispiel für For-Schleife \r\n======================================================================";
+            "## Beispiel für For-Schleife\r\n======================================================================";
         private readonly string Expected3a = "======================================================================\r\n" +
-            "## Beispiel für For-Schleife \r\n======================================================================\r\none";
+            "## Beispiel für For-Schleife\r\n======================================================================\r\none";
         private readonly string Expected3b = "======================================================================\r\n" +
-            "## Beispiel für For-Schleife \r\n======================================================================\r\none\r\ntwo";
+            "## Beispiel für For-Schleife\r\n======================================================================\r\none\r\ntwo";
         private readonly string Expected4= "======================================================================\r\n" +
-            "## Beispiel für Foreach-Schleife \r\n======================================================================";
+            "## Beispiel für Foreach-Schleife\r\n======================================================================";
         private readonly string Expected4a = "======================================================================\r\n" +
-            "## Beispiel für Foreach-Schleife \r\n======================================================================\r\none";
+            "## Beispiel für Foreach-Schleife\r\n======================================================================\r\none";
         private readonly string Expected4b = "======================================================================\r\n" +
-            "## Beispiel für Foreach-Schleife \r\n======================================================================\r\none\r\ntwo";
+            "## Beispiel für Foreach-Schleife\r\n======================================================================\r\none\r\ntwo";
 
         /// <summary>
         /// Defines the test method DoWhileStatementTest.

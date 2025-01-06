@@ -11,7 +11,7 @@ namespace TestStatements.Anweisungen.Tests
     public class ReturnStatementTests
     {
         private readonly string cExpected1= "======================================================================\r\n"+
-            "## Beispiel für Return-Anweisung \r\n======================================================================\r\n3";
+            "## Beispiel für Return-Anweisung\r\n======================================================================\r\n3";
 
         /// <summary>
         /// Defines the test method DoReturnStatementTest.
