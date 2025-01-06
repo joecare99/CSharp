@@ -1,13 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
-using GenFree.Model;
 using GenFree.Interfaces;
 
 namespace GenFree.Model.Tests;
