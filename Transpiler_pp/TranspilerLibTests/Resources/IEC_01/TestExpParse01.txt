@@ -1,0 +1,48 @@
+﻿///Declaration MainBlock 0,0
+
+///FLComment FLComment 1,0
+// Dies ist ein Kommentar zum Typ ST_01
+///Block Block 1,1
+TYPE
+///Variable Variable 2,0
+ST_01
+///Operation Operation 2,1
+:
+///Block Block 2,2
+STRUCT
+///FLComment FLComment 3,0
+// Dies ist ein Kommentar zum Element a
+///Variable Variable 3,1
+a
+///Operation Operation 3,2
+:
+///Function Function 3,3
+INT
+///Operation Operation 3,4
+:=
+///Number Number 3,5
+INT#1
+///Operation Operation 3,6
+;
+///LComment LComment 3,7
+// Dies ist ein 2. Kommentar zum Element a
+///FLComment FLComment 3,8
+// Dies ist ein Kommentar zum Element b
+///Variable Variable 3,9
+b
+///Operation Operation 3,10
+:
+///Function Function 3,11
+LREAL
+///Operation Operation 3,12
+:=
+///Number Number 3,13
+LREAL#2.7e-2
+///Operation Operation 3,14
+;
+///LComment LComment 3,15
+// Dies ist ein 2. Kommentar zum Element b
+///Block Block 2,3
+END_STRUCT
+///Block Block 1,2
+END_TYPE
