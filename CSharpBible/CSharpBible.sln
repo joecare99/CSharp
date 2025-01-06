@@ -1033,6 +1033,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_StickyNotesDemoTests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_StickyNotesDemo_netTests", "WPFSamples_2\WPF_StickyNotesDemoTests\WPF_StickyNotesDemo_netTests.csproj", "{75BC162C-D512-4027-8665-FD5420ACB863}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenInterfaces", "Libraries\GenInterfaces\GenInterfaces.csproj", "{0C5621AB-5BE2-49E2-85B1-2C3A17C2DCFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2856,6 +2858,10 @@ Global
 		{75BC162C-D512-4027-8665-FD5420ACB863}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75BC162C-D512-4027-8665-FD5420ACB863}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75BC162C-D512-4027-8665-FD5420ACB863}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C5621AB-5BE2-49E2-85B1-2C3A17C2DCFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C5621AB-5BE2-49E2-85B1-2C3A17C2DCFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C5621AB-5BE2-49E2-85B1-2C3A17C2DCFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C5621AB-5BE2-49E2-85B1-2C3A17C2DCFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3308,6 +3314,7 @@ Global
 		{E072D6A6-758E-4ABD-9B45-6A1FD8C35BAF} = {174E6CB9-42E1-4C99-B8EF-A2C1F426758D}
 		{C4C9533A-06C5-48CD-88DC-A1E7A81228E0} = {174E6CB9-42E1-4C99-B8EF-A2C1F426758D}
 		{75BC162C-D512-4027-8665-FD5420ACB863} = {174E6CB9-42E1-4C99-B8EF-A2C1F426758D}
+		{0C5621AB-5BE2-49E2-85B1-2C3A17C2DCFA} = {7BA535EF-38FA-47A6-A6BD-5D6333D5DB10}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
