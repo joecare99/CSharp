@@ -5,7 +5,7 @@ using System.IO;
 
 namespace WinAhnenCls.Model.HejInd
 {
-    public class CHejIndiData : DynamicObject
+    public class CHejIndiData : IGenIndividual
     {
         private Dictionary<EHejIndDataFields, object> _data = new();
 
