@@ -181,7 +181,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tetris_BaseTests", "Games\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Werner_Flaschbier_Base", "Games\Werner_Flaschbier\Werner_Flaschbier_Base.csproj", "{A5D73D86-9D5C-45E1-AE27-DDF8A5EE52E5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Werner_Flaschbier_BaseTests", "Games\Werner_Flaschbier_BaseTests\Werner_Flaschbier_BaseTests.csproj", "{FA9F3597-4C9F-48FA-A507-54BF6825C637}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Werner_Flaschbier_ConsoleTests", "Games\Werner_Flaschbier_BaseTests\Werner_Flaschbier_ConsoleTests.csproj", "{FA9F3597-4C9F-48FA-A507-54BF6825C637}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Display_netTest", "Display_Test\Display_netTest.csproj", "{5B2D89EC-28CF-493C-B503-74DCB0F68D73}"
 EndProject
