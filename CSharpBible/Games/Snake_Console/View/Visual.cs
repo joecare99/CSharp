@@ -22,20 +22,20 @@ namespace Snake_Console.View
 	/// <summary>
 	/// Class Visual.
 	/// </summary>
-	public static class Visual {
+	public class Visual : IVisual {
 
         #region Properties
 
         /// The game
         /// </summary>
-        private static Game? _game;
+        private  ISnakeViewModel? _game;
 
 		/// <summary>
 		/// My console
 		/// </summary>
-		public static MyConsoleBase myConsole;
+		public  IConsole myConsole;
 
-		private static TileDisplay _tileDisplay;	
+		private ITileDisplay _tileDisplay;	
 		/// <summary>
 		/// The key action
 		/// </summary>
