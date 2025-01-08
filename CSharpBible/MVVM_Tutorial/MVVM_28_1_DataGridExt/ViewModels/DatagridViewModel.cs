@@ -1,4 +1,4 @@
-﻿using BaseLib.Helper.MVVM;
+﻿using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_28_1_DataGridExt.Models;
 using MVVM_28_1_DataGridExt.Services;
@@ -21,7 +21,7 @@ namespace MVVM_28_1_DataGridExt.ViewModels
         public bool IsItemSelected => SelectedPerson != null;
         public DataGridViewModel() {
             var svc = new PersonService(
-                new CRandom());
+                new CRandom()); 
             foreach(var person in svc.GetPersons())
                 Persons.Add(person);
             foreach (var deprtment in svc.GetDepartments())
