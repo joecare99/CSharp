@@ -16,6 +16,7 @@ using WPF_StickyNotesDemo.Models;
 using WPF_StickyNotesDemo.Models.Interfaces;
 using System;
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace WPF_StickyNotesDemo.ViewModels
 {
@@ -53,6 +54,10 @@ namespace WPF_StickyNotesDemo.ViewModels
             OnPropertyChanged(e.PropertyName); 
         }
 
+        [RelayCommand]
+        private void CbClick(object o)
+        {
+        }
         #endregion
     }
 }

@@ -13,6 +13,7 @@
 // ***********************************************************************
 using CommonDialogs.Interfaces;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace CommonDialogs;
 
@@ -23,6 +24,7 @@ namespace CommonDialogs;
 /// <seealso cref="FontDialog" />
 public class FontDialog : System.Windows.Forms.FontDialog, IFontDialog
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
     public new System.Drawing.Font Font { get => base.Font;set => base.Font = value; }
 
     /// <summary>

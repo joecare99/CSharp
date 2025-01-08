@@ -7,7 +7,7 @@ using MVVM.ViewModel;
 
 namespace Calc64_Wpf.ViewModels;
 
-public class CalculatorViewModel:BaseViewModelCT
+public partial class CalculatorViewModel:BaseViewModelCT
 {
 
 }

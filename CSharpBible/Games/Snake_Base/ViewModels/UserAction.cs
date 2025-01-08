@@ -11,9 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Snake_Base.Model;
+using Snake_Base.Models;
 
-namespace Snake_Base.ViewModel
+namespace Snake_Base.ViewModels
 {
 
     /// <summary>
