@@ -15,7 +15,8 @@ using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Snake_Base.ViewModel;
+using Snake_Base.ViewModels;
+using System.ComponentModel;
 
 namespace Snake_Console.View
 {
@@ -35,7 +36,7 @@ namespace Snake_Console.View
 		/// </summary>
 		public  IConsole myConsole;
 
-		private ITileDisplay _tileDisplay;	
+		private ITileDisplay<Enum> _tileDisplay;	
 		/// <summary>
 		/// The key action
 		/// </summary>
@@ -54,24 +55,33 @@ namespace Snake_Console.View
 		#endregion
 
 		#region Methods
-		static Visual() {
-            myConsole = new MyConsole();
-            TileDisplay.myConsole = myConsole;
-        }
-        /// <summary>
-        /// Sets the game.
-        /// </summary>
-        /// <param name="g">The g.</param>
-        public static void SetGame(Game g)
-        {
-			_game = g;
-            _tileDisplay = new TileDisplay(new Point(1, 1), g.size, new TileDef());
-			_tileDisplay.DispOffset = new Point(-1, -1);
-            _tileDisplay.FncGetTile = (p)=>(Enum)_game.GetTile(p);
-			_tileDisplay.FncOldPos = _game.OldPos;
-            g.visUpdate += G_visUpdate;
-			g.visFullRedraw += FullRedraw;
+		public Visual(ISnakeViewModel viewModel, ITileDisplay<Enum> tileDisplay)
+		{
+			myConsole = tileDisplay.console;
+			_tileDisplay = tileDisplay;
+
+            _tileDisplay.DispOffset = new Point(-1, -1);
+            _tileDisplay.FncGetTile = (p) => (Enum)_game.Tiles[(Point)p];
+            _tileDisplay.FncOldPos = _game.GetOldPos;
+            
+			_game = viewModel;
+			_game.PropertyChanged += OnPropertyChanged;
 			FullRedraw();
+		}
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_game.Tiles))
+            {
+                _tileDisplay.Update(_game.HalfStep);
+
+                ShowStatistics();
+            }
+            else if (e.PropertyName == nameof(_game.Level))
+            {
+                FullRedraw();
+            }
+
         }
 
 
@@ -82,9 +92,6 @@ namespace Snake_Console.View
 		/// <param name="e">if set to <c>true</c> [e].</param>
 		private static void G_visUpdate(object? sender, bool e)
         {
-			_tileDisplay.Update(e);
-
-            ShowStatistics();
 		}
 
 		/// <summary>
@@ -92,7 +99,7 @@ namespace Snake_Console.View
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-		public static void FullRedraw(object? sender=null,EventArgs? e=null)
+		public void FullRedraw(object? sender=null,EventArgs? e=null)
         {
             // basic Checks
             if (_game == null) return;
@@ -105,13 +112,13 @@ namespace Snake_Console.View
 		/// <summary>
 		/// Shows the statistics.
 		/// </summary>
-		private static void ShowStatistics()
+		private void ShowStatistics()
         {
 			if (_game == null) return;
 			myConsole.SetCursorPosition(0, 24);
             myConsole.BackgroundColor = ConsoleColor.Black;
             myConsole.ForegroundColor = ConsoleColor.Yellow;
-            myConsole.Write($"\t{_game.Level + 1}\t\t{_game.Score}\t\t{_game.Lives}/{Game.MaxLives}\t\x08");
+            myConsole.Write($"\t{_game.Level + 1}\t\t{_game.Score}\t\t{_game.Lives}/{_game.MaxLives}\t\x08");
         }
 
 
@@ -119,7 +126,7 @@ namespace Snake_Console.View
 		/// Sounds the specified gs.
 		/// </summary>
 		/// <param name="gs">The gs.</param>
-		public static void Sound(GameSound gs)
+		public void Sound(GameSound gs)
 		{
 			switch (gs)
 			{
@@ -141,10 +148,10 @@ namespace Snake_Console.View
 		/// </summary>
 		/// <param name="action">The action.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		public static bool CheckUserAction(out UserAction action)
+		public bool CheckUserAction()
 		{
 			bool result = false;
-			action = UserAction.Nop;
+			var action = UserAction.Nop;
 			if (myConsole.KeyAvailable)
 			{
 				var ch = myConsole.ReadKey()?.KeyChar ?? '\x00';
@@ -156,7 +163,9 @@ namespace Snake_Console.View
 					result = true;
 				}
 			}
-			return result;
+			if (_game != null)
+                _game.UserAction = action;
+            return result;
 		}
 
         #endregion
