@@ -6,6 +6,22 @@
 version: 2
 updates:
   - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directory: "/CSharpBible" # Location of package manifests
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/TestStatements" # Location of package manifests
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/JC-AMS" # Location of package manifests
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/Transpiler_pp" # Location of package manifests
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/GenFreeWin" # Location of package manifests
     schedule:
       interval: "weekly"
