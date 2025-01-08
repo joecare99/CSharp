@@ -3,11 +3,11 @@
 namespace MVVM_AllExamples.Views
 {
     /// <summary>
-    /// Interaktionslogik für TemplateView.xaml
+    /// Interaktionslogik für AllExamplesView.xaml
     /// </summary>
-    public partial class TemplateView : Page
+    public partial class AllExamplesView : Page
     {
-        public TemplateView()
+        public AllExamplesView()
         {
             InitializeComponent();
         }

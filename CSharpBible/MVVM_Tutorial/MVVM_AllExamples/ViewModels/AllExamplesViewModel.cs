@@ -28,9 +28,9 @@ namespace MVVM_AllExamples.ViewModels
     public partial class AllExamplesViewModel : BaseViewModelCT
     {
         #region Properties
-        public static Func<ITemplateModel> GetModel { get; set; } = () => new AllExampleModel();
+        public static Func<IAllExampleModel> GetModel { get; set; } = () => new AllExampleModel();
 
-        private readonly ITemplateModel _model;
+        private readonly IAllExampleModel _model;
 
         public DateTime Now => _model.Now;
 
@@ -49,7 +49,7 @@ namespace MVVM_AllExamples.ViewModels
         {
         }
 
-        public AllExamplesViewModel(ITemplateModel model)
+        public AllExamplesViewModel(IAllExampleModel model)
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;

@@ -11,8 +11,10 @@ public class IoCTests : BaseTestViewModel
 {
     private Func<Type, object?>? _gsOld;
     private Func<Type, object>? _grsOld;
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     private Func<IServiceScope> _gscOld;
     private IServiceScopeFactory _f;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
     private object GetReqSrv(Type arg)
     {
