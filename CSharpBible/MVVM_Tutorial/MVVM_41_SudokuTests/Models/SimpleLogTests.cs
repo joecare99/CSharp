@@ -11,9 +11,11 @@ namespace MVVM_41_Sudoku.Models.Tests;
 [TestClass]
 public class SimpleLogTests:BaseTestViewModel
 {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     private Action<string> _gsOld;
-    private ISysTime? _sysTime;
     private SimpleLog simpleLog;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+    private ISysTime? _sysTime;
 
 
     [TestInitialize]

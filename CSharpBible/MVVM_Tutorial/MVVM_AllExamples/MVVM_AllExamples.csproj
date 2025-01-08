@@ -43,6 +43,8 @@
 		<ProjectReference Include="..\MVVM_28_1_CTDataGridExt\MVVM_28_1_CTDataGridExt.csproj" />
 		<ProjectReference Include="..\MVVM_33a_CTEvents_To_Commands\MVVM_33a_CTEvents_To_Commands.csproj" />
 		<ProjectReference Include="..\MVVM_33_Events_to_Commands\MVVM_33_Events_to_Commands.csproj" />
+		<ProjectReference Include="..\MVVM_34a_CTBindingEventArgs\MVVM_34a_CTBindingEventArgs.csproj" />
+		<ProjectReference Include="..\MVVM_34_BindingEventArgs\MVVM_34_BindingEventArgs.csproj" />
 		<ProjectReference Include="..\MVVM_35_CommunityToolkit\MVVM_35_CommunityToolkit.csproj" />
 		<ProjectReference Include="..\MVVM_36_ComToolKtSavesWork\MVVM_36_ComToolKtSavesWork.csproj" />
 		<ProjectReference Include="..\MVVM_37_TreeView\MVVM_37_TreeView.csproj" />
