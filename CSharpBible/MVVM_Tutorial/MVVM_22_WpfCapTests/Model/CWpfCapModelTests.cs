@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Helper.MVVM;
+using BaseLib.Helper;
 
 namespace MVVM_22_WpfCap.Model.Tests
 {

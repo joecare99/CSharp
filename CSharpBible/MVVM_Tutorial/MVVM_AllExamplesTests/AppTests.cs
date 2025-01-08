@@ -12,6 +12,7 @@ namespace MVVM_AllExamples.Tests
             OnStartup(null);
         }
     }
+
     [TestClass()]
     public class AppTests 
     {
@@ -29,7 +30,7 @@ namespace MVVM_AllExamples.Tests
             _gsold = IoC.GetSrv;
             _grsold = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) =>t switch {
-                _ when t == typeof(ITemplateModel) => new TemplateModel(),
+                _ when t == typeof(IAllExampleModel) => new AllExampleModel(),
                 _ => throw new ArgumentException() };          
         }
 
@@ -50,7 +51,7 @@ namespace MVVM_AllExamples.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(IAllExampleModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }
