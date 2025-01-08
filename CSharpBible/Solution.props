@@ -3,7 +3,7 @@
 		<UpDir>..</UpDir>
 		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>13.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<DefineConstants>NULLABLE</DefineConstants>
 		<ImplicitUsings>disable</ImplicitUsings>
