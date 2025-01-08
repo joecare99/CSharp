@@ -18,27 +18,24 @@ public abstract class Entity : IEntity
 
     protected bool m_just_checked;
 
-    protected Entity_Handle m_id;
+    protected Entity_Handle? m_id;
 
-    protected Entity_Type m_type;
+    protected Entity_Type? m_type;
 
     protected int m_position_x;
 
     protected int m_position_y;
     protected int m_speed;
 
-    protected Sprite m_sprite;
+    protected Sprite? m_sprite;
 
 
     //True if an entity exists - not used
     protected bool m_exists;
 
-    protected Level current_level;
+    protected Level? current_level;
 
-
-    public Entity();
-
-    public Entity_Handle get_id() => m_id;
+    public Entity_Handle? get_id() => m_id;
 
     public void set_id(Entity_Handle handle) => m_id = handle;
 
@@ -46,9 +43,9 @@ public abstract class Entity : IEntity
 
     public int get_position_y() => m_position_y;
 
-    public Entity_Type get_type() => m_type;
+    public Entity_Type? get_type() => m_type;
 
-    public Sprite get_sprite() => m_sprite;
+    public Sprite? get_sprite() => m_sprite;
 
     public void set_speed(int speed) => m_speed = speed;
 
