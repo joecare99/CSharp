@@ -16,7 +16,10 @@ namespace MVVM_41_Sudoku.Models.Tests;
 [TestClass]
 public class SudokuPrinterTests
 {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     ISudokuModel _model;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+    
     [TestInitialize]
     public void Init()
     {
@@ -45,7 +48,7 @@ public class SudokuPrinterTests
         PagePrinter.Print("PDF", "TestPage", null, TestPage );
     }
 
-    private void TestPage(string title, object data, DrawingContext dc, Rect r)
+    private void TestPage(string title, object? data, DrawingContext dc, Rect r)
     {
         Pen blackLinePen = new Pen(Brushes.Black, 0.5);
 

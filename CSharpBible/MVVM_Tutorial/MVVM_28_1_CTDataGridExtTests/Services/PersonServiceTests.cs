@@ -1,4 +1,4 @@
-﻿using BaseLib.Helper.MVVM;
+﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;

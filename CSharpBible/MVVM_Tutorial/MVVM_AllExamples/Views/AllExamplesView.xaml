@@ -9,7 +9,7 @@
       xmlns:vc="clr-namespace:MVVM_AllExamples.ValueConverters"
       xmlns:mvvm="clr-namespace:MVVM_AllExamples.ViewModels"
       xmlns:model="clr-namespace:MVVM_AllExamples.Models"
-    x:Class="MVVM_AllExamples.Views.TemplateView"
+    x:Class="MVVM_AllExamples.Views.AllExamplesView"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TemplateView">
