@@ -37,7 +37,7 @@
 		<PackageReference Include="System.IO.Ports" Version="7.0.0" />
 		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" Version="4.3.0" />
 		<PackageReference Include="System.Management" Version="7.0.0" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.0" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.0" />
 		<PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 	<ItemGroup>
