@@ -1,21 +1,23 @@
 ﻿<Project>
 	<Import Project="..\Games.props" />
 	<PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
-  </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Helper\" />
-  </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework)=='net462'">
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
-  </ItemGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+	</PropertyGroup>
+	<ItemGroup>
+		<Folder Include="Helper\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+		<ProjectReference Include="..\Game_Base\Game_Base.csproj" />
+	</ItemGroup>
 
 </Project>

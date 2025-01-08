@@ -59,6 +59,7 @@ namespace CommonDialogs
         /// Ruft die von den Benutzern ausgewählte Farbe ab oder legt diese fest.
         /// </summary>
         /// <value>The color.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public Color Color { get => _cd.Color; set => _cd.Color = value; }
 
 
