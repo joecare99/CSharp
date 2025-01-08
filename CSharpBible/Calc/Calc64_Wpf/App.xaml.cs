@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Calc64Base;
 using MVVM.View.Extension;
+using System;
 
 
 namespace Calc64_Wpf
@@ -20,7 +21,7 @@ namespace Calc64_Wpf
             IServiceCollection BaseServices = new ServiceCollection()
                 .AddSingleton<ICalculator, Calc64Model>();
                 
-            var serviceProvider = BaseServices.BuildServiceProvider();
+            IServiceProvider serviceProvider = BaseServices.BuildServiceProvider();
 
             IoC.Configure(serviceProvider);
 

@@ -27,7 +27,7 @@ namespace CreateCards.Utilities
         }
 
         public static void DrawToScreen(this Image ig, Rectangle? r = null)
-        {
+        {        
             using (Graphics g = Graphics.FromHdc(GetDC(IntPtr.Zero)))
             {
                 if (r == null)
