@@ -15,7 +15,7 @@ public static class PagePrinter
     private const int cA4Height = 297; //[mm]
     private const int cBoarder = 10; //[mm]
 
-    public static void Print(string printerName, string title, object data, Action<string, object, DrawingContext, Rect> drawPage)
+    public static void Print(string printerName, string title, object? data, Action<string, object, DrawingContext, Rect> drawPage)
     {
 
         PrintQueue? printQueue = GetPrintQueue(printerName);
@@ -30,8 +30,12 @@ public static class PagePrinter
         Print(printQueue, ticket, title, data, drawPage);
     }
 
-    public static void Print(PrintQueue? printQueue, PrintTicket ticket, string title, object data, Action<string, object, DrawingContext, Rect> drawPage)
+    public static void Print(PrintQueue? printQueue, PrintTicket ticket, string title, object? data, Action<string, object, DrawingContext, Rect> drawPage)
     {
+        if (printQueue == null)
+        {
+            return;
+        }
         printQueue.Comment = $"Comment: {title}";
         printQueue.CurrentJobSettings.Description = $"Desc: {title}";
         var writer = PrintQueue.CreateXpsDocumentWriter(printQueue);
@@ -52,7 +56,11 @@ public static class PagePrinter
 
     private static PrintTicket GetTicket(PrintQueue? printQueue)
     {
-        var ticket = printQueue.UserPrintTicket;
+        var ticket = printQueue?.UserPrintTicket;
+        if (ticket == null)
+        {
+            return new PrintTicket();
+        }
         ticket.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA4);
         ticket.PageOrientation = PageOrientation.Portrait;
         ticket.PageResolution = new PageResolution(300, 300);
