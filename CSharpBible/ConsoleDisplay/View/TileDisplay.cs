@@ -63,7 +63,7 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// it returns the default-tileDef when the local tileDef isn't set.
     /// </summary>
     /// <value>The tile definition.</value>
-    public TileDefBase? TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
+    public ITileDef? TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
 		public Point DispOffset { get; set; } = Point.Empty;
     public Func<Point, T>? FncGetTile { get; set; }
@@ -96,7 +96,7 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// <summary>
     /// The (local) tile-definition
     /// </summary>
-    private TileDefBase? _tileDef;
+    private ITileDef? _tileDef;
     #endregion
     #endregion
 
@@ -154,29 +154,20 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
     /// </summary>
-    public TileDisplay() : this(new MyConsole(),Point.Empty,Size.Empty){}
+    public TileDisplay() : this(new MyConsole(),tileDef!,Point.Empty,Size.Empty){}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
     /// </summary>
-    public TileDisplay(IConsole console) : this(console, Point.Empty, Size.Empty) { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
-    /// </summary>
-    /// <param name="position">The position.</param>
-    /// <param name="size">The size.</param>
-    public TileDisplay(IConsole console,Point position, Size size) : this(console, position, size,tileDef?.TileSize ?? new Size(4,2)) { }
+    public TileDisplay(IConsole console,ITileDef tileDef) : this(console, tileDef, Point.Empty, Size.Empty) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
     /// </summary>
     /// <param name="position">The position.</param>
     /// <param name="size">The size.</param>
-    /// <param name="aTileDef">The tile-definition.</param>
-    public TileDisplay(IConsole console,Point position, Size size, TileDefBase aTileDef) : this(console,position, size, aTileDef.TileSize ) {
-        TileDef = aTileDef;
-    }
+    public TileDisplay(IConsole console, ITileDef tileDef, Point position, Size size) : this(console, tileDef, position, size,tileDef?.TileSize ?? new Size(4,2)) { }
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
@@ -184,16 +175,23 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// <param name="position">The position.</param>
     /// <param name="size">The size.</param>
     /// <param name="tileSize">Size of the tile.</param>
-    public TileDisplay(IConsole console,Point position,Size size, Size tileSize)
+    public TileDisplay(IConsole console, ITileDef tileDef, Point position,Size size, Size tileSize)
     {
         this.console = console;
+        _tileDef = tileDef;
         _rect.Location = position;
         _tileSize = tileSize != Size.Empty ? tileSize : new Size(4, 2);
+        SetDispSize(size);
+    }
+
+    public void SetDispSize(Size size)
+    {
         if (size == Size.Empty)
-            _size = new Size(console.WindowWidth / _tileSize.Width,console.WindowHeight/_tileSize.Height);
+            _size = new Size(console.WindowWidth / _tileSize.Width, console.WindowHeight / _tileSize.Height);
         else
             _size = size;
-        _rect.Size = new Size(_size.Width * _tileSize.Width,_size.Height * _tileSize.Height);
+        _rect.Size = new Size(_size.Width * _tileSize.Width, _size.Height * _tileSize.Height);
+        _changed = true;
     }
 
     #region private Methods
@@ -332,22 +330,15 @@ public class TileDisplay<T>: ITileDisplay<T>
 	/// <summary>
 		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
 		/// </summary>
-		public TileDisplay(IConsole console) : base(console) { }
+		public TileDisplay(IConsole console, ITileDef tileDef) : base(console,tileDef) { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
 		/// </summary>
 		/// <param name="position">The position.</param>
 		/// <param name="size">The size.</param>
-		public TileDisplay(IConsole console,Point position, Size size) : base(console, position, size) { }
+		public TileDisplay(IConsole console,ITileDef tileDef, Point position, Size size) : base(console, tileDef, position, size) { }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
-		/// </summary>
-		/// <param name="position">The position.</param>
-		/// <param name="size">The size.</param>
-		/// <param name="aTileDef">The tile-definition.</param>
-		public TileDisplay(IConsole console, Point position, Size size, TileDefBase aTileDef) : base(console, position, size, aTileDef) {	}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
@@ -355,5 +346,5 @@ public class TileDisplay<T>: ITileDisplay<T>
 		/// <param name="position">The position.</param>
 		/// <param name="size">The size.</param>
 		/// <param name="tileSize">Size of the tile.</param>
-		public TileDisplay(IConsole console, Point position, Size size, Size tileSize) : base(console, position, size, tileSize) { }
+		public TileDisplay(IConsole console, ITileDef tileDef, Point position, Size size, Size tileSize) : base(console, tileDef, position, size, tileSize) { }
 	}
