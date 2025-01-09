@@ -76,8 +76,11 @@ namespace Werner_Flaschbier_Base.View.Tests
 \c0E\t2\t\t0\t\t10/10\t\t99\t\c00";
 
         TstConsole? _testConsole;
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private IWernerViewModel _model;
+        private VTileDef _tileDef;
         private Visual testClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
         /// <summary>
         /// Initializes this instance.
@@ -87,7 +90,8 @@ namespace Werner_Flaschbier_Base.View.Tests
         {
             _testConsole ??= new TstConsole();
             _model = Substitute.For<IWernerViewModel>();
-            testClass = new Visual(_model,_testConsole);
+            _tileDef = new VTileDef();
+            testClass = new Visual(_model,_testConsole,_tileDef);
         }
 
         /// <summary>
