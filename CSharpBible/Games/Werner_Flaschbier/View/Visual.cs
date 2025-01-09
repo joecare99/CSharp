@@ -34,12 +34,13 @@ namespace Werner_Flaschbier_Base.View
 		/// <summary>
 		/// The game
 		/// </summary>
-		private IWernerViewModel? _game;
+		private IWernerViewModel _viewModel;
+        private readonly ITileDef _tileDef;
 
-		/// <summary>
-		/// My console
-		/// </summary>
-		private IConsole _console ;
+        /// <summary>
+        /// My console
+        /// </summary>
+        private IConsole _console ;
 
 		/// <summary>
 		/// The key action
@@ -61,18 +62,19 @@ namespace Werner_Flaschbier_Base.View
 		#endregion
 
 		#region Methods
-		public Visual(IWernerViewModel viewModel,IConsole console)
+		public Visual(IWernerViewModel viewModel,IConsole console, ITileDef tileDef)
 		{
-			_game = viewModel;
-			_game.PropertyChanged += OnPropertyChanged;
-			_console = console;
+			_viewModel = viewModel;
+			_viewModel.PropertyChanged += OnPropertyChanged;
+			_tileDef = tileDef;
+            _console = console;
             FullRedraw();
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Tiles")
-                G_visUpdate(sender, _game.HalfStep);
+                G_visUpdate(sender, _viewModel!.HalfStep);
             else if (e.PropertyName == "Level")
                 FullRedraw();
         }
@@ -96,20 +98,20 @@ namespace Werner_Flaschbier_Base.View
         {
 			List<(Point, Tiles, Point)> diffFields = new();
 		    var p = new Point();
-			if (_game==null) return;
+			if (_viewModel==null) return;
 
-			for (p.Y = 0; p.Y < _game.size.Height; p.Y++)
-				for (p.X = 0; p.X < _game.size.Width; p.X++)
+			for (p.Y = 0; p.Y < _viewModel.size.Height; p.Y++)
+				for (p.X = 0; p.X < _viewModel.size.Width; p.X++)
 				{
-					var td = _game.Tiles[p];
-					if ((Tiles)td != _buffer[p.X + p.Y * _game.size.Width] || (IsEnemy((Tiles)td) && _game.OldPos(p)!=p))
+					var td = _viewModel.Tiles[p];
+					if ((Tiles)td != _buffer[p.X + p.Y * _viewModel.size.Width] || (IsEnemy((Tiles)td) && _viewModel.OldPos(p)!=p))
 					{
 						Point pp = new Point(p.X,p.Y);
 #pragma warning disable CS8604 // Mögliches Nullverweisargument.
-						diffFields.Add((pp, (Tiles)td, _game.OldPos(p)));
+						diffFields.Add((pp, (Tiles)td, _viewModel.OldPos(p)));
 #pragma warning restore CS8604 // Mögliches Nullverweisargument.
 						if (!e)	
-						   _buffer[p.X + p.Y * _game.size.Width] = (Tiles)td;
+						   _buffer[p.X + p.Y * _viewModel.size.Width] = (Tiles)td;
 					}
 				}
 			if (e)
@@ -132,9 +134,9 @@ namespace Werner_Flaschbier_Base.View
 					if (f.Item1.X != f.Item3.X && f.Item1.Y != f.Item3.Y)
 					{
 						var p1 = new Point(f.Item1.X, f.Item3.Y);
-						WriteTile(p1, (Tiles)_game.Tiles[p1]);
+						WriteTile(p1, (Tiles)_viewModel.Tiles[p1]);
 						var p2 = new Point(f.Item3.X, f.Item1.Y);
-						WriteTile(p2, (Tiles)_game.Tiles[p2]);
+						WriteTile(p2, (Tiles)_viewModel.Tiles[p2]);
 					}
 					WriteTile(f.Item1, f.Item2);
                 }
@@ -150,13 +152,13 @@ namespace Werner_Flaschbier_Base.View
 		public void FullRedraw(object? sender=null,EventArgs? e=null)
         {
             // basic Checks
-            if (_game == null) return;
+            if (_viewModel == null) return;
 
             // Draw playfield
             Point p = new Point();
-            for (p.Y = 0; p.Y < _game.size.Height; p.Y++)
-                for (p.X = 0; p.X < _game.size.Width; p.X++)
-                    WriteTile(p, _buffer[p.X + p.Y * _game.size.Width] = (Tiles)_game.Tiles[p]);
+            for (p.Y = 0; p.Y < _viewModel.size.Height; p.Y++)
+                for (p.X = 0; p.X < _viewModel.size.Width; p.X++)
+                    WriteTile(p, _buffer[p.X + p.Y * _viewModel.size.Width] = (Tiles)_viewModel.Tiles[p]);
 
             // Draw statistics
             ShowStatistics();
@@ -167,11 +169,11 @@ namespace Werner_Flaschbier_Base.View
 		/// </summary>
 		private void ShowStatistics()
         {
-			if (_game == null) return;
+			if (_viewModel == null) return;
 			_console.SetCursorPosition(0, 24);
             _console.BackgroundColor = ConsoleColor.Black;
             _console.ForegroundColor = ConsoleColor.Yellow;
-            _console.Write($"\t{_game.Level + 1}\t\t{_game.Score}\t\t{_game.Lives}/{_game.MaxLives} \t\t{Math.Floor(_game.TimeLeft)}\t\x08");
+            _console.Write($"\t{_viewModel.Level + 1}\t\t{_viewModel.Score}\t\t{_viewModel.Lives}/{_viewModel.MaxLives} \t\t{Math.Floor(_viewModel.TimeLeft)}\t\x08");
         }
 
 		/// <summary>
@@ -182,15 +184,14 @@ namespace Werner_Flaschbier_Base.View
 		public void WriteTile(PointF p, Tiles tile)
         {
 			Size s = new Size(4, 2);
-			var colors = VTileDef.GetTileColors(tile);
-			var sTileStr = VTileDef.GetTileStr(tile);
-			for (int i = 0; i < sTileStr.Length; i++)
-				for (int x = 0; x < sTileStr[i].Length; x++)
+			var tDef = _tileDef.GetTileDef(tile);
+			for (int i = 0; i < tDef.lines.Length; i++)
+				for (int x = 0; x < tDef.lines[i].Length; x++)
 				{
-					_console.ForegroundColor = colors[x + i * s.Width].foreGround;
-					_console.BackgroundColor = colors[x + i * s.Width].backGround;
+					_console.ForegroundColor = tDef.colors[x + i * s.Width].fgr;
+					_console.BackgroundColor = tDef.colors[x + i * s.Width].bgr;
 					_console.SetCursorPosition((int)(p.X * s.Width) + x, (int)(p.Y * s.Height) + i);
-					_console.Write(sTileStr[i][x]);
+					_console.Write(tDef.lines[i][x]);
 				}
 		}
 
@@ -235,7 +236,7 @@ namespace Werner_Flaschbier_Base.View
 					result = true;
 				}
 			}
-            _game?.HandleUserAction(action);
+            _viewModel?.HandleUserAction(action);
             return result;
 		}
 
