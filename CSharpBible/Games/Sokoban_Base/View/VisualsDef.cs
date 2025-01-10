@@ -11,14 +11,16 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ConsoleDisplay.View;
 using Sokoban_Base.ViewModel;
 using System;
+using System.Drawing;
 
 namespace Sokoban_Base.View {
 	/// <summary>
 	/// Class VisualsDef.
 	/// </summary>
-	public static class VisualsDef {
+	public class VisualsDef: ITileDef {
 
 		/// <summary>
 		/// The g STR1
@@ -42,12 +44,14 @@ namespace Sokoban_Base.View {
 		static string[] pStr1 = { "|()|",  @" <°)", "(°°)",  @"(°> ",
 								  "(__)",  @">-||", "|^^|",  @"||-<" };
 
-		/// <summary>
-		/// Gets the tile string.
-		/// </summary>
-		/// <param name="tileDef">The tile definition.</param>
-		/// <returns>System.String[].</returns>
-		public static string[] GetTileStr(TileDef tileDef) {
+		public Size TileSize => new Size(4, 2);
+
+        /// <summary>
+        /// Gets the tile string.
+        /// </summary>
+        /// <param name="tileDef">The tile definition.</param>
+        /// <returns>System.String[].</returns>
+        public static string[] GetTileStr(TileDef tileDef) {
 			String[] result ={ "","" };
 			if ((int)tileDef < gStr1.Length / 2 && tileDef != TileDef.Player)
 				(result[0], result[1]) = (gStr1[(int)tileDef], gStr1[(int)tileDef + gStr1.Length / 2]);
@@ -106,21 +110,26 @@ namespace Sokoban_Base.View {
 		/// </summary>
 		/// <param name="tileDef">The tile definition.</param>
 		/// <returns>ConsoleColor[].</returns>
-		public static ConsoleColor[] GetTileColors(TileDef tileDef)
+		public static (ConsoleColor fgr,ConsoleColor bgr) GetTileColors(TileDef tileDef)
         {
-			ConsoleColor[] result = new ConsoleColor[2] { ConsoleColor.Gray, ConsoleColor.Black };
+			var result = ( ConsoleColor.Gray, ConsoleColor.Black );
 			if ((int)tileDef < gColors.Length / 2)
-				(result[0], result[1]) = (gColors[(int)tileDef], gColors[(int)tileDef + gColors.Length / 2]);
+				result = (gColors[(int)tileDef], gColors[(int)tileDef + gColors.Length / 2]);
 			else if (tileDef == TileDef.Floor_Marked)
-				(result[0], result[1]) = (gColors[(int)TileDef.Floor], gColors[(int)TileDef.Floor + gColors.Length / 2]);
+				result = (gColors[(int)TileDef.Floor], gColors[(int)TileDef.Floor + gColors.Length / 2]);
 			else if (tileDef >= TileDef.Player_W && tileDef <= TileDef.PlayerOverDest_E)
             {
 				var td = (int)tileDef % 2 + (int)TileDef.Player; 
-				(result[0], result[1]) = (gColors[td], gColors[td + gColors.Length / 2]);
+				result = (gColors[td], gColors[td + gColors.Length / 2]);
             }
 			else
-				(result[0], result[1]) = (gColors[(int)TileDef.Wall], gColors[(int)TileDef.Wall + gColors.Length / 2]);
+				result = (gColors[(int)TileDef.Wall], gColors[(int)TileDef.Wall + gColors.Length / 2]);
 			return result;
         }
-	}
+
+        public (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile)
+        {
+            return (GetTileStr((TileDef)tile), [GetTileColors((TileDef)tile)]);
+        }
+    }
 }

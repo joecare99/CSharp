@@ -8,13 +8,16 @@
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
-  </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Models\Interfaces\" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <Reference Include="PresentationFramework">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.2\PresentationFramework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -18,6 +18,11 @@ public class VTEVisual : IVisual
         _viewModel.PropertyChanged += OnPropertyChanged;
     }
 
+    public void HandleUserInput()
+    {
+        throw new NotImplementedException();
+    }
+
     public bool ShowFileDialog(IFileDialogData fileDialog)
     {
         throw new NotImplementedException();

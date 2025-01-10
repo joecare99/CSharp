@@ -5,6 +5,7 @@
         Binary,
         Text,
         Json,
-        Code
+        Code,
+        Xml
     }
 }
