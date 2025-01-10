@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -143,16 +144,20 @@ namespace TestConsole.View
         /// The foreground color
         /// </summary>
         private ConsoleColor foregroundColor = ConsoleColor.Gray;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+
         public ConsoleColor ForegroundColor { get => foregroundColor; set => foregroundColor = value; }
         /// <summary>
         /// The background color
         /// </summary>
         private ConsoleColor backgroundColor = ConsoleColor.Black;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public ConsoleColor BackgroundColor { get => backgroundColor; set => backgroundColor = value; }
         /// <summary>
         /// Gets or sets the width of the window.
         /// </summary>
         /// <value>The width of the window.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public int WindowWidth
         {
             get => ConsoleSize.Width;
@@ -166,6 +171,7 @@ namespace TestConsole.View
         /// Gets or sets the height of the window.
         /// </summary>
         /// <value>The height of the window.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public int WindowHeight
         {
             get => ConsoleSize.Height;
@@ -234,8 +240,11 @@ namespace TestConsole.View
             }  
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ConsoleCharInfo[] ScreenBuffer { get => screenBuffer; set => screenBuffer = value; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ConsoleCharInfo[] OutBuffer { get => outBuffer; set => outBuffer = value; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public Size ConsoleSize { get => consoleSize; set => consoleSize = value; }
 
         /// <summary>
