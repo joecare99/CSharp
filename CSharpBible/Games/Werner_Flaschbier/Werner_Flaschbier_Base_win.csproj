@@ -18,6 +18,9 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Condition="$(TargetFramework.StartsWith('net46'))" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Game_Base\Game_Base.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Update="Ressource\Resource1.Designer.cs">

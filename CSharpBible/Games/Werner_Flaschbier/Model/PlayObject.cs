@@ -11,21 +11,38 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Game_Base.Model.Interfaces;
+using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace Werner_Flaschbier_Base.Model
 {
     /// <summary>
     /// Class PlayObject.
     /// </summary>
-    public abstract class PlayObject
+    public abstract class PlayObject : IPlacedObject
     {
+        private Point _place = Point.Empty;
+
+        public event EventHandler<(Point oP, Point nP)>? OnPlaceChange;
 
         /// <summary>
         /// Gets or sets the position.
         /// </summary>
         /// <value>The position of the player on the playfield</value>
-        public Point Position { get; set; }
+        public Point Place { get=>GetPlace(); set=>SetPlace(value); }
+
+        public void SetPlace(Point value, [CallerMemberName] string Name = "")
+        {
+            if (_place == value) return;
+            var _o = _place;
+            _place = value;
+            OnPlaceChange?.Invoke(this,(_o, _place));
+        }
+
+        public Point GetPlace() => _place;
+
         /// <summary>
         /// Gets or sets the old position.
         /// </summary>
@@ -56,6 +73,11 @@ namespace Werner_Flaschbier_Base.Model
         /// <param name="dir">The directon to move</param>
         /// <returns>true: if the object has moveed in the direction</returns>
         public abstract bool TryMove(Direction? dir=null);
+
+        public Point GetOldPlace()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayObject" /> class.

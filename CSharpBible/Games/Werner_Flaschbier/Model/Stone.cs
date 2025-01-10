@@ -38,19 +38,19 @@ namespace Werner_Flaschbier_Base.Model
         {
             var result = false;
 
-            var dest = field?.Parent?[Offsets.DirOffset(Direction.Down, Position)];
+            var dest = field?.Parent?[Offsets.DirOffset(Direction.Down, Place)];
             if (dest is Space @s && @s.Item == null && dest is not Destination)
                 result = true;
             else if (dest is Space @s2 && @s2.Item is Stone || dest is Wall)
             {
-                var zwd= field?.Parent?[Offsets.DirOffset(Direction.West, Position)];
-                var dest2= field?.Parent?[Offsets.DirOffset(Direction.WestDown, Position)];
+                var zwd= field?.Parent?[Offsets.DirOffset(Direction.West, Place)];
+                var dest2= field?.Parent?[Offsets.DirOffset(Direction.WestDown, Place)];
                 if (zwd is Space @zs && @zs.Item==null && @zs.OldItem == null && dest2 is Space @ds2 && @ds2.Item == null)
                     result =true;
                 else
                 {
-                    zwd = field?.Parent?[Offsets.DirOffset(Direction.East, Position)];
-                    dest2 = field?.Parent?[Offsets.DirOffset(Direction.EastDown, Position)];
+                    zwd = field?.Parent?[Offsets.DirOffset(Direction.East, Place)];
+                    dest2 = field?.Parent?[Offsets.DirOffset(Direction.EastDown, Place)];
                     if (zwd is Space @zs2 && @zs2.Item == null && @zs2.OldItem == null && dest2 is Space @ds3 && @ds3.Item == null)
                         result = true;
                 }
@@ -66,33 +66,33 @@ namespace Werner_Flaschbier_Base.Model
         public override bool TryMove(Direction? dir=null)
         {
             Handled=true;
-            var dest= field?.Parent?[Offsets.DirOffset(Direction.Down, Position)];
+            var dest= field?.Parent?[Offsets.DirOffset(Direction.Down, Place)];
             if (dest is Space @s && dest is not Destination && (s.Item == null && s.OldItem == null || s.Item is Player))
                 if (@s.Item == null)
                     @s.Item = this;
-                else if (@s.Item is Player @p && (OldPosition != Position))
+                else if (@s.Item is Player @p && (OldPosition != Place))
                     p.IsAlive = false;
-                else { OldPosition = Position; return false; }
+                else { OldPosition = Place; return false; }
             else if (dest is Space @s2 && @s2.Item is Stone || dest is Wall)
             {
-                var zwd = field?.Parent?[Offsets.DirOffset(Direction.West, Position)];
-                var dest2 = field?.Parent?[Offsets.DirOffset(Direction.WestDown, Position)];
+                var zwd = field?.Parent?[Offsets.DirOffset(Direction.West, Place)];
+                var dest2 = field?.Parent?[Offsets.DirOffset(Direction.WestDown, Place)];
                 if (zwd is Space @zs && zwd is not Destination && @zs.Item == null 
                     && dest2 is Space @ds2 && dest2 is not Destination && @ds2.Item == null && @ds2.OldItem == null)
                     @ds2.Item = this;
                 else
                 {
-                    zwd = field?.Parent?[Offsets.DirOffset(Direction.East, Position)];
-                    dest2 = field?.Parent?[Offsets.DirOffset(Direction.EastDown, Position)];
+                    zwd = field?.Parent?[Offsets.DirOffset(Direction.East, Place)];
+                    dest2 = field?.Parent?[Offsets.DirOffset(Direction.EastDown, Place)];
                     if (zwd is Space @zs2 && zwd is not Destination && @zs2.Item == null 
                         && dest2 is Space @ds3 && dest2 is not Destination && @ds3.Item == null && @ds3.OldItem == null)
                         @ds3.Item = this;
                     else
-                    { OldPosition = Position; return false; }
+                    { OldPosition = Place; return false; }
                 }
             }
             else
-            { OldPosition = Position; return false; }
+            { OldPosition = Place; return false; }
             return true;
         }
     }

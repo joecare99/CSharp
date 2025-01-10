@@ -19,7 +19,7 @@ namespace ConsoleDisplay.View {
 	/// Class TileDef.
 	/// </summary>
 	/// <typeparam name="Enum">The type of the enum.</typeparam>
-	public abstract class TileDefBase
+	public abstract class TileDefBase : ITileDef
     {
         /// <summary>
         /// Gets the tile definition.
