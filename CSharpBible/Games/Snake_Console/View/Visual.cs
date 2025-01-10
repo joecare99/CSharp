@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Snake_Base.ViewModels;
 using System.ComponentModel;
+using Snake_Base.Models.Data;
 
 namespace Snake_Console.View
 {
@@ -29,14 +30,14 @@ namespace Snake_Console.View
 
         /// The game
         /// </summary>
-        private  ISnakeViewModel? _game;
+        private  ISnakeViewModel _viewModel;
 
 		/// <summary>
 		/// My console
 		/// </summary>
 		public  IConsole myConsole;
 
-		private ITileDisplay<Enum> _tileDisplay;	
+		private ITileDisplay<SnakeTiles> _tileDisplay;	
 		/// <summary>
 		/// The key action
 		/// </summary>
@@ -55,44 +56,36 @@ namespace Snake_Console.View
 		#endregion
 
 		#region Methods
-		public Visual(ISnakeViewModel viewModel, ITileDisplay<Enum> tileDisplay)
+		public Visual(ISnakeViewModel viewModel, ITileDisplay<SnakeTiles> tileDisplay)
 		{
+			_viewModel = viewModel;
+			_viewModel.PropertyChanged += OnPropertyChanged;
+
 			myConsole = tileDisplay.console;
 			_tileDisplay = tileDisplay;
 
             _tileDisplay.DispOffset = new Point(-1, -1);
-            _tileDisplay.FncGetTile = (p) => (Enum)_game.Tiles[(Point)p];
-            _tileDisplay.FncOldPos = _game.GetOldPos;
+			_tileDisplay.SetDispSize ( new Size(22, 22));
+            _tileDisplay.FncGetTile = (p) => _viewModel.Tiles[(Point)p];
+            _tileDisplay.FncOldPos = _viewModel.GetOldPos;
             
-			_game = viewModel;
-			_game.PropertyChanged += OnPropertyChanged;
 			FullRedraw();
 		}
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(_game.Tiles))
+            if (e.PropertyName == nameof(_viewModel.Tiles))
             {
-                _tileDisplay.Update(_game.HalfStep);
+                _tileDisplay.Update(_viewModel.HalfStep);
 
                 ShowStatistics();
             }
-            else if (e.PropertyName == nameof(_game.Level))
+            else if (e.PropertyName == nameof(_viewModel.Level))
             {
                 FullRedraw();
             }
 
         }
-
-
-		/// <summary>
-		/// gs the vis update.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">if set to <c>true</c> [e].</param>
-		private static void G_visUpdate(object? sender, bool e)
-        {
-		}
 
 		/// <summary>
 		/// Fulls the redraw.
@@ -102,7 +95,7 @@ namespace Snake_Console.View
 		public void FullRedraw(object? sender=null,EventArgs? e=null)
         {
             // basic Checks
-            if (_game == null) return;
+            if (_viewModel == null) return;
 
 			_tileDisplay.FullRedraw();
             // Draw statistics
@@ -114,11 +107,11 @@ namespace Snake_Console.View
 		/// </summary>
 		private void ShowStatistics()
         {
-			if (_game == null) return;
+			if (_viewModel == null) return;
 			myConsole.SetCursorPosition(0, 24);
             myConsole.BackgroundColor = ConsoleColor.Black;
             myConsole.ForegroundColor = ConsoleColor.Yellow;
-            myConsole.Write($"\t{_game.Level + 1}\t\t{_game.Score}\t\t{_game.Lives}/{_game.MaxLives}\t\x08");
+            myConsole.Write($"\t{_viewModel.Level + 1}\t\t{_viewModel.Score}\t\t{_viewModel.Lives}/{_viewModel.MaxLives}\t\x08");
         }
 
 
@@ -163,8 +156,8 @@ namespace Snake_Console.View
 					result = true;
 				}
 			}
-			if (_game != null)
-                _game.UserAction = action;
+			if (_viewModel != null)
+                _viewModel.UserAction = action;
             return result;
 		}
 

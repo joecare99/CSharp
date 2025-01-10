@@ -113,6 +113,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEdit", "VTileEdit\VTil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werner_Flaschbier_ConsoleTests", "Werner_Flaschbier_BaseTests\Werner_Flaschbier_ConsoleTests.csproj", "{2CA579B8-2C96-4CB8-8FC3-510B9C353BCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEditTests", "VTileEditTests\VTileEditTests.csproj", "{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -299,6 +301,10 @@ Global
 		{2CA579B8-2C96-4CB8-8FC3-510B9C353BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CA579B8-2C96-4CB8-8FC3-510B9C353BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CA579B8-2C96-4CB8-8FC3-510B9C353BCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

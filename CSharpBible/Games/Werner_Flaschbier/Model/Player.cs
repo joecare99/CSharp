@@ -55,7 +55,7 @@ namespace Werner_Flaschbier_Base.Model
         /// <returns>true: if the object can move in the direction</returns>
         public override bool TestMove(Direction? dir)
         {
-            var newfield = field?.Parent?[Offsets.DirOffset(dir,Position)];
+            var newfield = field?.Parent?[Offsets.DirOffset(dir,Place)];
             if (newfield == null || newfield is not Space s)
                 return false;
             else
@@ -73,7 +73,7 @@ namespace Werner_Flaschbier_Base.Model
         public override bool TryMove(Direction? dir)
         {
             if (dir == null) return false;
-            var newfield = field?.Parent?[Offsets.DirOffset(dir, Position)];
+            var newfield = field?.Parent?[Offsets.DirOffset(dir, Place)];
             if (newfield == null || newfield is not Space f )
             {
                 if (newfield is Destination)

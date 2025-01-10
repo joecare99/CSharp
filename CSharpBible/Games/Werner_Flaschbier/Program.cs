@@ -32,16 +32,18 @@ namespace Werner_Flaschbier_Base
         /// <summary>
         /// The game
         /// </summary>
-        private IWernerGame game;
-        private IVisual visual;
+        private IWernerGame? game;
+        private IVisual? visual;
 
-        private static void OnStartUp()
+        private void OnStartUp()
         {
             var sc = new ServiceCollection()
                 .AddSingleton<IWernerGame, WernerGame>()
                 .AddTransient<IWernerViewModel, WernerViewModel>()
+                .AddSingleton<ITileDef, VTileDef>()
                 .AddSingleton<IVisual, Visual>()
                 .AddSingleton<IConsole, MyConsole>();
+            
             var sp = sc.BuildServiceProvider();
 
             IoC.Configure(sp);
@@ -61,10 +63,9 @@ namespace Werner_Flaschbier_Base
 
         public void Run()
         {
-            while (game.isRunning)
+            while (game!.isRunning)
             {
-                UserAction action;
-                visual.CheckUserAction();
+                visual?.CheckUserAction();
                 var delay = game.GameStep();
                 Thread.Sleep(delay);
             }
