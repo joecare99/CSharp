@@ -16,9 +16,10 @@ using MVVM.ViewModel;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
-using BaseLib.Helper.MVVM;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using BaseLib.Helper;
+using BaseLib.Interfaces;
 
 namespace CanvasWPF_CT.ViewModel
 {

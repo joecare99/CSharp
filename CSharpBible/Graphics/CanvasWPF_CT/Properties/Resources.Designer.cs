@@ -69,7 +69,7 @@ namespace CanvasWPF.Properties {
         ///        xmlns:local=&quot;clr-namespace:CanvasWPF_CT&quot;
         ///        xmlns:mvvm=&quot;clr-namespace:CanvasWPF_CT.ViewModel&quot; 
         ///        mc:Ignorable=&quot;d&quot;
-        ///        Title=&quot;Dynamic Shapes&quot; Height [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///        Title=&quot;Dynamic Shapes&quot; d:Heig [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string CanvasWPFView {
             get {
