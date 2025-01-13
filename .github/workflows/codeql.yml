@@ -40,9 +40,12 @@ jobs:
         languages: ${{ matrix.language }}
         queries: +security-extended,security-and-quality
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
-
+    - name: Build Solutions
+      run: |
+        dotnet build Avalonia_Apps/Avalonia_Apps.sln
+        dotnet build Transpiler_pp/Transpiler_pp.sln
+        dotnet build CSharpBible/CSharpBible.sln
+        
     # Uncomment and modify the following lines if Autobuild fails
     # - run: |
     #    echo "Run, Build Application using script"
