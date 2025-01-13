@@ -51,7 +51,7 @@ namespace MVVM_28_DataGrid.Models.Tests
         public void TestProperties(string sProp,string _,object oVal,object oExp)
         {
             if (oVal is DateTime? )
-                testItem.SetProp<Person,DateTime?>(sProp, oVal as DateTime?);
+                testItem.SetProp(sProp, oVal as DateTime?);
             else
                 testItem.SetProp(sProp, oVal);
             Assert.AreEqual(oExp,testItem.GetProp(sProp));

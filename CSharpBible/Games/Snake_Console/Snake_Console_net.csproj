@@ -1,14 +1,19 @@
-<Project>
+﻿<Project>
 	<Import Project="..\Games_net.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <ProjectReference Include="..\Game_Base\Game_Base_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
     <ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+	<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
 </Project>

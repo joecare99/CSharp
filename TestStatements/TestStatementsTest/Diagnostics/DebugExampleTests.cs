@@ -1,27 +1,44 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestStatements.Diagnostics;
+﻿using TestStatements.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TestStatements.UnitTesting;
 using System.Diagnostics;
 
 namespace TestStatements.Diagnostics.Tests
 {
     [TestClass()]
-    public class DebugExampleTests
+    public class DebugExampleTests : ConsoleTestsBase
     {
         [TestMethod()]
-        public void DebugDivideExampleTest()
+        [DataRow(1, 1, 1)]
+        [DataRow(0, 1, 0)]
+        [DataRow(10, 2, 5)]
+        [DataRow(10, 0, 0)]
+        public void DebugDivideExampleTest(int v1, int v2, int iexp)
         {
-            Assert.ThrowsException<Exception>(() => DebugExample.DebugDivideExample(10, 0));
+            if (v2 == 0 && Debugger.IsAttached)
+                Assert.ThrowsException<AssertFailedException>(() => DebugExample.DebugDivideExample(v1, v2));
+            else
+                Assert.AreEqual(iexp, DebugExample.DebugDivideExample(v1, v2));
         }
 
         [TestMethod()]
         public void DebugWriteExampleTest()
         {
-            Assert.Fail();
+            AssertConsoleOutput("", () => DebugExample.DebugWriteExample("Test message"));
+        }
+
+        [TestMethod()]
+        [DataRow(1, 1, 1)]
+        [DataRow(0, 1, 0)]
+        [DataRow(10, 2, 5)]
+        [DataRow(10, 0, 0)]
+        public void NormalDivideExampleTest(int v1, int v2,int iexp)
+        {
+            if (v2 == 0)
+                Assert.ThrowsException<DivideByZeroException>(() => DebugExample.NormalDivideExample(v1, v2));
+            else
+                Assert.AreEqual(iexp, DebugExample.NormalDivideExample(v1, v2));
         }
     }
 }

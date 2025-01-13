@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MVVM_19_FilterLists.ViewModel.Tests
+namespace MVVM_19_FilterLists.ViewModels.Tests
 {
     /// <summary>
     /// Defines test class PersonViewViewModelTests.

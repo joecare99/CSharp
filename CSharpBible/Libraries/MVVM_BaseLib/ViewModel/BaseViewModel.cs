@@ -22,9 +22,9 @@ namespace MVVM.ViewModel;
 
 /// <summary>
 /// Class BaseViewModel.
-/// Implements the <see cref="MVVM.ViewModel.NotificationObject" />
+/// Implements the <see cref="NotificationObject" />
 /// </summary>
-/// <seealso cref="MVVM.ViewModel.NotificationObject" />
+/// <seealso cref="NotificationObject" />
 public abstract class BaseViewModel : NotificationObject, IPropertyBinding
 {
     #region Properties
@@ -125,7 +125,7 @@ public abstract class BaseViewModel : NotificationObject, IPropertyBinding
 
     public bool RemovePropertyDependency(string prop1, string prop2)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     /// <summary>

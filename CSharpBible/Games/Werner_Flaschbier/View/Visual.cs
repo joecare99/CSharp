@@ -14,30 +14,33 @@
 using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using Werner_Flaschbier_Base.ViewModel;
+using Werner_Flaschbier_Base.Model;
+using Werner_Flaschbier_Base.ViewModels;
 
 namespace Werner_Flaschbier_Base.View
 {
     /// <summary>
     /// Class Visual.
     /// </summary>
-    public static class Visual {
+    public class Visual : IVisual {
 
 		#region Properties
 		/// <summary>
 		/// The buffer
 		/// </summary>
-		private static Tiles[] _buffer = new Tiles[12 * 20];
+		private Tiles[] _buffer = new Tiles[12 * 20];
 		/// <summary>
 		/// The game
 		/// </summary>
-		private static Game? _game;
+		private IWernerViewModel _viewModel;
+        private readonly ITileDef _tileDef;
 
-		/// <summary>
-		/// My console
-		/// </summary>
-		public static MyConsoleBase myConsole = new MyConsole();
+        /// <summary>
+        /// My console
+        /// </summary>
+        private IConsole _console ;
 
 		/// <summary>
 		/// The key action
@@ -59,24 +62,29 @@ namespace Werner_Flaschbier_Base.View
 		#endregion
 
 		#region Methods
-		/// <summary>
-		/// Sets the game.
-		/// </summary>
-		/// <param name="g">The g.</param>
-		public static void SetGame(Game g)
-        {
-			_game = g;
-            g.visUpdate += G_visUpdate;
-			g.visFullRedraw += FullRedraw;
-			FullRedraw();
+		public Visual(IWernerViewModel viewModel,IConsole console, ITileDef tileDef)
+		{
+			_viewModel = viewModel;
+			_viewModel.PropertyChanged += OnPropertyChanged;
+			_tileDef = tileDef;
+            _console = console;
+            FullRedraw();
         }
 
-		/// <summary>
-		/// Determines whether the specified e is enemy.
-		/// </summary>
-		/// <param name="e">The e.</param>
-		/// <returns><c>true</c> if the specified e is enemy; otherwise, <c>false</c>.</returns>
-		private static bool IsEnemy(Tiles e) => e == Tiles.Enemy_Dwn 
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Tiles")
+                G_visUpdate(sender, _viewModel!.HalfStep);
+            else if (e.PropertyName == "Level")
+                FullRedraw();
+        }
+
+        /// <summary>
+        /// Determines whether the specified e is enemy.
+        /// </summary>
+        /// <param name="e">The e.</param>
+        /// <returns><c>true</c> if the specified e is enemy; otherwise, <c>false</c>.</returns>
+        private bool IsEnemy(Tiles e) => e == Tiles.Enemy_Dwn 
 			|| e == Tiles.Enemy_Up 
 			|| e == Tiles.Enemy_Left 
 			|| e == Tiles.Enemy_Right;
@@ -86,24 +94,24 @@ namespace Werner_Flaschbier_Base.View
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">if set to <c>true</c> [e].</param>
-		private static void G_visUpdate(object? sender, bool e)
+		private void G_visUpdate(object? sender, bool e)
         {
 			List<(Point, Tiles, Point)> diffFields = new();
 		    var p = new Point();
-			if (_game==null) return;
+			if (_viewModel==null) return;
 
-			for (p.Y = 0; p.Y < _game.size.Height; p.Y++)
-				for (p.X = 0; p.X < _game.size.Width; p.X++)
+			for (p.Y = 0; p.Y < _viewModel.size.Height; p.Y++)
+				for (p.X = 0; p.X < _viewModel.size.Width; p.X++)
 				{
-					var td = _game[p];
-					if (td != _buffer[p.X + p.Y * _game.size.Width] || (IsEnemy(td) && _game.OldPos(p)!=p))
+					var td = _viewModel.Tiles[p];
+					if ((Tiles)td != _buffer[p.X + p.Y * _viewModel.size.Width] || (IsEnemy((Tiles)td) && _viewModel.OldPos(p)!=p))
 					{
 						Point pp = new Point(p.X,p.Y);
 #pragma warning disable CS8604 // Mögliches Nullverweisargument.
-						diffFields.Add((pp, td, _game.OldPos(p)));
+						diffFields.Add((pp, (Tiles)td, _viewModel.OldPos(p)));
 #pragma warning restore CS8604 // Mögliches Nullverweisargument.
 						if (!e)	
-						   _buffer[p.X + p.Y * _game.size.Width] = td;
+						   _buffer[p.X + p.Y * _viewModel.size.Width] = (Tiles)td;
 					}
 				}
 			if (e)
@@ -126,9 +134,9 @@ namespace Werner_Flaschbier_Base.View
 					if (f.Item1.X != f.Item3.X && f.Item1.Y != f.Item3.Y)
 					{
 						var p1 = new Point(f.Item1.X, f.Item3.Y);
-						WriteTile(p1, _game[p1]);
+						WriteTile(p1, (Tiles)_viewModel.Tiles[p1]);
 						var p2 = new Point(f.Item3.X, f.Item1.Y);
-						WriteTile(p2, _game[p2]);
+						WriteTile(p2, (Tiles)_viewModel.Tiles[p2]);
 					}
 					WriteTile(f.Item1, f.Item2);
                 }
@@ -141,16 +149,16 @@ namespace Werner_Flaschbier_Base.View
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-		public static void FullRedraw(object? sender=null,EventArgs? e=null)
+		public void FullRedraw(object? sender=null,EventArgs? e=null)
         {
             // basic Checks
-            if (_game == null) return;
+            if (_viewModel == null) return;
 
             // Draw playfield
             Point p = new Point();
-            for (p.Y = 0; p.Y < _game.size.Height; p.Y++)
-                for (p.X = 0; p.X < _game.size.Width; p.X++)
-                    WriteTile(p, _buffer[p.X + p.Y * _game.size.Width] = _game[p]);
+            for (p.Y = 0; p.Y < _viewModel.size.Height; p.Y++)
+                for (p.X = 0; p.X < _viewModel.size.Width; p.X++)
+                    WriteTile(p, _buffer[p.X + p.Y * _viewModel.size.Width] = (Tiles)_viewModel.Tiles[p]);
 
             // Draw statistics
             ShowStatistics();
@@ -159,13 +167,13 @@ namespace Werner_Flaschbier_Base.View
 		/// <summary>
 		/// Shows the statistics.
 		/// </summary>
-		private static void ShowStatistics()
+		private void ShowStatistics()
         {
-			if (_game == null) return;
-			myConsole.SetCursorPosition(0, 24);
-            myConsole.BackgroundColor = ConsoleColor.Black;
-            myConsole.ForegroundColor = ConsoleColor.Yellow;
-            myConsole.Write($"\t{_game.level + 1}\t\t{_game.Score}\t\t{_game.Lives}/{Game.MaxLives} \t\t{Math.Floor(_game.TimeLeft)}\t\x08");
+			if (_viewModel == null) return;
+			_console.SetCursorPosition(0, 24);
+            _console.BackgroundColor = ConsoleColor.Black;
+            _console.ForegroundColor = ConsoleColor.Yellow;
+            _console.Write($"\t{_viewModel.Level + 1}\t\t{_viewModel.Score}\t\t{_viewModel.Lives}/{_viewModel.MaxLives} \t\t{Math.Floor(_viewModel.TimeLeft)}\t\x08");
         }
 
 		/// <summary>
@@ -173,18 +181,17 @@ namespace Werner_Flaschbier_Base.View
 		/// </summary>
 		/// <param name="p">The p.</param>
 		/// <param name="tile">The tile.</param>
-		public static void WriteTile(PointF p, Tiles tile)
+		public void WriteTile(PointF p, Tiles tile)
         {
 			Size s = new Size(4, 2);
-			var colors = VTileDef.GetTileColors(tile);
-			var sTileStr = VTileDef.GetTileStr(tile);
-			for (int i = 0; i < sTileStr.Length; i++)
-				for (int x = 0; x < sTileStr[i].Length; x++)
+			var tDef = _tileDef.GetTileDef(tile);
+			for (int i = 0; i < tDef.lines.Length; i++)
+				for (int x = 0; x < tDef.lines[i].Length; x++)
 				{
-					myConsole.ForegroundColor = colors[x + i * s.Width].foreGround;
-					myConsole.BackgroundColor = colors[x + i * s.Width].backGround;
-					myConsole.SetCursorPosition((int)(p.X * s.Width) + x, (int)(p.Y * s.Height) + i);
-					myConsole.Write(sTileStr[i][x]);
+					_console.ForegroundColor = tDef.colors[x + i * s.Width].fgr;
+					_console.BackgroundColor = tDef.colors[x + i * s.Width].bgr;
+					_console.SetCursorPosition((int)(p.X * s.Width) + x, (int)(p.Y * s.Height) + i);
+					_console.Write(tDef.lines[i][x]);
 				}
 		}
 
@@ -192,17 +199,17 @@ namespace Werner_Flaschbier_Base.View
 		/// Sounds the specified gs.
 		/// </summary>
 		/// <param name="gs">The gs.</param>
-		public static void Sound(GameSound gs)
+		public void Sound(GameSound gs)
 		{
 			switch (gs)
 			{
 				case GameSound.NoSound:
 					break;
 				case GameSound.Tick:
-					myConsole.Beep(1000, 10);
+					_console.Beep(1000, 10);
 					break;
 				case GameSound.DeepBoom:
-					myConsole.Beep(300, 20);
+					_console.Beep(300, 20);
 					break;
 				default:
 					break;
@@ -214,13 +221,13 @@ namespace Werner_Flaschbier_Base.View
 		/// </summary>
 		/// <param name="action">The action.</param>
 		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		public static bool CheckUserAction(out UserAction action)
+		public bool CheckUserAction()
 		{
 			bool result = false;
-			action = UserAction.Nop;
-			if (myConsole.KeyAvailable)
+			UserAction action = UserAction.Nop;
+			if (_console.KeyAvailable)
 			{
-				var ch = myConsole.ReadKey()?.KeyChar ?? '\x00';
+				var ch = _console.ReadKey()?.KeyChar ?? '\x00';
 
 				ch = Char.ToUpper(ch);
 				if (keyAction.ContainsKey(ch))
@@ -229,7 +236,8 @@ namespace Werner_Flaschbier_Base.View
 					result = true;
 				}
 			}
-			return result;
+            _viewModel?.HandleUserAction(action);
+            return result;
 		}
 
         #endregion

@@ -2,11 +2,13 @@
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
     
         <UseWPF>true</UseWPF>
 		<SignAssembly>True</SignAssembly>
 		<Platforms>AnyCPU;x86</Platforms>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\sgLib.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -25,8 +27,8 @@
 		<Compile Include="..\BaseLib\Helper\StringUtils.cs" Link="Helper\StringUtils.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Condition="$(TargetFramework.StartsWith('net4'))" Include="System.Xaml" />

@@ -1,7 +1,6 @@
 ﻿using DBTest1.Model;
 using MySqlConnector;
 using System.Data.Common;
-using System.Data.OleDb;
 
 namespace DBTest1
 {

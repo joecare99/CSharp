@@ -1,7 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System.ComponentModel;
 using System.Threading;
 using TestConsole;
-using Werner_Flaschbier_Base.ViewModel;
+using Werner_Flaschbier_Base.Model;
+using Werner_Flaschbier_Base.ViewModels;
+using static BaseLib.Helper.TestHelper;
 
 namespace Werner_Flaschbier_Base.View.Tests
 {
@@ -72,6 +76,11 @@ namespace Werner_Flaschbier_Base.View.Tests
 \c0E\t2\t\t0\t\t10/10\t\t99\t\c00";
 
         TstConsole? _testConsole;
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+        private IWernerViewModel _model;
+        private VTileDef _tileDef;
+        private Visual testClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
         /// <summary>
         /// Initializes this instance.
@@ -80,7 +89,9 @@ namespace Werner_Flaschbier_Base.View.Tests
         public void Init()
         {
             _testConsole ??= new TstConsole();
-            Visual.myConsole = _testConsole;
+            _model = Substitute.For<IWernerViewModel>();
+            _tileDef = new VTileDef();
+            testClass = new Visual(_model,_testConsole,_tileDef);
         }
 
         /// <summary>
@@ -92,7 +103,7 @@ namespace Werner_Flaschbier_Base.View.Tests
             _testConsole!.Clear();
             foreach (Tiles tile in typeof(Tiles).GetEnumValues())
             {
-                Visual.WriteTile(new System.Drawing.PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
+                testClass.WriteTile(new System.Drawing.PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
                 Thread.Sleep(0);
             }
             Assert.AreEqual(cExpWriteTile, _testConsole.Content);
@@ -106,14 +117,23 @@ namespace Werner_Flaschbier_Base.View.Tests
         public void FullRedrawTest()
         {
             _testConsole!.Clear();
-            Game g;
-            Visual.SetGame(g=new Game());
+            WernerGame g = new();
+            IWernerViewModel.ITileProxy tp;
+            _model.Tiles.Returns(tp = Substitute.For<IWernerViewModel.ITileProxy>());
+            _model.size.Returns(g.size);
+            _model.Level.Returns((p)=>g.Level);
+            _model.Score.Returns(g.Score);
+            _model.Lives.Returns(g.Lives);
+            _model.MaxLives.Returns(g.MaxLives);
+            _model.TimeLeft.Returns(g.TimeLeft);
+            tp[Arg.Any<System.Drawing.Point>()].Returns((p) => g.GetTile((System.Drawing.Point)p[0]));
+            _model.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_model,new PropertyChangedEventArgs(nameof(_model.Level)));
             Thread.Sleep(500);
-            Assert.AreEqual(cExpFullRedraw1, _testConsole.Content);
+            AssertAreEqual(cExpFullRedraw1, _testConsole.Content);
             g.Setup(1);
-            Visual.FullRedraw();
+            testClass.FullRedraw();
             Thread.Sleep(500);
-            Assert.AreEqual(cExpFullRedraw2, _testConsole.Content);
+            AssertAreEqual(cExpFullRedraw2, _testConsole.Content);
         }
     }
 }

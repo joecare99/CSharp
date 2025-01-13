@@ -96,7 +96,7 @@ namespace MVVM_06_Converters_4.ViewModels.Tests
         public void TestProperties(string sProp, string sName, object oVal, object oExp)
         {
             if (oVal is DateTime?)
-                testModel.SetProp<VehicleViewModel, DateTime?>(sProp, oVal as DateTime?);
+                testModel.SetProp(sProp, oVal as DateTime?);
             else if (sName != "ro")
                 testModel.SetProp(sProp, oVal);
             Assert.AreEqual(oExp, testModel.GetProp(sProp));

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicSample.Constants
 {
@@ -12,6 +8,7 @@ namespace DynamicSample.Constants
     public static class Constants
     {
         private const string LineEnding = "\r\n";
+
         /// <summary>
         /// The header
         /// </summary>

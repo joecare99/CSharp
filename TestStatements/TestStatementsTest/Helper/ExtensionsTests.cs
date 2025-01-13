@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Concurrent;
 using System.Linq;
 
 namespace TestStatements.Helper.Tests

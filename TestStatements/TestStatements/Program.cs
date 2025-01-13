@@ -23,6 +23,7 @@ using TestStatements.CS_Concepts;
 using TestStatements.ClassesAndObjects;
 using TestStatements.Helper;
 using TestStatements.Runtime.Loader;
+using TestStatements.Runtime.Dynamic;
 
 namespace TestStatements
 {
@@ -41,6 +42,7 @@ namespace TestStatements
 			  Console.WriteLine(s.Substring(s.IndexOf(']')+1));
             Console.WriteLine();
             RTLoaderExample.Main(args);
+            DynamicAssembly.CreateAndSaveAssembly();
             DebugExample.Main();
             Declarations.DoVarDeclarations(args);
             Declarations.DoConstantDeclarations(args);

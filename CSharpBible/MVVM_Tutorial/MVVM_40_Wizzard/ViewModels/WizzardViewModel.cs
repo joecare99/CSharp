@@ -14,11 +14,15 @@
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.__Internals;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 
 /// <summary>
@@ -38,6 +42,7 @@ public partial class WizzardViewModel : BaseViewModelCT
     /// The model
     /// </summary>
     private readonly IWizzardModel _model;
+    private readonly IMessenger _messenger;
 
     /// <summary>
     /// Gets the now.
@@ -87,7 +92,7 @@ public partial class WizzardViewModel : BaseViewModelCT
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindowViewModel" /> class.
     /// </summary>
-    public WizzardViewModel() : this(IoC.GetRequiredService<IWizzardModel>())
+    public WizzardViewModel() : this(IoC.GetRequiredService<IWizzardModel>(), IoC.GetRequiredService<IMessenger>())
     {
     }
 
@@ -95,10 +100,11 @@ public partial class WizzardViewModel : BaseViewModelCT
     /// Initializes a new instance of the <see cref="WizzardViewModel"/> class.
     /// </summary>
     /// <param name="model">The model.</param>
-    public WizzardViewModel(IWizzardModel model)
+    public WizzardViewModel(IWizzardModel model, IMessenger messenger)
     {
         _model = model;
         _model.PropertyChanged += OnMPropertyChanged;
+        _messenger = messenger;
     }
 
     /// <summary>
@@ -165,5 +171,28 @@ public partial class WizzardViewModel : BaseViewModelCT
         SelectedTab++;
     }
 
+    [RelayCommand]
+    private void LangDe()
+    {
+        CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("de-DE");
+        CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("de-DE");
+        _messenger.Send(new ValueChangedMessage<CultureInfo>(CultureInfo.CurrentUICulture));
+    }
+
+    [RelayCommand]
+    private void LangEn()
+    {
+        CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("en-US");
+        CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+        _messenger.Send(new ValueChangedMessage<CultureInfo>(CultureInfo.CurrentUICulture));
+    }
+
+    [RelayCommand]
+    private void LangFr()
+    {
+        CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("fr-FR");
+        CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("fr-FR");
+        _messenger.Send(new ValueChangedMessage<CultureInfo>(CultureInfo.CurrentUICulture));
+    }
     #endregion
 }

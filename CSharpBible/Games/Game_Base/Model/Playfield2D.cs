@@ -31,7 +31,7 @@ namespace Game_Base.Model
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="IHasChildren{T}" />
-    public class Playfield2D<T>: IHasChildren<T> where T : class
+    public class Playfield2D<T>: IPlayfield2D<T>, IHasChildren<T> where T : class
     {
         #region Properties
         #region private Properties
@@ -77,6 +77,7 @@ namespace Game_Base.Model
         /// </summary>
         /// <value>The default size.</value>
         public static Size DefaultSize { get; set; } = new Size(20, 20);
+
         #region this
         /// <summary>
         /// Gets or sets the <see cref="System.Nullable{T}" /> with the specified p.

@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using static VBUnObfusicator.Models.ICSCode;
+using static VBUnObfusicator.Interfaces.Code.ICSCode;
 
 /// <summary>
 /// The Models namespace.
@@ -25,9 +25,9 @@ namespace VBUnObfusicator.Models
 {
     /// <summary>
     /// Class CSCode.
-    /// Implements the <see cref="VBUnObfusicator.Models.ICSCode" />
+    /// Implements the <see cref="Interfaces.Code.ICSCode" />
     /// </summary>
-    /// <seealso cref="VBUnObfusicator.Models.ICSCode" />
+    /// <seealso cref="Interfaces.Code.ICSCode" />
     public partial class CSCode
     {
         /// <summary>

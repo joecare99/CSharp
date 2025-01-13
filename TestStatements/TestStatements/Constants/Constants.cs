@@ -36,7 +36,7 @@ namespace TestStatements.Constants
         /// The header
         /// </summary>
         public const string Header = "======================================================================" + LineEnding +
-            "## %s " + LineEnding +
+            "## {0}" + LineEnding +
             "======================================================================";
 
         /// <summary>

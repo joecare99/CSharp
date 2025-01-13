@@ -1,13 +1,9 @@
-﻿
-using GenFree.Data;
-using GenFree.Helper;
+﻿using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Model;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace GenFree.Model
 {

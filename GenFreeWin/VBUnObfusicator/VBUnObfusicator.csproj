@@ -15,14 +15,14 @@
 		<Page Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="IsExternalInit" Version="1.0.3" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="IsExternalInit" Version="1.0.3" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Condition="!$(TargetFramework.Contains('net4'))" Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
-		<ProjectReference Condition="$(TargetFramework.Contains('net4'))" Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Condition="!$(TargetFramework.Contains('net4'))" Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+		<ProjectReference Condition="$(TargetFramework.Contains('net4'))" Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resource.Designer.cs">

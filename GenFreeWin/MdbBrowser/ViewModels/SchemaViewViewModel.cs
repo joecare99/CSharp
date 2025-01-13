@@ -3,12 +3,7 @@ using MdbBrowser.ViewModels.Interfaces;
 using MdbBrowser.Models;
 using MVVM.View.Extension;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
-using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace MdbBrowser.ViewModels
 {

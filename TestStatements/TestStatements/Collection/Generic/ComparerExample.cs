@@ -27,7 +27,7 @@ namespace TestStatements.Collection.Generic
         /// <summary>
         /// The boxes
         /// </summary>
-        private static List<Box> Boxes;
+        private static List<Box>? Boxes;
         /// <summary>
         /// Main procedure of Comparer-example.
         /// </summary>
@@ -36,7 +36,7 @@ namespace TestStatements.Collection.Generic
         {
 
             const string Title = "Comparer<T>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             ShowSortWithLengthFirstComparer();
 
@@ -51,7 +51,7 @@ namespace TestStatements.Collection.Generic
         private static void CreateTestData()
         {
             Boxes?.Clear();
-            Boxes = new List<Box>()
+            Boxes = new()
             {
                 new Box(4, 20, 14),
                 new Box(12, 12, 12),
@@ -152,9 +152,9 @@ namespace TestStatements.Collection.Generic
 
     /// <summary>
     /// Class BoxLengthFirst.
-    /// Implements the <see cref="System.Collections.Generic.Comparer{TestStatements.Collection.Generic.Box}" />
+    /// Implements the <see cref="Comparer{Box}" />
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.Comparer{TestStatements.Collection.Generic.Box}" />
+    /// <seealso cref="Comparer{Box}" />
     public class BoxLengthFirst : Comparer<Box>
     {
         // Compares by Length, Height, and Width.
@@ -195,9 +195,9 @@ namespace TestStatements.Collection.Generic
 
     /// <summary>
     /// Class BoxComp.
-    /// Implements the <see cref="System.Collections.Generic.IComparer{TestStatements.Collection.Generic.Box}" />
+    /// Implements the <see cref="IComparer{Box}" />
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.IComparer{TestStatements.Collection.Generic.Box}" />
+    /// <seealso cref="IComparer{Box}" />
     public class BoxComp : IComparer<Box>
     {
         /// <summary>
@@ -230,9 +230,9 @@ namespace TestStatements.Collection.Generic
 
     /// <summary>
     /// Class Box.
-    /// Implements the <see cref="System.IComparable{TestStatements.Collection.Generic.Box}" />
+    /// Implements the <see cref="IComparable{Box}" />
     /// </summary>
-    /// <seealso cref="System.IComparable{TestStatements.Collection.Generic.Box}" />
+    /// <seealso cref="IComparable{Box}" />
     public class Box : IComparable<Box>
     {
 

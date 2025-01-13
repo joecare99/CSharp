@@ -25,7 +25,7 @@ namespace TestStatements.Collection.Generic.Tests
             "Value = winword.exe\r\nValue = hypertrm.exe\r\nValue = wordpad.exe\r\nValue = notepad.exe";
         private readonly string cExpShowValues2 = "+----------------------------------------------------------\r\n" +
             "| Show Values - index\r\n" +
-            "+----------------------------------------------------------\r\n\n" +
+            "+----------------------------------------------------------\r\n\r\n" +
             "Indexed retrieval using the Values property: Values[2] = winword.exe";
         private readonly string cExpShowKeys1 = "+----------------------------------------------------------\r\n" +
             "| Show Keys - list\r\n" +
@@ -34,11 +34,11 @@ namespace TestStatements.Collection.Generic.Tests
             "Key = rtf\r\nKey = txt";
         private readonly string cExpShowKeys2 = "+----------------------------------------------------------\r\n" +
             "| Show Keys - index\r\n" +
-            "+----------------------------------------------------------\r\n\n" +
+            "+----------------------------------------------------------\r\n\r\n" +
             "Indexed retrieval using the Keys property: Keys[2] = doc";
         private readonly string cExpShowRemove = "+----------------------------------------------------------\r\n" +
             "| Show Remove \r\n" +
-            "+----------------------------------------------------------\r\n\nRemove(\"doc\")\r\n" +
+            "+----------------------------------------------------------\r\n\r\nRemove(\"doc\")\r\n" +
             "Key \"doc\" is not found.";
         private readonly string cExpShowForEach = "+----------------------------------------------------------\r\n" +
             "| Show ForEach\r\n" +
@@ -63,7 +63,7 @@ For key = ""txt"", value = notepad.exe.";
             "+----------------------------------------------------------\r\nAn element with Key = \"txt\" already exists.";
         private readonly string cExpSortedListMain =
             @"======================================================================
-## SortedList<TKey,TValue> 
+## SortedList<TKey,TValue>
 ======================================================================
 
 +----------------------------------------------------------

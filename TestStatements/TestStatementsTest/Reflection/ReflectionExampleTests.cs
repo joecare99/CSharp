@@ -1,10 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestStatements.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TestStatements.UnitTesting;
 
 namespace TestStatements.Reflection.Tests
@@ -17,8 +11,33 @@ namespace TestStatements.Reflection.Tests
     [TestClass()]
     public class ReflectionExampleTests : ConsoleTestsBase
     {
-        private readonly string cExpExampleMain =
-            "Attributes for type ReflectionExample:\r\n   ...is public\r\n   ...is AutoLayout\r\n   ...is a class\r\n   ...is abstract\r\n\r\nAttributes for type NestedClass:\r\n   ...is nested and protected\r\n   ...is AutoLayout\r\n   ...is a class\r\n   ...is sealed\r\n\r\nAttributes for type INested:\r\n   ...is nested and public\r\n   ...is AutoLayout\r\n   ...is an interface\r\n   ...is abstract\r\n\r\nAttributes for type S:\r\n   ...is not public\r\n   ...is SequentialLayout\r\n   ...is a value type\r\n   ...is sealed";
+        private readonly string cExpExampleMain = @"======================================================================
+## Example for Reflection (ReflectionExample)
+======================================================================
+
+Attributes for type ReflectionExample:
+   ...is public
+   ...is AutoLayout
+   ...is a class
+   ...is abstract
+
+Attributes for type NestedClass:
+   ...is nested and protected
+   ...is AutoLayout
+   ...is a class
+   ...is sealed
+
+Attributes for type INested:
+   ...is nested and public
+   ...is AutoLayout
+   ...is an interface
+   ...is abstract
+
+Attributes for type S:
+   ...is not public
+   ...is SequentialLayout
+   ...is a value type
+   ...is sealed";
 
         /// <summary>
         /// Defines the test method ExampleMainTest.

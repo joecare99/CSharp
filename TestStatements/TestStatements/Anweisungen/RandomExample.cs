@@ -196,7 +196,7 @@ namespace TestStatements.Anweisungen
             rnd1.NextBytes(bytes1);
             rnd2.NextBytes(bytes2);
             
-            WriteSeries("First Series",bytes1);
+            WriteSeries("First Series:",bytes1);
 
             Console.WriteLine();
 

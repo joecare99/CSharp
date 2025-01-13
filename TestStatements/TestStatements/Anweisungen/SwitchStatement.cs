@@ -128,7 +128,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         public static void SwitchExample4()
         {
-            var values = new List<object>();
+            var values = new List<object?>();
             for (int ctr = 0; ctr <= 7; ctr++)
             {
                 if (ctr == 2)
@@ -176,11 +176,8 @@ namespace TestStatements.Anweisungen
             names.AddRange(new string[] { "Adam", "Abigail", "Bertrand", "Bridgette" });
             ShowCollectionInformation(names);
 
-#if NET5_0_OR_GREATER
 			List<int>? numbers = null;
-#else
-			List<int> numbers = null;
-#endif
+
 			ShowCollectionInformation(numbers);
         }
 
@@ -188,11 +185,8 @@ namespace TestStatements.Anweisungen
         /// Show Collection Information
         /// </summary>
         /// <param name="coll">The coll.</param>
-#if NET5_0_OR_GREATER
         private static void ShowCollectionInformation(object? coll)
-#else
-		private static void ShowCollectionInformation(object coll)
-#endif
+
 		{
 			switch (coll)
             {
@@ -315,7 +309,7 @@ namespace TestStatements.Anweisungen
         /// </summary>
         /// <param name="values">The values.</param>
         /// <returns>System.Int32.</returns>
-        /// <exception cref="System.InvalidOperationException">unknown item type</exception>
+        /// <exception cref="InvalidOperationException">unknown item type</exception>
         public static int DiceSum(IEnumerable<object> values)
         {
             var sum = 0;
@@ -352,7 +346,7 @@ namespace TestStatements.Anweisungen
         /// Passes this instance.
         /// </summary>
         /// <returns>System.Object.</returns>
-        public static object Pass()
+        public static object? Pass()
         {
             if (rnd.Next(0, 2) == 0)
                 return null;

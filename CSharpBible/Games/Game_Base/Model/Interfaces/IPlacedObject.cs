@@ -29,7 +29,7 @@ namespace Game_Base.Model.Interfaces
         /// <summary>
         /// Occurs when [on place change].
         /// </summary>
-        event EventHandler<(Point oP, Point nP)> OnPlaceChange;
+        event EventHandler<(Point oP, Point nP)>? OnPlaceChange;
 #if NET6_0_OR_GREATER
         /// <summary>
         /// Gets or sets the place.

@@ -1,41 +1,73 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static BaseLib.Helper.TestHelper;
 
-namespace TestStatements.UnitTesting {
-	/// <summary>
-	/// Class ConsoleTestsBase.
-	/// </summary>
-	public class ConsoleTestsBase {
-		protected static void AssertConsoleOutput(string Expected, Action ToTest) {
-            using var sw = new StringWriter();
-            Console.SetOut(sw);
+namespace TestStatements.UnitTesting;
+/// <summary>
+/// Class ConsoleTestsBase.
+/// </summary>
+public class ConsoleTestsBase
+{
 
+    protected static void AssertConsoleOutput(string Expected, Action ToTest)
+    {
+        using var sw = new StringWriter();
+        var originalOut = Console.Out;
+        Console.SetOut(sw);
+
+        try
+        {
             ToTest?.Invoke();
-
-            var result = sw.ToString().Trim();
-            Assert.AreEqual(Expected, result);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
         }
 
-		protected static void AssertConsoleOutputArgs(string Expected, string[] Args, Action<String[]> ToTest) {
-            using var sw = new StringWriter();
-            Console.SetOut(sw);
+        var result = sw.ToString().Trim();
+        AssertAreEqual(Expected, result);
+    }
 
+    protected static void AssertConsoleOutputArgs(string Expected, string[] Args, Action<String[]> ToTest)
+    {
+        using var sw = new StringWriter();
+        var originalOut = Console.Out;
+
+        Console.SetOut(sw);
+
+        try
+        {
             ToTest?.Invoke(Args);
-
-            var result = sw.ToString().Trim();
-            Assert.AreEqual(Expected, result);
         }
-		protected void AssertConsoleInOutputArgs(string Expected, string TestInput, string[] Args, Action<string[]> ToTest) {
-            using var sw = new StringWriter();
-            using var sr = new StringReader(TestInput);
-            Console.SetOut(sw);
-            Console.SetIn(sr);
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
 
+        var result = sw.ToString().Trim();
+        AssertAreEqual(Expected, result);
+    }
+    protected void AssertConsoleInOutputArgs(string Expected, string TestInput, string[] Args, Action<string[]> ToTest)
+    {
+        using var sw = new StringWriter();
+        using var sr = new StringReader(TestInput);
+        var originalOut = Console.Out;
+        var originalIn = Console.In;
+        Console.SetOut(sw);
+        Console.SetIn(sr);
+
+        try
+        {
             ToTest?.Invoke(Args);
-
-            var result = sw.ToString().Trim();
-            Assert.AreEqual(Expected, result);
         }
-	}
+        finally
+        {
+            Console.SetOut(originalOut);
+            Console.SetIn(originalIn);
+        }
+
+        var result = sw.ToString().Trim();
+        AssertAreEqual(Expected, result);
+    }
 }

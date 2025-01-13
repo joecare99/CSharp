@@ -19,16 +19,16 @@ namespace TestStatements.Collection.Generic
 {
     /// <summary>
     /// Class Part.
-    /// Implements the <see cref="System.IEquatable{TestStatements.Collection.Generic.Part}" />
+    /// Implements the <see cref="IEquatable{Part}" />
     /// </summary>
-    /// <seealso cref="System.IEquatable{TestStatements.Collection.Generic.Part}" />
+    /// <seealso cref="IEquatable{Part}" />
     public class Part : IEquatable<Part>
     {
         /// <summary>
         /// Gets or sets the name of the part.
         /// </summary>
         /// <value>The name of the part.</value>
-        public string PartName { get; set; }
+        public string? PartName { get; set; }
 
         /// <summary>
         /// Gets or sets the part identifier.
@@ -42,7 +42,7 @@ namespace TestStatements.Collection.Generic
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return "ID: " + PartId + "   Name: " + PartName;
+            return $"ID: {PartId}   Name: {PartName}";
         }
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
@@ -88,7 +88,7 @@ namespace TestStatements.Collection.Generic
         public static void ListMain()
         {
             const string Title = "Show List<T>";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             CreateTestData();
             ShowList(parts);
@@ -276,7 +276,7 @@ namespace TestStatements.Collection.Generic
         public static void ListDinos()
         {
             const string Title = "Dinosaur Example";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             ShowStatus(dinosaurs);
 

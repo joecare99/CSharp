@@ -1,0 +1,30 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <Border Padding="20" Background="{DynamicResource ResourceKey=AppDefaultBackground}">
+      <!-- Add Controls for Previewer Here -->
+      <StackPanel>
+        <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/> 
+        <TextBox Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <CheckBox Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <RadioButton Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center">
+          <ComboBoxItem Content="Hello, Avalonia!"/>
+          <ComboBoxItem Content="Hello, Avalonia!"/>
+          <ComboBoxItem Content="Hello, Avalonia!"/>
+        </ComboBox>
+        <ListBox HorizontalAlignment="Center" VerticalAlignment="Center">
+          <ListBoxItem Content="Hello, Avalonia!"/>
+          <ListBoxItem Content="Hello, Avalonia!"/>
+          <ListBoxItem Content="Hello, Avalonia!"/>
+        </ListBox>
+        <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Slider HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+  </Design.PreviewWith>
+
+  <!-- Add Styles Here -->
+</Styles>

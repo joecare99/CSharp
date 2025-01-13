@@ -1,0 +1,23 @@
+{
+  "profiles": {
+    "AppWithPlugin": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "AppWithPlugin /d": {
+      "commandName": "Project",
+      "commandLineArgs": "/d"
+    },
+    "AppWithPlugin Hello": {
+      "commandName": "Project",
+      "commandLineArgs": "Hello"
+    },
+    "Profil \"1\"": {
+      "commandName": "Project",
+      "commandLineArgs": "Test"
+    }
+  }
+}

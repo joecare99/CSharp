@@ -1,22 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Data.Tests
 {
     [TestClass()]
     public class IndexDefTests
     {
-
+        private TableDef td;
         private IndexDef testClass;
 
         [TestInitialize]
         public void Init()
         {
-            testClass = new IndexDef();
+            td = new TableDef(null,"");
+            testClass = new IndexDef(td,"Name","sField",true,false);
         }
 
         [TestMethod()]

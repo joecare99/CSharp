@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_22_WpfCap.Model;
-using System;
-using System.Collections.Specialized;
+﻿using System;
 using System.ComponentModel;
-using Telerik.JustMock;
+using System.Collections.Specialized;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM_22_WpfCap.Model;
+using NSubstitute;
 
-namespace MVVM_22_WpfCap.ViewModel.Tests
+namespace MVVM_22_WpfCap.ViewModels.Tests
 {
     public class TestWpfCapModel : IWpfCapModel
     {
@@ -111,12 +111,11 @@ namespace MVVM_22_WpfCap.ViewModel.Tests
         [TestMethod()]
         public void WpfCapViewModelTest()
         {
-            var mdl = Mock.Create<IWpfCapModel>();
+            var mdl = Substitute.For<IWpfCapModel>();
             var _testWpfCapVM = new WpfCapViewModel(mdl);
             Assert.IsNotNull(_testWpfCapVM);
-            Mock.Assert(mdl);
-            Mock.Assert(() => mdl.Init());
-            Mock.Assert(() => mdl.Shuffle());
+            mdl.Received(1).Init();
+            mdl.Received(1).Shuffle();
         }
 
         [TestMethod()]

@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using TestStatements.UnitTesting;
 
 namespace TestStatements.Diagnostics.Tests
@@ -9,6 +8,7 @@ namespace TestStatements.Diagnostics.Tests
     public class StopWatchExampleTests:ConsoleTestsBase
     {
         private MyStopwatch _myStopwatch;
+        private MyStopwatch _myStopwatch2;
 
         private class MyStopwatch : IStopwatch
         {
@@ -65,7 +65,9 @@ namespace TestStatements.Diagnostics.Tests
         [TestInitialize]
         public virtual void Init() { 
             _myStopwatch = new MyStopwatch();
+            _myStopwatch2 = new MyStopwatch();
             StopWatchExample.GetStopwatch = () => _myStopwatch;
+            StopWatchExample.GetStopwatch2 = () => _myStopwatch2;
             StopWatchExample.ThreadSleep = MyStopwatch.Sleep;
         }
 
@@ -88,27 +90,27 @@ Press the Enter key to begin:
 
 
 Operation: Int32.Parse(""0"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds
 
 Operation: Int32.TryParse(""0"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds
 
 Operation: Int32.Parse(""a"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds
 
 Operation: Int32.TryParse(""a"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds", "\r\n",null,(a)=> StopWatchExample.ExampleMain());
         }
 
@@ -124,27 +126,27 @@ Press the Enter key to begin:
 
 
 Operation: Int32.Parse(""0"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds
 
 Operation: Int32.TryParse(""0"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds
 
 Operation: Int32.Parse(""a"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds
 
 Operation: Int32.TryParse(""a"") Summary:
-  Slowest time:  #-1/1000 = 0 ticks
-  Fastest time:  #1/1000 = 0 ticks
-  Average time:  0 ticks = 0 nanoseconds
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
   Total time looping through 1000 operations: 0 milliseconds", "\r\n", null, (a) => StopWatchExample.ExampleMain2());
         }
 
@@ -157,7 +159,29 @@ Operation: Int32.TryParse(""a"") Summary:
         [TestMethod]
         public void TimeOperationsTest()
         {
-            AssertConsoleOutput("Operation: Int32.Parse(\"0\") Summary:\r\n  Slowest time:  #-1/1000 = 0 ticks\r\n  Fastest time:  #1/1000 = 0 ticks\r\n  Average time:  0 ticks = 0 nanoseconds\r\n  Total time looping through 1000 operations: 0 milliseconds\r\n\r\nOperation: Int32.TryParse(\"0\") Summary:\r\n  Slowest time:  #-1/1000 = 0 ticks\r\n  Fastest time:  #1/1000 = 0 ticks\r\n  Average time:  0 ticks = 0 nanoseconds\r\n  Total time looping through 1000 operations: 0 milliseconds\r\n\r\nOperation: Int32.Parse(\"a\") Summary:\r\n  Slowest time:  #-1/1000 = 0 ticks\r\n  Fastest time:  #1/1000 = 0 ticks\r\n  Average time:  0 ticks = 0 nanoseconds\r\n  Total time looping through 1000 operations: 0 milliseconds\r\n\r\nOperation: Int32.TryParse(\"a\") Summary:\r\n  Slowest time:  #-1/1000 = 0 ticks\r\n  Fastest time:  #1/1000 = 0 ticks\r\n  Average time:  0 ticks = 0 nanoseconds\r\n  Total time looping through 1000 operations: 0 milliseconds", StopWatchExample.TimeOperations);
+            AssertConsoleOutput(@"Operation: Int32.Parse(""0"") Summary:
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
+  Total time looping through 1000 operations: 0 milliseconds
+
+Operation: Int32.TryParse(""0"") Summary:
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
+  Total time looping through 1000 operations: 0 milliseconds
+
+Operation: Int32.Parse(""a"") Summary:
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
+  Total time looping through 1000 operations: 0 milliseconds
+
+Operation: Int32.TryParse(""a"") Summary:
+  Slowest time:  #1/1000 = 20 ticks
+  Fastest time:  #1/1000 = 20 ticks
+  Average time:  20 ticks = 2000 nanoseconds
+  Total time looping through 1000 operations: 0 milliseconds", StopWatchExample.TimeOperations);
         }
 
     }

@@ -95,6 +95,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolySpline", "PolySpline\Po
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolySpline_net", "PolySpline\PolySpline_net.csproj", "{EF90C4A7-DB44-4672-A4A5-E7D9996587BC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_ImageHandling_netTests", "MVVM_ImageHandlingTests\MVVM_ImageHandling_netTests.csproj", "{74702CB8-336B-4AE0-990C-4E1914F720E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_ImageHandlingTests", "MVVM_ImageHandlingTests\MVVM_ImageHandlingTests.csproj", "{B1FCD6F4-2DBF-4AC7-AD62-64E830E83764}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -249,6 +253,14 @@ Global
 		{EF90C4A7-DB44-4672-A4A5-E7D9996587BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF90C4A7-DB44-4672-A4A5-E7D9996587BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF90C4A7-DB44-4672-A4A5-E7D9996587BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74702CB8-336B-4AE0-990C-4E1914F720E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74702CB8-336B-4AE0-990C-4E1914F720E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74702CB8-336B-4AE0-990C-4E1914F720E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74702CB8-336B-4AE0-990C-4E1914F720E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1FCD6F4-2DBF-4AC7-AD62-64E830E83764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1FCD6F4-2DBF-4AC7-AD62-64E830E83764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1FCD6F4-2DBF-4AC7-AD62-64E830E83764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1FCD6F4-2DBF-4AC7-AD62-64E830E83764}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,14 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EB874EF-C516-4C1C-8CD7-26EB15CA80E1}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		GenFreeWin.props = GenFreeWin.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{DDC1E0CB-8182-454A-8B2B-2F2CF9A2059B}"
+	ProjectSection(SolutionItems) = preProject
+		..\CSharpBible\Libraries\.info = ..\CSharpBible\Libraries\.info
+		..\CSharpBible\Libraries\Libraries.props = ..\CSharpBible\Libraries\Libraries.props
+		..\CSharpBible\Libraries\Libraries_net.props = ..\CSharpBible\Libraries\Libraries_net.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinAhnen", "WinAhnen", "{2A2E129C-95B6-4192-BA94-D9C5A249AB43}"
+	ProjectSection(SolutionItems) = preProject
+		..\WinAhnenNew\WinAhnen.props = ..\WinAhnenNew\WinAhnen.props
+	EndProjectSection
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenFreeWin", "GenFreeWin\GenFreeWin.csproj", "{91C4CEA9-5E18-4B23-950F-CAC0E34A2F1D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPUpd1", "GPUpd1\GPUpd1.csproj", "{FFD65393-61AB-4B9F-9762-0014659B4B78}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{BBF68FEC-4602-4230-BF49-B29995BF8BBB}"
-	ProjectSection(SolutionItems) = preProject
-		GenFreeWin.props = GenFreeWin.props
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "druck", "Druck\druck.csproj", "{62539906-8AC0-4F7F-9F2F-267DB84B2789}"
 EndProject
@@ -22,10 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenFreeWinTests", "GenFreeW
 	ProjectSection(ProjectDependencies) = postProject
 		{344EEF76-9D81-49D3-9EB5-1F629EDFBD14} = {344EEF76-9D81-49D3-9EB5-1F629EDFBD14}
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAhnenCls", "HejLib\WinAhnenCls.csproj", "{D3177C53-FFF3-432A-AE35-2AB870E644B4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAhnenClsTests", "WinAhnenClsTests\WinAhnenClsTests.csproj", "{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mdbTool", "mdbTool\mdbTool.csproj", "{6F399584-B25A-4F10-8838-A65C7BDC737F}"
 EndProject
@@ -39,13 +48,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBUnObfusicatorTests", "VBU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MdbBrowserTests", "MdbBrowserTests\MdbBrowserTests.csproj", "{458F102A-7BFD-4DBB-B036-61AAE8A081E2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{DDC1E0CB-8182-454A-8B2B-2F2CF9A2059B}"
-	ProjectSection(SolutionItems) = preProject
-		..\CSharpBible\Libraries\.info = ..\CSharpBible\Libraries\.info
-		..\CSharpBible\Libraries\Libraries.props = ..\CSharpBible\Libraries\Libraries.props
-		..\CSharpBible\Libraries\Libraries_net.props = ..\CSharpBible\Libraries\Libraries_net.props
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLib", "..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj", "{9EA5AE42-4A78-4D73-A9A3-29EDD88A18F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLib_net", "..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj", "{043D82CE-DE0D-4C15-A0B8-09809B28B543}"
@@ -54,10 +56,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests", "..\CSh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests_net", "..\CSharpBible\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj", "{D0D60A2C-7329-46AE-9229-AF73D7CE1058}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EB874EF-C516-4C1C-8CD7-26EB15CA80E1}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs", "..\CSharpBible\Libraries\CommonDialogs\CommonDialogs.csproj", "{5ECC12F4-F228-478A-965A-3A93B045DF51}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs_net", "..\CSharpBible\Libraries\CommonDialogs\CommonDialogs_net.csproj", "{C49B0328-C78F-4BAE-862E-452C19E3A4BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenInterfaces", "..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj", "{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gedles", "GedLes\gedles.csproj", "{FC6A0595-BB07-4987-8205-C2A57345199D}"
 EndProject
@@ -75,10 +78,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenFreeDataTests", "GenFree
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenFreeBaseTests", "GenFreeBaseTests\GenFreeBaseTests.csproj", "{8B70734E-8065-42B3-9025-96EEF88D890A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs", "..\CSharpBible\Libraries\CommonDialogs\CommonDialogs.csproj", "{5ECC12F4-F228-478A-965A-3A93B045DF51}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs_net", "..\CSharpBible\Libraries\CommonDialogs\CommonDialogs_net.csproj", "{C49B0328-C78F-4BAE-862E-452C19E3A4BA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{3BA154B1-5A96-474B-ABCF-8EBD41E2CD0A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSQBrowser", "MSQBrowser\MSQBrowser.csproj", "{E382C6FC-53E0-41A7-8B39-C41F6C2E67CC}"
@@ -86,6 +85,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBTest1", "..\CSharpBible\DB\DBTest1\DBTest1.csproj", "{9F4C1A90-7D00-4E3E-A539-05A70DC7C2B3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_09a_CTDialogBoxes", "..\CSharpBible\MVVM_Tutorial\MVVM_09a_CTDialogBoxes\MVVM_09a_CTDialogBoxes.csproj", "{B1E46411-307E-4BF6-B864-B3A74791FD5A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gen_BaseItf", "..\WinAhnenNew\Gen_BaseItf\Gen_BaseItf.csproj", "{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAhnenCls", "..\WinAhnenNew\WinAhnenCls\WinAhnenCls.csproj", "{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAhnenClsTests", "..\WinAhnenNew\WinAhnenClsTests\WinAhnenClsTests.csproj", "{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,22 +148,6 @@ Global
 		{B5FB7663-7D66-439B-866A-ECC27DA29079}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5FB7663-7D66-439B-866A-ECC27DA29079}.Release|x86.ActiveCfg = Release|Any CPU
 		{B5FB7663-7D66-439B-866A-ECC27DA29079}.Release|x86.Build.0 = Release|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Debug|x86.Build.0 = Debug|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Release|x86.ActiveCfg = Release|Any CPU
-		{D3177C53-FFF3-432A-AE35-2AB870E644B4}.Release|x86.Build.0 = Release|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Debug|x86.Build.0 = Debug|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Release|x86.ActiveCfg = Release|Any CPU
-		{97DE52C7-0B86-43E6-B046-BF5E7B9A7B8D}.Release|x86.Build.0 = Release|Any CPU
 		{6F399584-B25A-4F10-8838-A65C7BDC737F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F399584-B25A-4F10-8838-A65C7BDC737F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F399584-B25A-4F10-8838-A65C7BDC737F}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -333,6 +322,38 @@ Global
 		{B1E46411-307E-4BF6-B864-B3A74791FD5A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1E46411-307E-4BF6-B864-B3A74791FD5A}.Release|x86.ActiveCfg = Release|Any CPU
 		{B1E46411-307E-4BF6-B864-B3A74791FD5A}.Release|x86.Build.0 = Release|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Debug|x86.Build.0 = Debug|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Release|x86.ActiveCfg = Release|Any CPU
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA}.Release|x86.Build.0 = Release|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Debug|x86.Build.0 = Debug|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5}.Release|x86.Build.0 = Release|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Debug|x86.Build.0 = Debug|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Release|x86.ActiveCfg = Release|Any CPU
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC}.Release|x86.Build.0 = Release|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -362,6 +383,10 @@ Global
 		{C49B0328-C78F-4BAE-862E-452C19E3A4BA} = {DDC1E0CB-8182-454A-8B2B-2F2CF9A2059B}
 		{E382C6FC-53E0-41A7-8B39-C41F6C2E67CC} = {3BA154B1-5A96-474B-ABCF-8EBD41E2CD0A}
 		{9F4C1A90-7D00-4E3E-A539-05A70DC7C2B3} = {3BA154B1-5A96-474B-ABCF-8EBD41E2CD0A}
+		{AB31AF4A-B298-417C-AEC0-0E7E3D4EBCAA} = {2A2E129C-95B6-4192-BA94-D9C5A249AB43}
+		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5} = {2A2E129C-95B6-4192-BA94-D9C5A249AB43}
+		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC} = {2A2E129C-95B6-4192-BA94-D9C5A249AB43}
+		{259C4D8A-D667-4F41-BB7B-ABF0C29EE7A6} = {DDC1E0CB-8182-454A-8B2B-2F2CF9A2059B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B766B89-B32C-4777-9290-8BF7CEC401B5}

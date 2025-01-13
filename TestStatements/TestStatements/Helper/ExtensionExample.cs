@@ -26,7 +26,7 @@ namespace TestStatements.Helper
         public static void ShowExtensionEx1()
         {
             const string Title = "Example for Extension (Helper)";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
             Console.WriteLine();
             Console.WriteLine("123".AsInt() + 5);
             Console.WriteLine("12,3".AsFloat() -1.0);

@@ -21,7 +21,7 @@
         <ContextMenu Background="Wheat">
             <WrapPanel>
                 <CheckBox Padding="0" Margin="0" IsChecked="True" VerticalAlignment="Center" BorderThickness="0"
-                       Name="cb" Click="cb_Click" />
+                       Name="cb" Command="{Binding CbClickCommand}" />
                 <Label Padding="0" Margin="0" MouseLeftButtonUp="l_MouseLeftButtonUp">AlwaysOnTop</Label>
             </WrapPanel>
         </ContextMenu>

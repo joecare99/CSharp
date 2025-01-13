@@ -1,0 +1,16 @@
+﻿<Project>
+	<ImportGroup Label="SolutionProps">
+		<Import Project="..\Solution_net.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\snKey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	</ItemGroup>
+</Project>

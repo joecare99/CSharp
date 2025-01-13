@@ -32,7 +32,7 @@ namespace TestStatements.DataTypes
         public static void CombinedFormating()
         {
             const string Title = "Combined Formating";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             string name = "Fred";
             Console.WriteLine(String.Format("Name = {0}, hours = {1:hh}", name, GetNow()));
@@ -44,7 +44,7 @@ namespace TestStatements.DataTypes
         public static void IndexKomponent()
         {
             const string Title = "Formating with Index";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             string primes;
             primes = String.Format("Prime numbers less than 10: {0}, {1}, {2}, {3}",
@@ -60,7 +60,7 @@ namespace TestStatements.DataTypes
         public static void IndexKomponent2()
         {
             const string Title = "Formating with Index 2";
-            Console.WriteLine(Constants.Constants.Header.Replace("%s", Title));
+            Console.WriteLine(Constants.Constants.Header, Title);
 
             string multiple = String.Format("0x{0:X} {0:E} {0:N}",
                                 Int64.MaxValue);
