@@ -37,6 +37,8 @@ jobs:
     - name: Install wasi-experimental-workload (WebAssembly)
       run: |
         dotnet workload install wasi-experimental
+        dotnet workload install android
+        dotnet workload install ios
         
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -52,7 +54,7 @@ jobs:
     - name: Build Transpiler_pp
       continue-on-error: true  # Ignore errors during this step
       run: |
-        dotnet build Transpiler_pp/Transpiler_pp.sln
+        dotnet build Transpiler_pp/Transpiler.sln
         
     - name: Build CSharpBible
       continue-on-error: true  # Ignore errors during this step
