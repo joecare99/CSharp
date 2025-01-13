@@ -36,9 +36,7 @@ jobs:
           
     - name: Install wasi-experimental-workload (WebAssembly)
       run: |
-        wget -q https://aka.ms/wasi-workload-ubuntu -O wasi-workload.deb
-        sudo dpkg -i wasi-workload.deb
-        rm wasi-workload.deb
+        dotnet workload install wasi-experimental
         
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
