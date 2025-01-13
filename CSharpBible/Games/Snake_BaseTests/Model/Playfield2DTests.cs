@@ -12,8 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
+using Game_Base.Model;
+using Game_Base.Model.Interfaces;
 using Game_Base.Model.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Snake_Base.Models.Interfaces;
 using System;
 using System.Drawing;
 using System.Reflection;
@@ -47,7 +50,7 @@ namespace Snake_Base.Models.Tests
         /// Gets the test playfield.
         /// </summary>
         /// <value>The test playfield.</value>
-        internal Playfield2D<SnakeGameObject>? testPlayfield { get; private set; }
+        internal Playfield2D<ISnakeGameObject>? testPlayfield { get; private set; }
 
         /// <summary>
         /// Initializes this instance.
@@ -55,7 +58,7 @@ namespace Snake_Base.Models.Tests
         [TestInitialize]
         public void Init()
         {
-            testPlayfield = new Playfield2D<SnakeGameObject>(new Size(4, 3));
+            testPlayfield = new Playfield2D<ISnakeGameObject>(new Size(4, 3));
             testPlayfield.OnDataChanged += TPF_OnDataChanged; 
             TestItem.logOperation += LogOperation;
             ResultData = "";
