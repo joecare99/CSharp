@@ -35,3 +35,8 @@ updates:
       interval: "weekly"
     target-branch: "GenFreeWin"
 
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/Avalonia_Apps" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    target-branch: "Avalonia_Apps"
