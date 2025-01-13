@@ -1,21 +1,13 @@
 ﻿using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
 using System.Xml.Serialization;
 
 namespace VTileEdit.Models;
@@ -112,57 +104,74 @@ public class VisTileData : ITileDef
             case EStreamType.Text:
                 {
                     int iSplPos;
-                    (string key, string Value) kv(string line)
-                        => (line.Substring(0, iSplPos = line.IndexOf(':')), line.Substring(iSplPos + 1));
 
                     Dictionary<Enum, SingleTile>? data = new();
                     using (TextReader reader = new StreamReader(stream))
                     {
                         string? line;
+                        Dictionary<string, string> keyValuePairs = new();
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var (key, value) = kv(line);
-                            if (key == "Count")
+                            var (key, value2) = (line.Substring(0, iSplPos = line.IndexOf(':')), line.Substring(iSplPos + 1));
+                            keyValuePairs.Add(key, value2);
+                        }
+                        if (keyValuePairs.TryGetValue("Count", out var value))
+                        {
+                            data = new();
+                            int count = int.Parse(value);
+                            if (count > 0)
                             {
-                                data = new();
-                                Type KeyType;
-                                int count = int.Parse(value);
-                                if (count > 0)
+                                Type KeyType = typeof(object);
+                                if (keyValuePairs.TryGetValue("Size", out value))
                                 {
-                                    (key, value) = kv(reader.ReadLine() ?? ":");
                                     var size = value.Split(',');
                                     _size = new Size(int.Parse(size[0]), int.Parse(size[1]));
-                                    (key, value) = kv(reader.ReadLine() ?? ":");
+                                }
+                                if (keyValuePairs.TryGetValue("KeyType", out value))
+                                {
                                     KeyType = Type.GetType(value);
+                                }
 
-                                    for (int i = 0; i < count; i++)
+                                for (int i = 0; i < count; i++)
+                                {
+                                    Enum? keyE = default;
+                                    int lineCount = 0;
+                                    if (keyValuePairs.TryGetValue($"Key{i}", out value))
                                     {
-                                        (key, value) = kv(reader.ReadLine() ?? ":");
-                                        var keyE = (Enum)Enum.Parse(KeyType, value.Substring(0, value.IndexOf(' ') - 0));
-                                        (key, value) = kv(reader.ReadLine() ?? ":");
-                                        var lineCount = int.Parse(value);
-                                        string[] lines = new string[lineCount];
-                                        for (int j = 0; j < lineCount; j++)
-                                        {
-                                            (key, value) = kv(reader.ReadLine() ?? ":");
-                                            lines[j] = value;
-                                        }
+                                        keyE = (Enum)Enum.Parse(KeyType, value.Substring(0, value.IndexOf(' ') - 0));
+                                    }
+                                    if (keyValuePairs.TryGetValue($"Lines{i}", out value))
+                                    {
+                                        lineCount = int.Parse(value);
+                                    }
 
-                                        (key, value) = kv(reader.ReadLine() ?? ":");
-                                        var colorCount = int.Parse(value);
-                                        FullColor[] colors = new FullColor[colorCount];
-                                        for (int j = 0; j < colorCount; j++)
+                                    string[] lines = new string[lineCount];
+                                    for (int j = 0; j < lineCount; j++)
+                                    {
+                                        if (keyValuePairs.TryGetValue($"L{i}_{j}", out value))
+                                            lines[j] = value;
+                                    }
+                                    int colorCount = 0;
+                                        if (keyValuePairs.TryGetValue($"Colors{i}", out value))
                                         {
-                                            (key, value) = kv(reader.ReadLine() ?? ":");
+                                            colorCount = int.Parse(value);
+                                        }
+                                    FullColor[] colors = new FullColor[colorCount];
+                                    for (int j = 0; j < colorCount; j++)
+                                    {
+                                        if (keyValuePairs.TryGetValue($"C{i}_{j}", out value))
+                                        {
                                             var color = Convert.FromHexString(value.Substring(2));
                                             colors[j] = ((ConsoleColor)(color[0] >> 4), (ConsoleColor)(color[0] & 0xf));
                                         }
-                                        data.Add(keyE, new SingleTile(lines, colors));
-
                                     }
+
+                                    data.Add(keyE, new SingleTile(lines, colors));
+
                                 }
                             }
                         }
+
                     }
                     _storage = data ?? _storage;
                     return data != null;
@@ -173,10 +182,10 @@ public class VisTileData : ITileDef
 
                     using (TextReader reader = new StreamReader(stream))
                     {
-                        var xml = new XmlSerializer(typeof(List<object[]>), extraTypes: [typeof(SingleTile)]);
-                        var xdata = ((string KeyType, List<object[]> Data)?)xml.Deserialize(reader);
+                        var xml = new XmlSerializer(typeof((string, Size, List<object[]>)), extraTypes: [typeof(SingleTile)]);
+                        var xdata = ((string KeyType, Size sz, List<object[]> Data)?)xml.Deserialize(reader);
                         var _keyType = Type.GetType(xdata.Value.KeyType) ?? Assembly.GetExecutingAssembly().GetType();
-
+                        _size = xdata.Value.sz;
                         foreach (var itm in xdata.Value.Data)
                         {
                             data.Add((Enum)Enum.ToObject(_keyType, (int)itm[0]), (SingleTile)itm[1]);
@@ -188,12 +197,14 @@ public class VisTileData : ITileDef
             case EStreamType.Json:
                 {
                     Dictionary<Enum, SingleTile>? data = new();
-                    var lst = JsonSerializer.Deserialize<(string, List<object[]>)>(new StreamReader(stream).ReadToEnd());
+                    var lst = JsonSerializer.Deserialize<Tuple<string, Size, List<Tuple<int, SingleTile>>>>(new StreamReader(stream).ReadToEnd());
                     var _keyType = Type.GetType(lst.Item1) ?? Assembly.GetExecutingAssembly().GetType();
-                    foreach (var itm in lst.Item2)
+                    _size = lst.Item2;
+                    foreach (var itm in lst.Item3)
                     {
-                        data.Add((Enum)Enum.ToObject(_keyType, itm[0]), (SingleTile)itm[1]);
+                        data.Add((Enum)Enum.ToObject(_keyType, itm.Item1), itm.Item2);
                     }
+
                     _storage = data ?? _storage;
                     return data != null;
                 }
@@ -243,8 +254,8 @@ public class VisTileData : ITileDef
                     using (TextWriter writer = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true))
                     {
                         Type _keyType = _storage.Count > 0 ? _storage.First().Key.GetType() : typeof(object);
-                        (string KeyType, List<object[]> Data) data = (_keyType.AssemblyQualifiedName, _storage.Select(v => new object[] { v.Key, v.Value }).ToList());
-                        var xml = new XmlSerializer(data.GetType(), [typeof(SingleTile)]);
+                        (string KeyType, Size sz, List<object[]> Data) data = (_keyType.AssemblyQualifiedName, _size, _storage.Select(v => new object[] { v.Key, v.Value }).ToList());
+                        var xml = new XmlSerializer(data.GetType(), [typeof(SingleTile), typeof(Size)]);
                         xml.Serialize(writer, data);
                     }
                     return true;
@@ -268,11 +279,11 @@ public class VisTileData : ITileDef
                             {
                                 writer.WriteLine($"L{i}_{j}:{Quoted(item.Value.lines[j])}");
                             }
-                            writer.WriteLine($"Colors:{item.Value.colors.Length}");
+                            writer.WriteLine($"Colors{i}:{item.Value.colors.Length}");
                             for (var j = 0; j < item.Value.colors.Length; j++)
                             {
                                 var color = item.Value.colors[j];
-                                writer.WriteLine($"L{i}_{j}:{ToNibble([color.fgr, color.bgr])}");
+                                writer.WriteLine($"C{i}_{j}:{ToNibble([color.fgr, color.bgr])}");
                             }
                         }
                     }
@@ -280,7 +291,9 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json:
                 {
-                    var json = JsonSerializer.Serialize(_storage.Select(v => new object[] { v.Key, v.Value }));
+                    Type _keyType = _storage.Count > 0 ? _storage.First().Key.GetType() : typeof(object);
+                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(_keyType.AssemblyQualifiedName, _size, _storage.Select(v => new Tuple<int, SingleTile>((int)(object)v.Key, v.Value)).ToList());
+                    var json = JsonSerializer.Serialize(data);
                     using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
                     {
                         writer.Write(json);
@@ -376,12 +389,10 @@ public class TileDef : TileDefBase
     }
 
     public override bool Equals(object? obj)
-    {
-        return obj is VisTileData ot
+        => obj is VisTileData ot
             && _size == ot._size
             && _storage.Count == ot._storage.Count
             && _storage.All((t) => ot._storage.TryGetValue(t.Key, out var v) && t.Value.Equals(v));
-    }
 
     private string Compress(string s)
     {
@@ -395,9 +406,7 @@ public class TileDef : TileDefBase
     }
 
     private void Clear()
-    {
-        _storage.Clear();
-    }
+        => _storage.Clear();
 
     (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) ITileDef.GetTileDef(Enum? tile)
         => GetTileDef(tile);
@@ -406,38 +415,26 @@ public class TileDef : TileDefBase
 public record struct SingleTile(string[] lines, FullColor[] colors)
 {
     public static implicit operator (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors)(SingleTile value)
-    {
-        return (value.lines, value.colors.Select(fc => (fc.fgr, fc.bgr)).ToArray());
-    }
+        => (value.lines, value.colors.Select(fc => (fc.fgr, fc.bgr)).ToArray());
 
     public static implicit operator SingleTile((string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) value)
-    {
-        return new SingleTile(value.lines, value.colors.Select(fc => new FullColor(fc.fgr, fc.bgr)).ToArray());
-    }
+        => new SingleTile(value.lines, value.colors.Select(fc => new FullColor(fc.fgr, fc.bgr)).ToArray());
 
     public bool Equals(SingleTile other)
-    {
-        return lines.Length == other.lines.Length
+        => lines.Length == other.lines.Length
             && lines.Zip(other.lines).All((t) => t.First!.Equals(t.Second))
             && colors.Length == other.colors.Length
             && colors.Zip(other.colors).All((t) => t.First!.Equals(t.Second));
-    }
 }
 
 public record struct FullColor(ConsoleColor fgr, ConsoleColor bgr)
 {
     public static implicit operator (ConsoleColor fgr, ConsoleColor bgr)(FullColor value)
-    {
-        return (value.fgr, value.bgr);
-    }
+        => (value.fgr, value.bgr);
 
     public static implicit operator FullColor((ConsoleColor fgr, ConsoleColor bgr) value)
-    {
-        return new FullColor(value.fgr, value.bgr);
-    }
+        => new FullColor(value.fgr, value.bgr);
 
     public bool Equals(FullColor other)
-    {
-        return fgr == other.fgr && bgr == other.bgr;
-    }
+        => fgr == other.fgr && bgr == other.bgr;
 }
