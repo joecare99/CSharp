@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -5,6 +6,7 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia_App02.ViewModels;
+using Avalonia_App02.ViewModels.Interfaces;
 using Avalonia_App02.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +25,7 @@ public partial class App : Application
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<IFilesService>(x => new FilesService(desktop.MainWindow));
+            services.AddTransient<IMainWindowViewModel,MainWindowViewModel>();
 
             Services = services.BuildServiceProvider();
 
@@ -51,4 +53,6 @@ public partial class App : Application
             BindingPlugins.DataValidators.Remove(plugin);
         }
     }
+
+    public IServiceProvider Services { get; private set; }
 }
