@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "TranspilerConsTest": {
-      "commandName": "Project",
-      "commandLineArgs": "resources\\fbCalcWinkelvVector.xml"
-    }
-  }
-}

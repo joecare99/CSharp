@@ -1,4 +1,0 @@
-﻿private void Test10Dat()
-{
-    writeln((xText ? 1 : 0).AsString());
-}
