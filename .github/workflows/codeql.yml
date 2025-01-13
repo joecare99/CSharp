@@ -37,8 +37,6 @@ jobs:
     - name: Install wasi-experimental-workload (WebAssembly)
       run: |
         dotnet workload install wasi-experimental
-        dotnet workload install android
-        dotnet workload install ios
         
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -59,7 +57,10 @@ jobs:
     - name: Build CSharpBible
       continue-on-error: true  # Ignore errors during this step
       run: |
-        dotnet build CSharpBible/CSharpBible.sln
+        dotnet build     CSharpBible/Libraries/Libraries.sln
+        dotnet build     CSharpBible/Calc/Calc.sln
+        dotnet build     CSharpBible/Graphics/Graphics.sln
+        dotnet build     CSharpBible/MVVM_Tutorial/MVVM_Tutorial.sln
         
     # Uncomment and modify the following lines if Autobuild fails
     # - run: |
