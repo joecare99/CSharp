@@ -11,7 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Game_Base.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Snake_Base.Models.Interfaces;
 using System.Drawing;
 
 /// <summary>
@@ -65,7 +67,7 @@ namespace Snake_Base.Models.Tests
         /// <summary>
         /// The PLF
         /// </summary>
-        internal Playfield2D<SnakeGameObject>? plf;
+        internal IPlayfield2D<ISnakeGameObject>? plf;
         #endregion
         /// <summary>
         /// Initializes this instance.
@@ -74,7 +76,7 @@ namespace Snake_Base.Models.Tests
         public void Init()
         {
             ResultData = "";
-            plf = new Playfield2D<SnakeGameObject>(new Size(3, 3));
+            plf = new Playfield2D<ISnakeGameObject>(new Size(3, 3));
             plf.OnDataChanged += LogDataChanged;
         }
 
