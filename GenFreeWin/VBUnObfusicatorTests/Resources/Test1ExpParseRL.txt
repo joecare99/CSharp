@@ -1,0 +1,348 @@
+﻿///Declaration MainBlock 0,0
+private void Befehl_Click(object eventSender, EventArgs eventArgs)
+///BlockStart Block 1,0
+{
+///Instruction Instruction 1,1
+int try0000_dispatch = -1;
+///Instruction Instruction 1,2
+int num = default(int);
+///Instruction Instruction 1,3
+short index = default(short);
+///Instruction Instruction 1,4
+int num2 = default(int);
+///Instruction Instruction 1,5
+int num3 = default(int);
+///Instruction Instruction 1,6
+int number = default(int);
+///Instruction Instruction 1,7
+string prompt = default(string);
+///Instruction Instruction 1,8
+while (true)
+///BlockStart Block 2,0
+{
+///Instruction Instruction 2,1
+try
+///BlockStart Block 3,0
+{
+///Comment Comment 3,1
+/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+///Instruction Instruction 3,2
+;
+///Instruction Instruction 3,3
+int num4;
+///Instruction Instruction 3,4
+string text;
+///Instruction Instruction 3,5
+switch (try0000_dispatch)
+///BlockStart Block 4,0
+{
+///Label Label 4,1 1
+default:
+///Instruction Instruction 4,2
+num = 1;
+///Instruction Instruction 4,3
+index = Befehl.GetIndex((Button)eventSender);
+///Goto Goto 4,4 Dest:OK
+goto IL_0015;
+///Label Label 4,5
+case 1043:
+///BlockStart Block 5,0
+{
+///Instruction Instruction 5,1
+num2 = num;
+///Instruction Instruction 5,2
+switch (num3)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 2:
+///Instruction Instruction 6,2
+break;
+///Label Label 6,3
+case 1:
+///Goto Goto 6,4 Dest:OK
+goto IL_0319;
+///Label Label 6,5
+default:
+///Goto Goto 6,6 Dest:OK
+goto end_IL_0000;
+///BlockEnd Block 6,7
+}
+///Instruction Instruction 5,3
+number = Information.Err().Number;
+///Instruction Instruction 5,4
+if (number == 25)
+///BlockStart Block 6,0
+{
+///Instruction Instruction 6,1
+prompt = "Das angegebene Gerät ist nicht bereit.\rBitte einschalten oder abbrechen.";
+///Instruction Instruction 6,2
+if (Interaction.MsgBox(prompt, MsgBoxStyle.OkCancel, "Fehler") == MsgBoxResult.Cancel)
+///BlockStart Block 7,0
+{
+///Goto Goto 7,1 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 7,2
+}
+///Instruction Instruction 6,3
+ProjectData.ClearProjectError();
+///Instruction Instruction 6,4
+if (num2 == 0)
+///BlockStart Block 7,0
+{
+///Instruction Instruction 7,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,5 Dest:OK
+goto IL_0315;
+///BlockEnd Block 6,6
+}
+///Instruction Instruction 5,5
+if (number == 55)
+///BlockStart Block 6,0
+{
+///Instruction Instruction 6,1
+FileSystem.FileClose();
+///Instruction Instruction 6,2
+ProjectData.ClearProjectError();
+///Instruction Instruction 6,3
+if (num2 == 0)
+///BlockStart Block 7,0
+{
+///Instruction Instruction 7,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 7,2
+}
+///Goto Goto 6,4 Dest:OK
+goto IL_0315;
+///BlockEnd Block 6,5
+}
+///Instruction Instruction 5,6
+if (Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
+///BlockStart Block 6,0
+{
+///Instruction Instruction 6,1
+ProjectData.EndApp();
+///BlockEnd Block 6,2
+}
+///Instruction Instruction 5,7
+ProjectData.ClearProjectError();
+///Instruction Instruction 5,8
+if (num2 == 0)
+///BlockStart Block 6,0
+{
+///Instruction Instruction 6,1
+throw ProjectData.CreateProjectError(-2146828268);
+///BlockEnd Block 6,2
+}
+///Goto Goto 5,9 Dest:OK
+goto IL_0315;
+///BlockEnd Block 5,10
+}
+///Label Label 4,6 1
+end_IL_0000:
+///Instruction Instruction 4,7
+break;
+///Label Label 4,8 1
+IL_0015:
+///Instruction Instruction 4,9
+ProjectData.ClearProjectError();
+///Instruction Instruction 4,10
+num3 = 2;
+///Instruction Instruction 4,11
+text = "Datum " + Strings.Mid(DateAndTime.DateString, 4, 2) + "." + DateAndTime.DateString.Left( 2) + "." + Strings.Mid(DateAndTime.DateString, 7, 4);
+///Instruction Instruction 4,12
+switch (index)
+///BlockStart Block 5,0
+{
+///Label Label 5,1
+case 1:
+///Instruction Instruction 5,2
+break;
+///Label Label 5,3
+case 2:
+///Goto Goto 5,4 Dest:OK
+goto IL_00f9;
+///Label Label 5,5
+case 3:
+///Goto Goto 5,6 Dest:OK
+goto IL_0134;
+///Label Label 5,7
+default:
+///Goto Goto 5,8 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,9
+}
+///Instruction Instruction 4,13
+RichTextBox1.SaveFile(COND.Verz1 + "TEMP\\Text2.RTF", RichTextBoxStreamType.RichText);
+///Instruction Instruction 4,14
+RichTextBox1.LoadFile(COND.Verz1 + "TEMP\\Text2.RTF", RichTextBoxStreamType.RichText);
+///Instruction Instruction 4,15
+Interaction.Shell(COND.Aus[7] + " " + COND.Verz1 + "Temp\\Text2.RTF", AppWinStyle.MaximizedFocus);
+///Goto Goto 4,16 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,17 1
+IL_00f9:
+///Instruction Instruction 4,18
+num = 13;
+///Instruction Instruction 4,19
+RichTextBox1.Text = "";
+///Instruction Instruction 4,20
+Close();
+///Instruction Instruction 4,21
+MyProject.Forms.Druck.Show();
+///Goto Goto 4,22 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,23 1
+IL_0134:
+///Instruction Instruction 4,24
+num = 19;
+///Instruction Instruction 4,25
+MyProject.Forms.Hinter.CommonDialog1Save.Filter = "Text (*.txt)|*.txt|Formartierter Text (*.RTF)|*.RTF";
+///Instruction Instruction 4,26
+MyProject.Forms.Hinter.CommonDialog1Save.InitialDirectory = COND.GenPlu + "list\\";
+///Instruction Instruction 4,27
+MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex = 2;
+///Instruction Instruction 4,28
+MyProject.Forms.Hinter.CommonDialog1Save.ShowDialog();
+///Instruction Instruction 4,29
+if (MyProject.Forms.Hinter.CommonDialog1Save.FileName == "")
+///BlockStart Block 5,0
+{
+///Goto Goto 5,1 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,2
+}
+///Instruction Instruction 4,30
+switch (MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex)
+///BlockStart Block 5,0
+{
+///Label Label 5,1
+case 1:
+///Instruction Instruction 5,2
+break;
+///Label Label 5,3
+case 2:
+///Goto Goto 5,4 Dest:OK
+goto IL_021f;
+///Label Label 5,5
+default:
+///Goto Goto 5,6 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,7
+}
+///Instruction Instruction 4,31
+RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.PlainText);
+///Goto Goto 4,32 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,33 1
+IL_021f:
+///Instruction Instruction 4,34
+num = 31;
+///Instruction Instruction 4,35
+RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.RichText);
+///Goto Goto 4,36 Dest:OK
+goto end_IL_0000_2;
+///Label Label 4,37 3
+IL_0315:
+///Instruction Instruction 4,38
+num4 = num2;
+///Goto Goto 4,39 Dest:OK
+goto IL_031d;
+///Label Label 4,40 1
+IL_0319:
+///Instruction Instruction 4,41
+num4 = num2 + 1;
+///Goto Goto 4,42 Dest:OK
+goto IL_031d;
+///Label Label 4,43 2
+IL_031d:
+///Instruction Instruction 4,44
+num2 = 0;
+///Instruction Instruction 4,45
+switch (num4)
+///BlockStart Block 5,0
+{
+///Label Label 5,1
+case 1:
+///Instruction Instruction 5,2
+break;
+///Label Label 5,3
+case 5:
+///Label Label 5,4
+case 11:
+///Label Label 5,5
+case 16:
+///Label Label 5,6
+case 17:
+///Label Label 5,7
+case 25:
+///Label Label 5,8
+case 29:
+///Label Label 5,9
+case 32:
+///Label Label 5,10
+case 33:
+///Label Label 5,11
+case 34:
+///Label Label 5,12
+case 35:
+///Label Label 5,13
+case 37:
+///Label Label 5,14
+case 43:
+///Label Label 5,15
+case 45:
+///Label Label 5,16
+case 49:
+///Label Label 5,17
+case 50:
+///Label Label 5,18
+case 56:
+///Label Label 5,19
+case 57:
+///Label Label 5,20
+case 58:
+///Goto Goto 5,21 Dest:OK
+goto end_IL_0000_2;
+///BlockEnd Block 5,22
+}
+///Goto Goto 4,46 Dest:OK
+goto default;
+///BlockEnd Block 4,47
+}
+///BlockEnd Block 3,6
+}
+///Instruction Instruction 2,2
+catch (Exception obj) when (obj is not null && num3 != 0 && num2 == 0)
+///BlockStart Block 3,0
+{
+///Instruction Instruction 3,1
+ProjectData.SetProjectError(obj);
+///Instruction Instruction 3,2
+try0000_dispatch = 1043;
+///Instruction Instruction 3,3
+continue;
+///BlockEnd Block 3,4
+}
+///Instruction Instruction 2,3
+throw ProjectData.CreateProjectError(-2146828237);
+///Instruction Instruction 2,4
+continue;
+///Label Label 2,5 9
+end_IL_0000_2:
+///Instruction Instruction 2,6
+break;
+///BlockEnd Block 2,7
+}
+///Instruction Instruction 1,9
+if (num2 != 0)
+///BlockStart Block 2,0
+{
+///Instruction Instruction 2,1
+ProjectData.ClearProjectError();
+///BlockEnd Block 2,2
+}
+///BlockEnd Block 1,10
+}
