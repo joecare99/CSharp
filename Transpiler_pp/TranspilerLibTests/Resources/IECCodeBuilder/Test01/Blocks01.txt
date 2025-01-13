@@ -1,8 +1,0 @@
-///Declaration MainBlock 0,0
-
-///Operation Operation 1,5,0
-+
-///Number Number 2,1,0
-2.0
-///Number Number 2,7,1
-1.0
