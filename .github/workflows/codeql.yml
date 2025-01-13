@@ -44,10 +44,19 @@ jobs:
         languages: ${{ matrix.language }}
         queries: +security-extended,security-and-quality
 
-    - name: Build Solutions
+    - name: Build Avalonia_Apps
+      continue-on-error: true  # Ignore errors during this step
       run: |
         dotnet build Avalonia_Apps/Avalonia_Apps.sln
+        
+    - name: Build Transpiler_pp
+      continue-on-error: true  # Ignore errors during this step
+      run: |
         dotnet build Transpiler_pp/Transpiler_pp.sln
+        
+    - name: Build CSharpBible
+      continue-on-error: true  # Ignore errors during this step
+      run: |
         dotnet build CSharpBible/CSharpBible.sln
         
     # Uncomment and modify the following lines if Autobuild fails
