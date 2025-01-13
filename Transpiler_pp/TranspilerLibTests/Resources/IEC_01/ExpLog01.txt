@@ -1,0 +1,23 @@
+﻿T:FLComment,0,0,// Dies ist ein Kommentar zum Typ ST_01
+T:Block,40,0,TYPE
+T:Variable,45,1,ST_01
+T:Operation,51,1,:
+T:Block,53,1,STRUCT
+T:FLComment,67,2,// Dies ist ein Kommentar zum Element a
+T:Variable,107,2,a
+T:Operation,111,2,:
+T:Function,112,2,INT
+T:Operation,116,2,:=
+T:Number,119,2,INT#1
+T:Operation,125,2,;
+T:LComment,127,2,// Dies ist ein 2. Kommentar zum Element a
+T:FLComment,173,2,// Dies ist ein Kommentar zum Element b
+T:Variable,213,2,b
+T:Operation,217,2,:
+T:Function,218,2,LREAL
+T:Operation,224,2,:=
+T:Number,227,2,LREAL#2.7e-2
+T:Operation,240,2,;
+T:LComment,242,2,// Dies ist ein 2. Kommentar zum Element b
+T:Block,285,1,END_STRUCT
+T:Block,297,0,END_TYPE
