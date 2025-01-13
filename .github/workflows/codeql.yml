@@ -33,7 +33,13 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
-
+          
+    - name: Install wasi-experimental-workload (WebAssembly)
+      run: |
+        wget -q https://aka.ms/wasi-workload-ubuntu -O wasi-workload.deb
+        sudo dpkg -i wasi-workload.deb
+        rm wasi-workload.deb
+        
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
