@@ -11,17 +11,19 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Avalonia_App02.ViewModels.Interfaces;
+
 /// <summary>
 /// The ViewModels namespace.
 /// </summary>
 namespace Avalonia_App02.ViewModels;
 
-/// <summary>
-/// Class MainWindowViewModel.
-/// Implements the <see cref="Avalonia_App02.ViewModels.ViewModelBase" />
-/// </summary>
-/// <seealso cref="Avalonia_App02.ViewModels.ViewModelBase" />
-public class MainWindowViewModel : ViewModelBase
+/// <summary>Class MainWindowViewModel.
+/// Implements the <see cref="IMainWindowViewModel" />
+/// and the <see cref="ViewModelBase" /></summary>
+/// <seealso cref="ViewModelBase" />
+/// <seealso cref="IMainWindowViewModel" />
+public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 {
     /// <summary>
     /// Gets the greeting.
