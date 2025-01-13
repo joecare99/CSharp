@@ -1,0 +1,4 @@
+﻿T:Operation,0,private void Test10Dat()
+T:Block,1,{
+T:Operation,1,writeln((xText ? 1 : 0).AsString());
+T:Block,1,}
