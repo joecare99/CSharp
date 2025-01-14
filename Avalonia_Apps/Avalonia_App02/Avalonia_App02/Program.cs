@@ -22,7 +22,7 @@ namespace Avalonia_App02;
 /// <summary>
 /// Class Program. This class cannot be inherited.
 /// </summary>
-internal sealed class Program
+public sealed class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -32,7 +32,8 @@ internal sealed class Program
     /// </summary>
     /// <param name="args">The arguments.</param>
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
+    public static void Main(string[] args) 
+        => BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
 
     // Avalonia configuration, don't remove; also used by visual designer.
@@ -40,9 +41,17 @@ internal sealed class Program
     /// Builds the avalonia application.
     /// </summary>
     /// <returns>AppBuilder.</returns>
-    public static AppBuilder BuildAvaloniaApp()
+    public static AppBuilder BuildAvaloniaApp() //{ get; set; } = ()
+        => GetAppBuilder();
+
+    /// <summary>
+    /// Builds the avalonia application.
+    /// </summary>
+    /// <returns>AppBuilder.</returns>
+    public static Func<AppBuilder> GetAppBuilder{ get; set; } = ()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
+
 }
