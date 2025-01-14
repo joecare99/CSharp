@@ -11,69 +11,26 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup>
 		<RootNamespace>CSharpBible.AboutEx</RootNamespace>
-		<IsWebBootstrapper>false</IsWebBootstrapper>
-		<PublishUrl>publish\</PublishUrl>
-		<Install>true</Install>
-		<InstallFrom>Disk</InstallFrom>
-		<UpdateEnabled>false</UpdateEnabled>
-		<UpdateMode>Foreground</UpdateMode>
-		<UpdateInterval>7</UpdateInterval>
-		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-		<UpdatePeriodically>false</UpdatePeriodically>
-		<UpdateRequired>false</UpdateRequired>
-		<MapFileExtensions>true</MapFileExtensions>
-		<ApplicationRevision>1</ApplicationRevision>
-		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-		<UseApplicationTrust>false</UseApplicationTrust>
-		<PublishWizardCompleted>true</PublishWizardCompleted>
-		<BootstrapperEnabled>true</BootstrapperEnabled>
 	</PropertyGroup>
-	<PropertyGroup>
-		<SignManifests>true</SignManifests>
-	</PropertyGroup>
-	<PropertyGroup>
-		<ManifestCertificateThumbprint>0C28B4FABC7FB9526ADD2A6E9928E123EA59543E</ManifestCertificateThumbprint>
-	</PropertyGroup>
-	<PropertyGroup>
-		<ManifestKeyFile>AboutEx_TemporaryKey.pfx</ManifestKeyFile>
-	</PropertyGroup>
-	<PropertyGroup>
-		<GenerateManifests>true</GenerateManifests>
-	</PropertyGroup>
-	<PropertyGroup>
-		<TargetZone>LocalIntranet</TargetZone>
-	</PropertyGroup>
-	<PropertyGroup>
-		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-	</PropertyGroup>
-	<ItemGroup>
-		<None Include="..\.editorconfig">
-			<Link>.editorconfig</Link>
-		</None>
-	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="..\Resources\CheckMarkGreen.png">
 			<Link>Resources\CheckMarkGreen.png</Link>
 		</Resource>
 	</ItemGroup>
 	<ItemGroup>
-		<BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
-			<Visible>False</Visible>
-			<ProductName>Microsoft .NET Framework 4.7.2 %28x86 und x64%29</ProductName>
-			<Install>true</Install>
-		</BootstrapperPackage>
-		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-			<Visible>False</Visible>
-			<ProductName>.NET Framework 3.5 SP1</ProductName>
-			<Install>false</Install>
-		</BootstrapperPackage>
-	</ItemGroup>
-	<ItemGroup>
 		<Resource Include="Resources\FireAtDelphi.bmp" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.0" />
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
 	</ItemGroup>
 </Project>

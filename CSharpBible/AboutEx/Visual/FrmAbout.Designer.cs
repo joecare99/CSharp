@@ -1,4 +1,20 @@
-﻿namespace CSharpBible.AboutEx.Visual
+﻿// ***********************************************************************
+// Assembly         : AboutEx
+// Author           : Mir
+// Created          : 11-11-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 11-08-2022
+// ***********************************************************************
+// <copyright file="FrmAbout.Designer.cs" company="HP Inc.">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+/// <summary>
+/// The Visual namespace.
+/// </summary>
+namespace CSharpBible.AboutEx.Visual
 {
     /// <summary>
     /// Class FrmAbout.
@@ -161,13 +177,37 @@
 
         #endregion
 
+        /// <summary>
+        /// The PNL top
+        /// </summary>
         private System.Windows.Forms.Panel pnlTop;
+        /// <summary>
+        /// The BTN ok
+        /// </summary>
         private System.Windows.Forms.Button btnOK;
+        /// <summary>
+        /// The label copyright
+        /// </summary>
         private System.Windows.Forms.Label lblCopyright;
+        /// <summary>
+        /// The label version
+        /// </summary>
         private System.Windows.Forms.Label lblVersion;
+        /// <summary>
+        /// The label product name
+        /// </summary>
         private System.Windows.Forms.Label lblProductName;
+        /// <summary>
+        /// The PCT program icon
+        /// </summary>
         private System.Windows.Forms.PictureBox pctProgramIcon;
+        /// <summary>
+        /// The image list1
+        /// </summary>
         private System.Windows.Forms.ImageList imageList1;
+        /// <summary>
+        /// The label comments
+        /// </summary>
         private System.Windows.Forms.Label lblComments;
     }
 }

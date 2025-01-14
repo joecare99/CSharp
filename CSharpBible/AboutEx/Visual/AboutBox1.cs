@@ -1,7 +1,23 @@
+// ***********************************************************************
+// Assembly         : AboutEx
+// Author           : Mir
+// Created          : 11-11-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 02-18-2024
+// ***********************************************************************
+// <copyright file="AboutBox1.cs" company="HP Inc.">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using System;
 using System.Reflection;
 using System.Windows.Forms;
 
+/// <summary>
+/// The Visual namespace.
+/// </summary>
 namespace CSharpBible.AboutEx.Visual
 {
     /// <summary>
@@ -12,7 +28,7 @@ namespace CSharpBible.AboutEx.Visual
     partial class AboutBox1 : Form
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AboutBox1"/> class.
+        /// Initializes a new instance of the <see cref="AboutBox1" /> class.
         /// </summary>
         public AboutBox1()
         {
@@ -94,10 +110,11 @@ namespace CSharpBible.AboutEx.Visual
             }
         }
 
-		/// <summary>
-		/// The Copyright of this Assembly
-		/// </summary>
-		public string AssemblyCopyright {
+        /// <summary>
+        /// The Copyright of this Assembly
+        /// </summary>
+        /// <value>The assembly copyright.</value>
+        public string AssemblyCopyright {
 			get {
 				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 				if (attributes.Length == 0) {
@@ -107,12 +124,12 @@ namespace CSharpBible.AboutEx.Visual
 			}
 		}
 
-		/// <summary>
-		/// The Company of the assembly
-		/// </summary>
-		/// <remarks>Füllt das Company-Feld des Info/About-Dialogs</remarks>
-		/// <value>&lt;Name of Company&gt;</value>
-		public string AssemblyCompany {
+        /// <summary>
+        /// The Company of the assembly
+        /// </summary>
+        /// <value>&lt;Name of Company&gt;</value>
+        /// <remarks>Füllt das Company-Feld des Info/About-Dialogs</remarks>
+        public string AssemblyCompany {
 			get {
 				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 				if (attributes.Length == 0) {
@@ -121,9 +138,14 @@ namespace CSharpBible.AboutEx.Visual
 				return ((AssemblyCompanyAttribute)attributes[0]).Company;
 			}
 		}
-		#endregion
+        #endregion
 
-		private void okButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the Click event of the okButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void okButton_Click(object sender, EventArgs e)
         {
             Close();
         }

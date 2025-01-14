@@ -1,4 +1,20 @@
-﻿namespace CSharpBible.AboutEx.Visual
+﻿// ***********************************************************************
+// Assembly         : AboutEx
+// Author           : Mir
+// Created          : 11-11-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 11-08-2022
+// ***********************************************************************
+// <copyright file="AboutBox1.Designer.cs" company="HP Inc.">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+/// <summary>
+/// The Visual namespace.
+/// </summary>
+namespace CSharpBible.AboutEx.Visual
 {
     /// <summary>
     /// Class AboutBox1.
@@ -15,6 +31,7 @@
         /// <summary>
         /// Verwendete Ressourcen bereinigen.
         /// </summary>
+        /// <param name="disposing"><see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -189,13 +206,37 @@
 
         #endregion
 
+        /// <summary>
+        /// The table layout panel
+        /// </summary>
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        /// <summary>
+        /// The logo PictureBox
+        /// </summary>
         private System.Windows.Forms.PictureBox logoPictureBox;
+        /// <summary>
+        /// The label product name
+        /// </summary>
         private System.Windows.Forms.Label labelProductName;
+        /// <summary>
+        /// The label version
+        /// </summary>
         private System.Windows.Forms.Label labelVersion;
+        /// <summary>
+        /// The label copyright
+        /// </summary>
         private System.Windows.Forms.Label labelCopyright;
+        /// <summary>
+        /// The label company name
+        /// </summary>
         private System.Windows.Forms.Label labelCompanyName;
+        /// <summary>
+        /// The text box description
+        /// </summary>
         private System.Windows.Forms.TextBox textBoxDescription;
+        /// <summary>
+        /// The ok button
+        /// </summary>
         private System.Windows.Forms.Button okButton;
     }
 }
