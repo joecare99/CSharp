@@ -3,28 +3,71 @@
   <Design.PreviewWith>
     <Border Padding="20" Background="{DynamicResource ResourceKey=AppDefaultBackground}">
       <!-- Add Controls for Previewer Here -->
-      <StackPanel>
-        <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/> 
-        <TextBox Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <CheckBox Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <RadioButton Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center">
-          <ComboBoxItem Content="Hello, Avalonia!"/>
-          <ComboBoxItem Content="Hello, Avalonia!"/>
-          <ComboBoxItem Content="Hello, Avalonia!"/>
-        </ComboBox>
-        <ListBox HorizontalAlignment="Center" VerticalAlignment="Center">
-          <ListBoxItem Content="Hello, Avalonia!"/>
-          <ListBoxItem Content="Hello, Avalonia!"/>
-          <ListBoxItem Content="Hello, Avalonia!"/>
-        </ListBox>
-        <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Slider HorizontalAlignment="Center" VerticalAlignment="Center"/>
-      </StackPanel>
+      <Grid  ColumnDefinitions="*, *, *" >
+        <StackPanel Grid.Row="0" Spacing="10">
+          <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <TextBlock Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <TextBox Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <CheckBox Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <RadioButton Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ComboBoxItem Content="Hello, Avalonia!"/>
+            <ComboBoxItem Content="Hello, Avalonia!"/>
+            <ComboBoxItem Content="Hello, Avalonia!"/>
+          </ComboBox>
+          <ListBox HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ListBoxItem Content="Hello, Avalonia!"/>
+            <ListBoxItem Content="Hello, Avalonia!"/>
+            <ListBoxItem Content="Hello, Avalonia!"/>
+          </ListBox>
+          <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <Slider HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
+        <TextBlock Grid.Column="1" Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid Grid.Column="2" ColumnDefinitions="1*,1*,1*,1*" RowDefinitions="*,*,*,*,*">
+          <Panel Grid.Column="0" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
+          <Panel Grid.Column="1" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
+          <Panel Grid.Column="2" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
+          <Panel Grid.Column="3" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
+          <Panel Grid.Column="4" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
+          <Panel Grid.Column="0" Grid.Row="1" Width="150" Height="500" >
+            <Panel.Background>
+              <LinearGradientBrush SpreadMethod="Reflect" StartPoint="0,0" EndPoint="100,0" >
+                <LinearGradientBrush.GradientStops>                  
+                  <GradientStop Offset="0" Color="Blue"/>
+                  <GradientStop Offset="0.5" Color="Red"/>
+                  <GradientStop Offset="1" Color="Green"/>
+                </LinearGradientBrush.GradientStops>
+              </LinearGradientBrush>
+            </Panel.Background>
+            </Panel>
+        </Grid>
+      </Grid>
     </Border>
   </Design.PreviewWith>
 
   <!-- Add Styles Here -->
+  <Style Selector="TextBlock">
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="Foreground" Value="White"/>
+  </Style>
+  <Style Selector="Button">
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Background" Value="DarkBlue"/>
+    <Setter Property="BorderBrush" Value="Blue"/>
+    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="CornerRadius" Value="10"/>
+    <Setter Property="Margin" Value="20,5,20,5"/>        
+  </Style>
+  <Style Selector="TextBox">
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Background" Value="Blue"/>
+  </Style>
+  <Style Selector="CheckBox">
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="Foreground" Value="White"/>
+  </Style>
 </Styles>

@@ -1,7 +1,7 @@
 <Project>
 	<Import Project="..\Solution.Props" />
 	<PropertyGroup>
-		<UpDir>..</UpDir>
+		<UpDir>..\$(UpDir)</UpDir>
 		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 	</PropertyGroup>

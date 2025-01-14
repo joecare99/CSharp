@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
+	ProjectSection(SolutionItems) = preProject
+		Avalonia_App01\Avalonia_App01.props = Avalonia_App01\Avalonia_App01.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App_01", "Avalonia_App01\Avalonia_App_01\Avalonia_App_01.csproj", "{8EE2B2EC-CED9-43C5-AA6D-A17AD53614CB}"
 EndProject
@@ -16,16 +19,24 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App_01.iOS", "Avalonia_App01\Avalonia_App_01.iOS\Avalonia_App_01.iOS.csproj", "{E6C78ACA-A947-4E1D-BE34-172BBF620FF6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App02", "Avalonia_App02", "{A0284F63-BA9F-4E00-9FE0-0799CFED7857}"
+	ProjectSection(SolutionItems) = preProject
+		Avalonia_App02\Application.props = Avalonia_App02\Application.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App02", "Avalonia_App02\Avalonia_App02\Avalonia_App02.csproj", "{CEB09204-47F7-4136-877A-1920D53133C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{1F1DA5C0-206D-4682-8648-3BBFB5CFFC3C}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+		Solution.props = Solution.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App02Tests", "Avalonia_App02\Avalonia_App02Tests\Avalonia_App02Tests.csproj", "{E791FC44-D382-40BD-9345-2FA8DB263922}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8EE2B2EC-CED9-43C5-AA6D-A17AD53614CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -52,6 +63,13 @@ Global
 		{CEB09204-47F7-4136-877A-1920D53133C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEB09204-47F7-4136-877A-1920D53133C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEB09204-47F7-4136-877A-1920D53133C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E791FC44-D382-40BD-9345-2FA8DB263922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E791FC44-D382-40BD-9345-2FA8DB263922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E791FC44-D382-40BD-9345-2FA8DB263922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E791FC44-D382-40BD-9345-2FA8DB263922}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8EE2B2EC-CED9-43C5-AA6D-A17AD53614CB} = {EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}
@@ -60,5 +78,6 @@ Global
 		{72188BD8-AF61-4691-BB84-E186C71FB58C} = {EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}
 		{E6C78ACA-A947-4E1D-BE34-172BBF620FF6} = {EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}
 		{CEB09204-47F7-4136-877A-1920D53133C1} = {A0284F63-BA9F-4E00-9FE0-0799CFED7857}
+		{E791FC44-D382-40BD-9345-2FA8DB263922} = {A0284F63-BA9F-4E00-9FE0-0799CFED7857}
 	EndGlobalSection
 EndGlobal

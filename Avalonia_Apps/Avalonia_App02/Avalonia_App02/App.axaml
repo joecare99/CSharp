@@ -1,20 +1,29 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Avalonia_App02.App"
-             xmlns:local="using:Avalonia_App02"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    x:Class="Avalonia_App02.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Avalonia_App02"
+    RequestedThemeVariant="Default">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
-      <StyleInclude Source="Styles/AppDefaultStyles.axaml"/>  
+        <StyleInclude Source="Styles/AppDefaultStyles.axaml" />
     </Application.Styles>
 
-  <Application.Resources>
-    <SolidColorBrush x:Key="AppDefaultBackground" Color="#FF000020"/>
-  </Application.Resources>
+    <Application.Resources>
+        <SolidColorBrush x:Key="AppDefaultBackground" Color="#FF000020" />
+        <LinearGradientBrush x:Key="SideBarBackground" StartPoint="0,0" EndPoint="220,0">
+            <LinearGradientBrush.GradientStops>
+                <GradientStop Offset="0" Color="#FF000040" />
+                <GradientStop Offset="0.3" Color="#FF000020" />
+                <GradientStop Offset="0.7" Color="#FF000020" />
+                <GradientStop Offset="1" Color="#FF000000" />
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+    </Application.Resources>
 </Application>
