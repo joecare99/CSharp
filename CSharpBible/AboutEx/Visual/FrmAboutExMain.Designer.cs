@@ -1,4 +1,20 @@
-﻿namespace CSharpBible.AboutEx.Visual
+﻿// ***********************************************************************
+// Assembly         : AboutEx
+// Author           : Mir
+// Created          : 11-11-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 11-08-2022
+// ***********************************************************************
+// <copyright file="FrmAboutExMain.Designer.cs" company="HP Inc.">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+/// <summary>
+/// The Visual namespace.
+/// </summary>
+namespace CSharpBible.AboutEx.Visual
 {
     /// <summary>
     /// Class FrmAboutExMain.
@@ -81,7 +97,13 @@
 
         #endregion
 
+        /// <summary>
+        /// The BTN click me
+        /// </summary>
         private System.Windows.Forms.Button btnClickMe;
+        /// <summary>
+        /// The BTN click me2
+        /// </summary>
         private System.Windows.Forms.Button btnClickMe2;
     }
 }
