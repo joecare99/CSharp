@@ -17,6 +17,7 @@
     <CleanupOutputPath>true</CleanupOutputPath>
     <HelpFileName>CSharpBible</HelpFileName>
     <HelpFileNamingMethod>MemberName</HelpFileNamingMethod>
+    <HelpFileLoadIndexPanelOnDemand>false</HelpFileLoadIndexPanelOnDemand>
     <ImageFolderPath />
     <Theme>FlatGray</Theme>
     <HtmlFormats>
