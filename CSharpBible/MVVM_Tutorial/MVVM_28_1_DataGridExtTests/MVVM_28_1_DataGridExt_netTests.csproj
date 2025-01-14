@@ -8,8 +8,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.7.0" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.7.0" />
+		<PackageReference Include="MSTest" Version="3.7.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.3">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
