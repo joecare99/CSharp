@@ -56,6 +56,7 @@ public partial class TemplateViewModel : ViewModelBase, ITemplateViewModel
     public TemplateViewModel()
     {
         Greeting = $"Welcome to Avalonia! The current time is {DateTime.Now}";
+        _model = null!;
     }
 
     /// <summary>

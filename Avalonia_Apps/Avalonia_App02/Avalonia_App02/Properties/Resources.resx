@@ -122,6 +122,7 @@
   </data>
   <data name="btnConfig" xml:space="preserve">
     <value>Configuration</value>
+    <comment>Caption for Button "Config"</comment>
   </data>
   <data name="btnHistory" xml:space="preserve">
     <value>History</value>
