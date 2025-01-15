@@ -17,12 +17,23 @@
 
     <Application.Resources>
         <SolidColorBrush x:Key="AppDefaultBackground" Color="#FF000020" />
+        <SolidColorBrush x:Key="SideBarForeground" Color="#FFCFCFCF" />
+        <SolidColorBrush x:Key="SideBarOutline" Color="#FF000090" />
+        <SolidColorBrush x:Key="AppDefaultBackground2" Color="#FF000020" />
         <LinearGradientBrush x:Key="SideBarBackground" StartPoint="0,0" EndPoint="220,0">
             <LinearGradientBrush.GradientStops>
                 <GradientStop Offset="0" Color="#FF000040" />
                 <GradientStop Offset="0.3" Color="#FF000020" />
                 <GradientStop Offset="0.7" Color="#FF000020" />
                 <GradientStop Offset="1" Color="#FF000000" />
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="SideBarHLBackground" StartPoint="0,0" EndPoint="220,0">
+            <LinearGradientBrush.GradientStops>
+                <GradientStop Offset="0" Color="#FF000080" />
+                <GradientStop Offset="0.3" Color="#FF000060" />
+                <GradientStop Offset="0.7" Color="#FF000060" />
+                <GradientStop Offset="1" Color="#FF000040" />
             </LinearGradientBrush.GradientStops>
         </LinearGradientBrush>
     </Application.Resources>
