@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System;
 using Avalonia.Controls;
-using Avalonia.Controls.CommandParCalcs;
+using Avalonia.Controls.Templates;
 using AA05_CommandParCalc.ViewModels;
 
 /// <summary>
@@ -26,7 +26,7 @@ namespace AA05_CommandParCalc;
 /// Implements the <see cref="IDataCommandParCalc" />
 /// </summary>
 /// <seealso cref="IDataCommandParCalc" />
-public class ViewLocator : IDataCommandParCalc
+public class ViewLocator : IDataTemplate
 {
 
     /// <summary>

@@ -1,0 +1,334 @@
+﻿<UserControl
+    x:Class="AA05_CommandParCalc.Views.CommandParCalculatorView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ValueConverter="clr-namespace:AA05_CommandParCalc.Views.ValueConverter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AA05_CommandParCalc.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:AA05_CommandParCalc.Data"
+    xmlns:mvvm="clr-namespace:AA05_CommandParCalc.ViewModels"
+    xmlns:p="clr-namespace:AA05_CommandParCalc.Properties"
+    xmlns:vmi="clr-namespace:AA05_CommandParCalc.ViewModels.Interfaces"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vmi:ICommandParCalculatorViewModel"
+    Cursor=""
+    mc:Ignorable="d">
+  <UserControl.Resources>
+    <ValueConverter:DoubleValueConverter x:Key="DoubleValueConverter" />
+
+    <Style x:Key="ButtonStyle" Selector="Button">
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="Margin" Value="-5" />
+      <Setter Property="Padding" Value="10" />
+    </Style>
+  </UserControl.Resources>
+  <UserControl.DataContext>
+    <mvvm:CommandParCalculatorViewModel />
+  </UserControl.DataContext>
+  <Grid Background="LightGray" Cursor="Hand">
+    <Grid.RowDefinitions>
+      <RowDefinition />
+      <RowDefinition />
+      <RowDefinition />
+      <RowDefinition />
+      <RowDefinition />
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    <ItemsControl />
+    <Grid Grid.Column="1" Grid.ColumnSpan="4">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="1*" />
+        <RowDefinition Height="2*" />
+        <RowDefinition Height="2*" />
+      </Grid.RowDefinitions>
+      <TextBlock
+          Grid.Row="0"
+          Text="{Binding Status}"
+          TextWrapping="Wrap" />
+
+      <TextBox
+          Grid.Row="1"
+          Grid.Column="0"
+          Margin="5,2,5,2"
+          FontSize="18"
+          Text="{Binding Memory, ConverterParameter='', Converter={StaticResource DoubleValueConverter}, Mode=OneWay}"
+          TextAlignment="Right"
+          TextWrapping="Wrap" />
+      <TextBox
+          Grid.Row="2"
+          Grid.Column="0"
+          Margin="5,2,5,2"
+          FontSize="18"
+          Text="{Binding Accumulator, ConverterParameter='', Converter={StaticResource DoubleValueConverter}, Mode=OneWay}"
+          TextAlignment="Right"
+          TextWrapping="Wrap" />
+
+    </Grid>
+    <Button
+        Grid.Row="2"
+        Classes="Number"
+        Grid.Column="1"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._7}"
+        Content="7" />
+    <Button
+        Grid.Row="2"
+        Classes="Number"
+        Grid.Column="2"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._8}"
+        Content="8" />
+    <Button
+        Grid.Row="2"
+        Classes="Number"
+        Grid.Column="3"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._9}"
+        Content="9" />
+    <Button
+        Grid.Row="3"
+        Classes="Number"
+        Grid.Column="1"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._4}"
+        Content="4" />
+    <Button
+        Grid.Row="3"
+        Classes="Number"
+        Grid.Column="2"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._5}"
+        Content="5" />
+    <Button
+        Grid.Row="3"
+        Classes="Number"
+        Grid.Column="3"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._6}"
+        Content="6" />
+    <Button
+        Grid.Row="4"
+        Classes="Number"
+        Grid.Column="1"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._1}"
+        Content="1" />
+    <Button
+        Grid.Row="4"
+        Classes="Number"
+        Grid.Column="2"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._2}"
+        Content="2" />
+    <Button
+        Grid.Row="4"
+        Classes="Number"
+        Grid.Column="3"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._3}"
+        Content="3" />
+    <Button
+        Grid.Row="5"
+        Classes="Number"
+        Grid.Column="2"
+        Command="{Binding NumberCommand}"
+        CommandParameter="{x:Static model:ENumbers._0}"
+        Content="0" />
+    <Button
+        Grid.Row="0"
+        Classes="Command"
+        Grid.Column="0"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.Clear}"
+        Content="C/CE" />
+    <Button
+        Grid.Row="1"
+        Classes="Command"
+        Grid.Column="0"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.Clear}"
+        Content="Inv" />
+    <Button
+        Grid.Row="1"
+        Classes="Operator"
+        Grid.Column="1"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Square}"
+        Content="X²" />
+    <Button
+        Grid.Row="1"
+        Classes="Operator"
+        Grid.Column="2"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.SquareRt}"
+        Content="√x" />
+    <Button
+        Grid.Row="1"
+        Classes="Operator"
+        Grid.Column="3"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Inverse}"
+        Content="1/x" />
+    <Button
+        Grid.Row="1"
+        Classes="Operator"
+        Grid.Column="4"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Add}"
+        Content="+" />
+    <Button
+        Grid.Row="2"
+        Classes="Operator"
+        Grid.Column="4"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Subtract}"
+        Content="-" />
+    <Button
+        Grid.Row="3"
+        Grid.Column="4"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Multiply}"
+        Content="*" />
+    <Button
+        Grid.Row="4"
+        Grid.Column="4"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Divide}"
+        Content="/" />
+    <Button
+        Grid.Row="1"
+        Grid.Column="5"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Sin}"
+        Content="sin" />
+    <Button
+        Grid.Row="2"
+        Grid.Column="5"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Cos}"
+        Content="cos" />
+    <Button
+        Grid.Row="3"
+        Grid.Column="5"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Tan}"
+        Content="tan" />
+    <Button
+        Grid.Row="4"
+        Grid.Column="5"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.ExpN}"
+        Content="eˣ" />
+    <Button
+        Grid.Row="5"
+        Grid.Column="5"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.LogN}"
+        Content="log" />
+    <Button
+        Grid.Row="5"
+        Grid.Column="3"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.DecMode}"
+        Content="," />
+    <Button
+        Grid.Row="5"
+        Grid.Column="1"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.Negate}"
+        Content="+/-" />
+    <Button
+        Grid.Row="5"
+        Grid.Column="4"
+        Classes="Operator"
+        Command="{Binding OperatorCommand}"
+        CommandParameter="{x:Static model:EOperations.CalcResult}"
+        Content="=" />
+    <Button
+        Grid.Row="2"
+        Grid.Column="0"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.Pi}"
+        Content="π" />
+    <Button
+        Grid.Row="3"
+        Grid.Column="0"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.e}"
+        Content="e" />
+    <Button
+        Grid.Row="4"
+        Grid.Column="0"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.BracketOpen}"
+        Content="(" />
+    <Button
+        Grid.Row="5"
+        Grid.Column="0"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.BracketClose}"
+        Content=")" />
+    <Button
+        Grid.Row="0"
+        Grid.Column="5"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.MS}"
+        Content="MS" />
+    <Button
+        Grid.Row="0"
+        Grid.Column="6"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.MR}"
+        Content="MR" />
+    <Button
+        Grid.Row="0"
+        Grid.Column="7"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.MC}"
+        Content="MC" />
+    <Button
+        Grid.Row="0"
+        Grid.Column="8"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.Mp}"
+        Content="M+" />
+    <Button
+        Grid.Row="0"
+        Grid.Column="9"
+        Classes="Command"
+        Command="{Binding CalculatorCommand}"
+        CommandParameter="{x:Static model:ECommands.Mm}"
+        Content="M-" />
+  </Grid>
+</UserControl>

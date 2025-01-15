@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:p="clr-namespace:AA05_CommandParCalc.Properties"
+             xmlns:v="clr-namespace:AA05_CommandParCalc.Views"
              xmlns:vm="clr-namespace:AA05_CommandParCalc.ViewModels"
              xmlns:vmi="clr-namespace:AA05_CommandParCalc.ViewModels.Interfaces"
              x:DataType="vmi:ICommandParCalcViewModel"
@@ -36,6 +37,7 @@
     <StackPanel Grid.Column="1" VerticalAlignment="Center">
       <TextBlock  Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
       <TextBlock  Text="{Binding Now}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      <v:CommandParCalculatorView Height="400" Width="700"/>
     </StackPanel>
 
   </Grid>

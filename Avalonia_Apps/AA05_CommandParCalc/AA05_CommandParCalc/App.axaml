@@ -6,9 +6,9 @@
     RequestedThemeVariant="Default">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
-    <Application.DataCommandParCalcs>
+    <Application.DataTemplates>
         <local:ViewLocator />
-    </Application.DataCommandParCalcs>
+    </Application.DataTemplates>
 
     <Application.Styles>
         <FluentTheme />
