@@ -2,14 +2,14 @@
 using Avalonia.Headless;
 using Avalonia.Headless.MSTest;
 using Avalonia.Input;
-using Avalonia_App02.ViewModels.Interfaces;
+using AA05_CommandParCalc.ViewModels.Interfaces;
 using NSubstitute;
 
-namespace Avalonia_App02.Views.Tests;
+namespace AA05_CommandParCalc.Views.Tests;
 [TestClass]
 public class MainWindowTests
 {
-    private ITemplateViewModel? _vm;
+    private ICommandParCalcViewModel? _vm;
 
     [AvaloniaTestMethod()]
     public void MainWindowTest()
@@ -19,7 +19,7 @@ public class MainWindowTests
         {
             Height = 800,
             Width = 1024,
-            DataContext = _vm = Substitute.For<ITemplateViewModel>()            
+            DataContext = _vm = Substitute.For<ICommandParCalcViewModel>()            
         };
         
         window.Show();
@@ -28,7 +28,7 @@ public class MainWindowTests
         _vm.ConfigCommand.CanExecuteChanged += Raise.Event<EventHandler>(_vm.ConfigCommand, EventArgs.Empty);
 
         // Act
-        var view = window.FindControl<TemplateView>("AppView");
+        var view = window.FindControl<CommandParCalcView>("AppView");
         view?.FindControl<Button>("btnConfig")?.Focus();
         window.KeyPressQwerty(PhysicalKey.Enter,RawInputModifiers.None);
 

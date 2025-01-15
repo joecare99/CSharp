@@ -1,16 +1,16 @@
-﻿using Avalonia.Controls.Templates;
+﻿using Avalonia.Controls.CommandParCalcs;
 using System.Reflection;
-using Avalonia_App02.Models.Interfaces;
+using AA05_CommandParCalc.Models.Interfaces;
 using NSubstitute;
-using Avalonia_App02.ViewModels;
-using Avalonia_App02.ViewModels.Interfaces;
+using AA05_CommandParCalc.ViewModels;
+using AA05_CommandParCalc.ViewModels.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
-using Avalonia_App02.Models;
+using AA05_CommandParCalc.Models;
 using Avalonia.Controls;
 using System.Data;
 
-namespace Avalonia_App02.Tests
+namespace AA05_CommandParCalc.Tests
 {
     [TestClass()]
     public class ViewLocatorTests
@@ -18,7 +18,7 @@ namespace Avalonia_App02.Tests
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private ViewLocator testClass;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-        public class TestViewModel: ViewModelBase, ITemplateViewModel
+        public class TestViewModel: ViewModelBase, ICommandParCalcViewModel
         {
             public string Greeting { get; set; } = "Hello World !";
 
@@ -53,20 +53,20 @@ namespace Avalonia_App02.Tests
         {
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(ViewLocator));
-            Assert.IsInstanceOfType(testClass, typeof(IDataTemplate));
+            Assert.IsInstanceOfType(testClass, typeof(IDataCommandParCalc));
         }
 
         [TestMethod()]
         [DataRow("null","")]
-        [DataRow("Avalonia_App02.Models.TemplateModel, Avalonia_App02","")]
-        [DataRow("Avalonia_App02.Tests.ViewLocatorTests+TestViewModel, Avalonia_App02Tests","TextBlock")]
+        [DataRow("AA05_CommandParCalc.Models.CommandParCalcModel, AA05_CommandParCalc","")]
+        [DataRow("AA05_CommandParCalc.Tests.ViewLocatorTests+TestViewModel, AA05_CommandParCalcTests","TextBlock")]
         [DataRow("Avalonia.Controls.Button, Avalonia.Controls", "TextBlock")]
         public void BuildTest(string sAct,string sExp)
         {
             //Debug.WriteLine(typeof(TestViewModel).AssemblyQualifiedName);
             //Debug.WriteLine(typeof(Button).AssemblyQualifiedName);
-            //Debug.WriteLine(typeof(TemplateViewModel).AssemblyQualifiedName);
-            //Debug.WriteLine(typeof(TemplateModel).AssemblyQualifiedName);
+            //Debug.WriteLine(typeof(CommandParCalcViewModel).AssemblyQualifiedName);
+            //Debug.WriteLine(typeof(CommandParCalcModel).AssemblyQualifiedName);
             // Arrange
             Type? tAct = Type.GetType(sAct);
             object? obj = null;
@@ -84,7 +84,7 @@ namespace Avalonia_App02.Tests
 
             // Act
             object? result = null;
-            if (sAct.EndsWith(nameof(Avalonia_App02)))
+            if (sAct.EndsWith(nameof(AA05_CommandParCalc)))
             {
                 Assert.ThrowsException<MissingMethodException>(() => testClass.Build(obj));
                 tAct = null;    

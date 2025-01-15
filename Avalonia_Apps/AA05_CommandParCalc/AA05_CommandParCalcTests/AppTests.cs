@@ -2,7 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 
-namespace Avalonia_App02.Tests;
+namespace AA05_CommandParCalc.Tests;
 
 class TestApp : App
 {

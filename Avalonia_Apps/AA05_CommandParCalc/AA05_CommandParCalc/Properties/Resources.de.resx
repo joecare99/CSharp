@@ -118,25 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnActions" xml:space="preserve">
-    <value>Actions</value>
+    <value>Aktionen</value>
   </data>
   <data name="btnConfig" xml:space="preserve">
-    <value>Configuration</value>
-    <comment>Caption for Button "Config"</comment>
+    <value>Einstellungen</value>
   </data>
   <data name="btnHistory" xml:space="preserve">
-    <value>History</value>
+    <value>Historie</value>
   </data>
   <data name="btnHome" xml:space="preserve">
-    <value>Home</value>
+    <value>Anfang</value>
   </data>
   <data name="btnMacros" xml:space="preserve">
-    <value>Macros</value>
+    <value>Makros</value>
   </data>
   <data name="btnProcess" xml:space="preserve">
-    <value>Process</value>
+    <value>Prozess</value>
   </data>
   <data name="btnReports" xml:space="preserve">
-    <value>Reports</value>
+    <value>Auswertung</value>
   </data>
 </root>

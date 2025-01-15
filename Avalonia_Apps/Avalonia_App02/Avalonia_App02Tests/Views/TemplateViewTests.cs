@@ -10,7 +10,7 @@ namespace Avalonia_App02.Views.Tests;
 [TestClass]
 public class TemplateViewTests
 {
-    private ITemplateViewModel _vm;
+    private ITemplateViewModel? _vm;
 
     [AvaloniaTestMethod()]
     [DataRow("btnHome", nameof(ITemplateViewModel.HomeCommand))]
@@ -34,7 +34,7 @@ public class TemplateViewTests
             }
         };
 
-        if (_vm.GetType().GetProperty(sRelayCmd).GetValue(_vm) is IRelayCommand iRc)
+        if (_vm?.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
         {  
             iRc.CanExecute(null).Returns(true);
             iRc.CanExecuteChanged += Raise.Event<EventHandler>(_vm.HomeCommand, EventArgs.Empty);
@@ -43,7 +43,7 @@ public class TemplateViewTests
         window.Show();
 
         // Act
-        tv.FindControl<Button>(sAct).Focus();
+        tv.FindControl<Button>(sAct)?.Focus();
         window.KeyPressQwerty(PhysicalKey.Enter,RawInputModifiers.None);
 
         // Assert

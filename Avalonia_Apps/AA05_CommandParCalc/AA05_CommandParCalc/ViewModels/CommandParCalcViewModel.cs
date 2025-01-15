@@ -1,36 +1,36 @@
 ﻿// ***********************************************************************
-// Assembly         : Avalonia_App02
+// Assembly         : AA05_CommandParCalc
 // Author           : Mir
 // Created          : 01-11-2025
 //
 // Last Modified By : Mir
 // Last Modified On : 01-13-2025
 // ***********************************************************************
-// <copyright file="TemplateViewModel.cs" company="JC-Soft">
+// <copyright file="CommandParCalcViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2025
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System;
 using System.Reflection;
-using Avalonia_App02.Models.Interfaces;
-using Avalonia_App02.ViewModels.Interfaces;
+using AA05_CommandParCalc.Models.Interfaces;
+using AA05_CommandParCalc.ViewModels.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 /// <summary>
 /// The ViewModels namespace.
 /// </summary>
-namespace Avalonia_App02.ViewModels;
+namespace AA05_CommandParCalc.ViewModels;
 
 /// <summary>
-/// Class TemplateViewModel.
-/// Implements the <see cref="ITemplateViewModel" />
+/// Class CommandParCalcViewModel.
+/// Implements the <see cref="ICommandParCalcViewModel" />
 /// and the <see cref="ViewModelBase" />
 /// </summary>
 /// <seealso cref="ViewModelBase" />
-/// <seealso cref="ITemplateViewModel" />
-public partial class TemplateViewModel : ViewModelBase, ITemplateViewModel
+/// <seealso cref="ICommandParCalcViewModel" />
+public partial class CommandParCalcViewModel : ViewModelBase, ICommandParCalcViewModel
 {
     /// <summary>
     /// Gets the greeting.
@@ -51,19 +51,19 @@ public partial class TemplateViewModel : ViewModelBase, ITemplateViewModel
     /// <summary>
     /// The model
     /// </summary>
-    private ITemplateModel _model;
+    private ICommandParCalcModel _model;
 
-    public TemplateViewModel()
+    public CommandParCalcViewModel()
     {
         Greeting = $"Welcome to Avalonia! The current time is {DateTime.Now}";
         _model = null!;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TemplateViewModel"/> class.
+    /// Initializes a new instance of the <see cref="CommandParCalcViewModel"/> class.
     /// </summary>
     /// <param name="model">The model.</param>
-    public TemplateViewModel(ITemplateModel model)
+    public CommandParCalcViewModel(ICommandParCalcModel model)
     {
         Greeting = $"Welcome to Avalonia! The current time is {model.Now}";
         _model = model;

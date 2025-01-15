@@ -108,3 +108,4 @@ obj.net
 /CSharpBible/Libraries/*.snk
 /Transpiler_pp/Analyzer1/Analyzer1.Package/tools/install.ps1
 /*.lnk
+/Avalonia_Apps/*.lnk
