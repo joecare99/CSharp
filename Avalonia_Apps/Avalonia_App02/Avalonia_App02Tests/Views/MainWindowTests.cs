@@ -9,13 +9,12 @@ namespace Avalonia_App02.Views.Tests;
 [TestClass]
 public class MainWindowTests
 {
-    private ITemplateViewModel _vm;
+    private ITemplateViewModel? _vm;
 
     [AvaloniaTestMethod()]
     public void MainWindowTest()
     {
         // Arrange
-        TemplateView tv;
         var window = new MainWindow()
         {
             Height = 800,
@@ -30,7 +29,7 @@ public class MainWindowTests
 
         // Act
         var view = window.FindControl<TemplateView>("AppView");
-        view?.FindControl<Button>("btnConfig").Focus();
+        view?.FindControl<Button>("btnConfig")?.Focus();
         window.KeyPressQwerty(PhysicalKey.Enter,RawInputModifiers.None);
 
         // Assert

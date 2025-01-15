@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Avalonia_App02.ViewModels.Interfaces;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Globalization;
 
 namespace Avalonia_App02.ViewModels.Tests
 {
@@ -15,13 +16,23 @@ namespace Avalonia_App02.ViewModels.Tests
         TemplateViewModel testModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private string sTestLog="";
+        private CultureInfo? cc;
 
         [TestInitialize()]
         public void TestInitialize()
         {
+            cc = CultureInfo.CurrentCulture ;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             model = Substitute.For<ITemplateModel>();
             testModel = new TemplateViewModel(model);
-            testModel.PropertyChanged += (s, e) => DoLog($"PropChg({s.GetType().Name}, {e.PropertyName}) = ${s.GetType().GetProperty(e.PropertyName).GetValue(s)}");            
+            testModel.PropertyChanged += (s, e) => DoLog($"PropChg({s?.GetType().Name}, {e.PropertyName}) = ${s?.GetType().GetProperty(e.PropertyName??"")?.GetValue(s)}");            
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Debug.WriteLine(sTestLog);
+            CultureInfo.CurrentCulture = cc!;
         }
 
         private void DoLog(string v)
@@ -55,7 +66,7 @@ namespace Avalonia_App02.ViewModels.Tests
         public void GreetingsTest(string sAct,string sExp)
         {
             // Arrange & basetest
-            Assert.AreEqual("Welcome to Avalonia! The current time is 01.01.0001 00:00:00", testModel.Greeting);
+            Assert.AreEqual("Welcome to Avalonia! The current time is 01/01/0001 00:00:00", testModel.Greeting);
 
             // Act
             testModel.Greeting = sAct;
@@ -84,14 +95,14 @@ namespace Avalonia_App02.ViewModels.Tests
 
         [TestMethod()]
         [DataRow("", "")]
-        [DataRow("now", @"PropChg(TemplateViewModel, Now) = $14.01.2025 00:00:00\r\n")]
+        [DataRow("now", @"PropChg(TemplateViewModel, Now) = $01/14/2025 00:00:00\r\n")]
         [DataRow("title", @"PropChg(TemplateViewModel, Title) = $Main Menu\r\n")]
         [DataRow("bumlux", "")]
         public void PropertyChangedTest2(string sAct, string sExp)
         {
             // Arrange & basetest
             DateTime _dt;
-            model.Now.Returns(_dt=DateTime.Today);
+            model!.Now.Returns(_dt=new DateTime(2025,1,14));
 
             // Act
             model.PropertyChanged += Raise.Event<PropertyChangedEventHandler>([model, new PropertyChangedEventArgs(sAct)]);
@@ -102,7 +113,7 @@ namespace Avalonia_App02.ViewModels.Tests
         }
 
         [TestMethod()]
-        [DataRow("", "Welcome to Avalonia! The current time is 01.01.0001 00:00:00", "")]
+        [DataRow("", "Welcome to Avalonia! The current time is 01/01/0001 00:00:00", "")]
         [DataRow(nameof(TemplateViewModel.ActionsCommand), "Action:", @"PropChg(TemplateViewModel, Greeting) = $Action:\r\n")]
         [DataRow(nameof(TemplateViewModel.ConfigCommand), "Config:", @"PropChg(TemplateViewModel, Greeting) = $Config:\r\n")]
         [DataRow(nameof(TemplateViewModel.HomeCommand), "Hello, Avalonia!", @"PropChg(TemplateViewModel, Greeting) = $Hello, Avalonia!\r\n")]
@@ -113,7 +124,7 @@ namespace Avalonia_App02.ViewModels.Tests
         public void RelayCommandTest(string sAct,string sExp1,string sExp2)
         {
             // Arrange & basetest
-            Assert.AreEqual("Welcome to Avalonia! The current time is 01.01.0001 00:00:00", testModel.Greeting);
+            Assert.AreEqual("Welcome to Avalonia! The current time is 01/01/0001 00:00:00", testModel.Greeting);
 
             // Act
             if (testModel.GetType().GetProperty(sAct)?.GetValue(testModel) is IRelayCommand iRc)
