@@ -1,16 +1,15 @@
 ﻿using TranspilerLib.Interfaces.Code;
 
-namespace TranspilerLib.Models.Interpreter
+namespace TranspilerLib.Models.Interpreter;
+
+internal class InterpData
 {
-    internal class InterpData
+    private ICodeBlock? next;
+
+    public InterpData(ICodeBlock? next)
     {
-        private ICodeBlock? next;
-
-        public InterpData(ICodeBlock? next)
-        {
-            this.next = next;
-        }
-
-        public ICodeBlock pc { get; set; }
+        this.next = next;
     }
+
+    public ICodeBlock pc { get; set; }
 }

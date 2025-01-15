@@ -67,7 +67,7 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
             {
                 case CodeBlockType.Assignment:
                     var left = ipd.pc.Code.Split('=')[0].Trim();
-                    var right = Eval
+                    var right = ipd.pc.Code.Split('=')[1].Trim();
                     if (right.Contains("("))
                     {
                         var func = right.Split('(')[0];
