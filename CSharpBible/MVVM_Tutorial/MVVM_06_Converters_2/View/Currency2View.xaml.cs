@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows.Controls;
 
-namespace MVVM_06_Converters_2.View
+namespace MVVM_06_Converters_2.View;
+
+/// <summary>
+/// Interaktionslogik für CurrencyView.xaml
+/// </summary>
+public partial class Currency2View : Page
 {
     /// <summary>
-    /// Interaktionslogik für CurrencyView.xaml
+    /// Initializes a new instance of the <see cref="Currency2View"/> class.
     /// </summary>
-    public partial class Currency2View : Page
+    public Currency2View()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Currency2View"/> class.
-        /// </summary>
-        public Currency2View()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
