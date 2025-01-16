@@ -1,0 +1,21 @@
+﻿<Project>
+	<Import Project="..\Libraries.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="MSTest" Version="3.7.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\BaseLib\BaseLib.csproj" />
+	</ItemGroup>
+
+</Project>

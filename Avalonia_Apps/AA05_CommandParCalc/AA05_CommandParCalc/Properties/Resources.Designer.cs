@@ -61,6 +61,105 @@ namespace AA05_CommandParCalc.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 0 ähnelt.
+        /// </summary>
+        public static string btn0 {
+            get {
+                return ResourceManager.GetString("btn0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 1 ähnelt.
+        /// </summary>
+        public static string btn1 {
+            get {
+                return ResourceManager.GetString("btn1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 1/x ähnelt.
+        /// </summary>
+        public static string btn1_x {
+            get {
+                return ResourceManager.GetString("btn1_x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 2 ähnelt.
+        /// </summary>
+        public static string btn2 {
+            get {
+                return ResourceManager.GetString("btn2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 3 ähnelt.
+        /// </summary>
+        public static string btn3 {
+            get {
+                return ResourceManager.GetString("btn3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 4 ähnelt.
+        /// </summary>
+        public static string btn4 {
+            get {
+                return ResourceManager.GetString("btn4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 5 ähnelt.
+        /// </summary>
+        public static string btn5 {
+            get {
+                return ResourceManager.GetString("btn5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 6 ähnelt.
+        /// </summary>
+        public static string btn6 {
+            get {
+                return ResourceManager.GetString("btn6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 7 ähnelt.
+        /// </summary>
+        public static string btn7 {
+            get {
+                return ResourceManager.GetString("btn7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 8 ähnelt.
+        /// </summary>
+        public static string btn8 {
+            get {
+                return ResourceManager.GetString("btn8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die 9 ähnelt.
+        /// </summary>
+        public static string btn9 {
+            get {
+                return ResourceManager.GetString("btn9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Actions ähnelt.
         /// </summary>
         public static string btnActions {
@@ -70,11 +169,92 @@ namespace AA05_CommandParCalc.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ) ähnelt.
+        /// </summary>
+        public static string btnBrClose {
+            get {
+                return ResourceManager.GetString("btnBrClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ( ähnelt.
+        /// </summary>
+        public static string btnBrOpen {
+            get {
+                return ResourceManager.GetString("btnBrOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die C/CE ähnelt.
+        /// </summary>
+        public static string btnC_CE {
+            get {
+                return ResourceManager.GetString("btnC_CE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Configuration ähnelt.
         /// </summary>
         public static string btnConfig {
             get {
                 return ResourceManager.GetString("btnConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die cos ähnelt.
+        /// </summary>
+        public static string btnCos {
+            get {
+                return ResourceManager.GetString("btnCos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die . ähnelt.
+        /// </summary>
+        public static string btnDecp {
+            get {
+                return ResourceManager.GetString("btnDecp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die / ähnelt.
+        /// </summary>
+        public static string btnDiv {
+            get {
+                return ResourceManager.GetString("btnDiv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die e ähnelt.
+        /// </summary>
+        public static string btnE {
+            get {
+                return ResourceManager.GetString("btnE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die eˣ ähnelt.
+        /// </summary>
+        public static string btnE_X {
+            get {
+                return ResourceManager.GetString("btnE_X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die = ähnelt.
+        /// </summary>
+        public static string btnEquals {
+            get {
+                return ResourceManager.GetString("btnEquals", resourceCulture);
             }
         }
         
@@ -97,11 +277,119 @@ namespace AA05_CommandParCalc.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Inv ähnelt.
+        /// </summary>
+        public static string btnInv {
+            get {
+                return ResourceManager.GetString("btnInv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die log ähnelt.
+        /// </summary>
+        public static string btnLog {
+            get {
+                return ResourceManager.GetString("btnLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Macros ähnelt.
         /// </summary>
         public static string btnMacros {
             get {
                 return ResourceManager.GetString("btnMacros", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MC ähnelt.
+        /// </summary>
+        public static string btnMemClr {
+            get {
+                return ResourceManager.GetString("btnMemClr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die M- ähnelt.
+        /// </summary>
+        public static string btnMemMinus {
+            get {
+                return ResourceManager.GetString("btnMemMinus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die M+ ähnelt.
+        /// </summary>
+        public static string btnMemPlus {
+            get {
+                return ResourceManager.GetString("btnMemPlus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MR ähnelt.
+        /// </summary>
+        public static string btnMemRetr {
+            get {
+                return ResourceManager.GetString("btnMemRetr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MS ähnelt.
+        /// </summary>
+        public static string btnMemStore {
+            get {
+                return ResourceManager.GetString("btnMemStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die - ähnelt.
+        /// </summary>
+        public static string btnMinus {
+            get {
+                return ResourceManager.GetString("btnMinus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die * ähnelt.
+        /// </summary>
+        public static string btnMul {
+            get {
+                return ResourceManager.GetString("btnMul", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die +/- ähnelt.
+        /// </summary>
+        public static string btnNeg {
+            get {
+                return ResourceManager.GetString("btnNeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die π ähnelt.
+        /// </summary>
+        public static string btnPi {
+            get {
+                return ResourceManager.GetString("btnPi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die + ähnelt.
+        /// </summary>
+        public static string btnPlus {
+            get {
+                return ResourceManager.GetString("btnPlus", resourceCulture);
             }
         }
         
@@ -120,6 +408,42 @@ namespace AA05_CommandParCalc.Properties {
         public static string btnReports {
             get {
                 return ResourceManager.GetString("btnReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die sin ähnelt.
+        /// </summary>
+        public static string btnSin {
+            get {
+                return ResourceManager.GetString("btnSin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die √x ähnelt.
+        /// </summary>
+        public static string btnSqX {
+            get {
+                return ResourceManager.GetString("btnSqX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die tan ähnelt.
+        /// </summary>
+        public static string btnTan {
+            get {
+                return ResourceManager.GetString("btnTan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die X² ähnelt.
+        /// </summary>
+        public static string btnX2 {
+            get {
+                return ResourceManager.GetString("btnX2", resourceCulture);
             }
         }
     }

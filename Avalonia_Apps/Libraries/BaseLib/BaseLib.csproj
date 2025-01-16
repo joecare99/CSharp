@@ -1,0 +1,30 @@
+﻿<Project>
+	<Import Project="..\Libraries.props" />
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
+		<UseWindowsForms>true</UseWindowsForms>
+		<SignAssembly>True</SignAssembly>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<UserSecretsId>4772c317-55ff-4251-b766-1c41dfb672e5</UserSecretsId>
+		<SignAssembly>True</SignAssembly>
+		<DelaySign>False</DelaySign>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Helper\MVVM\**" />
+		<EmbeddedResource Remove="Helper\MVVM\**" />
+		<None Remove="*.bak" />
+		<None Remove="Helper\MVVM\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+	</ItemGroup>
+</Project>
