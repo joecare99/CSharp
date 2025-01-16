@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel;
+using static BaseLib.Helper.TestHelper;
 
 namespace Avalonia.ViewModels.Tests;
 
@@ -42,68 +43,68 @@ public class BaseViewModelCTTests : BaseViewModelCT
 
     [DataTestMethod()]
     [DataRow("0 - 1 =>  2",1,2,new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:7
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property1:2
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:7
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Property1:2
 " })]
     [DataRow("1 - 1 =>  6", 1, 6, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:11
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property1:6
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:11
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Property1:6
 " })]
     [DataRow("2 - 2 =>  2", 2, 2, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:5
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property4:4
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:2
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:5
+OnPropChanged: o:BaseViewModelCTTests, p:Property4:4
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Property2:2
 " })]
     [DataRow("3 - 2 =>  6", 2, 6, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:9
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property4:36
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:6
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:9
+OnPropChanged: o:BaseViewModelCTTests, p:Property4:36
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Property2:6
 " })]
     [DataRow("4 - 3 =>  9", 3, 9, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:9
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property1:4
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:9
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Property1:4
 " })]
     [DataRow("5 - 3 =>  7", 3, 7, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:7
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property1:2
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:7
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Property1:2
 " })]
     [DataRow("6 - 4 =>  9", 4, 9, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:6
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property4:9
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:3
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:6
+OnPropChanged: o:BaseViewModelCTTests, p:Property4:9
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Property2:3
 " })]
     [DataRow("7 - 4 =>  16", 4, 16, new string[] {
-        @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:7
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property4:16
-OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Prop2IsGreater:
-OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
+        @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:7
+OnPropChanged: o:BaseViewModelCTTests, p:Property4:16
+OnCanExChanged: o:RelayCommand`1
+OnPropChanged: o:BaseViewModelCTTests, p:Prop1IsGreaterThen1Prop2:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Prop2IsGreater:
+OnPropChanged: o:BaseViewModelCTTests, p:Property2:4
 " })]
     public void BaseViewModelTest(string name, int i,int iVal, string[] aExp )
     {
@@ -127,7 +128,7 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
             case 3: Property3 = iVal; break;
             case 4: Property4 = iVal; break;
         }
-        Assert.AreEqual( aExp[0], DebugResult, name);
+        AssertAreEqual( aExp[0], DebugResult, name);
 
     }
 

@@ -85,9 +85,16 @@ public class ObjectHelperTests
     [DataRow("Value1", TestEnum.Value1)]
     [DataRow("Value2", TestEnum.Value2)]
     [DataRow("InvalidValue", TestEnum.Default)]
+    [DataRow("TestEnum.Value1", TestEnum.Value1)]
+    [DataRow("IHasValue", TestEnum.Default)]
+    [DataRow("DBNull", TestEnum.Default)]
     [DataRow(1, TestEnum.Value1)]
     [DataRow(2, TestEnum.Value2)]
+    [DataRow(2u, TestEnum.Value2)]
     [DataRow(0, TestEnum.Default)]
+    [DataRow(99, (TestEnum)99)]
+    [DataRow(-1, (TestEnum)(int)-1)]
+    [DataRow("_", TestEnum.Default)]
     public void AsEnumTest(object? obj, TestEnum expected)
     {
         if (obj is string s)
@@ -95,6 +102,8 @@ public class ObjectHelperTests
             {
                 "DBNull" => DBNull.Value,
                 "IHasValue" => Substitute.For<IHasValue>(),
+                "TestEnum.Value1" => TestEnum.Value1,
+
                 "_" => new object(),
                 _ => obj
             };
@@ -228,7 +237,12 @@ public class ObjectHelperTests
     [DataRow("d3c4a1b2-3f4e-5d6c-7a8b-9c0d1e2f3a4b", "d3c4a1b2-3f4e-5d6c-7a8b-9c0d1e2f3a4b")]
     [DataRow("invalid-guid", "00000000-0000-0000-0000-000000000000")]
     [DataRow("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000")]
+    [DataRow("123456789", "075bcd15-0000-0000-0000-000000000000")]
+    [DataRow(123456789L, "075bcd15-0000-0000-0000-000000000000")]
+    [DataRow(123456789u, "075bcd15-0000-0000-0000-000000000000")]
     [DataRow("IHasValue", "00000000-0000-0000-0000-000000000000")]
+    [DataRow("DBNull", "00000000-0000-0000-0000-000000000000")]
+    [DataRow("EmptyGUID", "00000000-0000-0000-0000-000000000000")]
     [DataRow("_", "00000000-0000-0000-0000-000000000000")]
     public void AsGUIDTest(object? obj, string expected)
     {
@@ -237,6 +251,7 @@ public class ObjectHelperTests
             {
                 "DBNull" => DBNull.Value,
                 "IHasValue" => Substitute.For<IHasValue>(),
+                "EmptyGUID" => Guid.Empty,
                 "_" => new object(),
                 _ => obj
             };

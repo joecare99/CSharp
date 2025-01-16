@@ -120,7 +120,7 @@ public class BaseTestViewModel
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     protected virtual void OnCanExChanged(object? sender, EventArgs e)
-        => DoLog($"CanExChanged({sender})={(sender as IRelayCommand)?.CanExecute(null)}");
+        => DoLog($"CanExChanged({sender.GetType().Name})={(sender as IRelayCommand)?.CanExecute(null)}");
 
     /// <summary>
     /// Handles the <see cref="E:PropertyChanged" /> event of the model.
@@ -128,7 +128,7 @@ public class BaseTestViewModel
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
     protected virtual void OnVMPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        => DoLog($"PropChg({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
+        => DoLog($"PropChg({sender.GetType().Name},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
 
     /// <summary>
     /// Handles the <see cref="E:PropertyChanging" /> event of the model.
@@ -136,7 +136,7 @@ public class BaseTestViewModel
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="PropertyChangingEventArgs"/> instance containing the event data.</param>
     protected virtual void OnVMPropertyChanging(object? sender, PropertyChangingEventArgs e)
-        => DoLog($"PropChgn({sender},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
+        => DoLog($"PropChgn({sender.GetType().Name},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? "")}");
 
     /// <summary>
     /// Handles the <see cref="E:ErrorsChanged" /> event of the model.
@@ -144,5 +144,5 @@ public class BaseTestViewModel
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="DataErrorsChangedEventArgs"/> instance containing the event data.</param>
     protected virtual void OnVMErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
-        => DoLog($"ErrorsChanged({sender},{e.PropertyName})={string.Join(",", ((List<ValidationResult>)(sender as INotifyDataErrorInfo)!.GetErrors(e.PropertyName)).ConvertAll(o => o.ErrorMessage))}");
+        => DoLog($"ErrorsChanged({sender.GetType().Name},{e.PropertyName})={string.Join(",", ((List<ValidationResult>)(sender as INotifyDataErrorInfo)!.GetErrors(e.PropertyName)).ConvertAll(o => o.ErrorMessage))}");
 }

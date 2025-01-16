@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avln_BaseLibTests.Properties;
+using static BaseLib.Helper.TestHelper;
 
 namespace Avalonia.ViewModels.Tests;
 
@@ -45,53 +46,53 @@ public class BaseTestViewModelTest : BaseTestViewModel
 
     [DataTestMethod]
     [DataRow(0,0,new[] { "" })]
-    [DataRow(-1,0,new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=-1
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=False
+    [DataRow(-1,0,new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
+PropChg(TestVM,TestInt)=-1
+CanExChanged(RelayCommand)=False
 " })]
-    [DataRow(11, 0, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=11
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+    [DataRow(11, 0, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
+PropChg(TestVM,TestInt)=11
+CanExChanged(RelayCommand)=True
 " })]
-    [DataRow(5, 5, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=5
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=False
+    [DataRow(5, 5, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,TestInt)=5
+CanExChanged(RelayCommand)=False
 " })]
-    [DataRow(6, 6, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=6
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+    [DataRow(6, 6, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,TestInt)=6
+CanExChanged(RelayCommand)=True
 " })]
-    [DataRow(10, 10, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=10
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+    [DataRow(10, 10, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,TestInt)=10
+CanExChanged(RelayCommand)=True
 " })]
     public void IntPropTest(int iAct,int _,string[] asExp)
     {
         // Act
         testModel.TestInt = iAct;
 
-        // Assert
+        // Assert 
         Assert.AreEqual(iAct, testModel.TestInt);
-        Assert.AreEqual(asExp[0], DebugLog);
+        AssertAreEqual(asExp[0], DebugLog);
     }
     [DataTestMethod]
     [DataRow("<TestStr>", new[] { "","<TestStr>" })]
-    [DataRow(null, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=The value may not be empty TestStr
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=
+    [DataRow(null, new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestStr)=The value may not be empty TestStr
+PropChg(TestVM,TestStr)=
 ", "<TestStr>" })]
-    [DataRow("", new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=The value may not be empty TestStr
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=
+    [DataRow("", new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestStr)=The value may not be empty TestStr
+PropChg(TestVM,TestStr)=
 ", "" })]
-    [DataRow("Test", new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
+    [DataRow("Test", new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
+PropChg(TestVM,TestStr)=Test
 ", "Test" })]
     public void StringPropTest(string sAct, string[] asExp)
     {
@@ -110,29 +111,29 @@ public class BaseTestViewModelTest_T : BaseTestViewModel<TestVM>
 
     [DataTestMethod]
     [DataRow(0, 0, new[] { "" })]
-    [DataRow(-1, 0, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=-1
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=False
+    [DataRow(-1, 0, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
+PropChg(TestVM,TestInt)=-1
+CanExChanged(RelayCommand)=False
 " })]
-    [DataRow(11, 0, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=11
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+    [DataRow(11, 0, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
+PropChg(TestVM,TestInt)=11
+CanExChanged(RelayCommand)=True
 " })]
-    [DataRow(5, 5, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=5
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=False
+    [DataRow(5, 5, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,TestInt)=5
+CanExChanged(RelayCommand)=False
 " })]
-    [DataRow(6, 6, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=6
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+    [DataRow(6, 6, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,TestInt)=6
+CanExChanged(RelayCommand)=True
 " })]
-    [DataRow(10, 10, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=10
-CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
+    [DataRow(10, 10, new[] { @"PropChgn(TestVM,TestInt)=0
+PropChg(TestVM,TestInt)=10
+CanExChanged(RelayCommand)=True
 " })]
     public void IntPropTest(int iAct, int _, string[] asExp)
     {
@@ -145,18 +146,18 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
     }
     [DataTestMethod]
     [DataRow("<TestStr>", new[] { "", "<TestStr>" })]
-    [DataRow(null, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=The value may not be empty TestStr
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=
+    [DataRow(null, new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestStr)=The value may not be empty TestStr
+PropChg(TestVM,TestStr)=
 ", "<TestStr>" })]
-    [DataRow("", new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
-ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=The value may not be empty TestStr
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=
+    [DataRow("", new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
+PropChg(TestVM,HasErrors)=True
+ErrorsChanged(TestVM,TestStr)=The value may not be empty TestStr
+PropChg(TestVM,TestStr)=
 ", "" })]
-    [DataRow("Test", new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
-PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
+    [DataRow("Test", new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
+PropChg(TestVM,TestStr)=Test
 ", "Test" })]
     public void StringPropTest(string sAct, string[] asExp)
     {

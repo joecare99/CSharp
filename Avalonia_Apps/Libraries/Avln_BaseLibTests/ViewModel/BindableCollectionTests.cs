@@ -23,7 +23,7 @@ public class BindableCollectionTests : BaseTestViewModel
 
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-       DoLog($"OnCollectionChanged({sender},{e.Action})");
+       DoLog($"OnCollectionChanged({sender.GetType().Name},{e.Action})");
     }
 
     [TestMethod()]
@@ -52,7 +52,7 @@ public class BindableCollectionTests : BaseTestViewModel
         _testClass.Add("5");
         Assert.AreEqual(1, _testClass.Count);
         Assert.AreEqual("5", _testClass[0]);
-        Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\n", DebugLog);
+        Assert.AreEqual("OnCollectionChanged(BindableCollection`1,Add)\r\n", DebugLog);
     }
 
     [TestMethod()]
@@ -62,7 +62,7 @@ public class BindableCollectionTests : BaseTestViewModel
         _testClass.NotifyOfPropertyChange("Test");
         Assert.AreEqual(1, _testClass.Count);
         Assert.AreEqual("5", _testClass[0]);
-        Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\n", DebugLog);
+        Assert.AreEqual("OnCollectionChanged(BindableCollection`1,Add)\r\n", DebugLog);
     }
 
     [TestMethod()]
@@ -72,7 +72,7 @@ public class BindableCollectionTests : BaseTestViewModel
         _testClass[0] = "7";
         Assert.AreEqual(1, _testClass.Count);
         Assert.AreEqual("7", _testClass[0]);
-        Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\nOnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Replace)\r\n", DebugLog);
+        Assert.AreEqual("OnCollectionChanged(BindableCollection`1,Add)\r\nOnCollectionChanged(BindableCollection`1,Replace)\r\n", DebugLog);
     }
 
     [TestMethod()]
@@ -81,7 +81,7 @@ public class BindableCollectionTests : BaseTestViewModel
         _testClass.Add("5");
         _testClass.RemoveAt(0);
         Assert.AreEqual(0, _testClass.Count);
-        Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\nOnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Remove)\r\n", DebugLog);
+        Assert.AreEqual("OnCollectionChanged(BindableCollection`1,Add)\r\nOnCollectionChanged(BindableCollection`1,Remove)\r\n", DebugLog);
     }
 
     [TestMethod()]
