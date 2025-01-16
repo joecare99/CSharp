@@ -1,9 +1,8 @@
 ﻿using MVVM.ViewModel;
 
-namespace MVVM_16_UserControl1.ViewModels
+namespace MVVM_16_UserControl1.ViewModels;
+
+public class MainWindowViewModel : BaseViewModel
 {
-    public class MainWindowViewModel : BaseViewModel
-    {
-        
-    }
+    
 }
