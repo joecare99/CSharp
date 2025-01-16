@@ -14,7 +14,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
-using AA05_CommandParCalc.Model;
+using AA05_CommandParCalc.Models;
 using AA05_CommandParCalc.Models.Interfaces;
 using AA05_CommandParCalc.Data;
 using AA05_CommandParCalc.ViewModels.Interfaces;

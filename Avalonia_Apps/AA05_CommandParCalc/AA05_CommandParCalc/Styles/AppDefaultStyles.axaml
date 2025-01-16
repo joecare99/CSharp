@@ -1,120 +1,251 @@
-﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Design.PreviewWith>
-    <Border Padding="20" Background="{DynamicResource ResourceKey=AppDefaultBackground}">
-      <!-- Add Controls for Previewer Here -->
-      <Grid  ColumnDefinitions="*, *, *" >
-        <StackPanel Grid.Row="0" Spacing="10">
-          <Button Classes="Menu" Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <Button Classes="Number" Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <TextBlock Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <TextBox Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <CheckBox Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <RadioButton Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center">
-            <ComboBoxItem Content="Hello, Avalonia!"/>
-            <ComboBoxItem Content="Hello, Avalonia!"/>
-            <ComboBoxItem Content="Hello, Avalonia!"/>
-          </ComboBox>
-          <ListBox HorizontalAlignment="Center" VerticalAlignment="Center">
-            <ListBoxItem Content="Hello, Avalonia!"/>
-            <ListBoxItem Content="Hello, Avalonia!"/>
-            <ListBoxItem Content="Hello, Avalonia!"/>
-          </ListBox>
-          <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <Slider HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </StackPanel>
-        <TextBlock Grid.Column="1" Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Grid Grid.Column="2" ColumnDefinitions="1*,1*,1*,1*" RowDefinitions="*,*,*,*,*">
-          <Panel Grid.Column="0" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
-          <Panel Grid.Column="1" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarForeground}"/>
-          <Panel Grid.Column="2" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarOutline}"/>
-          <Panel Grid.Column="3" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarHLBackground}"/>
-          <Panel Grid.Column="4" Grid.Row="0" Width="50" Height="50" Background="{DynamicResource ResourceKey=SideBarBackground}"/>
-          <Panel Grid.Column="0" Grid.Row="1" Width="50" Height="50" >
-            <Panel.Background>
-              <LinearGradientBrush SpreadMethod="Reflect" StartPoint="0,0" EndPoint="100,0" >
-                <LinearGradientBrush.GradientStops>
-                  <GradientStop Offset="0" Color="Blue"/>
-                  <GradientStop Offset="0.5" Color="Red"/>
-                  <GradientStop Offset="1" Color="Green"/>
-                </LinearGradientBrush.GradientStops>
-              </LinearGradientBrush>
-            </Panel.Background>
-          </Panel>
-        </Grid>
-      </Grid>
-    </Border>
-  </Design.PreviewWith>
+﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20" Background="{DynamicResource ResourceKey=AppDefaultBackground}">
+            <!--  Add Controls for Previewer Here  -->
+            <Grid ColumnDefinitions="*, *, *">
+                <StackPanel Grid.Row="0" Spacing="10">
+                    <Button
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Classes="Menu"
+                        Content="Hello, Avalonia!" />
+                    <Button
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Classes="Number"
+                        Content="Hello, Avalonia!" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="Hello, Avalonia!" />
+                    <TextBox
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="Hello, Avalonia!" />
+                    <CheckBox
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="Hello, Avalonia!" />
+                    <RadioButton
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="Hello, Avalonia!" />
+                    <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ComboBoxItem Content="Hello, Avalonia!" />
+                        <ComboBoxItem Content="Hello, Avalonia!" />
+                        <ComboBoxItem Content="Hello, Avalonia!" />
+                    </ComboBox>
+                    <ListBox HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ListBoxItem Content="Hello, Avalonia!" />
+                        <ListBoxItem Content="Hello, Avalonia!" />
+                        <ListBoxItem Content="Hello, Avalonia!" />
+                    </ListBox>
+                    <ToggleSwitch HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Slider HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="Hello, Avalonia!" />
+                <Grid
+                    Grid.Column="2"
+                    ColumnDefinitions="1*,1*,1*,1*,*"
+                    RowDefinitions="*,*,*,*,*,*,*">
+                    <Panel
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Width="50"
+                        Height="50"
+                        Background="{DynamicResource ResourceKey=SideBarBackground}" />
+                    <Panel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Width="50"
+                        Height="50"
+                        Background="{DynamicResource ResourceKey=SideBarForeground}" />
+                    <Panel
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Width="50"
+                        Height="50"
+                        Background="{DynamicResource ResourceKey=SideBarOutline}" />
+                    <Panel
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        Width="50"
+                        Height="50"
+                        Background="{DynamicResource ResourceKey=SideBarHLBackground}" />
+                    <Panel
+                        Grid.Row="0"
+                        Grid.Column="4"
+                        Width="50"
+                        Height="50"
+                        Background="{DynamicResource ResourceKey=SideBarBackground}" />
+                    <Panel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Width="50"
+                        Height="50">
+                        <Panel.Background>
+                            <LinearGradientBrush SpreadMethod="Reflect" StartPoint="0,0" EndPoint="100,0">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStop Offset="0" Color="Blue" />
+                                    <GradientStop Offset="0.5" Color="Red" />
+                                    <GradientStop Offset="1" Color="Green" />
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Panel.Background>
+                    </Panel>
+                    <Border
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Background="{DynamicResource ResourceKey=CalcDefaultOutline}"
+                        BorderThickness="10">
+                        <TextBlock
+                            Width="45"
+                            Height="45"
+                            Background="{DynamicResource ResourceKey=CalcDefaultBackground}"
+                            FontSize="25"
+                            Foreground="{DynamicResource ResourceKey=CalcDefaultForeground}"
+                            Text="[1]" />
+                    </Border>
+                    <Border
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Background="{DynamicResource ResourceKey=CalcDefaultOutline}"
+                        BorderThickness="10">
+                        <TextBlock
+                            Width="45"
+                            Height="45"
+                            Background="{DynamicResource ResourceKey=CalcNumBtnBackground}"
+                            FontSize="25"
+                            Foreground="{DynamicResource ResourceKey=CalcDefaultForeground}"
+                            Text="[2]" />
+                    </Border>
+                    <Border
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Background="{DynamicResource ResourceKey=CalcDefaultOutline}"
+                        BorderThickness="10">
+                        <TextBlock
+                            Width="45"
+                            Height="45"
+                            Background="{DynamicResource ResourceKey=CalcCmdBtnBackground}"
+                            FontSize="25"
+                            Foreground="{DynamicResource ResourceKey=CalcDefaultForeground}"
+                            Text="[3]" />
+                    </Border>
+                    <Border
+                        Grid.Row="2"
+                        Grid.Column="3"
+                        Background="{DynamicResource ResourceKey=CalcDefaultOutline}"
+                        BorderThickness="10">
+                        <TextBlock
+                            Width="45"
+                            Height="45"
+                            Background="{DynamicResource ResourceKey=CalcOpBtnBackground}"
+                            FontSize="25"
+                            Foreground="{DynamicResource ResourceKey=CalcDefaultForeground}"
+                            Text="[4]" />
+                    </Border>
+                    <Panel
+                        Grid.Row="2"
+                        Grid.Column="4"
+                        Width="50"
+                        Height="50"
+                        Background="{DynamicResource ResourceKey=SideBarHLBackground}" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Design.PreviewWith>
 
-  <!-- Add Styles Here -->
-  <Style Selector="TextBlock">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Foreground" Value="White"/>
+    <!--  Add Styles Here  -->
+    <Style Selector="TextBlock">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.Menu">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ResourceKey=SideBarBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=SideBarOutline}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Margin" Value="20,5,20,5" />
+    </Style>
+    <Style Selector="Button.Menu:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ResourceKey=SideBarHLBackground}" />
+        <Setter Property="BorderThickness" Value="5" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Margin" Value="5,-3,-5,-4" />
+    </Style>
+    <Style Selector="Grid.Calc">
+        <Setter Property="Background" Value="{DynamicResource ResourceKey=CalcDefaultBackground}" />
+    </Style>
+    <Style Selector="Button.Number">
+        <Setter Property="FontSize" Value="35" />
+        <Setter Property="Foreground" Value="{DynamicResource ResourceKey=CalcDefaultForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=CalcDefaultOutline}" />
+        <Setter Property="Background" Value="{DynamicResource ResourceKey=CalcNumBtnBackground}" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+    <Style Selector="Button.Operator">
+        <Setter Property="FontSize" Value="26" />
+      <Setter Property="Foreground" Value="{DynamicResource ResourceKey=CalcDefaultForeground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=CalcDefaultOutline}" />
+      <Setter Property="Background" Value="{DynamicResource ResourceKey=CalcOpBtnBackground}" />
+      <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+    <Style Selector="Button.Command">
+        <Setter Property="FontSize" Value="22" />
+      <Setter Property="Foreground" Value="{DynamicResource ResourceKey=CalcDefaultForeground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=CalcDefaultOutline}" />
+      <Setter Property="Background" Value="{DynamicResource ResourceKey=CalcCmdBtnBackground}" />
+      <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+    <Style Selector="Button.Number:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFCCCCFF" />
+    </Style>
+    <Style Selector="Button.Operator:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFCCCCFF" />
+    </Style>
+    <Style Selector="Button.Command:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFCCCCFF" />
+    </Style>
+  <Style Selector="Button.Number:disabled /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=CalcDefaultForeground}" />
   </Style>
-  <Style Selector="Button.Menu">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-    <Setter Property="Background" Value="{DynamicResource ResourceKey=SideBarBackground}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=SideBarOutline}"/>
-    <Setter Property="BorderThickness" Value="2"/>
-    <Setter Property="CornerRadius" Value="10"/>
-    <Setter Property="Margin" Value="20,5,20,5"/>
+  <Style Selector="Button.Operator:disabled /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=CalcDefaultForeground}" />
   </Style>
-  <Style Selector="Button.Menu:pointerover /template/ ContentPresenter">
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-    <Setter Property="Background" Value="{DynamicResource ResourceKey=SideBarHLBackground}"/>
-    <Setter Property="BorderThickness" Value="5"/>
-    <Setter Property="CornerRadius" Value="5"/>
-    <Setter Property="Margin" Value="5,-3,-5,-4"/>
-  </Style>
-  <Style Selector="Button.Number">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=SideBarOutline}"/>
-    <Setter Property="VerticalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="CornerRadius" Value="10"/>
-    <Setter Property="Background" Value="#FFDDEEDD" />
-    <Setter Property="Margin" Value="5" />
-  </Style>
-  <Style Selector="Button.Operator">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Background" Value="#FFCCCCDD" />
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=SideBarOutline}"/>
-    <Setter Property="VerticalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="CornerRadius" Value="10"/>
-    <Setter Property="Margin" Value="5" />
-  </Style>
-  <Style Selector="Button.Command">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Background" Value="#FFDDCCCC" />
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=SideBarOutline}"/>
-    <Setter Property="VerticalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="CornerRadius" Value="10"/>
-    <Setter Property="Margin" Value="5" />
-  </Style>
-  <Style Selector="Button.Number:pointerover /template/ ContentPresenter">
-    <Setter Property="Background" Value="#FFCCCCFF" />
-  </Style>
-  <Style Selector="Button.Operator:pointerover /template/ ContentPresenter">
-    <Setter Property="Background" Value="#FFCCCCFF" />
-  </Style>
-  <Style Selector="Button.Command:pointerover /template/ ContentPresenter">
-    <Setter Property="Background" Value="#FFCCCCFF" />
+  <Style Selector="Button.Command:disabled /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=CalcDefaultForeground}" />
   </Style>
 
   <Style Selector="TextBox">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-    <Setter Property="Background" Value="Blue"/>
-  </Style>
-  <Style Selector="CheckBox">
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-  </Style>
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}" />
+        <Setter Property="Background" Value="Blue" />
+    </Style>
+    <Style Selector="CheckBox">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}" />
+    </Style>
 </Styles>

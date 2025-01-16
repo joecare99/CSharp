@@ -117,12 +117,72 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="btn0" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btn1" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btn1_x" xml:space="preserve">
+    <value>1/x</value>
+  </data>
+  <data name="btn2" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btn3" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="btn4" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="btn5" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="btn6" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="btn7" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btn8" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="btn9" xml:space="preserve">
+    <value>9</value>
+  </data>
   <data name="btnActions" xml:space="preserve">
     <value>Actions</value>
+  </data>
+  <data name="btnBrClose" xml:space="preserve">
+    <value>)</value>
+  </data>
+  <data name="btnBrOpen" xml:space="preserve">
+    <value>(</value>
   </data>
   <data name="btnConfig" xml:space="preserve">
     <value>Configuration</value>
     <comment>Caption for Button "Config"</comment>
+  </data>
+  <data name="btnCos" xml:space="preserve">
+    <value>cos</value>
+  </data>
+  <data name="btnC_CE" xml:space="preserve">
+    <value>C/CE</value>
+  </data>
+  <data name="btnDecp" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="btnDiv" xml:space="preserve">
+    <value>/</value>
+  </data>
+  <data name="btnE" xml:space="preserve">
+    <value>e</value>
+  </data>
+  <data name="btnEquals" xml:space="preserve">
+    <value>=</value>
+  </data>
+  <data name="btnE_X" xml:space="preserve">
+    <value>eˣ</value>
   </data>
   <data name="btnHistory" xml:space="preserve">
     <value>History</value>
@@ -130,13 +190,61 @@
   <data name="btnHome" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="btnInv" xml:space="preserve">
+    <value>Inv</value>
+  </data>
+  <data name="btnLog" xml:space="preserve">
+    <value>log</value>
+  </data>
   <data name="btnMacros" xml:space="preserve">
     <value>Macros</value>
+  </data>
+  <data name="btnMemClr" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="btnMemMinus" xml:space="preserve">
+    <value>M-</value>
+  </data>
+  <data name="btnMemPlus" xml:space="preserve">
+    <value>M+</value>
+  </data>
+  <data name="btnMemRetr" xml:space="preserve">
+    <value>MR</value>
+  </data>
+  <data name="btnMemStore" xml:space="preserve">
+    <value>MS</value>
+  </data>
+  <data name="btnMinus" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="btnMul" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="btnNeg" xml:space="preserve">
+    <value>+/-</value>
+  </data>
+  <data name="btnPi" xml:space="preserve">
+    <value>π</value>
+  </data>
+  <data name="btnPlus" xml:space="preserve">
+    <value>+</value>
   </data>
   <data name="btnProcess" xml:space="preserve">
     <value>Process</value>
   </data>
   <data name="btnReports" xml:space="preserve">
     <value>Reports</value>
+  </data>
+  <data name="btnSin" xml:space="preserve">
+    <value>sin</value>
+  </data>
+  <data name="btnSqX" xml:space="preserve">
+    <value>√x</value>
+  </data>
+  <data name="btnTan" xml:space="preserve">
+    <value>tan</value>
+  </data>
+  <data name="btnX2" xml:space="preserve">
+    <value>X²</value>
   </data>
 </root>

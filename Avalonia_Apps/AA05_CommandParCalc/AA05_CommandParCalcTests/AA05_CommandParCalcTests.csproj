@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="$(UpDir)\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
     <ProjectReference Include="..\AA05_CommandParCalc\AA05_CommandParCalc.csproj" />
   </ItemGroup>
 

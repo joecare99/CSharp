@@ -20,7 +20,13 @@
         <SolidColorBrush x:Key="SideBarForeground" Color="#FFCFCFCF" />
         <SolidColorBrush x:Key="SideBarOutline" Color="#FF000090" />
         <SolidColorBrush x:Key="AppDefaultBackground2" Color="#FF000020" />
-        <LinearGradientBrush x:Key="SideBarBackground" StartPoint="0,0" EndPoint="220,0">
+      <SolidColorBrush x:Key="CalcDefaultBackground" Color="#FF000020" />
+      <SolidColorBrush x:Key="CalcDefaultForeground" Color="#FFCFCFCF" />
+      <SolidColorBrush x:Key="CalcDefaultOutline" Color="#FF000080" />
+      <SolidColorBrush x:Key="CalcNumBtnBackground" Color="#FF204020" />
+      <SolidColorBrush x:Key="CalcOpBtnBackground" Color="#FF402020" />
+      <SolidColorBrush x:Key="CalcCmdBtnBackground" Color="#FF404020" />
+      <LinearGradientBrush x:Key="SideBarBackground" StartPoint="0,0" EndPoint="220,0">
             <LinearGradientBrush.GradientStops>
                 <GradientStop Offset="0" Color="#FF000040" />
                 <GradientStop Offset="0.3" Color="#FF000020" />
