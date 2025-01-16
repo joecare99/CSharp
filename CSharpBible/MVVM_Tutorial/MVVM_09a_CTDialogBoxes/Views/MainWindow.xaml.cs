@@ -15,50 +15,49 @@ using MVVM_09a_CTDialogBoxes.ViewModels;
 using System;
 using System.Windows;
 
-namespace MVVM_09a_CTDialogBoxes.Views
+namespace MVVM_09a_CTDialogBoxes.Views;
+
+/// <summary>
+/// Interaktionslogik für MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
+    public Func<IDialogWindow> NewDialogWindow = () => new DialogWindow();
+    public Func<string, string, MessageBoxButton, MessageBoxResult> MessageBoxShow = 
+        (t, n,mbb) => MessageBox.Show(t, n, mbb);
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public Func<IDialogWindow> NewDialogWindow = () => new DialogWindow();
-        public Func<string, string, MessageBoxButton, MessageBoxResult> MessageBoxShow = 
-            (t, n,mbb) => MessageBox.Show(t, n, mbb);
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// </summary>
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        /// <summary>
-        /// Handles the Loaded event of the Window control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        public void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            var vm = (MainWindowViewModel)DataContext;
-            vm.DoOpenDialog = DoOpenDialog;
-            vm.DoOpenMessageBox = DoOpenMessageBox;
-        }
+    /// <summary>
+    /// Handles the Loaded event of the Window control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    public void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        var vm = (MainWindowViewModel)DataContext;
+        vm.DoOpenDialog = DoOpenDialog;
+        vm.DoOpenMessageBox = DoOpenMessageBox;
+    }
 
-        private MessageBoxResult DoOpenMessageBox(string Title, string Name) 
-            => MessageBoxShow(Title, Name, MessageBoxButton.YesNo);
+    private MessageBoxResult DoOpenMessageBox(string Title, string Name) 
+        => MessageBoxShow(Title, Name, MessageBoxButton.YesNo);
 
-        private (string name, string email) DoOpenDialog(string Name, string email)
+    private (string name, string email) DoOpenDialog(string Name, string email)
+    {
+        IDialogWindow dialog = NewDialogWindow();
+        var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
+        (dialogViewModel.Name, dialogViewModel.Email) = (Name, email);
+        if (dialog.ShowDialog() == true)
         {
-            IDialogWindow dialog = NewDialogWindow();
-            var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
-            (dialogViewModel.Name, dialogViewModel.Email) = (Name, email);
-            if (dialog.ShowDialog() == true)
-            {
-                return (dialogViewModel.Name, dialogViewModel.Email);
-            }
-            else
-                return (Name, email);
+            return (dialogViewModel.Name, dialogViewModel.Email);
         }
+        else
+            return (Name, email);
     }
 }
