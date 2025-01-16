@@ -12,6 +12,8 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
+using MVVM_05a_CTCommandParCalc.Data;
+using MVVM_05a_CTCommandParCalc.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 
