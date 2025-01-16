@@ -13,6 +13,8 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
+using MVVM_05a_CTCommandParCalc.Data;
+using MVVM_05a_CTCommandParCalc.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -229,7 +231,7 @@ namespace MVVM_05a_CTCommandParCalc.Model
             {
                 if (!_editMode)
                 {
-                    _accumulator = 0d;
+                    Accumulator = 0d;
                     _editMode = true;
                     _decMode = false;
                 }
