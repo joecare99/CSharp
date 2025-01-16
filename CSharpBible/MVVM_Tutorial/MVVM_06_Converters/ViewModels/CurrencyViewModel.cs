@@ -13,38 +13,37 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_06_Converters.ViewModels
+namespace MVVM_06_Converters.ViewModels;
+
+/// <summary>
+/// Class CurrencyViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class CurrencyViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class CurrencyViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// The value
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class CurrencyViewModel : BaseViewModel
+    private decimal _value;
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    /// <value>The value.</value>
+    public decimal Value { get => _value; set => SetProperty(ref _value, value); }
+
+    public DelegateCommand EnterKey { get; set; }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurrencyViewModel"/> class.
+    /// </summary>
+    public CurrencyViewModel()
     {
-        /// <summary>
-        /// The value
-        /// </summary>
-        private decimal _value;
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        /// <value>The value.</value>
-        public decimal Value { get => _value; set => SetProperty(ref _value, value); }
+        Value = 10;
+        EnterKey = new DelegateCommand(OnEnterKey);
+    }
 
-        public DelegateCommand EnterKey { get; set; }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CurrencyViewModel"/> class.
-        /// </summary>
-        public CurrencyViewModel()
-        {
-            Value = 10;
-            EnterKey = new DelegateCommand(OnEnterKey);
-        }
-
-        private void OnEnterKey(object? obj)
-        {
-            ;
-        }
+    private void OnEnterKey(object? obj)
+    {
+        ;
     }
 }
