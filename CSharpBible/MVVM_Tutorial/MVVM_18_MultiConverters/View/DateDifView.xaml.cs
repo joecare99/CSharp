@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows.Controls;
 
-namespace MVVM_18_MultiConverters.View
+namespace MVVM_18_MultiConverters.View;
+
+/// <summary>
+/// Interaktionslogik für DateDifView.xaml
+/// </summary>
+public partial class DateDifView : Page
 {
     /// <summary>
-    /// Interaktionslogik für DateDifView.xaml
+    /// Initializes a new instance of the <see cref="DateDifView"/> class.
     /// </summary>
-    public partial class DateDifView : Page
+    public DateDifView()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DateDifView"/> class.
-        /// </summary>
-        public DateDifView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

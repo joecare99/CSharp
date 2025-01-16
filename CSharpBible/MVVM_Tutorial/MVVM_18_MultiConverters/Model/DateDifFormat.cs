@@ -12,28 +12,27 @@
 // <summary></summary>
 // ***********************************************************************
 
-namespace MVVM_18_MultiConverters.Model
+namespace MVVM_18_MultiConverters.Model;
+
+/// <summary>
+/// Enum DateDifFormat
+/// </summary>
+public enum DateDifFormat
 {
     /// <summary>
-    /// Enum DateDifFormat
+    /// The days
     /// </summary>
-    public enum DateDifFormat
-    {
-        /// <summary>
-        /// The days
-        /// </summary>
-        Days,
-        /// <summary>
-        /// The hours
-        /// </summary>
-        Hours,
-        /// <summary>
-        /// The minutes
-        /// </summary>
-        Minutes,
-        /// <summary>
-        /// The seconds
-        /// </summary>
-        Seconds
-    }
+    Days,
+    /// <summary>
+    /// The hours
+    /// </summary>
+    Hours,
+    /// <summary>
+    /// The minutes
+    /// </summary>
+    Minutes,
+    /// <summary>
+    /// The seconds
+    /// </summary>
+    Seconds
 }
