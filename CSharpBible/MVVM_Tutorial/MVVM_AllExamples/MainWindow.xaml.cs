@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_AllExamples
+namespace MVVM_AllExamples;
+
+/// <summary>
+/// Interaction logic for BindingGroupView.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
     /// <summary>
-    /// Interaction logic for BindingGroupView.xaml
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// </summary>
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
