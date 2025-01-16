@@ -18,15 +18,15 @@ using CommonDialogs.Interfaces;
 using Microsoft.Win32;
 using MVVM.ViewModel;
 
-namespace MVVM_20_Sysdialogs.ViewModels
-{
+namespace MVVM_20_Sysdialogs.ViewModels;
 
-    /// <summary>
-    /// Class SysDialogsViewModel.
-    /// Implements the <see cref="BaseViewModel" />
-    /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class SysDialogsViewModel : BaseViewModel {
+
+/// <summary>
+/// Class SysDialogsViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class SysDialogsViewModel : BaseViewModel {
 		#region Fields
 		/// <summary>
 		/// The file open name
@@ -192,55 +192,54 @@ namespace MVVM_20_Sysdialogs.ViewModels
 		/// </summary>
 		public SysDialogsViewModel() {
 			OpenFileOpenDialogCommand = new DelegateCommand((o) => {
-                IFileDialog foPar = new FileDialogProxy<OpenFileDialog>(new() 
+            IFileDialog foPar = new FileDialogProxy<OpenFileDialog>(new() 
 				{ 
-                    FileName = FileOpenName
-                });
-                FileOpenDialog?.Invoke(FileOpenName,foPar , 
+                FileName = FileOpenName
+            });
+            FileOpenDialog?.Invoke(FileOpenName,foPar , 
 					(s,p) => { 
 						FileOpenName = s; });
 			});
 
 			OpenFileSaveAsDialogCommand = new DelegateCommand((o) => {
-                IFileDialog fsPar = new FileDialogProxy<SaveFileDialog>(new() 
-                {
-                    FileName = FileSaveName
-                });
-                FileSaveAsDialog?.Invoke(FileSaveName, fsPar, (s,p) => { FileSaveName = s; });
+            IFileDialog fsPar = new FileDialogProxy<SaveFileDialog>(new() 
+            {
+                FileName = FileSaveName
+            });
+            FileSaveAsDialog?.Invoke(FileSaveName, fsPar, (s,p) => { FileSaveName = s; });
 			});
 
 			OpenDirectoryBrowseDialogCommand = new DelegateCommand((o) => {
-                IFileDialog bdPar = new FolderBrowserDialog()
-                {
-                    FileName = PathName
-                };
-                DirectoryBrowseDialog?.Invoke(PathName, bdPar, (s, p) => { PathName = s; });
+            IFileDialog bdPar = new FolderBrowserDialog()
+            {
+                FileName = PathName
+            };
+            DirectoryBrowseDialog?.Invoke(PathName, bdPar, (s, p) => { PathName = s; });
 			});
 
 			OpenColorDialogCommand = new DelegateCommand((o) => {
-                IColorDialog cdPar = new ColorDialog
-                {
-                    Color = MyColor
-                };
-                dColorDialog?.Invoke(MyColor, cdPar, (c, p) => { MyColor = c; });
+            IColorDialog cdPar = new ColorDialog
+            {
+                Color = MyColor
+            };
+            dColorDialog?.Invoke(MyColor, cdPar, (c, p) => { MyColor = c; });
 			});
 
 			OpenFontDialogCommand = new DelegateCommand((o) => {
-                IFontDialog fdPar = new FontDialog
-                {
-                    Font = MyFont
-                };
-                dFontDialog?.Invoke(MyFont, fdPar, (f, p) => { MyFont = f; });
+            IFontDialog fdPar = new FontDialog
+            {
+                Font = MyFont
+            };
+            dFontDialog?.Invoke(MyFont, fdPar, (f, p) => { MyFont = f; });
 			});
 
 			OpenPrintDialogCommand = new DelegateCommand((o) => {
-                IPrintDialog dialog = new PrintDialog()
-                {
-                    PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages
-                };
-                dPrintDialog?.Invoke(dialog, (p) => {/* ? */ });
+            IPrintDialog dialog = new PrintDialog()
+            {
+                PageRangeSelection = System.Windows.Controls.PageRangeSelection.AllPages
+            };
+            dPrintDialog?.Invoke(dialog, (p) => {/* ? */ });
 			});
 		}
 		#endregion
 	}
-}
