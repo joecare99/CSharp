@@ -19,25 +19,24 @@ using MVVM.View.Extension;
 using MVVM_22_CTWpfCap.Model;
 using MVVM_22_CTWpfCap.ViewModels;
 
-namespace MVVM_22_CTWpfCap
-{
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application
-    {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            //...
-            var services = new ServiceCollection();
-            services.AddTransient<IWpfCapModel, CWpfCapModel>();
-            services.AddTransient<IRandom, CRandom>();
-            services.AddTransient<WpfCapViewModel, WpfCapViewModel>();
+namespace MVVM_22_CTWpfCap;
 
-            ServiceProvider container = services.BuildServiceProvider();
-            IoC.GetReqSrv = (type) => container.GetRequiredService(type);
-            IoC.GetSrv = (type) => container.GetService(type);
-        }
+/// <summary>
+/// Interaktionslogik für "App.xaml"
+/// </summary>
+public partial class App : Application
+{
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+        //...
+        var services = new ServiceCollection();
+        services.AddTransient<IWpfCapModel, CWpfCapModel>();
+        services.AddTransient<IRandom, CRandom>();
+        services.AddTransient<WpfCapViewModel, WpfCapViewModel>();
+
+        ServiceProvider container = services.BuildServiceProvider();
+        IoC.GetReqSrv = (type) => container.GetRequiredService(type);
+        IoC.GetSrv = (type) => container.GetService(type);
     }
 }
