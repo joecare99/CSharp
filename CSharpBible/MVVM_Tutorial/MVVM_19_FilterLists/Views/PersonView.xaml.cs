@@ -16,28 +16,27 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_19_FilterLists.Views
+namespace MVVM_19_FilterLists.Views;
+
+/// <summary>
+/// Interaktionslogik für PersonView.xaml
+/// </summary>
+public partial class PersonView : Page
 {
     /// <summary>
-    /// Interaktionslogik für PersonView.xaml
+    /// Initializes a new instance of the <see cref="PersonView"/> class.
     /// </summary>
-    public partial class PersonView : Page
+    public PersonView()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PersonView"/> class.
-        /// </summary>
-        public PersonView()
-        {
-            InitializeComponent();
-            ((PersonViewViewModel)DataContext).MissingData += (object sender, EventArgs e)=>ShowError();
-        }
+        InitializeComponent();
+        ((PersonViewViewModel)DataContext).MissingData += (object sender, EventArgs e)=>ShowError();
+    }
 
-        /// <summary>
-        /// Shows the error.
-        /// </summary>
-        public void ShowError()
-        {
-            MessageBox.Show("Bitte einen Vornamen oder Nachnamen eingeben.");
-        }
+    /// <summary>
+    /// Shows the error.
+    /// </summary>
+    public void ShowError()
+    {
+        MessageBox.Show("Bitte einen Vornamen oder Nachnamen eingeben.");
     }
 }

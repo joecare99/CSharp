@@ -28,6 +28,7 @@ using System;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using System.Threading.Tasks;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 
 /// <summary>

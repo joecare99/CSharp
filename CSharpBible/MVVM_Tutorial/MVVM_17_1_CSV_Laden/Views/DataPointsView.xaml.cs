@@ -16,40 +16,39 @@ using MVVM_17_1_CSV_Laden.Views.Converter;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_17_1_CSV_Laden.Views
+namespace MVVM_17_1_CSV_Laden.Views;
+
+/// <summary>
+/// Interaktionslogik für DataPointsView.xaml
+/// </summary>
+public partial class DataPointsView : Page
 {
     /// <summary>
-    /// Interaktionslogik für DataPointsView.xaml
+    /// Finalizes an instance of the <see cref="DataPointsView"/> class.
     /// </summary>
-    public partial class DataPointsView : Page
+    public DataPointsView()
     {
-        /// <summary>
-        /// Finalizes an instance of the <see cref="DataPointsView"/> class.
-        /// </summary>
-        public DataPointsView()
+        InitializeComponent();
+        DataContextChanged += (object sender, DependencyPropertyChangedEventArgs e) =>
         {
-            InitializeComponent();
-            DataContextChanged += (object sender, DependencyPropertyChangedEventArgs e) =>
+            if (e.NewValue is DataPointsViewModel vm && this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
             {
-                if (e.NewValue is DataPointsViewModel vm && this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
-                {
-                    //                    pc.Row = vm.Row;
-                    //                  pc.Col = vm.Column;
-                    pc.WindowSize = new Size(Width, Height);
-                }
-            };
+                //                    pc.Row = vm.Row;
+                //                  pc.Col = vm.Column;
+                pc.WindowSize = new Size(Width, Height);
+            }
+        };
 
-            var f = this.FindName("ViewPort") as FrameworkElement;
-            f.SizeChanged += (object sender, SizeChangedEventArgs e) =>
+        var f = this.FindName("ViewPort") as FrameworkElement;
+        f.SizeChanged += (object sender, SizeChangedEventArgs e) =>
+        {
+            if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
             {
-                if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
-                {
-                    pc.WindowSize = e.NewSize;
-                    if (DataContext is DataPointsViewModel vm)
-                        vm.WindowSize = e.NewSize;
-                }
-            };
+                pc.WindowSize = e.NewSize;
+                if (DataContext is DataPointsViewModel vm)
+                    vm.WindowSize = e.NewSize;
+            }
+        };
 
-        }
     }
 }

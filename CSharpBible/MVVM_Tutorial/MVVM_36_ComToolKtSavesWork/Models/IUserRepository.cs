@@ -1,7 +1,6 @@
-﻿namespace MVVM_36_ComToolKtSavesWork.Models
+﻿namespace MVVM_36_ComToolKtSavesWork.Models;
+
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        User? Login(string username, string password);
-    }
+    User? Login(string username, string password);
 }

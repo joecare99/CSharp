@@ -13,40 +13,39 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_06_Converters_3.ViewModels
+namespace MVVM_06_Converters_3.ViewModels;
+
+/// <summary>
+/// Class CurrencyViewViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class CurrencyViewViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class CurrencyViewViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// The value
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class CurrencyViewViewModel : BaseViewModel
-    {
-        /// <summary>
-        /// The value
-        /// </summary>
-        private decimal _value;
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        /// <value>The value.</value>
-        public decimal Value { get => _value;
-            set
-            { if (_value == value) return; _value = value; RaisePropertyChanged(nameof(Value), nameof(ValueIsNotZero) ); } 
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CurrencyViewViewModel"/> class.
-        /// </summary>
-        public CurrencyViewViewModel()
-        {
-            Value = 0;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether [value is not zero].
-        /// </summary>
-        /// <value><c>true</c> if [value is not zero]; otherwise, <c>false</c>.</value>
-        public bool ValueIsNotZero => _value != 0;
+    private decimal _value;
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    /// <value>The value.</value>
+    public decimal Value { get => _value;
+        set
+        { if (_value == value) return; _value = value; RaisePropertyChanged(nameof(Value), nameof(ValueIsNotZero) ); } 
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurrencyViewViewModel"/> class.
+    /// </summary>
+    public CurrencyViewViewModel()
+    {
+        Value = 0;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether [value is not zero].
+    /// </summary>
+    /// <value><c>true</c> if [value is not zero]; otherwise, <c>false</c>.</value>
+    public bool ValueIsNotZero => _value != 0;
 }

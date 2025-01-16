@@ -13,12 +13,11 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace SyncAsyncParallel
+namespace SyncAsyncParallel;
+
+/// <summary>
+/// Interaktionslogik für "App.xaml"
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application
-    {
-    }
 }

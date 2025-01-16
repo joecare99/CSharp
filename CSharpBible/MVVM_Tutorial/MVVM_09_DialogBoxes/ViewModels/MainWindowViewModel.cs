@@ -13,18 +13,17 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_09_DialogBoxes.ViewModels
+namespace MVVM_09_DialogBoxes.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class MainWindowViewModel : BaseViewModel
 {
-    /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
-    /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public MainWindowViewModel()
     {
-        public MainWindowViewModel()
-        {
-            ;
-        }
+        ;
     }
 }

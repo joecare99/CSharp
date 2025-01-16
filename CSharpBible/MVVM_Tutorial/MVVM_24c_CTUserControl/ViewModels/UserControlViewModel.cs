@@ -14,8 +14,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
 
-namespace MVVM_24c_CTUserControl.ViewModels
-{
+namespace MVVM_24c_CTUserControl.ViewModels;
+
 	/// <summary>
 	/// Class MainWindowViewModel.
 	/// Implements the <see cref="BaseViewModel" />
@@ -49,4 +49,3 @@ namespace MVVM_24c_CTUserControl.ViewModels
 		}
 
 	}
-}

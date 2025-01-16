@@ -16,54 +16,53 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace MVVM_09a_CTDialogBoxes.ViewModels
+namespace MVVM_09a_CTDialogBoxes.ViewModels;
+
+/// <summary>
+/// Class DialogWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public partial class DialogWindowViewModel : BaseViewModelCT
 {
     /// <summary>
-    /// Class DialogWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// The name
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public partial class DialogWindowViewModel : BaseViewModelCT
+    [ObservableProperty]
+    private string _name = "";
+    /// <summary>
+    /// The email
+    /// </summary>
+    [ObservableProperty] 
+    private string _email = "";
+
+    /// <summary>
+    /// Occurs when [ok].
+    /// </summary>
+    public event EventHandler DoOK;
+    /// <summary>
+    /// Occurs when [cancel].
+    /// </summary>
+    public event EventHandler DoCancel;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DialogWindowViewModel"/> class.
+    /// </summary>
+    public DialogWindowViewModel()
     {
-        /// <summary>
-        /// The name
-        /// </summary>
-        [ObservableProperty]
-        private string _name = "";
-        /// <summary>
-        /// The email
-        /// </summary>
-        [ObservableProperty] 
-        private string _email = "";
+    }
 
-        /// <summary>
-        /// Occurs when [ok].
-        /// </summary>
-        public event EventHandler DoOK;
-        /// <summary>
-        /// Occurs when [cancel].
-        /// </summary>
-        public event EventHandler DoCancel;
+    [RelayCommand]
+    private void Cancel()
+    {
+        Name = String.Empty;
+        Email = String.Empty;
+        this.DoCancel?.Invoke(this, EventArgs.Empty);
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DialogWindowViewModel"/> class.
-        /// </summary>
-        public DialogWindowViewModel()
-        {
-        }
-
-        [RelayCommand]
-        private void Cancel()
-        {
-            Name = String.Empty;
-            Email = String.Empty;
-            this.DoCancel?.Invoke(this, EventArgs.Empty);
-        }
-
-        [RelayCommand]
-        private void OK()
-        {
-            this.DoOK?.Invoke(this, EventArgs.Empty);
-        }
+    [RelayCommand]
+    private void OK()
+    {
+        this.DoOK?.Invoke(this, EventArgs.Empty);
     }
 }

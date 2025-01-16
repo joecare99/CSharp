@@ -11,9 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-namespace MVVM_36_ComToolKtSavesWork.ViewModels
+namespace MVVM_36_ComToolKtSavesWork.ViewModels;
+
+public class ShowLoginMessage
 {
-    public class ShowLoginMessage
-    {
-    }
 }

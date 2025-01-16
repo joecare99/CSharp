@@ -17,56 +17,55 @@ using System.IO;
 using CsvHelper.Configuration;
 using System.Globalization;
 
-namespace MVVM_17_1_CSV_Laden.Model
+namespace MVVM_17_1_CSV_Laden.Model;
+
+/// <summary>
+/// Class CsvModel.
+/// Implements the <see cref="IDisposable" />
+/// </summary>
+/// <seealso cref="IDisposable" />
+public class CsvModel : IDisposable
 {
+
     /// <summary>
-    /// Class CsvModel.
-    /// Implements the <see cref="IDisposable" />
+    /// The reader
     /// </summary>
-    /// <seealso cref="IDisposable" />
-    public class CsvModel : IDisposable
+    TextReader reader;
+    /// <summary>
+    /// The CSV reader
+    /// </summary>
+    CsvHelper.CsvReader csvReader;
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public void Dispose()
     {
+        reader?.Dispose();
+        csvReader?.Dispose();
+    }
 
-        /// <summary>
-        /// The reader
-        /// </summary>
-        TextReader reader;
-        /// <summary>
-        /// The CSV reader
-        /// </summary>
-        CsvHelper.CsvReader csvReader;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CsvModel"/> class.
+    /// </summary>
+    /// <param name="filename">The filename.</param>
+    public CsvModel(string filename)
+    {
+        reader = new StreamReader(filename);
+        CsvConfiguration config = new CsvConfiguration(CultureInfo.CurrentCulture);
+        config.Delimiter = ";";
+        config.HasHeaderRecord = true;
+        csvReader = new CsvHelper.CsvReader(reader, config);
+        
+    }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            reader?.Dispose();
-            csvReader?.Dispose();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CsvModel"/> class.
-        /// </summary>
-        /// <param name="filename">The filename.</param>
-        public CsvModel(string filename)
-        {
-            reader = new StreamReader(filename);
-            CsvConfiguration config = new CsvConfiguration(CultureInfo.CurrentCulture);
-            config.Delimiter = ";";
-            config.HasHeaderRecord = true;
-            csvReader = new CsvHelper.CsvReader(reader, config);
-            
-        }
-
-        /// <summary>
-        /// Reads the CSV.
-        /// </summary>
-        /// <returns>IAsyncEnumerable&lt;DataPoint&gt;.</returns>
-        public IAsyncEnumerable<DataPoint> ReadCSV()
-        {
-            var datapoints = csvReader.GetRecordsAsync<DataPoint>();
-            return datapoints;
-        }
+    /// <summary>
+    /// Reads the CSV.
+    /// </summary>
+    /// <returns>IAsyncEnumerable&lt;DataPoint&gt;.</returns>
+    public IAsyncEnumerable<DataPoint> ReadCSV()
+    {
+        var datapoints = csvReader.GetRecordsAsync<DataPoint>();
+        return datapoints;
     }
 }

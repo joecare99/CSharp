@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_24b_UserControl.Views
-{
-    /// <summary>
-    /// Interaktionslogik für MaxLengthTextBoxUserControl.xaml
-    /// </summary>
-    public partial class MaxLengthTextBoxUserControl : UserControl
+namespace MVVM_24b_UserControl.Views;
+
+/// <summary>
+/// Interaktionslogik für MaxLengthTextBoxUserControl.xaml
+/// </summary>
+public partial class MaxLengthTextBoxUserControl : UserControl
 	{
 		public static readonly DependencyProperty TextProperty = 
 			DependencyProperty.Register(nameof(Text), typeof(string), 
@@ -28,4 +28,3 @@ namespace MVVM_24b_UserControl.Views
 			set { SetValue(TextProperty, value); }
 		}
 	}
-}

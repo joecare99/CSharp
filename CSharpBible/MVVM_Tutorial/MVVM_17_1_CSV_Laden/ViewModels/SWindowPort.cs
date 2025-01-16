@@ -13,24 +13,23 @@
 // ***********************************************************************
 using System.Drawing;
 
-namespace MVVM_17_1_CSV_Laden.ViewModels
+namespace MVVM_17_1_CSV_Laden.ViewModels;
+
+/// <summary>
+/// Struct SWindowPort
+/// </summary>
+public struct SWindowPort
 {
     /// <summary>
-    /// Struct SWindowPort
+    /// The port
     /// </summary>
-    public struct SWindowPort
-    {
-        /// <summary>
-        /// The port
-        /// </summary>
-        public RectangleF port;
-        /// <summary>
-        /// The window size
-        /// </summary>
-        public System.Windows.Size WindowSize;
-        /// <summary>
-        /// The parent
-        /// </summary>
-        public DataPointsViewModel Parent;
-    }
+    public RectangleF port;
+    /// <summary>
+    /// The window size
+    /// </summary>
+    public System.Windows.Size WindowSize;
+    /// <summary>
+    /// The parent
+    /// </summary>
+    public DataPointsViewModel Parent;
 }

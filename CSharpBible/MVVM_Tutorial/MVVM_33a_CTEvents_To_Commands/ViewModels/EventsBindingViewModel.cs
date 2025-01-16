@@ -15,43 +15,42 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 
-namespace MVVM_33a_CTEvents_To_Commands.ViewModels
+namespace MVVM_33a_CTEvents_To_Commands.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModelCT" />
+/// </summary>
+/// <seealso cref="BaseViewModelCT" />
+public partial class EventsBindingViewModel : BaseViewModelCT
 {
+    #region Properties
+    [ObservableProperty]
+    private string _state = "";
+    #endregion
+    #region Methods
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModelCT" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModelCT" />
-    public partial class EventsBindingViewModel : BaseViewModelCT
-    {
-        #region Properties
-        [ObservableProperty]
-        private string _state = "";
-        #endregion
-        #region Methods
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public EventsBindingViewModel()
-        { }
+    public EventsBindingViewModel()
+    { }
 
-        [RelayCommand]
-        private void LostFocus(object? _)
-            => State = "Lost focus";
+    [RelayCommand]
+    private void LostFocus(object? _)
+        => State = "Lost focus";
 
-        [RelayCommand]
-        private void GotFocus(object? _)
-            => State = "Got focus";
+    [RelayCommand]
+    private void GotFocus(object? _)
+        => State = "Got focus";
 
 #if !NET5_0_OR_GREATER
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~EventsBindingViewModel()
-        {
-            return;
-        }
-#endif
-        #endregion
+    /// <summary>
+    /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
+    /// </summary>
+    ~EventsBindingViewModel()
+    {
+        return;
     }
+#endif
+    #endregion
 }

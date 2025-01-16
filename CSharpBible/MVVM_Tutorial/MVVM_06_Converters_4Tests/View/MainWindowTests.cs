@@ -17,27 +17,26 @@ using System.Threading;
 /// <summary>
 /// The Tests namespace.
 /// </summary>
-namespace MVVM_06_Converters_4.View.Tests
+namespace MVVM_06_Converters_4.View.Tests;
+
+/// <summary>
+/// Defines test class MainWindowTests.
+/// </summary>
+[TestClass()]
+public class MainWindowTests
 {
     /// <summary>
-    /// Defines test class MainWindowTests.
+    /// Defines the test method MainWindowTest.
     /// </summary>
-    [TestClass()]
-    public class MainWindowTests
+    [TestMethod()]
+    public void MainWindowTest()
     {
-        /// <summary>
-        /// Defines the test method MainWindowTest.
-        /// </summary>
-        [TestMethod()]
-        public void MainWindowTest()
-        {
-            MainWindow? mw=null;
-            var t = new Thread(()=> mw = new());
-            t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-            t.Start();
-            t.Join(); //Wait for the thread to end
-            Assert.IsNotNull(mw);
-            Assert.IsInstanceOfType(mw, typeof(MainWindow));    
-        }
+        MainWindow? mw=null;
+        var t = new Thread(()=> mw = new());
+        t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+        t.Start();
+        t.Join(); //Wait for the thread to end
+        Assert.IsNotNull(mw);
+        Assert.IsInstanceOfType(mw, typeof(MainWindow));    
     }
 }

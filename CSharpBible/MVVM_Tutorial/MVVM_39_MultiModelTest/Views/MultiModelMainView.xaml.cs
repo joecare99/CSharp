@@ -1,40 +1,39 @@
 ﻿using MVVM.View.Extension;
 using System.Windows.Controls;
 
-namespace MVVM_39_MultiModelTest.Views
+namespace MVVM_39_MultiModelTest.Views;
+
+/// <summary>
+/// Interaktionslogik für TemplateView.xaml
+/// </summary>
+public partial class MultiModelMainView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für TemplateView.xaml
-    /// </summary>
-    public partial class MultiModelMainView : Page
+    public MultiModelMainView()
     {
-        public MultiModelMainView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        protected override void OnInitialized(System.EventArgs e)
+    protected override void OnInitialized(System.EventArgs e)
+    {
+        base.OnInitialized(e);
+        DataContextChanged += (s, e) =>
         {
-            base.OnInitialized(e);
-            DataContextChanged += (s, e) =>
-            {
-                SetVMShowDialog();
-            };
             SetVMShowDialog();
+        };
+        SetVMShowDialog();
 
-            void SetVMShowDialog()
+        void SetVMShowDialog()
+        {
+            if (DataContext is ViewModels.MultiModelMainViewModel vm)
             {
-                if (DataContext is ViewModels.MultiModelMainViewModel vm)
+                vm.showModel = (model) =>
                 {
-                    vm.showModel = (model) =>
-                    {
-                        IoC.SetCurrentScope(model.Scope);
-                        var view = new ScopedModelView();
-                        view.Show();
-                    };
-                }
+                    IoC.SetCurrentScope(model.Scope);
+                    var view = new ScopedModelView();
+                    view.Show();
+                };
             }
-
         }
+
     }
 }

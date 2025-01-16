@@ -15,42 +15,41 @@ using MVVM_09a_CTDialogBoxes.ViewModels;
 using System;
 using System.Windows;
 
-namespace MVVM_09a_CTDialogBoxes.Views
+namespace MVVM_09a_CTDialogBoxes.Views;
+
+/// <summary>
+/// Interaktionslogik für DialogWindow.xaml
+/// </summary>
+public partial class DialogWindow : Window, IDialogWindow
 {
     /// <summary>
-    /// Interaktionslogik für DialogWindow.xaml
+    /// Initializes a new instance of the <see cref="DialogWindow"/> class.
     /// </summary>
-    public partial class DialogWindow : Window, IDialogWindow
+    public DialogWindow()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DialogWindow"/> class.
-        /// </summary>
-        public DialogWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        /// <summary>
-        /// Handles the Loaded event of the Window control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            var vm = (DialogWindowViewModel)DataContext;
-            vm.DoCancel += DoCancel;
-            vm.DoOK += DoOK;
-        }
+    /// <summary>
+    /// Handles the Loaded event of the Window control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        var vm = (DialogWindowViewModel)DataContext;
+        vm.DoCancel += DoCancel;
+        vm.DoOK += DoOK;
+    }
 
-        private void DoOK(object sender,EventArgs e)
-        {
-            DialogResult = true;
-            Hide();
-        }
+    private void DoOK(object sender,EventArgs e)
+    {
+        DialogResult = true;
+        Hide();
+    }
 
-        private void DoCancel(object sender, EventArgs e)
-        {
-            Hide();
-        }
+    private void DoCancel(object sender, EventArgs e)
+    {
+        Hide();
     }
 }

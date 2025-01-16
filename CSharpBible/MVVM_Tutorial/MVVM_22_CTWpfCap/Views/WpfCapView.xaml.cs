@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows.Controls;
 
-namespace MVVM_22_CTWpfCap.Views
+namespace MVVM_22_CTWpfCap.Views;
+
+/// <summary>
+/// Interaktionslogik für WpfCapView.xaml
+/// </summary>
+public partial class WpfCapView : Page
 {
     /// <summary>
-    /// Interaktionslogik für WpfCapView.xaml
+    /// Initializes a new instance of the <see cref="WpfCapView"/> class.
     /// </summary>
-    public partial class WpfCapView : Page
+    public WpfCapView()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WpfCapView"/> class.
-        /// </summary>
-        public WpfCapView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

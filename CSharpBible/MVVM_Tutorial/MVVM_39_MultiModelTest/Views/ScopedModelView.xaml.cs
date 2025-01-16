@@ -1,37 +1,36 @@
 ﻿using System.Windows;
 
-namespace MVVM_39_MultiModelTest.Views
+namespace MVVM_39_MultiModelTest.Views;
+
+/// <summary>
+/// Interaktionslogik für ScopedModelView.xaml
+/// </summary>
+public partial class ScopedModelView : Window
 {
-    /// <summary>
-    /// Interaktionslogik für ScopedModelView.xaml
-    /// </summary>
-    public partial class ScopedModelView : Window
+    public ScopedModelView()
     {
-        public ScopedModelView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        protected override void OnInitialized(System.EventArgs e)
+    protected override void OnInitialized(System.EventArgs e)
+    {
+        base.OnInitialized(e);
+        DataContextChanged += (s, e) =>
         {
-            base.OnInitialized(e);
-            DataContextChanged += (s, e) =>
-            {
-                SetVMCloseDialog();
-            };
             SetVMCloseDialog();
+        };
+        SetVMCloseDialog();
 
-            void SetVMCloseDialog()
+        void SetVMCloseDialog()
+        {
+            if (DataContext is ViewModels.ScopedModelViewModel vm)
             {
-                if (DataContext is ViewModels.ScopedModelViewModel vm)
+                vm.DoClose = (o) =>
                 {
-                    vm.DoClose = (o) =>
-                    {
-                        Close();
-                    };
-                }
+                    Close();
+                };
             }
-
         }
+
     }
 }

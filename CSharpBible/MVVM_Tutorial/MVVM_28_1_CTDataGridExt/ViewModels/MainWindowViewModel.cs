@@ -13,32 +13,31 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_28_1_CTDataGridExt.ViewModels
+namespace MVVM_28_1_CTDataGridExt.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class MainWindowViewModel : BaseViewModelCT
 {
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModelCT
+    public MainWindowViewModel()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public MainWindowViewModel()
-        {
 
-        }
+    }
 
 #if !NET5_0_OR_GREATER
-        // Finalizer wird bei .net-Core nicht (mehr) ausgeführt
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~MainWindowViewModel()
-        {
-            return;
-        }
-#endif
+    // Finalizer wird bei .net-Core nicht (mehr) ausgeführt
+    /// <summary>
+    /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
+    /// </summary>
+    ~MainWindowViewModel()
+    {
+        return;
     }
+#endif
 }

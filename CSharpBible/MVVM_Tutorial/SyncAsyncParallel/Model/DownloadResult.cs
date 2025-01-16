@@ -11,28 +11,26 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-namespace SyncAsyncParallel.Model
+namespace SyncAsyncParallel.Model;
+
+/// <summary>
+/// Class DownloadResult.
+/// </summary>
+class DownloadResult
 {
     /// <summary>
-    /// Class DownloadResult.
+    /// Gets or sets the URL.
     /// </summary>
-    class DownloadResult
-    {
-        /// <summary>
-        /// Gets or sets the URL.
-        /// </summary>
-        /// <value>The URL.</value>
-        public string Url { get; set; } = "";
-        /// <summary>
-        /// Gets or sets the HTML.
-        /// </summary>
-        /// <value>The HTML.</value>
-        public string Html { get; set; } = "";
-        /// <summary>
-        /// Gets the content length.
-        /// </summary>
-        /// <value>The contentLength.</value>
-        public int ContentLength => Html?.Length ?? 0;
-    }
-
+    /// <value>The URL.</value>
+    public string Url { get; set; } = "";
+    /// <summary>
+    /// Gets or sets the HTML.
+    /// </summary>
+    /// <value>The HTML.</value>
+    public string Html { get; set; } = "";
+    /// <summary>
+    /// Gets the content length.
+    /// </summary>
+    /// <value>The contentLength.</value>
+    public int ContentLength => Html?.Length ?? 0;
 }

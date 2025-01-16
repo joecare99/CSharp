@@ -1,21 +1,20 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MVVM_05a_CTCommandParCalc.Views
+namespace MVVM_05a_CTCommandParCalc.Views;
+
+/// <summary>
+/// Interaktionslogik für CommandParCalculatorView.xaml
+/// </summary>
+public partial class CommandParCalculatorView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für CommandParCalculatorView.xaml
-    /// </summary>
-    public partial class CommandParCalculatorView : Page
+    public CommandParCalculatorView()
     {
-        public CommandParCalculatorView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
 
-        }
     }
 }

@@ -13,35 +13,34 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_06_Converters_2.ViewModels
+namespace MVVM_06_Converters_2.ViewModels;
+
+/// <summary>
+/// Class CurrencyViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class CurrencyViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class CurrencyViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// The value
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class CurrencyViewModel : BaseViewModel
-    {
-        /// <summary>
-        /// The value
-        /// </summary>
-        private decimal _value;
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        /// <value>The value.</value>
-        public decimal Value { get => _value;
-            set
-            { if (_value == value) return; _value = value; RaisePropertyChanged(); } 
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CurrencyViewModel"/> class.
-        /// </summary>
-        public CurrencyViewModel()
-        {
-            Value = 0;
-        }
-
+    private decimal _value;
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    /// <value>The value.</value>
+    public decimal Value { get => _value;
+        set
+        { if (_value == value) return; _value = value; RaisePropertyChanged(); } 
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurrencyViewModel"/> class.
+    /// </summary>
+    public CurrencyViewModel()
+    {
+        Value = 0;
+    }
+
 }

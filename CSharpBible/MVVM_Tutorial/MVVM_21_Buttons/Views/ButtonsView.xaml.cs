@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows.Controls;
 
-namespace MVVM_21_Buttons.Views
+namespace MVVM_21_Buttons.Views;
+
+/// <summary>
+/// Interaktionslogik für ButtonsView.xaml
+/// </summary>
+public partial class ButtonsView : Page
 {
     /// <summary>
-    /// Interaktionslogik für ButtonsView.xaml
+    /// Initializes a new instance of the <see cref="ButtonsView"/> class.
     /// </summary>
-    public partial class ButtonsView : Page
+    public ButtonsView()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ButtonsView"/> class.
-        /// </summary>
-        public ButtonsView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
