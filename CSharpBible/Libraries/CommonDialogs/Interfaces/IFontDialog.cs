@@ -12,12 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 
-namespace CommonDialogs.Interfaces
+namespace CommonDialogs.Interfaces;
+
+public interface IFontDialog
 {
-    public interface IFontDialog
-    {
-        System.Drawing.Font Font { get; set; }
-        bool? ShowDialog();
-        bool? ShowDialog(object owner);
-    }
+    System.Drawing.Font Font { get; set; }
+    bool? ShowDialog();
+    bool? ShowDialog(object owner);
 }

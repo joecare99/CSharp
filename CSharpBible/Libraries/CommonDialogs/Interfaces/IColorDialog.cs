@@ -13,21 +13,20 @@
 // ***********************************************************************
 using System.Drawing;
 
-namespace CommonDialogs.Interfaces
-{
-    public interface IColorDialog
-    {
-        bool AllowFullOpen { get; set; }
-        bool AnyColor { get; set; }
-        Color Color { get; set; }
-        int[] CustomColors { get; set; }
-        bool FullOpen { get; set; }
-        bool ShowHelp { get; set; }
-        bool SolidColorOnly { get; set; }
-        object? Tag { get; set; }
+namespace CommonDialogs.Interfaces;
 
-        void Reset();
-        bool? ShowDialog();
-        bool? ShowDialog(object owner);
-    }
+public interface IColorDialog
+{
+    bool AllowFullOpen { get; set; }
+    bool AnyColor { get; set; }
+    Color Color { get; set; }
+    int[] CustomColors { get; set; }
+    bool FullOpen { get; set; }
+    bool ShowHelp { get; set; }
+    bool SolidColorOnly { get; set; }
+    object? Tag { get; set; }
+
+    void Reset();
+    bool? ShowDialog();
+    bool? ShowDialog(object owner);
 }
