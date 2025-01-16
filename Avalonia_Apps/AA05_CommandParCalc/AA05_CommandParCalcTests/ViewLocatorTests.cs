@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls.CommandParCalcs;
+﻿using Avalonia.Controls.Templates;
 using System.Reflection;
 using AA05_CommandParCalc.Models.Interfaces;
 using NSubstitute;
@@ -53,7 +53,7 @@ namespace AA05_CommandParCalc.Tests
         {
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(ViewLocator));
-            Assert.IsInstanceOfType(testClass, typeof(IDataCommandParCalc));
+            Assert.IsInstanceOfType(testClass, typeof(IDataTemplate));
         }
 
         [TestMethod()]
