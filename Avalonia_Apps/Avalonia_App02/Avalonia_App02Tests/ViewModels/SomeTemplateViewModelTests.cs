@@ -9,11 +9,11 @@ using System.Globalization;
 namespace Avalonia_App02.ViewModels.Tests
 {
     [TestClass()]
-    public class TemplateViewModelTests
+    public class SomeTemplateViewModelTests
     {
-        private ITemplateModel? model;
+        private ISomeTemplateModel? model;
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-        TemplateViewModel testModel;
+        SomeTemplateViewModel testModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private string sTestLog="";
         private CultureInfo? cc;
@@ -23,8 +23,8 @@ namespace Avalonia_App02.ViewModels.Tests
         {
             cc = CultureInfo.CurrentCulture ;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            model = Substitute.For<ITemplateModel>();
-            testModel = new TemplateViewModel(model);
+            model = Substitute.For<ISomeTemplateModel>();
+            testModel = new SomeTemplateViewModel(model);
             testModel.PropertyChanged += (s, e) => DoLog($"PropChg({s?.GetType().Name}, {e.PropertyName}) = ${s?.GetType().GetProperty(e.PropertyName??"")?.GetValue(s)}");            
         }
 
@@ -45,23 +45,23 @@ namespace Avalonia_App02.ViewModels.Tests
         public void SetupTest()
         {
             Assert.IsNotNull(testModel);
-            Assert.IsInstanceOfType(testModel, typeof(TemplateViewModel));
-            Assert.IsInstanceOfType(testModel, typeof(ITemplateViewModel));
+            Assert.IsInstanceOfType(testModel, typeof(SomeTemplateViewModel));
+            Assert.IsInstanceOfType(testModel, typeof(ISomeTemplateViewModel));
         }
 
         [TestMethod()]
         public void SetupTest2()
         {
-            var testModel2 = new TemplateViewModel();
+            var testModel2 = new SomeTemplateViewModel();
             Assert.IsNotNull(testModel2);
-            Assert.IsInstanceOfType(testModel2, typeof(TemplateViewModel));
-            Assert.IsInstanceOfType(testModel2, typeof(ITemplateViewModel));
+            Assert.IsInstanceOfType(testModel2, typeof(SomeTemplateViewModel));
+            Assert.IsInstanceOfType(testModel2, typeof(ISomeTemplateViewModel));
         }
 
 
         [TestMethod()]
-        [DataRow("Hello World !", @"PropChg(TemplateViewModel, Greeting) = $Hello World !\r\n")]
-        [DataRow("Dada", @"PropChg(TemplateViewModel, Greeting) = $Dada\r\n")]
+        [DataRow("Hello World !", @"PropChg(SomeTemplateViewModel, Greeting) = $Hello World !\r\n")]
+        [DataRow("Dada", @"PropChg(SomeTemplateViewModel, Greeting) = $Dada\r\n")]
 
         public void GreetingsTest(string sAct,string sExp)
         {
@@ -77,8 +77,8 @@ namespace Avalonia_App02.ViewModels.Tests
         }
 
         [TestMethod()]
-        [DataRow("Hello World !", @"PropChg(TemplateViewModel, Title) = $Hello World !\r\n")]
-        [DataRow("menu grande", @"PropChg(TemplateViewModel, Title) = $menu grande\r\n")]
+        [DataRow("Hello World !", @"PropChg(SomeTemplateViewModel, Title) = $Hello World !\r\n")]
+        [DataRow("menu grande", @"PropChg(SomeTemplateViewModel, Title) = $menu grande\r\n")]
         [DataRow("Main Menu", @"")]
         public void TitleTest1(string sAct, string sExp)
         {
@@ -95,8 +95,8 @@ namespace Avalonia_App02.ViewModels.Tests
 
         [TestMethod()]
         [DataRow("", "")]
-        [DataRow("now", @"PropChg(TemplateViewModel, Now) = $01/14/2025 00:00:00\r\n")]
-        [DataRow("title", @"PropChg(TemplateViewModel, Title) = $Main Menu\r\n")]
+        [DataRow("now", @"PropChg(SomeTemplateViewModel, Now) = $01/14/2025 00:00:00\r\n")]
+        [DataRow("title", @"PropChg(SomeTemplateViewModel, Title) = $Main Menu\r\n")]
         [DataRow("bumlux", "")]
         public void PropertyChangedTest2(string sAct, string sExp)
         {
@@ -114,13 +114,13 @@ namespace Avalonia_App02.ViewModels.Tests
 
         [TestMethod()]
         [DataRow("", "Welcome to Avalonia! The current time is 01/01/0001 00:00:00", "")]
-        [DataRow(nameof(TemplateViewModel.ActionsCommand), "Action:", @"PropChg(TemplateViewModel, Greeting) = $Action:\r\n")]
-        [DataRow(nameof(TemplateViewModel.ConfigCommand), "Config:", @"PropChg(TemplateViewModel, Greeting) = $Config:\r\n")]
-        [DataRow(nameof(TemplateViewModel.HomeCommand), "Hello, Avalonia!", @"PropChg(TemplateViewModel, Greeting) = $Hello, Avalonia!\r\n")]
-        [DataRow(nameof(TemplateViewModel.MacrosCommand), "Macros:", @"PropChg(TemplateViewModel, Greeting) = $Macros:\r\n")]
-        [DataRow(nameof(TemplateViewModel.HistoryCommand), "History:", @"PropChg(TemplateViewModel, Greeting) = $History:\r\n")]
-        [DataRow(nameof(TemplateViewModel.ProcessCommand), "Process:", @"PropChg(TemplateViewModel, Greeting) = $Process:\r\n")]
-        [DataRow(nameof(TemplateViewModel.ReportsCommand), "Reports:", @"PropChg(TemplateViewModel, Greeting) = $Reports:\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.ActionsCommand), "Action:", @"PropChg(SomeTemplateViewModel, Greeting) = $Action:\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.ConfigCommand), "Config:", @"PropChg(SomeTemplateViewModel, Greeting) = $Config:\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.HomeCommand), "Hello, Avalonia!", @"PropChg(SomeTemplateViewModel, Greeting) = $Hello, Avalonia!\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.MacrosCommand), "Macros:", @"PropChg(SomeTemplateViewModel, Greeting) = $Macros:\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.HistoryCommand), "History:", @"PropChg(SomeTemplateViewModel, Greeting) = $History:\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.ProcessCommand), "Process:", @"PropChg(SomeTemplateViewModel, Greeting) = $Process:\r\n")]
+        [DataRow(nameof(SomeTemplateViewModel.ReportsCommand), "Reports:", @"PropChg(SomeTemplateViewModel, Greeting) = $Reports:\r\n")]
         public void RelayCommandTest(string sAct,string sExp1,string sExp2)
         {
             // Arrange & basetest

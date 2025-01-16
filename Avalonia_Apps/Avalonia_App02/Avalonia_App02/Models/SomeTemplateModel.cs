@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 01-12-2025
 // ***********************************************************************
-// <copyright file="TemplateModel.cs" company="JC-Soft">
+// <copyright file="SomeTemplateModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2025
 // </copyright>
 // <summary></summary>
@@ -28,9 +28,9 @@ using System.Timers;
 namespace Avalonia_App02.Models;
 
 /// <summary>
-/// Class TemplateModel.
+/// Class SomeTemplateModel.
 /// </summary>
-public partial class TemplateModel : ObservableObject, ITemplateModel
+public partial class SomeTemplateModel : ObservableObject, ISomeTemplateModel
 {
     /// <summary>
     /// The platform handle
@@ -41,10 +41,10 @@ public partial class TemplateModel : ObservableObject, ITemplateModel
 
     public DateTime Now => _sysTime.Now;
     /// <summary>
-    /// Initializes a new instance of the <see cref="TemplateModel"/> class.
+    /// Initializes a new instance of the <see cref="SomeTemplateModel"/> class.
     /// </summary>
     /// <param name="platformHandle">The platform handle.</param>
-    public  TemplateModel(IPlatformHandle platformHandle, ISysTime sysTime, ICyclTimer timer)
+    public  SomeTemplateModel(IPlatformHandle platformHandle, ISysTime sysTime, ICyclTimer timer)
     {
         _platformHandle = platformHandle;
         _sysTime = sysTime;

@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 01-12-2025
 // ***********************************************************************
-// <copyright file="TemplateViewModel.cs" company="JC-Soft">
+// <copyright file="SomeTemplateViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2025
 // </copyright>
 // <summary></summary>
@@ -16,7 +16,7 @@ using System;
 
 namespace Avalonia_App02.ViewModels.Interfaces
 {
-    public interface ITemplateViewModel
+    public interface ISomeTemplateViewModel
     {
         string Greeting { get; }
         string Title { get; }

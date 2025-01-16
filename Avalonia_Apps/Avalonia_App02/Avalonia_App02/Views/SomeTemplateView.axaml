@@ -5,13 +5,13 @@
              xmlns:p="clr-namespace:Avalonia_App02.Properties"
              xmlns:vm="clr-namespace:Avalonia_App02.ViewModels"
              xmlns:vmi="clr-namespace:Avalonia_App02.ViewModels.Interfaces"
-             x:DataType="vmi:ITemplateViewModel"
+             x:DataType="vmi:ISomeTemplateViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Avalonia_App02.Views.TemplateView">
+             x:Class="Avalonia_App02.Views.SomeTemplateView">
   <Design.DataContext>
     <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:TemplateViewModel/>
+    <vm:SomeTemplateViewModel/>
   </Design.DataContext>
   <Grid ColumnDefinitions="220, *" Background="{DynamicResource ResourceKey=AppDefaultBackground}">
     <Border Padding="10" Background="{DynamicResource ResourceKey=SideBarBackground}">
@@ -22,15 +22,15 @@
             <Image Source="avares://Avalonia_App02/Assets/Images/Logo_2.png" Height="50" HorizontalAlignment="Left"/>
             <TextBlock Text="{Binding Title}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Grid>
-          <Button Name="btnHome" Content="{x:Static p:Resources.btnHome}" Command="{Binding HomeCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-          <Button Name="btnProcess" Content="{x:Static p:Resources.btnProcess}" Command="{Binding ProcessCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-          <Button Name="btnActions" Content="{x:Static p:Resources.btnActions}" Command="{Binding ActionsCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-          <Button Name="btnMacros" Content="{x:Static p:Resources.btnMacros}" Command="{Binding MacrosCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-          <Button Name="btnReports" Content="{x:Static p:Resources.btnReports}" Command="{Binding ReportsCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-          <Button Name="btnHistory" Content="{x:Static p:Resources.btnHistory}" Command="{Binding HistoryCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+          <Button Classes="Menu" Name="btnHome" Content="{x:Static p:Resources.btnHome}" Command="{Binding HomeCommand}" />
+          <Button Classes="Menu" Name="btnProcess" Content="{x:Static p:Resources.btnProcess}" Command="{Binding ProcessCommand}" />
+          <Button Classes="Menu" Name="btnActions" Content="{x:Static p:Resources.btnActions}" Command="{Binding ActionsCommand}" />
+          <Button Classes="Menu" Name="btnMacros" Content="{x:Static p:Resources.btnMacros}" Command="{Binding MacrosCommand}" />
+          <Button Classes="Menu" Name="btnReports" Content="{x:Static p:Resources.btnReports}" Command="{Binding ReportsCommand}" />
+          <Button Classes="Menu" Name="btnHistory" Content="{x:Static p:Resources.btnHistory}" Command="{Binding HistoryCommand}" />
         </StackPanel>
 
-        <Button Name="btnConfig" Grid.Row="1" Content="{x:Static p:Resources.btnConfig}" Command="{Binding ConfigCommand}" HorizontalAlignment="Stretch"></Button>
+        <Button Classes="Menu" Name="btnConfig" Grid.Row="1" Content="{x:Static p:Resources.btnConfig}" Command="{Binding ConfigCommand}" />
       </Grid>
     </Border>
     <StackPanel Grid.Column="1" VerticalAlignment="Center">
