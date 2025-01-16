@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace MVVM_37_TreeView.Views
+namespace MVVM_37_TreeView.Views;
+
+/// <summary>
+/// Interaktionslogik für TemplateView.xaml
+/// </summary>
+public partial class BooksTreeView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für TemplateView.xaml
-    /// </summary>
-    public partial class BooksTreeView : Page
+    public BooksTreeView()
     {
-        public BooksTreeView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
