@@ -1,9 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace MVVM_19_FilterLists.Model
+namespace MVVM_19_FilterLists.Model;
+
+public interface IPersons
 {
-    public interface IPersons
-    {
-        ObservableCollection<Person> Persons { get; }
-    }
+    ObservableCollection<Person> Persons { get; }
 }
