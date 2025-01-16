@@ -20,6 +20,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
+using MVVM_40_Wizzard.Models.Interfaces;
 using System;
 using System.ComponentModel;
 using System.Globalization;

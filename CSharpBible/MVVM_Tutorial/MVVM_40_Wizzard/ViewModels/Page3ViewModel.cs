@@ -19,6 +19,7 @@ using MVVM_40_Wizzard.Models;
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using System.Linq;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 
 /// <summary>

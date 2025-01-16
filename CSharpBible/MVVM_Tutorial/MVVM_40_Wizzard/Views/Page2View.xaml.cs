@@ -13,16 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MVVM_40_Wizzard.Views
+namespace MVVM_40_Wizzard.Views;
+
+/// <summary>
+/// Interaktionslogik für Page2View.xaml
+/// </summary>
+public partial class Page2View : Page
 {
-    /// <summary>
-    /// Interaktionslogik für Page2View.xaml
-    /// </summary>
-    public partial class Page2View : Page
+    public Page2View()
     {
-        public Page2View()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
