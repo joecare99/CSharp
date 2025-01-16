@@ -8,153 +8,152 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MVVM_17_1_CSV_Laden.Properties {
-    using System;
+namespace MVVM_17_1_CSV_Laden.Properties; 
+using System;
+
+
+/// <summary>
+///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+/// </summary>
+// Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
+// -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
+// Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
+// mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+public class Resources {
     
+    private static global::System.Resources.ResourceManager resourceMan;
+    
+    private static global::System.Globalization.CultureInfo resourceCulture;
+    
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+    internal Resources() {
+    }
     
     /// <summary>
-    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
     /// </summary>
-    // Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
-    // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
-    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
-    // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
-        
-        private static global::System.Resources.ResourceManager resourceMan;
-        
-        private static global::System.Globalization.CultureInfo resourceCulture;
-        
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Resources.ResourceManager ResourceManager {
+        get {
+            if (object.ReferenceEquals(resourceMan, null)) {
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_17_1_CSV_Laden.Properties.Resources", typeof(Resources).Assembly);
+                resourceMan = temp;
+            }
+            return resourceMan;
         }
-        
-        /// <summary>
-        ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_17_1_CSV_Laden.Properties.Resources", typeof(Resources).Assembly);
-                    resourceMan = temp;
-                }
-                return resourceMan;
-            }
+    }
+    
+    /// <summary>
+    ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+    ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+    /// </summary>
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Globalization.CultureInfo Culture {
+        get {
+            return resourceCulture;
         }
-        
-        /// <summary>
-        ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
-                return resourceCulture;
-            }
-            set {
-                resourceCulture = value;
-            }
+        set {
+            resourceCulture = value;
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
-        ///// Assembly         : MVVM_17_1_CSV_Laden
-        ///// Author           : Mir
-        ///// Created          : 07-03-2022
-        /////
-        ///// Last Modified By : Mir
-        ///// Last Modified On : 07-04-2022
-        ///// ***********************************************************************
-        ///// &lt;copyright file=&quot;CsvModel.cs&quot; company=&quot;MVVM_17_1_CSV_Laden&quot;&gt;
-        /////     Copyright (c) JC-Soft. All rights reserved.
-        ///// &lt;/copyright&gt;
-        ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// ****************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
-        /// </summary>
-        public static string CsvModel {
-            get {
-                return ResourceManager.GetString("CsvModel", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+    ///// Assembly         : MVVM_17_1_CSV_Laden
+    ///// Author           : Mir
+    ///// Created          : 07-03-2022
+    /////
+    ///// Last Modified By : Mir
+    ///// Last Modified On : 07-04-2022
+    ///// ***********************************************************************
+    ///// &lt;copyright file=&quot;CsvModel.cs&quot; company=&quot;MVVM_17_1_CSV_Laden&quot;&gt;
+    /////     Copyright (c) JC-Soft. All rights reserved.
+    ///// &lt;/copyright&gt;
+    ///// &lt;summary&gt;&lt;/summary&gt;
+    ///// ****************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+    /// </summary>
+    public static string CsvModel {
+        get {
+            return ResourceManager.GetString("CsvModel", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_17_1_CSV_Laden.View.DataPointsView&quot;
-        ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
-        ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
-        ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
-        ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
-        ///      xmlns:i=&quot;http://schemas.microsoft.com/xaml/behaviors&quot;
-        ///      xmlns:local=&quot;clr-namespace:MVVM_17_1_CSV_Laden.View&quot;
-        ///      xmlns:vc=&quot;clr-namespace:MVVM_17_1_CSV_Laden.V [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
-        /// </summary>
-        public static string DataPointsView {
-            get {
-                return ResourceManager.GetString("DataPointsView", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_17_1_CSV_Laden.View.DataPointsView&quot;
+    ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+    ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+    ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
+    ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
+    ///      xmlns:i=&quot;http://schemas.microsoft.com/xaml/behaviors&quot;
+    ///      xmlns:local=&quot;clr-namespace:MVVM_17_1_CSV_Laden.View&quot;
+    ///      xmlns:vc=&quot;clr-namespace:MVVM_17_1_CSV_Laden.V [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+    /// </summary>
+    public static string DataPointsView {
+        get {
+            return ResourceManager.GetString("DataPointsView", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
-        ///// Assembly         : MVVM_17_1_CSV_Laden
-        ///// Author           : Mir
-        ///// Created          : 07-03-2022
-        /////
-        ///// Last Modified By : Mir
-        ///// Last Modified On : 07-04-2022
-        ///// ***********************************************************************
-        ///// &lt;copyright file=&quot;DataPointsView.xaml.cs&quot; company=&quot;MVVM_17_1_CSV_Laden&quot;&gt;
-        /////     Copyright (c) JC-Soft. All rights reserved.
-        ///// &lt;/copyright&gt;
-        ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// ******************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
-        /// </summary>
-        public static string DataPointsView_xaml {
-            get {
-                return ResourceManager.GetString("DataPointsView_xaml", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+    ///// Assembly         : MVVM_17_1_CSV_Laden
+    ///// Author           : Mir
+    ///// Created          : 07-03-2022
+    /////
+    ///// Last Modified By : Mir
+    ///// Last Modified On : 07-04-2022
+    ///// ***********************************************************************
+    ///// &lt;copyright file=&quot;DataPointsView.xaml.cs&quot; company=&quot;MVVM_17_1_CSV_Laden&quot;&gt;
+    /////     Copyright (c) JC-Soft. All rights reserved.
+    ///// &lt;/copyright&gt;
+    ///// &lt;summary&gt;&lt;/summary&gt;
+    ///// ******************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+    /// </summary>
+    public static string DataPointsView_xaml {
+        get {
+            return ResourceManager.GetString("DataPointsView_xaml", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
-        ///// Assembly         : MVVM_17_1_CSV_Laden
-        ///// Author           : Mir
-        ///// Created          : 07-03-2022
-        /////
-        ///// Last Modified By : Mir
-        ///// Last Modified On : 08-13-2022
-        ///// ***********************************************************************
-        ///// &lt;copyright file=&quot;DataPointsViewModel.cs&quot; company=&quot;MVVM_17_1_CSV_Laden&quot;&gt;
-        /////     Copyright (c) JC-Soft. All rights reserved.
-        ///// &lt;/copyright&gt;
-        ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// ******************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
-        /// </summary>
-        public static string DataPointsViewModel {
-            get {
-                return ResourceManager.GetString("DataPointsViewModel", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
+    ///// Assembly         : MVVM_17_1_CSV_Laden
+    ///// Author           : Mir
+    ///// Created          : 07-03-2022
+    /////
+    ///// Last Modified By : Mir
+    ///// Last Modified On : 08-13-2022
+    ///// ***********************************************************************
+    ///// &lt;copyright file=&quot;DataPointsViewModel.cs&quot; company=&quot;MVVM_17_1_CSV_Laden&quot;&gt;
+    /////     Copyright (c) JC-Soft. All rights reserved.
+    ///// &lt;/copyright&gt;
+    ///// &lt;summary&gt;&lt;/summary&gt;
+    ///// ******************* [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+    /// </summary>
+    public static string DataPointsViewModel {
+        get {
+            return ResourceManager.GetString("DataPointsViewModel", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #17: using an nuget-package for csv-handling ähnelt.
-        /// </summary>
-        public static string Description {
-            get {
-                return ResourceManager.GetString("Description", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #17: using an nuget-package for csv-handling ähnelt.
+    /// </summary>
+    public static string Description {
+        get {
+            return ResourceManager.GetString("Description", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #17 CSV-loading ähnelt.
-        /// </summary>
-        public static string Title {
-            get {
-                return ResourceManager.GetString("Title", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #17 CSV-loading ähnelt.
+    /// </summary>
+    public static string Title {
+        get {
+            return ResourceManager.GetString("Title", resourceCulture);
         }
     }
 }
