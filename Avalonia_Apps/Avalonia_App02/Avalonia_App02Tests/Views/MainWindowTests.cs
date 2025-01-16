@@ -9,7 +9,7 @@ namespace Avalonia_App02.Views.Tests;
 [TestClass]
 public class MainWindowTests
 {
-    private ITemplateViewModel? _vm;
+    private ISomeTemplateViewModel? _vm;
 
     [AvaloniaTestMethod()]
     public void MainWindowTest()
@@ -19,7 +19,7 @@ public class MainWindowTests
         {
             Height = 800,
             Width = 1024,
-            DataContext = _vm = Substitute.For<ITemplateViewModel>()            
+            DataContext = _vm = Substitute.For<ISomeTemplateViewModel>()            
         };
         
         window.Show();
@@ -28,7 +28,7 @@ public class MainWindowTests
         _vm.ConfigCommand.CanExecuteChanged += Raise.Event<EventHandler>(_vm.ConfigCommand, EventArgs.Empty);
 
         // Act
-        var view = window.FindControl<TemplateView>("AppView");
+        var view = window.FindControl<SomeTemplateView>("AppView");
         view?.FindControl<Button>("btnConfig")?.Focus();
         window.KeyPressQwerty(PhysicalKey.Enter,RawInputModifiers.None);
 
