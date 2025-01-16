@@ -37,7 +37,7 @@ public static class ObjectHelper
     public static T AsEnum<T>(this object? obj) where T : struct, Enum => obj switch
     {
         T t => t,
-        int i when i < Enum.GetValues(typeof(T)).Length => (T)Enum.ToObject(typeof(T), i),
+        int i when i>=0 && i < Enum.GetValues(typeof(T)).Length => (T)Enum.ToObject(typeof(T), i),
         string s when Enum.TryParse<T>(s, out var t) => t,
 //        string s when int.TryParse(s, out var i) => (T)Enum.ToObject(typeof(T), i),
         string s=> default,
