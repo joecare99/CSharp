@@ -15,17 +15,17 @@ using System;
 using System.Numerics;
 using static System.Math;
 
-namespace MathLibrary.TwoDim {
+namespace MathLibrary.TwoDim; 
 	/// <summary>
 	/// Class Math2d.
 	/// </summary>
 	public static class Math2d {
 
 		public delegate Vector dDoDlg(double x, double y);
-        /// <summary>
-        /// Class Vector.
-        /// </summary>
-        public class Vector : object {
+    /// <summary>
+    /// Class Vector.
+    /// </summary>
+    public class Vector : object {
 			/// <summary>
 			/// The x
 			/// </summary>
@@ -124,7 +124,7 @@ namespace MathLibrary.TwoDim {
 			vc?.Length >1?new Vector(vc[0], vc[1]):Null;
 #if NET472_OR_GREATER
 		public static Vector Vec(this (double,double) vc) =>
-            new Vector(vc.Item1, vc.Item2);
+        new Vector(vc.Item1, vc.Item2);
 #endif
 		/// <summary>
 		/// Adds the specified v1 to v2.
@@ -259,14 +259,14 @@ namespace MathLibrary.TwoDim {
 			=> new Vector(vector.x * Math.Cos(angle) - vector.y * Math.Sin(angle),
 						 vector.y * Math.Cos(angle) + vector.x * Math.Sin(angle));
 
-        public static Vector Do(this Vector vector, dDoDlg? action) 
+    public static Vector Do(this Vector vector, dDoDlg? action) 
 			=> action?.Invoke(vector.x, vector.y) ?? Null;
-        public static bool TryWinkel2Vec(this Vector vector1, Vector vector2, out double winkel) 
+    public static bool TryWinkel2Vec(this Vector vector1, Vector vector2, out double winkel) 
 			=> vector1.Do((x, y) => new Vector(x, -y))
 				.CMult(vector2)
 				.TryLengthAngle(out _, out winkel);
 
-        public static Vector CircleCenter(Vector[] vectors,out double radius)
+    public static Vector CircleCenter(Vector[] vectors,out double radius)
 		{
 			if ((vectors.Length != 3)
 				|| vectors[0].Equals(vectors[1])
@@ -279,7 +279,7 @@ namespace MathLibrary.TwoDim {
 			var tMP1 = vectors[0].Add(vectors[1]).Mult(0.5d);
 
 			var tn1 = vectors[1].Subtract(vectors[0]).Rot90();
-            var tn2 = vectors[2].Subtract(vectors[1]).Rot90();
+        var tn2 = vectors[2].Subtract(vectors[1]).Rot90();
 
 			tn1.TryWinkel2Vec(tn2, out double fWinkel);
 			fWinkel = fWinkel.WinkelNorm(0d);
@@ -290,10 +290,9 @@ namespace MathLibrary.TwoDim {
 				return tMP1.Add(CenterDir);
 			}
 			else
-            {
-                radius = double.PositiveInfinity;
-                return Null;
+        {
+            radius = double.PositiveInfinity;
+            return Null;
 			}
-        }
-}
+    }
 }
