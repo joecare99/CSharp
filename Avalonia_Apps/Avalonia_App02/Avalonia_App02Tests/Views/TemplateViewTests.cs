@@ -10,27 +10,27 @@ namespace Avalonia_App02.Views.Tests;
 [TestClass]
 public class TemplateViewTests
 {
-    private ITemplateViewModel? _vm;
+    private ISomeTemplateViewModel? _vm;
 
     [AvaloniaTestMethod()]
-    [DataRow("btnHome", nameof(ITemplateViewModel.HomeCommand))]
-    [DataRow("btnProcess", nameof(ITemplateViewModel.ProcessCommand))]
-    [DataRow("btnActions", nameof(ITemplateViewModel.ActionsCommand))]
-    [DataRow("btnMacros", nameof(ITemplateViewModel.MacrosCommand))]
-    [DataRow("btnReports", nameof(ITemplateViewModel.ReportsCommand))]
-    [DataRow("btnHistory", nameof(ITemplateViewModel.HistoryCommand))]
-    [DataRow("btnConfig", nameof(ITemplateViewModel.ConfigCommand))]
+    [DataRow("btnHome", nameof(ISomeTemplateViewModel.HomeCommand))]
+    [DataRow("btnProcess", nameof(ISomeTemplateViewModel.ProcessCommand))]
+    [DataRow("btnActions", nameof(ISomeTemplateViewModel.ActionsCommand))]
+    [DataRow("btnMacros", nameof(ISomeTemplateViewModel.MacrosCommand))]
+    [DataRow("btnReports", nameof(ISomeTemplateViewModel.ReportsCommand))]
+    [DataRow("btnHistory", nameof(ISomeTemplateViewModel.HistoryCommand))]
+    [DataRow("btnConfig", nameof(ISomeTemplateViewModel.ConfigCommand))]
     public void TemplateViewTest(string sAct,string sRelayCmd)
     {
         // Arrange
-        TemplateView tv;
+        SomeTemplateView tv;
         var window = new Window()
         {
             Height = 800,
             Width = 1024,
-            Content = tv = new TemplateView()
+            Content = tv = new SomeTemplateView()
             {
-                DataContext = _vm = Substitute.For<ITemplateViewModel>()
+                DataContext = _vm = Substitute.For<ISomeTemplateViewModel>()
             }
         };
 

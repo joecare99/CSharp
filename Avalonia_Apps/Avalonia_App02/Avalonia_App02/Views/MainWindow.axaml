@@ -6,10 +6,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="600"
         x:Class="Avalonia_App02.Views.MainWindow"
-        x:DataType="vm:TemplateViewModel"
+        x:DataType="vm:SomeTemplateViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Avalonia_App02">
   <Grid>
-    <view:TemplateView Name="AppView" />
+    <view:SomeTemplateView Name="AppView" />
   </Grid>     
 </Window>

@@ -36,11 +36,11 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
-        services.AddTransient<ITemplateViewModel, TemplateViewModel>()
+        services.AddTransient<ISomeTemplateViewModel, SomeTemplateViewModel>()
         .AddTransient<ISysTime, SysTime>()
         .AddTransient<ICyclTimer, TimerProxy>()
         .AddSingleton<IPlatformHandle>((s)=>null!)
-        .AddSingleton<ITemplateModel, TemplateModel>();
+        .AddSingleton<ISomeTemplateModel, SomeTemplateModel>();
 
         Services = services.BuildServiceProvider();
 
@@ -49,7 +49,7 @@ public partial class App : Application
         DisableAvaloniaDataAnnotationValidation();
         desktop.MainWindow = new MainWindow
         {
-            DataContext = Services.GetRequiredService<ITemplateViewModel>()
+            DataContext = Services.GetRequiredService<ISomeTemplateViewModel>()
         };
     }
 

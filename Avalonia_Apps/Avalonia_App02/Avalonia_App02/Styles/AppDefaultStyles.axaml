@@ -5,8 +5,8 @@
       <!-- Add Controls for Previewer Here -->
       <Grid  ColumnDefinitions="*, *, *" >
         <StackPanel Grid.Row="0" Spacing="10">
-          <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          <Button Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <Button Classes="Menu" Content="Button1" />
+          <Button Classes="Menu" Content="Button2" />
           <TextBlock Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
           <TextBox Text="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
           <CheckBox Content="Hello, Avalonia!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -52,16 +52,19 @@
     <Setter Property="FontSize" Value="20"/>
     <Setter Property="Foreground" Value="White"/>
   </Style>
-  <Style Selector="Button">
+  <Style Selector="Button.Menu">
     <Setter Property="FontSize" Value="20"/>
     <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
     <Setter Property="Background" Value="{DynamicResource ResourceKey=SideBarBackground}"/>
     <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=SideBarOutline}"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
     <Setter Property="BorderThickness" Value="2"/>
     <Setter Property="CornerRadius" Value="10"/>
     <Setter Property="Margin" Value="20,5,20,5"/>
   </Style>
-  <Style Selector="Button:pointerover /template/ ContentPresenter">
+  <Style Selector="Button.Menu:pointerover /template/ ContentPresenter">
     <Setter Property="FontSize" Value="20"/>
     <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
     <Setter Property="Background" Value="{DynamicResource ResourceKey=SideBarHLBackground}"/>

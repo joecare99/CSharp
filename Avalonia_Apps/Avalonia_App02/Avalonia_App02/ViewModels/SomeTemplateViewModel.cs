@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 01-13-2025
 // ***********************************************************************
-// <copyright file="TemplateViewModel.cs" company="JC-Soft">
+// <copyright file="SomeTemplateViewModel.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2025
 // </copyright>
 // <summary></summary>
@@ -24,13 +24,13 @@ using CommunityToolkit.Mvvm.Input;
 namespace Avalonia_App02.ViewModels;
 
 /// <summary>
-/// Class TemplateViewModel.
-/// Implements the <see cref="ITemplateViewModel" />
+/// Class SomeTemplateViewModel.
+/// Implements the <see cref="ISomeTemplateViewModel" />
 /// and the <see cref="ViewModelBase" />
 /// </summary>
 /// <seealso cref="ViewModelBase" />
-/// <seealso cref="ITemplateViewModel" />
-public partial class TemplateViewModel : ViewModelBase, ITemplateViewModel
+/// <seealso cref="ISomeTemplateViewModel" />
+public partial class SomeTemplateViewModel : ViewModelBase, ISomeTemplateViewModel
 {
     /// <summary>
     /// Gets the greeting.
@@ -51,19 +51,19 @@ public partial class TemplateViewModel : ViewModelBase, ITemplateViewModel
     /// <summary>
     /// The model
     /// </summary>
-    private ITemplateModel _model;
+    private ISomeTemplateModel _model;
 
-    public TemplateViewModel()
+    public SomeTemplateViewModel()
     {
         Greeting = $"Welcome to Avalonia! The current time is {DateTime.Now}";
         _model = null!;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TemplateViewModel"/> class.
+    /// Initializes a new instance of the <see cref="SomeTemplateViewModel"/> class.
     /// </summary>
     /// <param name="model">The model.</param>
-    public TemplateViewModel(ITemplateModel model)
+    public SomeTemplateViewModel(ISomeTemplateModel model)
     {
         Greeting = $"Welcome to Avalonia! The current time is {model.Now}";
         _model = model;
