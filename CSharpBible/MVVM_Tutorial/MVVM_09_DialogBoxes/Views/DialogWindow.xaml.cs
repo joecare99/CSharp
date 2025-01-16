@@ -15,35 +15,34 @@ using MVVM_09_DialogBoxes.ViewModels;
 using System;
 using System.Windows;
 
-namespace MVVM_09_DialogBoxes.Views
+namespace MVVM_09_DialogBoxes.Views;
+
+/// <summary>
+/// Interaktionslogik für DialogWindow.xaml
+/// </summary>
+public partial class DialogWindow : Window, IDialogWindow
 {
     /// <summary>
-    /// Interaktionslogik für DialogWindow.xaml
+    /// Initializes a new instance of the <see cref="DialogWindow"/> class.
     /// </summary>
-    public partial class DialogWindow : Window, IDialogWindow
+    public DialogWindow()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DialogWindow"/> class.
-        /// </summary>
-        public DialogWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        /// <summary>
-        /// Handles the Loaded event of the Window control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+    /// <summary>
+    /// Handles the Loaded event of the Window control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        var vm = (DialogWindowViewModel)DataContext;
+        vm.DoCancel += new EventHandler((o,ea) => Hide());
+        vm.DoOK += new EventHandler((o, ea) =>
         {
-            var vm = (DialogWindowViewModel)DataContext;
-            vm.DoCancel += new EventHandler((o,ea) => Hide());
-            vm.DoOK += new EventHandler((o, ea) =>
-            {
-                DialogResult = true;
-                Hide();
-            });
-        }
+            DialogResult = true;
+            Hide();
+        });
     }
 }
