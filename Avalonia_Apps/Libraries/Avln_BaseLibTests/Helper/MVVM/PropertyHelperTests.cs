@@ -168,7 +168,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1], DebugLog);
     }
 
-    public void RaisePropertyChanged(string propertyName)
+    public void OnPropertyChanged(string propertyName)
     {
      //   DoLog($"PropChg({propertyName})={this.GetProp(propertyName)}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
