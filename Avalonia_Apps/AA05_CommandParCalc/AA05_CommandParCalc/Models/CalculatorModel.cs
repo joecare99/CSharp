@@ -230,7 +230,7 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
         {
             if (!_editMode)
             {
-                _accumulator = 0d;
+                Accumulator = 0d;
                 _editMode = true;
                 _decMode = false;
             }
@@ -254,25 +254,25 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
 
         _editMode = false;
 
-        if (eO >= EOperations.CalcResult && _register != null && !_unaryOperation.Contains(eO))
+        if (eO >= EOperations.CalcResult && Register != null && !_unaryOperation.Contains(eO))
         {
             if (_Operation != null )
-                Accumulator = _Operation.Invoke(_accumulator);
+                Accumulator = _Operation.Invoke(Accumulator);
 
             Register = null;
             DecMode = false;
         }
         if (eO > EOperations.CalcResult && !_unaryOperation.Contains(eO)) 
-        { Register = _accumulator; };
+        { Register = Accumulator; };
         var op = eO switch
         {
 
             EOperations.CalcResult => null,
-            EOperations.Add => (a) => _register!.Value + a,
-            EOperations.Subtract => (a) => _register!.Value - a,
-            EOperations.Multiply => (a) => _register!.Value * a,
-            EOperations.Divide => (a) => _register!.Value / a,
-            EOperations.Power => (a) => Math.Pow(_register!.Value, a),
+            EOperations.Add => (a) => Register!.Value + a,
+            EOperations.Subtract => (a) => Register!.Value - a,
+            EOperations.Multiply => (a) => Register!.Value * a,
+            EOperations.Divide => (a) => Register!.Value / a,
+            EOperations.Power => (a) => Math.Pow(Register!.Value, a),
             EOperations.Negate => (a) => -a,
             EOperations.Square => (a) => a * a,
             EOperations.SquareRt => (a) => Math.Sqrt(a),
@@ -285,7 +285,7 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
             _ => (Func<double, double>?)null,
         };
         if (_unaryOperation.Contains(eO))
-            Accumulator = op?.Invoke(_accumulator) ?? _accumulator;
+            Accumulator = op?.Invoke(Accumulator) ?? Accumulator;
         else
         {
             _op = eO;

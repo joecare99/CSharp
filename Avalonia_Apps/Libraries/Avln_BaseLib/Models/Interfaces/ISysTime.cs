@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BaseLib.Interfaces;
+namespace BaseLib.Models.Interfaces;
 
 public interface ISysTime
 {

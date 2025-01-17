@@ -1,7 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace BaseLib.Helper.Tests;
+namespace Avln_BaseLibTests.Models;
 [TestClass]
 public class SysTimeTests
 {

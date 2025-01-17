@@ -1,8 +1,9 @@
-﻿using BaseLib.Interfaces;
+﻿using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static BaseLib.Helper.TestHelper;
 
-namespace BaseLib.Helper.MVVM.Tests;
+namespace Avln_BaseLibTests.Models;
 
 [TestClass()]
 public class CRandomTests
@@ -29,8 +30,9 @@ public class CRandomTests
     [DataTestMethod()]
     [DataRow(0, 1, new[] { 0, 0, 0, 0, 0 })]
     [DataRow(0, 2, new[] { 1, 1, 1, 1, 0 })]
+    [DataRow(3, -1, new[] { 2, 2, 2, 1, 0 })]
 
-    public void NextTest(int imin, int iMax,int[] asExp)
+    public void NextTest(int imin, int iMax, int[] asExp)
     {
         var aoResult = new int[asExp.Length];
         for (int i = 0; i < asExp.Length; i++)
@@ -41,7 +43,7 @@ public class CRandomTests
     }
 
     [DataTestMethod()]
-    [DataRow(new[] { 0.7262432699679598, 0.8173253595909687, 0.7680226893946634,0.5581611914365372, 0.2060331540210327 })]
+    [DataRow(new[] { 0.7262432699679598, 0.8173253595909687, 0.7680226893946634, 0.5581611914365372, 0.2060331540210327 })]
     public void NextDoubleTest(double[] adExp)
     {
         var adResult = new double[adExp.Length];
@@ -76,7 +78,7 @@ public class CRandomTests
         for (int i = 0; i < asExp.Length; i++)
         {
             aoResult[i] = _testClass.NextInt();
-        }       
-        AssertAreEqual(asExp, aoResult); 
+        }
+        AssertAreEqual(asExp, aoResult);
     }
 }

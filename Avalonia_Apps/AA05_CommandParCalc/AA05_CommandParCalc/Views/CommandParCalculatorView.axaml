@@ -79,6 +79,7 @@
 
         </Grid>
         <Button
+            x:Name="btn7"
             Grid.Row="2"
             Grid.Column="1"
             Classes="Number"
@@ -86,6 +87,7 @@
             CommandParameter="{x:Static model:ENumbers._7}"
             Content="{x:Static p:Resources.btn7}" />
         <Button
+            x:Name="btn8"
             Grid.Row="2"
             Grid.Column="2"
             Classes="Number"
@@ -93,6 +95,7 @@
             CommandParameter="{x:Static model:ENumbers._8}"
             Content="{x:Static p:Resources.btn8}" />
         <Button
+            x:Name="btn9"
             Grid.Row="2"
             Grid.Column="3"
             Classes="Number"
@@ -100,6 +103,7 @@
             CommandParameter="{x:Static model:ENumbers._9}"
             Content="{x:Static p:Resources.btn9}" />
         <Button
+            x:Name="btn4"
             Grid.Row="3"
             Grid.Column="1"
             Classes="Number"
@@ -107,6 +111,7 @@
             CommandParameter="{x:Static model:ENumbers._4}"
             Content="{x:Static p:Resources.btn4}" />
         <Button
+            x:Name="btn5"
             Grid.Row="3"
             Grid.Column="2"
             Classes="Number"
@@ -114,6 +119,7 @@
             CommandParameter="{x:Static model:ENumbers._5}"
             Content="{x:Static p:Resources.btn5}" />
         <Button
+            x:Name="btn6"
             Grid.Row="3"
             Grid.Column="3"
             Classes="Number"
@@ -121,6 +127,7 @@
             CommandParameter="{x:Static model:ENumbers._6}"
             Content="{x:Static p:Resources.btn6}" />
         <Button
+            x:Name="btn1"
             Grid.Row="4"
             Grid.Column="1"
             Classes="Number"
@@ -128,6 +135,7 @@
             CommandParameter="{x:Static model:ENumbers._1}"
             Content="{x:Static p:Resources.btn1}" />
         <Button
+            x:Name="btn2"
             Grid.Row="4"
             Grid.Column="2"
             Classes="Number"
@@ -135,6 +143,7 @@
             CommandParameter="{x:Static model:ENumbers._2}"
             Content="{x:Static p:Resources.btn2}" />
         <Button
+            x:Name="btn3"
             Grid.Row="4"
             Grid.Column="3"
             Classes="Number"
@@ -142,6 +151,7 @@
             CommandParameter="{x:Static model:ENumbers._3}"
             Content="{x:Static p:Resources.btn3}" />
         <Button
+            x:Name="btn0"
             Grid.Row="5"
             Grid.Column="2"
             Classes="Number"
@@ -149,13 +159,15 @@
             CommandParameter="{x:Static model:ENumbers._0}"
             Content="{x:Static p:Resources.btn0}" />
         <Button
+            x:Name="btnC_CE"
             Grid.Row="0"
             Grid.Column="0"
             Classes="Command"
             Command="{Binding CalculatorCommand}"
-            CommandParameter="{x:Static model:ECommands.Clear}"
+            CommandParameter="{x:Static model:ECommands.ClearAll}"
             Content="{x:Static p:Resources.btnC_CE}" />
         <Button
+            x:Name="btnInv"
             Grid.Row="1"
             Grid.Column="0"
             Classes="Command"
@@ -163,6 +175,7 @@
             CommandParameter="{x:Static model:ECommands.Clear}"
             Content="{x:Static p:Resources.btnInv}" />
         <Button
+            x:Name="btnX2"
             Grid.Row="1"
             Grid.Column="1"
             Classes="Operator"
@@ -170,6 +183,7 @@
             CommandParameter="{x:Static model:EOperations.Square}"
             Content="{x:Static p:Resources.btnX2}" />
         <Button
+            x:Name="btnSqX"
             Grid.Row="1"
             Grid.Column="2"
             Classes="Operator"
@@ -177,6 +191,7 @@
             CommandParameter="{x:Static model:EOperations.SquareRt}"
             Content="{x:Static p:Resources.btnSqX}" />
         <Button
+            x:Name="btn1_x"
             Grid.Row="1"
             Grid.Column="3"
             Classes="Operator"
@@ -184,6 +199,7 @@
             CommandParameter="{x:Static model:EOperations.Inverse}"
             Content="{x:Static p:Resources.btn1_x}" />
         <Button
+            x:Name="btnPlus"
             Grid.Row="1"
             Grid.Column="4"
             Classes="Operator"
@@ -191,6 +207,7 @@
             CommandParameter="{x:Static model:EOperations.Add}"
             Content="{x:Static p:Resources.btnPlus}" />
         <Button
+            x:Name="btnMinus"
             Grid.Row="2"
             Grid.Column="4"
             Classes="Operator"
@@ -198,6 +215,7 @@
             CommandParameter="{x:Static model:EOperations.Subtract}"
             Content="{x:Static p:Resources.btnMinus}" />
         <Button
+            x:Name="btnMul"
             Grid.Row="3"
             Grid.Column="4"
             Classes="Operator"
@@ -205,6 +223,7 @@
             CommandParameter="{x:Static model:EOperations.Multiply}"
             Content="{x:Static p:Resources.btnMul}" />
         <Button
+            x:Name="btnDiv"
             Grid.Row="4"
             Grid.Column="4"
             Classes="Operator"
@@ -212,6 +231,7 @@
             CommandParameter="{x:Static model:EOperations.Divide}"
             Content="{x:Static p:Resources.btnDiv}" />
         <Button
+            x:Name="btnSin"
             Grid.Row="1"
             Grid.Column="5"
             Classes="Operator"
@@ -219,6 +239,7 @@
             CommandParameter="{x:Static model:EOperations.Sin}"
             Content="{x:Static p:Resources.btnSin}" />
         <Button
+            x:Name="btnCos"
             Grid.Row="2"
             Grid.Column="5"
             Classes="Operator"
@@ -226,6 +247,7 @@
             CommandParameter="{x:Static model:EOperations.Cos}"
             Content="{x:Static p:Resources.btnCos}" />
         <Button
+            x:Name="btnTan"
             Grid.Row="3"
             Grid.Column="5"
             Classes="Operator"
@@ -233,6 +255,7 @@
             CommandParameter="{x:Static model:EOperations.Tan}"
             Content="{x:Static p:Resources.btnTan}" />
         <Button
+            x:Name="btnE_X"
             Grid.Row="4"
             Grid.Column="5"
             Classes="Operator"
@@ -240,6 +263,7 @@
             CommandParameter="{x:Static model:EOperations.ExpN}"
             Content="{x:Static p:Resources.btnE_X}" />
         <Button
+            x:Name="btnLog"
             Grid.Row="5"
             Grid.Column="5"
             Classes="Operator"
@@ -247,6 +271,7 @@
             CommandParameter="{x:Static model:EOperations.LogN}"
             Content="{x:Static p:Resources.btnLog}" />
         <Button
+            x:Name="btnDecp"
             Grid.Row="5"
             Grid.Column="3"
             Classes="Command"
@@ -254,6 +279,7 @@
             CommandParameter="{x:Static model:ECommands.DecMode}"
             Content="{x:Static p:Resources.btnDecp}" />
         <Button
+            x:Name="btnNeg"
             Grid.Row="5"
             Grid.Column="1"
             Classes="Operator"
@@ -261,6 +287,7 @@
             CommandParameter="{x:Static model:EOperations.Negate}"
             Content="{x:Static p:Resources.btnNeg}" />
         <Button
+            x:Name="btnEquals"
             Grid.Row="5"
             Grid.Column="4"
             Classes="Operator"
@@ -268,6 +295,7 @@
             CommandParameter="{x:Static model:EOperations.CalcResult}"
             Content="{x:Static p:Resources.btnEquals}" />
         <Button
+            x:Name="btnPi"
             Grid.Row="2"
             Grid.Column="0"
             Classes="Command"
@@ -275,6 +303,7 @@
             CommandParameter="{x:Static model:ECommands.Pi}"
             Content="{x:Static p:Resources.btnPi}" />
         <Button
+            x:Name="btnE"
             Grid.Row="3"
             Grid.Column="0"
             Classes="Command"
@@ -282,6 +311,7 @@
             CommandParameter="{x:Static model:ECommands.e}"
             Content="{x:Static p:Resources.btnE}" />
         <Button
+            x:Name="btnBrOpen"
             Grid.Row="4"
             Grid.Column="0"
             Classes="Command"
@@ -289,6 +319,7 @@
             CommandParameter="{x:Static model:ECommands.BracketOpen}"
             Content="{x:Static p:Resources.btnBrOpen}" />
         <Button
+            x:Name="btnBrClose"
             Grid.Row="5"
             Grid.Column="0"
             Classes="Command"
@@ -296,6 +327,7 @@
             CommandParameter="{x:Static model:ECommands.BracketClose}"
             Content="{x:Static p:Resources.btnBrClose}" />
         <Button
+            x:Name="btnMemStore"
             Grid.Row="0"
             Grid.Column="5"
             Classes="Command"
@@ -303,6 +335,7 @@
             CommandParameter="{x:Static model:ECommands.MS}"
             Content="{x:Static p:Resources.btnMemStore}" />
         <Button
+            x:Name="btnMemRetr"
             Grid.Row="0"
             Grid.Column="6"
             Classes="Command"
@@ -310,6 +343,7 @@
             CommandParameter="{x:Static model:ECommands.MR}"
             Content="{x:Static p:Resources.btnMemRetr}" />
         <Button
+            x:Name="btnMemClr"
             Grid.Row="0"
             Grid.Column="7"
             Classes="Command"
@@ -317,6 +351,7 @@
             CommandParameter="{x:Static model:ECommands.MC}"
             Content="{x:Static p:Resources.btnMemClr}" />
         <Button
+            x:Name="btnMemPlus"
             Grid.Row="0"
             Grid.Column="8"
             Classes="Command"
@@ -324,6 +359,7 @@
             CommandParameter="{x:Static model:ECommands.Mp}"
             Content="{x:Static p:Resources.btnMemPlus}" />
         <Button
+            x:Name="btnMemMinus"
             Grid.Row="0"
             Grid.Column="9"
             Classes="Command"
