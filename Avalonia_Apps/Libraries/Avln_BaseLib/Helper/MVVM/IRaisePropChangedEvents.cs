@@ -4,5 +4,5 @@ namespace BaseLib.Helper.MVVM;
 
 public interface IRaisePropChangedEvents : INotifyPropertyChanged
 {
-    void RaisePropertyChanged(string propertyName);
+    void OnPropertyChanged(string? propertyName);
 }

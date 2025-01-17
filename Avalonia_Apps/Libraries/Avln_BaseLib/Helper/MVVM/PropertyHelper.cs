@@ -70,7 +70,7 @@ public static class PropertyHelper
     private static void SetTail<T>(T value, Action<string, T?, T>? success, IRaisePropChangedEvents? This, string propertyName, T? old)
     {
         try { success?.Invoke(propertyName, old, value); } catch { }
-        This?.RaisePropertyChanged(propertyName);
+        This?.OnPropertyChanged(propertyName);
     }
 
     private static bool? CondSetHead<T>(T value, T field, Func<string, T, T, bool>? cond, bool force, string propertyName, out T? old)

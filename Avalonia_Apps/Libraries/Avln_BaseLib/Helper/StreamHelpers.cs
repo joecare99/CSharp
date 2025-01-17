@@ -78,14 +78,14 @@ public static class StreamHelpers
                     break;
                 case Type t when t == typeof(int):
                     streamBytes = new byte[sizeof(int)];
-                    if (stream.Read(streamBytes, 0, sizeof(int))== sizeof(int))
+                    if (stream.Read(streamBytes, 0, sizeof(int)) == sizeof(int))
                         yield return (e.Item1, BitConverter.ToInt32(streamBytes, 0));
                     else
                         yield return (e.Item1, 0); // ?? default value
                     break;
                 case Type t when t == typeof(bool):
                     streamBytes = new byte[sizeof(bool)];
-                    if (stream.Read(streamBytes, 0, sizeof(bool))== sizeof(bool))
+                    if (stream.Read(streamBytes, 0, sizeof(bool)) == sizeof(bool))
                         yield return (e.Item1, BitConverter.ToBoolean(streamBytes, 0));
                     else
                         yield return (e.Item1, false); // ?? default value
@@ -97,22 +97,33 @@ public static class StreamHelpers
                     else
                         yield return (e.Item1, (byte)0); // ?? default value
                     break;
-                case Type t when t == typeof(IEnumerable<int>):
+                case Type t when t.IsAssignableTo(typeof(IEnumerable<int>)):
                     streamBytes = new byte[sizeof(short)];
                     _ = stream.Read(streamBytes, 0, sizeof(short));
                     var count = BitConverter.ToInt16(streamBytes, 0);
                     streamBytes = new byte[sizeof(int) * count];
                     _ = stream.Read(streamBytes, 0, sizeof(int) * count);
-                    yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null));
+                    if (t.IsArray)
+                        yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null).Select(d => d.Value).ToArray());
+                    else    
+                    yield return (e.Item1, (streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null)).Select(d=>d.Value).ToList());
                     break;
-                case Type t when t.IsGenericType && t.GetGenericTypeDefinition()== typeof(IEnumerable<>):
-                    var t2 = t.GetGenericArguments()[0];
+                case Type t when (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
+                              (t.IsAssignableTo(typeof(IEnumerable<IPersistence>))):
+                    Type t2;
+                    if (t.IsGenericType)
+                        t2 = t.GetGenericArguments()[0];
+                    else if (t.IsArray)
+                        t2 = t.GetElementType();
+                    else
+                        t2 = typeof(IPersistence);
+
                     streamBytes = new byte[sizeof(int)];
                     _ = stream.Read(streamBytes, 0, sizeof(int));
                     var count32 = BitConverter.ToInt32(streamBytes, 0);
                     var result = new IPersistence?[count32];
-                    if (t2.IsClass && t2.GetConstructors().FirstOrDefault(c => c.IsPublic)!=null)
-                        for (var i =0;i<count32; i++)
+                    if (t2.IsClass && t2.GetConstructors().FirstOrDefault(c => c.IsPublic) != null)
+                        for (var i = 0; i < count32; i++)
                         {
                             result[i] = (IPersistence?)Activator.CreateInstance(t2);
                         }
@@ -121,7 +132,7 @@ public static class StreamHelpers
                         {
                             result[i] = IoC.GetRequiredService<IPersistence>();
                         }
-                    yield return (e.Item1, result.Select(b => b?.ReadFromEnumerable(stream.StreamToEnumerable(b!.PropTypes))??false?b:null).ToList());
+                    yield return (e.Item1, result.Select(b => b?.ReadFromEnumerable(stream.StreamToEnumerable(b!.PropTypes)) ?? false ? b : null).ToList());
                     break;
             }
     }

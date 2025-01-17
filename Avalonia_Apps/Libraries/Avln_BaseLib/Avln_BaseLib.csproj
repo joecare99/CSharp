@@ -34,5 +34,10 @@
 	<ItemGroup>
 	  <Reference Condition="$(TargetFramework.StartsWith('net4'))" Include="System.Xaml" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Models\TimerProxy.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
+	</ItemGroup>
 
 </Project>
