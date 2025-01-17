@@ -13,7 +13,7 @@
     <ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
 	<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>
