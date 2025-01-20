@@ -81,5 +81,5 @@
   <Style Selector="CheckBox">
     <Setter Property="FontSize" Value="20"/>
     <Setter Property="Foreground" Value="{DynamicResource ResourceKey=SideBarForeground}"/>
-  </Style>
+  </Style> 
 </Styles>
