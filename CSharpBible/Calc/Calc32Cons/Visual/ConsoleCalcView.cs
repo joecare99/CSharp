@@ -44,13 +44,13 @@ namespace Calc32Cons.Visual
         /// <param name="App">The application.</param>
         public ConsoleCalcView(ConsoleLib.Control? App = null)
         {
-            parent = App;
+            Parent = App;
             Boarder = ConsoleFramework.doubleBoarder;
             ForeColor = ConsoleColor.Blue;
             BackColor = ConsoleColor.DarkBlue;
             BoarderColor = ConsoleColor.Green;
-            dimension = new Rectangle(3, 5, 50, 20);
-            shadow = true;
+            Dimension = new Rectangle(3, 5, 50, 20);
+            Shadow = true;
 
             ConsoleLib.CommonControls.Button[] btnNumbers = new ConsoleLib.CommonControls.Button[10];
 
@@ -59,18 +59,18 @@ namespace Calc32Cons.Visual
                 var p = new Point(((i + 2) % 3) + 1, (i + 2) / 3);
                 btnNumbers[i] = new ConsoleLib.CommonControls.Button
                 {
-                    parent = this,
+                    Parent = this,
                     ForeColor = ConsoleColor.White,
                     BackColor = ConsoleColor.DarkGray,
-                    shadow = true,
-                    position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
+                    Shadow = true,
+                    Position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
                     Tag = i,
                     Accelerator = i.ToString()[0],
                     Text = $"░{i}░"
                 };
                 btnNumbers[i].OnClick += btnNumber_Click;
             };
-            btnNumbers[0].position = new Point(btnNumbers[0].position.X - 8, btnNumbers[0].position.Y);
+            btnNumbers[0].Position = new Point(btnNumbers[0].Position.X - 8, btnNumbers[0].Position.Y);
 
             ConsoleLib.CommonControls.Button[] btnCommandss = new ConsoleLib.CommonControls.Button[10];
             for (int i = 1; i < 10; i++)
@@ -92,37 +92,37 @@ namespace Calc32Cons.Visual
                 ;
                 btnCommandss[i] = new ConsoleLib.CommonControls.Button
                 {
-                    parent = this,
+                    Parent = this,
                     ForeColor = ConsoleColor.White,
                     BackColor = ConsoleColor.DarkGray,
-                    shadow = true,
-                    position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
+                    Shadow = true,
+                    Position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
                     Tag = -i,
                     Accelerator = (i == 1) ? '=' : CalculatorClass.sMode[i][0],
                     Text = (i == 1) ? "░=░" : $"░{CalculatorClass.sMode[i]}░"
                 };
                 btnCommandss[i].OnClick += btnCommand_Click;
             }
-            btnCommandss[1].size = new Size(5, 3);
-            btnCommandss[2].size = new Size(5, 3);
+            btnCommandss[1].Size = new Size(5, 3);
+            btnCommandss[2].Size = new Size(5, 3);
 
             lblAccumulator = new ConsoleLib.CommonControls.Label
             {
-                parent = this,
+                Parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.DarkCyan,
-                position = new Point(2, 1),
-                size = new Size(38, 1),
+                Position = new Point(2, 1),
+                Size = new Size(38, 1),
                 Text = "             "
             };
 
             var btnCancel = new ConsoleLib.CommonControls.Button
             {
-                parent = this,
+                Parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.DarkGray,
-                shadow = true,
-                position = new Point(14, 16),
+                Shadow = true,
+                Position = new Point(14, 16),
                 Text = "░Close░",
             };
             btnCancel.OnClick += btnCancel_Click;
@@ -158,7 +158,7 @@ namespace Calc32Cons.Visual
         private void btnCancel_Click(object? sender, EventArgs? e)
         {
             
-            (parent as ConsoleLib.CommonControls.Application)?.Stop();
+            (Parent as ConsoleLib.CommonControls.Application)?.Stop();
             
         }
 
