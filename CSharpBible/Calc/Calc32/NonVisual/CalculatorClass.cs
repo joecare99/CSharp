@@ -124,6 +124,8 @@ namespace Calc32.NonVisual
         /// Gets or sets the accumulator.
         /// </summary>
         /// <value>The accumulator.</value>
+        
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public int Accumulator
         {
             get => nAccumulator;
@@ -134,6 +136,7 @@ namespace Calc32.NonVisual
         /// Gets or sets the memory.
         /// </summary>
         /// <value>The memory.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public int Memory
         {
             get => nMemory;

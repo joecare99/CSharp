@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ConsoleDisplay.View;
+using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
 
@@ -19,7 +21,7 @@ namespace ConsoleLib
     /// <summary>
     /// Class ConsoleFramework.
     /// </summary>
-    public static class ConsoleFramework
+    public static class ConsoleFramework 
     {
         /// <summary>
         /// The chars
@@ -39,9 +41,9 @@ namespace ConsoleLib
         public static readonly char[] simpleBoarder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
 
         /// <summary>
-        /// Gets the mouse position.
+        /// Gets the mouse Position.
         /// </summary>
-        /// <value>The mouse position.</value>
+        /// <value>The mouse Position.</value>
         public static Point MousePos { get; private set; }
 
         /// <summary>
@@ -64,6 +66,12 @@ namespace ConsoleLib
         /// The canvas
         /// </summary>
         public static TextCanvas Canvas = new TextCanvas(new Rectangle(0, 0, Console.BufferWidth, Math.Min(50,Console.LargestWindowHeight)));
+
+        /// <summary>
+        /// The canvas
+        /// </summary>
+        public static IExtendedConsole console;
+
         /// <summary>
         /// Initializes static members of the <see cref="ConsoleFramework"/> class.
         /// </summary>
@@ -71,20 +79,15 @@ namespace ConsoleLib
         {
             ExtendedConsole.MouseEvent += OnMouseEvent;
             ExtendedConsole.WindowBufferSizeEvent += OnWindowSizeEvent;
+            console = new ExtendedConsole();
         }
 
         /// <summary>
-        /// Called when [window size event].
+        /// Called when [window Size event].
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private static void OnWindowSizeEvent(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            sender, NativeMethods.WINDOW_BUFFER_SIZE_RECORD e)
+        private static void OnWindowSizeEvent(object? sender, NativeMethods.WINDOW_BUFFER_SIZE_RECORD e)
         {
             (Canvas._dimension.Width, Canvas._dimension.Height) = (e.dwSize.X, e.dwSize.Y);
         }
@@ -94,13 +97,7 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private static void OnMouseEvent(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            sender, NativeMethods.MOUSE_EVENT_RECORD e)
+        private static void OnMouseEvent(object? sender, NativeMethods.MOUSE_EVENT_RECORD e)
         {
             MousePos = e.dwMousePosition.AsPoint;
         }

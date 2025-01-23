@@ -48,22 +48,22 @@ namespace Calc32Cons
 
             App = new ConsoleLib.CommonControls.Application
             {
-                visible = false,
+                Visible = false,
                 Boarder = ConsoleFramework.singleBoarder,
                 ForeColor = ConsoleColor.Gray,
                 BackColor = ConsoleColor.DarkGray,
                 BoarderColor = ConsoleColor.Green,
-                dimension = cl
+                Dimension = cl
             };
 
             // t.Draw(10, 40, ConsoleColor.Gray);
-            Mouse.parent = App;
+            Mouse.Parent = App;
             Mouse.Set(0, 0, " ");
             Mouse.BackColor = ConsoleColor.Red;
 
             var CalcView = new ConsoleCalcView(App);
 
-            App.visible = true;
+            App.Visible = true;
             App.Draw();
             App.OnMouseMove += App_MouseMove;
             App.OnCanvasResize += App_CanvasResize;
@@ -91,7 +91,7 @@ namespace Calc32Cons
         {
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
-            App.dimension = cl;
+            App.Dimension = cl;
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Calc32Cons
         /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
         private static void App_MouseMove(object? sender, MouseEventArgs e)
         {
-            Mouse.Set(Point.Subtract(e.Location, (Size?)Mouse.parent?.position??Size.Empty));
+            Mouse.Set(Point.Subtract(e.Location, (Size?)Mouse.Parent?.Position??Size.Empty));
         }
 
     }
