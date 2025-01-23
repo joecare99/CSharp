@@ -1,14 +1,14 @@
 <Project>
   <PropertyGroup>
 	  <UpDir>..\..</UpDir>
-    <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(UpDir)\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net","").Replace("_win",""))</RootNamespace>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <Company>JC-Soft</Company>
     <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2025</Copyright>
+    <Copyright>Copyright © JC-Soft 2023</Copyright>
   </PropertyGroup>
 </Project>
