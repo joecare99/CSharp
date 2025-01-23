@@ -13,7 +13,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
 	  <PackageReference Include="System.Data.Common" Version="4.3.0" />
-	  <PackageReference Include="System.Data.OleDb" Version="9.0.0" />
+	  <PackageReference Include="System.Data.OleDb" Version="9.0.1" />
 	</ItemGroup>
 
 </Project>
