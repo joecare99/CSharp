@@ -27,7 +27,7 @@
 	<ItemGroup Condition="'$(TargetFrameWork.StartsWith(net4))'">
 		<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
 		<ProjectReference Include="..\Calc64Base\Calc64Base_win.csproj" />
-		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" />
+		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
