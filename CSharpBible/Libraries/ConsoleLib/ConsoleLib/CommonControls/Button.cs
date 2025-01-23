@@ -51,8 +51,8 @@ namespace ConsoleLib.CommonControls
             BackColor=
             _BackColor = backColor;
             Text = text;
-            Size = new Size(text.Length + 2, 1);
-            Position = new Point(X, Y);
+            size = new Size(text.Length + 2, 1);
+            position = new Point(X, Y);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace ConsoleLib.CommonControls
         public override void SetText(string value)
         {
             base.SetText(value);
-            Size = new Size(value.Length+2, 1);
+            size = new Size(value.Length+2, 1);
         }
        
 

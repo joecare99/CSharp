@@ -21,7 +21,4 @@
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay_win.csproj" />
-  </ItemGroup>
 </Project>

@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
 
@@ -20,17 +19,17 @@ namespace ConsoleLib
     /// <summary>
     /// Class TextCanvas.
     /// </summary>
-    public class TextCanvas : ITextCanvas
+    public class TextCanvas
     {
         /// <summary>
-        /// The Dimension
+        /// The dimension
         /// </summary>
         internal Rectangle _dimension;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextCanvas"/> class.
         /// </summary>
-        /// <param name="dimension">The Dimension.</param>
+        /// <param name="dimension">The dimension.</param>
         public TextCanvas(Rectangle dimension)
         {
             _dimension = dimension;
@@ -56,7 +55,7 @@ namespace ConsoleLib
         /// <summary>
         /// Fills the rect.
         /// </summary>
-        /// <param name="dimension">The Dimension.</param>
+        /// <param name="dimension">The dimension.</param>
         /// <param name="frcolor">The frcolor.</param>
         /// <param name="bkcolor">The bkcolor.</param>
         /// <param name="c">The c.</param>
@@ -83,7 +82,7 @@ namespace ConsoleLib
         /// <summary>
         /// Draws the rect.
         /// </summary>
-        /// <param name="dimension">The Dimension.</param>
+        /// <param name="dimension">The dimension.</param>
         /// <param name="frcolor">The frcolor.</param>
         /// <param name="bkcolor">The bkcolor.</param>
         /// <param name="boarder">The boarder.</param>

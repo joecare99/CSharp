@@ -23,9 +23,9 @@ namespace ConsoleLib.CommonControls
     public class Label : Control
     {
         /// <summary>
-        /// Gets or sets a value indicating whether [Parent background].
+        /// Gets or sets a value indicating whether [parent background].
         /// </summary>
-        /// <value><c>true</c> if [Parent background]; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if [parent background]; otherwise, <c>false</c>.</value>
         public bool ParentBackground { get; set; }
         /// <summary>
         /// Draws this instance.
@@ -33,18 +33,18 @@ namespace ConsoleLib.CommonControls
         public override void Draw()
         {
             // Draw Background
-            ConsoleFramework.console.ForegroundColor = ForeColor;
-            if (ParentBackground && Parent != null)
+            Console.ForegroundColor = ForeColor;
+            if (ParentBackground && parent != null)
             {
-                ConsoleFramework.console.BackgroundColor = Parent.BackColor;
+                Console.BackgroundColor = parent.BackColor;
             }
             else
             {
-                ConsoleFramework.console.BackgroundColor = BackColor;
+                Console.BackgroundColor = BackColor;
             }
           
-            ConsoleFramework.Canvas.OutTextXY(RealDim.Location,(" "+(Text ?? "")+"                  ").Substring(0, Math.Min(Size.Width,(Text ?? "").Length+14)));
-            ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
+            ConsoleFramework.Canvas.OutTextXY(realDim.Location,(" "+(Text ?? "")+"                  ").Substring(0, Math.Min(size.Width,(Text ?? "").Length+14)));
+            Console.BackgroundColor = ConsoleColor.Black;
         }
 
     }

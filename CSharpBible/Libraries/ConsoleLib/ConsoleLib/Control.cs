@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,40 +21,39 @@ namespace ConsoleLib
     /// <summary>
     /// This is the basic class of all TextControls
     /// </summary>
-    public class Control : IControl
+    public class Control 
     {
         /// <summary>
-        /// The Dimension
+        /// The dimension
         /// </summary>
         protected Rectangle _dimension;
         /// <summary>
-        /// The Active
+        /// The active
         /// </summary>
         private bool _active;
         /// <summary>
-        /// The Valid
+        /// The valid
         /// </summary>
         private bool _valid;
         /// <summary>
-        /// The Shadow
+        /// The shadow
         /// </summary>
         private bool _shadow;
         /// <summary>
-        /// The Visible
+        /// The visible
         /// </summary>
         private bool _visible = true;
         /// <summary>
         /// Gets or sets the message queue.
         /// </summary>
         /// <value>The message queue.</value>
-        
         public static Stack<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
 
         /// <summary>
-        /// Gets or sets the Dimension.
+        /// Gets or sets the dimension.
         /// </summary>
-        /// <value>The Dimension.</value>
-        public Rectangle Dimension
+        /// <value>The dimension.</value>
+        public Rectangle dimension
         {
             get => _dimension;
             set
@@ -72,10 +70,10 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Gets or sets the Position.
+        /// Gets or sets the position.
         /// </summary>
-        /// <value>The Position.</value>
-        public Point Position
+        /// <value>The position.</value>
+        public Point position
         {
             get => _dimension.Location;
             set
@@ -89,10 +87,10 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Gets or sets the Size.
+        /// Gets or sets the size.
         /// </summary>
-        /// <value>The Size.</value>
-        public Size Size
+        /// <value>The size.</value>
+        public Size size
         {
             get => _dimension.Size; set
             {
@@ -105,32 +103,32 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Gets the real dim.
-        /// </summary>
-        /// <value>The real dim.</value>
-        public Rectangle RealDim => RealDimOf(_dimension);
-
-        /// <summary>
         /// Handles the control move.
         /// </summary>
-        /// <param name="_lastDim">The last Dimension.</param>
+        /// <param name="_lastDim">The last dimension.</param>
         private void HandleControlMove(Rectangle _lastDim)
         {
-            if (Parent == null)
+            if (parent == null)
             {
                 // Todo: Restore From Background
                 ConsoleFramework.Canvas.FillRect(_lastDim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
             }
             else
             {
-                _lastDim.Location = Point.Add(_lastDim.Location, (Size)Parent.Position);
-                Parent.ReDraw(_lastDim);
+                _lastDim.Location = Point.Add(_lastDim.Location, (Size)parent.position);
+                parent.ReDraw(_lastDim);
             }
             if (IsVisible)
             {
                 Invalidate();
             }
         }
+
+        /// <summary>
+        /// Gets the real dim.
+        /// </summary>
+        /// <value>The real dim.</value>
+        public Rectangle realDim => RealDimOf(_dimension);
 
         /// <summary>
         /// Reals the dim of.
@@ -140,9 +138,9 @@ namespace ConsoleLib
         public Rectangle RealDimOf(Rectangle aDim)
         {
             var result = aDim;
-            if (Parent != null)
+            if (parent != null)
             {
-                result.Offset(Parent.RealDim.Location);
+                result.Offset(parent.realDim.Location);
             }
             return result;
         }
@@ -153,14 +151,14 @@ namespace ConsoleLib
         /// <param name="aDim">a dim.</param>
         /// <param name="ancestor">The ancestor.</param>
         /// <returns>Rectangle.</returns>
-        public Rectangle LocalDimOf(Rectangle aDim, IControl? ancestor = null)
+        public Rectangle LocalDimOf(Rectangle aDim, Control? ancestor = null)
  
         {
             var result = aDim;
             result.Location = Point.Subtract(result.Location,(Size)_dimension.Location);
-            if (Parent != null && Parent != ancestor)
+            if (parent != null && parent != ancestor)
             {
-                result = Parent.LocalDimOf(result, ancestor);                 
+                result = parent.LocalDimOf(result, ancestor);                 
             }
             return result;
         }
@@ -168,7 +166,7 @@ namespace ConsoleLib
         /// <summary>
         /// Res the draw.
         /// </summary>
-        /// <param name="dimension">The Dimension.</param>
+        /// <param name="dimension">The dimension.</param>
         public virtual void ReDraw(Rectangle dimension)
         {
             if (_visible && dimension.IntersectsWith(_dimension))
@@ -182,26 +180,26 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="M">The m.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Over(Point M) => RealDim.Contains(M);
+        public bool Over(Point M) => realDim.Contains(M);
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Active.
+        /// Gets or sets a value indicating whether this <see cref="Control"/> is active.
         /// </summary>
-        /// <value><c>true</c> if Active; otherwise, <c>false</c>.</value>
-        public bool Active
+        /// <value><c>true</c> if active; otherwise, <c>false</c>.</value>
+        public bool active
         {
             get => _active; set
             {
                 if (!_visible || _active == value) return;
-                if (Parent != null)
+                if (parent != null)
                 {
                     if (!value)
-                        Parent.ActiveControl = null;
+                        parent.ActiveControl = null;
                     else
                     {
-                        if (Parent.ActiveControl!=null)
-                          Parent.ActiveControl.Active = false;
-                        Parent.ActiveControl = this;
+                        if (parent.ActiveControl!=null)
+                          parent.ActiveControl.active = false;
+                        parent.ActiveControl = this;
                     }
                 }
                 _active = value;
@@ -213,50 +211,50 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Visible.
+        /// Gets or sets a value indicating whether this <see cref="Control"/> is visible.
         /// </summary>
-        /// <value><c>true</c> if Visible; otherwise, <c>false</c>.</value>
-        public bool Visible
+        /// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
+        public bool visible
         {
             get => _visible; set
             {
                 if (_visible == value) return;
                 if (!value)
                 {
-                    Active = false;
+                    active = false;
                 }
                 _visible = value;
                 if (value)
                 OnChange?.Invoke(this, EventArgs.Empty);
-                Parent?.Invalidate();
+                parent?.Invalidate();
                 Invalidate();
             }
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is Visible.
+        /// Gets a value indicating whether this instance is visible.
         /// </summary>
-        /// <value><c>true</c> if this instance is Visible; otherwise, <c>false</c>.</value>
-        public bool IsVisible => _visible && (Parent?.IsVisible ?? true);
+        /// <value><c>true</c> if this instance is visible; otherwise, <c>false</c>.</value>
+        public bool IsVisible => _visible && (parent?.IsVisible ?? true);
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Shadow.
+        /// Gets or sets a value indicating whether this <see cref="Control"/> is shadow.
         /// </summary>
-        /// <value><c>true</c> if Shadow; otherwise, <c>false</c>.</value>
-        public bool Shadow
+        /// <value><c>true</c> if shadow; otherwise, <c>false</c>.</value>
+        public bool shadow
         {
             get => _shadow; set
             {
                 if (_shadow == value) return;
                 _shadow = value;
-                Parent?.Invalidate();
+                parent?.Invalidate();
             }
         }
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Valid.
+        /// Gets or sets a value indicating whether this <see cref="Control"/> is valid.
         /// </summary>
-        /// <value><c>true</c> if Valid; otherwise, <c>false</c>.</value>
-        public bool Valid
+        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
+        public bool valid
         {
             get => _valid; set
             {
@@ -289,9 +287,20 @@ namespace ConsoleLib
         private void DoRedraw(object sender, EventArgs a)
         {
             if (!_valid)
-                ReDraw(((Control)sender).Dimension);
+                ReDraw(((Control)sender).dimension);
         }
 
+#if NET5_0_OR_GREATER
+        public event EventHandler? OnClick;
+        public event EventHandler? OnMove;
+        public event EventHandler? OnResize;
+        public event EventHandler? OnChange;
+        public event EventHandler? OnActivate;
+        public event EventHandler? OnMouseEnter;
+        public event EventHandler? OnMouseLeave;
+        public event EventHandler<MouseEventArgs>? OnMouseMove;
+        public event EventHandler<KeyEventArgs>? OnKeyPressed;
+#else
         /// <summary>
         /// Occurs when [on click].
         /// </summary>
@@ -328,15 +337,16 @@ namespace ConsoleLib
         /// Occurs when [on key pressed].
         /// </summary>
         public event EventHandler<KeyEventArgs>? OnKeyPressed;
+#endif
 
         /// <summary>
         /// The back color
         /// </summary>
-        public ConsoleColor BackColor { get; set; }
+        public ConsoleColor BackColor;
         /// <summary>
         /// The fore color
         /// </summary>
-        public ConsoleColor ForeColor { get; set; }
+        public ConsoleColor ForeColor;
 
         /// <summary>
         /// Gets or sets the text.
@@ -357,34 +367,34 @@ namespace ConsoleLib
         }
 
         /// <summary>
-        /// The Children
+        /// The children
         /// </summary>
-        public List<IControl> Children { get; } = new();
+        public List<Control> children = new();
 
         /// <summary>
-        /// The Active control
+        /// The active control
         /// </summary>
-        public IControl? ActiveControl { get; set; }
+        public Control? ActiveControl;
         /// <summary>
-        /// The Parent
+        /// The parent
         /// </summary>
-        private IControl? _parent;
+        private Control? _parent;
         /// <summary>
         /// The text
         /// </summary>
         private string _text="";
 
         /// <summary>
-        /// Gets or sets the Parent.
+        /// Gets or sets the parent.
         /// </summary>
-        /// <value>The Parent.</value>
-        public IControl? Parent { get => _parent; set => SetParent(value); }
+        /// <value>The parent.</value>
+        public Control? parent { get => _parent; set => SetParent(value); }
 
         /// <summary>
-        /// Sets the Parent.
+        /// Sets the parent.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void SetParent(IControl? value) 
+        private void SetParent(Control? value) 
         {
             if (_parent == value) return;
             var oldPar = _parent;
@@ -398,17 +408,17 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="control">The control.</param>
         /// <returns>Control.</returns>
-        public IControl Add(IControl control)
+        public Control Add(Control control)
         {
-            if (control.Parent != this)
-               control.Parent?.Remove(control);
-            if (control.Parent == null)
+            if (control.parent != this)
+               control.parent?.Remove(control);
+            if (control.parent == null)
             {
-                Children.Add(control);
-                control.Parent = this;
+                children.Add(control);
+                control.parent = this;
             }
-            else if (!Children.Contains(control))
-                Children.Add(control);
+            else if (!children.Contains(control))
+                children.Add(control);
 
             return this;
         }
@@ -418,10 +428,10 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="control">The control.</param>
         /// <returns>Control.</returns>
-        public IControl Remove(IControl control)
+        public Control Remove(Control control)
         {
-            control.Parent = null;
-            Children.Remove(control);
+            control.parent = null;
+            children.Remove(control);
             return this;
         }
 
@@ -433,15 +443,15 @@ namespace ConsoleLib
             // Draw Background
             lock(this)
             {
-                if (RealDim.Height>1)
+                if (realDim.Height>1)
                 {
-                    ConsoleFramework.Canvas.FillRect(RealDim, ForeColor, BackColor, ConsoleFramework.chars[4]);
+                    ConsoleFramework.Canvas.FillRect(realDim, ForeColor, BackColor, ConsoleFramework.chars[4]);
                 }
-                ConsoleFramework.console.ForegroundColor = ForeColor;
-                ConsoleFramework.console.BackgroundColor = BackColor;
-                ConsoleFramework.console.SetCursorPosition(RealDim.X, RealDim.Y+RealDim.Height/2);
-                ConsoleFramework.console.Write($"[{Text}]");
-                ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ForeColor;
+                Console.BackgroundColor = BackColor;
+                Console.SetCursorPosition(realDim.X, realDim.Y+realDim.Height/2);
+                Console.Write($"[{Text}]");
+                Console.BackgroundColor = ConsoleColor.Black;
             }
         }
 
@@ -460,7 +470,7 @@ namespace ConsoleLib
         public virtual void MouseEnter(Point M)
         {
             OnMouseEnter?.Invoke(this, EventArgs.Empty);
-            foreach (var ctrl in Children)
+            foreach (var ctrl in children)
             {
                 if (ctrl.Over(M))
                     ctrl.MouseEnter(M);
@@ -473,7 +483,7 @@ namespace ConsoleLib
         public virtual void MouseLeave(Point M)
         {
             OnMouseLeave?.Invoke(this, EventArgs.Empty);
-            foreach (var ctrl in Children)
+            foreach (var ctrl in children)
             {
                 if (ctrl.Over(M))
                     ctrl.MouseLeave(M);
@@ -484,11 +494,11 @@ namespace ConsoleLib
         /// Mouse move in the control.
         /// </summary>
         /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
-        /// <param name="lastMousePos">The last mouse Position.</param>
+        /// <param name="lastMousePos">The last mouse position.</param>
         public virtual void MouseMove(MouseEventArgs M, Point lastMousePos)
         {
             OnMouseMove?.Invoke(this, M);
-            foreach (var ctrl in Children)
+            foreach (var ctrl in children)
             {
                 bool xoHit = ctrl.Over(lastMousePos);
                 bool xnHit = ctrl.Over(M.Location);
@@ -509,7 +519,7 @@ namespace ConsoleLib
         public virtual void MouseClick(MouseEventArgs M)
         {
             bool xFlag = false;
-            foreach (var ctrl in Children)
+            foreach (var ctrl in children)
             {
                 if (ctrl.Over(M.Location))
                 {
@@ -536,7 +546,7 @@ namespace ConsoleLib
             else
             { 
                 ActiveControl?.HandlePressKeyEvents(e);
-                if (!e.Handled) foreach (var ctrl in Children){
+                if (!e.Handled) foreach (var ctrl in children){
                         ctrl.HandlePressKeyEvents(e);
                         if (e.Handled) break;
                     }
@@ -548,7 +558,7 @@ namespace ConsoleLib
         /// </summary>
         public virtual void DoUpdate()
         {
-            foreach (var ctrl in Children)
+            foreach (var ctrl in children)
             {
                 ctrl.DoUpdate();
             }
@@ -558,7 +568,7 @@ namespace ConsoleLib
         /// Gets or sets the tag.
         /// </summary>
         /// <value>The tag.</value>
-        public long Tag { get; set; }
+        public int Tag { get; set; }
         /// <summary>
         /// Gets or sets the accelerator.
         /// </summary>

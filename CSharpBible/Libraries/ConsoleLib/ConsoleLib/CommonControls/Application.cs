@@ -28,9 +28,9 @@ namespace ConsoleLib.CommonControls
     public class Application : Panel
     {
         /// <summary>
-        /// Gets the mouse Position.
+        /// Gets the mouse position.
         /// </summary>
-        /// <value>The mouse Position.</value>
+        /// <value>The mouse position.</value>
         public Point MousePos { get; private set; }
         /// <summary>
         /// Gets a value indicating whether this <see cref="Application"/> is running.
@@ -94,7 +94,7 @@ namespace ConsoleLib.CommonControls
                 var keyEventArgs = new KeyPressEventArgs(e.UnicodeChar);
                 ActiveControl?.HandlePressKeyEvents(keyEventArgs);
                 if (!keyEventArgs.Handled)
-                foreach ( var ctrl in Children)
+                foreach ( var ctrl in children)
                 {
 
                         ctrl.HandlePressKeyEvents(keyEventArgs);
@@ -130,7 +130,7 @@ namespace ConsoleLib.CommonControls
                
                 MousePos = e.dwMousePosition.AsPoint;
                 MButtons = e.AsMouseEventArgs;
-                foreach (var ctrl in Children)
+                foreach (var ctrl in children)
                 {
                     if (ctrl.Over(MousePos))
                         ctrl.MouseClick(MButtons);

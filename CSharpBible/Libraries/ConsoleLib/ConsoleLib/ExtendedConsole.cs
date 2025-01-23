@@ -16,7 +16,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using ConsoleLib.Interfaces;
 using static ConsoleLib.NativeMethods;
 
 namespace ConsoleLib
@@ -24,7 +23,7 @@ namespace ConsoleLib
     /// <summary>
     /// Class ExtendedConsole.
     /// </summary>
-    public class ExtendedConsole : IExtendedConsole
+    public static class ExtendedConsole
     /// <summary>
     /// The days
     /// </summary>
@@ -98,68 +97,10 @@ namespace ConsoleLib
         /// </summary>
         private static bool Run = false;
 
-        public ConsoleColor ForegroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ConsoleColor BackgroundColor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public bool IsOutputRedirected => throw new NotImplementedException();
-
-        public bool KeyAvailable => throw new NotImplementedException();
-
-        public int LargestWindowHeight => throw new NotImplementedException();
-
-        public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int WindowHeight { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int WindowWidth { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         /// <summary>
         /// Stops this instance.
         /// </summary>
         public static void Stop() => Run = false;
-
-        public void Beep(int freq, int len)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        public (int Left, int Top) GetCursorPosition()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ConsoleKeyInfo? ReadKey()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string ReadLine()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetCursorPosition(int left, int top)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Write(char ch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Write(string? st)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void WriteLine(string? st = "")
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>Occurs when a mouse event happend.</summary>
         public static event EventHandler<MOUSE_EVENT_RECORD>? MouseEvent;
@@ -169,7 +110,7 @@ namespace ConsoleLib
         /// </summary>
         public static event EventHandler<KEY_EVENT_RECORD>? KeyEvent;
 
-        /// <summary>Occurs when a window buffer Size change event happend.</summary>
+        /// <summary>Occurs when a window buffer size change event happend.</summary>
         public static event EventHandler<WINDOW_BUFFER_SIZE_RECORD>? WindowBufferSizeEvent;
     }
 
@@ -288,7 +229,7 @@ namespace ConsoleLib
             /// </summary>
             MOUSE_EVENT = 0x0002,
             /// <summary>
-            /// The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/window-buffer-Size-record-str"><strong><u><font color="#0066cc">WINDOW_BUFFER_SIZE_RECORD</font></u></strong></a> structure with information about the new Size of the console screen buffer
+            /// The <strong>Event</strong> member contains a <a href="https://docs.microsoft.com/en-us/windows/console/window-buffer-size-record-str"><strong><u><font color="#0066cc">WINDOW_BUFFER_SIZE_RECORD</font></u></strong></a> structure with information about the new size of the console screen buffer
             /// </summary>
             WINDOW_BUFFER_SIZE_EVENT = 0x0004
         }; //more
@@ -379,7 +320,7 @@ namespace ConsoleLib
             /// </summary>
             MOUSE_HWHEELED = 0x0008,
             /// <summary>
-            /// A change in mouse Position occurred.
+            /// A change in mouse position occurred.
             /// </summary>
             MOUSE_MOVED = 0x0001,
             /// <summary>
@@ -413,7 +354,7 @@ namespace ConsoleLib
             [FieldOffset(4)]
             public MOUSE_EVENT_RECORD MouseEvent;
             /// <summary>
-            /// The window buffer Size event
+            /// The window buffer size event
             /// </summary>
             [FieldOffset(4)]
             public WINDOW_BUFFER_SIZE_RECORD WindowBufferSizeEvent;
@@ -515,7 +456,7 @@ namespace ConsoleLib
         public struct MOUSE_EVENT_RECORD
         {
             /// <summary>
-            /// The dw mouse Position
+            /// The dw mouse position
             /// </summary>
             public COORD dwMousePosition;
 
@@ -607,7 +548,7 @@ namespace ConsoleLib
         public struct WINDOW_BUFFER_SIZE_RECORD
         {
             /// <summary>
-            /// The dw Size
+            /// The dw size
             /// </summary>
             public COORD dwSize;
         }
@@ -658,11 +599,11 @@ namespace ConsoleLib
             /// </summary>
             ENABLE_EXTENDED_FLAGS = 0x0080,
             /// <summary>
-            /// Characters read by the <a href="https://msdn.microsoft.com/library/windows/desktop/aa365467"><strong><u><font color="#0066cc">ReadFile</font></u></strong></a> or <a href="https://docs.microsoft.com/en-us/windows/console/readconsole"><strong><u><font color="#0066cc">ReadConsole</font></u></strong></a> function are written to the Active screen buffer as they are read. This mode can be used only if the <strong>ENABLE_LINE_INPUT</strong> mode is also enabled.
+            /// Characters read by the <a href="https://msdn.microsoft.com/library/windows/desktop/aa365467"><strong><u><font color="#0066cc">ReadFile</font></u></strong></a> or <a href="https://docs.microsoft.com/en-us/windows/console/readconsole"><strong><u><font color="#0066cc">ReadConsole</font></u></strong></a> function are written to the active screen buffer as they are read. This mode can be used only if the <strong>ENABLE_LINE_INPUT</strong> mode is also enabled.
             /// </summary>
             ENABLE_ECHO_INPUT = 0x0004,
             /// <summary>
-            /// User interactions that change the Size of the console screen
+            /// User interactions that change the size of the console screen
             /// buffer are reported in the console's input buffer. Information about
             /// these events can be read from the input buffer by applications using the
             /// <a href="https://docs.microsoft.com/en-us/windows/console/readconsoleinput"><strong><u><font color="#0066cc">ReadConsoleInput</font></u></strong></a>
@@ -712,7 +653,7 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="hConsoleInput">A handle to the console input buffer. The handle must have the <strong>GENERIC_READ</strong> access right. For more information, see <a href="https://docs.microsoft.com/en-us/windows/console/console-buffer-security-and-access-rights" data-linktype="relative-path"><u><font color="#0066cc">Console Buffer Security and Access Rights</font></u></a>.</param>
         /// <param name="lpBuffer">A pointer to an array of <a href="https://docs.microsoft.com/en-us/windows/console/input-record-str" data-linktype="relative-path"><strong><u><font color="#0066cc">INPUT_RECORD</font></u></strong></a> structures that receives the input buffer data.</param>
-        /// <param name="nLength">The Size of the array pointed to by the <em>lpBuffer</em> parameter, in array elements.</param>
+        /// <param name="nLength">The size of the array pointed to by the <em>lpBuffer</em> parameter, in array elements.</param>
         /// <param name="lpNumberOfEventsRead">Variable that receives the number of input records read.</param>
         /// <returns><para>If the function succeeds, the return value is nonzero.</para>
         /// <para>If the function fails, the return value is zero. To get extended error information, call <a href="https://msdn.microsoft.com/library/windows/desktop/ms679360" data-linktype="external"><strong><u><font color="#0066cc">GetLastError</font></u></strong></a>.</para></returns>
