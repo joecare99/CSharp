@@ -21,6 +21,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App02", "Avalonia_App02", "{A0284F63-BA9F-4E00-9FE0-0799CFED7857}"
 	ProjectSection(SolutionItems) = preProject
 		Avalonia_App02\Application.props = Avalonia_App02\Application.props
+		Avalonia_App02\Directory.Packages.props = Avalonia_App02\Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App02", "Avalonia_App02\Avalonia_App02\Avalonia_App02.csproj", "{CEB09204-47F7-4136-877A-1920D53133C1}"
@@ -51,6 +52,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLib_net", "Libraries\BaseLib\BaseLib_net.csproj", "{ECB86AC6-D37D-487E-880B-2C31FD5A10C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLib_netTests", "Libraries\BaseLibTests\BaseLib_netTests.csproj", "{1044018A-9A2C-46D8-AA3B-C1BB624F02D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA06_ValueConverter2", "AA06_ValueConverter2", "{2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA06_ValueConverter2", "AA06_ValueConverter2\AA06_ValueConverter2\AA06_ValueConverter2.csproj", "{25D1167C-E942-49FD-B125-242062EB4D70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA06_ValueConverter2Tests", "AA06_ValueConverter2\AA06_ValueConverter2Tests\AA06_ValueConverter2Tests.csproj", "{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +117,14 @@ Global
 		{1044018A-9A2C-46D8-AA3B-C1BB624F02D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1044018A-9A2C-46D8-AA3B-C1BB624F02D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1044018A-9A2C-46D8-AA3B-C1BB624F02D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25D1167C-E942-49FD-B125-242062EB4D70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25D1167C-E942-49FD-B125-242062EB4D70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25D1167C-E942-49FD-B125-242062EB4D70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25D1167C-E942-49FD-B125-242062EB4D70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,5 +143,7 @@ Global
 		{EE714526-315A-4211-A4E3-2B74EE4C1D83} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
 		{ECB86AC6-D37D-487E-880B-2C31FD5A10C0} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
 		{1044018A-9A2C-46D8-AA3B-C1BB624F02D0} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
+		{25D1167C-E942-49FD-B125-242062EB4D70} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
+		{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
 	EndGlobalSection
 EndGlobal
