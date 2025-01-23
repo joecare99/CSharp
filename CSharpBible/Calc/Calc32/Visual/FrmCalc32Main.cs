@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Calc32.NonVisual;
@@ -36,12 +35,10 @@ namespace Calc32.Visual
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public
 #if NET7_0_OR_GREATER
             new
 #endif
-
             NotificationObject DataContext { get; private set; } = null!;
         #endregion
 
