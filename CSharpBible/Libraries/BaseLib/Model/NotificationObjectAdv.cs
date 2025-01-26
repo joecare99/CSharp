@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace BaseLib.Model
+namespace BaseLib.Models
 {
     /// <summary>
     /// Class NotificationObject.
