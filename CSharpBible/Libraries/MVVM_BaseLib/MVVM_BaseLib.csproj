@@ -3,10 +3,10 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
-    <UseWPF>true</UseWPF>
     <SignAssembly>True</SignAssembly>
     <Platforms>AnyCPU;x86</Platforms>
     <SignAssembly>True</SignAssembly>
+    <UseWPF>true</UseWPF>
     <AssemblyOriginatorKeyFile>..\sgLib.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -24,6 +24,7 @@
     <Compile Include="..\BaseLib\Helper\TypeUtils.cs" Link="Helper\TypeUtils.cs" />
     <Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
     <Compile Include="..\BaseLib\Helper\StringUtils.cs" Link="Helper\StringUtils.cs" />
+    <Compile Include="..\BaseLib\Interfaces\IConsole.cs" Link="Models\Interfaces\IConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
