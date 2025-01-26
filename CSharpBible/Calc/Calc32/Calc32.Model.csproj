@@ -1,0 +1,45 @@
+﻿<Project>
+	<Import Project="..\Calc.props" />
+	<PropertyGroup>
+		<OutputType>library</OutputType>
+		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<Compile Remove="NonVisual\**" />
+		<Compile Remove="obj\**" />
+		<Compile Remove="Properties\**" />
+		<Compile Remove="Resources\**" />
+		<Compile Remove="Visual\**" />
+		<EmbeddedResource Remove="NonVisual\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<EmbeddedResource Remove="Properties\**" />
+		<EmbeddedResource Remove="Resources\**" />
+		<EmbeddedResource Remove="Visual\**" />
+		<None Remove="NonVisual\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="*.bak" />
+		<None Remove="Properties\**" />
+		<None Remove="Resources\**" />
+		<None Remove="Visual\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Program.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="App.config" />
+	  <None Remove="ViewModels\CalculatorViewModel.cs~RF330c24d3.TMP" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="System.Xaml" />
+	</ItemGroup>
+</Project>
