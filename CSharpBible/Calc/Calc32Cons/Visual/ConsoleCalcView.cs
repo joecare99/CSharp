@@ -12,9 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using ConsoleLib;
-using Calc32.NonVisual;
 using System;
 using System.Drawing;
+using Calc32.ViewModels.Interfaces;
+using ConsoleLib.ConsoleLib.Interfaces;
+using Calc32.Models;
 
 /// <summary>
 /// The Visual namespace.
@@ -29,10 +31,12 @@ namespace Calc32Cons.Visual
     /// <seealso cref="ConsoleLib.CommonControls.Panel" />
     public class ConsoleCalcView : ConsoleLib.CommonControls.Panel
     {
+        private const int ciOperations = 14;
+
         /// <summary>
         /// The calculator
         /// </summary>
-        private readonly CalculatorClass Calculator = new();
+        private ICalculatorViewModel _model;
         /// <summary>
         /// The label accumulator
         /// </summary>
@@ -42,38 +46,40 @@ namespace Calc32Cons.Visual
         /// Initializes a new instance of the <see cref="ConsoleCalcView" /> class.
         /// </summary>
         /// <param name="App">The application.</param>
-        public ConsoleCalcView(ConsoleLib.Control? App = null)
+        public ConsoleCalcView(ICalculatorViewModel model, IApplication App)
         {
-            parent = App;
-            Boarder = ConsoleFramework.doubleBoarder;
+            Parent = App;
+            _model = model;
+            Border = ConsoleFramework.doubleBoarder;
             ForeColor = ConsoleColor.Blue;
             BackColor = ConsoleColor.DarkBlue;
             BoarderColor = ConsoleColor.Green;
-            dimension = new Rectangle(3, 5, 50, 20);
-            shadow = true;
+            Dimension = new Rectangle(3, 5, 50, 20);
+            Shadow = true;
 
-            ConsoleLib.CommonControls.Button[] btnNumbers = new ConsoleLib.CommonControls.Button[10];
+            ConsoleLib.CommonControls.Button[] btnNumbers = new ConsoleLib.CommonControls.Button[16];
 
             for (int i = 0; i < 10; i++)
             {
                 var p = new Point(((i + 2) % 3) + 1, (i + 2) / 3);
                 btnNumbers[i] = new ConsoleLib.CommonControls.Button
                 {
-                    parent = this,
+                    Parent = this,
                     ForeColor = ConsoleColor.White,
-                    BackColor = ConsoleColor.DarkGray,
-                    shadow = true,
-                    position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
-                    Tag = i,
+                    BackColor = ConsoleColor.DarkGreen,
+                    HLBackColor = ConsoleColor.Green,
+                    Shadow = true,
+                    Position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
+                    Tag = $"{i}",
                     Accelerator = i.ToString()[0],
-                    Text = $"░{i}░"
+                    Text = $"░{i}░",
+                    Command = _model.NumberCommand
                 };
-                btnNumbers[i].OnClick += btnNumber_Click;
             };
-            btnNumbers[0].position = new Point(btnNumbers[0].position.X - 8, btnNumbers[0].position.Y);
+            btnNumbers[0].Position = new Point(btnNumbers[0].Position.X - 8, btnNumbers[0].Position.Y);
 
-            ConsoleLib.CommonControls.Button[] btnCommandss = new ConsoleLib.CommonControls.Button[10];
-            for (int i = 1; i < 10; i++)
+            ConsoleLib.CommonControls.Button[] btnCommandss = new ConsoleLib.CommonControls.Button[ciOperations];
+            for (int i = 1; i < ciOperations; i++)
             {
                 var p = new Point(0, 0);
                 (p.X, p.Y) = i switch
@@ -86,68 +92,66 @@ namespace Calc32Cons.Visual
                     6 => (5, 0),
                     7 => (5, 1),
                     8 => (5, 2),
-                    9 => (3, 0),
+                    9 => (5, 3),
+                    10 => (3, 0),
+                    11 => (0, 4),
+                    12 => (0, 3),
+                    13 => (1, 4),
                     _ => (0, 0),
                 };
                 ;
                 btnCommandss[i] = new ConsoleLib.CommonControls.Button
                 {
-                    parent = this,
+                    Parent = this,
                     ForeColor = ConsoleColor.White,
-                    BackColor = ConsoleColor.DarkGray,
-                    shadow = true,
-                    position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
-                    Tag = -i,
+                    BackColor = ConsoleColor.DarkCyan,
+                    HLBackColor = ConsoleColor.Cyan,
+                    Shadow = true,
+                    Position = new Point(p.X * 8 + 2, 14 - p.Y * 2),
+                    Tag = $"{(i + 3) % ciOperations - 3}",
                     Accelerator = (i == 1) ? '=' : CalculatorClass.sMode[i][0],
-                    Text = (i == 1) ? "░=░" : $"░{CalculatorClass.sMode[i]}░"
+                    Text = (i == 1) ? "░=░" : $"░{CalculatorClass.sMode[i]}░",
+                    Command = _model.OperationCommand
                 };
-                btnCommandss[i].OnClick += btnCommand_Click;
             }
             btnCommandss[1].size = new Size(5, 3);
             btnCommandss[2].size = new Size(5, 3);
+            btnCommandss[10].Text = $"{CalculatorClass.sMode[10]}";
+            btnCommandss[12].Command = _model.BackSpaceCommand;
 
             lblAccumulator = new ConsoleLib.CommonControls.Label
             {
-                parent = this,
+                Parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.DarkCyan,
-                position = new Point(2, 1),
+                Position = new Point(2, 1),
                 size = new Size(38, 1),
-                Text = "             "
+                Text = "             ",
+                Binding = (_model, nameof(_model.Accumulator))
+            };
+
+            lblAccumulator = new ConsoleLib.CommonControls.Label
+            {
+                Parent = this,
+                ForeColor = ConsoleColor.White,
+                BackColor = ConsoleColor.DarkCyan,
+                Position = new Point(41, 1),
+                size = new Size(5, 1),
+                Text = "    ",
+                Binding = (_model, nameof(_model.OperationText))
             };
 
             var btnCancel = new ConsoleLib.CommonControls.Button
             {
-                parent = this,
+                Parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.DarkGray,
-                shadow = true,
-                position = new Point(14, 16),
+                Shadow = true,
+                Position = new Point(14, 16),
                 Text = "░Close░",
             };
             btnCancel.OnClick += btnCancel_Click;
 
-            Calculator.OnChange += Calculator_OnChange;
-        }
-
-        /// <summary>
-        /// Handles the Click event of the btnCommand control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnCommand_Click(object? sender, EventArgs? e)
-        {
-            Calculator.Operation(-((ConsoleLib.CommonControls.Button?)sender)?.Tag??0);
-        }
-
-        /// <summary>
-        /// Handles the OnChange event of the Calculator control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void Calculator_OnChange(object? sender, (string,object?,object?) e)
-        { 
-            lblAccumulator.Text = Calculator.Accumulator.ToString();
         }
 
         /// <summary>
@@ -157,19 +161,7 @@ namespace Calc32Cons.Visual
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnCancel_Click(object? sender, EventArgs? e)
         {
-            
-            (parent as ConsoleLib.CommonControls.Application)?.Stop();
-            
-        }
-
-        /// <summary>
-        /// Handles the Click event of the btnNumber control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnNumber_Click(object? sender, EventArgs? e)
-        {
-            Calculator.NumberButton(((ConsoleLib.CommonControls.Button?)sender)?.Tag??0);
+            (Parent as ConsoleLib.CommonControls.Application)?.Stop();
         }
 
     }

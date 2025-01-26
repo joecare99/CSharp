@@ -15,8 +15,17 @@ using System;
 using System.Drawing;
 using ConsoleLib;
 using ConsoleLib.CommonControls;
-using System.Windows.Forms;
 using Calc32Cons.Visual;
+using Microsoft.Extensions.DependencyInjection;
+using Calc32.Models.Interfaces;
+using Calc32.ViewModels;
+using Calc32.Models;
+using Calc32.ViewModels.Interfaces;
+using ConsoleLib.ConsoleLib.Interfaces;
+using BaseLib.Interfaces;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using ConsoleLib.Interfaces;
+using BaseLib.Models;
 
 /// <summary>
 /// The Calc32Cons namespace.
@@ -32,41 +41,16 @@ namespace Calc32Cons
         /// <summary>
         /// The mouse
         /// </summary>
-        private static readonly Pixel Mouse = new();
+        //private static Pixel Mouse = new();
         /// <summary>
         /// The application
         /// </summary>
-        private static readonly ConsoleLib.CommonControls.Application App;
+        private static Application? App;
 
         /// <summary>
         /// Initializes static members of the <see cref="Program" /> class.
         /// </summary>
         static Program() {
-            var cl = ConsoleFramework.Canvas.ClipRect;
-            cl.Inflate(-3, -3);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            App = new ConsoleLib.CommonControls.Application
-            {
-                visible = false,
-                Boarder = ConsoleFramework.singleBoarder,
-                ForeColor = ConsoleColor.Gray,
-                BackColor = ConsoleColor.DarkGray,
-                BoarderColor = ConsoleColor.Green,
-                dimension = cl
-            };
-
-            // t.Draw(10, 40, ConsoleColor.Gray);
-            Mouse.parent = App;
-            Mouse.Set(0, 0, " ");
-            Mouse.BackColor = ConsoleColor.Red;
-
-            var CalcView = new ConsoleCalcView(App);
-
-            App.visible = true;
-            App.Draw();
-            App.OnMouseMove += App_MouseMove;
-            App.OnCanvasResize += App_CanvasResize;
         }
 
         /// <summary>
@@ -75,12 +59,61 @@ namespace Calc32Cons
         /// <param name="args">The arguments.</param>
         static void Main(string[] _)
         {
+            Init();
 
-            App.Run();
+            App?.Run();
 
             Console.Write("Programm end ...");
-            ExtendedConsole.Stop();
+            ConsoleFramework.ExtendedConsole?.Stop();
         }
+
+        private static void Init()
+        {
+            var sp = new ServiceCollection()
+             .AddSingleton<ICalculatorClass, CalculatorClass>()
+             .AddTransient<ICalculatorViewModel, CalculatorViewModel>()
+             .AddSingleton<IExtendedConsole,ExtendedConsole>()
+             .AddSingleton(BuildApp)
+             .AddSingleton<Application, Application>()
+             .AddTransient<IConsole, ConsoleProxy>()
+             .AddTransient<ConsoleCalcView, ConsoleCalcView>()
+             //   .AddTransient<Views.LoadingDialog, Views.LoadingDialog>()
+             .BuildServiceProvider();
+
+            Ioc.Default.ConfigureServices(sp);
+
+            var CalcView = Ioc.Default.GetRequiredService<ConsoleCalcView>();
+
+            App.Visible = true;
+            App.Draw();
+            App.OnMouseMove += App_MouseMove;
+            App.OnCanvasResize += App_CanvasResize;
+
+        }
+
+        private static IApplication BuildApp(IServiceProvider provider)
+        {
+            if (App != null) return App;
+            var cl = ConsoleFramework.Canvas.ClipRect;
+            cl.Inflate(-3, -3);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            App = Ioc.Default.GetRequiredService<Application>();
+            App.Visible = false;
+            App.Border = ConsoleFramework.singleBorder;
+            App.Dimension = cl;
+            App.ForeColor = ConsoleColor.Gray;
+            App.BackColor = ConsoleColor.DarkGray;
+            App.BoarderColor = ConsoleColor.Green;
+
+            //Mouse.Set(0, 0, " ");
+            //Mouse.BackColor = ConsoleColor.Red;
+            //Mouse.Parent = App;
+            //// t.Draw(10, 40, ConsoleColor.Gray);
+
+            return App;
+        }
+
 
         /// <summary>
         /// Applications the canvas resize.
@@ -91,7 +124,8 @@ namespace Calc32Cons
         {
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
-            App.dimension = cl;
+            if (App != null)
+                App.Dimension = cl;
         }
 
         /// <summary>
@@ -99,9 +133,9 @@ namespace Calc32Cons
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
-        private static void App_MouseMove(object? sender, MouseEventArgs e)
+        private static void App_MouseMove(object? sender, IMouseEvent e)
         {
-            Mouse.Set(Point.Subtract(e.Location, (Size?)Mouse.parent?.position??Size.Empty));
+   //         Mouse.Set(Point.Subtract(e.MousePos, (Size?)Mouse.Parent?.Position??Size.Empty));
         }
 
     }
