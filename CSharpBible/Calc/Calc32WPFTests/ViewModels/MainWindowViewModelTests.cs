@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Calc32WPF.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 
@@ -112,11 +113,11 @@ namespace Calc32WPF.ViewModel.Tests
             foreach (var button in sButtons)
             {
                 if (button >= '0' && button <= '9')
-                    _ModelView.btnNumber.Execute($"{button}");
+                    _ModelView.NumberCommand.Execute($"{button}");
 
             }
             Assert.AreEqual(iPCCount, _PropChangedCount);
-            Assert.AreEqual(sAkk, _ModelView.Akkumulator);
+            Assert.AreEqual(sAkk, _ModelView.Accumulator);
             Assert.AreEqual(sExpPC, _PropChanged);
 
         }
@@ -164,16 +165,16 @@ namespace Calc32WPF.ViewModel.Tests
         [DataRow("99", 100, 6, 100, "", new string[] { "Akkumulator:-101\r\nMemory:0\r\nOperationText:\r\nAkkumulator:100\r\nMemory:0\r\nOperationText:\r\n" })]
         public void MainWindow_VM_OpButton(string sButtons, int iAcc,  int iPCCount, int iExpAkk,string sExpOp , string[] asExpPC)
         {
-            _ModelView.Akkumulator = iAcc;
+            _ModelView.Accumulator = iAcc;
             ClearResults();    
             foreach (var button in sButtons)
             {
                 if (button >= '0' && button <= '9')
-                    _ModelView.btnOperation.Execute($"-{button}");
+                    _ModelView.OperationCommand.Execute($"-{button}");
 
             }
             Assert.AreEqual(iPCCount, _PropChangedCount,$"Test: {sButtons}.PCCount");
-            Assert.AreEqual(iExpAkk, _ModelView.Akkumulator, $"Test: {sButtons}.Acc");
+            Assert.AreEqual(iExpAkk, _ModelView.Accumulator, $"Test: {sButtons}.Acc");
             Assert.AreEqual(sExpOp, _ModelView.OperationText, $"Test: {sButtons}.Op");
             Assert.AreEqual(asExpPC[0], _PropChanged, $"Test: {sButtons}.PropChanges");
         }
@@ -187,14 +188,14 @@ namespace Calc32WPF.ViewModel.Tests
             foreach (var button in sButtons)
             {
                 if (button >= '0' && button <= '9')
-                    _ModelView.btnNumber.Execute($"{button}");
+                    _ModelView.NumberCommand.Execute($"{button}");
             }
             ClearResults();
-            Assert.AreEqual(xEnab,_ModelView.btnBackspace.CanExecute(null));
+            Assert.AreEqual(xEnab,_ModelView.BackSpaceCommand.CanExecute(null));
             if (xEnab)
-                _ModelView.btnBackspace.Execute(null);
+                _ModelView.BackSpaceCommand.Execute(null);
             Assert.AreEqual(iPCCount, _PropChangedCount);
-            Assert.AreEqual(sAkk, _ModelView.Akkumulator);
+            Assert.AreEqual(sAkk, _ModelView.Accumulator);
             Assert.AreEqual(asExpPC[0], _PropChanged);
 
         }
