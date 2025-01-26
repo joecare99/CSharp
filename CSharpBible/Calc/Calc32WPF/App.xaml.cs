@@ -11,6 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Calc32.Models;
+using Calc32.Models.Interfaces;
+using Calc32.ViewModels;
+using Calc32.ViewModels.Interfaces;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
 /// <summary>
@@ -23,5 +29,17 @@ namespace Calc32WPF
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var sp = new ServiceCollection()
+ .AddSingleton<ICalculatorClass, CalculatorClass>()
+ .AddTransient<ICalculatorViewModel, CalculatorViewModel>()
+ //   .AddTransient<Views.LoadingDialog, Views.LoadingDialog>()
+ .BuildServiceProvider();
+
+            Ioc.Default.ConfigureServices(sp);
+
+            base.OnStartup(e);
+        }
     }
 }

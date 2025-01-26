@@ -22,14 +22,18 @@
 		<None Remove="*.bak" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="..\Calc32\NonVisual\CalculatorClass.cs">
-			<Link>NonVisual\CalulatorClass.cs</Link>
-		</Compile>
-	</ItemGroup>
+    <Compile Include="..\Calc32\Models\CalculatorClass.cs" Link="Models\CalculatorClass.cs" />
+    <Compile Include="..\Calc32\Models\Interfaces\ICalculatorClass.cs" Link="Models\Interfaces\ICalculatorClass.cs" />
+    <Compile Include="..\Calc32\ViewModels\CalculatorViewModel.cs" Link="ViewModels\CalculatorViewModel.cs" />
+    <Compile Include="..\Calc32\ViewModels\Interfaces\ICalculatorViewModel.cs" Link="ViewModels\Interfaces\ICalculatorViewModel.cs" />
+  </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
-	<ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
