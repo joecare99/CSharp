@@ -13,7 +13,13 @@
 // ***********************************************************************
 using System;
 using System.Windows.Forms;
+using Calc32.Models;
+using Calc32.Models.Interfaces;
+using Calc32.ViewModels;
+using Calc32.ViewModels.Interfaces;
 using Calc32.Visual;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// The Calc32 namespace.
@@ -26,7 +32,6 @@ namespace CSharpBible.Calc32
     /// </summary>
     public static class Program
     {
-        public static Func<Form?> GetMainForm { get; set; } = ()=>new FrmCalc32Main();
 
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
@@ -34,9 +39,22 @@ namespace CSharpBible.Calc32
         [STAThread]
         public static void Main()
         {
+            Init();
             Application.EnableVisualStyles();
 //            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(GetMainForm());
+            Application.Run(Ioc.Default.GetRequiredService<Form>());
         }
+
+        public static Action Init { get; set; } = static () =>
+        {
+            var sp = new ServiceCollection()
+             .AddSingleton<ICalculatorClass, CalculatorClass>()
+             .AddTransient<ICalculatorViewModel, CalculatorViewModel>()
+             .AddTransient<Form, FrmCalc32Main>()
+             //   .AddTransient<Views.LoadingDialog, Views.LoadingDialog>()
+             .BuildServiceProvider();
+
+            Ioc.Default.ConfigureServices(sp);
+        };
     }
 }

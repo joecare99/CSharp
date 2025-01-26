@@ -12,10 +12,10 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Calc32.NonVisual;
-using MVVM.ViewModel;
+using Calc32.ViewModels.Interfaces;
 
 /// <summary>
 /// The Visual namespace.
@@ -35,33 +35,35 @@ namespace Calc32.Visual
         /// Gets the data context.
         /// </summary>
         /// <value>The data context.</value>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public
 #if NET7_0_OR_GREATER
-            new
+        new
 #endif
-            NotificationObject DataContext { get; private set; } = null!;
+            ICalculatorViewModel DataContext { get; private set; } = null!;
         #endregion
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc32Main" /> class.
         /// </summary>
-        public FrmCalc32Main()
+        public FrmCalc32Main(ICalculatorViewModel model)
         {
             InitializeComponent();
-            //            DataContext = new BaseViewModel
+            DataContext = model;
+            DataContext.PropertyChanged += vmPropertyChanged;
+
+            CommandBindingAttribute.Commit(this,DataContext);
         }
 
-        /// <summary>
-        /// Change event of Calculators class.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void calculatorClassChange(object sender, (string, object, object) e)
+        private void vmPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            using CalculatorClass cc = (CalculatorClass)sender;
-            lblResult.Text = cc.Accumulator.ToString();
-            lblMemory.Text = cc.Memory.ToString();
-            lblOperation.Text = cc.OperationText;
+            switch (e.PropertyName) { 
+                case nameof(DataContext.OperationText):         
+                lblOperation.Text = DataContext.OperationText;break;
+                case nameof(DataContext.Accumulator):
+                    lblResult.Text = DataContext.Accumulator.ToString(); break;
+                case nameof(DataContext.Memory):
+                    lblMemory.Text = DataContext.Memory.ToString(); break;
+            }
         }
 
         /// <summary>
@@ -69,13 +71,8 @@ namespace Calc32.Visual
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnNumber_Click(object sender, EventArgs e)
-        {
-            if (int.TryParse(((Control)sender)?.Tag?.ToString(), out int aNumber))
-            {
-                calculatorClass1.NumberButton(aNumber);
-            }
-        }
+        private void btnNumber_Click(object sender, EventArgs e) 
+            => DataContext.NumberCommand.Execute(((Control)sender).Tag);
 
         /// <summary>
         /// Handles the MouseMove event of the FrmCalc32Main control.
@@ -148,33 +145,28 @@ namespace Calc32.Visual
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnOperator_Click(object sender, EventArgs e)
-        {
-            if (int.TryParse(((Control)sender)?.Tag?.ToString(), out int aNumber))
-            {
-                calculatorClass1.Operation(-aNumber);
-            }
-
-        }
+        private void btnOperator_Click(object sender, EventArgs e) 
+            => DataContext.OperationCommand.Execute(((Control)sender).Tag);
 
         /// <summary>
         /// Handles the Click event of the btnClose control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+        private void btnClose_Click(object sender, EventArgs e) 
+            => Close();
 
         /// <summary>
         /// Handles the Click event of the btnBack control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void btnBack_Click(object sender, EventArgs e)
+        private void btnBack_Click(object sender, EventArgs e) 
+            => DataContext.BackSpaceCommand.Execute(null);
+
+        private void calculatorViewModelBindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            calculatorClass1.BackSpace();
+
         }
     }
 }

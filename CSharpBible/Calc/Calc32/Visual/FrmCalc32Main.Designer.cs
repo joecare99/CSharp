@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System;
 using Calc32.Properties;
-using Calc32.NonVisual;
+using Calc32.ViewModels.Interfaces;
 
 /// <summary>
 /// The Visual namespace.
@@ -56,7 +56,6 @@ namespace Calc32.Visual
         {
             btnOne = new System.Windows.Forms.Button();
             lblResult = new System.Windows.Forms.Label();
-            calculatorClass1 = new CalculatorClass();
             pictureBox1 = new System.Windows.Forms.PictureBox();
             button1 = new System.Windows.Forms.Button();
             button2 = new System.Windows.Forms.Button();
@@ -137,12 +136,6 @@ namespace Calc32.Visual
             lblResult.Text = "0";
             lblResult.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             lblResult.MouseMove += FrmCalc32Main_MouseMove;
-            // 
-            // calculatorClass1
-            // 
-            calculatorClass1.Accumulator = 0;
-            calculatorClass1.Memory = 0;
-            calculatorClass1.OnChange += calculatorClassChange;
             // 
             // pictureBox1
             // 
@@ -358,10 +351,9 @@ namespace Calc32.Visual
             button11.Name = "button11";
             button11.Size = new System.Drawing.Size(62, 73);
             button11.TabIndex = 14;
-            button11.Tag = "+/-";
+            button11.Tag = "10";
             button11.Text = "+/-";
             button11.UseVisualStyleBackColor = true;
-            button11.Click += btnOperator_Click;
             button11.KeyDown += FrmCalc32Main_KeyDown;
             button11.MouseMove += FrmCalc32Main_MouseMove;
             // 
@@ -423,10 +415,9 @@ namespace Calc32.Visual
             btnClear.Name = "btnClear";
             btnClear.Size = new System.Drawing.Size(132, 73);
             btnClear.TabIndex = 18;
-            btnClear.Tag = "1";
+            btnClear.Tag = "-1";
             btnClear.Text = "C";
             btnClear.UseVisualStyleBackColor = true;
-            btnClear.Click += btnOperator_Click;
             btnClear.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnClearAll
@@ -441,10 +432,9 @@ namespace Calc32.Visual
             btnClearAll.Name = "btnClearAll";
             btnClearAll.Size = new System.Drawing.Size(132, 73);
             btnClearAll.TabIndex = 19;
-            btnClearAll.Tag = "3";
+            btnClearAll.Tag = "-3";
             btnClearAll.Text = "&CE";
             btnClearAll.UseVisualStyleBackColor = true;
-            btnClearAll.Click += btnOperator_Click;
             btnClearAll.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnHexB
@@ -549,10 +539,9 @@ namespace Calc32.Visual
             btnMult.Name = "btnMult";
             btnMult.Size = new System.Drawing.Size(62, 73);
             btnMult.TabIndex = 29;
-            btnMult.Tag = "-4";
+            btnMult.Tag = "4";
             btnMult.Text = "*";
             btnMult.UseVisualStyleBackColor = true;
-            btnMult.Click += btnOperator_Click;
             btnMult.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnDivide
@@ -567,10 +556,9 @@ namespace Calc32.Visual
             btnDivide.Name = "btnDivide";
             btnDivide.Size = new System.Drawing.Size(62, 73);
             btnDivide.TabIndex = 28;
-            btnDivide.Tag = "-5";
+            btnDivide.Tag = "5";
             btnDivide.Text = "/";
             btnDivide.UseVisualStyleBackColor = true;
-            btnDivide.Click += btnOperator_Click;
             btnDivide.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnPlus
@@ -585,10 +573,9 @@ namespace Calc32.Visual
             btnPlus.Name = "btnPlus";
             btnPlus.Size = new System.Drawing.Size(62, 73);
             btnPlus.TabIndex = 27;
-            btnPlus.Tag = "-2";
+            btnPlus.Tag = "2";
             btnPlus.Text = "+";
             btnPlus.UseVisualStyleBackColor = true;
-            btnPlus.Click += btnOperator_Click;
             btnPlus.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnMinus
@@ -603,10 +590,9 @@ namespace Calc32.Visual
             btnMinus.Name = "btnMinus";
             btnMinus.Size = new System.Drawing.Size(62, 73);
             btnMinus.TabIndex = 26;
-            btnMinus.Tag = "-3";
+            btnMinus.Tag = "3";
             btnMinus.Text = "-";
             btnMinus.UseVisualStyleBackColor = true;
-            btnMinus.Click += btnOperator_Click;
             btnMinus.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnResult
@@ -622,10 +608,9 @@ namespace Calc32.Visual
             btnResult.Name = "btnResult";
             btnResult.Size = new System.Drawing.Size(62, 156);
             btnResult.TabIndex = 25;
-            btnResult.Tag = "-1";
+            btnResult.Tag = "1";
             btnResult.Text = "=";
             btnResult.UseVisualStyleBackColor = true;
-            btnResult.Click += btnOperator_Click;
             btnResult.KeyDown += FrmCalc32Main_KeyDown;
             btnResult.MouseMove += FrmCalc32Main_MouseMove;
             // 
@@ -641,10 +626,9 @@ namespace Calc32.Visual
             btnOpAnd.Name = "btnOpAnd";
             btnOpAnd.Size = new System.Drawing.Size(133, 113);
             btnOpAnd.TabIndex = 33;
-            btnOpAnd.Tag = "-6";
+            btnOpAnd.Tag = "6";
             btnOpAnd.Text = "AND";
             btnOpAnd.UseVisualStyleBackColor = true;
-            btnOpAnd.Click += btnOperator_Click;
             btnOpAnd.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnOpOR
@@ -659,10 +643,9 @@ namespace Calc32.Visual
             btnOpOR.Name = "btnOpOR";
             btnOpOR.Size = new System.Drawing.Size(133, 113);
             btnOpOR.TabIndex = 32;
-            btnOpOR.Tag = "-7";
+            btnOpOR.Tag = "7";
             btnOpOR.Text = "OR";
             btnOpOR.UseVisualStyleBackColor = true;
-            btnOpOR.Click += btnOperator_Click;
             btnOpOR.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnOpXOR
@@ -677,10 +660,9 @@ namespace Calc32.Visual
             btnOpXOR.Name = "btnOpXOR";
             btnOpXOR.Size = new System.Drawing.Size(133, 113);
             btnOpXOR.TabIndex = 31;
-            btnOpXOR.Tag = "-8";
+            btnOpXOR.Tag = "8";
             btnOpXOR.Text = "XOR";
             btnOpXOR.UseVisualStyleBackColor = true;
-            btnOpXOR.Click += btnOperator_Click;
             btnOpXOR.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnOpNOT
@@ -695,10 +677,9 @@ namespace Calc32.Visual
             btnOpNOT.Name = "btnOpNOT";
             btnOpNOT.Size = new System.Drawing.Size(133, 113);
             btnOpNOT.TabIndex = 30;
-            btnOpNOT.Tag = "-9";
+            btnOpNOT.Tag = "9";
             btnOpNOT.Text = "NOT";
             btnOpNOT.UseVisualStyleBackColor = true;
-            btnOpNOT.Click += btnOperator_Click;
             btnOpNOT.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // pnlLeft
@@ -741,10 +722,9 @@ namespace Calc32.Visual
             button9.Name = "button9";
             button9.Size = new System.Drawing.Size(62, 73);
             button9.TabIndex = 36;
-            button9.Tag = "-4";
+            button9.Tag = "4";
             button9.Text = "*";
             button9.UseVisualStyleBackColor = true;
-            button9.Click += btnOperator_Click;
             button9.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // button12
@@ -758,10 +738,9 @@ namespace Calc32.Visual
             button12.Name = "button12";
             button12.Size = new System.Drawing.Size(62, 73);
             button12.TabIndex = 37;
-            button12.Tag = "-4";
+            button12.Tag = "4";
             button12.Text = "*";
             button12.UseVisualStyleBackColor = true;
-            button12.Click += btnOperator_Click;
             button12.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // pnlBottom
@@ -959,10 +938,12 @@ namespace Calc32.Visual
         /// <summary>
         /// The BTN clear
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnClear;
         /// <summary>
         /// The BTN clear all
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnClearAll;
         /// <summary>
         /// The BTN hexadecimal b
@@ -987,34 +968,42 @@ namespace Calc32.Visual
         /// <summary>
         /// The BTN mult
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnMult;
         /// <summary>
         /// The BTN divide
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnDivide;
         /// <summary>
         /// The BTN plus
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnPlus;
         /// <summary>
         /// The BTN minus
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnMinus;
         /// <summary>
         /// The BTN op and
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpAnd;
         /// <summary>
         /// The BTN op or
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpOR;
         /// <summary>
         /// The BTN op xor
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpXOR;
         /// <summary>
         /// The BTN op not
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpNOT;
         /// <summary>
         /// The PNL left
@@ -1061,8 +1050,8 @@ namespace Calc32.Visual
         /// </summary>
         private System.Windows.Forms.Panel panel5;
         public System.Windows.Forms.Button btnOne;
-        public CalculatorClass calculatorClass1;
         public System.Windows.Forms.Button btnBack;
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         public System.Windows.Forms.Button btnResult;
     }
 }
