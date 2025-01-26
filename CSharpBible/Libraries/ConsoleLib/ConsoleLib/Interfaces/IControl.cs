@@ -11,10 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace ConsoleLib.ConsoleLib.Interfaces
 {
@@ -29,7 +30,7 @@ namespace ConsoleLib.ConsoleLib.Interfaces
         Rectangle RealDim { get; }
         bool Shadow { get; set; }
         Size size { get; set; }
-        int Tag { get; set; }
+        object? Tag { get; set; }
         string Text { get; set; }
         bool Valid { get; set; }
         bool Visible { get; set; }
@@ -37,14 +38,15 @@ namespace ConsoleLib.ConsoleLib.Interfaces
         ConsoleColor BackColor { get; set; }
         ConsoleColor ForeColor { get; set; }
         IList<IControl> Children { get; }
+        (INotifyPropertyChanged model, string sProperty) Binding { set; }
 
         event EventHandler? OnActivate;
         event EventHandler? OnChange;
         event EventHandler? OnClick;
-        event EventHandler<KeyEventArgs>? OnKeyPressed;
+        event EventHandler<IKeyEvent>? OnKeyPressed;
         event EventHandler? OnMouseEnter;
         event EventHandler? OnMouseLeave;
-        event EventHandler<MouseEventArgs>? OnMouseMove;
+        event EventHandler<IMouseEvent>? OnMouseMove;
         event EventHandler? OnMove;
         event EventHandler? OnResize;
 
@@ -52,13 +54,13 @@ namespace ConsoleLib.ConsoleLib.Interfaces
         void Click();
         void DoUpdate();
         void Draw();
-        void HandlePressKeyEvents(KeyPressEventArgs e);
+        void HandlePressKeyEvents(IKeyEvent e);
         void Invalidate();
         Rectangle LocalDimOf(Rectangle aDim, IControl? ancestor = null);
-        void MouseClick(MouseEventArgs M);
+        void MouseClick(IMouseEvent M);
         void MouseEnter(Point M);
         void MouseLeave(Point M);
-        void MouseMove(MouseEventArgs M, Point lastMousePos);
+        void MouseMove(IMouseEvent M, Point lastMousePos);
         bool Over(Point M);
         Rectangle RealDimOf(Rectangle aDim);
         void ReDraw(Rectangle dimension);

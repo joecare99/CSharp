@@ -11,183 +11,182 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
+using ConsoleLib.ConsoleLib.Interfaces;
+using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
-using System.Windows.Forms;
-using static ConsoleLib.NativeMethods;
 
-namespace ConsoleLib.CommonControls
+namespace ConsoleLib.CommonControls;
+
+/// <summary>
+/// Class Application.
+/// Implements the <see cref="ConsoleLib.CommonControls.Panel" />
+/// </summary>
+/// <seealso cref="ConsoleLib.CommonControls.Panel" />
+public class Application : Panel, IApplication
 {
     /// <summary>
-    /// Class Application.
-    /// Implements the <see cref="ConsoleLib.CommonControls.Panel" />
+    /// Gets the mouse Position.
     /// </summary>
-    /// <seealso cref="ConsoleLib.CommonControls.Panel" />
-    public class Application : Panel
+    /// <value>The mouse Position.</value>
+    public Point MousePos { get; private set; }
+    /// <summary>
+    /// Gets a value indicating whether this <see cref="Application"/> is running.
+    /// </summary>
+    /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
+    public bool running { get; private set; }
+
+    public static IApplication? Default { get; private set; }
+
+    /// <summary>
+    /// Occurs when [on canvas resize].
+    /// </summary>
+    public event EventHandler<Point>? OnCanvasResize;
+
+    /// <summary>
+    /// The m buttons
+    /// </summary>
+    private IMouseEvent? MButtons = default;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Application"/> class.
+    /// </summary>
+    public Application(IConsole console,IExtendedConsole extendedConsole)
     {
-        /// <summary>
-        /// Gets the mouse position.
-        /// </summary>
-        /// <value>The mouse position.</value>
-        public Point MousePos { get; private set; }
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="Application"/> is running.
-        /// </summary>
-        /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
-        public bool running { get; private set; }
+        ConsoleFramework.ExtendedConsole = extendedConsole;
+        ConsoleFramework.console = console;
+        ConsoleFramework.ExtendedConsole.MouseEvent += HandleMouseEvent;
+        ConsoleFramework.ExtendedConsole.KeyEvent += HandleKeyEvent;
+        ConsoleFramework.ExtendedConsole.WindowBufferSizeEvent += HandleWinBufEvent;
+        Border = new Char[] { };
+        Control.MessageQueue = new Stack<(Action<object, EventArgs>, object, EventArgs)>();
+        Default = this; 
+    }
 
-        /// <summary>
-        /// Occurs when [on canvas resize].
-        /// </summary>
-        public event EventHandler<Point>? OnCanvasResize;
-
-        /// <summary>
-        /// The m buttons
-        /// </summary>
-        private MouseEventArgs? MButtons=default;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Application"/> class.
-        /// </summary>
-        public Application()
-        {
-            ExtendedConsole.MouseEvent += HandleMouseEvent;
-            ExtendedConsole.KeyEvent += HandleKeyEvent;
-            ExtendedConsole.WindowBufferSizeEvent += HandleWinBufEvent;
-            Boarder = new Char[] { };
-            Control.MessageQueue = new Stack<(Action<object, EventArgs>,object,EventArgs)>();
-        }
-
-#if NET5_0_OR_GREATER
-        private void HandleWinBufEvent(object? sender, WINDOW_BUFFER_SIZE_RECORD e)
-#else
-        /// <summary>
-        /// Handles the win buf event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private void HandleWinBufEvent(object sender, WINDOW_BUFFER_SIZE_RECORD e)
-#endif       
-        {
-            Console.Clear();
-            OnCanvasResize?.Invoke(this,e.dwSize.AsPoint);
-            Invalidate();
-        }
-
-#if NET5_0_OR_GREATER
-        private void HandleKeyEvent(object? sender, KEY_EVENT_RECORD e)
-#else
-        /// <summary>
-        /// Handles the key event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private void HandleKeyEvent(object sender, KEY_EVENT_RECORD e)
-#endif        
+    /// <summary>
+    /// Handles the win buf event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
+    private void HandleWinBufEvent(object? sender, Point e)      
     {
-            // Determine the Control to send the Event to
+        Console.Clear();
+        OnCanvasResize?.Invoke(this, e);
+        Invalidate();
+    }
 
-            if (e.bKeyDown)
-            {
-                var keyEventArgs = new KeyPressEventArgs(e.UnicodeChar);
-                ActiveControl?.HandlePressKeyEvents(keyEventArgs);
-                if (!keyEventArgs.Handled)
-                foreach ( var ctrl in children)
+    /// <summary>
+    /// Handles the key event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
+    private void HandleKeyEvent(object? sender, IKeyEvent e)
+    {
+        // Determine the Control to send the Event to
+
+        if (e.bKeyDown)
+        {
+            ActiveControl?.HandlePressKeyEvents(e);
+            if (!e.Handled)
+                foreach (var ctrl in Children)
                 {
 
-                        ctrl.HandlePressKeyEvents(keyEventArgs);
-                        if (keyEventArgs.Handled) break;
+                    ctrl.HandlePressKeyEvents(e);
+                    if (e.Handled)
+                        break;
                 }
-            }
-            else
-            { };     
-
         }
+        else
+        { };
 
-#if NET5_0_OR_GREATER
-        private void HandleMouseEvent(object? sender, MOUSE_EVENT_RECORD e)
-#else
-        /// <summary>
-        /// Handles the mouse event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private void HandleMouseEvent(object sender, MOUSE_EVENT_RECORD e) 
-#endif
+    }
+
+    /// <summary>
+    /// Handles the mouse event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
+    private void HandleMouseEvent(object? sender, IMouseEvent e) 
+    {
+        if (e.MouseMoved)
         {
-            if (e.dwEventFlags == EventFlags.MOUSE_MOVED)
+            Point lastMousePos = MousePos;
+
+            MousePos = e.MousePos;
+            MButtons = e;
+            MouseMove(e, lastMousePos);
+        }
+        else if (e.ButtonEvent )
+        {
+
+            MousePos = e.MousePos;
+            MButtons = e;
+            foreach (var ctrl in Children)
             {
-                Point lastMousePos = MousePos;
-                 
-                MousePos = e.dwMousePosition.AsPoint;
-                MButtons = e.AsMouseEventArgs;
-                MouseMove(MButtons,lastMousePos);
+                if (ctrl.Over(MousePos))
+                    ctrl.MouseClick(e);
             }
-            else if (e.dwEventFlags == 0)
+        }
+    }
+
+    /// <summary>
+    /// Initializes this instance.
+    /// </summary>
+    public virtual void Initialize()
+    {
+
+    }
+
+    /// <summary>
+    /// Runs this instance.
+    /// </summary>
+    public void Run()
+    {
+        running = true;
+        while (running)
+        {
+            HandleMessages();
+            // DoOnIdle
+
+            Thread.Sleep(1);
+            //   Console.Clear();
+        }
+        ConsoleFramework.console.SetCursorPosition(0, Position.Y+size.Height);
+    }
+
+    /// <summary>
+    /// Handles the messages.
+    /// </summary>
+    private void HandleMessages()
+    {
+        if (Control.MessageQueue != null)
+        {
+            int cc = Control.MessageQueue.Count;
+            if (cc > 0)
             {
-               
-                MousePos = e.dwMousePosition.AsPoint;
-                MButtons = e.AsMouseEventArgs;
-                foreach (var ctrl in children)
+                while (cc-- > 0)
                 {
-                    if (ctrl.Over(MousePos))
-                        ctrl.MouseClick(MButtons);
+                    (var Act, var sender, var arg2) = Control.MessageQueue.Pop();
+                    Act?.Invoke(sender, arg2);
                 }
+                DoUpdate();
             }
         }
+    }
 
-        /// <summary>
-        /// Initializes this instance.
-        /// </summary>
-        public virtual void Initialize()
-        {
-               
-        }
+    /// <summary>
+    /// Stops this instance.
+    /// </summary>
+    public void Stop()
+    {
+        running = false;
+    }
 
-        /// <summary>
-        /// Runs this instance.
-        /// </summary>
-        public void Run()
-        {
-            running = true;
-            while (running)
-            {
-                HandleMessages();   
-                // DoOnIdle
-
-                Thread.Sleep(1);
-                //   Console.Clear();
-            }
-        }
-
-        /// <summary>
-        /// Handles the messages.
-        /// </summary>
-        private void HandleMessages()
-        {
-            if (Control.MessageQueue != null)
-            {
-                int cc = Control.MessageQueue.Count;
-                if (cc > 0)
-                {
-                    while (cc-- > 0)
-                    {
-                        (var Act, var sender, var arg2) = Control.MessageQueue.Pop();
-                        Act?.Invoke(sender, arg2);
-                    }
-                    DoUpdate();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Stops this instance.
-        /// </summary>
-        public void Stop()
-        {
-            running = false;
-        }
+    public void Dispatch(Action act)
+    {
+        MessageQueue?.Push(((s,e)=>act(), this, EventArgs.Empty));
     }
 }

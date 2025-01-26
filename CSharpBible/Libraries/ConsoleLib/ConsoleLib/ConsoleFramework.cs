@@ -11,6 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
+using BaseLib.Models;
+using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
 
@@ -28,7 +31,7 @@ namespace ConsoleLib
         /// <summary>
         /// The single boarder
         /// </summary>
-        public static readonly char[] singleBoarder = { '─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼' };
+        public static readonly char[] singleBorder = { '─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼' };
         /// <summary>
         /// The double boarder
         /// </summary>
@@ -39,38 +42,41 @@ namespace ConsoleLib
         public static readonly char[] simpleBoarder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
 
         /// <summary>
-        /// Gets the mouse position.
+        /// Gets the mouse Position.
         /// </summary>
-        /// <value>The mouse position.</value>
+        /// <value>The mouse Position.</value>
         public static Point MousePos { get; private set; }
 
-        /// <summary>
-        /// Gets a value indicating whether [mouse button left].
-        /// </summary>
-        /// <value><c>true</c> if [mouse button left]; otherwise, <c>false</c>.</value>
-        public static bool MouseButtonLeft => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left;
-        /// <summary>
-        /// Gets a value indicating whether [mouse button right].
-        /// </summary>
-        /// <value><c>true</c> if [mouse button right]; otherwise, <c>false</c>.</value>
-        public static bool MouseButtonRight => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right;
-        /// <summary>
-        /// Gets a value indicating whether [mouse button middle].
-        /// </summary>
-        /// <value><c>true</c> if [mouse button middle]; otherwise, <c>false</c>.</value>
-        public static bool MouseButtonMiddle => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Middle;
+        public static IConsole console { get; set; } = new ConsoleProxy();
 
+        public static IExtendedConsole? ExtendedConsole
+        {
+            get => extendedConsole; set
+            {
+                if (extendedConsole != null)
+                {
+                    extendedConsole.MouseEvent -= OnMouseEvent;
+                    extendedConsole.WindowBufferSizeEvent -= OnWindowSizeEvent;
+                }
+                extendedConsole = value;
+                if (extendedConsole != null)
+                {
+                    extendedConsole.MouseEvent += OnMouseEvent;
+                    extendedConsole.WindowBufferSizeEvent += OnWindowSizeEvent;
+                }
+            }
+        }
         /// <summary>
         /// The canvas
         /// </summary>
         public static TextCanvas Canvas = new TextCanvas(new Rectangle(0, 0, Console.BufferWidth, Math.Min(50,Console.LargestWindowHeight)));
+        private static IExtendedConsole? extendedConsole;
+
         /// <summary>
         /// Initializes static members of the <see cref="ConsoleFramework"/> class.
         /// </summary>
         static ConsoleFramework()
         {
-            ExtendedConsole.MouseEvent += OnMouseEvent;
-            ExtendedConsole.WindowBufferSizeEvent += OnWindowSizeEvent;
         }
 
         /// <summary>
@@ -78,15 +84,9 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private static void OnWindowSizeEvent(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            sender, NativeMethods.WINDOW_BUFFER_SIZE_RECORD e)
+        private static void OnWindowSizeEvent(object? sender, Point e)
         {
-            (Canvas._dimension.Width, Canvas._dimension.Height) = (e.dwSize.X, e.dwSize.Y);
+            (Canvas._dimension.Width, Canvas._dimension.Height) = (e.X, e.Y);
         }
 
         /// <summary>
@@ -94,15 +94,9 @@ namespace ConsoleLib
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private static void OnMouseEvent(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            sender, NativeMethods.MOUSE_EVENT_RECORD e)
+        private static void OnMouseEvent(    object?            sender, IMouseEvent e)
         {
-            MousePos = e.dwMousePosition.AsPoint;
+            MousePos = e.MousePos;
         }
 
         /// <summary>
@@ -113,10 +107,10 @@ namespace ConsoleLib
         /// <param name="color">The color.</param>
         static public void SetPixel(int x, int y, ConsoleColor color)
         {
-            Console.SetCursorPosition(x, y);
-            Console.BackgroundColor = color;
-            Console.Write(" ");
-            Console.BackgroundColor = ConsoleColor.Black;
+            console.SetCursorPosition(x, y);
+            console.BackgroundColor = color;
+            console.Write(" ");
+            console.BackgroundColor = ConsoleColor.Black;
         }
 
  

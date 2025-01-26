@@ -42,13 +42,13 @@ namespace ConsoleLib.CommonControls
             {
                 Text = text; 
             }
-            position = new Point(X,Y);
+            Position = new Point(X,Y);
         }
 
         /// <summary>
-        /// Sets the specified position.
+        /// Sets the specified Position.
         /// </summary>
-        /// <param name="position">The position.</param>
+        /// <param name="position">The Position.</param>
         /// <param name="text">The text.</param>
         public void Set(Point position, string text= "")
         {
@@ -59,10 +59,13 @@ namespace ConsoleLib.CommonControls
         /// </summary>
         public override void Draw()
         {
-            if (parent != null && !parent.dimension.Contains(Point.Add(position,(Size)parent.position))) return;
-            Console.BackgroundColor = BackColor;
-            ConsoleFramework.Canvas.OutTextXY(realDim.Location,$"{Text}");
-            Console.BackgroundColor = ConsoleColor.Black;
+            if (Parent != null && !Parent.Dimension.Contains(Point.Add(Position,(Size)Parent.Position))) return;
+            Application.Default?.Dispatch(() =>
+            {
+                Console.BackgroundColor = BackColor;
+                ConsoleFramework.Canvas.OutTextXY(RealDim.Location, $"{Text}");
+                Console.BackgroundColor = ConsoleColor.Black;
+            });
         }
 
     }

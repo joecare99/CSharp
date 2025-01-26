@@ -26,7 +26,7 @@ namespace ConsoleLib.CommonControls
         /// <summary>
         /// The boarder
         /// </summary>
-        public char[] Boarder = {' ', ' ', ' ', ' ', ' ', ' ' };
+        public char[] Border = {' ', ' ', ' ', ' ', ' ', ' ' };
         /// <summary>
         /// The boarder color
         /// </summary>
@@ -37,28 +37,28 @@ namespace ConsoleLib.CommonControls
         /// </summary>
         public override void Draw()
         {
-            ConsoleFramework.Canvas.FillRect(realDim,ForeColor, BackColor, ConsoleFramework.chars[3]);
-            if (Boarder != null && Boarder.Length > 5)
-                ConsoleFramework.Canvas.DrawRect(realDim, BoarderColor, BackColor, Boarder);
-            foreach( Control c in children) if (c.visible)
+            ConsoleFramework.Canvas.FillRect(RealDim,ForeColor, BackColor, ConsoleFramework.chars[3]);
+            if (Border != null && Border.Length > 5)
+                ConsoleFramework.Canvas.DrawRect(RealDim, BoarderColor, BackColor, Border);
+            foreach( Control c in Children) if (c.Visible)
                 {
-                if (c.shadow)
+                if (c.Shadow)
                 {
-                    var sdim = c.dimension;
+                    var sdim = c.Dimension;
                     sdim.Offset(1, 1);
-                    sdim.Offset(position);
+                    sdim.Offset(Position);
                     ConsoleFramework.Canvas.FillRect(RealDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
                 }
                 c.Draw();
 
             }
-            valid = true;
+            Valid = true;
         }
 
         /// <summary>
         /// Res the draw.
         /// </summary>
-        /// <param name="dimension">The dimension.</param>
+        /// <param name="dimension">The Dimension.</param>
         public override void ReDraw(Rectangle dimension)
         {
             if (dimension.IsEmpty) return;
@@ -69,19 +69,19 @@ namespace ConsoleLib.CommonControls
             try
             {
                 ConsoleFramework.Canvas.FillRect(RealDimOf(icl), ForeColor, BackColor, ConsoleFramework.chars[3]);
-                // ToDo: Boarder
-                if (Boarder != null && Boarder.Length > 5 && _dimension.IntersectsWith(dimension) &&
+                // ToDo: Border
+                if (Border != null && Border.Length > 5 && _dimension.IntersectsWith(dimension) &&
                     !(innerRect.Contains(dimension.Location) && innerRect.Contains(Point.Subtract(Point.Add(dimension.Location, dimension.Size), new Size(1, 1)))
                     ))
-                    ConsoleFramework.Canvas.DrawRect(realDim, BoarderColor, BackColor, Boarder);
-                foreach (Control c in children)
-                    if (c.visible)
+                    ConsoleFramework.Canvas.DrawRect(RealDim, BoarderColor, BackColor, Border);
+                foreach (Control c in Children)
+                    if (c.Visible)
                     {
-                        if (c.shadow)
+                        if (c.Shadow)
                         {
-                            var sdim = c.dimension;
+                            var sdim = c.Dimension;
                             sdim.Offset(1, 1);
-                            sdim.Offset(position);
+                            sdim.Offset(Position);
                             sdim.Intersect(dimension);
                             ConsoleFramework.Canvas.FillRect(RealDimOf(sdim), ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleFramework.chars[4]);
                         }
@@ -89,7 +89,7 @@ namespace ConsoleLib.CommonControls
                         CClip.Location = Point.Subtract(dimension.Location, (Size)_dimension.Location);
                         c.ReDraw(CClip);
                     }
-                valid = true;
+                Valid = true;
             }
             catch
             {

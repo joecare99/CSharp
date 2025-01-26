@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System;
 using System.Drawing;
+using System.Windows.Input;
 
 namespace ConsoleLib.CommonControls
 {
@@ -26,18 +27,24 @@ namespace ConsoleLib.CommonControls
         /// <summary>
         /// The was pressed
         /// </summary>
-        private bool _WasPressed;
+    //    private bool _WasPressed;
         /// <summary>
         /// The back color
         /// </summary>
-        private ConsoleColor _BackColor;
+        private bool _enabled = true;
+        private ICommand? command;
+
+        public ConsoleColor HLBackColor { get; set; } = ConsoleColor.Green;
+        public ConsoleColor DisabledBackColor { get; set; } = ConsoleColor.DarkGray;
+        public ConsoleColor DisabledFrontColor { get; set; } = ConsoleColor.Black;
 
         /// <summary>
         /// Presseds the specified m.
         /// </summary>
         /// <param name="M">The m.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Pressed(Point M) => Over(M) && !_WasPressed & (_WasPressed=ConsoleFramework.MouseButtonLeft) ;
+//        public bool Pressed(Point M) => Over(M) && !_WasPressed & (_WasPressed = ConsoleFramework.MouseButtonLeft);
+        public bool Enabled { get => _enabled; set => SetEnabled(value); }
 
         /// <summary>
         /// Sets the specified x.
@@ -48,11 +55,12 @@ namespace ConsoleLib.CommonControls
         /// <param name="backColor">Color of the back.</param>
         public void Set(int X, int Y, string text, ConsoleColor backColor)
         {
-            BackColor=
-            _BackColor = backColor;
+            BackColor =
+            _ActBackColor = backColor;
+            _ActForeColor = ForeColor;
             Text = text;
             size = new Size(text.Length + 2, 1);
-            position = new Point(X, Y);
+            Position = new Point(X, Y);
         }
 
         /// <summary>
@@ -61,10 +69,12 @@ namespace ConsoleLib.CommonControls
         /// <param name="M">The m.</param>
         public override void MouseEnter(Point M)
         {
-            base.MouseEnter(M);
-            _BackColor = BackColor;
-            BackColor = ConsoleColor.Green;
-            Invalidate();
+            if (_enabled)
+            {
+                base.MouseEnter(M);
+                _ActBackColor = HLBackColor;
+                Invalidate();
+            }
         }
         /// <summary>
         /// Mouses the leave.
@@ -73,7 +83,10 @@ namespace ConsoleLib.CommonControls
         public override void MouseLeave(Point M)
         {
             base.MouseLeave(M);
-            BackColor = _BackColor;
+            if (_enabled)
+                _ActBackColor = BackColor;
+            else
+                _ActBackColor = DisabledBackColor;
             Invalidate();
         }
 
@@ -84,10 +97,41 @@ namespace ConsoleLib.CommonControls
         public override void SetText(string value)
         {
             base.SetText(value);
-            size = new Size(value.Length+2, 1);
+            size = new Size(value.Length + 2, 1);
         }
-       
 
+        private void SetEnabled(bool value)
+        {
+            _enabled = value;
+            _ActBackColor = _enabled ? BackColor : DisabledBackColor;
+            _ActForeColor = _enabled ? ForeColor : DisabledFrontColor;
+            Invalidate();
+        }
+
+        public ICommand? Command
+        {
+            get => command; set
+            {
+                if (command != null)
+                {
+                    command.CanExecuteChanged -= Command_CanExecuteChanged;
+                    OnClick -= CommandExecute;
+                }
+                command = value;
+                if (command != null)
+                {
+                    command.CanExecuteChanged += Command_CanExecuteChanged;
+                    OnClick += CommandExecute;
+                    Enabled = command.CanExecute(Tag);
+                }
+            }
+        }
+
+        private void CommandExecute(object? sender, EventArgs e) 
+            => command?.Execute(Tag);
+
+        private void Command_CanExecuteChanged(object? sender, EventArgs e) 
+            => Enabled = (sender as ICommand)?.CanExecute(Tag) ?? Enabled;
     }
 
 }

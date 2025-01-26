@@ -1,7 +1,7 @@
-<Project>
-	<Import Project="..\Libraries_net.props"/>
+﻿<Project>
+	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
@@ -17,5 +17,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\BaseLib\BaseLib_net.csproj" />
 	</ItemGroup>
 </Project>

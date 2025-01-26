@@ -16,7 +16,7 @@ using System.Drawing;
 
 namespace ConsoleLib.ConsoleLib.Interfaces
 {
-    public interface IApplication
+    public interface IApplication : IControl
     {
         Point MousePos { get; }
         bool running { get; }
@@ -26,5 +26,7 @@ namespace ConsoleLib.ConsoleLib.Interfaces
         void Initialize();
         void Run();
         void Stop();
+
+        void Dispatch(Action act);
     }
 }
