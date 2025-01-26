@@ -11,8 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Calc32.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Calc32.NonVisual;
 using System;
 
 /// <summary>
