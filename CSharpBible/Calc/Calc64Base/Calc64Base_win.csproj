@@ -27,6 +27,6 @@
 		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Condition="'$(TargetFrameWork)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Condition="'$(TargetFrameWork)'=='net462-windows'" Include="System.ValueTuple" />
 	</ItemGroup>
 </Project>
