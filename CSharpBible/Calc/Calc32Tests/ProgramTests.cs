@@ -1,4 +1,6 @@
-﻿using CSharpBible.Calc32;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CSharpBible.Calc32;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -18,8 +20,14 @@ namespace Calc32.Tests
         [TestMethod]
         public void MainTest()
         {
-            var f = Program.GetMainForm();
-            Program.GetMainForm = () => new testFrm();
+            var f = Program.Init;
+            Program.Init = static () =>
+            {
+                var sp = new ServiceCollection()
+                 .AddTransient<System.Windows.Forms.Form, testFrm>()
+                 .BuildServiceProvider();
+                Ioc.Default.ConfigureServices(sp);
+            };
             Program.Main();
         }
     }

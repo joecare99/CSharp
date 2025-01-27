@@ -11,7 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Calc32.ViewModels.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -40,7 +43,7 @@ namespace Calc32.Visual.Tests
         [TestInitialize]
         public void Init()
         {
-            testFrame = new FrmCalc32Main();
+            testFrame = new FrmCalc32Main(Substitute.For<ICalculatorViewModel>());
         }
 
         /// <summary>
@@ -69,7 +72,7 @@ namespace Calc32.Visual.Tests
         [TestMethod()]
         public void calculatorClassChangeTest()
         {
-            var i=( testFrame.calculatorClass1.Accumulator+=1);
+            var i=( testFrame.DataContext.Accumulator+=1);
             Assert.AreEqual(i.ToString(), testFrame.lblResult.Text);
         }
 
@@ -77,9 +80,9 @@ namespace Calc32.Visual.Tests
         public void btnNumber_ClickTest()
         {
             testFrame.Show();
-            var i = testFrame.calculatorClass1.Accumulator;
+            var i = testFrame.DataContext.Accumulator;
             testFrame.btnOne.PerformClick();
-            Assert.AreNotEqual(i, testFrame.calculatorClass1.Accumulator);
+            Assert.AreNotEqual(i, testFrame.DataContext.Accumulator);
             testFrame.Hide();
         }
 
@@ -87,9 +90,9 @@ namespace Calc32.Visual.Tests
         public void btnBack_ClickTest()
         {
             testFrame.Show();
-            var i = testFrame.calculatorClass1.Accumulator=123;
+            var i = testFrame.DataContext.Accumulator=123;
             testFrame.btnBack.PerformClick();
-            Assert.AreNotEqual(i, testFrame.calculatorClass1.Accumulator);
+            Assert.AreNotEqual(i, testFrame.DataContext.Accumulator);
             testFrame.Hide();
         }
 
