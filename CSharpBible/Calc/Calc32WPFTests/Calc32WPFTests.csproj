@@ -17,8 +17,6 @@
 	<ItemGroup>
 	</ItemGroup>
 	<ItemGroup>
-	</ItemGroup>
-	<ItemGroup>
 		<Compile Include="..\Calc32Tests\NonVisual\CalculatorClassTests.cs">
 			<Link>NonVisual\CalulatorClassTests.cs</Link>
 		</Compile>
@@ -30,6 +28,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="NSubstitute" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Calc32WPF\Calc32WPF.csproj" />

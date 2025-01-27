@@ -66,6 +66,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style
+            x:Key="Operation2"
+            BasedOn="{StaticResource ResourceKey=Operation}"
+            TargetType="Button">
+            <Setter Property="FontSize" Value="17pt" />
+        </Style>
     </Window.Resources>
     <Grid x:Name="frmCalc32Main" Initialized="frmCalc32Main_Initialized">
         <Grid.RowDefinitions>
@@ -245,6 +251,15 @@
                 Content="-"
                 Style="{StaticResource Operation}" />
             <Button
+                x:Name="btnOpNegate"
+                Grid.Row="4"
+                Grid.Column="4"
+                AutomationProperties.AcceleratorKey="-"
+                Command="{Binding OperationCommand}"
+                CommandParameter="10"
+                Content="+/-"
+                Style="{StaticResource Operation}" />
+            <Button
                 x:Name="btnOpMul"
                 Grid.Row="0"
                 Grid.Column="4"
@@ -262,6 +277,68 @@
                 CommandParameter="5"
                 Content="/"
                 Style="{StaticResource Operation}" />
+            <Button
+                x:Name="btnOpAnd"
+                Grid.Row="1"
+                Grid.Column="6"
+                AutomationProperties.AcceleratorKey="&amp;"
+                Command="{Binding OperationCommand}"
+                CommandParameter="6"
+                Content="AND"
+                Style="{StaticResource Operation2}" />
+            <Button
+                x:Name="btnOpOr"
+                Grid.Row="2"
+                Grid.Column="6"
+                AutomationProperties.AcceleratorKey="|"
+                Command="{Binding OperationCommand}"
+                CommandParameter="7"
+                Content="OR"
+                Style="{StaticResource Operation2}" />
+            <Button
+                x:Name="btnOpXor"
+                Grid.Row="3"
+                Grid.Column="6"
+                AutomationProperties.AcceleratorKey="x"
+                Command="{Binding OperationCommand}"
+                CommandParameter="8"
+                Content="XOR"
+                Style="{StaticResource Operation2}" />
+            <Button
+                x:Name="btnOpNot"
+                Grid.Row="4"
+                Grid.Column="6"
+                AutomationProperties.AcceleratorKey="!"
+                Command="{Binding OperationCommand}"
+                CommandParameter="9"
+                Content="NOT"
+                Style="{StaticResource Operation2}" />
+            <Button
+                x:Name="btnOpC"
+                Grid.Row="0"
+                Grid.Column="1"
+                AutomationProperties.AcceleratorKey="C"
+                Command="{Binding OperationCommand}"
+                CommandParameter="-1"
+                Content="C"
+                Style="{StaticResource Operation2}" />
+            <Button
+                x:Name="btnOpCE"
+                Grid.Row="0"
+                Grid.Column="2"
+                AutomationProperties.AcceleratorKey="E"
+                Command="{Binding OperationCommand}"
+                CommandParameter="-3"
+                Content="CE"
+                Style="{StaticResource Operation2}" />
+            <Button
+                x:Name="btnOpBack"
+                Grid.Row="1"
+                Grid.Column="1"
+                Command="{Binding BackSpaceCommand}"
+                CommandParameter="-2"
+                Content="&lt;=="
+                Style="{StaticResource Operation2}" />
         </Grid>
     </Grid>
 </Window>
