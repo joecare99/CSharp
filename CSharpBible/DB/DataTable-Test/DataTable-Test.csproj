@@ -1,0 +1,15 @@
+<Project>
+	<Import Project="..\DB_net.props" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<RootNamespace>DataTable_Test</RootNamespace>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Platforms>AnyCPU;x86</Platforms>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+</Project>
