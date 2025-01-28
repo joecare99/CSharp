@@ -11,7 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MVVM.ViewModel;
+using System;
+using WPF_Hello_World.Models.Interfaces;
 
 namespace WPF_Hello_World.ViewModels
 {
@@ -22,15 +25,19 @@ namespace WPF_Hello_World.ViewModels
     /// <seealso cref="BaseViewModel" />
     public class MainWindowViewModel : BaseViewModelCT
     {
+        private IHelloWorldModel model;
         #region Properties
         #endregion
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public MainWindowViewModel()
-        {
+        public MainWindowViewModel():this(Ioc.Default.GetService<IHelloWorldModel>())
+        {        }
 
+        public MainWindowViewModel(IHelloWorldModel model)
+        {
+            this.model = model;
         }
 
 #if !NET5_0_OR_GREATER
@@ -42,6 +49,11 @@ namespace WPF_Hello_World.ViewModels
             return;
         }
 #endif
+
+        internal void Closing()
+        {
+            model?.ClosingCommand.Execute(null);
+        }
         #endregion
     }
 }
