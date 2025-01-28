@@ -86,7 +86,7 @@ namespace Calc64WF.ViewModel.Tests
                     _ModelView.btnNummber_Click(this, $"{button}", new EventArgs());
             }
             Assert.AreEqual(iPCCount, _PropChangedCount);
-            Assert.AreEqual(iExpAkk, _ModelView.Akkumulator);
+            Assert.AreEqual(iExpAkk, _ModelView.Accumulator);
             Assert.AreEqual(sExpPC, _PropChanged);
         }
 
@@ -133,7 +133,7 @@ namespace Calc64WF.ViewModel.Tests
         [DataRow("99", 100, 4, 100, "", "Akkumulator:-101\r\nAccumulator:\r\nAkkumulator:100\r\nAccumulator:\r\n")]
         public void MainWindow_VM_OpButton(string sButtons, long iAcc, int iPCCount, long iExpAkk, string sExpOp, string sExpPC)
         {
-            _ModelView.Akkumulator = iAcc;
+            _ModelView.Accumulator = iAcc;
             ClearResults();
             foreach (var button in sButtons)
             {
@@ -142,7 +142,7 @@ namespace Calc64WF.ViewModel.Tests
 
             }
             Assert.AreEqual(iPCCount, _PropChangedCount, $"Test: {sButtons}.PCCount");
-            Assert.AreEqual(iExpAkk, _ModelView.Akkumulator, $"Test: {sButtons}.Acc");
+            Assert.AreEqual(iExpAkk, _ModelView.Accumulator, $"Test: {sButtons}.Acc");
             Assert.AreEqual(sExpOp, _ModelView.OperationText, $"Test: {sButtons}.Op");
             Assert.AreEqual(sExpPC, _PropChanged, $"Test: {sButtons}.PropChanges");
         }
