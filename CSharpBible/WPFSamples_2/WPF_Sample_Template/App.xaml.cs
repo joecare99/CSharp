@@ -11,7 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using System.Windows.Navigation;
+using WPF_Sample_Template.Models;
+using WPF_Sample_Template.ViewModels;
 
 namespace WPF_Sample_Template
 {
@@ -20,6 +25,18 @@ namespace WPF_Sample_Template
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var sc = new ServiceCollection()
+                .AddSingleton<ITemplateModel, TemplateModel>()
+                .AddTransient<TemplateViewModel, TemplateViewModel>();
+
+            var sp = sc.BuildServiceProvider();
+
+            Ioc.Default.ConfigureServices(sp);
+
+            base.OnStartup(e);
+        }
     }
 }
 namespace WPF_Sample_Template.Models { }
