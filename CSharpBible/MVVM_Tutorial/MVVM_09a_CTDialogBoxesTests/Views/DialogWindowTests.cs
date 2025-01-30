@@ -16,7 +16,6 @@ using MVVM.ViewModel;
 using MVVM_09a_CTDialogBoxes.ViewModels;
 using System.ComponentModel;
 using System.Threading;
-using System.Windows;
 
 /// <summary>
 /// The Tests namespace.
