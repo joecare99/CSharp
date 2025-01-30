@@ -12,9 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using WPF_Complex_Layout.Models;
-using System;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WPF_Complex_Layout.Properties;
