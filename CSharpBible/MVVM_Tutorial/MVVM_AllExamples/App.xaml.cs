@@ -15,8 +15,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using System.Windows;
-using BaseLib.Helper;
-using BaseLib.Helper.MVVM;
 using BaseLib.Interfaces;
 
 namespace MVVM_AllExamples
