@@ -13,7 +13,6 @@
 // ***********************************************************************
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel.Tests;
 using MVVM.View.Extension;
 using MVVM_36_ComToolKtSavesWork.Models;
 using MVVM_36_ComToolKtSavesWork.ViewModels;
