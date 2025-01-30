@@ -1,13 +1,14 @@
 <Project>
 	<PropertyGroup>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>..\..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<LangVersion>12.0</LangVersion>
+    <UpDir>..\..</UpDir>
+		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<DefineConstants>NULLABLE</DefineConstants>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>
-		<Copyright>Copyright © JC-Soft 2024</Copyright>
+		<Copyright>Copyright © JC-Soft 2025</Copyright>
 	</PropertyGroup>
 </Project>
