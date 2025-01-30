@@ -13,7 +13,6 @@
 // ***********************************************************************
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Helper;
 using BaseLib.Interfaces;
 using MVVM.View.Extension;
 using MVVM_22_WpfCap.Model;
