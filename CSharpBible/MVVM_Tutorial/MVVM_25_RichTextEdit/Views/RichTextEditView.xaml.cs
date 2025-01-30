@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Markup;
 using CommonDialogs.Interfaces;
 using MVVM_25_RichTextEdit.ViewModels;
 

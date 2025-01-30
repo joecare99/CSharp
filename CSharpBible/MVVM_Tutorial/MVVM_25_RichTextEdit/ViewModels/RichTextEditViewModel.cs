@@ -24,8 +24,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Windows.Documents;
-using MVVM.View.ValueConverter;
-using System.Globalization;
 
 namespace MVVM_25_RichTextEdit.ViewModels;
 
