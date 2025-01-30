@@ -13,7 +13,6 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace CSharpBible.AboutEx.Visual.Tests
 {
