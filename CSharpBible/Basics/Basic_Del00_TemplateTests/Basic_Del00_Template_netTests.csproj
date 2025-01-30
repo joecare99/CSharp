@@ -21,7 +21,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 		<ProjectReference Include="..\Basic_Del00_Template\Basic_Del00_Template_net.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLib_netTests.csproj" />
 	</ItemGroup>
