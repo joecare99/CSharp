@@ -7,7 +7,6 @@ using Snake_Base.ViewModels;
 using BaseLib.Interfaces;
 using BaseLib.Helper;
 using Snake_Console.View;
-using System;
 using System.Threading;
 using Game_Base.Model;
 
