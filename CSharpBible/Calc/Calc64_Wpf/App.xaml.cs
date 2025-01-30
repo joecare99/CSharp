@@ -1,8 +1,5 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Calc64Base;
 using MVVM.View.Extension;
 using System;
 
