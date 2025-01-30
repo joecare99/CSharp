@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_BaseLib.Models;
 using System;
 
 namespace BaseLib.Helper.Tests;

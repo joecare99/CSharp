@@ -1,9 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Helper;
+﻿using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static BaseLib.Helper.TestHelper;
-using MVVM_BaseLib.Models.Interfaces;
 
-namespace BaseLib.Helper.MVVM.Tests;
+namespace BaseLib.Models.MVVM.Tests;
 
 [TestClass()]
 public class CRandomTests
