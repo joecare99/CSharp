@@ -11,19 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MVVM.ViewModel;
-using System.Net.Http;
 using SyncAsyncParallel.Model;
-using System.Windows;
-using System.Windows.Threading;
-using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Diagnostics;
 
 namespace SyncAsyncParallel.ViewModels;
 
