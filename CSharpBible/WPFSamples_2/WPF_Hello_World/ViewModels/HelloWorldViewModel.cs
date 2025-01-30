@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using MVVM.ViewModel;
-using System;
 using System.ComponentModel;
 using WPF_Hello_World.Models.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
