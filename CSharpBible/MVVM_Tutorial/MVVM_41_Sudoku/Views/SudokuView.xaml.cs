@@ -3,7 +3,6 @@ using System.Windows;
 using System;
 using System.Windows.Controls;
 using MVVM_41_Sudoku.ViewModels;
-using System.Diagnostics;
 
 namespace MVVM_41_Sudoku.Views;
 
