@@ -14,7 +14,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
-using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Models.Interfaces;
 using NSubstitute;
 using System;
