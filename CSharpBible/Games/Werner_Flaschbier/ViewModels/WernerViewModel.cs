@@ -1,10 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Werner_Flaschbier_Base.Model;
 
 namespace Werner_Flaschbier_Base.ViewModels;
