@@ -12,7 +12,7 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+	  <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 	  <ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>

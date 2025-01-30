@@ -2,14 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Windows;
 using WPF_Hello_World.Models.Interfaces;
 
 namespace WPF_Hello_World.Models;

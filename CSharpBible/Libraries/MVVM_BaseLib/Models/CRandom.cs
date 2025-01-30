@@ -1,7 +1,7 @@
 ﻿using BaseLib.Models.Interfaces;
 using System;
 
-namespace BaseLib.Helper;
+namespace BaseLib.Models;
 
 public class CRandom : IRandom
 {

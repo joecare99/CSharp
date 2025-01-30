@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Solution.props" />
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
     <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
@@ -19,17 +19,17 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="MSTest" Version="3.7.1" />
-    <PackageReference Include="coverlet.collector" Version="6.0.3">
+    <PackageReference Include="MSTest" Version="3.7.3" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleDisplay\ConsoleDisplay.csproj" />
-    <ProjectReference Include="..\Libraries\BaseLibTests\BaseLibTests.csproj" />
-    <ProjectReference Include="..\TestConsole\TestConsole.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
+    <ProjectReference Include="$(UpDir)\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 
 </Project>

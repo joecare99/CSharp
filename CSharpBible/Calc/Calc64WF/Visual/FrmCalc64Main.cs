@@ -14,11 +14,9 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Globalization;
 using System.Windows.Forms;
 using Calc64WF.ViewModels.Interfaces;
 using Calc64WF.Visual.Converter;
-using MVVM.ViewModel;
 
 namespace Calc64WF.Visual
 {

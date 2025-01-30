@@ -22,7 +22,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Basic_Del01_Action\Basic_Del01_Action.csproj" />
-		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>

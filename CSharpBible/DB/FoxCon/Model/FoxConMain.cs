@@ -1,8 +1,4 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Edge;
-using OpenQA.Selenium.Support.UI;
-
-namespace FoxCon.Model
+﻿namespace FoxCon.Model
 {
     public static class FoxConMain
     {

@@ -26,7 +26,7 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+	  <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	</ItemGroup>
 	
 </Project>

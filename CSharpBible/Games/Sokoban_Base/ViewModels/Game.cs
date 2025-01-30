@@ -183,7 +183,7 @@ namespace Sokoban_Base.ViewModel
 		/// </summary>
 		/// <param name="p">The p.</param>
 		/// <returns>Point.</returns>
-		internal static Point GetOldPos(Point p)
+		public static Point GetOldPos(Point p)
         {
 			Point result = new(p.X,p.Y);
 			if (playfield[p] is Floor f && f.Item !=null)

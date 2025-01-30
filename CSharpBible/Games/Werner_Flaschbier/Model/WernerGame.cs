@@ -13,7 +13,6 @@
 // ***********************************************************************
 using System;
 using System.Drawing;
-using Werner_Flaschbier_Base.Model;
 
 namespace Werner_Flaschbier_Base.Model
 {

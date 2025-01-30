@@ -1,7 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestConsole;
 using System.Drawing;
-using static BaseLib.Helper.TestHelper;
 using System;
 
 namespace ConsoleDisplay.View.Tests

@@ -13,7 +13,6 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.DependencyInjection;
 using MVVM.ViewModel;
-using System;
 using WPF_Hello_World.Models.Interfaces;
 
 namespace WPF_Hello_World.ViewModels

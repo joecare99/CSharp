@@ -2,7 +2,6 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
-using TestConsole;
 
 namespace ConsoleDisplay.View.Tests
 {

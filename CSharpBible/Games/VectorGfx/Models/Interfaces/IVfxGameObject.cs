@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using VectorGfx.Models.Interfaces;
+﻿using System.Drawing;
 
 namespace VectorGfx.Models.Interfaces
 {

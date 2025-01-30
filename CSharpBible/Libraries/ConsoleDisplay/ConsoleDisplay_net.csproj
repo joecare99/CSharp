@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Solution_net.props" />
+	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 	<TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
@@ -12,6 +12,9 @@
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLib\BaseLib_net.csproj" />
   </ItemGroup>
 
 </Project>

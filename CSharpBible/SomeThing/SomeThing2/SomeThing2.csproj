@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-    <ProjectReference Condition="'!$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-    <ProjectReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+    <ProjectReference Condition="'!$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <ProjectReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 	</ItemGroup>
 </Project>

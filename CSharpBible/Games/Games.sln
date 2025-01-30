@@ -41,9 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game_BaseTests", "Game_Base
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateCards", "CreateCards\CreateCards.csproj", "{00D00117-45B0-4B30-87F0-74DBEE09898C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_win", "..\ConsoleDisplay\ConsoleDisplay_win.csproj", "{CE756825-E693-4592-A937-635A5E11274A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_win", "..\Libraries\ConsoleDisplay\ConsoleDisplay_win.csproj", "{CE756825-E693-4592-A937-635A5E11274A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_net", "..\ConsoleDisplay\ConsoleDisplay_net.csproj", "{A4144DF0-77E3-4370-8C46-64C56279B3DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay_net", "..\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj", "{A4144DF0-77E3-4370-8C46-64C56279B3DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLib", "..\Libraries\BaseLib\BaseLib.csproj", "{79B65C63-EB25-4DEF-AC59-52836AAA0F24}"
 EndProject
@@ -53,7 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLib_netTests", "..\Libr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLibTests", "..\Libraries\BaseLibTests\BaseLibTests.csproj", "{6F8F8283-A334-47D4-A15B-94100A2C29E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay", "..\ConsoleDisplay\ConsoleDisplay.csproj", "{D8E3D40A-8D95-4410-AF28-A7AD24215754}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDisplay", "..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj", "{D8E3D40A-8D95-4410-AF28-A7AD24215754}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snake_Base_netTests", "Snake_BaseTests\Snake_Base_netTests.csproj", "{8E1630B1-46AF-4A2B-8349-AEED39F1CFA9}"
 EndProject
@@ -114,6 +114,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werner_Flaschbier_ConsoleTests", "Werner_Flaschbier_BaseTests\Werner_Flaschbier_ConsoleTests.csproj", "{2CA579B8-2C96-4CB8-8FC3-510B9C353BCD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEditTests", "VTileEditTests\VTileEditTests.csproj", "{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_Converter_DrawGrid2", "..\Graphics\MVVM_Converter_DrawGrid2\MVVM_Converter_DrawGrid2.csproj", "{B8AF8A55-0C98-4EF4-973B-148FCB9CA675}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -305,6 +307,10 @@ Global
 		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC41269E-DFCB-4656-BE50-AB6A7FABFB37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8AF8A55-0C98-4EF4-973B-148FCB9CA675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8AF8A55-0C98-4EF4-973B-148FCB9CA675}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8AF8A55-0C98-4EF4-973B-148FCB9CA675}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8AF8A55-0C98-4EF4-973B-148FCB9CA675}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -322,6 +328,7 @@ Global
 		{3E13AE4D-D805-4D2E-B6B5-88DC174F6A2C} = {79430A25-1F0B-49B9-9A68-720A422E91AB}
 		{F74AA722-DB1C-4CDB-B0FB-4016651C6E1C} = {79430A25-1F0B-49B9-9A68-720A422E91AB}
 		{15EA50ED-95FB-4195-87F6-F1D48DA8B5F1} = {4BE42477-1420-4A81-BDFA-4C34DA898F05}
+		{B8AF8A55-0C98-4EF4-973B-148FCB9CA675} = {79430A25-1F0B-49B9-9A68-720A422E91AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51252E6F-E712-436A-B391-1C5243F65ABE}
