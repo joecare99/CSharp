@@ -1,4 +1,4 @@
-﻿using BaseLib.Interfaces;
+﻿using BaseLib.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static BaseLib.Helper.TestHelper;
 

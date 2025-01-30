@@ -1,7 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Models.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace BaseLib.Helper.Tests;
+namespace BaseLib.Models.Tests;
 [TestClass]
 public class SysTimeTests
 {
@@ -23,6 +24,18 @@ public class SysTimeTests
         SysTime.GetNow = _gnfunc;
     }
 
+    [TestMethod]
+    public void SetupTest()
+    {
+        // Arrange
+        var sysTime = new SysTime();
+        // Act
+        Assert.IsNotNull(sysTime);
+        Assert.IsNotNull(_gnfunc);
+        Assert.IsInstanceOfType(sysTime, typeof(ISysTime));
+        Assert.IsInstanceOfType(sysTime, typeof(SysTime));
+        Assert.AreEqual(new DateTime(2021, 1, 1, 12, 01, 59), SysTime.GetNow());
+    }
 
     [TestMethod]
     public void NowTest()
