@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Helper;
 
 namespace MVVM_22_CTWpfCap.Model.Tests;
 
