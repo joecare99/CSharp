@@ -14,7 +14,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using System.Windows.Navigation;
 using WPF_Sample_Template.Models;
 using WPF_Sample_Template.ViewModels;
 
