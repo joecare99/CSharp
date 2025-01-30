@@ -11,9 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM.ViewModel;
-using MVVM_Converter_DrawGrid3_NonLin.ViewModel;
-using System;
 using System.Windows;
 
 namespace MVVM_Converter_DrawGrid3_NonLin
