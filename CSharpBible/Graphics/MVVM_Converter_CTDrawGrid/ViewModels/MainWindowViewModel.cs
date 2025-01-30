@@ -1,10 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_Converter_CTDrawGrid.ViewModel
 {
