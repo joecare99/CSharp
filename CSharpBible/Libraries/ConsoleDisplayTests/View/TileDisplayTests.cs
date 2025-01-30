@@ -1,8 +1,10 @@
+using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using TestConsole;
 
 namespace ConsoleDisplay.View.Tests
 {
@@ -16,7 +18,7 @@ namespace ConsoleDisplay.View.Tests
             TileDisplay.tileDef = new TestTileDef42();
         }
 
-        private static MyConsoleBase? console;
+        private IConsole console;
         private static TstConsole? _tstCon;
         private readonly string cExpWriteTile=@"\c00    \x00\x00\x00\x00\x00\x00\x00\x00\c4F─┴┬─\c00\x00\x00\x00\x00\x00\x00\x00\x00\c6F⌐°@)\c00\x00\x00\x00\x00\x00\x00\x00\x00\c1A]\cA0°°\c1A[\c00
     \x00\x00\c6E=-=-\c00\x00\x00\c4F─┬┴─\c00\x00\x00\c0E ╓╖ \c00\x00\x00\c6F ⌡⌡‼\c00\x00\x00\c6E/¯¯\\\c00\x00\x00\c1A_\cA0!!\c1A_\c00\x00\x00\c1A◄\cA0°@\c1A[\c00
@@ -127,7 +129,7 @@ namespace ConsoleDisplay.View.Tests
         [TestInitialize()]
         public void Init()
         {
-            TileDisplay.myConsole = console ?? ( console= _tstCon = new TstConsole());
+            console = _tstCon ??= new TstConsole();
             Application.DoEvents();
             console.Clear();
         }
@@ -136,13 +138,13 @@ namespace ConsoleDisplay.View.Tests
         public void TileDisplayTest()
         {
         //    var tileDisplay = new TileDisplay();
-            TileDisplay.WriteTile(Point.Empty,PointF.Empty,VTiles.Wall);           
+            TileDisplay.WriteTile(console, Point.Empty,PointF.Empty,VTiles.Wall);           
         }
 
         [TestMethod()]
         public void TileDisplayTest1()
         {
-            var tileDisplay = new TileDisplay(new Point(2,2),new Size(3,5));
+            var tileDisplay = new TileDisplay(console, TileDisplay.tileDef, new Point(2,2),new Size(3,5));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f-0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f-0.5f), tile);
@@ -151,7 +153,7 @@ namespace ConsoleDisplay.View.Tests
             Application.DoEvents();
             Assert.AreEqual(cTileDisplayTest1, _tstCon?.Content);
 
-            tileDisplay = new TileDisplay(new Point(62, 12), new Size(3, 5));
+            tileDisplay = new TileDisplay(console, TileDisplay.tileDef, new Point(62, 12), new Size(3, 5));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f - 0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f - 0.5f), tile);
@@ -166,7 +168,7 @@ namespace ConsoleDisplay.View.Tests
         [TestMethod()]
         public void TileDisplayTest2()
         {
-            var tileDisplay = new TileDisplay(new Point(2, 2), new Size(3, 5),new Size(3,2));
+            var tileDisplay = new TileDisplay(console, TileDisplay.tileDef, new Point(2, 2), new Size(3, 5),new Size(3,2));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f - 0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f - 0.5f), tile);
@@ -175,7 +177,7 @@ namespace ConsoleDisplay.View.Tests
             Application.DoEvents();
             Assert.AreEqual(cTileDisplayTest2, _tstCon?.Content);
 
-            tileDisplay = new TileDisplay(new Point(62, 12), new Size(3, 5),new Size(2, 2));
+            tileDisplay = new TileDisplay(console, TileDisplay.tileDef, new Point(62, 12), new Size(3, 5),new Size(2, 2));
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
                 tileDisplay.WriteTile(new PointF((((int)tile) % 3) * 1.5f - 0.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 3) * 1.5f - 0.5f), tile);
@@ -184,8 +186,8 @@ namespace ConsoleDisplay.View.Tests
             Application.DoEvents();
             Assert.AreEqual(cTileDisplayTest22, _tstCon?.Content);
 
-            tileDisplay = new TileDisplay(new Point(40, 6), new Size(3, 5), new Size(4, 2));
-            var tileDisplay2 = new TileDisplay(new Point(32, 8), new Size(3, 5), new Size(2, 1))
+            tileDisplay = new TileDisplay(console, TileDisplay.tileDef, new Point(40, 6), new Size(3, 5), new Size(4, 2));
+            var tileDisplay2 = new TileDisplay(console, TileDisplay.tileDef, new Point(32, 8), new Size(3, 5), new Size(2, 1))
             {
                 TileDef = new TestTileDef21()
             };
@@ -206,7 +208,7 @@ namespace ConsoleDisplay.View.Tests
         {
             foreach (VTiles tile in typeof(VTiles).GetEnumValues())
             {
-                TileDisplay.WriteTile(Point.Empty, new PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
+                TileDisplay.WriteTile(console, Point.Empty, new PointF((((int)tile) % 8) * 1.5f, (((int)tile) % 2) * 0.5f + (((int)tile) / 8)), tile);
                 Thread.Sleep(0);
             }
             Assert.AreEqual(cExpWriteTile, _tstCon?.Content);
@@ -229,7 +231,7 @@ namespace ConsoleDisplay.View.Tests
         [DataRow("11 _", VTiles.PlayerDead, "\\c00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F*∩*∩*∩*∩\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F*∩*∩*∩*∩\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F*∩*∩*∩*∩\\c00\r\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\c6F*∩*∩*∩*∩\\c00")]
         public void FullRedrawTest(string name,VTiles vt,string sExp)
         {
-            var tileDisplay = new TileDisplay(new Point(22, 0), new Size(4, 4), new TestTileDef21());
+            var tileDisplay = new TileDisplay(console, new TestTileDef21(), new Point(22, 0), new Size(4, 4));
             if (vt == VTiles.zero)
             {
                 tileDisplay.FncGetTile = (p) => (VTiles)(p.X + p.Y * tileDisplay.DispSize.Width);
@@ -358,7 +360,7 @@ namespace ConsoleDisplay.View.Tests
             "\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00"})]
         public void UpdateTest(string name, VTiles vt, VTiles vt2, string[] sExp)
         {
-            var tileDisplay = new TileDisplay(new Point(2, 0), new Size(4, 4), new TestTileDef21())
+            var tileDisplay = new TileDisplay(console, new TestTileDef21(),new Point(2, 0), new Size(4, 4))
             {
                 FncGetTile = (p) => vt2
             };
