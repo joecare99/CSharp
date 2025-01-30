@@ -1,3 +1,4 @@
+using BaseLib.Interfaces;
 using ConsoleDisplay.View;
 using System;
 using TestConsole.Models.Interfaces;
@@ -10,7 +11,7 @@ namespace TestConsole
     /// Implements the <see cref="MyConsoleBase" />
     /// </summary>
     /// <seealso cref="MyConsoleBase" />
-    public class TstConsole : MyConsoleBase
+    public class TstConsole : MyConsoleBase, IConsole
     {
         /// <summary>
         /// Gets or sets the color of the foreground.
