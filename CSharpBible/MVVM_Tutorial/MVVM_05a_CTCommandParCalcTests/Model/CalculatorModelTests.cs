@@ -14,7 +14,6 @@
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
 using MVVM_05a_CTCommandParCalc.Data;
 using MVVM_05a_CTCommandParCalc.Model.Interfaces;
 using System;
