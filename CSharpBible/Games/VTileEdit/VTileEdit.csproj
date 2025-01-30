@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
-    <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
   </ItemGroup>
   <ItemGroup>
