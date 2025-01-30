@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using BaseLib.Model;
+using BaseLib.Models;
 using BaseLib.Interfaces;
 
 namespace BaseLib.ViewModel.Tests
