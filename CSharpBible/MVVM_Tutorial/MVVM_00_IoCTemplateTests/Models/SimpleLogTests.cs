@@ -1,13 +1,9 @@
 ﻿using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM.ViewModel.Tests;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_00_IoCTemplate.Models.Tests;
 
