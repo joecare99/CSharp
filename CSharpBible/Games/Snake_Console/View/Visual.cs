@@ -18,6 +18,7 @@ using System.Drawing;
 using Snake_Base.ViewModels;
 using System.ComponentModel;
 using Snake_Base.Models.Data;
+using BaseLib.Interfaces;
 
 namespace Snake_Console.View
 {
@@ -56,12 +57,12 @@ namespace Snake_Console.View
 		#endregion
 
 		#region Methods
-		public Visual(ISnakeViewModel viewModel, ITileDisplay<SnakeTiles> tileDisplay)
+		public Visual(IConsole console,	ISnakeViewModel viewModel, ITileDisplay<SnakeTiles> tileDisplay)
 		{
 			_viewModel = viewModel;
 			_viewModel.PropertyChanged += OnPropertyChanged;
 
-			myConsole = tileDisplay.console;
+			myConsole = console;
 			_tileDisplay = tileDisplay;
 
             _tileDisplay.DispOffset = new Point(-1, -1);
