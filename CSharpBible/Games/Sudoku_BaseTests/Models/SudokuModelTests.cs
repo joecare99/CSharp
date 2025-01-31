@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
-using BaseLib.Interfaces;
 using MVVM.ViewModel;
 using NSubstitute;
 using System.ComponentModel;
@@ -22,6 +21,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Sudoku_Base.Models.Interfaces;
 using System.IO;
+using BaseLib.Models.Interfaces;
 
 /// <summary>
 /// The Tests namespace.
