@@ -1,52 +1,60 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestConsole;
 using System.Drawing;
-using static BaseLib.Helper.TestHelper;
 using System;
+using TestConsole;
+using static BaseLib.Helper.TestHelper;
 
 namespace ConsoleDisplay.View.Tests
 {
     [TestClass()]
 	public class HexMathTests {
-		static System.Collections.Generic.IEnumerable<object[]> PointHexTestData => new[]{
-        new object[]{"Zero", new float[] { 0f, 0f }, false, new float[] { 0f, 0f }},
-        new object[] { "(0,1)", new float[] { 0f, 1f }, false, new float[] { 0.5f, 1f } },
-        new object[] { "(0,2)", new float[] { 0f, 2f }, false, new float[] { 0f, 2f } },
-        new object[] { "(1,0)", new float[] { 1f, 0f }, false, new float[] { 1f, 0f } },
-        new object[] { "(1,1)", new float[] { 1f, 1f }, false, new float[] { 1.5f, 1f } },
-        new object[] { "(1,2)", new float[] { 1f, 2f }, false, new float[] { 1f, 2f } },
-        new object[] { "(2,0)", new float[] { 2f, 0f }, false, new float[] { 2f, 0f } },
-        new object[] { "(2,1)", new float[] { 2f, 1f }, false, new float[] { 2.5f, 1f } },
-        new object[] { "(2,2)", new float[] { 2f, 2f }, false, new float[] { 2f, 2f } },
-        new object[] { "Zero", new float[] { 0f, 0f }, true, new float[] { 0f, 0f } },
-        new object[] { "(0,1)", new float[] { 0f, 1f }, true, new float[] { 0f, 1f } },
-        new object[] { "(0,2)", new float[] { 0f, 2f }, true, new float[] { 0f, 2f } },
-        new object[] { "(1,0)", new float[] { 1f, 0f }, true, new float[] { 1f, 0.5f } },
-        new object[] { "(1,1)", new float[] { 1f, 1f }, true, new float[] { 1f, 1.5f } },
-        new object[] { "(1,2)", new float[] { 1f, 2f }, true, new float[] { 1f, 2.5f } },
-        new object[] { "(2,0)", new float[] { 2f, 0f }, true, new float[] { 2f, 0f } },
-        new object[] { "(2,1)", new float[] { 2f, 1f }, true, new float[] { 2f, 1f } },
-        new object[] { "(2,2)", new float[] { 2f, 2f }, true, new float[] { 2f, 2f } },
-		};
+		static System.Collections.Generic.IEnumerable<object[]> PointHexTestData => [
+        ["Zero", new float[] { 0f, 0f }, false, new float[] { 0f, 0f }],
+        ["(0.0,1)", new float[] { 0f, 1f }, false, new float[] { 0.5f, 1f }],
+        ["(0.0,2)", new float[] { 0f, 2f }, false, new float[] { 0f, 2f }],
+        ["(0.4,0.4)", new float[] { 0.4f, 0.4f }, false, new float[] { 0.6f, 0.4f }],
+        ["(0.6,1.6)", new float[] { 0.6f, 1.6f }, false, new float[] { 0.8f, 1.6f }],
+        ["(1.0,0)", new float[] { 1f, 0f }, false, new float[] { 1f, 0f }],
+        ["(1.0,1)", new float[] { 1f, 1f }, false, new float[] { 1.5f, 1f }],
+        ["(1.0,2)", new float[] { 1f, 2f }, false, new float[] { 1f, 2f }],
+        ["(1.6,0.4)", new float[] { 1.6f, 0.4f }, false, new float[] { 1.8000001f, 0.4f }],
+        ["(1.4,1.6)", new float[] { 1.4f, 1.6f }, false, new float[] { 1.5999999f, 1.6f }],
+        ["(2.0,0)", new float[] { 2f, 0f }, false, new float[] { 2f, 0f }],
+        ["(2.0,1)", new float[] { 2f, 1f }, false, new float[] { 2.5f, 1f }],
+        ["(2.0,2)", new float[] { 2f, 2f }, false, new float[] { 2f, 2f }],
+        ["Zero", new float[] { 0f, 0f }, true, new float[] { 0f, 0f }],
+        ["(0.0,1)", new float[] { 0f, 1f }, true, new float[] { 0f, 1f }],
+        ["(0.0,2)", new float[] { 0f, 2f }, true, new float[] { 0f, 2f }],
+        ["(0.4,0.4)", new float[] { 0.4f, 0.4f }, true, new float[] { 0.4f, 0.6f }],
+        ["(0.6,1.6)", new float[] { 0.6f, 1.6f }, true, new float[] { 0.6f, 1.9000001f }],
+        ["(1.0,0)", new float[] { 1f, 0f }, true, new float[] { 1f, 0.5f }],
+        ["(1.0,1)", new float[] { 1f, 1f }, true, new float[] { 1f, 1.5f }],
+        ["(1.0,2)", new float[] { 1f, 2f }, true, new float[] { 1f, 2.5f }],
+        ["(1.6,0.4)", new float[] { 1.6f, 0.4f }, true, new float[] { 1.6f, 0.6f }],
+        ["(1.4,1.6)", new float[] { 1.4f, 1.6f }, true, new float[] { 1.4f, 1.9000001f }],
+        ["(2.0,0)", new float[] { 2f, 0f }, true, new float[] { 2f, 0f }],
+        ["(2.0,1)", new float[] { 2f, 1f }, true, new float[] { 2f, 1f }],
+        ["(2.0,2)", new float[] { 2f, 2f }, true, new float[] { 2f, 2f }],
+		];
 
-		static System.Collections.Generic.IEnumerable<object[]> ZigZagTestData => new[] {
-        new object[]{"Zero", 0f, 0f},
-        new object[]{"One", 1f, 1f},
-        new object[]{"-One", -1f, 1f},
-        new object[]{"Two", 2f, 0f},
-        new object[]{"-1.5", -1.5f, 0.5f},
-        new object[]{"-0.5", -0.5f, 0.5f},
-        new object[]{" 0.5", 0.5f, 0.5f},
-        new object[]{" 1.5", 1.5f, 0.5f},
-        new object[]{"-1.75", -1.75f, 0.25f},
-        new object[]{"-1.25", -1.25f, 0.75f},
-        new object[]{"-0.75", -0.75f, 0.75f},
-        new object[]{"-0.25", -0.25f, 0.25f},
-        new object[]{" 0.25", 0.25f, 0.25f},
-        new object[]{" 0.75", 0.75f, 0.75f},
-        new object[]{" 1.25", 1.25f, 0.75f},
-        new object[]{" 1.75", 1.75f, 0.25f},
-        };
+		static System.Collections.Generic.IEnumerable<object[]> ZigZagTestData => [
+        ["Zero", 0f, 0f],
+        ["One", 1f, 1f],
+        ["-One", -1f, 1f],
+        ["Two", 2f, 0f],
+        ["-1.5", -1.5f, 0.5f],
+        ["-0.5", -0.5f, 0.5f],
+        [" 0.5", 0.5f, 0.5f],
+        [" 1.5", 1.5f, 0.5f],
+        ["-1.75", -1.75f, 0.25f],
+        ["-1.25", -1.25f, 0.75f],
+        ["-0.75", -0.75f, 0.75f],
+        ["-0.25", -0.25f, 0.25f],
+        [" 0.25", 0.25f, 0.25f],
+        [" 0.75", 0.75f, 0.75f],
+        [" 1.25", 1.25f, 0.75f],
+        [" 1.75", 1.75f, 0.25f],
+        ];
 
 		[DataTestMethod()]
 		[TestProperty("Author", "J.C.")]
@@ -97,20 +105,20 @@ namespace ConsoleDisplay.View.Tests
         [TestProperty("Author", "J.C.")]
         [TestCategory("Math")]
         [DynamicData(nameof(PointHexTestData))]
-        public void HexPointTest(string name, float[] fVal, bool xVal, float[] fExp)
+        public void HexKPointTest(string name, float[] fVal, bool xVal, float[] fExp)
         {
-            var pfExp = new Point((int)Math.Round(fExp[0]), (int)Math.Round(fExp[1]));
-            Assert.AreEqual(pfExp, HexMath.HexKPoint((fVal[0], fVal[1]), xVal), $"{name}({fVal[0]},{fVal[1]})");
+            var pfExp = new Point((int)Math.Round(fVal[0]), (int)Math.Round(fVal[1]));
+            Assert.AreEqual(pfExp, HexMath.HexKPoint((fExp[0], fExp[1]), xVal), $"{name}({fExp[0]},{fExp[1]})");
         }
 
         [DataTestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("Math")]
         [DynamicData(nameof(PointHexTestData))]
-        public void HexPointTest2(string name, float[] fVal, bool xVal, float[] fExp)
+        public void HexKPointTest2(string name, float[] fVal, bool xVal, float[] fExp)
         {
-            var pfExp = new Point((int)Math.Round(fExp[0]), (int)Math.Round(fExp[1]));
-            Assert.AreEqual(pfExp, (fVal[0], fVal[1]).HexKPoint(xVal), $"{name}({fVal[0]},{fVal[1]})");
+            var pfExp = new Point((int)Math.Round(fVal[0]), (int)Math.Round(fVal[1]));
+            Assert.AreEqual(pfExp, (fExp[0], fExp[1]).HexKPoint(xVal), $"{name}({fExp[0]},{fExp[1]})");
         }
 
     }
@@ -230,33 +238,33 @@ namespace ConsoleDisplay.View.Tests
         private readonly string cTileDisplayTest3= "\\c00\r\n\\x00\\x00  \\c6E=-\\c4F|_\\c0E╓╖\\c00\r\n\\x00\\x00\\x00\\c6F⌐@\\c6E[]\\cA0°°\\c1A◄\\c00\r\n\\x00\\x00\\cA0oo°\\c1A►\\c6E╨╨\\c6F*∩\\c00\r\n\\x00\\x00\\x00\\c6E*∩\\c4F*∩*∩*\\c00";
 		private readonly string cTileDisplayTest4 = "\\c00\r\n\\x00\\x00    \\c6E=-=-\\c4F─┴┬─\\c0E ╓╖ \\c00\r\n\\x00\\x00    \\c6E-=-=\\c4F─┬┴─\\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\x00\\x00\\c6F⌐°@)\\c6E/¯¯\\\\\\c1A]\\cA0°°\\c1A[◄\\cA0°\\c00\r\n\\x00\\x00\\x00\\x00\\c6F ⌡⌡‼\\c6E\\\\__/\\c1A_\\cA0!!\\c1A__\\cA0!\\c00\r\n\\x00\\x00\\c1A]\\cA0oo\\c1A[]\\cA0@°\\c1A►\\c6E/╨╨\\\\\\c6F +*∩\\c00\r\n\\x00\\x00\\c1A_\\cA0!!\\c1A_/\\cA0!!\\c1A_\\c6E\\\\__/\\c6F╘═◊@\\c00\r\n\\x00\\x00\\x00\\x00\\c6E +*∩\\c4F +*∩ +*∩ +\\c00\r\n\\x00\\x00\\x00\\x00\\c6E╘═◊@\\c4F╘═◊@╘═◊@╘═\\c00";
 		private readonly string cTileDisplayTest5 = "\\c00\r\n\\x00\\x00    \\x00\\x00\\x00\\x00\\c4F─┴┬─\\c00\r\n\\x00\\x00    \\c6E=-=-\\c4F─┬┴─\\c0E ╓╖ \\c00\r\n\\x00\\x00\\c6F⌐°@)\\c6E-=-=\\c1A]\\cA0°°\\c1A[\\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼\\c6E/¯¯\\\\\\c1A_\\cA0!!\\c1A_◄\\cA0°@\\c1A[\\c00\r\n\\x00\\x00\\c1A]\\cA0oo\\c1A[\\c6E\\\\__//╨╨\\\\\\c1A_\\cA0!!\\c1A\\\\\\c00\r\n\\x00\\x00\\c1A_\\cA0!!\\c1A_]\\cA0@°\\c1A►\\c6E\\\\__/\\c6F +*∩\\c00\r\n\\x00\\x00\\c6E +*∩\\c1A/\\cA0!!\\c1A_\\c4F +*∩\\c6F╘═◊@\\c00\r\n\\x00\\x00\\c6E╘═◊@\\c4F +*∩╘═◊@ +*∩\\c00";
-		private readonly string[] cExpUpdateText = new string[]
-        {
-			"\\c00\\x00\\x00        \r\n\\x00\\x00\\x00       \r\n\\x00\\x00        \r\n\\x00\\x00\\x00",
+		private readonly string[] cExpUpdateText =
+        [
+            "\\c00\\x00\\x00        \r\n\\x00\\x00\\x00       \r\n\\x00\\x00        \r\n\\x00\\x00\\x00",
 			"\\c00\\x00\\x00\\c6E=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\c6E=-=-=-=\\c00\r\n\\x00\\x00\\c6E=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\c6E=-=-=-=\\c00",
 			"\\c00\\x00\\x00\\c4F|_|_|_|_\\c00\r\n\\x00\\x00\\x00\\c4F|_|_|_|\\c00\r\n\\x00\\x00\\c4F|_|_|_|_\\c00\r\n\\x00\\x00\\x00\\c4F|_|_|_|\\c00",
 			"\\c00\\x00\\x00\\c0E╓╖╓╖╓╖╓╖\\c00\r\n\\x00\\x00\\x00\\c0E╓╖╓╖╓╖╓\\c00\r\n\\x00\\x00\\c0E╓╖╓╖╓╖╓╖\\c00\r\n\\x00\\x00\\x00\\c0E╓╖╓╖╓╖╓\\c00",
 			"\\c00\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00\r\n\\x00\\x00\\x00\\c6F⌐@⌐@⌐@⌐\\c00\r\n\\x00\\x00\\c6F⌐@⌐@⌐@⌐@\\c00\r\n\\x00\\x00\\x00\\c6F⌐@⌐@⌐@⌐\\c00",
 			"\\c00\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\x00\\c6E[][][][\\c00\r\n\\x00\\x00\\c6E[][][][]\\c00\r\n\\x00\\x00\\x00\\c6E[][][][\\c00",
-        };
-		private readonly string[] cExpUpdateText2 = new string[]
-		{
-			"\\c00\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00",
+        ];
+		private readonly string[] cExpUpdateText2 =
+        [
+            "\\c00\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00",
 			"\\c00\\x00\\x00\\c6E=-=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\c6E-=-=-=-=-=-=-=-=\\c00\r\n\\x00\\x00\\x00\\x00\\c6E=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\x00\\c6E-=-=-=-=-=-=-=\\c00\r\n\\x00\\x00\\c6E=-=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\c6E-=-=-=-=-=-=-=-=\\c00\r\n\\x00\\x00\\x00\\x00\\c6E=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\x00\\c6E-=-=-=-=-=-=-=\\c00",
 			"\\c00\\x00\\x00\\c4F─┴┬──┴┬──┴┬──┴┬─\\c00\r\n\\x00\\x00\\c4F─┬┴──┬┴──┬┴──┬┴─\\c00\r\n\\x00\\x00\\x00\\x00\\c4F─┴┬──┴┬──┴┬──┴\\c00\r\n\\x00\\x00\\x00\\x00\\c4F─┬┴──┬┴──┬┴──┬\\c00\r\n\\x00\\x00\\c4F─┴┬──┴┬──┴┬──┴┬─\\c00\r\n\\x00\\x00\\c4F─┬┴──┬┴──┬┴──┬┴─\\c00\r\n\\x00\\x00\\x00\\x00\\c4F─┴┬──┴┬──┴┬──┴\\c00\r\n\\x00\\x00\\x00\\x00\\c4F─┬┴──┬┴──┬┴──┬\\c00",
 			"\\c00\\x00\\x00\\c0E ╓╖  ╓╖  ╓╖  ╓╖ \\c00\r\n\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\x00\\x00\\c0E ╓╖  ╓╖  ╓╖  ╓\\c00\r\n\\x00\\x00\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c00\r\n\\x00\\x00\\c0E ╓╖  ╓╖  ╓╖  ╓╖ \\c00\r\n\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\x00\\x00\\c0E ╓╖  ╓╖  ╓╖  ╓\\c00\r\n\\x00\\x00\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c02▒\\c22▓\\c2A▓\\c22░\\c00",
 			"\\c00\\x00\\x00\\c6F⌐°@)⌐°@)⌐°@)⌐°@)\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼ ⌡⌡‼ ⌡⌡‼ ⌡⌡‼\\c00\r\n\\x00\\x00\\x00\\x00\\c6F⌐°@)⌐°@)⌐°@)⌐°\\c00\r\n\\x00\\x00\\x00\\x00\\c6F ⌡⌡‼ ⌡⌡‼ ⌡⌡‼ ⌡\\c00\r\n\\x00\\x00\\c6F⌐°@)⌐°@)⌐°@)⌐°@)\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼ ⌡⌡‼ ⌡⌡‼ ⌡⌡‼\\c00\r\n\\x00\\x00\\x00\\x00\\c6F⌐°@)⌐°@)⌐°@)⌐°\\c00\r\n\\x00\\x00\\x00\\x00\\c6F ⌡⌡‼ ⌡⌡‼ ⌡⌡‼ ⌡\\c00",
 			"\\c00\\x00\\x00\\c6E/¯¯\\\\/¯¯\\\\/¯¯\\\\/¯¯\\\\\\c00\r\n\\x00\\x00\\c6E\\\\__/\\\\__/\\\\__/\\\\__/\\c00\r\n\\x00\\x00\\x00\\x00\\c6E/¯¯\\\\/¯¯\\\\/¯¯\\\\/¯\\c00\r\n\\x00\\x00\\x00\\x00\\c6E\\\\__/\\\\__/\\\\__/\\\\_\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\/¯¯\\\\/¯¯\\\\/¯¯\\\\\\c00\r\n\\x00\\x00\\c6E\\\\__/\\\\__/\\\\__/\\\\__/\\c00\r\n\\x00\\x00\\x00\\x00\\c6E/¯¯\\\\/¯¯\\\\/¯¯\\\\/¯\\c00\r\n\\x00\\x00\\x00\\x00\\c6E\\\\__/\\\\__/\\\\__/\\\\_\\c00",
-		};
-		private readonly string[] cExpUpdateText3 = new string[]
-		{
-			"\\c00\\x00\\x00    \\x00\\x00\\x00\\x00    \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00",
+		];
+		private readonly string[] cExpUpdateText3 =
+        [
+            "\\c00\\x00\\x00    \\x00\\x00\\x00\\x00    \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00",
 			"\\c00\\x00\\x00\\c6E=-=-\\c00\\x00\\x00\\x00\\x00\\c6E=-=-\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00\r\n\\x00\\x00\\c6E=-=--=-==-=--=-=\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00\r\n\\x00\\x00\\c6E=-=--=-==-=--=-=\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00\r\n\\x00\\x00\\c6E=-=--=-==-=--=-=\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00",
 			"\\c00\\x00\\x00\\c4F─┴┬─\\c00\\x00\\x00\\x00\\x00\\c4F─┴┬─\\c00\r\n\\x00\\x00\\c4F─┬┴──┴┬──┬┴──┴┬─\\c00\r\n\\x00\\x00\\c4F─┴┬──┬┴──┴┬──┬┴─\\c00\r\n\\x00\\x00\\c4F─┬┴──┴┬──┬┴──┴┬─\\c00\r\n\\x00\\x00\\c4F─┴┬──┬┴──┴┬──┬┴─\\c00\r\n\\x00\\x00\\c4F─┬┴──┴┬──┬┴──┴┬─\\c00\r\n\\x00\\x00\\c4F─┴┬──┬┴──┴┬──┬┴─\\c00\r\n\\x00\\x00\\c4F─┬┴──┴┬──┬┴──┴┬─\\c00",
 			"\\c00\\x00\\x00\\c0E ╓╖ \\c00\\x00\\x00\\x00\\x00\\c0E ╓╖ \\c00\r\n\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c00\r\n\\x00\\x00\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c00\r\n\\x00\\x00\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c00\r\n\\x00\\x00\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c00\r\n\\x00\\x00\\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c2A▓\\c22░\\c02▒\\c22▓\\c0E ╓╖ \\c00",
 			"\\c00\\x00\\x00\\c6F⌐°@)\\c00\\x00\\x00\\x00\\x00\\c6F⌐°@)\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼⌐°@) ⌡⌡‼⌐°@)\\c00\r\n\\x00\\x00\\c6F⌐°@) ⌡⌡‼⌐°@) ⌡⌡‼\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼⌐°@) ⌡⌡‼⌐°@)\\c00\r\n\\x00\\x00\\c6F⌐°@) ⌡⌡‼⌐°@) ⌡⌡‼\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼⌐°@) ⌡⌡‼⌐°@)\\c00\r\n\\x00\\x00\\c6F⌐°@) ⌡⌡‼⌐°@) ⌡⌡‼\\c00\r\n\\x00\\x00\\c6F ⌡⌡‼⌐°@) ⌡⌡‼⌐°@)\\c00",
 			"\\c00\\x00\\x00\\c6E/¯¯\\\\\\c00\\x00\\x00\\x00\\x00\\c6E/¯¯\\\\\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\\\\\__//¯¯\\\\\\\\__/\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\\\\\__//¯¯\\\\\\\\__/\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\\\\\__//¯¯\\\\\\\\__/\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00",
-		};
+		];
 
 		[TestInitialize()]
         public void Init()

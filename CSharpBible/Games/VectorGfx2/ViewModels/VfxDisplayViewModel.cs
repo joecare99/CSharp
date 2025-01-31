@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
 using System.Timers;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace VectorGfx2.ViewModels;

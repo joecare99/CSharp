@@ -13,27 +13,26 @@
 // ***********************************************************************
 using System;
 
-namespace ConsoleDisplay.View
-{
-    public interface IConsole
-    {
-        ConsoleColor ForegroundColor { get; set; }
-        ConsoleColor BackgroundColor { get; set; }
-        bool IsOutputRedirected { get; }
-        bool KeyAvailable { get; }
-        int LargestWindowHeight { get; }
-        string Title { get; set; }
-        int WindowHeight { get; set; }
-        int WindowWidth { get; set; }
+namespace ConsoleDisplay.View;
 
-        void Beep(int freq, int len);
-        void Clear();
-        (int Left, int Top) GetCursorPosition();
-        ConsoleKeyInfo? ReadKey();
-        string ReadLine();
-        void SetCursorPosition(int left, int top);
-        void Write(char ch);
-        void Write(string? st);
-        void WriteLine(string? st = "");
-    }
+public interface IConsole
+{
+    ConsoleColor ForegroundColor { get; set; }
+    ConsoleColor BackgroundColor { get; set; }
+    bool IsOutputRedirected { get; }
+    bool KeyAvailable { get; }
+    int LargestWindowHeight { get; }
+    string Title { get; set; }
+    int WindowHeight { get; set; }
+    int WindowWidth { get; set; }
+
+    void Beep(int freq, int len);
+    void Clear();
+    (int Left, int Top) GetCursorPosition();
+    ConsoleKeyInfo? ReadKey();
+    string ReadLine();
+    void SetCursorPosition(int left, int top);
+    void Write(char ch);
+    void Write(string? st);
+    void WriteLine(string? st = "");
 }

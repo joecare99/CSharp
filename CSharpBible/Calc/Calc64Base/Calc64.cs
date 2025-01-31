@@ -14,6 +14,7 @@
 using BaseLib.Helper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 /// <summary>
@@ -25,7 +26,7 @@ namespace Calc64Base
     /// <summary>
     /// a 64 bit calculator-class
     /// </summary>
-    public class Calc64
+    public class Calc64 : INotifyPropertyChanged
     {
         #region Properties
         #region private properties
@@ -95,6 +96,7 @@ namespace Calc64Base
         /// Occurs when [calculate operation error].
         /// </summary>
         public event EventHandler<Exception>? CalcOperationError;
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Methods
@@ -105,6 +107,11 @@ namespace Calc64Base
         static Calc64() {
             foreach (var op in StandardOperations.GetAll())
                 RegisterOperation(op);
+        }
+
+        public Calc64()
+        {
+            CalcOperationChanged += (s,e) => PropertyChanged?.Invoke(s,new(e.prop));
         }
 
         /// <summary>

@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
 using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;

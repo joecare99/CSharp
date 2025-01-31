@@ -14,12 +14,11 @@
 using System;
 using System.Drawing;
 
-namespace ConsoleDisplay.View
-{
-    public interface ITileDef
-    {
-        Size TileSize { get; }
+namespace ConsoleDisplay.View;
 
-        (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile);
-    }
+public interface ITileDef
+{
+    Size TileSize { get; }
+
+    (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile);
 }

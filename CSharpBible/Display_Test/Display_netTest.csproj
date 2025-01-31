@@ -1,7 +1,7 @@
 <Project>
 	<Import Project="..\Solution_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -12,6 +12,6 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	</ItemGroup>
 </Project>

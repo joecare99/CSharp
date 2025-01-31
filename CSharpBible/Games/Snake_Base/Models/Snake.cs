@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Model;
 using BaseLib.Helper;
 using BaseLib.Interfaces;
 using System;
@@ -20,6 +19,7 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using Snake_Base.Models.Interfaces;
 using Game_Base.Model;
+using BaseLib.Models;
 
 /// <summary>
 /// The Models namespace.

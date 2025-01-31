@@ -22,7 +22,7 @@ namespace Sokoban_Base.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource1 {
+    public class Resource1 {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Sokoban_Base.Properties {
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sokoban_Base.Properties.Resource1", typeof(Resource1).Assembly);
@@ -51,7 +51,7 @@ namespace Sokoban_Base.Properties {
         ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cannot move to direction {0} ähnelt.
         /// </summary>
-        internal static string CannotMoveMsg {
+        public static string CannotMoveMsg {
             get {
                 return ResourceManager.GetString("CannotMoveMsg", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die , (&lt;Enter&gt;) to continue ... ähnelt.
         /// </summary>
-        internal static string Continue {
+        public static string Continue {
             get {
                 return ResourceManager.GetString("Continue", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die You left the game ! ähnelt.
         /// </summary>
-        internal static string EndMessage {
+        public static string EndMessage {
             get {
                 return ResourceManager.GetString("EndMessage", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die You solved the puzzle ähnelt.
         /// </summary>
-        internal static string GameSuccess {
+        public static string GameSuccess {
             get {
                 return ResourceManager.GetString("GameSuccess", resourceCulture);
             }
@@ -107,7 +107,7 @@ namespace Sokoban_Base.Properties {
         ///Your can move the player in 4 directions: {1}, but only if you are not hitting a wall.
         ///The {0}s can be moved, by pushing them into the de [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
-        internal static string InfoText {
+        public static string InfoText {
             get {
                 return ResourceManager.GetString("InfoText", resourceCulture);
             }
@@ -116,7 +116,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die OK ähnelt.
         /// </summary>
-        internal static string OK {
+        public static string OK {
             get {
                 return ResourceManager.GetString("OK", resourceCulture);
             }
@@ -125,7 +125,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Possible moves: ähnelt.
         /// </summary>
-        internal static string PosibMoves {
+        public static string PosibMoves {
             get {
                 return ResourceManager.GetString("PosibMoves", resourceCulture);
             }
@@ -134,7 +134,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Level will be restarted ... ähnelt.
         /// </summary>
-        internal static string RestartMessage {
+        public static string RestartMessage {
             get {
                 return ResourceManager.GetString("RestartMessage", resourceCulture);
             }
@@ -143,7 +143,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please select an action : (Q)uit ähnelt.
         /// </summary>
-        internal static string SelectAction {
+        public static string SelectAction {
             get {
                 return ResourceManager.GetString("SelectAction", resourceCulture);
             }
@@ -152,7 +152,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die stone ähnelt.
         /// </summary>
-        internal static string stone {
+        public static string stone {
             get {
                 return ResourceManager.GetString("stone", resourceCulture);
             }
@@ -161,7 +161,7 @@ namespace Sokoban_Base.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die {0}  stones are in target-area ähnelt.
         /// </summary>
-        internal static string StonesInDest {
+        public static string StonesInDest {
             get {
                 return ResourceManager.GetString("StonesInDest", resourceCulture);
             }
@@ -169,16 +169,16 @@ namespace Sokoban_Base.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
-        ///[7]Revision: 395
+        ///[7]Revision: 1276
         ///[8]Node Kind: directory
         ///[9]Schedule: normal
         ///[10]Last Changed Author: jc99
-        ///[11]Last Changed Rev: 240
-        ///[12]Last Changed Date: 2022-09-17 12:15:49 +0200 (Sa, 17 Sep 2022)
+        ///[11]Last Changed Rev: 1275
+        ///[12]Last Changed Date: 2025-01-30 17:52:36 +0100 (Do, 30 Jan 2025)
         ///[13]
         /// ähnelt.
         /// </summary>
-        internal static string Version {
+        public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
             }

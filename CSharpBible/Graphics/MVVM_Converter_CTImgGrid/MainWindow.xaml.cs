@@ -1,7 +1,4 @@
-﻿using MVVM.ViewModel;
-using MVVM_Converter_CTImgGrid.ViewModel;
-using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace MVVM_Converter_CTImgGrid
 {

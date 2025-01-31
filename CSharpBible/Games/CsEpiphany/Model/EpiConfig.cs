@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CsEpiphany.Model.Interfaces;
+﻿using CsEpiphany.Model.Interfaces;
 
 namespace CsEpiphany.Model;
 

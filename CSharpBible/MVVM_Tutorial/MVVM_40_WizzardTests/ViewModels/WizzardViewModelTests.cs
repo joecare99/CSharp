@@ -17,7 +17,6 @@ using MVVM.ViewModel;
 using MVVM.View.Extension;
 using System;
 using NSubstitute;
-using MVVM_40_Wizzard.Models;
 
 /// <summary>
 /// The Tests namespace.

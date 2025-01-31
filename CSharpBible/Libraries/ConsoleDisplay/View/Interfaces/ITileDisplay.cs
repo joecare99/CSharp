@@ -23,7 +23,7 @@ namespace ConsoleDisplay.View
         Point Position { get; }
         Size DispSize { get; }
         Size TileSize { get; }
-        IConsole console { get; }
+//        IConsole console { get; }
         Point DispOffset { get; set; }
         Func<Point, T>? FncGetTile { get; set; }
         Func<Point, Point>? FncOldPos { get; set; }

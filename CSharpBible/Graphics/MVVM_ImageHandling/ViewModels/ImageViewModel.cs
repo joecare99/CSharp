@@ -17,11 +17,8 @@ using MVVM.ViewModel;
 using MVVM_ImageHandling.Models;
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 

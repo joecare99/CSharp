@@ -13,10 +13,9 @@
 // ***********************************************************************
 
 using BaseLib.Helper;
+using BaseLib.Interfaces;
 using ConsoleDisplay.View;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Security.Authentication.ExtendedProtection;
 using System.Threading;
 using Werner_Flaschbier_Base.Model;
 using Werner_Flaschbier_Base.View;

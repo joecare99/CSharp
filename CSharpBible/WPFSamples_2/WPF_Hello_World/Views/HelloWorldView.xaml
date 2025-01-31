@@ -16,8 +16,6 @@
         <mvvm:HelloWorldViewModel/>
     </Page.DataContext>
     <Grid>
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
-            Hello, WPF-World!
-        </TextBlock>
+        <TextBlock Text="{Binding Greeting}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </Page>

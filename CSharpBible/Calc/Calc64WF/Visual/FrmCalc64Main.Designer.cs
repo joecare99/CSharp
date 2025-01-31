@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System;
 using Calc64WF.Properties;
+using Calc64WF.ViewModel;
 
 namespace Calc64WF.Visual
 {
@@ -103,9 +104,8 @@ namespace Calc64WF.Visual
             this.btnNum1.Size = new System.Drawing.Size(60, 60);
             this.btnNum1.TabIndex = 0;
             this.btnNum1.Tag = "1";
-            this.btnNum1.Text = "&1";
+            this.btnNum1.Text = "1";
             this.btnNum1.UseVisualStyleBackColor = true;
-            this.btnNum1.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnNum1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnNum1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -149,9 +149,8 @@ namespace Calc64WF.Visual
             this.btnNum2.Size = new System.Drawing.Size(60, 60);
             this.btnNum2.TabIndex = 4;
             this.btnNum2.Tag = "2";
-            this.btnNum2.Text = "&2";
+            this.btnNum2.Text = "2";
             this.btnNum2.UseVisualStyleBackColor = true;
-            this.btnNum2.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnNum2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnNum2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -168,9 +167,8 @@ namespace Calc64WF.Visual
             this.btnNum3.Size = new System.Drawing.Size(60, 60);
             this.btnNum3.TabIndex = 5;
             this.btnNum3.Tag = "3";
-            this.btnNum3.Text = "&3";
+            this.btnNum3.Text = "3";
             this.btnNum3.UseVisualStyleBackColor = true;
-            this.btnNum3.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnNum3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnNum3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -187,9 +185,8 @@ namespace Calc64WF.Visual
             this.btnNum4.Size = new System.Drawing.Size(60, 60);
             this.btnNum4.TabIndex = 6;
             this.btnNum4.Tag = "4";
-            this.btnNum4.Text = "&4";
+            this.btnNum4.Text = "4";
             this.btnNum4.UseVisualStyleBackColor = true;
-            this.btnNum4.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnNum4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnNum4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -208,7 +205,6 @@ namespace Calc64WF.Visual
             this.btnNum5.Tag = "5";
             this.btnNum5.Text = "5";
             this.btnNum5.UseVisualStyleBackColor = true;
-            this.btnNum5.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnNum5.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnNum5.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -227,7 +223,6 @@ namespace Calc64WF.Visual
             this.button5.Tag = "6";
             this.button5.Text = "6";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.btnNummber_Click);
             this.button5.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.button5.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -246,7 +241,6 @@ namespace Calc64WF.Visual
             this.button6.Tag = "7";
             this.button6.Text = "7";
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.btnNummber_Click);
             this.button6.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.button6.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -265,7 +259,6 @@ namespace Calc64WF.Visual
             this.button7.Tag = "8";
             this.button7.Text = "8";
             this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.btnNummber_Click);
             this.button7.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.button7.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -284,7 +277,6 @@ namespace Calc64WF.Visual
             this.button8.Tag = "9";
             this.button8.Text = "9";
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.btnNummber_Click);
             this.button8.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.button8.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -303,7 +295,6 @@ namespace Calc64WF.Visual
             this.btnHexA.Tag = "10";
             this.btnHexA.Text = "A";
             this.btnHexA.UseVisualStyleBackColor = true;
-            this.btnHexA.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnHexA.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnHexA.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -322,7 +313,6 @@ namespace Calc64WF.Visual
             this.btnNum0.Tag = "0";
             this.btnNum0.Text = "0";
             this.btnNum0.UseVisualStyleBackColor = true;
-            this.btnNum0.Click += new System.EventHandler(this.btnNummber_Click);
             this.btnNum0.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnNum0.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -341,7 +331,6 @@ namespace Calc64WF.Visual
             this.button11.Tag = "+/-";
             this.button11.Text = "+/-";
             this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.btnOperator_Click);
             this.button11.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.button11.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -388,7 +377,7 @@ namespace Calc64WF.Visual
             this.btnBack.Tag = "+2";
             this.btnBack.Text = "<==";
             this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            this.btnBack.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnBack.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnClear
@@ -406,7 +395,7 @@ namespace Calc64WF.Visual
             this.btnClear.Tag = "+1";
             this.btnClear.Text = "C";
             this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnClear.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnClear.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnClearAll
@@ -424,7 +413,7 @@ namespace Calc64WF.Visual
             this.btnClearAll.Tag = "+3";
             this.btnClearAll.Text = "&CE";
             this.btnClearAll.UseVisualStyleBackColor = true;
-            this.btnClearAll.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnClearAll.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnClearAll.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnHexB
@@ -442,7 +431,7 @@ namespace Calc64WF.Visual
             this.btnHexB.Tag = "11";
             this.btnHexB.Text = "B";
             this.btnHexB.UseVisualStyleBackColor = true;
-            this.btnHexB.Click += new System.EventHandler(this.btnNummber_Click);
+            this.btnHexB.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnHexB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnHexC
@@ -460,7 +449,7 @@ namespace Calc64WF.Visual
             this.btnHexC.Tag = "12";
             this.btnHexC.Text = "C";
             this.btnHexC.UseVisualStyleBackColor = true;
-            this.btnHexC.Click += new System.EventHandler(this.btnNummber_Click);
+            this.btnHexC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnHexC.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnHexF
@@ -478,7 +467,7 @@ namespace Calc64WF.Visual
             this.btnHexF.Tag = "15";
             this.btnHexF.Text = "F";
             this.btnHexF.UseVisualStyleBackColor = true;
-            this.btnHexF.Click += new System.EventHandler(this.btnNummber_Click);
+            this.btnHexF.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnHexF.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnHexE
@@ -496,7 +485,7 @@ namespace Calc64WF.Visual
             this.btnHexE.Tag = "14";
             this.btnHexE.Text = "E";
             this.btnHexE.UseVisualStyleBackColor = true;
-            this.btnHexE.Click += new System.EventHandler(this.btnNummber_Click);
+            this.btnHexE.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnHexE.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnHexD
@@ -514,7 +503,7 @@ namespace Calc64WF.Visual
             this.btnHexD.Tag = "13";
             this.btnHexD.Text = "D";
             this.btnHexD.UseVisualStyleBackColor = true;
-            this.btnHexD.Click += new System.EventHandler(this.btnNummber_Click);
+            this.btnHexD.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnHexD.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnMult
@@ -532,7 +521,7 @@ namespace Calc64WF.Visual
             this.btnMult.Tag = "-4";
             this.btnMult.Text = "*";
             this.btnMult.UseVisualStyleBackColor = true;
-            this.btnMult.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnMult.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnMult.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnPlus
@@ -550,7 +539,7 @@ namespace Calc64WF.Visual
             this.btnPlus.Tag = "-2";
             this.btnPlus.Text = "+";
             this.btnPlus.UseVisualStyleBackColor = true;
-            this.btnPlus.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnPlus.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnPlus.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnMinus
@@ -568,7 +557,7 @@ namespace Calc64WF.Visual
             this.btnMinus.Tag = "-3";
             this.btnMinus.Text = "-";
             this.btnMinus.UseVisualStyleBackColor = true;
-            this.btnMinus.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnMinus.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnMinus.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnResult
@@ -587,7 +576,6 @@ namespace Calc64WF.Visual
             this.btnResult.Tag = "-1";
             this.btnResult.Text = "=";
             this.btnResult.UseVisualStyleBackColor = true;
-            this.btnResult.Click += new System.EventHandler(this.btnOperator_Click);
             this.btnResult.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnResult.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
@@ -606,7 +594,7 @@ namespace Calc64WF.Visual
             this.btnOpAnd.Tag = "-6";
             this.btnOpAnd.Text = "AND";
             this.btnOpAnd.UseVisualStyleBackColor = true;
-            this.btnOpAnd.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnOpAnd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnOpAnd.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnOpOR
@@ -624,7 +612,7 @@ namespace Calc64WF.Visual
             this.btnOpOR.Tag = "-7";
             this.btnOpOR.Text = "OR";
             this.btnOpOR.UseVisualStyleBackColor = true;
-            this.btnOpOR.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnOpOR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnOpOR.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnOpXOR
@@ -642,7 +630,7 @@ namespace Calc64WF.Visual
             this.btnOpXOR.Tag = "-8";
             this.btnOpXOR.Text = "XOR";
             this.btnOpXOR.UseVisualStyleBackColor = true;
-            this.btnOpXOR.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnOpXOR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnOpXOR.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnOpNOT
@@ -660,7 +648,7 @@ namespace Calc64WF.Visual
             this.btnOpNOT.Tag = "-9";
             this.btnOpNOT.Text = "NOT";
             this.btnOpNOT.UseVisualStyleBackColor = true;
-            this.btnOpNOT.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnOpNOT.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnOpNOT.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnMemory
@@ -673,10 +661,10 @@ namespace Calc64WF.Visual
             this.btnMemory.Name = "btnMemory";
             this.btnMemory.Size = new System.Drawing.Size(56, 58);
             this.btnMemory.TabIndex = 36;
-            this.btnMemory.Tag = "MR";
+            this.btnMemory.Tag = "-12";
             this.btnMemory.Text = "MR";
             this.btnMemory.UseVisualStyleBackColor = true;
-            this.btnMemory.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnMemory.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnMemory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // button12
@@ -689,10 +677,10 @@ namespace Calc64WF.Visual
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(56, 58);
             this.button12.TabIndex = 37;
-            this.button12.Tag = "MS";
+            this.button12.Tag = "-11";
             this.button12.Text = "MS";
             this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.btnOperator_Click);
+            this.button12.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.button12.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnClose
@@ -726,6 +714,7 @@ namespace Calc64WF.Visual
             this.pnlMaster.Size = new System.Drawing.Size(66, 112);
             this.pnlMaster.TabIndex = 40;
             this.pnlMaster.SizeChanged += new System.EventHandler(this.pnlMaster_SizeChanged);
+            this.pnlMaster.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.pnlMaster.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // btnDivide
@@ -743,7 +732,7 @@ namespace Calc64WF.Visual
             this.btnDivide.Tag = "-5";
             this.btnDivide.Text = "/";
             this.btnDivide.UseVisualStyleBackColor = true;
-            this.btnDivide.Click += new System.EventHandler(this.btnOperator_Click);
+            this.btnDivide.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.btnDivide.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             // 
             // FrmCalc64Main
@@ -791,18 +780,20 @@ namespace Calc64WF.Visual
             this.Controls.Add(this.pictureBox1);
             this.Name = "FrmCalc64Main";
             this.Text = "Calc64-Winform";
-            this.Click += new System.EventHandler(this.btnOperator_Click);
+            this.Click += new System.EventHandler(this.btnDefault_Click);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCalc32Main_KeyDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmCalc32Main_MouseMove);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
+
         #endregion
 
         /// <summary>
         /// The BTN one
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnNum1;
         /// <summary>
         /// The label result
@@ -815,46 +806,57 @@ namespace Calc64WF.Visual
         /// <summary>
         /// The button1
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnNum2;
         /// <summary>
         /// The button2
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnNum3;
         /// <summary>
         /// The button3
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnNum4;
         /// <summary>
         /// The button4
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnNum5;
         /// <summary>
         /// The button5
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button button5;
         /// <summary>
         /// The button6
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button button6;
         /// <summary>
         /// The button7
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button button7;
         /// <summary>
         /// The button8
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button button8;
         /// <summary>
         /// The BTN hexadecimal a
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexA;
         /// <summary>
         /// The button10
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnNum0;
         /// <summary>
         /// The button11
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button button11;
         /// <summary>
         /// The label operation
@@ -867,70 +869,87 @@ namespace Calc64WF.Visual
         /// <summary>
         /// The BTN back
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.BackSpaceCommand))]
         private System.Windows.Forms.Button btnBack;
         /// <summary>
         /// The BTN clear
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnClear;
         /// <summary>
         /// The BTN clear all
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnClearAll;
         /// <summary>
         /// The BTN hexadecimal b
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexB;
         /// <summary>
         /// The BTN hexadecimal c
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexC;
         /// <summary>
         /// The BTN hexadecimal f
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexF;
         /// <summary>
         /// The BTN hexadecimal e
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexE;
         /// <summary>
         /// The BTN hexadecimal d
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexD;
         /// <summary>
         /// The BTN mult
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnMult;
         /// <summary>
         /// The BTN plus
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnPlus;
         /// <summary>
         /// The BTN minus
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnMinus;
         /// <summary>
         /// The BTN result
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnResult;
         /// <summary>
         /// The BTN op and
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpAnd;
         /// <summary>
         /// The BTN op or
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpOR;
         /// <summary>
         /// The BTN op xor
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpXOR;
         /// <summary>
         /// The BTN op not
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnOpNOT;
         /// <summary>
         /// The BTN memory
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnMemory;
         /// <summary>
         /// The button12
@@ -947,6 +966,7 @@ namespace Calc64WF.Visual
         /// <summary>
         /// The BTN divide
         /// </summary>
+        [CommandBinding(nameof(FrmCalc64MainViewModel.OperationCommand))]
         private System.Windows.Forms.Button btnDivide;
     }
 }

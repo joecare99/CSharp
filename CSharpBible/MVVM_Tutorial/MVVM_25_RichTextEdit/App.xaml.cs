@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Helper;
 using BaseLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;

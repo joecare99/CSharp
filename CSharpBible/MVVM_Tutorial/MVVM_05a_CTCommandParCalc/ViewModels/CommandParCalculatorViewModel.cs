@@ -11,13 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MVVM.View.Extension;
 using MVVM.ViewModel;
 using MVVM_05a_CTCommandParCalc.Data;
-using MVVM_05a_CTCommandParCalc.Model;
 using MVVM_05a_CTCommandParCalc.Model.Interfaces;
 
 /// <summary>

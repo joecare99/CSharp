@@ -17,7 +17,6 @@ using System;
 using System.ComponentModel;
 using WPF_ControlsAndLayout.Models.Interfaces;
 using CommunityToolkit.Mvvm.Input;
-using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Xml;
 using System.Windows.Markup;

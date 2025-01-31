@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\Solution.props" />
+	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
@@ -14,7 +14,13 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Remove="View\Interfaces\IConsole.cs" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
 		<PackageReference Include="IndexRange" Version="1.0.3" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 </Project>

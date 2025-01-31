@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 using System.Collections.Generic;
 using System.Windows;
-using VectorGfx2.Models.Interfaces;
 
 namespace VectorGfx2.ViewModels;
 

@@ -8,11 +8,14 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
 		<Compile Remove="bin\**" />
+		<Compile Remove="View\**" />
 		<EmbeddedResource Remove="bin\**" />
+		<EmbeddedResource Remove="View\**" />
 		<None Remove="bin\**" />
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
+		<None Remove="View\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,14 +26,7 @@
 		<None Remove="ReadMe.md.bak" />
 		<None Remove="Resource1.resx.bak" />
 	</ItemGroup>
-	
-	<ItemGroup Condition ="'!$(TargetFramework.StartsWith(net4))'">
-		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-	</ItemGroup>
-	<ItemGroup Condition ="$(TargetFramework.StartsWith(net4))">
-		<ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay_win.csproj" />
-	</ItemGroup>
-	
+		
 	<ItemGroup>
 		<Compile Update="Properties\Resource1.Designer.cs">
 			<DesignTime>True</DesignTime>
@@ -53,9 +49,11 @@
 
 	<ItemGroup>
 		<Folder Include="Resources\" />
-	</ItemGroup>
+    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange" Version="1.0.3" />
+  </ItemGroup>
 
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition ="'$(TargetFramework)'=='net6.0'">
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(TargetFramework)'=='net6.0'">
 		<Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Version.svn" />
 	</Target>
 

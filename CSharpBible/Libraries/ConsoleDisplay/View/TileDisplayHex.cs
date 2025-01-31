@@ -10,10 +10,10 @@ namespace ConsoleDisplay.View
 			new PointF(f.X, f.Y + ZigZag(f.X ) * 0.5f) :
 			new PointF(f.X + ZigZag(f.Y) * 0.5f, f.Y);
 
-		public static Point HexKPoint(this (float X, float Y) f, bool v) =>
+	    public static Point HexKPoint(this (float X, float Y) f, bool v) =>
 			v ?
-			new Point((int)Math.Round(f.X), (int)Math.Round(f.Y + ZigZag(f.X) * 0.5f)) :
-			new Point((int)Math.Round(f.X + ZigZag(f.Y) * 0.5f), (int)Math.Round(f.Y));
+			new Point((int)Math.Round(f.X), (int)Math.Round(f.Y - ZigZag(f.X) * 0.5f)) :
+			new Point((int)Math.Round(f.X - ZigZag(f.Y) * 0.5f), (int)Math.Round(f.Y));
 
 		public static float ZigZag(this float x) =>
 			(float)Math.Abs(x - Math.Floor((x + 1.0) * 0.5) * 2.0);

@@ -48,6 +48,7 @@ namespace DataGridEx
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            // TODO DataGrid wird nicht mehr unterstützt. Verwenden Sie stattdessen DataGridView. Weitere Informationen finden Sie unter: https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
             this.dataGrid1 = new System.Windows.Forms.DataGrid();
             this.customerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.bindingNavigator1 = new System.Windows.Forms.BindingNavigator(this.components);
@@ -224,7 +225,8 @@ namespace DataGridEx
         /// <summary>
         /// The data grid1
         /// </summary>
-        private System.Windows.Forms.DataGrid dataGrid1;
+        // TODO DataGrid wird nicht mehr unterstützt. Verwenden Sie stattdessen DataGridView. Weitere Informationen finden Sie unter: https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
+                        private System.Windows.Forms.DataGrid dataGrid1;
         /// <summary>
         /// The customer binding source
         /// </summary>
