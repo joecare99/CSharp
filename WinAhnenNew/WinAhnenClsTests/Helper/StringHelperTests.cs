@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-/* Nicht gemergte Änderung aus Projekt "WinAhnenClsTests (net481-windows)"
+/* Nicht gemergte Änderung aus Projekt "WinAhnenClsTests (net481)"
 Vor:
 using WinAhnenCls.Helper;
 using System;
@@ -15,7 +15,7 @@ Nach:
 using System;
 */
 
-/* Nicht gemergte Änderung aus Projekt "WinAhnenClsTests (net481-windows)"
+/* Nicht gemergte Änderung aus Projekt "WinAhnenClsTests (net481)"
 Vor:
 using System.Threading.Tasks;
 Nach:
