@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+    <TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
 	  <SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -18,10 +18,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BaseLib\BaseLib_net.csproj" />
+    <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 </Project>
