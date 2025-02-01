@@ -2,7 +2,7 @@
 	<Import Project="..\Calc.props" />
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net462-windows;net472-windows;net481-windows;net48-windows</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net481;net48</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -30,7 +30,6 @@
     <Compile Include="..\Calc32\ViewModels\Interfaces\ICalculatorViewModel.cs" Link="ViewModels\Interfaces\ICalculatorViewModel.cs" />
   </ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
 		<ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
 		<ProjectReference Include="..\..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
 	</ItemGroup>
