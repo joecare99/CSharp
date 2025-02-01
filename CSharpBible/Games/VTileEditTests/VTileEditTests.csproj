@@ -21,9 +21,9 @@
   <ItemGroup>
     <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
     <ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
-    <ProjectReference Include="..\Snake_Base\Snake_Base_net.csproj" />
+    <ProjectReference Include="..\Snake_Base\Snake_Base.csproj" />
     <ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />
-    <ProjectReference Include="..\Snake_Console\Snake_Console_net.csproj" />
+    <ProjectReference Include="..\Snake_Console\Snake_Console.csproj" />
     <ProjectReference Include="..\Sokoban_Base\Sokoban_Base.csproj" />
     <ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
     <ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Console.csproj" />
