@@ -13,6 +13,7 @@
 // ***********************************************************************
 
 using BaseLib.Helper;
+using BaseLib.Interfaces;
 using ConsoleDisplay.View;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;

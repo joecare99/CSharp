@@ -19,8 +19,9 @@
 		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Game_Base\Game_Base.csproj" />
-	</ItemGroup>
+    <ProjectReference Condition="!$(TargetFramework.StartsWith(net4))"  Include="..\Game_Base\Game_Base_net.csproj"  />
+    <ProjectReference Condition="$(TargetFramework.StartsWith(net4))"  Include="..\Game_Base\Game_Base.csproj"  />
+  </ItemGroup>
 
 	<ItemGroup>
 		<Compile Update="Ressource\Resource1.Designer.cs">

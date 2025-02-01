@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -23,7 +24,7 @@ namespace ConsoleDisplay.View
     /// Implements the <see cref="ConsoleDisplay.View.MyConsoleBase" />
     /// </summary>
     /// <seealso cref="ConsoleDisplay.View.MyConsoleBase" />
-    public class MyConsole : MyConsoleBase
+    public class MyConsole : MyConsoleBase, IConsole
     {
         /// <summary>
         /// Gets or sets the color of the foreground.
