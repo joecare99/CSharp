@@ -2,7 +2,7 @@
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net481;net48;net472;net462</TargetFrameworks>
 		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -19,7 +19,7 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Condition="'$(TargetFrameWork)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
   </ItemGroup>
 </Project>
