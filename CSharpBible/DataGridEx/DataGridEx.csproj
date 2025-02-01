@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="..\Solution.props" />
   <PropertyGroup>
-    <TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;net481;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
     <OutputType>WinExe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
