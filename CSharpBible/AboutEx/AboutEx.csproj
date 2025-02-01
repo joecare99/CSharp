@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Solution_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net4.8.1-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
 		<OutputType>WinExe</OutputType>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWindowsForms>true</UseWindowsForms>

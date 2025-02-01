@@ -1,5 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BaseLib.Helper;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
+using MVVM_Converter_CTDrawGrid.Models.Interfaces;
+using System;
+using System.ComponentModel;
 using System.Drawing;
 using Werner_Flaschbier_Base.Model;
 
@@ -19,7 +23,7 @@ namespace MVVM_Converter_CTDrawGrid.ViewModel
         /// <summary>
         /// Initializes a new instance of the <see cref="PlotFrameViewModel"/> class.
         /// </summary>
-        public PlotFrameViewModel()
+        public PlotFrameViewModel(IDrawGridModel drawGridModel)
         {
             var _tiles = new TileData[20];
             for (int i = 0; i < 20; i++)
@@ -30,12 +34,13 @@ namespace MVVM_Converter_CTDrawGrid.ViewModel
                 _tiles[i].tileType = i % 9;
             }
             Tiles = _tiles;
-            Model.Model.PropertyChanged += ModelPropertyChanged;
+            drawGridModel.PropertyChanged += ModelPropertyChanged;
         }
 
-        private void ModelPropertyChanged(object? sender, (string, object, object) e)
+        private void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.Item3 is FieldDef[] fd)
+            if ( e.PropertyName == nameof(IDrawGridModel.LevelData) &&
+               sender.GetType().GetProperty(e.PropertyName).GetValue(sender) is FieldDef[] fd)
             {
                 TileData[] result = new TileData[fd.Length];
                 for (int i = 0; i < fd.Length; i++)

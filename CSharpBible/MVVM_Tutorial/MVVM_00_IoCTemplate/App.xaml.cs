@@ -11,7 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Helper;
 using BaseLib.Interfaces;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using MVVM_00_IoCTemplate.Models;

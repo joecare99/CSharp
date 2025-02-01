@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Calc32.WForms.Properties {
+namespace Calc32.Properties {
     using System;
     
     

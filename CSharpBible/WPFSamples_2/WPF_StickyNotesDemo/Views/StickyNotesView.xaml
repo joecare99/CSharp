@@ -1,5 +1,6 @@
 ﻿<Page x:Class="WPF_StickyNotesDemo.Views.StickyNotesView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -22,7 +23,14 @@
             <WrapPanel>
                 <CheckBox Padding="0" Margin="0" IsChecked="True" VerticalAlignment="Center" BorderThickness="0"
                        Name="cb" Command="{Binding CbClickCommand}" />
-                <Label Padding="0" Margin="0" MouseLeftButtonUp="l_MouseLeftButtonUp">AlwaysOnTop</Label>
+                <Label Padding="0" Margin="0" >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding MouseLeftButtonUpCommand}" CommandParameter="{Binding ElementName=cb, Path=IsChecked}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    AlwaysOnTop
+                    </Label>
             </WrapPanel>
         </ContextMenu>
     </Page.ContextMenu>

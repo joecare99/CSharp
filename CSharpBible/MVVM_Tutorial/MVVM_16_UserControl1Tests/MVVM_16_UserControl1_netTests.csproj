@@ -20,7 +20,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_16_Usercontrol1\MVVM_16_UserControl1_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Properties\" />

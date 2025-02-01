@@ -1,8 +1,8 @@
 <Project>
 	<Import Project="..\Games_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-		<OutputType>Exe</OutputType>
+    <TargetFrameworks>net481;net48;net472;net462;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -24,9 +24,6 @@
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
 	</ItemGroup>
 	
 </Project>

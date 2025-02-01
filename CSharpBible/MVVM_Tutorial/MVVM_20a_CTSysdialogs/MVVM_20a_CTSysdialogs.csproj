@@ -3,7 +3,7 @@
 
 	<PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+    <TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>

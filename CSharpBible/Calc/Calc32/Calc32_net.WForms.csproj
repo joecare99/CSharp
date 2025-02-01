@@ -8,9 +8,18 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <Compile Remove="NonVisual\**" />
     <Compile Remove="obj\**" />
+    <Compile Remove="ViewModels\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="NonVisual\**" />
     <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="ViewModels\**" />
+    <None Remove="Models\**" />
+    <None Remove="NonVisual\**" />
     <None Remove="obj\**" />
+    <None Remove="ViewModels\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />
@@ -23,7 +32,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="Calc32.Model.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -41,6 +51,7 @@
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Calc32.Properties</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

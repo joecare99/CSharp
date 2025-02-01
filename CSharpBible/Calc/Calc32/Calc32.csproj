@@ -2,7 +2,7 @@
 	<Import Project="..\Calc.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -24,9 +24,6 @@
 	  <None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
-	</ItemGroup>
-	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
@@ -40,7 +37,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Properties\Resources.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
+			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
@@ -48,6 +45,7 @@
 		<None Update="Properties\Settings.settings">
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+			<CustomToolNamespace>Calc32.Properties</CustomToolNamespace>
 		</None>
 	</ItemGroup>
 	<ItemGroup>
@@ -56,5 +54,8 @@
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 </Project>

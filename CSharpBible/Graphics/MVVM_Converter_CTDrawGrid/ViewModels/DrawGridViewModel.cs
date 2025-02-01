@@ -1,5 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using BaseLib.Helper;
+using CommunityToolkit.Mvvm.Input;
+using MVVM.View.Extension;
 using MVVM.ViewModel;
+using MVVM_Converter_CTDrawGrid.Models.Interfaces;
 using System;
 using System.Reflection;
 
@@ -12,6 +15,8 @@ namespace MVVM_Converter_CTDrawGrid.ViewModel;
 /// <seealso cref="BaseViewModel" />
 public partial class DrawGridViewModel:BaseViewModelCT
 {
+    private IDrawGridModel _drawGridModel;
+
     /// <summary>
     /// Gets or sets the show client.
     /// </summary>
@@ -21,9 +26,12 @@ public partial class DrawGridViewModel:BaseViewModelCT
     /// <summary>
     /// Initializes a new instance of the <see cref="DrawGridViewModel"/> class.
     /// </summary>
-    public DrawGridViewModel()
+    public DrawGridViewModel(): this(IoC.GetRequiredService<IDrawGridModel>())
     {
-
+    }
+    public DrawGridViewModel(IDrawGridModel drawGridModel)
+    {
+        this._drawGridModel = drawGridModel;
     }
 
     /// <summary>Gets the plot frame source.</summary>
@@ -36,20 +44,20 @@ public partial class DrawGridViewModel:BaseViewModelCT
     /// <value>The load level command.</value>
     [RelayCommand]
     private void LoadLevel() 
-        => Model.Model.LoadLevel();
+        => _drawGridModel.LoadLevel();
     /// <summary>
     /// Gets or sets the next level command.
     /// </summary>
     /// <value>The next level command.</value>
     [RelayCommand]
     private void NextLevel() 
-        => Model.Model.NextLevel();
+        => _drawGridModel.NextLevel();
     /// <summary>
     /// Gets or sets the previous level command.
     /// </summary>
     /// <value>The previous level command.</value>
     [RelayCommand]
     private void PrevLevel() 
-        => Model.Model.PrevLevel();
+        => _drawGridModel.PrevLevel();
 
 }

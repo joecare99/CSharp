@@ -17,7 +17,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_05_CommandParCalculator\MVVM_05_CommandParCalculator_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
 	</ItemGroup>
 
 </Project>

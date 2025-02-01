@@ -1,7 +1,7 @@
-<Project>
+﻿<Project>
 	<Import Project="..\Solution_net.props" />
 	<PropertyGroup>		
-	<TargetFrameworks>net6.0</TargetFrameworks>
+	<TargetFrameworks>net462;net472;net48;net481;net6.0</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -26,7 +26,7 @@
 		<Compile Include="..\Libraries\BaseLibTests\Helper\ClassHelperTests.cs" Link="Helper\ClassHelperTests.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Libraries\BaseLib\BaseLib_net.csproj" />
+	  <ProjectReference Include="..\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 
 </Project>

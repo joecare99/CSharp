@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
 using MVVM.View.Extension;
 using MVVM_28_1_DataGridExt.Models;
 

@@ -23,8 +23,7 @@
 	<ItemGroup>
 		<Folder Include="Properties\" />
 	</ItemGroup>
-	<ItemGroup >
-		<ProjectReference Condition="!$(TargetFrameWork.StartsWith(net4))" Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+	<ItemGroup>
 		<ProjectReference Condition="$(TargetFrameWork.StartsWith(net4))" Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
