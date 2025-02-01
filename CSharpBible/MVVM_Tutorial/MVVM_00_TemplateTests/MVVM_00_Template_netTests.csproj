@@ -17,6 +17,5 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MVVM_00_Template\MVVM_00_Template_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
 	</ItemGroup>
 </Project>
