@@ -7,8 +7,4 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
-	</ItemGroup>
-
 </Project>
