@@ -14,11 +14,10 @@
 	<ItemGroup>
 	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.1" />
 	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-		<ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib_net.csproj" />
-	</ItemGroup>
-	<ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
