@@ -3,6 +3,7 @@ using MVVM.ViewModel;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using BaseLib.Helper;
 
 namespace MVVM.View.Extension.Tests;
 
@@ -83,7 +84,7 @@ public class IoCTests : BaseTestViewModel
     [TestMethod()]
     public void ProvideValueTest()
     {
-        var ioc = new IoC
+        var ioc = new IoC2
         {
             Type = typeof(Object)
         };
