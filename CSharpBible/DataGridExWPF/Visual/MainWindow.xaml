@@ -14,10 +14,9 @@
     <NavigationWindow.Resources>
         <!--  Create list of enumeration values  -->
         <!--  Create an instance of the converter for Email  -->
-        <!--<worker:EmailConverter x:Key="" />
-  <!--->
         <worker:EmailConverter x:Key="EmailConverter" />
     </NavigationWindow.Resources>
+
     <NavigationWindow.Content>
         <Grid>
             <Grid.ColumnDefinitions>
