@@ -6,6 +6,8 @@ using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace CanvasWPF2_CTItemTemplateSelector.ViewModel
 {
