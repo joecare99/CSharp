@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using ConsoleLib;
+using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
 
@@ -49,20 +50,20 @@ namespace ConsoleMouseApp.View
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
 
-            visible = false;
-            Boarder = ConsoleFramework.singleBoarder;
+            Visible = false;
+            Border = ConsoleFramework.singleBorder;
             ForeColor = ConsoleColor.Gray;
             BackColor = ConsoleColor.DarkGray;
             BoarderColor = ConsoleColor.Green;
-            dimension = cl;
+            Dimension = cl;
 
             One = new ConsoleLib.CommonControls.Button
             {
-                parent = this,
+                Parent = this,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.Gray,
-                shadow = true,
-                position = new Point(5, 10),
+                Shadow = true,
+                Position = new Point(5, 10),
                 Text = "░░1░░"
             };
             One.OnClick += One_Click;
@@ -71,15 +72,15 @@ namespace ConsoleMouseApp.View
 
             lblMousePos = new ConsoleLib.CommonControls.Label
             {
-                parent = this,
+                Parent = this,
                 ForeColor = ConsoleColor.Gray,
                 ParentBackground = true,
-                position = new Point(40, 2),
+                Position = new Point(40, 2),
                 Text = "lblMousePos",
                 size = new Size(15, 1)
             };
 
-            visible = true;
+            Visible = true;
             OnMouseMove += App_MouseMove;
 
         }
@@ -93,33 +94,33 @@ namespace ConsoleMouseApp.View
         {
             var result = new ConsoleLib.CommonControls.Panel
             {
-                parent = this,
-                Boarder = ConsoleFramework.doubleBoarder,
+                Parent = this,
+                Border = ConsoleFramework.doubleBoarder,
                 ForeColor = ConsoleColor.Blue,
                 BackColor = ConsoleColor.DarkBlue,
                 BoarderColor = ConsoleColor.Green,
-                dimension = cl,
-                shadow = true
+                Dimension = cl,
+                Shadow = true
             };
 
             var btnOK = new ConsoleLib.CommonControls.Button
             {
-                parent = result,
+                Parent = result,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.Gray,
-                shadow = true,
-                position = new Point(2, 2),
+                Shadow = true,
+                Position = new Point(2, 2),
                 Text = "░░░OK░░░",
             };
             btnOK.OnClick += btnOK_Click;
 
             var btnCancel = new ConsoleLib.CommonControls.Button
             {
-                parent = result,
+                Parent = result,
                 ForeColor = ConsoleColor.White,
                 BackColor = ConsoleColor.Gray,
-                shadow = true,
-                position = new Point(14, 2),
+                Shadow = true,
+                Position = new Point(14, 2),
                 Text = "░Cancel░",
             };
             btnCancel.OnClick += btnCancel_Click;
@@ -127,19 +128,15 @@ namespace ConsoleMouseApp.View
             return result;
         }
 
-#if NET5_0_OR_GREATER
-        private void App_MouseMove(object? sender, System.Windows.Forms.MouseEventArgs e)
-#else
         /// <summary>
         /// Handles the MouseMove event of the App control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
-        private void App_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-#endif
+        private void App_MouseMove(object sender,IMouseEvent e)
         {
             if (lblMousePos == null) return;
-            lblMousePos.Text = e.Location.ToString();
+            lblMousePos.Text = e.MousePos.ToString();
         }
 
 #if NET5_0_OR_GREATER

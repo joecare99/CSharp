@@ -17,6 +17,7 @@ using ConsoleLib.CommonControls;
 using ConsoleLib;
 using System.Windows.Forms;
 using ConsoleMouseApp.View;
+using ConsoleLib.Interfaces;
 
 namespace ConsoleMouseApp
 {
@@ -48,7 +49,7 @@ namespace ConsoleMouseApp
             App = new ConsoleMouseView();
 
             // t.Draw(10, 40, ConsoleColor.Gray);
-            Mouse.parent = App;
+            Mouse.Parent = App;
             Mouse.Set(0, 0, " ");
             Mouse.BackColor = ConsoleColor.Red;
 
@@ -68,7 +69,7 @@ namespace ConsoleMouseApp
             App.Run();
 
             Console.Write("Programm end ...");
-            ExtendedConsole.Stop();
+            ConsoleFramework.ExtendedConsole.Stop();
         }
 
 #if NET5_0_OR_GREATER
@@ -85,21 +86,17 @@ namespace ConsoleMouseApp
             if (App == null) return;
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
-            App.dimension = cl;
+            App.Dimension = cl;
         }
 
-#if NET5_0_OR_GREATER
-        private static void App_MouseMove(object? sender, MouseEventArgs e)
-#else
         /// <summary>
         /// Handles the MouseMove event of the App control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
-        private static void App_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-#endif
+        private static void App_MouseMove(object? sender, IMouseEvent e)
         {
-            Mouse.Set(Point.Subtract(e.Location, (Size?)Mouse.parent?.position ?? Size.Empty));
+            Mouse.Set(Point.Subtract(e.MousePos, (Size?)Mouse.Parent?.Position ?? Size.Empty));
         }
 
         #endregion
