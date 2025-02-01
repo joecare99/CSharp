@@ -2,7 +2,7 @@
 	<Import Project="..\Calc_net.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -19,18 +19,12 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
-	</ItemGroup>
-	<ItemGroup Condition="'!$(TargetFrameWork.StartsWith(net4))'">
-		<ProjectReference Include="..\Calc64Base\Calc64Base_net.csproj" />
-		<!--<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data_net.csproj" />-->
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFrameWork.StartsWith(net4))'">
-		<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
-		<ProjectReference Include="..\Calc64Base\Calc64Base_win.csproj" />
-		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" />
+		<ProjectReference Include="..\Calc64Base\Calc64Base.csproj" />
+		<ProjectReference Condition="'$(TargetFrameWork.StartsWith(net4))'" Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
