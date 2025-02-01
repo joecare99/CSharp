@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net481-windows;net9.0-windows</TargetFrameworks>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net481;net9.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
