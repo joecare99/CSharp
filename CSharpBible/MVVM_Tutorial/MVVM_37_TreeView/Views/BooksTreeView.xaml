@@ -10,7 +10,7 @@
       xmlns:ioc="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
       xmlns:model="clr-namespace:MVVM_37_TreeView.Models"
       mc:Ignorable="d" 
-      DataContext="{ioc:IoC Type=mvvm:BooksTreeViewModel}"
+      DataContext="{ioc:IoC2 Type=mvvm:BooksTreeViewModel}"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Books TreeView">
     <Page.Resources>
