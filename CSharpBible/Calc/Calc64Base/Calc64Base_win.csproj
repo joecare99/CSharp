@@ -2,7 +2,7 @@
 	<Import Project="..\Calc.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -24,9 +24,6 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Condition="'$(TargetFrameWork)'=='net462-windows'" Include="System.ValueTuple" />
+		<PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" />
 	</ItemGroup>
 </Project>
