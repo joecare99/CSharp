@@ -9,12 +9,6 @@
 	<PropertyGroup>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<PlatformTarget>x64</PlatformTarget>
-	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Core\Logging\CProtocol.cs" />
 	</ItemGroup>
@@ -33,13 +27,13 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
-		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" Version="4.3.0" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.1" />
-		<PackageReference Include="System.Management" Version="9.0.1" />
-		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Include="System.Data.SqlClient" />
+		<PackageReference Include="System.IO.Ports" />
+		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" />
+		<PackageReference Include="System.Management" />
+		<PackageReference Include="System.Text.RegularExpressions"  />
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Resource\" />
