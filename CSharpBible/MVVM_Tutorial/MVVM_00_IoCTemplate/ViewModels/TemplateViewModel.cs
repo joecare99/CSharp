@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Helper;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_00_IoCTemplate.Models;
 using System;
