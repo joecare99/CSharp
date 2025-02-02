@@ -13,7 +13,7 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_41_Sudoku.Models;
 using Sudoku_Base.Models.Interfaces;
