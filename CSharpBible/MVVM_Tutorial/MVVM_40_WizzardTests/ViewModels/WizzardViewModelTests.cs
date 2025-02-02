@@ -14,9 +14,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using System;
 using NSubstitute;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 /// <summary>
 /// The Tests namespace.
