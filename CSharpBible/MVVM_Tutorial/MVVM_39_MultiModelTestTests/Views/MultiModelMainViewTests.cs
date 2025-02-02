@@ -14,7 +14,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using NSubstitute;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_39_MultiModelTest.Models;
 
 /// <summary>

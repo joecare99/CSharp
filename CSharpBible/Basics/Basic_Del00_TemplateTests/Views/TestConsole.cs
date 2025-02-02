@@ -11,7 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleDisplay.View;
+using BaseLib.Helper;
+using BaseLib.Interfaces;
 using System;
 
 namespace Basic_Del00_Template.Views.Tests

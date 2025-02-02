@@ -21,8 +21,8 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 		<ProjectReference Include="..\Basic_Del04_TestImposibleStuff\Basic_Del04_TestImposibleStuff.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
 	</ItemGroup>
 </Project>

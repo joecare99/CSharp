@@ -2,7 +2,8 @@
 	<Import Project="..\Games_net.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-    <TargetFrameworks>net481;net48;net472;net462;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net481;net48;net472;net462;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

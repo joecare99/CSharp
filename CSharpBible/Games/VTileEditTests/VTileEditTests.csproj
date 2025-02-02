@@ -19,7 +19,7 @@
     <PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
     <ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
     <ProjectReference Include="..\Snake_Base\Snake_Base.csproj" />
     <ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />

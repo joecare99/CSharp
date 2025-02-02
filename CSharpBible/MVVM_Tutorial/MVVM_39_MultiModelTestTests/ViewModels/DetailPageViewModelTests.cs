@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_39_MultiModelTest.Models;
 using NSubstitute;
 using System.ComponentModel;

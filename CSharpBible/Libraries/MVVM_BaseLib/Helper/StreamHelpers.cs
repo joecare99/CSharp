@@ -1,23 +1,23 @@
 ﻿// ***********************************************************************
-// Assembly         : Sudoku_Base
+// Assembly         : MVVM_BaseLib
 // Author           : Mir
 // Created          : 05-19-2023
 //
 // Last Modified By : Mir
 // Last Modified On : 05-19-2023
 // ***********************************************************************
-// <copyright file="SudokuModel.cs" company="JC-Soft">
+// <copyright file="StreamHelpers.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2023
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
-using MVVM.View.Extension;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+
 namespace BaseLib.Helper;
 
 public static class StreamHelpers

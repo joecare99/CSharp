@@ -1,41 +1,42 @@
 ﻿@using BlazorWasmDocker.ViewModels.Interfaces;
 @using System.ComponentModel;
 @using BlazorWasmDocker.Models;
+<style>
+	#Console {
+		width: 800px;
+		height: 550px;
+		table-layout: fixed;
+		font-family: Consolas;
+		font-size: 16px;
+	}
+</style>
 
 <h3>RConsole</h3>
-<div class="movable">
-<table>
+<div class="movable" background-color="#000000" color="#FFFF00">
+	<!--pre width="16" font="Consolas" ><b-->
+	<table id="Console" >
 	<tbody>
-		<tr>
-			<td colspan="2">
-				-
-			</td>
-			<td colspan="70" centered>
-				<pre>@Title</pre>
-			</td>
-			<td colspan="2">
-				_
-			</td>
-			<td colspan="2">
-				#
-			</td>
-			<td colspan="2">
-				X
-			</td>
+		<tr >
+			<td colspan="2">-</td>
+			<td colspan="70" centered>@Title</td>
+			<td colspan="2">_</td>
+			<td colspan="2">#</td>
+	<td colspan="2" background-color="#ff0000" color="#000000">X</td>
 		</tr>
 		@for (var row = 0; row<=25; row++)
 			{
-				<tr height="12">
+				<tr>
 					@for (var col =0;col<=79;col++)
 					{
-						<td>
-							<pre width="12" font="Consolas" background-color="000000" color="FFFF00"><b>@(Buffer[col + row*80] is ' ' or '\0' ?'\u00a0':Buffer[col + row*80])</b></pre>
+						<td background-color="#010101" >
+							@(Buffer[col + row*80] is ' ' or '\0' ?'\u00a0':Buffer[col + row*80])
 							</td>
 					}
 					</tr>
 			}
-    </tbody>
+		</tbody>
 </table>
+			<!--/b></pre-->
 </div>
 @code {
 	[Parameter]

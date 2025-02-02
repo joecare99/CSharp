@@ -1,9 +1,10 @@
 ﻿using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using Sudoku_Base.Models.Interfaces;
 using NSubstitute;
 using System;
+using BaseLib.Models.Interfaces;
 
 namespace MVVM_41_Sudoku.Tests;
 
