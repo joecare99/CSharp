@@ -19,12 +19,9 @@
 	  <None Remove="ViewModels\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Condition="!$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
-		<ProjectReference Condition="!$(TargetFramework.StartsWith(net4))" Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
-		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
-		<ProjectReference Condition="!$(TargetFramework.StartsWith(net4))" Include="Werner_Flaschbier_Base.csproj" />
-		<ProjectReference Condition="$(TargetFramework.StartsWith(net4))" Include="Werner_Flaschbier_Base.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
+		<ProjectReference Include="Werner_Flaschbier_Base.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
