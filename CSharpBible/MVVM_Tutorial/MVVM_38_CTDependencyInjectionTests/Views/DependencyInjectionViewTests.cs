@@ -15,7 +15,7 @@ using System;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
 
 /// <summary>

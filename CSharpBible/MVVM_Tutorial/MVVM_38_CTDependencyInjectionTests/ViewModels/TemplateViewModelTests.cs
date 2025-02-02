@@ -18,7 +18,7 @@ using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using NSubstitute;
 using System.Collections.Generic;
 using System;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 
 /// <summary>
 /// The Tests namespace.
