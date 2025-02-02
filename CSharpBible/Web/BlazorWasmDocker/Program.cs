@@ -10,7 +10,7 @@ using BlazorWasmDocker.ViewModels;
 using BlazorWasmDocker.Models.Interfaces;
 using LocalStorage.Services;
 using BlazorWasmDocker.Services;
-using ConsoleDisplay.View;
+using BaseLib.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

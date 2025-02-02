@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Globalization;

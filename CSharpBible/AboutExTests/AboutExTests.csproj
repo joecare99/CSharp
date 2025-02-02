@@ -1,22 +1,26 @@
-<Project>
+﻿<Project>
   <Import Project="..\Solution_net.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>CSharpBible.AboutExTests</RootNamespace>
     <AssemblyName>AboutExTests</AssemblyName>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFrameworks>net4.8.1-windows;net9.0-windows</TargetFrameworks>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="MSTest" Version="3.7.3" />
-    <PackageReference Include="coverlet.collector" Version="6.0.3">
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AboutEx\AboutEx.csproj" />
   </ItemGroup>
 
 </Project>

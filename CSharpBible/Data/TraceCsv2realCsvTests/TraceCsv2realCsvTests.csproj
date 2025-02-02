@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="..\Data_net.props" />
   <PropertyGroup>
-    <TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0</TargetFrameworks>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="MSTest" Version="3.7.3" />
-    <PackageReference Include="coverlet.collector" Version="6.0.3">
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

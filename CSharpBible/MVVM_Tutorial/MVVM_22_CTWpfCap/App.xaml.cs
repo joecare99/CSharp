@@ -14,9 +14,11 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using BaseLib.Interfaces;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_22_CTWpfCap.Model;
 using MVVM_22_CTWpfCap.ViewModels;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 
 namespace MVVM_22_CTWpfCap;
 

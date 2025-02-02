@@ -2,7 +2,7 @@
 	<Import Project="..\Calc.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net462-windows;net472-windows;net48-windows;net481-windows</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -33,7 +33,7 @@
 	  <None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 		<ProjectReference Include="Calc32.Model.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -52,6 +52,7 @@
 		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<CustomToolNamespace>Calc32.Properties</CustomToolNamespace>
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>

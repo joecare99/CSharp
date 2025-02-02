@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -79,15 +80,14 @@ namespace Calc64WF.Visual
         /// <summary>
         /// Gets the data context.
         /// </summary>
-        /// <value>The data context.</value>
-        public
+        /// <value>The data context        
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #if NET7_0_OR_GREATER
-            
-            new
+        public new IFrmCalc64MainViewModel DataContext { get; private set; }
+#else
+        public IFrmCalc64MainViewModel DataContext { get; private set; }
 #endif
-            IFrmCalc64MainViewModel DataContext
-        { get; private set; }
-        #endregion
+#endregion
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmCalc64Main" /> class.

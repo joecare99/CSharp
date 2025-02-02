@@ -14,7 +14,7 @@
 using System;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 
 namespace MVVM_39_MultiModelTest
 {

@@ -13,6 +13,7 @@
 // ***********************************************************************
 using BaseLib.Helper;
 using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;

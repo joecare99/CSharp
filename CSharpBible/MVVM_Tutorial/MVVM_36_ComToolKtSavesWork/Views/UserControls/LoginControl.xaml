@@ -9,7 +9,7 @@
              xmlns:p="clr-namespace:MVVM_36_ComToolKtSavesWork.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="130" d:DesignWidth="400"
-             DataContext="{ioc:IoC Type=mvvm:LoginViewModel}">
+             DataContext="{ioc:IoC2 Type=mvvm:LoginViewModel}">
     <d:UserControl.DataContext>
         <mvvm:LoginViewModel/>
     </d:UserControl.DataContext>

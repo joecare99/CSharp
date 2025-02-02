@@ -17,6 +17,5 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\WpfApp1\WpfApp_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
 	</ItemGroup>
 </Project>

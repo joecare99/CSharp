@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>

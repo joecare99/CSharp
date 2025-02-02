@@ -19,11 +19,6 @@ using System;
 /// </summary>
 namespace BaseLib.Helper;
 
-/// <summary>
-/// Class IoC.
-/// Implements the <see cref="MarkupExtension" />
-/// </summary>
-/// <seealso cref="MarkupExtension" />
 public class IoC
 {
     /// <summary>

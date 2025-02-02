@@ -7,7 +7,7 @@
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<RootNamespace>Calc64WF</RootNamespace>
 		<AssemblyName>Calc64WFTests</AssemblyName>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
 		<ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
@@ -30,10 +30,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj">
-		</ProjectReference>
-		<ProjectReference Include="..\Calc64Base\Calc64Base_win.csproj">
-		</ProjectReference>
-		<ProjectReference Include="..\Calc64WF\Calc64WF.csproj">
 		</ProjectReference>
 	</ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Solution.props"/>
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFrameworks>net481;net9.0-windows</TargetFrameworks>
     <OutputType>Library</OutputType>
     <BaseIntermediateOutputPath>..\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>

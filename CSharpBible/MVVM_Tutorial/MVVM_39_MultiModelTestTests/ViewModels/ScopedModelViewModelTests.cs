@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using NSubstitute;
 using MVVM_39_MultiModelTest.Models;
 

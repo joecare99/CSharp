@@ -14,8 +14,10 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using BaseLib.Interfaces;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_28_1_CTDataGridExt.Services;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 
 namespace MVVM_28_1_CTDataGridExt;
 

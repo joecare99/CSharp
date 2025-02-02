@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using System.ComponentModel;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM.ViewModel;
 using BaseLib.Helper;
 using MVVM_40_Wizzard.Properties;
