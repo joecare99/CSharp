@@ -16,7 +16,7 @@ using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_25_RichTextEdit.Models;
 
 /// <summary>

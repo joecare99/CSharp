@@ -17,6 +17,7 @@ using BaseLib.Interfaces;
 using MVVM.ViewModel;
 using NSubstitute;
 using System.ComponentModel;
+using BaseLib.Models.Interfaces;
 
 /// <summary>
 /// The Tests namespace.
