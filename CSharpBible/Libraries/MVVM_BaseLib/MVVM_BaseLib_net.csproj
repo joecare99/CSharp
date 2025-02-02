@@ -16,13 +16,10 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="..\BaseLib\Helper\PropertyHelper.cs" Link="Helper\PropertyHelper.cs" />
-		<Compile Include="..\BaseLib\Helper\StringUtils.cs" Link="Helper\StringUtils.cs" />
-		<Compile Include="..\BaseLib\Helper\TypeUtils.cs" Link="Helper\TypeUtils.cs" />
-		<Compile Include="..\BaseLib\Helper\ClassHelper.cs" Link="Helper\ClassHelper.cs" />
-	</ItemGroup>
-	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
 	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
+  </ItemGroup>
 </Project>
