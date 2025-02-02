@@ -13,9 +13,11 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using System.Windows;
 using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace MVVM_AllExamples
 {
@@ -59,7 +61,7 @@ namespace MVVM_AllExamples
                 .AddSingleton<MVVM_39_MultiModelTest.Models.ISystemModel, MVVM_39_MultiModelTest.Models.SystemModel>()
                 .AddScoped<MVVM_39_MultiModelTest.Models.IScopedModel, MVVM_39_MultiModelTest.Models.ScopedModel>()
 
-                .AddSingleton<MVVM_40_Wizzard.Models.IWizzardModel, MVVM_40_Wizzard.Models.WizzardModel>()
+                .AddSingleton<MVVM_40_Wizzard.Models.Interfaces.IWizzardModel, MVVM_40_Wizzard.Models.WizzardModel>()
                 .AddSingleton<Sudoku_Base.Models.Interfaces.ISudokuModel, Sudoku_Base.Models.SudokuModel>()
                 ;
 
