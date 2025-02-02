@@ -2,8 +2,10 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BaseLib.Interfaces;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_28_1_DataGridExt.Models;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace MVVM_28_1_DataGridExt.Services.Tests;
 
