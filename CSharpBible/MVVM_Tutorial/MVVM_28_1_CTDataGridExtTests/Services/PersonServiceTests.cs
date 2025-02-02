@@ -1,9 +1,11 @@
 ﻿using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_28_1_CTDataGridExt.Models;
 using System.Collections.Generic;
 using System.Linq;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace MVVM_28_1_CTDataGridExt.Services.Tests;
 
