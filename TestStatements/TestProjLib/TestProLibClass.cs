@@ -10,7 +10,7 @@ namespace TestProjLib
     {
         public static string GetTestString()
         {
-            return "Test String from TestProjLib";
+            return "New test string from TestProjLib";
         }
     }
 }
