@@ -31,7 +31,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj">
 		</ProjectReference>
-		<ProjectReference Include="..\Calc64Base\Calc64Base_win.csproj">
-		</ProjectReference>
 	</ItemGroup>
 </Project>
