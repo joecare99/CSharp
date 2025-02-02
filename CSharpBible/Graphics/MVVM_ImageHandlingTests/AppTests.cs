@@ -1,7 +1,7 @@
 ﻿using System;
 using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_ImageHandling.Models;
 
 namespace MVVM_ImageHandling.Tests
