@@ -2,5 +2,6 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFrameworks>net481;net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 </Project>

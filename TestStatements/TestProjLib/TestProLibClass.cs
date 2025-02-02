@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TestProjLib
+﻿namespace TestProjLib;
+public static class TestProLibClass
 {
-    public static class TestProLibClass
-    {
-        public static string GetTestString()
-        {
-            return "New test string from TestProjLib";
-        }
-    }
+    public static string GetTestString() => "New test string from TestProjLib";
 }
