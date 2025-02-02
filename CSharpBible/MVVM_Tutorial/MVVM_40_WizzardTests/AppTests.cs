@@ -1,9 +1,11 @@
 ﻿using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_40_Wizzard.Models;
 using NSubstitute;
 using System;
+using BaseLib.Models.Interfaces;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 namespace MVVM_40_Wizzard.Tests;
 

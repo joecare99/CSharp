@@ -18,11 +18,11 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
 using BaseLib.Helper;
-using static BaseLib.Helper.TestHelper;
 using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Properties;
+using MVVM_40_Wizzard.Models.Interfaces;
+using static BaseLib.Helper.TestHelper;
 
 /// <summary>
 /// The Tests namespace.
