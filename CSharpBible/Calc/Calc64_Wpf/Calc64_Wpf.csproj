@@ -19,7 +19,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
-	  <ProjectReference Include="..\Calc64Base\Calc64Base_net.csproj" />
+	  <ProjectReference Include="..\Calc64Base\Calc64Base.csproj" />
 	</ItemGroup>
 
 </Project>
