@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
+using BaseLib.Interfaces;
 using ConsoleDisplay.View;
 using Pattern_01_Singleton.Models;
 using Pattern_01_Singleton.ViewModels;
