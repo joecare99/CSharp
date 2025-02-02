@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_99_SomeIssue.Models;
 using System;

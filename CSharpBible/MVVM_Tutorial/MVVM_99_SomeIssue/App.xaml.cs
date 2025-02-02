@@ -14,9 +14,11 @@
 using BaseLib.Helper;
 using BaseLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_99_SomeIssue.Models;
 using System.Windows;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace MVVM_99_SomeIssue
 {
