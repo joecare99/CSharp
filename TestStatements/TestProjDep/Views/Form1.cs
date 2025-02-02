@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TestProjLib;
+using TestProjLib2;
 
 namespace TestProjDep.Views
 {
@@ -16,7 +10,7 @@ namespace TestProjDep.Views
         public Form1()
         {
             InitializeComponent();
-            label1.Text = TestProLibClass.GetTestString();
+            label1.Text = $"{TestProLibClass.GetTestString()}{Environment.NewLine}{TestProLib2Class.GetTestString()}";
         }
     }
 }
