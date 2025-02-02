@@ -1,9 +1,10 @@
 ﻿using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_99_SomeIssue.Models;
 using NSubstitute;
 using System;
+using BaseLib.Models.Interfaces;
 
 namespace MVVM_99_SomeIssue.Tests;
 
