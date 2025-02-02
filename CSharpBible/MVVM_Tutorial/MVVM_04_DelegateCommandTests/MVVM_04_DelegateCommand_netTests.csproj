@@ -16,8 +16,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand_net.csproj" />
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
+    <ProjectReference Include="..\MVVM_04_DelegateCommand\MVVM_04_DelegateCommand_net.csproj" />
 	</ItemGroup>
 
 </Project>
