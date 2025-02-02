@@ -11,8 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM_38_CTDependencyInjection.Models;
 using MVVM_38_CTDependencyInjection.Models.Interfaces;
 using MVVM_38_CTDependencyInjection.ViewModels;
