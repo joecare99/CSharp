@@ -3,6 +3,10 @@
     "TranspilerConsTest": {
       "commandName": "Project",
       "commandLineArgs": "resources\\fbCalcWinkelvVector.xml"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
     }
   }
 }

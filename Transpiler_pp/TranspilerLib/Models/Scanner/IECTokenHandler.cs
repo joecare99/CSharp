@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Controls;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using static TranspilerLib.Interfaces.Code.ICodeBase;
