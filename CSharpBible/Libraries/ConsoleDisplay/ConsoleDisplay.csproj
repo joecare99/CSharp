@@ -18,7 +18,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.5.0" />
-		<PackageReference Include="IndexRange" Version="1.0.3" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.0.3" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
