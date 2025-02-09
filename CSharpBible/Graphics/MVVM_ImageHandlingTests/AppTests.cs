@@ -48,7 +48,7 @@ namespace MVVM_ImageHandling.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(IImageHandlingModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }
