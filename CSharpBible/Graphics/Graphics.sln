@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLib", "..\Librarie
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{AF041458-CF94-4D6D-BB0F-8BC50F4F099C}"
 	ProjectSection(SolutionItems) = preProject
-		..\Libraries\Libraries_net.props = ..\Libraries\Libraries_net.props
+		..\Libraries\Libraries.props = ..\Libraries\Libraries.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests", "..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj", "{66EB60F2-523D-47C8-95EA-C7E10759E239}"
@@ -98,6 +98,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geometry", "..\..\WPF-Samples\Graphics\Geometry\Geometry.csproj", "{87466DDE-BDEF-4531-9BC3-17CFFDEF092D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageView", "..\..\WPF-Samples\Graphics\ImageView\ImageView.csproj", "{6D6156A7-7D25-44F2-9F8B-3BA2C150F3CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_Geometry", "..\WPFSamples_2\WPF_Geometry\WPF_Geometry.csproj", "{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLib", "..\Libraries\BaseLib\BaseLib.csproj", "{A77A2D02-C709-46C3-AC71-DD39B4BE1BB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLibTests", "..\Libraries\BaseLibTests\BaseLibTests.csproj", "{BA9C8374-D44A-4102-B709-B4D2DA4020CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game_Base", "..\Games\Game_Base\Game_Base.csproj", "{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -253,6 +261,22 @@ Global
 		{6D6156A7-7D25-44F2-9F8B-3BA2C150F3CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D6156A7-7D25-44F2-9F8B-3BA2C150F3CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D6156A7-7D25-44F2-9F8B-3BA2C150F3CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A77A2D02-C709-46C3-AC71-DD39B4BE1BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A77A2D02-C709-46C3-AC71-DD39B4BE1BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A77A2D02-C709-46C3-AC71-DD39B4BE1BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A77A2D02-C709-46C3-AC71-DD39B4BE1BB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA9C8374-D44A-4102-B709-B4D2DA4020CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA9C8374-D44A-4102-B709-B4D2DA4020CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA9C8374-D44A-4102-B709-B4D2DA4020CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA9C8374-D44A-4102-B709-B4D2DA4020CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -265,6 +289,10 @@ Global
 		{CB7C3DBF-3E01-41A1-A5E0-B2EF13FDEE4E} = {2D82C624-6758-46A6-B7BE-B985F6145CC4}
 		{87466DDE-BDEF-4531-9BC3-17CFFDEF092D} = {ED69D2D6-14A4-4EC3-AA1A-6C094F21F4C0}
 		{6D6156A7-7D25-44F2-9F8B-3BA2C150F3CC} = {ED69D2D6-14A4-4EC3-AA1A-6C094F21F4C0}
+		{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC} = {ED69D2D6-14A4-4EC3-AA1A-6C094F21F4C0}
+		{A77A2D02-C709-46C3-AC71-DD39B4BE1BB8} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{BA9C8374-D44A-4102-B709-B4D2DA4020CF} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F} = {2D82C624-6758-46A6-B7BE-B985F6145CC4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1671921B-67F7-474B-A77C-6D6A7F6DF943}
