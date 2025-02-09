@@ -95,6 +95,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             }
 
             var sFile = BlocksFilePath.Format(sFNStumb.PadLeft(2, '0'))+"_";
+            Directory.CreateDirectory(Path.GetDirectoryName(sFile));
             using var ms = new FileStream(sFile, FileMode.Create);
             new DataContractJsonSerializer(
                 type: typeof(List<ICodeBlock>),
