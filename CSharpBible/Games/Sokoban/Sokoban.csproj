@@ -19,7 +19,7 @@
 		<None Remove="*.bak" />
 	</ItemGroup>
   
-  <ItemGroup Condition="'!$(TargetFramework.StartsWith(net4))'">
+  <ItemGroup>
     <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
   </ItemGroup>
 
