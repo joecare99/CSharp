@@ -981,6 +981,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEditTests", "Games\VTi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake_BaseTests", "Games\Snake_BaseTests\Snake_BaseTests.csproj", "{2399EFC7-01EC-4574-9552-1A84857B076E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc32.Cons", "Calc\Calc32Cons\Calc32.Cons.csproj", "{69E4FEBA-5470-4BAC-8848-AF4ECA3DC9BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2699,6 +2701,10 @@ Global
 		{2399EFC7-01EC-4574-9552-1A84857B076E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2399EFC7-01EC-4574-9552-1A84857B076E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2399EFC7-01EC-4574-9552-1A84857B076E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69E4FEBA-5470-4BAC-8848-AF4ECA3DC9BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69E4FEBA-5470-4BAC-8848-AF4ECA3DC9BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69E4FEBA-5470-4BAC-8848-AF4ECA3DC9BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69E4FEBA-5470-4BAC-8848-AF4ECA3DC9BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3126,6 +3132,7 @@ Global
 		{CE9E0C11-AACD-4F57-8C1B-7210AFABCA19} = {A7AA5940-00E1-4F63-B85A-90BF6A35EA05}
 		{7EE327D2-B598-4F77-A889-04EB6949A6BB} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
 		{2399EFC7-01EC-4574-9552-1A84857B076E} = {947E3943-6DE0-46E7-9106-BCE8C6E812E0}
+		{69E4FEBA-5470-4BAC-8848-AF4ECA3DC9BD} = {71DD55F8-E61A-49E8-B841-72984B85D38B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAF8B3ED-D51A-4CDA-8BF1-1E032CF0AC4F}
