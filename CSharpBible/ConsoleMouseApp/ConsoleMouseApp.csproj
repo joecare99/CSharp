@@ -24,6 +24,10 @@
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1"/>
+  </ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib.csproj" />
 		<ProjectReference Include="..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
 	</ItemGroup>

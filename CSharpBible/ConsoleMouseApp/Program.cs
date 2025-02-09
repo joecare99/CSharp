@@ -15,9 +15,13 @@ using System;
 using System.Drawing;
 using ConsoleLib.CommonControls;
 using ConsoleLib;
-using System.Windows.Forms;
 using ConsoleMouseApp.View;
 using ConsoleLib.Interfaces;
+using BaseLib.Interfaces;
+using BaseLib.Models;
+using ConsoleLib.ConsoleLib.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace ConsoleMouseApp
 {
@@ -30,7 +34,7 @@ namespace ConsoleMouseApp
         /// <summary>
         /// The mouse
         /// </summary>
-        private static Pixel Mouse = new Pixel();
+    //    private static Pixel Mouse = new Pixel();
 
         /// <summary>
         /// The application
@@ -43,60 +47,62 @@ namespace ConsoleMouseApp
         /// Initializes static members of the <see cref="Program"/> class.
         /// </summary>
         static Program()
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-
-            App = new ConsoleMouseView();
-
-            // t.Draw(10, 40, ConsoleColor.Gray);
-            Mouse.Parent = App;
-            Mouse.Set(0, 0, " ");
-            Mouse.BackColor = ConsoleColor.Red;
-
-            App.OnCanvasResize += App_CanvasResize;
-            App.OnMouseMove += App_MouseMove;
-
-        }
-
+        { }
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
         /// <param name="args">The arguments.</param>
-        static void Main(string[] args)
+        static void Main(string[] _)
         {
+            Init();
 
-            App.Draw();
-            App.Run();
+            App?.Run();
 
             Console.Write("Programm end ...");
-            ConsoleFramework.ExtendedConsole.Stop();
+            ConsoleFramework.ExtendedConsole?.Stop();
         }
 
-#if NET5_0_OR_GREATER
-        private static void App_CanvasResize(object? sender, Point e)
-#else
+        private static void Init()
+        {
+            var sp = new ServiceCollection()
+             .AddSingleton<IExtendedConsole, ExtendedConsole>()
+             .AddTransient<IConsole, ConsoleProxy>()
+             .AddSingleton<Application,ConsoleMouseView>()
+             //   .AddTransient<Views.LoadingDialog, Views.LoadingDialog>()
+             .BuildServiceProvider();
+
+            Ioc.Default.ConfigureServices(sp);
+
+            App = Ioc.Default.GetRequiredService<Application>();
+            App.Visible = true;
+            App.Draw();
+            App.OnMouseMove += App_MouseMove;
+            App.OnCanvasResize += App_CanvasResize;
+
+        }
+
+
         /// <summary>
         /// Applications the canvas resize.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private static void App_CanvasResize(object sender, Point e)
-#endif
+        private static void App_CanvasResize(object? sender, Point e)
         {
-            if (App == null) return;
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
-            App.Dimension = cl;
+            if (App != null)
+                App.Dimension = cl;
         }
 
         /// <summary>
         /// Handles the MouseMove event of the App control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
         private static void App_MouseMove(object? sender, IMouseEvent e)
         {
-            Mouse.Set(Point.Subtract(e.MousePos, (Size?)Mouse.Parent?.Position ?? Size.Empty));
+            //         Mouse.Set(Point.Subtract(e.MousePos, (Size?)Mouse.Parent?.Position??Size.Empty));
         }
 
         #endregion
