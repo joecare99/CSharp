@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using VBUnObfusicator.Models;
 using VBUnObfusicator.Interfaces.Code;
+using BaseLib.Helper;
 
 namespace VBUnObfusicator
 {
