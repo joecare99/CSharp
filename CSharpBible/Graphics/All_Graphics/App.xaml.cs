@@ -1,4 +1,6 @@
-﻿using BaseLib.Models;
+﻿using All_Graphics.Models;
+using BaseLib.Helper;
+using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -13,7 +15,7 @@ namespace All_Graphics
         protected override void OnStartup(StartupEventArgs e)
         {
             var sc = new ServiceCollection()
-                .AddSingleton<ITemplateModel, TemplateModel>()
+                .AddSingleton<ITemplateModel, AllExampleModel>()
                 .AddTransient<ICyclTimer, TimerProxy>()
                 .AddTransient<ISysTime, SysTime>();
             var sp = sc.BuildServiceProvider();
