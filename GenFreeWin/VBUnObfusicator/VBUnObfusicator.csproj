@@ -21,7 +21,7 @@
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Condition="!$(TargetFramework.Contains('net4'))" Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+		<ProjectReference Condition="!$(TargetFramework.Contains('net4'))" Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 		<ProjectReference Condition="$(TargetFramework.Contains('net4'))" Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
