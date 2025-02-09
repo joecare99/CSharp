@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
 		<ProjectReference Include="..\..\TestConsole\TestConsole_net.csproj" />
 		<ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Console.csproj" />
 	</ItemGroup>
