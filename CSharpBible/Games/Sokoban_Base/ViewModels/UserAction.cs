@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Sokoban_Base.Model;
 
-namespace Sokoban_Base.ViewModel
+namespace Sokoban_Base.ViewModels
 {
 
     /// <summary>

@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Sokoban_Base.ViewModel
+namespace Sokoban_Base.ViewModels
 {
     /// <summary>
     /// Class Game.
