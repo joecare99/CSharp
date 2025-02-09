@@ -4,7 +4,7 @@
 	</ImportGroup>
 	<PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net481; net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UserSecretsId>85d7cf50-cf51-4539-ba76-0a882d37b3ec</UserSecretsId>
   </PropertyGroup>
