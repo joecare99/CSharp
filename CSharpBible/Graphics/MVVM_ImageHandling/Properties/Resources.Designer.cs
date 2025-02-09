@@ -63,6 +63,16 @@ namespace MVVM_ImageHandling.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
+        public static byte[] card_D10_emf {
+            get {
+                object obj = ResourceManager.GetObject("card_D10_emf", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
         public static byte[] card_SQueen {
             get {
                 object obj = ResourceManager.GetObject("card_SQueen", resourceCulture);

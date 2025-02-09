@@ -25,4 +25,7 @@
 		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
 	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.0.3" />
+  </ItemGroup>
 </Project>

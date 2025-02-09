@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using ConsoleDisplay.View;
-using Sokoban_Base.ViewModel;
+using Sokoban_Base.ViewModels;
 using System;
 using System.Drawing;
 

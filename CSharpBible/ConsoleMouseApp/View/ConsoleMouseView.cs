@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
 using ConsoleLib;
 using ConsoleLib.Interfaces;
 using System;
@@ -26,10 +27,6 @@ namespace ConsoleMouseApp.View
     public class ConsoleMouseView : ConsoleLib.CommonControls.Application
     {
         #region Properties
-#if NET5_0_OR_GREATER
-        private static ConsoleLib.CommonControls.Button? One;
-        private static ConsoleLib.CommonControls.Label? lblMousePos;
-#else
         /// <summary>
         /// The one
         /// </summary>
@@ -38,14 +35,13 @@ namespace ConsoleMouseApp.View
         /// The label mouse position
         /// </summary>
         private static ConsoleLib.CommonControls.Label lblMousePos;
-#endif
         #endregion
 
         #region Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsoleMouseView"/> class.
         /// </summary>
-        public ConsoleMouseView()
+        public ConsoleMouseView(IConsole console,IExtendedConsole extendedConsole) : base(console, extendedConsole)
         {
             var cl = ConsoleFramework.Canvas.ClipRect;
             cl.Inflate(-3, -3);
@@ -139,30 +135,22 @@ namespace ConsoleMouseApp.View
             lblMousePos.Text = e.MousePos.ToString();
         }
 
-#if NET5_0_OR_GREATER
-        private void btnCancel_Click(object? sender, EventArgs e)
-#else
         /// <summary>
         /// Handles the Click event of the btnCancel control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void btnCancel_Click(object sender, EventArgs e)
-#endif
+        private void btnCancel_Click(object? sender, EventArgs e)
         {
             Stop();
         }
 
-#if NET5_0_OR_GREATER
-        private void btnOK_Click(object? sender, EventArgs e)
-#else
         /// <summary>
         /// Handles the Click event of the btnOK control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void btnOK_Click(object sender, EventArgs e)
-#endif
+        private void btnOK_Click(object? sender, EventArgs e)
         {
             Console.Write("OK");
         }

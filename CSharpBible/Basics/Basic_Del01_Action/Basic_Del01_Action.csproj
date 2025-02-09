@@ -20,6 +20,7 @@
 	</ItemGroup>
   <ItemGroup>
     <PackageReference Condition="!$(TargetFramework.StartsWith(net4))" Include="System.Configuration.ConfigurationManager" Version="9.0.1" />
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.0.3" />
   </ItemGroup>
   <ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
