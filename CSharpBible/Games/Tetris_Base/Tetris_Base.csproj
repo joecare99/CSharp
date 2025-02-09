@@ -25,5 +25,8 @@
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
+	</ItemGroup>
 	
 </Project>
