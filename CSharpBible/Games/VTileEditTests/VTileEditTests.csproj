@@ -22,6 +22,7 @@
     <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
     <ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
     <ProjectReference Include="..\Snake_Base\Snake_Base.csproj" />
+    <ProjectReference Include="..\Sokoban\Sokoban.csproj" />
     <ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />
     <ProjectReference Include="..\Snake_Console\Snake_Console.csproj" />
     <ProjectReference Include="..\Sokoban_Base\Sokoban_Base.csproj" />
