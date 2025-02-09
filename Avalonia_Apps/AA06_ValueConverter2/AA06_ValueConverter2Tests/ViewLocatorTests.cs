@@ -39,6 +39,10 @@ namespace AA06_ValueConverter2.Tests
             public IRelayCommand ReportsCommand => throw new NotImplementedException();
 
             public IRelayCommand HistoryCommand => throw new NotImplementedException();
+
+            public double InputValue { get ; set ; }
+
+            public double ResultValue => throw new NotImplementedException();
         }
 
 

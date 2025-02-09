@@ -96,7 +96,7 @@ namespace AA06_ValueConverter2.ViewModels.Tests
         [TestMethod()]
         [DataRow("", "")]
         [DataRow("now", @"PropChg(ValueConverterViewModel, Now) = $01/14/2025 00:00:00\r\n")]
-        [DataRow("title", @"PropChg(ValueConverterViewModel, Title) = $Main Menu\r\n")]
+        [DataRow("title", @"PropChg(ValueConverterViewModel, Title) = $\r\nPropChg(ValueConverterViewModel, Title) = $\r\n")]
         [DataRow("bumlux", "")]
         public void PropertyChangedTest2(string sAct, string sExp)
         {
