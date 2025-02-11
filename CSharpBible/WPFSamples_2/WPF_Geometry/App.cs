@@ -6,6 +6,7 @@ using Geometry.ViewModels;
 using Geometry.ViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using BaseLib.Helper;
+using Geometry.Views;
 
 namespace Geometry
 {
