@@ -29,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
     <ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
-    <ProjectReference Include="$(UpDir)\TestConsole\TestConsole.csproj" />
+    <ProjectReference Include="$(UpDir)\ConsoleApps\TestConsole\TestConsole.csproj" />
   </ItemGroup>
 
 </Project>
