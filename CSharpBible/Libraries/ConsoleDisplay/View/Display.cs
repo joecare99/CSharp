@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
 using System;
 using System.Drawing;
 
@@ -30,7 +31,7 @@ namespace ConsoleDisplay.View
         /// <summary>
         /// My console
         /// </summary>
-        static public MyConsoleBase myConsole = new MyConsole();
+        static public IConsole myConsole = new MyConsole();
 
         /// <summary>
         /// The h block
