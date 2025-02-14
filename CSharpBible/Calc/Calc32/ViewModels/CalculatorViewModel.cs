@@ -70,8 +70,6 @@ public partial class CalculatorViewModel : ObservableObject, ICalculatorViewMode
         calculatorClass.OnChange += CalculatorClass_OnChange;
         this.calculatorClass = calculatorClass;
     }
-
-
     private bool canBackspace() => calculatorClass.Accumulator != 0;
     [RelayCommand(CanExecute = nameof(canBackspace))]
     private void BackSpace() => calculatorClass.BackSpace();
