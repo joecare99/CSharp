@@ -51,9 +51,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFSystem.Windows.Data", "WF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFSystem.Windows.Data_net", "WFSystem.Data\WFSystem.Windows.Data_net.csproj", "{48EB9D37-360A-4689-8095-53FB107F21D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "..\TestConsole\TestConsole.csproj", "{0D509CAA-F907-4EC5-A88A-E717B27E502D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "..\ConsoleApps\TestConsole\TestConsole.csproj", "{0D509CAA-F907-4EC5-A88A-E717B27E502D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole_net", "..\TestConsole\TestConsole_net.csproj", "{3ACA523C-7226-4FE2-9B92-A61EB15F12E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole_net", "..\ConsoleApps\TestConsole\TestConsole_net.csproj", "{3ACA523C-7226-4FE2-9B92-A61EB15F12E0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestConnsole", "TestConnsole", "{8AF3CE25-8695-412D-8E6C-37DFBBCD3DE8}"
 	ProjectSection(SolutionItems) = preProject
@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestConnsole", "TestConnsol
 		..\Solution_net.props = ..\Solution_net.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsoleTests", "..\TestConsoleTests\TestConsoleTests.csproj", "{07A11CAC-B395-4487-8D4B-98732F852360}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsoleTests", "..\ConsoleApps\TestConsoleTests\TestConsoleTests.csproj", "{07A11CAC-B395-4487-8D4B-98732F852360}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
