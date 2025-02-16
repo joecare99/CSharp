@@ -60,9 +60,10 @@ namespace ConsoleDisplay.View
                     var cdm = 0;
                     for (var j = 0; j < 16; j++)
                     {
-                        var cd = Math.Abs(i % 4 - ((j % 8) / 4) * ((j / 8) * 2 + 1))
-                        + Math.Abs((i / 4) % 4 - (j % 4) / 2 * ((j / 8) * 2 + 1))
-                        + Math.Abs((i / 16) - (j % 2) * ((j / 8) * 2 + 1));
+
+                        var cd = Math.Abs(i % 4 - (j == 8 ? 1 : ((j % 8) / 4) * ((j / 8) + 2)))
+                        + Math.Abs((i / 4) % 4 - (j == 8 ? 1 : (j % 4) / 2 * ((j / 8) + 2)))
+                        + Math.Abs((i / 16) - (j == 8 ? 1 : (j % 2) * ((j / 8) + 2)));
                         if (j == 0 || cd <= cdm)
                         {
                             colorMap[i] = (ConsoleColor)j;
@@ -118,21 +119,21 @@ namespace ConsoleDisplay.View
         {
             var _fgr = myConsole.ForegroundColor;
             var _bgr = myConsole.BackgroundColor;
-            for (int y = 0; y < dSize.Height/2*2; y += 2)
+            for (int y = 0; y < dSize.Height / 2 * 2; y += 2)
                 for (int x = 0; x < dSize.Width; x++)
                     if (ScreenBuffer[y * dSize.Width + x] != OutBuffer[y * dSize.Width + x] ||
                         ScreenBuffer[(y + 1) * dSize.Width + x] != OutBuffer[(y + 1) * dSize.Width + x])
                     {
-                        myConsole.BackgroundColor= ScreenBuffer[(y + 0) * dSize.Width + x];
+                        myConsole.BackgroundColor = ScreenBuffer[(y + 0) * dSize.Width + x];
                         myConsole.ForegroundColor = ScreenBuffer[(y + 1) * dSize.Width + x];
                         myConsole.SetCursorPosition(Origin.X + x, Origin.Y + y / 2);
                         myConsole.Write(hBlock);
                         OutBuffer[y * dSize.Width + x] = ScreenBuffer[y * dSize.Width + x];
                         OutBuffer[(y + 1) * dSize.Width + x] = ScreenBuffer[(y + 1) * dSize.Width + x];
                     }
-            if (dSize.Height % 2 == 1) 
+            if (dSize.Height % 2 == 1)
             {
-                var y = (dSize.Height - 1); 
+                var y = (dSize.Height - 1);
                 for (int x = 0; x < dSize.Width; x++)
                     if (ScreenBuffer[y * dSize.Width + x] != OutBuffer[y * dSize.Width + x])
                     {
@@ -143,8 +144,8 @@ namespace ConsoleDisplay.View
                         OutBuffer[y * dSize.Width + x] = ScreenBuffer[y * dSize.Width + x];
                     }
             }
-            myConsole.ForegroundColor=_fgr;
-            myConsole.BackgroundColor=_bgr;
+            myConsole.ForegroundColor = _fgr;
+            myConsole.BackgroundColor = _bgr;
         }
 
         /// <summary>
@@ -191,7 +192,7 @@ namespace ConsoleDisplay.View
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            string result=this.GetType().ToString();
+            string result = this.GetType().ToString();
             result += ".";
             result += $"({dSize.Width};{dSize.Height}),";
             for (var i = 0; i < ScreenBuffer.Length; i++)

@@ -18,6 +18,9 @@ using System;
 using System.Threading;
 using System.Xml.Schema;
 using BaseLib.Models.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using WaveFunCollapse.Views;
+using BaseLib.Interfaces;
 
 /// <summary>
 /// The Display_Test namespace.
@@ -30,11 +33,6 @@ namespace Display_Test
     /// </summary>
     public static class Program 
     {
-        private static IDisplayTest model;
-        private static IRandom random;
-
-        public static Func<IDisplayTest> GetModel = () => new DisplayTest.Models.DisplayTest();
-        public static Func<IRandom> GetRandom = () => new BaseLib.Models.CRandom();
 
         /// <summary>
         /// Defines the entry point of the application.
@@ -42,21 +40,21 @@ namespace Display_Test
         /// <param name="args">The arguments.</param>
         static public void Main(string[] args)
         {
-            Init(args);
-            Run();
+            var v=Init(args);
+            v.Show();
         }
 
-        private static void Run()
+        public static Func<string[], IView> Init = (args) =>
         {
-            model.DisplayTest1(random);
-            model.DisplayTest2();
-            model.DisplayTest3(random);
-        }
+            var sc = new ServiceCollection()
+                .AddSingleton<IDisplayTest, DisplayTest.Models.DisplayTest>()
+                .AddSingleton<IRandom, BaseLib.Models.CRandom>()
+                .AddSingleton<IConsole,MyConsole>()
+                .AddTransient<IView, WaveFunColView>();
 
-        private static void Init(string[] args)
-        {
-            model = GetModel();
-            random = GetRandom();
-        }
+            var sp = sc.BuildServiceProvider();
+
+            return sp.GetRequiredService<IView>();
+        };
     }
 }

@@ -98,6 +98,6 @@ public partial class TextConsoleDemoViewModel : ObservableObject, ITextConsoleDe
         _model.console = console;
         _model.DisplayTest1(_random);
         _model.DisplayTest2();
-        _model.DisplayTest3();
+        _model.DisplayTest3(_random);
     }
 }
