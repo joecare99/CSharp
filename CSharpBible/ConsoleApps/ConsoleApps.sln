@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDisplay", "..\Librar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Display_netTest", "Display_Test\Display_netTest.csproj", "{7BB37C2C-F923-43C5-BC61-7C3BE40F22E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveFunCollapse", "WaveFuncCol\WaveFunCollapse.csproj", "{7985E39D-419D-4648-ABD0-23615397E4FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{7BB37C2C-F923-43C5-BC61-7C3BE40F22E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BB37C2C-F923-43C5-BC61-7C3BE40F22E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BB37C2C-F923-43C5-BC61-7C3BE40F22E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7985E39D-419D-4648-ABD0-23615397E4FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7985E39D-419D-4648-ABD0-23615397E4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7985E39D-419D-4648-ABD0-23615397E4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7985E39D-419D-4648-ABD0-23615397E4FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,5 +126,6 @@ Global
 		{25703E7E-BE04-4306-888B-AF726CC02EC3} = {854ED3DA-3E2B-4EC4-A59B-4AC6ADD4E6E4}
 		{C8C6BF8C-BF4E-450D-A5A4-92E5F27F8374} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 		{7BB37C2C-F923-43C5-BC61-7C3BE40F22E9} = {854ED3DA-3E2B-4EC4-A59B-4AC6ADD4E6E4}
+		{7985E39D-419D-4648-ABD0-23615397E4FA} = {854ED3DA-3E2B-4EC4-A59B-4AC6ADD4E6E4}
 	EndGlobalSection
 EndGlobal
