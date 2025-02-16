@@ -628,6 +628,7 @@ namespace BaseLib.Helper.Tests
             Assert.AreEqual(iExp,lAct.BitCount());
         }
 
+        [TestMethod()]
         public void BitCountTest2()
         {
             for (var i = 0; i < 100000; i++)
@@ -647,6 +648,7 @@ namespace BaseLib.Helper.Tests
             Assert.AreEqual(iExp, lAct.BitCount2());
         }
 
+        [TestMethod()]
         public void BitCount2Test2()
         {
             for (var i = 0; i < 100000; i++)
