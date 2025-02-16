@@ -23,7 +23,10 @@ namespace TestConsole.View
         {
             InitializeComponent();
             foreach (var c in typeof(ConsoleColor).GetEnumValues())
-                ccolors[(int)c] = Color.FromArgb(((int)c / 4) % 2 * (1 + ((int)c / 8) * 2) * 85, ((int)c / 2) % 2 * (1 + ((int)c / 8) * 2) * 85, ((int)c % 2 * (1 + ((int)c / 8) * 2)) * 85);
+                ccolors[(int)c] = Color.FromArgb(
+                    (int)c == 7 ? 192 : (int)c == 8 ? 64 : ((int)c / 4 % 2 * (127 + ((int)c / 8)  * 128)),
+                    (int)c == 7 ? 192 : (int)c == 8 ? 64 : ((int)c / 2 % 2 * (127 + ((int)c / 8)  * 128)),
+                    (int)c == 7 ? 192 : (int)c == 8 ? 64 : ((int)c % 2 *     (127 + ((int)c / 8)  * 128)));
             Write("Testconsole Ver. 1.0\r\n");
         }
 
