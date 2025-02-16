@@ -24,13 +24,13 @@ namespace BaseLib.Helper
     {
 
          ///<summary>
-        /// return _bit array with toggled SingleBit at Index
+        /// return bit array with toggled SingleBit at Index
         /// </summary>
         public static int SwitchBit(this int bitArray, int index) 
             => bitArray ^ index.BitMask32();
 
         ///<summary>
-        /// return _bit array with toggled SingleBit at Index
+        /// return bit array with toggled SingleBit at Index
         /// </summary>
         public static uint SwitchBit(this uint bitArray, int index)
             => bitArray ^ ((uint)index).BitMask32();
@@ -42,79 +42,79 @@ namespace BaseLib.Helper
             => bitArray ^ index.BitMask64();
 
          ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static int SetBit(this int bitArray, int index)
             => bitArray | index.BitMask32();
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static uint SetBit(this uint bitArray, int index)
             => bitArray | ((uint)index).BitMask32();
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static long SetBit(this long bitArray, int index)
             => bitArray | index.BitMask64();
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static int SetBit(this int bitArray, int index, bool xVal)
             => xVal ? bitArray.SetBit(index) : bitArray.ClearBit(index);
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static uint SetBit(this uint bitArray, int index, bool xVal)
             => xVal ? bitArray.SetBit(index) : bitArray.ClearBit(index);
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static long SetBit(this long bitArray, int index, bool xVal)
             => xVal ? bitArray.SetBit(index) : bitArray.ClearBit(index);
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static bool GetBit(this int bitArray, int index)
             => (bitArray & index.BitMask32())!=0;
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static bool GetBit(this uint bitArray, int index)
             => (bitArray & ((uint)index).BitMask32())!=0;
 
         ///<summary>
-        /// return _bit array with set SingleBit at Index
+        /// return bit array with set SingleBit at Index
         /// </summary>
         public static bool GetBit(this long bitArray, int index)
             => (bitArray & index.BitMask64()) != 0;
 
         ///<summary>
-        /// return _bit array with cleared SingleBit at Index
+        /// return bit array with cleared SingleBit at Index
         /// </summary>
         public static int ClearBit(this int bitArray, int index)
             => bitArray & ~index.BitMask32();
 
         ///<summary>
-        /// return _bit array with cleared SingleBit at Index
+        /// return bit array with cleared SingleBit at Index
         /// </summary>
         public static uint ClearBit(this uint bitArray, int index)
             => bitArray & ~((uint)index).BitMask32();
 
         ///<summary>
-        /// return _bit array with cleared SingleBit at Index
+        /// return bit array with cleared SingleBit at Index
         /// </summary>
         public static long ClearBit(this long bitArray, int index)
             => bitArray & ~index.BitMask64();
 
         /// <summary>
-        ///  returns int Bitmask with 32Bits at _bit [Bit] is 1 rest 0 
+        ///  returns int Bitmask with 32Bits at bit [Bit] is 1 rest 0 
         /// </summary>
         /// <param name="bit"></param>
         /// <returns></returns>
@@ -144,41 +144,41 @@ namespace BaseLib.Helper
                 2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
                 1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
                 2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
+                1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
                 3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
                 2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
                 3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
                 3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
                 4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
             ];
-        
+
         /// <summary>
-        /// returns the number of bits set in the _bit array
+        /// returns the number of bits set in the bit array
         /// </summary>
         /// <param name="bit"></param>
         /// <returns></returns>
         public static int BitCount(this long bit)
-        {
-            int count = 0;
-            for (; bit > 0; bit >>= 8)
-                count += bitCounts[bit & 0xff];
-            return count;
-        }
+            => BitCount(unchecked((ulong)bit));
 
         /// <summary>
-        /// returns the number of bits set in the _bit array
+        /// returns the number of bits set in the bit array
         /// </summary>
         /// <param name="bit"></param>
         /// <returns></returns>
         public static int BitCount(this ulong bit)
         {
             int count = 0;
-            for (; bit > 0; bit >>= 8)
+            for (; bit != 0; bit >>= 8)
                 count += bitCounts[bit & 0xff];
             return count;
         }
 
         /// <summary>
-        /// returns the number of bits set in the _bit array
+        /// returns the number of bits set in the bit array
         /// </summary>
         /// <param name="_bit"></param>
         /// <returns></returns>
@@ -192,26 +192,16 @@ namespace BaseLib.Helper
 
     RETURN(@num & 0x3F) + @msb */
         public static int BitCount2(this long bit)
-        {
-            ulong _bit = unchecked((ulong)bit);
-            _bit = _bit - ((_bit >> 1) & 0x5555555555555555);
-            _bit = (_bit & 0x3333333333333333) + ((_bit >> 2) & 0x3333333333333333);
-            _bit = (_bit + (_bit >> 4)) & 0x0F0F0F0F0F0F0F0F;
-            _bit = _bit + (_bit >> 8);
-            _bit = _bit + (_bit >> 16);
-            _bit = _bit + (_bit >> 32);
-            return (int)(_bit & 0x3F);
-        }
+            =>BitCount2(unchecked((ulong) bit));
         public static int BitCount2(this ulong bit)
         {
-            ulong _bit = unchecked((ulong)bit);
-            _bit = _bit - ((_bit >> 1) & 0x5555555555555555);
-            _bit = (_bit & 0x3333333333333333) + ((_bit >> 2) & 0x3333333333333333);
-            _bit = (_bit + (_bit >> 4)) & 0x0F0F0F0F0F0F0F0F;
-            _bit = _bit + (_bit >> 8);
-            _bit = _bit + (_bit >> 16);
-            _bit = _bit + (_bit >> 32);
-            return (int)(_bit & 0x3F);
+            bit = bit - ((bit >> 1) & 0x5555555555555555);
+            bit = (bit & 0x3333333333333333) + ((bit >> 2) & 0x3333333333333333);
+            bit = (bit + (bit >> 4)) & 0x0F0F0F0F0F0F0F0F;
+            bit = bit + (bit >> 8);
+            bit = bit + (bit >> 16);
+            bit = bit + (bit >> 32);
+            return (int)(bit & 0x7F);
         }
 
     }
