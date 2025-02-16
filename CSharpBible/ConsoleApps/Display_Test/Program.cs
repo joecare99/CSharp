@@ -50,7 +50,7 @@ namespace Display_Test
         {
             model.DisplayTest1(random);
             model.DisplayTest2();
-            model.DisplayTest3();
+            model.DisplayTest3(random);
         }
 
         private static void Init(string[] args)
