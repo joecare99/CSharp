@@ -6,14 +6,23 @@ using System.Threading.Tasks;
 
 namespace WaveFunCollapse.Models.Data;
 
-public enum EDirections
-{
-    Up,
-    Down,
-    Left,
-    Right,
+public enum EDirections:int
+{ 
     UpLeft,
-    DownLeft,
+    Up,
     UpRight,
+    Left,
+    None,
+    Right,
+    DownLeft,
+    Down,
     DownRight,
+} 
+
+public static class EDirectionsExtensions
+{
+    public static EDirections Opposite(this EDirections direction) 
+        => (EDirections)(((int)EDirections.DownRight - (int)direction));
+
+    public static EDirections Neutral => EDirections.None;
 }

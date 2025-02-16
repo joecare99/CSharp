@@ -12,8 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using ConsoleDisplay.View;
-using DisplayTest.Models.Interfaces;
-using DisplayTest.Models;
 using System;
 using System.Threading;
 using System.Xml.Schema;
@@ -21,6 +19,7 @@ using BaseLib.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using WaveFunCollapse.Views;
 using BaseLib.Interfaces;
+using WaveFunCollapse.Models.Interfaces;
 
 /// <summary>
 /// The Display_Test namespace.
@@ -47,7 +46,7 @@ namespace Display_Test
         public static Func<string[], IView> Init = (args) =>
         {
             var sc = new ServiceCollection()
-                .AddSingleton<IDisplayTest, DisplayTest.Models.DisplayTest>()
+                .AddSingleton<IWFCModel, WaveFunCollapse.Models.WFCModel>()
                 .AddSingleton<IRandom, BaseLib.Models.CRandom>()
                 .AddSingleton<IConsole,MyConsole>()
                 .AddTransient<IView, WaveFunColView>();
