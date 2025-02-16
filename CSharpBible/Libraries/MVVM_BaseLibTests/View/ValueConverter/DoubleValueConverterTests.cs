@@ -80,4 +80,25 @@ public class DoubleValueConverterTests
             Assert.AreEqual(expected, result);
         }
     }
+
+    [TestMethod()]
+    [DataRow("2.5 mm", "0.0 mm", 2.5)]
+    [DataRow("invalid", "{0}", double.NaN)]
+    [DataRow("invalid#", "0#", double.NaN)]
+    [DataRow("3.14-", "0.00-", 3.14)]
+    public void ConvertBackTest2(object? value, object? par, object? expected)
+    {
+        // Act
+        var result = testConv.ConvertBack(value, typeof(double), par, CultureInfo.InvariantCulture);
+
+        // Assert
+        if (expected == null)
+        {
+            Assert.IsNull(result);
+        }
+        else
+        {
+            Assert.AreEqual(expected, result);
+        }
+    }
 }
