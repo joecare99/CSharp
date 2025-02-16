@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(UpDir)\TestConsole\TestConsole_net.csproj" />
+    <ProjectReference Include="$(UpDir)\ConsoleApps\TestConsole\TestConsole_net.csproj" />
   </ItemGroup>
 
 </Project>
