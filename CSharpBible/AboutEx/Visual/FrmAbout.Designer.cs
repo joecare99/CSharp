@@ -11,6 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CSharpBible.AboutEx.ViewModels.Interfaces;
+using Views;
+
 /// <summary>
 /// The Visual namespace.
 /// </summary>
@@ -188,14 +191,17 @@ namespace CSharpBible.AboutEx.Visual
         /// <summary>
         /// The label copyright
         /// </summary>
+        [TextBinding(nameof(IAboutViewModel.CopyRight))]
         private System.Windows.Forms.Label lblCopyright;
         /// <summary>
         /// The label version
         /// </summary>
+        [TextBinding(nameof(IAboutViewModel.Version))]
         private System.Windows.Forms.Label lblVersion;
         /// <summary>
         /// The label product name
         /// </summary>
+        [TextBinding(nameof(IAboutViewModel.Product))]
         private System.Windows.Forms.Label lblProductName;
         /// <summary>
         /// The PCT program icon
@@ -208,6 +214,7 @@ namespace CSharpBible.AboutEx.Visual
         /// <summary>
         /// The label comments
         /// </summary>
+        [TextBinding(nameof(IAboutViewModel.Description))]
         private System.Windows.Forms.Label lblComments;
     }
 }

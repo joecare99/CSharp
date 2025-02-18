@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Solution_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net4.8.1-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
 		<OutputType>WinExe</OutputType>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -12,6 +12,14 @@
 	<PropertyGroup>
 		<RootNamespace>CSharpBible.AboutEx</RootNamespace>
 	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Libraries\BaseLib\BaseLib.csproj" />
+	  <ProjectReference Include="..\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
+	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="..\Resources\CheckMarkGreen.png">
 			<Link>Resources\CheckMarkGreen.png</Link>

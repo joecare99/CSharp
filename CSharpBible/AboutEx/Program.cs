@@ -13,7 +13,11 @@
 // ***********************************************************************
 using System;
 using System.Windows.Forms;
+using BaseLib.Helper;
+using CSharpBible.AboutEx.ViewModels;
+using CSharpBible.AboutEx.ViewModels.Interfaces;
 using CSharpBible.AboutEx.Visual;
+using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// The AboutEx namespace.
@@ -29,11 +33,25 @@ namespace CSharpBible.AboutEx
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            Init(args);
+            Application.Run(IoC.GetRequiredService<Form>());
+        }
+
+        private static void Init(string[] args)
+        {            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmAboutExMain());
+
+            var sc = new ServiceCollection()
+                .AddTransient<FrmAbout>()
+                .AddTransient<AboutBox1>()
+                .AddTransient<Form, FrmAboutExMain>()
+                .AddTransient<IAboutViewModel, AboutViewModel>()
+                .AddTransient<IFrmAboutExMainViewModel, FrmAboutExMainViewModel>();
+            var sp = sc.BuildServiceProvider();
+            IoC.Configure(sp);
         }
     }
 }

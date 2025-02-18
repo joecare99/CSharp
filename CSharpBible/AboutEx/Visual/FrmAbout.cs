@@ -14,6 +14,8 @@
 using System;
 using System.Windows.Forms;
 using System.ComponentModel;
+using CSharpBible.AboutEx.ViewModels.Interfaces;
+using Views;
 
 /// <summary>
 /// The Visual namespace.
@@ -27,38 +29,20 @@ namespace CSharpBible.AboutEx.Visual
     /// <seealso cref="Form" />
     public partial class FrmAbout : Form
     {
+#if !NET7_0_OR_GREATER
+        public object? DataContext {get;set;}
+#endif
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmAbout" /> class.
         /// </summary>
-        public FrmAbout()
+        public FrmAbout(IAboutViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
+            CommandBindingAttribute.Commit(this, viewModel);
+            TextBindingAttribute.Commit(this, viewModel);
         }
-
-        /// <summary>
-        /// Gets or sets the name of the product.
-        /// </summary>
-        /// <value>The name of the product.</value>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public new string ProductName { get => lblProductName.Text; set => lblProductName.Text = value; }
-        /// <summary>
-        /// Gets or sets the version.
-        /// </summary>
-        /// <value>The version.</value>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public string Version { get => lblVersion.Text; set => lblVersion.Text = value; }
-        /// <summary>
-        /// Gets or sets the copyright.
-        /// </summary>
-        /// <value>The copyright.</value>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public string Copyright { get => lblCopyright.Text; set => lblCopyright.Text = value; }
-        /// <summary>
-        /// Gets or sets the comments.
-        /// </summary>
-        /// <value>The comments.</value>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public string Comments { get => lblComments.Text; set => lblComments.Text = value; }
 
         /// <summary>
         /// Handles the Click event of the btnOK control.

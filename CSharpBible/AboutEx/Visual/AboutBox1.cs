@@ -27,6 +27,9 @@ namespace CSharpBible.AboutEx.Visual
     /// <seealso cref="Form" />
     partial class AboutBox1 : Form
     {
+#if !NET7_0_OR_GREATER
+        public object? DataContext {get;set;}
+#endif
         /// <summary>
         /// Initializes a new instance of the <see cref="AboutBox1" /> class.
         /// </summary>

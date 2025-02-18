@@ -11,6 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CSharpBible.AboutEx.ViewModels.Interfaces;
+using Views;
+
 /// <summary>
 /// The Visual namespace.
 /// </summary>
@@ -65,7 +68,6 @@ namespace CSharpBible.AboutEx.Visual
             this.btnClickMe.TabIndex = 0;
             this.btnClickMe.Text = "Click Me! ...";
             this.btnClickMe.UseVisualStyleBackColor = true;
-            this.btnClickMe.Click += new System.EventHandler(this.btnClickMe_Click);
             // 
             // btnClickMe2
             // 
@@ -79,7 +81,6 @@ namespace CSharpBible.AboutEx.Visual
             this.btnClickMe2.TabIndex = 1;
             this.btnClickMe2.Text = "Click Me! ...";
             this.btnClickMe2.UseVisualStyleBackColor = true;
-            this.btnClickMe2.Click += new System.EventHandler(this.btnClickMe2_Click);
             // 
             // FrmAboutExMain
             // 
@@ -100,10 +101,12 @@ namespace CSharpBible.AboutEx.Visual
         /// <summary>
         /// The BTN click me
         /// </summary>
+        [CommandBinding(nameof(IFrmAboutExMainViewModel.ShowAbout1Command))]
         private System.Windows.Forms.Button btnClickMe;
         /// <summary>
         /// The BTN click me2
         /// </summary>
+        [CommandBinding(nameof(IFrmAboutExMainViewModel.ShowAbout2Command))]
         private System.Windows.Forms.Button btnClickMe2;
     }
 }
