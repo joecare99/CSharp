@@ -9,6 +9,8 @@ using BaseLib.Helper;
 using Snake_Console.View;
 using System.Threading;
 using Game_Base.Model;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace Snake_Console
 {
