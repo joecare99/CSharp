@@ -31,7 +31,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib_net.csproj" />
     <ProjectReference Include="$(UpDir)\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
   </ItemGroup>
 </Project>
