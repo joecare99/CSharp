@@ -27,7 +27,7 @@ public partial class AboutViewModel : ObservableObject, IAboutViewModel
     public partial string Company { get; private set; }
 
     [ObservableProperty]
-    public partial string CopyRight { get; private set; }
+    public partial string Copyright { get; private set; }
 
     [ObservableProperty]
     public partial string Product { get; private set; }
@@ -44,7 +44,7 @@ public partial class AboutViewModel : ObservableObject, IAboutViewModel
         if (strings.Length < 5) return;
         Company = strings[4];
         if (strings.Length < 6) return;
-        CopyRight = strings[5];
+        Copyright = strings[5];
         if (strings.Length < 7) return;
         Product = strings[6];
     }

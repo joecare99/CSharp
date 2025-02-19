@@ -191,7 +191,7 @@ namespace CSharpBible.AboutEx.Visual
         /// <summary>
         /// The label copyright
         /// </summary>
-        [TextBinding(nameof(IAboutViewModel.CopyRight))]
+        [TextBinding(nameof(IAboutViewModel.Copyright))]
         private System.Windows.Forms.Label lblCopyright;
         /// <summary>
         /// The label version

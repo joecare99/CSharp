@@ -15,7 +15,7 @@ public interface IAboutViewModel: INotifyPropertyChanged
     string Description { get; }
     string Author { get; }
     string Company { get; }
-    string CopyRight { get; }
+    string Copyright { get; }
     string Product { get; }
 
     IRelayCommand CloseCommand { get; }
