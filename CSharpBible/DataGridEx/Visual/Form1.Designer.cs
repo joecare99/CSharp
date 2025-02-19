@@ -49,7 +49,7 @@ namespace DataGridEx
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             // TODO DataGrid wird nicht mehr unterstützt. Verwenden Sie stattdessen DataGridView. Weitere Informationen finden Sie unter: https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-            this.dataGrid1 = new System.Windows.Forms.DataGrid();
+            this.dataGrid1 = new System.Windows.Forms.DataGridView();
             this.customerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.bindingNavigator1 = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorAddNewItem = new System.Windows.Forms.ToolStripButton();
@@ -73,7 +73,6 @@ namespace DataGridEx
             // 
             this.dataGrid1.DataMember = "";
             this.dataGrid1.DataSource = this.customerBindingSource;
-            this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
             this.dataGrid1.Location = new System.Drawing.Point(13, 36);
             this.dataGrid1.Name = "dataGrid1";
             this.dataGrid1.Size = new System.Drawing.Size(1184, 521);
@@ -226,7 +225,7 @@ namespace DataGridEx
         /// The data grid1
         /// </summary>
         // TODO DataGrid wird nicht mehr unterstützt. Verwenden Sie stattdessen DataGridView. Weitere Informationen finden Sie unter: https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-                        private System.Windows.Forms.DataGrid dataGrid1;
+        private System.Windows.Forms.DataGridView dataGrid1;
         /// <summary>
         /// The customer binding source
         /// </summary>
