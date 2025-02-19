@@ -2,6 +2,7 @@
 using BaseLib.Helper;
 using WPF_StickyNotesDemo.Models;
 using System;
+using WPF_StickyNotesDemo.Models.Interfaces;
 
 namespace WPF_StickyNotesDemo.Tests
 {
