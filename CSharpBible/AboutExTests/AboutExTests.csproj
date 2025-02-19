@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>CSharpBible.AboutExTests</RootNamespace>
     <AssemblyName>AboutExTests</AssemblyName>
-    <TargetFrameworks>net4.8.1-windows;net9.0-windows</TargetFrameworks>
+    <TargetFrameworks>net481;net9.0-windows</TargetFrameworks>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
     <UseWindowsForms>true</UseWindowsForms>
@@ -12,12 +12,13 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="MSTest" Version="3.7.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="MSTest" Version="3.8.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AboutEx\AboutEx.csproj" />
