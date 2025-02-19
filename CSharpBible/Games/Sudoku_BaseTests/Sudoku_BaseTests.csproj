@@ -14,12 +14,13 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MSTest" Version="3.7.3" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="MSTest" Version="3.8.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
 	</ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
     <ProjectReference Include="..\..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
     <ProjectReference Include="..\Sudoku_Base\Sudoku_Base.csproj" />
   </ItemGroup>
