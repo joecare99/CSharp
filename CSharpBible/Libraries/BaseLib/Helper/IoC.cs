@@ -47,6 +47,21 @@ public class IoC
     /// IoC.GetSrv = builder.BuildServiceProvider().GetService;</code>
     /// </example>
     public static Func<Type, object?> GetSrv { get; set; } = (t) => null;
+
+    /// <summary>
+    /// Gets or sets the requested service.
+    /// </summary>
+    /// <value>The initialized service.</value>
+    /// <example>
+    ///   <code>using Microsoft.Extensions.DependencyInjection
+    /// // Build the DependencyInjection container
+    /// var builder = new ServiceCollection();
+    /// builder.AddTransient&lt;IInterface, CImplement1&gt;();
+    /// builder.AddSingleton&lt;IInterface2, CSingleton&gt;();
+    /// IoC.GetKydReqSrv = builder.BuildServiceProvider().GetRequiredKeyedService;</code>
+    /// </example>
+    private static Func<Type, object?, object> GetKydReqSrv { get; set; } = (t, k) => throw new NotImplementedException("Please initialize the service first.");
+
     /// <summary>
     /// Gets or sets the get scope.
     /// </summary>
@@ -76,6 +91,13 @@ public class IoC
     /// <returns>T, the initialized service(class)</returns>
     public static T GetRequiredService<T>() => (T)GetReqSrv.Invoke(typeof(T));
     /// <summary>
+    /// Gets the required, keyed service.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key">The key</param>
+    /// <returns>T, the initialized service(class)</returns>
+    public static T GetKeyedRequiredService<T>(object? key) => (T)GetKydReqSrv.Invoke(typeof(T),key);
+    /// <summary>
     /// Gets the service.
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -98,6 +120,7 @@ public class IoC
         _Scope = _BaseScope = GetScope();
         GetReqSrv = (t) => { var s = sp.GetService(t); return s ?? throw new InvalidOperationException($"No service for {t}"); };
         GetSrv = sp.GetService;
+        GetKydReqSrv = (t, k) => { var s = sp.GetRequiredKeyedService(t,k); return s; };
     }
 
     /// <summary>
