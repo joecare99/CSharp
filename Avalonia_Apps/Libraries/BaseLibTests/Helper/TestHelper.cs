@@ -59,7 +59,7 @@ public static class TestHelper
                 Assert.AreEqual(ExpData.GetField(field.Name), ActData.GetField(field.Name), Msg + $".{field.Name}");
             }
     }
-    public static void AssertAreEqual<T>(T exp, T act, string Msg = "") where T : IEnumerable
+    public static void AssertAreEqual<T>(T exp, T act, string Msg = "") where T : IEnumerable?
     {
         static string BldLns(int i, string[] aLines)
             => (i > 1 ? $"#{i - 2:D3}: {aLines[(i + 3) % 5]}{Environment.NewLine}" : "") +
@@ -68,6 +68,12 @@ public static class TestHelper
                (i < aLines.Length - 1 ? $"{Environment.NewLine}#{i + 1:D3}: {aLines[(i + 1) % 5]}" : "") +
                (i < aLines.Length - 2 ? $"{Environment.NewLine}#{i + 2:D3}: {aLines[(i + 2) % 5]}" : "");
 
+        if (exp == null && act == null) return;
+        if (exp == null || act == null)
+        {
+            Assert.AreEqual(exp, act, Msg);
+            return;
+        }
         var actE = act.GetEnumerator();
         var actLines = new string[5];
         var expLines = new string[5];
