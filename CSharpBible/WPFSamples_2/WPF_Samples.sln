@@ -107,6 +107,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_Geometry", "WPF_Geometr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_ImageView", "WPF_ImageView\WPF_ImageView.csproj", "{DA21C175-58F7-4701-B0B1-E0AA5EB624FA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Styles & Templates", "Styles & Templates", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Styles_and_Templates\WPF_Samples.props = Styles_and_Templates\WPF_Samples.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_AlternatingAppearanceOfItems", "Styles_and_Templates\WPF_AlternatingAppearanceOfItems\WPF_AlternatingAppearanceOfItems.csproj", "{46D66569-3E63-470C-9469-289B5A0D12D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_ContentControlStyle", "Styles_and_Templates\WPF_ContentControlStyle\WPF_ContentControlStyle.csproj", "{431A0845-C890-411B-82D3-DD2CECC36ACF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_EventTriggers", "Styles_and_Templates\WPF_EventTriggers\WPF_EventTriggers.csproj", "{E30A1BE4-EB9C-466A-861A-C71BA8D5B019}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -273,6 +284,18 @@ Global
 		{DA21C175-58F7-4701-B0B1-E0AA5EB624FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA21C175-58F7-4701-B0B1-E0AA5EB624FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA21C175-58F7-4701-B0B1-E0AA5EB624FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46D66569-3E63-470C-9469-289B5A0D12D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D66569-3E63-470C-9469-289B5A0D12D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D66569-3E63-470C-9469-289B5A0D12D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D66569-3E63-470C-9469-289B5A0D12D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{431A0845-C890-411B-82D3-DD2CECC36ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{431A0845-C890-411B-82D3-DD2CECC36ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{431A0845-C890-411B-82D3-DD2CECC36ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{431A0845-C890-411B-82D3-DD2CECC36ACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E30A1BE4-EB9C-466A-861A-C71BA8D5B019}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E30A1BE4-EB9C-466A-861A-C71BA8D5B019}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E30A1BE4-EB9C-466A-861A-C71BA8D5B019}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E30A1BE4-EB9C-466A-861A-C71BA8D5B019}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -314,6 +337,9 @@ Global
 		{D71CE4E2-7D4C-41DB-BB75-8B9F791CDC46} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
 		{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
 		{DA21C175-58F7-4701-B0B1-E0AA5EB624FA} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{46D66569-3E63-470C-9469-289B5A0D12D4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{431A0845-C890-411B-82D3-DD2CECC36ACF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E30A1BE4-EB9C-466A-861A-C71BA8D5B019} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {538D0F12-3E9F-4868-8689-63796F14BD11}
