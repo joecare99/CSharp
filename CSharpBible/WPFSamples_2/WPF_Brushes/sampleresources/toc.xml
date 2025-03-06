@@ -2,7 +2,7 @@
   <Example
     Title="Introduction"
     ExampleClass="BrushesIntroduction.BrushTypesExample"
-    Uri="BrushTypesExample.xaml">
+    Uri="Views\BrushTypesExample.xaml">
     <Description>Shows simple examples of each of the brush types.</Description>
   </Example>
 
@@ -12,12 +12,12 @@
     <Children>
 
       <Example Title="Syntax"
-        Uri="SolidColorBrushSyntax.xaml">
+        Uri="Views\SolidColorBrushSyntax.xaml">
         <Description>Uses different methods to specify the same color.</Description>
       </Example>
 
       <Example Title="SolidColorBrush Animation"
-        Uri="AnimatingSolidColorBrushExample.xaml">
+        Uri="Views\AnimatingSolidColorBrushExample.xaml">
         <Description>Animates a SolidColorBrush.</Description>
       </Example>
     </Children>
@@ -26,7 +26,7 @@
 
   <Example Title="Predefined Brushes"
     ExampleClass="BrushesIntroduction.PredefinedBrushes"
-    Uri="PredefinedBrushes.xaml">
+    Uri="Views\PredefinedBrushes.xaml">
     <Description>Lists the predefined colors.</Description>
   </Example>
 
@@ -35,13 +35,13 @@
     <Children>
       <Example Title="Opacity"
         ExampleClass="BrushesIntroduction.BrushOpacityExample"
-        Uri="BrushOpacityExample.xaml">
+        Uri="Views\BrushOpacityExample.xaml">
         <Description>Demonstrates the Brush.Opacity property.</Description>
       </Example>
 
       <Example Title="Transform"
         ExampleClass="BrushesIntroduction.BrushTransformExample"
-        Uri="BrushTransformExample.xaml">
+        Uri="Views\BrushTransformExample.xaml">
         <Description>Shows the differences between the Brush.Transform and Brush.RelativeTransform properties.</Description>
       </Example>
     </Children>
@@ -53,7 +53,7 @@
 
       <Example Title="Gradient Brushes"
         ExampleClass="BrushesIntroduction.GradientBrushesExample"
-        Uri="GradientBrushesExample.xaml">
+        Uri="Views\GradientBrushesExample.xaml">
         <Description>Shows linear and radial gradient examples.</Description>
       </Example>
 
@@ -62,12 +62,12 @@
         <Children>
           <Example Title="LinearGradientBrush Animation"
              ExampleClass="BrushesIntroduction.LinearGradientBrushAnimationExample"
-             Uri="LinearGradientBrushAnimationExample.xaml">
+             Uri="Views\LinearGradientBrushAnimationExample.xaml">
             <Description>Animates a LinearGradientBrush.</Description>
           </Example>
           <Example Title="Interactive Example"
              ExampleClass="BrushesIntroduction.InteractiveLinearGradientBrushExample"
-             Uri="InteractiveLinearGradientBrushExample.xaml">
+             Uri="Views\InteractiveLinearGradientBrushExample.xaml">
             <Description>Enables you to interactively control a LinearGradientBrush.</Description>
           </Example>
         </Children>
@@ -77,19 +77,19 @@
         <Children>
           <Example Title="RadialGradientBrush"
              ExampleClass="BrushesIntroduction.RadialGradientBrushExample"
-             Uri="RadialGradientBrushExample.xaml">
+             Uri="Views\RadialGradientBrushExample.xaml">
             <Description>Shows several radial gradients.</Description>
           </Example>
           <Example Title="RadialGradientBrush Animation"
             ExampleClass="BrushesIntroduction.RadialGradientBrushAnimationExample"
-            Uri="RadialGradientBrushAnimationExample.xaml">
+            Uri="Views\RadialGradientBrushAnimationExample.xaml">
             <Description>Shows animated radial gradients.</Description>
           </Example>
         </Children>
       </Example>
       <Example Title="GradientSpread"
          ExampleClass="BrushesIntroduction.GradientSpreadExample"
-         Uri="GradientSpreadExample.xaml">
+         Uri="Views\GradientSpreadExample.xaml">
         <Description>Shows the different GradientSpread settings.</Description>
       </Example>
     </Children>
@@ -100,7 +100,7 @@
     <Children>
       <Example Title="Dashes"
         ExampleClass="BrushesIntroduction.DashExample"
-        Uri="DashExample.xaml">
+        Uri="Views\DashExample.xaml">
         <Description>Shows how to create a dash pattern.</Description>
       </Example>
     </Children>
