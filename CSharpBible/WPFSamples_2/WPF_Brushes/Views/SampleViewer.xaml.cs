@@ -1,6 +1,7 @@
 // // Copyright (c) Microsoft. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Brushes.ViewModels.Interfaces;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,21 +17,11 @@ namespace Brushes.Views;
 /// </summary>
 public partial class SampleViewer : Page
 {
-    public static RoutedUICommand ExitCommand =
-        new RoutedUICommand("Exit", "Exit", typeof (SampleViewer));
-
-    public SampleViewer()
+    public SampleViewer(ISampleViewerViewModel data)
     {
         InitializeComponent();
-    }
-
-    private void TransitionAnimationStateChanged(object sender, EventArgs args)
-    {
-        var transitionAnimationClock = (AnimationClock) sender;
-        if (transitionAnimationClock.CurrentState == ClockState.Filling)
-        {
-            FadeEnded();
-        }
+        DataContext = data;
+        data.DoExit += DoExitCommand;
     }
 
     private void MyFrameNavigated(object sender, NavigationEventArgs args)
@@ -39,22 +30,8 @@ public partial class SampleViewer : Page
         myFrame.BeginAnimation(OpacityProperty, myFadeInAnimation, HandoffBehavior.SnapshotAndReplace);
     }
 
-    private void FadeEnded()
-    {
-        var el = (XmlElement) myPageList.SelectedItem;
-        var att = el.Attributes["Uri"];
-        if (att != null)
-        {
-            myFrame.Navigate(new Uri(att.Value, UriKind.Relative));
-        }
-        else
-        {
-            myFrame.Content = null;
-        }
-    }
+    private void DoExitCommand(object sender, EventArgs e) => Application.Current.Shutdown();
 
-    private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)
-    {
-        Application.Current.Shutdown();
-    }
+    private void DoubleAnimation_Completed(object sender, EventArgs e)
+        => ((ISampleViewerViewModel)DataContext).TransitionCommand?.Execute(e);
 }
