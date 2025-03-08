@@ -10,5 +10,7 @@ namespace GenInterfaces.Interfaces.Genealogic
 
         IGenFact End { get; }
 
+        IList<IGenSources> Sources { get; init; }
+
     }
 }

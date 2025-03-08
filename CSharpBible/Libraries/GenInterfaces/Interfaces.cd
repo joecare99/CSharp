@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Interface Name="GenFree2Base.Interfaces.Genealogic.IGenBase">
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenBase">
     <Position X="8.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
@@ -10,7 +10,7 @@
       <Property Name="eGenType" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="GenFree2Base.Interfaces.Genealogic.IGenFact">
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenFact">
     <Position X="7.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAQAAABAEEAAAAAAAA=</HashCode>
@@ -20,14 +20,13 @@
       <Property Name="MainEntity" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="GenFree2Base.Interfaces.Genealogic.IGenEntity">
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenEntity">
     <Position X="14" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAJAAAAAACAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAJAAAAAACAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\Genealogic\IGenEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Facts" />
       <Property Name="Connects" />
     </ShowAsCollectionAssociation>
   </Interface>
@@ -59,7 +58,7 @@
       <FileName>Interfaces\Genealogic\IGenSources.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="GenFree2Base.Interfaces.Genealogic.IGenConnects">
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenConnects">
     <Position X="0.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -73,7 +72,7 @@
       <FileName>Interfaces\IGenTransaction.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="GenFree2Base.Interfaces.Genealogic.IGenealogy">
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenealogy">
     <Position X="5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAQCAAAAAAAAAAAAAA=</HashCode>
