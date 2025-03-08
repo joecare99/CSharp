@@ -1,4 +1,4 @@
-﻿using Gen_BaseItf.Model.Interface;
+﻿using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,15 +6,15 @@ using WinAhnenCls.Model.GenBase;
 
 namespace WinAhnenCls.Model.HejInd
 {
-    public partial class CHejInivid : IDisposable, IGenIndividual, IGenListProvider<IGenIndividual>, IGenListProvider<IGenFamily>, IGenListProvider<IGenEvent>
+    public partial class CHejInivid : IDisposable, IGenPerson, IGenListProvider<IGenIndividual>, IGenListProvider<IGenFamily>, IGenListProvider<IGenEvent>
     {
         private bool _disposedValue;
 
         public CHejInivid()
         {
             this.Indi = new CHejIndiData(); // init DataHolder
-            Children = new CGenList<IGenIndividual>(this, EGenListType.glt_Children);
-            Spouses = new CGenList<IGenIndividual>(this, EGenListType.glt_Spouses);
+            Children = new CGenList<IGenPerson>(this, EGenListType.glt_Children);
+            Spouses = new CGenList<IGenPerson>(this, EGenListType.glt_Spouses);
             Families = new CGenList<IGenFamily>(this, EGenListType.glt_Families);
             //this.IndiRedir = EHejIndRedir.hIRd_Ind;
             //this.IndiMeta = EIndMetaData.hInMeD_ParentCount;
@@ -26,15 +26,15 @@ namespace WinAhnenCls.Model.HejInd
         public EIndMetaData IndiMeta { get; set; }
 
         // Basic-Properies
-        public string Name { get => $"{Indi.FamilyName}, {Indi.GivenName}"; set => throw new NotImplementedException(); }
+        public string Name { get => $"{Indi.Surname}, {Indi.GivenName}"; set => throw new NotImplementedException(); }
         public string GivenName { get => Indi.GivenName; set => Indi.GivenName = value; }
-        public string Surname { get => Indi.FamilyName; set => Indi.FamilyName = value; }
+        public string Surname { get => Indi.Surname; set => Indi.Surname = value; }
         public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Sex { get => Indi.Sex; set => Indi.Sex = value; }
         public string IndRefID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         // Relationship-Properties
-        public IGenIndividual Father { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IGenP Father { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IGenIndividual Mother { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public int ChildCount => throw new NotImplementedException();

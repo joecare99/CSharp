@@ -1,4 +1,4 @@
-﻿using Gen_BaseItf.Model.Interface;
+﻿using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -21,8 +21,8 @@ namespace WinAhnenCls.Model
         public int ChildCount { get; set; }
         public object Data { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public IEnumerable<IGenIndividual> Individuals { get; set; }
-        public IEnumerable<CHejMarriageData> Marriages { get; set; }
+        public IList<IGenPerson> Individuals { get; set; }
+        public IList<CHejMarriageData> Marriages { get; set; }
         object IDataRO<object>.Data => throw new NotImplementedException();
 
         NotifyCollectionChangedEventHandler IDataRO<object>.OnUpdate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

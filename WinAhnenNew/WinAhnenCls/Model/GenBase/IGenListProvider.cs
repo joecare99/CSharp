@@ -1,9 +1,9 @@
-﻿using Gen_BaseItf.Model.Interface;
+﻿using GenInterfaces.Interfaces.Genealogic;
 using System.Collections.Generic;
 
 namespace WinAhnenCls.Model.HejInd
 {
-    public interface IGenListProvider<T> where T : IGenData
+    public interface IGenListProvider<T> where T : IGenBase
     {
         int Count(EGenListType lType);
         bool IsReadOnly(EGenListType lType);

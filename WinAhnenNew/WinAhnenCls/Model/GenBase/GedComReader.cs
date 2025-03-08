@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using System.Threading;
 
 namespace WinAhnenCls.Model.GenBase;
 public class GedComReader
 {
     private readonly GedComBaseReader _Reader;
+
+    Func<GedComBaseReader.SGedComLine, IGedComObjects> GetObj { get; set; }=(s) => new GedComObject(s);
 
     public GedComReader(Stream sr)
     {
@@ -34,7 +38,7 @@ public class GedComReader
                 {
                     lRet.Add(gco);
                 }
-                gco = new GedComObject(sLine);
+                gco = GetObj?.Invoke(sLine);
             }
             gco?.AddLine(sLine);
         }

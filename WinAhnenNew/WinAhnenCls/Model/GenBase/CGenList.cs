@@ -1,11 +1,11 @@
-﻿using Gen_BaseItf.Model.Interface;
+﻿using GenFree2Base.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using WinAhnenCls.Model.HejInd;
 
 namespace WinAhnenCls.Model.GenBase
 {
-    public class CGenList<T> : IIndexedList<T> where T : IGenData
+    public class CGenList<T> : IIndexedList<T> where T : IGen
     {
         public CGenList(IGenListProvider<T> prov, EGenListType ltype)
         {

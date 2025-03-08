@@ -1,11 +1,10 @@
-﻿using Gen_BaseItf.Model.Interface;
+﻿using GenInterfaces.Interfaces.Genealogic;
 using WinAhnenCls.Model.HejInd;
 
-namespace WinAhnenCls.Model.GenBase
+namespace WinAhnenCls.Model.GenBase;
+
+public interface IGenIndProvider
 {
-    public interface IGenIndProvider
-    {
-        IGenIndividual GetGenIndivid(object idx, EGenListType lType);
-        void SetGenIndivid(object idx, EGenListType lType, IGenIndividual value);
-    }
+    IGenPerson GetGenIndivid(object idx, EGenListType lType);
+    void SetGenIndivid(object idx, EGenListType lType, IGenPerson value);
 }

@@ -1,11 +1,10 @@
-﻿using Gen_BaseItf.Model.Interface;
+﻿using GenInterfaces.Interfaces.Genealogic;
 using WinAhnenCls.Model.HejInd;
 
-namespace WinAhnenCls.Model.GenBase
+namespace WinAhnenCls.Model.GenBase;
+
+public interface IGenEventProvider
 {
-    public interface IGenEventProvider
-    {
-        IGenEvent GetGenEvent(object idx, EGenListType lType);
-        void SetGenEvent(object idx, EGenListType lType, IGenEvent value);
-    }
+    IGenFact GetGenEvent(object idx, EGenListType lType);
+    void SetGenEvent(object idx, EGenListType lType, IGenFact value);
 }
