@@ -1,4 +1,5 @@
 ﻿using BaseLib.Helper;
+using GenInterfaces.Data;
 namespace WinAhnenCls.Model.GenBase;
 
 public class GedComObject : IGedComObjects

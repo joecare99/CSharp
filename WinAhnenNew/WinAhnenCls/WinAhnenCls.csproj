@@ -1,21 +1,26 @@
 ﻿<Project>
-	<Import Project="..\WinAhnen.props" />
+  <Import Project="..\WinAhnen.props" />
 
-	<PropertyGroup>
-		<TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
-		<Compile Remove="obj\**" />
-		<EmbeddedResource Remove="obj\**" />
-		<None Remove="obj\**" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj" />
+  <PropertyGroup>
+    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj" />
     <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>

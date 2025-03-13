@@ -1,16 +1,18 @@
-﻿using GenFree2Base;
-using GenFree2Base.Interfaces;
+﻿using GenFree2Base.Interfaces;
+using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using WinAhnenCls.Model.GenBase;
 
 namespace WinAhnenCls.Model.HejInd
 {
-    public class CHejIndiData : IGenPerson
+    public class CHejIndiReader : IReader<IGenPerson>
     {
-        private Dictionary<EHejIndDataFields, object> _data = new();
+
+    private Dictionary<EHejIndDataFields, object> _data = new();
 
         public int ID { get => (int)_data[EHejIndDataFields.hind_ID]; set => _data[EHejIndDataFields.hind_ID] = value; }
         public int idFather { get => (int)_data[EHejIndDataFields.hind_idFather]; set => _data[EHejIndDataFields.hind_idFather] = value; }
@@ -155,6 +157,23 @@ namespace WinAhnenCls.Model.HejInd
                     Data[field] = _line[i];
             }
             return _result;
+        }
+
+        public IEnumerable<IGenPerson> Read(StreamReader sr)
+        {
+            while (!sr.EndOfStream && (char)(sr.Peek()) != 'm') // 'mrt
+            {
+                var _line = sr.ReadLine().Split('');
+                for (int i = 0; i < _line.Length; i++)
+                {
+                    var field = (EHejIndDataFields)(i - 1);
+                    if (int.TryParse(_line[i], out int _int))
+                        Data[field] = _int;
+                    else
+                        Data[field] = _line[i];
+                }
+                yield return this;
+            }
         }
     }
 }

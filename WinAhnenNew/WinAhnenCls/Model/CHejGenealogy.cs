@@ -131,7 +131,7 @@ namespace WinAhnenCls.Model
         public void ReadFromStream(Stream lStr)
         {
             var sr = new StreamReader(lStr);
-            Individuals = CHejInivid.ReadFromStream(sr).ToList();
+            Individuals = CPerson.ReadFromStream(sr).ToList();
 
         }
 
