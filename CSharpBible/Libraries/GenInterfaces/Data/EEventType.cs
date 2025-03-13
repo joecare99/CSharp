@@ -1,8 +1,8 @@
-﻿namespace Gen_BaseItf.Model.Data;
+﻿namespace GenInterfaces.Data;
 
 public enum EEventType
 {
-    evt_ID = 0,
+    evt_ID = 0, // ID
     evt_Birth = 1,
     evt_Baptism = 2,
     evt_Marriage = 3,

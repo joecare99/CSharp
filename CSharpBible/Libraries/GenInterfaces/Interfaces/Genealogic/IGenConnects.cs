@@ -11,6 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using GenInterfaces.Data;
+using System;
+
 /// <summary>
 /// The Interfaces namespace.
 /// </summary>
@@ -28,4 +31,6 @@ public interface IGenConnects : IGenBase
     /// </summary>
     /// <value>The entity.</value>
     IGenEntity Entity { get; init; }
+
+    EGenConnectionType eGenConnectionType { get; init; }
 }

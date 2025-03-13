@@ -15,7 +15,8 @@ namespace GenFree2Base.Interfaces;
 
 public interface IListEntry<T> where T : IListEntry<T>
 {
-    IIndexedList<object> Owner { get; }
+    object owner { get; } 
+    IIndexedList<object> Items { get; }
     T Next { get; }
     T Prev { get; }
     T First { get; }

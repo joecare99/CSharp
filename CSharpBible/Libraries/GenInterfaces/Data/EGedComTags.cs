@@ -1,4 +1,4 @@
-﻿namespace WinAhnenCls.Model.GenBase;
+﻿namespace GenInterfaces.Data;
 
 public enum EGedComTags
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gen_BaseItf.Model.Data;
+namespace GenInterfaces.Data;
 
 public static class Constants
 {

@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using GenFree2Base;
+using GenInterfaces.Data;
 using System;
 
 /// <summary>
@@ -30,7 +30,7 @@ public interface IGenBase
     /// <value>The u identifier.</value>
     Guid UId { get; init; }
     /// <summary>
-    /// Gets the type of the e gen.
+    /// Gets the type of the genealogy-object.
     /// </summary>
     /// <value>The type of the e gen.</value>
     EGenType eGenType { get; init; }
