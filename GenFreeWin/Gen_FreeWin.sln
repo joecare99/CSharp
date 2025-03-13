@@ -90,6 +90,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAhnenClsTests", "..\WinA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLib", "..\CSharpBible\Libraries\BaseLib\BaseLib.csproj", "{75D90630-07F7-46A4-86EC-C185C5473BA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseGenClasses", "..\WinAhnenNew\BaseGenClasses\BaseGenClasses.csproj", "{86ACD0AC-1387-4BF2-860C-45987B662CC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -344,6 +346,14 @@ Global
 		{75D90630-07F7-46A4-86EC-C185C5473BA9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75D90630-07F7-46A4-86EC-C185C5473BA9}.Release|x86.ActiveCfg = Release|Any CPU
 		{75D90630-07F7-46A4-86EC-C185C5473BA9}.Release|x86.Build.0 = Release|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Debug|x86.Build.0 = Debug|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Release|x86.ActiveCfg = Release|Any CPU
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -376,6 +386,7 @@ Global
 		{DC2A9691-41FE-47F9-A439-D76D2ED8E9B5} = {2A2E129C-95B6-4192-BA94-D9C5A249AB43}
 		{B23BC158-49B5-4408-9C5E-C2BB24D4DEAC} = {2A2E129C-95B6-4192-BA94-D9C5A249AB43}
 		{75D90630-07F7-46A4-86EC-C185C5473BA9} = {DDC1E0CB-8182-454A-8B2B-2F2CF9A2059B}
+		{86ACD0AC-1387-4BF2-860C-45987B662CC1} = {2A2E129C-95B6-4192-BA94-D9C5A249AB43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B766B89-B32C-4777-9290-8BF7CEC401B5}
