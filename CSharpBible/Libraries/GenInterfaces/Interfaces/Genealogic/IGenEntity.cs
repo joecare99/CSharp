@@ -6,9 +6,9 @@ namespace GenInterfaces.Interfaces.Genealogic
     {
         IList<IGenFact> Facts { get; init; }
         IList<IGenConnects> Connects { get; init; }
-        IGenFact Start { get; }
+        IGenFact? Start { get; }
 
-        IGenFact End { get; }
+        IGenFact? End { get; }
 
         IList<IGenSources> Sources { get; init; }
 

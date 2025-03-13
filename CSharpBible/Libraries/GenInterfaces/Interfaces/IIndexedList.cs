@@ -8,4 +8,5 @@ public interface IIndexedList<T> : IList<T>
     new object IndexOf(T item);
     void Insert(object index, T item);
     void RemoveAt(object index);
+    void Add(T Item, object index);
 }
