@@ -1,6 +1,6 @@
 ﻿using BaseLib.Interfaces;
-using GenFree2Base.Interfaces;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace WinAhnenCls.Model.HejInd
 
         public int ChildCount => throw new NotImplementedException();
 
-        public IIndexedList<IGenPerson> Children { get; } = 
+        public IIndexedList<IGenPerson> Children { get; }  
 
         public IGenFamily ParentFamily { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -46,12 +46,9 @@ namespace WinAhnenCls.Model.HejInd
 
         // Vital-Properties
 
-
         public string Data { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        DateTime? IGenData.LastChange => throw new NotImplementedException();
-
-        object IGenData.This => this;
+        DateTime? IGenObject.LastChange => throw new NotImplementedException();
 
         public IGenDate BirthDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IGenPlace BirthPlace { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -77,9 +74,11 @@ namespace WinAhnenCls.Model.HejInd
 
         public IGenFact End => throw new NotImplementedException();
 
-        public IWeakRefList<IGenSources> Sources { get ; init ; }
+        public IList<IGenSources> Sources { get ; init ; }
         public Guid UId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public EGenType eGenType { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        IList<IGenSources> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenMedia> Media { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
         protected virtual void Dispose(bool disposing)
         {
