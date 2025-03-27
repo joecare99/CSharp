@@ -1,5 +1,5 @@
-﻿using GenFree2Base.Interfaces;
-using GenInterfaces.Data;
+﻿using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ namespace WinAhnenCls.Model.HejInd
         public int[] Marriages { get; set; }
         public _HejIndiDataProxy Data { get; }
         public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string IndRefID { get => ID.ToString(); set => ; }
+        public string IndRefID { get => ID.ToString(); set => throw new NotImplementedException(); }
         public IGenPerson Father { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IGenPerson Mother { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

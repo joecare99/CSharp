@@ -1,0 +1,209 @@
+{
+  "$id": "1",
+  "eGenType": 2,
+  "Facts": {
+    "$id": "2",
+    "$values": [
+      {
+        "$id": "3",
+        "eFactType": 0,
+        "Data": "Peter",
+        "Entities": {
+          "$id": "4",
+          "$values": []
+        },
+        "UId": "54883a8e-c59f-45ce-946e-5d24b152b546",
+        "eGenType": 0
+      },
+      {
+        "$id": "5",
+        "eFactType": 1,
+        "Data": "Mustermann",
+        "Entities": {
+          "$id": "6",
+          "$values": []
+        },
+        "UId": "598acdd9-013d-44c6-aced-29ae8739fff8",
+        "eGenType": 0
+      },
+      {
+        "$id": "7",
+        "eFactType": 2,
+        "Data": "Dr.",
+        "Entities": {
+          "$id": "8",
+          "$values": []
+        },
+        "UId": "c9b104e8-ef27-40c3-8312-1ebc7009b697",
+        "eGenType": 0
+      },
+      {
+        "$id": "9",
+        "eFactType": 4,
+        "Data": "Pemu",
+        "Entities": {
+          "$id": "10",
+          "$values": []
+        },
+        "UId": "ec56238f-d595-4ef1-8960-501ee9622a80",
+        "eGenType": 0
+      },
+      {
+        "$id": "11",
+        "eFactType": 6,
+        "Data": "M",
+        "Entities": {
+          "$id": "12",
+          "$values": []
+        },
+        "UId": "11dcf8d7-0f84-4962-9feb-2a7c88b1d203",
+        "eGenType": 0
+      },
+      {
+        "$id": "13",
+        "eFactType": 7,
+        "Date": {
+          "$id": "14",
+          "eDateModifier": 0,
+          "eDateType1": 0,
+          "Date1": "1960-01-01T00:00:00",
+          "eDateType2": null,
+          "Date2": null,
+          "DateText": null,
+          "eGenType": 10
+        },
+        "Place": {
+          "$id": "15",
+          "Name": "Bad Nauheim",
+          "Type": null,
+          "GOV_ID": null,
+          "Latitude": 0,
+          "Longitude": 0,
+          "Notes": null,
+          "Parent": null,
+          "UId": "0f9718ce-e40a-45a0-a33b-76a34b99838d",
+          "eGenType": 6
+        },
+        "Entities": {
+          "$id": "16",
+          "$values": []
+        },
+        "UId": "b1e257d5-114c-4c59-b775-8d621788428c",
+        "eGenType": 0
+      },
+      {
+        "$id": "17",
+        "eFactType": 8,
+        "Date": {
+          "$id": "18",
+          "eDateModifier": 0,
+          "eDateType1": 0,
+          "Date1": "1960-03-01T00:00:00",
+          "eDateType2": null,
+          "Date2": null,
+          "DateText": null,
+          "eGenType": 10
+        },
+        "Place": {
+          "$id": "19",
+          "Name": "Dortmund",
+          "Type": null,
+          "GOV_ID": null,
+          "Latitude": 0,
+          "Longitude": 0,
+          "Notes": null,
+          "Parent": null,
+          "UId": "3e9319ee-3970-4db6-8836-280cb605bc1c",
+          "eGenType": 6
+        },
+        "Entities": {
+          "$id": "20",
+          "$values": []
+        },
+        "UId": "54883a8e-c59f-45ce-946e-5d24b152b546",
+        "eGenType": 0
+      },
+      {
+        "$id": "21",
+        "eFactType": 9,
+        "Date": {
+          "$id": "22",
+          "eDateModifier": 0,
+          "eDateType1": 0,
+          "Date1": "2025-01-01T00:00:00",
+          "eDateType2": null,
+          "Date2": null,
+          "DateText": null,
+          "eGenType": 10
+        },
+        "Place": {
+          "$id": "23",
+          "Name": "Hamburg",
+          "Type": null,
+          "GOV_ID": null,
+          "Latitude": 0,
+          "Longitude": 0,
+          "Notes": null,
+          "Parent": null,
+          "UId": "f67220c2-9c73-4251-a47a-d98ab0db6726",
+          "eGenType": 6
+        },
+        "Entities": {
+          "$id": "24",
+          "$values": []
+        },
+        "UId": "54883a8e-c59f-45ce-946e-5d24b152b546",
+        "eGenType": 0
+      },
+      {
+        "$id": "25",
+        "eFactType": 10,
+        "Date": {
+          "$id": "26",
+          "eDateModifier": 0,
+          "eDateType1": 0,
+          "Date1": "2025-02-01T00:00:00",
+          "eDateType2": null,
+          "Date2": null,
+          "DateText": null,
+          "eGenType": 10
+        },
+        "Place": {
+          "$id": "27",
+          "Name": "Kiel",
+          "Type": null,
+          "GOV_ID": null,
+          "Latitude": 0,
+          "Longitude": 0,
+          "Notes": null,
+          "Parent": null,
+          "UId": "4c83ba6b-20af-4d45-b216-c11c9c9a78ec",
+          "eGenType": 6
+        },
+        "Entities": {
+          "$id": "28",
+          "$values": []
+        },
+        "UId": "54883a8e-c59f-45ce-946e-5d24b152b546",
+        "eGenType": 0
+      },
+      {
+        "$id": "29",
+        "eFactType": 27,
+        "Data": "123456",
+        "Entities": {
+          "$id": "30",
+          "$values": []
+        },
+        "UId": "54883a8e-c59f-45ce-946e-5d24b152b546",
+        "eGenType": 0
+      }
+    ]
+  },
+  "Connects": {
+    "$id": "31",
+    "$values": []
+  },
+  "UId": "95742eb9-44c2-4d3f-9242-8c61abdd9b65",
+  "LastChange": null
+}
