@@ -1,6 +1,7 @@
-﻿using BaseLib.Helper;
-using GenFree2Base.Interfaces;
+﻿using BaseGenClasses.Helper.Interfaces;
+using BaseLib.Helper;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
@@ -21,25 +22,33 @@ namespace BaseGenClasses.Helper
             connects.Add(connect);
         }
 
-        public static void AddFact(this IList<IGenFact> facts,IGenEntity mainEnt, EFactType type, string data)
+        public static void AddFamily(this IList<IGenConnects> connects, EGenConnectionType type, IGenFamily family)
+        {
+            IGenConnectBuilder conBuilder = IoC.GetRequiredService<IGenConnectBuilder>();
+            var connect = conBuilder.Emit(type, family);
+
+            connects.Add(connect);
+        }
+
+        public static void AddFact(this IList<IGenFact> facts,IGenEntity mainEnt, EFactType type, string data, Guid? Uid=null)
         {
             IGenFactBuilder conBuilder = IoC.GetRequiredService<IGenFactBuilder>();
-            var fact = conBuilder.Emit(type,mainEnt, data);
+            var fact = conBuilder.Emit(type,mainEnt, data, Uid);
 
             facts.Add(fact);
         }
-        public static void AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type,IGenDate date, string data)
+        public static void AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type,IGenDate date, string data, Guid? Uid = null)
         {
             IGenFactBuilder conBuilder = IoC.GetRequiredService<IGenFactBuilder>();
-            var evnt = conBuilder.Emit(type, mainEnt,date, data);
+            var evnt = conBuilder.Emit(type, mainEnt,date, data, Uid);
 
             facts.Add(evnt);
         }
 
-        public static void AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type, IGenDate date, IGenPlace place, string data)
+        public static void AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type, IGenDate date, IGenPlace place, string data, Guid? Uid = null)
         {
             IGenFactBuilder conBuilder = IoC.GetRequiredService<IGenFactBuilder>();
-            var evnt = conBuilder.Emit(type, mainEnt, date, place, data);
+            var evnt = conBuilder.Emit(type, mainEnt, date, place, data, Uid);
             facts.Add(evnt);
         }
 
@@ -53,10 +62,10 @@ namespace BaseGenClasses.Helper
             return facts.Where(f => f.eFactType == type).FirstOrDefault();
         }
 
-        public static IIndexedList<T> ToIndexedList<T,T2>(this IEnumerable<T> list,Func<T,T2> getIdx)
+        public static IIndexedList<T> ToIndexedList<T,T2>(this IEnumerable<T> list,Func<T,T2> getIdx) where T : class where T2 : notnull
         {
             IGenILBuilder conBuilder = IoC.GetRequiredService<IGenILBuilder>();
-            var result = conBuilder.NewList<T,T2>();
+            var result = conBuilder.NewList(getIdx);
             foreach (var item in list)
             {
                 result.Add(item,getIdx(item));

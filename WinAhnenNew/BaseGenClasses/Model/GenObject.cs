@@ -1,14 +1,22 @@
 ﻿using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace BaseGenClasses.Model
 {
-    abstract public class GenObject : IGenObject
+    [JsonDerivedType(typeof(GenObject), typeDiscriminator: "base")]
+
+    public abstract class GenObject : IGenObject
     {
+        private Guid? _uid;
+
         [DataMember]
-        public Guid UId { get ; init ; }
+        public Guid UId { get => _uid ??= Guid.NewGuid(); init => _uid = value; }
         [DataMember]
-        public EGenType eGenType { get ; init ; }
+        public abstract EGenType eGenType { get ; }
+ 
+        public DateTime? LastChange { get; protected set; }
     }
 }
