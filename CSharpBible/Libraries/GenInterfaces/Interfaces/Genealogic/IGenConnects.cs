@@ -32,5 +32,7 @@ public interface IGenConnects : IGenBase
     /// <value>The entity.</value>
     IGenEntity Entity { get; init; }
 
+    /// <summary>Gets the type of the genealogical connection.</summary>
+    /// <value>The type of the e gen connection.</value>
     EGenConnectionType eGenConnectionType { get; init; }
 }

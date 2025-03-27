@@ -13,6 +13,7 @@
 // ***********************************************************************
 using GenInterfaces.Data;
 using System;
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// The Interfaces namespace.
@@ -28,10 +29,11 @@ public interface IGenBase
     /// Gets the u identifier.
     /// </summary>
     /// <value>The u identifier.</value>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     Guid UId { get; init; }
     /// <summary>
     /// Gets the type of the genealogy-object.
     /// </summary>
     /// <value>The type of the e gen.</value>
-    EGenType eGenType { get; init; }
+    EGenType eGenType { get; }
 }

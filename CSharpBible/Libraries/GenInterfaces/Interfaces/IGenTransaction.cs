@@ -17,7 +17,7 @@ using System;
 /// <summary>
 /// The Interfaces namespace.
 /// </summary>
-namespace GenFree2Base.Interfaces;
+namespace GenInterfaces.Interfaces;
 
 /// <summary>
 /// Interface IGenTransaction
@@ -55,5 +55,5 @@ public interface IGenTransaction : IGenBase, IListEntry<IGenTransaction>
     /// Gets the previous.
     /// </summary>
     /// <value>The previous.</value>
-    IGenTransaction? Prev { get; init; }
+    new IGenTransaction? Prev { get; init; }
 }

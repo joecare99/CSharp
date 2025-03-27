@@ -1,7 +1,26 @@
-﻿using GenFree2Base.Interfaces;
-
+﻿// ***********************************************************************
+// Assembly         : GenInterfaces
+// Author           : Mir
+// Created          : 01-28-2025
+//
+// Last Modified By : Mir
+// Last Modified On : 03-08-2025
+// ***********************************************************************
+// <copyright file="IGenPerson.cs" company="JC-Soft">
+//     Copyright © JC-Soft 2025
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+/// <summary>
+/// The Genealogic namespace.
+/// </summary>
 namespace GenInterfaces.Interfaces.Genealogic;
 
+/// <summary>
+/// Interface IGenPerson
+/// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenEntity" />
+/// </summary>
+/// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenEntity" />
 public interface IGenPerson : IGenEntity
 {
     /// <summary>
