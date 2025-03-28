@@ -110,38 +110,18 @@ public class GenFactTests : IGenEntity
         Assert.AreEqual(0, _genFact.Medias.Count);
     }
 
-    public class GenFactConverter : JsonConverter<IGenFact>
+    public class GenConverter<T,I> : JsonConverter<I> where T : I
     {
-        public override IGenFact Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override I? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return JsonSerializer.Deserialize<GenFact>(ref reader, options);
+            return JsonSerializer.Deserialize<T>(ref reader, options);
         }
-        public override void Write(Utf8JsonWriter writer, IGenFact value, JsonSerializerOptions options)
+
+        public override void Write(Utf8JsonWriter writer, I value, JsonSerializerOptions options)
         {
         }
     }
 
-    public class GenDateConverter : JsonConverter<IGenDate>
-    {
-        public override IGenDate Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            return JsonSerializer.Deserialize<GenDate>(ref reader, options);
-        }
-        public override void Write(Utf8JsonWriter writer, IGenDate value, JsonSerializerOptions options)
-        {
-        }
-    }
-
-    public class GenPlaceConverter : JsonConverter<IGenPlace>
-    {
-        public override IGenPlace Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            return JsonSerializer.Deserialize<GenPlace>(ref reader, options);
-        }
-        public override void Write(Utf8JsonWriter writer, IGenPlace value, JsonSerializerOptions options)
-        {
-        }
-    }
     [TestMethod()]
     public void SerializationTest()
     {
@@ -152,9 +132,9 @@ public class GenFactTests : IGenEntity
         var json = System.Text.Json.JsonSerializer.Serialize<GenFact>(_genFact, options);
         Assert.AreEqual(_cGenFJS, json);
         options = new JsonSerializerOptions(options);
-        options.Converters.Add(new GenFactConverter());
-        options.Converters.Add(new GenDateConverter());
-        options.Converters.Add(new GenPlaceConverter());
+        options.Converters.Add(new GenConverter<GenFact,IGenFact>());
+        options.Converters.Add(new GenConverter<GenDate,IGenDate>());
+        options.Converters.Add(new GenConverter<GenPlace,IGenPlace>());
         var genFact = System.Text.Json.JsonSerializer.Deserialize<IGenFact>(json, options);
           Assert.AreEqual(_genFact.eFactType, genFact.eFactType);
           Assert.AreEqual(_genFact.Date?.Date1, genFact.Date?.Date1);

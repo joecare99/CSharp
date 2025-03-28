@@ -177,8 +177,10 @@ public class GenPersonTests
     [TestMethod]
     public void SerializeTest()
     {
-        JsonSerializerOptions _options = new() { WriteIndented = false,ReferenceHandler = ReferenceHandler.Preserve };
-        var result = JsonSerializer.Serialize(_genPerson, typeof(GenPerson),options: _options);
+        JsonSerializerOptions _options = new() { 
+            WriteIndented = false,
+            ReferenceHandler = ReferenceHandler.Preserve };
+        var result = JsonSerializer.Serialize(_genPerson,options: _options);
         Assert.AreEqual(_cJsonGP, result);
     }
 }
