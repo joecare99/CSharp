@@ -2,11 +2,15 @@
 using BaseGenClasses.Helper.Interfaces;
 using BaseLib.Helper;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static BaseGenClasses.Model.Tests.GenFactTests;
 
 namespace BaseGenClasses.Model.Tests;
 [TestClass]
@@ -14,6 +18,9 @@ public class GenFamilyTests
 {
     private Guid _uid;
     private GenFamily _genFamily;
+    private IGenPerson _husband;
+    private IGenPerson _wife;
+    private readonly string? _cFamilyJS= "{\"$id\":\"1\",\"Facts\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eFactType\":28,\"Date\":{\"$id\":\"4\",\"Date1\":\"1900-01-01T00:00:00\",\"eGenType\":10},\"Data\":\"\",\"Entities\":{\"$id\":\"5\",\"$values\":[]},\"eGenType\":0},{\"$id\":\"6\",\"eFactType\":29,\"Date\":{\"$id\":\"7\",\"Date1\":\"1930-01-01T00:00:00\",\"eGenType\":10},\"Data\":\"\",\"Entities\":{\"$id\":\"8\",\"$values\":[]},\"eGenType\":0},{\"$id\":\"9\",\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"10\",\"$values\":[]},\"eGenType\":0},{\"$id\":\"11\",\"eFactType\":27,\"Data\":\"123456\",\"Entities\":{\"$id\":\"12\",\"$values\":[]},\"eGenType\":0}]},\"Connects\":{\"$id\":\"13\",\"$values\":[{\"$id\":\"14\",\"Entity\":{\"$id\":\"15\",\"Facts\":{\"$id\":\"16\",\"$values\":[{\"$id\":\"17\",\"eFactType\":6,\"Data\":\"M\",\"Entities\":{\"$id\":\"18\",\"$values\":[]},\"eGenType\":0}]},\"Connects\":{\"$id\":\"19\",\"$values\":[]},\"UId\":\"95742eb9-44c2-4d3f-9201-8c61abdd9b65\",\"eGenType\":2},\"eGenConnectionType\":0,\"eGenType\":4},{\"$id\":\"20\",\"Entity\":{\"$id\":\"21\",\"Facts\":{\"$id\":\"22\",\"$values\":[{\"$id\":\"23\",\"eFactType\":6,\"Data\":\"F\",\"Entities\":{\"$id\":\"24\",\"$values\":[]},\"eGenType\":0}]},\"Connects\":{\"$id\":\"25\",\"$values\":[]},\"UId\":\"95742eb9-44c2-4d3f-9202-8c61abdd9b65\",\"eGenType\":2},\"eGenConnectionType\":0,\"eGenType\":4}]},\"UId\":\"95742eb9-44c2-4d3f-9200-8c61abdd9b65\",\"eGenType\":3}";
 
     [TestInitialize]
     public void Initialize()
@@ -30,9 +37,22 @@ public class GenFamilyTests
         {
             UId = _uid
         };
-        _genFamily.Facts.AddEvent(_genFamily, EFactType.Mariage, new GenDate(new DateTime(1900, 1, 1)),"",new Guid());
-        _genFamily.Facts.AddFact(_genFamily, EFactType.Surname, "Mustermann", new Guid());
-        _genFamily.Facts.AddFact(_genFamily, EFactType.Reference, "123456", new Guid());
+        _genFamily.AddEvent(EFactType.Mariage, new GenDate(new DateTime(1900, 1, 1)),"",new Guid());
+        _genFamily.AddEvent(EFactType.Divorce, new GenDate(new DateTime(1930, 1, 1)), "", new Guid());
+        _genFamily.AddFact(EFactType.Surname, "Mustermann", new Guid());
+        _genFamily.AddFact(EFactType.Reference, "123456", new Guid());
+        _husband = new GenPerson()
+        {
+            UId = new Guid("95742eb9-44c2-4d3f-9201-8c61abdd9b65")
+        };
+        _husband.AddFact(EFactType.Sex, "M");
+        _genFamily.Husband = _husband;
+        _wife = new GenPerson()
+        {
+            UId = new Guid("95742eb9-44c2-4d3f-9202-8c61abdd9b65")
+        };
+        _wife.AddFact(EFactType.Sex, "F");
+        _genFamily.Wife = _wife;
 
     }
 
@@ -50,18 +70,12 @@ public class GenFamilyTests
     [TestMethod]
     public void GenFamilyHusbandTest()
     {
-        var husband = new GenPerson();
-        husband.Facts.AddFact(husband, EFactType.Sex, "M");
-        _genFamily.Husband = husband;
-        Assert.AreEqual(husband, _genFamily.Husband);
+        Assert.AreEqual(_husband, _genFamily.Husband);
     }
     [TestMethod]
     public void GenFamilyWifeTest()
     {
-        var wife = new GenPerson();
-        wife.Facts.AddFact(wife, EFactType.Sex, "F");
-        _genFamily.Wife = wife;
-        Assert.AreEqual(wife, _genFamily.Wife);
+        Assert.AreEqual(_wife, _genFamily.Wife);
     }
     [TestMethod]
     public void GenFamilyChildrenCountTest()
@@ -88,5 +102,48 @@ public class GenFamilyTests
     {
         Assert.AreEqual("Mustermann", _genFamily.FamilyName);
     }
+    [TestMethod]
+    public void GenFamilyEndDateTest()
+    {
+        Assert.AreEqual(EFactType.Divorce, _genFamily.End.eFactType);
+        Assert.AreEqual(new DateTime(1930, 1, 1), _genFamily.End.Date.Date1);
+    }
+    [TestMethod]
+    public void GenFamilyStartDateTest()
+    {
+        Assert.AreEqual(EFactType.Mariage, _genFamily.Start.eFactType);
+        Assert.AreEqual(new DateTime(1900, 1, 1), _genFamily.Start.Date.Date1);
+    }
+    [TestMethod]
+    public void SerializationTest()
+    {
+        var options = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+        };
+        var json = JsonSerializer.Serialize<IGenEntity>(_genFamily,options);
+        Assert.AreEqual(_cFamilyJS, json);
+        options = new JsonSerializerOptions(options);
+        options.Converters.Add(new GenConverter<List<IGenFact>, IList<IGenFact>>());
+        options.Converters.Add(new GenConverter<GenFact, IGenFact>());
+        options.Converters.Add(new GenConverter<GenDate, IGenDate>());
+        options.Converters.Add(new GenConverter<GenPlace, IGenPlace>());
+        options.Converters.Add(new GenConverter<GenPerson, IGenEntity>());
+        options.Converters.Add(new GenConverter<GenConnect, IGenConnects>());
 
+        var genFamily = JsonSerializer.Deserialize<GenFamily>(json,options);
+        Assert.AreEqual(_genFamily.UId, genFamily.UId);
+        Assert.AreEqual(_genFamily.eGenType, genFamily.eGenType);
+        Assert.AreEqual(_genFamily.Husband.UId, genFamily.Husband.UId);
+        Assert.AreEqual(_genFamily.Wife.UId, genFamily.Wife.UId);
+        Assert.AreEqual(_genFamily.ChildCount, genFamily.ChildCount);
+        Assert.AreEqual(_genFamily.Children.Count, genFamily.Children.Count);
+        Assert.AreEqual(_genFamily.MarriageDate.Date1, genFamily.MarriageDate.Date1);
+        Assert.AreEqual(_genFamily.FamilyRefID, genFamily.FamilyRefID);
+        Assert.AreEqual(_genFamily.FamilyName, genFamily.FamilyName);
+        Assert.AreEqual(_genFamily.End.eFactType, genFamily.End.eFactType);
+        Assert.AreEqual(_genFamily.End.Date.Date1, genFamily.End.Date.Date1);
+        Assert.AreEqual(_genFamily.Start.eFactType, genFamily.Start.eFactType);
+        Assert.AreEqual(_genFamily.Start.Date.Date1, genFamily.Start.Date.Date1);
+    }
 }

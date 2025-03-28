@@ -1,0 +1,216 @@
+{
+  "$id": "1",
+  "eGenType": 3,
+  "Husband": {
+    "$id": "2",
+    "Name": "",
+    "GivenName": null,
+    "Surname": null,
+    "Title": null,
+    "Sex": "M",
+    "IndRefID": null,
+    "Father": null,
+    "Mother": null,
+    "ChildCount": 0,
+    "Children": {
+      "$id": "3",
+      "$values": []
+    },
+    "ParentFamily": null,
+    "FamilyCount": 0,
+    "Families": {
+      "$id": "4",
+      "$values": []
+    },
+    "SpouseCount": 0,
+    "Spouses": {
+      "$id": "5",
+      "$values": []
+    },
+    "BirthDate": null,
+    "BirthPlace": null,
+    "Birth": null,
+    "BaptDate": null,
+    "BaptPlace": null,
+    "Baptism": null,
+    "DeathDate": null,
+    "DeathPlace": null,
+    "Death": null,
+    "BurialDate": null,
+    "BurialPlace": null,
+    "Burial": null,
+    "Religion": null,
+    "Occupation": null,
+    "OccuPlace": null,
+    "Residence": null,
+    "Facts": {
+      "$id": "6",
+      "$values": [
+        {
+          "$id": "7",
+          "eFactType": 6,
+          "Data": "M",
+          "Entities": {
+            "$id": "8",
+            "$values": []
+          },
+          "eGenType": 0
+        }
+      ]
+    },
+    "Connects": {
+      "$id": "9",
+      "$values": []
+    },
+    "UId": "95742eb9-44c2-4d3f-9201-8c61abdd9b65",
+    "eGenType": 2
+  },
+  "Wife": {
+    "$id": "10",
+    "Name": "",
+    "GivenName": null,
+    "Surname": null,
+    "Title": null,
+    "Sex": "F",
+    "IndRefID": null,
+    "Father": null,
+    "Mother": null,
+    "ChildCount": 0,
+    "Children": {
+      "$id": "11",
+      "$values": []
+    },
+    "ParentFamily": null,
+    "FamilyCount": 0,
+    "Families": {
+      "$id": "12",
+      "$values": []
+    },
+    "SpouseCount": 0,
+    "Spouses": {
+      "$id": "13",
+      "$values": []
+    },
+    "BirthDate": null,
+    "BirthPlace": null,
+    "Birth": null,
+    "BaptDate": null,
+    "BaptPlace": null,
+    "Baptism": null,
+    "DeathDate": null,
+    "DeathPlace": null,
+    "Death": null,
+    "BurialDate": null,
+    "BurialPlace": null,
+    "Burial": null,
+    "Religion": null,
+    "Occupation": null,
+    "OccuPlace": null,
+    "Residence": null,
+    "Facts": {
+      "$id": "14",
+      "$values": [
+        {
+          "$id": "15",
+          "eFactType": 6,
+          "Data": "F",
+          "Entities": {
+            "$id": "16",
+            "$values": []
+          },
+          "eGenType": 0
+        }
+      ]
+    },
+    "Connects": {
+      "$id": "17",
+      "$values": []
+    },
+    "UId": "95742eb9-44c2-4d3f-9202-8c61abdd9b65",
+    "eGenType": 2
+  },
+  "ChildCount": 0,
+  "Children": {
+    "$id": "18",
+    "$values": []
+  },
+  "MarriageDate": {
+    "$id": "19",
+    "Date1": "1900-01-01T00:00:00",
+    "eGenType": 10
+  },
+  "MarriagePlace": null,
+  "Marriage": {
+    "$id": "20",
+    "eFactType": 28,
+    "Date": { "$ref": "19" },
+    "Data": "",
+    "Entities": {
+      "$id": "21",
+      "$values": []
+    },
+    "eGenType": 0
+  },
+  "FamilyRefID": "123456",
+  "FamilyName": "Mustermann",
+  "Facts": {
+    "$id": "22",
+    "$values": [
+      { "$ref": "20" },
+      {
+        "$id": "23",
+        "eFactType": 29,
+        "Date": {
+          "$id": "24",
+          "Date1": "1930-01-01T00:00:00",
+          "eGenType": 10
+        },
+        "Data": "",
+        "Entities": {
+          "$id": "25",
+          "$values": []
+        },
+        "eGenType": 0
+      },
+      {
+        "$id": "26",
+        "eFactType": 1,
+        "Data": "Mustermann",
+        "Entities": {
+          "$id": "27",
+          "$values": []
+        },
+        "eGenType": 0
+      },
+      {
+        "$id": "28",
+        "eFactType": 27,
+        "Data": "123456",
+        "Entities": {
+          "$id": "29",
+          "$values": []
+        },
+        "eGenType": 0
+      }
+    ]
+  },
+  "Connects": {
+    "$id": "30",
+    "$values": [
+      {
+        "$id": "31",
+        "Entity": { "$ref": "2" },
+        "eGenConnectionType": 0,
+        "eGenType": 4
+      },
+      {
+        "$id": "32",
+        "Entity": { "$ref": "10" },
+        "eGenConnectionType": 0,
+        "eGenType": 4
+      }
+    ]
+  },
+  "UId": "95742eb9-44c2-4d3f-9200-8c61abdd9b65",
+  "LastChange": null
+}
