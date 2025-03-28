@@ -15,6 +15,8 @@ namespace BaseGenClasses.Model;
 public class GenPerson : GenEntity, IGenPerson
 {
     #region Properties
+    public override EGenType eGenType => EGenType.GenPerson;
+
     [JsonIgnore]
     public string Name { get => BuildFullname(Facts); set => ParseName(value,Facts); }
     [JsonIgnore]
@@ -88,7 +90,6 @@ public class GenPerson : GenEntity, IGenPerson
     [JsonIgnore]
     public IGenPlace Residence { get => Facts.GetFact(EFactType.Residence, t => t.Place); set => throw new NotImplementedException(); }
 
-    public override EGenType eGenType => EGenType.GenPerson;
     #endregion
 
     protected override IGenFact? GetEndFactOfEntity() 
