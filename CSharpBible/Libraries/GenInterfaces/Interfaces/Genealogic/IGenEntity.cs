@@ -11,7 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using GenInterfaces.Data;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 /// <summary>
@@ -23,6 +25,8 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Interface IGenEntity
 /// Extends the <see cref="T:GenInterfaces.Interfaces.Genealogic.IGenObject" />, This interface is the base for Person and Families.
 /// </summary>
+[JsonDerivedType(typeof(IGenEntity))]
+[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
 public interface IGenEntity : IGenObject
 {
     /// <summary>

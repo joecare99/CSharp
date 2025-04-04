@@ -61,5 +61,6 @@ public enum EGenType
     /// The gen note
     /// </summary>
     GenNote,
-    GenDate
+    GenDate,
+    Genealogy
 }
