@@ -1,4 +1,5 @@
 ﻿using BaseGenClasses.Helper.Interfaces;
+using BaseGenClasses.Model;
 using BaseLib.Helper;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
@@ -27,35 +28,43 @@ public static class GenExtensions
         connects.Add(connect);
     }
 
-    public static void AddFact(this IList<IGenFact> facts,IGenEntity mainEnt, EFactType type, string data, Guid? Uid=null)
+    public static IGenFact AddFact(this IGenEntity mainEnt, EFactType type, string data, Guid? Uid = null) 
+        => mainEnt.Facts.AddFact(mainEnt, type, data, Uid);
+    public static IGenFact AddFact(this IList<IGenFact> facts,IGenEntity mainEnt, EFactType type, string data, Guid? Uid=null)
     {
         IGenFactBuilder conBuilder = IoC.GetRequiredService<IGenFactBuilder>();
         var fact = conBuilder.Emit(type,mainEnt, data, Uid);
 
         facts.Add(fact);
+        return fact;
     }
-    public static void AddFact(this IGenEntity mainEnt, EFactType type, string data, Guid? Uid = null) 
-        => mainEnt.Facts.AddFact(mainEnt, type, data, Uid);
 
-    public static void AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type,IGenDate date, string data, Guid? Uid = null)
+    public static IGenFact AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type,IGenDate date, string data, Guid? Uid = null)
     {
         IGenFactBuilder conBuilder = IoC.GetRequiredService<IGenFactBuilder>();
         var evnt = conBuilder.Emit(type, mainEnt,date, data, Uid);
 
         facts.Add(evnt);
+        return evnt;
     }
 
-    public static void AddEvent(this IGenEntity mainEnt, EFactType type, IGenDate date, string data, Guid? Uid = null) 
-        => mainEnt.Facts.AddEvent(mainEnt, type, date, data, Uid);
+    public static IGenFact AddEvent(this IGenEntity mainEnt, EFactType type, IGenDate genDate, string data, Guid? Uid = null) 
+        => mainEnt.Facts.AddEvent(mainEnt, type, genDate, data, Uid);
+    public static IGenFact AddEvent(this IGenEntity mainEnt, EFactType type, DateTime date, string data, Guid? Uid = null)
+    {
+        IGenDateBuilder dateBuilder = IoC.GetRequiredService<IGenDateBuilder>();
+        return AddEvent(mainEnt, type, dateBuilder.Emit(date), data, Uid);
+    }
 
-    public static void AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type, IGenDate date, IGenPlace place, string data, Guid? Uid = null)
+    public static IGenFact AddEvent(this IList<IGenFact> facts, IGenEntity mainEnt, EFactType type, IGenDate date, IGenPlace place, string data, Guid? Uid = null)
     {
         IGenFactBuilder conBuilder = IoC.GetRequiredService<IGenFactBuilder>();
         var evnt = conBuilder.Emit(type, mainEnt, date, place, data, Uid);
         facts.Add(evnt);
+        return evnt;
     }
 
-    public static void AddEvent(this IGenEntity mainEnt, EFactType type, IGenDate date, IGenPlace place, string data, Guid? Uid = null) 
+    public static IGenFact AddEvent(this IGenEntity mainEnt, EFactType type, IGenDate date, IGenPlace place, string data, Guid? Uid = null) 
         => mainEnt.Facts.AddEvent(mainEnt, type, date,place, data, Uid);
 
     public static T? GetFact<T>(this IList<IGenFact> facts, EFactType type,Func<IGenFact,T> selFct)
@@ -66,6 +75,11 @@ public static class GenExtensions
     public static IGenFact GetFact(this IList<IGenFact> facts, EFactType type)
     {
         return facts.Where(f => f.eFactType == type).FirstOrDefault();
+    }
+
+    public static void SetFact(this IList<IGenFact> facts, EFactType type,IGenEntity genEntity, string value)
+    {
+        (facts.FirstOrDefault(f => f.eFactType == type) ?? genEntity.AddFact( type, value)).Data = value;       
     }
 
     public static IIndexedList<T> ToIndexedList<T,T2>(this IEnumerable<T> list,Func<T,T2> getIdx) where T : class where T2 : notnull

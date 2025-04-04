@@ -95,13 +95,13 @@ public class GenFamily : GenEntity, IGenFamily
     /// </summary>
     /// <value>The family reference identifier.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public string FamilyRefID { get => Facts.GetFact(EFactType.Reference, f => f.Data); set => throw new NotImplementedException(); }
+    public string FamilyRefID { get => Facts.GetFact(EFactType.Reference, f => f.Data); set => Facts.SetFact(EFactType.Reference,this,value); }
     /// <summary>
     /// Gets or sets the name of the family.
     /// </summary>
     /// <value>The name of the family.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public string FamilyName { get => Facts.GetFact(EFactType.Surname,f=>f.Data); set => throw new NotImplementedException(); }
+    public string FamilyName { get => Facts.GetFact(EFactType.Surname,f=>f.Data); set => Facts.SetFact(EFactType.Surname,this, value); }
 
     /// <summary>
     /// Gets the end fact of entity.

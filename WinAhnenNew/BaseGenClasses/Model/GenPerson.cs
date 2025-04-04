@@ -100,7 +100,31 @@ public class GenPerson : GenEntity, IGenPerson
 
     private void ParseName(string value, IList<IGenFact> facts)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(value))
+            return;
+        if (value.StartsWith("Prof."))
+        {
+            facts.AddFact(this, EFactType.Title, "Prof.");
+            value = value.Substring(5).Trim();
+        }
+        if (value.StartsWith("Dr."))
+        {
+            facts.AddFact(this, EFactType.Title, "Dr.");
+            value = value.Substring(3).Trim();
+        }
+        if (value.Contains(" "))
+        {
+            var parts = value.Split(' ');
+            if (parts.Length > 1)
+            {
+                facts.AddFact(this, EFactType.Givenname, parts[0]);
+                facts.AddFact(this, EFactType.Surname, parts[1]);
+            }
+        }
+        else
+        {
+            facts.AddFact(this, EFactType.Givenname, value);
+        }
     }
 
     private string BuildFullname(IList<IGenFact> facts)
