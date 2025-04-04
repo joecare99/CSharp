@@ -30,10 +30,12 @@ public interface IGenBase
     /// </summary>
     /// <value>The u identifier.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonPropertyOrder(-98)]
     Guid UId { get; init; }
     /// <summary>
     /// Gets the type of the genealogy-object.
     /// </summary>
     /// <value>The type of the e gen.</value>
+    [JsonPropertyOrder(-99)]
     EGenType eGenType { get; }
 }
