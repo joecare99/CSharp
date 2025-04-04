@@ -1,10 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseGenClasses.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Text.Json;
 using GenInterfaces.Interfaces.Genealogic;
 
@@ -13,7 +7,7 @@ namespace BaseGenClasses.Model.Tests;
 [TestClass()]
 public class GenPlaceTests
 {
-    private const string _cPlaceJS = "{\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\",\"GOV_ID\":\"GOV123\",\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"eGenType\":6}";
+    private const string _cPlaceJS = "{\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\",\"GOV_ID\":\"GOV123\"}";
     GenPlace _genPlace;
 
     [TestInitialize]
@@ -77,6 +71,13 @@ public class GenPlaceTests
     }
     [TestMethod()]
     public void SerializeGenPlaceTest()
+    {
+        var json = JsonSerializer.Serialize<IGenPlace>(_genPlace);
+        Assert.AreEqual(_cPlaceJS, json);
+    }  
+    
+    [TestMethod()]
+    public void DeerializeGenPlaceTest()
     {
         var json = JsonSerializer.Serialize<IGenPlace>(_genPlace);
         Assert.AreEqual(_cPlaceJS, json);

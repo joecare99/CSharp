@@ -1,16 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseGenClasses.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenInterfaces.Interfaces.Genealogic;
-using GenInterfaces.Data;
-using GenInterfaces.Interfaces;
-using System.Text.Json.Serialization.Metadata;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
+using GenInterfaces.Interfaces.Genealogic;
+using BaseGenClasses.Helper;
 
 namespace BaseGenClasses.Model.Tests;
 
@@ -18,7 +13,7 @@ namespace BaseGenClasses.Model.Tests;
 public class GenFactTests : IGenEntity
 {
     GenFact _genFact;
-    private readonly string _cGenFJS = "{\"$id\":\"1\",\"$type\":\"GenFact\",\"eFactType\":7,\"Date\":{\"$id\":\"2\",\"Date1\":\"1960-01-01T00:00:00\",\"eGenType\":10},\"Place\":{\"$id\":\"3\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\",\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"eGenType\":6},\"Entities\":{\"$id\":\"4\",\"$values\":[]},\"eGenType\":0,\"UId\":\"ee43c2a5-2259-4bc5-9913-ce08b984eeac\",\"LastChange\":null}";
+    private readonly string _cGenFJS = "{\"$id\":\"1\",\"$type\":\"GenFact\",\"eFactType\":7,\"Date\":{\"$id\":\"2\",\"eGenType\":10,\"Date1\":\"1960-01-01T00:00:00\"},\"Place\":{\"$id\":\"3\",\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\"},\"Entities\":{\"$id\":\"4\",\"$values\":[]},\"eGenType\":0,\"UId\":\"ee43c2a5-2259-4bc5-9913-ce08b984eeac\",\"LastChange\":null}";
 
     public IList<IGenFact> Facts { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
     public IList<IGenConnects> Connects { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
@@ -110,18 +105,6 @@ public class GenFactTests : IGenEntity
         Assert.AreEqual(0, _genFact.Medias.Count);
     }
 
-    public class GenConverter<T,I> : JsonConverter<I> where T : I
-    {
-        public override I? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            return JsonSerializer.Deserialize<T>(ref reader, options);
-        }
-
-        public override void Write(Utf8JsonWriter writer, I value, JsonSerializerOptions options)
-        {
-        }
-    }
-
     [TestMethod()]
     public void SerializationTest()
     {
@@ -131,15 +114,26 @@ public class GenFactTests : IGenEntity
         };
         var json = System.Text.Json.JsonSerializer.Serialize<GenFact>(_genFact, options);
         Assert.AreEqual(_cGenFJS, json);
+    }
+
+    [TestMethod()]
+    public void DeserializationTest()
+    {
+        JsonSerializerOptions? options = new()
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+        };
+        var json = System.Text.Json.JsonSerializer.Serialize<GenFact>(_genFact, options);
+        Assert.AreEqual(_cGenFJS, json);
         options = new JsonSerializerOptions(options);
-        options.Converters.Add(new GenConverter<GenFact,IGenFact>());
-        options.Converters.Add(new GenConverter<GenDate,IGenDate>());
-        options.Converters.Add(new GenConverter<GenPlace,IGenPlace>());
+        options.Converters.Add(new GenConverter<GenFact, IGenFact>());
+        options.Converters.Add(new GenConverter<GenDate, IGenDate>());
+        options.Converters.Add(new GenConverter<GenPlace, IGenPlace>());
         var genFact = System.Text.Json.JsonSerializer.Deserialize<IGenFact>(json, options);
-          Assert.AreEqual(_genFact.eFactType, genFact.eFactType);
-          Assert.AreEqual(_genFact.Date?.Date1, genFact.Date?.Date1);
-          Assert.AreEqual(_genFact.Place?.Name, genFact.Place?.Name);
-          Assert.AreEqual(_genFact.Data, genFact.Data);
-      
+        Assert.AreEqual(_genFact.eFactType, genFact.eFactType);
+        Assert.AreEqual(_genFact.Date?.Date1, genFact.Date?.Date1);
+        Assert.AreEqual(_genFact.Place?.Name, genFact.Place?.Name);
+        Assert.AreEqual(_genFact.Data, genFact.Data);
+
     }
 }

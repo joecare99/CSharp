@@ -1,16 +1,12 @@
-﻿using BaseGenClasses.Helper;
-using BaseGenClasses.Helper.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using BaseLib.Helper;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using static BaseGenClasses.Model.Tests.GenFactTests;
+using BaseGenClasses.Helper;
+using BaseGenClasses.Helper.Interfaces;
 
 namespace BaseGenClasses.Model.Tests;
 [TestClass]
@@ -20,7 +16,7 @@ public class GenFamilyTests
     private GenFamily _genFamily;
     private IGenPerson _husband;
     private IGenPerson _wife;
-    private readonly string? _cFamilyJS= "{\"$id\":\"1\",\"Facts\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eFactType\":28,\"Date\":{\"$id\":\"4\",\"Date1\":\"1900-01-01T00:00:00\",\"eGenType\":10},\"Data\":\"\",\"Entities\":{\"$id\":\"5\",\"$values\":[]},\"eGenType\":0},{\"$id\":\"6\",\"eFactType\":29,\"Date\":{\"$id\":\"7\",\"Date1\":\"1930-01-01T00:00:00\",\"eGenType\":10},\"Data\":\"\",\"Entities\":{\"$id\":\"8\",\"$values\":[]},\"eGenType\":0},{\"$id\":\"9\",\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"10\",\"$values\":[]},\"eGenType\":0},{\"$id\":\"11\",\"eFactType\":27,\"Data\":\"123456\",\"Entities\":{\"$id\":\"12\",\"$values\":[]},\"eGenType\":0}]},\"Connects\":{\"$id\":\"13\",\"$values\":[{\"$id\":\"14\",\"Entity\":{\"$id\":\"15\",\"Facts\":{\"$id\":\"16\",\"$values\":[{\"$id\":\"17\",\"eFactType\":6,\"Data\":\"M\",\"Entities\":{\"$id\":\"18\",\"$values\":[]},\"eGenType\":0}]},\"Connects\":{\"$id\":\"19\",\"$values\":[]},\"UId\":\"95742eb9-44c2-4d3f-9201-8c61abdd9b65\",\"eGenType\":2},\"eGenConnectionType\":0,\"eGenType\":4},{\"$id\":\"20\",\"Entity\":{\"$id\":\"21\",\"Facts\":{\"$id\":\"22\",\"$values\":[{\"$id\":\"23\",\"eFactType\":6,\"Data\":\"F\",\"Entities\":{\"$id\":\"24\",\"$values\":[]},\"eGenType\":0}]},\"Connects\":{\"$id\":\"25\",\"$values\":[]},\"UId\":\"95742eb9-44c2-4d3f-9202-8c61abdd9b65\",\"eGenType\":2},\"eGenConnectionType\":0,\"eGenType\":4}]},\"UId\":\"95742eb9-44c2-4d3f-9200-8c61abdd9b65\",\"eGenType\":3}";
+    private readonly string? _cFamilyJS= "{\"$id\":\"1\",\"eGenType\":3,\"UId\":\"95742eb9-44c2-4d3f-9200-8c61abdd9b65\",\"Facts\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eGenType\":0,\"eFactType\":28,\"Date\":{\"$id\":\"4\",\"eGenType\":10,\"Date1\":\"1900-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"5\",\"$values\":[]}},{\"$id\":\"6\",\"eGenType\":0,\"eFactType\":29,\"Date\":{\"$id\":\"7\",\"eGenType\":10,\"Date1\":\"1930-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"8\",\"$values\":[]}},{\"$id\":\"9\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"10\",\"$values\":[]}},{\"$id\":\"11\",\"eGenType\":0,\"eFactType\":27,\"Data\":\"123456\",\"Entities\":{\"$id\":\"12\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"13\",\"$values\":[{\"$id\":\"14\",\"eGenType\":4,\"Entity\":{\"$id\":\"15\",\"eGenType\":2,\"UId\":\"95742eb9-44c2-4d3f-9201-8c61abdd9b65\",\"Facts\":{\"$id\":\"16\",\"$values\":[{\"$id\":\"17\",\"eGenType\":0,\"eFactType\":6,\"Data\":\"M\",\"Entities\":{\"$id\":\"18\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"19\",\"$values\":[]}},\"eGenConnectionType\":0},{\"$id\":\"20\",\"eGenType\":4,\"Entity\":{\"$id\":\"21\",\"eGenType\":2,\"UId\":\"95742eb9-44c2-4d3f-9202-8c61abdd9b65\",\"Facts\":{\"$id\":\"22\",\"$values\":[{\"$id\":\"23\",\"eGenType\":0,\"eFactType\":6,\"Data\":\"F\",\"Entities\":{\"$id\":\"24\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"25\",\"$values\":[]}},\"eGenConnectionType\":0}]}}";
 
     [TestInitialize]
     public void Initialize()
@@ -116,6 +112,17 @@ public class GenFamilyTests
     }
     [TestMethod]
     public void SerializationTest()
+    {
+        var options = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+        };
+        var json = JsonSerializer.Serialize<IGenEntity>(_genFamily,options);
+        Assert.AreEqual(_cFamilyJS, json);
+    }   
+    
+    [TestMethod]
+    public void DeserializationTest()
     {
         var options = new JsonSerializerOptions
         {
