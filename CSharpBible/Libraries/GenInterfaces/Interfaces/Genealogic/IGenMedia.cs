@@ -28,7 +28,7 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
 /// </summary>
 /// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
-public interface IGenMedia: IGenObject
+public interface IGenMedia: IGenObject, IHasOwner<IGenealogy>
 {
     /// <summary>
     /// Gets or sets the type of the e media.

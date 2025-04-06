@@ -23,7 +23,7 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
 /// </summary>
 /// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
-public interface IGenSources : IGenObject
+public interface IGenSources : IGenObject, IHasOwner<IGenealogy>
 {
     /// <summary>Gets the medias.</summary>
     /// <value>The list of media of this fact.</value>

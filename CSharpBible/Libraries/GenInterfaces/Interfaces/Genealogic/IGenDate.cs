@@ -29,32 +29,32 @@ public interface IGenDate : IGenObject
     /// <summary>
     /// Gets or sets the general date modifier.
     /// </summary>
-    /// <value>The e date modifier.</value>
+    /// <value>The date modifier.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     EDateModifier eDateModifier { get; set; }
     /// <summary>
     /// Gets or sets the type of Date1.
     /// </summary>
-    /// <value>The e date type1.</value>
+    /// <value>The type of date1.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     EDateType eDateType1 { get; set; }
     /// <summary>
-    /// Gets or sets the date1.<br/>
+    /// Gets or sets the first/start date.<br/>
     /// This Date is mostly set. and marks the date or the beginning of the event.
     /// </summary>
-    /// <value>The date1.</value>
+    /// <value>The date.</value>
     DateTime Date1 { get; set; }
     /// <summary>
-    /// Gets or sets the type of date2.
+    /// Gets or sets the type of the second date.
     /// </summary>
-    /// <value>The e date type2.</value>
+    /// <value>The type of the second date.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     EDateType? eDateType2 { get; set; }
     /// <summary>
-    /// Gets or sets the date2.<br/>
+    /// Gets or sets the second date.<br/>
     /// This Date is optional and marks the end or the last possibility of the event.
     /// </summary>
-    /// <value>The date2.</value>
+    /// <value>The second date.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     DateTime? Date2 { get; set; }
     /// <summary>

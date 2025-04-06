@@ -23,7 +23,7 @@ namespace GenInterfaces.Interfaces.Genealogic
     /// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
     /// </summary>
     /// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
-    public interface IGenPlace : IGenObject
+    public interface IGenPlace : IGenObject, IHasOwner<IGenealogy>
     {
         /// <summary>
         /// Gets or sets the name of the place.

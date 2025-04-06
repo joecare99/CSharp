@@ -27,7 +27,7 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// </summary>
 [JsonDerivedType(typeof(IGenEntity))]
 [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
-public interface IGenEntity : IGenObject
+public interface IGenEntity : IGenObject, IHasOwner<IGenealogy>
 {
     /// <summary>
     /// Gets the facts.

@@ -62,6 +62,11 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// <value>All sources of the genealogy.</value>
         IList<IGenSources> Sources { get; init; }
         /// <summary>
+        /// Gets all sources of the genealogy.
+        /// </summary>
+        /// <value>All sources of the genealogy.</value>
+        IList<IGenRepository> Repositorys { get; init; }
+        /// <summary>
         /// Gets all places of the genealogy.
         /// </summary>
         /// <value>All places of the genealogy.</value>

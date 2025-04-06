@@ -26,16 +26,16 @@ namespace GenInterfaces.Interfaces.Genealogic;
 public interface IGenBase
 {
     /// <summary>
-    /// Gets the u identifier.
+    /// Gets the unique identifier.
     /// </summary>
-    /// <value>The u identifier.</value>
+    /// <value>The unique identifier.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyOrder(-98)]
     Guid UId { get; init; }
     /// <summary>
     /// Gets the type of the genealogy-object.
     /// </summary>
-    /// <value>The type of the e gen.</value>
+    /// <value>The type of the object.</value>
     [JsonPropertyOrder(-99)]
     EGenType eGenType { get; }
 }
