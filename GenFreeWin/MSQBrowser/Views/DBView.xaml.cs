@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using CommonDialogs.Interfaces;
 using MVVM.View.Extension;
 using System.Security;
+using BaseLib.Helper;
 
 namespace MSQBrowser.Views
 {
