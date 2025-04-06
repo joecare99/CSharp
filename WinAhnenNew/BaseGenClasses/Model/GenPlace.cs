@@ -1,11 +1,15 @@
-﻿using GenInterfaces.Data;
+﻿using BaseGenClasses.Helper;
+using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
 using System.Text.Json.Serialization;
 
 namespace BaseGenClasses.Model;
 
 public class GenPlace : GenObject, IGenPlace
 {
+    #region Properties
+    private WeakReference<IGenealogy>? _WLowner;
     public override EGenType eGenType => EGenType.GenPlace;
 
     public string Name { get ; set ; }
@@ -15,6 +19,10 @@ public class GenPlace : GenObject, IGenPlace
     public double Longitude { get; set; }
     public string? Notes { get ; set ; }
     public IGenPlace? Parent { get; set; }
+
+    public IGenealogy? Owner => (_WLowner?.TryGetTarget(out var t) ?? false) ?t:null;
+    #endregion
+
     [JsonConstructor]
     private GenPlace() { }
     public GenPlace(params string[] place)

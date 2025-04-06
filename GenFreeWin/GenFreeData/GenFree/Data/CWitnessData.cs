@@ -4,6 +4,7 @@ using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
 using System.Linq;
+using BaseLib.Helper;
 
 namespace GenFree.Data
 {

@@ -1,5 +1,6 @@
 ﻿using BaseGenClasses.Helper;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -10,6 +11,10 @@ namespace BaseGenClasses.Model;
 [JsonDerivedType(typeof(GenEntity), typeDiscriminator: nameof(GenEntity))]
 public abstract class GenEntity : GenObject, IGenEntity
 {
+    #region Properties
+    #region private properties
+    private WeakReference<IGenealogy>? _WLowner;
+    #endregion
     [DataMember]
     public IList<IGenFact> Facts { get; init; } = new WeakLinkList<IGenFact>();
     [DataMember]
@@ -27,6 +32,9 @@ public abstract class GenEntity : GenObject, IGenEntity
     [JsonIgnore]
     public IList<IGenMedia> Media { get; init; } = new WeakLinkList<IGenMedia>();
 
+    [JsonIgnore]
+    public IGenealogy? Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
+    #endregion
     abstract protected IGenFact? GetStartFactOfEntity();
     abstract protected IGenFact? GetEndFactOfEntity();
 }

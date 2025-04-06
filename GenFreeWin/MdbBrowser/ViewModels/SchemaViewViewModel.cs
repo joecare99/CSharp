@@ -4,6 +4,7 @@ using MdbBrowser.Models;
 using MVVM.View.Extension;
 using System;
 using System.Data;
+using BaseLib.Helper;
 
 namespace MdbBrowser.ViewModels
 {

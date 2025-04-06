@@ -5,6 +5,7 @@ using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BaseLib.Helper;
 
 namespace GenFree.Data
 {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GenFree.Sys;
 using GenFree.Model.Data;
+using BaseLib.Helper;
 
 namespace GenFree.Data
 {

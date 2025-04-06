@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.Windows;
 using MySqlConnector;
 using MSQBrowser.Views;
+using BaseLib.Helper;
 
 namespace MSQBrowser
 {
