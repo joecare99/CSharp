@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using GenFree.Interfaces.DB;
+using BaseLib.Helper;
 
 namespace GenFree.Helper;
 public static class DBHelper
