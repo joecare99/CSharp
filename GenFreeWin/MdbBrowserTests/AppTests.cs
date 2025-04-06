@@ -2,6 +2,7 @@
 using System;
 using MVVM.View.Extension;
 using MdbBrowser.ViewModels.Interfaces;
+using BaseLib.Helper;
 
 namespace MdbBrowser.Tests
 {

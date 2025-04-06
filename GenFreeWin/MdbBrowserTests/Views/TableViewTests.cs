@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MVVM.View.Extension;
 using MdbBrowser.ViewModels.Interfaces;
 using NSubstitute;
+using BaseLib.Helper;
 
 namespace MdbBrowser.Views.Tests
 {
@@ -18,7 +19,7 @@ namespace MdbBrowser.Views.Tests
             var builder = new ServiceCollection()
                .AddTransient((s)=>Substitute.For<IDBViewViewModel>());
 
-            IoC.GetReqSrv = builder.BuildServiceProvider().GetRequiredService;
+            IoC.Configure(builder.BuildServiceProvider());
         }
 
         [TestMethod()]
