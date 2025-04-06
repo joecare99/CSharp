@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GenFree.Helper.Tests
 {
