@@ -1,4 +1,6 @@
-﻿using GenInterfaces.Interfaces.Genealogic;
+﻿using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
+using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -9,24 +11,39 @@ using WinAhnenCls.Model.HejMarr;
 
 namespace WinAhnenCls.Model
 {
-    public class CHejGenealogy : IData
+    public class CHejGenealogy : IData, IGenealogy
     {
         public int MarriagesCount { get; set; }
         public int IndividualCount { get; set; }
         public int GetActID { get; set; }
         public int PlaceCount { get; set; }
         public int SourceCount { get; set; }
-        public CHejIndiData ActualInd { get; set; }
         public int SpouseCount { get; set; }
         public int ChildCount { get; set; }
+        public IGenPerson ActualInd { get; set; }
+   
         public object Data { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        object IDataRO<object>.Data => throw new NotImplementedException();
+        NotifyCollectionChangedEventHandler IDataRO<object>.OnUpdate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public IList<IGenPerson> Individuals { get; set; }
         public IList<CHejMarriageData> Marriages { get; set; }
-        object IDataRO<object>.Data => throw new NotImplementedException();
 
-        NotifyCollectionChangedEventHandler IDataRO<object>.OnUpdate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public CHejMarriageData ActualMarriage { get; set; }
+        public Func<IList<object>, IGenEntity> GetEntity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Func<IList<object>, IGenFact> GetFact { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Func<IList<object>, IGenEntity> GetSource { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Func<IList<object>, IGenMedia> GetMedia { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Func<IList<object>, IGenEntity> GetTransaction { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IList<IGenEntity> Entitys { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenSources> Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenRepository> Repositorys { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenPlace> Places { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenMedia> Medias { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenTransaction> Transactions { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public Guid UId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+
+        public EGenType eGenType => throw new NotImplementedException();
 
         public void Clear()
         {
@@ -48,7 +65,7 @@ namespace WinAhnenCls.Model
             throw new NotImplementedException();
         }
 
-        public CHejIndiData PeekInd(int v)
+        public IGenPerson PeekInd(int v)
         {
             throw new NotImplementedException();
         }

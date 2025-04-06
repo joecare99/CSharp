@@ -12,6 +12,7 @@ namespace WinAhnenCls.Model.HejInd
     public class CPerson : IDisposable, IGenPerson
     {
         private bool _disposedValue;
+        private WeakReference<IGenealogy>? _WLowner;
 
         public CPerson()
         {
@@ -80,6 +81,8 @@ namespace WinAhnenCls.Model.HejInd
         IList<IGenSources> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenMedia> Media { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
+        public IGenealogy Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -102,5 +105,9 @@ namespace WinAhnenCls.Model.HejInd
             GC.SuppressFinalize(this);
         }
 
+        public static IEnumerable<IGenPerson> ReadFromStream(StreamReader sr)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
