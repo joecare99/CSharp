@@ -18,6 +18,7 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
     private IMessenger _messanger;
     #region Properties
     public EGenType eGenType => EGenType.Genealogy;
+    public Guid UId { get; init; }
     [JsonIgnore]
     public Func<IList<object>, IGenEntity> GetEntity { get; set; }
     [JsonIgnore]
@@ -32,9 +33,9 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
     public IList<IGenEntity> Entitys { get; init; } = new List<IGenEntity>();
     public IList<IGenSources> Sources { get; init; } = new List<IGenSources>();
     public IList<IGenPlace> Places { get; init; } = new List<IGenPlace>();
+    public IList<IGenRepository> Repositorys { get ; init ; }= new List<IGenRepository>();
     public IList<IGenMedia> Medias { get; init; } = new List<IGenMedia>();
     public IList<IGenTransaction> Transactions { get; init; } = new List<IGenTransaction>();
-    public Guid UId { get; init; }
 
     #endregion
 
