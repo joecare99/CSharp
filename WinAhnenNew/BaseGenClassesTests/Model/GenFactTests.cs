@@ -31,6 +31,8 @@ public class GenFactTests : IGenEntity
 
     public EGenType eGenType => throw new NotImplementedException();
 
+    public IGenealogy Owner => throw new NotImplementedException();
+
     [TestInitialize]
     public void Initialize()
     {
