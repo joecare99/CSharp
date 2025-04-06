@@ -8,7 +8,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
     public class CHejIndiDataTests
     {
         //private CHejInds FClsHejIndividuals;
-        private CHejIndiData FHejIndData;
+        private CHejIndiReader FHejIndData;
         private string FDataDir;
         private Random rnd;
         const string DefDataDir = "Data";
@@ -75,7 +75,7 @@ for (i = 1, i < cInd.Length; i++)
             FClsHejIndividuals.First;
         }
         */
-        private void AssertAreEqual(CHejIndiData expected, CHejIndiData actual, string msg, bool ChkID)
+        private void AssertAreEqual(CHejIndiReader expected, CHejIndiReader actual, string msg, bool ChkID)
         {
             //            EHejIndDataFields lFld;
 
