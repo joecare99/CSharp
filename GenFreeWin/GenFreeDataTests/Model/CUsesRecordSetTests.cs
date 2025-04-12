@@ -3,6 +3,7 @@ using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
+using BaseLib.Helper;
 
 namespace GenFree.Model.Tests;
 
