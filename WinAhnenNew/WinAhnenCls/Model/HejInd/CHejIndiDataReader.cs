@@ -78,23 +78,23 @@ namespace WinAhnenCls.Model.HejInd
             return _data[index];
         }
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            bool _result = false;
-            result = null;
-            try
-            {
-                if (_result = Enum.TryParse($"hind_{binder.Name}", out EHejIndDataFields field))
-                    result = Data[field];
-            }
-            finally { }
-            return _result;
-        }
+        //public override bool TryGetMember(GetMemberBinder binder, out object result)
+        //{
+        //    bool _result = false;
+        //    result = null;
+        //    try
+        //    {
+        //        if (_result = Enum.TryParse($"hind_{binder.Name}", out EHejIndDataFields field))
+        //            result = Data[field];
+        //    }
+        //    finally { }
+        //    return _result;
+        //}
 
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            throw new NotImplementedException();
-        }
+        //public override bool TrySetMember(SetMemberBinder binder, object value)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public bool ReadFromStream(StreamReader sr)
         {
