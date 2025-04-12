@@ -1,0 +1,24 @@
+﻿<Project>
+  <Import Project="..\GenFreeWin.props" />
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net481</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\GenFreeWinForms\GenFreeWinForms.csproj" />
+    <ProjectReference Include="..\GenFreeWinVm2\GenFreeWinVm2.csproj" />
+    <ProjectReference Include="..\GenFreeBaseClasses\GenFreeBaseClasses.csproj" />
+  </ItemGroup>
+
+</Project>

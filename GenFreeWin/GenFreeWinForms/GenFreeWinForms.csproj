@@ -1,0 +1,29 @@
+﻿<Project>
+  <Import Project="..\GenFreeWin.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net481</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWindowsForms>True</UseWindowsForms>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\GenFreeBase\GenFreeBase.csproj" />
+    <ProjectReference Include="..\GenFreeUIItfs\GenFreeUIItfs.csproj" />
+    <ProjectReference Include="..\..\CSharpBible\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\Adresse.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\FraStatistics.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Views\Menue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>
