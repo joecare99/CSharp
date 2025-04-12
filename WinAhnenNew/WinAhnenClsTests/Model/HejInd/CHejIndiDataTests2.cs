@@ -10,14 +10,14 @@ namespace WinAhnenCls.Model.HejInd.Tests
     [TestClass()]
     public class CHejIndiDataTests2
     {
-        public static readonly CHejIndiData[] cInd = new[] {
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
+        public static readonly CHejIndiReader[] cInd = new[] {
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
         };
 
         public static readonly CHejSourceData[] cSource = new[] {
