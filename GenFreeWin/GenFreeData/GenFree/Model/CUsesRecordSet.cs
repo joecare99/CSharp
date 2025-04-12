@@ -1,4 +1,5 @@
 ﻿//using DAO;
+using BaseLib.Helper;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
 
