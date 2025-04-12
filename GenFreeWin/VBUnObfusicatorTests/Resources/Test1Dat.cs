@@ -218,7 +218,7 @@
                         goto IL_001d;
                     IL_001d:
                         num = 3;
-                        text = "Datum " + Strings.Mid(DateAndTime.DateString, 4, 2) + "." + DateAndTime.DateString.Left( 2) + "." + Strings.Mid(DateAndTime.DateString, 7, 4);
+                        text = "Datum " + DateTime.Today.Month.ToString() + "." + DateTime.DateString.Left( 2) + "." + DateTime.Today.Year.ToString();
                         goto IL_0073;
                     IL_0073:
                         num = 4;

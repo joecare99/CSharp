@@ -151,7 +151,7 @@ ProjectData.ClearProjectError();
 ///Instruction Instruction 4,10
 num3 = 2;
 ///Instruction Instruction 4,11
-text = "Datum " + Strings.Mid(DateAndTime.DateString, 4, 2) + "." + DateAndTime.DateString.Left( 2) + "." + Strings.Mid(DateAndTime.DateString, 7, 4);
+text = "Datum " + DateTime.Today.Month.ToString() + "." + DateTime.DateString.Left( 2) + "." + DateTime.Today.Year.ToString();
 ///Instruction Instruction 4,12
 switch (index)
 ///BlockStart Block 5,0

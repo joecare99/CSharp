@@ -439,7 +439,7 @@ IL_001d:
 ///Instruction Instruction 4,80
 num = 3;
 ///Instruction Instruction 4,81
-text = "Datum " + Strings.Mid(DateAndTime.DateString, 4, 2) + "." + DateAndTime.DateString.Left( 2) + "." + Strings.Mid(DateAndTime.DateString, 7, 4);
+text = "Datum " + DateTime.Today.Month.ToString() + "." + DateTime.DateString.Left( 2) + "." + DateTime.Today.Year.ToString();
 ///Goto Goto 4,82 Dest:OK
 goto IL_0073;
 ///Label Label 4,83 2

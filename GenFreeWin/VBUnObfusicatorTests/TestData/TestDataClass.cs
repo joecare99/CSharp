@@ -777,7 +777,7 @@ IL_001d:
 ///Instruction Instruction 4,80
 num = 3;
 ///Instruction Instruction 4,81
-text = ""Datum "" + Strings.Mid(DateAndTime.DateString, 4, 2) + ""."" + DateAndTime.DateString.Left( 2) + ""."" + Strings.Mid(DateAndTime.DateString, 7, 4);
+text = ""Datum "" + DateTime.Today.Month.ToString() + ""."" + DateTime.DateString.Left( 2) + ""."" + DateTime.Today.Year.ToString();
 ///Goto Goto 4,82 Dest:OK
 goto IL_0073;
 ///Label Label 4,83 2
@@ -1386,7 +1386,7 @@ IL_001d:
 ///Instruction Instruction 4,77
 num = 3;
 ///Instruction Instruction 4,78
-text = ""Datum "" + Strings.Mid(DateAndTime.DateString, 4, 2) + ""."" + DateAndTime.DateString.Left( 2) + ""."" + Strings.Mid(DateAndTime.DateString, 7, 4);
+text = ""Datum "" + DateTime.Today.Month.ToString() + ""."" + DateTime.DateString.Left( 2) + ""."" + DateTime.Today.Year.ToString();
 ///Goto Goto 4,79 Dest:OK
 goto IL_0073;
 ///Label Label 4,80 2
@@ -1992,7 +1992,7 @@ IL_001d:
 ///Instruction Instruction 4,76
 num = 3;
 ///Instruction Instruction 4,77
-text = ""Datum "" + Strings.Mid(DateAndTime.DateString, 4, 2) + ""."" + DateAndTime.DateString.Left( 2) + ""."" + Strings.Mid(DateAndTime.DateString, 7, 4);
+text = ""Datum "" + DateTime.Today.Month.ToString() + ""."" + DateTime.DateString.Left( 2) + ""."" + DateTime.Today.Year.ToString();
 ///Goto Goto 4,78 Dest:OK
 goto IL_0073;
 ///Label Label 4,79 2
@@ -2957,11 +2957,11 @@ T:Block,1,}
         ("num = 3;", ICSCode.CodeBlockType.Instruction, 4),
         ("text =", ICSCode.CodeBlockType.Instruction, 4),
         ("\"Datum \"", ICSCode.CodeBlockType.String, 4),
-        ("+ Strings.Mid(DateAndTime.DateString, 4, 2) +", ICSCode.CodeBlockType.Instruction, 4),
+        ("+ DateTime.Today.Month.ToString() +", ICSCode.CodeBlockType.Instruction, 4),
         ("\".\"", ICSCode.CodeBlockType.String, 4),
-        ("+ DateAndTime.DateString.Left( 2) +", ICSCode.CodeBlockType.Instruction, 4),
+        ("+ DateTime.DateString.Left( 2) +", ICSCode.CodeBlockType.Instruction, 4),
         ("\".\"", ICSCode.CodeBlockType.String, 4),
-        ("+ Strings.Mid(DateAndTime.DateString, 7, 4);", ICSCode.CodeBlockType.Instruction, 4),
+        ("+ DateTime.Today.Year.ToString();", ICSCode.CodeBlockType.Instruction, 4),
         ("goto IL_0073;", ICSCode.CodeBlockType.Goto, 4),
         ("IL_0073:", ICSCode.CodeBlockType.Label, 4),
         ("num = 4;", ICSCode.CodeBlockType.Instruction, 4),

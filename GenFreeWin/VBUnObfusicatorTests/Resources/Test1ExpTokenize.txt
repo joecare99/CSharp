@@ -247,11 +247,11 @@ T:Label,4,IL_001d:
 T:Instruction,4,num = 3;
 T:Instruction,4,text =
 T:String,4,"Datum "
-T:Instruction,4,+ Strings.Mid(DateAndTime.DateString, 4, 2) +
+T:Instruction,4,+ DateTime.Today.Month.ToString() +
 T:String,4,"."
-T:Instruction,4,+ DateAndTime.DateString.Left( 2) +
+T:Instruction,4,+ DateTime.DateString.Left( 2) +
 T:String,4,"."
-T:Instruction,4,+ Strings.Mid(DateAndTime.DateString, 7, 4);
+T:Instruction,4,+ DateTime.Today.Year.ToString();
 T:Goto,4,goto IL_0073;
 T:Label,4,IL_0073:
 T:Instruction,4,num = 4;
