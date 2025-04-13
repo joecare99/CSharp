@@ -7,6 +7,7 @@
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <Company>JC-Soft</Company>
     <Authors>Joe Care</Authors>
     <Copyright>Copyright © JC-Soft 2025</Copyright>
