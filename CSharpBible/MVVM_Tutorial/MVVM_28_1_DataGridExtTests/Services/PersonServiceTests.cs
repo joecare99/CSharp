@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Interfaces;
 using BaseLib.Helper;
 using MVVM_28_1_DataGridExt.Models;
 using BaseLib.Models.Interfaces;
