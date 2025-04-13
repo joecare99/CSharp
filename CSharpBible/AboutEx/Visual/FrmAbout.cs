@@ -13,7 +13,6 @@
 // ***********************************************************************
 using System;
 using System.Windows.Forms;
-using System.ComponentModel;
 using CSharpBible.AboutEx.ViewModels.Interfaces;
 using Views;
 

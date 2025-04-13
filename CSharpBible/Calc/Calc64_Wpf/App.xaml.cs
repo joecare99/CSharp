@@ -4,7 +4,6 @@ using BaseLib.Helper;
 using System;
 using Calc64Base.Models.Interfaces;
 using Calc64Base.Models;
-using BaseLib.Helper;
 
 
 namespace Calc64_Wpf

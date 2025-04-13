@@ -10,7 +10,6 @@ using System.Windows.Xps.Packaging;
 using Sudoku_Base.Models.Interfaces;
 using Sudoku_Base.Models;
 using NSubstitute;
-using BaseLib.Interfaces;
 using BaseLib.Models.Interfaces;
 
 namespace MVVM_41_Sudoku.Models.Tests;

@@ -24,7 +24,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Windows.Documents;
-using BaseLib.Helper;
 
 namespace MVVM_25_RichTextEdit.ViewModels;
 

@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
-using ConsoleDisplay.View;
 using System;
 
 namespace Basic_Del03_General.Views.Tests

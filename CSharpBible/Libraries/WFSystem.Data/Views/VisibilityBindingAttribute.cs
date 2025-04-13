@@ -6,30 +6,30 @@
 // Last Modified By : Mir
 // Last Modified On : 10-07-2022
 // ***********************************************************************
-// <copyright file="CommandBindingAttribute.cs" company="JC-Soft">
+// <copyright file="VisibilityBindingAttribute.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace Views;
 
 [AttributeUsage(AttributeTargets.Field)]
-public class CommandBindingAttribute(string cmdName) : Attribute
+public class VisibilityBindingAttribute(string cmdName) : Attribute
 {
-    public string CommandName { get; } = cmdName;
+    public string PropertyName { get; } = cmdName;
 
     public void Bind(object viewModel, Control field)
     {
-        if (viewModel.GetType().GetProperty(CommandName)?.GetValue(viewModel) is ICommand cmd)
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType==typeof(bool) )
         {
-            cmd.CanExecuteChanged += (s, e) => field.Enabled = cmd.CanExecute(field.Tag);
-            field.Click += (s, e) => cmd.Execute(field.Tag);
-            field.Enabled = cmd.CanExecute(field.Tag);
+            field.Visible = (bool)pi.GetValue(viewModel)!;
+            if (viewModel is INotifyPropertyChanged npc)
+                npc.PropertyChanged += (s, e) => { if (e.PropertyName == PropertyName) field.Visible = (bool)s!.GetType().GetProperty(e.PropertyName)?.GetValue(s)!; };
         }
     }
 
@@ -37,7 +37,7 @@ public class CommandBindingAttribute(string cmdName) : Attribute
     {
         foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
         {
-            if (GetCustomAttribute(field, typeof(CommandBindingAttribute)) is CommandBindingAttribute attr
+            if (GetCustomAttribute(field, typeof(TextBindingAttribute)) is TextBindingAttribute attr
                 && field.GetValue(obj) is Control ctrl)
             {
                 attr.Bind(dataContext, ctrl);

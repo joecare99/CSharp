@@ -13,7 +13,6 @@
 // ***********************************************************************
 using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Helper;
 using MVVM_06_Converters_4.Model;
 using System.Windows;
 

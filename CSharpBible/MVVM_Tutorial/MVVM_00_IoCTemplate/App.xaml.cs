@@ -12,11 +12,9 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Helper;
-using BaseLib.Interfaces;
 using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Helper;
 using MVVM_00_IoCTemplate.Models;
 using System.Windows;
 

@@ -1,5 +1,5 @@
 ﻿<Project>
- 	<Import Project="..\Libraries.props" />
+ 	<Import Project="..\Libraries_net.props" />
   <PropertyGroup>
 	  <OutputType>Library</OutputType>
 	  <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
@@ -13,6 +13,6 @@
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
-	  <PackageReference Include="System.Text.Json" Version="9.0.2" />
+	  <PackageReference Include="System.Text.Json" Version="9.0.4" />
 	</ItemGroup>
 </Project>

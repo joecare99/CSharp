@@ -11,8 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using GenInterfaces.Interfaces;
-
 namespace GenInterfaces.Interfaces;
 
 public interface IListEntry<T> : IHasOwner where T : IListEntry<T>

@@ -11,12 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleDisplay.View;
 using DisplayTest.Models.Interfaces;
-using DisplayTest.Models;
 using System;
-using System.Threading;
-using System.Xml.Schema;
 using BaseLib.Models.Interfaces;
 
 /// <summary>

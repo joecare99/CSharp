@@ -1,16 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
   <Import Project="..\Libraries.props" />
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net481;net48;net472;net462</TargetFrameworks>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyTitle>CSFreeVision</AssemblyTitle>
-    <Company>JC-Soft</Company>
     <Product>CSFreeVision</Product>
-    <Copyright>Copyright © JC-Soft 2020</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <Compile Update="Base\Group.cs">
       <SubType>Component</SubType>

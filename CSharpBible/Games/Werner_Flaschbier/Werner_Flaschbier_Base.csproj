@@ -16,10 +16,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.6.1" />
 	</ItemGroup>
 	<ItemGroup>
-    <ProjectReference Include="..\Game_Base\Game_Base.csproj"  />
+    <ProjectReference Include="..\Game_Base\Game_Base.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

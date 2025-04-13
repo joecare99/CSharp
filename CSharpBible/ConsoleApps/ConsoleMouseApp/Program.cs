@@ -19,7 +19,6 @@ using ConsoleMouseApp.Views;
 using ConsoleLib.Interfaces;
 using BaseLib.Interfaces;
 using BaseLib.Models;
-using ConsoleLib.ConsoleLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.DependencyInjection;
 

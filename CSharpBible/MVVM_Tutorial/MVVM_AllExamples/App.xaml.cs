@@ -15,7 +15,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using BaseLib.Helper;
 using System.Windows;
-using BaseLib.Interfaces;
 using BaseLib.Models.Interfaces;
 using BaseLib.Models;
 

@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Helper;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows.Markup;
 
