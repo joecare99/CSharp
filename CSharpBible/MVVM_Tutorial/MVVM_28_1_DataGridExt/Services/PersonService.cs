@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using BaseLib.Interfaces;
 using BaseLib.Models.Interfaces;
 using BaseLib.Helper;
 using MVVM_28_1_DataGridExt.Models;
