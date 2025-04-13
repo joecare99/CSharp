@@ -28,14 +28,14 @@ public partial class FrmAboutExMainViewModel : ObservableObject, IFrmAboutExMain
     [ObservableProperty]
     private string _product = "AboutEx";
 
-    public Action<string[]> ShowAboutFrm1 { get; set; }
-    public Action<string[]> ShowAboutFrm2 { get; set; }
+    public Action<string[]>? ShowAboutFrm1 { get; set; }
+    public Action<string[]>? ShowAboutFrm2 { get; set; }
 
     [RelayCommand]
     private void ShowAbout1() 
-        => ShowAboutFrm1?.Invoke([_title, _version, _description, _author, _company, _copyright, _product]);
+        => ShowAboutFrm1?.Invoke([Title, Version, Description, Author, Company, Copyright, Product]);
 
     [RelayCommand]
     private void ShowAbout2()
-        => ShowAboutFrm2?.Invoke([_title, _version, _description, _author, _company, _copyright, _product]);
+        => ShowAboutFrm2?.Invoke([Title, Version, Description, Author, Company, Copyright, Product]);
 }
