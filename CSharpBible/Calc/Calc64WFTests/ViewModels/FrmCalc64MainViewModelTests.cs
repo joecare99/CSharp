@@ -1,9 +1,7 @@
 ﻿using Calc64Base.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace Calc64WF.ViewModel.Tests
