@@ -3,11 +3,6 @@ using BaseLib.Models.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DisplayTest.Models.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TestConsoleDemo.ViewModels.Interfaces;
 
 namespace TestConsoleDemo.ViewModels;

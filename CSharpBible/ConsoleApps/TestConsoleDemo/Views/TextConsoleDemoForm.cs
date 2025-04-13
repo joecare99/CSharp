@@ -1,5 +1,4 @@
 using BaseLib.Interfaces;
-using ConsoleDisplay.View;
 using TestConsoleDemo.ViewModels.Interfaces;
 using Views;
 
