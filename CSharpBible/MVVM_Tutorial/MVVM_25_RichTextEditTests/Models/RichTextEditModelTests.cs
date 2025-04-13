@@ -13,7 +13,6 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Interfaces;
 using MVVM.ViewModel;
 using NSubstitute;
 using System.ComponentModel;
