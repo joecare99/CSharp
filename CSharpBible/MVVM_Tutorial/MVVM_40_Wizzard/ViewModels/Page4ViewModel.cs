@@ -14,7 +14,6 @@
 using System.ComponentModel;
 using BaseLib.Helper;
 using MVVM.ViewModel;
-using BaseLib.Helper;
 using MVVM_40_Wizzard.Properties;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using CommunityToolkit.Mvvm.Messaging;
