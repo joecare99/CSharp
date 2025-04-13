@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System;
-using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using BaseLib.Helper;
 
 namespace MVVM.View.Extension.Tests;
