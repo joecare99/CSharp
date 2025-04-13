@@ -13,7 +13,6 @@
 // ***********************************************************************
 using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Helper;
 using MVVM_05a_CTCommandParCalc.Model;
 using MVVM_05a_CTCommandParCalc.Model.Interfaces;
 using System.Windows;
