@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using BaseLib.Helper;
 using MVVM_25_RichTextEdit.Models;
