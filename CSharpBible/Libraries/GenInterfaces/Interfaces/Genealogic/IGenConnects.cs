@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using GenInterfaces.Data;
-using System;
 
 /// <summary>
 /// The Interfaces namespace.

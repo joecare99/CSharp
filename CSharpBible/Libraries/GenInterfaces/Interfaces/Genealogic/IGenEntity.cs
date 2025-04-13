@@ -11,9 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using GenInterfaces.Data;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 /// <summary>
