@@ -1,16 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using VTileEdit.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using ConsoleDisplay.View;
 using System.IO;
 using System.Diagnostics;
 using static BaseLib.Helper.TestHelper;
 using System.IO.Compression;
-using System.Buffers.Text;
 
 namespace VTileEdit.Models.Tests
 {
