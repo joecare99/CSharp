@@ -1,8 +1,6 @@
-﻿using BaseLib.Helper;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
 using MVVM_Converter_CTDrawGrid.Models.Interfaces;
-using System;
 using System.ComponentModel;
 using System.Drawing;
 using Werner_Flaschbier_Base.Model;
