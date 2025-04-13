@@ -18,7 +18,6 @@ using System.ComponentModel;
 using System;
 using CommunityToolkit.Mvvm.Input;
 using BaseLib.Helper;
-using BaseLib.Helper;
 
 namespace MVVM_06_Converters_4.ViewModels;
 
