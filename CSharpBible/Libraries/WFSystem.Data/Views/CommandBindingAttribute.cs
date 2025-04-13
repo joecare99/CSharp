@@ -6,7 +6,7 @@
 // Last Modified By : Mir
 // Last Modified On : 10-07-2022
 // ***********************************************************************
-// <copyright file="FrmCalc32Main.Designer.cs" company="JC-Soft">
+// <copyright file="CommandBindingAttribute.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2020
 // </copyright>
 // <summary></summary>
