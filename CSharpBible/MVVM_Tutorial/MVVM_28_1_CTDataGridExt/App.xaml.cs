@@ -13,7 +13,6 @@
 // ***********************************************************************
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Interfaces;
 using BaseLib.Helper;
 using MVVM_28_1_CTDataGridExt.Services;
 using BaseLib.Models;

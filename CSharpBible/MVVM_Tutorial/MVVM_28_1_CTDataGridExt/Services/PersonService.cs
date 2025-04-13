@@ -1,5 +1,4 @@
-﻿using BaseLib.Interfaces;
-using BaseLib.Models.Interfaces;
+﻿using BaseLib.Models.Interfaces;
 using BaseLib.Helper;
 using MVVM_28_1_CTDataGridExt.Models;
 using System;
