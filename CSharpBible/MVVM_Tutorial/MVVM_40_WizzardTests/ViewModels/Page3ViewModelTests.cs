@@ -19,7 +19,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using MVVM.ViewModel;
 using BaseLib.Helper;
-using BaseLib.Helper;
 using static BaseLib.Helper.TestHelper;
 using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Properties;
