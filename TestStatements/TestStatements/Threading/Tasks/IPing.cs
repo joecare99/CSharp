@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Net;
 using System.Net.NetworkInformation;
 
 namespace TestStatements.Threading.Tasks
