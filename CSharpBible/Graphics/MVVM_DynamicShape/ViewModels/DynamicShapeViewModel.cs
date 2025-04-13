@@ -2,7 +2,6 @@
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_DynamicShape.Model;
 using MVVM_DynamicShape.Models.Interfaces;
