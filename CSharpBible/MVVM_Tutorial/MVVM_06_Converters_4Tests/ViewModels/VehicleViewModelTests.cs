@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using BaseLib.Helper;
 using MVVM.ViewModel;
 using System.ComponentModel;
-using BaseLib.Helper;
 
 namespace MVVM_06_Converters_4.ViewModels.Tests;
 
