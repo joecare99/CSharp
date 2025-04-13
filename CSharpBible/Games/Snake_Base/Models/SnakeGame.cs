@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Interfaces;
 using BaseLib.Models.Interfaces;
 using Game_Base.Model;
 using Snake_Base.Models.Data;
