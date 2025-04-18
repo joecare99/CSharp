@@ -35,6 +35,8 @@ public static partial class DataModul
     public static IDatabase DOSB { get; set; }
     public static IDatabase DSB { get; set; }
     public static IDatabase TempDB { get; set; }
+    public static IDatabase TempSort_DB { get; set; }
+    public static IDatabase DbsNew { get; set; }
     public static IDatabase NB { get; set; }
     public static IDatabase RechDB { get; set; }
     public static IDatabase WB { get; set; }
@@ -990,7 +992,7 @@ public static partial class DataModul
 
     #endregion
 
-    public static void Repository_AppendRaw(int num5, string[] kont1)
+    public static void Repository_AppendRaw(int num5, IList<string> kont1)
     {
         IRecordset dB_RepoTable = DB_RepoTable;
         dB_RepoTable.AddNew();
