@@ -25,6 +25,7 @@ public static partial class DataModul
     public static IWitness Witness { get; } = new CWitness(() => DB_WitnessTable);
     public static IOFB OFB { get; } = new COFB(() => DB_OFBTable); // new IoC.GetReqiredService(IOFB);
     public static ISourceLink SourceLink { get; } = new CSourceLink(() => DB_SourceLinkTable); // new IoC.GetReqiredService(ISourceLink);
+    public static IRepository Repositories { get; } = new CRepository(() => DB_RepoTable); // new IoC.GetReqiredService(IRepository); 
     public static INB_Person NB_Person { get; } = new CNB_Person(() => NB_PersonTable, Link_MoveAllPaten_ToNBWitn); // new IoC.GetReqiredService(INB_Person);
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable); // new IoC.GetReqiredService(INB_Family);
 
@@ -71,6 +72,7 @@ public static partial class DataModul
     public static IRecordset Osy;
     public static IRecordset LeerTable;
     // NB-DB
+    public static IRecordset NB_AhnTable;
     public static IRecordset NB_Ahn1Table;
     public static IRecordset NB_Ahn2Table;
     public static IRecordset NB_FrauTable;
@@ -85,6 +87,10 @@ public static partial class DataModul
     public static IRecordset NB_SperrPersTable;
     public static IRecordset NB_SperrFamsTable;
     public static IRecordset NB_BemTable;
+    public static IRecordset NB_TVerkTable;
+    public static IRecordset NB_SurTable;
+    public static IRecordset NB_Zeu2Table;
+
     //WB-DB
     public static IRecordset WB_FrauTable;
 
@@ -1027,6 +1033,52 @@ public static partial class DataModul
         return result;
     }
 
+    public static void Persichlöschloesch(int persInArb)
+    {
+        Names.DeleteAllP(persInArb);
+        SourceLink_DeleteAllPF(persInArb, 1);
+
+        ////Discarded unreachable code: IL_10c5
+        //int try0001_dispatch = -1;
+        //int num = default;
+        //int num2 = default;
+        //int num3 = default;
+        //int lErl = default;
+        ELinkKennz num6 = 1.AsEnum<ELinkKennz>();
+        while (num6 <= ELinkKennz.lk9)
+        {
+            _ = Link.DeleteAllE(persInArb, num6);
+            num6++;
+        }
+
+        _ = Link.DeleteAllF(persInArb, ELinkKennz.lkGodparent);
+
+        Witness.DeleteAllE(persInArb, 10);
+
+        Witness.DeleteAllF(persInArb, 10);
+
+        Ancestrers_DeleteAll(persInArb);
+        Descendent_DeleteAll(persInArb);
+        EEventArt num6b = EEventArt.eA_Birth;
+        while (num6b <= EEventArt.eA_120)
+        {
+            Event.DeleteBeSu(num6b, persInArb);
+            num6b++;
+        }
+
+        num6b = EEventArt.eA_300;
+        while (num6b <= EEventArt.eA_302)
+        {
+            Event.DeleteAll(num6b, persInArb);
+            num6b++;
+        }
+
+        SearchTab_Delete(persInArb);
+
+        _ = Picture_DeleteAll(persInArb, 'P');
+
+        Person.Delete(persInArb);
+    }
     public static bool Picture_Exists(int iPersonNr, char ePKennz)
     {
         DB_PictureTable.Index = nameof(PictureIndex.PerKenn);

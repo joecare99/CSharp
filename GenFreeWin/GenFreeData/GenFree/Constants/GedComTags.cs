@@ -66,6 +66,7 @@
         public const string cGed_HEAD = "HEAD";
         public const string cGed_HEADER = "HEADER";
         public const string cGed_HEAL = "HEAL";
+        public const string cGed_HEIM = "HEIM";
         public const string cGed_HIST = "HIST";
         public const string cGed_INDI = "INDI";
         public const string cGed_INFO = "INFO";
@@ -112,8 +113,7 @@
         public const string cGed_TRLR = "TRLR";
         public const string cGed_TYPE = "TYPE";
         public const string cGed_VALU = "VALU";
-        public const string cGed_VERS = "VERS";
-        
+        public const string cGed_VERS = "VERS";        
         public const string cGed_RELI = "RELI";
         public const string cGed__CRE = "_CRE";
         public const string cGed__INT = "_INT";
@@ -174,7 +174,6 @@
         public const string cGed_GIVN = "GIVN";
         public const string cGed_HAIR = "HAIR";
         public const string cGed_HEIG = "HEIG";
-        public const string cGed_HEIM = "HEIM";
         public const string cGed_HINW = "HINW";
         public const string cGed_HOBB = "HOBB";
         public const string cGed_HSEL = "HSEL";
