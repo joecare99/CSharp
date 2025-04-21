@@ -19,7 +19,7 @@ public partial class Menue
     [CommandBinding(nameof(IMenu1ViewModel.OpenPlacesCommand))]
     internal Button btnPlaces;
     [CommandBinding(nameof(IMenu1ViewModel.OpenMandantsCommand))]
-    internal Button btnMandants;
+    public Button btnMandants;
     [CommandBinding(nameof(IMenu1ViewModel.OpenTextsCommand))]
     internal Button btnManageTexts;
     [CommandBinding(nameof(IMenu1ViewModel.OpenPrintCommand))]
@@ -27,7 +27,7 @@ public partial class Menue
     [CommandBinding(nameof(IMenu1ViewModel.OpenImportExportCommand))]
     internal Button btnImportExport; 
     [CommandBinding(nameof(IMenu1ViewModel.OpenAddressCommand))]
-    internal Button btnAddress;
+    public Button btnAddress;
     [CommandBinding(nameof(IMenu1ViewModel.EndProgramCommand))]
     internal Button btnEndProgram;
     [CommandBinding(nameof(IMenu1ViewModel.OpenCalculationsCommand))]
@@ -47,7 +47,7 @@ public partial class Menue
     [CommandBinding(nameof(IMenu1ViewModel.OpenNotesCommand))]
     internal Button btnNotes;
     [CommandBinding(nameof(IMenu1ViewModel.OpenEnterLizenzCommand))]
-    internal Button btnEnterLizenz;
+    public Button btnEnterLizenz;
     [CommandBinding(nameof(IMenu1ViewModel.OpenReorgCommand))]
     internal Button btnReorg;
     [CommandBinding(nameof(IMenu1ViewModel.OpenPropertyCommand))]
@@ -58,7 +58,7 @@ public partial class Menue
     [TextBinding(nameof(IMenu1ViewModel.MandantPath))]
     internal Label lblMandantPath;
     [TextBinding(nameof(IMenu1ViewModel.Owner))]
-    internal Label lblOwner;
+    public Label lblOwner;
     [TextBinding(nameof(IMenu1ViewModel.Menue18))]
     internal Label lblMenue18;
     [TextBinding(nameof(IMenu1ViewModel.HdrOwner))]
@@ -84,7 +84,7 @@ public partial class Menue
     public ListBox File1;
     public ListBox Dir1;
 
-    internal Button btnCheckUpdate;
+    public Button btnCheckUpdate;
     internal Panel pnlUpdate;
 
     internal CheckBox chbDisableMsg;
@@ -99,7 +99,7 @@ public partial class Menue
 
     internal Label lblDateLastCheck;
 
-    internal Button btnSendData;
+    public Button btnSendData;
     //            _Button27.Click += _Button27_Click;
 
     internal Button btnMerging;
@@ -121,7 +121,7 @@ public partial class Menue
 
     internal Label lblAutoUpdState;
 
-    internal Button btnRemoteDiag;
+    public Button btnRemoteDiag;
     //           _Button30.Click += _Button30_Click;
 
     internal PictureBox pbxLanguage1;
