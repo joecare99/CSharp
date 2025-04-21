@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 
 namespace GenFree.Helper
 {
@@ -36,11 +37,11 @@ namespace GenFree.Helper
             return Datu.Replace(" ", ".");
         }
  
-        public static string[] IntoString(this DateTime[] adDates, string[]? asRes = null, int offs = 0)
+        public static IList<string> IntoString(this DateTime[] adDates, IList<string>? asRes = null, int offs = 0)
         {
             asRes ??= new string[Math.Max(0, adDates.Length + offs)];
             for(var i = 0; i<adDates.Length;i++)
-                if (i + offs >= 0 && i + offs < asRes.Length)
+                if (i + offs >= 0 && i + offs < asRes.Count)
                     asRes[i+offs] = adDates[i].ToString("yyyy.MM.dd");
             return asRes;
         }

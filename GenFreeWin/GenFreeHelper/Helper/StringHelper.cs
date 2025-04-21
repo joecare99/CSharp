@@ -66,11 +66,11 @@ namespace GenFree.Helper
             return $"{sFrame[0]}{kont2}{sFrame[Math.Min(sFrame.Length - 1, 1)]}";
         }
 
-        public static string[] IntoString(this string[] asData, string[]? asKont = null, int offs = 0)
+        public static IList<string> IntoString(this string[] asData, IList<string> asKont = null, int offs = 0)
         {
             asKont ??= new string[Math.Max(0, asData.Length + offs)];
             for (var i = 0; i < asData.Length; i++)
-                if (i + offs >= 0 && i + offs < asKont.Length)
+                if (i + offs >= 0 && i + offs < asKont.Count)
                     asKont[i + offs] = asData[i];
             return asKont;
         }
