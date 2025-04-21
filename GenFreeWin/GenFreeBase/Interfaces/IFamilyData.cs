@@ -1,5 +1,7 @@
 ﻿using GenFree.Data;
+using GenFree.Interfaces.DB;
 using System;
+using System.Collections.Generic;
 
 namespace GenFree.Interfaces;
 
@@ -18,4 +20,11 @@ public interface IFamilyData : IHasID<int>, IHasPropEnum<EFamilyProp>, IHasIReco
     string sSuffix { get; }
     bool xAeB { get; }
     int iEltern { get; }
+    int Mann { get; set; }
+    int Frau { get; set; }
+    IList<(int nr, string aTxt)> Kinder { get; }
+    IArrayProxy<int> Kind { get; }
+    int iGgv { get; }
+
+    void CheckSetAnlDatum(IRecordset dB_FamilyTable);
 }

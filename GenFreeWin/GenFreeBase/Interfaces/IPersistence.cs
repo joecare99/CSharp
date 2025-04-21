@@ -36,6 +36,7 @@ public interface IPersistence
     string ReadStringMLProg(string sSection, int iMaxLine);
     string ReadStringProg(string sSection);
     void ReadStringsProg(string sSection, string[] aus);
+    int[] ReadIntsProg(string sSection, int iCnt);
     void WriteIntsProg(string sSection, int[] aiValues);
     void WriteStringProg(string sFilename, string text);
     void WriteStringsProg(string sSection, string[] values);

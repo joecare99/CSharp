@@ -33,7 +33,7 @@ public interface ILink :
     IEnumerable<ILinkData> ReadAllFams(int iFamNr, ELinkKennz eKennz = ELinkKennz.lkNone);
     IEnumerable<ILinkData> ReadAllKennzs(ELinkKennz iKennz);
     IEnumerable<ILinkData> ReadAllPers(int iPersNr, ELinkKennz eKennz = ELinkKennz.lkNone);
-    bool ReadFamily(int FamNr, IFamilyPersons Family, Action<ELinkKennz, int>? action = null);
+    bool ReadFamily(int FamNr, IFamilyData Family, Action<ELinkKennz, int>? action = null);
     bool SetEQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
     bool SetVerknQ<T>(int iFamNr, int iPersNr, ELinkKennz iKennz, T okVal, Func<int, int, T> func) where T : struct;
 }

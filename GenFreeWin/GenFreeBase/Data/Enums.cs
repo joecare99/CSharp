@@ -412,6 +412,12 @@ public enum RepoFields
     Bem,
     Suchname
 }
+
+public enum RepoIndex
+{
+    Nr
+}
+
 public enum ENameKennz : int
 {
     nkGivnName = 0,
