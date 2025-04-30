@@ -2,8 +2,8 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Interfaces;
 using GenFree.Interfaces.Model;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data.Tests
 {

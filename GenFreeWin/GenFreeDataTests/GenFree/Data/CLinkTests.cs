@@ -3,10 +3,10 @@ using System;
 using System.Linq;
 using NSubstitute;
 using Microsoft.VisualBasic;
-using GenFree.Interfaces;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.DB;
 using static BaseLib.Helper.TestHelper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data.Tests;
 

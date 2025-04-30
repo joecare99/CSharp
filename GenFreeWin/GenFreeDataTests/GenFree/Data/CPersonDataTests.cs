@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
-using GenFree.Interfaces;
 using static BaseLib.Helper.TestHelper;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 
 namespace GenFree.Data.Tests
