@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using GenFree.Interfaces.DB;
-using Microsoft.VisualBasic;
 
 namespace GenFree.Helper
 {
@@ -102,8 +101,8 @@ namespace GenFree.Helper
             }
             if (Ubgt1.Contains('\xC5'.AsString()))
             {
-                var num5_ = Strings.InStr(Ubgt1, '\xC5'.AsString());
-                Ubgt1 = Ubgt1.Left(num5_ - 1) + "¿" + Strings.Mid(Ubgt1, num5_ + 2, Ubgt1.Length);
+                var num5_ = Ubgt1.IndexOf('\xC5');
+                Ubgt1 = Ubgt1.Left(num5_ - 1) + "¿" + Ubgt1.Substring(num5_ + 1, Ubgt1.Length);
             }
             return Ubgt1;
         }
@@ -154,7 +153,7 @@ namespace GenFree.Helper
 
         public static string UTF8Decode(this string Ubgt1)
         {
-            if (Strings.InStr(Ubgt1, '\xC2'.AsString()) != 0)
+            if (Ubgt1.Contains("\xC2"))
             {
                 Ubgt1 = Ubgt1.Replace($"\xC2\xA2", "¢");
                 Ubgt1 = Ubgt1.Replace("\xC2" + '\xA3'.AsString(), "£");
@@ -172,7 +171,7 @@ namespace GenFree.Helper
                 Ubgt1 = Ubgt1.Replace("\xC2" + (char)189, "½");
                 Ubgt1 = Ubgt1.Replace("\xC2" + (char)190, "¾");
             }
-            if (Strings.InStr(Ubgt1, '\xC3'.AsString()) != 0)
+            if (Ubgt1.Contains("\xC3"))
             {
                 Ubgt1 = Ubgt1.Replace("\xC3" + (char)128, "À");
                 Ubgt1 = Ubgt1.Replace("\xC3" + (char)129, "Á");
