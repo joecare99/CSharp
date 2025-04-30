@@ -1,6 +1,9 @@
 ﻿namespace BaseLib.Interfaces;
 
-public interface IHasValue
+public interface IHasValue : IHasValue<object>
 {
-    object? Value { get; }
+}
+public interface IHasValue<T>
+{
+    T? Value { get; }
 }

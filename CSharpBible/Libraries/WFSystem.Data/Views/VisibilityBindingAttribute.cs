@@ -35,9 +35,9 @@ public class VisibilityBindingAttribute(string cmdName) : Attribute
 
     public static void Commit(object obj, object dataContext)
     {
-        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
         {
-            if (GetCustomAttribute(field, typeof(TextBindingAttribute)) is TextBindingAttribute attr
+            if (GetCustomAttribute(field, typeof(VisibilityBindingAttribute)) is VisibilityBindingAttribute attr
                 && field.GetValue(obj) is Control ctrl)
             {
                 attr.Bind(dataContext, ctrl);
