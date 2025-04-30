@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net481</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>GenFreeWin</RootNamespace>
     <UseWindowsForms>True</UseWindowsForms>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -18,10 +19,19 @@
     <Compile Update="Views\Adresse.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Views\FraPersImpQuerry.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Views\FraStatistics.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Views\Lizenz.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Views\Menue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Repo.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

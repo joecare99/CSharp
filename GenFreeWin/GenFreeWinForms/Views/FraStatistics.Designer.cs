@@ -1,5 +1,5 @@
 ﻿using Views;
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFree.ViewModels.Interfaces;
 
 namespace Gen_FreeWin.Views
 {

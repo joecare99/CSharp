@@ -12,7 +12,6 @@ using GenFree.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.UI;
 using GenFree.Helper;
-using Gen_FreeWin.ViewModels.Interfaces;
 //using DAO;
 using Microsoft.VisualBasic;
 using BaseLib.Helper;
@@ -47,6 +46,7 @@ public partial class Menue : Form, IInteraction
         _menu1ViewModel.SetWindowState = (state) => { WindowState = (FormWindowState)state; };
         _menu1ViewModel.GetWindowState = () => WindowState;
         _menu1ViewModel.Grossaend = Grossaend;
+        _menu1ViewModel.AdresseType = typeof(Adresse);
 
         CommandBindingAttribute.Commit(this, viewModel);
         TextBindingAttribute.Commit(this, viewModel);
@@ -62,6 +62,17 @@ public partial class Menue : Form, IInteraction
     {
         _menu1ViewModel.FormLoadCommand.Execute(e);
         SetLabels();
+        Text = "Gen_Free";
+        Resize += Menue_Resize;
+        Menue_Resize(sender, e);
+
+    }
+
+    private void Menue_Resize(object? sender, EventArgs e)
+    {
+        lblHdrProgName.Width = Width;
+        lblHdrCopyright.Width = Width;
+        lblHdrAdt.Width = Width;
     }
 
     protected override CreateParams CreateParams
@@ -83,6 +94,7 @@ public partial class Menue : Form, IInteraction
 
     public void Grossaend(float fS)
     {
+        this.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
         btnFamilies.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
         btnSources.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
         btnPersons.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -121,9 +133,9 @@ public partial class Menue : Form, IInteraction
         //lblPlaces.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
         //lblDates.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
         //lblTexts.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
-        lblHdrProgName.Font = new Font("Arial", fS, FontStyle.Bold);
-        lblHdrCopyright.Font = new Font("Arial", fS, FontStyle.Bold);
-        lblHdrAdt.Font = new Font("Arial", fS, FontStyle.Bold);
+        lblHdrProgName.Font = new Font("Arial", fS * 0.9f, FontStyle.Bold);
+        lblHdrCopyright.Font = new Font("Arial", fS * 0.9f, FontStyle.Bold);
+        lblHdrAdt.Font = new Font("Arial", fS * 0.9f, FontStyle.Bold);
         lblMenue18.Font = new Font("Arial", fS, FontStyle.Regular);
         lblWarning.Font = new Font("Arial", fS, FontStyle.Regular);
         lblMandant.Font = new Font("Arial", fS, FontStyle.Bold);
@@ -132,9 +144,11 @@ public partial class Menue : Form, IInteraction
         btnTodayMarriage.Font = new Font("Arial", fS, FontStyle.Regular);
         btnTodayMarrRel.Font = new Font("Arial", fS, FontStyle.Regular);
         btnProperty.Font = new Font("Arial", fS, FontStyle.Regular);
+        btnCheckUpdate.Font = new Font("Arial", fS, FontStyle.Regular);
         btnTodayBapt.Font = new Font("Arial", fS, FontStyle.Regular);
         btnTodayBurial.Font = new Font("Arial", fS, FontStyle.Regular);
         pbxCodeOfArms.Font = new Font("Arial", fS, FontStyle.Regular, GraphicsUnit.Point, 0);
+        Menue_Resize(this, new());
     }
 
 
@@ -142,29 +156,29 @@ public partial class Menue : Form, IInteraction
     {
         btnUpdNo.Text = Modul1_IText[EUserText.tNo];
         btnUpdYes.Text = Modul1_IText[EUserText.tYes];
-        btnPlaces.Text = Modul1_IText[EUserText.t85];
-        btnMandants.Text = Modul1_IText[EUserText.t86];
+        btnPlaces.Text = Modul1_IText[EUserText.t85_Places];
+        btnMandants.Text = Modul1_IText[EUserText.t86_Mandants];
         btnManageTexts.Text = Modul1_IText[EUserText.t87];
-        btnPrint.Text = Modul1_IText[EUserText.t88];
+        btnPrint.Text = Modul1_IText[EUserText.t88_Print];
         btnImportExport.Text = Modul1_IText[EUserText.t89];
-        btnAddress.Text = Modul1_IText[EUserText.t90];
+        btnAddress.Text = Modul1_IText[EUserText.t90_Address];
         btnCalculations.Text = Modul1_IText[EUserText.t91];
         btnFunctionKeys.Text = Modul1_IText[EUserText.t92];
-        btnConfig.Text = Modul1_IText[EUserText.t93];
+        btnConfig.Text = Modul1_IText[EUserText.t93_Config];
         btnCheckPersons.Text = Modul1_IText[EUserText.t94];
         btnCheckFamilies.Text = Modul1_IText[EUserText.t95];
         btnCheckMissing.Text = Modul1_IText[EUserText.t96];
-        btnEndProgram.Text = Modul1_IText[EUserText.t97];
-        btnFamilies.Text = Modul1_IText[EUserText.t236];
-        btnPersons.Text = Modul1_IText[EUserText.t237];
+        btnEndProgram.Text = Modul1_IText[EUserText.t97_EndProg];
+        btnFamilies.Text = Modul1_IText[EUserText.t236_Families];
+        btnPersons.Text = Modul1_IText[EUserText.t237_Persons];
         btnSources.Text = Modul1_IText[EUserText.t244];
         btnRemoteDiag.Text = Modul1_IText[EUserText.t247];
         btnDuplettes.Text = Modul1_IText[EUserText.t248];
-        btnProperty.Text = Modul1_IText[EUserText.t249]; // "Grund und Hof-Akten";
+        btnProperty.Text = Modul1_IText[EUserText.t249_Property]; // "Grund und Hof-Akten";
 
-        btnMerging.Text = Modul1_IText[EUserText.t249];
-        btnNotes.Text = Modul1_IText[EUserText.t249]; // "Bemerkungen durchsuch.";
-        btnCardMode.Text = Modul1_IText[EUserText.t249];
+        btnMerging.Text = Modul1_IText[EUserText.t249_Property];
+        btnNotes.Text = Modul1_IText[EUserText.t249_Property]; // "Bemerkungen durchsuch.";
+        btnCardMode.Text = Modul1_IText[EUserText.t249_Property];
 
         btnCheckUpdate.Text = Modul1_IText[EUserText.t250];
         btnReorg.Text = Modul1_IText[EUserText.t251];
@@ -195,7 +209,16 @@ public partial class Menue : Form, IInteraction
 #endif
     }
 
-    public string? InputBox(string v)
+    public string? InputBox(string v, string title = "")
+    {
+#if NET5_0_OR_GREATER
+        return Interaction.InputBox(v, title);
+#else
+        return "";
+#endif
+    }
+
+    public int Shell(string v, int winStyle = 1)
     {
         throw new NotImplementedException();
     }

@@ -1,4 +1,4 @@
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFree.ViewModels.Interfaces;
 using GenFree;
 using Microsoft.VisualBasic;
 using System;
@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Views;
 
 namespace Gen_FreeWin.Views;
 
@@ -16,16 +17,24 @@ public partial class Adresse : Form
 
     private IAdresseViewModel _adresseViewModel;
     [DebuggerNonUserCode]
-    public Adresse()
+    public Adresse(IAdresseViewModel viewModel)
     {
         Load += Adresse_Load;
         lock (__ENCList)
         {
             __ENCList.Add(new WeakReference(this));
         }
-
+        _adresseViewModel = viewModel;
+        _adresseViewModel.OnClose += viewModel_OnClose;
         InitializeComponent();
 
+        CommandBindingAttribute.Commit(this, viewModel);
+        TextBindingAttribute.Commit(this, viewModel);
+    }
+
+    private void viewModel_OnClose(object? sender, EventArgs e)
+    {
+        Hide();
     }
 
     [DebuggerNonUserCode]

@@ -1,4 +1,4 @@
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFree.ViewModels.Interfaces;
 using System;
 using System.Windows.Forms;
 using Views;
