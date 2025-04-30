@@ -13,5 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+    <ProjectReference Include="..\GenFreeHelper\GenFreeHelper.csproj" />
   </ItemGroup>
 </Project>

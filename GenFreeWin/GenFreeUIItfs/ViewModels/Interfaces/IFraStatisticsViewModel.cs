@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Gen_FreeWin.ViewModels.Interfaces;
+namespace GenFree.ViewModels.Interfaces;
 
 public interface IFraStatisticsViewModel: INotifyPropertyChanged
 {
@@ -13,4 +13,6 @@ public interface IFraStatisticsViewModel: INotifyPropertyChanged
     public int Dates { get; }
 
     public int Texts { get; }
+
+    void UpdateStat();
 }
