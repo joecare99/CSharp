@@ -1,5 +1,6 @@
 ﻿//using DAO;
 using GenFree.Data;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Interfaces.Model;
 

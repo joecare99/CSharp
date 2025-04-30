@@ -1,4 +1,5 @@
 ﻿using GenFree.Data;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 
 namespace GenFree.Interfaces.Model

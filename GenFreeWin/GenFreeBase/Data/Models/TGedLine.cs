@@ -1,5 +1,4 @@
 ﻿using BaseLib.Helper;
-using GenFree.Helper;
 
 namespace Gedcomles.Model;
 
@@ -66,16 +65,6 @@ public record struct TGedLine(int iLvl = -1, string sTag = "", string? link = nu
     public string TrimEnd()
     {
         return ToString().TrimEnd();
-    }
-
-    public string Left(int i)
-    {
-        return ToString().Left(i);
-    }
-
-    public string Right(int i)
-    {
-        return ToString().Right(i);
     }
 
     public int Length => ToString().Length;

@@ -1,5 +1,5 @@
 ﻿//using DAO;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Model;
 using System;
 using System.Collections.Generic;

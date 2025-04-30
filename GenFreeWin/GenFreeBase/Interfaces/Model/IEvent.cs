@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using GenFree.Data;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;

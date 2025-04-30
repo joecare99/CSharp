@@ -13,6 +13,7 @@ using GenFree.Data;
 using GenFree.Interfaces.UI;
 using System.Windows.Forms;
 using GenFree.Interfaces.Model;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Interfaces.Sys;
 
@@ -97,6 +98,7 @@ public interface IModul1
     IList<string> Kont { get; }
     IList<string> Absend { get; }
     IList<string> TxT { get; }
+    IList<ESearchSelection> Suchfeld { get; }
 
     bool EreiRf { get; set; }
     /// <summary>Gets the printing texts.</summary>
@@ -138,11 +140,13 @@ public interface IModul1
 
     // FileSystem
     string InitDir { get; }
+    string InstPath { get; }
     string TempPath { get; }
     string GenFreeDir { get; }
     string ListDir { get; }
     string HelpDir { get; }
     string Verz { get; set; }
+    string Mandant { get; set; }
     string Verz1 { get; set; }
     string MainProg { get;  }
     DriveInfo cMandDrive { get; set; }
@@ -183,7 +187,8 @@ public interface IModul1
     string UbgT1 { get; set; }
     
     string AppHostName { get; }
-    Enum WindowState { get; set; }
+    Enum eWindowState { get; set; }
+    EWindowSize eWindowSize { get; set; }
     IApplUserTexts IText { get; }
     int Uml { get; set; }
     int Histor { get; set; }
@@ -229,10 +234,18 @@ public interface IModul1
     int FamPerschalt { get; set; }
     int Nr { get; set; }
     IList<string> Te { get; }
+    bool Reli { get; set; }
+    string ePKennz { get; set; }
+    ETextKennz eTKennz { get; set; }
+    int VerS { get; set; }
+    int Frauenkek1 { get; set; }
+    int Frauenkek2 { get; set; }
+    short Qkenn { get; set; }
 
     int AendPruef(int PersInArb, int ubg2=0);
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
+    Image AutoSizeImage(Image oBitmap, int maxWidth, int maxHeight, bool bStretch = false);
     string Conform(string sText);
     string Datwand1(string Datu, string Ds);
     void Dateienopen();
@@ -267,6 +280,7 @@ public interface IModul1
     void Paten_O_Taufe();
     void Paten2(int PersInArb, ref string Pattext, long Ahne);
     void Perles(int PersInArb);
+    [Obsolete("Auftrennen in 3 Funktionen")]
     int Persatzles(int PersInArb);
     void Person_ReadNames(int PersInArb, IPersonData person);
     int Person_TextSpeichern(int iPerson, string sText, ETextKennz eKennz1, int iLfNR = 0, short Ruf = 0);
@@ -284,9 +298,9 @@ public interface IModul1
     void Zeugsu(EEventArt Art, short LfNR, short Listart, long Ahne);
     //--
     void Historie(string UbgT);
-    [Obsolete("Auftrennen in 3 Funktionen")]
-
-
-
-
+    string[] F_GetAllFiles(string sPath, int funk);
+    IList<int> Ehesuch(int personNr, string Persex);
+    string BuildFullSurName(IPersonData person, bool xFamToUpper = true);
+    void FrmPerson_EventUpd(int PersInArb);
+    void SetCommandBtn(bool xCond, Button button, string sBtnHeader);
 }

@@ -1,4 +1,5 @@
 ﻿using GenFree.Data;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Interfaces.Model
 {
@@ -6,6 +7,7 @@ namespace GenFree.Interfaces.Model
     {
         string ADRText { get; set; }
         bool[] Kont3 { get; } //new bool[7];
+        int Leer { get; set; }
 
         void berufles(int iPersInArb);
         bool CheckFamPersons(int famInArb);
