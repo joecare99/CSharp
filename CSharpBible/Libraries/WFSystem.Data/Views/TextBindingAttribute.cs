@@ -30,12 +30,16 @@ public class TextBindingAttribute(string cmdName) : Attribute
             field.Text = pi.GetValue(viewModel)?.ToString();
             if (viewModel is INotifyPropertyChanged npc)
                 npc.PropertyChanged += (s, e) => { if (e.PropertyName == PropertyName) field.Text = s!.GetType().GetProperty(e.PropertyName)?.GetValue(s)?.ToString(); };
+            if (pi.CanWrite)
+            {
+                field.TextChanged += (s, e) => pi.SetValue(viewModel, field.Text);
+            }
         }
     }
 
     public static void Commit(object obj, object dataContext)
     {
-        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
         {
             if (GetCustomAttribute(field, typeof(TextBindingAttribute)) is TextBindingAttribute attr
                 && field.GetValue(obj) is Control ctrl)
