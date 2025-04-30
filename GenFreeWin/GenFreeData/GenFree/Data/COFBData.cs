@@ -1,6 +1,6 @@
 ﻿using BaseLib.Helper;
 using GenFree.Helper;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Model.Data;
 using System;

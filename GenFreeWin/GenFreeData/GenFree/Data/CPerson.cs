@@ -1,12 +1,12 @@
 ﻿//using DAO;
 using System;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using GenFree.Model;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData>, IPerson

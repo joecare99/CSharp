@@ -1,5 +1,4 @@
-﻿using GenFree.Interfaces;
-using GenFree.Interfaces.DB;
+﻿using GenFree.Interfaces.DB;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Reflection;
 using System.Linq;
 using GenFree.Model.Data;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 

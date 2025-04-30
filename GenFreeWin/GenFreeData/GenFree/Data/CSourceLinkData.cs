@@ -1,10 +1,10 @@
 ﻿using GenFree.Interfaces.DB;
 using GenFree.Helper;
-using GenFree.Interfaces;
 using System;
 using System.Linq;
 using GenFree.Model.Data;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {

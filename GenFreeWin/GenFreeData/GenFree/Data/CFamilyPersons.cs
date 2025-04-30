@@ -7,6 +7,7 @@ using System.Linq;
 using GenFree.Sys;
 using GenFree.Model.Data;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {

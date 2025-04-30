@@ -1,18 +1,18 @@
 ﻿using GenFree.Model.Data;
 using GenFree.Helper;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {
     /// <summary>PLace Data-class<br/>A class for Place data</summary>
     /// <example>
     /// <code>_ = new CPlaceData(rs);</code></example>
-    /// <seealso cref="GenFree.Interfaces.IPlaceData" />
+    /// <seealso cref="Interfaces.Data.IPlaceData" />
     public class CPlaceData : CRSData<EPlaceProp, int>, IPlaceData
     {
         private List<EPlaceProp> _changedPropList = new();

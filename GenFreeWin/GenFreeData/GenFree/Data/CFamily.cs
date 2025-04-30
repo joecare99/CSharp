@@ -2,11 +2,11 @@
 using System;
 using GenFree.Model;
 using GenFree.Helper;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 

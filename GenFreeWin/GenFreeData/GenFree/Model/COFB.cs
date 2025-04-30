@@ -1,7 +1,7 @@
 ﻿using BaseLib.Helper;
 using GenFree.Data;
 using GenFree.Helper;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;

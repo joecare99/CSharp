@@ -1,7 +1,7 @@
-﻿using GenFree.Interfaces;
-using GenFree.Helper;
+﻿using GenFree.Helper;
 using System;
 using System.Linq;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {

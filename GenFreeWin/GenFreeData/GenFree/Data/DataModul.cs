@@ -4,12 +4,12 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using GenFree.Interfaces;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.DB;
 using GenFree.Sys;
 using GenFree.Model;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 
@@ -119,6 +119,7 @@ public static partial class DataModul
         KindAhnTable = TempDB.OpenRecordset("Ahnew", RecordsetTypeEnum.dbOpenTable);
         DT_AncesterTable.Index = "PerNr";
     }
+
     public static void PeekMandant(string mandantname, out int PersonCount, out int FamilyCount, bool xIsReadOnly)
     {
         if (xIsReadOnly)
@@ -1091,6 +1092,61 @@ public static partial class DataModul
         DB_PictureTable.Index = nameof(PictureIndex.Nr);
         DB_PersonTable.Seek("=", iPersonNr);
         return string.IsNullOrWhiteSpace(DB_PersonTable.Fields[$"{eField}"].AsString());
+    }
+
+    public static void Leerpertest()
+    {
+        var dB_PersonTable = DB_PersonTable;
+        dB_PersonTable.Index = nameof(PersonIndex.PerNr);
+        dB_PersonTable.MoveLast();
+        long iMaxPerson = dB_PersonTable.Fields[nameof(PersonFields.PersNr)].AsLong();
+        dB_PersonTable.MoveFirst();
+
+        var dB_FamilyTable = DB_FamilyTable;
+        if (dB_FamilyTable.RecordCount <= 0)
+        {
+            return;
+        }
+
+        dB_FamilyTable.Index = nameof(FamilyIndex.Fam);
+        dB_FamilyTable.MoveLast();
+        long iMaxFamily = dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsLong();
+        dB_FamilyTable.MoveFirst();
+
+        int iFamNrFree = -1;
+        checked
+        {
+            var I = 1;
+            while (!dB_FamilyTable.EOF)
+            {
+                var FamInArb = I;
+                if (dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt() != I)
+                {
+                    if (dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt() >= I
+                        || dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt() != iFamNrFree)
+                    {
+                        if (!Link.ExistFam(FamInArb, [ELinkKennz.lkGodparent, ELinkKennz.lk9]))
+                        {
+                            Family.AppendRaw(FamInArb, 0, 0, " ");
+                        }
+                        I++;
+                        dB_FamilyTable.MoveNext();
+                        continue;
+                    }
+                    else
+                    {
+                        I--;
+                        dB_FamilyTable.Delete();
+                    }
+                }
+                else
+                {
+                    iFamNrFree = dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt();
+                }
+                dB_FamilyTable.MoveNext();
+                I++;
+            }
+        }
     }
 
 
