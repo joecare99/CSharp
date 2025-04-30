@@ -14,6 +14,7 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using BaseLib.Interfaces;
 
 namespace BaseLib.Helper;
 
@@ -201,4 +202,33 @@ public static class StringUtils
             if (!(AlphaNumeric+"_").Contains(c)) return false;
         return true;
     }
+
+    public static string Left(this string data, int iCnt)
+    => iCnt >= 0
+    ? data.Substring(0, Math.Min(data.Length, iCnt))
+    : data.Substring(0, Math.Max(0, data.Length + iCnt));
+
+    public static string Right(this string data, int iCnt)
+        => iCnt >= 0
+        ? data.Substring(Math.Max(0, data.Length - iCnt))
+        : data.Substring(Math.Min(data.Length, -iCnt));
+
+    public static string AsString(this object? data,string? format =null)
+    => data switch
+    {
+        string s => s,
+        IHasValue f => f.Value.AsString(),
+        null => "",
+        object o => o.ToString() ?? "",
+    };
+
+    public static IList<string> IntoString(this string[] asData, IList<string> asKont = null, int offs = 0)
+    {
+        asKont ??= new string[Math.Max(0, asData.Length + offs)];
+        for (var i = 0; i < asData.Length; i++)
+            if (i + offs >= 0 && i + offs < asKont.Count)
+                asKont[i + offs] = asData[i];
+        return asKont;
+    }
+
 }
