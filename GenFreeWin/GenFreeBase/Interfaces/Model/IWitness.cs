@@ -18,6 +18,7 @@ namespace GenFree.Data
         void DeleteAllF(int persInArb, int sWKennz);
         void DeleteAllFamPred(Func<int, bool> fncFamExists);
         void DeleteAllZ(int persInArb, int sWKennz, EEventArt eArt, short iLfNr);
+        bool ExistE(int persInArb, int eWKennz = 10);
         bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10);
         IEnumerable<IWitnessData> ReadAllFams(int iNr, int v);
         void UpdateAllReplFams(int Fam1, int Fam2);

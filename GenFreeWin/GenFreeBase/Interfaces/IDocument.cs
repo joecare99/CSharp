@@ -7,7 +7,7 @@ namespace GenFree.Interfaces
     {
         void AppendImage(Image image);
         void AppendText(string text);
-        bool AppendTextIfNd(string sText = "\n");
+        bool AppendTextIfNd(string sText = "\n",int iCnt=1);
         void ClearDocument();
         int GetIndent();
         void SetAlignment<T>(T eTextAlign) where T :Enum;
@@ -17,7 +17,6 @@ namespace GenFree.Interfaces
         bool TrimEnd();
         bool TrimEnd(string sText);
         void ReplaceLast(string v1, string v2);
-
         bool IsEmpty { get; }
     }
 }
