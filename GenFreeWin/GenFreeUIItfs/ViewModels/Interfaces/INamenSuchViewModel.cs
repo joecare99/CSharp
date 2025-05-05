@@ -1,0 +1,27 @@
+﻿using CommunityToolkit.Mvvm.Input;
+using System.ComponentModel;
+
+namespace GenFree.ViewModels.Interfaces;
+
+public interface INamenSuchViewModel: INotifyPropertyChanged
+{
+    bool Male_Checked { get; set; }
+    bool Female_Checked { get; set; }
+    bool FamOnly_Checked { get; set; }
+    bool Selection_Checked { get; set; }
+    bool Male2_Checked { get; set; }
+    bool Female2_Checked { get; set; }
+    bool OmitSpouse_Checked { get; set; }
+
+    IRelayCommand CloseCommand { get; }
+    IRelayCommand PersonSheetCommand { get; }
+    IRelayCommand FamilySheetCommand { get; }
+    IRelayCommand SearchCommand { get; }
+    IRelayCommand PrintListCommand { get; }
+
+    int PersNr { get; set; }
+    int FamNr { get; set; }
+
+    bool xComboBox2AddT308 { get; }
+    bool xComboBox2AddT309 { get; }
+}
