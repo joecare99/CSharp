@@ -205,7 +205,7 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
     }
 
 
-    public bool ReadFamily(int iFamily, IFamilyPersons Family, Action<ELinkKennz, int>? action = null)
+    public bool ReadFamily(int iFamily, IFamilyData Family, Action<ELinkKennz, int>? action = null)
     {
         Family_InitLinks(Family);
         var xResult = ForEachFam(iFamily, (link, dB_LinkTable) =>
@@ -216,7 +216,7 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
         return xResult;
     }
 
-    private static void Family_InitLinks(IFamilyPersons Family)
+    private static void Family_InitLinks(IFamilyData Family)
     {
         Family.Mann = 0;
         Family.Frau = 0;
@@ -224,7 +224,7 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
         Family.Kinder.Add((0, ""));
     }
 
-    private static void Family_SetLinkPerson(IFamilyPersons Family, Action<ELinkKennz, int>? action, int PeronNr, ELinkKennz value)
+    private static void Family_SetLinkPerson(IFamilyData Family, Action<ELinkKennz, int>? action, int PeronNr, ELinkKennz value)
     {
         switch (value)
         {
