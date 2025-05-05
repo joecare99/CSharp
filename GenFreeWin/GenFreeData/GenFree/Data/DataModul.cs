@@ -10,6 +10,8 @@ using GenFree.Sys;
 using GenFree.Model;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using Microsoft.VisualBasic;
+using System.Diagnostics;
 
 namespace GenFree.Data;
 
@@ -727,6 +729,347 @@ public static partial class DataModul
         }
     }
 
+    public static void Convert_OldReligion()
+    {
+        IRecordset dB_PersonTable1 = DB_PersonTable;
+        _ = Interaction.MsgBox("Die Religionseinträge werden jetzt bearbeitet. Vermutlich wurde der Mandant mit einer älteren Programmversion bearbeitet. Dieser Vorgang kann einige Minuten dauern.");
+        dB_PersonTable1.Index = nameof(PersonIndex.PerNr);
+        dB_PersonTable1.MoveLast();
+        int num5 = dB_PersonTable1.Fields[nameof(PersonFields.PersNr)].AsInt();
+        dB_PersonTable1.MoveFirst();
+        int num6 = num5;
+        var M1_Iter = 1;
+        while (M1_Iter <= num6)
+        {
+            dB_PersonTable1.Edit();
+            if (Strings.Trim(dB_PersonTable1.Fields[nameof(PersonFields.Konv)].AsString()) != "")
+            {
+                var field = dB_PersonTable1.Fields[nameof(PersonFields.Konv)];
+                var Wort = field.Value.AsString();
+                DataModul.Texte_Schreib(Wort, "", ETextKennz.tk7_, out var Satz);
+                field.Value = Wort;
+                dB_PersonTable1.Fields[nameof(PersonFields.religi)].Value = Satz;
+            }
+            else
+            {
+                dB_PersonTable1.Fields[nameof(PersonFields.religi)].Value = 0;
+            }
+
+            dB_PersonTable1.Update();
+            dB_PersonTable1.MoveNext();
+            M1_Iter++;
+        }
+
+        _ = Interaction.MsgBox("Fertig");
+    }
+    public static void Pictures_DeletePerson(int persInArb)
+    {
+        IRecordset dB_PictureTable = DataModul.DB_PictureTable;
+        dB_PictureTable.Index = nameof(PictureIndex.PerKenn);
+            dB_PictureTable.Seek("=", "P", persInArb);
+            while (!dB_PictureTable.EOF
+                && !dB_PictureTable.NoMatch
+                && !(dB_PictureTable.Fields[nameof(PictureFields.ZuNr)].AsInt() != persInArb))
+            {
+                dB_PictureTable.Delete();
+                dB_PictureTable.MoveNext();
+                //=================
+            }
+    }
+
+    public static void Search_DeletePeson(int persInArb)
+    {
+        IRecordset dSB_SearchTable = DataModul.DSB_SearchTable;
+        dSB_SearchTable.Index = "Nummer";
+            dSB_SearchTable.Seek(">=", persInArb);
+            if (!dSB_SearchTable.NoMatch)
+            {
+                if (dSB_SearchTable.Fields["Nummer"].AsInt() == persInArb)
+                {
+                    dSB_SearchTable.Delete();
+                }
+                //=================
+            }
+        
+    }
+
+    public static void Events_DeleteAllPersVitEv(int persInArb)
+    {
+        var eArt = EEventArt.eA_Birth;
+        while (eArt <= EEventArt.eA_120)
+        {
+            Event.DeleteBeSu(eArt, persInArb);
+            eArt++;
+        }
+
+    }
+    public static string Event_GetLabelText(int PersInArb, EEventArt eEvtArt)
+    {
+        if ((eEvtArt != EEventArt.eA_105)
+            && Event.ReadData(eEvtArt, PersInArb, out var cEvt))
+        {
+            string sDate = "";
+            string sKOnt2 = "";
+            string sDate2 = "";
+            string sDatumText = "";
+            string sPlace = "";
+            string sDatB_S = "";
+            string sKont1_5 = "";
+            string sKont1_6 = "";
+            string sKont1_7 = "";
+            string sKont1_17 = "";
+            string sOrt = "";
+            string globOrt1 = "";
+            string KontU;
+            short LfNR = 0;
+            string text = Witness.ExistZeug(PersInArb, eEvtArt, LfNR, 10) ? "Z " : "";
+            var Datu = "";
+            if (cEvt.dDatumV != default)
+            {
+                sDate = cEvt.dDatumV.ToShortDateString();
+            }
+            sDate = sDate + " " + cEvt.sDatumV_S;
+
+            string Ta = cEvt.dDatumV.DayOfWeekStr();
+
+            if (cEvt.dDatumB != default)
+            {
+                sDate2 = "/ " + cEvt.dDatumB.ToShortDateString();
+            }
+            sOrt = "";
+            if (0 != cEvt.iDatumText)
+            {
+                sDatumText = " " + cEvt.sDatumText + " ";
+            }
+            if (eEvtArt == EEventArt.eA_Death && (cEvt.iCausal > 0))
+            {
+                sKont1_17 = " " + cEvt.sCausal + " ";
+                KontU = "";
+                if (0 != cEvt.iAn)
+                {
+                    KontU = TextLese1(cEvt.iAn);
+                }
+                if (KontU.Trim() == "")
+                {
+                    KontU = "an";
+                }
+                if (KontU.Trim() == "°")
+                {
+                    KontU = "";
+                }
+                sKont1_17 = " " + KontU.Trim() + sKont1_17 + " ";
+            }
+
+            if (cEvt.iKBem > 0)
+            {
+                KontU = TextLese1(cEvt.iKBem);
+                sKont1_7 = " " + KontU.Trim() + " ";
+                //=================
+            }
+            else if (cEvt.sDeath == "J")
+            {
+                sKont1_7 = " verstorben ";
+            }
+
+            if (cEvt.iOrt > 0)
+            {
+                var Kont2_6 = "";
+                if ("" != cEvt.sZusatz)
+                {
+                    Kont2_6 = cEvt.sZusatz;
+                }
+                if (Place.ReadData(cEvt.iOrt, out var cPlace))
+                {
+                    sOrt = cPlace.sOrt;
+                    sOrt += string.IsNullOrEmpty(cPlace.sOrtsteil)?"": " "+cPlace.sOrtsteil;
+                    GeolesPers(cPlace);
+                    sOrt = Kont2_6 + " " + sOrt;
+                }
+                globOrt1 = globOrt1 + Kont2_1 + "§";
+            }
+            if (cEvt.sOrt_S.Trim() != "")
+            {
+                sOrt = sOrt.TrimEnd() + " " + cEvt.sOrt_S.Trim();
+            }
+            sDatB_S = " " + cEvt.sDatumB_S;
+            if (cEvt.iPlatz > 0)
+            {
+                sPlace = " " + cEvt.sPlatz.Trim() + " ";
+            }
+            if (cEvt.sBem[1] != ""
+                || cEvt.sBem[2] != "")
+            {
+                text += "B ";
+            }
+            if (cEvt.sBem[4].TrimEnd() != "" && !text.StartsWith("Z"))
+            {
+                text += "Z ";
+            }
+            if (cEvt.sReg.TrimEnd() != "")
+            {
+                text += "U ";
+            }
+            if (cEvt.sVChr != "0")
+            {
+                text += "< ";
+            }
+
+            if (!DataModul.SourceLink_Exists(3, PersInArb, eEvtArt, LfNR)
+                || cEvt.sBem[3].TrimEnd() != "")
+            {
+                text += " §";
+            }
+
+            return Strings.Replace(text + " " + Ta + " " +
+                    sDate + " " + sKOnt2 + sDate2 + sDatB_S + sDatumText + sKont1_17 + sKont1_7 +
+                    sKont1_5 + sPlace + sKont1_6 + " " + sOrt, "  ", " ");
+        }
+        else
+            return "";
+
+    }
+
+
+    public static void Descendents_DeleteAll(int persInArb)
+    {
+        IRecordset dT_DescendentTable = DataModul.DT_DescendentTable;
+        dT_DescendentTable.Index = "Pernr";
+            dT_DescendentTable.Seek("=", persInArb);
+            if (!dT_DescendentTable.NoMatch)
+            {
+                var M1_Iter = 1;
+                while (M1_Iter <= 99
+                    && !dT_DescendentTable.EOF
+                    && !(dT_DescendentTable.Fields["Pr"].AsInt() != persInArb))
+                {
+                    dT_DescendentTable.Delete();
+                    dT_DescendentTable.MoveNext();
+                    M1_Iter++;
+                }
+            }
+        
+    }
+
+    public static void Ancestors_DeleteAll(int persInArb)
+    {
+        IRecordset dT_AncesterTable = DataModul.DT_AncesterTable;
+        dT_AncesterTable.Index = "Pernr";
+            dT_AncesterTable.Seek("=", persInArb);
+            if (!dT_AncesterTable.NoMatch)
+            {
+                var M1_Iter = 1;
+                while (M1_Iter <= 99
+                    && !dT_AncesterTable.EOF
+                    && !(dT_AncesterTable.Fields["Pernr"].AsInt() != persInArb))
+                {
+                    dT_AncesterTable.Delete();
+                    dT_AncesterTable.MoveNext();
+                    M1_Iter++;
+                }
+            }
+        
+    }
+
+
+
+    public static void Witness_DeleteAllF(int persInArb)
+    {
+        var dB_WitnessTable = DataModul.DB_WitnessTable;
+        dB_WitnessTable.Index = nameof(WitnessIndex.FamSu);
+        dB_WitnessTable.Seek("=", persInArb, "10");
+        if (!dB_WitnessTable.NoMatch)
+        {
+            while (!dB_WitnessTable.EOF)
+            {
+                if (dB_WitnessTable.NoMatch)
+                {
+                    _ = Interaction.MsgBox("F35");
+                    Debugger.Break();
+                }
+                if (dB_WitnessTable.Fields[nameof(WitnessFields.FamNr)].AsInt() != persInArb
+                        || dB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() != 10)
+                {
+                    break;
+                }
+                if (dB_WitnessTable.Fields[nameof(WitnessFields.Art)].AsInt()< 500)
+                {
+                    dB_WitnessTable.Delete();
+                }
+                dB_WitnessTable.MoveNext();
+            }
+        }
+    }
+
+    public static void Witness_DeleteAllE(int persInArb)
+    {
+        var dB_WitnessTable = DataModul.DB_WitnessTable;
+        dB_WitnessTable.Index = nameof(WitnessIndex.ElSu);
+        dB_WitnessTable.Seek("=", persInArb, "10");
+        if (!dB_WitnessTable.NoMatch)
+        {
+            while (!dB_WitnessTable.EOF
+                && !dB_WitnessTable.EOF)
+            {
+                if (dB_WitnessTable.NoMatch)
+                {
+                    _ = Interaction.MsgBox("F35");
+                    Debugger.Break();
+                }
+                if (dB_WitnessTable.Fields[nameof(WitnessFields.PerNr)].AsInt() == persInArb
+                && dB_WitnessTable.Fields[nameof(WitnessFields.Kennz)].AsInt() == 10)
+                {
+                    break;
+                }
+                dB_WitnessTable.Delete();
+                dB_WitnessTable.MoveNext();
+            }
+        }
+    }
+
+    public static void TTable_RemovePerson(int persInArb, int Param)
+    {
+        var dB_TTable = DataModul.DB_SourceLinkTable;
+        dB_TTable.Index = "Tab";
+        dB_TTable.Seek("=", Param, persInArb);
+        if (!dB_TTable.NoMatch)
+        {
+            while (!dB_TTable.EOF
+                && !dB_TTable.NoMatch
+                && !
+                    (
+                        (dB_TTable.Fields["1"].Value.AsInt() != Param) ||
+                (dB_TTable.Fields["2"].Value.AsInt() != persInArb)))
+            {
+                dB_TTable.Delete();
+                dB_TTable.MoveNext();
+                //=================
+            }
+        }
+    }
+
+    public static void Namen_RemovePerson(int persInArb)
+    {
+        var dB_NameTable = DataModul.DB_NameTable;
+        dB_NameTable.Index = nameof(NameIndex.PNamen);
+        dB_NameTable.Seek("=", persInArb);
+        if (!dB_NameTable.NoMatch)
+        {
+            int num5 = dB_NameTable.RecordCount - 1;
+            var M1_Iter = 1;
+            while (M1_Iter <= num5
+                && !dB_NameTable.NoMatch
+                && !dB_NameTable.EOF
+                && !dB_NameTable.NoMatch
+                && !(dB_NameTable.Fields[nameof(NameFields.PersNr)].AsInt().AsInt() != persInArb))
+            {
+                dB_NameTable.Delete();
+                dB_NameTable.MoveNext();
+                M1_Iter++;
+            }
+        }
+    }
+
+
     public static void Db_Def(IDatabase Database, Action<string> print)
     {
         print("public static stTableDef[] Def = {");
@@ -1032,6 +1375,25 @@ public static partial class DataModul
             //=================
         }
         return result;
+    }
+
+    public static int Person_DoSearch(PersonIndex Index, string sText, int persInArb, bool rev = false)
+    {
+        sText = sText.Trim();
+        if (sText == "")
+        {
+            sText = "\"";
+        }
+
+        var dB_PersonTable = DataModul.DB_PersonTable;
+        dB_PersonTable.Index = Index.AsString();
+        dB_PersonTable.Seek(rev ? "<" : ">", sText, persInArb);
+        if (!dB_PersonTable.NoMatch)
+        {
+            return dB_PersonTable.Fields[nameof(PersonFields.PersNr)].AsInt();
+        }
+        else
+            return persInArb;
     }
 
     public static void Persichlöschloesch(int persInArb)

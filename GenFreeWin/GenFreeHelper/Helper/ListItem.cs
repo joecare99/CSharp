@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace GenFree.Helper
 {
@@ -60,7 +61,7 @@ namespace GenFree.Helper
     {
         public static object? ItemData(this IList items, int Idx)
             => Idx < items.Count && items[Idx] is ListItem l ? l.ItemData : null;
-        public static T? ItemData<T>(this IList items, int Idx)
+        public static T? ItemData<T>(this IList<IListItem<T>> items, int Idx)
             => Idx < items.Count && items[Idx] is ListItem l && l.ItemData is T t ? t : default;
         public static object? ItemData(this object item)
             => item is ListItem l ? l.ItemData : null;

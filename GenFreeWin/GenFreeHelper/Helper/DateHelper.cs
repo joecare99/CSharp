@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using BaseLib.Helper;
+using System.Globalization;
 
 namespace GenFree.Helper;
 
@@ -46,5 +47,11 @@ public static class DateHelper
                 asRes[i+offs] = adDates[i].ToString("yyyy.MM.dd");
         return asRes;
     }
+
+    public static string DayOfWeekStr(this DateTime dDate)
+    => DayOfWeekStr(dDate, CultureInfo.CurrentUICulture);
+
+    public static string DayOfWeekStr(this DateTime dDate, CultureInfo ci)
+        => ci.DateTimeFormat.ShortestDayNames[(int)ci.Calendar.GetDayOfWeek(dDate)];
 
 }

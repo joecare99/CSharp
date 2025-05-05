@@ -43,4 +43,8 @@ public interface IPersistence
     void WriteStringProg(string sFilename, string text);
     void WriteStringsProg(string sSection, string[] values);
     void CopyDirectory(string v, string backupDir);
+    void CreateTempFile(string v);
+    void ReadBoolsInit(string sSection, IList<bool> axOption);
+    void WriteBoolsInit(string sSection, IList<bool> axOption);
+    void WriteBoolsTemp(string sSection, IList<bool> Option);
 }

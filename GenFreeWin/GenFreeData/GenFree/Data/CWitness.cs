@@ -58,6 +58,11 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         return SeekZeug(persInArb, eWKennz, eEvtArt, lfNR) != null;
     }
 
+    public bool ExistE(int persInArb, int eWKennz = 10)
+    {
+        return SeekElSu(persInArb, eWKennz) != null;
+    }
+
     public void DeleteAllE(int persInArb, int eWKennz)
     {
         IRecordset DB_WitnessTable = _db_Table;
@@ -159,6 +164,12 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
     private IRecordset? SeekFaSu(int iLink, int iWKennz)
     {
         _db_Table.Index = nameof(WitnessIndex.FamSu);
+        _db_Table.Seek("=", iLink, iWKennz);
+        return _db_Table.NoMatch ? null : _db_Table;
+    }
+    private IRecordset? SeekElSu(int iLink, int iWKennz)
+    {
+        _db_Table.Index = nameof(WitnessIndex.ElSu);
         _db_Table.Seek("=", iLink, iWKennz);
         return _db_Table.NoMatch ? null : _db_Table;
     }

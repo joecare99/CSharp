@@ -177,11 +177,14 @@ public interface IModul1
     
     TGedLine Eing { get; set; }
 
+    
     ELinkKennz eLKennz { get; set; }
     EEventArt Art { get; set; }
     ETextKennz eNKennz { get; set; }
     string sPKennz { get; set; }
     int eWKennz { get; set; }
+    ETextKennz eTKennz { get; set; }
+    short Qkenn { get; set; }
 
     string UbgT { get; set; }
     string UbgT1 { get; set; }
@@ -235,12 +238,13 @@ public interface IModul1
     int Nr { get; set; }
     IList<string> Te { get; }
     bool Reli { get; set; }
-    string ePKennz { get; set; }
-    ETextKennz eTKennz { get; set; }
     int VerS { get; set; }
     int Frauenkek1 { get; set; }
     int Frauenkek2 { get; set; }
-    short Qkenn { get; set; }
+    string sBirthMark { get; }
+    string sBaptismMark { get; }
+    string sDeathMark { get; }
+    string sBurialMark { get; }
 
     int AendPruef(int PersInArb, int ubg2=0);
     void Ahnles(int PersInArb, out string[] asAhnData);
