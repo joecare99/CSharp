@@ -27,4 +27,5 @@ public interface IFamilyData : IHasID<int>, IHasPropEnum<EFamilyProp>, IHasIReco
     int iGgv { get; }
 
     void CheckSetAnlDatum(IRecordset dB_FamilyTable);
+    void Clear();
 }

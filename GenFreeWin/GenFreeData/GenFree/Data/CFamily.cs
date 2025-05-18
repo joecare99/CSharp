@@ -1,12 +1,12 @@
 ﻿//using DAO;
-using System;
-using GenFree.Model;
+using BaseLib.Helper;
 using GenFree.Helper;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
+using GenFree.Model;
+using System;
 
 namespace GenFree.Data;
 
@@ -120,6 +120,14 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
         dB_FamilyTable.Fields[nameof(FamilyFields.Aeb)].Value = iAeb;
         dB_FamilyTable.Fields[nameof(FamilyFields.Fuid)].Value = Guid.NewGuid();
         dB_FamilyTable.Update();
+    }
+
+    public bool Get_Aeb(int iFam)
+    {
+        IRecordset dB_FamilyTable = _db_Table;
+        dB_FamilyTable.Index = nameof(FamilyIndex.Fam);
+        dB_FamilyTable.Seek("=", iFam);
+        return !dB_FamilyTable.NoMatch && dB_FamilyTable.Fields[nameof(FamilyFields.Aeb)].AsBool();
     }
 }
 

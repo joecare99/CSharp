@@ -19,13 +19,19 @@ public interface IPersistence
     void WriteEnumInit(string sSection, Enum eValue);
     void WriteIntInit(string sSection, int iValue);
     void WriteStringInit(string sSection, string verz);
-    void WriteStringsInit(string sSection, string[] asData);
+    void WriteStringsInit(string sSection, IList<string> asData);
     IList<T> ReadEnumsInit<T>(string v);
+    void ReadBoolsInit(string sSection, IList<bool> axOption);
+    void WriteBoolsInit(string sSection, IList<bool> axOption);
+    bool ExistFileInit(string v);
+    void PutColorsInit(string v, IList<Color> value);
+    void PutColorInit(string v, Color value, int iCnt);
     
     void AppendStringsTemp(IList<string> lines, string sSection);
     void WriteStringTemp(string sSection, string text);
     
     void GetEnumsMand<T>(string sSection, T[] enums) where T : Enum;
+    void GetEnumsMand<T>(string sSection, IList<T> enums) where T : Enum;
     int GetIntMand(string sSection, long lPos = 1);
     void PutEnumsMand<T>(string sSection, IList<T> enums) where T : Enum;
     void PutIntMand(string sSection, ValueType letzte, long lPos);
@@ -42,9 +48,13 @@ public interface IPersistence
     void WriteIntsProg(string sSection, int[] aiValues);
     void WriteStringProg(string sFilename, string text);
     void WriteStringsProg(string sSection, string[] values);
+
     void CopyDirectory(string v, string backupDir);
+    
     void CreateTempFile(string v);
-    void ReadBoolsInit(string sSection, IList<bool> axOption);
-    void WriteBoolsInit(string sSection, IList<bool> axOption);
     void WriteBoolsTemp(string sSection, IList<bool> Option);
+    bool ReadBoolInit(string v);
+    void ReadBoolsTemp( string v, IList<bool> Option);
+    void ReadStringsOutput(string sSection, IList<string> asValue, int iCount);
+    void WriteStringsOutput(string sSection, IList<string> asValue, int iCount);
 }

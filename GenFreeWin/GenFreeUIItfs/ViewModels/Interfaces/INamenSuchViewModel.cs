@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using GenFree.Helper;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace GenFree.ViewModels.Interfaces;
@@ -6,7 +8,7 @@ namespace GenFree.ViewModels.Interfaces;
 public interface INamenSuchViewModel: INotifyPropertyChanged
 {
     bool Male_Checked { get; set; }
-    bool Female_Checked { get; set; }
+    bool Females_Checked { get; set; }
     bool FamOnly_Checked { get; set; }
     bool Selection_Checked { get; set; }
     bool Male2_Checked { get; set; }
@@ -24,4 +26,7 @@ public interface INamenSuchViewModel: INotifyPropertyChanged
 
     bool xComboBox2AddT308 { get; }
     bool xComboBox2AddT309 { get; }
+    ObservableCollection<ListItem<int>> Label1_Text { get; }
+    ObservableCollection<ListItem<int>> Label5_Text { get; }
+    ObservableCollection<ListItem<int>> Label7_Text { get; }
 }

@@ -1,5 +1,7 @@
 ﻿using Views;
 using GenFree.ViewModels.Interfaces;
+using Gen_FreeWin.Views;
+
 
 
 #if !NET5_0_OR_GREATER
@@ -7,7 +9,7 @@ using GenFree.ViewModels.Interfaces;
 using System.Windows.Forms;
 
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Menue
 {

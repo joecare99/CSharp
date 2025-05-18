@@ -1,14 +1,7 @@
 ﻿using BaseLib.Helper;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFreeWin2.ViewModels.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GenFreeWin2;

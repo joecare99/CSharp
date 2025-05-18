@@ -2,16 +2,15 @@ using System;
 using System.Windows.Forms;
 using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
-using Gen_FreeWin.ViewModels;
-using Gen_FreeWin.Views;
-using GenFreeWin.ViewModels;
-using GenFree.Interfaces.UI;
-using GenFree.Views;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using GenFree.Interfaces.UI;
 using GenFreeWin2.ViewModels.Interfaces;
-using GenFreeWin2.ViewModels;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin2.ViewModels;
+using GenFreeWin.ViewModels;
+using GenFreeWin.Views;
+using GenFree.Views;
 
 namespace GenFreeWin2
 {

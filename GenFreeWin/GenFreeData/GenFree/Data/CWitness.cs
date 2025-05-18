@@ -53,15 +53,12 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         }
     }
 
-    public bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10)
-    {
-        return SeekZeug(persInArb, eWKennz, eEvtArt, lfNR) != null;
-    }
-
-    public bool ExistE(int persInArb, int eWKennz = 10)
-    {
-        return SeekElSu(persInArb, eWKennz) != null;
-    }
+    public bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10) 
+        => SeekZeug(persInArb, eWKennz, eEvtArt, lfNR) != null;
+    public bool ExistE(int persInArb, int eWKennz = 10) 
+        => SeekElSu(persInArb, eWKennz) != null;
+    public bool ExistF(int persInArb, int eWKennz = 10) 
+        => SeekFaSu(persInArb, eWKennz) != null;
 
     public void DeleteAllE(int persInArb, int eWKennz)
     {
@@ -214,4 +211,5 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         }
     }
 
+  
 }
