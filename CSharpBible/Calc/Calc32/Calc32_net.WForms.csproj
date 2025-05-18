@@ -56,8 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Calc32.Properties</CustomToolNamespace>
     </None>
   </ItemGroup>
 
