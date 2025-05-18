@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Gen_FreeWin;
 using Gen_FreeWin.Views;
+using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
 namespace GenFreeWin.ViewModels;
@@ -22,6 +23,10 @@ public partial class FraPersImpQuerryViewModel : BaseViewModelCT, IFraPersImpQue
     [ObservableProperty]
     private EUserText _iLoadFromFile = EUserText.t306;
 
+    public Action<object, object> onCancel { get ; set ; }
+    public Action onFromFile { get ; set ; }
+    public Action onReenter { get ; set ; }
+
     public void SetDefaultTexts()
     {
         IReenter  = EUserText.t72;
@@ -36,12 +41,12 @@ public partial class FraPersImpQuerryViewModel : BaseViewModelCT, IFraPersImpQue
     }
 
     [RelayCommand]
-    private void Cancel() { }
+    private void Cancel() => onCancel?.Invoke(null, null);
 
     [RelayCommand]
-    private void Reenter() { }
+    private void Reenter() => onReenter?.Invoke();
 
     [RelayCommand]
-    private void LoadFromFile() { }
+    private void LoadFromFile() => onFromFile?.Invoke();
 
 }
