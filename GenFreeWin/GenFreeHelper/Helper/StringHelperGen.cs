@@ -15,7 +15,7 @@ namespace GenFree.Helper
                 yield return func(item);
             }
         }
-
+/*
         //public static string AsString(this object? data)
         //    => data switch
         //    {
@@ -34,6 +34,7 @@ namespace GenFree.Helper
         //    => iCnt >= 0
         //    ? data.Substring(Math.Max(0, data.Length - iCnt))
         //    : data.Substring(Math.Min(data.Length, -iCnt));
+*/
         public static string Uml2Such(this string UbgT)
         {
             List<(string uml, string repl)> Umlauts = new List<(string, string)>() {
@@ -72,7 +73,7 @@ namespace GenFree.Helper
             }
             return $"{sFrame[0]}{kont2}{sFrame[Math.Min(sFrame.Length - 1, 1)]}";
         }
-
+        /*
         //public static IList<string> IntoString(this string[] asData, IList<string> asKont = null, int offs = 0)
         //{
         //    asKont ??= new string[Math.Max(0, asData.Length + offs)];
@@ -81,7 +82,7 @@ namespace GenFree.Helper
         //            asKont[i + offs] = asData[i];
         //    return asKont;
         //}
-
+        */
         public static string ANSELDecode(this string Ubgt1)
         {
             Ubgt1 = Ubgt1.Replace("\xCF", "ß");
