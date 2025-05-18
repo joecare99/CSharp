@@ -349,7 +349,7 @@ public enum PropertyIndex
 
 public enum SourceLinkIndex
 {
-    Tab, // Person/Family-Index
+    Tab, // Person/o04_Family-Index
     Tab22, // Event-Index
 }
 public enum SourceLinkFields
@@ -359,7 +359,7 @@ public enum SourceLinkFields
     /// </summary>
     _1, // Kind    
     /// <summary>
-    /// The Source Nr (Person/Family/Event)
+    /// The Source Nr (Person/o04_Family/Event)
     /// </summary>
     _2, // Nr
     _3, // NrNeu    

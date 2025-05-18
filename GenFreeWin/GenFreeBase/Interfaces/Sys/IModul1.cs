@@ -14,6 +14,7 @@ using GenFree.Interfaces.UI;
 using System.Windows.Forms;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
+using GenFree.Helper;
 
 namespace GenFree.Interfaces.Sys;
 
@@ -47,7 +48,7 @@ public interface IModul1
     public struct Frauen
     {
         public int PERS;
-        public Type Kek1;
+        public TypeCode Kek1;
         public int Kek2;
         public short Gen;
     }
@@ -138,17 +139,35 @@ public interface IModul1
     /// </summary>
     string Titel2 { get; }
 
-    // FileSystem
+    // FileSystem    
+    /// <summary>
+    /// Gets the initialization dir.
+    /// </summary>
+    /// <value>The initialization directory with default values.</value>
     string InitDir { get; }
     string InstPath { get; }
     string TempPath { get; }
     string GenFreeDir { get; }
     string ListDir { get; }
     string HelpDir { get; }
+    /// <summary>
+    /// Gets or sets the path to the mandant.
+    /// </summary>
+    /// <value>The (full) path to the mandant.</value>
     string Verz { get; set; }
-    string Mandant { get; set; }
+    /// <summary>
+    /// Gets the picture dir.
+    /// </summary>
+    /// <value>The path of picture .</value>
+    string PictureDir { get;}
+
     string Verz1 { get; set; }
     string MainProg { get;  }
+    /// <summary>
+    /// Gets or sets the name of the mandant.
+    /// </summary>
+    /// <value>The name of the mandant.</value>
+    string Mandant { get; set; }
     DriveInfo cMandDrive { get; set; }
     DriveType Typ { get; }
 
@@ -245,16 +264,25 @@ public interface IModul1
     string sBaptismMark { get; }
     string sDeathMark { get; }
     string sBurialMark { get; }
+    [Obsolete]
+    bool Ad { get; set; }
+    string Ind1 { get; set; }
+    Frauen Frauen_Renamed { get; }
+    IList<short> Posi { get; set; }
+    string Job { get; set; }
+    bool reorga { get; set; }
 
-    int AendPruef(int PersInArb, int ubg2=0);
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
     Image AutoSizeImage(Image oBitmap, int maxWidth, int maxHeight, bool bStretch = false);
     string Conform(string sText);
     string Datwand1(string Datu, string Ds);
     void Dateienopen();
+    float Datcheck(int eArt);
     void Datles(int Ubg, int PersInArb);
     void Datles(int PersInArb, out IList<string> asPersDates);
+    (string sDat_Birth, string sDat_Death) Datles(int PersInArb, IPersonData person);
+    void DatPruef(int Pschalt);
     string Datwand(string Dat);
     void DezRechnen(ref string A4);
     void Diskvoll();
@@ -307,4 +335,13 @@ public interface IModul1
     string BuildFullSurName(IPersonData person, bool xFamToUpper = true);
     void FrmPerson_EventUpd(int PersInArb);
     void SetCommandBtn(bool xCond, Button button, string sBtnHeader);
+    void Berufles(int PersInArb, EEventArt Beruf, ComboBox combo1);
+    string ortles1(int OrtNr, byte Schalt);
+    IList<string> DeleteDoublicates<Type>(IList<string> oList, IList<string> gList);
+    int Eltsuch(int persInArb);
+    IEnumerable<IListItem<(int, DateTime, ELinkKennz)>> Family_Kindsuch(int iFamNr);
+    string Ancesters_GetPersonData(int PersonNr, out int Ahnsp, out string Kont20);
+    string Ancester_GetAncesterData(int iAnc);
+    void Ausdruck(string Datnam);
+    void Bildzeig1(string biart, int PBW, int PBH, string Form, ref string BiText1, ref string Bitext2, ref bool ja);
 }

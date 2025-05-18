@@ -275,14 +275,14 @@ public enum EUserText : int
     t197 = 197,
     t198 = 198,
     /// <summary>
-    /// Check Family
+    /// Check o04_Family
     /// </summary>
     t200 = 200,
     t201 = 201,
     t202 = 202,
     t204 = 204,    
     /// <summary>
-    /// Family-errors
+    /// o04_Family-errors
     /// </summary>
     t205 = 205,
     t207 = 207,
