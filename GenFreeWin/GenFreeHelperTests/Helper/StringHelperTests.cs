@@ -2,6 +2,7 @@
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using static BaseLib.Helper.TestHelper;
+using BaseLib.Helper;
 
 namespace GenFree.Helper.Tests
 {
