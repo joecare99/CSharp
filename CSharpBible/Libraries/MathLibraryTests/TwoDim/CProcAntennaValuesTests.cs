@@ -59,7 +59,7 @@ public class CProcAntennaValuesTests
     public void HandleMovementTest(double[] aDVal, double fT, double fR, double fDt, double[] adExp)
     {
         var avData = ToVArr(aDVal);
-        CProcAntennaValues testClass = new(avData);
+        CProcAntennaValues testClass = new(avData, [0]);
         Assert.IsTrue(testClass.HandleMovement(fR, fT, fDt));
         System.Diagnostics.Debug.WriteLine($"{{{string.Join(", ", ToDArr(testClass.Debug.aPoints).Select(d => d.ToString(CultureInfo.InvariantCulture) + "d"))}}}");
         CollectionAssert.AreEqual(adExp, ToDArr(testClass.Debug.aPoints), new DObjComaprer());
@@ -94,7 +94,7 @@ public class CProcAntennaValuesTests
     public void HandleStdAntennaValueTest(double[] aDVal, bool xDetect, double fValue, double[] adExp)
     {
         var avData = ToVArr(aDVal);
-        CProcAntennaValues testClass = new(avData);
+        CProcAntennaValues testClass = new(avData, [0]);
         Assert.IsTrue(testClass.HandleStdAntennaValue(fValue, xDetect));
         System.Diagnostics.Debug.WriteLine($"{{{string.Join(", ", ToDArr(testClass.Debug.aPoints).Select(d => d.ToString(CultureInfo.InvariantCulture) + "d"))}}}");
         CollectionAssert.AreEqual(adExp, ToDArr(testClass.Debug.aPoints), new DObjComaprer());
@@ -115,7 +115,7 @@ public class CProcAntennaValuesTests
     public void Calculate3DistinctPointsTest(double[] aDVal, double[] adExp1, double[] adExp2, double[] adExp3)
     {
         var avData = ToVArr(aDVal);
-        CProcAntennaValues testClass = new(avData);
+        CProcAntennaValues testClass = new(avData, [0]);
         testClass.Calculate3DistinctPoints(out var _v1, out var _v2, out var _v3);
         System.Diagnostics.Debug.Write($"new[]{{{_v1.x}d, {_v1.y}d}}, ");
         System.Diagnostics.Debug.Write($"new[]{{{_v2.x}d, {_v2.y}d}}, ");
@@ -163,13 +163,40 @@ public class CProcAntennaValuesTests
             Assert.AreEqual(fExpDist, _fDist, "fDist = NaN");
         else
             Assert.AreEqual(fExpDist, _fDist, 1e-8, "fDist");
-        Assert.AreEqual(adExp[0], _Seg.vFootPoint.x, 1e-8, "Seg.vFootPoint.x");
-        Assert.AreEqual(adExp[1], _Seg.vFootPoint.y, 1e-8, "Seg.vFootPoint.y");
-        Assert.AreEqual(adExp[2], _Seg.vNormal.x, 1e-8, "Seg.vNormal.x");
-        Assert.AreEqual(adExp[3], _Seg.vNormal.y, 1e-8, "Seg.vNormal.y");
-        Assert.AreEqual(adExp[4], _Seg.lrRadius, 1e-8, "Seg.lrRadius");
+        AssertAreEqual(CreateTrackSegment(adExp), _Seg);
     }
 
+    private static void AssertAreEqual(StTrackSeg tsExp, StTrackSeg _Seg)
+    {
+        Assert.AreEqual(tsExp.vFootPoint.x, _Seg.vFootPoint.x, 1e-8, "Seg.vFootPoint.x");
+        Assert.AreEqual(tsExp.vFootPoint.y, _Seg.vFootPoint.y, 1e-8, "Seg.vFootPoint.y");
+        Assert.AreEqual(tsExp.vNormal.x, _Seg.vNormal.x, 1e-8, "Seg.vNormal.x");
+        Assert.AreEqual(tsExp.vNormal.y, _Seg.vNormal.y, 1e-8, "Seg.vNormal.y");
+        Assert.AreEqual(tsExp.lrRadius, _Seg.lrRadius, 1e-8, "Seg.lrRadius");
+    }
 
+    [TestMethod()]
+    [DataRow(new[] { 0.0, 0.0, 0.0, 1.0, 0.0}, 400.0d, 0 , 0, DisplayName = "1 - Default")]
+    [DataRow(new[] { 0.0, 123.0, 0.0, 1.0, 0.0}, 400.0d, 0 , 123.0, DisplayName = "2 - Straight (y+123)")]
+    [DataRow(new[] { 0.0, 123.0, -0.5, 0.86602540378, 0 }, 400.0d, 0.523598775600518, 353.940107677034, DisplayName = "2a - Straight (y+123 30°)")]
+    [DataRow(new[] { 0.0, 123.0,  0.5, 0.86602540378, 0 }, 400.0d, -0.523598775600518, -107.940107677034, DisplayName = "2b - Straight (y+123 -30°)")]
+    [DataRow(new[] {-1000.0, -1000.0, 0.0, 1.0, 5000.0}, 1000.0d, 0.41151684606748806, -582.57569495584, DisplayName = "3 - Curve ((-1,4), 5m) s=1m")]
+    [DataRow(new[] {-1000.0, -1000.0, 0.0, 1.0, 5000.0}, 2000.0d, 0.64350110879328437, 0.0, DisplayName = "4 - Curve ((-1,4), 5m) s=2m")]
+    [DataRow(new[] {    0.0,     0.0, 0.0, 1.0, 2000.0}, 400.0d, 0.201357920790331, 40.4082057734577, DisplayName = "5 - Curve ((0,2), 2m) s=40cm")]
+    [DataRow(new[] {    0.0,     0.0, 0.0, 1.0, -2000.0}, 400.0d, -0.201357920790331, -40.4082057734577, DisplayName = "6 - Curve ((0,-2), 2m) s=40cm")]
+    [DataRow(new[] {    0.0,     0.0, 0.0, 1.0, 2000.0}, -400.0d, -0.201357920790331, 40.4082057734577, DisplayName = "7 - Curve ((0,2), 2m) s=-40cm")]
+    [DataRow(new[] {    0.0,     0.0, 0.0, 1.0, -2000.0}, -400.0d, 0.201357920790331, -40.4082057734577, DisplayName = "8 - Curve ((0,-2), 2m) s=-40cm")]
 
+    public void ComputeAngleOffsetTest(double[] adSeg,double lrDist,double lrExpAngle,double lrOffset)
+    {
+        StTrackSeg _Seg = CreateTrackSegment(adSeg);
+        CProcAntennaValues.ComputeAngleOffset(_Seg, lrDist, out var _fAngle, out var _fOffset);
+        Assert.AreEqual(lrExpAngle, _fAngle, 1e-8, "fAngle");
+        Assert.AreEqual(lrOffset, _fOffset, 1e-8, "fOffset");
+    }
+
+    private StTrackSeg CreateTrackSegment(double[] adSeg)
+    {
+        return new StTrackSeg(ToVArr(adSeg)[0], ToVArr(adSeg)[1], adSeg[4]);
+    }
 }

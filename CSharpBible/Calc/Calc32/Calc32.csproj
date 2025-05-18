@@ -39,6 +39,7 @@
 		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<CustomToolNamespace>Calc32.Properties</CustomToolNamespace>
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>

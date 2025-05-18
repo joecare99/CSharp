@@ -40,6 +40,6 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Reference Include="System.Xaml" />
+	  <Reference Condition="$(TargetFramework.StartsWith('net4'))" Include="System.Xaml" />
 	</ItemGroup>
 </Project>

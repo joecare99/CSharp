@@ -18,7 +18,7 @@
     <PackageVersion Include="Avalonia.Browser" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Android" Version="11.2.3" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="System.Collections.Immutable" Version="9.0.1" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.0" />

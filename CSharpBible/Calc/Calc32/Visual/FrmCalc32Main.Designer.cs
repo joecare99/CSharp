@@ -769,7 +769,7 @@ namespace Calc32.Visual
             btnClose.Size = new System.Drawing.Size(230, 113);
             btnClose.TabIndex = 39;
             btnClose.Tag = "0";
-            btnClose.Text = "Schliessen";
+            btnClose.Text = Resources.btnClose;
             btnClose.UseVisualStyleBackColor = true;
             btnClose.Click += btnClose_Click;
             btnClose.MouseMove += FrmCalc32Main_MouseMove;

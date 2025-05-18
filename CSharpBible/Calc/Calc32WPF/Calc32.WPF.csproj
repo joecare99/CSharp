@@ -22,7 +22,7 @@
 		<None Remove="*.bak" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 		<ProjectReference Include="..\Calc32\Calc32.Model.csproj" />
 	</ItemGroup>
   <ItemGroup>

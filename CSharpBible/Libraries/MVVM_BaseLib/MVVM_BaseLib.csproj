@@ -2,7 +2,7 @@
   <Import Project="..\Libraries_net.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net481;net48;net472;net462;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+    <TargetFrameworks>net481;net48;net472;net462;net8.0-windows;net9.0-windows</TargetFrameworks>
     <Platforms>AnyCPU;x86</Platforms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
@@ -26,7 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
   </ItemGroup>
   <ItemGroup>
