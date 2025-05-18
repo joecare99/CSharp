@@ -13,6 +13,7 @@ namespace WinAhnenCls.Model.HejInd
     {
         private bool _disposedValue;
         private WeakReference<IGenealogy>? _WLowner;
+        private IGenPerson Indi { get; set; } = null!;
 
         public CPerson()
         {
