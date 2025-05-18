@@ -17,9 +17,10 @@ using Microsoft.VisualBasic;
 using BaseLib.Helper;
 using Views;
 using GenFree.ViewModels.Interfaces;
+using Gen_FreeWin;
 
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Menue : Form, IInteraction
 {
