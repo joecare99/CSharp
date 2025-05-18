@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using static MathLibrary.TwoDim.Math2d;
 
 namespace MathLibrary.TwoDim;
@@ -12,6 +14,7 @@ public class CProcAntennaValues
 {
     private Vector[] aPunkteSpeicher = new Vector[31];
     public Vector[] HMI = new Vector[33];
+    public int[] aIndex = new int[31];
     private double fDispFak = 0.25;
     private double lrCfgDeichsellaenge = 1000.0;
     private double lrCfgAntennaOffs = 300.0;
@@ -19,6 +22,8 @@ public class CProcAntennaValues
     private double lrCfgMinRadius = 500.0;
     private bool bflag = true;
     const double fAnpFakt = 0.05d;
+    public Vector vOffset = new Vector(0,0);
+    public double lrAngle = 0.0; 
 
     public class _Debug(CProcAntennaValues p)
     {
@@ -30,13 +35,18 @@ public class CProcAntennaValues
     public _Debug Debug;
 
     public CProcAntennaValues() { Debug = new(this); }
-    public CProcAntennaValues(Vector[] v) : this()
+    public CProcAntennaValues(Vector[] v, int[] aIx) : this()
     {
         for (int i = 0; i < aPunkteSpeicher.Length; i++)
             if (i < v.Length)
                 aPunkteSpeicher[i] = v[i];
             else
                 aPunkteSpeicher[i] = new();
+        for (int i = 0; i < aIndex.Length; i++)
+            if (i < aIx.Length)
+                this.aIndex[i] = aIx[i];
+            else
+                this.aIndex[i] = 0;
     }
 
     public bool Config(double lrCPOffset, double lrAntennaOffset, double lrEntryDist)
@@ -82,6 +92,50 @@ public class CProcAntennaValues
         else if (xAntDetect
             && (((tfPoint.x - aPunkteSpeicher[30].x) < -lrCfgEinfgDist) 
                 ||((tfPoint.x - aPunkteSpeicher[29].x) < -2*lrCfgEinfgDist)))
+        {
+            for (var i = 0; i < 30; i++)
+                aPunkteSpeicher[i] = aPunkteSpeicher[i + 1];
+            bflag = false;
+            nIdx = 30;
+            aPunkteSpeicher[30] = tfPoint;
+            HMI[30] = aPunkteSpeicher[30].Mult(fDispFak);
+        }
+        else if (xAntDetect)
+        {
+            var fDist = 0d;
+            for (var i = 0; i < 31; i++)
+                if ((i == 0) || (Math.Abs(aPunkteSpeicher[i].x - tfPoint.x) < fDist))
+                {
+                    fDist = Math.Abs(aPunkteSpeicher[i].x - tfPoint.x);
+                    nIdx = i;
+                }
+            aPunkteSpeicher[nIdx] =
+                    aPunkteSpeicher[nIdx]
+                    .Mult(1.0 - fAnpFakt)
+                    .Add(tfPoint.Mult(fAnpFakt));
+        }
+        return true;
+    }
+
+    public bool HandleAntennaValue(double lrAntennaOffset, double lrAntennaValue, bool xAntDetect)
+    {
+        // Wert in Tabelle einfügen oder ändern
+        var tfPoint = new Vector(lrAntennaOffset, lrAntennaValue);
+        var tfPointWorld = new Vector(lrAntennaOffset, lrAntennaValue);
+        var iDist = new double[31];iDist.Initialize();
+        var nIdx = 0;
+        if (xAntDetect
+            && (((tfPoint.x - aPunkteSpeicher[0].x) > lrCfgEinfgDist)
+                || ((tfPoint.x - aPunkteSpeicher[1].x) > 2 * lrCfgEinfgDist)))
+        {
+            for (var i = 30; i > 0; i++)
+                aPunkteSpeicher[i] = aPunkteSpeicher[i - 1];
+            aPunkteSpeicher[0] = tfPoint;
+            HMI[0] = aPunkteSpeicher[0].Mult(fDispFak);
+        }
+        else if (xAntDetect
+            && (((tfPoint.x - aPunkteSpeicher[30].x) < -lrCfgEinfgDist)
+                || ((tfPoint.x - aPunkteSpeicher[29].x) < -2 * lrCfgEinfgDist)))
         {
             for (var i = 0; i < 30; i++)
                 aPunkteSpeicher[i] = aPunkteSpeicher[i + 1];
@@ -225,5 +279,24 @@ public class CProcAntennaValues
             fLenkWinkel = -fLenkWinkel;
 
         return fLenkWinkel;
+    }
+
+    public static bool ComputeAngleOffset(StTrackSeg vTrack,double lrDist, out double lrAngle, out double lrOffset)
+    {
+        if (Math.Abs(vTrack.lrRadius) > 1e-8)
+        {
+            // Kreis ...
+            var tMiddle = vTrack.vFootPoint.Add(vTrack.vNormal.Mult(vTrack.lrRadius));
+            lrAngle =  Math.Asin((lrDist-tMiddle.x)/Math.Abs(vTrack.lrRadius))* Math.Sign(tMiddle.y);
+            var lrAngle2 = Math.Sign(lrAngle) * Math.PI / 2 - lrAngle;
+            lrOffset = Math.Sign(lrDist-tMiddle.x)*Math.Abs(vTrack.lrRadius)*Math.Sin(-lrAngle2) + tMiddle.y;
+        }
+        else
+        {             
+            // Gerade ...
+            lrAngle = Math.Atan2(vTrack.vNormal.y,vTrack.vNormal.x) - Math.PI/2;
+            lrOffset = vTrack.vFootPoint.y + Math.Tan(lrAngle)*(lrDist-vTrack.vFootPoint.x);
+        }
+        return true;
     }
 }
