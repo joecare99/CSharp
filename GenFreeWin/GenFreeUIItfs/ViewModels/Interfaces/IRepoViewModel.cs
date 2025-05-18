@@ -21,6 +21,8 @@ public interface IRepoViewModel: INotifyPropertyChanged
     string TextBox4_Text { get; set; }
     string TextBox5_Text { get; set; }
     string TextBox6_Text { get; set; }
+    string RichTextBox1_Text { get; set; }
+    string RichTextBox2_Text { get; set; }
     float FontSize { get; }
     object HintFarb { get; }
 

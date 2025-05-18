@@ -15,11 +15,11 @@ public interface IPersonenViewModel : INotifyPropertyChanged
     IEventShowEditViewModel DeathEVM { get; }
     IEventShowEditViewModel BurialEVM { get; }
 
+    IRelayCommand FormLoadCommand { get; }
     IRelayCommand ResidenceCommand { get; }
     IRelayCommand OccupationCommand { get; }
     IRelayCommand TitleCommand { get; }
     IRelayCommand AdditionalCommand { get; }
-    IRelayCommand HometownCommand { get; }
     IRelayCommand LoadFromFileCommand { get; }
 
     IRelayCommand ReturnCommand { get; }
@@ -108,5 +108,8 @@ public interface IPersonenViewModel : INotifyPropertyChanged
 
     bool PersImpQuerry1_Visible { get; }
     bool Dublicates_Visible { get; }
+
+    int AendPruef(int persInArb, int ubg2);
     (EEventArt eArt, int iLfNr) GetEventArtNr(EUserText iText);
+    void Perzeig(int persInArb);
 }

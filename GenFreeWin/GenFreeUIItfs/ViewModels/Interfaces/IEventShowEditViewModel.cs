@@ -16,4 +16,5 @@ public interface IEventShowEditViewModel: INotifyPropertyChanged
     int IPersNr { get; set; }
     Action<int> DataSchreib { get; set; }
     Action<int> DataZeig { get; set; }
+    Action DoClick { get; set; }
 }
