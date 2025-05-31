@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MVVM.ViewModel;
 
-namespace GenFreeWin3.ViewModels;
+namespace GenFreeWpf.ViewModels;
 
 public partial class MainWindowViewModel: BaseViewModelCT
 {
