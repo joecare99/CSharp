@@ -49,7 +49,7 @@ public static class DBHelper
         try
         {
             foreach (DataRow row in db.GetSchema("Tables").Rows)
-            
+
                 if (row["TABLE_NAME"].AsString().ToLower() == mytable.AsString().ToLower())
                 {
                     return true;
@@ -71,20 +71,39 @@ public static class DBHelper
         {
         }
     }
+    /// <summary>
+    /// Begins the transaction.
+    /// </summary>
+    /// <param name="wks">The WKS.</param>
+    public static void BeginTrans(this IDBWorkSpace wks) => wks.Begin();
+    /// <summary>
+    /// Commits the transaction.
+    /// </summary>
+    /// <param name="wks">The WKS.</param>
+    public static void CommitTrans(this IDBWorkSpace wks) => wks.Commit();
 
-    public static void BeginTrans(this IDBWorkSpace wks)
-    {
-        wks.Begin();
-    }
+    /// <summary>
+    /// Converts an Enum as a fieldname.
+    /// </summary>
+    /// <param name="eFld">The field as enum.</param>
+    /// <returns>System.String.</returns>
+    public static string AsFld(this Enum eFld) => $"{eFld}".TrimStart('_');
 
-    public static void CommitTrans(this IDBWorkSpace wks)
+    /// <summary>
+    /// This does the Action fo reach record in the recordset.
+    /// </summary>
+    /// <param name="recordset">The table.</param>
+    /// <param name="doActn">The action to do.</param>
+    public static void ForEachDo(this IRecordset recordset, Action<IFieldsCollection> doActn)
     {
-        wks.Commit();
-    }
-
-    public static string AsFld(this Enum eFld)
-    {
-        return $"{eFld}".TrimStart('_');
+        recordset.MoveFirst();
+        while (!recordset.EOF)
+        {
+            recordset.Edit();
+            doActn(recordset.Fields);
+            recordset.Update();
+            recordset.MoveNext();
+        }
     }
 
 }
