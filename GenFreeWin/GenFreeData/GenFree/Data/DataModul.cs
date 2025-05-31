@@ -12,6 +12,7 @@ using BaseLib.Helper;
 using GenFree.Interfaces.Data;
 using Microsoft.VisualBasic;
 using System.Diagnostics;
+using GenFree.Interfaces.Sys;
 
 namespace GenFree.Data;
 
@@ -30,6 +31,7 @@ public static partial class DataModul
     public static IRepository Repositories { get; } = new CRepository(() => DB_RepoTable); // new IoC.GetReqiredService(IRepository); 
     public static INB_Person NB_Person { get; } = new CNB_Person(() => NB_PersonTable, Link_MoveAllPaten_ToNBWitn); // new IoC.GetReqiredService(INB_Person);
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable); // new IoC.GetReqiredService(INB_Family);
+    public static INB_Frau NB_Frau{ get; } = new CNBFrau_Frau(() => NB_Frau1Table); // new IoC.GetReqiredService(INB_Family);
 
     public static object[] Mandanten = new string[0];
 
@@ -54,6 +56,8 @@ public static partial class DataModul
     public static IRecordset DB_TexteTable;
     public static IRecordset DB_PictureTable;
     public static IRecordset DB_LinkTable { get; set; }
+    public static ICitationData CitationData { get; }
+
     public static IRecordset DB_WitnessTable;
     public static IRecordset DB_SourceLinkTable;
     public static IRecordset DB_QuTable;
@@ -227,6 +231,7 @@ public static partial class DataModul
         return recordset;
     }
 
+    #region NB-DB Methods
     public static void OpenNBDatabase(string name)
     {
         NB?.Close();
@@ -237,7 +242,24 @@ public static partial class DataModul
         NB_Frau2Table = NB.OpenRecordset(nameof(nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
     }
 
-    public static bool ReadNBFrau1Data(int LfdNr, out int persNr, out int famNr, out short gen, out int kek2, out int kek1)
+    public static void CreateNewNBDatabase(IPersistence persistence)
+    {
+        NB.Close();
+        string name = persistence.CreateTempFilefromInit("GedAus.mdb");
+        OpenNBDatabase(name);
+    }
+    #region NB-Frau Methods    
+    /// <summary>
+    /// Reads the data from a specific record from Frauen-Tab (by ID).
+    /// </summary>
+    /// <param name="LfdNr">The LFD nr.</param>
+    /// <param name="persNr">The pers nr.</param>
+    /// <param name="famNr">The fam nr.</param>
+    /// <param name="gen">The gen.</param>
+    /// <param name="kek2">The kek2.</param>
+    /// <param name="kek1">The kek1.</param>
+    /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    public static bool ReadNBFrau1Data(int LfdNr, out int persNr, out int famNr, out int gen, out int kek2, out int kek1)
     {
         bool flag;
         gen = default;
@@ -245,21 +267,68 @@ public static partial class DataModul
         kek1 = default;
         persNr = default;
         famNr = default;
-        NB_Frau1Table.Index = "LfNr";
-        NB_Frau1Table.Seek("=", LfdNr);
-        if (flag = !NB_Frau1Table.NoMatch)
+        if (flag = FrauenTab_Exists(LfdNr))
         {
-            gen = (short)NB_Frau1Table.Fields["Gen"].AsInt();
-            persNr = NB_Frau1Table.Fields["Nr"].AsInt();
-            famNr = NB_Frau1Table.Fields["Alt"].AsInt();
+            (gen, persNr, famNr) = Frauen_RawReadBaseData();
             kek1 = NB_Frau1Table.Fields["Kek1"].AsInt();
             kek2 = NB_Frau1Table.Fields["Kek2"].AsInt();
         }
 
         return flag;
     }
+    public static bool Frauen_CReadData(int num6, out (int iGen, int iPers, int iFam)? value)
+    {
+        bool result;
+        value = default;
+        if (result = FrauenTab_Exists(num6))
+        {
+            value = Frauen_RawReadBaseData();
+        }
+        return result;
+    }
+    /// <summary>
+    /// Checks if a record exists (by ID).
+    /// </summary>
+    /// <param name="num6">The num6.</param>
+    /// <returns><c>true</c> if record exists, <c>false</c> otherwise.</returns>
+    /// <remarks>can also be used to jump to a specific record</remarks>
+    public static bool FrauenTab_Exists(int num6)
+    {
+        DataModul.NB_Frau1Table.Index = "LfNr";
+        DataModul.NB_Frau1Table.Seek("=", num6);
+        return !DataModul.NB_Frau1Table.NoMatch;
+    }
 
+    public static bool FrauenTab_PersonExists(int iPersNr)
+    {
+        DataModul.NB_Frau1Table.Index = "PerNR";
+        DataModul.NB_Frau1Table.Seek("=", iPersNr);
+        return !DataModul.NB_Frau1Table.NoMatch;
+    }
 
+    private static (int iGen, int iPers, int iFam) Frauen_RawReadBaseData()
+    {
+        var num5 = DataModul.NB_Frau1Table.Fields["Gen"].Value.AsInt();
+        var iPers = DataModul.NB_Frau1Table.Fields["Nr"].AsInt();
+        var iFam = DataModul.NB_Frau1Table.Fields["Alt"].AsInt();
+        return (num5, iPers, iFam);
+    }
+
+    public static void NBFrauTab_AddRow(int iNr, int iGen, int iPersNr, int iFamNr, int iKek1, int iKek2)
+    {
+        DataModul.NB_Frau1Table.AddNew();
+        DataModul.NB_Frau1Table.Fields["Nr"].Value = iPersNr;
+        DataModul.NB_Frau1Table.Fields["Kek1"].Value = iKek1;
+        DataModul.NB_Frau1Table.Fields["Kek2"].Value = iKek2;
+        DataModul.NB_Frau1Table.Fields["Gen"].Value = iGen;
+        DataModul.NB_Frau1Table.Fields["LfNr"].Value = iNr;
+        DataModul.NB_Frau1Table.Fields["Alt"].Value = iFamNr;
+        DataModul.NB_Frau1Table.Update();
+    }
+
+    #endregion
+
+    #region NB-SperrPers Methods
     public static bool NB_SperrPers_Exists(int iPers)
     {
         NB_SperrPersTable.Seek("=", iPers);
@@ -278,7 +347,9 @@ public static partial class DataModul
         }
         return result;
     }
+    #endregion
 
+    #region NB-SperrFams Methods
     public static bool NB_SperrFams_Exists(int iFam)
     {
         NB_SperrFamsTable.Seek("=", iFam);
@@ -297,6 +368,66 @@ public static partial class DataModul
         }
         return result;
     }
+    #endregion
+
+    #region NB-Ahn Methods
+    public static void Ahn1_Update(int persInArb, int famInArb, int num5, int num6, short gen, string name)
+    {
+        bool noMatch = NBAhnen_ExistsPerson(persInArb);
+        if (noMatch)
+        {
+            NBAhn1AddRow(persInArb, gen, num6, num5, 0, famInArb);
+        }
+        else if (NB_Ahn1Table.Fields["Ahn1"].AsInt() != 0)
+        {
+            NBAhnen_SetWeiterRaw();
+            NBAhn1AddRow(persInArb, gen, num6, num5, 1, famInArb);
+        }
+        else
+        {
+            NBAhnen_EditRaw(gen, num5, num6, famInArb, name);
+        }
+    }
+
+    private static bool NBAhnen_ExistsPerson(int persInArb)
+    {
+        NB_Ahn1Table.Index = "PerNr";
+        NB_Ahn1Table.Seek("=", persInArb);
+        bool noMatch = NB_Ahn1Table.NoMatch;
+        return noMatch;
+    }
+
+    public static void NBAhn1AddRow(int persInArb, int iGene, int iAhn1, int iAhn2, int iWtr, int famInArb)
+    {
+        DataModul.NB_Ahn1Table.AddNew();
+        DataModul.NB_Ahn1Table.Fields["PerNr"].Value = persInArb;
+        DataModul.NB_Ahn1Table.Fields["Gene"].Value = iGene;
+        DataModul.NB_Ahn1Table.Fields["Ahn1"].Value = iAhn1;
+        DataModul.NB_Ahn1Table.Fields["Ahn2"].Value = iAhn2;
+        DataModul.NB_Ahn1Table.Fields["Ahn3"].Value = 0;
+        DataModul.NB_Ahn1Table.Fields["Weiter"].Value = iWtr;
+        DataModul.NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
+        DataModul.NB_Ahn1Table.Update();
+    }
+
+    public static void NBAhnen_EditRaw(int iGene, int iAhn2, int iAhn1, int famInArb, string surName)
+    {
+        DataModul.NB_Ahn1Table.Edit();
+        DataModul.NB_Ahn1Table.Fields["Gene"].Value = iGene;
+        DataModul.NB_Ahn1Table.Fields["Ahn1"].Value = iAhn1;
+        DataModul.NB_Ahn1Table.Fields["Ahn2"].Value = iAhn2;
+        DataModul.NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
+        DataModul.NB_Ahn1Table.Fields["Name"].Value = surName;
+        DataModul.NB_Ahn1Table.Update();
+    }
+
+    public static void NBAhnen_SetWeiterRaw()
+    {
+        DataModul.NB_Ahn1Table.Edit();
+        DataModul.NB_Ahn1Table.Fields["Weiter"].Value = 1;
+        DataModul.NB_Ahn1Table.Update();
+    }
+    #endregion
 
     public static void Link_MoveAllPaten_ToNBWitn(int persInArb)
     {
@@ -310,52 +441,19 @@ public static partial class DataModul
         }
     }
 
-
-
-    public static void Ahn1_Update(int persInArb, int famInArb, int num5, decimal num6, short gen, string name)
+    public static void BemTable_AppendRaw(int iNr, string sPF, string sArt, string sBem, object iLfNr)
     {
-        NB_Ahn1Table.Index = "PerNr";
-        NB_Ahn1Table.Seek("=", persInArb);
-        if (NB_Ahn1Table.NoMatch)
-        {
-            NB_Ahn1Table.AddNew();
-            NB_Ahn1Table.Fields["PerNr"].Value = persInArb;
-            NB_Ahn1Table.Fields["Gene"].Value = gen;
-            NB_Ahn1Table.Fields["Ahn1"].Value = num6;
-            NB_Ahn1Table.Fields["Ahn2"].Value = num5;
-            NB_Ahn1Table.Fields["Ahn3"].Value = 0;
-            NB_Ahn1Table.Fields["Weiter"].Value = 0;
-            NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
-            NB_Ahn1Table.Update();
-        }
-        else if (NB_Ahn1Table.Fields["Ahn1"].AsInt() != 0)
-        {
-            NB_Ahn1Table.Edit();
-            NB_Ahn1Table.Fields["Weiter"].Value = 1;
-            NB_Ahn1Table.Update();
-
-            NB_Ahn1Table.AddNew();
-            NB_Ahn1Table.Fields["PerNr"].Value = persInArb;
-            NB_Ahn1Table.Fields["Gene"].Value = gen;
-            NB_Ahn1Table.Fields["Ahn1"].Value = num6;
-            NB_Ahn1Table.Fields["Ahn2"].Value = num5;
-            NB_Ahn1Table.Fields["Ahn3"].Value = 0;
-            NB_Ahn1Table.Fields["Weiter"].Value = 1;//??
-            NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
-            NB_Ahn1Table.Update();
-        }
-        else
-        {
-            NB_Ahn1Table.Edit();
-            NB_Ahn1Table.Fields["Ahn1"].Value = num6;
-            NB_Ahn1Table.Fields["Ahn2"].Value = num5;
-            NB_Ahn1Table.Fields["Gene"].Value = gen;
-            NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
-            NB_Ahn1Table.Fields["Name"].Value = name;
-            NB_Ahn1Table.Update();
-        }
+        IRecordset nB_BemTable = NB_OrtTable;
+        nB_BemTable.AddNew();
+        nB_BemTable.Fields["Nr"].Value = iNr;
+        nB_BemTable.Fields["PF"].Value = sPF;
+        nB_BemTable.Fields["Art"].Value = sArt;
+        nB_BemTable.Fields["BemText"].Value = sBem;
+        nB_BemTable.Fields["LFnr"].Value = iLfNr;
+        nB_BemTable.Update();
     }
-#nullable enable
+    #endregion
+
     public static void ReplaceNBDatafile(string destination, string source, Action? action = null, bool nbLeaveOpen = false)
     {
         WB?.Close();
@@ -376,7 +474,7 @@ public static partial class DataModul
         if (!nbLeaveOpen)
             NB.Close();
     }
-#nullable restore
+
     public static void CreateWBDatabase(string destination, string source)
     {
         WB_FrauTable?.Close();
@@ -394,6 +492,8 @@ public static partial class DataModul
         WB_FrauTable = WB.OpenRecordset("Frauen", RecordsetTypeEnum.dbOpenTable);
         WB_FrauTable.Index = "LfNr";
     }
+
+
     public static void PrepRechData(string destination, string source)
     {
         var nB = RechDB;
@@ -436,23 +536,12 @@ public static partial class DataModul
         NB_FamilyTable = NB.OpenRecordset("Familie1", RecordsetTypeEnum.dbOpenTable);
     }
 
-    public static void BemTable_AppendRaw(int iNr, string sPF, string sArt, string sBem, object iLfNr)
-    {
-        IRecordset nB_BemTable = NB_OrtTable;
-        nB_BemTable.AddNew();
-        nB_BemTable.Fields["Nr"].Value = iNr;
-        nB_BemTable.Fields["PF"].Value = sPF;
-        nB_BemTable.Fields["Art"].Value = sArt;
-        nB_BemTable.Fields["BemText"].Value = sBem;
-        nB_BemTable.Fields["LFnr"].Value = iLfNr;
-        nB_BemTable.Update();
-    }
 
 
     #region Names Methods
     public static void Namen_RemovePerson(int persInArb)
     {
-        var dB_NameTable = DataModul.DB_NameTable;
+        var dB_NameTable = DB_NameTable;
         dB_NameTable.Index = nameof(NameIndex.PNamen);
         dB_NameTable.Seek("=", persInArb);
         if (!dB_NameTable.NoMatch)
@@ -477,7 +566,7 @@ public static partial class DataModul
     #region Witness Methods
     public static void Witness_DeleteAllF(int persInArb)
     {
-        var dB_WitnessTable = DataModul.DB_WitnessTable;
+        var dB_WitnessTable = DB_WitnessTable;
         dB_WitnessTable.Index = nameof(WitnessIndex.FamSu);
         dB_WitnessTable.Seek("=", persInArb, "10");
         if (!dB_WitnessTable.NoMatch)
@@ -504,7 +593,7 @@ public static partial class DataModul
     }
     public static void Witness_DeleteAllE(int persInArb)
     {
-        var dB_WitnessTable = DataModul.DB_WitnessTable;
+        var dB_WitnessTable = DB_WitnessTable;
         dB_WitnessTable.Index = nameof(WitnessIndex.ElSu);
         dB_WitnessTable.Seek("=", persInArb, "10");
         if (!dB_WitnessTable.NoMatch)
@@ -820,7 +909,7 @@ public static partial class DataModul
             {
                 var field = dB_PersonTable1.Fields[nameof(PersonFields.Konv)];
                 var Wort = field.Value.AsString();
-                DataModul.Texte_Schreib(Wort, "", ETextKennz.tk7_, out var Satz);
+                Texte_Schreib(Wort, "", ETextKennz.tk7_, out var Satz);
                 field.Value = Wort;
                 dB_PersonTable1.Fields[nameof(PersonFields.religi)].Value = Satz;
             }
@@ -838,7 +927,7 @@ public static partial class DataModul
     }
     public static void Pictures_DeletePerson(int persInArb)
     {
-        IRecordset dB_PictureTable = DataModul.DB_PictureTable;
+        IRecordset dB_PictureTable = DB_PictureTable;
         dB_PictureTable.Index = nameof(PictureIndex.PerKenn);
             dB_PictureTable.Seek("=", "P", persInArb);
             while (!dB_PictureTable.EOF
@@ -853,7 +942,7 @@ public static partial class DataModul
 
     public static void Search_DeletePeson(int persInArb)
     {
-        IRecordset dSB_SearchTable = DataModul.DSB_SearchTable;
+        IRecordset dSB_SearchTable = DSB_SearchTable;
         dSB_SearchTable.Index = "Nummer";
             dSB_SearchTable.Seek(">=", persInArb);
             if (!dSB_SearchTable.NoMatch)
@@ -986,7 +1075,7 @@ public static partial class DataModul
                 text += "< ";
             }
 
-            if (!DataModul.SourceLink_Exists(3, PersInArb, eEvtArt, LfNR)
+            if (!SourceLink_Exists(3, PersInArb, eEvtArt, LfNR)
                 || cEvt.sBem[3].TrimEnd() != "")
             {
                 text += " §";
@@ -1001,7 +1090,7 @@ public static partial class DataModul
 
     public static void Descendents_DeleteAll(int persInArb)
     {
-        IRecordset dT_DescendentTable = DataModul.DT_DescendentTable;
+        IRecordset dT_DescendentTable = DT_DescendentTable;
         dT_DescendentTable.Index = "Pernr";
             dT_DescendentTable.Seek("=", persInArb);
             if (!dT_DescendentTable.NoMatch)
@@ -1021,7 +1110,7 @@ public static partial class DataModul
 
     public static void Ancestors_DeleteAll(int persInArb)
     {
-        IRecordset dT_AncesterTable = DataModul.DT_AncesterTable;
+        IRecordset dT_AncesterTable = DT_AncesterTable;
         dT_AncesterTable.Index = "Pernr";
             dT_AncesterTable.Seek("=", persInArb);
             if (!dT_AncesterTable.NoMatch)
@@ -1123,12 +1212,12 @@ public static partial class DataModul
     {
         if (iPerson > 0)
         {
-            if (!DataModul.Person.Exists(iPerson))
+            if (!Person.Exists(iPerson))
             {
                 Output($"    {sParDesc} nicht vorhanden");
                 return false;
             }
-            else if (dB_FamilyTable.Fields[nameof(FamilyFields.ggv)].AsInt() != 1 && DataModul.Person.GetSex(iPerson) != sExpSex)
+            else if (dB_FamilyTable.Fields[nameof(FamilyFields.ggv)].AsInt() != 1 && Person.GetSex(iPerson) != sExpSex)
             {
                 Output($"    {sParDesc} hat das falsche Geschlecht");
                 return false;
@@ -1257,7 +1346,7 @@ public static partial class DataModul
    
     public static void TTable_RemovePerson(int persInArb, int Param)
     {
-        var dB_TTable = DataModul.DB_SourceLinkTable;
+        var dB_TTable = DB_SourceLinkTable;
         dB_TTable.Index = "Tab";
         dB_TTable.Seek("=", Param, persInArb);
         if (!dB_TTable.NoMatch)
@@ -1411,7 +1500,7 @@ public static partial class DataModul
             sText = "\"";
         }
 
-        var dB_PersonTable = DataModul.DB_PersonTable;
+        var dB_PersonTable = DB_PersonTable;
         dB_PersonTable.Index = Index.AsString();
         dB_PersonTable.Seek(rev ? "<" : ">", sText, persInArb);
         if (!dB_PersonTable.NoMatch)
@@ -1420,6 +1509,20 @@ public static partial class DataModul
         }
         else
             return persInArb;
+    }
+
+    private static void Person_Clear_EntryRaw(string sSex, string sCheck)
+    {
+        IRecordset dB_PersonTable = DataModul.DB_PersonTable;
+        dB_PersonTable.Edit();
+        dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].Value = 0;
+        dB_PersonTable.Fields[nameof(PersonFields.EditDat)].Value = 0;
+        dB_PersonTable.Fields[nameof(PersonFields.Konv)].Value = " ";
+        dB_PersonTable.Fields[nameof(PersonFields.religi)].Value = " ";
+        dB_PersonTable.Fields[nameof(PersonFields.Sex)].Value = sSex;
+        dB_PersonTable.Fields[nameof(PersonFields.Bem1)].Value = " ";
+        dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].Value = sCheck;
+        dB_PersonTable.Update();
     }
     #endregion
     public static void Persichlöschloesch(int persInArb)
@@ -1526,15 +1629,15 @@ public static partial class DataModul
 
     public static int Person_NewPerson(Action frmPerson_Clear,short Schalt)
     {
-        GenFree.Interfaces.DB.IRecordset dB_PersonTable = DataModul.DB_PersonTable;
+        GenFree.Interfaces.DB.IRecordset dB_PersonTable = DB_PersonTable;
         dB_PersonTable.Index = nameof(PersonIndex.PerNr);
         int persInArb = 0;
 
         if (Schalt != 5)
         {
             frmPerson_Clear?.Invoke();
-            DataModul.DB_WDTable.MoveFirst();
-            int iWDTable_Nr = DataModul.DB_WDTable.Fields["NR"].AsInt();
+            DB_WDTable.MoveFirst();
+            int iWDTable_Nr = DB_WDTable.Fields["NR"].AsInt();
 
             if (iWDTable_Nr == 1)
             {
@@ -1543,7 +1646,7 @@ public static partial class DataModul
                     dB_PersonTable.Seek("=", persInArb);
                     if (dB_PersonTable.NoMatch)
                     {
-                        DataModul.Persichlöschloesch(persInArb);
+                        Persichlöschloesch(persInArb);
                     }
                     else
                     {
@@ -1587,7 +1690,7 @@ public static partial class DataModul
     public static bool LeerTab_GetEmptyPerson(out int persInArb)
     {
         persInArb = 0;
-        IRecordset db_leerTable = DataModul.DB_LeerTable;
+        IRecordset db_leerTable = DB_LeerTable;
         db_leerTable.Index = "Leer";
         db_leerTable.Seek("=", "P");
         bool xLeerPNoMatch = db_leerTable.NoMatch;
@@ -1604,7 +1707,7 @@ public static partial class DataModul
     public static bool LeerTab_GetEmptyFam(out int famInArb)
     {
         famInArb = 0;
-        IRecordset dB_LeerTable = DataModul.DB_LeerTable;
+        IRecordset dB_LeerTable = DB_LeerTable;
         dB_LeerTable.Index = "Leer";
         dB_LeerTable.Seek("=", "F");
         var xMatch = !dB_LeerTable.NoMatch;
@@ -1619,7 +1722,7 @@ public static partial class DataModul
 
     public static void LeerTab_AddRaw(int persInArb, string sArt)
     {
-        IRecordset dB_LeerTable = DataModul.DB_LeerTable;
+        IRecordset dB_LeerTable = DB_LeerTable;
         dB_LeerTable.AddNew();
         dB_LeerTable.Fields["Nr"].Value = persInArb;
         dB_LeerTable.Fields["Art"].Value = sArt;
@@ -1627,5 +1730,43 @@ public static partial class DataModul
     }
 
     #endregion
+
+    public static void CitationData_Commit(int iPerFamNr)
+    {
+            if (CitationData.iSourceKnd < 3)
+            {
+                DB_SourceLinkTable.Index = "Tab21";
+                DB_SourceLinkTable.Seek("=", CitationData.iSourceKnd, iPerFamNr, CitationData.iSourceId);
+            }
+            else
+            {
+                DB_SourceLinkTable.Index = "Tab23";
+                DB_SourceLinkTable.Seek("=", 3, iPerFamNr, CitationData.iSourceId, Modul1.Art, Modul1.LfNR);
+            }
+            if (!DB_SourceLinkTable.NoMatch)
+            {
+                DB_SourceLinkTable.Edit();
+                DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (CitationData.sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Aus)].Value = CitationData.sPage;
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Orig)].Value = CitationData.sOriginalText;
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Kom)].Value = CitationData.sComment;
+                DB_SourceLinkTable.Update();
+            }
+            else
+            {
+                DB_SourceLinkTable.AddNew();
+                DB_SourceLinkTable.Fields[0].Value = CitationData.iSourceKnd;
+                DB_SourceLinkTable.Fields[1].Value = iPerFamNr;
+                DB_SourceLinkTable.Fields[2].Value = CitationData.iSourceId;
+                DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (CitationData.sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Art)].Value = Modul1.Art;
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.LfNr)].Value = Modul1.LfNR;
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Aus)].Value = CitationData.sPage;
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Orig)].Value = CitationData.sOriginalText;
+                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Kom)].Value = CitationData.sComment;
+                DB_SourceLinkTable.Update();
+            }
+        }
+    
 
 }
