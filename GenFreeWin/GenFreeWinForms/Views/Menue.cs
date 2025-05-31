@@ -223,4 +223,14 @@ public partial class Menue : Form, IInteraction
     {
         throw new NotImplementedException();
     }
+
+    public bool Choose(double v1, string v2, string v3, string v4, string v5, string v6)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetAdress(string v)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -12,6 +12,8 @@ using GenFree.Data;
 using GenFree.Helper;
 using Gen_FreeWin;
 using GenFree.ViewModels.Interfaces;
+using System.Windows.Input;
+using Views;
 
 namespace GenFreeWin.Views;
 
@@ -30,6 +32,10 @@ public partial class Repo : Form
             __ENCList.Add(new WeakReference(this));
         }
         InitializeComponent();
+
+        CommandBindingAttribute.Commit(this,_viewModel);
+        DblClickBindingAttribute.Commit(this,_viewModel);
+        TextBindingAttribute.Commit(this,_viewModel);
     }
 
     private void Repo_Load(object sender, EventArgs e)
@@ -43,7 +49,6 @@ public partial class Repo : Form
     {
         Close();
     }
-
 
 
     private void RichTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
