@@ -1,0 +1,138 @@
+<Page
+    x:Class="GenFreeWpf.Views.AdresseView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:GenFreeWpf.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vex="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
+    xmlns:vm="clr-namespace:GenFree.ViewModels.Interfaces;assembly=GenFreeUIItfs"
+    DataContext="{vex:IoC2 Type=vm:IAdresseViewModel}"
+    mc:Ignorable="d">
+    <Grid Margin="10" d:Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Titel:" />
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Vorname:" />
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Givenname, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Nachname:" />
+        <TextBox
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Surname, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="3"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Straße:" />
+        <TextBox
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Street, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="4"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="PLZ:" />
+        <TextBox
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Zip, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="5"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Ort:" />
+        <TextBox
+            Grid.Row="5"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Place, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="6"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Telefon:" />
+        <TextBox
+            Grid.Row="6"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="7"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="E-Mail:" />
+        <TextBox
+            Grid.Row="7"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding EMail, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="8"
+            Grid.Column="0"
+            Margin="0,2"
+            Text="Besonderes:" />
+        <TextBox
+            Grid.Row="8"
+            Grid.Column="1"
+            Margin="2"
+            Text="{Binding Special, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button
+            Grid.Row="9"
+            Grid.Column="1"
+            Width="100"
+            Margin="2"
+            HorizontalAlignment="Right"
+            Command="{Binding SaveCommand}"
+            Content="Speichern" />
+    </Grid>
+</Page>
