@@ -44,4 +44,5 @@ public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecor
     void SetFullSurname(string value);
     void SetPersonNames(int[] iName, (int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN);
     void SetPersonNr(int i);
+    void SetSex(string sSex);
 }

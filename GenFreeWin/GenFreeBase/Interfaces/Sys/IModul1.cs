@@ -255,6 +255,10 @@ public interface IModul1
     short ErSchalt { get; set; }
     int FamPerschalt { get; set; }
     int Nr { get; set; }
+    /// <summary>
+    /// Gets the Text-Substitution-List.
+    /// </summary>
+    /// <value>The Text-substitution-list. Contains the substitution for single keys.</value>
     IList<string> Te { get; }
     bool Reli { get; set; }
     int VerS { get; set; }
@@ -271,7 +275,7 @@ public interface IModul1
     IList<short> Posi { get; set; }
     string Job { get; set; }
     bool reorga { get; set; }
-
+    string sDemoVerNotPossibl { get; }
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
     Image AutoSizeImage(Image oBitmap, int maxWidth, int maxHeight, bool bStretch = false);
@@ -304,9 +308,9 @@ public interface IModul1
     string OfficeInstallPath(MSOfficeVersion nVersion);
     object OpenRecordSet();
 
-    void ortles(int OrtNr, ref byte Schalt);
-    void ortles(ref int Ortnr);
+    string ortles1(int Ortnr, byte Schalt=0,Action<int,string> action=null);
     string ortles(int OrtNr, byte Schalt);
+    string[] Ortles(IPlaceData place, int Schalt = 0, Action<int, string> export = null);
     void Orttextspeichern();
 
     void Paten_O_Taufe();
@@ -320,7 +324,7 @@ public interface IModul1
     string Rech(ref string datum1, ref string datum2);
     void Sichwand(string Dasich, string sDatumV_S, DateTime dDatumB, EEventArt eArt);
     void Sperrfehler();
-    void STextles(string Formnam, ETextKennz Kennz, string UbgT, ListBox.ObjectCollection ocItems);
+    void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList<IListItem<int>> ocItems,(string, ETextKennz) Bez);
     int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0);
     void TextTeilen(string UbgT, string UbgT4, string Kennung);
     string Umlaute4(string Fld, int uml);
@@ -336,12 +340,14 @@ public interface IModul1
     void FrmPerson_EventUpd(int PersInArb);
     void SetCommandBtn(bool xCond, Button button, string sBtnHeader);
     void Berufles(int PersInArb, EEventArt Beruf, ComboBox combo1);
-    string ortles1(int OrtNr, byte Schalt);
-    IList<string> DeleteDoublicates<Type>(IList<string> oList, IList<string> gList);
+    IList<T> DeleteDoublicates<T>(IList<T> oList, IList<T> gList);
     int Eltsuch(int persInArb);
     IEnumerable<IListItem<(int, DateTime, ELinkKennz)>> Family_Kindsuch(int iFamNr);
     string Ancesters_GetPersonData(int PersonNr, out int Ahnsp, out string Kont20);
     string Ancester_GetAncesterData(int iAnc);
     void Ausdruck(string Datnam);
-    void Bildzeig1(string biart, int PBW, int PBH, string Form, ref string BiText1, ref string Bitext2, ref bool ja);
+    bool Bildzeig1(string biart, int PBW, int PBH, string Form, out string BiText1, out string Bitext2);
+    void KTextles(string Formnam, ETextKennz eTKennz, (string sText, ETextKennz eTKnz) Bezeichnu);
+    void ExportPlace(int OrtNr, string sOrt, string ind1, string namen);
+    bool RemoveWriteProtection(string sFile);
 }
