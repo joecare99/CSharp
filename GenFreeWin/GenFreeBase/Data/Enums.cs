@@ -190,7 +190,6 @@ public enum NameFields
     LfNr,
     Ruf,
     Spitz,
-    LfNr1 // Only trmporary for conversion
 }
 public enum NameIndex
 {
@@ -398,6 +397,11 @@ public enum SourceIndex
     Nam,
     Nr,
     Zitat
+}
+
+public enum SuchFields
+{
+    Sich,
 }
 public enum RepoFields
 {

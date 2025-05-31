@@ -44,6 +44,9 @@ public interface IPersonenViewModel : INotifyPropertyChanged
     IRelayCommand NoWitnessesCommand { get; }
     IRelayCommand WitnessIfNoCommand { get; }
     IRelayCommand ResarchCommand { get; }
+    IRelayCommand HometownCommand { get; }
+    IRelayCommand PropertyCommand { get; }
+    IRelayCommand ShowPlacesCommand { get; }
 
     EUserText eFamHdr { get; }
 
@@ -66,9 +69,22 @@ public interface IPersonenViewModel : INotifyPropertyChanged
     string Status_Text { get; set; }
     string Marriages_Text { get; }
     string Notes_Text { get; }
+    string CreationDate_Text { get; }
+    string Family1_Text { get; }
+    string Age_Text { get; }
     string Search_Text { get; }
     string Search2_Text { get; }
     string Search3_Text { get; }
+    string AncesterNr_Text { get; }
+    string NoWitnesses_Text { get; }
+    string NoGodparents_Text { get; }
+    string NoSources_Text { get; }
+    string Display_Text { get; }
+    string LinkedPerson_Text { get; }
+    string LinkTo_Text { get; }
+    string WitnessIfNo_Text { get; }
+    string Mandant_Text { get; }
+    string Property_Text { get; }
 
     ObservableCollection<ListItem<int>> Occupation_Items { get; }
     ListItem<int> Occupation_SelectedItem { get; set; }
@@ -105,6 +121,9 @@ public interface IPersonenViewModel : INotifyPropertyChanged
     bool NoWitnesses_Visible { get; }
     bool WitnessIfNo_Visible { get; }
     bool Resarch_Visible { get; }
+    bool GodparentIfNo_Visible { get; }
+    bool NoGodparents_Visible { get; }
+    bool EndTextInput_Visible { get; }
 
     bool PersImpQuerry1_Visible { get; }
     bool Dublicates_Visible { get; }

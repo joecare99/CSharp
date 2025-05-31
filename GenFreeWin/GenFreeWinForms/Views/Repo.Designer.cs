@@ -36,6 +36,8 @@ public partial class Repo
         lblSorting = new Label();
         lblEMail = new Label();
         lblURL = new Label();
+        Label8 = new Label();
+        Label9 = new Label();
         edtPredicate = new TextBox();
         TextBox2 = new TextBox();
         TextBox3 = new TextBox();
@@ -43,16 +45,14 @@ public partial class Repo
         TextBox5 = new TextBox();
         TextBox6 = new TextBox();
         RichTextBox1 = new RichTextBox();
+        RichTextBox2 = new RichTextBox();
         btnSave = new Button();
         btnSave2 = new Button();
-        ListBox1 = new ListBox();
-        Label8 = new Label();
         btnClose = new Button();
         btnNewEntry = new Button();
-        RichTextBox2 = new RichTextBox();
-        Button5 = new Button();
+        btnDelete = new Button();
+        ListBox1 = new ListBox();
         ListBox2 = new ListBox();
-        Label9 = new Label();
         SuspendLayout();
         lblRepoName.BackColor = Color.FromArgb(224, 224, 224);
         lblRepoName.Location = new Point(12, 10);
@@ -196,14 +196,14 @@ public partial class Repo
         RichTextBox2.Size = new Size(576, 22);
         RichTextBox2.TabIndex = 22;
         RichTextBox2.Text = "";
-        Button5.BackColor = Color.FromArgb(128, 255, 255);
-        Button5.Location = new Point(306, 358);
-        Button5.Name = "btnHometown";
-        Button5.Size = new Size(128, 23);
-        Button5.TabIndex = 23;
-        Button5.Text = "löschen";
-        Button5.UseVisualStyleBackColor = false;
-        Button5.Visible = false;
+        btnDelete.BackColor = Color.FromArgb(128, 255, 255);
+        btnDelete.Location = new Point(306, 358);
+        btnDelete.Name = "btnDelete";
+        btnDelete.Size = new Size(128, 23);
+        btnDelete.TabIndex = 23;
+        btnDelete.Text = "löschen";
+        btnDelete.UseVisualStyleBackColor = false;
+        btnDelete.Visible = false;
         ListBox2.FormattingEnabled = true;
         ListBox2.ItemHeight = 17;
         ListBox2.Location = new Point(9, 436);
@@ -221,7 +221,7 @@ public partial class Repo
         ClientSize = new Size(1016, 678);
         Controls.Add(Label9);
         Controls.Add(ListBox2);
-        Controls.Add(Button5);
+        Controls.Add(btnDelete);
         Controls.Add(ListBox1);
         Controls.Add(RichTextBox2);
         Controls.Add(btnNewEntry);
@@ -255,17 +255,19 @@ public partial class Repo
 
 
     [CommandBinding(nameof(IRepoViewModel.SaveCommand))]
-    internal Button btnSave;
+    public Button btnSave;
     [CommandBinding(nameof(IRepoViewModel.Save2Command))]
-    private Button btnSave2;
-    private ListBox ListBox1;
+    public Button btnSave2;
     [CommandBinding(nameof(IRepoViewModel.CloseCommand))]
-    private Button btnClose;
+    public Button btnClose;
     [CommandBinding(nameof(IRepoViewModel.NewEntryCommand))]
-    private Button btnNewEntry;
+    public Button btnNewEntry;
     [CommandBinding(nameof(IRepoViewModel.DeleteCommand))]
-    private Button Button5;
+    private Button btnDelete;
+    [DblClickBinding(nameof(IRepoViewModel.Sources_DblCommand))]
     private ListBox ListBox2;
+    [DblClickBinding(nameof(IRepoViewModel.List2DblCommand))]
+    private ListBox ListBox1;
     internal Label lblRepoName;
     internal Label lblState;
     internal Label lblDisplayHint;
@@ -276,7 +278,7 @@ public partial class Repo
     [TextBinding(nameof(IRepoViewModel.SourceCount))]
     internal Label Label8;
     internal Label Label9;
-    [TextBinding(nameof(IRepoViewModel.RepoName))]
+    [TextBinding(nameof(IRepoViewModel.RepoName_Text))]
     internal TextBox edtPredicate;
     internal TextBox TextBox2;
     internal TextBox TextBox3;

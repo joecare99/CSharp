@@ -16,6 +16,9 @@ public partial class Adresse : Form
     private static readonly List<WeakReference> __ENCList = new();
 
     private IAdresseViewModel _adresseViewModel;
+
+    public static Adresse Default;
+
     [DebuggerNonUserCode]
     public Adresse(IAdresseViewModel viewModel)
     {

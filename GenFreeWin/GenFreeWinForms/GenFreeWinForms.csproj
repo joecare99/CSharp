@@ -26,9 +26,6 @@
     <Compile Update="Views\FraPersImpQuerry.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Views\FraStatistics.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Views\Lizenz.cs">
       <SubType>Form</SubType>
     </Compile>

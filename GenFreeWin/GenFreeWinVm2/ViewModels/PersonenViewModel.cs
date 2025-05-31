@@ -176,12 +176,53 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 
     public bool Dublicates_Visible => throw new NotImplementedException();
 
+    public IRelayCommand PropertyCommand => throw new NotImplementedException();
+
+    public IRelayCommand ShowPlacesCommand => throw new NotImplementedException();
+
+    public string CreationDate_Text => throw new NotImplementedException();
+
+    public string Family1_Text => throw new NotImplementedException();
+
+    public string Age_Text => throw new NotImplementedException();
+
+    public string AncesterNr_Text => throw new NotImplementedException();
+
+    public string NoWitnesses_Text => throw new NotImplementedException();
+
+    public string NoGodparents_Text => throw new NotImplementedException();
+
+    public string NoSources_Text => throw new NotImplementedException();
+
+    public string Display_Text => throw new NotImplementedException();
+
+    public string LinkedPerson_Text => throw new NotImplementedException();
+
+    public string LinkTo_Text => throw new NotImplementedException();
+
+    public string WitnessIfNo_Text => throw new NotImplementedException();
+
+    public string Mandant_Text => throw new NotImplementedException();
+
+    public string Property_Text => throw new NotImplementedException();
+
+    public bool GodparentIfNo_Visible => throw new NotImplementedException();
+
+    public bool NoGodparents_Visible => throw new NotImplementedException();
+
+    public bool EndTextInput_Visible => throw new NotImplementedException();
+
     public int AendPruef(int persInArb, int ubg2)
     {
         throw new NotImplementedException();
     }
 
     public (EEventArt eArt, int iLfNr) GetEventArtNr(EUserText iText)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Perzeig(int persInArb)
     {
         throw new NotImplementedException();
     }

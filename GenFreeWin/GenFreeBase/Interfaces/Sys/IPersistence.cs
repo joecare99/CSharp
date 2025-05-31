@@ -57,4 +57,12 @@ public interface IPersistence
     void ReadBoolsTemp( string v, IList<bool> Option);
     void ReadStringsOutput(string sSection, IList<string> asValue, int iCount);
     void WriteStringsOutput(string sSection, IList<string> asValue, int iCount);
+    void DeleteTempFile(string v);
+    bool ExistFileTemp(string v);
+    int FileLengthTemp(string v);
+    void WriteStringsTemp(string sSection, IList<string> asValue);
+    int[] ReadIntsMand(string sSection, int cCnt);
+    IList<string> ReadStringsMand(string v1, int v2);
+    void ReadStringsTemp(string v, IList<string> asOption);
+    string CreateTempFilefromInit(string v);
 }
