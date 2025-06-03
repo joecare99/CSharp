@@ -6,7 +6,7 @@ public interface IFraStatisticsViewModel: INotifyPropertyChanged
 {
     public int Persons { get; }
 
-    public int Families { get;  }
+    public int Families { get; }
 
     public int Places { get; }
 
