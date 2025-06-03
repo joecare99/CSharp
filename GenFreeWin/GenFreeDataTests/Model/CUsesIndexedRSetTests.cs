@@ -398,9 +398,9 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
 
         public void FillData(IRecordset rs)
         {
-            ID = rs.Fields[nameof(TestIndexField.ID)].AsInt();
-            Description = rs.Fields[nameof(TestIndexField.Description)].AsString();
-            Data = rs.Fields[nameof(TestIndexField.Data)].AsInt();
+            ID = rs.Fields[TestIndexField.ID].AsInt();
+            Description = rs.Fields[TestIndexField.Description].AsString();
+            Data = rs.Fields[TestIndexField.Data].AsInt();
         }
 
         public void SetDBValue(IRecordset rs, Enum[]? asProps)

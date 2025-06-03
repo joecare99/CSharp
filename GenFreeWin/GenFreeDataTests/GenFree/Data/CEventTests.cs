@@ -21,15 +21,15 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CEvent(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(EventFields.Art)].Value.Returns(101, 102, 502, 503);
-            testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(2, 3, 5);
-            testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(1, 6, 4, 9);
-            testRS.Fields[nameof(EventFields.DatumV)].Value.Returns(19000101);
-            testRS.Fields[nameof(EventFields.DatumB)].Value.Returns(19101231);
-            testRS.Fields[nameof(EventFields.DatumV_S)].Value.Returns("<V>");
-            testRS.Fields[nameof(EventFields.DatumB_S)].Value.Returns("<B>");
-            testRS.Fields[nameof(EventFields.VChr)].Value.Returns("0");
-            testRS.Fields[nameof(EventFields.Ort)].Value.Returns(2);
+            testRS.Fields[EventFields.Art].Value.Returns(101, 102, 502, 503);
+            testRS.Fields[EventFields.PerFamNr].Value.Returns(2, 3, 5);
+            testRS.Fields[EventFields.LfNr].Value.Returns(1, 6, 4, 9);
+            testRS.Fields[EventFields.DatumV].Value.Returns(19000101);
+            testRS.Fields[EventFields.DatumB].Value.Returns(19101231);
+            testRS.Fields[EventFields.DatumV_S].Value.Returns("<V>");
+            testRS.Fields[EventFields.DatumB_S].Value.Returns("<B>");
+            testRS.Fields[EventFields.VChr].Value.Returns("0");
+            testRS.Fields[EventFields.Ort].Value.Returns(2);
         }
 
         [TestMethod()]
@@ -57,10 +57,10 @@ namespace GenFree.Data.Tests
 
         public void GetPersonDatesTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
-            testRS.Fields[nameof(EventFields.Art)].Value.Returns(101, 101);
-            testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(1, 0, 1, 0);
+            testRS.Fields[EventFields.Art].Value.Returns(101, 101);
+            testRS.Fields[EventFields.LfNr].Value.Returns(1, 0, 1, 0);
             if (xExp)
-                testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(iActFam);
+                testRS.Fields[EventFields.PerFamNr].Value.Returns(iActFam);
             var iCnt = 0;
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true, false, true);
             Action<EEventArt, int, string>? testAct = eArt switch
@@ -84,9 +84,9 @@ namespace GenFree.Data.Tests
 
         public void ReadFamDatesTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
-            testRS.Fields[nameof(EventFields.Art)].Value.Returns(502, 502);
-            testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(2, 2);
-            testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(1, 1, 0);
+            testRS.Fields[EventFields.Art].Value.Returns(502, 502);
+            testRS.Fields[EventFields.PerFamNr].Value.Returns(2, 2);
+            testRS.Fields[EventFields.LfNr].Value.Returns(1, 1, 0);
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, false, true);
             var adAct = testClass.ReadFamDates(iActFam);
         }
@@ -98,10 +98,10 @@ namespace GenFree.Data.Tests
         [DataRow("2-2eA_Baptism", 2, 2, EEventArt.eA_Baptism, false)]
         public void PersonDatTest(string sName, int iActFam, int iLfdNr, EEventArt eArt, bool xExp)
         {
-            testRS.Fields[nameof(EventFields.Art)].Value.Returns(101, 101, 101, 101, 103);
-            testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(1, 0, 1, 0);
+            testRS.Fields[EventFields.Art].Value.Returns(101, 101, 101, 101, 103);
+            testRS.Fields[EventFields.LfNr].Value.Returns(1, 0, 1, 0);
             if (xExp)
-                testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(iActFam);
+                testRS.Fields[EventFields.PerFamNr].Value.Returns(iActFam);
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true, true, false, false, true);
             testClass.PersonDat(iActFam, out var dt1, out var dt2);
             testRS.Received().Seek("=", EEventArt.eA_Birth, iActFam);
@@ -203,9 +203,9 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
             if (xExp)
-                testRS.Fields[nameof(EventFields.Ort)].Value.Returns(15, 17, 19);
+                testRS.Fields[EventFields.Ort].Value.Returns(15, 17, 19);
             else
-                testRS.Fields[nameof(EventFields.Ort)].Value.Returns(0);
+                testRS.Fields[EventFields.Ort].Value.Returns(0);
             var cEv = testClass.ReadDataPl(eArt, iActFam, out var xBreak, (short)iLfdNr);
             Assert.AreEqual(!xExp, xBreak);
             if (xExp)
@@ -501,19 +501,19 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, true);
             if (eArt == EEventArt.eA_Unknown)
             {
-                testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(0);
-                testRS.Fields[nameof(EventFields.DatumV)].Value.Returns(0);
-                testRS.Fields[nameof(EventFields.DatumB)].Value.Returns(0);
-                testRS.Fields[nameof(EventFields.DatumV_S)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.DatumB_S)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.Ort)].Value.Returns(0);
-                testRS.Fields[nameof(EventFields.Ort_S)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.Art)].Value.Returns(0);
-                testRS.Fields[nameof(EventFields.ArtText)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.Bem1)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.Bem2)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.Bem3)].Value.Returns("");
-                testRS.Fields[nameof(EventFields.Reg)].Value.Returns("");
+                testRS.Fields[EventFields.LfNr].Value.Returns(0);
+                testRS.Fields[EventFields.DatumV].Value.Returns(0);
+                testRS.Fields[EventFields.DatumB].Value.Returns(0);
+                testRS.Fields[EventFields.DatumV_S].Value.Returns("");
+                testRS.Fields[EventFields.DatumB_S].Value.Returns("");
+                testRS.Fields[EventFields.Ort].Value.Returns(0);
+                testRS.Fields[EventFields.Ort_S].Value.Returns("");
+                testRS.Fields[EventFields.Art].Value.Returns(0);
+                testRS.Fields[EventFields.ArtText].Value.Returns("");
+                testRS.Fields[EventFields.Bem1].Value.Returns("");
+                testRS.Fields[EventFields.Bem2].Value.Returns("");
+                testRS.Fields[EventFields.Bem3].Value.Returns("");
+                testRS.Fields[EventFields.Reg].Value.Returns("");
             }
             Assert.AreEqual(!xExp, testClass.DeleteEmptyFam(iActFam, eArt));
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);

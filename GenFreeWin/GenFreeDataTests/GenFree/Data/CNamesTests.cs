@@ -21,9 +21,9 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CNames(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(NameFields.Kennz)].Value.Returns('N', 'V', '-', 'F', 'A', 'B');
-            testRS.Fields[nameof(NameFields.LfNr)].Value.Returns(1, 3, 5, 16);
-            testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 6, 4, 9);
+            testRS.Fields[NameFields.Kennz].Value.Returns('N', 'V', '-', 'F', 'A', 'B');
+            testRS.Fields[NameFields.LfNr].Value.Returns(1, 3, 5, 16);
+            testRS.Fields[NameFields.PersNr].Value.Returns(2, 6, 4, 9);
             testRS.ClearReceivedCalls();
         }
 
@@ -183,7 +183,7 @@ namespace GenFree.Data.Tests
         public void ReadPersonNamesTest(string sName, int iActPers, ETextKennz eTKennz, int iLfNr, bool xExp)
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, false, false, true);
-            testRS.Fields[nameof(NameFields.PersNr)].Value.Returns(2, 2, 2, 2, 2, 9);
+            testRS.Fields[NameFields.PersNr].Value.Returns(2, 2, 2, 2, 2, 9);
 
             Assert.AreEqual(xExp, testClass.ReadPersonNames(iActPers, out var aiNames, out var aVrn));
             //          Assert.AreEqual(!xExp, xBreak);
@@ -210,9 +210,9 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).Edit();
             testRS.Received(xExp ? 0 : 1).AddNew();
             testRS.Received().Update();
-            testRS.Received().Fields[nameof(NameFields.LfNr)].Value = iLfNr;
-            testRS.Received().Fields[nameof(NameFields.Kennz)].Value = eTKennz;
-            testRS.Received(xExp ? 5 : 6).Fields[nameof(NameFields.PersNr)].Value = iActPers;
+            testRS.Received().Fields[NameFields.LfNr].Value = iLfNr;
+            testRS.Received().Fields[NameFields.Kennz].Value = eTKennz;
+            testRS.Received(xExp ? 5 : 6).Fields[NameFields.PersNr].Value = iActPers;
         }
 
         [DataTestMethod()]

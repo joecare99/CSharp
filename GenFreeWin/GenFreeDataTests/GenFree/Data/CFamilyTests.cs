@@ -24,9 +24,9 @@ namespace GenFree.Data.Tests
             testST.Now.Returns(new DateTime(2022, 12, 31));
             testClass = new CFamily(() => testRS, testST);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(FamilyFields.FamNr)].Value.Returns(2, 6, 4, 9);
-            testRS.Fields[nameof(FamilyFields.Eltern)].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[nameof(FamilyFields.Aeb)].Value.Returns(1, 3, 5);
+            testRS.Fields[FamilyFields.FamNr].Value.Returns(2, 6, 4, 9);
+            testRS.Fields[FamilyFields.Eltern].Value.Returns('N', 'V', 'V', 'A', 'B');
+            testRS.Fields[FamilyFields.Aeb].Value.Returns(1, 3, 5);
             testRS.ClearReceivedCalls();
         }
 

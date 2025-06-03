@@ -28,9 +28,9 @@ public class CRSDataTests
 
         public override void FillData(IRecordset dB_Table)
         {
-            dB_Table.Fields[nameof(TestProp.ID)].Value = ID;
-            dB_Table.Fields[nameof(TestProp.sDescription)].Value = sDescription;
-            dB_Table.Fields[nameof(TestProp.iData)].Value = iData;
+            dB_Table.Fields[TestProp.ID].Value = ID;
+            dB_Table.Fields[TestProp.sDescription].Value = sDescription;
+            dB_Table.Fields[TestProp.iData].Value = iData;
         }
 
         public override Type GetPropType(TestProp prop) => prop switch
@@ -83,9 +83,9 @@ public class CRSDataTests
         testRS = Substitute.For<IRecordset>();
         testClass = new(testRS);
         testRS.NoMatch.Returns(true);
-        testRS.Fields[nameof(TestProp.ID)].Value.Returns(1, 2, 3);
-        testRS.Fields[nameof(TestProp.sDescription)].Value.Returns("Some Test", "Some_Test", "SomeTest_");
-        testRS.Fields[nameof(TestProp.iData)].Value.Returns(320, 321, 322);
+        testRS.Fields[TestProp.ID].Value.Returns(1, 2, 3);
+        testRS.Fields[TestProp.sDescription].Value.Returns("Some Test", "Some_Test", "SomeTest_");
+        testRS.Fields[TestProp.iData].Value.Returns(320, 321, 322);
         testRS.ClearReceivedCalls();
     }
 

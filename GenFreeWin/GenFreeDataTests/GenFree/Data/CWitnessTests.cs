@@ -20,11 +20,11 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CWitness(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(WitnessFields.FamNr)].Value.Returns(1, 2, 3);
-            testRS.Fields[nameof(WitnessFields.PerNr)].Value.Returns(2, 3, 5);
-            testRS.Fields[nameof(WitnessFields.Kennz)].Value.Returns(3, 4, 5);
-            testRS.Fields[nameof(WitnessFields.Art)].Value.Returns(101, 102, 502, 503);
-            testRS.Fields[nameof(WitnessFields.LfNr)].Value.Returns(1, 6, 4, 9);
+            testRS.Fields[WitnessFields.FamNr].Value.Returns(1, 2, 3);
+            testRS.Fields[WitnessFields.PerNr].Value.Returns(2, 3, 5);
+            testRS.Fields[WitnessFields.Kennz].Value.Returns(3, 4, 5);
+            testRS.Fields[WitnessFields.Art].Value.Returns(101, 102, 502, 503);
+            testRS.Fields[WitnessFields.LfNr].Value.Returns(1, 6, 4, 9);
             testRS.ClearReceivedCalls();
         }
 
@@ -101,7 +101,7 @@ namespace GenFree.Data.Tests
         public void DeleteAllETest(int iAct, int iK, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iK / 2 != iAct, false, false, true);
-            testRS.Fields[nameof(WitnessFields.Kennz)].Value.Returns(4, 6, 5);
+            testRS.Fields[WitnessFields.Kennz].Value.Returns(4, 6, 5);
             testClass.DeleteAllE(iAct, iK);
             Assert.AreEqual(nameof(WitnessIndex.ElSu), testRS.Index);
             testRS.Received(1).Seek("=", iAct, iK);
@@ -125,7 +125,7 @@ namespace GenFree.Data.Tests
         public void DeleteAllZeugTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iK / 2 != iAct, false, false, true);
-            testRS.Fields[nameof(WitnessFields.Kennz)].Value.Returns(4, 6, 5);
+            testRS.Fields[WitnessFields.Kennz].Value.Returns(4, 6, 5);
             testClass.DeleteAllZ(iAct, iK, eAct, sAct);
             testRS.Received(1).Seek("=", iAct, iK, eAct, sAct);
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
@@ -138,7 +138,7 @@ namespace GenFree.Data.Tests
         {
             bool testPred(int i) => i % 2 == 0;
             testRS.EOF.Returns(iAct is not (> 0 and < 3) || iK / 2 != iAct, false, false, true);
-            testRS.Fields[nameof(WitnessFields.Art)].Value.Returns(101, 502, 503);
+            testRS.Fields[WitnessFields.Art].Value.Returns(101, 502, 503);
             testClass.DeleteAllFamPred(testPred);
             testRS.ReceivedWithAnyArgs(0).Seek("=");
             testRS.Received(1).MoveFirst();

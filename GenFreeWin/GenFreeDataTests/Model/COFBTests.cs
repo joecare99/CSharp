@@ -20,9 +20,9 @@ namespace GenFree.Model.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new COFB(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(OFBFields.PerNr)].Value.Returns(1, 2, 3);
-            testRS.Fields[nameof(OFBFields.Kennz)].Value.Returns("AA", "BB", "OO");
-            testRS.Fields[nameof(OFBFields.TextNr)].Value.Returns(2, 3, 4);
+            testRS.Fields[OFBFields.PerNr].Value.Returns(1, 2, 3);
+            testRS.Fields[OFBFields.Kennz].Value.Returns("AA", "BB", "OO");
+            testRS.Fields[OFBFields.TextNr].Value.Returns(2, 3, 4);
             testRS.ClearReceivedCalls();
         }
 

@@ -21,10 +21,10 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CPlace(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(PlaceFields.OrtNr)].Value.Returns(2, 6, 4, 9);
-            testRS.Fields[nameof(PlaceFields.Ort)].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[nameof(PlaceFields.PLZ)].Value.Returns("F", 'M', '_', 'C', 'B');
-            testRS.Fields[nameof(PlaceFields.Bem)].Value.Returns(1, 3, 5);
+            testRS.Fields[PlaceFields.OrtNr].Value.Returns(2, 6, 4, 9);
+            testRS.Fields[PlaceFields.Ort].Value.Returns('N', 'V', 'V', 'A', 'B');
+            testRS.Fields[PlaceFields.PLZ].Value.Returns("F", 'M', '_', 'C', 'B');
+            testRS.Fields[PlaceFields.Bem].Value.Returns(1, 3, 5);
             testRS.ClearReceivedCalls();
         }
 
