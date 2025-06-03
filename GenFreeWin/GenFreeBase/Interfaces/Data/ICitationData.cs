@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GenFree.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,5 +21,5 @@ public interface ICitationData: IHasIRecordset
 
     void Clear(); // Method to clear the citation data
 
-    void Commit(int iPerFamNr); // Method to commit the citation data changes
+    void Commit(int iPerFamNr, EEventArt eArt, short lfNR);
 }

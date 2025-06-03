@@ -276,6 +276,8 @@ public interface IModul1
     string Job { get; set; }
     bool reorga { get; set; }
     string sDemoVerNotPossibl { get; }
+    int PersInArbsp { get; }
+
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
     Image AutoSizeImage(Image oBitmap, int maxWidth, int maxHeight, bool bStretch = false);
@@ -295,8 +297,7 @@ public interface IModul1
     IList<int> Famsuch(int PersInArb, ELinkKennz eLKennz);
     void Famdatles(int FamInArb, out string[] Kont);
     void Famdatles2();
-    void FrmFamily_fameinlesen(int FamInArb, out short Rich);
-     string GoogleInstallPath();
+    string GoogleInstallPath();
     void Info();
     [Obsolete("Use File.Exists")]
     bool IstDa(string DateiName);
@@ -350,4 +351,8 @@ public interface IModul1
     void KTextles(string Formnam, ETextKennz eTKennz, (string sText, ETextKennz eTKnz) Bezeichnu);
     void ExportPlace(int OrtNr, string sOrt, string ind1, string namen);
     bool RemoveWriteProtection(string sFile);
+    void Famdatles(int FamInArb);
+    string Wochtag(string Datu);
+    string Event_PreDisplay(bool xCitation=false, bool xAnnotation = false, bool xBC = false, bool xReg = false, bool xWitness = false);
+    IDictionary<EEventArt, ((EEventArt, int, short), string, DateTime)> FamPerDatles(int PersInArb, int schalt);
 }

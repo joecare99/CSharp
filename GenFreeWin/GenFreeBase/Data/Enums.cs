@@ -350,17 +350,23 @@ public enum SourceLinkIndex
 {
     Tab, // Person/o04_Family-Index
     Tab22, // Event-Index
+    Tab21,
+    Tab23,
 }
 public enum SourceLinkFields
 {
     /// <summary>
     /// Type of Link
     /// </summary>
-    _1, // Kind    
+    _0, // Kind    
     /// <summary>
-    /// The Source Nr (Person/o04_Family/Event)
+    /// The Person/Family PerNr 
     /// </summary>
-    _2, // Nr
+    _1, // PerFamNr
+    /// <summary>
+    /// The Source PerNr (Person/o04_Family/Event)
+    /// </summary>
+    _2, // PerNr
     _3, // NrNeu    
     /// <summary>
     /// The Page
@@ -422,6 +428,38 @@ public enum RepoIndex
     Nr
 }
 
+public enum NB_Frau1Fields
+{
+    Nr,
+    Gen,
+    LfNr,
+    Alt,
+    Kek1,
+    Kek2,
+    Name
+}
+public enum NB_Frau1Index
+{
+    LfNr,
+    PerNR
+}
+
+public enum NB_AhnenFields
+{
+    PerNr,
+    Gene,
+    Weiter,
+    Ehe,
+    Ahn1,
+    Ahn2,
+    Ahn3,
+    Name
+}
+public enum NB_AhnenIndex
+{
+    LfNr,
+    PerNR
+}
 public enum ENameKennz : int
 {
     nkGivnName = 0,

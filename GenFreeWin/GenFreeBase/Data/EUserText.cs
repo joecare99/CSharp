@@ -366,7 +366,7 @@ public enum EUserText : int
     /// </summary>
     t238 = 238,
     /// <summary>
-    /// Nachf.-Nr.:
+    /// Nachf.-PerNr.:
     /// </summary>
     t239 = 239,
     /// <summary>

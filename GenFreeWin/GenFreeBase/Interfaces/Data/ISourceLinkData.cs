@@ -2,7 +2,7 @@
 
 namespace GenFree.Interfaces.Data
 {
-    public interface ISourceLinkData : IHasID<(int, EEventArt, int)>, IHasPropEnum<ESourceLinkProp>, IHasIRecordset
+    public interface ISourceLinkData : IHasID<(int, EEventArt, int, short)>, IHasPropEnum<ESourceLinkProp>, IHasIRecordset
     {
         EEventArt eArt { get; }
         int iLfdNr { get; }
