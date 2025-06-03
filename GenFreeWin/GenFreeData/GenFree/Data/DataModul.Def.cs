@@ -366,7 +366,7 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Quellen),
           Fields = new stFieldDef[]{
-                new(SourceFields._1, TypeCode.Int64) ,  // Nr
+                new(SourceFields._1, TypeCode.Int64) ,  // PerNr
                 new(SourceFields._2, TypeCode.String) { Laenge = 240 }, // Titel
                 new(SourceFields._3, TypeCode.String) { Laenge = 240 }, // Ort
                 new(SourceFields._4, TypeCode.String) { Laenge = 240 }, // Zitat

@@ -8,7 +8,7 @@ using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {
-    public class CSourceLinkData : CRSDataC<ESourceLinkProp, (int, EEventArt, int)>, ISourceLinkData
+    public class CSourceLinkData : CRSDataC<ESourceLinkProp, (int, EEventArt, int, short)>, ISourceLinkData
     {
 
         public CSourceLinkData(IRecordset recordset) : base(recordset)
@@ -25,8 +25,8 @@ namespace GenFree.Data
         public string sField3 { get; internal set; }
         public int iQuNr { get; internal set; }
 
-        public override (int, EEventArt, int) ID =>
-            (iLinkType, eArt, iPersNr);
+        public override (int, EEventArt, int, short) ID =>
+            (iLinkType, eArt, iPersNr, (short)iLfdNr);
 
         public override void FillData(IRecordset db_Table)
         {
@@ -69,10 +69,10 @@ namespace GenFree.Data
             _ => throw new NotImplementedException()
         };
 
-        protected override IRecordset? Seek((int, EEventArt, int) iD)
+        protected override IRecordset? Seek((int, EEventArt, int, short) iD)
         {
             _db_Table.Index = nameof(SourceLinkIndex.Tab22);
-            _db_Table.Seek("=", iD.Item1, iD.Item2, iD.Item3);
+            _db_Table.Seek("=", iD.Item1, iD.Item2, iD.Item3, iD.Item4);
             return _db_Table.NoMatch ? null : _db_Table;
         }
 

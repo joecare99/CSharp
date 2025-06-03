@@ -1,18 +1,21 @@
 ﻿//using DAO;
+using BaseLib.Helper;
+using GenFree.GenFree.Data;
+using GenFree.GenFree.Model;
 using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using GenFree.Interfaces.Sys;
+using GenFree.Model;
+using GenFree.Sys;
+using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using GenFree.Interfaces.Model;
-using GenFree.Interfaces.DB;
-using GenFree.Sys;
-using GenFree.Model;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
-using Microsoft.VisualBasic;
-using System.Diagnostics;
-using GenFree.Interfaces.Sys;
+using System.Reflection;
 
 namespace GenFree.Data;
 
@@ -29,9 +32,13 @@ public static partial class DataModul
     public static IOFB OFB { get; } = new COFB(() => DB_OFBTable); // new IoC.GetReqiredService(IOFB);
     public static ISourceLink SourceLink { get; } = new CSourceLink(() => DB_SourceLinkTable); // new IoC.GetReqiredService(ISourceLink);
     public static IRepository Repositories { get; } = new CRepository(() => DB_RepoTable); // new IoC.GetReqiredService(IRepository); 
+  
+    public static IWB_Frau WB_Frau { get; } = new CWB_Frau(() => WB_FrauTable); // new IoC.GetReqiredService(IWB_Frau);
     public static INB_Person NB_Person { get; } = new CNB_Person(() => NB_PersonTable, Link_MoveAllPaten_ToNBWitn); // new IoC.GetReqiredService(INB_Person);
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable); // new IoC.GetReqiredService(INB_Family);
-    public static INB_Frau NB_Frau{ get; } = new CNBFrau_Frau(() => NB_Frau1Table); // new IoC.GetReqiredService(INB_Family);
+    public static INB_Frau NB_Frau{ get; } = new CNB_Frau(() => NB_Frau1Table); // new IoC.GetReqiredService(INB_Family);
+    public static INB_Ahnen NB_Ahnen{ get; } = new CNB_Ahnen(() => NB_Ahn1Table); // new IoC.GetReqiredService(INB_Family);
+    public static ICitationData CitationData { get; } = new CCitationData(); // new IoC.GetReqiredService(ICitationData);
 
     public static object[] Mandanten = new string[0];
 
@@ -56,7 +63,6 @@ public static partial class DataModul
     public static IRecordset DB_TexteTable;
     public static IRecordset DB_PictureTable;
     public static IRecordset DB_LinkTable { get; set; }
-    public static ICitationData CitationData { get; }
 
     public static IRecordset DB_WitnessTable;
     public static IRecordset DB_SourceLinkTable;
@@ -104,6 +110,28 @@ public static partial class DataModul
     public static IRecordset RechDB_Frauen1;
     // DB-Engine
     public static IDBEngine DAODBEngine_definst;
+    /// <summary>
+    /// Opens a database and returns an <see cref="IDatabase"/> instance representing the opened database.
+    /// </summary>
+    /// <param name="sPath">The name or path of the database to open. This cannot be null or empty.</param>
+    /// <param name="xExclusive">A boolean value indicating whether the database should be opened in exclusive mode.  <see langword="true"/> to
+    /// open the database exclusively; otherwise, <see langword="false"/>.</param>
+    /// <param name="xReadOnly">A boolean value indicating whether the database should be opened in read-only mode.  <see langword="true"/> to
+    /// open the database as read-only; otherwise, <see langword="false"/>.</param>
+    /// <param name="sAdditional">An optional connection string or additional parameters for opening the database.  This can be null or empty if
+    /// no additional parameters are required.</param>
+    /// <returns>An <see cref="IDatabase"/> instance representing the opened database.</returns>
+    public static IDatabase OpenDatabase(string sPath, bool xExclusive, bool xReadOnly, string sAdditional="")
+    => DAODBEngine_definst.OpenDatabase(sPath, xExclusive, xReadOnly, sAdditional);
+    /// <summary>
+    /// Opens multiple databases in read-only mode and initializes recordsets for data access.
+    /// </summary>
+    /// <remarks>This method opens the specified main database and several related databases in the same
+    /// directory. It initializes recordsets for specific tables within these databases to facilitate data access. The
+    /// databases are opened in read-only mode to ensure no modifications are made.  If the directory of the provided
+    /// <paramref name="Mandant"/> cannot be determined, an empty string is used as the directory path. Any previously
+    /// opened databases or recordsets are closed before opening new ones.</remarks>
+    /// <param name="Mandant">The file path of the main database to open. This parameter cannot be null or empty.</param>
     public static void DataOpenRO(string Mandant)
     {
         string Verz = Path.GetDirectoryName(Mandant) ?? "";
@@ -113,10 +141,10 @@ public static partial class DataModul
         DOSB?.Close();
         DSB?.Close();
         wrkDefault = dbEng.Workspaces[0];
-        MandDB = dbEng.OpenDatabase(Mandant.ToUpper(), true, true, "");
-        TempDB = dbEng.OpenDatabase(Path.Combine(Verz, "Tempo.mdb"), true, true, "");
-        DOSB = dbEng.OpenDatabase(Path.Combine(Verz, "Ort1.mdb"), true, true, "");
-        DSB = dbEng.OpenDatabase(Path.Combine(Verz, "Such.mdb"), true, true, "");
+        MandDB = dbEng.OpenDatabase(Mandant.ToUpper(), false, true, "");
+        TempDB = dbEng.OpenDatabase(Path.Combine(Verz, "Tempo.mdb"), false, true, "");
+        DOSB = dbEng.OpenDatabase(Path.Combine(Verz, "Ort1.mdb"), false, true, "");
+        DSB = dbEng.OpenDatabase(Path.Combine(Verz, "Such.mdb"), false, true, "");
         DT_DescendentTable = TempDB.OpenRecordset("Nachk", RecordsetTypeEnum.dbOpenTable);
         DSB_SearchTable = DSB.OpenRecordset("Such", RecordsetTypeEnum.dbOpenTable);
         DOSB_OrtSTable = DOSB.OpenRecordset("Ortsuch", RecordsetTypeEnum.dbOpenTable);
@@ -126,30 +154,51 @@ public static partial class DataModul
         DT_AncesterTable.Index = "PerNr";
     }
 
-    public static void PeekMandant(string mandantname, out int PersonCount, out int FamilyCount, bool xIsReadOnly)
+    /// <summary>
+    /// Opens the specified database and retrieves the total number of persons and families.
+    /// </summary>
+    /// <remarks>If <paramref name="xIsReadOnly"/> is <see langword="false"/>, the method modifies the file 
+    /// attributes of the specified database file and related files before opening the database.</remarks>
+    /// <param name="mandantname">The path to the database file to be opened.</param>
+    /// <param name="xIsReadOnly">A value indicating whether the database should be opened in read-only mode.  If <see langword="false"/>, file
+    /// attributes for certain files will be set to normal.</param>
+    /// <param name="SetAttributes">A callback action used to set file attributes. This is invoked for specific files  when <paramref
+    /// name="xIsReadOnly"/> is <see langword="false"/>.</param>
+    /// <returns>A tuple containing two integers: <list type="number"> <item>The total number of persons in the database.</item>
+    /// <item>The total number of families in the database.</item> </list></returns>
+    public static (int,int) PeekMandant(string mandantname, bool xIsReadOnly, Action<string,FileAttributes> SetAttributes)
     {
-        if (xIsReadOnly)
+        if (!xIsReadOnly)
         {
-            MandDB = DAODBEngine_definst.OpenDatabase(mandantname.ToUpper(), true, true, "");
-        }
-        else
-        {
-            File.SetAttributes(mandantname, FileAttributes.Normal);
+            SetAttributes(mandantname, FileAttributes.Normal);
             var path = Path.GetDirectoryName(mandantname) ?? "";
-            File.SetAttributes(Path.Combine(path, "Letzter.DAT"), FileAttributes.Normal);
-            File.SetAttributes(Path.Combine(path, "Such.Dat"), FileAttributes.Normal);
-            MandDB = DAODBEngine_definst.OpenDatabase(mandantname, true, false, "");
+            SetAttributes(Path.Combine(path, "Letzter.DAT"), FileAttributes.Normal);
+            SetAttributes(Path.Combine(path, "Such.Dat"), FileAttributes.Normal);
         }
+        MandDB = OpenDatabase(mandantname, false, xIsReadOnly, "");
         DB_PersonTable = MandDB.OpenRecordset(nameof(dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
         DB_FamilyTable = MandDB.OpenRecordset(nameof(dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
         DB_PersonTable.Index = nameof(PersonIndex.PerNr);
         DB_PersonTable.MoveLast();
-        PersonCount = DB_PersonTable.RecordCount;
+        var PersonCount = DB_PersonTable.RecordCount;
         DB_FamilyTable.Index = nameof(FamilyIndex.Fam);
         DB_FamilyTable.MoveLast();
-        FamilyCount = DB_FamilyTable.RecordCount;
+        var FamilyCount = DB_FamilyTable.RecordCount;
+        return (PersonCount, FamilyCount);
     }
-
+    /// <summary>
+    /// Opens and initializes multiple database connections and recordsets for the specified data source.
+    /// </summary>
+    /// <remarks>This method establishes connections to several databases and prepares recordsets for use in
+    /// subsequent operations.  If the specified database file or any related database files are missing, the method
+    /// will not create new databases  but will skip opening those files. The method also ensures that any previously
+    /// opened connections are closed before  initializing new ones.  The method assumes that certain auxiliary database
+    /// files (e.g., "Tempo.mdb", "Ort1.mdb", "Such.mdb") are located  in the same directory as the primary database. If
+    /// these files are present, they will be opened; otherwise, they  will be skipped.  The caller is responsible for
+    /// ensuring that the specified file paths are valid and accessible. Additionally, the  method initializes several
+    /// recordsets for specific tables within the databases, which are expected to exist.  If any required table is
+    /// missing, an exception may be thrown during recordset initialization.</remarks>
+    /// <param name="Mandant">The file path to the primary database to be opened. This must be a valid file path to an existing database file.</param>
     public static void DataOpen(string Mandant)
     {
         string Verz = Path.GetDirectoryName(Mandant) ?? "";
@@ -221,121 +270,75 @@ public static partial class DataModul
         DB_OFBTable = MandDB.OpenRecordset(nameof(dbTables.INDNam), RecordsetTypeEnum.dbOpenTable);
 
     }
-
+    /// <summary>
+    /// Opens a recordset for the "Lingua" table in the specified database.
+    /// </summary>
+    /// <param name="name">The name or path of the database to open.</param>
+    /// <returns>An <see cref="IRecordset"/> object representing the "Lingua" table, with the index set to "PrimaryKey"  and the
+    /// cursor positioned at the first record.</returns>
     public static IRecordset OpenLinguaRecordSet(string name)
     {
-        TempDB = DAODBEngine_definst.OpenDatabase(name, false, false, "");
-        IRecordset recordset = TempDB.OpenRecordset("Lingua", RecordsetTypeEnum.dbOpenTable);
+        TempDB = OpenDatabase(name, false, false, "");
+        IRecordset recordset = TempDB.OpenRecordset(nameof(dbTables.Lingua), RecordsetTypeEnum.dbOpenTable);
         recordset.Index = "PrimaryKey";
         recordset.MoveFirst();
         return recordset;
     }
 
     #region NB-DB Methods
+    /// <summary>
+    /// Opens the specified NB database and initializes the associated recordsets.
+    /// </summary>
+    /// <remarks>This method closes any previously opened NB database before opening the specified one.  It
+    /// initializes recordsets for the tables <see cref="nbTables.Ahnen1"/>, <see cref="nbTables.Ahnen2"/>,  <see
+    /// cref="nbTables.Frauen1"/>, and <see cref="nbTables.Frauen2"/>.  Ensure that the database file exists and is
+    /// accessible before calling this method.</remarks>
+    /// <param name="name">The name of the database to open. This must be a valid database file name.</param>
     public static void OpenNBDatabase(string name)
     {
         NB?.Close();
-        NB = DAODBEngine_definst.OpenDatabase(name, false, false, "");
+        NB = OpenDatabase(name, false, false, "");
         NB_Ahn1Table = NB.OpenRecordset(nameof(nbTables.Ahnen1), RecordsetTypeEnum.dbOpenTable);
         NB_Ahn2Table = NB.OpenRecordset(nameof(nbTables.Ahnen2), RecordsetTypeEnum.dbOpenTable);
         NB_Frau1Table = NB.OpenRecordset(nameof(nbTables.Frauen1), RecordsetTypeEnum.dbOpenTable);
         NB_Frau2Table = NB.OpenRecordset(nameof(nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
     }
-
+    /// <summary>
+    /// Creates a new temporary NB database and opens it for use.
+    /// </summary>
+    /// <remarks>This method closes any previously opened NB database before creating and opening a new one.
+    /// The temporary database file is created using the <paramref name="persistence"/> instance.</remarks>
+    /// <param name="persistence">An implementation of <see cref="IPersistence"/> used to create the temporary database file.</param>
     public static void CreateNewNBDatabase(IPersistence persistence)
     {
-        NB.Close();
+        NB?.Close();
         string name = persistence.CreateTempFilefromInit("GedAus.mdb");
         OpenNBDatabase(name);
     }
-    #region NB-Frau Methods    
-    /// <summary>
-    /// Reads the data from a specific record from Frauen-Tab (by ID).
-    /// </summary>
-    /// <param name="LfdNr">The LFD nr.</param>
-    /// <param name="persNr">The pers nr.</param>
-    /// <param name="famNr">The fam nr.</param>
-    /// <param name="gen">The gen.</param>
-    /// <param name="kek2">The kek2.</param>
-    /// <param name="kek1">The kek1.</param>
-    /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    public static bool ReadNBFrau1Data(int LfdNr, out int persNr, out int famNr, out int gen, out int kek2, out int kek1)
-    {
-        bool flag;
-        gen = default;
-        kek2 = default;
-        kek1 = default;
-        persNr = default;
-        famNr = default;
-        if (flag = FrauenTab_Exists(LfdNr))
-        {
-            (gen, persNr, famNr) = Frauen_RawReadBaseData();
-            kek1 = NB_Frau1Table.Fields["Kek1"].AsInt();
-            kek2 = NB_Frau1Table.Fields["Kek2"].AsInt();
-        }
-
-        return flag;
-    }
-    public static bool Frauen_CReadData(int num6, out (int iGen, int iPers, int iFam)? value)
-    {
-        bool result;
-        value = default;
-        if (result = FrauenTab_Exists(num6))
-        {
-            value = Frauen_RawReadBaseData();
-        }
-        return result;
-    }
-    /// <summary>
-    /// Checks if a record exists (by ID).
-    /// </summary>
-    /// <param name="num6">The num6.</param>
-    /// <returns><c>true</c> if record exists, <c>false</c> otherwise.</returns>
-    /// <remarks>can also be used to jump to a specific record</remarks>
-    public static bool FrauenTab_Exists(int num6)
-    {
-        DataModul.NB_Frau1Table.Index = "LfNr";
-        DataModul.NB_Frau1Table.Seek("=", num6);
-        return !DataModul.NB_Frau1Table.NoMatch;
-    }
-
-    public static bool FrauenTab_PersonExists(int iPersNr)
-    {
-        DataModul.NB_Frau1Table.Index = "PerNR";
-        DataModul.NB_Frau1Table.Seek("=", iPersNr);
-        return !DataModul.NB_Frau1Table.NoMatch;
-    }
-
-    private static (int iGen, int iPers, int iFam) Frauen_RawReadBaseData()
-    {
-        var num5 = DataModul.NB_Frau1Table.Fields["Gen"].Value.AsInt();
-        var iPers = DataModul.NB_Frau1Table.Fields["Nr"].AsInt();
-        var iFam = DataModul.NB_Frau1Table.Fields["Alt"].AsInt();
-        return (num5, iPers, iFam);
-    }
-
-    public static void NBFrauTab_AddRow(int iNr, int iGen, int iPersNr, int iFamNr, int iKek1, int iKek2)
-    {
-        DataModul.NB_Frau1Table.AddNew();
-        DataModul.NB_Frau1Table.Fields["Nr"].Value = iPersNr;
-        DataModul.NB_Frau1Table.Fields["Kek1"].Value = iKek1;
-        DataModul.NB_Frau1Table.Fields["Kek2"].Value = iKek2;
-        DataModul.NB_Frau1Table.Fields["Gen"].Value = iGen;
-        DataModul.NB_Frau1Table.Fields["LfNr"].Value = iNr;
-        DataModul.NB_Frau1Table.Fields["Alt"].Value = iFamNr;
-        DataModul.NB_Frau1Table.Update();
-    }
-
-    #endregion
 
     #region NB-SperrPers Methods
+    /// <summary>
+    /// Determines whether a record exists in the NB_SperrPers table for the specified person ID.
+    /// </summary>
+    /// <remarks>This method checks for the existence of a record in the NB_SperrPers table by seeking the
+    /// specified person ID.</remarks>
+    /// <param name="iPers">The ID of the person to check for in the NB_SperrPers table.</param>
+    /// <returns><see langword="true"/> if a record exists for the specified person ID; otherwise, <see langword="false"/>.</returns>
     public static bool NB_SperrPers_Exists(int iPers)
     {
         NB_SperrPersTable.Seek("=", iPers);
-        var xExist = !NB_SperrPersTable.NoMatch;
-        return xExist;
+        return !NB_SperrPersTable.NoMatch;
     }
-
+    /// <summary>
+    /// Attempts to add a person identifier to the restricted persons list if it does not already exist.
+    /// </summary>
+    /// <remarks>This method checks whether the specified person identifier is already present in the
+    /// restricted persons list. If it is not present, the identifier is added to the list and the method returns <see
+    /// langword="true"/>.  If the identifier already exists, no changes are made and the method returns <see
+    /// langword="false"/>.</remarks>
+    /// <param name="iPersInArb">The identifier of the person to be added to the restricted persons list.</param>
+    /// <returns><see langword="true"/> if the person identifier was successfully added to the restricted persons list; 
+    /// otherwise, <see langword="false"/> if the identifier already exists in the list.</returns>
     public static bool NB_SperrPers_AppendC(int iPersInArb)
     {
         bool result = false;
@@ -367,65 +370,6 @@ public static partial class DataModul
             NB_SperrFamsTable.Update();
         }
         return result;
-    }
-    #endregion
-
-    #region NB-Ahn Methods
-    public static void Ahn1_Update(int persInArb, int famInArb, int num5, int num6, short gen, string name)
-    {
-        bool noMatch = NBAhnen_ExistsPerson(persInArb);
-        if (noMatch)
-        {
-            NBAhn1AddRow(persInArb, gen, num6, num5, 0, famInArb);
-        }
-        else if (NB_Ahn1Table.Fields["Ahn1"].AsInt() != 0)
-        {
-            NBAhnen_SetWeiterRaw();
-            NBAhn1AddRow(persInArb, gen, num6, num5, 1, famInArb);
-        }
-        else
-        {
-            NBAhnen_EditRaw(gen, num5, num6, famInArb, name);
-        }
-    }
-
-    private static bool NBAhnen_ExistsPerson(int persInArb)
-    {
-        NB_Ahn1Table.Index = "PerNr";
-        NB_Ahn1Table.Seek("=", persInArb);
-        bool noMatch = NB_Ahn1Table.NoMatch;
-        return noMatch;
-    }
-
-    public static void NBAhn1AddRow(int persInArb, int iGene, int iAhn1, int iAhn2, int iWtr, int famInArb)
-    {
-        DataModul.NB_Ahn1Table.AddNew();
-        DataModul.NB_Ahn1Table.Fields["PerNr"].Value = persInArb;
-        DataModul.NB_Ahn1Table.Fields["Gene"].Value = iGene;
-        DataModul.NB_Ahn1Table.Fields["Ahn1"].Value = iAhn1;
-        DataModul.NB_Ahn1Table.Fields["Ahn2"].Value = iAhn2;
-        DataModul.NB_Ahn1Table.Fields["Ahn3"].Value = 0;
-        DataModul.NB_Ahn1Table.Fields["Weiter"].Value = iWtr;
-        DataModul.NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
-        DataModul.NB_Ahn1Table.Update();
-    }
-
-    public static void NBAhnen_EditRaw(int iGene, int iAhn2, int iAhn1, int famInArb, string surName)
-    {
-        DataModul.NB_Ahn1Table.Edit();
-        DataModul.NB_Ahn1Table.Fields["Gene"].Value = iGene;
-        DataModul.NB_Ahn1Table.Fields["Ahn1"].Value = iAhn1;
-        DataModul.NB_Ahn1Table.Fields["Ahn2"].Value = iAhn2;
-        DataModul.NB_Ahn1Table.Fields["Ehe"].Value = famInArb;
-        DataModul.NB_Ahn1Table.Fields["Name"].Value = surName;
-        DataModul.NB_Ahn1Table.Update();
-    }
-
-    public static void NBAhnen_SetWeiterRaw()
-    {
-        DataModul.NB_Ahn1Table.Edit();
-        DataModul.NB_Ahn1Table.Fields["Weiter"].Value = 1;
-        DataModul.NB_Ahn1Table.Update();
     }
     #endregion
 
@@ -468,7 +412,7 @@ public static partial class DataModul
         NB.TryExecute($"ALTER TABLE {dbTables.Frauen} ADD COLUMN {FrauenFields.Kek} Text(40);");
         NB.TryExecute($"ALTER TABLE {dbTables.Frauen} ADD COLUMN {FrauenFields.PNr} Integer);");
         NB.TryExecute($"CREATE UNIQUE INDEX {FrauenIndex.Nr} ON {dbTables.Frauen} ([{FrauenFields.PNr}]);");
-        NB_FrauTable = NB.OpenRecordset("Frauen", RecordsetTypeEnum.dbOpenTable);
+        NB_FrauTable = NB.OpenRecordset($"{dbTables.Frauen}", RecordsetTypeEnum.dbOpenTable);
         OrtindTable = NB.OpenRecordset("Ortind", RecordsetTypeEnum.dbOpenTable);
         action?.Invoke();
         if (!nbLeaveOpen)
@@ -487,9 +431,9 @@ public static partial class DataModul
             File.Copy(source, destination);
         }
         WB = DAODBEngine_definst.OpenDatabase(destination, false, false, "");
-        WB.TryExecute("ALTER TABLE Frauen ADD COLUMN Name Text(50);");
-        WB.TryExecute("CREATE INDEX Name ON Frauen ([Name]);");
-        WB_FrauTable = WB.OpenRecordset("Frauen", RecordsetTypeEnum.dbOpenTable);
+        WB.TryExecute($"ALTER TABLE {dbTables.Frauen} ADD COLUMN Name Text(50);");
+        WB.TryExecute($"CREATE INDEX Name ON {dbTables.Frauen} ([Name]);");
+        WB_FrauTable = WB.OpenRecordset($"{dbTables.Frauen}", RecordsetTypeEnum.dbOpenTable);
         WB_FrauTable.Index = "LfNr";
     }
 
@@ -669,6 +613,23 @@ public static partial class DataModul
         ? (sText, sText2)
         : ("", "");
 
+    public static string Texte_GetLeitName(string sName,string sSurnames_Text, string Kont3 = "")
+    {
+        string sLeitName = "";
+
+        IRecordset dB_TexteTable = DB_TexteTable;
+        dB_TexteTable.Index = nameof(TexteIndex.ITexte);
+        dB_TexteTable.Seek("=", sSurnames_Text.Trim(), "N");
+        if (!dB_TexteTable.NoMatch)
+        {
+
+            sLeitName = dB_TexteTable.Fields[nameof(TexteFields.Leitname)].AsString().Trim() == ""
+                ? sName
+                : (dB_TexteTable.Fields[nameof(TexteFields.Leitname)].AsString() + "," + Kont3.Trim()).Left(50);
+        }
+
+        return sLeitName;
+    }
     public static void Texte_Schreib(string Wort, string Leitn, ETextKennz Kennz, out int Satz)
     {
         Wort = Wort.Trim();
@@ -1144,7 +1105,7 @@ public static partial class DataModul
             {
                 print($"\tnew() {{ Name = \"{tbl.Name}\",");
                 print("\t  Fields = new stFieldDef[]{");
-                //             new("Ortnr",new[] { "Nr" }),
+                //             new("Ortnr",new[] { "PerNr" }),
                 //             new("Ortsu",new[] { "Name" }),
 
                 foreach (FieldDef fld in tbl.Fields)
@@ -1190,10 +1151,19 @@ public static partial class DataModul
         throw new NotImplementedException();
     }
 
-    public static IDatabase OpenDatabase(string v1, bool v2, bool v3, string v4)
-        => DAODBEngine_definst.OpenDatabase(v1, v2, v3, v4);
 
-
+    /// <summary>
+    /// Deletes a family record identified by the specified key and performs an action on a field value before deletion.
+    /// </summary>
+    /// <remarks>The method searches for a family record using the specified identifier. If the record is
+    /// found, the value of the field corresponding to the provided enumeration is passed to the <paramref
+    /// name="action"/> callback (if not <see langword="null"/>), and the record is then deleted. If no matching record
+    /// is found, the method returns <see langword="false"/> without performing any action.</remarks>
+    /// <param name="Fam1">The unique identifier of the family record to delete.</param>
+    /// <param name="v">An enumeration value representing the field to retrieve before deletion.</param>
+    /// <param name="action">An optional callback action to invoke with the value of the specified field before the record is deleted. Can be
+    /// <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if the family record was found and deleted; otherwise, <see langword="false"/>.</returns>
     public static bool Family_DeleteA(int Fam1, Enum v, Action<object> action)
     {
         bool xRes;
@@ -1226,36 +1196,6 @@ public static partial class DataModul
         return true;
     }
 
-    public static void FrauTab_SetParentTo1(IFamilyPersons family)
-    {
-        IRecordset wB_FrauTable = WB_FrauTable;
-        wB_FrauTable.Index = "LfNR";
-        foreach (var iParent in new[] { family.Mann, family.Frau })
-            if (iParent > 0)
-            {
-                wB_FrauTable.Seek("=", iParent);
-                if (!wB_FrauTable.NoMatch)
-                {
-                    wB_FrauTable.Edit();
-                    wB_FrauTable.Fields["NR"].Value = 1;
-                    wB_FrauTable.Update();
-                }
-            }
-    }
-
-    public static void FrauTab_AddParent(IFamilyPersons family)
-    {
-        IRecordset wB_FrauTable = WB_FrauTable;
-        foreach (var iParent in new[] { family.Mann, family.Frau })
-            if (iParent > 0)
-            {
-                wB_FrauTable.AddNew();
-                wB_FrauTable.Fields["LfNr"].Value = iParent;
-                wB_FrauTable.Fields["Nr"].Value = 0;
-                wB_FrauTable.Update();
-            }
-    }
-
     public static void SearchTab_Delete(int persInArb)
     {
         DSB_SearchTable.Index = "Nummer";
@@ -1265,6 +1205,33 @@ public static partial class DataModul
         {
             DSB_SearchTable.Delete();
         }
+    }
+
+    public static void SearchTable_Update(int PersInArb, string inputStr, string value, string sName, string surname, string sKenn, string sLeitName, string sAlias, Func<string, string> koelner_Phonetic, Func<string, string> getSoundEx)
+    {
+        IRecordset dSB_SearchTable = DSB_SearchTable;
+        dSB_SearchTable.Index = "Nummer";
+        dSB_SearchTable.Seek("=", PersInArb);
+        if (!dSB_SearchTable.NoMatch)
+        {
+            dSB_SearchTable.Edit();
+        }
+        else
+        {
+            dSB_SearchTable.AddNew();
+        }
+        dSB_SearchTable.Fields["Name"].Value = sName;
+        dSB_SearchTable.Fields["iKenn"].Value = sKenn;
+        dSB_SearchTable.Fields["Alias"].Value = sAlias;
+        dSB_SearchTable.Fields["Leit"].Value = sLeitName;
+        dSB_SearchTable.Fields["K_Phon"].Value = koelner_Phonetic(surname);
+        dSB_SearchTable.Fields["Sound"].Value = getSoundEx(surname);
+        dSB_SearchTable.Fields["Datum"].Value = inputStr.AsInt();
+        dSB_SearchTable.Fields["Sich"].Value = value;
+        dSB_SearchTable.Fields["Nummer"].Value = PersInArb;
+
+
+        dSB_SearchTable.Update();
     }
 
     public static void Descendent_DeleteAll(int persInArb)
@@ -1443,38 +1410,96 @@ public static partial class DataModul
     }
 
     #endregion
-
-    public static void Repository_AppendRaw(int num5, IList<string> kont1)
+    /// <summary>
+    /// Appends a new record to the repository with the specified identifier and data fields.
+    /// </summary>
+    /// <remarks>The method trims whitespace from each field in <paramref name="lsData"/> before storing it in
+    /// the repository. Additionally, a "search name" is generated by concatenating the first and third elements of
+    /// <paramref name="lsData"/>  (name and city) with a space, and this value is also stored in the
+    /// repository.</remarks>
+    /// <param name="iNr">The unique identifier for the new record.</param>
+    /// <param name="lsData">A list of strings containing the data fields for the new record. The list must contain at least 8 elements:
+    /// <list type="number"> <item><description>The name of the entity.</description></item> <item><description>The
+    /// street address.</description></item> <item><description>The city or locality.</description></item>
+    /// <item><description>The postal code.</description></item> <item><description>The phone
+    /// number.</description></item> <item><description>The email address.</description></item> <item><description>The
+    /// website URL.</description></item> <item><description>Additional remarks or comments.</description></item>
+    /// </list></param>
+    public static void Repository_AppendRaw(int iNr, IList<string> lsData)
     {
         IRecordset dB_RepoTable = DB_RepoTable;
         dB_RepoTable.AddNew();
-        dB_RepoTable.Fields[nameof(RepoFields.Nr)].Value = num5;
-        dB_RepoTable.Fields[nameof(RepoFields.Name)].Value = kont1[0].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Strasse)].Value = kont1[1].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Ort)].Value = kont1[2].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.PLZ)].Value = kont1[3].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Fon)].Value = kont1[4].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Mail)].Value = kont1[5].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Http)].Value = kont1[6].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Bem)].Value = kont1[7].Trim();
-        dB_RepoTable.Fields[nameof(RepoFields.Suchname)].Value = (kont1[0] + " " + kont1[2]).Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Nr)].Value = iNr;
+        dB_RepoTable.Fields[nameof(RepoFields.Name)].Value = lsData[0].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Strasse)].Value = lsData[1].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Ort)].Value = lsData[2].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.PLZ)].Value = lsData[3].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Fon)].Value = lsData[4].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Mail)].Value = lsData[5].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Http)].Value = lsData[6].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Bem)].Value = lsData[7].Trim();
+        dB_RepoTable.Fields[nameof(RepoFields.Suchname)].Value = (lsData[0] + " " + lsData[2]).Trim();
         dB_RepoTable.Update();
     }
 
     #region Picture Methods
-    public static bool Picture_Exists(int iPersonNr, char ePKennz)
+    /// <summary>
+    /// Determines whether a picture exists for the specified family number and identifier.
+    /// </summary>
+    /// <remarks>This method performs a database lookup to check for the existence of a picture based on the
+    /// provided parameters.</remarks>
+    /// <param name="iPerFamNr">The family number to search for.</param>
+    /// <param name="ePKennz">The identifier associated with the picture.</param>
+    /// <returns><see langword="true"/> if a picture exists for the specified family number and identifier; otherwise, <see
+    /// langword="false"/>.</returns>
+    public static bool Picture_Exists(int iPerFamNr, char ePKennz)
     {
         DB_PictureTable.Index = nameof(PictureIndex.PerKenn);
-        DB_PictureTable.Seek("=", ePKennz, iPersonNr);
+        DB_PictureTable.Seek("=", ePKennz, iPerFamNr);
         return !DB_PictureTable.NoMatch;
     }
-
+    /// <summary>
+    /// Determines whether a picture associated with the specified family identifier exists in the database.
+    /// </summary>
+    /// <remarks>This method queries the database to check for the existence of a picture record with a
+    /// specific family identifier. Ensure that the database connection is properly initialized before calling this
+    /// method.</remarks>
+    /// <param name="FamInArb">The identifier of the family to check for an associated picture.</param>
+    /// <returns><see langword="true"/> if a picture associated with the specified family identifier exists; otherwise, <see
+    /// langword="false"/>.</returns>
+    public static bool Picture_ExistsFam(int FamInArb)
+    {
+        var sPKennz = "F";
+        BildTab = MandDB.OpenRecordset($"select * from {dbTables.Bilder} Where {dbTables.Bilder}.{PictureFields.Kennz}='{sPKennz}'");
+        BildTab.FindFirst($"{dbTables.Bilder}.{PictureFields.ZuNr} = {FamInArb}");
+        bool noMatch = BildTab.NoMatch;
+        return !noMatch;
+    }
+    /// <summary>
+    /// Determines whether the specified person's data for the given field exists in the database.
+    /// </summary>
+    /// <remarks>This method checks if the specified field for the given person is empty or consists only of
+    /// whitespace.</remarks>
+    /// <param name="iPersonNr">The unique identifier of the person.</param>
+    /// <param name="eField">The field of the person's data to check for existence.</param>
+    /// <returns><see langword="true"/> if the specified field for the person contains data; otherwise, <see langword="false"/>.</returns>
     public static bool Picture_PersonDataExist(int iPersonNr, PersonFields eField)
     {
         DB_PictureTable.Index = nameof(PictureIndex.Nr);
         DB_PersonTable.Seek("=", iPersonNr);
         return string.IsNullOrWhiteSpace(DB_PersonTable.Fields[$"{eField}"].AsString());
     }
+    /// <summary>
+    /// Deletes all picture records associated with the specified person and identifier.
+    /// </summary>
+    /// <remarks>This method searches for picture records in the database that match the specified person
+    /// identifier (<paramref name="persInArb"/>) and picture identifier (<paramref name="pPKennz"/>). If matching
+    /// records are found, they are deleted. The method returns a boolean indicating whether any matching records were
+    /// found.</remarks>
+    /// <param name="persInArb">The unique identifier of the person whose picture records are to be deleted.</param>
+    /// <param name="pPKennz">A character representing the specific identifier for the picture records to delete.</param>
+    /// <returns><see langword="true"/> if one or more picture records matching the specified criteria were found and deleted;
+    /// otherwise, <see langword="false"/>.</returns>
     public static bool Picture_DeleteAll(int persInArb, char pPKennz)
     {
         DB_PictureTable.Index = nameof(PictureIndex.PerKenn);
@@ -1491,7 +1516,21 @@ public static partial class DataModul
         }
         return result;
     }
+    #endregion
 
+    /// <summary>
+    /// Searches for a person in the specified index based on the given search text and returns the person's unique
+    /// identifier.
+    /// </summary>
+    /// <remarks>The search operation is performed using the specified index and search text. If no match is
+    /// found, the method returns the fallback identifier provided in <paramref name="persInArb"/>.</remarks>
+    /// <param name="Index">The index to search within. This determines the scope of the search.</param>
+    /// <param name="sText">The search text used to locate the person. Leading and trailing whitespace will be trimmed. If empty, a default
+    /// value of <see langword="&quot;"/> is used.</param>
+    /// <param name="persInArb">The fallback person identifier to return if no match is found.</param>
+    /// <param name="rev">A value indicating whether to perform a reverse search. If <see langword="true"/>, the search is performed in
+    /// reverse order; otherwise, it is performed in forward order.</param>
+    /// <returns>The unique identifier of the person if a match is found; otherwise, the value of <paramref name="persInArb"/>.</returns>
     public static int Person_DoSearch(PersonIndex Index, string sText, int persInArb, bool rev = false)
     {
         sText = sText.Trim();
@@ -1510,10 +1549,17 @@ public static partial class DataModul
         else
             return persInArb;
     }
-
-    private static void Person_Clear_EntryRaw(string sSex, string sCheck)
+    /// <summary>
+    /// Clears and resets specific fields in the person record with the provided values for sex and check status.
+    /// </summary>
+    /// <remarks>This method modifies the person record by resetting several fields to default or empty values
+    /// and updating the sex and check status fields with the provided values. Ensure that the provided  values for
+    /// <paramref name="sSex"/> and <paramref name="sCheck"/> are valid and non-null.</remarks>
+    /// <param name="sSex">The value to set for the person's sex field. This value cannot be null.</param>
+    /// <param name="sCheck">The value to set for the person's check status field. This value cannot be null.</param>
+    public static void Person_Clear_EntryRaw(string sSex, string sCheck)
     {
-        IRecordset dB_PersonTable = DataModul.DB_PersonTable;
+        IRecordset dB_PersonTable = DB_PersonTable;
         dB_PersonTable.Edit();
         dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].Value = 0;
         dB_PersonTable.Fields[nameof(PersonFields.EditDat)].Value = 0;
@@ -1524,8 +1570,7 @@ public static partial class DataModul
         dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].Value = sCheck;
         dB_PersonTable.Update();
     }
-    #endregion
-    public static void Persichlöschloesch(int persInArb)
+    public static void Person_Sichlöschloesch(int persInArb)
     {
         Names.DeleteAllP(persInArb);
         SourceLink_DeleteAllPF(persInArb, 1);
@@ -1572,7 +1617,7 @@ public static partial class DataModul
         Person.Delete(persInArb);
     }
 
-    public static void Leerpertest()
+    public static void Person_Leertest()
     {
         var dB_PersonTable = DB_PersonTable;
         dB_PersonTable.Index = nameof(PersonIndex.PerNr);
@@ -1629,7 +1674,7 @@ public static partial class DataModul
 
     public static int Person_NewPerson(Action frmPerson_Clear,short Schalt)
     {
-        GenFree.Interfaces.DB.IRecordset dB_PersonTable = DB_PersonTable;
+        IRecordset dB_PersonTable = DB_PersonTable;
         dB_PersonTable.Index = nameof(PersonIndex.PerNr);
         int persInArb = 0;
 
@@ -1646,7 +1691,7 @@ public static partial class DataModul
                     dB_PersonTable.Seek("=", persInArb);
                     if (dB_PersonTable.NoMatch)
                     {
-                        Persichlöschloesch(persInArb);
+                        Person_Sichlöschloesch(persInArb);
                     }
                     else
                     {
@@ -1684,6 +1729,20 @@ public static partial class DataModul
             persInArb = 1;
         }
         return persInArb;
+    }
+
+    public static void Person_UpdateOFB(int iPers, bool xChecked)
+    {
+        IRecordset dB_PersonTable = DB_PersonTable;
+        dB_PersonTable.Seek("=", iPers);
+        if (!dB_PersonTable.NoMatch)
+        {
+            throw new ArgumentException($"Person with ID {iPers} does not exist in the database.");
+        }
+        dB_PersonTable.Edit();
+        dB_PersonTable.Fields[nameof(PersonFields.EditDat)].Value = DateTime.Now.ToString("yyyyMMdd");
+        dB_PersonTable.Fields[nameof(PersonFields.OFB)].Value = xChecked ? "J" : (object)"N";
+        dB_PersonTable.Update();
     }
 
     #region LeetTab-Methods
@@ -1730,43 +1789,6 @@ public static partial class DataModul
     }
 
     #endregion
-
-    public static void CitationData_Commit(int iPerFamNr)
-    {
-            if (CitationData.iSourceKnd < 3)
-            {
-                DB_SourceLinkTable.Index = "Tab21";
-                DB_SourceLinkTable.Seek("=", CitationData.iSourceKnd, iPerFamNr, CitationData.iSourceId);
-            }
-            else
-            {
-                DB_SourceLinkTable.Index = "Tab23";
-                DB_SourceLinkTable.Seek("=", 3, iPerFamNr, CitationData.iSourceId, Modul1.Art, Modul1.LfNR);
-            }
-            if (!DB_SourceLinkTable.NoMatch)
-            {
-                DB_SourceLinkTable.Edit();
-                DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (CitationData.sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Aus)].Value = CitationData.sPage;
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Orig)].Value = CitationData.sOriginalText;
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Kom)].Value = CitationData.sComment;
-                DB_SourceLinkTable.Update();
-            }
-            else
-            {
-                DB_SourceLinkTable.AddNew();
-                DB_SourceLinkTable.Fields[0].Value = CitationData.iSourceKnd;
-                DB_SourceLinkTable.Fields[1].Value = iPerFamNr;
-                DB_SourceLinkTable.Fields[2].Value = CitationData.iSourceId;
-                DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (CitationData.sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Art)].Value = Modul1.Art;
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.LfNr)].Value = Modul1.LfNR;
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Aus)].Value = CitationData.sPage;
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Orig)].Value = CitationData.sOriginalText;
-                DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Kom)].Value = CitationData.sComment;
-                DB_SourceLinkTable.Update();
-            }
-        }
     
 
 }

@@ -130,7 +130,7 @@ public class CEventData : CRSDataC<EEventProp, (EEventArt eArt, int iLink, short
             rs.Edit();
             SetDBValue(rs);
         }
-        // TODO: Update Record
+        // TODO: Commit Record
         if (rs!.EditMode != 0)
             rs.Update();
 

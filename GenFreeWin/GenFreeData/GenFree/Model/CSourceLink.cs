@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace GenFree.Model
 {
-    public class CSourceLink : CUsesIndexedRSet<(int, EEventArt, int), SourceLinkIndex, SourceLinkFields, ISourceLinkData>, ISourceLink
+    public class CSourceLink : CUsesIndexedRSet<(int, EEventArt, int, short), SourceLinkIndex, SourceLinkFields, ISourceLinkData>, ISourceLink
     {
         private Func<IRecordset> _value;
 
@@ -28,7 +28,7 @@ namespace GenFree.Model
 
         protected override ISourceLinkData GetData(IRecordset rs) => new CSourceLinkData(rs);
 
-        public override IRecordset? Seek((int, EEventArt, int) tKey, out bool xBreak)
+        public override IRecordset? Seek((int, EEventArt, int, short) tKey, out bool xBreak)
         {
             var db_Table = _db_Table;
             db_Table.Index = _keyIndex.AsFld();
@@ -37,10 +37,11 @@ namespace GenFree.Model
             return xBreak ? null : db_Table;
         }
 
-        protected override (int, EEventArt, int) GetID(IRecordset recordset)
+        protected override (int, EEventArt, int, short) GetID(IRecordset recordset)
             => (recordset.Fields[SourceLinkFields._1.AsFld()].AsInt(),
-                                   recordset.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>(),
-                                                      recordset.Fields[SourceLinkFields._2.AsFld()].AsInt());
+                recordset.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>(),
+                recordset.Fields[SourceLinkFields._2.AsFld()].AsInt(),
+                (short)recordset.Fields[SourceLinkFields.LfNr.AsFld()].AsInt());
 
         public IEnumerable<ISourceLinkData> ReadAll(int persInArb, EEventArt eEventArt)
         {
@@ -64,6 +65,9 @@ namespace GenFree.Model
             }
             yield break;
         }
+
+        public bool Exists(int iCitKenn, int iPerFamNr, EEventArt eArt, short lfNR = 0) 
+            => Exists(( iCitKenn,eArt, iPerFamNr, lfNR));
     }
 
 }
