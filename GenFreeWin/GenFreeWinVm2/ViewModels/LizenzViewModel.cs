@@ -62,7 +62,7 @@ public partial class LizenzViewModel : BaseViewModelCT, ILizenzViewModel
             Interaction.MsgBox("Sie hatten vier Versuche die Lizenz-Nr. einzugeben. Das Programm wird beendet!");
             DoEndProg?.Invoke();
         }
-        _Value = (float)Interaction.MsgBox("Die eingegebene Lizenz-Nr. ist falsch", "Versuch " + _Command1_Click_Counter.AsString(), MessageBoxButtons.RetryCancel);
+        _Value = (float)Interaction.MsgBox("Die eingegebene Lizenz-Nr. ist falsch", title: "Versuch " + _Command1_Click_Counter.AsString(), mb: MessageBoxButtons.RetryCancel);
         if (_Value == 2f)
         {
             DoEndProg?.Invoke();
