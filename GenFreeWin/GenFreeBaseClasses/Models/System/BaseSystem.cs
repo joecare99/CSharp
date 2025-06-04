@@ -14,9 +14,9 @@ namespace GenFree.Models.System;
 
 public partial class BaseSystem: ObservableObject, ISystem
 {
-    private IPersistence _persistence;
+    private IGenPersistence _persistence;
 
-    public BaseSystem(IPersistence persistence) {
+    public BaseSystem(IGenPersistence persistence) {
         _persistence = persistence;
     }
 
