@@ -1,19 +1,11 @@
-﻿using GenFree.Model;
+﻿using GenFree.GenFree.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.GenFree.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Data;
 using GenFree.Interfaces.Data;
 
-
-namespace GenFree.Model.Tests;
+namespace GenFree.GenFree.Model.Tests;
 
 [TestClass()]
 public class CWB_FrauTests
@@ -34,17 +26,18 @@ public class CWB_FrauTests
     public void AddParentTest()
     {
         // Arrange
-        var family = Substitute.For<IFamilyPersons>();
+        var family = Substitute.For<IFamilyData>();
         family.Mann.Returns(1);
         family.Frau.Returns(2);
         // Act
         TestClass.AddParent(family);
         // Assert
         _rs.Received(2).AddNew();
-        _rs.Received(2).Fields[NB_Frau1Fields.Nr].Value = 0;
+        _ = _rs.Received(4).Fields;
+        _rs.Fields[NB_Frau1Fields.Nr].Received(2).Value = 0;
         _rs.Received(2).Update();
-        _rs.Received(1).Fields[NB_Frau1Fields.LfNr].Value = 2;
-        _rs.Received(1).Fields[NB_Frau1Fields.LfNr].Value = 1;
+        _rs.Fields[NB_Frau1Fields.LfNr].Received(1).Value = 2;
+        _rs.Fields[NB_Frau1Fields.LfNr].Received(1).Value = 1;
     }
 
     [TestMethod()]
@@ -52,14 +45,35 @@ public class CWB_FrauTests
     {
         // Arrange
         int iPerFamNr = 123;
-        _rs.Fields[NB_Frau1Fields.Nr].Value = 0;
+        _rs.Fields[NB_Frau1Fields.Nr].Value = 1;
+        _rs.Fields[NB_Frau1Fields.Nr].ClearReceivedCalls();
+        _rs.ClearReceivedCalls();
         // Act
         TestClass.AddRow(iPerFamNr);
         // Assert
         _rs.Received(1).AddNew();
-        _rs.Received(1).Fields[NB_Frau1Fields.LfNr].Value = iPerFamNr;
+        _ = _rs.Received(2).Fields;
+        _rs.Fields[NB_Frau1Fields.LfNr].Received(1).Value = iPerFamNr;
+        _rs.Fields[NB_Frau1Fields.Nr].Received(1).Value = 0;
+        _rs.Received(1).Update();
+    }
+
+    [TestMethod()]
+    public void ClearNrTest()
+    {
+        // Arrange
+        _rs.Fields[NB_Frau1Fields.Nr].Value = 1;
+        _rs.EOF.Returns(false, true); // Simulate multiple records
+        _rs.ClearReceivedCalls();
+        // Act
+        TestClass.ClearNr();
+        // Assert
+        _rs.Received(1).MoveFirst();
+        _rs.Received(1).Seek(">", 0);
+        _rs.Received(1).Edit();
         _rs.Received(1).Fields[NB_Frau1Fields.Nr].Value = 0;
         _rs.Received(1).Update();
+        _rs.Received(1).MoveNext();
     }
 
     [TestMethod()]
@@ -74,7 +88,7 @@ public class CWB_FrauTests
         // Act
         bool result = TestClass.Update(iPerNr);
         // Assert
-        Assert.IsTrue(result);
+        Assert.AreEqual(!xSeek, result);
         _rs.Received(1).Seek("=", iPerNr);
         _rs.Index = nameof(NB_Frau1Index.LfNr);
         if (!xSeek)
@@ -90,6 +104,5 @@ public class CWB_FrauTests
             _rs.DidNotReceive().Update();
         }
     }
-
 
 }

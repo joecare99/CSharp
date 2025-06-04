@@ -7,6 +7,7 @@ using GenFree.Helper;
 using static BaseLib.Helper.TestHelper;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 
 namespace GenFree.Data.Tests
@@ -33,24 +34,24 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[PersonFields.PersNr.AsFld()].Value.Returns(1, 2, 3);
-            testRS.Fields[PersonFields.OFB.AsFld()].Value.Returns("OFB");
-            testRS.Fields[PersonFields.Pruefen.AsFld()].Value.Returns("Pruefen");
-            testRS.Fields[PersonFields.Such1.AsFld()].Value.Returns("Such1");
-            testRS.Fields[PersonFields.Such2.AsFld()].Value.Returns("Such2");
-            testRS.Fields[PersonFields.Such3.AsFld()].Value.Returns("Such3");
-            testRS.Fields[PersonFields.Such4.AsFld()].Value.Returns("Such4");
-            testRS.Fields[PersonFields.Such5.AsFld()].Value.Returns("Such5");
-            testRS.Fields[PersonFields.Such6.AsFld()].Value.Returns("Such6");
-            testRS.Fields[PersonFields.Sex.AsFld()].Value.Returns("Sex");
-            testRS.Fields[PersonFields.Konv.AsFld()].Value.Returns("Konv");
-            testRS.Fields[PersonFields.religi.AsFld()].Value.Returns(2, 3, 4);
-            testRS.Fields[PersonFields.Bem1.AsFld()].Value.Returns("Bem1");
-            testRS.Fields[PersonFields.Bem2.AsFld()].Value.Returns("Bem2");
-            testRS.Fields[PersonFields.Bem3.AsFld()].Value.Returns("Bem3");
-            testRS.Fields[PersonFields.PUid.AsFld()].Value.Returns(_guid = new Guid("0123456789ABCDEF0123456789ABCDEF"));
-            testRS.Fields[PersonFields.EditDat.AsFld()].Value.Returns(20000304, 20100506, 5);
-            testRS.Fields[PersonFields.AnlDatum.AsFld()].Value.Returns(19990101, 20050708, 6);
+            (testRS.Fields[PersonFields.PersNr] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[PersonFields.OFB] as IHasValue).Value.Returns("OFB");
+            (testRS.Fields[PersonFields.Pruefen] as IHasValue).Value.Returns("Pruefen");
+            (testRS.Fields[PersonFields.Such1] as IHasValue).Value.Returns("Such1");
+            (testRS.Fields[PersonFields.Such2] as IHasValue).Value.Returns("Such2");
+            (testRS.Fields[PersonFields.Such3] as IHasValue).Value.Returns("Such3");
+            (testRS.Fields[PersonFields.Such4] as IHasValue).Value.Returns("Such4");
+            (testRS.Fields[PersonFields.Such5] as IHasValue).Value.Returns("Such5");
+            (testRS.Fields[PersonFields.Such6] as IHasValue).Value.Returns("Such6");
+            (testRS.Fields[PersonFields.Sex] as IHasValue).Value.Returns("Sex");
+            (testRS.Fields[PersonFields.Konv] as IHasValue).Value.Returns("Konv");
+            (testRS.Fields[PersonFields.religi] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[PersonFields.Bem1] as IHasValue).Value.Returns("Bem1");
+            (testRS.Fields[PersonFields.Bem2] as IHasValue).Value.Returns("Bem2");
+            (testRS.Fields[PersonFields.Bem3] as IHasValue).Value.Returns("Bem3");
+            (testRS.Fields[PersonFields.PUid] as IHasValue).Value.Returns(_guid = new Guid("0123456789ABCDEF0123456789ABCDEF"));
+            (testRS.Fields[PersonFields.EditDat] as IHasValue).Value.Returns(20000304, 20100506, 5);
+            (testRS.Fields[PersonFields.AnlDatum] as IHasValue).Value.Returns(19990101, 20050708, 6);
             testClass = new(testRS);
             CPersonData.SetGetText(getTextFnc);
             CPersonData.SetGetText2(getTextFnc2);

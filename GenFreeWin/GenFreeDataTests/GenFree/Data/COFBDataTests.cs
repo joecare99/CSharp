@@ -5,6 +5,7 @@ using NSubstitute;
 using GenFree.Helper;
 using static BaseLib.Helper.TestHelper;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -22,9 +23,9 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[OFBFields.PerNr].Value.Returns(1, 2, 3);
-            testRS.Fields[OFBFields.Kennz].Value.Returns("AA", "BB", "CC");
-            testRS.Fields[OFBFields.TextNr].Value.Returns(3, 4, 5);
+            (testRS.Fields[OFBFields.PerNr] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[OFBFields.Kennz] as IHasValue).Value.Returns("AA", "BB", "CC");
+            (testRS.Fields[OFBFields.TextNr] as IHasValue).Value.Returns(3, 4, 5);
             testClass = new(testRS);
             COFBData.SetGetText(getTextFnc);
             testRS.ClearReceivedCalls();

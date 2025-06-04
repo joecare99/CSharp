@@ -4,6 +4,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -21,10 +22,10 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CPlace(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[PlaceFields.OrtNr].Value.Returns(2, 6, 4, 9);
-            testRS.Fields[PlaceFields.Ort].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[PlaceFields.PLZ].Value.Returns("F", 'M', '_', 'C', 'B');
-            testRS.Fields[PlaceFields.Bem].Value.Returns(1, 3, 5);
+            (testRS.Fields[PlaceFields.OrtNr] as IHasValue).Value.Returns(2, 6, 4, 9);
+            (testRS.Fields[PlaceFields.Ort] as IHasValue).Value.Returns('N', 'V', 'V', 'A', 'B');
+            (testRS.Fields[PlaceFields.PLZ] as IHasValue).Value.Returns("F", 'M', '_', 'C', 'B');
+            (testRS.Fields[PlaceFields.Bem] as IHasValue).Value.Returns(1, 3, 5);
             testRS.ClearReceivedCalls();
         }
 

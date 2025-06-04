@@ -4,6 +4,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -21,9 +22,9 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CNames(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[NameFields.Kennz].Value.Returns('N', 'V', '-', 'F', 'A', 'B');
-            testRS.Fields[NameFields.LfNr].Value.Returns(1, 3, 5, 16);
-            testRS.Fields[NameFields.PersNr].Value.Returns(2, 6, 4, 9);
+            (testRS.Fields[NameFields.Kennz] as IHasValue).Value.Returns('N', 'V', '-', 'F', 'A', 'B');
+            (testRS.Fields[NameFields.LfNr] as IHasValue).Value.Returns(1, 3, 5, 16);
+            (testRS.Fields[NameFields.PersNr] as IHasValue).Value.Returns(2, 6, 4, 9);
             testRS.ClearReceivedCalls();
         }
 
@@ -183,7 +184,7 @@ namespace GenFree.Data.Tests
         public void ReadPersonNamesTest(string sName, int iActPers, ETextKennz eTKennz, int iLfNr, bool xExp)
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, false, false, true);
-            testRS.Fields[NameFields.PersNr].Value.Returns(2, 2, 2, 2, 2, 9);
+            (testRS.Fields[NameFields.PersNr] as IHasValue).Value.Returns(2, 2, 2, 2, 2, 9);
 
             Assert.AreEqual(xExp, testClass.ReadPersonNames(iActPers, out var aiNames, out var aVrn));
             //          Assert.AreEqual(!xExp, xBreak);

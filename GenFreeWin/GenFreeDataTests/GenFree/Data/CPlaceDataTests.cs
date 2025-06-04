@@ -3,6 +3,7 @@ using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -19,23 +20,23 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[PlaceFields.OrtNr].Value.Returns(1, 2, 3);
-            testRS.Fields[PlaceFields.Ort].Value.Returns(2, 3, 4);
-            testRS.Fields[PlaceFields.Ortsteil].Value.Returns(3, 4, 5);
-            testRS.Fields[PlaceFields.Kreis].Value.Returns(4, 5, 6);
-            testRS.Fields[PlaceFields.Land].Value.Returns(5, 6, 7);
-            testRS.Fields[PlaceFields.Staat].Value.Returns(6, 7, 8);
-            testRS.Fields[PlaceFields.Staatk].Value.Returns("Staatk");
-            testRS.Fields[PlaceFields.PLZ].Value.Returns("PLZ");
-            testRS.Fields[PlaceFields.Terr].Value.Returns("Terr");
-            testRS.Fields[PlaceFields.Loc].Value.Returns("Loc");
-            testRS.Fields[PlaceFields.L].Value.Returns("Lat");
-            testRS.Fields[PlaceFields.B].Value.Returns("Long");
-            testRS.Fields[PlaceFields.Bem].Value.Returns("Bem");
-            testRS.Fields[PlaceFields.Zusatz].Value.Returns("Zusatz");
-            testRS.Fields[PlaceFields.GOV].Value.Returns("GOV");
-            testRS.Fields[PlaceFields.PolName].Value.Returns("PolName");
-            testRS.Fields[PlaceFields.g].Value.Returns("g");
+            (testRS.Fields[PlaceFields.OrtNr] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[PlaceFields.Ort] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[PlaceFields.Ortsteil] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[PlaceFields.Kreis] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[PlaceFields.Land] as IHasValue).Value.Returns(5, 6, 7);
+            (testRS.Fields[PlaceFields.Staat] as IHasValue).Value.Returns(6, 7, 8);
+            (testRS.Fields[PlaceFields.Staatk] as IHasValue).Value.Returns("Staatk");
+            (testRS.Fields[PlaceFields.PLZ] as IHasValue).Value.Returns("PLZ");
+            (testRS.Fields[PlaceFields.Terr] as IHasValue).Value.Returns("Terr");
+            (testRS.Fields[PlaceFields.Loc] as IHasValue).Value.Returns("Loc");
+            (testRS.Fields[PlaceFields.L] as IHasValue).Value.Returns("Lat");
+            (testRS.Fields[PlaceFields.B] as IHasValue).Value.Returns("Long");
+            (testRS.Fields[PlaceFields.Bem] as IHasValue).Value.Returns("Bem");
+            (testRS.Fields[PlaceFields.Zusatz] as IHasValue).Value.Returns("Zusatz");
+            (testRS.Fields[PlaceFields.GOV] as IHasValue).Value.Returns("GOV");
+            (testRS.Fields[PlaceFields.PolName] as IHasValue).Value.Returns("PolName");
+            (testRS.Fields[PlaceFields.g] as IHasValue).Value.Returns("g");
             testClass = new(testRS);
             CPlaceData.SetGetText(getTextFnc);
             testRS.ClearReceivedCalls();

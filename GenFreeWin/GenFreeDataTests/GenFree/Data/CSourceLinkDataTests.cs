@@ -4,6 +4,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -20,15 +21,15 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[SourceLinkFields.Art.AsFld()].Value.Returns(1, 2, 3);
-            testRS.Fields[SourceLinkFields._1.AsFld()].Value.Returns(2, 3, 4);
-            testRS.Fields[SourceLinkFields._2.AsFld()].Value.Returns(3, 4, 5);
-            testRS.Fields[SourceLinkFields.LfNr.AsFld()].Value.Returns(4, 5, 6);
-            testRS.Fields[SourceLinkFields._3.AsFld()].Value.Returns(5, 6, 7);
-            testRS.Fields[SourceLinkFields._4.AsFld()].Value.Returns("Field3");
-            testRS.Fields[SourceLinkFields.Aus.AsFld()].Value.Returns("Aus");
-            testRS.Fields[SourceLinkFields.Orig.AsFld()].Value.Returns("Orig");
-            testRS.Fields[SourceLinkFields.Kom.AsFld()].Value.Returns("Kom");
+            (testRS.Fields[SourceLinkFields.Art] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[SourceLinkFields._1] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[SourceLinkFields._2] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[SourceLinkFields._3] as IHasValue).Value.Returns(5, 6, 7);
+            (testRS.Fields[SourceLinkFields._4] as IHasValue).Value.Returns("Field3");
+            (testRS.Fields[SourceLinkFields.Aus] as IHasValue).Value.Returns("Aus");
+            (testRS.Fields[SourceLinkFields.Orig] as IHasValue).Value.Returns("Orig");
+            (testRS.Fields[SourceLinkFields.Kom] as IHasValue).Value.Returns("Kom");
             testClass = new(testRS);
             testRS.ClearReceivedCalls();
         }

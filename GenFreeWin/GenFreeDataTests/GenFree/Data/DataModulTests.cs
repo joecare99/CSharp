@@ -9,6 +9,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Sys;
 using System.IO;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -59,7 +60,7 @@ namespace GenFree.Data.Tests
             // Arrange
             DataModul.DAODBEngine_definst = Substitute.For<IDBEngine>();
             var oldNB = Substitute.For<IDatabase>();
-            var persistence = Substitute.For<IPersistence>();
+            var persistence = Substitute.For<IGenPersistence>();
             persistence.CreateTempFilefromInit(Arg.Any<string>()).Returns(sName);
             if (xNB)
                 DataModul.NB = oldNB;
@@ -199,7 +200,7 @@ namespace GenFree.Data.Tests
             DataModul.DB_PersonTable = personTable;
             string searchField = nameof(PersonFields.Such1);
             string searchValue = "Mustermann";
-            personTable.Fields[searchField].Value.Returns(searchValue);
+            (personTable.Fields[searchField] as IHasValue).Value.Returns(searchValue);
 
             // Simuliertes Suchverhalten: Treffer, wenn Nachname "Mustermann"
             personTable.Seek(Arg.Is<string>(s => s == searchField), Arg.Any<object>());

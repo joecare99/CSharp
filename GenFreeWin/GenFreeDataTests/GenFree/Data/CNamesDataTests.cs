@@ -4,6 +4,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests;
 
@@ -20,12 +21,12 @@ public class CNamesDataTests
     {
         testRS = Substitute.For<IRecordset>();
         testRS.NoMatch.Returns(true);
-        testRS.Fields[NameFields.PersNr.AsFld()].Value.Returns(1, 2, 3);
-        testRS.Fields[NameFields.Kennz.AsFld()].Value.Returns(2, 3, 4);
-        testRS.Fields[NameFields.Text.AsFld()].Value.Returns(3, 4, 5);
-        testRS.Fields[NameFields.LfNr.AsFld()].Value.Returns(4, 5, 6);
-        testRS.Fields[NameFields.Ruf.AsFld()].Value.Returns(5, 6, 7);
-        testRS.Fields[NameFields.Spitz.AsFld()].Value.Returns(6, 7, 8);
+        (testRS.Fields[NameFields.PersNr] as IHasValue).Value.Returns(1, 2, 3);
+        (testRS.Fields[NameFields.Kennz] as IHasValue).Value.Returns(2, 3, 4);
+        (testRS.Fields[NameFields.Text] as IHasValue).Value.Returns(3, 4, 5);
+        (testRS.Fields[NameFields.LfNr] as IHasValue).Value.Returns(4, 5, 6);
+        (testRS.Fields[NameFields.Ruf] as IHasValue).Value.Returns(5, 6, 7);
+        (testRS.Fields[NameFields.Spitz] as IHasValue).Value.Returns(6, 7, 8);
         testClass = new(testRS);
         testRS.ClearReceivedCalls();
     }

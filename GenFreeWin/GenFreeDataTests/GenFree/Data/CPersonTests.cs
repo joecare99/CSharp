@@ -5,6 +5,7 @@ using NSubstitute;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -24,10 +25,10 @@ namespace GenFree.Data.Tests
             testST.Now.Returns(new DateTime(2022, 12, 31));
             testClass = new CPerson(() => testRS, testST);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[PersonFields.PersNr].Value.Returns(2, 6, 4, 9);
-            testRS.Fields[PersonFields.Bem1].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[PersonFields.Sex].Value.Returns("F", 'M', '_', 'C', 'B');
-            testRS.Fields[PersonFields.OFB].Value.Returns(1, 3, 5);
+            (testRS.Fields[PersonFields.PersNr] as IHasValue).Value.Returns(2, 6, 4, 9);
+            (testRS.Fields[PersonFields.Bem1] as IHasValue).Value.Returns('N', 'V', 'V', 'A', 'B');
+            (testRS.Fields[PersonFields.Sex] as IHasValue).Value.Returns("F", 'M', '_', 'C', 'B');
+            (testRS.Fields[PersonFields.OFB] as IHasValue).Value.Returns(1, 3, 5);
             testRS.ClearReceivedCalls();
         }
 
@@ -75,7 +76,7 @@ namespace GenFree.Data.Tests
         public void CheckIDTest(string sName, int iActPers, Enum eTKennz, int iLfNr, int iExp)
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
-            if (iLfNr == 3) testRS.Fields[PersonFields.Sex].Value.Returns("M");
+            if (iLfNr == 3) (testRS.Fields[PersonFields.Sex] as IHasValue).Value.Returns("M");
             Assert.AreEqual(iExp, testClass.CheckID(iActPers, (int)(ELinkKennz)eTKennz == 0, (ELinkKennz)eTKennz));
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received(iExp is -1 ? 0 : 1).Seek("=", iActPers);
@@ -97,7 +98,7 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             testRS.RecordCount.Returns(iLfNr);
-            if (iLfNr >= 4) testRS.Fields[PersonFields.Pruefen].Value.Returns("G", "G", "G", "");
+            if (iLfNr >= 4) (testRS.Fields[PersonFields.Pruefen] as IHasValue).Value.Returns("G", "G", "G", "");
             Assert.AreEqual(iExp, testClass.ValidateID(iActPers, (short)schalt, iLfNr, ELinkKennz.lkNone, i => (ELinkKennz)eTKennz));
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received().Seek("=", iActPers);

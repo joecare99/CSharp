@@ -6,6 +6,7 @@ using GenFree.Helper;
 using BaseLib.Helper;
 using static BaseLib.Helper.TestHelper;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -23,20 +24,20 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[FamilyFields.AnlDatum].Value.Returns(new DateTime(1980, 12, 31));
-            testRS.Fields[FamilyFields.EditDat].Value.Returns(new DateTime(2024, 01, 01));
-            testRS.Fields[FamilyFields.Prüfen].Value.Returns("Pruefen");
-            testRS.Fields[FamilyFields.Bem1].Value.Returns("Bem1");
-            testRS.Fields[FamilyFields.FamNr].Value.Returns(3, 4, 5);
-            testRS.Fields[FamilyFields.Aeb].Value.Returns(4, 5, 6);
-            testRS.Fields[FamilyFields.Name].Value.Returns(5, 6, 7);
-            testRS.Fields[FamilyFields.Bem2].Value.Returns("Bem2");
-            testRS.Fields[FamilyFields.Bem3].Value.Returns("Bem3");
-            testRS.Fields[FamilyFields.Eltern].Value.Returns(6, 7, 8);
-            testRS.Fields[FamilyFields.Fuid].Value.Returns(_guid = new Guid("0123456789ABCDEF0123456789ABCDEF"));
-            testRS.Fields[FamilyFields.Prae].Value.Returns(7, 8, 9);
-            testRS.Fields[FamilyFields.Suf].Value.Returns(8, 9, 10);
-            testRS.Fields[FamilyFields.ggv].Value.Returns(9, 10, 11);
+            (testRS.Fields[FamilyFields.AnlDatum] as IHasValue).Value.Returns(new DateTime(1980, 12, 31));
+            (testRS.Fields[FamilyFields.EditDat] as IHasValue).Value.Returns(new DateTime(2024, 01, 01));
+            (testRS.Fields[FamilyFields.Prüfen] as IHasValue).Value.Returns("Pruefen");
+            (testRS.Fields[FamilyFields.Bem1] as IHasValue).Value.Returns("Bem1");
+            (testRS.Fields[FamilyFields.FamNr] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[FamilyFields.Aeb] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[FamilyFields.Name] as IHasValue).Value.Returns(5, 6, 7);
+            (testRS.Fields[FamilyFields.Bem2] as IHasValue).Value.Returns("Bem2");
+            (testRS.Fields[FamilyFields.Bem3] as IHasValue).Value.Returns("Bem3");
+            (testRS.Fields[FamilyFields.Eltern] as IHasValue).Value.Returns(6, 7, 8);
+            (testRS.Fields[FamilyFields.Fuid] as IHasValue).Value.Returns(_guid = new Guid("0123456789ABCDEF0123456789ABCDEF"));
+            (testRS.Fields[FamilyFields.Prae] as IHasValue).Value.Returns(7, 8, 9);
+            (testRS.Fields[FamilyFields.Suf] as IHasValue).Value.Returns(8, 9, 10);
+            (testRS.Fields[FamilyFields.ggv] as IHasValue).Value.Returns(9, 10, 11);
             testClass = new(testRS);
             CFamilyPersons.SetGetText(getTextFnc);
             testRS.ClearReceivedCalls();

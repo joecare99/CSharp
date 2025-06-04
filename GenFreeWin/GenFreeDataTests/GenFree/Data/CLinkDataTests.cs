@@ -3,6 +3,7 @@ using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -19,9 +20,9 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[ILinkData.LinkFields.Kennz].Value.Returns(1, 2, 3);
-            testRS.Fields[ILinkData.LinkFields.FamNr].Value.Returns(2, 3, 4);
-            testRS.Fields[ILinkData.LinkFields.PerNr].Value.Returns(3, 4, 5);
+            (testRS.Fields[ILinkData.LinkFields.Kennz] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[ILinkData.LinkFields.FamNr] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(3, 4, 5);
             testClass = new(testRS);
             testRS.ClearReceivedCalls();
         }
@@ -109,9 +110,9 @@ namespace GenFree.Data.Tests
         public void SetPersTest(int iAct,bool xPre, int iPre1,int iPre2, ELinkKennz ePre3, int iExp)
         {
             testRS.NoMatch.Returns(xPre);
-            testRS.Fields[ILinkData.LinkFields.PerNr].Value.Returns(iPre1);
-            testRS.Fields[ILinkData.LinkFields.FamNr].Value.Returns(iPre2);
-            testRS.Fields[ILinkData.LinkFields.Kennz].Value.Returns(ePre3);
+            (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(iPre1);
+            (testRS.Fields[ILinkData.LinkFields.FamNr] as IHasValue).Value.Returns(iPre2);
+            (testRS.Fields[ILinkData.LinkFields.Kennz] as IHasValue).Value.Returns(ePre3);
 
             testClass.SetPers(iAct);
 
@@ -124,9 +125,9 @@ namespace GenFree.Data.Tests
         public void SetFamTest(int iAct, bool xPre, int iPre1, int iPre2, ELinkKennz ePre3, int iExp)
         {
             testRS.NoMatch.Returns(xPre);
-            testRS.Fields[ILinkData.LinkFields.Kennz].Value.Returns(iPre1);
-            testRS.Fields[ILinkData.LinkFields.FamNr].Value.Returns(iPre2);
-            testRS.Fields[ILinkData.LinkFields.PerNr].Value.Returns(ePre3);
+            (testRS.Fields[ILinkData.LinkFields.Kennz] as IHasValue).Value.Returns(iPre1);
+            (testRS.Fields[ILinkData.LinkFields.FamNr] as IHasValue).Value.Returns(iPre2);
+            (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(ePre3);
 
             testClass.SetFam(iAct);
 

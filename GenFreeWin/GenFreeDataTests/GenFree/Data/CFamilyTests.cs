@@ -5,6 +5,7 @@ using NSubstitute;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -24,9 +25,9 @@ namespace GenFree.Data.Tests
             testST.Now.Returns(new DateTime(2022, 12, 31));
             testClass = new CFamily(() => testRS, testST);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[FamilyFields.FamNr].Value.Returns(2, 6, 4, 9);
-            testRS.Fields[FamilyFields.Eltern].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[FamilyFields.Aeb].Value.Returns(1, 3, 5);
+            (testRS.Fields[FamilyFields.FamNr] as IHasValue).Value.Returns(2, 6, 4, 9);
+            (testRS.Fields[FamilyFields.Eltern] as IHasValue).Value.Returns('N', 'V', 'V', 'A', 'B');
+            (testRS.Fields[FamilyFields.Aeb] as IHasValue).Value.Returns(1, 3, 5);
             testRS.ClearReceivedCalls();
         }
 
@@ -57,7 +58,7 @@ namespace GenFree.Data.Tests
             testClass.SetNameNr(iActFamNr, iName);
             Assert.AreEqual(nameof(FamilyIndex.Fam), testRS.Index);
             testRS.Received(1).Seek("=", iActFamNr);
-            _ = testRS.Received(xExp ? 2 : 8).Fields[""].Value;
+            _ = (testRS.Received(xExp ? 2 : 8).Fields[""] as IHasValue).Value;
             _ = testRS.Received(xExp ? 2 : 1).NoMatch;
             _ = testRS.Received(0).EOF;
             testRS.Received(xExp ? 0 : 1).AddNew();
@@ -76,7 +77,7 @@ namespace GenFree.Data.Tests
             testClass.SetValue(iActFamNr, iName, new[] { (eFProp,(object)sName) });
             Assert.AreEqual(nameof(FamilyIndex.Fam), testRS.Index);
             testRS.Received(1).Seek("=", iActFamNr);
-            _ = testRS.Received(xExp ? 3 : 8).Fields[""].Value;
+            _ = (testRS.Received(xExp ? 3 : 8).Fields[""] as IHasValue).Value;
             _ = testRS.Received(xExp ? 2 : 1).NoMatch;
             _ = testRS.Received(0).EOF;
             testRS.Received(xExp ? 0 : 1).AddNew();

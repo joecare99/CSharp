@@ -4,6 +4,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -20,11 +21,11 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[WitnessFields.PerNr.AsFld()].Value.Returns(1, 2, 3);
-            testRS.Fields[WitnessFields.Kennz.AsFld()].Value.Returns(2, 3, 4);
-            testRS.Fields[WitnessFields.FamNr.AsFld()].Value.Returns(3, 4, 5);
-            testRS.Fields[WitnessFields.Art.AsFld()].Value.Returns(4, 5, 6);
-            testRS.Fields[WitnessFields.LfNr.AsFld()].Value.Returns(5, 6, 7);
+            (testRS.Fields[WitnessFields.PerNr] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[WitnessFields.Kennz] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[WitnessFields.FamNr] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[WitnessFields.Art] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[WitnessFields.LfNr] as IHasValue).Value.Returns(5, 6, 7);
             testClass = new(testRS);
             testRS.ClearReceivedCalls();
         }
