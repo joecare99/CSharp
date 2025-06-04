@@ -7,6 +7,8 @@ namespace GenFree.Interfaces.Model
 {
     public interface IPerson : IHasIxDataItf<PersonIndex, IPersonData,int>, IUsesRecordset<int>, IUsesID<int>, IHasRSIndex1<PersonIndex,PersonFields>
     {
+        int MinID { get; }
+
         void AllSetEditDate();
         int CheckID(int iPerson, bool xIgnoreSex, ELinkKennz kennz);
         string GetSex(int persInArb);

@@ -15,7 +15,7 @@ public interface IWB_Frau :
     /// Fügt die Elternteile einer Familie als neue Datensätze in die WB_Frau-Tabelle ein.
     /// </summary>
     /// <param name="family">Die Familienpersonen, deren Eltern hinzugefügt werden sollen.</param>
-    void AddParent(IFamilyPersons family);
+    void AddParent(IFamilyData family);
     /// <summary>
     /// Fügt eine neue Zeile mit der angegebenen Personen-/Familiennummer in die WB_Frau-Tabelle ein.
     /// </summary>

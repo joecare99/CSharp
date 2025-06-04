@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
 using GenFree.Helper;
+using System.Collections;
 
 namespace GenFree.Interfaces.Sys;
 
@@ -171,7 +172,7 @@ public interface IModul1
     DriveInfo cMandDrive { get; set; }
     DriveType Typ { get; }
 
-    IPersistence Persistence { get; }
+    IGenPersistence Persistence { get; }
 
     // User
     int thisYear { get; }
@@ -325,7 +326,7 @@ public interface IModul1
     string Rech(ref string datum1, ref string datum2);
     void Sichwand(string Dasich, string sDatumV_S, DateTime dDatumB, EEventArt eArt);
     void Sperrfehler();
-    void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList<IListItem<int>> ocItems,(string, ETextKennz) Bez);
+    void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList ocItems,(string, ETextKennz) Bez);
     int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0);
     void TextTeilen(string UbgT, string UbgT4, string Kennung);
     string Umlaute4(string Fld, int uml);
@@ -348,11 +349,12 @@ public interface IModul1
     string Ancester_GetAncesterData(int iAnc);
     void Ausdruck(string Datnam);
     bool Bildzeig1(string biart, int PBW, int PBH, string Form, out string BiText1, out string Bitext2);
-    void KTextles(string Formnam, ETextKennz eTKennz, (string sText, ETextKennz eTKnz) Bezeichnu);
+    void KTextles(string Formnam, ETextKennz eTKennz, IList oIIList, (string sText, ETextKennz eTKnz) Bezeichnu);
     void ExportPlace(int OrtNr, string sOrt, string ind1, string namen);
     bool RemoveWriteProtection(string sFile);
     void Famdatles(int FamInArb);
     string Wochtag(string Datu);
     string Event_PreDisplay(bool xCitation=false, bool xAnnotation = false, bool xBC = false, bool xReg = false, bool xWitness = false);
     IDictionary<EEventArt, ((EEventArt, int, short), string, DateTime)> FamPerDatles(int PersInArb, int schalt);
+    void KTextlesTL5(ETextKennz txknz, IList items, (string, ETextKennz) m_Bezeichnu);
 }
