@@ -4,9 +4,9 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
-using GenFree.Model;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.GenFree.Model;
 
 namespace GenFree.Data;
 public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData>, IPerson

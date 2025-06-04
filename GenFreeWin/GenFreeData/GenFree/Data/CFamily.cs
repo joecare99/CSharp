@@ -1,11 +1,11 @@
 ﻿//using DAO;
 using BaseLib.Helper;
+using GenFree.GenFree.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
-using GenFree.Model;
 using System;
 
 namespace GenFree.Data;

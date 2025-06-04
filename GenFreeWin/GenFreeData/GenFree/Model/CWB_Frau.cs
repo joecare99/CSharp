@@ -4,10 +4,9 @@ using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Model;
 using System;
 
-namespace GenFree.Model;
+namespace GenFree.GenFree.Model;
 
 public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Frau
 {
@@ -19,7 +18,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// Fügt die Elternteile einer Familie als neue Datensätze in die WB_Frau-Tabelle ein.
     /// </summary>
     /// <param name="family">Die Familienpersonen, deren Eltern hinzugefügt werden sollen.</param>
-    public void AddParent(IFamilyPersons family)
+    public void AddParent(IFamilyData family)
     {
         IRecordset wB_FrauTable = _db_Table;
         foreach (var iParent in new[] { family.Mann, family.Frau })
@@ -34,7 +33,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// <param name="iPerFamNr">Die Personen- oder Familiennummer.</param>
     public void AddRow(int iPerFamNr)
     {
-        IRecordset wB_FrauTable = DataModul.WB_FrauTable;
+        IRecordset wB_FrauTable = _db_Table;
         wB_FrauTable.AddNew();
         wB_FrauTable.Fields[NB_Frau1Fields.LfNr].Value = iPerFamNr;
         wB_FrauTable.Fields[NB_Frau1Fields.Nr].Value = 0;
@@ -45,13 +44,13 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// </summary>
     public void ClearNr()
     {
-        IRecordset wB_FrauTable = DataModul.WB_FrauTable;
+        IRecordset wB_FrauTable = _db_Table;
         wB_FrauTable.MoveFirst();
         wB_FrauTable.Seek(">", 0);
         while (!wB_FrauTable.EOF)
         {
             wB_FrauTable.Edit();
-            wB_FrauTable.Fields["Nr"].Value = 0;
+            wB_FrauTable.Fields[NB_Frau1Fields.Nr].Value = 0;
             wB_FrauTable.Update();
             wB_FrauTable.MoveNext();
         }
@@ -62,7 +61,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// <param name="iPers">Die Personen-ID.</param>
     public void Commit(int iPers)
     {
-        IRecordset wB_FrauTable = DataModul.WB_FrauTable;
+        IRecordset wB_FrauTable = _db_Table;
         wB_FrauTable.Index = NB_Frau1Index.LfNr.AsFld();
         wB_FrauTable.Seek("=", iPers);
         if (!wB_FrauTable.NoMatch)
@@ -84,7 +83,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// </summary>
     public void DeleteEmpty()
     {
-        IRecordset wB_FrauTable = DataModul.WB_FrauTable;
+        IRecordset wB_FrauTable = _db_Table;
         wB_FrauTable.MoveFirst();
         wB_FrauTable.Seek(">", 0);
 
@@ -104,7 +103,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// <param name="DataModul_SearchTab_GetNameDate">Funktion, die Name und Datum für eine gegebene Personen-ID zurückgibt.</param>
     public void ForAll(Func<int, (string, string)> DataModul_SearchTab_GetNameDate)
     {
-        IRecordset wB_FrauTable = DataModul.WB_FrauTable;
+        IRecordset wB_FrauTable = _db_Table;
         wB_FrauTable.MoveFirst();
         while (!wB_FrauTable.EOF)
         {
@@ -142,7 +141,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     /// <param name="family">Die Familiendaten.</param>
     public void SetParentTo1(IFamilyData family)
     {
-        IRecordset wB_FrauTable = DataModul.WB_FrauTable;
+        IRecordset wB_FrauTable = _db_Table;
         wB_FrauTable.Index = "LfNR";
         foreach (var iParent in new[] { family.Mann, family.Frau })
             if (iParent > 0)

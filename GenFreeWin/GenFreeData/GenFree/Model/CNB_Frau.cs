@@ -3,7 +3,6 @@ using BaseLib.Helper;
 using GenFree.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Model;
 using System;
 
 namespace GenFree.GenFree.Model;

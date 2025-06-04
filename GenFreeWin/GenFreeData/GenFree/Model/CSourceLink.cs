@@ -7,7 +7,7 @@ using GenFree.Interfaces.Model;
 using System;
 using System.Collections.Generic;
 
-namespace GenFree.Model
+namespace GenFree.GenFree.Model
 {
     public class CSourceLink : CUsesIndexedRSet<(int, EEventArt, int, short), SourceLinkIndex, SourceLinkFields, ISourceLinkData>, ISourceLink
     {

@@ -6,7 +6,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model
+namespace GenFree.GenFree.Model
 {
     public class COFB : CUsesIndexedRSet<(int, string, int), OFBIndex, OFBFields, IOFBData>, IOFB
     {
@@ -69,9 +69,9 @@ namespace GenFree.Model
             if (dB_OFBTable.NoMatch)
             {
                 dB_OFBTable.AddNew();
-                dB_OFBTable.Fields["PerNr"].Value = persInArb;
-                dB_OFBTable.Fields["Kennz"].Value = Kennz;
-                dB_OFBTable.Fields["TextNr"].Value = satz;
+                dB_OFBTable.Fields[OFBFields.PerNr].Value = persInArb;
+                dB_OFBTable.Fields[OFBFields.Kennz].Value = Kennz;
+                dB_OFBTable.Fields[OFBFields.TextNr].Value = satz;
                 dB_OFBTable.Update();
             }
         }
@@ -93,9 +93,9 @@ namespace GenFree.Model
         protected override (int, string, int) GetID(IRecordset recordset)
         {
             return (
-                recordset.Fields[nameof(OFBFields.PerNr)].AsInt(),
-                recordset.Fields[nameof(OFBFields.Kennz)].AsString(),
-                recordset.Fields[nameof(OFBFields.TextNr)].AsInt());
+                recordset.Fields[OFBFields.PerNr].AsInt(),
+                recordset.Fields[OFBFields.Kennz].AsString(),
+                recordset.Fields[OFBFields.TextNr].AsInt());
         }
     }
 }

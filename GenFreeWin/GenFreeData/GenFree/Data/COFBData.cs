@@ -39,9 +39,9 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_Table)
         {
-            iPerNr = dB_Table.Fields[nameof(OFBFields.PerNr)].AsInt();
-            sKennz = dB_Table.Fields[nameof(OFBFields.Kennz)].AsString();
-            iTextNr = dB_Table.Fields[nameof(OFBFields.TextNr)].AsInt();
+            iPerNr = dB_Table.Fields[OFBFields.PerNr].AsInt();
+            sKennz = dB_Table.Fields[OFBFields.Kennz].AsString();
+            iTextNr = dB_Table.Fields[OFBFields.TextNr].AsInt();
         }
 
         public override Type GetPropType(EOFBProps prop)
@@ -77,13 +77,13 @@ namespace GenFree.Data
                     switch (sProp.AsEnum<EOFBProps>())
                     {
                         case EOFBProps.iPerNr:
-                            dB_Table.Fields[nameof(OFBFields.PerNr)].Value = iPerNr;
+                            dB_Table.Fields[OFBFields.PerNr].Value = iPerNr;
                             break;
                         case EOFBProps.sKennz:
-                            dB_Table.Fields[nameof(OFBFields.Kennz)].Value = sKennz;
+                            dB_Table.Fields[OFBFields.Kennz].Value = sKennz;
                             break;
                         case EOFBProps.iTextNr:
-                            dB_Table.Fields[nameof(OFBFields.TextNr)].Value = iTextNr;
+                            dB_Table.Fields[OFBFields.TextNr].Value = iTextNr;
                             break;
                         default:
                             throw new NotImplementedException();

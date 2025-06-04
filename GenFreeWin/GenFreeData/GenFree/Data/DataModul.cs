@@ -7,7 +7,6 @@ using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
-using GenFree.Model;
 using GenFree.Sys;
 using Microsoft.VisualBasic;
 using System;
@@ -15,7 +14,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace GenFree.Data;
 
@@ -308,8 +306,8 @@ public static partial class DataModul
     /// </summary>
     /// <remarks>This method closes any previously opened NB database before creating and opening a new one.
     /// The temporary database file is created using the <paramref name="persistence"/> instance.</remarks>
-    /// <param name="persistence">An implementation of <see cref="IPersistence"/> used to create the temporary database file.</param>
-    public static void CreateNewNBDatabase(IPersistence persistence)
+    /// <param name="persistence">An implementation of <see cref="IGenPersistence"/> used to create the temporary database file.</param>
+    public static void CreateNewNBDatabase(IGenPersistence persistence)
     {
         NB?.Close();
         string name = persistence.CreateTempFilefromInit("GedAus.mdb");

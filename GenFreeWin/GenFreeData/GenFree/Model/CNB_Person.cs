@@ -4,7 +4,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model
+namespace GenFree.GenFree.Model
 {
     public class CNB_Person : CUsesRecordSet<int>, INB_Person
     {
@@ -41,6 +41,15 @@ namespace GenFree.Model
             if (xAppenWitt)
             {
                 _aApeendPaten(persInArb);
+            }
+        }
+
+        public int MinID
+        {
+            get
+            {
+                _db_Table.MoveFirst();
+                return GetID(_db_Table);
             }
         }
     }

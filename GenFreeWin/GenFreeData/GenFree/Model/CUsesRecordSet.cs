@@ -1,13 +1,10 @@
-﻿//using DAO;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
-
-//using DAO;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model
+namespace GenFree.GenFree.Model
 {
     public abstract class CUsesRecordSet<T> : IUsesRecordset<T>
     {

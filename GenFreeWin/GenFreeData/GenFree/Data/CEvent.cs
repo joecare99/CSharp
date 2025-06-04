@@ -4,9 +4,9 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
-using GenFree.Model;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.GenFree.Model;
 
 namespace GenFree.Data;
 #nullable enable

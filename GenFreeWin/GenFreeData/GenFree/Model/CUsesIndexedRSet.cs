@@ -6,7 +6,7 @@ using GenFree.Interfaces.Model;
 using System;
 using System.Collections.Generic;
 
-namespace GenFree.Model
+namespace GenFree.GenFree.Model
 {
     public abstract class CUsesIndexedRSet<T, T2, T3, T4> : 
         CUsesRecordSet<T>,
@@ -66,8 +66,8 @@ namespace GenFree.Model
         public bool ReadData(T2 eIndex, object iValue, out T4? cData)
         {
             var dB_EventTable = Seek(eIndex, iValue);
-            cData = (dB_EventTable == null) ? default : GetData(dB_EventTable);
-            return (cData != null);
+            cData = dB_EventTable == null ? default : GetData(dB_EventTable);
+            return cData != null;
         }
 
         public void ForEachDo(T2 eIndex, T3 eIndexField, object oIndexVal, Func<T4, bool> func)
