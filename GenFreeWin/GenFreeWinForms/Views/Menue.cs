@@ -221,16 +221,38 @@ public partial class Menue : Form, IInteraction
 
     public int Shell(string v, int winStyle = 1)
     {
-        throw new NotImplementedException();
+#if NET5_0_OR_GREATER
+        return Interaction.Shell(v, (AppWinStyle)winStyle);
+#else
+        return 0;
+#endif
     }
 
-    public bool Choose(double v1, string v2, string v3, string v4, string v5, string v6)
+    public object? Choose(double Index, params object?[] v2)
     {
-        throw new NotImplementedException();
+#if NET5_0_OR_GREATER
+        return Interaction.Choose(Index,v2);
+#else
+        return false;
+#endif
     }
 
     public void SetAdress(string v)
     {
         throw new NotImplementedException();
+    }
+
+    public void Beep()
+    {
+        System.Media.SystemSounds.Beep.Play();
+    }
+
+    public string? InputBox(string v, string title = "", string sDefault = "")
+    {
+        #if NET5_0_OR_GREATER
+        return Interaction.InputBox(v, title, sDefault);
+#else
+        return string.Empty;
+#endif
     }
 }
