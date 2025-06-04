@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFree.ViewModels.Interfaces;
+using System.Collections.ObjectModel;
+using GenFree.Helper;
 
 namespace GenFreeWpf.ViewModels;
 
@@ -56,6 +58,14 @@ public partial class RepoPageViewModel : BaseViewModelCT, IRepoViewModel
     public IRelayCommand DeleteCommand { get; }
     public IRelayCommand Sources_DblCommand { get; }
     public IRelayCommand List2DblCommand { get; }
+
+    public ObservableCollection<IListItem<int>> Sources_Items => throw new NotImplementedException();
+
+    public ObservableCollection<IListItem<int>> Repolist_Items => throw new NotImplementedException();
+
+    public IListItem<int> Repolist_SelectedItem => throw new NotImplementedException();
+
+    public IListItem<int> Sources_SelectedItem => throw new NotImplementedException();
 
     public RepoPageViewModel()
     {
