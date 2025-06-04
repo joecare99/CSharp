@@ -16,7 +16,7 @@ namespace GenFreeWin.ViewModels;
 
 public partial class LizenzViewModel : BaseViewModelCT, ILizenzViewModel
 {
-    private IPersistence _persistence;
+    private IGenPersistence _persistence;
     private ISystem _system;
     private string _A;
     private float _Value;
@@ -37,7 +37,7 @@ public partial class LizenzViewModel : BaseViewModelCT, ILizenzViewModel
 
     public IInteraction Interaction { get; set; }
 
-    public LizenzViewModel(IPersistence persistence, ISystem system)
+    public LizenzViewModel(IGenPersistence persistence, ISystem system)
     {
         _persistence = persistence;
         _system = system;
