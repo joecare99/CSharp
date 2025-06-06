@@ -583,7 +583,7 @@ namespace Game_Base.Model.Tests
         }
 
         [TestMethod]
-        public void GetItemsTest()
+        public void GetItems1Test()
         {
             foreach (var i in testField.Items);
                 Assert.Fail();
