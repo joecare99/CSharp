@@ -24,6 +24,16 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
 
     protected override PersonIndex _keyIndex => PersonIndex.PerNr;
 
+    public int MinID
+    {
+        get
+        {
+            _db_Table.Index = $"{_keyIndex}";
+            _db_Table.MoveFirst();
+            return GetID(_db_Table);
+        }
+    }
+
     public void AllSetEditDate()
     {
         _db_Table.Index = $"{_keyIndex}";

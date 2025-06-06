@@ -572,6 +572,25 @@ public static partial class DataModul
             num5++;
         }
     }
+    public static void Witness_ChangeEventArt(int famInArb, EEventArt eArtOld, EEventArt eArtNew)
+    {
+        var dB_WitnessTable = DB_WitnessTable;
+        dB_WitnessTable.Index = nameof(WitnessIndex.FamSu);
+        dB_WitnessTable.Seek("=", famInArb, "10");
+        while (!dB_WitnessTable.EOF
+            && !dB_WitnessTable.NoMatch
+            && !(dB_WitnessTable.Fields[WitnessFields.FamNr].AsInt() != famInArb))
+        {
+            if (dB_WitnessTable.Fields[WitnessFields.Art].AsEnum<EEventArt>() == eArtOld)
+            {
+                dB_WitnessTable.Edit();
+                dB_WitnessTable.Fields[WitnessFields.Art].Value = eArtNew;
+                dB_WitnessTable.Update();
+            }
+            dB_WitnessTable.MoveNext();
+        }
+    }
+
 
     #endregion
 
@@ -1405,6 +1424,27 @@ public static partial class DataModul
         DB_SourceLinkTable.Index = "Tab22";
         DB_SourceLinkTable.Seek("=", v, nr, ubg, lfNR);
         return !DB_SourceLinkTable.NoMatch;
+    }
+
+    public static void SourceLink_ChangeEvent(int famInArb, EEventArt eArtOld, EEventArt eArtNew)
+    {
+        var dB_TTable = DataModul.DB_SourceLinkTable;
+        dB_TTable.Index = "Tab";
+        dB_TTable.Seek("=", 3, famInArb);
+        while (!dB_TTable.EOF
+            && !dB_TTable.NoMatch
+            && !(
+                dB_TTable.Fields[0].AsInt() != 3 
+                ||dB_TTable.Fields[1].AsInt() > famInArb))
+        {
+            if (dB_TTable.Fields["Art"].AsEnum<EEventArt>() == eArtOld)
+            {
+                dB_TTable.Edit();
+                dB_TTable.Fields["Art"].Value = eArtNew;
+                dB_TTable.Update();
+            }
+            dB_TTable.MoveNext();
+        }
     }
 
     #endregion
