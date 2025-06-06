@@ -18,6 +18,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Calc64WF.ViewModels.Interfaces;
 using Calc64WF.Visual.Converter;
+using Views;
 
 namespace Calc64WF.Visual
 {
@@ -28,39 +29,39 @@ namespace Calc64WF.Visual
     /// <seealso cref="Form" />
     public partial class FrmCalc64Main : Form
     {
-        private readonly object[][] btnDef = new object[][]
-        {
-            new object[]{"0",  2,2,3,2},
-            new object[]{"+/-",5,2,3,2},
-            new object[]{"1",2,4,2,2},
-            new object[]{"2",4,4,2,2},
-            new object[]{"3",6,4,2,2},
-            new object[]{"4",2,6,2,2},
-            new object[]{"5",4,6,2,2},
-            new object[]{"6",6,6,2,2},
-            new object[]{"7",2,8,2,2},
-            new object[]{"8",4,8,2,2},
-            new object[]{"9",6,8,2,2},
-            new object[]{"10",2,10,2,2},
-            new object[]{"11",4,10,2,2},
-            new object[]{"12",6,10,2,2},
-            new object[]{"13",2,12,2,2},
-            new object[]{"14",4,12,2,2},
-            new object[]{"15",6,12,2,2},
-            new object[]{"-1",0,4,2,4},
-            new object[]{"-2",0,6,2,2},
-            new object[]{"-3",0,8,2,2},
-            new object[]{"-4",0,10,2,2},
-            new object[]{"-5",0,12,2,2},
-            new object[]{"-6",8,12,3,3},
-            new object[]{"-7",8,9,3,3},
-            new object[]{"-8",8,6,3,3},
-            new object[]{"-9",8,3,3,3},
-            new object[]{"+0",-14,4,8,4},
-            new object[]{"+1",-4,12,4,2},
-            new object[]{"+2",-14,12,4,2},
-            new object[]{"+3",-4,10,4,2},
-        };
+        private readonly object[][] btnDef =
+        [
+            ["0",  2,2,3,2],
+            ["+/-",5,2,3,2],
+            ["1",2,4,2,2],
+            ["2",4,4,2,2],
+            ["3",6,4,2,2],
+            ["4",2,6,2,2],
+            ["5",4,6,2,2],
+            ["6",6,6,2,2],
+            ["7",2,8,2,2],
+            ["8",4,8,2,2],
+            ["9",6,8,2,2],
+            ["10",2,10,2,2],
+            ["11",4,10,2,2],
+            ["12",6,10,2,2],
+            ["13",2,12,2,2],
+            ["14",4,12,2,2],
+            ["15",6,12,2,2],
+            ["-1",0,4,2,4],
+            ["-2",0,6,2,2],
+            ["-3",0,8,2,2],
+            ["-4",0,10,2,2],
+            ["-5",0,12,2,2],
+            ["-6",8,12,3,3],
+            ["-7",8,9,3,3],
+            ["-8",8,6,3,3],
+            ["-9",8,3,3,3],
+            ["+0",-14,4,8,4],
+            ["+1",-4,12,4,2],
+            ["+2",-14,12,4,2],
+            ["+3",-4,10,4,2],
+        ];
 
 
         #region Properties
@@ -102,10 +103,10 @@ namespace Calc64WF.Visual
             this.Text += " FW4.8";
 #endif
             DataContext = vm;
-            vm.OnDataChanged += DataChanged;
             vm.CloseForm += DoCloseForm;
 
             CommandBindingAttribute.Commit(this, vm);
+            TextBindingAttribute.Commit(this, vm);
 
             foreach (Control c in Controls)
             {
@@ -150,28 +151,6 @@ namespace Calc64WF.Visual
                     ((Button)c).Select();
                     ((Button)c).PerformClick();
                 }
-            }
-        }
-
-        /// <summary>
-        /// Change event of Calculators class.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void DataChanged(object sender, (string prop, object? oldVal, object? newVal) e)
-        {
-            switch (e.prop)
-            {
-                case nameof(IFrmCalc64MainViewModel.Accumulator):
-                    lblResult.Text = e.newVal?.ToString() ?? "";
-                    break;
-                case nameof(IFrmCalc64MainViewModel.OperationText):
-                    lblOperation.Text = e.newVal?.ToString() ?? "";
-                    break;
-                case nameof(IFrmCalc64MainViewModel.Memory):
-                    lblMemory.Text = e.newVal?.ToString() ?? "";
-                    break;
-
             }
         }
 

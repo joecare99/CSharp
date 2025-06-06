@@ -14,6 +14,7 @@
 using System;
 using Calc64WF.Properties;
 using Calc64WF.ViewModel;
+using Views;
 
 namespace Calc64WF.Visual
 {
@@ -798,6 +799,7 @@ namespace Calc64WF.Visual
         /// <summary>
         /// The label result
         /// </summary>
+        [TextBinding(nameof(FrmCalc64MainViewModel.Accumulator))]
         private System.Windows.Forms.Label lblResult;
         /// <summary>
         /// The picture box1
@@ -861,10 +863,12 @@ namespace Calc64WF.Visual
         /// <summary>
         /// The label operation
         /// </summary>
+        [TextBinding(nameof(FrmCalc64MainViewModel.OperationText))]
         private System.Windows.Forms.Label lblOperation;
         /// <summary>
         /// The label memory
         /// </summary>
+        [TextBinding(nameof(FrmCalc64MainViewModel.Memory))]
         private System.Windows.Forms.Label lblMemory;
         /// <summary>
         /// The BTN back
