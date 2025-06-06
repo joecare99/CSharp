@@ -86,7 +86,7 @@ namespace Calc32.Visual.Tests
         {
             testFrame.Show();
             var i = testFrame.DataContext.Accumulator;
-            testFrame.btnOne.PerformClick();
+            testFrame.btnNum1.PerformClick();
             _vm.NumberCommand.ReceivedWithAnyArgs(1).Execute(null);
             testFrame.Hide();
         }
