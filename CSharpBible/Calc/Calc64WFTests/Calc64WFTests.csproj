@@ -20,6 +20,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="NSubstitute" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="*.csproj" />
@@ -31,5 +32,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj">
 		</ProjectReference>
+		<ProjectReference Include="..\Calc64Base\Calc64Base.csproj" />
+		<ProjectReference Include="..\Calc64WF\Calc64WF_net.csproj" />
 	</ItemGroup>
 </Project>
