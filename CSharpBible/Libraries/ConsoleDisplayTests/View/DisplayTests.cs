@@ -79,6 +79,27 @@ namespace ConsoleDisplay.View.Tests
         /// Defines the test method DisplayTest.
         /// </summary>
         [TestMethod()]
+        [DataRow(new[] { 0, 0, 1 }, new[] { 1, 0, 0, 0 })]
+        [DataRow(new[] { 0, 1, 2 }, new[] { 0, 0, 2, 0 })]
+        [DataRow(new[] { -1, 0, 3 }, new[] { 0, 0, 0, 0 })]
+        [DataRow(new[] { 2, 0, 3 }, new[] { 0, 0, 0, 0 })]
+        [DataRow(new[] { 0, -1, 4 }, new[] { 0, 0, 0, 0 })]
+        [DataRow(new[] { 0, 2, 4 }, new[] { 0, 0, 0, 0 })]
+        public void PutPixelTest1(int[] aiAct, int[] aiExp)
+        {
+            var display = new Display(15, 3, 2, 2);
+            display.PutPixel(aiAct[0], aiAct[1], (ConsoleColor)aiAct[2]);
+            display.Update();
+            for (int i = 0; i < 4; i++) // 600 Frames;
+            {
+                Assert.AreEqual(aiExp[i], (int)display.GetPixel(i % 2, i / 2));
+            }
+        }
+
+        /// <summary>
+        /// Defines the test method DisplayTest.
+        /// </summary>
+        [TestMethod()]
         public void DisplayTest()
         {
             var display = new Display(2, 2, 20, 20);

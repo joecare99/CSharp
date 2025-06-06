@@ -135,10 +135,17 @@ namespace ConsoleDisplay.View.Tests
         }
 
         [TestMethod()]
-        public void TileDisplayTest()
+        public void WriteTile2Test()
         {
         //    var tileDisplay = new TileDisplay();
             TileDisplay.WriteTile(console, Point.Empty,PointF.Empty,VTiles.Wall);           
+        }
+
+        [TestMethod()]
+        public void TileDisplayTest()
+        {
+            var tileDisplay = new TileDisplay();
+            Assert.AreEqual(new Size(0,0),tileDisplay.DispSize, "TileDisplayTest");
         }
 
         [TestMethod()]
