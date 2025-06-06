@@ -340,9 +340,8 @@ public interface IModul1
     IList<int> Ehesuch(int personNr, string Persex);
     string BuildFullSurName(IPersonData person, bool xFamToUpper = true);
     void FrmPerson_EventUpd(int PersInArb);
-    void SetCommandBtn(bool xCond, Button button, string sBtnHeader);
     void Berufles(int PersInArb, EEventArt Beruf, ComboBox combo1);
-    IList<T> DeleteDoublicates<T>(IList<T> oList, IList<T> gList);
+    IList<T> DeleteDoublicates<T>(IList<T> oList);
     int Eltsuch(int persInArb);
     IEnumerable<IListItem<(int, DateTime, ELinkKennz)>> Family_Kindsuch(int iFamNr);
     string Ancesters_GetPersonData(int PersonNr, out int Ahnsp, out string Kont20);
@@ -352,9 +351,11 @@ public interface IModul1
     void KTextles(string Formnam, ETextKennz eTKennz, IList oIIList, (string sText, ETextKennz eTKnz) Bezeichnu);
     void ExportPlace(int OrtNr, string sOrt, string ind1, string namen);
     bool RemoveWriteProtection(string sFile);
-    void Famdatles(int FamInArb);
     string Wochtag(string Datu);
     string Event_PreDisplay(bool xCitation=false, bool xAnnotation = false, bool xBC = false, bool xReg = false, bool xWitness = false);
     IDictionary<EEventArt, ((EEventArt, int, short), string, DateTime)> FamPerDatles(int PersInArb, int schalt);
     void KTextlesTL5(ETextKennz txknz, IList items, (string, ETextKennz) m_Bezeichnu);
+    IListItem<int> Event_ToShortLine(IEventData cEvent);
+    void FamDatLes_int(int famInArb, Action disableIllg, Action<string, int, string> setEventText);
+    bool EstDateLes(out string text);
 }
