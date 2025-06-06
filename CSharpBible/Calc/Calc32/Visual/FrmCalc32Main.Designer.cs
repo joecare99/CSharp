@@ -14,6 +14,7 @@
 using System;
 using Calc32.Properties;
 using Calc32.ViewModels.Interfaces;
+using Views;
 
 /// <summary>
 /// The Visual namespace.
@@ -54,20 +55,20 @@ namespace Calc32.Visual
         /// </summary>
         private void InitializeComponent()
         {
-            btnOne = new System.Windows.Forms.Button();
+            btnNum1 = new System.Windows.Forms.Button();
             lblResult = new System.Windows.Forms.Label();
             pictureBox1 = new System.Windows.Forms.PictureBox();
-            button1 = new System.Windows.Forms.Button();
-            button2 = new System.Windows.Forms.Button();
-            button3 = new System.Windows.Forms.Button();
-            button4 = new System.Windows.Forms.Button();
-            button5 = new System.Windows.Forms.Button();
-            button6 = new System.Windows.Forms.Button();
-            button7 = new System.Windows.Forms.Button();
-            button8 = new System.Windows.Forms.Button();
+            btnNum2 = new System.Windows.Forms.Button();
+            btnNum3 = new System.Windows.Forms.Button();
+            btnNum4 = new System.Windows.Forms.Button();
+            btnNum5 = new System.Windows.Forms.Button();
+            btnNum6 = new System.Windows.Forms.Button();
+            btnNum7 = new System.Windows.Forms.Button();
+            btnNum8 = new System.Windows.Forms.Button();
+            btnNum9 = new System.Windows.Forms.Button();
             btnHexA = new System.Windows.Forms.Button();
-            button10 = new System.Windows.Forms.Button();
-            button11 = new System.Windows.Forms.Button();
+            btnNum0 = new System.Windows.Forms.Button();
+            btnToggleSign = new System.Windows.Forms.Button();
             lblOperation = new System.Windows.Forms.Label();
             lblMemory = new System.Windows.Forms.Label();
             btnBack = new System.Windows.Forms.Button();
@@ -90,7 +91,7 @@ namespace Calc32.Visual
             pnlLeft = new System.Windows.Forms.Panel();
             panel2 = new System.Windows.Forms.Panel();
             pnlRight = new System.Windows.Forms.Panel();
-            button9 = new System.Windows.Forms.Button();
+            btnExtraFunction = new System.Windows.Forms.Button();
             button12 = new System.Windows.Forms.Button();
             pnlBottom = new System.Windows.Forms.Panel();
             btnClose = new System.Windows.Forms.Button();
@@ -102,25 +103,24 @@ namespace Calc32.Visual
             pnlLeft.SuspendLayout();
             SuspendLayout();
             // 
-            // btnOne
+            // btnNum1
             // 
-            btnOne.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOne.AutoEllipsis = true;
-            btnOne.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            btnOne.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            btnOne.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnOne.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            btnOne.Location = new System.Drawing.Point(605, 575);
-            btnOne.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            btnOne.Name = "btnOne";
-            btnOne.Size = new System.Drawing.Size(62, 73);
-            btnOne.TabIndex = 0;
-            btnOne.Tag = "1";
-            btnOne.Text = "1";
-            btnOne.UseVisualStyleBackColor = true;
-            btnOne.Click += btnNumber_Click;
-            btnOne.KeyDown += FrmCalc32Main_KeyDown;
-            btnOne.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum1.AutoEllipsis = true;
+            btnNum1.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum1.Location = new System.Drawing.Point(605, 575);
+            btnNum1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum1.Name = "btnNum1";
+            btnNum1.Size = new System.Drawing.Size(62, 73);
+            btnNum1.TabIndex = 0;
+            btnNum1.Tag = "1";
+            btnNum1.Text = "1";
+            btnNum1.UseVisualStyleBackColor = true;
+            btnNum1.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum1.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // lblResult
             // 
@@ -149,157 +149,149 @@ namespace Calc32.Visual
             pictureBox1.TabStop = false;
             pictureBox1.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button1
+            // btnNum2
             // 
-            button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button1.Location = new System.Drawing.Point(675, 575);
-            button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(62, 73);
-            button1.TabIndex = 4;
-            button1.Tag = "2";
-            button1.Text = "2";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += btnNumber_Click;
-            button1.KeyDown += FrmCalc32Main_KeyDown;
-            button1.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum2.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum2.Location = new System.Drawing.Point(675, 575);
+            btnNum2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum2.Name = "btnNum2";
+            btnNum2.Size = new System.Drawing.Size(62, 73);
+            btnNum2.TabIndex = 4;
+            btnNum2.Tag = "2";
+            btnNum2.Text = "2";
+            btnNum2.UseVisualStyleBackColor = true;
+            btnNum2.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum2.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button2
+            // btnNum3
             // 
-            button2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button2.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button2.Location = new System.Drawing.Point(743, 575);
-            button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(62, 73);
-            button2.TabIndex = 5;
-            button2.Tag = "3";
-            button2.Text = "3";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += btnNumber_Click;
-            button2.KeyDown += FrmCalc32Main_KeyDown;
-            button2.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum3.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum3.Location = new System.Drawing.Point(743, 575);
+            btnNum3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum3.Name = "btnNum3";
+            btnNum3.Size = new System.Drawing.Size(62, 73);
+            btnNum3.TabIndex = 5;
+            btnNum3.Tag = "3";
+            btnNum3.Text = "3";
+            btnNum3.UseVisualStyleBackColor = true;
+            btnNum3.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum3.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button3
+            // btnNum4
             // 
-            button3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button3.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button3.Location = new System.Drawing.Point(605, 494);
-            button3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(62, 73);
-            button3.TabIndex = 6;
-            button3.Tag = "4";
-            button3.Text = "4";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += btnNumber_Click;
-            button3.KeyDown += FrmCalc32Main_KeyDown;
-            button3.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum4.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum4.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum4.Location = new System.Drawing.Point(605, 494);
+            btnNum4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum4.Name = "btnNum4";
+            btnNum4.Size = new System.Drawing.Size(62, 73);
+            btnNum4.TabIndex = 6;
+            btnNum4.Tag = "4";
+            btnNum4.Text = "4";
+            btnNum4.UseVisualStyleBackColor = true;
+            btnNum4.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum4.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button4
+            // btnNum5
             // 
-            button4.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button4.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button4.Location = new System.Drawing.Point(675, 494);
-            button4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(62, 73);
-            button4.TabIndex = 7;
-            button4.Tag = "5";
-            button4.Text = "5";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += btnNumber_Click;
-            button4.KeyDown += FrmCalc32Main_KeyDown;
-            button4.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum5.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum5.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum5.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum5.Location = new System.Drawing.Point(675, 494);
+            btnNum5.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum5.Name = "btnNum5";
+            btnNum5.Size = new System.Drawing.Size(62, 73);
+            btnNum5.TabIndex = 7;
+            btnNum5.Tag = "5";
+            btnNum5.Text = "5";
+            btnNum5.UseVisualStyleBackColor = true;
+            btnNum5.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum5.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button5
+            // btnNum6
             // 
-            button5.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button5.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button5.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button5.Location = new System.Drawing.Point(743, 494);
-            button5.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button5.Name = "button5";
-            button5.Size = new System.Drawing.Size(62, 73);
-            button5.TabIndex = 8;
-            button5.Tag = "6";
-            button5.Text = "6";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += btnNumber_Click;
-            button5.KeyDown += FrmCalc32Main_KeyDown;
-            button5.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum6.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum6.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum6.Location = new System.Drawing.Point(743, 494);
+            btnNum6.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum6.Name = "btnNum6";
+            btnNum6.Size = new System.Drawing.Size(62, 73);
+            btnNum6.TabIndex = 8;
+            btnNum6.Tag = "6";
+            btnNum6.Text = "6";
+            btnNum6.UseVisualStyleBackColor = true;
+            btnNum6.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum6.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button6
+            // btnNum7
             // 
-            button6.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button6.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button6.Location = new System.Drawing.Point(605, 412);
-            button6.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button6.Name = "button6";
-            button6.Size = new System.Drawing.Size(62, 73);
-            button6.TabIndex = 9;
-            button6.Tag = "7";
-            button6.Text = "7";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += btnNumber_Click;
-            button6.KeyDown += FrmCalc32Main_KeyDown;
-            button6.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum7.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum7.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum7.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum7.Location = new System.Drawing.Point(605, 412);
+            btnNum7.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum7.Name = "btnNum7";
+            btnNum7.Size = new System.Drawing.Size(62, 73);
+            btnNum7.TabIndex = 9;
+            btnNum7.Tag = "7";
+            btnNum7.Text = "7";
+            btnNum7.UseVisualStyleBackColor = true;
+            btnNum7.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum7.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button7
+            // btnNum8
             // 
-            button7.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button7.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button7.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button7.Location = new System.Drawing.Point(675, 412);
-            button7.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button7.Name = "button7";
-            button7.Size = new System.Drawing.Size(62, 73);
-            button7.TabIndex = 10;
-            button7.Tag = "8";
-            button7.Text = "8";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += btnNumber_Click;
-            button7.KeyDown += FrmCalc32Main_KeyDown;
-            button7.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum8.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum8.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum8.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum8.Location = new System.Drawing.Point(675, 412);
+            btnNum8.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum8.Name = "btnNum8";
+            btnNum8.Size = new System.Drawing.Size(62, 73);
+            btnNum8.TabIndex = 10;
+            btnNum8.Tag = "8";
+            btnNum8.Text = "8";
+            btnNum8.UseVisualStyleBackColor = true;
+            btnNum8.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum8.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button8
+            // btnNum9
             // 
-            button8.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button8.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button8.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button8.Location = new System.Drawing.Point(743, 412);
-            button8.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button8.Name = "button8";
-            button8.Size = new System.Drawing.Size(62, 73);
-            button8.TabIndex = 11;
-            button8.Tag = "9";
-            button8.Text = "9";
-            button8.UseVisualStyleBackColor = true;
-            button8.Click += btnNumber_Click;
-            button8.KeyDown += FrmCalc32Main_KeyDown;
-            button8.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum9.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum9.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum9.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum9.Location = new System.Drawing.Point(743, 412);
+            btnNum9.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum9.Name = "btnNum9";
+            btnNum9.Size = new System.Drawing.Size(62, 73);
+            btnNum9.TabIndex = 11;
+            btnNum9.Tag = "9";
+            btnNum9.Text = "9";
+            btnNum9.UseVisualStyleBackColor = true;
+            btnNum9.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum9.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // btnHexA
             // 
@@ -316,46 +308,44 @@ namespace Calc32.Visual
             btnHexA.Tag = "10";
             btnHexA.Text = "A";
             btnHexA.UseVisualStyleBackColor = true;
-            btnHexA.Click += btnNumber_Click;
             btnHexA.KeyDown += FrmCalc32Main_KeyDown;
             btnHexA.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button10
+            // btnNum0
             // 
-            button10.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button10.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button10.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button10.Location = new System.Drawing.Point(605, 656);
-            button10.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button10.Name = "button10";
-            button10.Size = new System.Drawing.Size(132, 73);
-            button10.TabIndex = 13;
-            button10.Tag = "0";
-            button10.Text = "0";
-            button10.UseVisualStyleBackColor = true;
-            button10.Click += btnNumber_Click;
-            button10.KeyDown += FrmCalc32Main_KeyDown;
-            button10.MouseMove += FrmCalc32Main_MouseMove;
+            btnNum0.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnNum0.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnNum0.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnNum0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnNum0.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnNum0.Location = new System.Drawing.Point(605, 656);
+            btnNum0.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNum0.Name = "btnNum0";
+            btnNum0.Size = new System.Drawing.Size(132, 73);
+            btnNum0.TabIndex = 13;
+            btnNum0.Tag = "0";
+            btnNum0.Text = "0";
+            btnNum0.UseVisualStyleBackColor = true;
+            btnNum0.KeyDown += FrmCalc32Main_KeyDown;
+            btnNum0.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button11
+            // btnToggleSign
             // 
-            button11.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            button11.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button11.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button11.Location = new System.Drawing.Point(743, 656);
-            button11.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button11.Name = "button11";
-            button11.Size = new System.Drawing.Size(62, 73);
-            button11.TabIndex = 14;
-            button11.Tag = "10";
-            button11.Text = "+/-";
-            button11.UseVisualStyleBackColor = true;
-            button11.KeyDown += FrmCalc32Main_KeyDown;
-            button11.MouseMove += FrmCalc32Main_MouseMove;
+            btnToggleSign.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnToggleSign.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnToggleSign.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnToggleSign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnToggleSign.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnToggleSign.Location = new System.Drawing.Point(743, 656);
+            btnToggleSign.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnToggleSign.Name = "btnToggleSign";
+            btnToggleSign.Size = new System.Drawing.Size(62, 73);
+            btnToggleSign.TabIndex = 14;
+            btnToggleSign.Tag = "10";
+            btnToggleSign.Text = "+/-";
+            btnToggleSign.UseVisualStyleBackColor = true;
+            btnToggleSign.KeyDown += FrmCalc32Main_KeyDown;
+            btnToggleSign.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // lblOperation
             // 
@@ -711,21 +701,21 @@ namespace Calc32.Visual
             pnlRight.TabIndex = 35;
             pnlRight.MouseMove += FrmCalc32Main_MouseMove;
             // 
-            // button9
+            // btnExtraFunction
             // 
-            button9.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            button9.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
-            button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button9.Location = new System.Drawing.Point(138, 10);
-            button9.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            button9.Name = "button9";
-            button9.Size = new System.Drawing.Size(62, 73);
-            button9.TabIndex = 36;
-            button9.Tag = "4";
-            button9.Text = "*";
-            button9.UseVisualStyleBackColor = true;
-            button9.MouseMove += FrmCalc32Main_MouseMove;
+            btnExtraFunction.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            btnExtraFunction.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lavender;
+            btnExtraFunction.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnExtraFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btnExtraFunction.Location = new System.Drawing.Point(138, 10);
+            btnExtraFunction.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnExtraFunction.Name = "btnExtraFunction";
+            btnExtraFunction.Size = new System.Drawing.Size(62, 73);
+            btnExtraFunction.TabIndex = 36;
+            btnExtraFunction.Tag = "4";
+            btnExtraFunction.Text = "X1";
+            btnExtraFunction.UseVisualStyleBackColor = true;
+            btnExtraFunction.MouseMove += FrmCalc32Main_MouseMove;
             // 
             // button12
             // 
@@ -739,7 +729,7 @@ namespace Calc32.Visual
             button12.Size = new System.Drawing.Size(62, 73);
             button12.TabIndex = 37;
             button12.Tag = "4";
-            button12.Text = "*";
+            button12.Text = "X2";
             button12.UseVisualStyleBackColor = true;
             button12.MouseMove += FrmCalc32Main_MouseMove;
             // 
@@ -827,7 +817,7 @@ namespace Calc32.Visual
             Controls.Add(btnClose);
             Controls.Add(pnlBottom);
             Controls.Add(button12);
-            Controls.Add(button9);
+            Controls.Add(btnExtraFunction);
             Controls.Add(pnlRight);
             Controls.Add(pnlLeft);
             Controls.Add(btnOpAnd);
@@ -849,19 +839,19 @@ namespace Calc32.Visual
             Controls.Add(btnBack);
             Controls.Add(lblMemory);
             Controls.Add(lblOperation);
-            Controls.Add(button11);
-            Controls.Add(button10);
+            Controls.Add(btnToggleSign);
+            Controls.Add(btnNum0);
             Controls.Add(btnHexA);
-            Controls.Add(button8);
-            Controls.Add(button7);
-            Controls.Add(button6);
-            Controls.Add(button5);
-            Controls.Add(button4);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnNum9);
+            Controls.Add(btnNum8);
+            Controls.Add(btnNum7);
+            Controls.Add(btnNum6);
+            Controls.Add(btnNum5);
+            Controls.Add(btnNum4);
+            Controls.Add(btnNum3);
+            Controls.Add(btnNum2);
             Controls.Add(lblResult);
-            Controls.Add(btnOne);
+            Controls.Add(btnNum1);
             Controls.Add(pictureBox1);
             Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             Name = "FrmCalc32Main";
@@ -878,62 +868,76 @@ namespace Calc32.Visual
         /// <summary>
         /// The label result
         /// </summary>
+        [TextBinding(nameof(ICalculatorViewModel.Accumulator))]
         public System.Windows.Forms.Label lblResult;
         /// <summary>
         /// The picture box1
         /// </summary>
         private System.Windows.Forms.PictureBox pictureBox1;
         /// <summary>
-        /// The button1
+        /// The btnNum2
         /// </summary>
-        private System.Windows.Forms.Button button1;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum2;
         /// <summary>
-        /// The button2
+        /// The btnNum3
         /// </summary>
-        private System.Windows.Forms.Button button2;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum3;
         /// <summary>
-        /// The button3
+        /// The btnNum4
         /// </summary>
-        private System.Windows.Forms.Button button3;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum4;
         /// <summary>
-        /// The button4
+        /// The btnNum5
         /// </summary>
-        private System.Windows.Forms.Button button4;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum5;
         /// <summary>
-        /// The button5
+        /// The btnNum6
         /// </summary>
-        private System.Windows.Forms.Button button5;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum6;
         /// <summary>
-        /// The button6
+        /// The btnNum7
         /// </summary>
-        private System.Windows.Forms.Button button6;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum7;
         /// <summary>
-        /// The button7
+        /// The btnNum8
         /// </summary>
-        private System.Windows.Forms.Button button7;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum8;
         /// <summary>
-        /// The button8
+        /// The btnNum9
         /// </summary>
-        private System.Windows.Forms.Button button8;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum9;
         /// <summary>
         /// The BTN hexadecimal a
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexA;
         /// <summary>
-        /// The button10
+        /// The btnNum0
         /// </summary>
-        private System.Windows.Forms.Button button10;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        private System.Windows.Forms.Button btnNum0;
         /// <summary>
-        /// The button11
+        /// The btnToggleSign
         /// </summary>
-        private System.Windows.Forms.Button button11;
+        [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
+        private System.Windows.Forms.Button btnToggleSign;
         /// <summary>
         /// The label operation
         /// </summary>
+        [TextBinding(nameof(ICalculatorViewModel.OperationText))]
         private System.Windows.Forms.Label lblOperation;
         /// <summary>
         /// The label memory
         /// </summary>
+        [TextBinding(nameof(ICalculatorViewModel.Memory))]
         private System.Windows.Forms.Label lblMemory;
         /// <summary>
         /// The BTN clear
@@ -948,22 +952,27 @@ namespace Calc32.Visual
         /// <summary>
         /// The BTN hexadecimal b
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexB;
         /// <summary>
         /// The BTN hexadecimal c
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexC;
         /// <summary>
         /// The BTN hexadecimal f
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexF;
         /// <summary>
         /// The BTN hexadecimal e
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexE;
         /// <summary>
         /// The BTN hexadecimal d
         /// </summary>
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
         private System.Windows.Forms.Button btnHexD;
         /// <summary>
         /// The BTN mult
@@ -1018,9 +1027,9 @@ namespace Calc32.Visual
         /// </summary>
         private System.Windows.Forms.Panel panel2;
         /// <summary>
-        /// The button9
+        /// The btnExtraFunction
         /// </summary>
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button btnExtraFunction;
         /// <summary>
         /// The button12
         /// </summary>
@@ -1049,7 +1058,8 @@ namespace Calc32.Visual
         /// The panel5
         /// </summary>
         private System.Windows.Forms.Panel panel5;
-        public System.Windows.Forms.Button btnOne;
+        [CommandBinding(nameof(ICalculatorViewModel.NumberCommand))]
+        public System.Windows.Forms.Button btnNum1;
         public System.Windows.Forms.Button btnBack;
         [CommandBinding(nameof(ICalculatorViewModel.OperationCommand))]
         public System.Windows.Forms.Button btnResult;
