@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Calc32.ViewModels.Interfaces;
+using Views;
 
 /// <summary>
 /// The Visual namespace.
@@ -49,21 +50,9 @@ namespace Calc32.Visual
         {
             InitializeComponent();
             DataContext = model;
-            DataContext.PropertyChanged += vmPropertyChanged;
 
+            TextBindingAttribute.Commit(this, DataContext);
             CommandBindingAttribute.Commit(this,DataContext);
-        }
-
-        private void vmPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName) { 
-                case nameof(DataContext.OperationText):         
-                lblOperation.Text = DataContext.OperationText;break;
-                case nameof(DataContext.Accumulator):
-                    lblResult.Text = DataContext.Accumulator.ToString(); break;
-                case nameof(DataContext.Memory):
-                    lblMemory.Text = DataContext.Memory.ToString(); break;
-            }
         }
 
         /// <summary>

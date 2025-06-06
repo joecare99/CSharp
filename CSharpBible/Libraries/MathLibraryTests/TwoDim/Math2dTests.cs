@@ -208,8 +208,13 @@ public class Math2dTests
         Assert.AreEqual(Math2d.Vec(x, y), new[] { x, y }.Vec());
     }
 
-#if NET472_OR_GREATER
-		[DataTestMethod]
+#if NET472_OR_GREATER || NET6_0_OR_GREATER
+    /// <summary>
+    /// Defines the test method VecTest4.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="y">The y.</param>
+    [DataTestMethod]
     [DataRow(0.0, 0.0)]
     [DataRow(1.0, 0.0)]
     [DataRow(0.0, 1.0)]

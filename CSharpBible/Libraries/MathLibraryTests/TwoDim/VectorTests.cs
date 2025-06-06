@@ -54,7 +54,7 @@ public class VectorTests
         Assert.AreEqual(exp, v1.ToString(), $"({x},{y}).ToString()");
     }
 
-#if NET472_OR_GREATER
+#if NET472_OR_GREATER || NET6_0_OR_GREATER
     /// <summary>
     /// Gets or sets the vector as a tuple.
     /// </summary>

@@ -18,6 +18,7 @@ namespace Calc32.Models.Interfaces;
 public interface ICalculatorClass
 {
     int Accumulator { get; set; }
+    int Register { get; }
     int Memory { get; set; }
     string OperationText { get; }
 

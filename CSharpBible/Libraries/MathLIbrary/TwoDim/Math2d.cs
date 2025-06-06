@@ -63,7 +63,7 @@ public static class Math2d
         /// <value>The y.</value>
         public double y { get => _y; set => _y = value; }
 
-#if NET472_OR_GREATER
+#if NET472_OR_GREATER || NET6_0_OR_GREATER
         /// <summary>
         /// Gets or sets the vector as a tuple.
         /// </summary>
@@ -74,7 +74,7 @@ public static class Math2d
         /// Gets or sets the vector as a complex number.
         /// </summary>
         /// <value>As complex.</value>
-#if NET472_OR_GREATER
+#if NET472_OR_GREATER || NET6_0_OR_GREATER
         public Complex AsComplex { get => new Complex(_x, _y); set => (_x, _y) = (value.Real, value.Imaginary); }
 #else
 			public Complex AsComplex { get => new Complex(_x, _y); set {_x = value.Real; _y= value.Imaginary;} }
@@ -126,7 +126,7 @@ public static class Math2d
         new Vector(x, y);
     public static Vector Vec(this double[] vc) =>
         vc?.Length > 1 ? new Vector(vc[0], vc[1]) : Null;
-#if NET472_OR_GREATER
+#if NET472_OR_GREATER || NET6_0_OR_GREATER
     public static Vector Vec(this (double, double) vc) =>
     new Vector(vc.Item1, vc.Item2);
 #endif

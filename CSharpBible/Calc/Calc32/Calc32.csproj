@@ -58,5 +58,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
-	</ItemGroup>
+    <ProjectReference Include="..\..\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
+  </ItemGroup>
 </Project>

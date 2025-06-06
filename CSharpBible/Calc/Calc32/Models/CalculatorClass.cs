@@ -13,6 +13,7 @@
 // ***********************************************************************
 using BaseLib.Helper;
 using Calc32.Models.Interfaces;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 
@@ -93,7 +94,7 @@ public class CalculatorClass : Component, ICalculatorClass
     /// <summary>
     /// The accumulator
     /// </summary>
-    private int nAccumulator; // Editorfeld
+    private int _accumulator; // Editorfeld
     /// <summary>
     /// The n mode
     /// </summary>
@@ -107,8 +108,9 @@ public class CalculatorClass : Component, ICalculatorClass
     /// <summary>
     /// The n memory
     /// </summary>
-    private int nMemory; // Gemerkte Zahl für Operationen
+    private int _register; // Gemerkte Zahl für Operationen
     private eOpMode _nMode;
+    private int _memory;
     #endregion
 
     /// <summary>
@@ -128,8 +130,19 @@ public class CalculatorClass : Component, ICalculatorClass
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
     public int Accumulator
     {
-        get => nAccumulator;
-        set => value.SetProperty(ref nAccumulator, FireChangeEvent);
+        get => _accumulator;
+        set => value.SetProperty(ref _accumulator, FireChangeEvent);
+    }
+
+    /// <summary>
+    /// Gets or sets the memory.
+    /// </summary>
+    /// <value>The memory.</value>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public int Register
+    {
+        get => _register;
+        private set => value.SetProperty(ref _register, FireChangeEvent);
     }
 
     /// <summary>
@@ -139,10 +152,9 @@ public class CalculatorClass : Component, ICalculatorClass
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
     public int Memory
     {
-        get => nMemory;
-        set => value.SetProperty(ref nMemory, FireChangeEvent);
+        get => _memory;
+        set => value.SetProperty(ref _memory, FireChangeEvent);
     }
-
 
     /// <summary>
     /// Gets the operation text.
@@ -157,7 +169,7 @@ public class CalculatorClass : Component, ICalculatorClass
     /// </summary>
     public CalculatorClass()
     {
-        nAccumulator = 0;
+        _accumulator = 0;
         nMode = 0;
         OnChange = null;
     }
@@ -180,9 +192,9 @@ public class CalculatorClass : Component, ICalculatorClass
     {
         if (bEditMode)
         {
-            if (nAccumulator < int.MaxValue / 10)
+            if (_accumulator < int.MaxValue / 10)
             {
-                Accumulator = nAccumulator * 10 + aNumber;
+                Accumulator = _accumulator * 10 + aNumber;
             }
         }
         else
@@ -203,39 +215,40 @@ public class CalculatorClass : Component, ICalculatorClass
             bEditMode &= (v == (int)eOpMode.Negate);
             Accumulator = nMode switch
             {
-                eOpMode.Plus => nMemory + nAccumulator,
-                eOpMode.Minus => nMemory - nAccumulator,
-                eOpMode.Multiply => nMemory * nAccumulator,
-                eOpMode.Divide => nMemory / nAccumulator,
-                eOpMode.BinaryAnd => nMemory & nAccumulator,
-                eOpMode.BinaryOr => nMemory | nAccumulator,
-                eOpMode.BinaryXor => nMemory ^ nAccumulator,
-                _ => nAccumulator
+                eOpMode.Plus => _register + _accumulator,
+                eOpMode.Minus => _register - _accumulator,
+                eOpMode.Multiply => _register * _accumulator,
+                eOpMode.Divide => _register / _accumulator,
+                eOpMode.BinaryAnd => _register & _accumulator,
+                eOpMode.BinaryOr => _register | _accumulator,
+                eOpMode.BinaryXor => _register ^ _accumulator,
+                _ => _accumulator
             };
 
             if ((eOpMode)v == eOpMode.CalcResult)
             {
                 nMode = (eOpMode)v;
-                Memory = 0;
+                Register = 0;
             }
             else if ((eOpMode)v == eOpMode.BinaryNot)
             {
-                Accumulator = ~nAccumulator;
+                Accumulator = ~_accumulator;
             }
             else if ((eOpMode)v == eOpMode.Negate)
             {
-                Accumulator = -nAccumulator;
+                Accumulator = -_accumulator;
             }
             else
             {
                 nMode = (eOpMode)v;
-                Memory = nAccumulator;
+                Register = _accumulator;
             }
 
         }
         else if (v == -3)
         {
             Accumulator = 0;
+            Register = 0;
             Memory = 0;
             nMode = eOpMode.NoMode;
         }
@@ -249,6 +262,6 @@ public class CalculatorClass : Component, ICalculatorClass
     /// Backs the space.
     /// </summary>
     public void BackSpace()
-        => Accumulator = bEditMode ? nAccumulator / 10 : 0;
+        => Accumulator = bEditMode ? _accumulator / 10 : 0;
     #endregion
 }

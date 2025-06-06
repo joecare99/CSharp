@@ -1069,10 +1069,11 @@ namespace ConsoleDisplay.View.Tests
 			"\\c00\\x00\\x00\\c6E/¯¯\\\\\\c00\\x00\\x00\\x00\\x00\\c6E/¯¯\\\\\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\\\\\__//¯¯\\\\\\\\__/\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\\\\\__//¯¯\\\\\\\\__/\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00\r\n\\x00\\x00\\c6E/¯¯\\\\\\\\__//¯¯\\\\\\\\__/\\c00\r\n\\x00\\x00\\c6E\\\\__//¯¯\\\\\\\\__//¯¯\\\\\\c00" })]
 
 		public void UpdateTest3(string name, VTiles vt, VTiles vt2, string[] sExp) {
-            var tileDisplayHex = new TileDisplayHex(new Point(2, 0), new Size(4, 4), new TestTileDef42(), true)
+            var tileDisplayHex = new TileDisplayHex(new Point(2, 0), new Size(4, 4), new TestTileDef42())
             {
                 FncGetTile = (p) => vt2
             };
+			tileDisplayHex.Vertical = true;
             tileDisplayHex.FullRedraw();
 			Application_DoEvents();
 			AssertAreEqual(cExpUpdateText3[(int)vt2], _tstCon?.Content ?? "");
@@ -1101,5 +1102,7 @@ namespace ConsoleDisplay.View.Tests
 
             static bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
 		}
-	}
+
+		
+    }
 }
