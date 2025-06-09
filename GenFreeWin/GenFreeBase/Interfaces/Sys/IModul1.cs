@@ -11,7 +11,6 @@ using Microsoft.VisualBasic;
 using System.Runtime.InteropServices;
 using GenFree.Data;
 using GenFree.Interfaces.UI;
-using System.Windows.Forms;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
 using GenFree.Helper;
@@ -52,6 +51,11 @@ public interface IModul1
         public TypeCode Kek1;
         public int Kek2;
         public short Gen;
+
+        public void SetKek1(int v)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public struct Adresse
@@ -278,6 +282,7 @@ public interface IModul1
     bool reorga { get; set; }
     string sDemoVerNotPossibl { get; }
     int PersInArbsp { get; }
+    string sGeocodeXMLAddress { get; }
 
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
@@ -290,29 +295,25 @@ public interface IModul1
     void Datles(int PersInArb, out IList<string> asPersDates);
     (string sDat_Birth, string sDat_Death) Datles(int PersInArb, IPersonData person);
     void DatPruef(int Pschalt);
-    string Datwand(string Dat);
-    void DezRechnen(ref string A4);
+    string Date2DotDateStr2(string Dat);
+    string DezRechnen(string A4, string ubgT);
     void Diskvoll();
     IEnumerable<string> EnumerateMandants(string drive);
     void Erei(int PersInArb, EEventArt eArt, ref byte PerPos);
-    IList<int> Famsuch(int PersInArb, ELinkKennz eLKennz);
+    IList<int> Link_Famsuch(int PersInArb, ELinkKennz eLKennz);
     void Famdatles(int FamInArb, out string[] Kont);
     void Famdatles2();
     string GoogleInstallPath();
     void Info();
-    [Obsolete("Use File.Exists")]
-    bool IstDa(string DateiName);
-    short IsFormloaded(Form Formtocheck);
+    short IsFormloaded(object Formtocheck);
     void Lerz(ref short A, ref int u);
     string Leerweg1(string sText);
     void OFBTextPruefenSpeichern(string UbgT, string Kennz, int LfNR);
     bool OfficeAppInstalled(MSOfficeComponent nComponent);
     string OfficeInstallPath(MSOfficeVersion nVersion);
-    object OpenRecordSet();
-
-    string ortles1(int Ortnr, byte Schalt=0,Action<int,string> action=null);
+    string ortles1(int Ortnr, byte Schalt=0,Action<int,string>? action=null);
     string ortles(int OrtNr, byte Schalt);
-    string[] Ortles(IPlaceData place, int Schalt = 0, Action<int, string> export = null);
+    string[] Ortles(IPlaceData place, int Schalt = 0, Action<int, string>? export = null);
     void Orttextspeichern();
 
     void Paten_O_Taufe();
@@ -327,7 +328,7 @@ public interface IModul1
     void Sichwand(string Dasich, string sDatumV_S, DateTime dDatumB, EEventArt eArt);
     void Sperrfehler();
     void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList ocItems,(string, ETextKennz) Bez);
-    int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0);
+    int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0, short ruf = 0);
     void TextTeilen(string UbgT, string UbgT4, string Kennung);
     string Umlaute4(string Fld, int uml);
     void Vornam_Namles(int personNr);
@@ -340,7 +341,7 @@ public interface IModul1
     IList<int> Ehesuch(int personNr, string Persex);
     string BuildFullSurName(IPersonData person, bool xFamToUpper = true);
     void FrmPerson_EventUpd(int PersInArb);
-    void Berufles(int PersInArb, EEventArt Beruf, ComboBox combo1);
+    void Berufles(int PersInArb, EEventArt Beruf, object combo1);
     IList<T> DeleteDoublicates<T>(IList<T> oList);
     int Eltsuch(int persInArb);
     IEnumerable<IListItem<(int, DateTime, ELinkKennz)>> Family_Kindsuch(int iFamNr);
@@ -352,10 +353,14 @@ public interface IModul1
     void ExportPlace(int OrtNr, string sOrt, string ind1, string namen);
     bool RemoveWriteProtection(string sFile);
     string Wochtag(string Datu);
-    string Event_PreDisplay(bool xCitation=false, bool xAnnotation = false, bool xBC = false, bool xReg = false, bool xWitness = false);
+    string Event_PreDisplay(bool xCitation = false, bool xWitness = false, bool xAnnotation = false, bool xBC = false, bool xReg = false);
     IDictionary<EEventArt, ((EEventArt, int, short), string, DateTime)> FamPerDatles(int PersInArb, int schalt);
     void KTextlesTL5(ETextKennz txknz, IList items, (string, ETextKennz) m_Bezeichnu);
     IListItem<int> Event_ToShortLine(IEventData cEvent);
     void FamDatLes_int(int famInArb, Action disableIllg, Action<string, int, string> setEventText);
     bool EstDateLes(out string text);
+    void Listbox3Clip(IList lList, short A);
+    int? FamDatYear(int FamInArb, short schalt);
+    bool GeolesPlace(IPlaceData cPlace, Action<(string, string)>? action = null, bool v = true);
+    void GEExportPlace(string sName, (string sLongitude, string sLatiude) cKoords, bool xAppend = true);
 }

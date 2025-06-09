@@ -1,9 +1,8 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net481</TargetFrameworks>
+    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
-		<TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <Nullable>enable</Nullable>
     <RootNamespace>GenFree</RootNamespace>
   </PropertyGroup>
@@ -26,11 +25,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="System.Windows.Forms">
-	    <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
-	  </Reference>
 	</ItemGroup>
 
 </Project>
