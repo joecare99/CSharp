@@ -13,7 +13,8 @@ namespace BaseGenClasses.Model.Tests;
 public class GenFactTests : IGenEntity
 {
     GenFact _genFact;
-    private readonly string _cGenFJS = "{\"$id\":\"1\",\"$type\":\"GenFact\",\"eFactType\":7,\"Date\":{\"$id\":\"2\",\"eGenType\":10,\"Date1\":\"1960-01-01T00:00:00\"},\"Place\":{\"$id\":\"3\",\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\"},\"Entities\":{\"$id\":\"4\",\"$values\":[]},\"eGenType\":0,\"UId\":\"ee43c2a5-2259-4bc5-9913-ce08b984eeac\",\"LastChange\":null}";
+    private readonly string _cGenFJS = "{\"$id\":\"1\",\"$type\":\"GenFact\",\"eFactType\":7,\"Date\":{\"$id\":\"2\",\"eGenType\":10,\"Date1\":\"1960-01-01T00:00:00\",\"ID\":0},\"Place\":{\"$id\":\"3\",\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\",\"ID\":0},\"Entities\":{\"$id\":\"4\",\"$values\":[]},\"eGenType\":0,\"UId\":\"ee43c2a5-2259-4bc5-9913-ce08b984eeac\",\"LastChange\":null,\"ID\":0}";
+//  private readonly string _cGenFJS = "{\"$id\":\"1\",\"$type\":\"GenFact\",\"eFactType\":7,\"Date\":{\"$id\":\"2\",\"eGenType\":10,\"Date1\":\"1960-01-01T00:00:00\",\"ID\":0},\"Place\":{\"$id\":\"3\",\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\"},\"Entities\":{\"$id\":\"4\",\"$values\":[]},\"eGenType\":0,\"UId\":\"ee43c2a5-2259-4bc5-9913-ce08b984eeac\",\"LastChange\":null}";
 
     public IList<IGenFact> Facts { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
     public IList<IGenConnects> Connects { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
@@ -30,8 +31,17 @@ public class GenFactTests : IGenEntity
     public Guid UId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
     public EGenType eGenType => throw new NotImplementedException();
-
+    /// <summary>
+    /// Gets the owner.
+    /// </summary>
+    /// <value>The owner.</value>
+    /// <exception cref="System.NotImplementedException"></exception>
     public IGenealogy Owner => throw new NotImplementedException();
+    /// <summary>
+    /// Gets the (local) identifier. This ID is only unique within the application, maybe classes and not across different applications.
+    /// </summary>
+    /// <value>The identifier.</value>
+    public int ID { get ; init ; }
 
     [TestInitialize]
     public void Initialize()
