@@ -108,7 +108,17 @@ namespace BaseGenClasses.Model.Tests
         [TestMethod()]
         public void DisposeTest()
         {
-            Assert.Fail();
+            // Arrange
+            var genealogy = new Genealogy(WeakReferenceMessenger.Default);
+
+            // Act
+            genealogy.Dispose();
+
+            // Assert
+            // Nach Dispose sollten keine weiteren Transaktionen empfangen werden
+            var initialCount = genealogy.Transactions.Count;
+            WeakReferenceMessenger.Default.Send(Substitute.For<IGenTransaction>());
+            Assert.AreEqual(initialCount, genealogy.Transactions.Count);
         }
 
         [TestMethod()]
