@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 	<ImportGroup Label="SolutionProps">
 		<Import Project="..\Solution.props" />
 	</ImportGroup>
@@ -32,7 +32,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageReference Include="MSTest" Version="3.8.3" />
+		<PackageReference Include="MSTest" Version="3.9.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
