@@ -9,7 +9,7 @@ using BaseLib.Helper;
 namespace GenFree.Helper;
 public static class DBHelper
 {
-    public static IEnumerable<TableDef> TableDefs(this IDatabase db)
+    public static IEnumerable<ITableDef> TableDefs(this IDatabase db)
     {
         var enumerator = db.GetSchema("Tables").Rows;
         foreach (DataRow row in enumerator)
