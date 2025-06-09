@@ -25,17 +25,17 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
 
     public override void ReadID(IRecordset dB_Table)
     {
-        iPersNr = dB_Table.Fields[NameFields.PersNr.AsFld()].AsInt();
-        eTKennz = dB_Table.Fields[NameFields.Kennz.AsFld()].AsEnum<ETextKennz>();
-        iLfNr = dB_Table.Fields[NameFields.LfNr.AsFld()].AsInt();
+        iPersNr = dB_Table.Fields[NameFields.PersNr].AsInt();
+        eTKennz = dB_Table.Fields[NameFields.Kennz].AsEnum<ETextKennz>();
+        iLfNr = dB_Table.Fields[NameFields.LfNr].AsInt();
     }
 
     public override void FillData(IRecordset dB_Table)
     {
         ReadID(dB_Table);
-        iTextNr = dB_Table.Fields[NameFields.Text.AsFld()].AsInt();
-        bRuf = dB_Table.Fields[NameFields.Ruf.AsFld()].AsBool();
-        bSpitz = dB_Table.Fields[NameFields.Spitz.AsFld()].AsBool();
+        iTextNr = dB_Table.Fields[NameFields.Text].AsInt();
+        bRuf = dB_Table.Fields[NameFields.Ruf].AsBool();
+        bSpitz = dB_Table.Fields[NameFields.Spitz].AsBool();
     }
 
     public override Type GetPropType(ENamesProp prop) => prop switch
@@ -71,22 +71,22 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
             switch (prop.AsEnum<ENamesProp>())
             {
                 case ENamesProp.iPersNr:
-                    dB_Table.Fields[NameFields.PersNr.AsFld()].Value = iPersNr;
+                    dB_Table.Fields[NameFields.PersNr].Value = iPersNr;
                     break;
                 case ENamesProp.eTKennz:
-                    dB_Table.Fields[NameFields.Kennz.AsFld()].Value = eTKennz;
+                    dB_Table.Fields[NameFields.Kennz].Value = eTKennz;
                     break;
                 case ENamesProp.iTextNr:
-                    dB_Table.Fields[NameFields.Text.AsFld()].Value = iTextNr;
+                    dB_Table.Fields[NameFields.Text].Value = iTextNr;
                     break;
                 case ENamesProp.iLfNr:
-                    dB_Table.Fields[NameFields.LfNr.AsFld()].Value = iLfNr;
+                    dB_Table.Fields[NameFields.LfNr].Value = iLfNr;
                     break;
                 case ENamesProp.bRuf:
-                    dB_Table.Fields[NameFields.Ruf.AsFld()].Value = bRuf;
+                    dB_Table.Fields[NameFields.Ruf].Value = bRuf;
                     break;
                 case ENamesProp.bSpitz:
-                    dB_Table.Fields[NameFields.Spitz.AsFld()].Value = bSpitz;
+                    dB_Table.Fields[NameFields.Spitz].Value = bSpitz;
                     break;
                 default:
                     throw new NotImplementedException();

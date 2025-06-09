@@ -15,8 +15,6 @@ namespace GenFree.Data
     /// <seealso cref="Interfaces.Data.IPlaceData" />
     public class CPlaceData : CRSDataInt<EPlaceProp>, IPlaceData
     {
-        private List<EPlaceProp> _changedPropList = new();
-
         private static Func<int, string> _GetText = DataModul.TextLese1;
         private int iOrt1;
         private int iOrtsteil1;
@@ -175,7 +173,7 @@ namespace GenFree.Data
 
         public override void SetDBValues(IRecordset dB_FamilyTable, Enum[]? asProps)
         {
-            asProps ??= _changedPropList.Select((e) => (Enum)e).ToArray();
+            asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
                 _ = prop.AsEnum<EPlaceProp>() switch

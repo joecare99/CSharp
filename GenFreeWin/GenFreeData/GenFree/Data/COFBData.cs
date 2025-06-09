@@ -33,7 +33,7 @@ namespace GenFree.Data
         //{
         //    _getTable = value;
         //}
-        public COFBData(IRecordset db_Table, bool xNoInit) : base(db_Table,xNoInit)
+        public COFBData(IRecordset db_Table, bool xNoInit=false) : base(db_Table,xNoInit)
         {
         }
 

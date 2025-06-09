@@ -220,7 +220,7 @@ namespace GenFree.Data
         }
 
 
-          public static void SetGetText(Func<int, string> getTextFnc)
+        public static void SetGetText(Func<int, string> getTextFnc)
         {
             _getText = getTextFnc;
         }

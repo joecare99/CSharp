@@ -25,11 +25,7 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_Table)
         {
-            iPers = dB_Table.Fields[WitnessFields.PerNr].AsInt();
-            iWKennz = dB_Table.Fields[WitnessFields.Kennz].AsInt();
-            iLink = dB_Table.Fields[WitnessFields.FamNr].AsInt();
-            eArt = dB_Table.Fields[WitnessFields.Art].AsEnum<EEventArt>();
-            iLfNr = (short)dB_Table.Fields[WitnessFields.LfNr].AsInt();
+            ReadID(dB_Table);
         }
 
         public override Type GetPropType(EWitnessProp prop)
@@ -73,19 +69,19 @@ namespace GenFree.Data
                 switch (prop.AsEnum<EWitnessProp>())
                 {
                     case EWitnessProp.iPers:
-                        dB_Table.Fields[WitnessFields.PerNr.AsFld()].Value = iPers;
+                        dB_Table.Fields[WitnessFields.PerNr].Value = iPers;
                         break;
                     case EWitnessProp.iWKennz:
-                        dB_Table.Fields[WitnessFields.Kennz.AsFld()].Value = iWKennz;
+                        dB_Table.Fields[WitnessFields.Kennz].Value = iWKennz;
                         break;
                     case EWitnessProp.iLink:
-                        dB_Table.Fields[WitnessFields.FamNr.AsFld()].Value = iLink;
+                        dB_Table.Fields[WitnessFields.FamNr].Value = iLink;
                         break;
                     case EWitnessProp.eArt:
-                        dB_Table.Fields[WitnessFields.Art.AsFld()].Value = eArt;
+                        dB_Table.Fields[WitnessFields.Art].Value = eArt;
                         break;
                     case EWitnessProp.iLfNr:
-                        dB_Table.Fields[WitnessFields.LfNr.AsFld()].Value = iLfNr;
+                        dB_Table.Fields[WitnessFields.LfNr].Value = iLfNr;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -112,7 +108,11 @@ namespace GenFree.Data
 
         public override void ReadID(IRecordset dB_Table)
         {
-            throw new NotImplementedException();
+            iPers = dB_Table.Fields[WitnessFields.PerNr].AsInt();
+            iWKennz = dB_Table.Fields[WitnessFields.Kennz].AsInt();
+            iLink = dB_Table.Fields[WitnessFields.FamNr].AsInt();
+            eArt = dB_Table.Fields[WitnessFields.Art].AsEnum<EEventArt>();
+            iLfNr = (short)dB_Table.Fields[WitnessFields.LfNr].AsInt();
         }
     }
 }

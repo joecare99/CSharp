@@ -30,10 +30,7 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset db_Table)
         {
-            eArt = db_Table.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>();
-            iLinkType = db_Table.Fields[SourceLinkFields._1.AsFld()].AsInt();
-            iPersNr = db_Table.Fields[SourceLinkFields._2.AsFld()].AsInt();
-            iLfdNr = db_Table.Fields[SourceLinkFields.LfNr.AsFld()].AsInt();
+            ReadID(db_Table);
             iQuNr = db_Table.Fields[SourceLinkFields._3.AsFld()].AsInt();
             sField3 = db_Table.Fields[SourceLinkFields._4.AsFld()].AsString();
             sAus = db_Table.Fields[SourceLinkFields.Aus.AsFld()].AsString();
@@ -137,9 +134,12 @@ namespace GenFree.Data
             };
         }
 
-        public override void ReadID(IRecordset dB_Table)
+        public override void ReadID(IRecordset db_Table)
         {
-            throw new NotImplementedException();
+            eArt = db_Table.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>();
+            iLinkType = db_Table.Fields[SourceLinkFields._1.AsFld()].AsInt();
+            iPersNr = db_Table.Fields[SourceLinkFields._2.AsFld()].AsInt();
+            iLfdNr = db_Table.Fields[SourceLinkFields.LfNr.AsFld()].AsInt();
         }
     }
 }

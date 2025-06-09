@@ -86,16 +86,11 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
         gUid = dB_PersonTable.Fields[PersonFields.PUid].AsGUID();
     }
 
-    static CPersonData()
-    {
-        Reset();
-    }
-
     public static void Reset()
     {
         GetPersonTable = () => DataModul.DB_PersonTable;
-        _GetText = (i) => "";
-        _GetText2 = (i) => ("", "");
+        _GetText = DataModul.TextLese1;
+        _GetText2 = DataModul.TextLese2;
     }
 
     public CPersonData(int iPersonNr) : base(GetPersonTable())
@@ -142,7 +137,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
         && string.IsNullOrWhiteSpace(sBem[2])
         && string.IsNullOrWhiteSpace(sBem[3]);
 
-    public bool xVChr { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public bool xVChr { get ; set; }
 
     public void SetPersonNr(int i) { _ID = i; }
 
@@ -307,7 +302,13 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     }
     public void Update()
     {
-        throw new NotImplementedException();
+        if (_ID == 0) return; // no ID, nothing to update
+        var dB_PersonTable = Seek(_ID);
+        if (dB_PersonTable == null) return;
+        dB_PersonTable.Edit();
+        SetDBValues(dB_PersonTable, null);
+        dB_PersonTable.Update();
+        ClearChangedProps();
     }
 
     public void SetSex(string sSex) => SetPropValue(EPersonProp.sSex, sSex);

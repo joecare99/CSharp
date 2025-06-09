@@ -15,8 +15,6 @@ namespace GenFree.Data
     /// <seealso cref="Interfaces.Data.IPlaceData" />
     public class CRepoData : CRSDataInt<ERepoProp>, IRepoData
     {
-        private List<ERepoProp> _changedPropList = new();
-
         private string _sName = "";
         private string _sOrt = "";
         private string _sPLZ = "";
@@ -58,6 +56,7 @@ namespace GenFree.Data
             sHttp = dB_RepoTable.Fields[RepoFields.Http].AsString();
             sBem = dB_RepoTable.Fields[RepoFields.Bem].AsString();
             sSuchname = dB_RepoTable.Fields[RepoFields.Suchname].AsString();
+            sName = dB_RepoTable.Fields[RepoFields.Name].AsString();
         }
 
         public override Type GetPropType(ERepoProp prop)
@@ -123,7 +122,7 @@ namespace GenFree.Data
 
         public override void SetDBValues(IRecordset dB_RepoTable, Enum[]? asProps)
         {
-            asProps ??= _changedPropList.Select((e) => (Enum)e).ToArray();
+            asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
                 _ = prop.AsEnum<ERepoProp>() switch
