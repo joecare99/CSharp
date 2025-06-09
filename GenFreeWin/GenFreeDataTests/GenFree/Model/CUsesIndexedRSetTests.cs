@@ -7,6 +7,7 @@ using GenFree.Interfaces;
 using BaseLib.Helper;
 using GenFree.GenFree.Model;
 using BaseLib.Interfaces;
+using System.Linq;
 
 namespace GenFree.GenFree.Model.Tests;
 
@@ -375,16 +376,16 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         _ => throw new NotImplementedException(),
     };
 
-    protected override ITestData GetData(IRecordset rs) => new CTestData(rs);
+    protected override ITestData GetData(IRecordset rs,bool xNoInit=false) => new CTestData(rs,xNoInit);
 
     private class CTestData : ITestData
     {
         private IRecordset rs;
 
-        public CTestData(IRecordset rs)
+        public CTestData(IRecordset rs, bool xNoInit=false)
         {
             this.rs = rs;
-            FillData(rs);
+            if (!xNoInit) FillData(rs); else Description = string.Empty;
         }
 
         public string Description { get; set; }
@@ -400,14 +401,37 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
 
         public void FillData(IRecordset rs)
         {
-            ID = rs.Fields[TestIndexField.ID].AsInt();
             Description = rs.Fields[TestIndexField.Description].AsString();
             Data = rs.Fields[TestIndexField.Data].AsInt();
         }
 
-        public void SetDBValue(IRecordset rs, Enum[]? asProps)
+        public void NewID()
         {
+            rs.Index = nameof(TestIndexField.ID);
+            rs.MoveLast();
+            ReadID(rs);
+            ID++;
+        }
 
+        public void ReadID(IRecordset dB_Table)
+        {
+            ID = rs.Fields[TestIndexField.ID].AsInt();
+        }
+
+        public void SetDBValues(IRecordset rs, Enum[]? asProps)
+        {
+            if (asProps == null || asProps.Length == 0 || asProps.Contains(TestIndexField.ID))
+            {
+                rs.Fields[TestIndexField.ID].Value = ID;
+            }
+            if (asProps == null || asProps.Length == 0 || asProps.Contains(TestIndexField.Description))
+            {
+                rs.Fields[TestIndexField.Description].Value = Description;
+            }
+            if (asProps == null || asProps.Length == 0 || asProps.Contains(TestIndexField.Data))
+            {
+                rs.Fields[TestIndexField.Data].Value = Data;
+            }
         }
     }
 }

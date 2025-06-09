@@ -29,7 +29,7 @@ public class CRSDataTests
 
         public override void FillData(IRecordset dB_Table)
         {
-            dB_Table.Fields[TestProp.ID].Value = ID;
+            ReadID(dB_Table);
             dB_Table.Fields[TestProp.sDescription].Value = sDescription;
             dB_Table.Fields[TestProp.iData].Value = iData;
         }
@@ -50,7 +50,12 @@ public class CRSDataTests
             _ => null
         };
 
-        public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+        public override void ReadID(IRecordset dB_Table)
+        {
+            dB_Table.Fields[TestProp.ID].Value = ID;
+        }
+
+        public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
         {
             asProps ??= _changedPropsList.Select(e => (Enum)e).ToArray();
             foreach (var sProp in asProps)
