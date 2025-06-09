@@ -15,7 +15,7 @@ namespace GenFree.GenFree.Model
         where T2 : Enum where T3 : Enum where T4 : IHasID<T>, IHasIRecordset
     {
         public abstract T3 GetIndex1Field(T2 eIndex);
-        protected abstract T4 GetData(IRecordset rs);
+        protected abstract T4 GetData(IRecordset rs,bool xNoInit = false);
 
         protected abstract T2 _keyIndex { get; }
         protected override string __keyIndex => _keyIndex.AsString();
@@ -124,8 +124,30 @@ namespace GenFree.GenFree.Model
             if (dB_Table != null)
             {
                 dB_Table.Edit();
-                data.SetDBValue(dB_Table, asProps);
+                data.SetDBValues(dB_Table, asProps);
                 dB_Table.Update();
+            }
+        }
+        public T4 CreateNew() => GetData(_db_Table, true);
+
+        public void Commit(T4 data)
+        {
+            if (data == null) return;
+            var id = data.ID;
+            var rs = Seek(id);
+            if (rs != null)
+            {
+                rs.Edit();
+                data.SetDBValues(rs, null);
+                rs.Update();
+            }
+            else
+            {
+                rs = _db_Table;
+                data.NewID();
+                rs.AddNew();
+                data.SetDBValues(rs, null);
+                rs.Update();
             }
         }
     }

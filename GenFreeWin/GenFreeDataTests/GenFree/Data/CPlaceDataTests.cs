@@ -237,7 +237,7 @@ namespace GenFree.Data.Tests
         [DataRow(EPlaceProp.ig, 1)]
         public void SetDBValueTest(EPlaceProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+            testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
@@ -247,7 +247,7 @@ namespace GenFree.Data.Tests
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EPlaceProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]
@@ -271,7 +271,7 @@ namespace GenFree.Data.Tests
         public void SetDBValueTest2(EPlaceProp eAct, object oVal)
         {
             testClass.SetPropValue(eAct, oVal);
-            testClass.SetDBValue(testRS, null);
+            testClass.SetDBValues(testRS, null);
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 

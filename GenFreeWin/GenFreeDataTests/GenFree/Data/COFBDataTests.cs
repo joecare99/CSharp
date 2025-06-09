@@ -132,7 +132,7 @@ namespace GenFree.Data.Tests
 
         public void SetDBValueTest(EOFBProps eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+            testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
@@ -142,7 +142,7 @@ namespace GenFree.Data.Tests
         [DataRow((EOFBProps)100, TypeCode.Int32)]
         public void SetDBValueTest1(EOFBProps eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]
@@ -152,7 +152,7 @@ namespace GenFree.Data.Tests
         public void SetDBValueTest2(EOFBProps eAct, object oExp)
         {
             SetPropValueTest(eAct, oExp);
-            testClass.SetDBValue(testRS, null);
+            testClass.SetDBValues(testRS, null);
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 

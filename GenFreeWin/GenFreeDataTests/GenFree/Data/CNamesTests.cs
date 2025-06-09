@@ -174,7 +174,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
             testRS.Received(xExp ? 1 : 0).Edit();
             testRS.Received(xExp ? 1 : 0).Update();
-            testND.Received(xExp ? 1 : 0).SetDBValue(testRS, null);
+            testND.Received(xExp ? 1 : 0).SetDBValues(testRS, null);
         }
 
         [DataTestMethod()]

@@ -123,7 +123,7 @@ namespace GenFree.Data.Tests
         [DataRow(EFamilyProp.sPruefen, "Pruefe")]
         public void SetDBValueTest(EFamilyProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+            testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
         [TestMethod()]
@@ -132,7 +132,7 @@ namespace GenFree.Data.Tests
         [DataRow((EFamilyProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EFamilyProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
         [DataTestMethod()]
@@ -152,7 +152,7 @@ namespace GenFree.Data.Tests
         public void SetDBValueTest2(EFamilyProp eAct, object oExp)
         {
             SetPropValueTest(eAct, oExp);
-            testClass.SetDBValue(testRS, null );
+            testClass.SetDBValues(testRS, null );
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 

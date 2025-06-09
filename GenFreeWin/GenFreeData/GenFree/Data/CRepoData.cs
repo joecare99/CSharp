@@ -13,38 +13,19 @@ namespace GenFree.Data
     /// <example>
     /// <code>_ = new CPlaceData(rs);</code></example>
     /// <seealso cref="Interfaces.Data.IPlaceData" />
-    public class CRepoData : CRSData<ERepoProp, int>, IRepoData
+    public class CRepoData : CRSDataInt<ERepoProp>, IRepoData
     {
         private List<ERepoProp> _changedPropList = new();
 
-        private static Func<IRecordset> __dB_RepoTable;
-        private string _sName;
-        private string _sOrt;
-        private string _sPLZ;
-        private string _sStrasse;
-        private string _sFon;
-        private string _sMail;
-        private string _sHttp;
-        private string _sBem;
-        private string _sSuchname;
-        private int _ID;
-
-        public CRepoData(IRecordset dB_RepoTable) : base(dB_RepoTable) { }
-
-        public override void FillData(IRecordset dB_RepoTable)
-        {
-            _ID = dB_RepoTable.Fields[nameof(RepoFields.Nr)].AsInt();
-            sOrt = dB_RepoTable.Fields[nameof(RepoFields.Ort)].AsString();
-            sPLZ = dB_RepoTable.Fields[nameof(RepoFields.PLZ)].AsString();
-            sStrasse = dB_RepoTable.Fields[nameof(RepoFields.Strasse)].AsString();
-            sFon = dB_RepoTable.Fields[nameof(RepoFields.Fon)].AsString();
-            sMail = dB_RepoTable.Fields[nameof(RepoFields.Mail)].AsString();
-            sHttp = dB_RepoTable.Fields[nameof(RepoFields.Http)].AsString();
-            sBem = dB_RepoTable.Fields[nameof(RepoFields.Bem)].AsString();
-            sSuchname = dB_RepoTable.Fields[nameof(RepoFields.Suchname)].AsString();
-        }
-
-        public IReadOnlyList<ERepoProp> ChangedProps => _changedPropList;
+        private string _sName = "";
+        private string _sOrt = "";
+        private string _sPLZ = "";
+        private string _sStrasse = "";
+        private string _sFon = "";
+        private string _sMail = "";
+        private string _sHttp = "";
+        private string _sBem = "";
+        private string _sSuchname = "";
 
         public override int ID => _ID;
         public string sName { get => _sName; set => SetPropValue(ERepoProp.sName, value); }
@@ -59,15 +40,24 @@ namespace GenFree.Data
 
         protected override Enum _keyIndex => RepoIndex.Nr;
 
-        public void AddChangedProp(ERepoProp prop)
+        public CRepoData(IRecordset dB_RepoTable, bool xNoInit=false) : base(dB_RepoTable,xNoInit) { }
+
+        public override void ReadID(IRecordset dB_RepoTable)
         {
-            if (!_changedPropList.Contains(prop))
-                _changedPropList.Add(prop);
+            _ID = dB_RepoTable.Fields[RepoFields.Nr].AsInt();
         }
 
-        public void ClearChangedProps()
+        public override void FillData(IRecordset dB_RepoTable)
         {
-            _changedPropList.Clear();
+            ReadID(dB_RepoTable);
+            sOrt = dB_RepoTable.Fields[RepoFields.Ort].AsString();
+            sPLZ = dB_RepoTable.Fields[RepoFields.PLZ].AsString();
+            sStrasse = dB_RepoTable.Fields[RepoFields.Strasse].AsString();
+            sFon = dB_RepoTable.Fields[RepoFields.Fon].AsString();
+            sMail = dB_RepoTable.Fields[RepoFields.Mail].AsString();
+            sHttp = dB_RepoTable.Fields[RepoFields.Http].AsString();
+            sBem = dB_RepoTable.Fields[RepoFields.Bem].AsString();
+            sSuchname = dB_RepoTable.Fields[RepoFields.Suchname].AsString();
         }
 
         public override Type GetPropType(ERepoProp prop)
@@ -131,23 +121,23 @@ namespace GenFree.Data
             };
         }
 
-        public override void SetDBValue(IRecordset dB_RepoTable, Enum[]? asProps)
+        public override void SetDBValues(IRecordset dB_RepoTable, Enum[]? asProps)
         {
             asProps ??= _changedPropList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
                 _ = prop.AsEnum<ERepoProp>() switch
                 {
-                    ERepoProp.ID => dB_RepoTable.Fields[nameof(RepoFields.Nr)].Value = ID,
-                    ERepoProp.sName => dB_RepoTable.Fields[nameof(RepoFields.Name)].Value = sName,
-                    ERepoProp.sOrt => dB_RepoTable.Fields[nameof(RepoFields.Ort)].Value = sOrt,
-                    ERepoProp.sPLZ => dB_RepoTable.Fields[nameof(RepoFields.PLZ)].Value = sPLZ,
-                    ERepoProp.sStrasse => dB_RepoTable.Fields[nameof(RepoFields.Strasse)].Value = sStrasse,
-                    ERepoProp.sFon => dB_RepoTable.Fields[nameof(RepoFields.Fon)].Value = sFon,
-                    ERepoProp.sMail => dB_RepoTable.Fields[nameof(RepoFields.Mail)].Value = sMail,
-                    ERepoProp.sHttp => dB_RepoTable.Fields[nameof(RepoFields.Http)].Value = sHttp,
-                    ERepoProp.sBem => dB_RepoTable.Fields[nameof(RepoFields.Bem)].Value = sBem,
-                    ERepoProp.sSuchname => dB_RepoTable.Fields[nameof(RepoFields.Suchname)].Value = sSuchname,
+                    ERepoProp.ID => dB_RepoTable.Fields[RepoFields.Nr].Value = ID,
+                    ERepoProp.sName => dB_RepoTable.Fields[RepoFields.Name].Value = sName,
+                    ERepoProp.sOrt => dB_RepoTable.Fields[RepoFields.Ort].Value = sOrt,
+                    ERepoProp.sPLZ => dB_RepoTable.Fields[RepoFields.PLZ].Value = sPLZ,
+                    ERepoProp.sStrasse => dB_RepoTable.Fields[RepoFields.Strasse].Value = sStrasse,
+                    ERepoProp.sFon => dB_RepoTable.Fields[RepoFields.Fon].Value = sFon,
+                    ERepoProp.sMail => dB_RepoTable.Fields[RepoFields.Mail].Value = sMail,
+                    ERepoProp.sHttp => dB_RepoTable.Fields[RepoFields.Http].Value = sHttp,
+                    ERepoProp.sBem => dB_RepoTable.Fields[RepoFields.Bem].Value = sBem,
+                    ERepoProp.sSuchname => dB_RepoTable.Fields[RepoFields.Suchname].Value = sSuchname,
                     _ => throw new NotImplementedException(),
                 };
             }

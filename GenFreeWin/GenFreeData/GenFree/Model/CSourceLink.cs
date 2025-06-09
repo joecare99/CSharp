@@ -26,7 +26,7 @@ namespace GenFree.GenFree.Model
             _ => throw new ArgumentException()
         };
 
-        protected override ISourceLinkData GetData(IRecordset rs) => new CSourceLinkData(rs);
+        protected override ISourceLinkData GetData(IRecordset rs, bool xNoInit = false) => new CSourceLinkData(rs, xNoInit);
 
         public override IRecordset? Seek((int, EEventArt, int, short) tKey, out bool xBreak)
         {

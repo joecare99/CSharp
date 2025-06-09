@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenInterfaces.Interfaces.Genealogic;
 using BaseGenClasses.Model;
+using GenInterfaces.Data;
 
 namespace BaseGenClasses.Helper.Tests
 {
@@ -33,15 +34,59 @@ namespace BaseGenClasses.Helper.Tests
         }
 
         [TestMethod()]
-        public void ReadTest()
+        [DataRow("{\"eGenType\":10,\"eDateModifier\":4,\"Date1\":\"1980-05-12T00:00:00\",\"eDateType2\":2,\"Date2\":\"1985-01-01T00:00:00\",\"DateText\":\"ca. 1980-1985\"}", EDateModifier.About)]
+        public void ReadTest(string json, EDateModifier about)
         {
+            // Arrange
+            var date = new GenDate(
+                about,
+                EDateType.Full,
+                new DateTime(1980, 5, 12),
+                EDateType.Year,
+                new DateTime(1985, 1, 1),
+                "ca. 1980-1985"
+            );
+            var options = new System.Text.Json.JsonSerializerOptions();
+            options.Converters.Add(genConverter);
 
+            var reader = new System.Text.Json.Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(json));
+
+            // Act
+            reader.Read(); // Move to StartObject
+            var result = genConverter.Read(ref reader, typeof(IGenDate), options);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(date.eDateModifier, result.eDateModifier);
+            Assert.AreEqual(date.eDateType1, result.eDateType1);
+            Assert.AreEqual(date.Date1, result.Date1);
+            Assert.AreEqual(date.eDateType2, result.eDateType2);
+            Assert.AreEqual(date.Date2, result.Date2);
+            Assert.AreEqual(date.DateText, result.DateText);
         }
 
         [TestMethod()]
-        public void WriteTest()
+        [DataRow("{\"eGenType\":10,\"eDateModifier\":4,\"Date1\":\"1980-05-12T00:00:00\",\"eDateType2\":2,\"Date2\":\"1985-01-01T00:00:00\",\"DateText\":\"ca. 1980-1985\"}", EDateModifier.About)]
+        public void WriteTest(string sExp, EDateModifier about)
         {
-            Assert.Fail();
+            // Arrange
+            var date = new GenDate(
+                about,
+                EDateType.Full,
+                new DateTime(1980, 5, 12),
+                EDateType.Year,
+                new DateTime(1985, 1, 1),
+                "ca. 1980-1985"
+            );
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            // Act
+            string json = System.Text.Json.JsonSerializer.Serialize<IGenDate>(date, options);
+
+            // Assert
+            Assert.IsFalse(string.IsNullOrEmpty(json), "JSON output should not be empty or null.");
+             Assert.IsTrue(json.Contains($"\"eDateModifier\":{(int)about}"), "JSON should contain eDateModifier About.");
+            Assert.AreEqual(sExp, json);
         }
     }
 }

@@ -7,5 +7,6 @@ namespace GenFree.Interfaces.Model;
 
 public interface IPlace : IHasIxDataItf<PlaceIndex,IPlaceData,int>, IUsesRecordset<int>, IUsesID<int>, IHasRSIndex1<PlaceIndex,PlaceFields>
 {
+    IPlaceData? CreateNew();
     void ForeEachTextDo(Func<int, string> onGetText, Action<int, string[]> onDo, Action<float, int>? onProgress = null);
 }

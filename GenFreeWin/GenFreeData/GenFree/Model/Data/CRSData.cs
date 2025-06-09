@@ -9,7 +9,7 @@ namespace GenFree.Model.Data
         where T2 : struct
     {
         protected abstract Enum _keyIndex { get; }
-        protected CRSData(IRecordset db_Table) : base(db_Table)
+        protected CRSData(IRecordset db_Table, bool xNoInit =false) : base(db_Table,xNoInit)
         {
         }
 
@@ -19,6 +19,7 @@ namespace GenFree.Model.Data
             _db_Table.Seek("=", iD);
             return _db_Table.NoMatch?null:_db_Table;
         }
+
     }
 
     public abstract class CRSDataC<T, T2> : CData<T>, IHasIRecordset, IHasID<T2>
@@ -28,10 +29,10 @@ namespace GenFree.Model.Data
 
         public abstract T2 ID { get; }
 
-        public CRSDataC(IRecordset db_Table)
+        public CRSDataC(IRecordset db_Table, bool xNoInit=false)
         {
             _db_Table = db_Table;
-            FillData(db_Table);
+            if (!xNoInit) FillData(db_Table);
         }
         protected abstract IRecordset? Seek(T2 iD);
 
@@ -41,6 +42,9 @@ namespace GenFree.Model.Data
         }
 
         public abstract void FillData(IRecordset dB_Table);
-        public abstract void SetDBValue(IRecordset dB_Table, Enum[]? asProps);
+        public abstract void ReadID(IRecordset dB_Table);
+        public abstract void SetDBValues(IRecordset dB_Table, Enum[]? asProps);
+
+        public virtual void NewID() { }
     }
 }

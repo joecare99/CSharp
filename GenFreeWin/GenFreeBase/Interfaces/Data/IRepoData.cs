@@ -7,7 +7,6 @@ namespace GenFree.Interfaces.Data
 {
     public interface IRepoData : IHasPropEnum<ERepoProp>, IHasID<int>, IHasIRecordset
     {
-        int ID { get; } // This is the primary key
         string sName { get; set; }
         string sOrt { get; set; }
         string sPLZ { get; set; }

@@ -42,10 +42,10 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
             _db_Table.MoveFirst();
             while (!_db_Table.EOF)
             {
-                if (_db_Table.Fields[nameof(PersonFields.EditDat)].AsDate() == default)
+                if (_db_Table.Fields[PersonFields.EditDat].AsDate() == default)
                 {
                     _db_Table.Edit();
-                    _db_Table.Fields[nameof(PersonFields.EditDat)].Value = _db_Table.Fields[nameof(PersonFields.AnlDatum)].Value;
+                    _db_Table.Fields[PersonFields.EditDat].Value = _db_Table.Fields[PersonFields.AnlDatum].Value;
                     _db_Table.Update();
                 }
                 _db_Table.MoveNext();
@@ -62,7 +62,7 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
         }
         var dB_PersonTable = _db_Table;
         dB_PersonTable.Seek("=", iPerson);
-        string Person_sSex = dB_PersonTable.Fields[nameof(PersonFields.Sex)].AsString();
+        string Person_sSex = dB_PersonTable.Fields[PersonFields.Sex].AsString();
         if (dB_PersonTable.NoMatch)
         {
             return -2; // Person does not exist
@@ -82,7 +82,7 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
         var dB_PersonTable = Seek(persInArb, out bool xBreak);
         var i = 0;
         while (xBreak
-            | (dB_PersonTable?.Fields[nameof(PersonFields.Pruefen)]).AsString().Trim() == "G")
+            | (dB_PersonTable?.Fields[PersonFields.Pruefen]).AsString().Trim() == "G")
         {
             if (persInArb < 1)
             {
@@ -99,7 +99,7 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
                 if (uQuery(persInArb).Equals(tOKRes))
                 {
                     dB_PersonTable!.Edit();
-                    dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].Value = "     ";
+                    dB_PersonTable.Fields[PersonFields.Pruefen].Value = "     ";
                     dB_PersonTable.Update();
                     xBreak = true;
                 }
@@ -123,11 +123,11 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
     }
 
     public string GetSex(int persInArb)
-        => (Seek(persInArb, out _)?.Fields[nameof(PersonFields.Sex)]).AsString().ToUpper();
+        => (Seek(persInArb, out _)?.Fields[PersonFields.Sex]).AsString().ToUpper();
 
 
     protected override int GetID(IRecordset recordset)
-        => recordset.Fields[nameof(PersonFields.PersNr)].AsInt();
+        => recordset.Fields[PersonFields.PersNr].AsInt();
 
 
     public override PersonFields GetIndex1Field(PersonIndex eIndex) => eIndex switch
@@ -139,5 +139,5 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
         _ => throw new ArgumentException(nameof(eIndex)),
     };
 
-    protected override IPersonData GetData(IRecordset rs) => new CPersonData(rs);
+    protected override IPersonData GetData(IRecordset rs, bool xNoInit = false) => new CPersonData(rs, xNoInit);
 }

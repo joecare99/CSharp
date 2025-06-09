@@ -21,7 +21,7 @@ public partial class BaseSystem: ObservableObject, ISystem
     }
 
     [ObservableProperty]
-    private string _progOwner;
+    private string _progOwner="";
     [ObservableProperty]
     private bool _progIsDemo;
 

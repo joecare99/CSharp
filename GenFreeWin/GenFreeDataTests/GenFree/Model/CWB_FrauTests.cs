@@ -77,6 +77,12 @@ public class CWB_FrauTests
     }
 
     [TestMethod()]
+    public void CommitTest()
+    {
+        Assert.Fail();
+    }
+
+    [TestMethod()]
     [DataRow(true)]
     [DataRow(false)]
     public void UpdateTest(bool xSeek)

@@ -85,8 +85,8 @@ namespace WinAhnenCls.Model.HejInd.Tests
                 Assert.AreEqual(2, FHejClass.MarriagesCount, "2 Marriages");
                 Assert.AreEqual(2, FHejClass.IndividualCount, "2 Individuals");
                 Assert.AreEqual(2, FHejClass.GetActID, "ID:2");
-                Assert.AreEqual(1, FHejClass.ActualInd.Marriages.Length, "length(ActInd.Marriage)");
-                Assert.AreEqual(1, FHejClass.PeekInd(1).Marriages.Length, "length(peekInd[0].Marriage)");
+                Assert.AreEqual(1, FHejClass.ActualInd.Marriages.Count, "length(ActInd.Marriage)");
+                Assert.AreEqual(1, FHejClass.PeekInd(1).Marriages.Count, "length(peekInd[0].Marriage)");
                 Assert.AreEqual(2, FUpdateCount, "2 Update");
             }
 
@@ -117,7 +117,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
             {
                 Assert.AreEqual(4, FUpdateCount, "4 Update");
                 Assert.AreEqual(2, FHejClass.GetActID, "ID:2");
-                Assert.AreEqual(3, FHejClass.ActualInd.idFather, "IDFather:3");
+                Assert.AreEqual(3, FHejClass.ActualInd.Father.ID, "IDFather:3");
             }
 
             FHejClass.AppendParent(EHejIndDataFields.hind_idMother);

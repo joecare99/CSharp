@@ -27,7 +27,7 @@ public interface IGenPersistence
     void PutColorsInit(string v, IList<Color> value);
     void PutColorInit(string v, Color value, int iCnt);
     
-    void AppendStringsTemp(IList<string> lines, string sSection);
+    void AppendStringsTemp(string sSection, IList<string> lines);
     void WriteStringTemp(string sSection, string text);
     
     int GetIntMand(string sSection, long lPos = 1);
@@ -61,6 +61,8 @@ public interface IGenPersistence
     IList<string> ReadStringsMand(string v1, int v2);
     void ReadStringsTemp(string v, IList<string> asOption);
     string CreateTempFilefromInit(string v);
+    bool ExistFile(string v);
+    bool ExistFileMand(string dateiName);
 }
 
 public static class PersistenceHelper {
