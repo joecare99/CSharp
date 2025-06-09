@@ -26,9 +26,9 @@ public class IndexDef : IIndexDef
         IIndexDef? ix;
         if ((ix = td.Indexes.Find(i => i.Name == name)) != null)
         {
-            var Fld = ix.Fields?.ToList();
-            Fld?.Add(sField);
-            ix.Fields = Fld?.ToArray();
+            var Fld = (ix.Fields ?? []).ToList();
+            Fld.Add(sField);
+            ix.Fields = Fields = Fld.ToArray();
         }
         else
         {

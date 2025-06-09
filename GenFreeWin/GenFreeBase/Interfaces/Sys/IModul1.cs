@@ -295,7 +295,6 @@ public interface IModul1
     void Datles(int PersInArb, out IList<string> asPersDates);
     (string sDat_Birth, string sDat_Death) Datles(int PersInArb, IPersonData person);
     void DatPruef(int Pschalt);
-    string Date2DotDateStr2(string Dat);
     string DezRechnen(string A4, string ubgT);
     void Diskvoll();
     IEnumerable<string> EnumerateMandants(string drive);
@@ -327,7 +326,7 @@ public interface IModul1
     string Rech(ref string datum1, ref string datum2);
     void Sichwand(string Dasich, string sDatumV_S, DateTime dDatumB, EEventArt eArt);
     void Sperrfehler();
-    void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList ocItems,(string, ETextKennz) Bez);
+    void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList ocItems);
     int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0, short ruf = 0);
     void TextTeilen(string UbgT, string UbgT4, string Kennung);
     string Umlaute4(string Fld, int uml);
@@ -363,4 +362,9 @@ public interface IModul1
     int? FamDatYear(int FamInArb, short schalt);
     bool GeolesPlace(IPlaceData cPlace, Action<(string, string)>? action = null, bool v = true);
     void GEExportPlace(string sName, (string sLongitude, string sLatiude) cKoords, bool xAppend = true);
+    string Umlaute(string Fld);
+    string Umlaute_UCase(string sText);
+    short Famsatzles(int FamInArb, short Rich, IFamilyData cFamily);
+    IListItem<int> Famzeig(int Fam, ELinkKennz Kenn);
+    void DataModul_Texte_ListDistLeitname(ETextKennz eTKennz, string UbgT, IList items);
 }

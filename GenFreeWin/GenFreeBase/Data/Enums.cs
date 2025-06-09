@@ -11,12 +11,12 @@ public enum nbTables
 }
 public enum PersonFields
 {
+    PersNr,
     AnlDatum,
     Sex,
     EditDat,
     Bem1,
     Pruefen,
-    PersNr,
     Konv,
     Such1,
     Bem2,
@@ -94,11 +94,11 @@ public enum EventIndex
 }
 public enum FamilyFields
 {
+    FamNr,
     AnlDatum,
     EditDat,
     Prüfen,
     Bem1,
-    FamNr,
     Aeb,
     Name,
     Bem2,
@@ -132,6 +132,7 @@ public enum OFBFields
 
 public enum PlaceFields
 {
+    OrtNr,
     Ort,
     Ortsteil,
     Kreis,
@@ -144,7 +145,6 @@ public enum PlaceFields
     L,
     B,
     Bem,
-    OrtNr,
     Zusatz,
     GOV,
     PolName,
@@ -460,6 +460,18 @@ public enum NB_AhnenIndex
     LfNr,
     PerNR
 }
+public enum ReligionFields
+{
+    PerNr,
+    TextNr
+}
+public enum ReligionIndex
+{
+    T,
+    PerNR
+}
+
+
 public enum ENameKennz : int
 {
     nkGivnName = 0,
