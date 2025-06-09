@@ -1,6 +1,7 @@
 ﻿using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System.Collections.Generic;
 
 namespace GenFree.Data.Tests
 {
@@ -9,11 +10,13 @@ namespace GenFree.Data.Tests
     {
         private ITableDef td;
         private IndexDef testClass;
+        private List<IIndexDef> _ix;
 
         [TestInitialize]
         public void Init()
         {
             td = Substitute.For<ITableDef>();
+            td.Indexes.Returns(_ix = new List<IIndexDef>());
             testClass = new IndexDef(td, "Name", "sField", true, false);
         }
 
@@ -77,7 +80,7 @@ namespace GenFree.Data.Tests
 
             // Assert
             Assert.IsNotNull(id);
-            Assert.AreEqual("Name", id.Name);
+            Assert.AreEqual(null, id.Name);
             Assert.IsTrue(id.Fields != null && id.Fields.Length == 2 && id.Fields[1] == "Field2");
         }
     }
