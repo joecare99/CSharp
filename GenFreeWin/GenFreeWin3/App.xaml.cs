@@ -1,4 +1,6 @@
 ﻿using BaseLib.Helper;
+using CommunityToolkit.Mvvm.Messaging;
+using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 using GenFreeWpf.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,8 +27,19 @@ namespace GenFreeWpf
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<MainWindow>();
-            services.AddTransient<MainWindowViewModel>();
+            services.AddSingleton<MainWindow>()
+            .AddSingleton<IMessenger>((s) => WeakReferenceMessenger.Default)
+            .AddSingleton<IApplUserTexts, GenFree.Views.ApplUserTexts>()
+            .AddTransient<MainWindowViewModel>()
+            .AddTransient<IMenu1ViewModel, GenFreeWin.ViewModels.MenueViewModel>()
+            .AddTransient<IFraStatisticsViewModel, FraStatisticsViewModel>()
+            .AddTransient<IAdresseViewModel, GenFreeWin.ViewModels.AdresseViewModel>()
+            .AddTransient<ILizenzViewModel, GenFreeWin.ViewModels.LizenzViewModel>()
+            .AddTransient<IFraPersImpQuerryViewModel, GenFreeWin.ViewModels.FraPersImpQuerryViewModel>()
+            .AddTransient<IPersonenViewModel, GenFreeWin.ViewModels.PersonenViewModel>()
+              ;
+
+
         }
 
         /// <summary>

@@ -10,7 +10,7 @@
     <Window.DataContext>
         <mvvm:MainWindowViewModel />
     </Window.DataContext>
-    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" d:Source="Views/Menue.xaml" Source="" >
+    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" d:Source="Views/Menue.xaml" Source="/Views/MenueControl.xaml" >
         <Frame.Resources>
             <Style TargetType="Frame">
                 <Setter Property="Background" Value="Transparent"/>

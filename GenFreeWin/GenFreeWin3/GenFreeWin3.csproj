@@ -4,20 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>GenFreeWpf</RootNamespace>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Page Remove="Views\MenueControl.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\MenueControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
@@ -25,6 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+    <ProjectReference Include="..\GenFreeBaseClasses\GenFreeBaseClasses.csproj" />
+    <ProjectReference Include="..\GenFreeWinVm2\GenFreeWinVm2.csproj" />
     <ProjectReference Include="..\GenFreeUIItfs\GenFreeUIItfs.csproj" />
   </ItemGroup>
 

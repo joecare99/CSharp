@@ -396,7 +396,7 @@
                 Height="150"
                 FontFamily="Arial"
                 FontSize="10"
-                ItemsSource="{Binding List3Items}"
+                ItemsSource="{Binding LstList3Items}"
                 Visibility="{Binding List3Visible, Converter={StaticResource Bool2VisibilityConverter}}" />
         </StackPanel>
         <!--  Fenstergröße  -->
