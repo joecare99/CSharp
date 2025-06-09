@@ -89,6 +89,8 @@ public class GenPerson : GenEntity, IGenPerson
     public IGenPlace OccuPlace { get => Facts.GetFact(EFactType.Occupation, t => t.Place); set => throw new NotImplementedException(); }
     [JsonIgnore]
     public IGenPlace Residence { get => Facts.GetFact(EFactType.Residence, t => t.Place); set => throw new NotImplementedException(); }
+    [JsonIgnore]
+    public IIndexedList<IGenFamily> Marriages => Connects.Where(c => c.Entity is IGenFamily && c.eGenConnectionType == EGenConnectionType.ChildFamily).Select(p => p.Entity as IGenFamily).ToIndexedList(f => f.UId);
 
     #endregion
 
