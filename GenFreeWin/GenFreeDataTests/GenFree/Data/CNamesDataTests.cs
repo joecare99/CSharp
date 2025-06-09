@@ -5,6 +5,7 @@ using NSubstitute;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using BaseLib.Interfaces;
+using BaseLib.Helper;
 
 namespace GenFree.Data.Tests;
 
@@ -99,8 +100,8 @@ public class CNamesDataTests
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
     [DataRow(ENamesProp.iTextNr, 4)]
     [DataRow(ENamesProp.iLfNr, 5)]
-    [DataRow(ENamesProp.bRuf, false)]
-    [DataRow(ENamesProp.bSpitz, false)]
+    [DataRow(ENamesProp.bRuf, true)]
+    [DataRow(ENamesProp.bSpitz, true)]
     public void SetPropValueTest(ENamesProp eAct, object iVal)
     {
         testClass.SetPropValue(eAct, iVal);
@@ -151,7 +152,7 @@ public class CNamesDataTests
     {
         testClass.SetPropValue(eAct, oVal);
         testClass.SetDBValues(testRS, null);
-        _ = testRS.Received().Fields[eAct.ToString()];
+        _ = testRS.Received().Fields[eAct.AsEnum<RepoFields>()];
     }
 
     [DataTestMethod()]

@@ -78,6 +78,23 @@ public class CDataTests
     }
 
     [DataTestMethod()]
+    [DataRow(TestProp.ID, 1)]
+    [DataRow(TestProp.sDescription, "Some Test")]
+    [DataRow(TestProp.iData, 321)]
+    public void GetPropValue2Test(TestProp eAct, object? oExp)
+    {
+       switch (eAct)
+        {
+            default:
+                Assert.AreEqual(oExp, testClass.GetPropValue<int>(eAct));
+                break;
+            case TestProp.sDescription:
+                Assert.AreEqual(oExp, testClass.GetPropValue<string>(eAct));
+                break;
+        }
+    }
+
+    [DataTestMethod()]
     [DataRow(TestProp.ID, 1, 0)]
     [DataRow(TestProp.sDescription, "Some Test", 0)]
     [DataRow(TestProp.iData, 321, 0)]

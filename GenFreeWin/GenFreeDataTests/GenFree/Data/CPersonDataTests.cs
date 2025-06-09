@@ -63,6 +63,7 @@ namespace GenFree.Data.Tests
         {
             CPersonData.Reset();
         }
+
         [TestMethod()]
         public void CPersonDataTest()
         {
@@ -231,9 +232,27 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        public void UpdateTest()
+        [DataRow(true)]
+        [DataRow(false)]
+        public void UpdateTest(bool xNoMatch)
         {
-            Assert.Fail();
+            //Arrange
+            testRS.NoMatch.Returns(xNoMatch);
+            //Act
+            testClass.Update();
+
+            _= testRS.Received(1).NoMatch;
+            testRS.Received(xNoMatch?0:1).Edit();
+            testRS.Received(xNoMatch ? 0 : 1).Update();
+            Assert.AreEqual(0, testClass.ChangedProps.Count);
+        }
+
+        [TestMethod()]
+        public void UpdateTest1()
+        {
+            CPersonData.Reset();
+            var _test = new CPersonData();
+            Assert.IsNotNull(_test);
         }
 
         [DataTestMethod()]
@@ -246,6 +265,15 @@ namespace GenFree.Data.Tests
             testClass.SetSex(sAct);
             Assert.AreEqual(sAct, testClass.sSex);
             Assert.AreEqual(xCH ? 1 : 0, testClass.ChangedProps.Count);
+        }
+
+        [DataTestMethod()]
+        [DataRow(true)]
+        [DataRow(false)]
+        public void xVChrTest(bool sAct)
+        {
+            testClass.xVChr = sAct; 
+            Assert.AreEqual(sAct, testClass.xVChr);
         }
 
         [DataTestMethod()]
@@ -362,8 +390,8 @@ namespace GenFree.Data.Tests
         [DataRow(EPersonProp.dBurial, new[] { 1981, 7, 8 })]
         [DataRow(EPersonProp.dEditDat, new[] { 2000, 3, 4 })]
         [DataRow(EPersonProp.dAnlDatum, new[] { 1999, 1, 1 })]
-        [DataRow(EPersonProp.SurName, null)]
-        [DataRow(EPersonProp.Givennames, null)]
+        [DataRow(EPersonProp.SurName, "")]
+        [DataRow(EPersonProp.Givennames, "")]
         [DataRow(EPersonProp.iReligi, 2)]
         [DataRow(EPersonProp.sOFB, "OFB")]
         public void GetPropValueTest(EPersonProp eExp, object oAct)

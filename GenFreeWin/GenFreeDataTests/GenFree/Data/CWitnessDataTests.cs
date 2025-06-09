@@ -5,6 +5,7 @@ using NSubstitute;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using BaseLib.Interfaces;
+using BaseLib.Helper;
 
 namespace GenFree.Data.Tests
 {
@@ -145,7 +146,7 @@ namespace GenFree.Data.Tests
         {
             testClass.SetPropValue(eAct, oVal);
             testClass.SetDBValues(testRS, null);
-            _ = testRS.Received().Fields[eAct.ToString()];
+            _ = testRS.Received().Fields[eAct.AsEnum<WitnessFields>()];
         }
 
         [DataTestMethod()]

@@ -48,18 +48,17 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        public void SetTableTest()
-        {
-            var testTable = Substitute.For<IRecordset>();
-            CFamilyPersons.SetTableGtr(() => testRS);
-        }
-
-        [TestMethod()]
         public void CFamilyPersonsTest()
         {
+            //act
+            var testClass = new CFamilyPersons();
+            //assert
+            Assert.IsNotNull(testClass);
+            Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
+
             var testTable = Substitute.For<IRecordset>();
             CFamilyPersons.SetTableGtr(() => testRS);
-            var testClass = new CFamilyPersons();
+            testClass = new CFamilyPersons();
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
             Assert.AreEqual(4, testClass.ID);

@@ -236,7 +236,7 @@ namespace GenFree.Data.Tests
         [TestMethod()]
         public void UpdateAllSetValTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]

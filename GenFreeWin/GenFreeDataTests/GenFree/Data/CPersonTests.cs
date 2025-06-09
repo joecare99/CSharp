@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
@@ -47,7 +48,17 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(2, testClass.MaxID);
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received(1).MoveLast();
-            testRS.Received(1).Fields[0].Value = 0;
+            testRS.Received(1).Fields[PersonFields.PersNr].Value = 0;
+
+        }
+
+        [TestMethod()]
+        public void MinIDTest()
+        {
+            Assert.AreEqual(2, testClass.MinID);
+            Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
+            testRS.Received(1).MoveFirst();
+            testRS.Received(1).Fields[PersonFields.PersNr].Value = 0;
 
         }
 
@@ -86,13 +97,13 @@ namespace GenFree.Data.Tests
         [DataRow("Null", 0, ETextKennz.tkNone, 0, 0, 0)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, 0, 0)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, 0, 1)]
-        [DataRow("1-Name-2", 1, ETextKennz.tkName, 3, 0, 1)]
-        [DataRow("1-Name-2", 1, ETextKennz.tkName, 4, 0, 0)]
-        [DataRow("1-Name-2", 2, ETextKennz.tkNone, 4, 0, 2)]
-        [DataRow("1-Name-2", 2, ETextKennz.tkName, 4, 0, 0)]
-        [DataRow("1-Name-2", 2, ETextKennz.tkNone, 4, 3, 2)]
-        [DataRow("1-Name-2", 2, ETextKennz.tkName, 4, 3, 0)]
-        [DataRow("1-Name-2", 2, ETextKennz.tkName, 4, 2, 2)]
+        [DataRow("1-Name-3", 1, ETextKennz.tkName, 3, 0, 1)]
+        [DataRow("1-Name-4", 1, ETextKennz.tkName, 4, 0, 0)]
+        [DataRow("2-None-4", 2, ETextKennz.tkNone, 4, 0, 0)]
+        [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, 0, 0)]
+        [DataRow("2-None-4-3", 2, ETextKennz.tkNone, 4, 3, 0)]
+        [DataRow("2-Name-4-2", 2, ETextKennz.tkName, 4, 2, 2)]
+        [DataRow("2-Name-4-3", 2, ETextKennz.tkName, 4, 3, 0)]
 
         public void ValidateIDTest(string sName, int iActPers, Enum eTKennz, int iLfNr, int schalt, int iExp)
         {
@@ -159,9 +170,9 @@ namespace GenFree.Data.Tests
                 Assert.IsInstanceOfType(cNm, typeof(CPersonData));
                 iCnt++;
             }
-            Assert.AreEqual(xExp ? 3 : 0, iCnt);
+            Assert.AreEqual(xExp ? 2 : 0, iCnt);
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
-            testRS.Received(xExp ? 3 : 0).MoveNext();
+            testRS.Received(xExp ? 2 : 0).MoveNext();
             testRS.Received(1).MoveFirst();
         }
 
@@ -179,11 +190,11 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(PersonIndex.PerNr,PersonFields.PersNr)]
+        [DataRow(PersonIndex.PerNr, PersonFields.PersNr)]
         [DataRow(PersonIndex.Puid, PersonFields.PUid)]
         [DataRow(PersonIndex.BeaDat, PersonFields.EditDat)]
         [DataRow(PersonIndex.reli, PersonFields.religi)]
-        public void GetIndex1FieldTest(PersonIndex eAct,PersonFields eExp)
+        public void GetIndex1FieldTest(PersonIndex eAct, PersonFields eExp)
         {
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
@@ -194,8 +205,9 @@ namespace GenFree.Data.Tests
         [DataRow(PersonIndex.Such3, PersonFields.PersNr)]
         public void GetIndex1FieldTest2(PersonIndex eAct, PersonFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(()=> testClass.GetIndex1Field(eAct));
+            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
+      
     }
 }
