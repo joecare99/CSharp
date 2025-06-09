@@ -33,8 +33,8 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.Seek("=", i, iFamPers);
             while (!dB_EventTable.NoMatch
                  && !dB_EventTable.EOF
-                 && !(dB_EventTable.Fields[nameof(EventFields.PerFamNr)].AsInt() != iFamPers)
-                 && !(dB_EventTable.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>() != i))
+                 && !(dB_EventTable.Fields[EventFields.PerFamNr].AsInt() != iFamPers)
+                 && !(dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() != i))
             {
                 try { action(GetData(dB_EventTable), dB_EventTable); } catch { }
                 dB_EventTable.MoveNext();
@@ -73,10 +73,10 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     public DateTime GetPersonBirthOrBapt(int persInArb, bool xPrefBap = false)
     {
         var dB_EventTable = Seek((xPrefBap ? EEventArt.eA_Birth : EEventArt.eA_Baptism, persInArb, 0));
-        if ((dB_EventTable?.Fields[nameof(EventFields.DatumV)]).AsDate() == default)
+        if ((dB_EventTable?.Fields[EventFields.DatumV]).AsDate() == default)
             dB_EventTable = Seek((xPrefBap ? EEventArt.eA_Baptism : EEventArt.eA_Birth, persInArb, 0));
 
-        return (dB_EventTable?.Fields[nameof(EventFields.DatumV)]).AsDate();
+        return (dB_EventTable?.Fields[EventFields.DatumV]).AsDate();
     }
 
     public DateTime GetDate(EEventArt eArt, int iFamPers)
@@ -87,8 +87,8 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         sDateV_S = "";
         if (!xBreak)
         {
-            sDateV_S = dB_EventTable!.Fields[nameof(EventFields.DatumV_S)].AsString();
-            return dB_EventTable.Fields[nameof(EventFields.DatumV)].AsDate();
+            sDateV_S = dB_EventTable!.Fields[EventFields.DatumV_S].AsString();
+            return dB_EventTable.Fields[EventFields.DatumV].AsDate();
         }
         else
             return default;
@@ -103,8 +103,8 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         sDateB_S = "";
         if (!xBreak)
         {
-            sDateB_S = dB_EventTable!.Fields[nameof(EventFields.DatumB_S)].AsString();
-            return dB_EventTable.Fields[nameof(EventFields.DatumB)].AsDate();
+            sDateB_S = dB_EventTable!.Fields[EventFields.DatumB_S].AsString();
+            return dB_EventTable.Fields[EventFields.DatumB].AsDate();
         }
         else
             return default;
@@ -160,8 +160,8 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         var db_Table = SeekBeSu(eArt, iPerFamNr, out var xBreak);
         while (!xBreak
            && !db_Table!.EOF
-           && !(db_Table.Fields[nameof(EventFields.PerFamNr)].AsInt() != iPerFamNr)
-           && !(db_Table.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>() != eArt))
+           && !(db_Table.Fields[EventFields.PerFamNr].AsInt() != iPerFamNr)
+           && !(db_Table.Fields[EventFields.Art].AsEnum<EEventArt>() != eArt))
         {
             if (!db_Table.NoMatch)
             {
@@ -177,9 +177,9 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         if (!xBreak && (eArt != eArt2 || (iFam2 != 0 && iFam2 != iPerFamNr)))
         {
             dB_EventTable!.Edit();
-            dB_EventTable.Fields[nameof(EventFields.Art)].Value = eArt2;
+            dB_EventTable.Fields[EventFields.Art].Value = eArt2;
             if (iFam2 != 0 && iFam2 != iPerFamNr)
-                dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = iFam2;
+                dB_EventTable.Fields[EventFields.PerFamNr].Value = iFam2;
             dB_EventTable.Update();
         }
     }
@@ -273,34 +273,34 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         var recordset = _db_Table;
         recordset.AddNew();
-        recordset.Fields[nameof(EventFields.Art)].Value = key.eArt;
-        recordset.Fields[nameof(EventFields.PerFamNr)].Value = key.iLink;
-        recordset.Fields[nameof(EventFields.DatumV)].Value = 0;
-        recordset.Fields[nameof(EventFields.DatumV_S)].Value = " ";
-        recordset.Fields[nameof(EventFields.DatumB)].Value = 0;
-        recordset.Fields[nameof(EventFields.DatumB_S)].Value = " ";
-        recordset.Fields[nameof(EventFields.DatumText)].Value = "0";
-        recordset.Fields[nameof(EventFields.Ort)].Value = 0;
-        recordset.Fields[nameof(EventFields.Ort_S)].Value = " ";
-        recordset.Fields[nameof(EventFields.KBem)].Value = 0;
-        recordset.Fields[nameof(EventFields.Reg)].Value = " ";
-        recordset.Fields[nameof(EventFields.Bem1)].Value = " ";
-        recordset.Fields[nameof(EventFields.Bem2)].Value = " ";
-        recordset.Fields[nameof(EventFields.Platz)].Value = 0;
-        recordset.Fields[nameof(EventFields.LfNr)].Value = key.iLfNr;
-        recordset.Fields[nameof(EventFields.VChr)].Value = "0";
-        recordset.Fields[nameof(EventFields.Zusatz)].Value = "";
-        recordset.Fields[nameof(EventFields.GrabNr)].Value = 0;
-        recordset.Fields[nameof(EventFields.tot)].Value = " ";
+        recordset.Fields[EventFields.Art].Value = key.eArt;
+        recordset.Fields[EventFields.PerFamNr].Value = key.iLink;
+        recordset.Fields[EventFields.DatumV].Value = 0;
+        recordset.Fields[EventFields.DatumV_S].Value = " ";
+        recordset.Fields[EventFields.DatumB].Value = 0;
+        recordset.Fields[EventFields.DatumB_S].Value = " ";
+        recordset.Fields[EventFields.DatumText].Value = "0";
+        recordset.Fields[EventFields.Ort].Value = 0;
+        recordset.Fields[EventFields.Ort_S].Value = " ";
+        recordset.Fields[EventFields.KBem].Value = 0;
+        recordset.Fields[EventFields.Reg].Value = " ";
+        recordset.Fields[EventFields.Bem1].Value = " ";
+        recordset.Fields[EventFields.Bem2].Value = " ";
+        recordset.Fields[EventFields.Platz].Value = 0;
+        recordset.Fields[EventFields.LfNr].Value = key.iLfNr;
+        recordset.Fields[EventFields.VChr].Value = "0";
+        recordset.Fields[EventFields.Zusatz].Value = "";
+        recordset.Fields[EventFields.GrabNr].Value = 0;
+        recordset.Fields[EventFields.tot].Value = " ";
         recordset.Update();
         return recordset;
     }
 
     protected override (EEventArt eArt, int iLink, short iLfNr) GetID(IRecordset recordset)
     {
-        return (recordset.Fields[nameof(EventFields.Art)].AsEnum<EEventArt>(),
-            recordset.Fields[nameof(EventFields.PerFamNr)].AsInt(),
-            (short)recordset.Fields[nameof(EventFields.LfNr)].AsInt());
+        return (recordset.Fields[EventFields.Art].AsEnum<EEventArt>(),
+            recordset.Fields[EventFields.PerFamNr].AsInt(),
+            (short)recordset.Fields[EventFields.LfNr].AsInt());
     }
 
     public override EventFields GetIndex1Field(EventIndex eIndex)
@@ -317,11 +317,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
        _ => throw new NotImplementedException(),
    };
 
-    protected override IEventData GetData(IRecordset rs)
-    {
-        IEventData cResult = new CEventData(rs); // Todo: IoC
-        return cResult;
-    }
+    protected override IEventData GetData(IRecordset rs, bool xNoInit = false) =>new CEventData(rs,xNoInit);
 
     public  void UpdateClearPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, Predicate<IEventData> predicate)
     {
@@ -333,7 +329,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             if (predicate(cEv))
             {
                 dB_EventTable.Edit();
-                dB_EventTable.Fields[nameof(EventFields.ArtText)].Value = 0;
+                dB_EventTable.Fields[EventFields.ArtText].Value = 0;
                 dB_EventTable.Update();
             }
         }
@@ -347,7 +343,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
         {
             dB_EventTable.Edit();
-            dB_EventTable.Fields[nameof(eIndexField)].Value = iNewVal;
+            dB_EventTable.Fields[eIndexField].Value = iNewVal;
             dB_EventTable.Update();
             dB_EventTable.MoveNext();
         }
@@ -474,7 +470,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable = AppendRaw(key);
         }
         dB_EventTable.Edit();
-        var field = dB_EventTable.Fields[nameof(eSetField)];
+        var field = dB_EventTable.Fields[eSetField];
         field.Value = field.AsString().Trim() == ""
             ? sNewVal + " "
             : field.AsString() + " " + sNewVal;
@@ -486,7 +482,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         var dB_EventTable = _db_Table;
         dB_EventTable.Index = nameof(EventIndex.ArtNr);
         dB_EventTable.Seek("=", iEventType, persInArb, 0);
-        T sEvtBem4 = conv(dB_EventTable.Fields[nameof(eGetField)]);
+        T sEvtBem4 = conv(dB_EventTable.Fields[eGetField]);
         return sEvtBem4;
     }
 
@@ -516,7 +512,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         if ((dB_EventTable = SeekBeSu(eArt, Fam1, out _)) != null)
         {
             dB_EventTable.Edit();
-            dB_EventTable.Fields[nameof(EventFields.PerFamNr)].Value = Fam2;
+            dB_EventTable.Fields[EventFields.PerFamNr].Value = Fam2;
             dB_EventTable.Update();
         }
     }

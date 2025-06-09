@@ -10,7 +10,7 @@ namespace GenFree.Data;
 
 public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesData
 {
-    public CNamesData(IRecordset dB_NamesTable) : base(dB_NamesTable)
+    public CNamesData(IRecordset dB_NamesTable, bool xNoInit=false) : base(dB_NamesTable,xNoInit)
     {
     }
 
@@ -23,12 +23,17 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
     public bool bRuf { get; private set; }
     public bool bSpitz { get; private set; }
 
-    public override void FillData(IRecordset dB_Table)
+    public override void ReadID(IRecordset dB_Table)
     {
         iPersNr = dB_Table.Fields[NameFields.PersNr.AsFld()].AsInt();
         eTKennz = dB_Table.Fields[NameFields.Kennz.AsFld()].AsEnum<ETextKennz>();
-        iTextNr = dB_Table.Fields[NameFields.Text.AsFld()].AsInt();
         iLfNr = dB_Table.Fields[NameFields.LfNr.AsFld()].AsInt();
+    }
+
+    public override void FillData(IRecordset dB_Table)
+    {
+        ReadID(dB_Table);
+        iTextNr = dB_Table.Fields[NameFields.Text.AsFld()].AsInt();
         bRuf = dB_Table.Fields[NameFields.Ruf.AsFld()].AsBool();
         bSpitz = dB_Table.Fields[NameFields.Spitz.AsFld()].AsBool();
     }
@@ -58,7 +63,8 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
         };
     }
 
-    public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+
+    public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
     {
         asProps ??= _changedPropsList.Select(i => (Enum)i).ToArray();
         foreach (var prop in asProps)

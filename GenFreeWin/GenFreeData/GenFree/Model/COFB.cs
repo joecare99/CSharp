@@ -31,10 +31,7 @@ namespace GenFree.GenFree.Model
             };
         }
 
-        protected override IOFBData GetData(IRecordset rs)
-        {
-            return new COFBData(rs);
-        }
+        protected override IOFBData GetData(IRecordset rs, bool xNoInit = false) => new COFBData(rs,xNoInit);
 
         public override IRecordset? Seek((int, string, int) tValue, out bool xBreak)
         {

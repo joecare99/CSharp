@@ -11,7 +11,7 @@ namespace GenFree.Data
     public class CSourceLinkData : CRSDataC<ESourceLinkProp, (int, EEventArt, int, short)>, ISourceLinkData
     {
 
-        public CSourceLinkData(IRecordset recordset) : base(recordset)
+        public CSourceLinkData(IRecordset recordset, bool xNoInit=false) : base(recordset,xNoInit)
         {
         }
 
@@ -19,10 +19,10 @@ namespace GenFree.Data
         public EEventArt eArt { get; internal set; }
         public int iPersNr { get; internal set; }
         public int iLfdNr { get; internal set; }
-        public string sKom { get; internal set; }
-        public string sOrig { get; internal set; }
-        public string sAus { get; internal set; }
-        public string sField3 { get; internal set; }
+        public string sKom { get; internal set; } = "";
+        public string sOrig { get; internal set; } = "";
+        public string sAus { get; internal set; } = "";
+        public string sField3 { get; internal set; } = "";
         public int iQuNr { get; internal set; }
 
         public override (int, EEventArt, int, short) ID =>
@@ -76,7 +76,7 @@ namespace GenFree.Data
             return _db_Table.NoMatch ? null : _db_Table;
         }
 
-        public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+        public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
         {
             asProps ??= _changedPropsList.Select(e => (Enum)e).ToArray();
             foreach (var prop in asProps)
@@ -135,6 +135,11 @@ namespace GenFree.Data
                 ESourceLinkProp.sOrig => sOrig = (string)value,
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        public override void ReadID(IRecordset dB_Table)
+        {
+            throw new NotImplementedException();
         }
     }
 }

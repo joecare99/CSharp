@@ -94,7 +94,7 @@ public abstract class CData<T> : IHasPropEnum<T>
     /// <typeparam name="T2">The type of the t2.</typeparam>
     /// <param name="prop">The property.</param>
     /// <returns>T2.</returns>
-    public T2? GetPropValue<T2>(T prop) => (T2)GetPropValue(prop);
+    public T2? GetPropValue<T2>(T prop) => (T2?)GetPropValue(prop);
 
     /// <summary>
     /// Sets the property value.

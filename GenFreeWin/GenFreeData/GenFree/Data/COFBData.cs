@@ -11,14 +11,14 @@ namespace GenFree.Data
     public class COFBData : CRSDataC<EOFBProps, (int, string, int)>, IOFBData
     {
         private string? _sText;
-        private static Func<int, string>? _getText;
+        private static Func<int, string> _getText = DataModul.TextLese1;
      //   private static Func<IRecordset> _getTable;
 
         public override (int, string, int) ID => (iPerNr,sKennz,iTextNr);
 
         public int iPerNr { get; private set; }
 
-        public string sKennz { get; private set; }
+        public string sKennz { get; private set; } = "";
 
         public int iTextNr { get; private set; }
 
@@ -33,15 +33,20 @@ namespace GenFree.Data
         //{
         //    _getTable = value;
         //}
-        public COFBData(IRecordset db_Table) : base(db_Table)
+        public COFBData(IRecordset db_Table, bool xNoInit) : base(db_Table,xNoInit)
         {
         }
 
-        public override void FillData(IRecordset dB_Table)
+        public override void ReadID(IRecordset dB_Table)
         {
             iPerNr = dB_Table.Fields[OFBFields.PerNr].AsInt();
             sKennz = dB_Table.Fields[OFBFields.Kennz].AsString();
             iTextNr = dB_Table.Fields[OFBFields.TextNr].AsInt();
+        }
+
+        public override void FillData(IRecordset dB_Table)
+        {
+            ReadID(dB_Table);
         }
 
         public override Type GetPropType(EOFBProps prop)
@@ -68,7 +73,7 @@ namespace GenFree.Data
             };
         }
 
-        public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+        public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
         {
             asProps ??= _changedPropsList.Select(e=>(Enum)e).ToArray();
             {
@@ -120,5 +125,6 @@ namespace GenFree.Data
             _db_Table.Seek("=", iD.Item1,iD.Item2,iD.Item3);
             return _db_Table.NoMatch ? null : _db_Table;
         }
+
     }
 }

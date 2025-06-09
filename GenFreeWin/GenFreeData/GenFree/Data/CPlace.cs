@@ -32,7 +32,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
         dB_PlaceTable.MoveFirst();
         while (!dB_PlaceTable.EOF)
         {
-            int Place_iOrtNr = dB_PlaceTable.Fields[nameof(PlaceFields.OrtNr)].AsInt();
+            int Place_iOrtNr = dB_PlaceTable.Fields[PlaceFields.OrtNr].AsInt();
             onProgress?.Invoke(Place_iOrtNr / (float)iMax, Place_iOrtNr);
             foreach (var f in new[] {
                     PlaceFields.Ort,
@@ -54,7 +54,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
 
     protected override int GetID(IRecordset recordset)
     {
-        return _db_Table.Fields[nameof(PlaceFields.OrtNr)].AsInt();
+        return _db_Table.Fields[PlaceFields.OrtNr].AsInt();
     }
 
     public override PlaceFields GetIndex1Field(PlaceIndex eIndex) => eIndex switch
@@ -68,5 +68,6 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
         _ => throw new ArgumentException(nameof(eIndex)),
     };
 
-    protected override IPlaceData GetData(IRecordset rs) => new CPlaceData(rs);
+    protected override IPlaceData GetData(IRecordset rs, bool xNoInit = false) => new CPlaceData(rs,xNoInit);
+
 }

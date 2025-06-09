@@ -19,9 +19,9 @@ internal class CRepository : CUsesIndexedRSet<int, RepoIndex, RepoFields, IRepoD
 
     protected override RepoIndex _keyIndex => RepoIndex.Nr;
 
-    protected override int GetID(IRecordset rs) => rs.Fields[nameof(RepoFields.Nr)].AsInt();
+    protected override int GetID(IRecordset rs) => rs.Fields[RepoFields.Nr].AsInt();
 
-    protected override IRepoData GetData(IRecordset rs) => new CRepoData(rs);
+    protected override IRepoData GetData(IRecordset rs, bool xNoInit = false) => new CRepoData(rs,xNoInit);
 
     public override RepoFields GetIndex1Field(RepoIndex eIndex) => RepoFields.Nr;
 }

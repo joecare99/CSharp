@@ -17,12 +17,14 @@ public class CCitationData : ICitationData
     public string this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public int iSourceId { get => field; set => field = value; }
+    public short siLfNr { get => field; set => field = value; }
     public short iSourceKnd { get => field; set => field = value; }
-    public string sSourceTitle { get => field; set => field = value; }
-    public string sPage { get => field; set => field = value; }
-    public string sEntry { get => field; set => field = value; }
-    public string sOriginalText { get => field; set => field = value; }
-    public string sComment { get => field; set => field = value; }
+    public int iPerFamNr { get => field; set => field = value; }
+    public string sSourceTitle { get => field; set => field = value; } = "";
+    public string sPage { get => field; set => field = value; } = "";
+    public string sEntry { get => field; set => field = value; } = "";
+    public string sOriginalText { get => field; set => field = value; } = "";
+    public string sComment { get => field; set => field = value; } = "";
   
     /// <summary>
     /// Clears this instance.
@@ -60,9 +62,9 @@ public class CCitationData : ICitationData
         {
             DB_SourceLinkTable.Edit();
             DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Aus)].Value = sPage;
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Orig)].Value = sOriginalText;
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Kom)].Value = sComment;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value = sPage;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Orig].Value = sOriginalText;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Kom].Value = sComment;
             DB_SourceLinkTable.Update();
         }
         else
@@ -72,11 +74,11 @@ public class CCitationData : ICitationData
             DB_SourceLinkTable.Fields[SourceLinkFields._1.AsFld()].Value = iPerFamNr;
             DB_SourceLinkTable.Fields[SourceLinkFields._2.AsFld()].Value = iSourceId;
             DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Art)].Value = eArt;
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.LfNr)].Value = lfNR;
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Aus)].Value = sPage;
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Orig)].Value = sOriginalText;
-            DB_SourceLinkTable.Fields[nameof(SourceLinkFields.Kom)].Value = sComment;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Art].Value = eArt;
+            DB_SourceLinkTable.Fields[SourceLinkFields.LfNr].Value = lfNR;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value = sPage;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Orig].Value = sOriginalText;
+            DB_SourceLinkTable.Fields[SourceLinkFields.Kom].Value = sComment;
             DB_SourceLinkTable.Update();
         }
     }
@@ -89,15 +91,22 @@ public class CCitationData : ICitationData
     public void FillData(IRecordset dB_Table)
     {
         if (dB_Table == null) throw new ArgumentNullException(nameof(dB_Table), "dB_Table cannot be null.");
-        iSourceKnd = (short)dB_Table.Fields[SourceLinkFields._0.AsFld()].AsInt();
-        iSourceId = dB_Table.Fields[SourceLinkFields._2.AsFld()].AsInt();
+        ReadID(dB_Table);
         sEntry = dB_Table.Fields[SourceLinkFields._3.AsFld()].AsString();
-        sPage = dB_Table.Fields[nameof(SourceLinkFields.Aus)].AsString();
-        sOriginalText = dB_Table.Fields[nameof(SourceLinkFields.Orig)].AsString();
-        sComment = dB_Table.Fields[nameof(SourceLinkFields.Kom)].AsString();
+        sPage = dB_Table.Fields[SourceLinkFields.Aus].AsString();
+        sOriginalText = dB_Table.Fields[SourceLinkFields.Orig].AsString();
+        sComment = dB_Table.Fields[SourceLinkFields.Kom].AsString();
     }
 
-    public void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+    public void ReadID(IRecordset dB_Table)
+    {
+        iSourceKnd = (short)dB_Table.Fields[SourceLinkFields._0.AsFld()].AsInt();
+        iPerFamNr = dB_Table.Fields[SourceLinkFields._1.AsFld()].AsInt();
+        iSourceId = dB_Table.Fields[SourceLinkFields._2.AsFld()].AsInt();
+        siLfNr= (short)dB_Table.Fields[SourceLinkFields.LfNr].AsInt();
+    }
+
+    public void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
     {
         if (dB_Table == null) throw new ArgumentNullException(nameof(dB_Table), "dB_Table cannot be null.");
         if (asProps == null || asProps.Length == 0) return;
@@ -106,25 +115,28 @@ public class CCitationData : ICitationData
             switch (prop)
             {
                 case SourceLinkFields._0:
-                    dB_Table.Fields[SourceLinkFields._0.AsFld()].Value = iSourceKnd;
+                    dB_Table.Fields[SourceLinkFields._0].Value = iSourceKnd;
                     break;
                 case SourceLinkFields._1:
-                    dB_Table.Fields[SourceLinkFields._1.AsFld()].Value = iSourceId;
+                    dB_Table.Fields[SourceLinkFields._1].Value = iPerFamNr;
                     break;
                 case SourceLinkFields._2:
-                    dB_Table.Fields[SourceLinkFields._2.AsFld()].Value = sEntry;
+                    dB_Table.Fields[SourceLinkFields._2].Value = iSourceId;
                     break;
                 case SourceLinkFields._3:
-                    dB_Table.Fields[SourceLinkFields._3.AsFld()].Value = sPage;
+                    dB_Table.Fields[SourceLinkFields._3].Value = sEntry;
+                    break;
+                case SourceLinkFields.LfNr:
+                    dB_Table.Fields[SourceLinkFields.LfNr].Value = siLfNr;
                     break;
                 case SourceLinkFields.Aus:
-                    dB_Table.Fields[nameof(SourceLinkFields.Aus)].Value = sOriginalText;
+                    dB_Table.Fields[SourceLinkFields.Aus].Value = sOriginalText;
                     break;
                 case SourceLinkFields.Orig:
-                    dB_Table.Fields[nameof(SourceLinkFields.Orig)].Value = sComment;
+                    dB_Table.Fields[SourceLinkFields.Orig].Value = sComment;
                     break;
                 case SourceLinkFields.Kom:
-                    dB_Table.Fields[nameof(SourceLinkFields.Kom)].Value = sComment;
+                    dB_Table.Fields[SourceLinkFields.Kom].Value = sComment;
                     break;
             }
         }
