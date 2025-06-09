@@ -35,22 +35,7 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     Color _mandantPathBackColor;
     [ObservableProperty]
     Color _frmWindowSizeBackColor;
-    [ObservableProperty]
-    private bool _creationDateVisible;
-    [ObservableProperty]
-    private bool _markedVisible;
-    [ObservableProperty]
-    bool _notesVisible;
-    [ObservableProperty]
-    bool _codeOfArmsVisible;
-    [ObservableProperty]
-    bool _listBox2Visible;
-    [ObservableProperty]
-    bool _list3Visible;
-    [ObservableProperty]
-    bool _warningVisible;
-    [ObservableProperty]
-    bool _enterLizenzVisible;
+
     [ObservableProperty]
     string _notes;
     [ObservableProperty]
@@ -84,26 +69,35 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     public Type _adresseType;
 
     [ObservableProperty]
+    private bool _creationDateVisible;
+    [ObservableProperty]
+    private bool _markedVisible;
+    [ObservableProperty]
+    bool _notesVisible;
+    [ObservableProperty]
+    bool _codeOfArmsVisible;
+    [ObservableProperty]
+    bool _listBox2Visible;
+    [ObservableProperty]
+    bool _list3Visible;
+    [ObservableProperty]
+    bool _warningVisible;
+    [ObservableProperty]
+    bool _enterLizenzVisible;
+    [ObservableProperty]
     private bool _CheckUpdateVisible;
-
     [ObservableProperty]
     private bool _UpdateVisible;
-
     [ObservableProperty]
     private bool _DateTimePickerVisible;
-
     [ObservableProperty]
     private bool _SetDateVisible;
-
     [ObservableProperty]
     private bool _FrmWindowSizeVisible;
-
     [ObservableProperty]
     private bool _PbxLanguage1Visible;
-
     [ObservableProperty]
     private bool _PbxLanguage2Visible;
-
     [ObservableProperty]
     private bool _PbxLanguage3Visible;
 
@@ -179,7 +173,7 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     [RelayCommand]
     private void OpenNotes()
     {
-        Interaction.MsgBox("Test"); 
+        Interaction.MsgBox("Test");
     }
 
     [RelayCommand]
