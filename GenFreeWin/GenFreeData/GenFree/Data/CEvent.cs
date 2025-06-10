@@ -115,7 +115,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         return (Seek(key) is IRecordset dB_EventTable
             && !dB_EventTable.NoMatch
-            && dB_EventTable.Fields[$"{eDataField}"] is T data) ? data : dDef;
+            && dB_EventTable.Fields[eDataField] is T data) ? data : dDef;
     }
 
     public void PersonDat(int iPersNr, out DateTime down1, out DateTime up1)
@@ -264,7 +264,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.Edit();
         foreach (var (field, value) in values)
         {
-            dB_EventTable.Fields[$"{field}"].Value = value; // Todo: Error-Handling
+            dB_EventTable.Fields[field].Value = value; // Todo: Error-Handling
         }
         dB_EventTable.Update();
     }
@@ -323,7 +323,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         var dB_EventTable = Seek(eIndex, iIndexVal);
         if (dB_EventTable?.EOF == false
-            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+            && dB_EventTable.Fields[eIndexField].AsInt() == iIndexVal)
         {
             IEventData cEv = GetData(dB_EventTable);
             if (predicate(cEv))
@@ -340,7 +340,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         var dB_EventTable = Seek(eIndex, iIndexVal);
         while (dB_EventTable?.EOF == false
             && !dB_EventTable.NoMatch
-            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+            && dB_EventTable.Fields[eIndexField].AsInt() == iIndexVal)
         {
             dB_EventTable.Edit();
             dB_EventTable.Fields[eIndexField].Value = iNewVal;
@@ -357,7 +357,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.Edit();
             foreach (var (field, value) in values)
             {
-                dB_EventTable.Fields[$"{field}"].Value = value; // Todo: Error-Handling
+                dB_EventTable.Fields[field].Value = value; // Todo: Error-Handling
             }
             dB_EventTable.Update();
             return true;
@@ -372,17 +372,17 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         dB_EventTable.Seek("=", iIndexVal);
         while (!dB_EventTable.NoMatch
             && !dB_EventTable.EOF
-            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+            && dB_EventTable.Fields[eIndexField].AsInt() == iIndexVal)
         {
             dB_EventTable.Edit();
 
-            IField field = dB_EventTable.Fields[$"{eModField}"];
+            IField field = dB_EventTable.Fields[eModField];
 
             field.Value = field.AsString().Trim() == ""
                 ? sNewText
                 : field.AsString() + " " + sNewText;
 
-            dB_EventTable.Fields[$"{eIndexField}"].Value = 0;
+            dB_EventTable.Fields[eIndexField].Value = 0;
 
             dB_EventTable.Update();
 
@@ -397,11 +397,11 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         dB_EventTable.Seek("=", iIndexVal);
         while (!dB_EventTable.NoMatch
             && !dB_EventTable.EOF
-            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+            && dB_EventTable.Fields[eIndexField].AsInt() == iIndexVal)
         {
             dB_EventTable.Edit();
-            dB_EventTable.Fields[$"{eModField}"].Value = iIndexVal;
-            dB_EventTable.Fields[$"{eIndexField}"].Value = iClearVal;
+            dB_EventTable.Fields[eModField].Value = iIndexVal;
+            dB_EventTable.Fields[eIndexField].Value = iClearVal;
             dB_EventTable.Update();
             dB_EventTable.MoveNext();
         }
@@ -413,14 +413,14 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         dB_EventTable.Seek("=", iIndexVal);
         while (!dB_EventTable.NoMatch
             && !dB_EventTable.EOF
-            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iIndexVal)
+            && dB_EventTable.Fields[eIndexField].AsInt() == iIndexVal)
         {
             if (predicate(GetData(dB_EventTable)))
             {
                 dB_EventTable.Edit();
-                dB_EventTable.Fields[$"{eModField}"].Value = iNewVal;
+                dB_EventTable.Fields[eModField].Value = iNewVal;
                 if (eModField != eIndexField)
-                    dB_EventTable.Fields[$"{eIndexField}"].Value = iClearVal;
+                    dB_EventTable.Fields[eIndexField].Value = iClearVal;
                 dB_EventTable.Update();
             }
             dB_EventTable.MoveNext();
@@ -434,7 +434,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         dB_EventTable.Seek("=", iTndexVal);
         while (!dB_EventTable.NoMatch
             && !dB_EventTable.EOF
-            && dB_EventTable.Fields[$"{eIndexField}"].AsInt() == iTndexVal)
+            && dB_EventTable.Fields[eIndexField].AsInt() == iTndexVal)
         {
             if (predicate(GetData(dB_EventTable)))
             {
@@ -452,10 +452,10 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         dB_EventTable.Seek("=", iIdxVal);
         while (!dB_EventTable.EOF
             && !dB_EventTable.NoMatch
-            && dB_EventTable.Fields[$"{eIdxField}"].AsInt() == iIdxVal)
+            && dB_EventTable.Fields[eIdxField].AsInt() == iIdxVal)
         {
             dB_EventTable.Edit();
-            dB_EventTable.Fields[$"{eIdxField}"].Value = 0;
+            dB_EventTable.Fields[eIdxField].Value = 0;
             dB_EventTable.Update();
 
             dB_EventTable.MoveNext();

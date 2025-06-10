@@ -8,6 +8,7 @@ using GenFree.Sys;
 using GenFree.Model.Data;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Model.Data;
 
 namespace GenFree.Data
 {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace GenFree.GenFree.Model
 {
-    public class CSourceLink : CUsesIndexedRSet<(int, EEventArt, int, short), SourceLinkIndex, SourceLinkFields, ISourceLinkData>, ISourceLink
+    public class CSourceLink : CUsesIndexedRSet<(short, int, EEventArt, short), SourceLinkIndex, SourceLinkFields, ISourceLinkData>, ISourceLink
     {
         private Func<IRecordset> _value;
 
@@ -28,7 +28,7 @@ namespace GenFree.GenFree.Model
 
         protected override ISourceLinkData GetData(IRecordset rs, bool xNoInit = false) => new CSourceLinkData(rs, xNoInit);
 
-        public override IRecordset? Seek((int, EEventArt, int, short) tKey, out bool xBreak)
+        public override IRecordset? Seek((short, int, EEventArt, short) tKey, out bool xBreak)
         {
             var db_Table = _db_Table;
             db_Table.Index = _keyIndex.AsFld();
@@ -37,10 +37,10 @@ namespace GenFree.GenFree.Model
             return xBreak ? null : db_Table;
         }
 
-        protected override (int, EEventArt, int, short) GetID(IRecordset recordset)
-            => (recordset.Fields[SourceLinkFields._1.AsFld()].AsInt(),
-                recordset.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>(),
+        protected override (short, int, EEventArt, short) GetID(IRecordset recordset)
+            => ((short)recordset.Fields[SourceLinkFields._1.AsFld()].AsInt(),
                 recordset.Fields[SourceLinkFields._2.AsFld()].AsInt(),
+                recordset.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>(),
                 (short)recordset.Fields[SourceLinkFields.LfNr.AsFld()].AsInt());
 
         public IEnumerable<ISourceLinkData> ReadAll(int persInArb, EEventArt eEventArt)
@@ -55,7 +55,7 @@ namespace GenFree.GenFree.Model
                     && EEventArt.eA_Unknown != Src.eArt)
                 {
                     if (Src.iLinkType != 3 // Event
-                        || Src.iPersNr > persInArb
+                        || Src.iPerFamNr > persInArb
                         || Src.eArt != eEventArt
                         || Src.iLfdNr != 0)
                         break;
@@ -67,7 +67,7 @@ namespace GenFree.GenFree.Model
         }
 
         public bool Exists(int iCitKenn, int iPerFamNr, EEventArt eArt, short lfNR = 0) 
-            => Exists(( iCitKenn,eArt, iPerFamNr, lfNR));
+            => Exists(( (short)iCitKenn, iPerFamNr, eArt, lfNR));
     }
 
 }

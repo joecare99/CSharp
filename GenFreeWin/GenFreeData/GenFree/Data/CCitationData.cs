@@ -4,40 +4,38 @@ using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Sys;
+using GenFree.Model.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenFree.GenFree.Data;
+namespace GenFree.Data;
 
-public class CCitationData : ICitationData
+public class CCitationData : CSourceLinkData, ICitationData
 {
-    public string this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public CCitationData(IRecordset db_Table, bool xNoInit = false) : base(db_Table, xNoInit)
+    {
+    }
 
-    public int iSourceId { get => field; set => field = value; }
-    public short siLfNr { get => field; set => field = value; }
-    public short iSourceKnd { get => field; set => field = value; }
-    public int iPerFamNr { get => field; set => field = value; }
     public string sSourceTitle { get => field; set => field = value; } = "";
-    public string sPage { get => field; set => field = value; } = "";
-    public string sEntry { get => field; set => field = value; } = "";
-    public string sOriginalText { get => field; set => field = value; } = "";
-    public string sComment { get => field; set => field = value; } = "";
-  
+
+
     /// <summary>
     /// Clears this instance.
     /// </summary>
     public void Clear()
     {
-        iSourceId = 0;
-        iSourceKnd = 0;
+        iQuNr = 0;
+        iLinkType = 0;
         sSourceTitle = string.Empty;
         sPage = string.Empty;
+        eArt = EEventArt.eA_Unknown;
         sEntry = string.Empty;
         sOriginalText = string.Empty;
         sComment = string.Empty;
+        ClearChangedProps();
     }
     /// <summary>
     /// Commits the data. 
@@ -47,21 +45,21 @@ public class CCitationData : ICitationData
     /// <param name="lfNR">The lf nr.</param>
     public void Commit(int iPerFamNr, EEventArt eArt, short lfNR)
     {
-        IRecordset DB_SourceLinkTable = DataModul.DB_SourceLinkTable;
-        if (iSourceKnd < 3)
+        IRecordset DB_SourceLinkTable = _db_Table;
+        if (iLinkType < 3)
         {
             DB_SourceLinkTable.Index = nameof(SourceLinkIndex.Tab21);
-            DB_SourceLinkTable.Seek("=", iSourceKnd, iPerFamNr, iSourceId);
+            DB_SourceLinkTable.Seek("=", iLinkType, iPerFamNr, iQuNr);
         }
         else
         {
             DB_SourceLinkTable.Index = nameof(SourceLinkIndex.Tab23);
-            DB_SourceLinkTable.Seek("=", 3, iPerFamNr, iSourceId, eArt, lfNR);
+            DB_SourceLinkTable.Seek("=", 3, iPerFamNr, iQuNr, eArt, lfNR);
         }
         if (!DB_SourceLinkTable.NoMatch)
         {
             DB_SourceLinkTable.Edit();
-            DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
+            DB_SourceLinkTable.Fields[SourceLinkFields._4].Value = (sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3].Size);
             DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value = sPage;
             DB_SourceLinkTable.Fields[SourceLinkFields.Orig].Value = sOriginalText;
             DB_SourceLinkTable.Fields[SourceLinkFields.Kom].Value = sComment;
@@ -70,10 +68,10 @@ public class CCitationData : ICitationData
         else
         {
             DB_SourceLinkTable.AddNew();
-            DB_SourceLinkTable.Fields[SourceLinkFields._0.AsFld()].Value = iSourceKnd;
-            DB_SourceLinkTable.Fields[SourceLinkFields._1.AsFld()].Value = iPerFamNr;
-            DB_SourceLinkTable.Fields[SourceLinkFields._2.AsFld()].Value = iSourceId;
-            DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = (sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Size);
+            DB_SourceLinkTable.Fields[SourceLinkFields._1].Value = iLinkType;
+            DB_SourceLinkTable.Fields[SourceLinkFields._2].Value = iPerFamNr;
+            DB_SourceLinkTable.Fields[SourceLinkFields._3].Value = iQuNr;
+            DB_SourceLinkTable.Fields[SourceLinkFields._4].Value = (sEntry.Trim() + " ").Left(DB_SourceLinkTable.Fields[SourceLinkFields._3].Size);
             DB_SourceLinkTable.Fields[SourceLinkFields.Art].Value = eArt;
             DB_SourceLinkTable.Fields[SourceLinkFields.LfNr].Value = lfNR;
             DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value = sPage;
@@ -83,62 +81,32 @@ public class CCitationData : ICitationData
         }
     }
 
-    public void Delete()
-    {
-        throw new NotImplementedException();
-    }
 
-    public void FillData(IRecordset dB_Table)
+    public override Type GetPropType(ESourceLinkProp prop)
     {
-        if (dB_Table == null) throw new ArgumentNullException(nameof(dB_Table), "dB_Table cannot be null.");
-        ReadID(dB_Table);
-        sEntry = dB_Table.Fields[SourceLinkFields._3.AsFld()].AsString();
-        sPage = dB_Table.Fields[SourceLinkFields.Aus].AsString();
-        sOriginalText = dB_Table.Fields[SourceLinkFields.Orig].AsString();
-        sComment = dB_Table.Fields[SourceLinkFields.Kom].AsString();
-    }
-
-    public void ReadID(IRecordset dB_Table)
-    {
-        iSourceKnd = (short)dB_Table.Fields[SourceLinkFields._0.AsFld()].AsInt();
-        iPerFamNr = dB_Table.Fields[SourceLinkFields._1.AsFld()].AsInt();
-        iSourceId = dB_Table.Fields[SourceLinkFields._2.AsFld()].AsInt();
-        siLfNr= (short)dB_Table.Fields[SourceLinkFields.LfNr].AsInt();
-    }
-
-    public void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
-    {
-        if (dB_Table == null) throw new ArgumentNullException(nameof(dB_Table), "dB_Table cannot be null.");
-        if (asProps == null || asProps.Length == 0) return;
-        foreach (var prop in asProps)
+        return prop switch
         {
-            switch (prop)
-            {
-                case SourceLinkFields._0:
-                    dB_Table.Fields[SourceLinkFields._0].Value = iSourceKnd;
-                    break;
-                case SourceLinkFields._1:
-                    dB_Table.Fields[SourceLinkFields._1].Value = iPerFamNr;
-                    break;
-                case SourceLinkFields._2:
-                    dB_Table.Fields[SourceLinkFields._2].Value = iSourceId;
-                    break;
-                case SourceLinkFields._3:
-                    dB_Table.Fields[SourceLinkFields._3].Value = sEntry;
-                    break;
-                case SourceLinkFields.LfNr:
-                    dB_Table.Fields[SourceLinkFields.LfNr].Value = siLfNr;
-                    break;
-                case SourceLinkFields.Aus:
-                    dB_Table.Fields[SourceLinkFields.Aus].Value = sOriginalText;
-                    break;
-                case SourceLinkFields.Orig:
-                    dB_Table.Fields[SourceLinkFields.Orig].Value = sComment;
-                    break;
-                case SourceLinkFields.Kom:
-                    dB_Table.Fields[SourceLinkFields.Kom].Value = sComment;
-                    break;
-            }
+            ESourceLinkProp.sSourceTitle => typeof(string),
+            _ => base.GetPropType(prop),
+        };
+    }
+
+    public override object? GetPropValue(ESourceLinkProp prop)
+    {
+        return prop switch
+        {
+            ESourceLinkProp.sSourceTitle => sSourceTitle,
+            _ => base.GetPropValue(prop),
+        };
+    }
+
+    public override void SetPropValue(ESourceLinkProp prop, object value)
+    {
+        if (prop == ESourceLinkProp.sSourceTitle)
+        {
+            sSourceTitle = value.AsString();
         }
+        else
+            base.SetPropValue(prop, value);
     }
 }

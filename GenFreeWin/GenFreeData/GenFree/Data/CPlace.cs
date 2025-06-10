@@ -27,7 +27,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
     {
         IRecordset dB_PlaceTable = _db_Table;
 
-        string[] Kont2 = new string[6];
+        string[] Kont2 = new string[7];
         var iMax = MaxID;
         dB_PlaceTable.MoveFirst();
         while (!dB_PlaceTable.EOF)
@@ -41,7 +41,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
                     PlaceFields.Land,
                     PlaceFields.Staat
                 })
-                Kont2[(int)f + 1] = onGetText(dB_PlaceTable.Fields[f.ToString()].AsInt());
+                Kont2[(int)f + 1] = onGetText(dB_PlaceTable.Fields[f].AsInt());
             Kont2[(int)PlaceFields.Ortsteil + 1] = Kont2[(int)PlaceFields.Ortsteil + 1].FrameIfNEoW("-", "");
 
             Kont2[0] = string.Join(" ", Kont2.Where((s) => !string.IsNullOrWhiteSpace(s)));

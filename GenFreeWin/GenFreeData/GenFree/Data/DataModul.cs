@@ -1,6 +1,5 @@
 ﻿//using DAO;
 using BaseLib.Helper;
-using GenFree.GenFree.Data;
 using GenFree.GenFree.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
@@ -36,7 +35,7 @@ public static partial class DataModul
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable!); // new IoC.GetReqiredService(INB_Family);
     public static INB_Frau NB_Frau{ get; } = new CNB_Frau(() => NB_Frau1Table!); // new IoC.GetReqiredService(INB_Family);
     public static INB_Ahnen NB_Ahnen{ get; } = new CNB_Ahnen(() => NB_Ahn1Table!); // new IoC.GetReqiredService(INB_Family);
-    public static ICitationData CitationData { get; } = new CCitationData(); // new IoC.GetReqiredService(ICitationData);
+    public static ICitationData CitationData { get; } = new CCitationData(DB_SourceLinkTable,true); // new IoC.GetReqiredService(ICitationData);
 
     public static object[] Mandanten = new string[0];
 

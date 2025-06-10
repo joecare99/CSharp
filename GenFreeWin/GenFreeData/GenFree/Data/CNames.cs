@@ -176,10 +176,10 @@ namespace GenFree.Data
             dB_NameTable.Seek("=", iIndexVal);
             while (!dB_NameTable.EOF
                     && !dB_NameTable.NoMatch
-                    && !(dB_NameTable.Fields[$"{eIndexField}"].AsInt() != iIndexVal))
+                    && !(dB_NameTable.Fields[eIndexField].AsInt() != iIndexVal))
             {
                 dB_NameTable.Edit();
-                dB_NameTable.Fields[$"{eIndexField}"].Value = iNewVal;
+                dB_NameTable.Fields[eIndexField].Value = iNewVal;
                 dB_NameTable.Update();
                 dB_NameTable.MoveNext();
             }
