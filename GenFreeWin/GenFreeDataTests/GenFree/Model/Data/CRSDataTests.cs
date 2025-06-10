@@ -30,8 +30,8 @@ public class CRSDataTests
         public override void FillData(IRecordset dB_Table)
         {
             ReadID(dB_Table);
-            dB_Table.Fields[TestProp.sDescription].Value = sDescription;
-            dB_Table.Fields[TestProp.iData].Value = iData;
+            sDescription = dB_Table.Fields[TestProp.sDescription].AsString();
+            iData = dB_Table.Fields[TestProp.iData].AsInt();
         }
 
         public override Type GetPropType(TestProp prop) => prop switch
@@ -52,7 +52,7 @@ public class CRSDataTests
 
         public override void ReadID(IRecordset dB_Table)
         {
-            dB_Table.Fields[TestProp.ID].Value = ID;
+            _ID = dB_Table.Fields[TestProp.ID].AsInt();
         }
 
         public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)

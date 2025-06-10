@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
@@ -94,6 +95,29 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Seek("=", iAct, iK, eAct, sAct);
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
         }
+
+        [DataTestMethod()]
+        [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
+        [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
+        public void ExistETest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
+        {
+            testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || sAct / 2 != iAct, false, false, true);
+            Assert.AreEqual(xExp, testClass.ExistE(iAct, iK));
+            testRS.Received(1).Seek("=", iAct, iK);
+            Assert.AreEqual(nameof(WitnessIndex.ElSu), testRS.Index);
+        }
+
+        [DataTestMethod()]
+        [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
+        [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
+        public void ExistFTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
+        {
+            testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || sAct / 2 != iAct, false, false, true);
+            Assert.AreEqual(xExp, testClass.ExistF(iAct, iK));
+            testRS.Received(1).Seek("=", iAct, iK);
+            Assert.AreEqual(nameof(WitnessIndex.FamSu), testRS.Index);
+        }
+
 
         [DataTestMethod()]
         [DataRow(0, 0, false)]
@@ -210,7 +234,7 @@ namespace GenFree.Data.Tests
         public void UpdateAllReplFamsTest2(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iLfNr / 2 != iAct, false, false, true);
-            testClass.UpdateAllReplFams(iAct, Fam2,iLfNr,eArt);
+            testClass.UpdateAllReplFams(iAct, Fam2, iLfNr, eArt);
             Assert.AreEqual(nameof(WitnessIndex.FamSu), testRS.Index);
             testRS.Received(1).Seek("=", iAct, 10);
             if (xExp)
@@ -226,5 +250,6 @@ namespace GenFree.Data.Tests
                 testRS.Received(0).Update();
             }
         }
+
     }
 }

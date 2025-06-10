@@ -47,9 +47,9 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     {
         testRS = Substitute.For<IRecordset>();
         testRS.NoMatch.Returns(true);
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 2, 3);
-        (testRS.Fields["Description"] as IHasValue).Value.Returns("one", "two", "three");
-        (testRS.Fields["Data"] as IHasValue).Value.Returns(2, 6, 4);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 2, 3);
+        (testRS.Fields[TestIndexField.Description] as IHasValue).Value.Returns("one", "two", "three");
+        (testRS.Fields[TestIndexField.Data] as IHasValue).Value.Returns(2, 6, 4);
         testRS.EOF.Returns(false, false, true);
     }
 
@@ -125,7 +125,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ForEachDoTest()
     {
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         ForEachDo(TestIndex._MyKeyIndex, TestIndexField.ID, 1, ce =>
@@ -145,7 +145,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ForEachDo2Test()
     {
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         ForEachDo(TestIndex._MyKeyIndex, TestIndexField.ID, 1, null!);
         Assert.AreEqual("_MyKeyIndex", testRS.Index);
@@ -158,7 +158,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     public void ForEachDo3Test()
     {
         var iCnt = 0;
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false, false, true);
         ForEachDo(TestIndex._MyKeyIndex, TestIndexField.ID, 1, rs =>
         {
@@ -175,7 +175,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ReadAllTest()
     {
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         foreach (var ce in ReadAll())
@@ -183,7 +183,8 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
             Assert.IsNotNull(ce);
             Assert.IsInstanceOfType(ce, typeof(ITestData));
             iCnt++;
-        };
+        }
+        ;
         Assert.AreEqual(2, iCnt);
         Assert.AreEqual("_MyKeyIndex", testRS.Index);
         testRS.Received(1).MoveFirst();
@@ -194,7 +195,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ReadAllTest2()
     {
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         foreach (var ce in ReadAll(TestIndex._MyKeyIndex))
@@ -202,7 +203,8 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
             Assert.IsNotNull(ce);
             Assert.IsInstanceOfType(ce, typeof(ITestData));
             iCnt++;
-        };
+        }
+        ;
         Assert.AreEqual(2, iCnt);
         Assert.AreEqual("_MyKeyIndex", testRS.Index);
         testRS.Received(1).MoveFirst();
@@ -213,7 +215,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ReadAllTest3()
     {
-        (testRS.Fields["Data"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.Data] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         foreach (var ce in ReadAll(TestIndex.Idx2, 1))
@@ -221,7 +223,8 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
             Assert.IsNotNull(ce);
             Assert.IsInstanceOfType(ce, typeof(ITestData));
             iCnt++;
-        };
+        }
+        ;
         Assert.AreEqual(2, iCnt);
         Assert.AreEqual("Idx2", testRS.Index);
         testRS.Received(0).MoveFirst();
@@ -232,7 +235,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ReadAllDataDBTest()
     {
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         foreach (var ce in ReadAllDataDB(TestIndex._MyKeyIndex, r => r.Seek("=", 1), c => false))
@@ -240,7 +243,8 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
             Assert.IsNotNull(ce);
             Assert.IsInstanceOfType(ce, typeof(ITestData));
             iCnt++;
-        };
+        }
+        ;
         Assert.AreEqual(2, iCnt);
         Assert.AreEqual("_MyKeyIndex", testRS.Index);
         testRS.Received(0).MoveFirst();
@@ -251,7 +255,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     [TestMethod()]
     public void ReadAllDataDB2Test()
     {
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         foreach (var ce in ReadAllDataDB(TestIndex._MyKeyIndex, r => r.Seek("=", 1), c => true))
@@ -269,7 +273,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     public void ReadAllDataDB3Test()
     {
         var iCnt = 0;
-        (testRS.Fields["ID"] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
         testRS.NoMatch.Returns(false, false, true);
         foreach (var ce in ReadAllDataDB(TestIndex._MyKeyIndex, r => r.Seek("=", 1), c => c.Data != 2))
         {
@@ -366,7 +370,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
 
     protected override int GetID(IRecordset recordset)
     {
-        return recordset.Fields["ID"].AsInt();
+        return recordset.Fields[TestIndexField.ID].AsInt();
     }
 
     public override TestIndexField GetIndex1Field(TestIndex eIndex) => eIndex switch
@@ -376,13 +380,13 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         _ => throw new NotImplementedException(),
     };
 
-    protected override ITestData GetData(IRecordset rs,bool xNoInit=false) => new CTestData(rs,xNoInit);
+    protected override ITestData GetData(IRecordset rs, bool xNoInit = false) => new CTestData(rs, xNoInit);
 
     private class CTestData : ITestData
     {
         private IRecordset rs;
 
-        public CTestData(IRecordset rs, bool xNoInit=false)
+        public CTestData(IRecordset rs, bool xNoInit = false)
         {
             this.rs = rs;
             if (!xNoInit) FillData(rs); else Description = string.Empty;
@@ -433,5 +437,49 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
                 rs.Fields[TestIndexField.Data].Value = Data;
             }
         }
+    }
+
+    [TestMethod()]
+    public void CreateNewTest()
+    {
+        // Arrange
+      //  testRS.AddNew().Returns(_ => { });
+        (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(0);
+        (testRS.Fields[TestIndexField.Description] as IHasValue).Value.Returns(string.Empty);
+        (testRS.Fields[TestIndexField.Data] as IHasValue).Value.Returns(0);
+
+        // Act
+        var newData = CreateNew();
+
+        // Assert
+        Assert.IsNotNull(newData);
+        Assert.IsInstanceOfType(newData, typeof(ITestData));
+        Assert.AreEqual(0, newData.ID);
+        Assert.AreEqual(string.Empty, newData.Description);
+        Assert.AreEqual(0, newData.Data);
+    }
+
+    [DataTestMethod()]
+    [DataRow(1, "Test", 42)]
+    [DataRow(2, "Beispiel", 99)]
+    [DataRow(3, "", 0)]
+    public void CommitTest(int id, string description, int data)
+    {
+        // Arrange
+        var ce = new CTestData(testRS) { ID = id, Description = description, Data = data };
+        testRS.EditMode.Returns(0);
+        testRS.NoMatch.Returns(id!=2);
+        testRS.When(x => x.Edit()).Do(_ => { });
+        testRS.When(x => x.Update()).Do(_ => { });
+
+        // Act
+        Commit(ce);
+
+        // Assert
+        testRS.Received(1).Edit();
+        testRS.Received(1).Update();
+        Assert.AreEqual(id, ce.ID);
+        Assert.AreEqual(description, ce.Description);
+        Assert.AreEqual(data, ce.Data);
     }
 }

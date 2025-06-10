@@ -1,10 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
 using BaseLib.Interfaces;
+using BaseLib.Helper;
 
 namespace GenFree.Data.Tests
 {
@@ -769,16 +771,176 @@ namespace GenFree.Data.Tests
             return xResult[iRc++];
         }
 
-        [TestMethod()]
-        public void AppendRawTest()
+        [DataTestMethod()]
+        [DataRow(EEventArt.eA_Birth, 1, (short)0)]
+        [DataRow(EEventArt.eA_Baptism, 2, (short)1)]
+        [DataRow(EEventArt.eA_Unknown, 0, (short)0)]
+        public void AppendRawTest(EEventArt eArt, int iLink, short iLfNr)
         {
-            Assert.Fail();
+            // Arrange
+            var key = (eArt, iLink, iLfNr);
+
+            // Act
+            var rs = testClass.AppendRaw(key);
+
+            // Assert
+            Assert.IsNotNull(rs);
+            testRS.Received(1).AddNew();
+            // Optional: Überprüfe, ob die Felder gesetzt werden, falls dies in AppendRaw passiert
         }
 
-        [TestMethod()]
-        public void SetValAppendTest()
+        [DataTestMethod()]
+        [DataRow(EEventArt.eA_Birth, 1, (short)0, EventFields.ArtText, "TestValue")]
+        [DataRow(EEventArt.eA_Baptism, 2, (short)1, EventFields.Bem1, "Bemerkung")]
+        [DataRow(EEventArt.eA_Unknown, 0, (short)0, EventFields.Ort_S, "OrtText")]
+        public void SetValAppendTest(EEventArt eArt, int iLink, short iLfNr, EventFields eSetField, string sNewVal)
         {
-            Assert.Fail();
+            // Arrange
+            var key = (eArt, iLink, iLfNr);
+
+            // Act
+            testClass.SetValAppend(key, eSetField, sNewVal);
+
+            // Assert
+            testRS.Received(1).AddNew();
+            Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
+            // Optional: Überprüfe, ob das Feld gesetzt wurde
+            testRS.Fields[eSetField].Received(1).Value = sNewVal;
+            testRS.Received(1).Update();
+        }
+
+        [DataTestMethod()]
+        [DataRow(EEventArt.eA_Birth, 1, (short)0, EventFields.ArtText, "Default")]
+        [DataRow(EEventArt.eA_Baptism, 2, (short)1, EventFields.Bem1, "Default")]
+        [DataRow(EEventArt.eA_Unknown, 0, (short)0, EventFields.Ort_S, "Fallback")]
+        public void GetValueTest1(EEventArt eArt, int iLink, short iLfNr, EventFields eField, string expected)
+        {
+            // Arrange
+            // Simuliere Rückgabewert für das Feld
+            (testRS.Fields[eField] as IHasValue).Value.Returns(expected);
+
+            // Act
+            var result = testClass.GetValue(iLink,eArt, eField,i=>i.AsString());
+
+            // Assert
+            Assert.AreEqual(expected, result);
+            Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
+            testRS.Received().Seek("=", eArt, iLink,0);
+        }
+
+        [DataTestMethod()]
+        [DataRow(0, false)]
+        [DataRow(1, true)]
+        [DataRow(2, true)]
+        public void DeleteAllNonVitalETest(int famNr, bool xExp)
+        {
+            // Arrange
+            // Simuliere, dass testRS.NoMatch beim ersten MoveNext false (Datensatz vorhanden), dann true (Ende)
+            testRS.NoMatch.Returns(!xExp, true);
+
+            // Act
+            testClass.DeleteAllNonVitalE(famNr);
+
+            // Assert
+            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
+            testRS.Received(1).Seek("=", famNr);
+            if (xExp)
+            {
+                testRS.Received(1).Delete();
+                testRS.Received(1).MoveNext();
+            }
+            else
+            {
+                testRS.DidNotReceive().Delete();
+                testRS.DidNotReceive().MoveNext();
+            }       
+        }
+
+        [DataTestMethod()]
+        [DataRow(0, false)]
+        [DataRow(1, true)]
+        [DataRow(2, true)]
+        public void DeleteAllVitalETest(int famNr, bool xExp)
+        {
+            // Arrange
+            // Simuliere, dass testRS.NoMatch beim ersten MoveNext false (Datensatz vorhanden), dann true (Ende)
+            testRS.NoMatch.Returns(!xExp, true);
+
+            // Act
+            testClass.DeleteAllVitalE(famNr);
+
+            // Assert
+            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
+            testRS.Received(1).Seek("=", famNr);
+            if (xExp)
+            {
+                testRS.Received(1).Delete();
+                testRS.Received(1).MoveNext();
+            }
+            else
+            {
+                testRS.DidNotReceive().Delete();
+                testRS.DidNotReceive().MoveNext();
+            }
+        }
+
+        [DataTestMethod()]
+        [DataRow(1, 2, EEventArt.eA_Birth)]
+        [DataRow(2, 3, EEventArt.eA_Baptism)]
+        [DataRow(0, 0, EEventArt.eA_Unknown)]
+        public void UpdateReplFamsTest(int fam1, int fam2, EEventArt eArt)
+        {
+            // Arrange
+            // Simuliere, dass es mindestens einen Datensatz gibt, der geändert werden kann
+            testRS.NoMatch.Returns(false, true);
+
+            // Act
+            testClass.UpdateReplFams(fam1, fam2, eArt);
+
+            // Assert
+            Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
+            testRS.Received(1).Seek("=", fam1);
+            testRS.Received(1).Edit();
+            testRS.Fields[EventFields.PerFamNr].Received(1).Value = fam2;
+            testRS.Received(1).Update();
+            testRS.Received(1).MoveNext();
+        }
+
+        [DataTestMethod()]
+        [DataRow(EventIndex.ArtNr, 0, false)]
+        [DataRow(EventIndex.ArtNr, 1, true)]
+        [DataRow(EventIndex.BeSu, 2, true)]
+        [DataRow(EventIndex.EOrt, 3, true)]
+        public void ReadAllGtTest(EventIndex eIndex, int iIndexVal, bool xExp)
+        {
+            // Arrange
+            // Simuliere, dass testRS.NoMatch beim ersten MoveNext false (Datensatz vorhanden), dann true (Ende)
+            testRS.NoMatch.Returns(!xExp, true);
+            (testRS.Fields[EventFields.Art] as IHasValue).Value.Returns(101);
+            (testRS.Fields[EventFields.PerFamNr] as IHasValue).Value.Returns(2);
+            (testRS.Fields[EventFields.LfNr] as IHasValue).Value.Returns(1);
+            (testRS.Fields[EventFields.DatumV] as IHasValue).Value.Returns(19000101);
+            (testRS.Fields[EventFields.DatumB] as IHasValue).Value.Returns(19101231);
+
+            // Act
+            var result = testClass.ReadAllGt(eIndex, iIndexVal);
+
+            // Assert
+            int count = 0;
+            foreach (var cEv in result)
+            {
+                count++;
+                Assert.AreEqual(new DateTime(1900, 1, 1), cEv.dDatumV);
+                Assert.AreEqual(new DateTime(1910, 12, 31), cEv.dDatumB);
+                Assert.AreEqual(2, cEv.iPerFamNr);
+                Assert.AreEqual(1, cEv.iLfNr);
+            }
+            if (xExp)
+                Assert.AreEqual(1, count);
+            else
+                Assert.AreEqual(0, count);
+            Assert.AreEqual($"{eIndex}", testRS.Index);
+            testRS.Received(1).Seek(">", iIndexVal);
         }
     }
 }

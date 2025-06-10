@@ -56,13 +56,13 @@ namespace GenFree.Data.Tests
         [DataTestMethod()]
         [DataRow(ESourceLinkProp.eArt,      TypeCode.Int32)]
         [DataRow(ESourceLinkProp.iLinkType, TypeCode.Int32)]
-        [DataRow(ESourceLinkProp.iPersNr,   TypeCode.Int32)]
+        [DataRow(ESourceLinkProp.iPerFamNr,   TypeCode.Int32)]
         [DataRow(ESourceLinkProp.iQuNr,     TypeCode.Int32)]
-        [DataRow(ESourceLinkProp.sField3,   TypeCode.String)]
+        [DataRow(ESourceLinkProp.sEntry,   TypeCode.String)]
         [DataRow(ESourceLinkProp.iLfdNr,    TypeCode.Int32)]
-        [DataRow(ESourceLinkProp.sAus,      TypeCode.String)]
-        [DataRow(ESourceLinkProp.sOrig,     TypeCode.String)]
-        [DataRow(ESourceLinkProp.sKom,      TypeCode.String)]
+        [DataRow(ESourceLinkProp.sPage,      TypeCode.String)]
+        [DataRow(ESourceLinkProp.sOriginalText,     TypeCode.String)]
+        [DataRow(ESourceLinkProp.sComment,      TypeCode.String)]
         public void GetPropTypeTest(ESourceLinkProp pAct, TypeCode eExp)
         {
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
@@ -80,13 +80,13 @@ namespace GenFree.Data.Tests
         [DataTestMethod()]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)1)]
         [DataRow(ESourceLinkProp.iLinkType, 2)]
-        [DataRow(ESourceLinkProp.iPersNr, 3)]
+        [DataRow(ESourceLinkProp.iPerFamNr, 3)]
         [DataRow(ESourceLinkProp.iQuNr, 5)]
-        [DataRow(ESourceLinkProp.sField3, "Field3")]
+        [DataRow(ESourceLinkProp.sEntry, "Field3")]
         [DataRow(ESourceLinkProp.iLfdNr, 4)]
-        [DataRow(ESourceLinkProp.sAus, "Aus")]
-        [DataRow(ESourceLinkProp.sOrig, "Orig")]
-        [DataRow(ESourceLinkProp.sKom, "Kom")]
+        [DataRow(ESourceLinkProp.sPage, "Aus")]
+        [DataRow(ESourceLinkProp.sOriginalText, "Orig")]
+        [DataRow(ESourceLinkProp.sComment, "Kom")]
         public void GetPropValueTest(ESourceLinkProp eExp, object oAct)
         {
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
@@ -104,20 +104,20 @@ namespace GenFree.Data.Tests
         [TestMethod()]
         public void GetPropValueTest1()
         {
-            Assert.AreEqual(3, testClass.GetPropValue<int>(ESourceLinkProp.iPersNr));
+            Assert.AreEqual(3, testClass.GetPropValue<int>(ESourceLinkProp.iPerFamNr));
         }
 
         [DataTestMethod()]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)1)]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)2)]
         [DataRow(ESourceLinkProp.iLinkType, 3)]
-        [DataRow(ESourceLinkProp.iPersNr, 4)]
+        [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
-        [DataRow(ESourceLinkProp.sField3, "Field2")]
+        [DataRow(ESourceLinkProp.sEntry, "Field2")]
         [DataRow(ESourceLinkProp.iLfdNr, 5)]
-        [DataRow(ESourceLinkProp.sAus, "Aus_")]
-        [DataRow(ESourceLinkProp.sOrig, "Orig_")]
-        [DataRow(ESourceLinkProp.sKom, "Kom_")]
+        [DataRow(ESourceLinkProp.sPage, "Aus_")]
+        [DataRow(ESourceLinkProp.sOriginalText, "Orig_")]
+        [DataRow(ESourceLinkProp.sComment, "Kom_")]
         public void SetPropValueTest(ESourceLinkProp eAct, object iVal)
         {
             testClass.SetPropValue(eAct, iVal);
@@ -138,13 +138,13 @@ namespace GenFree.Data.Tests
         [DataRow(ESourceLinkProp.eArt, (EEventArt)1)]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)2)]
         [DataRow(ESourceLinkProp.iLinkType, 3)]
-        [DataRow(ESourceLinkProp.iPersNr, 4)]
+        [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
-        [DataRow(ESourceLinkProp.sField3, "Field2")]
+        [DataRow(ESourceLinkProp.sEntry, "Field2")]
         [DataRow(ESourceLinkProp.iLfdNr, 5)]
-        [DataRow(ESourceLinkProp.sAus, "Aus_")]
-        [DataRow(ESourceLinkProp.sOrig, "Orig_")]
-        [DataRow(ESourceLinkProp.sKom, "Kom_")]
+        [DataRow(ESourceLinkProp.sPage, "Aus_")]
+        [DataRow(ESourceLinkProp.sOriginalText, "Orig_")]
+        [DataRow(ESourceLinkProp.sComment, "Kom_")]
         public void SetDBValueTest(ESourceLinkProp eAct, object _)
         {
             testClass.SetDBValues(testRS, new[] { (Enum)eAct });
@@ -163,13 +163,13 @@ namespace GenFree.Data.Tests
         [DataTestMethod()]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)2)]
         [DataRow(ESourceLinkProp.iLinkType, 3)]
-        [DataRow(ESourceLinkProp.iPersNr, 4)]
+        [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
-        [DataRow(ESourceLinkProp.sField3, "Field2")]
+        [DataRow(ESourceLinkProp.sEntry, "Field2")]
         [DataRow(ESourceLinkProp.iLfdNr, 5)]
-        [DataRow(ESourceLinkProp.sAus, "Aus_")]
-        [DataRow(ESourceLinkProp.sOrig, "Orig_")]
-        [DataRow(ESourceLinkProp.sKom, "Kom_")]
+        [DataRow(ESourceLinkProp.sPage, "Aus_")]
+        [DataRow(ESourceLinkProp.sOriginalText, "Orig_")]
+        [DataRow(ESourceLinkProp.sComment, "Kom_")]
         public void SetDBValueTest2(ESourceLinkProp eAct, object oVal)
         {
             testClass.SetPropValue(eAct, oVal);

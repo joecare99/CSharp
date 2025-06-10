@@ -1,10 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
 using BaseLib.Interfaces;
+using GenFree.Helper;
 
 namespace GenFree.Data.Tests
 {
@@ -233,16 +235,56 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
-        [TestMethod()]
-        public void UpdateAllSetValTest()
+        [DataTestMethod()]
+        [DataRow(NameIndex.PNamen, NameFields.PersNr, 2, 99)]
+        [DataRow(NameIndex.TxNr, NameFields.Text, 5, 42)]
+        [DataRow(NameIndex.Vollname, NameFields.PersNr, 1, 7)]
+        [DataRow(NameIndex.NamKenn, NameFields.Kennz, (int)ETextKennz.tkName, (int)ETextKennz.tk1_)]
+        public void UpdateAllSetValTest(NameIndex eIndex, NameFields eIndexField, int iIndexVal, int iNewVal)
         {
-            
+            // Arrange
+            var rs = testRS;
+            rs.NoMatch.Returns(false, false, true);
+            rs.EOF.Returns(false, false, true);
+            int callCount = 0;
+            rs.When(x => x.Edit()).Do(_ => callCount++);
+            rs.When(x => x.Update()).Do(_ => callCount++);
+            rs.Fields[eIndexField].Value.Returns(iIndexVal, iIndexVal, iIndexVal);
+            (rs.Fields[NameFields.PersNr] as IHasValue).Value.Returns(iIndexVal, iIndexVal, iIndexVal);
+            (rs.Fields[NameFields.Kennz] as IHasValue).Value.Returns(iIndexVal, iIndexVal, iIndexVal);
+            (rs.Fields[NameFields.Text] as IHasValue).Value.Returns(iIndexVal, iIndexVal, iIndexVal);
+
+            // Act
+            testClass.UpdateAllSetVal(eIndex, eIndexField, iIndexVal, iNewVal);
+
+            // Assert
+            Assert.AreEqual(eIndex.AsFld(), rs.Index);
+            rs.Received(0).MoveFirst();
+            rs.Received(2).MoveNext();
+            rs.Received(2).Edit();
+            rs.Received(2).Update();
+            rs.Received(8).Fields[eIndexField].Value = iNewVal;
         }
 
-        [TestMethod()]
-        public void DeleteAllPersTest()
+        [DataTestMethod()]
+        [DataRow(0, false)]
+        [DataRow(1, true)]
+        [DataRow(2, true)]
+        [DataRow(99, false)]
+        public void DeleteAllPersTest(int persNr, bool xExp)
         {
-            Assert.Fail();
+            // Arrange
+            testRS.NoMatch.Returns(persNr is not (> 0 and < 3), false, false, true);
+            testRS.EOF.Returns(persNr is not (> 0 and < 3), false, false, true);
+
+            // Act
+            testClass.DeleteAllPers(persNr);
+
+            // Assert
+            Assert.AreEqual(nameof(NameIndex.PNamen), testRS.Index);
+            testRS.Received().Seek("=", persNr);
+            testRS.Received(xExp ? 3 : 0).Delete();
         }
+
     }
 }
