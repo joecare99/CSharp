@@ -63,6 +63,7 @@ public interface IGenPersistence
     string CreateTempFilefromInit(string v);
     bool ExistFile(string v);
     bool ExistFileMand(string dateiName);
+    void WriteStringsMand(string sSection, IList<string> items);
 }
 
 public static class PersistenceHelper {

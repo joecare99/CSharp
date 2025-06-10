@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace GenFree.Interfaces.Model
 {
     public interface ISourceLink :
-        IHasIxDataItf<SourceLinkIndex, ISourceLinkData, (int, EEventArt, int, short)>,
-        IUsesRecordset<(int, EEventArt, int, short)>,
-        IUsesID<(int, EEventArt, int, short)>,
+        IHasIxDataItf<SourceLinkIndex, ISourceLinkData, (short, int, EEventArt, short)>,
+        IUsesRecordset<(short, int, EEventArt, short)>,
+        IUsesID<(short, int, EEventArt, short)>,
         IHasRSIndex1<SourceLinkIndex, SourceLinkFields>
     {
         bool Exists(int v, int famInArb, EEventArt eArt, short lfNR=0);

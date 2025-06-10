@@ -287,7 +287,14 @@ public enum QuFields
     _12,
     _13
 }
-
+public enum QuIndex
+{    
+    Autor,
+    Dopp,
+    Nam,
+    Nr,
+    Zitat
+}
 public enum AhnenIndex
 {
     Spitz,
@@ -358,21 +365,23 @@ public enum SourceLinkFields
     /// <summary>
     /// Type of Link
     /// </summary>
-    _0, // Kind    
+    _1, // Kind
     /// <summary>
     /// The Person/Family PerNr 
     /// </summary>
-    _1, // PerFamNr
+    _2, // PerFamNr
     /// <summary>
     /// The Source PerNr (Person/o04_Family/Event)
     /// </summary>
-    _2, // PerNr
-    _3, // NrNeu    
+    _3,
+    /// <summary>
+    /// The title of the entry
+    /// </summary>
+    _4, 
     /// <summary>
     /// The Page
     /// </summary>
-    _4, // Page
-    Aus,
+    Aus,// Page
     Orig,
     Kom,
     Art,

@@ -1,23 +1,19 @@
 ﻿using GenFree.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Interfaces.Data;
 
-public interface ICitationData: IHasIRecordset 
+public interface ICitationData: IHasIRecordset , IHasID<(short , int , EEventArt , short )>, IHasPropEnum<ESourceLinkProp>
 {
-    [Obsolete("use named properties")]
-    string this[int index] { get; set; } // Indexer to access citation data by index
-    int iSourceId { get; set; } // Source ID
-    short iSourceKnd { get; set; } // Kind of the Source
+    int iQuNr { get; set; } // Source ID
+    short iLfdNr { get; set; } // Link number, used for multiple links to the same source
+    short iLinkType { get; set; } // Kind of the Source
     string sSourceTitle { get; set; } // Source title 
     string sPage { get; set; } // Page number or identifier
     string sEntry { get; set; } // Citation entry-title or description
     string sOriginalText { get; set; } // Citation text
     string sComment { get; set; } // Notes or comments about the citation
+    EEventArt eArt { get; set; }
+    int iPerFamNr { get; set; }
 
     void Clear(); // Method to clear the citation data
 

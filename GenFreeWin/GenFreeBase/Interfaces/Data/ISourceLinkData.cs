@@ -2,16 +2,16 @@
 
 namespace GenFree.Interfaces.Data
 {
-    public interface ISourceLinkData : IHasID<(int, EEventArt, int, short)>, IHasPropEnum<ESourceLinkProp>, IHasIRecordset
+    public interface ISourceLinkData : IHasID<(short, int, EEventArt, short)>, IHasPropEnum<ESourceLinkProp>, IHasIRecordset
     {
+        short iLinkType { get; }
         EEventArt eArt { get; }
-        int iLfdNr { get; }
-        int iLinkType { get; }
-        int iPersNr { get; }
+        int iPerFamNr { get; }
+        short iLfdNr { get; }
         int iQuNr { get; }
-        string sAus { get; }
-        string sField3 { get; }
-        string sKom { get; }
-        string sOrig { get; }
+        string sPage { get; }
+        string sEntry { get; }
+        string sComment { get; }
+        string sOriginalText { get; }
     }
 }
