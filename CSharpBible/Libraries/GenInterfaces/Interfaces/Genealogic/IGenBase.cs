@@ -24,7 +24,7 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Interface IGenBase
 /// </summary>
 public interface IGenBase
-{
+{        
     /// <summary>
     /// Gets the unique identifier.
     /// </summary>

@@ -91,6 +91,12 @@ public interface IGenPerson : IGenEntity
     /// <value>The families.</value>
     IIndexedList<IGenFamily> Families { get; }
     /// <summary>
+    /// Gets the families.
+    /// </summary>
+    /// <value>The families.</value>
+    IIndexedList<IGenFamily> Marriages { get; }
+
+    /// <summary>
     /// Gets the spouse count.
     /// </summary>
     /// <value>The spouse count.</value>
