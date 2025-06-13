@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenFree.Interfaces.DB;
-using Gedcomles.Model;
 using Microsoft.VisualBasic;
 using System.Runtime.InteropServices;
 using GenFree.Data;
@@ -15,6 +14,7 @@ using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Data;
 using GenFree.Helper;
 using System.Collections;
+using GenFree.Data.Models;
 
 namespace GenFree.Interfaces.Sys;
 

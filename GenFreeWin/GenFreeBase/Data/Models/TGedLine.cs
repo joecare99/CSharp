@@ -1,6 +1,6 @@
 ﻿using BaseLib.Helper;
 
-namespace Gedcomles.Model;
+namespace GenFree.Data.Models;
 
 public record struct TGedLine(int iLvl = -1, string sTag = "", string? link = null, string? sData = null)
 {
@@ -31,7 +31,7 @@ public record struct TGedLine(int iLvl = -1, string sTag = "", string? link = nu
 
     public void SetTag(string sTag) => this.sTag= sTag;
     public void SetLvl(int iLvl) => this.iLvl= iLvl;
-    public void SetData(string data) => this.sData= data;
+    public void SetData(string data) => sData= data;
 
     
 
