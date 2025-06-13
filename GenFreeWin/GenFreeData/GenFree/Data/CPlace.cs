@@ -5,7 +5,7 @@ using GenFree.Interfaces.Model;
 using GenFree.Helper;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.GenFree.Model;
+using GenFree.Model;
 
 namespace GenFree.Data;
 

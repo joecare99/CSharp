@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.GenFree.Model;
+using GenFree.Model;
 
 namespace GenFree.Data;
 

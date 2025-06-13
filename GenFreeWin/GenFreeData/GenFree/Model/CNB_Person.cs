@@ -4,7 +4,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.GenFree.Model
+namespace GenFree.Model
 {
     public class CNB_Person : CUsesRecordSet<int>, INB_Person
     {
