@@ -84,6 +84,10 @@ namespace WinAhnenCls.Model.HejInd
 
         public IGenealogy Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
 
+        public IIndexedList<IGenFamily> Marriages => throw new NotImplementedException();
+
+        public int ID { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
