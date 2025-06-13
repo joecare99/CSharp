@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 
-namespace GenFree.GenFree.Model.Tests
+namespace GenFree.Model.Tests
 {
     [TestClass()]
     public class COFBTests

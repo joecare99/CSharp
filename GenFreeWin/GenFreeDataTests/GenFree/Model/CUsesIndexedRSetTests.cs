@@ -5,11 +5,11 @@ using NSubstitute;
 using GenFree.Helper;
 using GenFree.Interfaces;
 using BaseLib.Helper;
-using GenFree.GenFree.Model;
+using GenFree.Model;
 using BaseLib.Interfaces;
 using System.Linq;
 
-namespace GenFree.GenFree.Model.Tests;
+namespace GenFree.Model.Tests;
 
 public enum TestIndex
 {
