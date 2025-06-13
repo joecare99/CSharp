@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using BaseLib.Interfaces;
-using GenFree.GenFree.Model;
 using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

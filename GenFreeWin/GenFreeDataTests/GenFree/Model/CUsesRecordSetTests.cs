@@ -2,9 +2,7 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Helper;
 using BaseLib.Helper;
-using GenFree.GenFree.Model;
 using BaseLib.Interfaces;
 
 namespace GenFree.Model.Tests;

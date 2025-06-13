@@ -1,6 +1,5 @@
 ﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
-using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

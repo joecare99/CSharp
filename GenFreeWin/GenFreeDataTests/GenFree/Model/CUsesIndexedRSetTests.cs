@@ -2,10 +2,8 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Helper;
 using GenFree.Interfaces;
 using BaseLib.Helper;
-using GenFree.Model;
 using BaseLib.Interfaces;
 using System.Linq;
 
@@ -126,6 +124,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     public void ForEachDoTest()
     {
         (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        testRS.EOF.Returns(false);
         testRS.NoMatch.Returns(false);
         var iCnt = 0;
         ForEachDo(TestIndex._MyKeyIndex, TestIndexField.ID, 1, ce =>
@@ -135,10 +134,10 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
             iCnt++;
             return true;
         });
-        Assert.AreEqual(2, iCnt);
+        Assert.AreEqual(4, iCnt);
         Assert.AreEqual("_MyKeyIndex", testRS.Index);
         testRS.Received(0).MoveFirst();
-        testRS.Received(2).MoveNext();
+        testRS.Received(4).MoveNext();
         testRS.Received(1).Seek("=", 1);
     }
 
@@ -159,6 +158,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     {
         var iCnt = 0;
         (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(1, 1, 1, 1, 3);
+        testRS.EOF.Returns(false);
         testRS.NoMatch.Returns(false, false, true);
         ForEachDo(TestIndex._MyKeyIndex, TestIndexField.ID, 1, rs =>
         {
@@ -380,7 +380,8 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         _ => throw new NotImplementedException(),
     };
 
-    protected override ITestData GetData(IRecordset rs, bool xNoInit = false) => new CTestData(rs, xNoInit);
+    protected override ITestData GetData(IRecordset rs, bool xNoInit = false) 
+        => new CTestData(rs, xNoInit);
 
     private class CTestData : ITestData
     {
@@ -467,18 +468,16 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     {
         // Arrange
         var ce = new CTestData(testRS) { ID = id, Description = description, Data = data };
-        testRS.EditMode.Returns(0);
         testRS.NoMatch.Returns(id!=2);
-        testRS.When(x => x.Edit()).Do(_ => { });
-        testRS.When(x => x.Update()).Do(_ => { });
 
         // Act
         Commit(ce);
 
         // Assert
-        testRS.Received(1).Edit();
+        testRS.Received(id==2?1:0).Edit();
+        testRS.Received(id==2?0:1).AddNew();
         testRS.Received(1).Update();
-        Assert.AreEqual(id, ce.ID);
+        Assert.AreEqual(2, ce.ID,"Id");
         Assert.AreEqual(description, ce.Description);
         Assert.AreEqual(data, ce.Data);
     }

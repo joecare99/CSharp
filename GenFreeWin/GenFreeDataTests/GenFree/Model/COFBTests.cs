@@ -1,6 +1,5 @@
 ﻿using BaseLib.Interfaces;
 using GenFree.Data;
-using GenFree.GenFree.Model;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
