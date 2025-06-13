@@ -110,7 +110,7 @@ public partial class Menue
     internal Button btnHelpMain;
 
     [VisibilityBinding(nameof(IMenu1ViewModel.CodeOfArmsVisible))]
-    internal PictureBox pbxCodeOfArms;
+    public PictureBox pbxCodeOfArms;
     internal Label lblAutoUpdState;
     public Button btnRemoteDiag;
     [VisibilityBinding(nameof(IMenu1ViewModel.PbxLanguage1Visible))]
