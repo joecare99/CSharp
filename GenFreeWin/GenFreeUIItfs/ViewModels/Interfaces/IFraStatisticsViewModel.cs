@@ -14,5 +14,7 @@ public interface IFraStatisticsViewModel: INotifyPropertyChanged
 
     public int Texts { get; }
 
+    void SetDates(int count);
+    void SetTexts(int Count);
     void UpdateStat();
 }
