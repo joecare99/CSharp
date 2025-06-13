@@ -15,9 +15,11 @@ public static class DBHelper
         foreach (DataRow row in enumerator)
         {
             TableDef td = new(db.Connection, row["TABLE_NAME"].AsString());
-            db.GetSchema("Columns", new[] { null, null, td.Name }).Rows.Cast<DataRow>().Select(
+            db.GetSchema("Columns", new[] { null, null, td.Name }).Rows
+                .Cast<DataRow>().Select(
                 r => new FieldDef(td, r["COLUMN_NAME"].AsString(), r["DATA_TYPE"].AsString(), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(r => { });
-            db.GetSchema("Indexes").Rows.Cast<DataRow>().Where(r => r["TABLE_NAME"].AsString() == td.Name).Select(
+            db.GetSchema("Indexes").Rows
+                .Cast<DataRow>().Where(r => r["TABLE_NAME"].AsString() == td.Name)?.Select(
                 r => new IndexDef(td, r["INDEX_NAME"].AsString(), r["COLUMN_NAME"].AsString(), r["PRIMARY_KEY"].AsBool(), r["UNIQUE"].AsBool())).ToList().ForEach(r => { /*if (r.Name == null) td.Indexes.Add(r);*/ });
             yield return td;
         }
