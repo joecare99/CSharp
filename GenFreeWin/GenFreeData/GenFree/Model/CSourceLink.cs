@@ -26,13 +26,14 @@ namespace GenFree.Model
             _ => throw new ArgumentException()
         };
 
-        protected override ISourceLinkData GetData(IRecordset rs, bool xNoInit = false) => new CSourceLinkData(rs, xNoInit);
+        protected override ISourceLinkData GetData(IRecordset rs, bool xNoInit = false) 
+            => new CSourceLinkData(rs, xNoInit);
 
         public override IRecordset? Seek((short, int, EEventArt, short) tKey, out bool xBreak)
         {
             var db_Table = _db_Table;
             db_Table.Index = _keyIndex.AsFld();
-            db_Table.Seek("=", tKey.Item1, tKey.Item2, tKey.Item3);
+            db_Table.Seek("=", tKey.Item1, tKey.Item2, (int)tKey.Item3,tKey.Item4);
             xBreak = db_Table.NoMatch;
             return xBreak ? null : db_Table;
         }
@@ -50,7 +51,7 @@ namespace GenFree.Model
             dB_SourceLinkTable.Seek("=", 3, persInArb, eEventArt, 0);
             while (!dB_SourceLinkTable.EOF)
             {
-                var Src = new CSourceLinkData(dB_SourceLinkTable);
+                var Src = GetData(dB_SourceLinkTable);
                 if (!dB_SourceLinkTable.NoMatch
                     && EEventArt.eA_Unknown != Src.eArt)
                 {

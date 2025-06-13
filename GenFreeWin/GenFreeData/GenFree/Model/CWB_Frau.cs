@@ -113,7 +113,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
                 var (sName, sDatum) = DataModul_SearchTab_GetNameDate(iPerFamNr);
 
                 wB_FrauTable.Edit();
-                wB_FrauTable.Fields[NB_Frau1Fields.Name].Value = sName.Left(40) + sDatum;
+                wB_FrauTable.Fields[NB_Frau1Fields.Name].Value = sName.Left(40) + " " + sDatum;
                 wB_FrauTable.Update();
             }
             wB_FrauTable.MoveNext();
@@ -156,7 +156,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
             }
     }
 
-    
+
     ///<summary>
     /// Aktualisiert das Feld "Nr" für einen bestimmten Datensatz auf 1, falls vorhanden.
     /// </summary>

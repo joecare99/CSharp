@@ -1,4 +1,5 @@
 ﻿using BaseLib.Helper;
+using BaseLib.Interfaces;
 using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
@@ -29,7 +30,7 @@ namespace GenFree.Model
             var eIdxFld = GetIndex1Field(eIndex);
             while (rs?.NoMatch == false
                   && !rs.EOF
-                  && oIndexVal.Equals(rs.Fields[eIdxFld].Value))
+                  && oIndexVal.Equals((rs.Fields[eIdxFld] as IHasValue).Value))
             {
                 yield return GetData(rs);
                 rs.MoveNext();
@@ -75,7 +76,7 @@ namespace GenFree.Model
             var rs = Seek(eIndex, oIndexVal);
             while (rs?.EOF == false
                 && !rs.NoMatch
-                && oIndexVal.Equals(rs.Fields[eIndexField].Value)
+                && oIndexVal.Equals((rs.Fields[eIndexField] as IHasValue).Value)
                 && lFunc(GetData(rs)))
             {
                 rs.MoveNext();
