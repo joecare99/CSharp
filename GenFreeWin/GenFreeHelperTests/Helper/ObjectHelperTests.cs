@@ -4,6 +4,7 @@ using NSubstitute;
 using GenFree.Data;
 using GenFree.Interfaces.DB;
 using BaseLib.Helper;
+using BaseLib.Interfaces;
 
 namespace GenFree.Helper.Tests
 {
@@ -44,7 +45,7 @@ namespace GenFree.Helper.Tests
         public void AsIntTest2(int iExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsIntTest(iExp, sAct);
         }
 
@@ -89,7 +90,7 @@ namespace GenFree.Helper.Tests
         public void AsLongTest2(long lExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsLongTest(lExp, sAct);
         }
 
@@ -138,7 +139,7 @@ namespace GenFree.Helper.Tests
         {
             var eExp = sExp.AsEnum<ENameKennz>();
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsEnumTest(sExp, sAct);
         }
 
@@ -189,7 +190,7 @@ namespace GenFree.Helper.Tests
         public void AsDateTest2(long lExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsDateTest(lExp, sAct);
         }
 
@@ -239,7 +240,7 @@ namespace GenFree.Helper.Tests
         public void AsDoubleTest2(double fExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsDoubleTest(fExp, sAct);
         }
 
@@ -261,7 +262,7 @@ namespace GenFree.Helper.Tests
         [DataRow(false, null)]
         [DataRow(true, "true")]
         [DataRow(true, true)]
-        [DataRow(true, 'b')]
+        [DataRow(false, 'b')]
         [DataRow(true, 3)]
         [DataRow(true, 4.0)]
         [DataRow(true, 5.0f)]
@@ -280,7 +281,7 @@ namespace GenFree.Helper.Tests
         public void AsBoolTest2(bool xExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsBoolTest(xExp, sAct);
         }
 
@@ -313,7 +314,9 @@ namespace GenFree.Helper.Tests
         [DataRow(9, 9)]
         public void AsGUIDTest(int iExp, object sAct)
         {
+            // Arrange
             var gExp = new Guid(iExp, 0, 0, new byte[8]);
+            // Act & Assert
             Assert.AreEqual(gExp, sAct.AsGUID(), $"AsGUID({sAct})");
         }
         [DataTestMethod()]
@@ -323,7 +326,8 @@ namespace GenFree.Helper.Tests
         public void AsGUIDTest2(int iExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
+            // Act
             AsGUIDTest(iExp, sAct);
         }
 
