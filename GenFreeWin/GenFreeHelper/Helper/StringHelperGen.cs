@@ -111,7 +111,7 @@ namespace GenFree.Helper
             if (Ubgt1.Contains('\xC5'.AsString()))
             {
                 var num5_ = Ubgt1.IndexOf('\xC5');
-                Ubgt1 = Ubgt1.Left(num5_ - 1) + "¿" + Ubgt1.Substring(num5_ + 1, Ubgt1.Length);
+                Ubgt1 = Ubgt1.Left(num5_ - 1) + "¿" + Ubgt1.Substring(num5_ + 1, Math.Max(0, Ubgt1.Length-num5_-1));
             }
             return Ubgt1;
         }

@@ -72,13 +72,13 @@ public static class PersistenceHelper {
     public static void ReadEnumsMand<T>(this IGenPersistence _p, string sSection, T[] enums) where T : Enum
     {
         var ai = _p.ReadIntsMand(sSection, enums.Length);
-        for (var i = 0; i < Math.Min(ai.Length, enums.Length) - 1; i++)
+        for (var i = 0; i < Math.Min(ai.Length, enums.Length) ; i++)
             enums[i] = (T)(object)ai[i];
     }
     public static void ReadEnumsMand<T>(this IGenPersistence _p, string sSection, IList<T> enums) where T : Enum
     {
         var ai = _p.ReadIntsMand(sSection, enums.Count);
-        for (var i = 0; i<Math.Min(ai.Length, enums.Count) - 1; i++)
+        for (var i = 0; i<Math.Min(ai.Length, enums.Count) ; i++)
             enums[i] = (T) (object) ai[i]; 
     }
     public static void PutEnumsMand<T>(this IGenPersistence _p, string sSection, IList<T> enums) where T : Enum
@@ -93,7 +93,7 @@ public static class PersistenceHelper {
     {
         _p.ReadEnumsMand(DateiName, aeValues);
     }
-    public static void ReadEnumsInit<T>(this IGenPersistence _p, string sSection, out T eVal) where T : Enum
+    public static void ReadEnumInit<T>(this IGenPersistence _p, string sSection, out T eVal) where T : Enum
     { 
         eVal = _p.ReadEnumInit<T>(sSection);
     }

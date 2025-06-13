@@ -11,5 +11,6 @@
 		<Authors>Joe Care</Authors>
 		<Copyright>Copyright © JC-Soft 2025</Copyright>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 	</PropertyGroup>
 </Project>

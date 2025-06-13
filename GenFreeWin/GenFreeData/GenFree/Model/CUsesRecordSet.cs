@@ -4,7 +4,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.GenFree.Model
+namespace GenFree.Model
 {
     public abstract class CUsesRecordSet<T> : IUsesRecordset<T>
     {

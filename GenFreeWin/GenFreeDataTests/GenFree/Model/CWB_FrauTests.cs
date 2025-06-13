@@ -1,11 +1,11 @@
-﻿using GenFree.GenFree.Model;
+﻿using GenFree.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Data;
 using GenFree.Interfaces.Data;
 
-namespace GenFree.GenFree.Model.Tests;
+namespace GenFree.Model.Tests;
 
 [TestClass()]
 public class CWB_FrauTests

@@ -3,6 +3,7 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using static BaseLib.Helper.TestHelper;
 using BaseLib.Helper;
+using BaseLib.Interfaces;
 
 namespace GenFree.Helper.Tests
 {
@@ -61,7 +62,7 @@ namespace GenFree.Helper.Tests
         public void AsStringTest2(string sExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             Assert.AreEqual(sExp, sAct.AsString(), $"AsString({sAct})");
         }
 

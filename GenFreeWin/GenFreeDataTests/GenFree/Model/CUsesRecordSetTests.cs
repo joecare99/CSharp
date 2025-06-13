@@ -7,7 +7,7 @@ using BaseLib.Helper;
 using GenFree.GenFree.Model;
 using BaseLib.Interfaces;
 
-namespace GenFree.GenFree.Model.Tests;
+namespace GenFree.Model.Tests;
 
 [TestClass()]
 public class CUsesRecordSetTests : CUsesRecordSet<int>

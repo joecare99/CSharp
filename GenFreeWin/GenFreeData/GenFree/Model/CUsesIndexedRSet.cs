@@ -6,7 +6,7 @@ using GenFree.Interfaces.Model;
 using System;
 using System.Collections.Generic;
 
-namespace GenFree.GenFree.Model
+namespace GenFree.Model
 {
     public abstract class CUsesIndexedRSet<T, T2, T3, T4> : 
         CUsesRecordSet<T>,

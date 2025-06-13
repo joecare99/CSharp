@@ -4,7 +4,7 @@ using GenFree.Interfaces.Model;
 using System;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.GenFree.Model;
+using GenFree.Model;
 
 namespace GenFree.Data
 {
