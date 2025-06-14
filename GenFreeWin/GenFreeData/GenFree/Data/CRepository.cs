@@ -8,20 +8,42 @@ using System;
 
 namespace GenFree.Data;
 
-internal class CRepository : CUsesIndexedRSet<int, RepoIndex, RepoFields, IRepoData>, IRepository
+public class CRepository : CUsesIndexedRSet<int, RepoIndex, RepoFields, IRepoData>, IRepository
 {
     private readonly Func<IRecordset> _value;
-    public CRepository(Func<IRecordset> value)
-    {
-        _value = value;
-    }
-    protected override IRecordset _db_Table => _value();
+    public CRepository(Func<IRecordset> value) 
+        => _value = value;
 
-    protected override RepoIndex _keyIndex => RepoIndex.Nr;
+    /// <summary>Get the table of the repository</summary>
+    protected override IRecordset _db_Table 
+        => _value();
 
-    protected override int GetID(IRecordset rs) => rs.Fields[RepoFields.Nr].AsInt();
+    /// <summary>Get the index of the repository</summary>
+    protected override RepoIndex _keyIndex 
+        => RepoIndex.Nr;
 
-    protected override IRepoData GetData(IRecordset rs, bool xNoInit = false) => new CRepoData(rs,xNoInit);
+    
+    /// <summary>
+    /// Die Klasse CRepository verwaltet den Zugriff auf das Repository-Recordset und stellt Methoden zur Datenmanipulation bereit.
+    /// </summary>
+    /// <param name="rs"></param>
+    /// <returns></returns>
+    protected override int GetID(IRecordset rs) 
+        => rs.Fields[RepoFields.Nr].AsInt();
 
-    public override RepoFields GetIndex1Field(RepoIndex eIndex) => RepoFields.Nr;
+    
+    /// <summary>
+    /// Diese Klasse implementiert das Repository-Muster für den Zugriff auf das Repository-Recordset und stellt Methoden zur Datenmanipulation bereit.
+    /// </summary>
+    /// <param name="rs"></param>
+    /// <param name="xNoInit"></param>
+    /// <returns></returns>
+    protected override IRepoData GetData(IRecordset rs, bool xNoInit = false) 
+        => new CRepoData(rs,xNoInit);
+
+    /// <summary>
+    /// Diese Methode gibt das Feld zurück, das für den angegebenen Index als Indexfeld verwendet wird.
+    /// </summary>
+    public override RepoFields GetIndex1Field(RepoIndex eIndex) 
+        => RepoFields.Nr;
 }

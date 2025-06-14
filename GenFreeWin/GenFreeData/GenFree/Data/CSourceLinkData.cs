@@ -45,7 +45,7 @@ namespace GenFree.Data
             ESourceLinkProp.iPerFamNr => typeof(int),
             ESourceLinkProp.iQuNr => typeof(int),
             ESourceLinkProp.sEntry => typeof(string),
-            ESourceLinkProp.iLfdNr => typeof(int),
+            ESourceLinkProp.iLfdNr => typeof(short),
             ESourceLinkProp.sPage => typeof(string),
             ESourceLinkProp.sOriginalText => typeof(string),
             ESourceLinkProp.sComment => typeof(string),
@@ -69,7 +69,7 @@ namespace GenFree.Data
         protected override IRecordset? Seek((short, int, EEventArt, short) iD)
         {
             _db_Table.Index = nameof(SourceLinkIndex.Tab22);
-            _db_Table.Seek("=", iD.Item1, iD.Item3, iD.Item2, iD.Item4);
+            _db_Table.Seek("=", iD.Item1, (int)iD.Item3, iD.Item2, iD.Item4);
             return _db_Table.NoMatch ? null : _db_Table;
         }
 

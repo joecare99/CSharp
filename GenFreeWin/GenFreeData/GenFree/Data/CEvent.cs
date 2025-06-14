@@ -187,13 +187,13 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     public IRecordset? SeekBeSu(EEventArt eArt, int iPerFamnr, out bool xBreak)
     {
         _db_Table.Index = nameof(EventIndex.BeSu);
-        _db_Table.Seek("=", eArt, iPerFamnr);
+        _db_Table.Seek("=", (int)eArt, iPerFamnr);
         xBreak = _db_Table.NoMatch;
         return xBreak ? null : _db_Table;
     }
 
     public IEnumerable<IEventData> ReadEventsBeSu(int iFamPers, EEventArt iArt)
-        => ReadAllDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
+        => ReadAllDataDB(Idx: EventIndex.BeSu, SeekAct: (rs) => rs.Seek("=", (int)iArt, iFamPers), StopPred: (ed) => ed.eArt != iArt || ed.iPerFamNr != iFamPers);
 
     public IEnumerable<IEventData> ReadAllPlaces(int iPlace)
         => ReadAllDataDB(EventIndex.EOrt, (rs) => rs.Seek("=", iPlace), (e) => e.iOrt != iPlace);
@@ -202,7 +202,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         var xInfoFound = false;
         if (ReadData(eArt, ifamInArb, out var cEvt1)
-                                                && cEvt1!.sVChr == "0")
+           && cEvt1!.sVChr == "0")
         {
             xInfoFound = cEvt1.dDatumV != default
                 || cEvt1.dDatumB != default
@@ -241,7 +241,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         var dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{_keyIndex}";
-        dB_EventTable.Seek("=", key.eArt, key.iLink, key.iLfNr);
+        dB_EventTable.Seek("=", (int)key.eArt, key.iLink, key.iLfNr);
         xBreak = dB_EventTable.NoMatch;
         return xBreak ? null : dB_EventTable;
     }
@@ -481,7 +481,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
     {
         var dB_EventTable = _db_Table;
         dB_EventTable.Index = nameof(EventIndex.ArtNr);
-        dB_EventTable.Seek("=", iEventType, persInArb, 0);
+        dB_EventTable.Seek("=", (int)iEventType, persInArb, 0);
         T sEvtBem4 = conv(dB_EventTable.Fields[eGetField]);
         return sEvtBem4;
     }
@@ -525,7 +525,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         while (!dB_EventTable.EOF
             && !dB_EventTable.NoMatch)
         {
-            yield return new CEventData(dB_EventTable);
+            yield return GetData(dB_EventTable);
             dB_EventTable.MoveNext();
         }
     }

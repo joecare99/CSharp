@@ -73,7 +73,7 @@ public class CNB_Ahnen(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Ah
     private (int iGen, int iPers, int iFam) RawReadBaseData()
     {
         IRecordset nB_AhnenTable = _db_Table;
-        var iGene = nB_AhnenTable.Fields[NB_AhnenFields.Gene].Value.AsInt();
+        var iGene = nB_AhnenTable.Fields[NB_AhnenFields.Gene].AsInt();
         var iPers = nB_AhnenTable.Fields[NB_AhnenFields.PerNr].AsInt();
         var iFam = nB_AhnenTable.Fields[NB_AhnenFields.Ehe].AsInt();
         return (iGene, iPers, iFam);
