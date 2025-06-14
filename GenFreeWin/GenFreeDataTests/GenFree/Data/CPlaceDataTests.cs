@@ -74,11 +74,11 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(1, 3)]
-        [DataRow(2, 4)]
-        [DataRow(3, 5)]
-        [DataRow(4, 6)]
-        [DataRow(5, 7)]
+        [DataRow((EPlaceProp)1, 3)]
+        [DataRow((EPlaceProp)2, 4)]
+        [DataRow((EPlaceProp)3, 5)]
+        [DataRow((EPlaceProp)4, 6)]
+        [DataRow((EPlaceProp)5, 7)]
         public void FillDataTest(EPlaceProp eProp, object oExp)
         {
             testClass.FillData(testRS);

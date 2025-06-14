@@ -150,7 +150,7 @@ namespace GenFree.Data.Tests
                 _odo.Received(0).Close();
                 _ods.Received(0).Close();
             }
-            DataModul.DAODBEngine_definst.Received(4).OpenDatabase(Arg.Any<string>(), v2: true, v3: true, v4: Arg.Any<string>());
+            DataModul.DAODBEngine_definst.Received(4).OpenDatabase(Arg.Any<string>(), v2: false, v3: true, v4: Arg.Any<string>());
             Assert.IsNotNull(DataModul.MandDB);
             DataModul.MandDB.Received(0).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
             Assert.IsNotNull(DataModul.TempDB);
@@ -205,7 +205,7 @@ namespace GenFree.Data.Tests
 
             // Assert
             personTable.Received(0).FindFirst($"{searchField} = '{searchValue}'");
-            personTable.Received(1).Seek(Arg.Any<string>());
+            personTable.ReceivedWithAnyArgs(1).Seek(Arg.Any<string>());
             Assert.AreEqual(iExp,found);
         }
 

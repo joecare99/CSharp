@@ -39,11 +39,11 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(0, 4)]
-        [DataRow(1, 2)]
-        [DataRow(2, 3)]
-        [DataRow(3, (EEventArt)5)]
-        [DataRow(4, (short)6)]
+        [DataRow((EWitnessProp)0, 4)]
+        [DataRow((EWitnessProp)1, 2)]
+        [DataRow((EWitnessProp)2, 3)]
+        [DataRow((EWitnessProp)3, (EEventArt)5)]
+        [DataRow((EWitnessProp)4, (short)6)]
         public void FillDataTest(EWitnessProp eProp, object oExp)
         {
             testClass.FillData(testRS);
@@ -54,7 +54,7 @@ namespace GenFree.Data.Tests
         [DataRow(EWitnessProp.iPers, TypeCode.Int32)]
         [DataRow(EWitnessProp.iWKennz, TypeCode.Int32)]
         [DataRow(EWitnessProp.iLink, TypeCode.Int32)]
-        [DataRow(EWitnessProp.eArt, TypeCode.Int32)]
+        [DataRow(EWitnessProp.eArt, TypeCode.Int16)]
         [DataRow(EWitnessProp.iLfNr, TypeCode.Int16)]
         public void GetPropTypeTest(EWitnessProp pAct, TypeCode eExp)
         {

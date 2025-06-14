@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using BaseLib.Interfaces;
+using GenFree.Data;
 using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -46,9 +47,9 @@ public class CNB_AhnenTests
         _recordset.NoMatch.Returns(!exists);
         (_recordset.Fields[NB_AhnenFields.Ahn1] as IHasValue).Value.Returns(kek1Val);
         (_recordset.Fields[NB_AhnenFields.Ahn2] as IHasValue).Value.Returns(kek2Val);
-        (_recordset.Fields[NB_AhnenFields.Ahn2] as IHasValue).Value.Returns(kek2Val);
-        (_recordset.Fields[NB_AhnenFields.Ahn2] as IHasValue).Value.Returns(kek2Val);
-        (_recordset.Fields[NB_AhnenFields.Ahn2] as IHasValue).Value.Returns(kek2Val);
+        (_recordset.Fields[NB_AhnenFields.Gene] as IHasValue).Value.Returns(genVal);
+        (_recordset.Fields[NB_AhnenFields.PerNr] as IHasValue).Value.Returns(persNrVal);
+        (_recordset.Fields[NB_AhnenFields.Ehe] as IHasValue).Value.Returns(famNrVal);
 
         var result = _sut.ReadData(lfdNr, out int persNr, out int famNr, out int gen, out int kek2, out int kek1);
 
@@ -76,6 +77,10 @@ public class CNB_AhnenTests
     [DataRow(1, 0, 0, false)]
     public void CReadData_ReturnsExpected(int num6, int genVal, int persVal, bool exists)
     {
+        _recordset.NoMatch.Returns(!exists);
+        (_recordset.Fields[NB_AhnenFields.Gene] as IHasValue).Value.Returns(genVal);
+        (_recordset.Fields[NB_AhnenFields.PerNr] as IHasValue).Value.Returns(persVal);
+        (_recordset.Fields[NB_AhnenFields.Ehe] as IHasValue).Value.Returns(num6);
 
         var result = _sut.CReadData(num6, out var value);
 
@@ -95,16 +100,7 @@ public class CNB_AhnenTests
     [TestMethod]
     public void AddRow_SetsAllFieldsAndUpdates()
     {
-        var fields = Substitute.For<IFieldsCollection>();
-        _recordset.Fields.Returns(fields);
-
-        fields[NB_AhnenFields.PerNr].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Gene].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ahn1].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ahn2].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ahn3].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Weiter].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ehe].Returns(Substitute.For<IField>());
+        var fields = _recordset.Fields;
 
         _sut.AddRow(1, 2, 3, 4, 5, 6);
 
@@ -122,14 +118,7 @@ public class CNB_AhnenTests
     [TestMethod]
     public void EditRaw_SetsFieldsAndUpdates()
     {
-        var fields = Substitute.For<IFieldsCollection>();
-        _recordset.Fields.Returns(fields);
-
-        fields[NB_AhnenFields.Gene].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ahn1].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ahn2].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Ehe].Returns(Substitute.For<IField>());
-        fields[NB_AhnenFields.Name].Returns(Substitute.For<IField>());
+        var fields = _recordset.Fields;
 
         _sut.EditRaw(1, 2, 3, 4, "Test");
 
@@ -145,14 +134,10 @@ public class CNB_AhnenTests
     [TestMethod]
     public void SetWeiterRaw_SetsWeiterAndUpdates()
     {
-        var fields = Substitute.For<IFieldsCollection>();
-        _recordset.Fields.Returns(fields);
-        fields[NB_AhnenFields.Weiter].Returns(Substitute.For<IField>());
-
         _sut.SetWeiterRaw();
 
         _recordset.Received().Edit();
-        fields[NB_AhnenFields.Weiter].Received().Value = 1;
+        _recordset.Fields[NB_AhnenFields.Weiter].Received().Value = 1;
         _recordset.Received().Update();
     }
 
@@ -162,49 +147,26 @@ public class CNB_AhnenTests
     [DataRow(true, 0, false, true, false, DisplayName ="Commit_EditRaw_WhenAhn1Zero")]
     public void Commit_BehavesCorrectly(bool personExists, int ahn1, bool expectAdd, bool expectEdit, bool expectSetWeiter)
     {
-        _sut = Substitute.ForPartsOf<CNB_Ahnen>(_recordsetFactory);
-        _sut.PersonExists(1).Returns(personExists);
+        _recordset.NoMatch.Returns(!personExists);
         (_recordset.Fields[NB_AhnenFields.Ahn1] as IHasValue).Value.Returns(ahn1);
-
-        _sut.When(x => x.AddRow(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>())).DoNotCallBase();
-        _sut.When(x => x.EditRaw(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>())).DoNotCallBase();
-        _sut.When(x => x.SetWeiterRaw()).DoNotCallBase();
 
         _sut.Commit(1, 2, 3, 4, 5, "Name");
 
         if (expectAdd)
-            _sut.Received().AddRow(1, 3, Arg.Any<int>(), 4, 5, 2);
+            _recordset.Received().AddNew();
         else
-            _sut.DidNotReceive().AddRow(1, 3, Arg.Any<int>(), 4, 5, 2);
+            _recordset.DidNotReceive().AddNew();
 
-        if (expectEdit)
-            _sut.Received().EditRaw(3, 4, 5, 2, "Name");
+        if (expectEdit || expectSetWeiter)
+            _recordset.Received().Edit();
         else
-            _sut.DidNotReceive().EditRaw(3, 4, 5, 2, "Name");
+            _recordset.DidNotReceive().Edit();
 
         if (expectSetWeiter)
-            _sut.Received().SetWeiterRaw();
+            _recordset.Fields[NB_AhnenFields.Weiter].Received().Value = 1;
         else
-            _sut.DidNotReceive().SetWeiterRaw();
+            _recordset.Fields[NB_AhnenFields.Weiter].DidNotReceive().Value = 1;
     }
 
 }
 
-
-public static class NB_AhnenFields
-{
-    public const string PerNr = "PerNr";
-    public const string Gene = "Gene";
-    public const string Ahn1 = "Ahn1";
-    public const string Ahn2 = "Ahn2";
-    public const string Ahn3 = "Ahn3";
-    public const string Weiter = "Weiter";
-    public const string Ehe = "Ehe";
-    public const string Name = "Name";
-}
-
-public static class NB_AhnenIndex
-{
-    public const string LfNr = "LfNr";
-    public const string PerNR = "PerNR";
-}

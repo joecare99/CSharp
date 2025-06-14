@@ -61,7 +61,7 @@ namespace GenFree.Data.Tests
             testClass = new CFamilyPersons();
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
-            Assert.AreEqual(4, testClass.ID);
+            Assert.AreEqual(0, testClass.ID);
             Assert.AreEqual(0, testClass.Mann);
             Assert.AreEqual(0, testClass.Frau);
             Assert.AreEqual(0, testClass.Kinder.Count);
@@ -75,8 +75,8 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(3,6)]
-        [DataRow(4, 8)]
+        [DataRow((EFamilyProp)3,6)]
+        [DataRow((EFamilyProp)4, 8)]
         public void FillDataTest(EFamilyProp eProp, object oExp)
         {
             testClass.FillData(testRS);

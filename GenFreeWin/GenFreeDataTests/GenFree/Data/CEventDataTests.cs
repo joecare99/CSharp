@@ -151,7 +151,7 @@ public class CEventDataTests
     }
 
     [DataTestMethod()]
-    [DataRow(EEventProp.eArt, TypeCode.Int32)]
+    [DataRow(EEventProp.eArt, TypeCode.Int16)]
     [DataRow(EEventProp.iArtText, TypeCode.Int32)]
     [DataRow(EEventProp.iPerFamNr, TypeCode.Int32)]
     [DataRow(EEventProp.dDatumV, TypeCode.DateTime)]

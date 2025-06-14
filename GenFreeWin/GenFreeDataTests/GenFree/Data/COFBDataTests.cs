@@ -56,10 +56,10 @@ namespace GenFree.Data.Tests
         //}
 
         [DataTestMethod()]
-        [DataRow(0, 2)]
-        [DataRow(1, "BB")]
-        [DataRow(2, 4)]
-        [DataRow(3, "Text_4")]
+        [DataRow((EOFBProps)0, 2)]
+        [DataRow((EOFBProps)1, "BB")]
+        [DataRow((EOFBProps)2, 4)]
+        [DataRow((EOFBProps)3, "Text_4")]
         public void FillDataTest(EOFBProps eProp, object oExp)
         {
             testClass.FillData(testRS);

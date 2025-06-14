@@ -102,8 +102,8 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(0, 2)]
-        [DataRow(2, 3)]
+        [DataRow((EPersonProp)0, 2)]
+        [DataRow((EPersonProp)2, 3)]
         public void FillDataTest(EPersonProp eProp, object oExp)
         {
             testClass.FillData(testRS);

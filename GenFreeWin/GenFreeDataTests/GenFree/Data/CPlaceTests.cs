@@ -57,8 +57,10 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             testRS.EOF.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             var iCnt = 0;
-            Action<float, int>? onProgress = ((int)(EEventArt)eTKennz == 0) ? null : (f, i) => _ = i;
+            Action<float, int>? onProgress = ((int)(ETextKennz)eTKennz == 0) ? null : (f, i) => _ = i;
+           
             testClass.ForeEachTextDo(i => $"i", (i, aS) => iCnt++, onProgress);
+            
             Assert.AreEqual(xExp ? 3 : 0, iCnt);
             Assert.AreEqual(nameof(PlaceIndex.OrtNr), testRS.Index);
             testRS.Received(xExp ? 3 : 0).MoveNext();

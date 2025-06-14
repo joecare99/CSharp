@@ -41,11 +41,11 @@ public class CNamesDataTests
     }
 
     [DataTestMethod()]
-    [DataRow(1, (ETextKennz)3)]
-    [DataRow(2, 4)]
-    [DataRow(3, 5)]
-    [DataRow(4, true)]
-    [DataRow(5, true)]
+    [DataRow((ENamesProp)1, (ETextKennz)3)]
+    [DataRow((ENamesProp)2, 4)]
+    [DataRow((ENamesProp)3, 5)]
+    [DataRow((ENamesProp)4, true)]
+    [DataRow((ENamesProp)5, true)]
     public void FillDataTest(ENamesProp eProp, object oExp)
     {
         testClass.FillData(testRS);

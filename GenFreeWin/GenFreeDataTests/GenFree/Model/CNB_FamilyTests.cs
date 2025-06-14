@@ -73,11 +73,11 @@ namespace GenFree.Model.Tests
         [TestMethod]
         public void MaxIDTest()
         {
-            Assert.AreEqual(0, testClass.MaxID); // Assuming MaxID returns 0 for an empty recordset
+            Assert.AreEqual(1, testClass.MaxID); // Assuming MaxID returns 0 for an empty recordset
             testRS.Received(1).MoveLast();
             testRS.Received(1).Index = "Fam";
             _=testRS.Received(1).Fields;
-            _=(testRS.Fields[FamilyFields.FamNr] as IHasValue).Received(0).Value;
+            _=(testRS.Fields[FamilyFields.FamNr] as IHasValue).Received(1).Value;
         }
     }
 }

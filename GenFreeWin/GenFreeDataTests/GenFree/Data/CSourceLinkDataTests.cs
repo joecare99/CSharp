@@ -20,15 +20,15 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            (testRS.Fields[SourceLinkFields.Art] as IHasValue).Value.Returns(1, 2, 3);
             (testRS.Fields[SourceLinkFields._1] as IHasValue).Value.Returns(2, 3, 4);
             (testRS.Fields[SourceLinkFields._2] as IHasValue).Value.Returns(3, 4, 5);
-            (testRS.Fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns(4, 5, 6);
             (testRS.Fields[SourceLinkFields._3] as IHasValue).Value.Returns(5, 6, 7);
             (testRS.Fields[SourceLinkFields._4] as IHasValue).Value.Returns("Field3");
             (testRS.Fields[SourceLinkFields.Aus] as IHasValue).Value.Returns("Aus");
             (testRS.Fields[SourceLinkFields.Orig] as IHasValue).Value.Returns("Orig");
             (testRS.Fields[SourceLinkFields.Kom] as IHasValue).Value.Returns("Kom");
+            (testRS.Fields[SourceLinkFields.Art] as IHasValue).Value.Returns(101, 102, 103);
+            (testRS.Fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns(4, 5, 6);
             testClass = new(testRS);
             testRS.ClearReceivedCalls();
         }
@@ -41,11 +41,15 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(1, 3)]
-        [DataRow(2, 4)]
-        [DataRow(3, 6)]
-        [DataRow(4, "Field3")]
-        [DataRow(5, 5)]
+        [DataRow(ESourceLinkProp.iLinkType, (short)3)]
+        [DataRow(ESourceLinkProp.iPerFamNr, 4)]
+        [DataRow(ESourceLinkProp.iQuNr, 6)]
+        [DataRow(ESourceLinkProp.sEntry, "Field3")]
+        [DataRow(ESourceLinkProp.sPage, "Aus")]
+        [DataRow(ESourceLinkProp.sOriginalText, "Orig")]
+        [DataRow(ESourceLinkProp.sComment, "Kom")]
+        [DataRow(ESourceLinkProp.eArt, EEventArt.eA_Baptism)]
+        [DataRow(ESourceLinkProp.iLfdNr, (short)5)]
         public void FillDataTest(ESourceLinkProp eProp, object oExp)
         {
             testClass.FillData(testRS);
@@ -53,12 +57,12 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(ESourceLinkProp.eArt,      TypeCode.Int32)]
-        [DataRow(ESourceLinkProp.iLinkType, TypeCode.Int32)]
+        [DataRow(ESourceLinkProp.eArt,      TypeCode.Int16)]
+        [DataRow(ESourceLinkProp.iLinkType, TypeCode.Int16)]
         [DataRow(ESourceLinkProp.iPerFamNr,   TypeCode.Int32)]
         [DataRow(ESourceLinkProp.iQuNr,     TypeCode.Int32)]
         [DataRow(ESourceLinkProp.sEntry,   TypeCode.String)]
-        [DataRow(ESourceLinkProp.iLfdNr,    TypeCode.Int32)]
+        [DataRow(ESourceLinkProp.iLfdNr,    TypeCode.Int16)]
         [DataRow(ESourceLinkProp.sPage,      TypeCode.String)]
         [DataRow(ESourceLinkProp.sOriginalText,     TypeCode.String)]
         [DataRow(ESourceLinkProp.sComment,      TypeCode.String)]
@@ -77,12 +81,12 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(ESourceLinkProp.eArt, (EEventArt)1)]
-        [DataRow(ESourceLinkProp.iLinkType, 2)]
+        [DataRow(ESourceLinkProp.eArt, EEventArt.eA_Birth)]
+        [DataRow(ESourceLinkProp.iLinkType, (short)2)]
         [DataRow(ESourceLinkProp.iPerFamNr, 3)]
         [DataRow(ESourceLinkProp.iQuNr, 5)]
         [DataRow(ESourceLinkProp.sEntry, "Field3")]
-        [DataRow(ESourceLinkProp.iLfdNr, 4)]
+        [DataRow(ESourceLinkProp.iLfdNr, (short)4)]
         [DataRow(ESourceLinkProp.sPage, "Aus")]
         [DataRow(ESourceLinkProp.sOriginalText, "Orig")]
         [DataRow(ESourceLinkProp.sComment, "Kom")]
@@ -107,13 +111,13 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(ESourceLinkProp.eArt, (EEventArt)1)]
-        [DataRow(ESourceLinkProp.eArt, (EEventArt)2)]
-        [DataRow(ESourceLinkProp.iLinkType, 3)]
+        [DataRow(ESourceLinkProp.eArt, (EEventArt)101)]
+        [DataRow(ESourceLinkProp.eArt, (EEventArt)102)]
+        [DataRow(ESourceLinkProp.iLinkType, (short)3)]
         [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
         [DataRow(ESourceLinkProp.sEntry, "Field2")]
-        [DataRow(ESourceLinkProp.iLfdNr, 5)]
+        [DataRow(ESourceLinkProp.iLfdNr, (short)5)]
         [DataRow(ESourceLinkProp.sPage, "Aus_")]
         [DataRow(ESourceLinkProp.sOriginalText, "Orig_")]
         [DataRow(ESourceLinkProp.sComment, "Kom_")]
@@ -134,13 +138,13 @@ namespace GenFree.Data.Tests
 
 
         [DataTestMethod()]
-        [DataRow(ESourceLinkProp.eArt, (EEventArt)1)]
-        [DataRow(ESourceLinkProp.eArt, (EEventArt)2)]
-        [DataRow(ESourceLinkProp.iLinkType, 3)]
+        [DataRow(ESourceLinkProp.eArt, (EEventArt)101)]
+        [DataRow(ESourceLinkProp.eArt, (EEventArt)102)]
+        [DataRow(ESourceLinkProp.iLinkType, (short)3)]
         [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
         [DataRow(ESourceLinkProp.sEntry, "Field2")]
-        [DataRow(ESourceLinkProp.iLfdNr, 5)]
+        [DataRow(ESourceLinkProp.iLfdNr, (short)5)]
         [DataRow(ESourceLinkProp.sPage, "Aus_")]
         [DataRow(ESourceLinkProp.sOriginalText, "Orig_")]
         [DataRow(ESourceLinkProp.sComment, "Kom_")]
@@ -160,12 +164,12 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(ESourceLinkProp.eArt, (EEventArt)2)]
-        [DataRow(ESourceLinkProp.iLinkType, 3)]
+        [DataRow(ESourceLinkProp.eArt, (EEventArt)102)]
+        [DataRow(ESourceLinkProp.iLinkType, (short)3)]
         [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
         [DataRow(ESourceLinkProp.sEntry, "Field2")]
-        [DataRow(ESourceLinkProp.iLfdNr, 5)]
+        [DataRow(ESourceLinkProp.iLfdNr, (short)5)]
         [DataRow(ESourceLinkProp.sPage, "Aus_")]
         [DataRow(ESourceLinkProp.sOriginalText, "Orig_")]
         [DataRow(ESourceLinkProp.sComment, "Kom_")]
@@ -185,7 +189,7 @@ namespace GenFree.Data.Tests
             testClass.Delete();
             Assert.AreEqual(nameof(SourceLinkIndex.Tab22), testRS.Index);
             testRS.Received(xAct ? 0 : 1).Delete();
-            testRS.Received(1).Seek("=", testClass.ID.Item1, testClass.ID.Item2, testClass.ID.Item3);
+            testRS.Received(1).Seek("=", testClass.ID.Item1,  (int)testClass.ID.Item3, testClass.ID.Item2, testClass.ID.Item4);
         }
 
     }

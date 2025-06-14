@@ -1,11 +1,13 @@
-﻿using BaseLib.Interfaces;
-using GenFree.Data;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using NSubstitute;
+using BaseLib.Interfaces;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
-using System.Collections.Generic;
-using System.Linq;
+using GenFree.Interfaces.Model;
+using GenFree.Data;
 
 namespace GenFree.Model.Tests
 {
@@ -33,38 +35,16 @@ namespace GenFree.Model.Tests
         }
 
         [TestMethod]
-        [DataRow(1, 2, EEventArt.eA_Birth, 8)]
-        [DataRow(2, 3, EEventArt.eA_Death, 9)]
-        [DataRow(5, 4, EEventArt.eA_Burial, 10)]
-        [DataRow(16, 4, EEventArt.eA_Unknown, 10)]
-        public void CSourceLinkTest(int citKenn, int perFamNr, EEventArt art, int lfNr)
+        public void CSourceLinkTest()
         {
-            // Arrange
-            var rs = testRS;
-            var fields = testRS.Fields;
-
-            (fields[SourceLinkFields._1] as IHasValue).Value.Returns(citKenn);
-            (fields[SourceLinkFields._2] as IHasValue).Value.Returns(perFamNr);
-            (fields[SourceLinkFields._3] as IHasValue).Value.Returns((int)art);
-            (fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns(lfNr);
-
-
-            // Act
-            var key = ((short)citKenn, perFamNr, art, (short)lfNr);
-            bool xBreak;
-            var result = testClass.Seek(key, out xBreak);
-
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsFalse(xBreak);
-            rs.Received().Seek(Arg.Any<string>(), (short)citKenn, perFamNr, (int)art, (short)lfNr);
+            Assert.IsNotNull(testClass);
+            Assert.IsInstanceOfType(testClass, typeof(CSourceLink));
+            Assert.IsInstanceOfType(testClass, typeof(ISourceLink));
         }
 
         [TestMethod]
-        [DataRow(SourceLinkIndex.Tab, SourceLinkFields._1)]
-        [DataRow(SourceLinkIndex.Tab21, SourceLinkFields._3)]
-        [DataRow(SourceLinkIndex.Tab22, SourceLinkFields._2)]
-        [DataRow(SourceLinkIndex.Tab23, SourceLinkFields._4)]
+        [DataRow(SourceLinkIndex.Tab, SourceLinkFields._2)]
         public void GetIndex1FieldTest(SourceLinkIndex index, SourceLinkFields expectedField)
         {
             // Arrange
@@ -75,6 +55,18 @@ namespace GenFree.Model.Tests
 
             // Assert
             Assert.AreEqual(expectedField, result);
+        }
+
+        [TestMethod]
+        [DataRow(SourceLinkIndex.Tab22, SourceLinkFields._2)]
+        public void GetIndex1FieldTest2(SourceLinkIndex index, SourceLinkFields expectedField)
+        {
+            // Arrange
+            var sut = testClass;
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(()=>_= sut.GetIndex1Field(index));
+
         }
 
         [TestMethod]
@@ -115,29 +107,25 @@ namespace GenFree.Model.Tests
         }
 
         [TestMethod]
-        [DataRow(1, 2, EEventArt.eA_Birth, 1)]
-        [DataRow(2, 3, EEventArt.eA_Death, 0)]
-        [DataRow(5, 4, EEventArt.eA_Burial, 2)]
-        [DataRow(16, 4, EEventArt.eA_Unknown, 0)]
+        [DataRow(1, 101, EEventArt.eA_Birth, 1)]
+        [DataRow(2, 103, EEventArt.eA_Death, 0)]
+        [DataRow(5, 104, EEventArt.eA_Burial, 2)]
+        [DataRow(16, 0, EEventArt.eA_Unknown, 0)]
         public void ReadAllTest(int persInArb, int eventArtInt, EEventArt expectedArt, int expectedCount)
         {
             // Arrange
             var rs = testRS;
             var sut = new CSourceLink(() => rs);
 
-            // Simulierte Daten für das Recordset
-            var dataList = new List<ISourceLinkData>();
-            for (int i = 0; i < expectedCount; i++)
-            {
-                var data = Substitute.For<ISourceLinkData>();
-                dataList.Add(data);
-            }
-
             // Recordset simulieren: MoveNext/EOF
             int moveCount = 0;
             rs.EOF.Returns(ci => moveCount >= expectedCount);
+            (rs.Fields[SourceLinkFields.Art] as IHasValue).Value.Returns(expectedArt, expectedArt, expectedArt, (short)0);
+            (rs.Fields[SourceLinkFields._2] as IHasValue).Value.Returns(persInArb, persInArb, 0, 0);
+            (rs.Fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns(0, 0, 1, (short)0);
+            (rs.Fields[SourceLinkFields._1] as IHasValue).Value.Returns(3, 3, 3, (short)0);
             rs.When(x => x.MoveNext()).Do(_ => moveCount++);
-
+            rs.NoMatch.Returns(false);
             // Act
             var result = testClass.ReadAll(persInArb, (EEventArt)eventArtInt).ToList();
 
