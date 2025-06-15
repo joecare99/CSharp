@@ -192,7 +192,14 @@ public static class StringUtils
                 return true;
         return false;
     }
-
+       
+    /// <summary>
+    /// Prüft, ob der angegebene String ein gültiger Bezeichner (Identifier) ist.
+    /// Ein gültiger Bezeichner beginnt mit einem Großbuchstaben (A-Z) und enthält nur Buchstaben, Ziffern oder Unterstriche.
+    /// Leere oder nur aus Leerzeichen bestehende Strings sind ungültig.
+    /// </summary>
+    /// <param name="s">Der zu prüfende String.</param>
+    /// <returns>True, wenn der String ein gültiger Bezeichner ist, sonst false.</returns>
     public static bool IsValidIdentifyer(this string? s)
     {
         if (string.IsNullOrWhiteSpace(s)) return false;
@@ -203,16 +210,43 @@ public static class StringUtils
         return true;
     }
 
+    /// <summary>
+    /// Gibt die ersten iCnt Zeichen des Strings zurück.
+    /// Bei positivem iCnt werden die ersten iCnt Zeichen geliefert.
+    /// Bei negativem iCnt werden alle bis auf die letzten |iCnt| Zeichen geliefert.
+    /// Ist iCnt größer als die Länge des Strings, wird der gesamte String zurückgegeben.
+    /// </summary>
+    /// <param name="data">Der Eingabestring.</param>
+    /// <param name="iCnt">Anzahl der gewünschten Zeichen (positiv: von links, negativ: bis auf die letzten |iCnt| Zeichen).</param>
+    /// <returns>Der entsprechend gekürzte String.</returns>
     public static string Left(this string data, int iCnt)
     => iCnt >= 0
     ? data.Substring(0, Math.Min(data.Length, iCnt))
     : data.Substring(0, Math.Max(0, data.Length + iCnt));
 
+    /// <summary>
+    /// Gibt die letzten iCnt Zeichen des Strings zurück.
+    /// Bei positivem iCnt werden die letzten iCnt Zeichen geliefert.
+    /// Bei negativem iCnt werden die ersten |iCnt| Zeichen entfernt und der Rest geliefert.
+    /// Ist iCnt größer als die Länge des Strings, wird der gesamte String zurückgegeben.
+    /// </summary>
+    /// <param name="data">Der Eingabestring.</param>
+    /// <param name="iCnt">Anzahl der gewünschten Zeichen (positiv: von rechts, negativ: ab dem |iCnt|-ten Zeichen von links).</param>
+    /// <returns>Der entsprechend gekürzte String.</returns>
     public static string Right(this string data, int iCnt)
         => iCnt >= 0
         ? data.Substring(Math.Max(0, data.Length - iCnt))
         : data.Substring(Math.Min(data.Length, -iCnt));
 
+    /// <summary>
+    /// Gibt eine String-Repräsentation des Objekts zurück.
+    /// Falls das Objekt ein String ist, wird es direkt zurückgegeben.
+    /// Falls das Objekt das Interface IHasValue implementiert, wird dessen Value als String zurückgegeben.
+    /// Bei null wird ein leerer String geliefert, ansonsten wird ToString() verwendet.
+    /// </summary>
+    /// <param name="data">The data.</param>
+    /// <param name="format">The format.(optional)</param>
+    /// <returns>System.String.</returns>
     public static string AsString(this object? data,string? format =null)
     => data switch
     {
@@ -221,8 +255,17 @@ public static class StringUtils
         null => "",
         object o => o.ToString() ?? "",
     };
-
-    public static IList<string> IntoString(this string[] asData, IList<string> asKont = null, int offs = 0)
+    
+    /// <summary>
+    /// Copies the elements of the given string array into the specified list of strings, starting at the given offset.
+    /// If the target list is null, a new list with sufficient capacity is created.
+    /// Only elements that fit within the bounds of the target list are copied.
+    /// </summary>
+    /// <param name="asData">The source array of strings to copy from.</param>
+    /// <param name="asKont">The target list to copy into. If null, a new list is created.</param>
+    /// <param name="offs">The zero-based index in the target list at which copying begins. Can be negative.</param>
+    /// <returns>The target list with the copied elements.</returns>
+    public static IList<string> IntoString(this string[] asData, IList<string>? asKont = null, int offs = 0)
     {
         asKont ??= new string[Math.Max(0, asData.Length + offs)];
         for (var i = 0; i < asData.Length; i++)

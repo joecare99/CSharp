@@ -120,4 +120,4 @@ public static class ObjectHelper2
         .FirstOrDefault().Key - 1;
 
 }
-public class ControlArray<T> : Dictionary<int, T> { public EventHandler DoubleClick { get; set; } };
+public class ControlArray<T> : Dictionary<int, T>;

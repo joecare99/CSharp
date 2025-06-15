@@ -29,7 +29,7 @@ public interface IGenConnects : IGenBase
     /// Gets the entity.
     /// </summary>
     /// <value>The connected entity.</value>
-    IGenEntity Entity { get; init; }
+    IGenEntity? Entity { get; init; }
 
     /// <summary>Gets the type of the genealogical connection.</summary>
     /// <value>The type of the genealogical connection.</value>

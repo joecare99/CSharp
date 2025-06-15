@@ -104,7 +104,7 @@ public static class StreamHelpers
                     var count = BitConverter.ToInt16(streamBytes, 0);
                     streamBytes = new byte[sizeof(int) * count];
                     _ = stream.Read(streamBytes, 0, sizeof(int) * count);
-                    yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null).Select(i=>i.Value).ToList());
+                    yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null).Select(i=>i!.Value).ToList());
                     break;
                 case Type t when typeof(IEnumerable<IPersistence>).IsAssignableFrom(t):
                     Type t1 = typeof(IPersistence);
