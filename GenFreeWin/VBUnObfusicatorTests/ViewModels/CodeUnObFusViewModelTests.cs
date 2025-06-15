@@ -217,6 +217,28 @@ Lines 0 => 0
             return _toCodeResult;
         }
 
+        [TestMethod]
+        public void Execute_ExceptionIsThrown_Result2ContainsExceptionMessage()
+        {
+            // Arrange
+            var viewModel = new CodeUnObFusViewModel();
+            IoC.GetReqSrv = (t) => t switch
+            {              
+                _ => throw new NotImplementedException()
+            };
+
+            // Simuliere einen Fehler durch ungültigen Code, der im Parser eine Exception auslöst
+            viewModel.Code = "\u0000"; // ungültiges Zeichen
+
+            // Act
+            var method = typeof(CodeUnObFusViewModel).GetMethod("Execute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method.Invoke(viewModel, null);
+
+            // Assert
+            Assert.IsFalse(string.IsNullOrEmpty(viewModel.Result2), "Result2 sollte eine Fehlermeldung enthalten.");
+            Assert.AreEqual(string.Empty, viewModel.Result, "Result sollte leer sein, wenn eine Exception auftritt.");
+        }
+
         public void Tokenize(ICSCode.TokenDelegate? token)
             => throw new NotImplementedException();
 
