@@ -66,7 +66,7 @@ namespace BaseGenClasses.Helper.Tests
         }
 
         [TestMethod()]
-        [DataRow("{\"eGenType\":10,\"eDateModifier\":4,\"Date1\":\"1980-05-12T00:00:00\",\"eDateType2\":2,\"Date2\":\"1985-01-01T00:00:00\",\"DateText\":\"ca. 1980-1985\",\"ID\":0}", EDateModifier.About)]
+        [DataRow("{\"eGenType\":10,\"eDateModifier\":4,\"Date1\":\"1980-05-12T00:00:00\",\"eDateType2\":2,\"Date2\":\"1985-01-01T00:00:00\",\"DateText\":\"ca. 1980-1985\"}", EDateModifier.About)]
         public void WriteTest(string sExp, EDateModifier about)
         {
             // Arrange

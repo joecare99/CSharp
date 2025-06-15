@@ -20,8 +20,8 @@ namespace BaseGenClasses.Helper.Tests
     public class GenExtensionsTests
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-        private IList<IGenConnects> iConnect;
-        private IList<IGenFact> iFacts;
+        private IList<IGenConnects?> iConnect;
+        private IList<IGenFact?> iFacts;
         private IGenConnectBuilder _GCBuilder;
         private IGenFactBuilder _GFBuilder;
         private IGenILBuilder _GILBuilder;
@@ -168,11 +168,11 @@ namespace BaseGenClasses.Helper.Tests
             iConnect.AddPerson(EGenConnectionType.Friend, Substitute.For<IGenPerson>());
 
             // Act
-            var result = iConnect.ToIndexedList((I)=>I.Entity.eGenType);
+            var result = iConnect.Where(i=>i?.Entity != null).ToIndexedList((I)=>I.Entity!.eGenType);
 
             // Assert
             Assert.IsNotNull(result);
-            result.ReceivedWithAnyArgs(2).Add(null,null);
+            result.ReceivedWithAnyArgs(2).Add(null!,null!);
         }
     }
 }
