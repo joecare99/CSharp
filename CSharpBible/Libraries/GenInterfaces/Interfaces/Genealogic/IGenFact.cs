@@ -55,21 +55,21 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// </summary>
         /// <value>The sources.</value>
         [JsonIgnore]
-        IList<IGenSources> Sources { get; init; }
+        IList<IGenSources?> Sources { get; init; }
         /// <summary>
         /// Gets the main entity.
         /// </summary>
         /// <value>The main entity.</value>
         [JsonIgnore]
-        IGenEntity MainEntity { get; }
+        IGenEntity? MainEntity { get; }
         /// <summary>
         /// Gets the entities.
         /// </summary>
         /// <value>The entities.</value>
-        IList<IGenConnects> Entities { get; init; }
+        IList<IGenConnects?> Entities { get; init; }
         /// <summary>Gets the medias.</summary>
         /// <value>The list of media of this fact.</value>
         [JsonIgnore]
-        IList<IGenMedia> Medias { get; init; }
+        IList<IGenMedia?> Medias { get; init; }
     }
 }
