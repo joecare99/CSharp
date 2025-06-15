@@ -11,10 +11,11 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
     private Dictionary<T2,int> _list = new();
 
     private Func<T, T2> _getIdx = getIdx;
-    public T this[object index] { get => _list.TryGetValue((T2)index,out var iix)?this[iix]:null ; set => throw new NotImplementedException(); }
+    public T? this[object index] { get => _list.TryGetValue((T2)index,out var iix)?this[iix]:null ; set => throw new NotImplementedException(); }
 
-    public override void Add(T item)
+    public override void Add(T? item)
     {
+        if (item == null) return;
         base.Add(item);
         _list.Add(_getIdx(item), Count - 1);
     }
@@ -31,8 +32,9 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
         _list.Clear();
     }
 
-    public override bool Remove(T item)
+    public override bool Remove(T? item)
     {
+        if (item == null) return false;
         if (_list.TryGetValue(_getIdx(item), out var i))
         {
             _list.Remove(_getIdx(item));
@@ -42,8 +44,9 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
         return base.Remove(item);
     }
 
-    public override void Insert(int index, T item)
+    public override void Insert(int index, T? item)
     {
+        if (item == null) return;
         base.Insert(index, item);
         _list.Add(_getIdx(item), index);
     }
@@ -55,7 +58,8 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
 
     public override void RemoveAt(int index)
     {
-        _list.Remove(_getIdx(this[index]));
+        T? t = this[index];
+        if (t!=null) _list.Remove(_getIdx(t));
         base.RemoveAt(index);
     }
 

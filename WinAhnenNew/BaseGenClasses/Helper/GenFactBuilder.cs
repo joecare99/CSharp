@@ -9,14 +9,14 @@ namespace BaseGenClasses.Helper
     public class GenFactBuilder : IGenFactBuilder
     {
 
-        public IGenFact Emit(EFactType type, IGenEntity mainEnt, string data, Guid? Uid, bool xReplace = true) => new GenFact(mainEnt)
+        public IGenFact Emit(EFactType type, IGenEntity mainEnt, string? data, Guid? Uid, bool xReplace = true) => new GenFact(mainEnt)
         {
             eFactType = type,
             UId = Uid ?? new Guid(),
             Data = data
         };
 
-        public IGenFact Emit(EFactType type, IGenEntity mainEnt, IGenDate date, string data, Guid? Uid, bool xReplace = true) => new GenFact(mainEnt)
+        public IGenFact Emit(EFactType type, IGenEntity mainEnt, IGenDate date, string? data, Guid? Uid, bool xReplace = true) => new GenFact(mainEnt)
         {
             eFactType = type,
             UId = Uid ?? new Guid(),
@@ -24,7 +24,7 @@ namespace BaseGenClasses.Helper
             Data = data
         };
 
-        public IGenFact Emit(EFactType type, IGenEntity mainEnt, IGenDate date, IGenPlace place, string data, Guid? Uid, bool xReplace = true) => new GenFact(mainEnt)
+        public IGenFact Emit(EFactType type, IGenEntity mainEnt, IGenDate date, IGenPlace place, string? data, Guid? Uid, bool xReplace = true) => new GenFact(mainEnt)
         {
             eFactType = type,
             UId = Uid ?? new Guid(),

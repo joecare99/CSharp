@@ -1,5 +1,6 @@
 ﻿using BaseGenClasses.Helper;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Text.Json.Serialization;
@@ -12,7 +13,7 @@ public class GenPlace : GenObject, IGenPlace
     private WeakReference<IGenealogy>? _WLowner;
     public override EGenType eGenType => EGenType.GenPlace;
 
-    public string Name { get ; set ; }
+    public string? Name { get ; set ; }
     public string? Type { get ; set ; }
     public string? GOV_ID { get ; set ; }
     public double Latitude { get; set; }
@@ -39,4 +40,10 @@ public class GenPlace : GenObject, IGenPlace
         if (place.Length <= 5) return;
         Notes = place[5];
     }
+    void IHasOwner<IGenealogy>.SetOwner(IGenealogy t)
+    {
+        if (t == null) return;
+        _WLowner = new(t);
+    }
+
 }
