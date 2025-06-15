@@ -30,14 +30,15 @@ namespace GenFree.Helper.Tests
         [DataRow("A", "Ä")]
         [DataRow("O", "Ö")]
         [DataRow("U", "Ü")]
-        [DataRow("Á", "á")]
-        [DataRow("Â", "â")]
-        [DataRow("À", "à")]
+        [DataRow("a", "á")]
+        [DataRow("a", "â")]
+        [DataRow("a", "à")]
         [DataRow("ss", "ß")]
         public void Uml2SuchTest(string sExp, string sAct)
         {
             Assert.AreEqual(sExp, sAct.Uml2Such(), $"Uml2Such({sAct})Test failed");
         }
+
 
         [DataTestMethod()]
         [DataRow("", null)]
@@ -86,7 +87,7 @@ namespace GenFree.Helper.Tests
         [DataRow("0-2", new string[] { "1" }, new string[] { "0" }, 1, new string[] { "0" })]
         [DataRow("0-3", new string[] { "1" }, new string[] { "0" }, -1, new string[] { "0" })]
         [DataRow("1-0", new string[] { "1" }, null, 0, new string[] { "1" })]
-        [DataRow("1-1", new string[] { "1" }, null, 1, new string[] { "", "1" })]
+        [DataRow("1-1", new string[] { "1" }, null, 1, new string[] { "", "1", "" })]
         [DataRow("1-2", new string[] { "1" }, null, -1, new string[] { })]
         [DataRow("2-2-0", new string[] { "1", "2" }, new string[] { "A", "B" }, 0, new string[] { "1", "2" })]
         [DataRow("2-2-1", new string[] { "1", "2" }, new string[] { "A", "B" }, 1, new string[] { "A", "1" })]

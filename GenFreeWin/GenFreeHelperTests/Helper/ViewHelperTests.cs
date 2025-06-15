@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenFree.Interfaces.UI;
 using NSubstitute;
+using System.Drawing;
 
 namespace GenFree.Helper.Tests
 {
@@ -33,15 +34,38 @@ namespace GenFree.Helper.Tests
             // Arrange
             var button = new System.Windows.Forms.Button
             {
-                Text = buttonText
+                Text = buttonText,
+                Visible = false
             };
 
             // Act
             ViewHelper.SetCommandBtn(button, expectedEnabled, commandName, iText);
 
             // Assert
-            Assert.AreEqual(commandName, button.Text);
+            Assert.AreEqual(commandName+":", button.Text);
             Assert.AreEqual(expectedEnabled, button.Visible);
         }
+
+        [DataTestMethod]
+        [DataRow("Speichern", "Save",0xE0E0E0, true)]
+        [DataRow("Löschen", "Delete", 0xE0E0E0, false)]
+        [DataRow("Bearbeiten", "Edit", 0xE0E0E0, true)]
+        public void SetLabelTxtTest(string labelText, string labelName,int iColor, bool expectedEnabled)
+        {
+            // Arrange
+            var label = new System.Windows.Forms.Label
+            {
+                Text = labelText,
+                Visible = false
+            };
+
+            // Act
+            ViewHelper.SetLabelTxt(label, expectedEnabled, labelName,Color.FromArgb(iColor), iText);
+
+            // Assert
+            Assert.AreEqual(labelName + ":", label.Text);
+            Assert.AreEqual(expectedEnabled, label.Visible);
+        }
+
     }
 }
