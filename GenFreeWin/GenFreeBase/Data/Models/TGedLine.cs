@@ -7,11 +7,15 @@ public record struct TGedLine(int iLvl = -1, string sTag = "", string? link = nu
     public TGedLine(string v) : this(-1, "", null, null)
     {
         var eing2 = v.Split(' ');
-        var iLvl = eing2[0].AsInt();
-        if (eing2[0] != iLvl.ToString())
+        var _iLvl = eing2[0].AsInt();
+        if (eing2[0] != _iLvl.ToString())
         {
             sData = v;
             return;
+        }
+        else
+        {
+            iLvl = _iLvl;
         }
         int iPrse = 1;
         if (eing2.Length > iPrse && eing2[iPrse].StartsWith("@"))
