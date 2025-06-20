@@ -46,4 +46,14 @@ public partial class FraStatisticsViewModel : ObservableObject, IFraStatisticsVi
         Dates = 0;
         Texts = 0;
     }
+
+    public void SetDates(int count)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void SetTexts(int Count)
+    {
+        throw new System.NotImplementedException();
+    }
 }
