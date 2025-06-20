@@ -76,7 +76,7 @@ public class CNB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Fra
     private (int iGen, int iPers, int iFam) RawReadBaseData()
     {
         IRecordset nB_Frau1Table = _db_Table;
-        var num5 = nB_Frau1Table.Fields[NB_Frau1Fields.Gen].Value.AsInt();
+        var num5 = nB_Frau1Table.Fields[NB_Frau1Fields.Gen].AsInt();
         var iPers = nB_Frau1Table.Fields[NB_Frau1Fields.Nr].AsInt();
         var iFam = nB_Frau1Table.Fields[NB_Frau1Fields.Alt].AsInt();
         return (num5, iPers, iFam);

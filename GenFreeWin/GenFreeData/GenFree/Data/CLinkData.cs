@@ -10,7 +10,7 @@ using GenFree.Model.Data;
 namespace GenFree.Data
 {
 
-    public class CLinkData :CRSDataC<ELinkProp, (int iFamily, int iPerson, ELinkKennz eKennz)>, ILinkData
+    public class CLinkData : CRSDataC<ELinkProp, (int iFamily, int iPerson, ELinkKennz eKennz)>, ILinkData
     {
         private static Func<IRecordset>? _DB_LinkTable;
 
@@ -32,7 +32,7 @@ namespace GenFree.Data
             _DB_LinkTable = () => DataModul.DB_LinkTable;
         }
 
-        public CLinkData() : base(_DB_LinkTable?.Invoke()!,true)
+        public CLinkData() : base(_DB_LinkTable?.Invoke()!, true)
         {
         }
 
@@ -43,7 +43,7 @@ namespace GenFree.Data
             iPersNr = PersNr;
         }
 
-        public CLinkData(IRecordset dB_LinkTable, bool xNoInit = false) : base(dB_LinkTable,xNoInit)
+        public CLinkData(IRecordset dB_LinkTable, bool xNoInit = false) : base(dB_LinkTable, xNoInit)
         {
         }
 
@@ -51,7 +51,7 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_LinkTable)
         {
-            if (dB_LinkTable == null) return; 
+            if (dB_LinkTable == null) return;
             ReadID(dB_LinkTable);
         }
 
@@ -70,7 +70,7 @@ namespace GenFree.Data
             var dB_LinkTable = _db_Table;
             dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
             dB_LinkTable.Seek("=", ID.iFamily, ID.iPerson, ID.eKennz);
-            return dB_LinkTable.NoMatch?null: dB_LinkTable ;
+            return dB_LinkTable.NoMatch ? null : dB_LinkTable;
         }
 
         private bool CkeckRecordset(IRecordset dB_LinkTable, (int iFamily, int iPerson, ELinkKennz eKennz) ID)
@@ -184,5 +184,6 @@ namespace GenFree.Data
             iPersNr = dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].AsInt();
         }
 
+        
     }
 }

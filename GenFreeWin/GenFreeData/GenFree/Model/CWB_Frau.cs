@@ -142,7 +142,7 @@ public class CWB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, IWB_Fra
     public void SetParentTo1(IFamilyData family)
     {
         IRecordset wB_FrauTable = _db_Table;
-        wB_FrauTable.Index = "LfNR";
+        wB_FrauTable.Index = NB_Frau1Index.LfNr.AsFld();
         foreach (var iParent in new[] { family.Mann, family.Frau })
             if (iParent > 0)
             {

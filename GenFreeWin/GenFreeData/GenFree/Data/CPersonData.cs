@@ -14,8 +14,8 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
 {
     #region static Properties
     private static Func<IRecordset> GetPersonTable { get; set; }
-    private static Func<int, string> _GetText = DataModul.TextLese1;
-    private static Func<int, (string, string)> _GetText2 = DataModul.TextLese2;
+    private static Func<int, string> _GetText;
+    private static Func<int, (string, string)> _GetText2;
     #endregion
     protected override Enum _keyIndex => PersonIndex.PerNr;
 
@@ -60,7 +60,9 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     public float fAge { get; internal set; }
     public string sPruefen { get; set; } = "";
 
-
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    static CPersonData() => Reset();
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public CPersonData(IRecordset dB_PersonTable, bool xNoInit=false) : base(dB_PersonTable, xNoInit) { }
 
     public override void FillData(IRecordset dB_PersonTable)
