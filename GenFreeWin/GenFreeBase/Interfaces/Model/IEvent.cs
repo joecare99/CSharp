@@ -335,4 +335,5 @@ public interface IEvent :
     /// <param name="iIndexVal">The i index value.</param>
     /// <returns>IEnumerable&lt;IEventData&gt;.</returns>
     IEnumerable<IEventData> ReadAllGt(EventIndex eIndex, int iIndexVal);
+    IEnumerable<IEventData> ReadAllBeSu(EEventArt eEventArt, int persInArb);
 }
