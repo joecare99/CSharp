@@ -4,7 +4,7 @@
 	  <TargetFrameworks>net481</TargetFrameworks>
 	  <PlatformTarget>x86</PlatformTarget>
 	  <Nullable>enable</Nullable>
-
+    <UseWindowsForms>true</UseWindowsForms>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
