@@ -25,6 +25,21 @@ public class CWB_FrauTests
     }
 
     [TestMethod()]
+    [DataRow(3)]
+    [DataRow(7)]
+    public void GetID_Test(int iAct)
+    {
+        // Arrange
+        (_rs.Fields[NB_Frau1Fields.LfNr] as IHasValue).Value.Returns(iAct);
+        // Act
+        var result = TestClass.MaxID;
+        // Assert
+        _rs.Received(1).MoveLast();
+        Assert.AreEqual(iAct, result);
+    }
+
+
+    [TestMethod()]
     public void AddParentTest()
     {
         // Arrange
@@ -198,7 +213,71 @@ public class CWB_FrauTests
         // Assert
         rs.Received(1).MoveFirst();
         rs.Received(1).Edit();
-        nameField.Received(1).Value = expectedName+" "+expectedDate;
+        nameField.Received(1).Value = expectedName + " " + expectedDate;
         rs.Received(1).Update();
+    }
+
+    /// <summary>
+    /// Testet die Seek-Methode von CWB_Frau für verschiedene Schlüsselwerte.
+    /// </summary>
+    /// <param name="key">Der zu suchende Schlüssel.</param>
+    /// <param name="noMatch">Gibt an, ob kein passender Datensatz gefunden werden soll.</param>
+    /// <param name="expectNull">Gibt an, ob das Ergebnis null sein soll.</param>
+    [TestMethod()]
+    [DataRow(1, false, false)]
+    [DataRow(2, true, true)]
+    public void SeekTest(int key, bool noMatch, bool expectNull)
+    {
+        // Arrange
+        _rs.NoMatch.Returns(noMatch);
+        _rs.ClearReceivedCalls();
+
+        bool xBreak;
+        // Act
+        var result = TestClass.Seek(key, out xBreak);
+
+        // Assert
+        _rs.Received(1).Seek("=", key);
+        Assert.AreEqual(noMatch, xBreak, "xBreak sollte dem Wert von NoMatch entsprechen.");
+        if (expectNull)
+        {
+            Assert.IsNull(result, "Das Ergebnis sollte null sein, wenn kein Datensatz gefunden wurde.");
+        }
+        else
+        {
+            Assert.AreEqual(_rs, result, "Das Ergebnis sollte das Recordset sein, wenn ein Datensatz gefunden wurde.");
+        }
+    }
+
+    /// <summary>
+    /// Testet die SetParentTo1-Methode von CWB_Frau für verschiedene Kombinationen von Eltern-IDs.
+    /// Erwartet, dass Update für jeden Elternteil mit ID > 0 aufgerufen wird.
+    /// </summary>
+    /// <param name="mannId">ID des Mannes (Vaters).</param>
+    /// <param name="frauId">ID der Frau (Mutter).</param>
+    /// <param name="expectFatherUpdate">Soll Update für den Vater aufgerufen werden?</param>
+    /// <param name="expectMotherUpdate">Soll Update für die Mutter aufgerufen werden?</param>
+    [TestMethod()]
+    [DataRow(1, 2, true, true)]
+    [DataRow(0, 2, false, true)]
+    [DataRow(1, 0, true, false)]
+    [DataRow(0, 0, false, false)]
+    public void SetParentTo1Test(int mannId, int frauId, bool expectFatherUpdate, bool expectMotherUpdate)
+    {
+        // Arrange
+        var family = Substitute.For<IFamilyData>();
+        family.Mann.Returns(mannId);
+        family.Frau.Returns(frauId);
+
+        // Act
+        TestClass.SetParentTo1(family);
+
+        // Assert
+        if (expectFatherUpdate && expectMotherUpdate)
+            _rs.Received(2).Update();
+        else if (expectFatherUpdate || expectMotherUpdate)
+            _rs.Received(1).Update();
+        else
+            _rs.DidNotReceive().Update();
     }
 }

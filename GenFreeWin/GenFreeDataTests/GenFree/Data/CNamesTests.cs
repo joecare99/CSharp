@@ -72,7 +72,7 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
             Assert.AreEqual(xExp, testClass.DeleteNK(iActPers, eTKennz));
             Assert.AreEqual(nameof(NameIndex.NamKenn), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz);
+            testRS.Received().Seek("=", iActPers, (char)eTKennz);
             testRS.Received(xExp ? 1 : 0).Delete();
         }
 
@@ -99,7 +99,7 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
             Assert.AreEqual(xExp, testClass.ExistsNK(iActPers, eTKennz));
             Assert.AreEqual(nameof(NameIndex.NamKenn), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz);
+            testRS.Received().Seek("=", iActPers, (char)eTKennz);
         }
 
         [DataTestMethod()]
@@ -143,7 +143,7 @@ namespace GenFree.Data.Tests
                 Assert.IsNull(cNm);
             }
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
+            testRS.Received().Seek("=", iActPers, (char)eTKennz, iLfNr);
         }
 
         [DataTestMethod()]
@@ -156,7 +156,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(xExp ? testRS : null, testClass.Seek((iActPers, eTKennz, iLfNr), out var xBreak));
             Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
+            testRS.Received().Seek("=", iActPers, (char)eTKennz, iLfNr);
 
         }
 
@@ -172,7 +172,7 @@ namespace GenFree.Data.Tests
             testClass.SetData((iActPers, eTKennz, iLfNr), testND);
             //          Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
+            testRS.Received().Seek("=", iActPers, (char)eTKennz, iLfNr);
             testRS.Received(xExp ? 1 : 0).Edit();
             testRS.Received(xExp ? 1 : 0).Update();
             testND.Received(xExp ? 1 : 0).SetDBValues(testRS, null);
@@ -208,12 +208,12 @@ namespace GenFree.Data.Tests
             testClass.Update(iActPers, iLfNr, eTKennz, iLfNr);
             //          Assert.AreEqual(!xExp, xBreak);
             Assert.AreEqual(nameof(NameIndex.Vollname), testRS.Index);
-            testRS.Received().Seek("=", iActPers, eTKennz, iLfNr);
+            testRS.Received().Seek("=", iActPers, (char)eTKennz, iLfNr);
             testRS.Received(xExp ? 1 : 0).Edit();
             testRS.Received(xExp ? 0 : 1).AddNew();
             testRS.Received().Update();
             testRS.Received().Fields[NameFields.LfNr].Value = iLfNr;
-            testRS.Received().Fields[NameFields.Kennz].Value = eTKennz;
+            testRS.Received().Fields[NameFields.Kennz].Value = (char)eTKennz;
             testRS.Received(xExp ? 5 : 6).Fields[NameFields.PersNr].Value = iActPers;
         }
 
