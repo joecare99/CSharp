@@ -102,4 +102,26 @@ public abstract class CData<T> : IHasPropEnum<T>
     /// <param name="prop">The property.</param>
     /// <param name="value">The value.</param>
     public abstract void SetPropValue(T prop, object value);
+
+    /// <summary>
+    /// Setzt den Wert einer Eigenschaft und aktualisiert das zugehörige Feld.
+    /// Diese Methode dient dazu, den Wert eines Feldes vom Typ <typeparamref name="T2"/> zu setzen,
+    /// wobei das Feld per Referenz übergeben wird. Zusätzlich kann die Methode genutzt werden, um
+    /// Änderungsbenachrichtigungen oder Validierungen zu implementieren, indem sie in abgeleiteten
+    /// Klassen überschrieben wird. Der Parameter <paramref name="prop"/> gibt an, um welche Eigenschaft
+    /// es sich handelt, während <paramref name="value"/> den neuen Wert darstellt.
+    /// </summary>
+    /// <typeparam name="T2">Der Typ des Feldes, das gesetzt werden soll. Muss ein Werttyp oder Referenztyp sein, aber nicht null.</typeparam>
+    /// <param name="fld">Referenz auf das zu setzende Feld.</param>
+    /// <param name="prop">Die Eigenschaft, die geändert wird.</param>
+    /// <param name="value">Der neue Wert, der gesetzt werden soll.</param>
+    protected virtual void SetPropValue<T2>(ref T2 fld, T prop, T2 value) where T2 : notnull
+    {
+        if (!Equals(fld, value))
+        {
+            SetPropValue(prop, value);
+            fld = value;
+            AddChangedProp(prop);
+        }
+    }
 }

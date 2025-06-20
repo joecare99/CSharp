@@ -359,6 +359,9 @@ public enum SourceLinkIndex
     Tab22, // Event-Index
     Tab21,
     Tab23,
+    Tab2,
+    Verw,
+    Tab1, // Obsolete, use Tab22
 }
 public enum SourceLinkFields
 {
@@ -537,7 +540,7 @@ public enum EGedSource
     _21 = 21,
 }
 
-public enum ETextKennz : int
+public enum ETextKennz : uint
 {
     tkNone = '\0',
     /// <summary>

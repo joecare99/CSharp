@@ -91,7 +91,7 @@ public class CCitationData : CSourceLinkData, ICitationData
         };
     }
 
-    public override object? GetPropValue(ESourceLinkProp prop)
+    public override object GetPropValue(ESourceLinkProp prop)
     {
         return prop switch
         {

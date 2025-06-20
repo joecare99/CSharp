@@ -5,6 +5,7 @@ using NSubstitute;
 using GenFree.Interfaces.Sys;
 using System.IO;
 using BaseLib.Interfaces;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -39,11 +40,11 @@ namespace GenFree.Data.Tests
             DataModul.DAODBEngine_definst.Received(1).OpenDatabase(sName, Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<string>());
             Assert.IsNotNull(DataModul.NB);
 
-            DataModul.NB.Received(4).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
-            DataModul.NB.Received(1).OpenRecordset(nameof(nbTables.Ahnen1), RecordsetTypeEnum.dbOpenTable);
-            DataModul.NB.Received(1).OpenRecordset(nameof(nbTables.Ahnen2), RecordsetTypeEnum.dbOpenTable);
-            DataModul.NB.Received(1).OpenRecordset(nameof(nbTables.Frauen1), RecordsetTypeEnum.dbOpenTable);
-            DataModul.NB.Received(1).OpenRecordset(nameof(nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
+            DataModul.NB.Received(4).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
+            DataModul.NB.Received(1).OpenRecordset((nbTables.Ahnen1), RecordsetTypeEnum.dbOpenTable);
+            DataModul.NB.Received(1).OpenRecordset((nbTables.Ahnen2), RecordsetTypeEnum.dbOpenTable);
+            DataModul.NB.Received(1).OpenRecordset((nbTables.Frauen1), RecordsetTypeEnum.dbOpenTable);
+            DataModul.NB.Received(1).OpenRecordset((nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
 
         }
 
@@ -96,9 +97,9 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iExp, lst.Count);
             DataModul.DAODBEngine_definst.Received(1).OpenDatabase(sName, v2: false, v3: xRO, Arg.Any<string>());
             Assert.IsNotNull(DataModul.MandDB);
-            DataModul.MandDB.Received(2).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
-            DataModul.MandDB.Received(1).OpenRecordset(nameof(dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
-            DataModul.MandDB.Received(1).OpenRecordset(nameof(dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
+            DataModul.MandDB.Received(2).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
+            DataModul.MandDB.Received(1).OpenRecordset((dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
+            DataModul.MandDB.Received(1).OpenRecordset((dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
             Assert.IsNotNull(DataModul.DB_PersonTable);
             DataModul.DB_PersonTable.Received(1).MoveLast();
             Assert.IsNotNull(DataModul.DB_FamilyTable);
@@ -150,15 +151,15 @@ namespace GenFree.Data.Tests
                 _odo.Received(0).Close();
                 _ods.Received(0).Close();
             }
-            DataModul.DAODBEngine_definst.Received(4).OpenDatabase(Arg.Any<string>(), v2: false, v3: true, v4: Arg.Any<string>());
+            DataModul.DAODBEngine_definst.Received(4).OpenDatabase(Arg.Any<Enum>(), v2: false, v3: true, v4: Arg.Any<string>());
             Assert.IsNotNull(DataModul.MandDB);
-            DataModul.MandDB.Received(0).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
+            DataModul.MandDB.Received(0).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
             Assert.IsNotNull(DataModul.TempDB);
-            DataModul.TempDB.Received(4).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
+            DataModul.TempDB.Received(4).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
             Assert.IsNotNull(DataModul.DOSB);
-            DataModul.DOSB.Received(1).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
+            DataModul.DOSB.Received(1).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
             Assert.IsNotNull(DataModul.DSB);
-            DataModul.DSB.Received(1).OpenRecordset(Arg.Any<string>(), RecordsetTypeEnum.dbOpenTable);
+            DataModul.DSB.Received(1).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
         }
 
         [TestMethod()]

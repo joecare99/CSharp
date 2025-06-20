@@ -24,6 +24,21 @@ public class CNB_AhnenTests
         _sut = new CNB_Ahnen(_recordsetFactory);
     }
 
+    [TestMethod()]
+    [DataRow(3)]
+    [DataRow(7)]
+    public void GetID_Test(int iAct)
+    {
+        // Arrange
+        (_recordset.Fields[NB_AhnenFields.Weiter] as IHasValue).Value.Returns(iAct);
+        // Act
+        var result = _sut.MaxID;
+        // Assert
+        _recordset.Received(1).MoveLast();
+        Assert.AreEqual(iAct, result);
+    }
+
+
     [TestMethod]
     [DataRow(1, true)]
     [DataRow(2, false)]

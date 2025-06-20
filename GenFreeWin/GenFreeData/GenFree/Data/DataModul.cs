@@ -19,6 +19,7 @@ namespace GenFree.Data;
 
 public static partial class DataModul
 {
+
     public static ILink Link { get; } = new CLink(() => DB_LinkTable!); // new IoC.GetReqiredService(ILink);
     public static IEvent Event { get; } = new CEvent(() => DB_EventTable!); // new IoC.GetReqiredService(IEvent);
     public static IPlace Place { get; } = new CPlace(() => DB_PlaceTable!); // new IoC.GetReqiredService(IPlace);
@@ -29,27 +30,29 @@ public static partial class DataModul
     public static IOFB OFB { get; } = new COFB(() => DB_OFBTable!); // new IoC.GetReqiredService(IOFB);
     public static ISourceLink SourceLink { get; } = new CSourceLink(() => DB_SourceLinkTable!); // new IoC.GetReqiredService(ISourceLink);
     public static IRepository Repositories { get; } = new CRepository(() => DB_RepoTable!); // new IoC.GetReqiredService(IRepository); 
-  
+
+
     public static IWB_Frau WB_Frau { get; } = new CWB_Frau(() => WB_FrauTable!); // new IoC.GetReqiredService(IWB_Frau);
     public static INB_Person NB_Person { get; } = new CNB_Person(() => NB_PersonTable!, Link_MoveAllPaten_ToNBWitn); // new IoC.GetReqiredService(INB_Person);
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable!); // new IoC.GetReqiredService(INB_Family);
     public static INB_Frau NB_Frau{ get; } = new CNB_Frau(() => NB_Frau1Table!); // new IoC.GetReqiredService(INB_Family);
     public static INB_Ahnen NB_Ahnen{ get; } = new CNB_Ahnen(() => NB_Ahn1Table!); // new IoC.GetReqiredService(INB_Family);
-    public static ICitationData CitationData { get; } = new CCitationData(DB_SourceLinkTable,true); // new IoC.GetReqiredService(ICitationData);
+    public static ICitationData CitationData { get; } = new CCitationData(DB_SourceLinkTable!,true); // new IoC.GetReqiredService(ICitationData);
 
     public static object[] Mandanten = new string[0];
 
-    public static IDBWorkSpace wrkDefault;
-    public static IDatabase MandDB { get; set; }
-    public static IDatabase DOSB { get; set; }
-    public static IDatabase DSB { get; set; }
-    public static IDatabase TempDB { get; set; }
-    public static IDatabase TempSort_DB { get; set; }
-    public static IDatabase DbsNew { get; set; }
-    public static IDatabase NB { get; set; }
-    public static IDatabase RechDB { get; set; }
-    public static IDatabase WB { get; set; }
+    public static IDBWorkSpace? wrkDefault;
+    public static IDatabase? MandDB { get; set; }
+    public static IDatabase? DOSB { get; set; }
+    public static IDatabase? DSB { get; set; }
+    public static IDatabase? TempDB { get; set; }
+    public static IDatabase? TempSort_DB { get; set; }
+    public static IDatabase? DbsNew { get; set; }
+    public static IDatabase? NB { get; set; }
+    public static IDatabase? RechDB { get; set; }
+    public static IDatabase? WB { get; set; }
     public static int NB_SperrPers_Count => NB_SperrPersTable?.RecordCount ?? 0;
+
 
     public static IRecordset DB_PersonTable;
     public static IRecordset DB_FamilyTable;
@@ -57,7 +60,7 @@ public static partial class DataModul
     public static IRecordset DB_PlaceTable;
     public static IRecordset DB_NameTable;
     public static IRecordset DB_PropertyTable;
-    public static IRecordset DB_TexteTable;
+    public static IRecordset DB_TexteTable { get; set; }
     public static IRecordset DB_PictureTable;
     public static IRecordset DB_LinkTable { get; set; }
 
@@ -70,16 +73,30 @@ public static partial class DataModul
     public static IRecordset DB_GbeTable;
     public static IRecordset DB_OFBTable;
     public static IRecordset DB_WDTable;
+    public static IRecordset DB_DopTable { get; set; }
+    public static IRecordset DB_GedTable { get; set; }
+    public static IRecordset DB_BildTab;
+    public static IRecordset DB_LeerTable ;
+
     // Temp-DB
     public static IRecordset DT_AncesterTable;
     public static IRecordset DT_RelgionTable;
     public static IRecordset DT_DescendentTable;
-    public static IRecordset DSB_SearchTable;
     public static IRecordset DT_KindAhnTable;
-    public static IRecordset OrtindTable;
+    public static IRecordset DT_SperrPerTable { get; set; }
+    public static IRecordset DT_SperrFamTable { get; set; }
+    public static IRecordset DT_SperrTable { get; set; }
+
     public static IRecordset DOSB_OrtSTable;
+    public static IRecordset DSB_SearchTable;
+    public static IRecordset DSB_SortTable;
+    public static IRecordset DSB_PerStatTable { get; set; }
+    public static IRecordset DSB_FamStatTable { get; set; }
+    public static IRecordset DSB_OrtIdxTable { get; set; }
+    public static IRecordset DSB_NamIdxTable { get; set; }
+    public static IRecordset DSB_QuellIdxTable { get; set; }
+
     public static IRecordset Osy;
-    public static IRecordset DB_LeerTable ;
     // NB-DB
     public static IRecordset? NB_AhnTable;
     public static IRecordset? NB_Ahn1Table;
@@ -89,23 +106,26 @@ public static partial class DataModul
     public static IRecordset? NB_Frau2Table;
     public static IRecordset? NB_SourceTable;
     public static IRecordset? NB_OrtTable;
+    public static IRecordset? NB_OrtindTable;
     public static IRecordset? NB_PersonTable;
     public static IRecordset? NB_FamilyTable;
     public static IRecordset? NB_PictureTable;
     public static IRecordset? NB_WitnessTable;
+    public static IRecordset? NB_Witness2Table;
     public static IRecordset? NB_SperrPersTable;
     public static IRecordset? NB_SperrFamsTable;
     public static IRecordset? NB_BemTable;
-    public static IRecordset? NB_TVerkTable;
     public static IRecordset? NB_SurTable;
-    public static IRecordset? NB_Zeu2Table;
+    public static IRecordset? NB_LagTable;
     public static IRecordset? NB_TexteTable { get; set; }
+    public static IRecordset? NB_TZeutable { get; set; }
+    public static IRecordset? NB_TVerkTable { get; set; }
+    public static IRecordset? NB_NumTable { get; set; }
+
 
     //WB-DB
     public static IRecordset? WB_FrauTable;
 
-    public static IRecordset BildTab;
-    public static IRecordset RechDB_Frauen1;
     // DB-Engine
     public static IDBEngine DAODBEngine_definst;
     /// <summary>
@@ -143,12 +163,12 @@ public static partial class DataModul
         TempDB = dbEng.OpenDatabase(Path.Combine(Verz, "Tempo.mdb"), false, true, "");
         DOSB = dbEng.OpenDatabase(Path.Combine(Verz, "Ort1.mdb"), false, true, "");
         DSB = dbEng.OpenDatabase(Path.Combine(Verz, "Such.mdb"), false, true, "");
-        DT_DescendentTable = TempDB.OpenRecordset("Nachk", RecordsetTypeEnum.dbOpenTable);
-        DSB_SearchTable = DSB.OpenRecordset("Such", RecordsetTypeEnum.dbOpenTable);
-        DOSB_OrtSTable = DOSB.OpenRecordset("Ortsuch", RecordsetTypeEnum.dbOpenTable);
-        DT_RelgionTable = TempDB.OpenRecordset("Konf", RecordsetTypeEnum.dbOpenTable);
-        DT_AncesterTable = TempDB.OpenRecordset("Ahnen1", RecordsetTypeEnum.dbOpenTable);
-        DT_KindAhnTable = TempDB.OpenRecordset("Ahnew", RecordsetTypeEnum.dbOpenTable);
+        DT_DescendentTable = TempDB.OpenRecordset(dbTables.Nachk, RecordsetTypeEnum.dbOpenTable);
+        DSB_SearchTable = DSB.OpenRecordset(dbTables.Such, RecordsetTypeEnum.dbOpenTable);
+        DOSB_OrtSTable = DOSB.OpenRecordset(dbTables.OrtSuch, RecordsetTypeEnum.dbOpenTable);
+        DT_RelgionTable = TempDB.OpenRecordset(dbTables.Konf, RecordsetTypeEnum.dbOpenTable);
+        DT_AncesterTable = TempDB.OpenRecordset(dbTables.Ahnen1, RecordsetTypeEnum.dbOpenTable);
+        DT_KindAhnTable = TempDB.OpenRecordset(dbTables.Ahnew, RecordsetTypeEnum.dbOpenTable);
         DT_AncesterTable.Index = "PerNr";
     }
 
@@ -174,8 +194,8 @@ public static partial class DataModul
             SetAttributes(Path.Combine(path, "Such.Dat"), FileAttributes.Normal);
         }
         MandDB = OpenDatabase(mandantname, false, xIsReadOnly, "");
-        DB_PersonTable = MandDB.OpenRecordset(nameof(dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
-        DB_FamilyTable = MandDB.OpenRecordset(nameof(dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
+        DB_PersonTable = MandDB.OpenRecordset(dbTables.Personen, RecordsetTypeEnum.dbOpenTable);
+        DB_FamilyTable = MandDB.OpenRecordset(dbTables.Familie, RecordsetTypeEnum.dbOpenTable);
         DB_PersonTable.Index = nameof(PersonIndex.PerNr);
         DB_PersonTable.MoveLast();
         var PersonCount = DB_PersonTable.RecordCount;
@@ -236,36 +256,36 @@ public static partial class DataModul
 
         CheckDB(TempDB, DTDef);
 
-        DT_DescendentTable = TempDB.OpenRecordset("Nachk", RecordsetTypeEnum.dbOpenTable);
-        DSB_SearchTable = DSB.OpenRecordset("Such", RecordsetTypeEnum.dbOpenTable);
-        DOSB_OrtSTable = DOSB.OpenRecordset("Ortsuch", RecordsetTypeEnum.dbOpenTable);
-        DT_RelgionTable = TempDB.OpenRecordset("Konf", RecordsetTypeEnum.dbOpenTable);
-        DT_AncesterTable = TempDB.OpenRecordset("Ahnen1", RecordsetTypeEnum.dbOpenTable);
-        DT_KindAhnTable = TempDB.OpenRecordset("Ahnew", RecordsetTypeEnum.dbOpenTable);
+        DT_DescendentTable = TempDB.OpenRecordset(dbTables.Nachk, RecordsetTypeEnum.dbOpenTable);
+        DSB_SearchTable = DSB.OpenRecordset(dbTables.Such, RecordsetTypeEnum.dbOpenTable);
+        DOSB_OrtSTable = DOSB.OpenRecordset(dbTables.OrtSuch, RecordsetTypeEnum.dbOpenTable);
+        DT_RelgionTable = TempDB.OpenRecordset(dbTables.Konf, RecordsetTypeEnum.dbOpenTable);
+        DT_AncesterTable = TempDB.OpenRecordset(dbTables.Ahnen1, RecordsetTypeEnum.dbOpenTable);
+        DT_KindAhnTable = TempDB.OpenRecordset(dbTables.Ahnew, RecordsetTypeEnum.dbOpenTable);
    //     DT_AncesterTable.Index = "PerNr";
 
-        DB_PersonTable = MandDB.OpenRecordset(nameof(dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
+        DB_PersonTable = MandDB.OpenRecordset((dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
         DB_PersonTable.Index = nameof(PersonIndex.PerNr);
-        DB_FamilyTable = MandDB.OpenRecordset(nameof(dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
-        DB_NameTable = MandDB.OpenRecordset(nameof(dbTables.Inamen), RecordsetTypeEnum.dbOpenTable);
+        DB_FamilyTable = MandDB.OpenRecordset((dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
+        DB_NameTable = MandDB.OpenRecordset((dbTables.INamen), RecordsetTypeEnum.dbOpenTable);
         DB_NameTable.Index = nameof(NameIndex.PNamen);
-        DB_PlaceTable = MandDB.OpenRecordset(nameof(dbTables.Orte), RecordsetTypeEnum.dbOpenTable);
+        DB_PlaceTable = MandDB.OpenRecordset((dbTables.Orte), RecordsetTypeEnum.dbOpenTable);
         DB_PlaceTable.Index = nameof(PlaceIndex.OrtNr);
-        DB_EventTable = MandDB.OpenRecordset(nameof(dbTables.Ereignis), RecordsetTypeEnum.dbOpenTable);
+        DB_EventTable = MandDB.OpenRecordset((dbTables.Ereignis), RecordsetTypeEnum.dbOpenTable);
         DB_EventTable.Index = nameof(EventIndex.ArtNr);
-        DB_PropertyTable = MandDB.OpenRecordset(nameof(dbTables.BesitzTab), RecordsetTypeEnum.dbOpenTable);
-        DB_PictureTable = MandDB.OpenRecordset(nameof(dbTables.Bilder), RecordsetTypeEnum.dbOpenTable);
-        DB_SourceLinkTable = MandDB.OpenRecordset(nameof(dbTables.Tab1), RecordsetTypeEnum.dbOpenTable);
-        DB_TexteTable = MandDB.OpenRecordset(nameof(dbTables.Texte), RecordsetTypeEnum.dbOpenTable);
-        DB_HGATable = MandDB.OpenRecordset(nameof(dbTables.HGA), RecordsetTypeEnum.dbOpenTable);
-        DB_LinkTable = MandDB.OpenRecordset(nameof(dbTables.Tab), RecordsetTypeEnum.dbOpenTable);
-        DB_WitnessTable = MandDB.OpenRecordset(nameof(dbTables.Tab2), RecordsetTypeEnum.dbOpenTable);
-        DB_LeerTable = MandDB.OpenRecordset(nameof(dbTables.Leer1), RecordsetTypeEnum.dbOpenTable);
+        DB_PropertyTable = MandDB.OpenRecordset((dbTables.BesitzTab), RecordsetTypeEnum.dbOpenTable);
+        DB_PictureTable = MandDB.OpenRecordset((dbTables.Bilder), RecordsetTypeEnum.dbOpenTable);
+        DB_SourceLinkTable = MandDB.OpenRecordset((dbTables.Tab1), RecordsetTypeEnum.dbOpenTable);
+        DB_TexteTable = MandDB.OpenRecordset((dbTables.Texte), RecordsetTypeEnum.dbOpenTable);
+        DB_HGATable = MandDB.OpenRecordset((dbTables.HGA), RecordsetTypeEnum.dbOpenTable);
+        DB_LinkTable = MandDB.OpenRecordset((dbTables.Tab), RecordsetTypeEnum.dbOpenTable);
+        DB_WitnessTable = MandDB.OpenRecordset((dbTables.Tab2), RecordsetTypeEnum.dbOpenTable);
+        DB_LeerTable = MandDB.OpenRecordset((dbTables.Leer1), RecordsetTypeEnum.dbOpenTable);
         DB_LeerTable.Index = "Leer";
-        DB_RepoTable = MandDB.OpenRecordset(nameof(dbTables.Repo), RecordsetTypeEnum.dbOpenTable);
-        DB_RepoTab = MandDB.OpenRecordset(nameof(dbTables.RepoTab), RecordsetTypeEnum.dbOpenTable);
-        DB_QuTable = MandDB.OpenRecordset(nameof(dbTables.Quellen), RecordsetTypeEnum.dbOpenTable);
-        DB_OFBTable = MandDB.OpenRecordset(nameof(dbTables.INDNam), RecordsetTypeEnum.dbOpenTable);
+        DB_RepoTable = MandDB.OpenRecordset((dbTables.Repo), RecordsetTypeEnum.dbOpenTable);
+        DB_RepoTab = MandDB.OpenRecordset((dbTables.RepoTab), RecordsetTypeEnum.dbOpenTable);
+        DB_QuTable = MandDB.OpenRecordset((dbTables.Quellen), RecordsetTypeEnum.dbOpenTable);
+        DB_OFBTable = MandDB.OpenRecordset((dbTables.IndNam), RecordsetTypeEnum.dbOpenTable);
 
     }
     /// <summary>
@@ -277,7 +297,7 @@ public static partial class DataModul
     public static IRecordset OpenLinguaRecordSet(string name)
     {
         TempDB = OpenDatabase(name, false, false, "");
-        IRecordset recordset = TempDB.OpenRecordset(nameof(dbTables.Lingua), RecordsetTypeEnum.dbOpenTable);
+        IRecordset recordset = TempDB.OpenRecordset((dbTables.Lingua), RecordsetTypeEnum.dbOpenTable);
         recordset.Index = "PrimaryKey";
         recordset.MoveFirst();
         return recordset;
@@ -296,10 +316,10 @@ public static partial class DataModul
     {
         NB?.Close();
         NB = OpenDatabase(name, false, false, "");
-        NB_Ahn1Table = NB.OpenRecordset(nameof(nbTables.Ahnen1), RecordsetTypeEnum.dbOpenTable);
-        NB_Ahn2Table = NB.OpenRecordset(nameof(nbTables.Ahnen2), RecordsetTypeEnum.dbOpenTable);
-        NB_Frau1Table = NB.OpenRecordset(nameof(nbTables.Frauen1), RecordsetTypeEnum.dbOpenTable);
-        NB_Frau2Table = NB.OpenRecordset(nameof(nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
+        NB_Ahn1Table = NB.OpenRecordset((nbTables.Ahnen1), RecordsetTypeEnum.dbOpenTable);
+        NB_Ahn2Table = NB.OpenRecordset((nbTables.Ahnen2), RecordsetTypeEnum.dbOpenTable);
+        NB_Frau1Table = NB.OpenRecordset((nbTables.Frauen1), RecordsetTypeEnum.dbOpenTable);
+        NB_Frau2Table = NB.OpenRecordset((nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
     }
     /// <summary>
     /// Creates a new temporary NB database and opens it for use.
@@ -413,8 +433,8 @@ public static partial class DataModul
         NB.TryExecute($"ALTER TABLE {dbTables.Frauen} ADD COLUMN {FrauenFields.Kek} Text(40);");
         NB.TryExecute($"ALTER TABLE {dbTables.Frauen} ADD COLUMN {FrauenFields.PNr} Integer);");
         NB.TryExecute($"CREATE UNIQUE INDEX {FrauenIndex.Nr} ON {dbTables.Frauen} ([{FrauenFields.PNr}]);");
-        NB_FrauTable = NB.OpenRecordset($"{dbTables.Frauen}", RecordsetTypeEnum.dbOpenTable);
-        OrtindTable = NB.OpenRecordset("Ortind", RecordsetTypeEnum.dbOpenTable);
+        NB_FrauTable = NB.OpenRecordset(dbTables.Frauen, RecordsetTypeEnum.dbOpenTable);
+        NB_OrtindTable = NB.OpenRecordset(dbTables.OrtInd, RecordsetTypeEnum.dbOpenTable);
         action?.Invoke();
         if (!nbLeaveOpen)
             NB.Close();
@@ -434,7 +454,7 @@ public static partial class DataModul
         WB = DAODBEngine_definst.OpenDatabase(destination, false, false, "");
         WB.TryExecute($"ALTER TABLE {dbTables.Frauen} ADD COLUMN Name Text(50);");
         WB.TryExecute($"CREATE INDEX Name ON {dbTables.Frauen} ([Name]);");
-        WB_FrauTable = WB.OpenRecordset($"{dbTables.Frauen}", RecordsetTypeEnum.dbOpenTable);
+        WB_FrauTable = WB.OpenRecordset(dbTables.Frauen, RecordsetTypeEnum.dbOpenTable);
         WB_FrauTable.Index = "LfNr";
     }
 
@@ -450,13 +470,13 @@ public static partial class DataModul
                 .ForEach(File.Delete);
         File.Copy(source, destination);
         nB = DAODBEngine_definst.OpenDatabase(destination, false, false, "");
-        NB_OrtTable = nB.OpenRecordset("ORTE", RecordsetTypeEnum.dbOpenTable);
+        NB_OrtTable = nB.OpenRecordset(dbTables.Orte, RecordsetTypeEnum.dbOpenTable);
         NB_OrtTable.Index = "ORT";
-        NB_SourceTable = nB.OpenRecordset("QuellTemp", RecordsetTypeEnum.dbOpenTable);
-        NB_PictureTable = nB.OpenRecordset("Bilder", RecordsetTypeEnum.dbOpenTable);
-        RechDB_Frauen1 = nB.OpenRecordset("Frauen1", RecordsetTypeEnum.dbOpenTable);
-        NB_PersonTable = nB.OpenRecordset("Personen1", RecordsetTypeEnum.dbOpenTable);
-        NB_FamilyTable = nB.OpenRecordset("Familie1", RecordsetTypeEnum.dbOpenTable);
+        NB_SourceTable = nB.OpenRecordset(dbTables.QuellTemp, RecordsetTypeEnum.dbOpenTable);
+        NB_PictureTable = nB.OpenRecordset(dbTables.Bilder, RecordsetTypeEnum.dbOpenTable);
+        NB_FrauTable = nB.OpenRecordset(dbTables.Frauen1, RecordsetTypeEnum.dbOpenTable);
+        NB_PersonTable = nB.OpenRecordset(dbTables.Personen1, RecordsetTypeEnum.dbOpenTable);
+        NB_FamilyTable = nB.OpenRecordset(dbTables.Familie1, RecordsetTypeEnum.dbOpenTable);
     }
 
     public static void OpenQuellData(string destination, string source, bool xReplace)
@@ -472,13 +492,13 @@ public static partial class DataModul
             File.Copy(source, destination);
         }
         NB = DAODBEngine_definst.OpenDatabase(destination, false, false, "");
-        NB_OrtTable = NB.OpenRecordset("ORTE", RecordsetTypeEnum.dbOpenTable);
+        NB_OrtTable = NB.OpenRecordset(dbTables.Orte, RecordsetTypeEnum.dbOpenTable);
         NB_OrtTable.Index = "ORT";
-        NB_SourceTable = NB.OpenRecordset("QuellTemp", RecordsetTypeEnum.dbOpenTable);
-        NB_PictureTable = NB.OpenRecordset("Bilder", RecordsetTypeEnum.dbOpenTable);
-        NB_FrauTable = NB.OpenRecordset("Frauen1", RecordsetTypeEnum.dbOpenTable);
-        NB_PersonTable = NB.OpenRecordset("Personen1", RecordsetTypeEnum.dbOpenTable);
-        NB_FamilyTable = NB.OpenRecordset("Familie1", RecordsetTypeEnum.dbOpenTable);
+        NB_SourceTable = NB.OpenRecordset(dbTables.QuellTemp, RecordsetTypeEnum.dbOpenTable);
+        NB_PictureTable = NB.OpenRecordset(dbTables.Bilder, RecordsetTypeEnum.dbOpenTable);
+        NB_FrauTable = NB.OpenRecordset(dbTables.Frauen1, RecordsetTypeEnum.dbOpenTable);
+        NB_PersonTable = NB.OpenRecordset(dbTables.Personen1, RecordsetTypeEnum.dbOpenTable);
+        NB_FamilyTable = NB.OpenRecordset(dbTables.Familie1, RecordsetTypeEnum.dbOpenTable);
     }
 
 
@@ -651,21 +671,22 @@ public static partial class DataModul
 
         return sLeitName;
     }
-    public static void Texte_Schreib(string Wort, string Leitn, ETextKennz Kennz, out int Satz)
+
+    public static int Texte_Schreib(string Wort, string Leitn, ETextKennz Kennz)
     {
         Wort = Wort.Trim();
         if (Wort == "")
         {
-            Satz = 0;
-            return;
+            return 0;
         }
         Wort = Wort.Replace("ß", "ssss");
         Leitn = Leitn.Replace("ß", "ssss");
         IRecordset dB_TexteTable = DB_TexteTable;
 
         dB_TexteTable.Index = nameof(TexteIndex.ITexte);
-        dB_TexteTable.Seek("=", Wort, Kennz);
+        dB_TexteTable.Seek("=", Wort, (char)Kennz);
         // update
+        int Satz = 0;
         if (!dB_TexteTable.NoMatch)
         {
             IField fld;
@@ -683,8 +704,7 @@ public static partial class DataModul
             }
             if (dB_TexteTable.EditMode != 0)
                 dB_TexteTable.Update();
-            Satz = dB_TexteTable.Fields[TexteFields.TxNr].AsInt();
-            return;
+            return dB_TexteTable.Fields[TexteFields.TxNr].AsInt();       
         }
         dB_TexteTable.Index = nameof(TexteIndex.TxNr);
         if (dB_TexteTable.RecordCount == 0)
@@ -711,8 +731,7 @@ public static partial class DataModul
 
         }
         Texte_AppendRaw(Kennz, Wort, " ", Leitn, Satz);
-        // ??
-        dB_TexteTable.MoveLast();
+        return Satz;
     }
 
     private static void Texte_AppendRaw(ETextKennz Kennz, string Wort, string sBem, string Leitn, int Satz)
@@ -800,7 +819,7 @@ public static partial class DataModul
                 TempDB.TryExecute("Create Table Konf (PerNr long)");
                 TempDB.TryExecute("Alter table Konf Add column Textnr long;");
                 TempDB.TryExecute("create Index T on Konf ([TextNr]);");
-                DT_RelgionTable = TempDB.OpenRecordset("Konf", RecordsetTypeEnum.dbOpenTable);
+                DT_RelgionTable = TempDB.OpenRecordset(dbTables.Konf, RecordsetTypeEnum.dbOpenTable);
                 flag = true;
                 //=============================
                 break;
@@ -891,7 +910,7 @@ public static partial class DataModul
             {
                 var field = dB_PersonTable1.Fields[PersonFields.Konv];
                 var Wort = field.Value.AsString();
-                Texte_Schreib(Wort, "", ETextKennz.tk7_, out var Satz);
+                var Satz = Texte_Schreib(Wort, "", ETextKennz.tk7_);
                 field.Value = Wort;
                 dB_PersonTable1.Fields[PersonFields.religi].Value = Satz;
             }
@@ -1478,9 +1497,9 @@ public static partial class DataModul
     public static bool Picture_ExistsFam(int FamInArb)
     {
         var sPKennz = "F";
-        BildTab = MandDB.OpenRecordset($"select * from {dbTables.Bilder} Where {dbTables.Bilder}.{PictureFields.Kennz}='{sPKennz}'");
-        BildTab.FindFirst($"{dbTables.Bilder}.{PictureFields.ZuNr} = {FamInArb}");
-        bool noMatch = BildTab.NoMatch;
+        DB_BildTab = MandDB.OpenRecordset($"select * from {dbTables.Bilder} Where {dbTables.Bilder}.{PictureFields.Kennz}='{sPKennz}'");
+        DB_BildTab.FindFirst($"{dbTables.Bilder}.{PictureFields.ZuNr} = {FamInArb}");
+        bool noMatch = DB_BildTab.NoMatch;
         return !noMatch;
     }
     /// <summary>

@@ -15,6 +15,7 @@ using GenFree.Interfaces.Data;
 using GenFree.Helper;
 using System.Collections;
 using GenFree.Data.Models;
+using GenFree.Interfaces.VB;
 
 namespace GenFree.Interfaces.Sys;
 
@@ -112,8 +113,8 @@ public interface IModul1
     IList<string> DTxt { get; set; }
 
     // Database
-    IRecordset OrtSTable { get; set; }
-    IRecordset DT_OrtIdxTable { get; set; }
+    IRecordset DgbTable { get; set; }
+    IRecordset DT_AhnTable { get; set; }
 
     string AppName { get; }
     string Author { get; }
@@ -283,6 +284,13 @@ public interface IModul1
     string sDemoVerNotPossibl { get; }
     int PersInArbsp { get; }
     string sGeocodeXMLAddress { get; }
+    bool xJudenfriedhofVersion { get; set; }
+    byte Datschalt { get; set; }
+    [Obsolete]
+    IProjectData ProjectData { get; }
+
+    [Obsolete]
+    IVBInformation Information { get; }
 
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
@@ -321,7 +329,7 @@ public interface IModul1
     [Obsolete("Auftrennen in 3 Funktionen")]
     int Persatzles(int PersInArb);
     void Person_ReadNames(int PersInArb, IPersonData person);
-    int Person_TextSpeichern(int iPerson, string sText, ETextKennz eKennz1, int iLfNR = 0, short Ruf = 0);
+    int Person_TextSpeichern(string sText, int iPerson, ETextKennz eKennz1, int iLfNR = 0, short Ruf = 0);
     void Quellenaus(EEventArt L);
     string Rech(ref string datum1, ref string datum2);
     void Sichwand(string Dasich, string sDatumV_S, DateTime dDatumB, EEventArt eArt);
@@ -367,4 +375,6 @@ public interface IModul1
     short Famsatzles(int FamInArb, short Rich, IFamilyData cFamily);
     IListItem<int> Famzeig(int Fam, ELinkKennz Kenn);
     void DataModul_Texte_ListDistLeitname(ETextKennz eTKennz, string UbgT, IList items);
+    void Datles3(short listart, long v, object value, ref bool neb);
+    void Datles10(ref short listart, bool m1_Ki);
 }

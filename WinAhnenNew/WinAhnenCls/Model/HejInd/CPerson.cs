@@ -114,5 +114,10 @@ namespace WinAhnenCls.Model.HejInd
         {
             throw new NotImplementedException();
         }
+
+        public void SetOwner(IGenealogy t)
+        {
+            _WLowner = new WeakReference<IGenealogy>(t);
+        }
     }
 }

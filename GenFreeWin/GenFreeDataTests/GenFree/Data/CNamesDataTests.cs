@@ -54,7 +54,7 @@ public class CNamesDataTests
 
     [DataTestMethod()]
     [DataRow(ENamesProp.iPersNr, TypeCode.Int32)]
-    [DataRow(ENamesProp.eTKennz, TypeCode.Int32)]
+    [DataRow(ENamesProp.eTKennz, TypeCode.UInt32)]
     [DataRow(ENamesProp.iTextNr, TypeCode.Int32)]
     [DataRow(ENamesProp.iLfNr, TypeCode.Int32)]
     [DataRow(ENamesProp.bRuf, TypeCode.Boolean)]

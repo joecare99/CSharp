@@ -44,6 +44,33 @@ namespace GenFree.Model.Tests
         }
 
         [TestMethod]
+        [DataRow(1, 2, EEventArt.eA_Birth, 8, true, false)]
+        [DataRow(2, 3, EEventArt.eA_Death, 9, false, true)]
+        [DataRow(5, 4, EEventArt.eA_Burial, 10, false, true)]
+        [DataRow(16, 4, EEventArt.eA_Unknown, 10, true, false)]
+        public void GetIDTest(int citKenn, int perFamNr, EEventArt art, int lfNr, bool seekResult, bool noMatch)
+        {
+            // Arrange
+            var rs = testRS;
+            var fields = rs.Fields;
+
+            (fields[SourceLinkFields._1] as IHasValue).Value.Returns((short)citKenn);
+            (fields[SourceLinkFields._2] as IHasValue).Value.Returns(perFamNr);
+            (fields[SourceLinkFields.Art] as IHasValue).Value.Returns((int)art);
+            (fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns((short)lfNr);
+            rs.NoMatch.Returns(noMatch);
+
+            //Act
+            var result = testClass.MaxID;
+
+            rs.Received(1).MoveLast();
+            Assert.AreEqual((short)citKenn, result.Item1);
+            Assert.AreEqual(perFamNr, result.Item2);
+            Assert.AreEqual(art, result.Item3);
+            Assert.AreEqual((short)lfNr, result.Item4);
+
+        }
+        [TestMethod]
         [DataRow(SourceLinkIndex.Tab, SourceLinkFields._2)]
         public void GetIndex1FieldTest(SourceLinkIndex index, SourceLinkFields expectedField)
         {

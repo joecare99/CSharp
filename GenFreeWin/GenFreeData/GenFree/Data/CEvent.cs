@@ -529,6 +529,22 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.MoveNext();
         }
     }
+
+    public IEnumerable<IEventData> ReadAllBeSu(EEventArt eEventArt, int persInArb)
+    {
+        var dB_EventTable = SeekBeSu(eEventArt, persInArb, out var xBreak);
+        if (!xBreak)
+        {
+            while (!dB_EventTable!.EOF
+                && !dB_EventTable.NoMatch
+                && dB_EventTable.Fields[EventFields.PerFamNr].AsInt() == persInArb
+                && dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() == eEventArt)
+            {
+                yield return GetData(dB_EventTable);
+                dB_EventTable.MoveNext();
+            }
+        }
+    }
 }
 
 

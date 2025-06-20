@@ -153,7 +153,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
     {
         var dB_Table = _db_Table;
         dB_Table.Index = $"{_keyIndex}";
-        dB_Table.Seek("=", tValue.iLink, tValue.iPers, tValue.iWKennz, tValue.eArt, tValue.iLfNr);
+        dB_Table.Seek("=", tValue.iLink, tValue.iPers, tValue.iWKennz,(short)tValue.eArt, tValue.iLfNr);
         xBreak = dB_Table.NoMatch;
         return xBreak ? null : dB_Table;
     }
@@ -174,7 +174,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
     private IRecordset? SeekZeug(int persInArb, int sWKennz, EEventArt eArt, short iLfNr)
     {
         _db_Table.Index = nameof(WitnessIndex.ZeugSu);
-        _db_Table.Seek("=", persInArb, sWKennz, eArt, iLfNr);
+        _db_Table.Seek("=", persInArb, sWKennz, (short)eArt, iLfNr);
         return _db_Table.NoMatch ? null : _db_Table;
     }
 
@@ -211,5 +211,16 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         }
     }
 
-  
+    public IEnumerable<IWitnessData> ReadAllZeug(int iPerFamNr, EEventArt eArt)
+    {
+        IRecordset? db_WitnessTable = SeekZeug(iPerFamNr, 10, eArt, 0);
+        while (db_WitnessTable?.EOF == false
+            && !db_WitnessTable.NoMatch
+            && db_WitnessTable.Fields[WitnessFields.PerNr].AsInt() == iPerFamNr
+            && db_WitnessTable.Fields[WitnessFields.Art].AsEnum<EEventArt>() == eArt)
+        {
+            yield return GetData(db_WitnessTable);
+            db_WitnessTable.MoveNext();
+        }
+    }
 }

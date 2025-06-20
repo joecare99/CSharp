@@ -4,6 +4,7 @@
     <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <RootNamespace>GenFree</RootNamespace>
   </PropertyGroup>
@@ -11,6 +12,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />

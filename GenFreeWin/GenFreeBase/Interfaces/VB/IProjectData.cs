@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenFree.ViewModels.Interfaces;
+namespace GenFree.Interfaces.VB;
 
 public interface IProjectData
 {

@@ -39,10 +39,10 @@ namespace GenFree.Model
         }
 
         protected override (short, int, EEventArt, short) GetID(IRecordset recordset)
-            => ((short)recordset.Fields[SourceLinkFields._1.AsFld()].AsInt(),
-                recordset.Fields[SourceLinkFields._2.AsFld()].AsInt(),
-                recordset.Fields[SourceLinkFields.Art.AsFld()].AsEnum<EEventArt>(),
-                (short)recordset.Fields[SourceLinkFields.LfNr.AsFld()].AsInt());
+            => ((short)recordset.Fields[SourceLinkFields._1].AsInt(),
+                recordset.Fields[SourceLinkFields._2].AsInt(),
+                recordset.Fields[SourceLinkFields.Art].AsEnum<EEventArt>(),
+                (short)recordset.Fields[SourceLinkFields.LfNr].AsInt());
 
         public IEnumerable<ISourceLinkData> ReadAll(int persInArb, EEventArt eEventArt)
         {

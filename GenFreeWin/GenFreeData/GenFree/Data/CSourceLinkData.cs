@@ -133,13 +133,6 @@ namespace GenFree.Data
                 _ => throw new NotImplementedException(),
             };
         }
-        private void SetPropValue<T>(ref T fld, ESourceLinkProp prop, T value)where T : notnull
-        {
-            if (fld.Equals(value)) return;
-            AddChangedProp(prop);
-            fld = value;
-        }
-
 
         public override void ReadID(IRecordset db_Table)
         {

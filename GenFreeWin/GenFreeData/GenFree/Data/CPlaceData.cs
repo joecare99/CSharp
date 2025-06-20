@@ -38,16 +38,16 @@ namespace GenFree.Data
         public string sLand => (_sLand ??= _GetText?.Invoke(iLand)) ?? $"{iLand}";
         public int iStaat { get => iStaat1; set => SetPropValue(EPlaceProp.iStaat, value); }
         public string sStaat => (_sStaat ??= _GetText?.Invoke(iStaat))?? $"{iStaat}";
-        public string sStaatk { get; private set; } = "";
-        public string sPLZ { get; private set; } = "";
-        public string sTerr { get; private set; } = "";
-        public string sLoc { get; private set; } = "";
-        public string sL { get; private set; } = "";
-        public string sB { get; private set; } = "";
+        public string sStaatk { get => field; set => SetPropValue(ref field, EPlaceProp.iStaat, value); } = "";
+        public string sPLZ { get => field; set => SetPropValue(ref field, EPlaceProp.sPLZ, value); } = "";
+        public string sTerr { get => field; set => SetPropValue(ref field, EPlaceProp.sTerr, value); } = "";
+        public string sLoc { get => field; set => SetPropValue(ref field, EPlaceProp.sLoc, value); } = "";
+        public string sL { get => field; set => SetPropValue(ref field, EPlaceProp.sL, value); } = "";
+        public string sB { get => field; set => SetPropValue(ref field, EPlaceProp.sB, value); } = "";
         public string sBem { get => sBem1; set => SetPropValue(EPlaceProp.sBem, value); }
-        public string sZusatz { get; private set; } = "";
-        public string sGOV { get; private set; } = "";
-        public string sPolName { get; private set; } = "";
+        public string sZusatz { get => field; set => SetPropValue(ref field, EPlaceProp.sZusatz, value); } = "";
+        public string sGOV { get => field; set => SetPropValue(ref field, EPlaceProp.sGOV, value); } = "";
+        public string sPolName { get => field; set => SetPropValue(ref field, EPlaceProp.sPolName, value); } = "";
         public int ig { get; private set; }
 
         protected override Enum _keyIndex => PlaceIndex.OrtNr;
@@ -170,6 +170,7 @@ namespace GenFree.Data
                 _ => throw new NotImplementedException()
             };
         }
+
 
         public override void SetDBValues(IRecordset dB_FamilyTable, Enum[]? asProps)
         {

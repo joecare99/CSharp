@@ -76,8 +76,8 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow("Null", 0, ETextKennz.tkNone, 0, -2)]
-        [DataRow("1-None-0", 5, ETextKennz.tkNone, 0, -1)]
+        [DataRow("Null", 0, (ELinkKennz)0, 0, -2)]
+        [DataRow("1-None-0", 5, ELinkKennz.lkNone, 0, -1)]
         [DataRow("2-Name-4", 1, ELinkKennz.lkFather, 2, -3)]
         [DataRow("2-Name-4", 1, ELinkKennz.lkFather, 3, 0)]
         [DataRow("2-Name-4", 1, ELinkKennz.lkMother, 2, 0)]
@@ -93,23 +93,25 @@ namespace GenFree.Data.Tests
         }
 
         [DataTestMethod()]
-        [DataRow("Null", 0, ETextKennz.tkNone, 0, 0, 0)]
-        [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, 0, 0)]
-        [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, 0, 1)]
-        [DataRow("1-Name-3", 1, ETextKennz.tkName, 3, 0, 1)]
-        [DataRow("1-Name-4", 1, ETextKennz.tkName, 4, 0, 0)]
-        [DataRow("2-None-4", 2, ETextKennz.tkNone, 4, 0, 0)]
-        [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, 0, 0)]
-        [DataRow("2-None-4-3", 2, ETextKennz.tkNone, 4, 3, 0)]
-        [DataRow("2-Name-4-2", 2, ETextKennz.tkName, 4, 2, 2)]
-        [DataRow("2-Name-4-3", 2, ETextKennz.tkName, 4, 3, 0)]
+        [DataRow("Null", 0, ELinkKennz.lkNone, 0, 0, 0)]
+        [DataRow("1-None-0", 1, ELinkKennz.lkNone, 0, 0, 0)]
+        [DataRow("1-Father-2", 1, ELinkKennz.lkFather, 2, 0, 1)]
+        [DataRow("1-Father-3", 1, ELinkKennz.lkFather, 3, 0, 1)]
+        [DataRow("1-lk9-4", 1, ELinkKennz.lk9, 4, 0, 0)]
+        [DataRow("2-None-4", 2, ELinkKennz.lkNone, 4, 0, 0)]
+        [DataRow("2-lk9-4", 2, ELinkKennz.lk9, 4, 0, 0)]
+        [DataRow("2-None-4-3", 2, ELinkKennz.lkNone, 4, 3, 0)]
+        [DataRow("2-Mother-4-2", 2, ELinkKennz.lkMother, 4, 2, 2)]
+        [DataRow("2-lk9-4-3", 2, ELinkKennz.lk9, 4, 3, 0)]
 
-        public void ValidateIDTest(string sName, int iActPers, Enum eTKennz, int iLfNr, int schalt, int iExp)
+        public void ValidateIDTest(string sName, int iActPers, Enum eLKennz, int iLfNr, int schalt, int iExp)
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             testRS.RecordCount.Returns(iLfNr);
             if (iLfNr >= 4) (testRS.Fields[PersonFields.Pruefen] as IHasValue).Value.Returns("G", "G", "G", "");
-            Assert.AreEqual(iExp, testClass.ValidateID(iActPers, (short)schalt, iLfNr, ELinkKennz.lkNone, i => (ELinkKennz)eTKennz));
+
+            Assert.AreEqual(iExp, testClass.ValidateID(iActPers, (short)schalt, iLfNr, ELinkKennz.lkNone, i => (ELinkKennz)eLKennz));
+            
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received().Seek("=", iActPers);
         }

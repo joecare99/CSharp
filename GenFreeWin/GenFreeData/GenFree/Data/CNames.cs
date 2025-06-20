@@ -59,7 +59,7 @@ namespace GenFree.Data
         {
             IRecordset DB_NameTable = _db_Table;
             DB_NameTable.Index = nameof(NameIndex.NamKenn);
-            DB_NameTable.Seek("=", persInArb, eTKennz);
+            DB_NameTable.Seek("=", persInArb, (char)eTKennz);
             xBreak = DB_NameTable.NoMatch;
             return xBreak ? null : DB_NameTable;
         }
@@ -68,7 +68,7 @@ namespace GenFree.Data
         {
             IRecordset dB_NamesTable = _db_Table;
             dB_NamesTable.Index = $"{_keyIndex}";
-            dB_NamesTable.Seek("=", key.Item1, key.Item2, key.Item3);
+            dB_NamesTable.Seek("=", key.Item1,(char)key.Item2, key.Item3);
             xBreak = dB_NamesTable.NoMatch;
             return xBreak ? null : dB_NamesTable;
         }

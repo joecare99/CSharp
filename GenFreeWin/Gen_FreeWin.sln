@@ -113,6 +113,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenFreeWin3", "GenFreeWin3\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenFreeBaseClassesTests", "GenFreeBaseClassesTests\GenFreeBaseClassesTests.csproj", "{84F810F8-7C9A-445D-975C-BFD709446BBF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\WinFormsDesignerCompat_AutoEvents.csx = Tools\WinFormsDesignerCompat_AutoEvents.csx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
