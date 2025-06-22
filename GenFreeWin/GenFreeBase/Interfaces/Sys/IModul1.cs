@@ -113,7 +113,7 @@ public interface IModul1
     IList<string> DTxt { get; set; }
 
     // Database
-    IRecordset DgbTable { get; set; }
+    IRecordset DataModul.NB_DgbTable { get; set; }
     IRecordset DT_AhnTable { get; set; }
 
     string AppName { get; }

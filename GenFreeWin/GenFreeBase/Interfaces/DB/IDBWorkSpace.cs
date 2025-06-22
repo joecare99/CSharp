@@ -4,7 +4,7 @@
     {
         void Begin();
         void Commit();
-        IDatabase CreateDatabase(string v1, string v2);
+        IDatabase CreateDatabase(string sDBName, string? sSQL = null);
         void Rollback();
     }
 }

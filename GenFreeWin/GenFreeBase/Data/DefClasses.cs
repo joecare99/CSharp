@@ -48,11 +48,11 @@ public class IndexDef : IIndexDef
 
 public class FieldDef : IFieldDef
 {
-    public FieldDef(ITableDef td, string name, string v2, int v3)
+    public FieldDef(ITableDef td, string name, Enum v2, int v3)
     {
         _table = td;
         Name = name;
-        Type = (TypeCode)Enum.Parse(typeof(TypeCode), v2, true);
+        Type = (TypeCode)v2;
         Size = v3;
         td.Fields.Add(this);
     }

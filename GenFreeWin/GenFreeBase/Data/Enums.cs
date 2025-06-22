@@ -2,13 +2,6 @@
 
 namespace GenFree.Data;
 
-public enum nbTables
-{
-    Ahnen1,
-    Ahnen2,
-    Frauen1,
-    Frauen2
-}
 public enum PersonFields
 {
     PersNr,
@@ -321,6 +314,14 @@ public enum WitnessIndex
     FamSu,
     Zeug,
     ZeugSu
+}
+
+public enum DoppelFields {
+    Nr,
+    Pr
+}
+public enum DoppelIndex {
+    Nr
 }
 
 public enum FrauenFields

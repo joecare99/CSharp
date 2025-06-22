@@ -56,4 +56,7 @@ public enum dbTables
     Temp,
     Bem,
     Sur,
+    Num,
+    TVerk,
+    TZeu,
 }
