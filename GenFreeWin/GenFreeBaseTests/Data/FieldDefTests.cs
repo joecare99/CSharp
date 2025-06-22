@@ -15,7 +15,7 @@ namespace GenFree.Data.Tests
         public void Init()
         {
             testTable = new(null!, "test");
-            testClass = new FieldDef(testTable, "test", nameof(TypeCode.Int32), 4);
+            testClass = new FieldDef(testTable, "test", TypeCode.Int32, 4);
         }
 
         [TestMethod()]
