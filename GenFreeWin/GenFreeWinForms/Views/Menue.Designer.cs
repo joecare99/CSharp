@@ -146,7 +146,6 @@ public partial class Menue
     private void InitializeComponent()
     {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Menue));
             this.btnFamilies = new System.Windows.Forms.Button();
             this.btnSources = new System.Windows.Forms.Button();
             this.btnPersons = new System.Windows.Forms.Button();
@@ -1104,7 +1103,7 @@ public partial class Menue
             this.Controls.Add(this.btnSources);
             this.Controls.Add(this.btnFamilies);
             this.Font = new System.Drawing.Font("Arial", 9F);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+    //        this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Menue";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
