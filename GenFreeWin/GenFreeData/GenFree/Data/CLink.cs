@@ -131,7 +131,7 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
     {
         bool result;
         var db_Table = Seek((iFamNr, iPersNr, iKennz));
-        if ((result = (db_Table?.NoMatch == false)) && okVal.Equals(func(iPersNr, iFamNr)))
+        if ((result = db_Table?.NoMatch == false) && okVal.Equals(func(iPersNr, iFamNr)))
             db_Table!.Delete();
         else
         {

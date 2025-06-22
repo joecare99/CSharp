@@ -12,7 +12,7 @@ namespace GenFree.Data
         {
             public string Name;
             public TypeCode Typ;
-            public int Laenge = 0;
+            public int Length = 0;
             public bool xNull = true;
             public stFieldDef(string aName, TypeCode aType)
             { Name = aName; Typ = aType; }
@@ -34,6 +34,7 @@ namespace GenFree.Data
         public struct stTableDef
         {
             public string Name;
+            public string? IntName;
             //   public List<stFieldDef> Fields;
             public stFieldDef[] Fields;
             public stIndex[] Indexes;
@@ -43,23 +44,23 @@ namespace GenFree.Data
         public static stTableDef[] DOSBDef = [ new() {
              Name= "Ortsuch",
              Fields = [
-                new("Name",TypeCode.String) { Laenge = 100 },
-                new("Nr",TypeCode.Int64)],
+                new("Name",TypeCode.String) { Length = 100 },
+                new("Nr",TypeCode.Int32)],
              Indexes =[
                  new("Ortnr",["Nr"]),
                  new("Ortsu",["Name"])] } ];
         public static stTableDef[] DSBDef = [ new() {
              Name= "Such",
              Fields = [
-                new("Name",TypeCode.String) { Laenge = 50 },
-                new("K_Phon",TypeCode.String){ Laenge = 60 },
-                new("Leit",TypeCode.String){ Laenge = 60 },
-                new("Alias",TypeCode.String){ Laenge = 60 },
-                new("Sound",TypeCode.String){ Laenge = 60 },
+                new("Name",TypeCode.String) { Length = 50 },
+                new("K_Phon",TypeCode.String){ Length = 60 },
+                new("Leit",TypeCode.String){ Length = 60 },
+                new("Alias",TypeCode.String){ Length = 60 },
+                new("Sound",TypeCode.String){ Length = 60 },
                 new("Datum",TypeCode.String),
-                new("Nummer",TypeCode.Int64),
-                new("iKenn",TypeCode.String){ Laenge = 1 },
-                new("Sich",TypeCode.String){ Laenge = 1 }],
+                new("Nummer",TypeCode.Int32),
+                new("iKenn",TypeCode.String){ Length = 1 },
+                new("Sich",TypeCode.String){ Length = 1 }],
              Indexes =[
                  new("Nummer",["Nummer"]) { Unique = true },
                  new("Namen",["Name"]),
@@ -71,13 +72,13 @@ namespace GenFree.Data
         public static stTableDef[] DTDef = [ new() {
              Name= "Ahnen1",
              Fields = [
-                new("Gen",TypeCode.Int32) ,
-                new("PerNr",TypeCode.Int64),
-                new("Weiter",TypeCode.String){ Laenge = 1 },
-                new("EHE",TypeCode.Int64),
-                new("Ahn",TypeCode.String){ Laenge = 40 },
-                new("Name",TypeCode.String){ Laenge = 255 },
-                new("aiSpitz",TypeCode.String){ Laenge = 1 }],
+                new("Gen",TypeCode.Int16) ,
+                new("PerNr",TypeCode.Int32),
+                new("Weiter",TypeCode.String){ Length = 1 },
+                new("EHE",TypeCode.Int32),
+                new("Ahn",TypeCode.String){ Length = 40 },
+                new("Name",TypeCode.String){ Length = 255 },
+                new("aiSpitz",TypeCode.String){ Length = 1 }],
              Indexes =[
                  new("aiSpitz",["aiSpitz"]),
                  new("Namen",["Name"]),
@@ -89,8 +90,8 @@ namespace GenFree.Data
         new() {
              Name= "Ahnew",
              Fields = [
-                new("Ahn",TypeCode.String){ Laenge = 40 },
-                new("PerNr",TypeCode.Int64)],
+                new("Ahn",TypeCode.String){ Length = 40 },
+                new("PerNr",TypeCode.Int32)],
              Indexes =[
                  new("Kind",["PerNr"])
              ] },
@@ -98,19 +99,19 @@ namespace GenFree.Data
             xDrop = true,
              Name= "Konf",
              Fields = [
-                new("PerNr",TypeCode.Int64),
-                new("Textnr",TypeCode.Int64) ],
+                new("PerNr",TypeCode.Int32),
+                new("Textnr",TypeCode.Int32) ],
              Indexes =[
                  new("T",["TextNr"])
              ] },
         new() {
              Name= "Nachk",
              Fields = [
-                new("Gen",TypeCode.Int32),
-                new("Nr",TypeCode.String){Laenge = 240,xNull = false },
-                new("Pr",TypeCode.Int64),
-                new("LfNr",TypeCode.Int64),
-                new("kia",TypeCode.String){Laenge = 2 }
+                new("Gen",TypeCode.Int16),
+                new("Nr",TypeCode.String){Length = 240,xNull = false },
+                new("Pr",TypeCode.Int32),
+                new("LfNr",TypeCode.Int32),
+                new("kia",TypeCode.String){Length = 2 }
              ],
              Indexes =[
                  new("PerNr",["Pr"]){Unique = true },
@@ -123,72 +124,74 @@ namespace GenFree.Data
         public static stTableDef[] DbDef = [
         new() { Name = nameof(dbTables.BesitzTab),
           Fields = [
-                new(PropertyFields.Nr, TypeCode.Int64) ,
-                new(PropertyFields.Akte, TypeCode.String) { Laenge = 240 },
-                new(PropertyFields.Pers, TypeCode.Int64) ],
+                new(PropertyFields.Nr, TypeCode.Int32) ,
+                new(PropertyFields.Akte, TypeCode.String) { Length = 240 },
+                new(PropertyFields.Pers, TypeCode.Int32) ],
           Indexes = [
                 new(PropertyIndex.Akt, [PropertyFields.Akte] ),
                 new(PropertyIndex.NuAkPer, [PropertyFields.Nr, PropertyFields.Akte, PropertyFields.Pers] ){ Unique = true },
                 new(PropertyIndex.Per, [PropertyFields.Pers] )]
                 },
         new() { Name = nameof(dbTables.Bilder),
+                IntName = "Picture - Table", //from MandDB Table: DB_PictureTable
           Fields = [
-                new("ZuNr", TypeCode.Int64) ,
-                new("Kennz", TypeCode.String) { Laenge = 1 },
-                new("Bem", TypeCode.String) ,
-                new("Datei", TypeCode.String) { Laenge = 255, xNull = true },
-                new("Pfad", TypeCode.String) { Laenge = 255 },
-                new("LfNr", TypeCode.Int64) ,
-                new("Form", TypeCode.Boolean) ,
-                new("Beschreibung", TypeCode.String) { Laenge = 255, xNull = true },
-                new("Format", TypeCode.String) { Laenge = 1 }],
+                new(PictureFields.Bem, TypeCode.String) ,
+                new(PictureFields.Beschreibung, TypeCode.String) { Length = 255 },
+                new(PictureFields.Datei, TypeCode.String) { Length = 255 },
+                new(PictureFields.Form, TypeCode.Boolean) ,
+                new(PictureFields.Format, TypeCode.String) { Length = 1 },
+                new(PictureFields.Kennz, TypeCode.String) { Length = 1 },
+                new(PictureFields.LfNr, TypeCode.Int32) ,
+                new(PictureFields.Pfad, TypeCode.String) { Length = 255 },
+                new(PictureFields.ZuNr, TypeCode.Int32) ],
           Indexes = [
-                new("Bild", [""] ),
-                new("Nr", ["LfNr"] ){ Unique = true },
-                new("PerKen2", [""] ),
-                new("PerKenn", ["Kennz", "ZuNr"] )]
+                new(PictureIndex.Nr, [ PictureFields.LfNr ]){ Unique = true },
+                new(PictureIndex.Bild, [ PictureFields.Datei ]),
+                new(PictureIndex.PerKen2, [ PictureFields.Kennz, PictureFields.ZuNr, PictureFields.Beschreibung ]),
+                new(PictureIndex.PerKenn, [ PictureFields.Kennz, PictureFields.ZuNr ]) ]
                 },
-        new() { Name = nameof(dbTables.Doppel),
+       new() { Name = nameof(dbTables.Doppel),
+                IntName = "Doppel - Table", //from MandDB Table: DB_DoppelTable
           Fields = [
-                new("Nr", TypeCode.String) { Laenge = 240, xNull = true },
-                new("Pr", TypeCode.Int64) ],
+                new(DoppelFields.Nr, TypeCode.String) { Length = 240 },
+                new(DoppelFields.Pr, TypeCode.Int32) ],
           Indexes = [
-                new("Nr", ["Nr"] ){ Unique = true }]
-                },
-        new() { Name = nameof(dbTables.Ereignis),
+                new(DoppelIndex.Nr, [ DoppelFields.Pr ]){ Unique = true } ]
+               },
+       new() { Name = nameof(dbTables.Ereignis),
           Fields = [
-                new(EventFields.Art, TypeCode.Int32) ,
-                new(EventFields.PerFamNr, TypeCode.Int64) ,
-                new(EventFields.DatumV, TypeCode.Int64) ,
-                new(EventFields.DatumB_S, TypeCode.String) { Laenge = 1 },
-                new(EventFields.DatumV_S, TypeCode.String) { Laenge = 1 },
-                new(EventFields.DatumB, TypeCode.Int64) ,
-                new(EventFields.KBem, TypeCode.Int64) ,
-                new(EventFields.Ort, TypeCode.Int64) ,
-                new(EventFields.Ort_S, TypeCode.String) { Laenge = 1, xNull = true },
-                new(EventFields.Reg, TypeCode.String) { Laenge = 50 },
+                new(EventFields.Art, TypeCode.Int16) ,
+                new(EventFields.PerFamNr, TypeCode.Int32) ,
+                new(EventFields.DatumV, TypeCode.Int32) ,
+                new(EventFields.DatumB_S, TypeCode.String) { Length = 1 },
+                new(EventFields.DatumV_S, TypeCode.String) { Length = 1 },
+                new(EventFields.DatumB, TypeCode.Int32) ,
+                new(EventFields.KBem, TypeCode.Int32) ,
+                new(EventFields.Ort, TypeCode.Int32) ,
+                new(EventFields.Ort_S, TypeCode.String) { Length = 1, xNull = true },
+                new(EventFields.Reg, TypeCode.String) { Length = 50 },
                 new(EventFields.Bem1, TypeCode.String) ,
                 new(EventFields.Bem2, TypeCode.String) ,
-                new(EventFields.Platz, TypeCode.Int64) ,
+                new(EventFields.Platz, TypeCode.Int32) ,
                 new(EventFields.VChr, TypeCode.Boolean) ,
-                new(EventFields.LfNr, TypeCode.Int32) ,
+                new(EventFields.LfNr, TypeCode.Int16) ,
                 new(EventFields.Bem3, TypeCode.String) ,
                 new(EventFields.Bem4, TypeCode.String) ,
-                new(EventFields.ArtText, TypeCode.String) { Laenge = 240 },
-                new(EventFields.Zusatz, TypeCode.String) { Laenge = 240 },
-                new(EventFields.priv, TypeCode.String) { Laenge = 1 },
-                new(EventFields.tot, TypeCode.String) { Laenge = 1 },
-                new(EventFields.DatumText, TypeCode.Int64) ,
-                new(EventFields.Causal, TypeCode.Int64) ,
-                new(EventFields.an, TypeCode.Int64) ,
-                new(EventFields.Hausnr, TypeCode.Int64) ,
-                new(EventFields.GrabNr, TypeCode.Int64) ],
+                new(EventFields.ArtText, TypeCode.String) { Length = 240 },
+                new(EventFields.Zusatz, TypeCode.String) { Length = 240 },
+                new(EventFields.priv, TypeCode.String) { Length = 1 },
+                new(EventFields.tot, TypeCode.String) { Length = 1 },
+                new(EventFields.DatumText, TypeCode.Int32) ,
+                new(EventFields.Causal, TypeCode.Int32) ,
+                new(EventFields.an, TypeCode.Int32) ,
+                new(EventFields.Hausnr, TypeCode.Int32) ,
+                new(EventFields.GrabNr, TypeCode.Int32) ],
           Indexes = [
                 new(EventIndex.ArtNr, [EventFields.Art,EventFields.PerFamNr, EventFields.LfNr] ){ Unique = true },
                 new(EventIndex.BeSu, [EventFields.Art,EventFields.PerFamNr] ),
                 new(EventIndex.Datbs, [EventFields.DatumB_S] ),
                 new(EventIndex.DatInd, [EventFields.DatumV] ),
-                new(EventIndex.Datvs, new Enum[] { EventFields.DatumV_S } ),
+                new(EventIndex.Datvs, [EventFields.DatumV_S] ),
                 new(EventIndex.EOrt, [EventFields.Ort] ),
                 new(EventIndex.HaNu, [EventFields.Hausnr] ),
                 new(EventIndex.JaTa, [EventFields.Art] ),
@@ -201,20 +204,20 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Familie),
           Fields = [
-                new(nameof(FamilyFields.AnlDatum), TypeCode.Int64) ,
-                new(nameof(FamilyFields.EditDat), TypeCode.Int64) ,
-                new(nameof(FamilyFields.Prüfen), TypeCode.String) { Laenge = 5 },
+                new(nameof(FamilyFields.AnlDatum), TypeCode.Int32) ,
+                new(nameof(FamilyFields.EditDat), TypeCode.Int32) ,
+                new(nameof(FamilyFields.Prüfen), TypeCode.String) { Length = 5 },
                 new(nameof(FamilyFields.Bem1), TypeCode.String) ,
-                new(nameof(FamilyFields.FamNr), TypeCode.Int64) ,
+                new(nameof(FamilyFields.FamNr), TypeCode.Int32) ,
                 new(nameof(FamilyFields.Aeb), TypeCode.Boolean) ,
-                new(nameof(FamilyFields.Name), TypeCode.Int64) ,
+                new(nameof(FamilyFields.Name), TypeCode.Int32) ,
                 new(nameof(FamilyFields.Bem2), TypeCode.String) ,
                 new(nameof(FamilyFields.Bem3), TypeCode.String) ,
                 new(nameof(FamilyFields.Eltern), TypeCode.Single) ,
-                new(nameof(FamilyFields.Fuid), TypeCode.String) { Laenge = 40 },
-                new(nameof(FamilyFields.Prae), TypeCode.String) { Laenge = 240 },
-                new(nameof(FamilyFields.Suf), TypeCode.String) { Laenge = 240 },
-                new(nameof(FamilyFields.ggv), TypeCode.String) { Laenge = 1 }],
+                new(nameof(FamilyFields.Fuid), TypeCode.String) { Length = 40 },
+                new(nameof(FamilyFields.Prae), TypeCode.String) { Length = 240 },
+                new(nameof(FamilyFields.Suf), TypeCode.String) { Length = 240 },
+                new(nameof(FamilyFields.ggv), TypeCode.String) { Length = 1 }],
           Indexes = [
                 new(FamilyIndex.BeaDat, [FamilyFields.EditDat] ),
                 new(FamilyIndex.Fam, [FamilyFields.FamNr] ){ Unique = true },
@@ -222,13 +225,13 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.GBE),
           Fields = [
-                new("Nr", TypeCode.Int64) ,
-                new("Akte", TypeCode.String) { Laenge = 240 },
-                new("Jahr", TypeCode.String) { Laenge = 24 },
+                new("Nr", TypeCode.Int32) ,
+                new("Akte", TypeCode.String) { Length = 240 },
+                new("Jahr", TypeCode.String) { Length = 24 },
                 new("Name", TypeCode.String) ,
                 new("Geb", TypeCode.String) ,
-                new("Erb", TypeCode.String) { Laenge = 24 },
-                new("Abg", TypeCode.String) { Laenge = 24 }],
+                new("Erb", TypeCode.String) { Length = 24 },
+                new("Abg", TypeCode.String) { Length = 24 }],
           Indexes = [
                 new("Akte", ["Akte"] ),
                 new("AkteJa", ["Akte", "Jahr"] ),
@@ -236,19 +239,19 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.GED),
           Fields = [
-                new("PNr", TypeCode.Int64) ],
+                new("PNr", TypeCode.Int32) ],
           Indexes = [
                 new("pNr", ["PNr"] ){ Unique = true }]
                 },
         new() { Name = nameof(dbTables.HGA),
           Fields = [
-                new("Nr", TypeCode.Int64) ,
-                new("Akte", TypeCode.String) { Laenge = 240 },
-                new("Kirchspiel", TypeCode.String) { Laenge = 240 },
-                new("Beschr", TypeCode.String) { Laenge = 240 },
-                new("Flur", TypeCode.String) { Laenge = 240 },
-                new("Parzelle", TypeCode.String) { Laenge = 240 },
-                new("Hof", TypeCode.String) { Laenge = 240 },
+                new("Nr", TypeCode.Int32) ,
+                new("Akte", TypeCode.String) { Length = 240 },
+                new("Kirchspiel", TypeCode.String) { Length = 240 },
+                new("Beschr", TypeCode.String) { Length = 240 },
+                new("Flur", TypeCode.String) { Length = 240 },
+                new("Parzelle", TypeCode.String) { Length = 240 },
+                new("Hof", TypeCode.String) { Length = 240 },
                 new("Brandkasse", TypeCode.String) ,
                 new("Bem", TypeCode.String) ],
           Indexes = [
@@ -257,23 +260,23 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.INamen),
           Fields = [
-                new(NameFields.PersNr, TypeCode.Int64) ,
-                new(NameFields.Kennz, TypeCode.String) { Laenge = 1 },
-                new(NameFields.Text, TypeCode.Int64) ,
-                new(NameFields.LfNr, TypeCode.String) { Laenge = 2 },
+                new(NameFields.PersNr, TypeCode.Int32) ,
+                new(NameFields.Kennz, TypeCode.String) { Length = 1 },
+                new(NameFields.Text, TypeCode.Int32) ,
+                new(NameFields.LfNr, TypeCode.String) { Length = 2 },
                 new(NameFields.Ruf, TypeCode.Byte) ,
                 new(NameFields.Spitz, TypeCode.Byte) ],
           Indexes = [
                 new(NameIndex.NamKenn, [] ),
                 new(NameIndex.PNamen, [] ),
                 new(NameIndex.TxNr, [] ),
-                new(NameIndex.Vollname, [NameFields.PersNr, NameFields.Kennz, NameFields.LfNr] ){ Unique = true }] 
+                new(NameIndex.Vollname, [NameFields.PersNr, NameFields.Kennz, NameFields.LfNr] ){ Unique = true }]
                 },
         new() { Name = nameof(dbTables.IndNam), //OFB-Table
           Fields = [
-                new(OFBFields.PerNr, TypeCode.Int64) ,
-                new(OFBFields.Kennz, TypeCode.String) { Laenge = 2 },
-                new(OFBFields.TextNr, TypeCode.Int64) ],
+                new(OFBFields.PerNr, TypeCode.Int32) ,
+                new(OFBFields.Kennz, TypeCode.String) { Length = 2 },
+                new(OFBFields.TextNr, TypeCode.Int32) ],
           Indexes = [
                 new(OFBIndex.Indn, [OFBFields.PerNr, OFBFields.Kennz ,OFBFields.TextNr] ){ Unique = true},
                 new(OFBIndex.InDNr, [OFBFields.PerNr,OFBFields.Kennz] ),
@@ -281,38 +284,38 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Leer1),
           Fields = [
-                new("Nr", TypeCode.Int64) ,
-                new("Art", TypeCode.String) { Laenge = 1 }],
+                new("Nr", TypeCode.Int32) ,
+                new("Art", TypeCode.String) { Length = 1 }],
           Indexes = [
                 new("Leer", ["Art"] )]
                 },
         new() { Name = nameof(dbTables.Nachk),
           Fields = [
-                new("Gen", TypeCode.Int64) ,
-                new("Nr", TypeCode.String) { Laenge = 240, xNull = true },
-                new("Pr", TypeCode.Int64) ],
+                new("Gen", TypeCode.Int32) ,
+                new("Nr", TypeCode.String) { Length = 240, xNull = true },
+                new("Pr", TypeCode.Int32) ],
           Indexes = [
                 new("Nr", ["Nr"] ),
                 new("PerNr", ["Pr", "Nr"] ){ Unique = true }]
                 },
         new() { Name = nameof(dbTables.Orte),
           Fields = [
-                new(PlaceFields.Ort, TypeCode.Int64) ,
-                new(PlaceFields.Ortsteil, TypeCode.Int64) ,
-                new(PlaceFields.Kreis, TypeCode.Int64) ,
-                new(PlaceFields.Land, TypeCode.Int64) ,
-                new(PlaceFields.Staat, TypeCode.Int64) ,
-                new(PlaceFields.Staatk, TypeCode.String) { Laenge = 3 },
-                new(PlaceFields.PLZ, TypeCode.String) { Laenge = 10 },
-                new(PlaceFields.Terr, TypeCode.String) { Laenge = 5 },
-                new(PlaceFields.Loc, TypeCode.String) { Laenge = 6 },
-                new(PlaceFields.L, TypeCode.String) { Laenge = 10 },
-                new(PlaceFields.B, TypeCode.String) { Laenge = 10 },
+                new(PlaceFields.Ort, TypeCode.Int32) ,
+                new(PlaceFields.Ortsteil, TypeCode.Int32) ,
+                new(PlaceFields.Kreis, TypeCode.Int32) ,
+                new(PlaceFields.Land, TypeCode.Int32) ,
+                new(PlaceFields.Staat, TypeCode.Int32) ,
+                new(PlaceFields.Staatk, TypeCode.String) { Length = 3 },
+                new(PlaceFields.PLZ, TypeCode.String) { Length = 10 },
+                new(PlaceFields.Terr, TypeCode.String) { Length = 5 },
+                new(PlaceFields.Loc, TypeCode.String) { Length = 6 },
+                new(PlaceFields.L, TypeCode.String) { Length = 10 },
+                new(PlaceFields.B, TypeCode.String) { Length = 10 },
                 new(PlaceFields.Bem, TypeCode.String) ,
-                new(PlaceFields.OrtNr, TypeCode.Int64) { xNull = true },
-                new(PlaceFields.Zusatz, TypeCode.String) { Laenge = 240 },
-                new(PlaceFields.GOV, TypeCode.String) { Laenge = 20 },
-                new(PlaceFields.PolName, TypeCode.String) { Laenge = 240 },
+                new(PlaceFields.OrtNr, TypeCode.Int32) { xNull = true },
+                new(PlaceFields.Zusatz, TypeCode.String) { Length = 240 },
+                new(PlaceFields.GOV, TypeCode.String) { Length = 20 },
+                new(PlaceFields.PolName, TypeCode.String) { Length = 240 },
                 new(PlaceFields.g, TypeCode.Single) ],
           Indexes = [
                 new(PlaceIndex.K, [PlaceFields.Kreis] ),
@@ -326,32 +329,32 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.OrtSuch),
           Fields = [
-                new("Name", TypeCode.String) { Laenge = 100 },
-                new("Nr", TypeCode.Int64) ],
+                new("Name", TypeCode.String) { Length = 100 },
+                new("Nr", TypeCode.Int32) ],
           Indexes = [
                 new("OrtNr", ["Nr"] ),
                 new("ortsu", ["Name"] ){ Unique = true }]
                 },
         new() { Name = nameof(dbTables.Personen),
           Fields = [
-                new(PersonFields.AnlDatum, TypeCode.Int64) ,
-                new(PersonFields.Sex, TypeCode.String) { Laenge = 1, xNull = true },
-                new(PersonFields.EditDat, TypeCode.Int64) ,
+                new(PersonFields.AnlDatum, TypeCode.Int32) ,
+                new(PersonFields.Sex, TypeCode.String) { Length = 1, xNull = true },
+                new(PersonFields.EditDat, TypeCode.Int32) ,
                 new(PersonFields.Bem1, TypeCode.String) ,
-                new(PersonFields.Pruefen, TypeCode.String) { Laenge = 5 },
-                new(PersonFields.PersNr, TypeCode.Int64) ,
-                new(PersonFields.Konv, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such1, TypeCode.String) { Laenge = 240 },
+                new(PersonFields.Pruefen, TypeCode.String) { Length = 5 },
+                new(PersonFields.PersNr, TypeCode.Int32) ,
+                new(PersonFields.Konv, TypeCode.String) { Length = 240 },
+                new(PersonFields.Such1, TypeCode.String) { Length = 240 },
                 new(PersonFields.Bem2, TypeCode.String) ,
                 new(PersonFields.Bem3, TypeCode.String) ,
-                new(PersonFields.OFB, TypeCode.String) { Laenge = 1 },
-                new(PersonFields.religi, TypeCode.Int64) ,
-                new(PersonFields.PUid, TypeCode.String) { Laenge = 40 },
-                new(PersonFields.Such2, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such3, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such4, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such5, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such6, TypeCode.String) { Laenge = 240 }],
+                new(PersonFields.OFB, TypeCode.String) { Length = 1 },
+                new(PersonFields.religi, TypeCode.Int32) ,
+                new(PersonFields.PUid, TypeCode.String) { Length = 40 },
+                new(PersonFields.Such2, TypeCode.String) { Length = 240 },
+                new(PersonFields.Such3, TypeCode.String) { Length = 240 },
+                new(PersonFields.Such4, TypeCode.String) { Length = 240 },
+                new(PersonFields.Such5, TypeCode.String) { Length = 240 },
+                new(PersonFields.Such6, TypeCode.String) { Length = 240 }],
           Indexes = [
                 new(PersonIndex.BeaDat,[PersonFields.EditDat] ),
                 new(PersonIndex.PerNr, [PersonFields.PersNr]){ Unique = true },
@@ -366,17 +369,17 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Quellen),
           Fields = [
-                new(SourceFields._1, TypeCode.Int64) ,  // PerNr
-                new(SourceFields._2, TypeCode.String) { Laenge = 240 }, // Titel
-                new(SourceFields._3, TypeCode.String) { Laenge = 240 }, // Ort
-                new(SourceFields._4, TypeCode.String) { Laenge = 240 }, // Zitat
-                new(SourceFields._5, TypeCode.String) { Laenge = 240 }, // Author
-                new(SourceFields._7, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._8, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._9, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._10, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._11, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._12, TypeCode.String) { Laenge = 240 },
+                new(SourceFields._1, TypeCode.Int32) ,  // PerNr
+                new(SourceFields._2, TypeCode.String) { Length = 240 }, // Titel
+                new(SourceFields._3, TypeCode.String) { Length = 240 }, // Ort
+                new(SourceFields._4, TypeCode.String) { Length = 240 }, // Zitat
+                new(SourceFields._5, TypeCode.String) { Length = 240 }, // Author
+                new(SourceFields._7, TypeCode.String) { Length = 240 },
+                new(SourceFields._8, TypeCode.String) { Length = 240 },
+                new(SourceFields._9, TypeCode.String) { Length = 240 },
+                new(SourceFields._10, TypeCode.String) { Length = 240 },
+                new(SourceFields._11, TypeCode.String) { Length = 240 },
+                new(SourceFields._12, TypeCode.String) { Length = 240 },
                 new(SourceFields._13, TypeCode.String) ],
           Indexes = [
                 new(SourceIndex.Autor, [SourceFields._5] ),
@@ -387,16 +390,16 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Repo),
           Fields = [
-                new("Nr", TypeCode.Int64) ,
-                new("Name", TypeCode.String) { Laenge = 240 },
-                new("Strasse", TypeCode.String) { Laenge = 240 },
-                new("Ort", TypeCode.String) { Laenge = 240 },
-                new("PLZ", TypeCode.String) { Laenge = 240 },
-                new("Fon", TypeCode.String) { Laenge = 240 },
-                new("Mail", TypeCode.String) { Laenge = 240 },
-                new("Http", TypeCode.String) { Laenge = 240 },
+                new("Nr", TypeCode.Int32) ,
+                new("Name", TypeCode.String) { Length = 240 },
+                new("Strasse", TypeCode.String) { Length = 240 },
+                new("Ort", TypeCode.String) { Length = 240 },
+                new("PLZ", TypeCode.String) { Length = 240 },
+                new("Fon", TypeCode.String) { Length = 240 },
+                new("Mail", TypeCode.String) { Length = 240 },
+                new("Http", TypeCode.String) { Length = 240 },
                 new("Bem", TypeCode.String) ,
-                new("Suchname", TypeCode.String) { Laenge = 240 }],
+                new("Suchname", TypeCode.String) { Length = 240 }],
           Indexes = [
                 new("Name", ["SuchName"] ),
                 new("Nr", ["Nr"] ),
@@ -404,8 +407,8 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.RepoTab),
           Fields = [
-                new("Quelle", TypeCode.Int64) ,
-                new("Repo", TypeCode.Int64) ],
+                new("Quelle", TypeCode.Int32) ,
+                new("Repo", TypeCode.Int32) ],
           Indexes = [
                 new("Dop", ["Quelle", "Repo"] ),
                 new("Leer", ["Repo"] ),
@@ -413,11 +416,11 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Such),
           Fields = [
-                new("Name", TypeCode.String) { Laenge = 50 },
-                new("Datum", TypeCode.Int32) ,
-                new("Nummer", TypeCode.Int64) ,
-                new("iKenn", TypeCode.String) { Laenge = 1 },
-                new("Sich", TypeCode.String) { Laenge = 1 }],
+                new("Name", TypeCode.String) { Length = 50 },
+                new("Datum", TypeCode.Int16) ,
+                new("Nummer", TypeCode.Int32) ,
+                new("iKenn", TypeCode.String) { Length = 1 },
+                new("Sich", TypeCode.String) { Length = 1 }],
           Indexes = [
                 new("Namen", [""] ),
                 new("Nummer", [""] ){ Unique = true },
@@ -426,8 +429,8 @@ namespace GenFree.Data
         new() { Name = nameof(dbTables.Tab),
           Fields = [
                 new(ILinkData.LinkFields.Kennz, TypeCode.Byte) ,
-                new(ILinkData.LinkFields.FamNr, TypeCode.Int64) ,
-                new(ILinkData.LinkFields.PerNr, TypeCode.Int64) ],
+                new(ILinkData.LinkFields.FamNr, TypeCode.Int32) ,
+                new(ILinkData.LinkFields.PerNr, TypeCode.Int32) ],
           Indexes = [
                 new(LinkIndex.ElSu,    [ILinkData.LinkFields.PerNr, ILinkData.LinkFields.Kennz] ),
                 new(LinkIndex.FamNr,   [ILinkData.LinkFields.FamNr] ),
@@ -440,12 +443,12 @@ namespace GenFree.Data
         new() { Name = nameof(dbTables.Tab1),
           Fields = [
                 new(SourceLinkFields._1, TypeCode.Single) ,
-                new(SourceLinkFields._2, TypeCode.Int64) ,
-                new(SourceLinkFields._3, TypeCode.Int64) ,
-                new(SourceLinkFields._4, TypeCode.String) { Laenge = 240 },
+                new(SourceLinkFields._2, TypeCode.Int32) ,
+                new(SourceLinkFields._3, TypeCode.Int32) ,
+                new(SourceLinkFields._4, TypeCode.String) { Length = 240 },
                 new(SourceLinkFields.LfNr, TypeCode.Single) ,
                 new(SourceLinkFields.Art, TypeCode.Single) ,
-                new(SourceLinkFields.Aus, TypeCode.String) { Laenge = 240 },
+                new(SourceLinkFields.Aus, TypeCode.String) { Length = 240 },
                 new(SourceLinkFields.Orig, TypeCode.String) ,
                 new(SourceLinkFields.Kom, TypeCode.String) ],
           Indexes = [
@@ -458,9 +461,9 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Tab2),
           Fields = [
-                new(WitnessFields.FamNr, TypeCode.Int64) ,
-                new(WitnessFields.PerNr, TypeCode.Int64) ,
-                new(WitnessFields.Kennz, TypeCode.String) { Laenge = 2 },
+                new(WitnessFields.FamNr, TypeCode.Int32) ,
+                new(WitnessFields.PerNr, TypeCode.Int32) ,
+                new(WitnessFields.Kennz, TypeCode.String) { Length = 2 },
                 new(WitnessFields.Art, TypeCode.Single) ,
                 new(WitnessFields.LfNr, TypeCode.Single) ],
           Indexes = [
@@ -472,10 +475,10 @@ namespace GenFree.Data
                 },
         new() { Name = nameof(dbTables.Texte),
           Fields = [
-                new(TexteFields.Txt, TypeCode.String) { Laenge = 240 },
-                new(TexteFields.Kennz, TypeCode.String) { Laenge = 1, xNull = true },
-                new(TexteFields.TxNr, TypeCode.Int64) ,
-                new(TexteFields.Leitname, TypeCode.String) { Laenge = 32 },
+                new(TexteFields.Txt, TypeCode.String) { Length = 240 },
+                new(TexteFields.Kennz, TypeCode.String) { Length = 1, xNull = true },
+                new(TexteFields.TxNr, TypeCode.Int32) ,
+                new(TexteFields.Leitname, TypeCode.String) { Length = 32 },
                 new(TexteFields.Bem, TypeCode.String) { xNull = true }],
           Indexes = [
                 new(TexteIndex.ITexte, [TexteFields.Txt, TexteFields.Kennz] ){ Unique = true },

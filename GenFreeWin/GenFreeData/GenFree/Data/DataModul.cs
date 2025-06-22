@@ -1,18 +1,20 @@
 ﻿//using DAO;
 using BaseLib.Helper;
-using GenFree.Model;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
+using GenFree.Model;
 using GenFree.Sys;
 using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.Devices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace GenFree.Data;
 
@@ -35,9 +37,9 @@ public static partial class DataModul
     public static IWB_Frau WB_Frau { get; } = new CWB_Frau(() => WB_FrauTable!); // new IoC.GetReqiredService(IWB_Frau);
     public static INB_Person NB_Person { get; } = new CNB_Person(() => NB_PersonTable!, Link_MoveAllPaten_ToNBWitn); // new IoC.GetReqiredService(INB_Person);
     public static INB_Family NB_Family { get; } = new CNB_Family(() => NB_FamilyTable!); // new IoC.GetReqiredService(INB_Family);
-    public static INB_Frau NB_Frau{ get; } = new CNB_Frau(() => NB_Frau1Table!); // new IoC.GetReqiredService(INB_Family);
-    public static INB_Ahnen NB_Ahnen{ get; } = new CNB_Ahnen(() => NB_Ahn1Table!); // new IoC.GetReqiredService(INB_Family);
-    public static ICitationData CitationData { get; } = new CCitationData(DB_SourceLinkTable!,true); // new IoC.GetReqiredService(ICitationData);
+    public static INB_Frau NB_Frau { get; } = new CNB_Frau(() => NB_Frau1Table!); // new IoC.GetReqiredService(INB_Family);
+    public static INB_Ahnen NB_Ahnen { get; } = new CNB_Ahnen(() => NB_Ahn1Table!); // new IoC.GetReqiredService(INB_Family);
+    public static ICitationData CitationData { get; } = new CCitationData(DB_SourceLinkTable!, true); // new IoC.GetReqiredService(ICitationData);
 
     public static object[] Mandanten = new string[0];
 
@@ -73,10 +75,10 @@ public static partial class DataModul
     public static IRecordset DB_GbeTable;
     public static IRecordset DB_OFBTable;
     public static IRecordset DB_WDTable;
-    public static IRecordset DB_DopTable { get; set; }
+    public static IRecordset DB_DoppelTable { get; set; }
     public static IRecordset DB_GedTable { get; set; }
     public static IRecordset DB_BildTab;
-    public static IRecordset DB_LeerTable ;
+    public static IRecordset DB_LeerTable;
 
     // Temp-DB
     public static IRecordset DT_AncesterTable;
@@ -86,6 +88,7 @@ public static partial class DataModul
     public static IRecordset DT_SperrPerTable { get; set; }
     public static IRecordset DT_SperrFamTable { get; set; }
     public static IRecordset DT_SperrTable { get; set; }
+    public static IRecordset DT_OTTable { get; set; }
 
     public static IRecordset DOSB_OrtSTable;
     public static IRecordset DSB_SearchTable;
@@ -139,7 +142,7 @@ public static partial class DataModul
     /// <param name="sAdditional">An optional connection string or additional parameters for opening the database.  This can be null or empty if
     /// no additional parameters are required.</param>
     /// <returns>An <see cref="IDatabase"/> instance representing the opened database.</returns>
-    public static IDatabase OpenDatabase(string sPath, bool xExclusive, bool xReadOnly, string sAdditional="")
+    public static IDatabase OpenDatabase(string sPath, bool xExclusive, bool xReadOnly, string sAdditional = "")
     => DAODBEngine_definst.OpenDatabase(sPath, xExclusive, xReadOnly, sAdditional);
     /// <summary>
     /// Opens multiple databases in read-only mode and initializes recordsets for data access.
@@ -184,7 +187,7 @@ public static partial class DataModul
     /// name="xIsReadOnly"/> is <see langword="false"/>.</param>
     /// <returns>A tuple containing two integers: <list type="number"> <item>The total number of persons in the database.</item>
     /// <item>The total number of families in the database.</item> </list></returns>
-    public static (int,int) PeekMandant(string mandantname, bool xIsReadOnly, Action<string,FileAttributes> SetAttributes)
+    public static (int, int) PeekMandant(string mandantname, bool xIsReadOnly, Action<string, FileAttributes> SetAttributes)
     {
         if (!xIsReadOnly)
         {
@@ -262,30 +265,30 @@ public static partial class DataModul
         DT_RelgionTable = TempDB.OpenRecordset(dbTables.Konf, RecordsetTypeEnum.dbOpenTable);
         DT_AncesterTable = TempDB.OpenRecordset(dbTables.Ahnen1, RecordsetTypeEnum.dbOpenTable);
         DT_KindAhnTable = TempDB.OpenRecordset(dbTables.Ahnew, RecordsetTypeEnum.dbOpenTable);
-   //     DT_AncesterTable.Index = "PerNr";
+        //     DT_AncesterTable.Index = "PerNr";
 
-        DB_PersonTable = MandDB.OpenRecordset((dbTables.Personen), RecordsetTypeEnum.dbOpenTable);
+        DB_PersonTable = MandDB.OpenRecordset(dbTables.Personen, RecordsetTypeEnum.dbOpenTable);
         DB_PersonTable.Index = nameof(PersonIndex.PerNr);
-        DB_FamilyTable = MandDB.OpenRecordset((dbTables.Familie), RecordsetTypeEnum.dbOpenTable);
-        DB_NameTable = MandDB.OpenRecordset((dbTables.INamen), RecordsetTypeEnum.dbOpenTable);
+        DB_FamilyTable = MandDB.OpenRecordset(dbTables.Familie, RecordsetTypeEnum.dbOpenTable);
+        DB_NameTable = MandDB.OpenRecordset(dbTables.INamen, RecordsetTypeEnum.dbOpenTable);
         DB_NameTable.Index = nameof(NameIndex.PNamen);
-        DB_PlaceTable = MandDB.OpenRecordset((dbTables.Orte), RecordsetTypeEnum.dbOpenTable);
+        DB_PlaceTable = MandDB.OpenRecordset(dbTables.Orte, RecordsetTypeEnum.dbOpenTable);
         DB_PlaceTable.Index = nameof(PlaceIndex.OrtNr);
-        DB_EventTable = MandDB.OpenRecordset((dbTables.Ereignis), RecordsetTypeEnum.dbOpenTable);
+        DB_EventTable = MandDB.OpenRecordset(dbTables.Ereignis, RecordsetTypeEnum.dbOpenTable);
         DB_EventTable.Index = nameof(EventIndex.ArtNr);
-        DB_PropertyTable = MandDB.OpenRecordset((dbTables.BesitzTab), RecordsetTypeEnum.dbOpenTable);
-        DB_PictureTable = MandDB.OpenRecordset((dbTables.Bilder), RecordsetTypeEnum.dbOpenTable);
-        DB_SourceLinkTable = MandDB.OpenRecordset((dbTables.Tab1), RecordsetTypeEnum.dbOpenTable);
-        DB_TexteTable = MandDB.OpenRecordset((dbTables.Texte), RecordsetTypeEnum.dbOpenTable);
-        DB_HGATable = MandDB.OpenRecordset((dbTables.HGA), RecordsetTypeEnum.dbOpenTable);
-        DB_LinkTable = MandDB.OpenRecordset((dbTables.Tab), RecordsetTypeEnum.dbOpenTable);
-        DB_WitnessTable = MandDB.OpenRecordset((dbTables.Tab2), RecordsetTypeEnum.dbOpenTable);
-        DB_LeerTable = MandDB.OpenRecordset((dbTables.Leer1), RecordsetTypeEnum.dbOpenTable);
+        DB_PropertyTable = MandDB.OpenRecordset(dbTables.BesitzTab, RecordsetTypeEnum.dbOpenTable);
+        DB_PictureTable = MandDB.OpenRecordset(dbTables.Bilder, RecordsetTypeEnum.dbOpenTable);
+        DB_SourceLinkTable = MandDB.OpenRecordset(dbTables.Tab1, RecordsetTypeEnum.dbOpenTable);
+        DB_TexteTable = MandDB.OpenRecordset(dbTables.Texte, RecordsetTypeEnum.dbOpenTable);
+        DB_HGATable = MandDB.OpenRecordset(dbTables.HGA, RecordsetTypeEnum.dbOpenTable);
+        DB_LinkTable = MandDB.OpenRecordset(dbTables.Tab, RecordsetTypeEnum.dbOpenTable);
+        DB_WitnessTable = MandDB.OpenRecordset(dbTables.Tab2, RecordsetTypeEnum.dbOpenTable);
+        DB_LeerTable = MandDB.OpenRecordset(dbTables.Leer1, RecordsetTypeEnum.dbOpenTable);
         DB_LeerTable.Index = "Leer";
-        DB_RepoTable = MandDB.OpenRecordset((dbTables.Repo), RecordsetTypeEnum.dbOpenTable);
-        DB_RepoTab = MandDB.OpenRecordset((dbTables.RepoTab), RecordsetTypeEnum.dbOpenTable);
-        DB_QuTable = MandDB.OpenRecordset((dbTables.Quellen), RecordsetTypeEnum.dbOpenTable);
-        DB_OFBTable = MandDB.OpenRecordset((dbTables.IndNam), RecordsetTypeEnum.dbOpenTable);
+        DB_RepoTable = MandDB.OpenRecordset(dbTables.Repo, RecordsetTypeEnum.dbOpenTable);
+        DB_RepoTab = MandDB.OpenRecordset(dbTables.RepoTab, RecordsetTypeEnum.dbOpenTable);
+        DB_QuTable = MandDB.OpenRecordset(dbTables.Quellen, RecordsetTypeEnum.dbOpenTable);
+        DB_OFBTable = MandDB.OpenRecordset(dbTables.IndNam, RecordsetTypeEnum.dbOpenTable);
 
     }
     /// <summary>
@@ -297,7 +300,7 @@ public static partial class DataModul
     public static IRecordset OpenLinguaRecordSet(string name)
     {
         TempDB = OpenDatabase(name, false, false, "");
-        IRecordset recordset = TempDB.OpenRecordset((dbTables.Lingua), RecordsetTypeEnum.dbOpenTable);
+        IRecordset recordset = TempDB.OpenRecordset(dbTables.Lingua, RecordsetTypeEnum.dbOpenTable);
         recordset.Index = "PrimaryKey";
         recordset.MoveFirst();
         return recordset;
@@ -308,18 +311,18 @@ public static partial class DataModul
     /// Opens the specified NB database and initializes the associated recordsets.
     /// </summary>
     /// <remarks>This method closes any previously opened NB database before opening the specified one.  It
-    /// initializes recordsets for the tables <see cref="nbTables.Ahnen1"/>, <see cref="nbTables.Ahnen2"/>,  <see
-    /// cref="nbTables.Frauen1"/>, and <see cref="nbTables.Frauen2"/>.  Ensure that the database file exists and is
+    /// initializes recordsets for the tables <see cref="dbTables.Ahnen1"/>, <see cref="dbTables.Ahnen2"/>,  <see
+    /// cref="dbTables.Frauen1"/>, and <see cref="dbTables.Frauen2"/>.  Ensure that the database file exists and is
     /// accessible before calling this method.</remarks>
     /// <param name="name">The name of the database to open. This must be a valid database file name.</param>
     public static void OpenNBDatabase(string name)
     {
         NB?.Close();
         NB = OpenDatabase(name, false, false, "");
-        NB_Ahn1Table = NB.OpenRecordset((nbTables.Ahnen1), RecordsetTypeEnum.dbOpenTable);
-        NB_Ahn2Table = NB.OpenRecordset((nbTables.Ahnen2), RecordsetTypeEnum.dbOpenTable);
-        NB_Frau1Table = NB.OpenRecordset((nbTables.Frauen1), RecordsetTypeEnum.dbOpenTable);
-        NB_Frau2Table = NB.OpenRecordset((nbTables.Frauen2), RecordsetTypeEnum.dbOpenTable);
+        NB_Ahn1Table = NB.OpenRecordset(dbTables.Ahnen1, RecordsetTypeEnum.dbOpenTable);
+        NB_Ahn2Table = NB.OpenRecordset(dbTables.Ahnen2, RecordsetTypeEnum.dbOpenTable);
+        NB_Frau1Table = NB.OpenRecordset(dbTables.Frauen1, RecordsetTypeEnum.dbOpenTable);
+        NB_Frau2Table = NB.OpenRecordset(dbTables.Frauen2, RecordsetTypeEnum.dbOpenTable);
     }
     /// <summary>
     /// Creates a new temporary NB database and opens it for use.
@@ -548,7 +551,7 @@ public static partial class DataModul
                 {
                     break;
                 }
-                if (dB_WitnessTable.Fields[WitnessFields.Art].AsInt()< 500)
+                if (dB_WitnessTable.Fields[WitnessFields.Art].AsInt() < 500)
                 {
                     dB_WitnessTable.Delete();
                 }
@@ -585,16 +588,16 @@ public static partial class DataModul
     {
         var num5 = 1;
         if (NB_WitnessTable != null)
-        foreach (var cWitness in Witness.ReadAllFams(iNr, 10))
-        {
-            if (xAR ^ (cWitness.eArt <= EEventArt.eA_499))
+            foreach (var cWitness in Witness.ReadAllFams(iNr, 10))
             {
-                NB_WitnessTable.AddNew();
-                NB_WitnessTable.Fields["Person"].Value = cWitness.iPers;
-                NB_WitnessTable.Update();
+                if (xAR ^ (cWitness.eArt <= EEventArt.eA_499))
+                {
+                    NB_WitnessTable.AddNew();
+                    NB_WitnessTable.Fields["Person"].Value = cWitness.iPers;
+                    NB_WitnessTable.Update();
+                }
+                num5++;
             }
-            num5++;
-        }
     }
     public static void Witness_ChangeEventArt(int famInArb, EEventArt eArtOld, EEventArt eArtNew)
     {
@@ -654,7 +657,7 @@ public static partial class DataModul
         ? (sText, sText2)
         : ("", "");
 
-    public static string Texte_GetLeitName(string sName,string sSurnames_Text, string Kont3 = "")
+    public static string Texte_GetLeitName(string sName, string sSurnames_Text, string Kont3 = "")
     {
         string sLeitName = "";
 
@@ -704,7 +707,7 @@ public static partial class DataModul
             }
             if (dB_TexteTable.EditMode != 0)
                 dB_TexteTable.Update();
-            return dB_TexteTable.Fields[TexteFields.TxNr].AsInt();       
+            return dB_TexteTable.Fields[TexteFields.TxNr].AsInt();
         }
         dB_TexteTable.Index = nameof(TexteIndex.TxNr);
         if (dB_TexteTable.RecordCount == 0)
@@ -815,10 +818,10 @@ public static partial class DataModul
                 break;
             case ETextKennz.Z_:
                 DT_RelgionTable.Close();
-                TempDB.TryExecute("DROP Table Konf");
-                TempDB.TryExecute("Create Table Konf (PerNr long)");
-                TempDB.TryExecute("Alter table Konf Add column Textnr long;");
-                TempDB.TryExecute("create Index T on Konf ([TextNr]);");
+                TempDB.TryExecute($"DROP Table {dbTables.Konf}");
+                TempDB.TryExecute($"CREATE Table {dbTables.Konf}(PerNr long)");
+                TempDB.TryExecute($"ALTER Table {dbTables.Konf} Add column Textnr long;");
+                TempDB.TryExecute($"CREATE Index T ON {dbTables.Konf} ([TextNr]);");
                 DT_RelgionTable = TempDB.OpenRecordset(dbTables.Konf, RecordsetTypeEnum.dbOpenTable);
                 flag = true;
                 //=============================
@@ -861,7 +864,7 @@ public static partial class DataModul
                     {
                         if (!DbFieldExists(tbl, fld.Name))
                         {
-                            var f = tbl.CreateField(fld.Name, fld.Typ, fld.Laenge);
+                            var f = tbl.CreateField(fld.Name, fld.Typ, fld.Length);
                             f.Required = !fld.xNull;
                             tbl.Fields.Append(f);
                         }
@@ -874,7 +877,7 @@ public static partial class DataModul
                     var tbl = Database.CreateTableDef(tbldef.Name);
                     foreach (var fld in tbldef.Fields)
                     {
-                        var f = tbl.CreateField(fld.Name, fld.Typ, fld.Laenge);
+                        var f = tbl.CreateField(fld.Name, fld.Typ, fld.Length);
                         f.Required = !fld.xNull;
                         tbl.Fields.Append(f);
                     }
@@ -930,31 +933,31 @@ public static partial class DataModul
     {
         IRecordset dB_PictureTable = DB_PictureTable;
         dB_PictureTable.Index = nameof(PictureIndex.PerKenn);
-            dB_PictureTable.Seek("=", "P", persInArb);
-            while (!dB_PictureTable.EOF
-                && !dB_PictureTable.NoMatch
-                && !(dB_PictureTable.Fields[PictureFields.ZuNr].AsInt() != persInArb))
-            {
-                dB_PictureTable.Delete();
-                dB_PictureTable.MoveNext();
-                //=================
-            }
+        dB_PictureTable.Seek("=", "P", persInArb);
+        while (!dB_PictureTable.EOF
+            && !dB_PictureTable.NoMatch
+            && !(dB_PictureTable.Fields[PictureFields.ZuNr].AsInt() != persInArb))
+        {
+            dB_PictureTable.Delete();
+            dB_PictureTable.MoveNext();
+            //=================
+        }
     }
 
     public static void Search_DeletePeson(int persInArb)
     {
         IRecordset dSB_SearchTable = DSB_SearchTable;
         dSB_SearchTable.Index = "Nummer";
-            dSB_SearchTable.Seek(">=", persInArb);
-            if (!dSB_SearchTable.NoMatch)
+        dSB_SearchTable.Seek(">=", persInArb);
+        if (!dSB_SearchTable.NoMatch)
+        {
+            if (dSB_SearchTable.Fields["Nummer"].AsInt() == persInArb)
             {
-                if (dSB_SearchTable.Fields["Nummer"].AsInt() == persInArb)
-                {
-                    dSB_SearchTable.Delete();
-                }
-                //=================
+                dSB_SearchTable.Delete();
             }
-        
+            //=================
+        }
+
     }
 
     public static void Events_DeleteAllPersVitEv(int persInArb)
@@ -1009,7 +1012,7 @@ public static partial class DataModul
                 {
                     sAn = "";
                 }
-                sCausalExt = $" {sAn}{(string.IsNullOrEmpty(sAn)?"":" ")}{cEvt.sCausal} ";
+                sCausalExt = $" {sAn}{(string.IsNullOrEmpty(sAn) ? "" : " ")}{cEvt.sCausal} ";
             }
 
             if (cEvt.iKBem > 0)
@@ -1027,7 +1030,7 @@ public static partial class DataModul
                 if (Place.ReadData(cEvt.iOrt, out var cPlace))
                 {
                     sOrt = cPlace!.sOrt;
-                    sOrt += $"{(string.IsNullOrEmpty(cPlace.sOrtsteil)?"": " ")}{cPlace.sOrtsteil}";
+                    sOrt += $"{(string.IsNullOrEmpty(cPlace.sOrtsteil) ? "" : " ")}{cPlace.sOrtsteil}";
                     sOrt = $"{(string?)cEvt.sZusatz} {sOrt}";
                 }
             }
@@ -1046,9 +1049,9 @@ public static partial class DataModul
                 cEvt.sBem[4].TrimEnd() != "" || Witness.ExistZeug(PersInArb, eEvtArt, LfNR, 10),
                 cEvt.sBem[1] != "" || cEvt.sBem[2] != "",
                 cEvt.sVChr != "0",
-                cEvt.sReg.TrimEnd() != "" );
+                cEvt.sReg.TrimEnd() != "");
 
-            return $"{text} {sDoW} {sDate} {sDate2}{sDatB_S}{sDatumText}{sCausalExt}{sDeathBem}{sPlace} {sOrt}".Replace( "  ", " ");
+            return $"{text} {sDoW} {sDate} {sDate2}{sDatB_S}{sDatumText}{sCausalExt}{sDeathBem}{sPlace} {sOrt}".Replace("  ", " ");
         }
         else
             return "";
@@ -1059,81 +1062,152 @@ public static partial class DataModul
     {
         IRecordset dT_DescendentTable = DT_DescendentTable;
         dT_DescendentTable.Index = "Pernr";
-            dT_DescendentTable.Seek("=", persInArb);
-            if (!dT_DescendentTable.NoMatch)
+        dT_DescendentTable.Seek("=", persInArb);
+        if (!dT_DescendentTable.NoMatch)
+        {
+            var M1_Iter = 1;
+            while (M1_Iter <= 99
+                && !dT_DescendentTable.EOF
+                && !(dT_DescendentTable.Fields["Pr"].AsInt() != persInArb))
             {
-                var M1_Iter = 1;
-                while (M1_Iter <= 99
-                    && !dT_DescendentTable.EOF
-                    && !(dT_DescendentTable.Fields["Pr"].AsInt() != persInArb))
-                {
-                    dT_DescendentTable.Delete();
-                    dT_DescendentTable.MoveNext();
-                    M1_Iter++;
-                }
+                dT_DescendentTable.Delete();
+                dT_DescendentTable.MoveNext();
+                M1_Iter++;
             }
-        
+        }
+
     }
 
     public static void Ancestors_DeleteAll(int persInArb)
     {
         IRecordset dT_AncesterTable = DT_AncesterTable;
         dT_AncesterTable.Index = "Pernr";
-            dT_AncesterTable.Seek("=", persInArb);
-            if (!dT_AncesterTable.NoMatch)
+        dT_AncesterTable.Seek("=", persInArb);
+        if (!dT_AncesterTable.NoMatch)
+        {
+            var M1_Iter = 1;
+            while (M1_Iter <= 99
+                && !dT_AncesterTable.EOF
+                && !(dT_AncesterTable.Fields["Pernr"].AsInt() != persInArb))
             {
-                var M1_Iter = 1;
-                while (M1_Iter <= 99
-                    && !dT_AncesterTable.EOF
-                    && !(dT_AncesterTable.Fields["Pernr"].AsInt() != persInArb))
-                {
-                    dT_AncesterTable.Delete();
-                    dT_AncesterTable.MoveNext();
-                    M1_Iter++;
-                }
+                dT_AncesterTable.Delete();
+                dT_AncesterTable.MoveNext();
+                M1_Iter++;
             }
-        
+        }
+
     }
-
-
-
-
-
-
-
 
     public static void Db_Def(IDatabase Database, Action<string> print)
     {
+        IList<IList<object>> tabTransl = [
+            [dbTables.Personen, nameof(MandDB), nameof(DB_PersonTable)],
+            [dbTables.Familie, nameof(MandDB), nameof(DB_FamilyTable)],
+            [dbTables.INamen, nameof(MandDB), nameof(DB_NameTable)],
+            [dbTables.Orte, nameof(MandDB), nameof(DB_PlaceTable)],
+            [dbTables.Ereignis, nameof(MandDB), nameof(DB_EventTable)],
+            [dbTables.BesitzTab, nameof(MandDB), nameof(DB_PropertyTable)],
+            [dbTables.Bilder, nameof(MandDB), nameof(DB_PictureTable)],
+            [dbTables.Tab1, nameof(MandDB), nameof(DB_SourceLinkTable)],
+            [dbTables.Texte, nameof(MandDB), nameof(DB_TexteTable)],
+            [dbTables.HGA, nameof(MandDB), nameof(DB_HGATable)],
+            [dbTables.Tab, nameof(MandDB), nameof(DB_LinkTable)],
+            [dbTables.Tab2, nameof(MandDB), nameof(DB_WitnessTable)],
+            [dbTables.Leer1, nameof(MandDB), nameof(DB_LeerTable)],
+            [dbTables.Repo, nameof(MandDB), nameof(DB_RepoTable)],
+            [dbTables.RepoTab, nameof(MandDB), nameof(DB_RepoTab)],
+            [dbTables.Quellen, nameof(MandDB), nameof(DB_QuTable)],
+            [dbTables.IndNam, nameof(MandDB), nameof(DB_OFBTable)],
+            [dbTables.Doppel, nameof(MandDB), nameof(DB_DoppelTable)],
+            [dbTables.GED, nameof(MandDB), nameof(DB_GedTable)],
+            [dbTables.GBE, nameof(MandDB), nameof(DB_GbeTable)],
+            [dbTables.Such, nameof(MandDB), nameof(DB_SearchTable)],
+
+            [dbTables.Nachk, nameof(TempDB), nameof(DT_DescendentTable)],
+            [dbTables.Konf, nameof(TempDB), nameof(DT_RelgionTable)],
+            [dbTables.Ahnen1, nameof(TempDB), nameof(DT_AncesterTable)],
+            [dbTables.Ahnew, nameof(TempDB), nameof(DT_KindAhnTable)],
+            [dbTables.Lingua, nameof(TempDB), "Lingua"],
+
+            [dbTables.Such, nameof(DSB), nameof(DSB_SearchTable)],
+
+            [dbTables.Sort, nameof(TempSort_DB), "DSB_SortTable"],
+            [dbTables.NamInd, nameof(TempSort_DB), "DSB_NamIdxTable"],
+            [dbTables.OrtIndex, nameof(TempSort_DB), "DSB_OrtIdxTable"],
+            [dbTables.QuellVerz, nameof(TempSort_DB), "DSB_OrtIdxTable"],
+            [dbTables.Per_Stat, nameof(TempSort_DB), "DSB_PerStatTable"],
+            [dbTables.Fam_Stat, nameof(TempSort_DB), "DSB_FamStatTable"],
+
+            [dbTables.OrtSuch, nameof(DOSB), nameof(DOSB_OrtSTable)],
+
+            [dbTables.Frauen, nameof(NB), "NB_FrauTable"],
+            [dbTables.Frauen1, nameof(NB), "NB_Frau1Table"],
+            [dbTables.Frauen2, nameof(NB), "NB_Frau2Table"],
+            [dbTables.Ahnen1, nameof(NB), "NB_Ahn1Table"],
+            [dbTables.Ahnen2, nameof(NB), "NB_Ahn2Table"],
+            [dbTables.Personen1, nameof(NB), "NB_PersonTable"],
+            [dbTables.Familie1, nameof(NB), "NB_FamilyTable"],
+            [dbTables.Bilder, nameof(NB), "NB_PictureTable"],
+            [dbTables.Orte, nameof(NB), "NB_OrtTable"],
+            [dbTables.OrtInd, nameof(NB), "NB_OrtindTable"],
+            [dbTables.QuellTemp, nameof(NB), "NB_SourceTable"],
+            [dbTables.Zeugen, nameof(NB), nameof(NB_WitnessTable)],
+            [dbTables.Zeugen2, nameof(NB), nameof(NB_Witness2Table)],
+            [dbTables.SperrPer, nameof(NB), nameof(NB_SperrPersTable)],
+            [dbTables.SperrFam, nameof(NB), "NB_SperrFamsTable"],
+            [dbTables.Bem, nameof(NB), "NB_BemTable"],
+            [dbTables.Sur, nameof(NB), "NB_SurTable"],
+            [dbTables.Lag, nameof(NB), "NB_LagTable"],
+            [dbTables.Texte, nameof(NB), "NB_TexteTable"],
+            [dbTables.TempZeug, nameof(NB), nameof(NB_TZeutable)],
+            [dbTables.TempVerk, nameof(NB), nameof(NB_TVerkTable)],
+            [dbTables.Temp, nameof(NB), nameof(NB_NumTable)],
+
+            [dbTables.Frauen, "WB", "WB_FrauTable"],
+        ];
+
         print("public static stTableDef[] Def = {");
 
         foreach (ITableDef tbl in Database.TableDefs())
             if (!tbl.Name?.StartsWith("MSys") ?? false)
             {
-                print($"\tnew() {{ Name = \"{tbl.Name}\",");
-                print("\t  Fields = new stFieldDef[]{");
+                var sDesc = tbl.Name;
+                if (Enum.TryParse<dbTables>(tbl.Name, true, out var result))
+                {
+                    var t = tabTransl.FirstOrDefault(s => s[0].AsEnum<dbTables>() == result);
+                    print($"\tnew() {{ Name = nameof({nameof(dbTables)}.{result}),");
+                    if (t != null)
+                        print($"\t\tIntName = \"{sDesc = t[2].AsString().Right(-3).Replace("Table", "")} - Table\", //from {t[1]} Table: {t[2]}");
+                }
+                else
+                    print($"\tnew() {{ Name = \"{tbl.Name}\",");
+
+
+                print("\t  Fields = [");
                 //             new("Ortnr",new[] { "PerNr" }),
                 //             new("Ortsu",new[] { "Name" }),
 
-                foreach (FieldDef fld in tbl.Fields)
+                foreach (IFieldDef fld in tbl.Fields)
                 {
-                    print($"\t\tnew(\"{fld.Name}\", TypeCode.{fld.Type}) " +
-                        $"{(fld.Type == TypeCode.String ? $"{{ Laenge = {fld.Size} }}" : "")}" +
+                    print($"\t\tnew({GetFldName(sDesc, fld.Name)}, TypeCode.{fld.Type}) " +
+                        $"{(fld.Type == TypeCode.String && fld.Size > 0 ? $"{{ Length = {fld.Size} }}" : "")}" +
                         $"{(fld.Required ? $"{{ xNull = true }}" : "")}, ");
                 }
-                print("\t\t},");
+                print("\t\t],");
                 try
                 {
                     if (tbl.Indexes.Count > 0)
                     {
-                        print("\t  Indexes = new stIndex[]{");
-                        foreach (IndexDef idx in tbl.Indexes)
+                        print("\t  Indexes = [");
+                        foreach (IIndexDef idx in tbl.Indexes)
                         {
                             var fields = idx.Fields;
-                            print($"\t\tnew(\"{idx.Name}\", new[] {{ {string.Join(", ", fields)} }} )"
-                                + $"{(idx.Unique ? "{ Unique = true }," : "")}"
-                                + $"{(idx.IgnoreNulls ? "{ IgnoreNull = true }," : "")}");
+                            print($"\t\tnew({sDesc}Index.{idx.Name}, [ {string.Join(", " , fields.Select(f=> GetFldName(sDesc, f))) } ])"
+                                + $"{(idx.Unique ? "{ Unique = true }" : "")}"
+                                + $"{(idx.IgnoreNulls ? "{ IgnoreNull = true }" : "")}"
+                                + ",");
                         }
-                        print("\t\t}");
+                        print("\t\t]");
                     }
                 }
                 catch (Exception)
@@ -1142,6 +1216,8 @@ public static partial class DataModul
                 print("\t\t},");
             }
 
+        static string? GetFldName(string sDesc, string fld)
+            => $"{sDesc}Fields.{(int.TryParse(fld, out _) ? "_" : "")}{fld}";
     }
 
     public static void DataClose()
@@ -1316,7 +1392,7 @@ public static partial class DataModul
     #endregion
 
     #region SourceLink Methods
-   
+
     public static void TTable_RemovePerson(int persInArb, int Param)
     {
         var dB_TTable = DB_SourceLinkTable;
@@ -1423,8 +1499,8 @@ public static partial class DataModul
         while (!dB_TTable.EOF
             && !dB_TTable.NoMatch
             && !(
-                dB_TTable.Fields[0].AsInt() != 3 
-                ||dB_TTable.Fields[1].AsInt() > famInArb))
+                dB_TTable.Fields[0].AsInt() != 3
+                || dB_TTable.Fields[1].AsInt() > famInArb))
         {
             if (dB_TTable.Fields["Art"].AsEnum<EEventArt>() == eArtOld)
             {
@@ -1699,7 +1775,7 @@ public static partial class DataModul
         }
     }
 
-    public static int Person_NewPerson(Action frmPerson_Clear,short Schalt)
+    public static int Person_NewPerson(Action frmPerson_Clear, short Schalt)
     {
         IRecordset dB_PersonTable = DB_PersonTable;
         dB_PersonTable.Index = nameof(PersonIndex.PerNr);
@@ -1737,7 +1813,7 @@ public static partial class DataModul
             {
                 dB_PersonTable.Index = nameof(PersonIndex.PerNr);
                 dB_PersonTable.MoveLast();
-                persInArb = dB_PersonTable.Fields[PersonFields.PersNr].AsInt()+ 1;
+                persInArb = dB_PersonTable.Fields[PersonFields.PersNr].AsInt() + 1;
             }
             else
             {
@@ -1815,7 +1891,14 @@ public static partial class DataModul
         dB_LeerTable.Update();
     }
 
+    public static bool NB_Witness2_Table_ExistsPer(int iPersNr)
+    {
+        DataModul.NB_Witness2Table.Index = "Per";
+        DataModul.NB_Witness2Table.Seek("=", iPersNr);
+        return !DataModul.NB_Witness2Table.NoMatch;
+    }
+
     #endregion
-    
+
 
 }

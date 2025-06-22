@@ -228,7 +228,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
               if (p.PropertyType == typeof(IList<string>))
                 ((IList<string>)p.GetValue(this)!).Clear();
             else if (p.PropertyType == typeof(string[]))
-               new[] {"","","","" }.IntoString( ((string[])p.GetValue(this)));
+               new[] {"","","","" }.IntoString( (string[])p.GetValue(this));
 
 
         }
