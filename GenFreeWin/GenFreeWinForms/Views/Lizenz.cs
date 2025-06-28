@@ -67,7 +67,7 @@ public partial class Lizenz : Form
                 }
                 break;
         }
-        eventArgs.KeyChar = (char)(num);
+        eventArgs.KeyChar = (char)num;
         if (num == 0)
         {
             eventArgs.Handled = true;

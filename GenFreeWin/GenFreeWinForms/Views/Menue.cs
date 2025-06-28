@@ -198,7 +198,7 @@ public partial class Menue : Form, IInteraction
 
     public DialogResult MsgBox(string prompt, string title = "", MessageBoxButtons mb = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
     {
-        return MsgBox(prompt, title, mb, icon);
+        return System.Windows.Forms.MessageBox.Show(prompt, title, mb, icon);
     }
 
     public int Shell(string v)
