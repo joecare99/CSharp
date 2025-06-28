@@ -86,11 +86,21 @@ public static class DBHelper
         return false;
     }
 
-    public static void TryExecute(this IDatabase db, string sql, object? val = null)
+    public static void TryExecute(this IDatabase db, string sql, object? val)
     {
         try
         {
             db.Execute(sql, val);
+        }
+        catch
+        {
+        }
+    }
+    public static void TryExecute(this IDatabase db, string sql)
+    {
+        try
+        {
+            db.Execute(sql);
         }
         catch
         {
