@@ -151,7 +151,7 @@ namespace GenFree.Data.Tests
                 _odo.Received(0).Close();
                 _ods.Received(0).Close();
             }
-            DataModul.DAODBEngine_definst.Received(4).OpenDatabase(Arg.Any<Enum>(), v2: false, v3: true, v4: Arg.Any<string>());
+            DataModul.DAODBEngine_definst.Received(4).OpenDatabase(Arg.Any<string>(), v2: false, v3: true, v4: Arg.Any<string>());
             Assert.IsNotNull(DataModul.MandDB);
             DataModul.MandDB.Received(0).OpenRecordset(Arg.Any<Enum>(), RecordsetTypeEnum.dbOpenTable);
             Assert.IsNotNull(DataModul.TempDB);
