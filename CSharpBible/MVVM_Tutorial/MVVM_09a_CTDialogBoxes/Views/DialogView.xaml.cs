@@ -30,7 +30,7 @@ public partial class DialogView : Page
         vm.DoOpenDialog = (Name, email) =>
         {
             IDialogWindow dialog = NewDialogWindow();
-            var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
+            var dialogViewModel = (DialogWindowViewModel)dialog.DataContext;
             (dialogViewModel.Name, dialogViewModel.Email) = (Name, email);
             if (dialog.ShowDialog() == true)
             {

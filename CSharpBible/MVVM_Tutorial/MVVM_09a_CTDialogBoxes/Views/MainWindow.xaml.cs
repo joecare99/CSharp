@@ -51,7 +51,7 @@ public partial class MainWindow : Window
     private (string name, string email) DoOpenDialog(string Name, string email)
     {
         IDialogWindow dialog = NewDialogWindow();
-        var dialogViewModel = ((DialogWindowViewModel)dialog.DataContext);
+        var dialogViewModel = (DialogWindowViewModel)dialog.DataContext;
         (dialogViewModel.Name, dialogViewModel.Email) = (Name, email);
         if (dialog.ShowDialog() == true)
         {
