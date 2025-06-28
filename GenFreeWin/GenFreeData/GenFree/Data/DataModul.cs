@@ -8,7 +8,6 @@ using GenFree.Interfaces.Sys;
 using GenFree.Model;
 using GenFree.Sys;
 using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.Devices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -85,13 +84,12 @@ public static partial class DataModul
     public static IRecordset DT_RelgionTable;
     public static IRecordset DT_DescendentTable;
     public static IRecordset DT_KindAhnTable;
-    public static IRecordset DT_SperrPerTable { get; set; }
-    public static IRecordset DT_SperrFamTable { get; set; }
     public static IRecordset DT_SperrTable { get; set; }
     public static IRecordset DT_OTTable { get; set; }
 
     public static IRecordset DOSB_OrtSTable;
-    public static IRecordset DSB_SearchTable;
+    public static IRecordset DSB_SearchTable { get; set; }
+
     public static IRecordset DSB_SortTable;
     public static IRecordset DSB_PerStatTable { get; set; }
     public static IRecordset DSB_FamStatTable { get; set; }
@@ -99,7 +97,6 @@ public static partial class DataModul
     public static IRecordset DSB_NamIdxTable { get; set; }
     public static IRecordset DSB_QuellIdxTable { get; set; }
 
-    public static IRecordset Osy;
     // NB-DB
     public static IRecordset? NB_AhnTable;
     public static IRecordset? NB_Ahn1Table;
@@ -124,6 +121,7 @@ public static partial class DataModul
     public static IRecordset? NB_TZeutable { get; set; }
     public static IRecordset? NB_TVerkTable { get; set; }
     public static IRecordset? NB_NumTable { get; set; }
+    public static IRecordset? NB_DgbTable { get; set; }
 
 
     //WB-DB
@@ -401,7 +399,7 @@ public static partial class DataModul
             foreach (var cLink in Link.ReadAllFams(persInArb, ELinkKennz.lkGodparent))
             {
                 NB_WitnessTable.AddNew();
-                NB_WitnessTable.Fields["Person"].Value = cLink.iPersNr;
+                NB_WitnessTable.Fields[IndexFields.Person].Value = cLink.iPersNr;
                 NB_WitnessTable.Update();
                 b++;
             }
@@ -593,7 +591,7 @@ public static partial class DataModul
                 if (xAR ^ (cWitness.eArt <= EEventArt.eA_499))
                 {
                     NB_WitnessTable.AddNew();
-                    NB_WitnessTable.Fields["Person"].Value = cWitness.iPers;
+                    NB_WitnessTable.Fields[IndexFields.Person].Value = cWitness.iPers;
                     NB_WitnessTable.Update();
                 }
                 num5++;
@@ -1121,7 +1119,7 @@ public static partial class DataModul
             [dbTables.Doppel, nameof(MandDB), nameof(DB_DoppelTable)],
             [dbTables.GED, nameof(MandDB), nameof(DB_GedTable)],
             [dbTables.GBE, nameof(MandDB), nameof(DB_GbeTable)],
-            [dbTables.Such, nameof(MandDB), nameof(DB_SearchTable)],
+            [dbTables.Such, nameof(MandDB), "DB_SearchTable"], //Obsolete, use DSB_SearchTable
 
             [dbTables.Nachk, nameof(TempDB), nameof(DT_DescendentTable)],
             [dbTables.Konf, nameof(TempDB), nameof(DT_RelgionTable)],
@@ -1131,16 +1129,16 @@ public static partial class DataModul
 
             [dbTables.Such, nameof(DSB), nameof(DSB_SearchTable)],
 
-            [dbTables.Sort, nameof(TempSort_DB), "DSB_SortTable"],
-            [dbTables.NamInd, nameof(TempSort_DB), "DSB_NamIdxTable"],
-            [dbTables.OrtIndex, nameof(TempSort_DB), "DSB_OrtIdxTable"],
-            [dbTables.QuellVerz, nameof(TempSort_DB), "DSB_OrtIdxTable"],
-            [dbTables.Per_Stat, nameof(TempSort_DB), "DSB_PerStatTable"],
-            [dbTables.Fam_Stat, nameof(TempSort_DB), "DSB_FamStatTable"],
+            [dbTables.Sort, nameof(TempSort_DB), nameof(DSB_SortTable)],
+            [dbTables.NamInd, nameof(TempSort_DB), nameof(DSB_NamIdxTable)],
+            [dbTables.OrtIndex, nameof(TempSort_DB), nameof(DSB_OrtIdxTable)],
+            [dbTables.QuellVerz, nameof(TempSort_DB), nameof(DSB_OrtIdxTable)],
+            [dbTables.Per_Stat, nameof(TempSort_DB), nameof(DSB_PerStatTable)],
+            [dbTables.Fam_Stat, nameof(TempSort_DB), nameof(DSB_FamStatTable)],
 
             [dbTables.OrtSuch, nameof(DOSB), nameof(DOSB_OrtSTable)],
 
-            [dbTables.Frauen, nameof(NB), "NB_FrauTable"],
+            [dbTables.Frauen, nameof(NB), nameof(NB_FrauTable)],
             [dbTables.Frauen1, nameof(NB), "NB_Frau1Table"],
             [dbTables.Frauen2, nameof(NB), "NB_Frau2Table"],
             [dbTables.Ahnen1, nameof(NB), "NB_Ahn1Table"],
@@ -1402,10 +1400,8 @@ public static partial class DataModul
         {
             while (!dB_TTable.EOF
                 && !dB_TTable.NoMatch
-                && !
-                    (
-                        (dB_TTable.Fields["1"].Value.AsInt() != Param) ||
-                (dB_TTable.Fields["2"].Value.AsInt() != persInArb)))
+                && dB_TTable.Fields[SourceLinkFields._1].AsInt() == Param 
+                && dB_TTable.Fields[SourceLinkFields._2].AsInt() == persInArb)
             {
                 dB_TTable.Delete();
                 dB_TTable.MoveNext();
@@ -1417,12 +1413,12 @@ public static partial class DataModul
     public static void SourceLink_AppendRaw(int iLinkType, int iLink, int num15, EEventArt eArt, int iLfNr)
     {
         DB_SourceLinkTable.AddNew();
-        DB_SourceLinkTable.Fields[SourceLinkFields._1.AsFld()].Value = iLinkType;
-        DB_SourceLinkTable.Fields[SourceLinkFields._2.AsFld()].Value = iLink;
-        DB_SourceLinkTable.Fields[SourceLinkFields._3.AsFld()].Value = num15;
-        DB_SourceLinkTable.Fields[SourceLinkFields._4.AsFld()].Value = "";
-        DB_SourceLinkTable.Fields[SourceLinkFields.Art.AsFld()].Value = eArt;
-        DB_SourceLinkTable.Fields[SourceLinkFields.LfNr.AsFld()].Value = iLfNr;
+        DB_SourceLinkTable.Fields[SourceLinkFields._1].Value = iLinkType;
+        DB_SourceLinkTable.Fields[SourceLinkFields._2].Value = iLink;
+        DB_SourceLinkTable.Fields[SourceLinkFields._3].Value = num15;
+        DB_SourceLinkTable.Fields[SourceLinkFields._4].Value = "";
+        DB_SourceLinkTable.Fields[SourceLinkFields.Art].Value = eArt;
+        DB_SourceLinkTable.Fields[SourceLinkFields.LfNr].Value = iLfNr;
         DB_SourceLinkTable.Update();
     }
 
@@ -1785,7 +1781,7 @@ public static partial class DataModul
         {
             frmPerson_Clear?.Invoke();
             DB_WDTable.MoveFirst();
-            int iWDTable_Nr = DB_WDTable.Fields["NR"].AsInt();
+            int iWDTable_Nr = DB_WDTable.Fields[WDFields.NR].AsInt();
 
             if (iWDTable_Nr == 1)
             {

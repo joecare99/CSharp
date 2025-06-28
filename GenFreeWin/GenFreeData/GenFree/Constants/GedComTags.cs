@@ -30,6 +30,7 @@
         public const string cGed__ORT = "_ORT";
         public const string cGed__PEI = "_PEI";
         public const string cGed__SUSA = "_SUSA";
+        public const string cGed__STRASSE = "_STRASSE";
         public const string cGed__TIT = "_TIT";
         public const string cGed__TXT = "_TXT";
         public const string cGed__UID = "_UID";

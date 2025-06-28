@@ -36,7 +36,7 @@ namespace GenFree.Model
         {
             var NB_PersonTable = _db_Table;
             NB_PersonTable.AddNew();
-            NB_PersonTable.Fields["Person"].Value = persInArb;
+            NB_PersonTable.Fields[IndexFields.Person].Value = persInArb;
             NB_PersonTable.Update();
             if (xAppenWitt)
             {
