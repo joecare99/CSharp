@@ -94,6 +94,7 @@ public interface IMenu1ViewModel : INotifyPropertyChanged
     IInteraction Interaction { get; set; }
     public Action<Enum> SetWindowState { set; }
     public Func<Enum> GetWindowState { set; }
+
     Action<float> Grossaend { set; }
     IFraStatisticsViewModel Statistics { get; }
     float FontSize { get; }
