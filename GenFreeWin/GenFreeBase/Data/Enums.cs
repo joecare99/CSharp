@@ -484,6 +484,14 @@ public enum ReligionIndex
     PerNR
 }
 
+public enum IndexFields {
+    Person,
+    Fam,
+    SatzNr
+}
+public enum SperrIdxFields {
+    Nr
+}
 
 public enum ENameKennz : int
 {

@@ -1,4 +1,5 @@
 ﻿using BaseLib.Helper;
+using System;
 
 namespace GenFree.Data.Models;
 
@@ -37,8 +38,6 @@ public record struct TGedLine(int iLvl = -1, string sTag = "", string? link = nu
     public void SetLvl(int iLvl) => this.iLvl= iLvl;
     public void SetData(string data) => sData= data;
 
-    
-
     public readonly (int,string) tLvlTag => (iLvl,sTag);
 
     public static implicit operator (int iLvl, string? link, string sTag, string? sData)(TGedLine value)
@@ -72,4 +71,10 @@ public record struct TGedLine(int iLvl = -1, string sTag = "", string? link = nu
     }
 
     public int Length => ToString().Length;
+
+    [Obsolete ("use tLvlTag if possible")]
+    public string Left(int length)
+    {
+        return ToString().Left(length);
+    }
 }

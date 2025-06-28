@@ -16,10 +16,16 @@ namespace GenFree.Interfaces.Model
         void FamSonstles(int FamInArb);
         void Individuum(IPersonData cPerson);
         void Kopf();
+        void Namensteil(int PersInArb);
+        void OpenTempDB(string sFileName);
+        string ortles(int Ortnr);
+        int PeekDB(string dateiName);
         void Personenpaten(int PersInArb, bool xGodChildRelSkip);
         bool Person_DatSchutz(int M1_PersInArb, int[] datschu);
+        void Repoausgeb();
         void Sonstles(int PersInArb);
         void Sperrdaterst(int iPersInArb, int iFamInArb);
+        void TextTeilen(string UbgT, string UbgT4, string Kennung);
         void Wandel();
         void WriteAnDatum(string _Cr, string CHa);
         void WriteDate(string _Cr, int iLvl);

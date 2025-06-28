@@ -113,7 +113,6 @@ public interface IModul1
     IList<string> DTxt { get; set; }
 
     // Database
-    IRecordset DataModul.NB_DgbTable { get; set; }
     IRecordset DT_AhnTable { get; set; }
 
     string AppName { get; }
@@ -336,10 +335,8 @@ public interface IModul1
     void Sperrfehler();
     void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList ocItems);
     int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0, short ruf = 0);
-    void TextTeilen(string UbgT, string UbgT4, string Kennung);
     string Umlaute4(string Fld, int uml);
     void Vornam_Namles(int personNr);
-    string Wortlesen(int Satz, string Kennz);
 
     void Zeugsu(EEventArt Art, short LfNR, short Listart, long Ahne);
     //--
@@ -377,4 +374,5 @@ public interface IModul1
     void DataModul_Texte_ListDistLeitname(ETextKennz eTKennz, string UbgT, IList items);
     void Datles3(short listart, long v, object value, ref bool neb);
     void Datles10(ref short listart, bool m1_Ki);
+    int System_TestForm_Height();
 }

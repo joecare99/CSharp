@@ -1,6 +1,7 @@
 ﻿using GenFree.Data;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Sys;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -31,7 +32,7 @@ public interface IEinles
     short LaufNr { get; set; }
     Encoding? Um { get; set; }
 
-    void Datsatz(EEventArt Art);
+    void Datsatz(EEventArt Art, Action<IEventData> finalize = null);
     void NeuOrteinlesen(EEventArt Art, int Arryzaehl, string[] mararray);
     void Orteinlesen(EEventArt Art, StreamReader Sr);
     void Patschr(ELinkKennz eLKennz, int iFamInArb, int iPersInArb, int iNeuer);
