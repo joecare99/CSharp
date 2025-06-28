@@ -99,7 +99,7 @@ namespace WinAhnenCls.Model.HejInd
         public bool ReadFromStream(StreamReader sr)
         {
             var _result = true;
-            if (sr.EndOfStream || (char)(sr.Peek()) == 'm') // 'mrt
+            if (sr.EndOfStream || (char)sr.Peek() == 'm') // 'mrt
                 return false;
             var _line = sr.ReadLine().Split('');
             for (int i = 0; i < _line.Length; i++)
@@ -115,7 +115,7 @@ namespace WinAhnenCls.Model.HejInd
 
         public IEnumerable<IGenPerson> Read(StreamReader sr)
         {
-            while (!sr.EndOfStream && (char)(sr.Peek()) != 'm') // 'mrt
+            while (!sr.EndOfStream && (char)sr.Peek() != 'm') // 'mrt
             {
                 var _line = sr.ReadLine().Split('');
                 for (int i = 0; i < _line.Length; i++)
