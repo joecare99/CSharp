@@ -79,7 +79,7 @@ namespace BaseGenClasses.Model.Tests
             object? Exec(Action action) { action(); return null; }
             if (ex != null)
             {
-                _ = (ex) switch
+                _ = ex switch
                 {
                     ArgumentException argEx => Exec(() => Assert.ThrowsException<ArgumentException>(() => _genealogy.GetEntity(param?.ToList()))),
                     _ => Exec(() => Assert.Fail("Unknown exception"))
