@@ -7,7 +7,7 @@ internal class Program
     private static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        DataModul.DAODBEngine_definst = new GenFree.DB.DBImplementOleDB.DBEngine();
+        DataModul.DAODBEngine_definst = new GenFree.Data.DB.DBImplementOleDB.DBEngine();
         DataModul.DataOpen("C:\\Gen_FreeWin\\Binau\\Gen_Plusdaten.mdb");
         DataModul.OpenNBDatabase("C:\\Gen_FreeWin\\Init\\GedAus.mdb");
         DataModul.Db_Def(DataModul.MandDB, Console.WriteLine);
