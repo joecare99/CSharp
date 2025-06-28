@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GenFree.Interfaces.VB;
 
-namespace GenFree;
+namespace GenFree.Models.VB;
 
 public class CStrings : IStrings
 {

@@ -42,7 +42,7 @@ public class ApplUserTexts : IApplUserTexts
 
     public bool IsReadOnly => false;
 
-    public void Add(string item) => throw new System.NotImplementedException();
+    public void Add(string item) =>_texte.Add(item);
 
     public void Clear() => _texte.Clear();
 
