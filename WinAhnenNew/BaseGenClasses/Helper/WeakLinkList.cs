@@ -70,7 +70,7 @@ namespace BaseGenClasses.Helper
         /// </summary>
         /// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
         /// <returns><see langword="true" /> if <paramref name="item" /> is found in the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, <see langword="false" />.</returns>
-        public bool Contains(T? item) => _list.Any(wr => (wr?.TryGetTarget(out T? target) ?? false ? target.Equals(item) : false ));
+        public bool Contains(T? item) => _list.Any(wr => wr?.TryGetTarget(out T? target) ?? false ? target.Equals(item) : false );
         /// <summary>
         /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
         /// </summary>
