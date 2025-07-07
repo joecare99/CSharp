@@ -146,19 +146,19 @@ namespace Gen_FreeWin.Views
 
         #endregion
 
-        [ApplTextBinding(nameof(IFraPersImpQuerryViewModel.IText))]
+        [ApplTextBinding(nameof(IFraPersImpQueryViewModel.IText))]
         public System.Windows.Forms.GroupBox frmImport;
-        [CommandBinding(nameof(IFraPersImpQuerryViewModel.DeleteQuietCommand))]
-        [ApplTextBinding(nameof(IFraPersImpQuerryViewModel.IDelete))]
+        [CommandBinding(nameof(IFraPersImpQueryViewModel.DeleteQuietCommand))]
+        [ApplTextBinding(nameof(IFraPersImpQueryViewModel.IDelete))]
         internal System.Windows.Forms.Button btnDeleteQuiet;
-        [CommandBinding(nameof(IFraPersImpQuerryViewModel.CancelCommand))]
-        [ApplTextBinding(nameof(IFraPersImpQuerryViewModel.ICancel))]
+        [CommandBinding(nameof(IFraPersImpQueryViewModel.CancelCommand))]
+        [ApplTextBinding(nameof(IFraPersImpQueryViewModel.ICancel))]
         public System.Windows.Forms.Button btnCancel3;
-        [CommandBinding(nameof(IFraPersImpQuerryViewModel.ReenterCommand))]
-        [ApplTextBinding(nameof(IFraPersImpQuerryViewModel.IReenter))]
+        [CommandBinding(nameof(IFraPersImpQueryViewModel.ReenterCommand))]
+        [ApplTextBinding(nameof(IFraPersImpQueryViewModel.IReenter))]
         public System.Windows.Forms.Button btnReenter;
-        [CommandBinding(nameof(IFraPersImpQuerryViewModel.LoadFromFileCommand))]
-        [ApplTextBinding(nameof(IFraPersImpQuerryViewModel.ILoadFromFile))]
+        [CommandBinding(nameof(IFraPersImpQueryViewModel.LoadFromFileCommand))]
+        [ApplTextBinding(nameof(IFraPersImpQueryViewModel.ILoadFromFile))]
         public System.Windows.Forms.Button btnLoadFromFile;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }

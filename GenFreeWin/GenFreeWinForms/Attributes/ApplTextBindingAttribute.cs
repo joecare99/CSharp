@@ -30,7 +30,7 @@ public class ApplTextBindingAttribute(string cmdName) : Attribute
     {
         if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType==typeof(EUserText) )
         {
-            field.Text = strings[(bool)pi.GetValue(viewModel)!];
+            field.Text = strings[pi.GetValue(viewModel)!];
             if (viewModel is INotifyPropertyChanged npc)
                 npc.PropertyChanged += (s, e) => { if (e.PropertyName == PropertyName) field.Text = strings[s!.GetType().GetProperty(e.PropertyName)?.GetValue(s)!]; };
         }

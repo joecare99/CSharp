@@ -14,9 +14,9 @@ namespace Gen_FreeWin.Views
     public partial class FraPersImpQuerry : UserControl
     {
         private readonly IApplUserTexts _strings;
-        private readonly IFraPersImpQuerryViewModel _viewModel;
+        private readonly IFraPersImpQueryViewModel _viewModel;
 
-        public FraPersImpQuerry(IFraPersImpQuerryViewModel viewModel, IApplUserTexts strings)
+        public FraPersImpQuerry(IFraPersImpQueryViewModel viewModel, IApplUserTexts strings)
         {
             _strings = strings;
             _viewModel = viewModel;
