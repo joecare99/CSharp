@@ -41,7 +41,7 @@ namespace GenFreeWin2
                 .AddTransient<IFraStatisticsViewModel, FraStatisticsViewModel>()
                 .AddTransient<IMainFormViewModel,MainFormViewModel>()
                 .AddTransient<ILizenzViewModel,LizenzViewModel>()
-                .AddTransient<IFraPersImpQuerryViewModel, FraPersImpQuerryViewModel>()
+                .AddTransient<IFraPersImpQueryViewModel, FraPersImpQuerryViewModel>()
                 .AddTransient<IPersonenViewModel, PersonenViewModel>()
                 .AddTransient<IShowDlgMsg,ShowDlgMsg>()
                 .AddTransient<IShowFrmMsg,ShowFrmMsg>()
