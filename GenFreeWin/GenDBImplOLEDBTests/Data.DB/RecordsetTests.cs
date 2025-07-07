@@ -146,13 +146,24 @@ public class RecordsetTests
     [TestMethod()]
     public void DeleteTest()
     {
-        Assert.Fail();
+        TestRS.MoveFirst();
+        TestRS.Delete();
+        
+        Assert.AreEqual(1, TestRS.RecordCount);
+        TestRS.MoveFirst();
+        Assert.AreEqual("Another Test Name", TestRS.Fields["Name"].Value);
+        TestRS.Close();
+        var TestRS2 = database.OpenRecordset("TestTable", RecordsetTypeEnum.dbOpenTable);
+        Assert.AreEqual(1, TestRS2.RecordCount);
+        TestRS2.Close();
     }
 
     [TestMethod()]
     public void MoveLastTest()
     {
-        Assert.Fail();
+        TestRS.MoveLast();
+        Assert.AreEqual("Another Test Name", TestRS.Fields["Name"].Value);
+        TestRS.Close();
     }
 
     [TestMethod()]
@@ -164,7 +175,9 @@ public class RecordsetTests
     [TestMethod()]
     public void MoveFirstTest()
     {
-        Assert.Fail();
+        TestRS.MoveFirst();
+        Assert.AreEqual("Test Name", TestRS.Fields["Name"].Value);
+        TestRS.Close();
     }
 
     [TestMethod()]
