@@ -9,7 +9,7 @@ namespace GenFree.ViewModels.Interfaces;
 
 public interface IPersonenViewModel : INotifyPropertyChanged
 {
-    IFraPersImpQuerryViewModel FraPersImpQuerryViewModel { get; }
+    IFraPersImpQueryViewModel FraPersImpQuerryViewModel { get; }
     IEventShowEditViewModel BirthEVM { get; }
     IEventShowEditViewModel BaptismEVM { get; }
     IEventShowEditViewModel DeathEVM { get; }
