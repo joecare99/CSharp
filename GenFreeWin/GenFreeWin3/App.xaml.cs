@@ -35,7 +35,7 @@ namespace GenFreeWpf
             .AddTransient<IFraStatisticsViewModel, FraStatisticsViewModel>()
             .AddTransient<IAdresseViewModel, GenFreeWin.ViewModels.AdresseViewModel>()
             .AddTransient<ILizenzViewModel, GenFreeWin.ViewModels.LizenzViewModel>()
-            .AddTransient<IFraPersImpQuerryViewModel, GenFreeWin.ViewModels.FraPersImpQuerryViewModel>()
+            .AddTransient<IFraPersImpQueryViewModel, GenFreeWin.ViewModels.FraPersImpQuerryViewModel>()
             .AddTransient<IPersonenViewModel, GenFreeWin.ViewModels.PersonenViewModel>()
               ;
 
