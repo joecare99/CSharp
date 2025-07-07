@@ -10,7 +10,7 @@ namespace GenFreeWin.ViewModels;
 
 public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 {
-    public IFraPersImpQuerryViewModel FraPersImpQuerryViewModel => throw new NotImplementedException();
+    public IFraPersImpQueryViewModel FraPersImpQuerryViewModel => throw new NotImplementedException();
 
     public IEventShowEditViewModel BirthEVM => throw new NotImplementedException();
 
