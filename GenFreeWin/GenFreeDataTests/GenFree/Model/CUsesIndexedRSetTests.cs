@@ -7,7 +7,7 @@ using BaseLib.Helper;
 using BaseLib.Interfaces;
 using System.Linq;
 
-namespace GenFree.Model.Tests;
+namespace GenFree.Models.Tests;
 
 public enum TestIndex
 {

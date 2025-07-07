@@ -2,7 +2,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GenFree.Data;
 using GenFree.Interfaces.DB;
-using GenFree.Model;
+using GenFree.Models;
 using NSubstitute;
 using BaseLib.Interfaces;
 using BaseLib.Helper;

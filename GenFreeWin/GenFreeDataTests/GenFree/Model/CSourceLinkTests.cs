@@ -9,7 +9,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Data;
 
-namespace GenFree.Model.Tests
+namespace GenFree.Models.Tests
 {
     [TestClass()]
     public class CSourceLinkTests

@@ -1,4 +1,4 @@
-﻿using GenFree.Model;
+﻿using GenFree.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GenFree.Interfaces.DB;
 using NSubstitute;
@@ -7,7 +7,7 @@ using GenFree.Interfaces.Data;
 using BaseLib.Interfaces;
 using System;
 
-namespace GenFree.Model.Tests;
+namespace GenFree.Models.Tests;
 
 [TestClass()]
 public class CWB_FrauTests

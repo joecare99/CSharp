@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace GenFree.Model.Data.Tests;
+namespace GenFree.Models.Data.Tests;
 
 [TestClass()]
 public class CDataTests
