@@ -13,4 +13,8 @@ public class CVBInformation : IVBInformation
                 Information.Err().Source, 
                 (int v) => { Information.Err().Raise(v); });
     }
+
+    public bool IsDBNull(object v) 
+        => Information.IsDBNull(v);
+
 }

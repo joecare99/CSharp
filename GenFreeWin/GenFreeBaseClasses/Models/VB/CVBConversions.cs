@@ -19,6 +19,11 @@ public class CVBConversions : IVBConversions
 
     public bool ToBoolean(object v) => v.AsBool();
 
+    public DateTime ToDate(string datum2) =>
+        // Konvertiert einen String in ein DateTime-Objekt.
+        // In VB.NET wird dies oft mit CDate gemacht, hier verwenden wir DateTime.Parse.
+        datum2.AsDate();
+
     public double ToDouble(object v) => v.AsDouble();
 
     public int ToInteger(object v) => v.AsInt();
