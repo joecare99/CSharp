@@ -175,6 +175,39 @@ public enum PictureIndex
     PerKen2,
     PerKenn
 }
+public enum GBEFields
+{
+    Nr,
+    Akte,
+    Jahr,
+    Name,
+    Geb,
+    Erb,
+    Abg,
+}
+public enum GBEIndex
+{
+    Nr,
+    AkteJa,
+    Akte
+}
+public enum HGAFields
+{
+    Nr,
+    Akte,
+    Kirchspiel,
+    Beschr,
+    Flur,
+    Parzelle,
+    Hof,
+    Brandkasse,
+    Bem,
+}
+public enum HGAIndex
+{
+    Nr,
+    Akte
+}
 public enum NameFields
 {
     PersNr,
@@ -266,18 +299,39 @@ public enum AhnenFields
 
 public enum QuFields
 {
+    /// <summary>
+    /// The Number of the source
+    /// </summary>
     _1,
+    /// <summary>
+    /// The Title of the source
+    /// </summary>
     _2,
     _3,
-    _4, 
+    _4,
+    /// <summary>
+    /// The Author of the source
+    /// </summary>
     _5,
     _6,
+    /// <summary>
+    /// The Publication date of the source
+    /// </summary>
     _7,
+    /// <summary>
+    /// The Place of the source
+    /// </summary>
     _8,
     _9,
     _10,
     _11,
+    /// <summary>
+    /// The Reference ID of the source
+    /// </summary>
     _12,
+    /// <summary>
+    /// Additional information or comments about the source
+    /// </summary>
     _13
 }
 public enum QuIndex
@@ -441,6 +495,16 @@ public enum RepoIndex
     Nr
 }
 
+public enum RepoTabFields {
+    Quelle,
+    Repo,
+    Repoalt
+}
+
+public enum WDFields
+{
+    Nr
+}
 public enum NB_Frau1Fields
 {
     Nr,

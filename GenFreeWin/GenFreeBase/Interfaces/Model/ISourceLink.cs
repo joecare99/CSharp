@@ -11,6 +11,13 @@ namespace GenFree.Interfaces.Model
         IHasRSIndex1<SourceLinkIndex, SourceLinkFields>
     {
         bool Exists(int v, int famInArb, EEventArt eArt, short lfNR=0);
+        /// <summary>
+        /// Exists the entity.
+        /// </summary>
+        /// <param name="v">The v.</param>
+        /// <param name="iFamInArb">The i fam in arb.</param>
+        /// <returns><c>true</c> if the entity exists, <c>false</c> otherwise.</returns>
+        bool ExistsEnt(short v, int iFamInArb);
         IEnumerable<ISourceLinkData> ReadAll(int persInArb, EEventArt eEventArt);
     }
 }
