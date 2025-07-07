@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
 
@@ -21,10 +21,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
 
     public DateTime dEditDat { get; set; }
     public DateTime dAnlDatum { get; private set; }
-
-    private int _iPersNr;
-
-    public Guid gUid { get; internal set; }
+    public Guid? gUid { get; internal set; }
     public string SurName { get; private set; } = "";
     public string Givennames { get; internal set; } = "";
     public IList<string> Givenname { get; } = new List<string>();
@@ -51,6 +48,11 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     public DateTime dBurial { get; private set; }
     public string Burial { get; internal set; } = "";
     public string sBurried { get; internal set; } = "";
+    /// <summary>
+    /// Events of this person 
+    /// </summary>
+    public IList<IEventData> Events { get; } = [];
+    
     public string sOFB { get; private set; } = "";
     public string[] sSuch { get; } = new string[7];
     public string Stat { get; private set; } = "";
@@ -59,6 +61,8 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     public string sAge { get; internal set; } = "";
     public float fAge { get; internal set; }
     public string sPruefen { get; set; } = "";
+
+    public IList<ILinkData> Connects => [];
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     static CPersonData() => Reset();
@@ -102,14 +106,14 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
             FillData(_dB_PersonTable);
         else
         {
-            _iPersNr = iPersonNr;
+            _ID = iPersonNr;
             gUid = Guid.NewGuid();
         }
     }
 
     public CPersonData() : base(GetPersonTable())
     {
-        _iPersNr = 0;
+        _ID = 0;
         gUid = Guid.NewGuid();
     }
 
@@ -286,17 +290,25 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
         {
             case EEventArt.eA_Birth:
                 dBirth = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             case EEventArt.eA_Baptism:
                 dBaptised = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             case EEventArt.eA_Death:
                 xDead = cEvt.xIsDead || cEvt.dDatumV != default;
                 dDeath = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             case EEventArt.eA_Burial:
                 sBurried = "J";
                 dBurial = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             default:
                 break;

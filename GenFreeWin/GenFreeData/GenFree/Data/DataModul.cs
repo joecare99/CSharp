@@ -5,7 +5,7 @@ using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
-using GenFree.Model;
+using GenFree.Models;
 using GenFree.Sys;
 using Microsoft.VisualBasic;
 using System;
@@ -58,7 +58,7 @@ public static partial class DataModul
     public static IRecordset DB_PersonTable;
     public static IRecordset DB_FamilyTable;
     public static IRecordset DB_EventTable { get; set; }
-    public static IRecordset DB_PlaceTable;
+    public static IRecordset DB_PlaceTable { get; set; }
     public static IRecordset DB_NameTable;
     public static IRecordset DB_PropertyTable;
     public static IRecordset DB_TexteTable { get; set; }
@@ -1781,7 +1781,7 @@ public static partial class DataModul
         {
             frmPerson_Clear?.Invoke();
             DB_WDTable.MoveFirst();
-            int iWDTable_Nr = DB_WDTable.Fields[WDFields.NR].AsInt();
+            int iWDTable_Nr = DB_WDTable.Fields[WDFields.Nr].AsInt();
 
             if (iWDTable_Nr == 1)
             {

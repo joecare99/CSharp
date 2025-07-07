@@ -2,7 +2,7 @@
 using GenFree.Interfaces.DB;
 using System;
 
-namespace GenFree.Model.Data
+namespace GenFree.Models.Data
 {
     public abstract class CRSData<T, T2> : CRSDataC<T, T2>
      where T : Enum

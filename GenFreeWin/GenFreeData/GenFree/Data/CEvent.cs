@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.Model;
+using GenFree.Models;
 
 namespace GenFree.Data;
 #nullable enable

@@ -5,7 +5,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model;
+namespace GenFree.Models;
 
 public class CNB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Frau
 {

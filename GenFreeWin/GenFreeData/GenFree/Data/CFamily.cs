@@ -1,6 +1,6 @@
 ﻿//using DAO;
 using BaseLib.Helper;
-using GenFree.Model;
+using GenFree.Models;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;

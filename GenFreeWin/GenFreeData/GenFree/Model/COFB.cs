@@ -6,7 +6,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model;
+namespace GenFree.Models;
 
 public class COFB : CUsesIndexedRSet<(int, string, int), OFBIndex, OFBFields, IOFBData>, IOFB
 {

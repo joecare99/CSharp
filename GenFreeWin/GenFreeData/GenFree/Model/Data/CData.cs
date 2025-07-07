@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// The GenFree namespace.
 /// </summary>
-namespace GenFree.Model.Data;
+namespace GenFree.Models.Data;
 
 /// <summary>
 /// Class CData.

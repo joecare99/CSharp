@@ -5,7 +5,7 @@ using GenFree.Interfaces.DB;
 using System.Linq;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 
 namespace GenFree.Data
 {
@@ -15,7 +15,6 @@ namespace GenFree.Data
         private static Func<IRecordset>? _DB_LinkTable;
 
         public ELinkKennz eKennz { get; internal set; }
-        public int iKennz => eKennz.AsInt();
         public int iFamNr { get; internal set; }
         public int iPersNr { get; internal set; }
 
@@ -59,7 +58,7 @@ namespace GenFree.Data
         {
             var dB_LinkTable = _db_Table;
             dB_LinkTable.AddNew();
-            dB_LinkTable.Fields[ILinkData.LinkFields.Kennz].Value = eKennz;
+            dB_LinkTable.Fields[ILinkData.LinkFields.Kennz].Value = (int)eKennz;
             dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].Value = iFamNr;
             dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].Value = iPersNr;
             dB_LinkTable.Update();
@@ -81,7 +80,7 @@ namespace GenFree.Data
             || dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].AsInt() != ID.iPerson)
             {
                 dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
-                dB_LinkTable.Seek("=", iFamNr, iPersNr, iKennz);
+                dB_LinkTable.Seek("=", iFamNr, iPersNr, (int)eKennz);
                 flag = !dB_LinkTable.NoMatch;
             }
             return flag;

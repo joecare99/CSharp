@@ -6,7 +6,7 @@ using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.Model;
+using GenFree.Models;
 
 namespace GenFree.Data;
 public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData>, IPerson

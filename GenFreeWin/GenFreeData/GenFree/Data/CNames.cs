@@ -4,7 +4,7 @@ using GenFree.Interfaces.Model;
 using System;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
-using GenFree.Model;
+using GenFree.Models;
 
 namespace GenFree.Data
 {
@@ -128,7 +128,7 @@ namespace GenFree.Data
         }
 
 
-        public void Update(int nPersNr, int nText, ETextKennz kennz, int lfNR = 0, byte calln = 0, byte nickn = 0)
+        public void Update(int nPersNr, int nText, ETextKennz kennz, int lfNR = 0, bool xCalln = false, bool xNickn = false)
         {
             var DB_NameTable = Seek((nPersNr, kennz, lfNR));
             if (DB_NameTable?.NoMatch == false)
@@ -138,8 +138,8 @@ namespace GenFree.Data
                     DB_NameTable.Edit();
                     DB_NameTable.Fields[NameFields.Text].Value = nText;
                     DB_NameTable.Fields[NameFields.LfNr].Value = lfNR;
-                    DB_NameTable.Fields[NameFields.Ruf].Value = calln;
-                    DB_NameTable.Fields[NameFields.Spitz].Value = nickn;
+                    DB_NameTable.Fields[NameFields.Ruf].Value = xCalln;
+                    DB_NameTable.Fields[NameFields.Spitz].Value = xNickn;
                     DB_NameTable.Update();
                 }
             }
@@ -150,8 +150,8 @@ namespace GenFree.Data
                 DB_NameTable.Fields[NameFields.PersNr].Value = nPersNr;
                 DB_NameTable.Fields[NameFields.Kennz].Value = kennz;
                 DB_NameTable.Fields[NameFields.Text].Value = nText;
-                DB_NameTable.Fields[NameFields.Ruf].Value = calln;
-                DB_NameTable.Fields[NameFields.Spitz].Value = nickn;
+                DB_NameTable.Fields[NameFields.Ruf].Value = xCalln;
+                DB_NameTable.Fields[NameFields.Spitz].Value = xNickn;
                 DB_NameTable.Fields[NameFields.LfNr].Value = kennz is ETextKennz.V_ or ETextKennz.F_ ? lfNR : 0;
                 DB_NameTable.Update();
             }
