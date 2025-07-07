@@ -110,7 +110,7 @@ public interface IModul1
     bool EreiRf { get; set; }
     /// <summary>Gets the printing texts.</summary>
     /// <value>The printing texts.</value>
-    IList<string> DTxt { get; set; }
+    IList<string> DTxt { get; }
 
     // Database
     IRecordset DT_AhnTable { get; set; }
@@ -140,7 +140,7 @@ public interface IModul1
     /// </summary>
     string VersDat { get; }
     /// <summary>
-    /// "(c) YYYY-YYYY {Author} {Kontakt}"
+    /// "(c) YYYY-YYYY {Author} {GedAus.Kontakt}"
     /// </summary>
     string Titel2 { get; }
 
@@ -184,7 +184,11 @@ public interface IModul1
     // =================
     byte Programtesttemp { get; set; }
     string AutoupD { get; set; }
-    bool Demo { get; set; }
+
+    bool System_xDemo { get; set; }
+    bool System_xJudenfriedhofVersion { get; set; }
+    short System_VerSpecial { get; set; }
+    
     bool FAendmerk { get; set; }
     bool PAendmerk { get; set; }
 
@@ -198,9 +202,6 @@ public interface IModul1
 
     IFamilyData Family { get; set; }
     IPersonData Person { get; set; }
-    
-    TGedLine Eing { get; set; }
-
     
     ELinkKennz eLKennz { get; set; }
     EEventArt Art { get; set; }
@@ -217,7 +218,6 @@ public interface IModul1
     Enum eWindowState { get; set; }
     EWindowSize eWindowSize { get; set; }
     IApplUserTexts IText { get; }
-    int Uml { get; set; }
     int Histor { get; set; }
     int Quell { get; set; }
     [Obsolete]
@@ -247,7 +247,9 @@ public interface IModul1
      short Les { get; set; }
     
     short Druck_Tast { get; set; }
-    string cNoChangesOnCD { get; }
+    string Message_sNoChangesOnCD { get; }
+    string Message_sDemoVerNotPossibl { get; }
+
     Letzter Letzte { get; set; }
  
     
@@ -266,7 +268,7 @@ public interface IModul1
     /// <value>The Text-substitution-list. Contains the substitution for single keys.</value>
     IList<string> Te { get; }
     bool Reli { get; set; }
-    int VerS { get; set; }
+
     int Frauenkek1 { get; set; }
     int Frauenkek2 { get; set; }
     string sBirthMark { get; }
@@ -280,16 +282,22 @@ public interface IModul1
     IList<short> Posi { get; set; }
     string Job { get; set; }
     bool reorga { get; set; }
-    string sDemoVerNotPossibl { get; }
     int PersInArbsp { get; }
     string sGeocodeXMLAddress { get; }
-    bool xJudenfriedhofVersion { get; set; }
     byte Datschalt { get; set; }
-    [Obsolete]
-    IProjectData ProjectData { get; }
 
     [Obsolete]
+    IProjectData ProjectData { get; }
+    [Obsolete]
     IVBInformation Information { get; }
+    [Obsolete]
+    IVBConversions Conversions { get; }
+    [Obsolete]
+    IStrings Strings { get; }
+    [Obsolete]
+    IOperators Operators { get; }
+
+    IUserData User { get; }
 
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
@@ -300,10 +308,10 @@ public interface IModul1
     float Datcheck(int eArt);
     void Datles(int Ubg, int PersInArb);
     void Datles(int PersInArb, out IList<string> asPersDates);
-    (string sDat_Birth, string sDat_Death) Datles(int PersInArb, IPersonData person);
+    (string sDat_Birth, string sDat_Death) Datles(int PersInArb, IPersonData person, bool xPlace = false);
     void DatPruef(int Pschalt);
     string DezRechnen(string A4, string ubgT);
-    void Diskvoll();
+    void GedAus_Diskvoll();
     IEnumerable<string> EnumerateMandants(string drive);
     void Erei(int PersInArb, EEventArt eArt, ref byte PerPos);
     IList<int> Link_Famsuch(int PersInArb, ELinkKennz eLKennz);
@@ -312,8 +320,8 @@ public interface IModul1
     string GoogleInstallPath();
     void Info();
     short IsFormloaded(object Formtocheck);
-    void Lerz(ref short A, ref int u);
-    string Leerweg1(string sText);
+    short Strings_Lerz(string s);
+    string Strings_Leerweg1(string sText);
     void OFBTextPruefenSpeichern(string UbgT, string Kennz, int LfNR);
     bool OfficeAppInstalled(MSOfficeComponent nComponent);
     string OfficeInstallPath(MSOfficeVersion nVersion);
@@ -334,13 +342,12 @@ public interface IModul1
     void Sichwand(string Dasich, string sDatumV_S, DateTime dDatumB, EEventArt eArt);
     void Sperrfehler();
     void STextles(string Formnam, ETextKennz Kennz, string UbgT, IList ocItems);
-    int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0, short ruf = 0);
-    string Umlaute4(string Fld, int uml);
+    int TextSpeich(string sText, string sLeitName, ETextKennz eTKennz, int PersInArb = 0, int LfNR = 0, bool xCalln = false, bool xNickn = false);
+    string Strngs_Umlaute4(string Fld, int uml);
     void Vornam_Namles(int personNr);
 
     void Zeugsu(EEventArt Art, short LfNR, short Listart, long Ahne);
     //--
-    void Historie(string UbgT);
     string[] F_GetAllFiles(string sPath, int funk);
     IList<int> Ehesuch(int personNr, string Persex);
     string BuildFullSurName(IPersonData person, bool xFamToUpper = true);
@@ -375,4 +382,5 @@ public interface IModul1
     void Datles3(short listart, long v, object value, ref bool neb);
     void Datles10(ref short listart, bool m1_Ki);
     int System_TestForm_Height();
+    int DataModul_PeekMandant_RecordCount();
 }

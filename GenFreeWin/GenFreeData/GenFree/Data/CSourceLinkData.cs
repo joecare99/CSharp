@@ -2,7 +2,7 @@
 using GenFree.Helper;
 using System;
 using System.Linq;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
 

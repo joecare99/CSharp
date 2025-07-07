@@ -279,7 +279,7 @@ public static class DBImplementOleDB
         Dictionary<string, (IList<(string, int)>, string Sorting)> NamedIndex = new();
         private OleDbDataAdapter adapter;
 
-        public DataRow ActRow => _dataTable.Rows[dataRow];
+        public DataRow ActRow => EditMode == 2 ? drNew : _dataTable.Rows[dataRow];
         public Recordset(DbConnection db, string name, RecordsetTypeEnum type)
         {
             Name = name;
@@ -310,10 +310,10 @@ public static class DBImplementOleDB
                 if (row[2].AsString().ToUpper() == name.ToUpper())
                 {
                     var indexName = row[5].AsString();
-                    if (!NamedIndex.ContainsKey(indexName))
-                        NamedIndex.Add(indexName, (new List<(string, int)>() { (row[17].AsString(), row[16].AsInt()) }, ""));
+                    if (!NamedIndex.ContainsKey(indexName.ToUpper()))
+                        NamedIndex.Add(indexName.ToUpper(), (new List<(string, int)>() { (row[17].AsString(), row[16].AsInt()) }, ""));
                     else
-                        NamedIndex[indexName].Item1.Add((row[17].AsString(), row[16].AsInt()));
+                        NamedIndex[indexName.ToUpper()].Item1.Add((row[17].AsString(), row[16].AsInt()));
                 }
             foreach (var key in NamedIndex.Keys.ToArray())
             {
@@ -331,7 +331,7 @@ public static class DBImplementOleDB
             get => index; set
             {
                 if (index != value)
-                    _dataTable.DefaultView.Sort = NamedIndex[value].Sorting;
+                    _dataTable.DefaultView.Sort = NamedIndex[value.ToUpper()].Sorting;
                 index = value;
             }
         }
@@ -340,6 +340,9 @@ public static class DBImplementOleDB
         public IFieldsCollection Fields { get; }
         public int RecordCount => _dataTable.Rows.Count;
         public int EditMode { get; private set; }
+
+        private DataRow? drNew = null;
+
         public bool EOF => dataRow >= _dataTable.Rows.Count;
         public bool BOF => dataRow < 0;
 
@@ -359,12 +362,14 @@ public static class DBImplementOleDB
         public void Edit()
         {
             _dataTable.Rows[dataRow].BeginEdit();
-            EditMode = 1; // Setzt den Editiermodus
+            if (EditMode == 0)
+               EditMode = 1; // Setzt den Editiermodus
         }
 
         public void MoveNext()
         {
             _dataTable.RejectChanges();
+            EditMode = 0; // Setzt den Editiermodus zurück
             if (!EOF)
                 dataRow++;
         }
@@ -452,6 +457,12 @@ public static class DBImplementOleDB
 
         public void Update()
         {
+            if (EditMode == 2)
+            {    
+                _dataTable.Rows.Add(drNew);
+                dataRow = _dataTable.Rows.IndexOf(drNew);
+                drNew= null;
+            }
             _dataTable.Rows[dataRow].EndEdit();
             adapter?.Update(_dataTable);
             _dataTable.AcceptChanges();
@@ -460,16 +471,16 @@ public static class DBImplementOleDB
 
         public void AddNew()
         {
-            EditMode = 1; // Setzt den Editiermodus
-            var dr = _dataTable.NewRow();
-            dr.BeginEdit();
-         //   _dataTable.Rows.Add(dr);
-            dataRow = _dataTable.Rows.IndexOf(dr);
+            EditMode = 2; // Setzt den Appendmodus
+            drNew = _dataTable.NewRow();
+            drNew.BeginEdit();
+            dataRow = _dataTable.Rows.Count; // Setzt den Zeiger auf die neue Zeile
         }
 
         public void Delete()
         {
-            _dataTable.Rows.RemoveAt(dataRow);
+            _dataTable.Rows[dataRow].Delete();
+            adapter?.Update(_dataTable);
         }
 
         public void MoveLast()

@@ -6,7 +6,7 @@ using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
 namespace GenFreeWin.ViewModels;
-public partial class FraPersImpQuerryViewModel : BaseViewModelCT, IFraPersImpQuerryViewModel
+public partial class FraPersImpQuerryViewModel : BaseViewModelCT, IFraPersImpQueryViewModel
 {
     [ObservableProperty]
     private EUserText _iText;

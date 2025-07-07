@@ -6,7 +6,7 @@ using NSubstitute;
 using System;
 using System.Linq;
 
-namespace GenFree.Model.Data.Tests;
+namespace GenFree.Models.Data.Tests;
 
 [TestClass()]
 public class CRSDataTests

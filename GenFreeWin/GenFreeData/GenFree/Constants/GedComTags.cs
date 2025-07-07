@@ -274,6 +274,7 @@
         public const string cGed__LIV = "_LIV";
         public const string cGed__LOC = "_LOC";
         public const string cGed__MAID = "_MAID";
+        public const string cGed__MAIDENHEAD = "_MAIDENHEAD";
         public const string cGed__MARNM = "_MARNM";
         public const string cGed__MEND = "_MEND";
         public const string cGed__MIL = "_MIL";

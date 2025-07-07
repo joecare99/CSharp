@@ -1,4 +1,4 @@
-﻿namespace GenFree.Model.Data.Tests;
+﻿namespace GenFree.Models.Data.Tests;
 
 public enum TestProp
 {

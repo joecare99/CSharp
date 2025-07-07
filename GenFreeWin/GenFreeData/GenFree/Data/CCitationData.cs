@@ -4,7 +4,7 @@ using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Sys;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

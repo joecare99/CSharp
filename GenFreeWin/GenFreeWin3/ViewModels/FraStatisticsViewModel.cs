@@ -39,7 +39,7 @@ public partial class FraStatisticsViewModel : ObservableObject, IFraStatisticsVi
 
     public void UpdateStat()
     {
-        // Hier sollten die echten Werte aus dem Model geladen werden
+        // Hier sollten die echten Werte aus dem Models geladen werden
         Persons = 0;
         Families = 0;
         Places = 0;

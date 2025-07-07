@@ -1,10 +1,10 @@
 ﻿using BaseLib.Helper;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 using System;
 
-namespace GenFree.Model.Data
+namespace GenFree.Models.Data
 {
     public abstract class CRSDataInt<T> : CRSData<T, int> where T : Enum
     {

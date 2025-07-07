@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Data;
-public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecordset
+public interface IPersonData : IEntityData, IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecordset
 {
     /// <summary>
     /// Gets the alias or AKA.
@@ -40,15 +40,9 @@ public interface IPersonData : IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecor
     /// </summary>
     /// <value>The death.</value>
     string Death { get; }
-    DateTime dEditDat { get; }
     string FullSurName { get; }
     IList<string> Givenname { get; }
     string Givennames { get; }
-    /// <summary>
-    /// Gets the guid.
-    /// </summary>
-    /// <value>The guid.</value>
-    Guid gUid { get; }
     int iReligi { get; }
     IList<string> Nickname { get; }
     string Prae { get; }

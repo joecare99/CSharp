@@ -5,7 +5,7 @@ using GenFree.Interfaces.Model;
 using GenFree.Data;
 using BaseLib.Interfaces;
 
-namespace GenFree.Model.Tests
+namespace GenFree.Models.Tests
 {
     [TestClass()]
     public class CNB_FamilyTests

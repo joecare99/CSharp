@@ -16,7 +16,7 @@ public interface IGenPersistence
     string ReadStringInit(string sSection);
     void ReadStringsInit(string sSection, string[] aus);
     void ReadStringsInit(string sSection, int anz, IList<string> txT);
-    int ReadStringsInit(string sSection, IList<string> asValue);
+    int ReadStringsInit(string sSection, IList<string> asValue, bool xReplace = false);
     void WriteEnumInit(string sSection, Enum eValue);
     void WriteIntInit(string sSection, int iValue);
     void WriteStringInit(string sSection, string verz);
@@ -64,6 +64,7 @@ public interface IGenPersistence
     bool ExistFile(string v);
     bool ExistFileMand(string dateiName);
     void WriteStringsMand(string sSection, IList<string> items);
+    bool ExistFileProg(string v);
 }
 
 public static class PersistenceHelper {

@@ -1,12 +1,12 @@
 using System;
-using GenFree.Model;
+using GenFree.Models;
 using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using BaseLib.Interfaces;
 using GenFree.Data;
 
-namespace GenFree.Model.Tests
+namespace GenFree.Models.Tests
 {
     /// <summary>
     /// Testklasse für <see cref="CNB_Frau"/>.

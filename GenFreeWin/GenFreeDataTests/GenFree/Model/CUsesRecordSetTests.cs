@@ -5,7 +5,7 @@ using NSubstitute;
 using BaseLib.Helper;
 using BaseLib.Interfaces;
 
-namespace GenFree.Model.Tests;
+namespace GenFree.Models.Tests;
 
 [TestClass()]
 public class CUsesRecordSetTests : CUsesRecordSet<int>

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GenFree.Sys;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
 
@@ -42,9 +42,13 @@ namespace GenFree.Data
         public int iGgv { get; internal set; }
         public bool xAeB { get; internal set; }
 
-        public Guid? gUID { get; internal set; }
+        public Guid? gUid { get; internal set; }
 
         protected override Enum _keyIndex => FamilyIndex.Fam;
+
+        public IList<IEventData> Events { get; } =[];
+
+        public IList<ILinkData> Connects { get; } =[];
 
         public CFamilyPersons() : this(_getTable(),true) { }
 
@@ -73,7 +77,7 @@ namespace GenFree.Data
             iEltern = dB_FamilyTable.Fields[FamilyFields.Eltern].AsInt();
             iGgv = dB_FamilyTable.Fields[FamilyFields.ggv].AsInt();
             xAeB = dB_FamilyTable.Fields[FamilyFields.Aeb].AsBool();
-            gUID = dB_FamilyTable.Fields[FamilyFields.Fuid].AsGUID();
+            gUid = dB_FamilyTable.Fields[FamilyFields.Fuid].AsGUID();
             _sName = null;
             _sPrefix = null;
             _sSuffix = null;
@@ -132,7 +136,7 @@ namespace GenFree.Data
                         dB_PersonTable.Fields[FamilyFields.ggv].Value = iGgv;
                         break;
                     case EFamilyProp.gUID:
-                        dB_PersonTable.Fields[FamilyFields.Fuid].Value = gUID ?? Guid.Empty;
+                        dB_PersonTable.Fields[FamilyFields.Fuid].Value = gUid ?? Guid.Empty;
                         break;
                     case EFamilyProp.iPrae:
                         dB_PersonTable.Fields[FamilyFields.Prae].Value = iPrae;
@@ -181,7 +185,7 @@ namespace GenFree.Data
                 EFamilyProp.xAeB => xAeB,
                 EFamilyProp.iName => iName,
                 EFamilyProp.iGgv => iGgv,
-                EFamilyProp.gUID => gUID,
+                EFamilyProp.gUID => gUid,
                 EFamilyProp.iPrae => iPrae,
                 EFamilyProp.iSuf => iSuf,
                 EFamilyProp.iEltern => iEltern,
@@ -211,7 +215,7 @@ namespace GenFree.Data
                 EFamilyProp.xAeB => xAeB = (bool)value,
                 EFamilyProp.iName => iName = (int)value,
                 EFamilyProp.iGgv => iGgv = (int)value,
-                EFamilyProp.gUID => gUID = (Guid)value,
+                EFamilyProp.gUID => gUid = (Guid)value,
                 EFamilyProp.iPrae => iPrae = (int)value,
                 EFamilyProp.iSuf => iSuf = (int)value,
                 EFamilyProp.iEltern => iEltern = (int)value,

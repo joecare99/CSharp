@@ -1,12 +1,12 @@
 ﻿//using DAO;
 using BaseLib.Helper;
 using GenFree.Data;
-using GenFree.Model;
+using GenFree.Models;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model;
+namespace GenFree.Models;
 
 public class CNB_Ahnen(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Ahnen
 {

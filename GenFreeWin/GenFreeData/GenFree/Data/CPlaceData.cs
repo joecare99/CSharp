@@ -1,4 +1,4 @@
-﻿using GenFree.Model.Data;
+﻿using GenFree.Models.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using System;

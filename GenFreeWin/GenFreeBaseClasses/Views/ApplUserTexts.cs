@@ -19,8 +19,8 @@ public class ApplUserTexts : IApplUserTexts
     {
         get => Idx switch
         {
-            int i => _texte[i],
-            EUserText e => _texte[(int)e] ?? e.ToString(),
+            int i when i >= 0 && i < _texte.Count => _texte[i],
+            EUserText e when (int)e >= 0 && (int)e < _texte.Count => _texte[(int)e] ?? e.ToString(),
             _ => string.Empty
         };
         set

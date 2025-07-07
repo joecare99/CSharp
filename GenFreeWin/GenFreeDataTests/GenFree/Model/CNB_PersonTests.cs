@@ -4,7 +4,7 @@ using NSubstitute;
 using GenFree.Interfaces.Model;
 using BaseLib.Interfaces;
 
-namespace GenFree.Model.Tests
+namespace GenFree.Models.Tests
 {
     [TestClass()]
     public class CNB_PersonTests

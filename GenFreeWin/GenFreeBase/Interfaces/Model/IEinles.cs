@@ -1,4 +1,5 @@
 ﻿using GenFree.Data;
+using GenFree.Data.Models;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Sys;
 using System;
@@ -31,6 +32,21 @@ public interface IEinles
 
     short LaufNr { get; set; }
     Encoding? Um { get; set; }
+    int Manipu { get; set; }
+    TGedLine Eing { get; set; }
+    string GedFehl { get; set; }
+    string Einfueg { get; set; }
+    string AltPerson { get; set; }
+    bool BildPF { get; set; }
+    bool Fehlig { get; set; }
+    bool Groß { get; set; }
+    bool NumBleib { get; set; }
+    bool Leerzeich { get; set; }
+    bool kein_Alter { get; set; }
+    bool Bom { get; set; }
+    int fu { get; set; }
+    string HaNr { get; set; }
+    string[] Mar { get; }
 
     void Datsatz(EEventArt Art, Action<IEventData> finalize = null);
     void NeuOrteinlesen(EEventArt Art, int Arryzaehl, string[] mararray);
