@@ -30,6 +30,7 @@ public interface IGenPersistence
     void AppendStringsTemp(string sSection, IList<string> lines);
     void WriteStringTemp(string sSection, string text);
     
+    void WriteEnumMand(string sSection, Enum eValue);
     int GetIntMand(string sSection, long lPos = 1);
     void PutIntMand(string sSection, ValueType letzte, long lPos);
     void PutIntsMand(string sSection, int[] aiValues);
@@ -70,6 +71,8 @@ public interface IGenPersistence
 public static class PersistenceHelper {
     public static T ReadEnumInit<T>(this IGenPersistence _p, string sSection) where T :  Enum
         => ToEnum<T>(_p.ReadIntInit(sSection));
+    public static T ReadEnumMand<T>(this IGenPersistence _p, string sSection) where T : Enum
+    => ToEnum<T>(_p.ReadIntMand(sSection));
 
     private static T ToEnum<T>(int v) where T :  Enum
     {
@@ -100,9 +103,7 @@ public static class PersistenceHelper {
     {
         _p.ReadEnumsMand(DateiName, aeValues);
     }
-    public static void ReadEnumInit<T>(this IGenPersistence _p, string sSection, out T eVal) where T :  Enum
-    { 
-        eVal = _p.ReadEnumInit<T>(sSection);
-    }
+    public static void ReadEnumInit<T>(this IGenPersistence _p, string sSection, out T eVal) where T : Enum 
+        => eVal = _p.ReadEnumInit<T>(sSection);
 
 }
