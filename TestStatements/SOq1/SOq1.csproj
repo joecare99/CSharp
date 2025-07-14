@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILGPU" Version="1.5.2" />
+    <PackageReference Include="ILGPU" Version="1.5.3" />
   </ItemGroup>
 
 </Project>
