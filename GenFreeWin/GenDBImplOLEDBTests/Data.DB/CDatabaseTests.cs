@@ -63,7 +63,7 @@ public class CDatabaseTests
         Assert.IsNotNull(database);
         Assert.IsTrue(database.IsOpen);
         database.Execute("CREATE TABLE TestTable (ID AUTOINCREMENT, Name TEXT(50))");
-        database.Execute("CREATE UNIQUE INDEX idx_ID ON TestTable (ID)");
+        database.Execute("CREATE UNIQUE INDEX idx_ID ON TestTable (ID) WITH PRIMARY");
         database.Execute("INSERT INTO TestTable (Name) VALUES ('Test Name')");
         Assert.AreEqual(1, database.Execute("INSERT INTO TestTable (Name) VALUES ('Another Test Name')"));
         Assert.IsTrue(database.TableExists("TestTable"), "TestTable was not created successfully.");
