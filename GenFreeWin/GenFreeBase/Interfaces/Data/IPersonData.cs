@@ -73,6 +73,7 @@ public interface IPersonData : IEntityData, IHasID<int>,IHasPropEnum<EPersonProp
     void SetData(IEventData cEvt);
     void SetDates(string[] value, Func<string, string, string>? SetAge = null);
     void SetFullSurname(string value);
+    void SetPersonEvents(IEnumerable<IEventData> acEvents);
     void SetPersonNames(int[] iName, (int iName, bool xRuf, bool xNick)[] aiVorns, bool xInclLN);
     void SetPersonNr(int i);
     void SetSex(string sSex);

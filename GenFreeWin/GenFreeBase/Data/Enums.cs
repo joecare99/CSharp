@@ -83,7 +83,8 @@ public enum EventIndex
     NText,
     PText,
     Reg,
-    Reg1
+    Reg1,
+    BeSu2
 }
 public enum FamilyFields
 {
@@ -190,6 +191,14 @@ public enum GBEIndex
     Nr,
     AkteJa,
     Akte
+}
+public enum GEDFields
+{
+    PNr,
+}
+public enum GEDIndex
+{
+    PNr,
 }
 public enum HGAFields
 {
@@ -335,7 +344,7 @@ public enum QuFields
     _13
 }
 public enum QuIndex
-{    
+{
     Autor,
     Dopp,
     Nam,
@@ -370,11 +379,13 @@ public enum WitnessIndex
     ZeugSu
 }
 
-public enum DoppelFields {
+public enum DoppelFields
+{
     Nr,
     Pr
 }
-public enum DoppelIndex {
+public enum DoppelIndex
+{
     Nr
 }
 
@@ -435,7 +446,7 @@ public enum SourceLinkFields
     /// <summary>
     /// The title of the entry
     /// </summary>
-    _4, 
+    _4,
     /// <summary>
     /// The Page
     /// </summary>
@@ -472,10 +483,21 @@ public enum SourceIndex
     Zitat
 }
 
-public enum SuchFields
+public enum SearchFields
 {
+    Name,
+    Datum,
+    Nummer,
+    Kenn,
     Sich,
 }
+public enum SearchIndex
+{
+    Nummer,
+    Namen,
+    Persuch
+}
+
 public enum RepoFields
 {
     Nr,
@@ -495,7 +517,8 @@ public enum RepoIndex
     Nr
 }
 
-public enum RepoTabFields {
+public enum RepoTabFields
+{
     Quelle,
     Repo,
     Repoalt
@@ -548,12 +571,14 @@ public enum ReligionIndex
     PerNR
 }
 
-public enum IndexFields {
+public enum IndexFields
+{
     Person,
     Fam,
     SatzNr
 }
-public enum SperrIdxFields {
+public enum SperrIdxFields
+{
     Nr
 }
 

@@ -7,5 +7,6 @@ namespace GenFree.Interfaces.DB
         bool IgnoreNulls { get; set; }
         string? Name { get; set; }
         bool Unique { get; set; }
+        bool Primary { get; set; }
     }
 }

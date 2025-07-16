@@ -6,8 +6,8 @@ namespace GenFree.Interfaces.DB
 {
     public interface ITableDef
     {
-        List<IFieldDef> Fields { get; }
-        List<IIndexDef> Indexes { get; }
+        IList<IFieldDef> Fields { get; }
+        IList<IIndexDef> Indexes { get; }
         string? Name { get; set; }
     }
 }

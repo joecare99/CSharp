@@ -14,8 +14,8 @@ public class TableDef : ITableDef
 
     protected DbConnection _db;
     public string? Name { get; set; }
-    public List<IFieldDef> Fields { get; } = [];
-    public List<IIndexDef> Indexes { get; } = [];
+    public IList<IFieldDef> Fields { get; init; } = [];
+    public IList<IIndexDef> Indexes { get; init; } = [];
 }
 
 public class IndexDef : IIndexDef
@@ -24,7 +24,7 @@ public class IndexDef : IIndexDef
     {
         _table = td;
         IIndexDef? ix;
-        if ((ix = td.Indexes.Find(i => i.Name == name)) != null)
+        if ((ix = td?.Indexes.FirstOrDefault(i => i.Name == name)) != null)
         {
             var Fld = (ix.Fields ?? []).ToList();
             Fld.Add(sField);
@@ -34,14 +34,17 @@ public class IndexDef : IIndexDef
         {
             Name = name;
             Fields = new string[] { sField };
+            Primary = xPrimary;
             Unique = xUnique;
-            td.Indexes.Add(this);
+            if (td != null)
+               td.Indexes.Add(this);
         }
     }
     private ITableDef _table;
 
     public string? Name { get; set; }
     public string[]? Fields { get; set; } = default;
+    public bool Primary { get; set; } = false;
     public bool Unique { get; set; } = false;
     public bool IgnoreNulls { get; set; } = false;
 }
@@ -54,7 +57,8 @@ public class FieldDef : IFieldDef
         Name = name;
         Type = (TypeCode)v2;
         Size = v3;
-        td.Fields.Add(this);
+        if(td!=null)
+          td.Fields.Add(this);
     }
 
     private ITableDef _table;

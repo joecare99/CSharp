@@ -336,4 +336,5 @@ public interface IEvent :
     /// <returns>IEnumerable&lt;IEventData&gt;.</returns>
     IEnumerable<IEventData> ReadAllGt(EventIndex eIndex, int iIndexVal);
     IEnumerable<IEventData> ReadAllBeSu(EEventArt eEventArt, int persInArb);
+    IEnumerable<IEventData> ReadEntityEvents(int iD, bool xFamily=false);
 }
