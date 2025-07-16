@@ -84,6 +84,6 @@ public static class DateHelper
     => DayOfWeekStr(dDate, CultureInfo.CurrentUICulture);
 
     public static string DayOfWeekStr(this DateTime dDate, CultureInfo ci)
-        => ci.DateTimeFormat.ShortestDayNames[(int)ci.Calendar.GetDayOfWeek(dDate)];
+        => ci.DateTimeFormat.AbbreviatedDayNames[(int)ci.Calendar.GetDayOfWeek(dDate)];
 
 }

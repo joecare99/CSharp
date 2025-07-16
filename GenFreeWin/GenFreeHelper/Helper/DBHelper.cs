@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace GenFree.Helper;
 public static class DBHelper
@@ -106,6 +108,86 @@ public static class DBHelper
         {
         }
     }
+
+    public static void CreateField(this IDatabase db, ITableDef tbl, IFieldDef val)
+    {
+        try
+        {
+            db.Execute($"ALTER TABLE {tbl.Name} ADD {val.Name} {val.Type.ToDBType(val.Size)}");
+        }
+        catch
+        {
+        }
+    }
+
+    public static void CreateIndex(this IDatabase db, ITableDef tbl, IIndexDef idx)
+    {
+        try
+        {
+            db.Execute($"CREATE {(idx.Unique ? "UNIQUE " : "")}INDEX [{idx.Name}] ON [{tbl.Name}] ({string.Join(",", idx.Fields.Select(s => $"[{s}]"))}) {(idx.Primary ? "WITH PRIMARY" : "")};");
+        }
+        catch
+        {
+            System.Diagnostics.Debug.WriteLine($"Error creating index {idx.Name} on table {tbl.Name}: {string.Join(",", idx.Fields)}");
+        }
+    }
+
+    public static void AlterIndex(this IDatabase db, ITableDef tbl, IIndexDef idx)
+    {
+      //  var tr=db.Connection.BeginTransaction();
+        try
+        {
+            // Drop the existing index if it exists
+            db.TryExecute($"DROP INDEX [{idx.Name}] ON [{tbl.Name}]");
+
+            // Create the new index with updated properties
+            db.Execute($"CREATE {(idx.Unique ? "UNIQUE " : "")}INDEX [{idx.Name}] ON [{tbl.Name}] ({string.Join(",", idx.Fields.Select(s => $"[{s}]"))}) {(idx.Primary ? "WITH PRIMARY" : "")};");
+            //tr.Commit();
+        }
+        catch (Exception ex)
+        {
+          //  tr.Rollback();
+            System.Diagnostics.Debug.WriteLine($"Error creating index {idx.Name} on table {tbl.Name}: {string.Join(",", idx.Fields)}");
+        }
+    }
+
+    public static void CreateTable(this IDatabase db, ITableDef tbl )
+    {
+        try
+        {
+            db.Execute($"CREATE TABLE {tbl.Name} ({string.Join(",", tbl.Fields.Select(f => $"{f.Name} {f.Type.ToDBType(f.Size)}"))});");
+            foreach (var idx in tbl.Indexes)
+            {
+                db.CreateIndex(tbl, idx);
+            }
+        }
+        catch
+        {
+            System.Diagnostics.Debug.WriteLine($"Error creating table {tbl.Name}: {string.Join(",", tbl.Fields)}");
+        }
+    }
+
+    public static string ToDBType(this TypeCode type, int size = 0)
+    {
+        return type switch
+        {
+            TypeCode.Boolean => "BIT",
+            TypeCode.Byte => "TINYINT",
+            TypeCode.Char => "CHAR",
+            TypeCode.DateTime => "DATETIME",
+            TypeCode.Decimal => "DECIMAL",
+            TypeCode.Double => "DOUBLE",
+            TypeCode.Int16 => "SMALLINT",
+            TypeCode.Int32 => "INTEGER",
+            TypeCode.Int64 => "BIGINT",
+            TypeCode.SByte => "TINYINT",
+            TypeCode.Single => "FLOAT",
+            TypeCode.String when size>0 => $"VARCHAR({size})",
+            TypeCode.String when size==0 => "MEMO",
+            _ => throw new ArgumentException($"Unsupported type: {type}"),
+        };
+    }
+
     /// <summary>
     /// Begins the transaction.
     /// </summary>
