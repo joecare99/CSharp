@@ -209,6 +209,7 @@ public static class DBImplementOleDB
 
         public int Execute(string sql)
         {
+            System.Diagnostics.Debug.WriteLine($"SQL:{sql}");
             var cmd = Connection.CreateCommand();
             cmd.CommandText = sql;
             return cmd.ExecuteNonQuery();
@@ -279,7 +280,7 @@ public static class DBImplementOleDB
         Dictionary<string, (IList<(string, int)>, string Sorting)> NamedIndex = new();
         private OleDbDataAdapter adapter;
 
-        public DataRow ActRow => EditMode == 2 ? drNew : _dataTable.Rows[dataRow];
+        public DataRow ActRow => EditMode == 2 ? drNew : _dataTable.DefaultView[dataRow].Row;
         public Recordset(DbConnection db, string name, RecordsetTypeEnum type)
         {
             Name = name;
@@ -288,13 +289,20 @@ public static class DBImplementOleDB
             if (name.IsValidIdentifyer() && type == RecordsetTypeEnum.dbOpenTable)
                 try
                 {
-                   var cmd = new OleDbCommand($"SELECT * FROM {name}", (OleDbConnection)db);
-                   adapter = new OleDbDataAdapter(cmd);
+                   var cmd = new OleDbCommand(name, (OleDbConnection)db);
+                    cmd.CommandType = CommandType.TableDirect;
+                    adapter = new OleDbDataAdapter(cmd);
                    adapter.Fill(_dataTable);
+   //                adapter.
                    _dataTable.TableName = name;
-                   _ = new OleDbCommandBuilder(adapter);
+                   var b = new OleDbCommandBuilder(adapter);
+                   adapter.UpdateCommand = b.GetUpdateCommand();
+                   adapter.InsertCommand = b.GetInsertCommand();
+                   adapter.DeleteCommand = b.GetDeleteCommand();
                 }
-                catch { }
+                catch {
+                    _ = 1;
+                }
             else
                 try
                 { _dataTable.Load(new OleDbCommand(name, (OleDbConnection)db).ExecuteReader()); }
@@ -361,7 +369,7 @@ public static class DBImplementOleDB
 
         public void Edit()
         {
-            _dataTable.Rows[dataRow].BeginEdit();
+            _dataTable.DefaultView[dataRow].Row.BeginEdit();
             if (EditMode == 0)
                EditMode = 1; // Setzt den Editiermodus
         }
@@ -392,12 +400,13 @@ public static class DBImplementOleDB
                 dataRow = -1;
                 return;
             }
+            DataView defaultView = _dataTable.DefaultView;
 
             // "=": exakte Suche mit Find
             if (v.Trim() == "=")
             {
-                dataRow = _dataTable.DefaultView.Find(param);
-                return;
+                dataRow = defaultView.Find(param);
+                    return;
             }
             // ">=": ersten passenden Eintrag suchen (optimiert, da DefaultView sortiert ist)
             else if (v.Trim() == ">=")
@@ -405,7 +414,6 @@ public static class DBImplementOleDB
                 var comparer = StringComparer.InvariantCultureIgnoreCase;
                 // Ersetze die lineare Suche durch eine Binärsuche
                 int left = 0;
-                DataView defaultView = _dataTable.DefaultView;
                 int right = defaultView.Count - 1;
                 int foundIndex = -1;
                 while (left <= right)
@@ -428,7 +436,11 @@ public static class DBImplementOleDB
                 }
                 if (foundIndex >= 0)
                 {
-                    dataRow = _dataTable.Rows.IndexOf(defaultView[foundIndex].Row);
+                    dataRow = foundIndex;
+                }
+                else if (left < defaultView.Count)
+                {
+                    dataRow = left;
                 }
                 else
                     dataRow = -1;
@@ -444,13 +456,14 @@ public static class DBImplementOleDB
                 for (int c = 0; c < param.Length && c < sortColumns.Length; c++)
                 {
                     var colValue = rowView[sortColumns[c]];
-                    cmp = Comparer.Default.Compare(colValue, param[c]);
+                    cmp = Comparer.Default.Compare( colValue, param[c]);
                     if (cmp < 0 || cmp > 0)
                     {
                         break;
                     }
                 }
-
+                if (cmp == 0 && param.Length < sortColumns.Length)
+                    cmp = 1;
                 return cmp;
             }
         }
@@ -460,10 +473,12 @@ public static class DBImplementOleDB
             if (EditMode == 2)
             {    
                 _dataTable.Rows.Add(drNew);
-                dataRow = _dataTable.Rows.IndexOf(drNew);
-                drNew= null;
+                dataRow = _dataTable.Rows.Count - 1;
+                drNew?.EndEdit();
+                drNew = null;
             }
-            _dataTable.Rows[dataRow].EndEdit();
+            else
+                _dataTable.DefaultView[dataRow].Row.EndEdit();
             adapter?.Update(_dataTable);
             _dataTable.AcceptChanges();
             EditMode = 0; // Setzt den Editiermodus zurück
@@ -479,7 +494,7 @@ public static class DBImplementOleDB
 
         public void Delete()
         {
-            _dataTable.Rows[dataRow].Delete();
+            _dataTable.DefaultView[dataRow].Row.Delete();
             adapter?.Update(_dataTable);
         }
 
