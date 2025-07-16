@@ -248,7 +248,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
 
     public bool ReadBeSu(EEventArt eArt, int iLink, out IEventData? cEv)
     {
-        var _r = SeekBeSu(eArt,iLink, out var xB);
+        var _r = SeekBeSu(eArt, iLink, out var xB);
         cEv = _r is null ? null : GetData(_r);
         return !xB;
     }
@@ -317,9 +317,9 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
        _ => throw new NotImplementedException(),
    };
 
-    protected override IEventData GetData(IRecordset rs, bool xNoInit = false) =>new CEventData(rs,xNoInit);
+    protected override IEventData GetData(IRecordset rs, bool xNoInit = false) => new CEventData(rs, xNoInit);
 
-    public  void UpdateClearPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, Predicate<IEventData> predicate)
+    public void UpdateClearPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, Predicate<IEventData> predicate)
     {
         var dB_EventTable = Seek(eIndex, iIndexVal);
         if (dB_EventTable?.EOF == false
@@ -335,7 +335,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         }
 
     }
-    public  void UpdateAllSetVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, int iNewVal)
+    public void UpdateAllSetVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, int iNewVal)
     {
         var dB_EventTable = Seek(eIndex, iIndexVal);
         while (dB_EventTable?.EOF == false
@@ -349,7 +349,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         }
     }
 
-    public  bool UpdateValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
+    public bool UpdateValues((EEventArt eArt, int iLink, short iLfNr) key, (EventFields, object)[] values)
     {
         if (Seek(key) is IRecordset dB_EventTable
             && !dB_EventTable.NoMatch)
@@ -365,7 +365,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         return false;
     }
 
-    public  void UpdateAllMvAppend(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, string sNewText)
+    public void UpdateAllMvAppend(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, string sNewText)
     {
         IRecordset dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{eIndex}";
@@ -390,7 +390,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         }
     }
 
-    public  void UpdateAllMvVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iClearVal = 0)
+    public void UpdateAllMvVal(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iClearVal = 0)
     {
         IRecordset dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{eIndex}";
@@ -406,7 +406,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
             dB_EventTable.MoveNext();
         }
     }
-    public  void UpdateAllSetValPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iNewVal, Predicate<IEventData> predicate, int iClearVal = 0)
+    public void UpdateAllSetValPred(EventIndex eIndex, EventFields eIndexField, int iIndexVal, EventFields eModField, int iNewVal, Predicate<IEventData> predicate, int iClearVal = 0)
     {
         IRecordset dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{eIndex}";
@@ -427,7 +427,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         }
     }
 
-    public  bool ExistsPred(EventIndex eIndex, EventFields eIndexField, int iTndexVal, Predicate<IEventData> predicate)
+    public bool ExistsPred(EventIndex eIndex, EventFields eIndexField, int iTndexVal, Predicate<IEventData> predicate)
     {
         IRecordset dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{eIndex}";
@@ -445,7 +445,7 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         return false;
     }
 
-    public  void ClearAllRemText(EventIndex eIndex, EventFields eIdxField, int iIdxVal)
+    public void ClearAllRemText(EventIndex eIndex, EventFields eIdxField, int iIdxVal)
     {
         IRecordset dB_EventTable = _db_Table;
         dB_EventTable.Index = $"{eIndex}";
@@ -544,6 +544,23 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
                 dB_EventTable.MoveNext();
             }
         }
+    }
+
+    public IEnumerable<IEventData> ReadEntityEvents(int iD, bool xFamily)
+    {
+        var dB_EventTable = _db_Table;
+
+        dB_EventTable.Index = nameof(EventIndex.BeSu2);
+        dB_EventTable.Seek(">=", iD);
+        while (!dB_EventTable.NoMatch
+                    && !dB_EventTable.EOF
+                    && dB_EventTable.Fields[EventFields.PerFamNr].AsInt() == iD)
+        {
+            if (xFamily == (dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() >= EEventArt.eA_500))
+                yield return GetData(dB_EventTable);
+            dB_EventTable.MoveNext();
+        }
+
     }
 }
 

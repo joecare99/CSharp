@@ -467,4 +467,13 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     {
         _ID = dB_PersonTable.Fields[PersonFields.PersNr].AsInt();
     }
+
+    public void SetPersonEvents(IEnumerable<IEventData> acEvents)
+    { Events.Clear();
+        if (acEvents == null) return;
+        foreach (var cEvt in acEvents)
+        {
+            SetData(cEvt);
+        }
+    }
 }

@@ -234,6 +234,7 @@ public static partial class DataModul
         {
             //  MandDB = wrkDefault.CreateDatabase(file, dbCreationFlags, DatabaseTypeEnum.dbVersion120);
         }
+        CheckDB(MandDB, DbDef);
 
         string file;
         if (File.Exists(file = Path.Combine(Verz, "Tempo.mdb")))
@@ -840,6 +841,7 @@ public static partial class DataModul
 
     private static void CheckDB(IDatabase Database, stTableDef[] Def)
     {
+        var tbls = Database.TableDefs().ToList();
         foreach (var tbldef in Def)
         {
             if (tbldef.xDrop)
@@ -856,18 +858,33 @@ public static partial class DataModul
             {
                 try
                 {
-                    /*
-                    var tbl = Database.TableDefs[tbldef.Name];
-                    foreach (var fld in tbldef.Fields)
+              
+                    var tbl = tbls.FirstOrDefault(x => x.Name.ToLower() == tbldef.Name.ToLower() );
+                    if (tbl is null)
                     {
-                        if (!DbFieldExists(tbl, fld.Name))
+                        Database.CreateTable(tbldef.tableDef);
+                    }
+                    else
+                    {
+                        foreach (var fld in tbldef.Fields)
                         {
-                            var f = tbl.CreateField(fld.Name, fld.Typ, fld.Length);
-                            f.Required = !fld.xNull;
-                            tbl.Fields.Append(f);
+                            if (!DbFieldExists(tbl, fld.Name))
+                            {
+                                Database.CreateField(tbl, fld.fieldDef);
+                            }
+                        }
+                        foreach (var idx in tbldef.Indexes)
+                        {
+                            IIndexDef Ix;
+                            if ((Ix = tbl.Indexes.FirstOrDefault(x => x.Name.ToLower() == idx.Name.ToLower())) is not null)
+                            {
+                                if (Ix.Unique != idx.Unique || Ix.Primary != idx.Primary)
+                                    Database.AlterIndex(tbl, idx.indexDef);
+                                continue;
+                            }
+                            Database.CreateIndex(tbl, idx.indexDef);
                         }
                     }
-                    */
                 }
                 catch (Exception)
                 {
@@ -890,6 +907,18 @@ public static partial class DataModul
                     Database.TableDefs.Append(tbl);
                     */
                 }
+            }
+        }
+
+        bool DbFieldExists(ITableDef? tbl, string fldName)
+        {
+            try
+            {
+                return tbl?.Fields.FirstOrDefault(f => f.Name.ToLower() == fldName.ToLower()) != null;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }
@@ -974,86 +1003,91 @@ public static partial class DataModul
         if ((eEvtArt != EEventArt.eA_105)
             && Event.ReadData(eEvtArt, PersInArb, out var cEvt))
         {
-            string sDate = "";
-            string sDate2 = "";
-            string sDatumText = "";
-            string sPlace = "";
-            string sDeathBem = "";
-            string sCausalExt = "";
-            string sAn;
-            short LfNR = 0;
-            if (cEvt!.dDatumV != default)
-            {
-                sDate = cEvt.dDatumV.ToShortDateString();
-            }
-            sDate = sDate + " " + cEvt.sDatumV_S;
-
-            string sDoW = cEvt.dDatumV.DayOfWeekStr();
-
-            if (cEvt.dDatumB != default)
-            {
-                sDate2 = "/ " + cEvt.dDatumB.ToShortDateString();
-            }
-            string sOrt = "";
-            if (0 != cEvt.iDatumText)
-            {
-                sDatumText = " " + cEvt.sDatumText + " ";
-            }
-            if (eEvtArt == EEventArt.eA_Death && (cEvt.iCausal > 0))
-            {
-                sAn = cEvt.sAn;
-                if (sAn.Trim() == "")
-                {
-                    sAn = "an";
-                }
-                else if (sAn.Trim() == "°")
-                {
-                    sAn = "";
-                }
-                sCausalExt = $" {sAn}{(string.IsNullOrEmpty(sAn) ? "" : " ")}{cEvt.sCausal} ";
-            }
-
-            if (cEvt.iKBem > 0)
-            {
-                sDeathBem = $" {cEvt.sKBem.Trim()} ";
-                //=================
-            }
-            else if (cEvt.sDeath == "J")
-            {
-                sDeathBem = " verstorben ";
-            }
-
-            if (cEvt.iOrt > 0)
-            {
-                if (Place.ReadData(cEvt.iOrt, out var cPlace))
-                {
-                    sOrt = cPlace!.sOrt;
-                    sOrt += $"{(string.IsNullOrEmpty(cPlace.sOrtsteil) ? "" : " ")}{cPlace.sOrtsteil}";
-                    sOrt = $"{(string?)cEvt.sZusatz} {sOrt}";
-                }
-            }
-            if (cEvt.sOrt_S.Trim() != "")
-            {
-                sOrt = sOrt.TrimEnd() + " " + cEvt.sOrt_S.Trim();
-            }
-            string sDatB_S = " " + cEvt.sDatumB_S;
-            if (cEvt.iPlatz > 0)
-            {
-                sPlace = " " + cEvt.sPlatz.Trim() + " ";
-            }
-
-            string text = event_PreDisplay(
-                SourceLink_Exists(3, PersInArb, eEvtArt, LfNR) || cEvt.sBem[3].TrimEnd() != "",
-                cEvt.sBem[4].TrimEnd() != "" || Witness.ExistZeug(PersInArb, eEvtArt, LfNR, 10),
-                cEvt.sBem[1] != "" || cEvt.sBem[2] != "",
-                cEvt.sVChr != "0",
-                cEvt.sReg.TrimEnd() != "");
-
-            return $"{text} {sDoW} {sDate} {sDate2}{sDatB_S}{sDatumText}{sCausalExt}{sDeathBem}{sPlace} {sOrt}".Replace("  ", " ");
+            return Event_GetLabelText2(cEvt, event_PreDisplay);
         }
         else
             return "";
 
+    }
+
+    public static string Event_GetLabelText2(IEventData cEvt, Func<bool, bool, bool, bool, bool, string> event_PreDisplay)
+    {
+        string sDate = "";
+        string sDate2 = "";
+        string sDatumText = "";
+        string sPlace = "";
+        string sDeathBem = "";
+        string sCausalExt = "";
+        string sAn;
+        short LfNR = 0;
+        if (cEvt!.dDatumV != default)
+        {
+            sDate = cEvt.dDatumV.ToShortDateString();
+        }
+        sDate = sDate + " " + cEvt.sDatumV_S;
+
+        string sDoW = cEvt.dDatumV.DayOfWeekStr();
+
+        if (cEvt.dDatumB != default)
+        {
+            sDate2 = "/ " + cEvt.dDatumB.ToShortDateString();
+        }
+        string sOrt = "";
+        if (0 != cEvt.iDatumText)
+        {
+            sDatumText = " " + cEvt.sDatumText + " ";
+        }
+        if (cEvt.eArt == EEventArt.eA_Death && (cEvt.iCausal > 0))
+        {
+            sAn = cEvt.sAn;
+            if (sAn.Trim() == "")
+            {
+                sAn = "an";
+            }
+            else if (sAn.Trim() == "°")
+            {
+                sAn = "";
+            }
+            sCausalExt = $" {sAn}{(string.IsNullOrEmpty(sAn) ? "" : " ")}{cEvt.sCausal} ";
+        }
+
+        if (cEvt.iKBem > 0)
+        {
+            sDeathBem = $" {cEvt.sKBem.Trim()} ";
+            //=================
+        }
+        else if (cEvt.sDeath == "J")
+        {
+            sDeathBem = " verstorben ";
+        }
+
+        if (cEvt.iOrt > 0)
+        {
+            if (Place.ReadData(cEvt.iOrt, out var cPlace))
+            {
+                sOrt = cPlace!.sOrt;
+                sOrt += $"{(string.IsNullOrEmpty(cPlace.sOrtsteil) ? "" : " ")}{cPlace.sOrtsteil}";
+                sOrt = $"{(string?)cEvt.sZusatz} {sOrt}";
+            }
+        }
+        if (cEvt.sOrt_S.Trim() != "")
+        {
+            sOrt = sOrt.TrimEnd() + " " + cEvt.sOrt_S.Trim();
+        }
+        string sDatB_S = " " + cEvt.sDatumB_S;
+        if (cEvt.iPlatz > 0)
+        {
+            sPlace = " " + cEvt.sPlatz.Trim() + " ";
+        }
+
+        string text = event_PreDisplay(
+            SourceLink_Exists(3, cEvt.iPerFamNr, cEvt.eArt, LfNR) || cEvt.sBem[3].TrimEnd() != "",
+            cEvt.sBem[4].TrimEnd() != "" || Witness.ExistZeug(cEvt.iPerFamNr, cEvt.eArt, LfNR, 10),
+            cEvt.sBem[1] != "" || cEvt.sBem[2] != "",
+            cEvt.sVChr != "0",
+            cEvt.sReg.TrimEnd() != "");
+
+        return $"{text} {sDoW} {sDate} {sDate2}{sDatB_S}{sDatumText}{sCausalExt}{sDeathBem}{sPlace} {sOrt}".Replace("  ", " ");
     }
 
     public static void Descendents_DeleteAll(int persInArb)
@@ -1201,7 +1235,9 @@ public static partial class DataModul
                         {
                             var fields = idx.Fields;
                             print($"\t\tnew({sDesc}Index.{idx.Name}, [ {string.Join(", " , fields.Select(f=> GetFldName(sDesc, f))) } ])"
-                                + $"{(idx.Unique ? "{ Unique = true }" : "")}"
+                                + $"{(idx.Unique && !idx.Primary ? "{ Unique = true }" : "")}"
+                                + $"{(idx.Primary && !idx.Unique ? "{ Primary = true }" : "")}"
+                                + $"{(idx.Primary && idx.Unique ? "{ Primary = true, Unique = true }" : "")}"
                                 + $"{(idx.IgnoreNulls ? "{ IgnoreNull = true }" : "")}"
                                 + ",");
                         }
@@ -1394,7 +1430,7 @@ public static partial class DataModul
     public static void TTable_RemovePerson(int persInArb, int Param)
     {
         var dB_TTable = DB_SourceLinkTable;
-        dB_TTable.Index = "Tab";
+        dB_TTable.Index = SourceLinkIndex.Tab.AsFld();
         dB_TTable.Seek("=", Param, persInArb);
         if (!dB_TTable.NoMatch)
         {
@@ -1425,7 +1461,7 @@ public static partial class DataModul
     public static void SourceLink_DeleteAllPF(int persInArb, int iSKennz)
     {
         IRecordset dB_SourceLinkTable = DB_SourceLinkTable;
-        dB_SourceLinkTable.Index = nameof(SourceLinkIndex.Tab);
+        dB_SourceLinkTable.Index = SourceLinkIndex.Tab.AsFld();
         dB_SourceLinkTable.Seek("=", iSKennz, persInArb);
         while (!dB_SourceLinkTable.NoMatch
             && !dB_SourceLinkTable.EOF
@@ -1439,7 +1475,7 @@ public static partial class DataModul
 
     public static void SourceLink_DeleteAllEvLk(int iLink, EEventArt eArt, int iLfNr)
     {
-        DB_SourceLinkTable.Index = nameof(SourceLinkIndex.Tab22);
+        DB_SourceLinkTable.Index = SourceLinkIndex.Tab22.AsFld();
         DB_SourceLinkTable.Seek("=", 3, iLink, eArt, iLfNr);
         while (!DB_SourceLinkTable.NoMatch
             && !DB_SourceLinkTable.EOF
@@ -1455,7 +1491,7 @@ public static partial class DataModul
 
     public static void SourceLink_DeleteAllWhere(int iLinkNr, int iSKennz, Predicate<EEventArt> pWhere)
     {
-        DB_SourceLinkTable.Index = "Tab";
+        DB_SourceLinkTable.Index = SourceLinkIndex.Tab.AsFld();
         DB_SourceLinkTable.Seek("=", iSKennz, iLinkNr);
         while (!DB_SourceLinkTable.NoMatch
             && !DB_SourceLinkTable.EOF
@@ -1470,7 +1506,7 @@ public static partial class DataModul
 
     public static void SourceLink_DeleteAllWhere(Predicate<CSourceLinkData> predicate)
     {
-        DB_SourceLinkTable.Index = "Tab";
+        DB_SourceLinkTable.Index = SourceLinkIndex.Tab.AsFld();
         DB_SourceLinkTable.MoveFirst();
         while (!DB_SourceLinkTable.EOF)
         {
@@ -1480,10 +1516,10 @@ public static partial class DataModul
         }
     }
 
-    public static bool SourceLink_Exists(int v, int nr, EEventArt ubg, short lfNR)
+    public static bool SourceLink_Exists(int v, int nr, EEventArt eArt, short lfNR)
     {
-        DB_SourceLinkTable.Index = "Tab22";
-        DB_SourceLinkTable.Seek("=", v, nr, ubg, lfNR);
+        DB_SourceLinkTable.Index = SourceLinkIndex.Tab22.AsFld();
+        DB_SourceLinkTable.Seek("=", v, nr, eArt, lfNR);
         return !DB_SourceLinkTable.NoMatch;
     }
 

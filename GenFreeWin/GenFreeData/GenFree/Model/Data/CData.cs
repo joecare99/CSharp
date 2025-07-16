@@ -119,7 +119,7 @@ public abstract class CData<T> : IHasPropEnum<T>
     {
         if (!Equals(fld, value))
         {
-            SetPropValue(prop, value);
+//            SetPropValue(prop, value);
             fld = value;
             AddChangedProp(prop);
         }
