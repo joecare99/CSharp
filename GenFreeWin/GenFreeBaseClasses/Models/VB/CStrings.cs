@@ -14,7 +14,7 @@ public class CStrings : IStrings
         // If the string is empty, return 0
         string.IsNullOrEmpty(keystring) ? (short)0 : (short)keystring[0];
 
-    public char Chr(short num) =>
+    public char Chr(int num) =>
         // Convert the ASCII value back to a character
         (char)num;
 

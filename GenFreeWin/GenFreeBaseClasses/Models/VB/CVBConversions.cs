@@ -13,7 +13,7 @@ public class CVBConversions : IVBConversions
         return string.Empty;
     }
 
-    public double Int(double v) => Math.Floor(v);
+    public float Int(double v) => (float)Math.Floor(v);
 
     public string Str(object v) => v.AsString();
 
