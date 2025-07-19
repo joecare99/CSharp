@@ -1531,13 +1531,13 @@ public static partial class DataModul
         while (!dB_TTable.EOF
             && !dB_TTable.NoMatch
             && !(
-                dB_TTable.Fields[0].AsInt() != 3
-                || dB_TTable.Fields[1].AsInt() > famInArb))
+                dB_TTable.Fields[SourceLinkFields._1].AsInt() != 3
+                || dB_TTable.Fields[SourceLinkFields._2].AsInt() > famInArb))
         {
-            if (dB_TTable.Fields["Art"].AsEnum<EEventArt>() == eArtOld)
+            if (dB_TTable.Fields[SourceLinkFields.Art].AsEnum<EEventArt>() == eArtOld)
             {
                 dB_TTable.Edit();
-                dB_TTable.Fields["Art"].Value = eArtNew;
+                dB_TTable.Fields[SourceLinkFields.Art].Value = eArtNew;
                 dB_TTable.Update();
             }
             dB_TTable.MoveNext();
