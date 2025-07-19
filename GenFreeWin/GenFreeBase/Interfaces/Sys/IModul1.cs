@@ -260,7 +260,6 @@ public interface IModul1
     string Inhaber { get; set; }
     
     short ErSchalt { get; set; }
-    int FamPerschalt { get; set; }
     int Nr { get; set; }
     /// <summary>
     /// Gets the Text-Substitution-List.

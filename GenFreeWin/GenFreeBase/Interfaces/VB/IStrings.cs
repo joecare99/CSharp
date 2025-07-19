@@ -8,7 +8,7 @@ public interface IStrings
 {
     short Asc(char keyChar);
     short Asc(string keystring);
-    char Chr(short num);
+    char Chr(int num);
     int InStr(string text, string v);
     int Len(string readOnlySpan);
     string Mid(string text, int num11, int length=-1);
