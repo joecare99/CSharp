@@ -7,6 +7,8 @@ namespace GenFree.ViewModels.Interfaces;
 public interface IRechTextViewModel: INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
+    int FamPerSchalt { get; }
+    int PersInArb { get; }
 
     void Bef_Click(object eventSender, EventArgs eventArgs);
     void Command1_Click(object eventSender, EventArgs eventArgs);

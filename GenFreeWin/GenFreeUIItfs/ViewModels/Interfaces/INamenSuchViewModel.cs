@@ -12,6 +12,7 @@ public interface INamenSuchViewModel: INotifyPropertyChanged
     IContainerControl View { get; set; }
     int PersNr { get; set; }
     int FamNr { get; set; }
+    int FamPerschalt { get; set; }
     string Text1_Text { get; set; }
     string Text2_Text { get; set; }
     bool Male_Checked { get; set; }
