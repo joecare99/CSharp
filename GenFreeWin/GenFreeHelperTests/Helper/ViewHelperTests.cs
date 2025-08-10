@@ -25,7 +25,7 @@ namespace GenFree.Helper.Tests
             iText[Arg.Any<string>()].Returns(callInfo => callInfo.Arg<string>());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Speichern", "Save", true)]
         [DataRow("Löschen", "Delete", false)]
         [DataRow("Bearbeiten", "Edit", true)]
@@ -46,7 +46,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(expectedEnabled, button.Visible);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Speichern", "Save",0xE0E0E0, true)]
         [DataRow("Löschen", "Delete", 0xE0E0E0, false)]
         [DataRow("Bearbeiten", "Edit", 0xE0E0E0, true)]

@@ -10,7 +10,7 @@ namespace GenFree.Helper.Tests
     [TestClass()]
     public class StringHelperTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", "", new string[] { "(", ")" })]
         [DataRow("(a)", "a", new string[] { "(", ")" })]
         [DataRow("'b'", "b", new string[] { "'" })]
@@ -22,7 +22,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, sAct.FrameIfNEoW(sFrame), $"FrameIfNEoW({sAct},{string.Join(", ", sFrame)})Test failed");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", "")]
         [DataRow("a", "a")]
         [DataRow("bb", "bb")]
@@ -40,7 +40,7 @@ namespace GenFree.Helper.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", null)]
         [DataRow("a", "a")]
         [DataRow("b", 'b')]
@@ -56,7 +56,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, sAct.AsString(), $"AsString({sAct})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", null)]
         [DataRow("a", "a")]
         [DataRow("3", 3)]
@@ -80,7 +80,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual("", sAct.AsString(), $"AsString({sAct})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("00", new string[] { }, new string[] { }, 0, new string[] { })]
         [DataRow("01", new string[] { "1" }, new string[] { }, 0, new string[] { })]
         [DataRow("0-1", new string[] { }, new string[] { "0" }, 0, new string[] { "0" })]
@@ -97,7 +97,7 @@ namespace GenFree.Helper.Tests
             AssertAreEqual(asExp, asAct1.IntoString(asAct2, iAct), sName);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("a", 0, "")]
         [DataRow("a", 1, "a")]
         [DataRow("ab", 1, "b")]
@@ -113,7 +113,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, sAct.Right(iAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("a", 0, "")]
         [DataRow("a", 1, "a")]
         [DataRow("ab", 1, "a")]
@@ -135,7 +135,7 @@ namespace GenFree.Helper.Tests
             AssertAreEqual(new[] { "'0'", "'1'", "'2'" }, new[] { "0", "1", "2" }.ToStrings((s) => $"'{s}'"));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("a", "a")]
         [DataRow("A", "A")]
         [DataRow("\xCF", "ß")]
@@ -148,7 +148,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, sAct.ANSELDecode());
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("a", "a")]
         [DataRow("A", "A")]
         [DataRow("\xCF", "ß")]
@@ -159,7 +159,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, sAct.IBM_DOSDecode());
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("a", "a")]
         [DataRow("A", "A")]
         [DataRow("\xC2\xB0", "°")]

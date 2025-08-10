@@ -5,7 +5,7 @@ namespace GenFree.Helper.Tests
     [TestClass()]
     public class ListItemTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("A")]
         [DataRow("B")]
         [DataRow("C")]

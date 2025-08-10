@@ -11,7 +11,7 @@ namespace GenFree.Helper.Tests
     public class DBHelperTests
     {
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Exception", PersonFields.Sex, false)]
         [DataRow("NoException", FamilyFields.Suf, false)]
         [DataRow("Test", LinkFields.Kennz, true)]
@@ -30,7 +30,7 @@ namespace GenFree.Helper.Tests
             testWS.Received(1).GetSchema("Columns");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Exception", false)]
         [DataRow("NoException", false)]
         [DataRow("Test", true)]
@@ -49,7 +49,7 @@ namespace GenFree.Helper.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Exception", null)]
         [DataRow("NoException", null)]
         [DataRow("NoException", "Test")]
