@@ -1,5 +1,7 @@
 ﻿using BaseLib.Helper;
 using GenFree.Interfaces.DB;
+using GenFree.Properties;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,10 +9,9 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Diagnostics;
-using System.Linq;
-using GenFree.Properties;
-using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.Eventing.Reader;
+using System.IO;
+using System.Linq;
 
 namespace GenFree.Data.DB;
 
@@ -149,10 +150,10 @@ public static class DBImplementOleDB
 
             // 4. Öffne die neue Datenbank und gib das IDatabase-Objekt zurück
             var result = new OleDbConnection(new OleDbConnectionStringBuilder
-            {
-                Provider = Settings.Default.OleDB_Provider,
-                DataSource = sDBName
-            }.ConnectionString);
+                {
+                    Provider = (IntPtr.Size == 8)?Settings.Default.OleDB_Provider64: Settings.Default.OleDB_Provider,
+                    DataSource = sDBName
+                }.ConnectionString);
             result.Open();
             return new CDatabase(result);
         }
@@ -456,6 +457,8 @@ public static class DBImplementOleDB
                 for (int c = 0; c < param.Length && c < sortColumns.Length; c++)
                 {
                     var colValue = rowView[sortColumns[c]];
+                    if (DBNull.Value == colValue)
+                        return 1;
                     cmp = Comparer.Default.Compare( colValue, param[c]);
                     if (cmp < 0 || cmp > 0)
                     {
