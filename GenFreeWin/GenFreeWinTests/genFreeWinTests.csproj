@@ -20,7 +20,7 @@
 
 	<ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="MSTest" Version="3.9.2" />
+    <PackageReference Include="MSTest" Version="3.10.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,6 +31,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
     <ProjectReference Include="..\GenFreeWin\GenFreeWin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>

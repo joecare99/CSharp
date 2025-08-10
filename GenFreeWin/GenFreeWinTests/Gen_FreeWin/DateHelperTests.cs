@@ -8,7 +8,7 @@ namespace Gen_FreeWin.Tests
     [TestClass()]
     public class DateHelperTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", "", new[] { "" }, new[] { "", "", "" })]
         [DataRow("32", "", new[] { "" }, new[] { "", "32", "" })]
         [DataRow("", "32", new[] { "" }, new[] { "", "", "32" })]

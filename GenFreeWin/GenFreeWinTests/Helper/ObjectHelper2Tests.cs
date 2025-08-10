@@ -6,7 +6,7 @@ namespace GenFree.Helper.Tests
     [TestClass()]
     public class ObjectHelper2Tests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, "0")]
         [DataRow(2, "Uno")]
         [DataRow(3, "Zwei")]
@@ -21,7 +21,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, test[iIdx]);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "0")]
         [DataRow(1, "Uno")]
         [DataRow(2, "Zwei")]
