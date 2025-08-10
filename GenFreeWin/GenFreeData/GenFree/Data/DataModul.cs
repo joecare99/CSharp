@@ -630,7 +630,7 @@ public static partial class DataModul
         {
             return false;
         }
-        DB_TexteTable.Index = nameof(TexteIndex.TxNr);
+        DB_TexteTable.Index = nameof(TexteIndex.TxNr1);
         DB_TexteTable.Seek("=", nIdx);
         if (result = !DB_TexteTable.NoMatch)
         {
@@ -708,7 +708,7 @@ public static partial class DataModul
                 dB_TexteTable.Update();
             return dB_TexteTable.Fields[TexteFields.TxNr].AsInt();
         }
-        dB_TexteTable.Index = nameof(TexteIndex.TxNr);
+        dB_TexteTable.Index = nameof(TexteIndex.TxNr1);
         if (dB_TexteTable.RecordCount == 0)
             Satz = 1;
         else
@@ -925,6 +925,7 @@ public static partial class DataModul
 
     public static void Convert_OldReligion()
     {
+        if (DataModul.Person.ExistsReligi()) return;
         IRecordset dB_PersonTable1 = DB_PersonTable;
         _ = Interaction.MsgBox("Die Religionseinträge werden jetzt bearbeitet. Vermutlich wurde der Mandant mit einer älteren Programmversion bearbeitet. Dieser Vorgang kann einige Minuten dauern.");
         dB_PersonTable1.Index = nameof(PersonIndex.PerNr);

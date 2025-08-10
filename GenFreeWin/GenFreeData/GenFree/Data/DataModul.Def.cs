@@ -506,7 +506,7 @@ public static partial class DataModul
             new(TexteIndex.RTexte, [TexteFields.TxNr, TexteFields.Kennz] ),
             new(TexteIndex.SSTexte,[TexteFields.Txt] ),
             new(TexteIndex.STexte, [TexteFields.Kennz, TexteFields.Txt] ),
-            new(TexteIndex.TxNr,   [TexteFields.TxNr] ){ Unique = true, Primary = true },]
+            new(TexteIndex.TxNr1,   [TexteFields.TxNr] ){ Unique = true, Primary = true },]
             },
     new() { Name = nameof(dbTables.WDBL),
       Fields = [

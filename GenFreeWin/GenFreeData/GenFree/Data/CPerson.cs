@@ -140,4 +140,11 @@ public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData
     };
 
     protected override IPersonData GetData(IRecordset rs, bool xNoInit = false) => new CPersonData(rs, xNoInit);
+
+    public bool ExistsReligi()
+    {
+        _db_Table.Index = PersonIndex.reli.AsFld();
+        _db_Table.Seek(">=", 1);
+        return (!_db_Table.NoMatch);
+    }
 }
