@@ -11,6 +11,7 @@ namespace GenFree.Interfaces.Model
 
         void AllSetEditDate();
         int CheckID(int iPerson, bool xIgnoreSex, ELinkKennz kennz);
+        bool ExistsReligi();
         string GetSex(int persInArb);
         int ValidateID<T>(int persInArb, short schalt, int MaxPersID, T tOKRes, Func<int, T> uQuery) where T : Enum;
     }

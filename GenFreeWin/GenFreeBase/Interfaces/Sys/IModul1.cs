@@ -184,10 +184,6 @@ public interface IModul1
     // =================
     byte Programtesttemp { get; set; }
     string AutoupD { get; set; }
-
-    bool System_xDemo { get; set; }
-    bool System_xJudenfriedhofVersion { get; set; }
-    short System_VerSpecial { get; set; }
     
     bool FAendmerk { get; set; }
     bool PAendmerk { get; set; }
@@ -295,7 +291,7 @@ public interface IModul1
     IStrings Strings { get; }
     [Obsolete]
     IOperators Operators { get; }
-
+    ISystem System { get; }
     IUserData User { get; }
 
     void Ahnles(int PersInArb, out string[] asAhnData);

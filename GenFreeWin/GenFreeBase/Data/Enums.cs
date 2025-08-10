@@ -270,7 +270,6 @@ public enum TexteIndex
     LTexte,
     SSTexte,
     STexte,
-    TxNr,
     TxNr1,
 }
 
