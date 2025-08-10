@@ -48,7 +48,7 @@ namespace MdbBrowser.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(IDBViewViewModel));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false, null, new[] { @"" })]
         [DataRow(false, "", new[] { @"OnDoFileDlg: ,CommonDialogs.FileDialogProxy`1[Microsoft.Win32.OpenFileDialog] => False,
 " })]
@@ -97,7 +97,7 @@ PropChg(MdbBrowser.ViewModels.DBViewViewModel,FileOpenName)=Resources\mydb.mdb
             Assert.AreEqual("", DebugLog);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null, new[] { "" })]
         [DataRow(EKind.Schema, new[] { @"PropChgn(MdbBrowser.ViewModels.DBViewViewModel,SelectedEntry)=
 PropChg(MdbBrowser.ViewModels.DBViewViewModel,SelectedEntry)=(N:, K:Schema D:())

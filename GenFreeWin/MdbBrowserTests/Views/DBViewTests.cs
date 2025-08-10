@@ -22,7 +22,7 @@ namespace MdbBrowser.Views.Tests
             Assert.IsInstanceOfType(mw, typeof(DBView));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true)]
         [DataRow(true,false)]
         [DataRow(false)]
