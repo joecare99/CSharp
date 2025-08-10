@@ -72,7 +72,7 @@ namespace BaseGenClasses.Model.Tests
             new object?[] { new object?[] { EGenType.GenFamily, new Guid("c8456df6-cb02-4bee-92d9-652c1fd7f40d") },null, EGenType.GenFamily, null, null }
         };
 
-        [DataTestMethod]
+        [TestMethod]
         [DynamicData(nameof(GetEnityTestData))]
         public void GetEntityTest(IEnumerable<object?> param, Exception? ex,EGenType eExpType, string sExpStr, DateTime? dExpDate)
         {
