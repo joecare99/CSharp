@@ -84,8 +84,8 @@ public partial class MenueControlViewModel : BaseViewModelCT, IMenu1ViewModel
     public int TrackBar1Maximum { get; } = 0;
     public int TrackBar1Value { get; set; }
     public DateTime DateTimePicker1Value { get; } = DateTime.Now;
-    public ObservableCollection<ListItem<(EEventArt, int)>> ListBox2Items { get; } = new();
-    public ObservableCollection<ListItem<(bool, int)>> LstList3Items { get; } = new();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<(EEventArt, int)>> ListBox2Items { get; } = new();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<(bool, int)>> LstList3Items { get; } = new();
     public string LstList3Text { get; } = string.Empty;
     public string DateLastCheckText { get; } = string.Empty;
     public ListItem<(bool, int)> LstList3SelectedItem { get; } = default!;

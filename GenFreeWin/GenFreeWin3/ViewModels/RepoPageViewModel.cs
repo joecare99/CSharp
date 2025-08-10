@@ -15,28 +15,28 @@ namespace GenFreeWpf.ViewModels;
 public partial class RepoPageViewModel : BaseViewModelCT, IRepoViewModel
 {
     [ObservableProperty]
-    private string repoName_Text;
+    public partial string RepoName_Text { get; set; }
 
     [ObservableProperty]
-    private string textBox2_Text;
+    public partial string RepoStreet_Text { get; set; }
 
     [ObservableProperty]
-    private string textBox3_Text;
+    public partial string RepoPlace_Text { get; set; }
 
     [ObservableProperty]
-    private string textBox4_Text;
+    public partial string RepoPLZ_Text { get; set; }
 
     [ObservableProperty]
-    private string textBox5_Text;
+    public partial string RepoPhone_Text { get; set; }
 
     [ObservableProperty]
-    private string textBox6_Text;
+    public partial string RepoMail_Text { get; set; }
 
     [ObservableProperty]
-    private string richTextBox1_Text;
+    public partial string RichTextBox1_Text { get; set; }
 
     [ObservableProperty]
-    private string richTextBox2_Text;
+    public partial string RichTextBox2_Text { get; set; }
 
     [ObservableProperty]
     private Action doClose;
@@ -59,13 +59,15 @@ public partial class RepoPageViewModel : BaseViewModelCT, IRepoViewModel
     public IRelayCommand Sources_DblCommand { get; }
     public IRelayCommand List2DblCommand { get; }
 
-    public ObservableCollection<IListItem<int>> Sources_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<IListItem<int>> Sources_Items => throw new NotImplementedException();
 
-    public ObservableCollection<IListItem<int>> Repolist_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<IListItem<int>> Repolist_Items => throw new NotImplementedException();
 
     public IListItem<int> Repolist_SelectedItem => throw new NotImplementedException();
 
     public IListItem<int> Sources_SelectedItem => throw new NotImplementedException();
+
+    public Action<string> DoStart { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public RepoPageViewModel()
     {
