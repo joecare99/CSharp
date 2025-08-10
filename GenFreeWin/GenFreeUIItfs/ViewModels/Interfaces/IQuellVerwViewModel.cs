@@ -8,6 +8,7 @@ public interface IQuellVerwViewModel
     IContainerControl View { get; set; }
     IFrmQuellSrchViewModel frmSrch { get; }
     IInteraction Interaction { get; }
+    bool Frame1_Visible { get; }
 
     void btnHometown_Click(object s, EventArgs e);
     void btnNewEntry_Click(object s, EventArgs e);

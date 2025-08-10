@@ -2,6 +2,7 @@
 using Gen_FreeWin;
 using GenFree.Data;
 using GenFree.Helper;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -127,6 +128,8 @@ public interface IPersonenViewModel : INotifyPropertyChanged
 
     bool PersImpQuerry1_Visible { get; }
     bool Dublicates_Visible { get; }
+    Action<object> SetFocus { set; }
+    Action DoClose { set; }
 
     int AendPruef(int persInArb, int ubg2);
     (EEventArt eArt, int iLfNr) GetEventArtNr(EUserText iText);

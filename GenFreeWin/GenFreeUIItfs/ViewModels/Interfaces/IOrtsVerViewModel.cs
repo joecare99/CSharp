@@ -17,6 +17,7 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     IRelayCommand ConvertKoordsCommand { get; }
     IRelayCommand SearchNameCommand { get; }
     IRelayCommand SearchNumberCommand { get; }
+    bool Frame1_Visible { get; }
 
     void Button10_Click(object s, EventArgs e);
     void Button11_Click(object s, EventArgs e);

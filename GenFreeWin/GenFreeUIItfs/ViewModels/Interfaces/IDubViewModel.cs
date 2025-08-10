@@ -6,8 +6,7 @@ namespace GenFree.ViewModels.Interfaces;
 
 public interface IDubViewModel: INotifyPropertyChanged
 {
-    Form View { get; set; }
-
+    IContainerControl? View { get; set; }
     void Button1_Click(object sender, EventArgs e);
     void Button2_Click(object sender, EventArgs e);
     void Button3_Click(object sender, EventArgs e);

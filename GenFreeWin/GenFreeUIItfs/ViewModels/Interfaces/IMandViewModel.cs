@@ -7,6 +7,7 @@ namespace GenFree.ViewModels.Interfaces;
 public interface IMandViewModel: INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
+    bool Frame1_Visible { get; }
 
     void Befehl2_Click(object sender, EventArgs e);
     void CmdDeleteMandant_Click(object sender, EventArgs e);

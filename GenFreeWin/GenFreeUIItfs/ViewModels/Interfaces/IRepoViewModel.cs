@@ -26,14 +26,15 @@ public interface IRepoViewModel: INotifyPropertyChanged
 
     int SourceCount { get; }
     string RepoName_Text { get; set; }
-    string TextBox2_Text { get; set; }
-    string TextBox3_Text { get; set; }
-    string TextBox4_Text { get; set; }
-    string TextBox5_Text { get; set; }
-    string TextBox6_Text { get; set; }
+    string RepoStreet_Text { get; set; }
+    string RepoPlace_Text { get; set; }
+    string RepoPLZ_Text { get; set; }
+    string RepoPhone_Text { get; set; }
+    string RepoMail_Text { get; set; }
     string RichTextBox1_Text { get; set; }
     string RichTextBox2_Text { get; set; }
     float FontSize { get; }
     object HintFarb { get; }
     Action DoClose { get; set; }
+    Action<string> DoStart { get; set; }
 }

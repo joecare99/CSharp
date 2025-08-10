@@ -21,6 +21,7 @@ public interface ITextLesenViewModel : INotifyPropertyChanged
     IRelayCommand MoveToEntityAnotCommand { get; }
     (string sText, ETextKennz eTKnz) tTextBez { get; set; }
     bool Check1_Checked { get; set; }
+    bool Frame1_Visible { get; }
 
     void Bef_Click(object sender, EventArgs e);
     void btnMoveNameToAlias_Click(object sender, EventArgs e);
