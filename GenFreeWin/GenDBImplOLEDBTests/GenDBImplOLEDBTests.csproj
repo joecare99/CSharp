@@ -15,10 +15,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="MSTest" Version="3.9.3" />
+    <PackageReference Include="MSTest" Version="3.10.0" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
-     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
-    <PackageReference Include="System.Data.OleDb" Version="9.0.6" />
+     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+    <PackageReference Include="System.Data.OleDb" Version="9.0.7" />
  </ItemGroup>
 
   <ItemGroup>
