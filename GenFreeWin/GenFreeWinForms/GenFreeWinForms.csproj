@@ -2,16 +2,15 @@
   <Import Project="..\GenFreeWin.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net481</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net9.0-windows;net481</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWindowsForms>True</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GenFreeBase\GenFreeBase.csproj" />
@@ -35,7 +34,7 @@
     <Compile Update="Views\Menue.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Views\Repo.cs">
+    <Compile Update="Views\OFB.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

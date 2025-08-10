@@ -12,6 +12,7 @@ using System.ComponentModel;
 using GenFree.ViewModels.Interfaces;
 using GenFree.Interfaces.UI;
 using Gen_FreeWin;
+using Views;
 
 namespace GenFreeWin.Views;
 
@@ -20,6 +21,8 @@ public partial class Lizenz : Form
     private ILizenzViewModel _viewModel;
     private IApplUserTexts _strings;
 
+    public ILizenzViewModel ViewModel => _viewModel;
+
     public Lizenz(ILizenzViewModel viewModel, IApplUserTexts strings)
     {
         Load += _Lizenz_Load;
@@ -27,7 +30,9 @@ public partial class Lizenz : Form
         _strings = strings;
         InitializeComponent();
 
-
+        TextBindingAttribute.Commit(this, _viewModel);
+        CommandBindingAttribute.Commit(this, _viewModel);
+        VisibilityBindingAttribute.Commit(this, _viewModel);
     }
 
     private void _Lizenz_Load(object eventSender, EventArgs eventArgs)
