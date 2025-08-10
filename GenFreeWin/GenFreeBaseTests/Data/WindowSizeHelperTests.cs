@@ -11,7 +11,7 @@ namespace GenFree.Data.Tests;
 [TestClass()]
 public class WindowSizeHelperTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(EWindowSize.ws800x600, 800, 600, "Normal")]
     [DataRow(EWindowSize.ws900x670, 900, 670, "Custom1")]
     [DataRow(EWindowSize.ws900x710, 900, 710, "Custom2")]
@@ -30,7 +30,7 @@ public class WindowSizeHelperTests
         Assert.AreEqual(height, iRHeight);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow((EWindowSize)10, 1600, 1200, "UXGA")]
     public void GetWindowSizeTest2(EWindowSize eAct, int width, int height, string expected)
     {
@@ -39,7 +39,7 @@ public class WindowSizeHelperTests
     }
 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(600, EWindowSize.ws800x600)]
     [DataRow(670, EWindowSize.ws900x670)]
     [DataRow(700, EWindowSize.ws900x710)]

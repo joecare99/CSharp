@@ -26,7 +26,7 @@ namespace GenFree.Data.Tests
             Assert.IsNotNull(testClass);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("test")]
         [DataRow("")]
         [DataRow(null)]
@@ -37,7 +37,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(sAct, testClass.Name);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true)]
         [DataRow(false)]
         public void UniquePropTest(bool xAct)
@@ -47,7 +47,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(xAct, testClass.Unique);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true)]
         [DataRow(false)]
         public void IgnoreNullsPropTest(bool xAct)
@@ -57,7 +57,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(xAct, testClass.IgnoreNulls);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null, DisplayName = "null")]
         [DataRow("")]
         [DataRow("1")]

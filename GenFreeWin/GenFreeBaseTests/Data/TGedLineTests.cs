@@ -6,7 +6,7 @@ namespace GenFree.Data.Models.Tests;
 [TestClass]
 public class TGedLineTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("0 HEAD", 0, null, "HEAD", null)]
     [DataRow("1 @I1@ NAME John /Doe/", 1, "@I1@", "NAME", "John /Doe/")]
     [DataRow("2 DATE 1 JAN 1900", 2, null, "DATE", "1 JAN 1900")]
