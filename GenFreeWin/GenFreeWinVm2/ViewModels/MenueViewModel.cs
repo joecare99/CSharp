@@ -117,10 +117,10 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     private DateTime _DateTimePicker1Value;
 
     [ObservableProperty]
-    ObservableCollection<ListItem<(EEventArt, int)>> _ListBox2Items = new();
+    System.Collections.ObjectModel.ObservableCollection<ListItem<(EEventArt, int)>> _ListBox2Items = new();
 
     [ObservableProperty]
-    ObservableCollection<ListItem<(bool, int)>> _LstList3Items = new();
+    System.Collections.ObjectModel.ObservableCollection<ListItem<(bool, int)>> _LstList3Items = new();
 
     [ObservableProperty]
     private string _LstList3Text;

@@ -88,6 +88,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 
     public int NachfNr => throw new NotImplementedException();
 
+    public Action DoClose { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public Action<object> SetFocus { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public string Surnames_Text { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public string Givennames_Text { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public string Alias_Text { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -110,23 +112,23 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 
     public string Search3_Text => throw new NotImplementedException();
 
-    public ObservableCollection<ListItem<int>> Occupation_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<int>> Occupation_Items => throw new NotImplementedException();
 
     public ListItem<int> Occupation_SelectedItem { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public ObservableCollection<ListItem<int>> Title_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<int>> Title_Items => throw new NotImplementedException();
 
     public ListItem<int> Title_SelectedItem { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public ObservableCollection<ListItem<int>> Residence_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<int>> Residence_Items => throw new NotImplementedException();
 
     public ListItem<int> Residence_SelectedItem { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public ObservableCollection<ListItem<int>> Home_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<int>> Home_Items => throw new NotImplementedException();
 
     public ListItem<int> Home_SelectedItem { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public ObservableCollection<ListItem<int>> Additional_Items => throw new NotImplementedException();
+    public System.Collections.ObjectModel.ObservableCollection<ListItem<int>> Additional_Items => throw new NotImplementedException();
 
     public ListItem<int> Additional_SelectedItem { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
