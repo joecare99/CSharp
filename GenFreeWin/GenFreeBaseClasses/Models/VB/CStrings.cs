@@ -60,7 +60,7 @@ public class CStrings : IStrings
     {
         // This method returns a substring starting at 'num11' with an optional 'length'.
         // If 'length' is -1, it returns the rest of the string.
-        if (string.IsNullOrEmpty(text) || num11 < 1)
+        if (string.IsNullOrEmpty(text) || num11 < 1 || num11 > text.Length)
         {
             return string.Empty;
         }

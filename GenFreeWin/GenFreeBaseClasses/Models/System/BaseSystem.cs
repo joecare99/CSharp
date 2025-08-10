@@ -26,6 +26,9 @@ public partial class BaseSystem: ObservableObject, ISystem
     private bool _progIsDemo;
 
     public Func<string, bool> CheckLicence { get; set; } = (s) => ChecLicInt(s);
+    public short VerSpecial { get ; set ; }
+    public bool xDemo { get; set; }
+    public bool xJudenfriedhofVersion { get; set; }
 
     public bool SetLicNr(string licNr)
     {
