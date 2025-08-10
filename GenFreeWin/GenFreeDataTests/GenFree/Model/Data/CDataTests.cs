@@ -68,7 +68,7 @@ public class CDataTests
         Assert.AreEqual(0, testClass.ChangedProps.Count);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TestProp.ID, 1)]
     [DataRow(TestProp.sDescription, "Some Test")]
     [DataRow(TestProp.iData, 321)]
@@ -77,7 +77,7 @@ public class CDataTests
         Assert.AreEqual(oExp, testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TestProp.ID, 1)]
     [DataRow(TestProp.sDescription, "Some Test")]
     [DataRow(TestProp.iData, 321)]
@@ -94,7 +94,7 @@ public class CDataTests
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TestProp.ID, 1, 0)]
     [DataRow(TestProp.sDescription, "Some Test", 0)]
     [DataRow(TestProp.iData, 321, 0)]
@@ -108,7 +108,7 @@ public class CDataTests
         Assert.AreEqual(oExp, testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((TestProp)(0 - 1), "Some_Test", 1)]
     [DataRow((TestProp)3, 322, 1)]
     public void SetPropValueTest1(TestProp eAct, object? oExp, int iExp)

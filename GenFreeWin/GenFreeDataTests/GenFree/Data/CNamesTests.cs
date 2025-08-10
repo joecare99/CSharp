@@ -47,7 +47,7 @@ namespace GenFree.Data.Tests
             testRS.Received(3).Fields[0].Value = 0;
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
@@ -63,7 +63,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -76,7 +76,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).Delete();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -89,7 +89,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -102,7 +102,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers, (char)eTKennz);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
@@ -124,7 +124,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -146,7 +146,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers, (char)eTKennz, iLfNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -160,7 +160,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
@@ -178,7 +178,7 @@ namespace GenFree.Data.Tests
             testND.Received(xExp ? 1 : 0).SetDBValues(testRS, null);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
@@ -197,7 +197,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 2, ETextKennz.tkName, 4, true)]
@@ -217,7 +217,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 5 : 6).Fields[NameFields.PersNr].Value = iActPers;
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(NameIndex.PNamen, NameFields.PersNr)]
         [DataRow(NameIndex.TxNr, NameFields.Text)]
         [DataRow(NameIndex.Vollname, NameFields.PersNr)]
@@ -227,14 +227,14 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((NameIndex)5, NameFields.PersNr)]
         public void GetIndex1FieldTest1(NameIndex eAct, NameFields eExp)
         {
             Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(NameIndex.PNamen, NameFields.PersNr, 2, 99)]
         [DataRow(NameIndex.TxNr, NameFields.Text, 5, 42)]
         [DataRow(NameIndex.Vollname, NameFields.PersNr, 1, 7)]
@@ -265,7 +265,7 @@ namespace GenFree.Data.Tests
             rs.Received(8).Fields[eIndexField].Value = iNewVal;
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, false)]
         [DataRow(1, true)]
         [DataRow(2, true)]

@@ -74,7 +74,7 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EFamilyProp)3,6)]
         [DataRow((EFamilyProp)4, 8)]
         public void FillDataTest(EFamilyProp eProp, object oExp)
@@ -94,7 +94,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(0, testClass.Kinder.Count);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void CheckSetAnlDatumTest(bool xAct)
@@ -105,7 +105,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xAct?1:0).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, 3)]
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]
@@ -134,7 +134,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]
         [DataRow(EFamilyProp.sBem, new[] { "", "Bem1-", "Bem2-", "Bem3" })]
@@ -155,7 +155,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)
@@ -175,7 +175,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual("A",testClass.KiAText[0]);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("sName","Text_5")]
         [DataRow("sPrefix", "Text_7")]
         [DataRow("sSuffix", "Text_8")]
@@ -186,7 +186,7 @@ namespace GenFree.Data.Tests
 
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, TypeCode.Int32)]
         [DataRow(EFamilyProp.iName, TypeCode.Int32)]
         [DataRow(EFamilyProp.sBem, TypeCode.Object)]
@@ -254,7 +254,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(3, testClass.GetPropValue<int>(EFamilyProp.ID));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, 3)]
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]

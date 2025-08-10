@@ -46,7 +46,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Fields[0].Value = 0;
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 1, ETextKennz.tkName, 2, true)]
@@ -67,7 +67,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -81,7 +81,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Seek("=", iActPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -93,7 +93,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 1, ETextKennz.tkName, 2, true)]
@@ -116,7 +116,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -129,7 +129,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(PlaceIndex.OrtNr,PlaceFields.OrtNr)]
         [DataRow(PlaceIndex.Orte, PlaceFields.Ort)]
         [DataRow(PlaceIndex.OT, PlaceFields.Ortsteil)]
@@ -141,7 +141,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(PlaceIndex.Pol, PlaceFields.OrtNr)]
         [DataRow(PlaceIndex.O, PlaceFields.OrtNr)]
         [DataRow((PlaceIndex)100, PlaceFields.OrtNr)]

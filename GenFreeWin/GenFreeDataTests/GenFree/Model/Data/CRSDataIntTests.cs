@@ -97,7 +97,7 @@ public class CRSDataIntTests
         Assert.IsInstanceOfType(testClass, typeof(CRSData<TestProp, int>));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(false)]
     [DataRow(true)]
     public void DeleteTest(bool xExp)
@@ -109,7 +109,7 @@ public class CRSDataIntTests
         testRS.Received(1).Seek("=", testClass.ID);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     public void NewIDTest()
     {
         testClass.NewID();

@@ -50,7 +50,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 2, 4, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Birth", 2, 4, EEventArt.eA_Unknown, true)]
@@ -78,7 +78,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(xExp && eArt == EEventArt.eA_Birth ? 2 : 0, iCnt);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 2, 4, EEventArt.eA_Marriage, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -93,7 +93,7 @@ namespace GenFree.Data.Tests
             var adAct = testClass.ReadFamDates(iActFam);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 2, 4, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -113,7 +113,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -125,7 +125,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, testClass.GetPersonBirthOrBapt(iActFam));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -137,7 +137,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(xExp ? new DateTime(1900, 1, 1) : default, testClass.GetPersonBirthOrBapt(iActFam, true));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -151,7 +151,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)0);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -165,7 +165,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)0);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -179,7 +179,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)0);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -194,7 +194,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, false)]
@@ -222,7 +222,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -244,7 +244,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -271,7 +271,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
@@ -293,7 +293,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
@@ -306,7 +306,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -320,7 +320,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=",(int)eArt, iActFam);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 2, 4, EEventArt.eA_Birth, true)]
@@ -347,7 +347,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, EEventArt.eA_Unknown, 0, false)]
         [DataRow("1-0eA_Unknown", 1, 0, EEventArt.eA_Unknown, EEventArt.eA_Unknown, 0, false)]
         [DataRow("1-2eA_Birth", 2, 4, EEventArt.eA_Birth, EEventArt.eA_Birth, 0, false)]
@@ -379,7 +379,7 @@ namespace GenFree.Data.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -393,7 +393,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -419,7 +419,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -439,7 +439,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -461,7 +461,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -483,7 +483,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -504,7 +504,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", 1);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-2eA_Birth", 1, 2, EEventArt.eA_Birth, true)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, false)]
@@ -535,7 +535,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)0);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -558,7 +558,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)EEventArt.eA_Burial, iActFam, (short)0);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
@@ -572,7 +572,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, null, false)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, null, true)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, null, false)]
@@ -585,7 +585,7 @@ namespace GenFree.Data.Tests
             testClass.SetData((eArt, iActFam, (short)iLfdNr), testP, asAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, EventFields.ArtText, null, 0)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, EventFields.ArtText, null, 0)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, EventFields.ArtText, null, 0)]
@@ -596,7 +596,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iExp, testClass.GetValue((eArt, iActFam, (short)iLfdNr), eDataField, 0));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, EventFields.ArtText, null, 0)]
         [DataRow("1-0eA_Unknown", 1, 2, EEventArt.eA_Unknown, EventFields.ArtText, null, 0)]
         [DataRow("1-2eA_Birth", 1, 0, EEventArt.eA_Birth, EventFields.ArtText, null, 0)]
@@ -609,7 +609,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iActFam, (short)iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("NText", EventIndex.NText, EventFields.ArtText)]
         [DataRow("PText", EventIndex.PText, EventFields.Platz)]
         [DataRow("CText", EventIndex.CText, EventFields.Causal)]
@@ -623,14 +623,14 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eIx));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("ArtNr", EventIndex.ArtNr, EventFields.ArtText)]
         public void GetIndex2FieldTest(string sName, EventIndex eIx, EventFields eExp)
         {
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetIndex1Field(eIx));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -646,7 +646,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -664,7 +664,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -682,7 +682,7 @@ namespace GenFree.Data.Tests
             testRS.Received(0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -700,7 +700,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -718,7 +718,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, (EventFields)0, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, (EventFields)101, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EventFields.Zusatz, true)]
@@ -739,7 +739,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 1 : 0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", 1, 2, EEventArt.eA_Unknown, true)]
@@ -755,7 +755,7 @@ namespace GenFree.Data.Tests
         private int iRc = 0;
         private bool[] xResult = { true, false, true, false };
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -770,7 +770,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iLfdNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", EventIndex.ArtNr, EventFields.Art, 0, 0, EEventArt.eA_Unknown, false)]
         [DataRow("1-0eA_Birth", EventIndex.ArtNr, EventFields.Art, 1, 0, EEventArt.eA_Birth, false)]
         [DataRow("1-2eA_Unknown", EventIndex.BeSu, EventFields.PerFamNr, 1, 2, EEventArt.eA_Unknown, true)]
@@ -790,7 +790,7 @@ namespace GenFree.Data.Tests
             return xResult[iRc++];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EEventArt.eA_Birth, 1, (short)0)]
         [DataRow(EEventArt.eA_Baptism, 2, (short)1)]
         [DataRow(EEventArt.eA_Unknown, 0, (short)0)]
@@ -808,7 +808,7 @@ namespace GenFree.Data.Tests
             // Optional: Überprüfe, ob die Felder gesetzt werden, falls dies in AppendRaw passiert
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EEventArt.eA_Birth, 1, (short)0, EventFields.ArtText, "TestValue")]
         [DataRow(EEventArt.eA_Baptism, 2, (short)1, EventFields.Bem1, "Bemerkung")]
         [DataRow(EEventArt.eA_Unknown, 0, (short)0, EventFields.Ort_S, "OrtText")]
@@ -834,7 +834,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1+iLfNr).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EEventArt.eA_Birth, 1, (short)0, EventFields.ArtText, "Default")]
         [DataRow(EEventArt.eA_Baptism, 2, (short)1, EventFields.Bem1, "Default")]
         [DataRow(EEventArt.eA_Unknown, 0, (short)0, EventFields.Ort_S, "Fallback")]
@@ -853,7 +853,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", (int)eArt, iLink,0);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, false)]
         [DataRow(1, true)]
         [DataRow(2, true)]
@@ -882,7 +882,7 @@ namespace GenFree.Data.Tests
             }       
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, false)]
         [DataRow(1, true)]
         [DataRow(2, true)]
@@ -912,7 +912,7 @@ namespace GenFree.Data.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, 2, EEventArt.eA_Birth)]
         [DataRow(2, 3, EEventArt.eA_Baptism)]
         [DataRow(0, 0, EEventArt.eA_Unknown)]
@@ -934,7 +934,7 @@ namespace GenFree.Data.Tests
             testRS.Received(0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EventIndex.ArtNr, 0, false)]
         [DataRow(EventIndex.ArtNr, 1, true)]
         [DataRow(EventIndex.BeSu, 2, true)]

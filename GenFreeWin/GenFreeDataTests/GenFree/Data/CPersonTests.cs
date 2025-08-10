@@ -61,7 +61,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -75,7 +75,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xExp ? 3 : 0).MoveNext();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, (ELinkKennz)0, 0, -2)]
         [DataRow("1-None-0", 5, ELinkKennz.lkNone, 0, -1)]
         [DataRow("2-Name-4", 1, ELinkKennz.lkFather, 2, -3)]
@@ -92,7 +92,7 @@ namespace GenFree.Data.Tests
             testRS.Received(iExp is -1 ? 0 : 1).Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ELinkKennz.lkNone, 0, 0, 0)]
         [DataRow("1-None-0", 1, ELinkKennz.lkNone, 0, 0, 0)]
         [DataRow("1-Father-2", 1, ELinkKennz.lkFather, 2, 0, 1)]
@@ -116,7 +116,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, "")]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, "")]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, "F")]
@@ -128,7 +128,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -142,7 +142,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -154,7 +154,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 1, ETextKennz.tkName, 2, true)]
@@ -177,7 +177,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -190,7 +190,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPers);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(PersonIndex.PerNr, PersonFields.PersNr)]
         [DataRow(PersonIndex.Puid, PersonFields.PUid)]
         [DataRow(PersonIndex.BeaDat, PersonFields.EditDat)]
@@ -200,7 +200,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(PersonIndex.Such1, PersonFields.PersNr)]
         [DataRow(PersonIndex.Such2, PersonFields.PersNr)]
         [DataRow(PersonIndex.Such3, PersonFields.PersNr)]

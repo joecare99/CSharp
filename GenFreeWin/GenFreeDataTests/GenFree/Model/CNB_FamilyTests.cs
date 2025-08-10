@@ -43,7 +43,7 @@ namespace GenFree.Models.Tests
             Assert.IsInstanceOfType(testClass, typeof(INB_Family));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, false)]
         [DataRow(1, true)]
         public void SeekTest(int iAct, bool xExt)
@@ -54,7 +54,7 @@ namespace GenFree.Models.Tests
             Assert.AreEqual(xBreak ? null : testRS, tRS);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, false)]
         [DataRow(1, true)]
         public void AppendTest(int iAct, bool xAct)

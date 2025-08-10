@@ -38,7 +38,7 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IWitnessData));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EWitnessProp)0, 4)]
         [DataRow((EWitnessProp)1, 2)]
         [DataRow((EWitnessProp)2, 3)]
@@ -50,7 +50,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EWitnessProp.iPers, TypeCode.Int32)]
         [DataRow(EWitnessProp.iWKennz, TypeCode.Int32)]
         [DataRow(EWitnessProp.iLink, TypeCode.Int32)]
@@ -61,7 +61,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EWitnessProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EWitnessProp)5, TypeCode.Int32)]
         [DataRow((EWitnessProp)100, TypeCode.Int32)]
@@ -70,7 +70,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EWitnessProp.iPers, 1)]
         [DataRow(EWitnessProp.iWKennz, 2)]
         [DataRow(EWitnessProp.iLink, 3)]
@@ -81,7 +81,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EWitnessProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EWitnessProp)5, TypeCode.Int32)]
         [DataRow((EWitnessProp)100, TypeCode.Int32)]
@@ -90,7 +90,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EWitnessProp.iPers, 1)]
         [DataRow(EWitnessProp.iPers, 2)]
         [DataRow(EWitnessProp.iWKennz, 3)]
@@ -103,7 +103,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EWitnessProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EWitnessProp)5, TypeCode.Int32)]
         [DataRow((EWitnessProp)100, TypeCode.Int32)]
@@ -113,7 +113,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EWitnessProp.iPers, 1)]
         [DataRow(EWitnessProp.iPers, 2)]
         [DataRow(EWitnessProp.iWKennz, 3)]
@@ -126,7 +126,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EWitnessProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EWitnessProp)17, TypeCode.Int32)]
         [DataRow((EWitnessProp)100, TypeCode.Int32)]
@@ -135,7 +135,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EWitnessProp.iPers, 2)]
         [DataRow(EWitnessProp.iWKennz, 3)]
         [DataRow(EWitnessProp.iLink, 4)]
@@ -148,7 +148,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.AsEnum<WitnessFields>()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)

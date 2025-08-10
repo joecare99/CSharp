@@ -59,7 +59,7 @@ public class CEventDataTests
         return $"Text_{arg}";
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Text_11", EventFields.ArtText)]
     [DataRow("Text_16", EventFields.Hausnr)]
     [DataRow("Text_7", EventFields.KBem)]
@@ -91,7 +91,7 @@ public class CEventDataTests
         Assert.IsInstanceOfType(testClass, typeof(IEventData));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(2, (EEventArt)2)]
     [DataRow(3, 16)]
     [DataRow(4, 12)]
@@ -111,7 +111,7 @@ public class CEventDataTests
         Assert.AreEqual((short)10,testClass.ID.iLfNr);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true,false,true,null)]
     [DataRow(false,false,false,null)]
     [DataRow(false, true, true, new[] { "test" })]
@@ -150,7 +150,7 @@ public class CEventDataTests
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, TypeCode.Int16)]
     [DataRow(EEventProp.iArtText, TypeCode.Int32)]
     [DataRow(EEventProp.iPerFamNr, TypeCode.Int32)]
@@ -179,7 +179,7 @@ public class CEventDataTests
         Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((EEventProp)(0 - 1), TypeCode.Int32)]
     [DataRow((EEventProp)23, TypeCode.Int32)]
     [DataRow((EEventProp)100, TypeCode.Int32)]
@@ -188,7 +188,7 @@ public class CEventDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.iArtText, 11)]
     [DataRow(EEventProp.iPerFamNr, 2)]
@@ -229,7 +229,7 @@ public class CEventDataTests
             AssertAreEqual(aS, (string[])testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((EEventProp)(0 - 1), TypeCode.Int32)]
     [DataRow((EEventProp)23, TypeCode.Int32)]
     [DataRow((EEventProp)100, TypeCode.Int32)]
@@ -238,7 +238,7 @@ public class CEventDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.eArt, (EEventArt)2)]
     [DataRow(EEventProp.iArtText, 12)]
@@ -284,7 +284,7 @@ public class CEventDataTests
             AssertAreEqual(aS, (string[])testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((EEventProp)(0 - 1), TypeCode.Int32)]
     [DataRow((EEventProp)23, TypeCode.Int32)]
     [DataRow((EEventProp)100, TypeCode.Int32)]
@@ -304,7 +304,7 @@ public class CEventDataTests
         Assert.AreEqual(false, testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.eArt, (EEventArt)2)]
     [DataRow(EEventProp.iArtText, 12)]
@@ -345,7 +345,7 @@ public class CEventDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
 //    [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.eArt, (EEventArt)2)]
     [DataRow(EEventProp.iArtText, 12)]

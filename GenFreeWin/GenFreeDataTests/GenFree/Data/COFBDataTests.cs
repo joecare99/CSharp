@@ -31,7 +31,7 @@ namespace GenFree.Data.Tests
             testRS.ClearReceivedCalls();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Text_3", EOFBProps.sText)]
         public void SetGetTextTest(string sExp, EOFBProps iAct)
         {
@@ -55,7 +55,7 @@ namespace GenFree.Data.Tests
         //    Assert.Fail();
         //}
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EOFBProps)0, 2)]
         [DataRow((EOFBProps)1, "BB")]
         [DataRow((EOFBProps)2, 4)]
@@ -74,7 +74,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(3, testClass.ID.Item3);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EOFBProps.iPerNr, TypeCode.Int32)]
         [DataRow(EOFBProps.sKennz, TypeCode.String)]
         [DataRow(EOFBProps.iTextNr, TypeCode.Int32)]
@@ -83,7 +83,7 @@ namespace GenFree.Data.Tests
         {
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EOFBProps)(0 - 1), TypeCode.Int32)]
         [DataRow((EOFBProps)4, TypeCode.Int32)]
         [DataRow((EOFBProps)100, TypeCode.Int32)]
@@ -92,7 +92,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EOFBProps.iPerNr, 1)]
         [DataRow(EOFBProps.sKennz, "AA")]
         [DataRow(EOFBProps.iTextNr, 3)]
@@ -114,7 +114,7 @@ namespace GenFree.Data.Tests
                 AssertAreEqual(aS, (string[])testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EOFBProps)(0 - 1), TypeCode.Int32)]
         [DataRow((EOFBProps)4, TypeCode.Int32)]
         [DataRow((EOFBProps)100, TypeCode.Int32)]
@@ -124,7 +124,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EOFBProps.iPerNr, 1)]
         [DataRow(EOFBProps.iPerNr, 2)]
         [DataRow(EOFBProps.sKennz, "AA_")]
@@ -145,7 +145,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EOFBProps.iPerNr, 2)]
         [DataRow(EOFBProps.sKennz, "AA_")]
         [DataRow(EOFBProps.iTextNr, 4)]
@@ -156,7 +156,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EOFBProps.iPerNr, 1)]
         [DataRow(EOFBProps.iPerNr, 2)]
         [DataRow(EOFBProps.sKennz, "AA_")]
@@ -179,7 +179,7 @@ namespace GenFree.Data.Tests
                 AssertAreEqual(aS, (string[])testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EOFBProps)(0 - 1), TypeCode.Int32)]
         [DataRow((EOFBProps)3, TypeCode.Int32)]
         [DataRow((EOFBProps)100, TypeCode.Int32)]
@@ -188,7 +188,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eExp, oAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)

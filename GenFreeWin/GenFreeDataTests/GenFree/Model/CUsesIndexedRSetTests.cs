@@ -62,7 +62,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         Assert.AreEqual(0, testRS.RecordCount);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -75,7 +75,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         testRS.Received().Seek("=", iActPers);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -87,7 +87,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         testRS.Received().Seek("=", iActPers);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -107,7 +107,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", TestIndex.Idx1, 0, false)]
     [DataRow("1-0None", TestIndex.Idx1, 1, true)]
     [DataRow("1-1Father", TestIndex.Idx2, 1, true)]
@@ -304,7 +304,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         Assert.AreEqual("", testRS.Index);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -325,7 +325,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         testRS.Received().Seek("=", iActPers);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -346,7 +346,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         testRS.Received().Seek("=", iActPers);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -460,7 +460,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         Assert.AreEqual(0, newData.Data);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(1, "Test", 42)]
     [DataRow(2, "Beispiel", 99)]
     [DataRow(3, "", 0)]

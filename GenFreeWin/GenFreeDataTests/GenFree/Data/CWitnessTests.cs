@@ -47,7 +47,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(WitnessIndex.Fampruef), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(WitnessIndex.ElSu, WitnessFields.PerNr)]
         [DataRow(WitnessIndex.FamSu, WitnessFields.FamNr)]
         public void GetIndex1FieldTest(WitnessIndex eAct, WitnessFields eExp)
@@ -55,7 +55,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(WitnessIndex.Zeug, WitnessFields.PerNr)]
         public void GetIndex1FieldTest1(WitnessIndex eAct, WitnessFields eExp)
         {
@@ -85,7 +85,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
         public void ExistZeugTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -96,7 +96,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
         public void ExistETest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -107,7 +107,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(WitnessIndex.ElSu), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
         public void ExistFTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -119,7 +119,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, false)]
         [DataRow(1, 2, false)]
         [DataRow(2, 4, true)]
@@ -132,7 +132,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Seek("=", iAct, iK);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, false)]
         [DataRow(1, 3, true)]
         [DataRow(2, 4, false)]
@@ -144,7 +144,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Seek("=", iAct, iK);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(2, EEventArt.eA_Birth, (short)1, 4, true)]
         public void DeleteAllZeugTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -156,7 +156,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(2, EEventArt.eA_Birth, (short)1, 4, true)]
         public void DeleteAllFamPredTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -170,7 +170,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(WitnessIndex.Fampruef), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, EEventArt.eA_Birth, (short)1, 10, true)]
         [DataRow(1, 2, EEventArt.eA_Birth, (short)1, 4, false)]
         public void AppendTest(int iAct, int iPers, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -193,7 +193,7 @@ namespace GenFree.Data.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(1, 2, EEventArt.eA_Birth, (short)1, 4, true)]
         public void AddTest(int iAct, int iPers, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -206,7 +206,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, (short)1, EEventArt.eA_Birth, false)]
         [DataRow("Null", 1, 0, (short)2, EEventArt.eA_603, true)]
         public void UpdateAllReplFamsTest(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
@@ -228,7 +228,7 @@ namespace GenFree.Data.Tests
                 testRS.Received(0).Update();
             }
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, (short)1, EEventArt.eA_Birth, false)]
         [DataRow("Null", 1, 0, (short)2, EEventArt.eA_603, true)]
         public void UpdateAllReplFamsTest2(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
@@ -255,7 +255,7 @@ namespace GenFree.Data.Tests
         /// Testet die Methode ReadAllZeug von CWitness mit verschiedenen Parametern.
         /// Erwartet wird, dass die zurückgegebenen Daten korrekt sind und die Recordset-Operationen wie erwartet aufgerufen werden.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, false)]
         [DataRow(1, EEventArt.eA_Marriage, true)]
         public void ReadAllZeugTest(int iPerFamNr, EEventArt eArt, bool xExp)

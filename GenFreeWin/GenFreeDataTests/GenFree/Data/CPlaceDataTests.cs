@@ -47,7 +47,7 @@ namespace GenFree.Data.Tests
             return $"Text_{arg}";
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Text_2", PlaceFields.Ort)]
         [DataRow("Text_3", PlaceFields.Ortsteil)]
         [DataRow("Text_4", PlaceFields.Kreis)]
@@ -73,7 +73,7 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IPlaceData));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)1, 3)]
         [DataRow((EPlaceProp)2, 4)]
         [DataRow((EPlaceProp)3, 5)]
@@ -102,7 +102,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(0, testClass.ChangedProps.Count);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, TypeCode.Int32)]
         [DataRow(EPlaceProp.iOrt, TypeCode.Int32)]
         [DataRow(EPlaceProp.iOrtsteil, TypeCode.Int32)]
@@ -130,7 +130,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)22, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
@@ -139,7 +139,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 1)]
         [DataRow(EPlaceProp.iOrt, 2)]
         [DataRow(EPlaceProp.iOrtsteil, 3)]
@@ -167,7 +167,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)22, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
@@ -182,7 +182,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(1, testClass.GetPropValue<int>(EPlaceProp.ID));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 1)]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
@@ -207,7 +207,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)17, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
@@ -217,7 +217,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
         [DataRow(EPlaceProp.iOrtsteil, 4)]
@@ -241,7 +241,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)17, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
@@ -250,7 +250,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
         [DataRow(EPlaceProp.iOrtsteil, 4)]
@@ -275,7 +275,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)

@@ -48,7 +48,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Fields[0].Value = 0;
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -66,7 +66,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, EFamilyProp.sBem, 0, false)]
         [DataRow("1-None-0", 1, EFamilyProp.iPrae, 0, false)]
         [DataRow("1-Name-2", 1, EFamilyProp.xAeB, 2, true)]
@@ -85,7 +85,7 @@ namespace GenFree.Data.Tests
             testRS.Received(2).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -99,7 +99,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActFamNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -112,7 +112,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActFamNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -136,7 +136,7 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -150,7 +150,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActFamNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(FamilyIndex.Fam, FamilyFields.FamNr)]
         [DataRow(FamilyIndex.Fuid, FamilyFields.Fuid)]
         [DataRow(FamilyIndex.BeaDat, FamilyFields.EditDat)]
@@ -159,7 +159,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((FamilyIndex)5, FamilyFields.FamNr)]
         [DataRow((FamilyIndex)7, FamilyFields.FamNr)]
         public void GetIndex1FieldTest2(FamilyIndex eAct, FamilyFields eExp)
@@ -167,7 +167,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, "2023-01-01")]
         [DataRow(2, "default")]
         public void AllSetEditDateTest(int famNr, string expectedDateStr)
@@ -197,7 +197,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(expectedDate, (testRS.Fields[FamilyFields.EditDat] as IHasValue).Value);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, 2, 3, "Bemerkung1")]
         [DataRow(5, 10, 0, "")]
         [DataRow(0, 0, 0, null)]

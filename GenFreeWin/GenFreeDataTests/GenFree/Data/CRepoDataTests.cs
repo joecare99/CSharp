@@ -119,7 +119,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eProp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ERepoProp.ID, 1)]
         [DataRow(ERepoProp.ID, 2)]
         [DataRow(ERepoProp.sOrt, "3")]
@@ -137,7 +137,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ERepoProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ERepoProp)10, TypeCode.String)]
         [DataRow((ERepoProp)100, TypeCode.DateTime)]
@@ -147,7 +147,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ERepoProp.ID, 1)]
         [DataRow(ERepoProp.ID, 2)]
         [DataRow(ERepoProp.sOrt, "3")]
@@ -166,7 +166,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received(1).Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ERepoProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ERepoProp)10, TypeCode.String)]
         [DataRow((ERepoProp)100, TypeCode.DateTime)]
@@ -175,7 +175,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ERepoProp.ID, 2)]
         [DataRow(ERepoProp.sOrt, "3")]
         [DataRow(ERepoProp.sPLZ, "4")]

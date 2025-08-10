@@ -40,7 +40,7 @@ public class CNamesDataTests
         Assert.IsInstanceOfType(testClass, typeof(INamesData));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)1, (ETextKennz)3)]
     [DataRow((ENamesProp)2, 4)]
     [DataRow((ENamesProp)3, 5)]
@@ -52,7 +52,7 @@ public class CNamesDataTests
         Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, TypeCode.Int32)]
     [DataRow(ENamesProp.eTKennz, TypeCode.UInt32)]
     [DataRow(ENamesProp.iTextNr, TypeCode.Int32)]
@@ -64,7 +64,7 @@ public class CNamesDataTests
         Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
@@ -73,7 +73,7 @@ public class CNamesDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 1)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)2)]
     [DataRow(ENamesProp.iTextNr, 3)]
@@ -85,7 +85,7 @@ public class CNamesDataTests
         Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
@@ -94,7 +94,7 @@ public class CNamesDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 1)]
     [DataRow(ENamesProp.iPersNr, 2)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
@@ -108,7 +108,7 @@ public class CNamesDataTests
         Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
@@ -118,7 +118,7 @@ public class CNamesDataTests
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 1)]
     [DataRow(ENamesProp.iPersNr, 2)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
@@ -132,7 +132,7 @@ public class CNamesDataTests
         _ = testRS.Received().Fields[eAct.ToString()];
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
@@ -141,7 +141,7 @@ public class CNamesDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 2)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
     [DataRow(ENamesProp.iTextNr, 4)]
@@ -155,7 +155,7 @@ public class CNamesDataTests
         _ = testRS.Received().Fields[eAct.AsEnum<RepoFields>()];
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(false)]
     [DataRow(true)]
     public void DeleteTest(bool xAct)

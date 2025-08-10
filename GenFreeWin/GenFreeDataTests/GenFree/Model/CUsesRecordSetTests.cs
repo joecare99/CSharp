@@ -40,7 +40,7 @@ public class CUsesRecordSetTests : CUsesRecordSet<int>
         Assert.AreEqual(0, testRS.RecordCount);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -53,7 +53,7 @@ public class CUsesRecordSetTests : CUsesRecordSet<int>
         testRS.Received().Seek("=", iActPers);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -65,7 +65,7 @@ public class CUsesRecordSetTests : CUsesRecordSet<int>
         testRS.Received().Seek("=", iActPers);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]
@@ -85,7 +85,7 @@ public class CUsesRecordSetTests : CUsesRecordSet<int>
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", 0, false)]
     [DataRow("1-0None", 1, true)]
     [DataRow("1-1Father", 1, true)]

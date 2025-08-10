@@ -40,7 +40,7 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(ISourceLinkData));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ESourceLinkProp.iLinkType, (short)3)]
         [DataRow(ESourceLinkProp.iPerFamNr, 4)]
         [DataRow(ESourceLinkProp.iQuNr, 6)]
@@ -56,7 +56,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ESourceLinkProp.eArt,      TypeCode.Int16)]
         [DataRow(ESourceLinkProp.iLinkType, TypeCode.Int16)]
         [DataRow(ESourceLinkProp.iPerFamNr,   TypeCode.Int32)]
@@ -71,7 +71,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ESourceLinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ESourceLinkProp)9, TypeCode.Int32)]
         [DataRow((ESourceLinkProp)100, TypeCode.Int32)]
@@ -80,7 +80,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ESourceLinkProp.eArt, EEventArt.eA_Birth)]
         [DataRow(ESourceLinkProp.iLinkType, (short)2)]
         [DataRow(ESourceLinkProp.iPerFamNr, 3)]
@@ -95,7 +95,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ESourceLinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ESourceLinkProp)9, TypeCode.Int32)]
         [DataRow((ESourceLinkProp)100, TypeCode.Int32)]
@@ -110,7 +110,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(3, testClass.GetPropValue<int>(ESourceLinkProp.iPerFamNr));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)101)]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)102)]
         [DataRow(ESourceLinkProp.iLinkType, (short)3)]
@@ -127,7 +127,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ESourceLinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ESourceLinkProp)9, TypeCode.Int32)]
         [DataRow((ESourceLinkProp)100, TypeCode.Int32)]
@@ -137,7 +137,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)101)]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)102)]
         [DataRow(ESourceLinkProp.iLinkType, (short)3)]
@@ -154,7 +154,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ESourceLinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ESourceLinkProp)17, TypeCode.Int32)]
         [DataRow((ESourceLinkProp)100, TypeCode.Int32)]
@@ -163,7 +163,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ESourceLinkProp.eArt, (EEventArt)102)]
         [DataRow(ESourceLinkProp.iLinkType, (short)3)]
         [DataRow(ESourceLinkProp.iPerFamNr, 4)]
@@ -180,7 +180,7 @@ namespace GenFree.Data.Tests
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)

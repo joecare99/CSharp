@@ -45,7 +45,7 @@ namespace GenFree.Models.Tests
             Assert.AreEqual(nameof(OFBIndex.Indn), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(OFBIndex.InDNr, OFBFields.PerNr)]
         [DataRow(OFBIndex.IndNum, OFBFields.TextNr)]
         public void GetIndex1FieldTest(OFBIndex eAct, OFBFields eExp)
@@ -53,14 +53,14 @@ namespace GenFree.Models.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(OFBIndex.Indn, OFBFields.PerNr)]
         public void GetIndex1FieldTest1(OFBIndex eAct, OFBFields eExp)
         {
             Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -85,7 +85,7 @@ namespace GenFree.Models.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -106,7 +106,7 @@ namespace GenFree.Models.Tests
         /// <param name="textNr">Die zu prüfende TextNr</param>
         /// <param name="noMatch">Ob der Recordset NoMatch zurückgeben soll</param>
         /// <param name="expected">Das erwartete Ergebnis von TextExist</param>
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(0, true, false, DisplayName = "TextNr 0, NoMatch true => Existiert nicht")]
         [DataRow(2, false, true, DisplayName = "TextNr 2, NoMatch false => Existiert")]
         [DataRow(3, true, false, DisplayName = "TextNr 3, NoMatch true => Existiert nicht")]
@@ -134,7 +134,7 @@ namespace GenFree.Models.Tests
         /// <param name="kennz">Das Kennzeichen</param>
         /// <param name="noMatch">Ob der Recordset NoMatch zurückgeben soll</param>
         /// <param name="expected">Das erwartete Ergebnis von Exists</param>
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(OFBIndex.InDNr, 1, "AA", false, true, DisplayName = "InDNr, PerNr 1, Kennz 'AA', NoMatch false => Existiert")]
         [DataRow(OFBIndex.InDNr, 2, "BB", true, false, DisplayName = "InDNr, PerNr 2, Kennz 'BB', NoMatch true => Existiert nicht")]
         [DataRow(OFBIndex.IndNum, 3, "OO", false, true, DisplayName = "IndNum, PerNr 3, Kennz 'OO', NoMatch false => Existiert")]
@@ -160,7 +160,7 @@ namespace GenFree.Models.Tests
         /// <param name="kennz">Das Kennzeichen</param>
         /// <param name="persInArb">Die Personennummer</param>
         /// <param name="satz">Der Satz</param>
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("AA", 1, 2, DisplayName = "Update mit Kennz 'AA', PerNr 1, Satz 2")]
         [DataRow("BB", 2, 3, DisplayName = "Update mit Kennz 'BB', PerNr 2, Satz 3")]
         [DataRow("CC", 3, 4, DisplayName = "Update mit Kennz 'CC', PerNr 3, Satz 4")]
@@ -187,7 +187,7 @@ namespace GenFree.Models.Tests
         /// <param name="kennz">Das Kennzeichen</param>
         /// <param name="noMatch">Ob der Recordset NoMatch zurückgeben soll</param>
         /// <param name="expectedFound">Ob ein Datensatz gefunden werden soll</param>
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(1, "AA", false, true, DisplayName = "PerNr 1, Kennz 'AA', NoMatch false => gefunden")]
         [DataRow(2, "BB", true, false, DisplayName = "PerNr 2, Kennz 'BB', NoMatch true => nicht gefunden")]
         [DataRow(3, "CC", false, true, DisplayName = "PerNr 3, Kennz 'CC', NoMatch false => gefunden")]
@@ -216,7 +216,7 @@ namespace GenFree.Models.Tests
         /// <param name="kennz">Das Kennzeichen</param>
         /// <param name="noMatch">Ob der Recordset NoMatch zurückgeben soll</param>
         /// <param name="expected">Das erwartete Ergebnis von DeleteIndNr</param>
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(1, "AA", false, true, DisplayName = "PerNr 1, Kennz 'AA', NoMatch false => gelöscht")]
         [DataRow(2, "BB", true, false, DisplayName = "PerNr 2, Kennz 'BB', NoMatch true => nicht gelöscht")]
         [DataRow(3, "CC", false, true, DisplayName = "PerNr 3, Kennz 'CC', NoMatch false => gelöscht")]

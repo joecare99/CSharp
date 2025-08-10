@@ -104,7 +104,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xAct ?1:0).Delete();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1,true,1,2,ELinkKennz.lkNone,3)]
         [DataRow(2,false,3,2,ELinkKennz.lkFather,2)]
         public void SetPersTest(int iAct,bool xPre, int iPre1,int iPre2, ELinkKennz ePre3, int iExp)
@@ -119,7 +119,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iExp,testClass.iPersNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, true, 1, 2, ELinkKennz.lkNone, 2)]
         [DataRow(3, false, 3, 2, ELinkKennz.lkFather, 3)]
         public void SetFamTest(int iAct, bool xPre, int iPre1, int iPre2, ELinkKennz ePre3, int iExp)
@@ -134,7 +134,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iExp, testClass.iFamNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, TypeCode.Int32)]
         [DataRow(ELinkProp.iFamNr, TypeCode.Int32)]
         [DataRow(ELinkProp.eKennz, TypeCode.Int32)]
@@ -143,7 +143,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         } 
         
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)(0-1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
@@ -152,7 +152,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 3)]
         [DataRow(ELinkProp.iFamNr, 2)]
         [DataRow(ELinkProp.eKennz, ELinkKennz.lkFather)]
@@ -161,7 +161,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
@@ -176,7 +176,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(3, testClass.GetPropValue<int>(ELinkProp.iPersNr));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 1)]
         [DataRow(ELinkProp.iFamNr, 4)]
         [DataRow(ELinkProp.eKennz, ELinkKennz.lkChild)]
@@ -189,7 +189,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
@@ -215,7 +215,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(2, testClass.ChangedProps.Count);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 1)]
         [DataRow(ELinkProp.iFamNr, 2)]
         [DataRow(ELinkProp.eKennz, 3)]
@@ -224,14 +224,14 @@ namespace GenFree.Data.Tests
             testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)3, 4)]
         public void SetDBValueTest3(ELinkProp eAct, object _)
         {
             Assert.ThrowsException<NotImplementedException>(()=> testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 1)]
         [DataRow(ELinkProp.iFamNr, 4)]
         [DataRow(ELinkProp.eKennz, ELinkKennz.lkChild)]
