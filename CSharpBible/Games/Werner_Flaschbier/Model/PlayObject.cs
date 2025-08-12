@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Game_Base.Model.Interfaces;
+using Game.Model.Interfaces;
 using System;
 using System.Drawing;
 using System.Runtime.CompilerServices;
