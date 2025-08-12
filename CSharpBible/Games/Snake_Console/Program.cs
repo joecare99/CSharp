@@ -8,9 +8,10 @@ using BaseLib.Interfaces;
 using BaseLib.Helper;
 using Snake_Console.View;
 using System.Threading;
-using Game_Base.Model;
 using BaseLib.Models.Interfaces;
 using BaseLib.Models;
+using Game.Model.Interfaces;
+using Game.Model;
 
 namespace Snake_Console
 {
