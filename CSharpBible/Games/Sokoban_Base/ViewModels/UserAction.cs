@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban_Base.Model;
+using Sokoban.Model;
 
 namespace Sokoban_Base.ViewModels
 {
