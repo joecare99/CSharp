@@ -33,7 +33,7 @@ public class ListBindingAttribute(string itmsName,string selItemName) : Attribut
         {
             if (field is ComboBox cbx)
             {
-                cbx.Items.AddRange((pi.GetValue(viewModel) as IEnumerable<object>).ToArray());
+                cbx.Items.AddRange((pi.GetValue(viewModel) as IEnumerable<object>)?.ToArray() ?? []);
                 if (pi.GetValue(viewModel) is INotifyCollectionChanged npc)
                     npc.CollectionChanged += (s, e) => { cbx.Items.Clear();cbx.Items.AddRange((s as IEnumerable<object>).ToArray()); };
             }
