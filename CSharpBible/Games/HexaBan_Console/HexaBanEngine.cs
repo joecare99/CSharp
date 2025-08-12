@@ -1,5 +1,4 @@
 ﻿using HexaBan.Models.Interfaces;
-using System.Net.Security;
 
 public class HexaBanEngine2 : IHexaBanEngine
 {

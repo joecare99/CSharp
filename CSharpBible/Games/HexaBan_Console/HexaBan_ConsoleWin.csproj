@@ -1,4 +1,4 @@
-﻿<Project >
+﻿<Project>
   <Import Project="..\Games_net.props" />
 
   <PropertyGroup>
@@ -11,7 +11,10 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HexaBan\HexaBan.csproj" />
   </ItemGroup>
 
 </Project>
