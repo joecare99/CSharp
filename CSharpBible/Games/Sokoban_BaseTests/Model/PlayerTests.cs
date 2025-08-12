@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sokoban.Model;
 using System.Drawing;
 using System.Linq;
 using static BaseLib.Helper.TestHelper;

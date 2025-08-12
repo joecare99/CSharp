@@ -18,8 +18,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using Snake_Base.Models.Interfaces;
-using Game_Base.Model;
 using BaseLib.Models;
+using Game.Model.Interfaces;
 
 /// <summary>
 /// The Models namespace.

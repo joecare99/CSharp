@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Sokoban.Model;
 using System.Drawing;
 
 namespace Sokoban_Base.Model

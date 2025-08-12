@@ -42,7 +42,7 @@ public class DebugLogTests
         Assert.AreEqual("", (testClass as IDebugLog).DebugLog);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] { "" }, new[] { "\r\n" })]
     [DataRow(new[] { "","" }, new[] { "\r\n\r\n" })]
     [DataRow(new[] { "Peter" }, new[] { "Peter\r\n" })]

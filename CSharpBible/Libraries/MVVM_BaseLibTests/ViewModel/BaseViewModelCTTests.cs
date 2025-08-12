@@ -40,7 +40,7 @@ public class BaseViewModelCTTests : BaseViewModelCT
 
     public IRelayCommand? doSomething { get; set; }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0 - 1 =>  2",1,2,new string[] {
         @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property3:7
 OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
@@ -137,7 +137,7 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
         Assert.ThrowsException<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1,false)]
     [DataRow(2, false)]
     [DataRow(0, false)]
@@ -146,7 +146,7 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
         Assert.AreEqual (xExp,FuncProxy(dVal, Prop2IsGreater));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1, true)]
     [DataRow(2, true)]
     [DataRow(0.5, false)]

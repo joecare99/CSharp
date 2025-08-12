@@ -108,7 +108,7 @@ public class NotificationObjectTests : NotificationObject
         Assert.AreEqual("", DebugResult);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [TestProperty("Author","J.C.")]
     [DataRow("00 Empty",0,"",eValidReact.OK,"","")]
     [DataRow("01-Test", 0, "Test", eValidReact.OK, "Test", "OnPropChanged: o:MVVM.ViewModel.Tests.NotificationObjectTests, p:TestString:Test\r\n")]
@@ -183,7 +183,7 @@ public class NotificationObjectTests : NotificationObject
         Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");    
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [TestProperty("Author", "J.C.")]
     [DataRow("00 Empty", 0, "", eValidReact.OK, "", new string[] { "" })]
     [DataRow("01-Test", 0, "Test", eValidReact.OK, "Test", new string[] { "OnPropChanged: o:MVVM.ViewModel.Tests.NotificationObjectTests, p:TestString0a:Test\r\n" })]

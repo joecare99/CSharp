@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Game_Base.Model;
+using Game.Model.Interfaces;
 using Snake_Base.Models.Data;
 using System;
 using System.Drawing;

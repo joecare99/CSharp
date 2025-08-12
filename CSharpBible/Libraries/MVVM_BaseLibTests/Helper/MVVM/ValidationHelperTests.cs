@@ -74,7 +74,7 @@ ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
         AssertAreEqual(new List<string>() { "Not a valid property" }, (_helper.GetErrors("SomeProp") as List<ValidationResult>)?.ConvertAll(o=>o.ErrorMessage??"")!);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new string []{}, new[] { "" },DisplayName ="Empty")]
     [DataRow(new[] { "SomeProp", "Not a valid property" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
     "SomeProp","Not a valid property" }, DisplayName = "1 SomeProp")]

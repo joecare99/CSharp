@@ -15,7 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Game_Base.Model;
+namespace Game.Model.Interfaces;
 
 public interface IPlayfield2D<T> where T : class
 {
