@@ -27,7 +27,7 @@ public class ValidationHelperExtTests : INotifyDataErrorInfo
             return new List<string>();    
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Test",false,new string[] { },null)]
     [DataRow("Test2",true, new[] { "Error1" }, "Error1")]
     [DataRow("TTest2", true, new[] { "Error1", "Error2" }, "Error1, Error2")]
