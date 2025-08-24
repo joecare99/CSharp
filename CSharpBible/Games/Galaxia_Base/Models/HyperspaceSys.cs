@@ -79,6 +79,7 @@ namespace Galaxia.Models
                     Fleet = fleet;
                 StartSector = fleet?.sector;
                 JumpEnergy = 0;
+                return true;
             }
 
             public IEnumerable<ISector> GetReachableSectors()

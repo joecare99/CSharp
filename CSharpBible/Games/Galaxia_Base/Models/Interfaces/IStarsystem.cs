@@ -1,6 +1,6 @@
 ﻿namespace Galaxia.Models.Interfaces;
 
-public interface IStarsystem
+public interface IStarsystem : IFleetContainer
 {
     /// <summary>
     /// Gets the name of the Starsystem.
@@ -19,4 +19,5 @@ public interface IStarsystem
     /// Gets the amount of resources of the starsystem.
     /// </summary>
     float Resources { get; }
+    ISector Sector { get; }
 }

@@ -37,6 +37,7 @@ namespace Galaxia.Models
         public Fleet(ICorporation owner, float size, IFleetContainer container)
         {
             Owner = owner;
+            Owner.Fleets.Add(this);
             Size = size;
             Container = container;
             container.SetFleet(this);
@@ -95,7 +96,9 @@ namespace Galaxia.Models
 
         public void Dispose()
         {
-           Size = 0;
+            Owner.Fleets.Remove(this);
+            Container = null!;
+            Size = 0;
         }
     }
 }

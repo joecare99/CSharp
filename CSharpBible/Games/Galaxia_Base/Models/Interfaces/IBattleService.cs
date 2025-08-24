@@ -1,9 +1,12 @@
-﻿using Galaxia.Models.Interfaces;
+﻿namespace Galaxia.Models.Interfaces;
 
-namespace Galaxia.Models
+public interface IBattleService
 {
-    internal interface IBattleService
-    {
-        IFleet StartBattle(IFleet fleet1, IFleet fleet2);
-    }
+    /// <summary>
+    /// Starts the battle. Contains the battle logic.
+    /// </summary>
+    /// <param name="fleet1">The fleet1.</param>
+    /// <param name="fleet2">The fleet2.</param>
+    /// <returns>IFleet. The winning fleet.</returns>
+    IFleet StartBattle(IFleet fleet1, IFleet fleet2);
 }

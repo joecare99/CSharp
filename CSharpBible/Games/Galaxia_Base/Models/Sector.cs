@@ -10,7 +10,7 @@ public class Sector(ISpace space, Point3d position) : ISector
     /// <summary>
     /// Gets the name of the sector.
     /// </summary>
-    public string Name => $"{(char)((int)'A'+position.X+position.Y*4)}";
+    public string Name => $"{(char)((int)'A' + position.X + position.Y * 4)}";
     /// <summary>
     /// Gets the color of the sector.
     /// </summary>
@@ -26,4 +26,18 @@ public class Sector(ISpace space, Point3d position) : ISector
     /// </summary>
     /// <value>The starsystems.</value>
     public IList<IStarsystem> Starsystems { get; } = [];
+
+    public bool IsOpen => true;
+
+    public IFleet? Fleet { get; private set; }
+
+    public bool SetFleet(IFleet? fleet)
+    {
+        Fleet = fleet;
+        if (fleet != null && fleet.Container != this)
+        {
+            fleet.MoveTo(this);
+        }
+        return true;
+    }
 }

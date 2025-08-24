@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Galaxia.Models.Interfaces;
 
-public interface ISector
+public interface ISector : IFleetContainer
 {
     string Name { get; }
     /// <summary>
@@ -15,4 +15,5 @@ public interface ISector
     /// </summary>
     IList<IStarsystem> Starsystems { get; }
     Color Color { get; }
+
 }

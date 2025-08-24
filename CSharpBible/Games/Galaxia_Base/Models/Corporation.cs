@@ -84,11 +84,13 @@ namespace Galaxia.Models
             return possibleActions;
         }
 
+
+
         public void ExecuteActions()
         {
             xExecute = true;
             // Logik zur Ausführung der Aktionen
-            
+        //    HyperspaceSys 
         }
     }
 }
