@@ -169,7 +169,7 @@ namespace Sokoban.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
-        ///[7]Revision: 1358
+        ///[7]Revision: 1398
         ///[8]Node Kind: directory
         ///[9]Schedule: normal
         ///[10]Last Changed Author: jc99
