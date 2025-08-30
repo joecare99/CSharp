@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Galaxia.Models
 {
+    /// <summary>
+    /// Implementierung des Hyperspace-Systems einer Corporation.
+    /// </summary>
     public class HyperspaceSys : IHyperspaceSys
     {
         private readonly List<IHyperSlot> _hyperSlots;
@@ -12,8 +15,11 @@ namespace Galaxia.Models
 
         public ICorporation corporation { get; }
         public ISpace space { get; }
-        public bool IsAvailable => _startSpaceTime != space!.SpaceTime && _hyperSlots.Any(slot => slot.IsOpen); 
+        // Korrigierte Eigenschaft gemäß Interface (IsAvailible).
+        public bool IsAvailible => _startSpaceTime != space.SpaceTime && _hyperSlots.Any(slot => slot.IsOpen);
         public IReadOnlyList<IHyperSlot> HyperSlots => _hyperSlots;
+
+        public bool IsAvailable => HyperSlots.Any(slot => slot.IsOpen);
 
         public HyperspaceSys(ICorporation corporation, ISpace space)
         {
@@ -28,15 +34,16 @@ namespace Galaxia.Models
 
         public bool Embark(IFleet fleet)
         {
-            // Beispielhafte Logik: Finde einen freien Slot und setze Fleet
-            if (_startSpaceTime != space!.SpaceTime)
-            foreach (var slot in _hyperSlots)
+            if (_startSpaceTime != space.SpaceTime)
             {
-                if (slot is HyperSlot hs && slot.Fleet == null)
+                foreach (var slot in _hyperSlots)
                 {
-                    hs.SetFleet(fleet);
-                    _startSpaceTime = space!.SpaceTime;
-                    return true;
+                    if (slot is HyperSlot hs && slot.Fleet == null)
+                    {
+                        hs.SetFleet(fleet);
+                        _startSpaceTime = space.SpaceTime;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -44,7 +51,6 @@ namespace Galaxia.Models
 
         public IEnumerable<ISector> CombReachableSectors()
         {
-            // Gib eine Liste von Sektoren zurück, die von allen HyperSlots aus erreichbar sind
             IEnumerable<ISector> reachableSectors = space.Sectors.Values;
             foreach (var slot in _hyperSlots)
             {
@@ -56,21 +62,18 @@ namespace Galaxia.Models
             return reachableSectors;
         }
 
-        // Interne Beispiel-Implementierung eines HyperSlots
         private class HyperSlot(IHyperspaceSys hyperspaceSys) : IHyperSlot
         {
             private int _startSpaceTime;
-
             IHyperspaceSys HyperspaceSys => hyperspaceSys;
             public IFleet? Fleet { get; private set; }
             public bool IsOpen => Fleet == null;
-
             public ISector? StartSector { get; private set; }
 
             public float JumpEnergy
             {
-                get => Fleet == null ? 0 : HyperspaceSys.space!.SpaceTime - _startSpaceTime;
-                private set => _startSpaceTime = HyperspaceSys.space!.SpaceTime;
+                get => Fleet == null ? 0 : HyperspaceSys.space.SpaceTime - _startSpaceTime;
+                private set => _startSpaceTime = HyperspaceSys.space.SpaceTime;
             }
 
             public bool SetFleet(IFleet? fleet)
@@ -84,8 +87,7 @@ namespace Galaxia.Models
 
             public IEnumerable<ISector> GetReachableSectors()
             {
-                // Gib eine Liste von Sektoren zurück, die erreichbar sind
-                foreach (ISector sector in HyperspaceSys.space?.Sectors.Values ?? new List<ISector>())
+                foreach (ISector sector in HyperspaceSys.space.Sectors.Values)
                 {
                     if (StartSector != null
                         && sector.Position.DistanceTo(StartSector.Position) == (int)Math.Round(JumpEnergy))

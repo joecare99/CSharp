@@ -7,6 +7,7 @@
         /// </summary>
         /// <value>The corporation.</value>
         ICorporation Corporation { get; }
+        IFleet Fleet { get; }
 
         /// <summary>
         /// Executes this instance.

@@ -9,11 +9,6 @@ namespace Galaxia.Models.CorActions
     public class DoubleJump : JumpAction, ICorAction
     {
         /// <summary>
-        /// Die Flotte, die den Hyperjump ausführen soll.
-        /// </summary>
-        public IFleet Fleet { get; }
-
-        /// <summary>
         /// Die zweite Flotte, die den Hyperjump ausführen soll.
         /// </summary>
         public IFleet Fleet2 { get; }
@@ -29,9 +24,8 @@ namespace Galaxia.Models.CorActions
         /// <param name="corporation">Die ausführende Corporation.</param>
         /// <param name="fleet">Die springende Flotte.</param>
         /// <param name="targetStarsystem">Das Ziel-Sternensystem.</param>
-        public DoubleJump(ICorporation corporation, IFleet fleet1, IFleet fleet2, IStarsystem targetStarsystem):base(corporation)
+        public DoubleJump(ICorporation corporation, IFleet fleet1, IFleet fleet2, IStarsystem targetStarsystem):base(corporation,fleet1)
         {
-            Fleet = fleet1;
             Fleet2 = fleet2;
             TargetStarsystem = targetStarsystem;
         }

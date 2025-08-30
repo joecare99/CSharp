@@ -26,6 +26,8 @@ public interface IHyperspaceSys
     /// </summary>
     /// <value>The hyper slots.</value>
     IReadOnlyList<IHyperSlot> HyperSlots { get; }
+    bool IsAvailible { get; }
+
     /// <summary>
     /// Gets the combined reachable sectors.
     /// </summary>

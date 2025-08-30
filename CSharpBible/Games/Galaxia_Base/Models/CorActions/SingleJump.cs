@@ -29,9 +29,8 @@ namespace Galaxia.Models.CorActions
         /// <param name="corporation">Die ausführende Corporation.</param>
         /// <param name="fleet">Die springende Flotte.</param>
         /// <param name="targetStarsystem">Das Ziel-Sternensystem.</param>
-        public SingleJump(ICorporation corporation, IFleet fleet, IStarsystem targetStarsystem):base(corporation)
+        public SingleJump(ICorporation corporation, IFleet fleet, IStarsystem targetStarsystem):base(corporation,fleet)
         {
-            Fleet = fleet;
             TargetStarsystem = targetStarsystem;
         }
 

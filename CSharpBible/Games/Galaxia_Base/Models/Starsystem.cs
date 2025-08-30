@@ -40,7 +40,7 @@ public class Starsystem(ISector sector,string name,Point3d position,float popula
         
         if (Fleet != null)
         {
-            if (!Fleet.Owner.Stars.Contains(this))
+            if (!Fleet.Owner.Stars.Contains(this) && Fleet.Owner.Home != this)
                 fleet.Owner.Stars.Remove(this);
         }
         

@@ -15,7 +15,7 @@ namespace Galaxia.Models.CorActions
         /// <summary>
         /// Die Flotte, die eingeschifft werden soll.
         /// </summary>
-        public IFleet Fleet { get; }
+        public IFleet? Fleet { get; }
 
         /// <summary>
         /// Die Größe des Flottenteils, der eingeschifft werden soll. 
@@ -48,7 +48,7 @@ namespace Galaxia.Models.CorActions
         public bool Execute()
         {
             // Überprüfe, ob die Flotte zur Corporation gehört und sich im angegebenen Sternensystem befindet
-            if (Fleet.Owner != Corporation || Fleet.Container != SourceStarsystem)
+            if (Fleet?.Owner != Corporation || Fleet?.Container != SourceStarsystem)
                 return false;
 
             // Versuche, die Flotte ins Hyperspace-System einzuschiffen
