@@ -1,12 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+  <Import Project="..\Games_net.props" />
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Galaxia.UI</RootNamespace>
     <AssemblyName>Galaxia.UI</AssemblyName>
   </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Galaxia_Base\Galaxia_Base.csproj" />
   </ItemGroup>

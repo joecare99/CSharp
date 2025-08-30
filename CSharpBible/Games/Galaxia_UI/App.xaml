@@ -2,9 +2,9 @@
     x:Class="Galaxia.UI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="MainWindow.xaml">
+    >
     <Application.Resources>
-        <!--  DataTemplates für einfache Visualisierung  -->
+        <!--  DataTemplates fuer einfache Visualisierung  -->
         <DataTemplate xmlns:vm="clr-namespace:Galaxia.UI.ViewModels" DataType="{x:Type vm:SectorViewModel}">
             <Border
                 Margin="2"

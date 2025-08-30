@@ -1,3 +1,6 @@
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
+using Galaxia.Helper;
 using Galaxia.Models;
 using Galaxia.Models.Interfaces;
 using Galaxia.UI.ViewModels;
@@ -28,6 +31,7 @@ namespace Galaxia.UI
 
         private void ConfigureServices(HostBuilderContext ctx, IServiceCollection services)
         {
+            services.AddSingleton<IRandom, CRandom>();
             services.AddSingleton<ISpace, Space>(sp =>
             {
                 var space = new Space();
@@ -44,19 +48,24 @@ namespace Galaxia.UI
                 // Verwende erweiterten Corporation-Konstruktor (siehe aktualisierte Klasse unten)
                 var corp = new Corporation("DemoCorp", "Demonstration", Color.Aqua,
                                            homeStar,
-                                           new System.Collections.Generic.List<IStarsystem> { homeStar },
                                            space);
                 return corp;
             });
 
-            services.AddSingleton<MainViewModel>();
+            services.AddKeyedSingleton<IHyperspaceSys>(0,(sp,o) =>
+            {
+                var corp = sp.GetRequiredKeyedService<ICorporation>(o);
+                return corp.hyperspace;
+            });
+
+            services.AddTransient<MainViewModel>();
             services.AddSingleton<MainWindow>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             await HostInstance.StartAsync();
-
+            NamingHelper.SetRandom(HostInstance.Services.GetRequiredService<IRandom>());
             var mainWindow = HostInstance.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);

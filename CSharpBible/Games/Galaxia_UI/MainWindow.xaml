@@ -9,9 +9,9 @@
     Width="900"
     Height="600"
     mc:Ignorable="d">
-    <Window.DataContext>
+    <d:Window.DataContext>
         <vm:MainViewModel />
-    </Window.DataContext>
+    </d:Window.DataContext>
     <DockPanel>
         <StackPanel
             Margin="4"
