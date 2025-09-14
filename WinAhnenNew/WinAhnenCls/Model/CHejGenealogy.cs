@@ -36,8 +36,8 @@ namespace WinAhnenCls.Model
         public Func<IList<object>, IGenMedia> GetMedia { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Func<IList<object>, IGenEntity> GetTransaction { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IList<IGenEntity> Entitys { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-        public IList<IGenSources> Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-        public IList<IGenRepository> Repositorys { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenSource> Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IList<IGenRepository> Repositories { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenPlace> Places { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenMedia> Medias { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenTransaction> Transactions { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
