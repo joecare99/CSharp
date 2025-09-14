@@ -44,5 +44,5 @@ public interface IGenRepository: IGenObject, IHasOwner<IGenealogy>
     /// Gets the connected sources.
     /// </summary>
     /// <value>The gen sources.</value>
-    IIndexedList<IGenSources> GenSources { get; }
+    IIndexedList<IGenSource> GenSources { get; }
 }
