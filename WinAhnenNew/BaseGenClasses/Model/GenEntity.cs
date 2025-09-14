@@ -28,7 +28,7 @@ public abstract class GenEntity : GenObject, IGenEntity
     public IGenFact? End => GetEndFactOfEntity();
 
     [JsonIgnore]
-    public IList<IGenSources?> Sources { get; init; } = new WeakLinkList<IGenSources>();
+    public IList<IGenSource?> Sources { get; init; } = new WeakLinkList<IGenSource>();
 
     [JsonIgnore]
     public IList<IGenMedia?> Media { get; init; } = new WeakLinkList<IGenMedia>();
