@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <LangVersion>preview</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
+		<ProjectReference Include="..\RepoMigrator.Providers.Git\RepoMigrator.Providers.Git.csproj" />
+		<ProjectReference Include="..\RepoMigrator.Providers.SvnCli\RepoMigrator.Providers.SvnCli.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+	</ItemGroup>
+</Project>
