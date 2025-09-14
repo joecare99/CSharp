@@ -15,11 +15,15 @@
 		<AssemblyOriginatorKeyFile>..\snKey.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 	<ItemGroup>
+<<<<<<< HEAD
 	  <None Remove="App-Link.lnk" />
 	  <None Remove="net9.0 - Verknüpfung.lnk" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" ExcludeAssets="runtime" />
+=======
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" ExcludeAssets="runtime" />
+>>>>>>> 15109110037a1b342f6346fa4d6d126779e076a5
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\PluginBase\PluginBase.csproj">
