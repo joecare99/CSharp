@@ -23,7 +23,7 @@ public class GenFactTests : IGenEntity
 
     public IGenFact? End => throw new NotImplementedException();
 
-    public IList<IGenSources> Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+    public IList<IGenSource> Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
     public IList<IGenMedia> Media { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
     public DateTime? LastChange => throw new NotImplementedException();

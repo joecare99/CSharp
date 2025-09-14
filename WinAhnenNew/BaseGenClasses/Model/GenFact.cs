@@ -25,7 +25,7 @@ public class GenFact(IGenEntity _owner) : GenObject, IGenFact
     public string? Data { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-    public IList<IGenSources?> Sources { get; init; } = new WeakLinkList<IGenSources>();
+    public IList<IGenSource?> Sources { get; init; } = new WeakLinkList<IGenSource>();
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
     public IGenEntity? MainEntity => (this as IHasOwner<IGenEntity>).Owner;
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]

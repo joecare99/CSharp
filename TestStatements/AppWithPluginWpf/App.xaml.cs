@@ -85,7 +85,7 @@ public partial class App : Application, IEnvironment
         commands.Add(new CommandProxy("list", "lists all commands", DoList));
     }
 
-    private int DoList()
+    private int DoList(object? param = null)
     {
         foreach (ICommand command in commands)
         {

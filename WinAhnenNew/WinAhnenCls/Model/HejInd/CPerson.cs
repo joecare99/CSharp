@@ -76,10 +76,10 @@ namespace WinAhnenCls.Model.HejInd
 
         public IGenFact End => throw new NotImplementedException();
 
-        public IList<IGenSources> Sources { get ; init ; }
+        public IList<IGenSource> Sources { get ; init ; }
         public Guid UId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public EGenType eGenType { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-        IList<IGenSources> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        IList<IGenSource> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenMedia> Media { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
         public IGenealogy Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
