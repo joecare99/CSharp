@@ -5,6 +5,6 @@ public interface ICommand
     string Name { get; }
     string Description { get; }
     void Initialize(IEnvironment env);
-    int Execute();
+    int Execute(object? param = null);
 }
 

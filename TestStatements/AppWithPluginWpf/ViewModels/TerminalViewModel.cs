@@ -31,10 +31,10 @@ public partial class TerminalViewModel: ObservableObject, IUserInterface
         Output = new();
         (App.Current as App).ui = this;
         foreach (var cmd in new List<CommandProxy> {
-            new CommandProxy("clear","wipes the terminal", () => { Output.Clear(); return 0; } ),
-            new CommandProxy("exit","quit the application", () => { App.Current.Shutdown(); return 0; } ),
-            new CommandProxy("help","displays a help-page", () => { Output.Add("This is the help page."); return 0; } ),
-            new CommandProxy("settitle","sets the title of the terminal", () => { Output.Clear(); return 0; } ),
+            new CommandProxy("clear","wipes the terminal", (p) => { Output.Clear(); return 0; } ),
+            new CommandProxy("exit","quit the application", (p) => { App.Current.Shutdown(); return 0; } ),
+            new CommandProxy("help","displays a help-page", (p) => { Output.Add($"This is the help page for {p}."); return 0; } ),
+            new CommandProxy("settitle","sets the title of the terminal", (p) => { Title = p?.ToString() ?? string.Empty; return 0; } ),
         })
         {
             (App.Current as App).commands.Add(cmd);
@@ -59,7 +59,7 @@ public partial class TerminalViewModel: ObservableObject, IUserInterface
             {
                 if (Command.ToLower().StartsWith(cmd.Name) && (Command.Length == cmd.Name.Length || Command[cmd.Name.Length] == ' '))
                 {
-                    cmd.Execute();
+                    cmd.Execute(Command.Substring(cmd.Name.Length).Trim());
                     Output.Add($"Executed command: {Command}");
                     Command = string.Empty;
                 }

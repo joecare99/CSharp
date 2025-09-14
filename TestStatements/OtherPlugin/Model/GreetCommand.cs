@@ -16,7 +16,7 @@ public class GreetCommand : ICommand
         _env = env;
     }
 
-    public int Execute()
+    public int Execute(object? param = null)
     {
         _env?.ui.ShowMessage(Resources.msgGreet);
         return 1;
