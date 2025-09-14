@@ -39,7 +39,7 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// Gets or sets the "get source function".
         /// </summary>
         /// <value>The get source function. This function should get a new instance of IGenSource or deliver an existing one due to the parameters</value>
-        Func<IList<object?>, IGenEntity> GetSource { get; set; }
+        Func<IList<object?>, IGenSource> GetSource { get; set; }
         /// <summary>
         /// Gets or sets the "get media function".
         /// </summary>
@@ -49,7 +49,7 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// Gets or sets the "get transaction function".
         /// </summary>
         /// <value>The get entity function. This function should get a new instance of IGenTransaction or deliver an existing one due to the parameters</value>
-        Func<IList<object?>, IGenEntity> GetTransaction { get; set; }
+        Func<IList<object?>, IGenTransaction> GetTransaction { get; set; }
 
         /// <summary>
         /// The List of all entities of the genealogy (persons and families).
@@ -60,19 +60,19 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// Gets all sources of the genealogy.
         /// </summary>
         /// <value>All sources of the genealogy.</value>
-        IList<IGenSources> Sources { get; init; }
+        IList<IGenSource> Sources { get; init; }
         /// <summary>
         /// Gets all sources of the genealogy.
         /// </summary>
         /// <value>All sources of the genealogy.</value>
-        IList<IGenRepository> Repositorys { get; init; }
+        IList<IGenRepository> Repositories { get; init; }
         /// <summary>
         /// Gets all places of the genealogy.
         /// </summary>
         /// <value>All places of the genealogy.</value>
         IList<IGenPlace> Places { get; init; }
         /// <summary>Gets the medias.</summary>
-        /// <value>The list of media of this fact.</value>
+        /// <value>The list of all media of this genealogy.</value>
         IList<IGenMedia> Medias { get; init; }
         /// <summary>
         /// Gets all the transactions done in the genealogy.

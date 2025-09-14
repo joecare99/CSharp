@@ -55,7 +55,7 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// </summary>
         /// <value>The sources.</value>
         [JsonIgnore]
-        IList<IGenSources?> Sources { get; init; }
+        IList<IGenSource?> Sources { get; init; }
         /// <summary>
         /// Gets the main entity.
         /// </summary>
