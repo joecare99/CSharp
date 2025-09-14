@@ -102,9 +102,9 @@ namespace Calc32Cons
             App.Visible = false;
             App.Border = ConsoleFramework.singleBorder;
             App.Dimension = cl;
-            App.ForeColor = ConsoleColor.Gray;
-            App.BackColor = ConsoleColor.DarkGray;
-            App.BoarderColor = ConsoleColor.Green;
+            App.ForeColor = ConsoleColor.DarkBlue;
+            App.BackColor = ConsoleColor.Black;
+            App.BoarderColor = ConsoleColor.Blue;
 
             //Mouse.Set(0, 0, " ");
             //Mouse.BackColor = ConsoleColor.Red;

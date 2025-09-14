@@ -35,7 +35,7 @@ public class GetResultTests
         Assert.AreEqual(3, testClass.Count);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Test1", new[] {"Hello" }, "Test1(Hello)")]
     [DataRow("Test1", new[] { "Hello", "World" }, "Test1(Hello, World)")]
     [DataRow("Test1", new[] { "Hello", "World","!" }, "Test1(Hello, World, !)")]
@@ -46,7 +46,7 @@ public class GetResultTests
         Assert.AreEqual(3, testClass.Count);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Test3", new[] { "Hello" }, "Test3(Hello)")]
     [DataRow("Test2", new[] { "Hello", "World" }, "Test2(Hello, World)")]
     [DataRow("Test1", new[] { "Hello", "new", "World" }, "Test1(Hello, new, World)")]
@@ -58,7 +58,7 @@ public class GetResultTests
         Assert.AreEqual(3, testClass.Count);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, new[] { "Hello" }, null)]
     [DataRow("Test0", new[] { "Hello", "World" }, null)]
     [DataRow("", new[] { "Hello", "new", "World" }, null)]

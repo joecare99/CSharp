@@ -1,0 +1,57 @@
+﻿<!-- MainWindow.xaml -->
+<Window x:Class="PrimePlotter.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mvvm="clr-namespace:PrimePlotter.ViewModels"
+        xmlns:local="clr-namespace:PrimePlotter.Views"
+        Title="Prime Plotter" Width="1100" Height="800"
+        WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <mvvm:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Width="280" Margin="0,0,12,0">
+            <TextBlock Text="Einstellungen" FontWeight="Bold" Margin="0,0,0,8"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="Bildbreite:" Width="110" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding ImageWidth, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="Bildhöhe:" Width="110" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding ImageHeight, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="Anzahl Primzahlen:" Width="110" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding PrimeCount, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+            </StackPanel>
+
+            <ProgressBar Minimum="0" Maximum="100" Height="18" Margin="0,8,0,0"
+                         Value="{Binding Progress, Mode=OneWay}"/>
+            <TextBlock Text="{Binding Status}" Margin="0,6,0,0"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                <Button Content="Start" Command="{Binding StartCommand}" Width="100"/>
+                <Button Content="Abbrechen" Command="{Binding CancelCommand}" Width="100"/>
+            </StackPanel>
+
+            <TextBlock Margin="0,12,0,0" TextWrapping="Wrap">
+                Hinweis: Das Bild wird nach Abschluss automatisch im Bilder-Ordner gespeichert.
+            </TextBlock>
+        </StackPanel>
+
+        <Border Grid.Column="1" BorderBrush="#DDD" BorderThickness="1" Background="#111">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Image Source="{Binding Bitmap}" Stretch="None"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

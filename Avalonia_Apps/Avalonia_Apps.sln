@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
 	ProjectSection(SolutionItems) = preProject
 		Avalonia_App01\Avalonia_App01.props = Avalonia_App01\Avalonia_App01.props
+		Avalonia_App01\Directory.Packages.props = Avalonia_App01\Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App_01", "Avalonia_App01\Avalonia_App_01\Avalonia_App_01.csproj", "{8EE2B2EC-CED9-43C5-AA6D-A17AD53614CB}"
@@ -35,6 +36,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App02Tests", "Avalonia_App02\Avalonia_App02Tests\Avalonia_App02Tests.csproj", "{E791FC44-D382-40BD-9345-2FA8DB263922}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA05_CommandParCalc", "AA05_CommandParCalc", "{A7D9F32C-17D5-46A0-A9A8-ACE23BBCA366}"
+	ProjectSection(SolutionItems) = preProject
+		AA05_CommandParCalc\Directory.Packages.props = AA05_CommandParCalc\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA05_CommandParCalc", "AA05_CommandParCalc\AA05_CommandParCalc\AA05_CommandParCalc.csproj", "{75BC2329-CC7B-4576-B326-DB9A7F52C861}"
 EndProject
@@ -50,6 +54,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_BaseLibTests", "Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj", "{EE714526-315A-4211-A4E3-2B74EE4C1D83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA06_ValueConverter2", "AA06_ValueConverter2", "{2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}"
+	ProjectSection(SolutionItems) = preProject
+		AA06_ValueConverter2\Directory.Packages.props = AA06_ValueConverter2\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA06_ValueConverter2", "AA06_ValueConverter2\AA06_ValueConverter2\AA06_ValueConverter2.csproj", "{25D1167C-E942-49FD-B125-242062EB4D70}"
 EndProject
@@ -145,5 +152,8 @@ Global
 		{DB95AE93-5D9E-41FF-AF2D-41DA28F98D78} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
 		{DE7CD837-BA7E-4488-891E-8DFD14EB529B} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
 		{A943C3B6-9BE3-443D-A561-212E203A8A83} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}
 	EndGlobalSection
 EndGlobal

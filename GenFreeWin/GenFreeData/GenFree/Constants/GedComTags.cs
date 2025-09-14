@@ -30,6 +30,7 @@
         public const string cGed__ORT = "_ORT";
         public const string cGed__PEI = "_PEI";
         public const string cGed__SUSA = "_SUSA";
+        public const string cGed__STRASSE = "_STRASSE";
         public const string cGed__TIT = "_TIT";
         public const string cGed__TXT = "_TXT";
         public const string cGed__UID = "_UID";
@@ -66,6 +67,7 @@
         public const string cGed_HEAD = "HEAD";
         public const string cGed_HEADER = "HEADER";
         public const string cGed_HEAL = "HEAL";
+        public const string cGed_HEIM = "HEIM";
         public const string cGed_HIST = "HIST";
         public const string cGed_INDI = "INDI";
         public const string cGed_INFO = "INFO";
@@ -112,8 +114,7 @@
         public const string cGed_TRLR = "TRLR";
         public const string cGed_TYPE = "TYPE";
         public const string cGed_VALU = "VALU";
-        public const string cGed_VERS = "VERS";
-        
+        public const string cGed_VERS = "VERS";        
         public const string cGed_RELI = "RELI";
         public const string cGed__CRE = "_CRE";
         public const string cGed__INT = "_INT";
@@ -174,7 +175,6 @@
         public const string cGed_GIVN = "GIVN";
         public const string cGed_HAIR = "HAIR";
         public const string cGed_HEIG = "HEIG";
-        public const string cGed_HEIM = "HEIM";
         public const string cGed_HINW = "HINW";
         public const string cGed_HOBB = "HOBB";
         public const string cGed_HSEL = "HSEL";
@@ -274,6 +274,7 @@
         public const string cGed__LIV = "_LIV";
         public const string cGed__LOC = "_LOC";
         public const string cGed__MAID = "_MAID";
+        public const string cGed__MAIDENHEAD = "_MAIDENHEAD";
         public const string cGed__MARNM = "_MARNM";
         public const string cGed__MEND = "_MEND";
         public const string cGed__MIL = "_MIL";

@@ -71,7 +71,7 @@ public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, 
 
     protected static IEnumerable<object[]> TestModelProperies => typeof(T).GetProperties().Select(o => new object[] { o.Name, o.PropertyType.TC(), o.CanRead, o.CanWrite });
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(TestModelProperies))]
     public virtual void TestModelProperiesTest(string sPropName, TypeCode tPropType, bool xCanRead, bool xCanWrite)
     {

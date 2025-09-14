@@ -16,7 +16,7 @@
 	  <ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
   <ItemGroup>
-	  <PackageReference Condition="!$(TargetFramework.StartsWith(net4))" Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
+	  <PackageReference Condition="!$(TargetFramework.StartsWith(net4))" Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
     <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.0.3" />
 	</ItemGroup>
 	<ItemGroup>

@@ -33,7 +33,7 @@ public class DelegateCommandTests : BaseTestViewModel
         => o is not null and not (TypeCode.Object or TypeCode.Empty or TypeCode.DBNull);
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, null, false)]
     [DataRow(1,TypeCode.Boolean,true)]
     [DataRow(1, TypeCode.Empty, true)]
@@ -57,7 +57,7 @@ public class DelegateCommandTests : BaseTestViewModel
         Assert.AreEqual(xExp,f(tC));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, null, new[] { ""})]
     [DataRow(1, TypeCode.Boolean, new[] { "Execute(_testCommand1,Boolean)\r\n" })]
     [DataRow(1, TypeCode.Empty, new[] { "Execute(_testCommand1,Empty)\r\n" })]
@@ -83,7 +83,7 @@ public class DelegateCommandTests : BaseTestViewModel
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, new[] { "" })]
     [DataRow(1, new[] { "CanExecuteChanged(MVVM.ViewModel.DelegateCommand)\r\n" })]
     [DataRow(2, new[] { "CanExecuteChanged(MVVM.ViewModel.DelegateCommand`1[System.Nullable`1[System.TypeCode]])\r\n" })]

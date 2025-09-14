@@ -17,6 +17,5 @@ public class GenConverter<T, I> : JsonConverter<I> where T : I
 
     public override void Write(Utf8JsonWriter writer, I value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, value, options);
     }
 }

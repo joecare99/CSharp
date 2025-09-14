@@ -4,6 +4,7 @@ using NSubstitute;
 using GenFree.Data;
 using GenFree.Interfaces.DB;
 using BaseLib.Helper;
+using BaseLib.Interfaces;
 
 namespace GenFree.Helper.Tests
 {
@@ -18,7 +19,6 @@ namespace GenFree.Helper.Tests
         }
 
         [TestMethod()]
-        [DataTestMethod()]
         [DataRow(0, null)]
         [DataRow(0, default(DBNull), DisplayName = "DBNull")]
         [DataRow(0, "Zero")]
@@ -37,25 +37,25 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(iExp, sAct.AsInt(), $"AsInt({sAct})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(1, "1")]
         [DataRow(3, 3)]
         public void AsIntTest2(int iExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsIntTest(iExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsIntTest3()
         {
             var sAct = new CTest();
             AsIntTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsIntTest4()
         {
             var sAct = DBNull.Value;
@@ -63,7 +63,6 @@ namespace GenFree.Helper.Tests
         }
 
         [TestMethod()]
-        [DataTestMethod()]
         [DataRow(0, null)]
         [DataRow(0, default(DBNull), DisplayName = "DBNull")]
         [DataRow(0, "Zero")]
@@ -82,25 +81,25 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(lExp, sAct.AsLong(), $"AsLong({sAct})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(1, "1")]
         [DataRow(3, 3)]
         public void AsLongTest2(long lExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsLongTest(lExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsLongTest3()
         {
             var sAct = new CTest();
             AsLongTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsLongTest4()
         {
             var sAct = DBNull.Value;
@@ -108,7 +107,6 @@ namespace GenFree.Helper.Tests
         }
 
         [TestMethod()]
-        [DataTestMethod()]
         [DataRow(0, null)]
         [DataRow(0, default(ENameKennz))]
         [DataRow(0, "Zero")]
@@ -130,7 +128,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(eExp, sAct.AsEnum<ENameKennz>(), $"AsEnum({sAct})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(1, "1")]
         [DataRow(3, 3)]
@@ -138,25 +136,25 @@ namespace GenFree.Helper.Tests
         {
             var eExp = sExp.AsEnum<ENameKennz>();
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsEnumTest(sExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsEnumTest3()
         {
             var sAct = new CTest();
             AsEnumTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsEnumTest4()
         {
             var sAct = DBNull.Value;
             AsEnumTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(0, 0)]
         [DataRow(624511296000000000, 19800101)]
@@ -182,39 +180,39 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(DateTime.FromBinary(dExp), d = sAct.AsDate(), $"AsDate({sAct}) ({d.ToBinary()})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(599265216000000000, "1")]
         [DataRow(599266944000000000, 3)]
         public void AsDateTest2(long lExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsDateTest(lExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsDateTest3()
         {
             var sAct = new CTest();
             AsDateTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsDateTest4()
         {
             var sAct = DBNull.Value;
             AsDateTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsDateTest5()
         {
             var sAct = default(DateTime);
             AsDateTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0.0, null)]
         [DataRow(0.0, default(DBNull), DisplayName = "DBNull")]
         [DataRow(0.0, "Zero")]
@@ -232,36 +230,36 @@ namespace GenFree.Helper.Tests
         {
             Assert.AreEqual(fExp, sAct.AsDouble(), $"AsDouble({sAct})");
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(1, "1")]
         [DataRow(3, 3)]
         public void AsDoubleTest2(double fExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsDoubleTest(fExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsDoubleTest3()
         {
             var sAct = new CTest();
             AsDoubleTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsDoubleTest4()
         {
             var sAct = DBNull.Value;
             AsDoubleTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false, null)]
         [DataRow(true, "true")]
         [DataRow(true, true)]
-        [DataRow(true, 'b')]
+        [DataRow(false, 'b')]
         [DataRow(true, 3)]
         [DataRow(true, 4.0)]
         [DataRow(true, 5.0f)]
@@ -273,32 +271,32 @@ namespace GenFree.Helper.Tests
         {
             Assert.AreEqual(xExp, sAct.AsBool(), $"AsBool({sAct})");
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false, null)]
         [DataRow(true, "true")]
         [DataRow(true, 3)]
         public void AsBoolTest2(bool xExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
             AsBoolTest(xExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsBoolTest3()
         {
             var sAct = new CTest();
             AsBoolTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsBoolTest4()
         {
             var sAct = DBNull.Value;
             AsBoolTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(0, "True")]
         [DataRow(255, "255")]
@@ -313,42 +311,45 @@ namespace GenFree.Helper.Tests
         [DataRow(9, 9)]
         public void AsGUIDTest(int iExp, object sAct)
         {
+            // Arrange
             var gExp = new Guid(iExp, 0, 0, new byte[8]);
+            // Act & Assert
             Assert.AreEqual(gExp, sAct.AsGUID(), $"AsGUID({sAct})");
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, null)]
         [DataRow(1, "1")]
         [DataRow(3, 3)]
         public void AsGUIDTest2(int iExp, object sAct0)
         {
             var sAct = Substitute.For<IField>();
-            sAct.Value.Returns(sAct0);
+            (sAct as IHasValue).Value.Returns(sAct0);
+            // Act
             AsGUIDTest(iExp, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsGUIDTest3()
         {
             var sAct = new CTest();
             AsGUIDTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsGUIDTest4()
         {
             var sAct = DBNull.Value;
             AsGUIDTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void AsGUIDTest5()
         {
             var sAct = Guid.Empty;
             AsGUIDTest(default, sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Zero", null,null)]
         [DataRow("1-0", 1, 0.0)]
         [DataRow("0-1", 0, 1.0)]

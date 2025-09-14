@@ -5,7 +5,7 @@ namespace GenFree.Helper.Tests
     [TestClass()]
     public class PlaceHelpersTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("A", 0, 0, 0, 0, 0)]
         [DataRow("B", 0, 0, 0, 1f, 111.3239f)]
         [DataRow("C", 0, 0, 1f, 0f, 111.3239f)]

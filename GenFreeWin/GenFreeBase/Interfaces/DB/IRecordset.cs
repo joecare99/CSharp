@@ -14,6 +14,7 @@ public interface IRecordset
     string Name { get; }
     bool NoMatch { get; }
     int RecordCount { get; }
+    bool IsOpen { get; }
 
     void AddNew();
     void Close();

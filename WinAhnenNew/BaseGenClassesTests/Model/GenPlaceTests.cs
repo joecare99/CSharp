@@ -8,6 +8,7 @@ namespace BaseGenClasses.Model.Tests;
 public class GenPlaceTests
 {
     private const string _cPlaceJS = "{\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\",\"GOV_ID\":\"GOV123\"}";
+    private const string _cPlaceJ2 = "{\"eGenType\":6,\"UId\":\"164359f0-a3a4-4f9f-8824-af79ec666a45\",\"Name\":\"Musterstadt\",\"Type\":\"Deutschland\",\"GOV_ID\":\"GOV123\",\"ID\":0}";
     GenPlace _genPlace;
 
     [TestInitialize]

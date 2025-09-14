@@ -30,9 +30,9 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         Assert.IsNotNull(_testClass);
         Assert.IsInstanceOfType(_testClass, typeof(BindableCollection<string>));
+        Assert.IsInstanceOfType(_testClass, typeof(System.Collections.ObjectModel.ObservableCollection<string>));
         Assert.IsInstanceOfType(_testClass, typeof(ObservableCollection<string>));
-        Assert.IsInstanceOfType(_testClass, typeof(IObservableCollection<string>));
-        Assert.AreSame(_testClass, _testClass as IObservableCollection<string>);
+        Assert.AreSame(_testClass, _testClass as ObservableCollection<string>);
     }
 
     [TestMethod()]
@@ -41,8 +41,8 @@ public class BindableCollectionTests : BaseTestViewModel
         var testClass = new BindableCollection<string>(new[] { "1", "2", "3" });
         Assert.IsNotNull(testClass);
         Assert.IsInstanceOfType(testClass, typeof(BindableCollection<string>));
+        Assert.IsInstanceOfType(testClass, typeof(System.Collections.ObjectModel.ObservableCollection<string>));
         Assert.IsInstanceOfType(testClass, typeof(ObservableCollection<string>));
-        Assert.IsInstanceOfType(testClass, typeof(IObservableCollection<string>));
     }
 
     [TestMethod()]

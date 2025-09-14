@@ -37,7 +37,7 @@ namespace WinAhnenCls.Helper.Tests
     [TestClass()]
     public class StringHelperTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null, 3, null)]
         [DataRow("", 0, "")]
         [DataRow("123", 0, "")]
@@ -50,7 +50,7 @@ namespace WinAhnenCls.Helper.Tests
             Assert.AreEqual(sExp, sVal.RightStr(iVal));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null, 2, null)]
         [DataRow("", 0, "")]
         [DataRow("123", 0, "")]

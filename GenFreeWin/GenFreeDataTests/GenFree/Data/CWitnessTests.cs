@@ -1,8 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -20,11 +22,11 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CWitness(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(WitnessFields.FamNr)].Value.Returns(1, 2, 3);
-            testRS.Fields[nameof(WitnessFields.PerNr)].Value.Returns(2, 3, 5);
-            testRS.Fields[nameof(WitnessFields.Kennz)].Value.Returns(3, 4, 5);
-            testRS.Fields[nameof(WitnessFields.Art)].Value.Returns(101, 102, 502, 503);
-            testRS.Fields[nameof(WitnessFields.LfNr)].Value.Returns(1, 6, 4, 9);
+            (testRS.Fields[WitnessFields.FamNr] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[WitnessFields.PerNr] as IHasValue).Value.Returns(2, 3, 5);
+            (testRS.Fields[WitnessFields.Kennz] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[WitnessFields.Art] as IHasValue).Value.Returns(101, 102, 502, 503);
+            (testRS.Fields[WitnessFields.LfNr] as IHasValue).Value.Returns(1, 6, 4, 9);
             testRS.ClearReceivedCalls();
         }
 
@@ -45,7 +47,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(WitnessIndex.Fampruef), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(WitnessIndex.ElSu, WitnessFields.PerNr)]
         [DataRow(WitnessIndex.FamSu, WitnessFields.FamNr)]
         public void GetIndex1FieldTest(WitnessIndex eAct, WitnessFields eExp)
@@ -53,7 +55,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(WitnessIndex.Zeug, WitnessFields.PerNr)]
         public void GetIndex1FieldTest1(WitnessIndex eAct, WitnessFields eExp)
         {
@@ -83,31 +85,54 @@ namespace GenFree.Data.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
         public void ExistZeugTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || sAct / 2 != iAct, false, false, true);
             Assert.AreEqual(xExp, testClass.ExistZeug(iAct, eAct, sAct, iK));
-            testRS.Received(1).Seek("=", iAct, iK, eAct, sAct);
+            testRS.Received(1).Seek("=", iAct, iK, (short)eAct, sAct);
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
+        [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
+        [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
+        public void ExistETest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
+        {
+            testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || sAct / 2 != iAct, false, false, true);
+            Assert.AreEqual(xExp, testClass.ExistE(iAct, iK));
+            testRS.Received(1).Seek("=", iAct, iK);
+            Assert.AreEqual(nameof(WitnessIndex.ElSu), testRS.Index);
+        }
+
+        [TestMethod()]
+        [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
+        [DataRow(1, EEventArt.eA_Birth, (short)2, 10, true)]
+        public void ExistFTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
+        {
+            testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || sAct / 2 != iAct, false, false, true);
+            Assert.AreEqual(xExp, testClass.ExistF(iAct, iK));
+            testRS.Received(1).Seek("=", iAct, iK);
+            Assert.AreEqual(nameof(WitnessIndex.FamSu), testRS.Index);
+        }
+
+
+        [TestMethod()]
         [DataRow(0, 0, false)]
         [DataRow(1, 2, false)]
         [DataRow(2, 4, true)]
         public void DeleteAllETest(int iAct, int iK, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iK / 2 != iAct, false, false, true);
-            testRS.Fields[nameof(WitnessFields.Kennz)].Value.Returns(4, 6, 5);
+            (testRS.Fields[WitnessFields.Kennz] as IHasValue).Value.Returns(4, 6, 5);
             testClass.DeleteAllE(iAct, iK);
             Assert.AreEqual(nameof(WitnessIndex.ElSu), testRS.Index);
             testRS.Received(1).Seek("=", iAct, iK);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, false)]
         [DataRow(1, 3, true)]
         [DataRow(2, 4, false)]
@@ -119,33 +144,33 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Seek("=", iAct, iK);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(2, EEventArt.eA_Birth, (short)1, 4, true)]
         public void DeleteAllZeugTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iK / 2 != iAct, false, false, true);
-            testRS.Fields[nameof(WitnessFields.Kennz)].Value.Returns(4, 6, 5);
+            (testRS.Fields[WitnessFields.Kennz] as IHasValue).Value.Returns(4, 6, 5);
             testClass.DeleteAllZ(iAct, iK, eAct, sAct);
-            testRS.Received(1).Seek("=", iAct, iK, eAct, sAct);
+            testRS.Received(1).Seek("=", iAct, iK, (short)eAct, sAct);
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(2, EEventArt.eA_Birth, (short)1, 4, true)]
         public void DeleteAllFamPredTest(int iAct, EEventArt eAct, short sAct, int iK, bool xExp)
         {
             bool testPred(int i) => i % 2 == 0;
             testRS.EOF.Returns(iAct is not (> 0 and < 3) || iK / 2 != iAct, false, false, true);
-            testRS.Fields[nameof(WitnessFields.Art)].Value.Returns(101, 502, 503);
+            (testRS.Fields[WitnessFields.Art] as IHasValue).Value.Returns(101, 502, 503);
             testClass.DeleteAllFamPred(testPred);
             testRS.ReceivedWithAnyArgs(0).Seek("=");
             testRS.Received(1).MoveFirst();
             Assert.AreEqual(nameof(WitnessIndex.Fampruef), testRS.Index);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, EEventArt.eA_Birth, (short)1, 10, true)]
         [DataRow(1, 2, EEventArt.eA_Birth, (short)1, 4, false)]
         public void AppendTest(int iAct, int iPers, EEventArt eAct, short sAct, int iK, bool xExp)
@@ -153,7 +178,7 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iPers / 2 != iAct, false, false, true);
             testClass.Append(iAct, iPers, iK, eAct, sAct);
             Assert.AreEqual(nameof(WitnessIndex.Fampruef), testRS.Index);
-            testRS.Received(1).Seek("=", iAct, iPers, iK, eAct, sAct);
+            testRS.Received(1).Seek("=", iAct, iPers, iK, (short)eAct, sAct);
             if (xExp)
             {
                 testRS.Received(1).AddNew();
@@ -168,20 +193,20 @@ namespace GenFree.Data.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, EEventArt.eA_Birth, (short)1, 10, false)]
         [DataRow(1, 2, EEventArt.eA_Birth, (short)1, 4, true)]
         public void AddTest(int iAct, int iPers, EEventArt eAct, short sAct, int iK, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iPers / 2 != iAct, false, false, true);
             testClass.Add(iAct, iPers, eAct, sAct, iK);
-            testRS.Received(0).Seek("=", iAct, iPers, iK, eAct, sAct);
+            testRS.Received(0).Seek("=", iAct, iPers, iK, (short)eAct, sAct);
             testRS.Received(1).AddNew();
             _ = testRS.Received(5).Fields[""];
             testRS.Received(1).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, (short)1, EEventArt.eA_Birth, false)]
         [DataRow("Null", 1, 0, (short)2, EEventArt.eA_603, true)]
         public void UpdateAllReplFamsTest(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
@@ -203,13 +228,13 @@ namespace GenFree.Data.Tests
                 testRS.Received(0).Update();
             }
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, 0, (short)1, EEventArt.eA_Birth, false)]
         [DataRow("Null", 1, 0, (short)2, EEventArt.eA_603, true)]
         public void UpdateAllReplFamsTest2(string sName, int iAct, int Fam2, short iLfNr, EEventArt eArt, bool xExp)
         {
             testRS.NoMatch.Returns(iAct is not (> 0 and < 3) || iLfNr / 2 != iAct, false, false, true);
-            testClass.UpdateAllReplFams(iAct, Fam2,iLfNr,eArt);
+            testClass.UpdateAllReplFams(iAct, Fam2, iLfNr, eArt);
             Assert.AreEqual(nameof(WitnessIndex.FamSu), testRS.Index);
             testRS.Received(1).Seek("=", iAct, 10);
             if (xExp)
@@ -224,6 +249,41 @@ namespace GenFree.Data.Tests
                 _ = testRS.Received(0).Fields[""];
                 testRS.Received(0).Update();
             }
+        }
+
+        /// <summary>
+        /// Testet die Methode ReadAllZeug von CWitness mit verschiedenen Parametern.
+        /// Erwartet wird, dass die zurückgegebenen Daten korrekt sind und die Recordset-Operationen wie erwartet aufgerufen werden.
+        /// </summary>
+        [TestMethod()]
+        [DataRow(0, EEventArt.eA_Birth, false)]
+        [DataRow(1, EEventArt.eA_Marriage, true)]
+        public void ReadAllZeugTest(int iPerFamNr, EEventArt eArt, bool xExp)
+        {
+            // Arrange
+            testRS.NoMatch.Returns(iPerFamNr != 1, false, true);
+            testRS.EOF.Returns(iPerFamNr != 1, false, true);
+            (testRS.Fields[WitnessFields.PerNr] as IHasValue).Value.Returns(1, 1, 3);
+            (testRS.Fields[WitnessFields.FamNr] as IHasValue).Value.Returns(2, 2);
+            (testRS.Fields[WitnessFields.Kennz] as IHasValue).Value.Returns(3, 4);
+            (testRS.Fields[WitnessFields.Art] as IHasValue).Value.Returns((short)eArt, (short)eArt);
+            (testRS.Fields[WitnessFields.LfNr] as IHasValue).Value.Returns(1, 2);
+
+            // Act
+            var result = testClass.ReadAllZeug(iPerFamNr, eArt);
+            int count = 0;
+            foreach (var item in result)
+            {
+                Assert.IsNotNull(item);
+                Assert.IsInstanceOfType(item, typeof(IWitnessData));
+                Assert.AreEqual((2, 1, 3, eArt, (short)1), item.ID);
+                count++;
+            }
+
+            // Assert
+            Assert.AreEqual(xExp ? 1 : 0, count);
+            Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
+            testRS.Received(1).Seek("=", iPerFamNr,10, (short)eArt,(short)0);
         }
     }
 }

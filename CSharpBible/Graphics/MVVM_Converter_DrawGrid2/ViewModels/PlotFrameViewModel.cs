@@ -14,7 +14,7 @@
 using MVVM.ViewModel;
 using System.Drawing;
 using MVVM_Converter_DrawGrid2.Model;
-using Sokoban_Base.Model;
+using Sokoban.Model;
 
 namespace MVVM_Converter_DrawGrid2.ViewModel
 {

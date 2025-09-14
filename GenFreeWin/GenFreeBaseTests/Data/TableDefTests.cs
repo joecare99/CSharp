@@ -19,7 +19,7 @@ namespace GenFree.Data.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("test")]
         [DataRow("")]
         [DataRow(null)]

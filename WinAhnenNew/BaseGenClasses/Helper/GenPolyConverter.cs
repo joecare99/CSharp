@@ -34,7 +34,7 @@ public class GenPolyConverter<I> : JsonConverter<I> where I : class, IGenBase
             throw new JsonException();
         }
 
-        while (discrReader.GetString().StartsWith("$"))
+        while (discrReader.GetString()?.StartsWith("$")==true)
         {
             discrReader.Read();
             discrReader.Skip();
@@ -57,7 +57,7 @@ public class GenPolyConverter<I> : JsonConverter<I> where I : class, IGenBase
             throw new JsonException();
         }
 
-        var result = (I)JsonSerializer.Deserialize(ref reader, type, options);
+        var result = (I?)JsonSerializer.Deserialize(ref reader, type, options);
 
         return result;
     }

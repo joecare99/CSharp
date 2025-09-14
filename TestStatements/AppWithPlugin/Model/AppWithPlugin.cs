@@ -16,27 +16,42 @@ public class AppWithPlugin : IEnvironment, IUserInterface
 {
     static Assembly LoadPlugin(string relativePath)
     {
-        // Navigate up to the solution root
-        string root = Path.GetFullPath(Path.Combine(
-                Path.GetDirectoryName(
+        string pluginLocation, assemblyPath;
+        if (File.Exists(relativePath))
+        {
+            // Use the current directory
+            pluginLocation = Path.GetFullPath(Path.GetDirectoryName(relativePath));
+            assemblyPath = Path.GetFullPath(relativePath);
+        }
+        else
+        {
+            // Navigate up to the solution root
+            string root = Path.GetFullPath(Path.Combine(
                     Path.GetDirectoryName(
                         Path.GetDirectoryName(
-                            Path.GetDirectoryName(typeof(Program).Assembly.Location))))));
+                            Path.GetDirectoryName(
+                                Path.GetDirectoryName(typeof(Program).Assembly.Location))))));
 
-        string pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar),"Debug", "net6.0"));
+            pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar), "Debug", "net6.0"));
+            assemblyPath = Path.Combine(pluginLocation, relativePath) + ".dll";
+        }
+
         Console.WriteLine($"Loading commands from: {pluginLocation}");
         PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
-        string assemblyPath = Path.Combine(pluginLocation, relativePath) + ".dll";
+        
         Assembly assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
+       
         if (!assembly?.IsFullyTrusted ?? false)
             return null;
 
         // Additional check for a valid signature (if applicable)
+#if SIGNED_BUILD
         if (!IsAssemblySigned(assembly))
         {
             Console.WriteLine("Assembly is not signed or has an invalid signature.");
             return null;
         }
+#endif
         return assembly;
     }
 
@@ -101,11 +116,17 @@ public class AppWithPlugin : IEnvironment, IUserInterface
             .BuildServiceProvider();
 
 
-        string[] pluginPaths =
+        IList<string> pluginPaths =
             [
-                "HelloPlugin"
+                "HelloPlugin",
             ];
-
+        
+        foreach (string pluginPath in Directory.EnumerateFiles(
+            Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location),"..","PlugIns"),"*.dll"))
+        {
+            pluginPaths.Add(pluginPath);
+        }
+        
         commands = pluginPaths.SelectMany(pluginPath =>
         {
             Assembly pluginAssembly = LoadPlugin(pluginPath);
@@ -182,5 +203,10 @@ public class AppWithPlugin : IEnvironment, IUserInterface
     {
         Console.WriteLine(message);
         return true;
+    }
+
+    public void WriteLine(string v)
+    {
+        Console.WriteLine(v);
     }
 }

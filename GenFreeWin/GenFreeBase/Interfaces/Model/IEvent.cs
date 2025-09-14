@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using GenFree.Data;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
@@ -177,7 +178,7 @@ public interface IEvent :
     /// <param name="cEvt">The c evt.</param>
     /// <param name="iLfNr">The i lf nr.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    bool ReadData(EEventArt eEventArt, int persInArb, out IEventData? cEvt, short iLfNr = 0);
+    bool ReadData(EEventArt eEventArt, int persInArb,out IEventData? cEvt, short iLfNr = 0);
     /// <summary>
     /// Reads the data pl.
     /// </summary>
@@ -201,7 +202,7 @@ public interface IEvent :
     /// <param name="cEv">The data.</param>
     /// <returns>
     ///   <c>true</c> if event found, <c>false</c> otherwise.</returns>
-    bool ReadBeSu(EEventArt eArt, int iLink, out IEventData? cEv);
+    bool ReadBeSu(EEventArt eArt, int iLink,  out IEventData? cEv);
     /// <summary>
     /// Reads the events be su.
     /// </summary>
@@ -287,11 +288,53 @@ public interface IEvent :
     /// <param name="eIdxField">The e index field.</param>
     /// <param name="iIdxVal">The i index value.</param>
     void ClearAllRemText(EventIndex eIndex, EventFields eIdxField, int iIdxVal);
+    /// <summary>
+    /// Appends the raw record.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <returns>IRecordset.</returns>
     IRecordset AppendRaw((EEventArt eArt, int iLink, short iLfNr) key);
+    /// <summary>
+    /// Sets the value append.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <param name="eSetField">The e set field.</param>
+    /// <param name="sNewVal">The s new value.</param>
     void SetValAppend((EEventArt eArt, int iLink, short iLfNr) key, EventFields eSetField, string sNewVal);
+    /// <summary>
+    /// Gets the value.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="persInArb">The pers in arb.</param>
+    /// <param name="iEventType">Type of the i event.</param>
+    /// <param name="eGetField">The e get field.</param>
+    /// <param name="conv">The conv.</param>
+    /// <returns>T.</returns>
     T GetValue<T>(int persInArb, EEventArt iEventType, EventFields eGetField, Func<IField, T> conv);
+    /// <summary>
+    /// Updates the repl fams.
+    /// </summary>
+    /// <param name="Fam1">The fam1.</param>
+    /// <param name="Fam2">The fam2.</param>
+    /// <param name="eArt">The e art.</param>
     void UpdateReplFams(int Fam1, int Fam2, EEventArt eArt);
+    /// <summary>
+    /// Deletes all non vital events.
+    /// </summary>
+    /// <param name="num18">The num18.</param>
     void DeleteAllNonVitalE(int num18);
+    /// <summary>
+    /// Deletes all vital e.
+    /// </summary>
+    /// <param name="num18">The num18.</param>
     void DeleteAllVitalE(int num18);
+    /// <summary>
+    /// Reads all events greater iVal.
+    /// </summary>
+    /// <param name="eIndex">Index of the e.</param>
+    /// <param name="iIndexVal">The i index value.</param>
+    /// <returns>IEnumerable&lt;IEventData&gt;.</returns>
     IEnumerable<IEventData> ReadAllGt(EventIndex eIndex, int iIndexVal);
+    IEnumerable<IEventData> ReadAllBeSu(EEventArt eEventArt, int persInArb);
+    IEnumerable<IEventData> ReadEntityEvents(int iD, bool xFamily=false);
 }

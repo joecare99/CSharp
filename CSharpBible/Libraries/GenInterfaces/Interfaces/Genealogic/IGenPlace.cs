@@ -29,7 +29,7 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// Gets or sets the name of the place.
         /// </summary>
         /// <value>The name of the place.</value>
-        string Name { get; set; }
+        string? Name { get; set; }
         /// <summary>
         /// Gets or sets the type of the place.
         /// </summary>

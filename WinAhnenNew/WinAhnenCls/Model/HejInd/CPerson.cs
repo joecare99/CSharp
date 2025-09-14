@@ -13,6 +13,7 @@ namespace WinAhnenCls.Model.HejInd
     {
         private bool _disposedValue;
         private WeakReference<IGenealogy>? _WLowner;
+        private IGenPerson Indi { get; set; } = null!;
 
         public CPerson()
         {
@@ -75,13 +76,17 @@ namespace WinAhnenCls.Model.HejInd
 
         public IGenFact End => throw new NotImplementedException();
 
-        public IList<IGenSources> Sources { get ; init ; }
+        public IList<IGenSource> Sources { get ; init ; }
         public Guid UId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public EGenType eGenType { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-        IList<IGenSources> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        IList<IGenSource> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenMedia> Media { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
         public IGenealogy Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
+
+        public IIndexedList<IGenFamily> Marriages => throw new NotImplementedException();
+
+        public int ID { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -108,6 +113,11 @@ namespace WinAhnenCls.Model.HejInd
         public static IEnumerable<IGenPerson> ReadFromStream(StreamReader sr)
         {
             throw new NotImplementedException();
+        }
+
+        public void SetOwner(IGenealogy t)
+        {
+            _WLowner = new WeakReference<IGenealogy>(t);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GenFree.Data;
 
-public enum EEventArt : int
+public enum EEventArt : short
 {
     eA_Unknown = 0,
     eA_100 = 100,

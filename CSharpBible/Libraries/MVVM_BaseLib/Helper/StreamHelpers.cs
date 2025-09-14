@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace BaseLib.Helper;
 
@@ -97,13 +98,32 @@ public static class StreamHelpers
                     else
                         yield return (e.Item1, (byte)0); // ?? default value
                     break;
-                case Type t when t == typeof(IEnumerable<int>):
+                case Type t when typeof(IEnumerable<int>).IsAssignableFrom(t):
                     streamBytes = new byte[sizeof(short)];
                     _ = stream.Read(streamBytes, 0, sizeof(short));
                     var count = BitConverter.ToInt16(streamBytes, 0);
                     streamBytes = new byte[sizeof(int) * count];
                     _ = stream.Read(streamBytes, 0, sizeof(int) * count);
-                    yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null));
+                    yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null).Select(i=>i!.Value).ToList());
+                    break;
+                case Type t when typeof(IEnumerable<IPersistence>).IsAssignableFrom(t):
+                    Type t1 = typeof(IPersistence);
+                    if (t.IsArray && t.HasElementType) t1=t.GetElementType();
+                    streamBytes = new byte[sizeof(int)];
+                    _ = stream.Read(streamBytes, 0, sizeof(int));
+                    var count2 = BitConverter.ToInt32(streamBytes, 0);
+                    var result1 = new IPersistence?[count2];
+                    if (t1.IsClass && t1.GetConstructors().FirstOrDefault(c => c.IsPublic) != null)
+                        for (var i = 0; i < count2; i++)
+                        {
+                            result1[i] = (IPersistence?)Activator.CreateInstance(t1);
+                        }
+                    else
+                        for (var i = 0; i < count2; i++)
+                        {
+                            result1[i] = IoC.GetRequiredService<IPersistence>();
+                        }
+                    yield return (e.Item1, result1.Select(b => b?.ReadFromEnumerable(stream.StreamToEnumerable(b!.PropTypes)) ?? false ? b : null).ToList());
                     break;
                 case Type t when t.IsGenericType && t.GetGenericTypeDefinition()== typeof(IEnumerable<>):
                     var t2 = t.GetGenericArguments()[0];

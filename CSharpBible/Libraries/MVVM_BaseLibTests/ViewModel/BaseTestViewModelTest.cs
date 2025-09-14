@@ -44,7 +44,7 @@ public class BaseTestViewModelTest : BaseTestViewModel
         testModel.DoSomethingCommand.CanExecuteChanged += OnCanExChanged;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0,0,new[] { "" })]
     [DataRow(-1,0,new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
@@ -79,7 +79,7 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
         Assert.AreEqual(iAct, testModel.TestInt);
         Assert.AreEqual(asExp[0], DebugLog);
     }
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("<TestStr>", new[] { "","<TestStr>" })]
     [DataRow(null, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
@@ -109,7 +109,7 @@ PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
 public class BaseTestViewModelTest_T : BaseTestViewModel<TestVM>
 {
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 0, new[] { "" })]
     [DataRow(-1, 0, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
@@ -144,7 +144,7 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
         Assert.AreEqual(iAct, testModel.TestInt);
         Assert.AreEqual(asExp[0], DebugLog);
     }
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("<TestStr>", new[] { "", "<TestStr>" })]
     [DataRow(null, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True

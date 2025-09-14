@@ -9,6 +9,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<Copyright>Copyright © JC-Soft 2023</Copyright>
 	</PropertyGroup>
 </Project>

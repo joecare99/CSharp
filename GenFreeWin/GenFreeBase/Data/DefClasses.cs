@@ -3,61 +3,65 @@ using System.Data.Common;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using GenFree.Interfaces.DB;
 
 namespace GenFree.Data;
 
-public class TableDef
+public class TableDef : ITableDef
 {
     public TableDef(DbConnection db, string v)
-    {
-        Name = v;
-    }
-    private DbConnection _db;
+        => (Name, _db) = (v, db);
+
+    protected DbConnection _db;
     public string? Name { get; set; }
-    public List<FieldDef> Fields { get; } = new();
-    public List<IndexDef> Indexes { get; } = new();
+    public IList<IFieldDef> Fields { get; init; } = [];
+    public IList<IIndexDef> Indexes { get; init; } = [];
 }
 
-public class IndexDef
+public class IndexDef : IIndexDef
 {
-    public IndexDef(TableDef td, string name, string sField, bool xPrimary,bool xUnique)
+    public IndexDef(ITableDef td, string name, string sField, bool xPrimary, bool xUnique)
     {
         _table = td;
-        IndexDef? ix;
-        if ((ix = td.Indexes.Find(i => i.Name==name)) != null)
+        IIndexDef? ix;
+        if ((ix = td?.Indexes.FirstOrDefault(i => i.Name == name)) != null)
         {
-            var Fld = ix.Fields.ToList();
+            var Fld = (ix.Fields ?? []).ToList();
             Fld.Add(sField);
-            ix.Fields = Fld.ToArray();
+            ix.Fields = Fields = Fld.ToArray();
         }
         else
         {
             Name = name;
             Fields = new string[] { sField };
+            Primary = xPrimary;
             Unique = xUnique;
-            td.Indexes.Add(this);
+            if (td != null)
+               td.Indexes.Add(this);
         }
     }
-    private TableDef _table;
+    private ITableDef _table;
 
     public string? Name { get; set; }
     public string[]? Fields { get; set; } = default;
+    public bool Primary { get; set; } = false;
     public bool Unique { get; set; } = false;
     public bool IgnoreNulls { get; set; } = false;
 }
 
-public class FieldDef
+public class FieldDef : IFieldDef
 {
-    public FieldDef(TableDef td, string name, string v2, int v3)
+    public FieldDef(ITableDef td, string name, Enum v2, int v3)
     {
         _table = td;
         Name = name;
-        Type = (TypeCode)Enum.Parse(typeof(TypeCode), v2, true);
+        Type = (TypeCode)v2;
         Size = v3;
-        td.Fields.Add(this);
+        if(td!=null)
+          td.Fields.Add(this);
     }
 
-    private TableDef _table;
+    private ITableDef _table;
     public string? Name { get; set; }
     public TypeCode Type { get; set; } = default;
     public int Size { get; set; } = -1;

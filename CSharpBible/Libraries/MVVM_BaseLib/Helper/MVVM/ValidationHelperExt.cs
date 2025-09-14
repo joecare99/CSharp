@@ -14,7 +14,7 @@ public static class ValidationHelperExt
         if (string.IsNullOrEmpty(property)) throw new ArgumentNullException(nameof(property));
         var l = (vm.GetErrors(property!.TrimStart('T')) as List<ValidationResult>)?.ConvertAll(o => o.ErrorMessage);
 			if (!(l?.Count > 0))
-				 l = (vm.GetErrors("T"+( property!.TrimStart('T'))) as List<ValidationResult>)?.ConvertAll(o => o.ErrorMessage);
+				 l = (vm.GetErrors("T"+ property!.TrimStart('T')) as List<ValidationResult>)?.ConvertAll(o => o.ErrorMessage);
 			if (l?.Count > 0)
 				return string.Join(", ", l);
 			else

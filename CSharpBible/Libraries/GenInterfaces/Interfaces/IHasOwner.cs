@@ -22,5 +22,7 @@ public interface IHasOwner : IHasOwner<object>
 public interface IHasOwner<T>
 {
     [JsonIgnore]
-    T Owner { get; }
+    T? Owner { get; }
+
+    void SetOwner(T t);
 }

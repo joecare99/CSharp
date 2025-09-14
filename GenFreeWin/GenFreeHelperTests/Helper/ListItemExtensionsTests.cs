@@ -34,7 +34,7 @@ namespace GenFree.Helper.Tests
             Assert.IsInstanceOfType(_testNData, typeof(List<int>));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testSData), 0, "1")]
         [DataRow(nameof(_testSData), 1, "2")]
         [DataRow(nameof(_testSData), 2, "3")]
@@ -59,7 +59,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(oExp, act.ItemData(iAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testSData), 0, "1")]
         [DataRow(nameof(_testSData), 1, "2")]
         [DataRow(nameof(_testSData), 2, "3")]
@@ -78,7 +78,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(oExp, act.ItemData<string>(iAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testIData), 0, 1)]
         [DataRow(nameof(_testIData), 1, 2)]
         [DataRow(nameof(_testIData), 2, 3)]
@@ -97,7 +97,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(oExp, act.ItemData<int>(iAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testSData), 0, "1")]
         [DataRow(nameof(_testSData), 1, "2")]
         [DataRow(nameof(_testSData), 2, "3")]
@@ -122,7 +122,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(oExp, iAct < act.Count ? act[iAct].ItemData() : null);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testSData), 0, "1")]
         [DataRow(nameof(_testSData), 1, "2")]
         [DataRow(nameof(_testSData), 2, "3")]
@@ -141,7 +141,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(oExp, iAct < act.Count ? act[iAct].ItemData<string>() : null);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testIData), 0, 1)]
         [DataRow(nameof(_testIData), 1, 2)]
         [DataRow(nameof(_testIData), 2, 3)]
@@ -160,7 +160,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(oExp, iAct < act.Count ? act[iAct].ItemData<int>() : default);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testSData), 0, "A")]
         [DataRow(nameof(_testSData), 1, "B")]
         [DataRow(nameof(_testSData), 2, "C")]
@@ -186,7 +186,7 @@ namespace GenFree.Helper.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(nameof(_testSData), 0, "A")]
         [DataRow(nameof(_testSData), 1, "B")]
         [DataRow(nameof(_testSData), 2, "C")]

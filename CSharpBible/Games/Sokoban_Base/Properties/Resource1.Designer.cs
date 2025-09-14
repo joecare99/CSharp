@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sokoban_Base.Properties {
+namespace Sokoban.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Sokoban_Base.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sokoban_Base.Properties.Resource1", typeof(Resource1).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sokoban.Properties.Resource1", typeof(Resource1).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -169,12 +169,12 @@ namespace Sokoban_Base.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
-        ///[7]Revision: 1276
+        ///[7]Revision: 1398
         ///[8]Node Kind: directory
         ///[9]Schedule: normal
         ///[10]Last Changed Author: jc99
-        ///[11]Last Changed Rev: 1275
-        ///[12]Last Changed Date: 2025-01-30 17:52:36 +0100 (Do, 30 Jan 2025)
+        ///[11]Last Changed Rev: 1317
+        ///[12]Last Changed Date: 2025-04-24 22:33:34 +0200 (Do, 24 Apr 2025)
         ///[13]
         /// ähnelt.
         /// </summary>

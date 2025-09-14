@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Models.Interfaces;
-using Game_Base.Model;
+using Game.Model.Interfaces;
 using Snake_Base.Models.Data;
 using Snake_Base.Models.Interfaces;
 using System;

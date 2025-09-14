@@ -1,10 +1,7 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net6.0;net7.0;net8.0</TargetFrameworks>
-		<Nullable>enable</Nullable>
-
-		<IsPackable>false</IsPackable>
+    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -18,8 +15,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageReference Include="MSTest" Version="3.8.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="MSTest" Version="3.10.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -28,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
+		<ProjectReference Include="..\..\CSharpBible\Libraries\BaseLibTests\BaseLibTests.csproj" />
 		<ProjectReference Include="..\GenFreeBase\GenFreeBase.csproj" />
 	</ItemGroup>
 

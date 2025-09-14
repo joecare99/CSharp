@@ -19,8 +19,8 @@ public class ApplUserTexts : IApplUserTexts
     {
         get => Idx switch
         {
-            int i => _texte[i],
-            EUserText e => _texte[(int)e] ?? e.ToString(),
+            int i when i >= 0 && i < _texte.Count => _texte[i],
+            EUserText e when (int)e >= 0 && (int)e < _texte.Count => _texte[(int)e] ?? e.ToString(),
             _ => string.Empty
         };
         set
@@ -42,7 +42,7 @@ public class ApplUserTexts : IApplUserTexts
 
     public bool IsReadOnly => false;
 
-    public void Add(string item) => throw new System.NotImplementedException();
+    public void Add(string item) =>_texte.Add(item);
 
     public void Clear() => _texte.Clear();
 

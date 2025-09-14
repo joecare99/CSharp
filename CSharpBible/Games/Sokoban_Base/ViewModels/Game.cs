@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Sokoban.Model;
 using Sokoban_Base.Model;
 using Sokoban_Base.Properties;
 using System;

@@ -1,12 +1,14 @@
 ﻿using GenFree.Helper;
+using GenFree.Interfaces.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 
 namespace Gen_FreeWin.Tests
 {
     [TestClass()]
     public class DateHelperTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", "", new[] { "" }, new[] { "", "", "" })]
         [DataRow("32", "", new[] { "" }, new[] { "", "32", "" })]
         [DataRow("", "32", new[] { "" }, new[] { "", "", "32" })]
@@ -16,7 +18,7 @@ namespace Gen_FreeWin.Tests
         [DataRow("30.1", "31.1", new[] { "A", "B", "C", "D", "E", "F" }, new[] { "B C 1A", "", "31.1" })]
         public void RechTest(string D1, string D2, string[] IT, string[] asExp)
         {
-            ApplUserTexts asIT = new();
+            IApplUserTexts asIT = Substitute.For<IApplUserTexts>();
             asIT[216] = IT[0];
             for (int i = 1; i < IT.Length; i++)
                 asIT[116 + i] = IT[i];

@@ -25,6 +25,16 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// </summary>
 public interface IGenObject : IGenBase 
 {
+    /// <summary>
+    /// Gets the (local) identifier. This ID is only unique within the application, maybe classes and not across different applications.
+    /// </summary>
+    /// <value>The identifier.</value>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    int ID { get; init; }
+    /// <summary>
+    /// Gets the (time and) date of the last change.
+    /// </summary>
+    /// <value>The last change.</value>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     DateTime? LastChange { get; }
 }

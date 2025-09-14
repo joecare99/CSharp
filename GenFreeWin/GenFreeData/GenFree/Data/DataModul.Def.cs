@@ -1,495 +1,518 @@
-﻿using GenFree.Interfaces;
-using GenFree.Helper;
+﻿using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
 using System;
 using System.Linq;
+using System.Xml;
 
-namespace GenFree.Data
+namespace GenFree.Data;
+
+public static partial class DataModul
 {
-    public static partial class DataModul
+
+    public struct stFieldDef
     {
-
-        public struct stFieldDef
+        public string Name;
+        public TypeCode Typ;
+        public int Length = 0;
+        public bool xNull = true;
+        public stFieldDef(string aName, TypeCode aType)
+        { Name = aName; Typ = aType; }
+        public stFieldDef(Enum eFld, TypeCode aType)
+        : this($"{eFld.AsFld()}", aType) { }
+        public IFieldDef fieldDef => new FieldDef(null!, Name, Typ, Length)
         {
-            public string Name;
-            public TypeCode Typ;
-            public int Laenge = 0;
-            public bool xNull = true;
-            public stFieldDef(string aName, TypeCode aType)
-            { Name = aName; Typ = aType; }
-            public stFieldDef(Enum eFld, TypeCode aType)
-            : this($"{eFld}", aType) { }
-
-        }
-        public struct stIndex
-        {
-            public string Name;
-            public string[] Fields;
-            public bool Unique = false;
-            public bool IgnoreNull = false;
-            public stIndex(string aName, string[] aFields)
-            { Name = aName; Fields = aFields; }
-            public stIndex(Enum eFld, Enum[] eFlds)
-            : this($"{eFld}", eFlds.ToStrings((e) => $"{e}").ToArray()) { }
-        }
-        public struct stTableDef
-        {
-            public string Name;
-            //   public List<stFieldDef> Fields;
-            public stFieldDef[] Fields;
-            public stIndex[] Indexes;
-            public bool xDrop;
-        }
-
-        public static stTableDef[] DOSBDef = { new() {
-             Name= "Ortsuch",
-             Fields = new stFieldDef[]{
-                new("Name",TypeCode.String) { Laenge = 100 },
-                new("Nr",TypeCode.Int64)},
-             Indexes =new stIndex[]{
-                 new("Ortnr",new[] { "Nr" }),
-                 new("Ortsu",new[] { "Name" })} } };
-        public static stTableDef[] DSBDef = { new() {
-             Name= "Such",
-             Fields = new stFieldDef[]{
-                new("Name",TypeCode.String) { Laenge = 50 },
-                new("K_Phon",TypeCode.String){ Laenge = 60 },
-                new("Leit",TypeCode.String){ Laenge = 60 },
-                new("Alias",TypeCode.String){ Laenge = 60 },
-                new("Sound",TypeCode.String){ Laenge = 60 },
-                new("Datum",TypeCode.String),
-                new("Nummer",TypeCode.Int64),
-                new("iKenn",TypeCode.String){ Laenge = 1 },
-                new("Sich",TypeCode.String){ Laenge = 1 }},
-             Indexes =new stIndex[]{
-                 new("Nummer",new[] { "Nummer" }) { Unique = true },
-                 new("Namen",new[] { "Name" }),
-                 new("Persuch",new[] { "Name","Datum" }),
-                 new("Soundsuch",new[] { "Sound","Name","Datum" }),
-                 new("K_Phonsuch",new[] { "K_Phon","Name","Datum" }),
-                 new("Aliassuch",new[] { "Alias","Datum" }),
-                 new("Leitsuch",new[] { "Leit","Datum" })} } };
-        public static stTableDef[] DTDef = { new() {
-             Name= "Ahnen1",
-             Fields = new stFieldDef[]{
-                new("Gen",TypeCode.Int32) ,
-                new("PerNr",TypeCode.Int64),
-                new("Weiter",TypeCode.String){ Laenge = 1 },
-                new("EHE",TypeCode.Int64),
-                new("Ahn",TypeCode.String){ Laenge = 40 },
-                new("Name",TypeCode.String){ Laenge = 255 },
-                new("aiSpitz",TypeCode.String){ Laenge = 1 }},
-             Indexes =new stIndex[]{
-                 new("aiSpitz",new[] { "aiSpitz" }),
-                 new("Namen",new[] { "Name" }),
-                 new("PerNr",new[] { "PerNr" }),
-                 new("Gen",new[] { "Gen" }),
-                 new("Ahnen",new[] { "Ahn" }),
-                 new("Implex",new[] { "PerNr", "Ahn" })
-             } },
-        new() {
-             Name= "Ahnew",
-             Fields = new stFieldDef[]{
-                new("Ahn",TypeCode.String){ Laenge = 40 },
-                new("PerNr",TypeCode.Int64)},
-             Indexes =new stIndex[]{
-                 new("Kind",new[] { "PerNr" })
-             } },
-        new() {
-            xDrop = true,
-             Name= "Konf",
-             Fields = new stFieldDef[]{
-                new("PerNr",TypeCode.Int64),
-                new("Textnr",TypeCode.Int64) },
-             Indexes =new stIndex[]{
-                 new("T",new[] { "TextNr" })
-             } },
-        new() {
-             Name= "Nachk",
-             Fields = new stFieldDef[]{
-                new("Gen",TypeCode.Int32),
-                new("Nr",TypeCode.String){Laenge = 240,xNull = false },
-                new("Pr",TypeCode.Int64),
-                new("LfNr",TypeCode.Int64),
-                new("kia",TypeCode.String){Laenge = 2 }
-             },
-             Indexes =new stIndex[]{
-                 new("PerNr",new[] { "Pr" }){Unique = true },
-                 new("Nr",new[] { "Nr" }),
-                 new("GNr",new[] { "Gen","Nr" }),
-                 new("LNr",new[] { "Gen","LfNr" })
-             } }};
-
-
-        public static stTableDef[] DbDef = {
-        new() { Name = nameof(dbTables.BesitzTab),
-          Fields = new stFieldDef[]{
-                new(PropertyFields.Nr, TypeCode.Int64) ,
-                new(PropertyFields.Akte, TypeCode.String) { Laenge = 240 },
-                new(PropertyFields.Pers, TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new(PropertyIndex.Akt, new Enum[] { PropertyFields.Akte } ),
-                new(PropertyIndex.NuAkPer, new Enum[] { PropertyFields.Nr, PropertyFields.Akte, PropertyFields.Pers } ){ Unique = true },
-                new(PropertyIndex.Per, new Enum[] { PropertyFields.Pers } )}
-                },
-        new() { Name = nameof(dbTables.Bilder),
-          Fields = new stFieldDef[]{
-                new("ZuNr", TypeCode.Int64) ,
-                new("Kennz", TypeCode.String) { Laenge = 1 },
-                new("Bem", TypeCode.String) ,
-                new("Datei", TypeCode.String) { Laenge = 255, xNull = true },
-                new("Pfad", TypeCode.String) { Laenge = 255 },
-                new("LfNr", TypeCode.Int64) ,
-                new("Form", TypeCode.Boolean) ,
-                new("Beschreibung", TypeCode.String) { Laenge = 255, xNull = true },
-                new("Format", TypeCode.String) { Laenge = 1 }},
-          Indexes = new stIndex[]{
-                new("Bild", new[] { "" } ),
-                new("Nr", new[] { "LfNr" } ){ Unique = true },
-                new("PerKen2", new[] { "" } ),
-                new("PerKenn", new[] { "Kennz", "ZuNr" } )}
-                },
-        new() { Name = nameof(dbTables.Doppel),
-          Fields = new stFieldDef[]{
-                new("Nr", TypeCode.String) { Laenge = 240, xNull = true },
-                new("Pr", TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new("Nr", new[] { "Nr" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.Ereignis),
-          Fields = new stFieldDef[]{
-                new(EventFields.Art, TypeCode.Int32) ,
-                new(EventFields.PerFamNr, TypeCode.Int64) ,
-                new(EventFields.DatumV, TypeCode.Int64) ,
-                new(EventFields.DatumB_S, TypeCode.String) { Laenge = 1 },
-                new(EventFields.DatumV_S, TypeCode.String) { Laenge = 1 },
-                new(EventFields.DatumB, TypeCode.Int64) ,
-                new(EventFields.KBem, TypeCode.Int64) ,
-                new(EventFields.Ort, TypeCode.Int64) ,
-                new(EventFields.Ort_S, TypeCode.String) { Laenge = 1, xNull = true },
-                new(EventFields.Reg, TypeCode.String) { Laenge = 50 },
-                new(EventFields.Bem1, TypeCode.String) ,
-                new(EventFields.Bem2, TypeCode.String) ,
-                new(EventFields.Platz, TypeCode.Int64) ,
-                new(EventFields.VChr, TypeCode.Boolean) ,
-                new(EventFields.LfNr, TypeCode.Int32) ,
-                new(EventFields.Bem3, TypeCode.String) ,
-                new(EventFields.Bem4, TypeCode.String) ,
-                new(EventFields.ArtText, TypeCode.String) { Laenge = 240 },
-                new(EventFields.Zusatz, TypeCode.String) { Laenge = 240 },
-                new(EventFields.priv, TypeCode.String) { Laenge = 1 },
-                new(EventFields.tot, TypeCode.String) { Laenge = 1 },
-                new(EventFields.DatumText, TypeCode.Int64) ,
-                new(EventFields.Causal, TypeCode.Int64) ,
-                new(EventFields.an, TypeCode.Int64) ,
-                new(EventFields.Hausnr, TypeCode.Int64) ,
-                new(EventFields.GrabNr, TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new("ArtNr", new[] { "Art","PerFamNr", "LfNnr" } ){ Unique = true },
-                new(EventIndex.BeSu, new Enum[] { EventFields.Art,EventFields.PerFamNr } ),
-                new("Datbs", new[] { "Datumb_s" } ),
-                new("DatInd", new[] { "DatumV" } ),
-                new("Datvs", new[] { "DatumV_s" } ),
-                new("EOrt", new[] { "Ort" } ),
-                new("HaNu", new[] { "Hausnr" } ),
-                new(EventIndex.JaTa, new Enum[] { EventFields.Art } ),
-                new(EventIndex.CText, new Enum[] { EventFields.Causal } ),
-                new(EventIndex.KText, new Enum[] { EventFields.KBem } ),
-                new(EventIndex.NText, new Enum[] { EventFields.ArtText } ),
-                new(EventIndex.PText, new Enum[] { EventFields.Platz } ),
-                new("Reg", new[] { "Reg" } ),
-                new("Reg1", new[] { "Art", "Reg" } )}
-                },
-        new() { Name = nameof(dbTables.Familie),
-          Fields = new stFieldDef[]{
-                new(nameof(FamilyFields.AnlDatum), TypeCode.Int64) ,
-                new(nameof(FamilyFields.EditDat), TypeCode.Int64) ,
-                new(nameof(FamilyFields.Prüfen), TypeCode.String) { Laenge = 5 },
-                new(nameof(FamilyFields.Bem1), TypeCode.String) ,
-                new(nameof(FamilyFields.FamNr), TypeCode.Int64) ,
-                new(nameof(FamilyFields.Aeb), TypeCode.Boolean) ,
-                new(nameof(FamilyFields.Name), TypeCode.Int64) ,
-                new(nameof(FamilyFields.Bem2), TypeCode.String) ,
-                new(nameof(FamilyFields.Bem3), TypeCode.String) ,
-                new(nameof(FamilyFields.Eltern), TypeCode.Single) ,
-                new(nameof(FamilyFields.Fuid), TypeCode.String) { Laenge = 40 },
-                new(nameof(FamilyFields.Prae), TypeCode.String) { Laenge = 240 },
-                new(nameof(FamilyFields.Suf), TypeCode.String) { Laenge = 240 },
-                new(nameof(FamilyFields.ggv), TypeCode.String) { Laenge = 1 }},
-          Indexes = new stIndex[]{
-                new(FamilyIndex.BeaDat, new Enum[] { FamilyFields.EditDat } ),
-                new(FamilyIndex.Fam, new Enum[] { FamilyFields.FamNr } ){ Unique = true },
-                new(FamilyIndex.Fuid, new Enum[] { FamilyFields.Fuid } )}
-                },
-        new() { Name = nameof(dbTables.GBE),
-          Fields = new stFieldDef[]{
-                new("Nr", TypeCode.Int64) ,
-                new("Akte", TypeCode.String) { Laenge = 240 },
-                new("Jahr", TypeCode.String) { Laenge = 24 },
-                new("Name", TypeCode.String) ,
-                new("Geb", TypeCode.String) ,
-                new("Erb", TypeCode.String) { Laenge = 24 },
-                new("Abg", TypeCode.String) { Laenge = 24 }},
-          Indexes = new stIndex[]{
-                new("Akte", new[] { "Akte" } ),
-                new("AkteJa", new[] { "Akte", "Jahr" } ),
-                new("Nr", new[] { "Nr" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.GED),
-          Fields = new stFieldDef[]{
-                new("PNr", TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new("pNr", new[] { "PNr" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.HGA),
-          Fields = new stFieldDef[]{
-                new("Nr", TypeCode.Int64) ,
-                new("Akte", TypeCode.String) { Laenge = 240 },
-                new("Kirchspiel", TypeCode.String) { Laenge = 240 },
-                new("Beschr", TypeCode.String) { Laenge = 240 },
-                new("Flur", TypeCode.String) { Laenge = 240 },
-                new("Parzelle", TypeCode.String) { Laenge = 240 },
-                new("Hof", TypeCode.String) { Laenge = 240 },
-                new("Brandkasse", TypeCode.String) ,
-                new("Bem", TypeCode.String) },
-          Indexes = new stIndex[]{
-                new("Akte", new[] { "Akte" } ){ Unique = true },
-                new("Nr", new[] { "Nr" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.Inamen),
-          Fields = new stFieldDef[]{
-                new(NameFields.PersNr, TypeCode.Int64) ,
-                new(NameFields.Kennz, TypeCode.String) { Laenge = 1 },
-                new(NameFields.Text, TypeCode.Int64) ,
-                new(NameFields.LfNr, TypeCode.String) { Laenge = 2 },
-                new(NameFields.Ruf, TypeCode.Byte) ,
-                new(NameFields.Spitz, TypeCode.Byte) },
-          Indexes = new stIndex[]{
-                new(NameIndex.NamKenn, new Enum[] {  } ),
-                new(NameIndex.PNamen, new Enum[] {  } ),
-                new(NameIndex.TxNr, new Enum[] {  } ),
-                new(NameIndex.Vollname, new Enum[] { NameFields.PersNr, NameFields.Kennz, NameFields.LfNr } ){ Unique = true }} 
-                },
-        new() { Name = nameof(dbTables.INDNam), //OFB-Table
-          Fields = new stFieldDef[]{
-                new(OFBFields.PerNr, TypeCode.Int64) ,
-                new(OFBFields.Kennz, TypeCode.String) { Laenge = 2 },
-                new(OFBFields.TextNr, TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new(OFBIndex.Indn, new Enum[] { OFBFields.PerNr, OFBFields.Kennz ,OFBFields.TextNr} ){ Unique = true},
-                new(OFBIndex.InDNr, new Enum[] { OFBFields.PerNr,OFBFields.Kennz } ),
-                new(OFBIndex.IndNum, new Enum[] { OFBFields.TextNr } )}
-                },
-        new() { Name = nameof(dbTables.Leer1),
-          Fields = new stFieldDef[]{
-                new("Nr", TypeCode.Int64) ,
-                new("Art", TypeCode.String) { Laenge = 1 }},
-          Indexes = new stIndex[]{
-                new("Leer", new[] { "Art" } )}
-                },
-        new() { Name = nameof(dbTables.Nachk),
-          Fields = new stFieldDef[]{
-                new("Gen", TypeCode.Int64) ,
-                new("Nr", TypeCode.String) { Laenge = 240, xNull = true },
-                new("Pr", TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new("Nr", new[] { "Nr" } ),
-                new("PerNr", new[] { "Pr", "Nr" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.Orte),
-          Fields = new stFieldDef[]{
-                new(PlaceFields.Ort, TypeCode.Int64) ,
-                new(PlaceFields.Ortsteil, TypeCode.Int64) ,
-                new(PlaceFields.Kreis, TypeCode.Int64) ,
-                new(PlaceFields.Land, TypeCode.Int64) ,
-                new(PlaceFields.Staat, TypeCode.Int64) ,
-                new(PlaceFields.Staatk, TypeCode.String) { Laenge = 3 },
-                new(PlaceFields.PLZ, TypeCode.String) { Laenge = 10 },
-                new(PlaceFields.Terr, TypeCode.String) { Laenge = 5 },
-                new(PlaceFields.Loc, TypeCode.String) { Laenge = 6 },
-                new(PlaceFields.L, TypeCode.String) { Laenge = 10 },
-                new(PlaceFields.B, TypeCode.String) { Laenge = 10 },
-                new(PlaceFields.Bem, TypeCode.String) ,
-                new(PlaceFields.OrtNr, TypeCode.Int64) { xNull = true },
-                new(PlaceFields.Zusatz, TypeCode.String) { Laenge = 240 },
-                new(PlaceFields.GOV, TypeCode.String) { Laenge = 20 },
-                new(PlaceFields.PolName, TypeCode.String) { Laenge = 240 },
-                new(PlaceFields.g, TypeCode.Single) },
-          Indexes = new stIndex[]{
-                new(PlaceIndex.K, new Enum[] { PlaceFields.Kreis } ),
-                new(PlaceIndex.L, new Enum[] { PlaceFields.Land } ),
-                new(PlaceIndex.O, new Enum[] { } ),
-                new(PlaceIndex.Orte, new Enum[] { PlaceFields.Ort } ),
-                new(PlaceIndex.OrtNr, new Enum[] { PlaceFields.OrtNr } ){ Unique = true },
-                new(PlaceIndex.OT, new Enum[] { PlaceFields.Ortsteil } ),
-                new(PlaceIndex.Pol, new Enum[] { PlaceFields.PolName } ),
-                new(PlaceIndex.S, new Enum[] { PlaceFields.Staat } )}
-                },
-        new() { Name = nameof(dbTables.Ortsuch),
-          Fields = new stFieldDef[]{
-                new("Name", TypeCode.String) { Laenge = 100 },
-                new("Nr", TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new("OrtNr", new[] { "Nr" } ),
-                new("ortsu", new[] { "Name" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.Personen),
-          Fields = new stFieldDef[]{
-                new(PersonFields.AnlDatum, TypeCode.Int64) ,
-                new(PersonFields.Sex, TypeCode.String) { Laenge = 1, xNull = true },
-                new(PersonFields.EditDat, TypeCode.Int64) ,
-                new(PersonFields.Bem1, TypeCode.String) ,
-                new(PersonFields.Pruefen, TypeCode.String) { Laenge = 5 },
-                new(PersonFields.PersNr, TypeCode.Int64) ,
-                new(PersonFields.Konv, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such1, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Bem2, TypeCode.String) ,
-                new(PersonFields.Bem3, TypeCode.String) ,
-                new(PersonFields.OFB, TypeCode.String) { Laenge = 1 },
-                new(PersonFields.religi, TypeCode.Int64) ,
-                new(PersonFields.PUid, TypeCode.String) { Laenge = 40 },
-                new(PersonFields.Such2, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such3, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such4, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such5, TypeCode.String) { Laenge = 240 },
-                new(PersonFields.Such6, TypeCode.String) { Laenge = 240 }},
-          Indexes = new stIndex[]{
-                new(PersonIndex.BeaDat,new Enum[] { PersonFields.EditDat } ),
-                new(PersonIndex.PerNr, new Enum[] { PersonFields.PersNr }){ Unique = true },
-                new(PersonIndex.Puid,  new Enum[] { PersonFields.PUid } ),
-                new(PersonIndex.reli,  new Enum[] { PersonFields.religi } ),
-                new(PersonIndex.Such1, new Enum[] { PersonFields.Such1, PersonFields.PersNr }) { IgnoreNull = true} ,
-                new(PersonIndex.Such2, new Enum[] { PersonFields.Such2, PersonFields.PersNr } ),
-                new(PersonIndex.Such3, new Enum[] { PersonFields.Such3, PersonFields.PersNr } ),
-                new(PersonIndex.Such4, new Enum[] { PersonFields.Such4, PersonFields.PersNr } ){ IgnoreNull = true},
-                new(PersonIndex.Such5, new Enum[] { PersonFields.Such5, PersonFields.PersNr } ),
-                new(PersonIndex.Such6, new Enum[] { PersonFields.Such6, PersonFields.PersNr } )}
-                },
-        new() { Name = nameof(dbTables.Quellen),
-          Fields = new stFieldDef[]{
-                new(SourceFields._1, TypeCode.Int64) ,  // Nr
-                new(SourceFields._2, TypeCode.String) { Laenge = 240 }, // Titel
-                new(SourceFields._3, TypeCode.String) { Laenge = 240 }, // Ort
-                new(SourceFields._4, TypeCode.String) { Laenge = 240 }, // Zitat
-                new(SourceFields._5, TypeCode.String) { Laenge = 240 }, // Author
-                new(SourceFields._7, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._8, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._9, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._10, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._11, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._12, TypeCode.String) { Laenge = 240 },
-                new(SourceFields._13, TypeCode.String) },
-          Indexes = new stIndex[]{
-                new(SourceIndex.Autor, new Enum[] { SourceFields._5 } ),
-                new(SourceIndex.Dopp, new Enum[] {SourceFields._2, SourceFields._4 } ),
-                new(SourceIndex.Nam, new Enum[] { SourceFields._2 } ),
-                new(SourceIndex.Nr, new Enum[] { SourceFields._1 } ),
-                new(SourceIndex.Zitat, new Enum[] { SourceFields._4 } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.Repo),
-          Fields = new stFieldDef[]{
-                new("Nr", TypeCode.Int64) ,
-                new("Name", TypeCode.String) { Laenge = 240 },
-                new("Strasse", TypeCode.String) { Laenge = 240 },
-                new("Ort", TypeCode.String) { Laenge = 240 },
-                new("PLZ", TypeCode.String) { Laenge = 240 },
-                new("Fon", TypeCode.String) { Laenge = 240 },
-                new("Mail", TypeCode.String) { Laenge = 240 },
-                new("Http", TypeCode.String) { Laenge = 240 },
-                new("Bem", TypeCode.String) ,
-                new("Suchname", TypeCode.String) { Laenge = 240 }},
-          Indexes = new stIndex[]{
-                new("Name", new[] { "SuchName" } ),
-                new("Nr", new[] { "Nr" } ),
-                new("Such", new[] { "SuchName", "Ort" } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.RepoTab),
-          Fields = new stFieldDef[]{
-                new("Quelle", TypeCode.Int64) ,
-                new("Repo", TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new("Dop", new[] { "Quelle", "Repo" } ),
-                new("Leer", new[] { "Repo" } ),
-                new("Nr", new[] { "Quelle" } )}
-                },
-        new() { Name = nameof(dbTables.Such),
-          Fields = new stFieldDef[]{
-                new("Name", TypeCode.String) { Laenge = 50 },
-                new("Datum", TypeCode.Int32) ,
-                new("Nummer", TypeCode.Int64) ,
-                new("iKenn", TypeCode.String) { Laenge = 1 },
-                new("Sich", TypeCode.String) { Laenge = 1 }},
-          Indexes = new stIndex[]{
-                new("Namen", new[] { "" } ),
-                new("Nummer", new[] { "" } ){ Unique = true },
-                new("Persuch", new[] { "" } )}
-                },
-        new() { Name = nameof(dbTables.Tab),
-          Fields = new stFieldDef[]{
-                new(ILinkData.LinkFields.Kennz, TypeCode.Byte) ,
-                new(ILinkData.LinkFields.FamNr, TypeCode.Int64) ,
-                new(ILinkData.LinkFields.PerNr, TypeCode.Int64) },
-          Indexes = new stIndex[]{
-                new(LinkIndex.ElSu,    new Enum[] { ILinkData.LinkFields.PerNr, ILinkData.LinkFields.Kennz } ),
-                new(LinkIndex.FamNr,   new Enum[] { ILinkData.LinkFields.FamNr  } ),
-                new(LinkIndex.FamPruef,new Enum[] { ILinkData.LinkFields.FamNr, ILinkData.LinkFields.PerNr, ILinkData.LinkFields.Kennz } ){ Unique = true },
-                new(LinkIndex.FamSu,   new Enum[] { ILinkData.LinkFields.FamNr, ILinkData.LinkFields.Kennz } ),
-                new(LinkIndex.FamSu1,  new Enum[] {  } ),
-                new(LinkIndex.PAFI,    new Enum[] {  } ),
-                new(LinkIndex.Per,     new Enum[] { ILinkData.LinkFields.PerNr } )}
-                },
-        new() { Name = nameof(dbTables.Tab1),
-          Fields = new stFieldDef[]{
-                new(SourceLinkFields._1, TypeCode.Single) ,
-                new(SourceLinkFields._2, TypeCode.Int64) ,
-                new(SourceLinkFields._3, TypeCode.Int64) ,
-                new(SourceLinkFields._4, TypeCode.String) { Laenge = 240 },
-                new(SourceLinkFields.LfNr, TypeCode.Single) ,
-                new(SourceLinkFields.Art, TypeCode.Single) ,
-                new(SourceLinkFields.Aus, TypeCode.String) { Laenge = 240 },
-                new(SourceLinkFields.Orig, TypeCode.String) ,
-                new(SourceLinkFields.Kom, TypeCode.String) },
-          Indexes = new stIndex[]{
-                new(SourceLinkIndex.Tab, new Enum[] { SourceLinkFields._1,SourceLinkFields._2 } ),
-                new("Tab2", new[] { "" } ),
-                new("Tab21", new[] { "" } ),
-                new(SourceLinkIndex.Tab22, new Enum[] { SourceLinkFields._1, SourceLinkFields._2, SourceLinkFields.Art,SourceLinkFields.LfNr } ),
-                new("Tab23", new[] { "" } ),
-                new("Verw", new[] { "" } )}
-                },
-        new() { Name = nameof(dbTables.Tab2),
-          Fields = new stFieldDef[]{
-                new(WitnessFields.FamNr, TypeCode.Int64) ,
-                new(WitnessFields.PerNr, TypeCode.Int64) ,
-                new(WitnessFields.Kennz, TypeCode.String) { Laenge = 2 },
-                new(WitnessFields.Art, TypeCode.Single) ,
-                new(WitnessFields.LfNr, TypeCode.Single) },
-          Indexes = new stIndex[]{
-                new(WitnessIndex.ElSu,    new Enum[] { WitnessFields.Art, WitnessFields.PerNr, WitnessFields.Kennz } ),
-                new(WitnessIndex.Fampruef,new Enum[] { WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } ){ Unique = true },
-                new(WitnessIndex.FamSu,   new Enum[] { WitnessFields.Art, WitnessFields.FamNr, WitnessFields.Kennz } ),
-                new(WitnessIndex.Zeug,    new Enum[] { WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } ),
-                new(WitnessIndex.ZeugSu,  new Enum[] { WitnessFields.FamNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr } )}
-                },
-        new() { Name = nameof(dbTables.Texte),
-          Fields = new stFieldDef[]{
-                new(TexteFields.Txt, TypeCode.String) { Laenge = 240 },
-                new(TexteFields.Kennz, TypeCode.String) { Laenge = 1, xNull = true },
-                new(TexteFields.TxNr, TypeCode.Int64) ,
-                new(TexteFields.Leitname, TypeCode.String) { Laenge = 32 },
-                new(TexteFields.Bem, TypeCode.String) { xNull = true }},
-          Indexes = new stIndex[]{
-                new(TexteIndex.ITexte, new Enum[] { TexteFields.Txt, TexteFields.Kennz } ){ Unique = true },
-                new(TexteIndex.KText,  new Enum[] {  } ),
-                new(TexteIndex.LTexte, new Enum[] {  } ),
-                new(TexteIndex.RTexte, new Enum[] {  } ),
-                new(TexteIndex.SSTexte,new Enum[] {  } ),
-                new(TexteIndex.STexte, new Enum[] { TexteFields.Kennz, TexteFields.Txt } ),
-                new(TexteIndex.TxNr,   new Enum[] { TexteFields.TxNr } ),
-                new(TexteIndex.TxNr1,  new Enum[] { TexteFields.TxNr, TexteFields.Txt } ){ Unique = true }}
-                },
-        new() { Name = nameof(dbTables.WDBL),
-          Fields = new stFieldDef[]{
-                new(WDBLFields.Nr, TypeCode.Byte) }} };
-
+            xNull = xNull
+        };
     }
+    public struct stIndex
+    {
+        public string Name;
+        public string[] Fields;
+        public bool Primary = false;
+        public bool Unique = false;
+        public bool IgnoreNull = false;
+        public stIndex(string aName, string[] aFields)
+        { Name = aName; Fields = aFields; }
+        public stIndex(Enum eFld, Enum[] eFlds)
+        : this($"{eFld}", eFlds.ToStrings((e) => $"{e.AsFld()}").ToArray()) { }
+
+        public IIndexDef indexDef => new IndexDef(null!, Name, Fields[0], Primary, Unique)
+        {
+            Fields = Fields,
+            IgnoreNulls = IgnoreNull
+        };
+    }
+    public struct stTableDef
+    {
+        public string Name;
+        public string? IntName;
+        //   public List<stFieldDef> Fields;
+        public stFieldDef[] Fields;
+        public stIndex[] Indexes;
+        public bool xDrop;
+        public ITableDef tableDef => new TableDef(null!, Name)
+        {
+            Fields = Fields.Select(f => f.fieldDef).ToList(),
+            Indexes = Indexes.Select(i => i.indexDef).ToList()
+        };
+    }
+
+    public static stTableDef[] DOSBDef = [ new() {
+         Name= "Ortsuch",
+         Fields = [
+            new("Name",TypeCode.String) { Length = 100 },
+            new("Nr",TypeCode.Int32)],
+         Indexes =[
+             new("Ortnr",["Nr"]),
+             new("Ortsu",["Name"])] } ];
+
+    public static stTableDef[] DSBDef = [ new() {
+         Name= "Such",
+         Fields = [
+            new("Name",TypeCode.String) { Length = 50 },
+            new("K_Phon",TypeCode.String){ Length = 60 },
+            new("Leit",TypeCode.String){ Length = 60 },
+            new("Alias",TypeCode.String){ Length = 60 },
+            new("Sound",TypeCode.String){ Length = 60 },
+            new("Datum",TypeCode.String),
+            new("Nummer",TypeCode.Int32),
+            new("iKenn",TypeCode.String){ Length = 1 },
+            new("Sich",TypeCode.String){ Length = 1 }],
+         Indexes =[
+             new("Nummer",["Nummer"]) { Unique = true },
+             new("Namen",["Name"]),
+             new("Persuch",["Name","Datum"]),
+             new("Soundsuch",["Sound","Name","Datum"]),
+             new("K_Phonsuch",["K_Phon","Name","Datum"]),
+             new("Aliassuch",["Alias","Datum"]),
+             new("Leitsuch",["Leit","Datum"])] } ];
+    public static stTableDef[] DTDef = [ new() {
+         Name= "Ahnen1",
+         Fields = [
+            new("Gen",TypeCode.Int16) ,
+            new("PerNr",TypeCode.Int32),
+            new("Weiter",TypeCode.String){ Length = 1 },
+            new("EHE",TypeCode.Int32),
+            new("Ahn",TypeCode.String){ Length = 40 },
+            new("Name",TypeCode.String){ Length = 255 },
+            new("Spitz",TypeCode.String){ Length = 1 }],
+         Indexes =[
+             new("Spitz",["Spitz"]),
+             new("Namen",["Name"]),
+             new("PerNr",["PerNr"]),
+             new("Gen",["Gen"]),
+             new("Ahnen",["Ahn"]),
+             new("Implex",["PerNr", "Ahn"])
+         ] },
+    new() {
+         Name= "Ahnew",
+         Fields = [
+            new("Ahn",TypeCode.String){ Length = 40 },
+            new("PerNr",TypeCode.Int32)],
+         Indexes =[
+             new("Kind",["PerNr"]){Unique = true, Primary = true }
+         ] },
+    new() {
+        xDrop = true,
+         Name= "Konf",
+         Fields = [
+            new("PerNr",TypeCode.Int32),
+            new("Textnr",TypeCode.Int32) ],
+         Indexes =[
+             new("T",["TextNr"]){Primary = true }
+         ] },
+    new() {
+         Name= "Nachk",
+         Fields = [
+            new("Gen",TypeCode.Int16),
+            new("Nr",TypeCode.String){Length = 240,xNull = false },
+            new("Pr",TypeCode.Int32),
+            new("LfNr",TypeCode.Int32),
+            new("kia",TypeCode.String){Length = 2 }
+         ],
+         Indexes =[
+             new("PerNr",["Pr"]){Unique = true, Primary = true },
+             new("Nr",["Nr"]),
+             new("GNr",["Gen","Nr"]),
+             new("LNr",["Gen","LfNr"])
+         ] }];
+
+
+    public static readonly stTableDef[] DbDef = [
+    new() { Name = nameof(dbTables.BesitzTab),
+      Fields = [
+            new(PropertyFields.Nr, TypeCode.Int32) ,
+            new(PropertyFields.Akte, TypeCode.String) { Length = 240 },
+            new(PropertyFields.Pers, TypeCode.Int32) ],
+      Indexes = [
+            new(PropertyIndex.Akt, [PropertyFields.Akte] ),
+            new(PropertyIndex.NuAkPer, [PropertyFields.Nr, PropertyFields.Akte, PropertyFields.Pers] ){ Unique = true, Primary = true },
+            new(PropertyIndex.Per, [PropertyFields.Pers] )]
+            },
+    new() { Name = nameof(dbTables.Bilder),
+            IntName = "Picture - Table", //from MandDB Table: DB_PictureTable
+      Fields = [
+            new(PictureFields.Bem, TypeCode.String) ,
+            new(PictureFields.Beschreibung, TypeCode.String) { Length = 255 },
+            new(PictureFields.Datei, TypeCode.String) { Length = 255 },
+            new(PictureFields.Form, TypeCode.Boolean) ,
+            new(PictureFields.Format, TypeCode.String) { Length = 1 },
+            new(PictureFields.Kennz, TypeCode.String) { Length = 1 },
+            new(PictureFields.LfNr, TypeCode.Int32) ,
+            new(PictureFields.Pfad, TypeCode.String) { Length = 255 },
+            new(PictureFields.ZuNr, TypeCode.Int32) ],
+      Indexes = [
+            new(PictureIndex.Nr, [ PictureFields.LfNr ]){ Unique = true, Primary = true },
+            new(PictureIndex.Bild, [ PictureFields.Datei ]),
+            new(PictureIndex.PerKen2, [ PictureFields.Kennz, PictureFields.ZuNr, PictureFields.Beschreibung ]),
+            new(PictureIndex.PerKenn, [ PictureFields.Kennz, PictureFields.ZuNr ]) ]
+            },
+   new() { Name = nameof(dbTables.Doppel),
+            IntName = "Doppel - Table", //from MandDB Table: DB_DoppelTable
+      Fields = [
+            new(DoppelFields.Nr, TypeCode.String) { Length = 240 },
+            new(DoppelFields.Pr, TypeCode.Int32) ],
+      Indexes = [
+            new(DoppelIndex.Nr, [ DoppelFields.Pr ]){ Unique = true, Primary = true } ]
+           },
+   new() { Name = nameof(dbTables.Ereignis),
+      Fields = [
+            new(EventFields.Art, TypeCode.Int16) ,
+            new(EventFields.PerFamNr, TypeCode.Int32) ,
+            new(EventFields.DatumV, TypeCode.Int32) ,
+            new(EventFields.DatumB_S, TypeCode.String) { Length = 1 },
+            new(EventFields.DatumV_S, TypeCode.String) { Length = 1 },
+            new(EventFields.DatumB, TypeCode.Int32) ,
+            new(EventFields.KBem, TypeCode.Int32) ,
+            new(EventFields.Ort, TypeCode.Int32) ,
+            new(EventFields.Ort_S, TypeCode.String) { Length = 1, xNull = true },
+            new(EventFields.Reg, TypeCode.String) { Length = 50 },
+            new(EventFields.Bem1, TypeCode.String) ,
+            new(EventFields.Bem2, TypeCode.String) ,
+            new(EventFields.Platz, TypeCode.Int32) ,
+            new(EventFields.VChr, TypeCode.Boolean) ,
+            new(EventFields.LfNr, TypeCode.Int16) ,
+            new(EventFields.Bem3, TypeCode.String) ,
+            new(EventFields.Bem4, TypeCode.String) ,
+            new(EventFields.ArtText, TypeCode.String) { Length = 240 },
+            new(EventFields.Zusatz, TypeCode.String) { Length = 240 },
+            new(EventFields.priv, TypeCode.String) { Length = 1 },
+            new(EventFields.tot, TypeCode.String) { Length = 1 },
+            new(EventFields.DatumText, TypeCode.Int32) ,
+            new(EventFields.Causal, TypeCode.Int32) ,
+            new(EventFields.an, TypeCode.Int32) ,
+            new(EventFields.Hausnr, TypeCode.Int32) ,
+            new(EventFields.GrabNr, TypeCode.Int32) ],
+      Indexes = [
+            new(EventIndex.ArtNr, [EventFields.Art,EventFields.PerFamNr, EventFields.LfNr] ){ Unique = true, Primary = true },
+            new(EventIndex.BeSu, [EventFields.Art,EventFields.PerFamNr] ),
+            new(EventIndex.BeSu2, [EventFields.PerFamNr, EventFields.Art, EventFields.LfNr] ),
+            new(EventIndex.Datbs, [EventFields.DatumB_S] ),
+            new(EventIndex.DatInd, [EventFields.DatumV] ),
+            new(EventIndex.Datvs, [EventFields.DatumV_S] ),
+            new(EventIndex.EOrt, [EventFields.Ort] ),
+            new(EventIndex.HaNu, [EventFields.Hausnr] ),
+            new(EventIndex.JaTa, [EventFields.Art] ),
+            new(EventIndex.CText, [EventFields.Causal] ),
+            new(EventIndex.KText, [EventFields.KBem] ),
+            new(EventIndex.NText, [EventFields.ArtText] ),
+            new(EventIndex.PText, [EventFields.Platz] ),
+            new(EventIndex.Reg, [EventFields.Reg] ),
+            new(EventIndex.Reg1, [EventFields.Art, EventFields.Reg] )]
+            },
+    new() { Name = nameof(dbTables.Familie),
+      Fields = [
+            new((FamilyFields.AnlDatum), TypeCode.Int32) ,
+            new((FamilyFields.EditDat), TypeCode.Int32) ,
+            new((FamilyFields.Prüfen), TypeCode.String) { Length = 5 },
+            new((FamilyFields.Bem1), TypeCode.String) ,
+            new((FamilyFields.FamNr), TypeCode.Int32) ,
+            new((FamilyFields.Aeb), TypeCode.Boolean) ,
+            new((FamilyFields.Name), TypeCode.Int32) ,
+            new((FamilyFields.Bem2), TypeCode.String) ,
+            new((FamilyFields.Bem3), TypeCode.String) ,
+            new((FamilyFields.Eltern), TypeCode.Int16) ,
+            new((FamilyFields.Fuid), TypeCode.String) { Length = 40 },
+            new((FamilyFields.Prae), TypeCode.String) { Length = 240 },
+            new((FamilyFields.Suf), TypeCode.String) { Length = 240 },
+            new((FamilyFields.ggv), TypeCode.String) { Length = 1 }],
+      Indexes = [
+            new(FamilyIndex.BeaDat, [FamilyFields.EditDat] ),
+            new(FamilyIndex.Fam, [FamilyFields.FamNr] ){ Unique = true, Primary = true },
+            new(FamilyIndex.Fuid, [FamilyFields.Fuid] )]
+            },
+    new() { Name = nameof(dbTables.GBE),
+      Fields = [
+            new(GBEFields.Nr, TypeCode.Int32) ,
+            new(GBEFields.Akte, TypeCode.String) { Length = 240 },
+            new(GBEFields.Jahr, TypeCode.String) { Length = 24 },
+            new(GBEFields.Name, TypeCode.String) ,
+            new(GBEFields.Geb, TypeCode.String) ,
+            new(GBEFields.Erb, TypeCode.String) { Length = 24 },
+            new(GBEFields.Abg, TypeCode.String) { Length = 24 }],
+      Indexes = [
+            new(GBEIndex.Akte, [GBEFields.Akte] ),
+            new(GBEIndex.AkteJa, [GBEFields.Akte, GBEFields.Jahr] ),
+            new(GBEIndex.Nr, [GBEFields.Nr] ){ Unique = true, Primary = true }]
+            },
+    new() { Name = nameof(dbTables.GED),
+      Fields = [
+            new(GEDFields.PNr, TypeCode.Int32) ],
+      Indexes = [
+            new(GEDIndex.PNr, [GEDFields.PNr] ){ Unique = true, Primary = true }]
+            },
+    new() { Name = nameof(dbTables.HGA),
+      Fields = [
+            new(HGAFields.Nr, TypeCode.Int32) ,
+            new(HGAFields.Akte, TypeCode.String) { Length = 240 },
+            new(HGAFields.Kirchspiel, TypeCode.String) { Length = 240 },
+            new(HGAFields.Beschr, TypeCode.String) { Length = 240 },
+            new(HGAFields.Flur, TypeCode.String) { Length = 240 },
+            new(HGAFields.Parzelle, TypeCode.String) { Length = 240 },
+            new(HGAFields.Hof, TypeCode.String) { Length = 240 },
+            new(HGAFields.Brandkasse, TypeCode.String) ,
+            new(HGAFields.Bem, TypeCode.String) ],
+      Indexes = [
+            new(HGAIndex.Akte, [HGAFields.Akte] ){ Unique = true },
+            new(HGAIndex.Nr, [HGAFields.Nr] ){ Unique = true, Primary = true }]
+            },
+    new() { Name = nameof(dbTables.INamen),
+      Fields = [
+            new(NameFields.PersNr, TypeCode.Int32) ,
+            new(NameFields.Kennz, TypeCode.String) { Length = 1 },
+            new(NameFields.Text, TypeCode.Int32) ,
+            new(NameFields.LfNr, TypeCode.String) { Length = 2 },
+            new(NameFields.Ruf, TypeCode.Byte) ,
+            new(NameFields.Spitz, TypeCode.Byte) ],
+      Indexes = [
+            new(NameIndex.NamKenn, [] ),
+            new(NameIndex.PNamen, [] ),
+            new(NameIndex.TxNr, [] ),
+            new(NameIndex.Vollname, [NameFields.PersNr, NameFields.Kennz, NameFields.LfNr] ){ Unique = true, Primary = true }]
+            },
+    new() { Name = nameof(dbTables.IndNam), //OFB-Table
+      Fields = [
+            new(OFBFields.PerNr, TypeCode.Int32) ,
+            new(OFBFields.Kennz, TypeCode.String) { Length = 2 },
+            new(OFBFields.TextNr, TypeCode.Int32) ],
+      Indexes = [
+            new(OFBIndex.Indn, [OFBFields.PerNr, OFBFields.Kennz ,OFBFields.TextNr] ){ Unique = true, Primary = true},
+            new(OFBIndex.InDNr, [OFBFields.PerNr,OFBFields.Kennz] ),
+            new(OFBIndex.IndNum, [OFBFields.TextNr] )]
+            },
+    new() { Name = nameof(dbTables.Leer1),
+      Fields = [
+            new("Nr", TypeCode.Int32) ,
+            new("Art", TypeCode.String) { Length = 1 }],
+      Indexes = [
+            new("Leer", ["Art"] )]
+            },
+    new() { Name = nameof(dbTables.Nachk),
+      Fields = [
+            new("Gen", TypeCode.Int32) ,
+            new("Nr", TypeCode.String) { Length = 240, xNull = true },
+            new("Pr", TypeCode.Int32) ],
+      Indexes = [
+            new("Nr", ["Nr"] ),
+            new("PerNr", ["Pr", "Nr"] ){ Unique = true, Primary = true }]
+            },
+    new() { Name = nameof(dbTables.Orte),
+      Fields = [
+            new(PlaceFields.Ort, TypeCode.Int32) ,
+            new(PlaceFields.Ortsteil, TypeCode.Int32) ,
+            new(PlaceFields.Kreis, TypeCode.Int32) ,
+            new(PlaceFields.Land, TypeCode.Int32) ,
+            new(PlaceFields.Staat, TypeCode.Int32) ,
+            new(PlaceFields.Staatk, TypeCode.String) { Length = 3 },
+            new(PlaceFields.PLZ, TypeCode.String) { Length = 10 },
+            new(PlaceFields.Terr, TypeCode.String) { Length = 5 },
+            new(PlaceFields.Loc, TypeCode.String) { Length = 6 },
+            new(PlaceFields.L, TypeCode.String) { Length = 10 },
+            new(PlaceFields.B, TypeCode.String) { Length = 10 },
+            new(PlaceFields.Bem, TypeCode.String) ,
+            new(PlaceFields.OrtNr, TypeCode.Int32) { xNull = true },
+            new(PlaceFields.Zusatz, TypeCode.String) { Length = 240 },
+            new(PlaceFields.GOV, TypeCode.String) { Length = 20 },
+            new(PlaceFields.PolName, TypeCode.String) { Length = 240 },
+            new(PlaceFields.g, TypeCode.Single) ],
+      Indexes = [
+            new(PlaceIndex.K, [PlaceFields.Kreis] ),
+            new(PlaceIndex.L, [PlaceFields.Land] ),
+            new(PlaceIndex.O, [] ),
+            new(PlaceIndex.Orte, [PlaceFields.Ort] ),
+            new(PlaceIndex.OrtNr, [PlaceFields.OrtNr] ){ Unique = true, Primary = true },
+            new(PlaceIndex.OT, [PlaceFields.Ortsteil] ),
+            new(PlaceIndex.Pol, [PlaceFields.PolName] ),
+            new(PlaceIndex.S, [PlaceFields.Staat] )]
+            },
+    new() { Name = nameof(dbTables.OrtSuch),
+      Fields = [
+            new("Name", TypeCode.String) { Length = 100 },
+            new("Nr", TypeCode.Int32) ],
+      Indexes = [
+            new("OrtNr", ["Nr"] ),
+            new("ortsu", ["Name"] ){ Unique = true, Primary = true }]
+            },
+    new() { Name = nameof(dbTables.Personen),
+      Fields = [
+            new(PersonFields.AnlDatum, TypeCode.Int32) ,
+            new(PersonFields.Sex, TypeCode.String) { Length = 1, xNull = true },
+            new(PersonFields.EditDat, TypeCode.Int32) ,
+            new(PersonFields.Bem1, TypeCode.String) ,
+            new(PersonFields.Pruefen, TypeCode.String) { Length = 5 },
+            new(PersonFields.PersNr, TypeCode.Int32) ,
+            new(PersonFields.Konv, TypeCode.String) { Length = 240 },
+            new(PersonFields.Such1, TypeCode.String) { Length = 240 },
+            new(PersonFields.Bem2, TypeCode.String) ,
+            new(PersonFields.Bem3, TypeCode.String) ,
+            new(PersonFields.OFB, TypeCode.String) { Length = 1 },
+            new(PersonFields.religi, TypeCode.Int32) ,
+            new(PersonFields.PUid, TypeCode.String) { Length = 40 },
+            new(PersonFields.Such2, TypeCode.String) { Length = 240 },
+            new(PersonFields.Such3, TypeCode.String) { Length = 240 },
+            new(PersonFields.Such4, TypeCode.String) { Length = 240 },
+            new(PersonFields.Such5, TypeCode.String) { Length = 240 },
+            new(PersonFields.Such6, TypeCode.String) { Length = 240 }],
+      Indexes = [
+            new(PersonIndex.BeaDat,[PersonFields.EditDat] ),
+            new(PersonIndex.PerNr, [PersonFields.PersNr]){ Unique = true, Primary = true },
+            new(PersonIndex.Puid,  [PersonFields.PUid] ),
+            new(PersonIndex.reli,  [PersonFields.religi] ),
+            new(PersonIndex.Such1, [PersonFields.Such1, PersonFields.PersNr]) { IgnoreNull = true} ,
+            new(PersonIndex.Such2, [PersonFields.Such2, PersonFields.PersNr] ),
+            new(PersonIndex.Such3, [PersonFields.Such3, PersonFields.PersNr] ),
+            new(PersonIndex.Such4, [PersonFields.Such4, PersonFields.PersNr] ){ IgnoreNull = true},
+            new(PersonIndex.Such5, [PersonFields.Such5, PersonFields.PersNr] ),
+            new(PersonIndex.Such6, [PersonFields.Such6, PersonFields.PersNr] )]
+            },
+    new() { Name = nameof(dbTables.Quellen),
+      Fields = [
+            new(SourceFields._1, TypeCode.Int32) ,  // PerNr
+            new(SourceFields._2, TypeCode.String) { Length = 240 }, // Titel
+            new(SourceFields._3, TypeCode.String) { Length = 240 }, // Ort
+            new(SourceFields._4, TypeCode.String) { Length = 240 }, // Zitat
+            new(SourceFields._5, TypeCode.String) { Length = 240 }, // Author
+            new(SourceFields._7, TypeCode.String) { Length = 240 },
+            new(SourceFields._8, TypeCode.String) { Length = 240 },
+            new(SourceFields._9, TypeCode.String) { Length = 240 },
+            new(SourceFields._10, TypeCode.String) { Length = 240 },
+            new(SourceFields._11, TypeCode.String) { Length = 240 },
+            new(SourceFields._12, TypeCode.String) { Length = 240 },
+            new(SourceFields._13, TypeCode.String) ],
+      Indexes = [
+            new(SourceIndex.Autor, [SourceFields._5] ),
+            new(SourceIndex.Dopp, [SourceFields._2, SourceFields._4] ),
+            new(SourceIndex.Nam, [SourceFields._2] ),
+            new(SourceIndex.Nr, [SourceFields._1] ){ Unique = true, Primary = true  },
+            new(SourceIndex.Zitat, [SourceFields._4] ){ Unique = true }]
+            },
+    new() { Name = nameof(dbTables.Repo),
+      Fields = [
+            new(RepoFields.Nr, TypeCode.Int32) ,
+            new(RepoFields.Name, TypeCode.String) { Length = 240 },
+            new(RepoFields.Strasse, TypeCode.String) { Length = 240 },
+            new(RepoFields.Ort, TypeCode.String) { Length = 240 },
+            new(RepoFields.PLZ, TypeCode.String) { Length = 240 },
+            new(RepoFields.Fon, TypeCode.String) { Length = 240 },
+            new(RepoFields.Mail, TypeCode.String) { Length = 240 },
+            new(RepoFields.Http, TypeCode.String) { Length = 240 },
+            new(RepoFields.Bem, TypeCode.String) ,
+            new(RepoFields.Suchname, TypeCode.String) { Length = 240 }],
+      Indexes = [
+            new("Name", ["SuchName"] ),
+            new("Nr", ["Nr"] ){ Unique = true, Primary = true},
+            new("Such", ["SuchName", "Ort"] ){ Unique = true }]
+            },
+    new() { Name = nameof(dbTables.RepoTab),
+      Fields = [
+            new("Quelle", TypeCode.Int32) ,
+            new("Repo", TypeCode.Int32) ],
+      Indexes = [
+            new("Dop", ["Quelle", "Repo"] ),
+            new("Leer", ["Repo"] ),
+            new("Nr", ["Quelle"] )]
+            },
+    new() { Name = nameof(dbTables.Such),
+      Fields = [
+            new(SearchFields.Name, TypeCode.String) { Length = 50 },
+            new(SearchFields.Datum, TypeCode.Int16) ,
+            new(SearchFields.Nummer, TypeCode.Int32) ,
+            new(SearchFields.Kenn, TypeCode.String) { Length = 1 },
+            new(SearchFields.Sich, TypeCode.String) { Length = 1 }],
+      Indexes = [
+            new(SearchIndex.Nummer, [ SearchFields.Nummer ]){ Unique = true },
+            new(SearchIndex.Namen, [ SearchFields.Name ]),
+            new(SearchIndex.Persuch, [ SearchFields.Name, SearchFields.Datum ]),]
+            },
+    new() { Name = nameof(dbTables.Tab),
+      Fields = [
+            new(ILinkData.LinkFields.Kennz, TypeCode.Byte) ,
+            new(ILinkData.LinkFields.FamNr, TypeCode.Int32) ,
+            new(ILinkData.LinkFields.PerNr, TypeCode.Int32) ],
+      Indexes = [
+            new(LinkIndex.ElSu,    [ILinkData.LinkFields.PerNr, ILinkData.LinkFields.Kennz] ),
+            new(LinkIndex.FamNr,   [ILinkData.LinkFields.FamNr] ),
+            new(LinkIndex.FamPruef,[ILinkData.LinkFields.FamNr, ILinkData.LinkFields.PerNr, ILinkData.LinkFields.Kennz] ){ Unique = true },
+            new(LinkIndex.FamSu,   [ILinkData.LinkFields.FamNr, ILinkData.LinkFields.Kennz] ),
+            new(LinkIndex.FamSu1,  [ILinkData.LinkFields.FamNr, ILinkData.LinkFields.Kennz] ),
+            new(LinkIndex.PAFI,    [ILinkData.LinkFields.Kennz] ),
+            new(LinkIndex.Per,     [ILinkData.LinkFields.PerNr] )]
+            },
+    new() { Name = nameof(dbTables.Tab1),
+      Fields = [
+            new(SourceLinkFields._1, TypeCode.Int16) ,
+            new(SourceLinkFields._2, TypeCode.Int32) ,
+            new(SourceLinkFields._3, TypeCode.Int32) ,
+            new(SourceLinkFields._4, TypeCode.String) { Length = 240 },
+            new(SourceLinkFields.LfNr, TypeCode.Int16) ,
+            new(SourceLinkFields.Art, TypeCode.Int16) ,
+            new(SourceLinkFields.Aus, TypeCode.String) { Length = 240 },
+            new(SourceLinkFields.Orig, TypeCode.String) ,
+            new(SourceLinkFields.Kom, TypeCode.String) ],
+      Indexes = [
+            new(SourceLinkIndex.Tab, [ SourceLinkFields._1, SourceLinkFields._2 ]),
+            new(SourceLinkIndex.Tab2, [ SourceLinkFields._3 ]),
+            new(SourceLinkIndex.Tab21, [ SourceLinkFields._1, SourceLinkFields._2, SourceLinkFields._3 ]),
+            new(SourceLinkIndex.Tab22, [SourceLinkFields._1, SourceLinkFields._2, SourceLinkFields.Art,SourceLinkFields.LfNr] ),
+            new(SourceLinkIndex.Tab23, [SourceLinkFields._1, SourceLinkFields._2, SourceLinkFields._3, SourceLinkFields.Art, SourceLinkFields.LfNr]) {Unique = true, Primary = true },
+            new(SourceLinkIndex.Verw, [ SourceLinkFields._3, SourceLinkFields._1 ]),],
+          },
+    new() { Name = nameof(dbTables.Tab2),
+      Fields = [
+            new(WitnessFields.FamNr, TypeCode.Int32) ,
+            new(WitnessFields.PerNr, TypeCode.Int32) ,
+            new(WitnessFields.Kennz, TypeCode.String) { Length = 2 },
+            new(WitnessFields.Art, TypeCode.Int16) ,
+            new(WitnessFields.LfNr, TypeCode.Int16) ],
+      Indexes = [
+            new(WitnessIndex.ElSu,    [WitnessFields.Art, WitnessFields.PerNr, WitnessFields.Kennz] ),
+            new(WitnessIndex.Fampruef,[WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr] ){ Unique = true, Primary = true },
+            new(WitnessIndex.FamSu,   [WitnessFields.Art, WitnessFields.FamNr, WitnessFields.Kennz] ),
+            new(WitnessIndex.Zeug,    [WitnessFields.FamNr, WitnessFields.PerNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr] ),
+            new(WitnessIndex.ZeugSu,  [WitnessFields.FamNr, WitnessFields.Kennz, WitnessFields.Art, WitnessFields.LfNr] )]
+            },
+    new() { Name = nameof(dbTables.Texte),
+      Fields = [
+            new(TexteFields.Txt, TypeCode.String) { Length = 240 },
+            new(TexteFields.Kennz, TypeCode.String) { Length = 1, xNull = true },
+            new(TexteFields.TxNr, TypeCode.Int32) ,
+            new(TexteFields.Leitname, TypeCode.String) { Length = 32 },
+            new(TexteFields.Bem, TypeCode.String) { xNull = true }],
+      Indexes = [
+            new(TexteIndex.ITexte, [TexteFields.Txt, TexteFields.Kennz] ){ Unique = true },
+            new(TexteIndex.KText,  [TexteFields.Kennz] ),
+            new(TexteIndex.LTexte, [TexteFields.Leitname, TexteFields.Kennz] ),
+            new(TexteIndex.RTexte, [TexteFields.TxNr, TexteFields.Kennz] ),
+            new(TexteIndex.SSTexte,[TexteFields.Txt] ),
+            new(TexteIndex.STexte, [TexteFields.Kennz, TexteFields.Txt] ),
+            new(TexteIndex.TxNr1,   [TexteFields.TxNr] ){ Unique = true, Primary = true },]
+            },
+    new() { Name = nameof(dbTables.WDBL),
+      Fields = [
+            new(WDBLFields.Nr, TypeCode.Byte) ],
+      Indexes =[]
+      } ];
+
 }
+

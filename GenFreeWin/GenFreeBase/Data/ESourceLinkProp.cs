@@ -2,14 +2,15 @@
 {
     public enum ESourceLinkProp
     {
-        eArt,
         iLinkType,
-        iPersNr,
+        iPerFamNr,
         iQuNr,
-        sField3,
+        sEntry,
+        sPage,
+        sOriginalText,
+        sComment,
+        eArt,
         iLfdNr,
-        sAus,
-        sOrig,
-        sKom,
+        sSourceTitle,
     }
 }

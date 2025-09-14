@@ -1,5 +1,6 @@
 ﻿//using DAO;
 using GenFree.Data;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Interfaces.Model
 {
@@ -7,6 +8,7 @@ namespace GenFree.Interfaces.Model
     {
         void AllSetEditDate();
         void AppendRaw(int iFamNr, int iName, int iAeb, string sBem1);
+        bool Get_Aeb(int iFam);
         void SetNameNr(int iFamInArb, int iName);
         void SetValue(int famInArb, int satz, (EFamilyProp, object)[] atProps);
     }

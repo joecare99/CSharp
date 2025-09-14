@@ -50,7 +50,7 @@ PropChg(MdbBrowser.ViewModels.SchemaViewViewModel,TableName)=Test
 " : "", DebugLog);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true,true,true)]
         [DataRow(false,true,false)]
         [DataRow(true,false,false)]

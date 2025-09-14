@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using System;
+using System.ComponentModel;
 
-namespace Gen_FreeWin.ViewModels.Interfaces;
+namespace GenFree.ViewModels.Interfaces;
 
-public interface IAdresseViewModel
+public interface IAdresseViewModel : INotifyPropertyChanged
 {
     string Title { get; set; }
     string Givenname { get; set; }
@@ -15,4 +17,6 @@ public interface IAdresseViewModel
     string Special { get; set; }
     IRelayCommand SaveCommand { get; }
     IRelayCommand FormLoadCommand { get; }
+
+    event EventHandler OnClose;
 }

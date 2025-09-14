@@ -88,11 +88,14 @@ namespace Calc64WF.ViewModel
         {
             if (e.prop == nameof(Accumulator))
                 Accumulator = (long)e.newVal;
+            else if (e.prop == nameof(ICalculator.OperationMode))
+            {
+                OnPropertyChanged(nameof(OperationText));
+            }
             else
             {
                 OnPropertyChanged(e.prop);
             }
-            OnDataChanged?.Invoke(s, e);
         }
 
         /// <summary>
@@ -168,7 +171,7 @@ namespace Calc64WF.ViewModel
 
             switch (e.KeyCode)
             {
-                case Keys.Oemplus:
+                case Keys.Oemplus when !e.Shift:
                 case Keys.Add:
                     Operation("-2");
                     break;
@@ -177,17 +180,19 @@ namespace Calc64WF.ViewModel
                     Operation("-3");
                     break;
                 case Keys.Divide:
-                    //case Keys.Add:
+                case Keys.D7 when e.Shift:
                     Operation("-5");
                     break;
                 case Keys.Multiply:
-                    //case Keys.:
+                case Keys.Oemplus when e.Shift:
                     Operation("-4");
                     break;
                 case Keys.Escape:
                     break;
                 case Keys.Back:
                     BackSpace("");
+                    break;
+                case Keys.ShiftKey:
                     break;
                 default:
                     if (ActKey != (char)0)

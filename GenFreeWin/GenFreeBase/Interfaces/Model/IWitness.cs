@@ -1,5 +1,5 @@
 ﻿//using DAO;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Model;
 using System;
 using System.Collections.Generic;
@@ -18,8 +18,11 @@ namespace GenFree.Data
         void DeleteAllF(int persInArb, int sWKennz);
         void DeleteAllFamPred(Func<int, bool> fncFamExists);
         void DeleteAllZ(int persInArb, int sWKennz, EEventArt eArt, short iLfNr);
+        bool ExistE(int persInArb, int eWKennz = 10);
+        bool ExistF(int personNr, int eWKennz = 10);
         bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10);
         IEnumerable<IWitnessData> ReadAllFams(int iNr, int v);
+        IEnumerable<IWitnessData> ReadAllZeug(int iPerFamNr, EEventArt eArt);
         void UpdateAllReplFams(int Fam1, int Fam2);
         void UpdateAllReplFams(int Fam1, int Fam2, short iLfNr2, EEventArt eArt2);
     }

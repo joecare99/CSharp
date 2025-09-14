@@ -1,9 +1,9 @@
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFree.ViewModels.Interfaces;
 using System;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 public partial class Adresse
 {
 

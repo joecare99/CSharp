@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
 namespace GenFreeWin.ViewModels;
@@ -26,8 +26,12 @@ public partial class AdresseViewModel : BaseViewModelCT, IAdresseViewModel
     [ObservableProperty]
     private string _special;
 
+    public event EventHandler OnClose;
+
     [RelayCommand]
     private void Save() { 
+        //Todo save data
+        OnClose?.Invoke(this, EventArgs.Empty);
     }
     [RelayCommand] 
     private void FormLoad() { 

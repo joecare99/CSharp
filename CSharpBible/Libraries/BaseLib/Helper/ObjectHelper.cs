@@ -1,9 +1,11 @@
 ﻿
+using BaseLib.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using BaseLib.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace BaseLib.Helper;
 
@@ -118,6 +120,11 @@ public static class ObjectHelper2
     public static void SetIndex<T>(this Dictionary<int, T> dic, T value, int index) => dic[index + 1] = value;
     public static int GetIndex<T>(this Dictionary<int, T> dic, T value) => dic.Where((itm) => itm.Value?.Equals(value) ?? false)
         .FirstOrDefault().Key - 1;
-
 }
-public class ControlArray<T> : Dictionary<int, T> { };
+public class ControlArray<T> : Dictionary<int, T>, ISupportInitialize
+{
+    public void BeginInit() { }
+    public void EndInit() { }
+
+    public new T this[int i] => base[i+1];
+}

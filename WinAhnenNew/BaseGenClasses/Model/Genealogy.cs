@@ -1,15 +1,17 @@
 ﻿using BaseGenClasses.Helper;
 using BaseGenClasses.Model;
+using BaseLib.Helper;
+using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
+using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text.Json.Serialization;
-using BaseLib.Helper;
+using System.Threading.Tasks;
 
 namespace BaseGenClasses.Model;
 
@@ -20,22 +22,22 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
     public EGenType eGenType => EGenType.Genealogy;
     public Guid UId { get; init; }
     [JsonIgnore]
-    public Func<IList<object>, IGenEntity> GetEntity { get; set; }
+    public Func<IList<object?>, IGenEntity> GetEntity { get; set; }
     [JsonIgnore]
-    public Func<IList<object>, IGenFact> GetFact { get; set; }
+    public Func<IList<object?>, IGenFact> GetFact { get; set; }
     [JsonIgnore]
-    public Func<IList<object>, IGenEntity> GetSource { get; set; }
+    public Func<IList<object?>, IGenSource> GetSource { get; set; }
     [JsonIgnore]
-    public Func<IList<object>, IGenMedia> GetMedia { get; set; }
+    public Func<IList<object?>, IGenMedia> GetMedia { get; set; }
     [JsonIgnore]
-    public Func<IList<object>, IGenEntity> GetTransaction { get; set; }
+    public Func<IList<object?>, IGenTransaction> GetTransaction { get; set; }
 
-    public IList<IGenEntity> Entitys { get; init; } = new List<IGenEntity>();
-    public IList<IGenSources> Sources { get; init; } = new List<IGenSources>();
-    public IList<IGenPlace> Places { get; init; } = new List<IGenPlace>();
-    public IList<IGenRepository> Repositorys { get ; init ; }= new List<IGenRepository>();
-    public IList<IGenMedia> Medias { get; init; } = new List<IGenMedia>();
-    public IList<IGenTransaction> Transactions { get; init; } = new List<IGenTransaction>();
+    public IList<IGenEntity> Entitys { get; init; } = [];
+    public IList<IGenSource> Sources { get; init; } = [];
+    public IList<IGenPlace> Places { get; init; } = [];
+    public IList<IGenRepository> Repositories { get ; init ; }= [];
+    public IList<IGenMedia> Medias { get; init; } = [];
+    public IList<IGenTransaction> Transactions { get; init; } = [];
 
     #endregion
 
@@ -52,7 +54,7 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
         (_messanger = messenger).Register(this);
     }
 
-    private IGenEntity _GetEntity(IList<object> o)
+    private IGenEntity _GetEntity(IList<object?> o)
     {
         if ((o?.Count ?? 0) == 0)
             throw new ArgumentException("No data to create an entity");
@@ -106,10 +108,11 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
         }
 
         Entitys.Add(result);
+        if (result is IHasOwner<IGenealogy> hasOwner) hasOwner.SetOwner(this);
         return result;
     }
 
-    private IGenFact _GetFact(IList<object> o)
+    private IGenFact _GetFact(IList<object?> o)
     {
         if ((o?.Count ?? 0) == 0)
             throw new ArgumentException("No data to create an entity");
@@ -128,26 +131,53 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
         if ((_uid == null && _type == null) || _entity == null)
             throw new ArgumentException("Not enough data to create an entity");
 
-        var knownFact = _entity.Facts.FirstOrDefault(e => e.UId == _uid);
+        var knownFact = _entity.Facts.FirstOrDefault(e => e?.UId == _uid);
         if (knownFact != null)
             return knownFact;
 
-        var result = _entity.AddFact(_type!.Value, _data, _uid);
+        var result = _entity.AddFact(_type!.Value, _data ?? "", _uid);
 
         return result;
     }
 
-    private IGenEntity _GetSource(IList<object> o)
+    private IGenSource _GetSource(IList<object?> o)
+    {
+        if ((o?.Count ?? 0) == 0)
+            throw new ArgumentException("No data to create an entity");
+
+        Guid? _uid = null;
+        IGenFact? _fact = null;
+        string? _data = null;
+        Uri? _www = null;
+        string? _description = null;
+
+        foreach (var item in o!)
+        {
+            _uid = _uid ?? ((item is Guid g) ? g : null);
+            _fact = _fact ?? ((item is IGenFact f) ? f : null);
+            if (item is string s)
+            {
+                if (s.StartsWith("http")) _www = s;
+                else if (s.Length < 100 && !s.Contains('\n')) _description = s;
+                else if (_data == null) _data = s;
+            }
+        }
+
+        if (_uid == null && (_fact == null || _data == null))
+            throw new ArgumentException("Not enough data to create an entity");
+
+        var knownFact = Sources.FirstOrDefault(e => e?.UId == _uid);
+        if (knownFact != null)
+            return knownFact;
+
+    }
+
+    private IGenMedia _GetMedia(IList<object?> o)
     {
         throw new NotImplementedException();
     }
 
-    private IGenMedia _GetMedia(IList<object> o)
-    {
-        throw new NotImplementedException();
-    }
-
-    private IGenEntity _GetTransaction(IList<object> o)
+    private IGenEntity _GetTransaction(IList<object?> o)
     {
         throw new NotImplementedException();
     }

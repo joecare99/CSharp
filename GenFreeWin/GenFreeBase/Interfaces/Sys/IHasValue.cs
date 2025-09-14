@@ -1,6 +1,6 @@
-﻿namespace GenFree.Interfaces.Sys
+﻿namespace GenFree.Interfaces.Sys;
+
+public interface IHasValue<T>
 {
-    public interface IHasValue<T>
-    {
-    }
+
 }

@@ -2,8 +2,8 @@
 
 namespace GenFree.Interfaces.Sys
 {
-    public interface ISysTime
+    public interface ISysTime : BaseLib.Models.Interfaces.ISysTime
     {
-        DateTime Now { get; }
+        int TodayInt { get; }
     }
 }

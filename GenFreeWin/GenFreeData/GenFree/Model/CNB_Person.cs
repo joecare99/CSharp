@@ -1,10 +1,11 @@
 ﻿using BaseLib.Helper;
+using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model
+namespace GenFree.Models
 {
     public class CNB_Person : CUsesRecordSet<int>, INB_Person
     {
@@ -18,10 +19,8 @@ namespace GenFree.Model
         }
         protected override string __keyIndex => "Per";
         protected override IRecordset _db_Table => _value();
-        protected override int GetID(IRecordset recordset)
-        {
-            return recordset.Fields["Person"].AsInt();
-        }
+        protected override int GetID(IRecordset recordset) 
+            => recordset.Fields[IndexFields.Person].AsInt();
 
         public override IRecordset? Seek(int key, out bool xBreak)
         {
@@ -36,11 +35,20 @@ namespace GenFree.Model
         {
             var NB_PersonTable = _db_Table;
             NB_PersonTable.AddNew();
-            NB_PersonTable.Fields["Person"].Value = persInArb;
+            NB_PersonTable.Fields[IndexFields.Person].Value = persInArb;
             NB_PersonTable.Update();
             if (xAppenWitt)
             {
                 _aApeendPaten(persInArb);
+            }
+        }
+
+        public int MinID
+        {
+            get
+            {
+                _db_Table.MoveFirst();
+                return GetID(_db_Table);
             }
         }
     }

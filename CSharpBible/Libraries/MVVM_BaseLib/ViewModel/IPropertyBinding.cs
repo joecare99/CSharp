@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System;
 using System.Runtime.CompilerServices;
 
 namespace MVVM.ViewModel;

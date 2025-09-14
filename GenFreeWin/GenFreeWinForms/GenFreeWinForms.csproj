@@ -1,13 +1,17 @@
 ﻿<Project>
   <Import Project="..\GenFreeWin.props" />
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net481</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <UseWindowsForms>True</UseWindowsForms>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>net8.0-windows;net9.0-windows;net481</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <UseWindowsForms>True</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GenFreeBase\GenFreeBase.csproj" />
     <ProjectReference Include="..\GenFreeUIItfs\GenFreeUIItfs.csproj" />
@@ -18,10 +22,19 @@
     <Compile Update="Views\Adresse.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Views\FraStatistics.cs">
+    <Compile Update="Views\FraEventShowEdit.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Views\FraPersImpQuerry.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Views\Lizenz.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Views\Menue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\OFB.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

@@ -11,10 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Sokoban_Base.Model;
 using System;
 using System.Drawing;
 
-namespace Sokoban_Base.Model
+namespace Sokoban.Model
 {
     /// <summary>
     /// Class Field.
@@ -73,9 +74,9 @@ namespace Sokoban_Base.Model
 
     /// <summary>
     /// Class Wall.
-    /// Implements the <see cref="Sokoban_Base.Model.Field" />
+    /// Implements the <see cref="Field" />
     /// </summary>
-    /// <seealso cref="Sokoban_Base.Model.Field" />
+    /// <seealso cref="Field" />
     public class Wall : Field
     {
         /// <summary>
@@ -96,7 +97,7 @@ namespace Sokoban_Base.Model
         /// Sets the item.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <exception cref="System.ArgumentException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         protected override void SetItem(PlayObject? value)
         {
             // a Wall cannot contain an object
@@ -107,9 +108,9 @@ namespace Sokoban_Base.Model
 
     /// <summary>
     /// Class Floor.
-    /// Implements the <see cref="Sokoban_Base.Model.Field" />
+    /// Implements the <see cref="Field" />
     /// </summary>
-    /// <seealso cref="Sokoban_Base.Model.Field" />
+    /// <seealso cref="Field" />
     public class Floor: Field
     {
         /// <summary>
@@ -125,7 +126,7 @@ namespace Sokoban_Base.Model
         /// Gets the field definition.
         /// </summary>
         /// <returns>FieldDef.</returns>
-        /// <exception cref="System.ArgumentException">Illegal Item</exception>
+        /// <exception cref="ArgumentException">Illegal Item</exception>
         protected override FieldDef GetFieldDef() => Item switch
         {
             Stone => FieldDef.Stone,
@@ -170,9 +171,9 @@ namespace Sokoban_Base.Model
 
     /// <summary>
     /// Class Destination.
-    /// Implements the <see cref="Sokoban_Base.Model.Floor" />
+    /// Implements the <see cref="Floor" />
     /// </summary>
-    /// <seealso cref="Sokoban_Base.Model.Floor" />
+    /// <seealso cref="Floor" />
     public class Destination : Floor
     {
         /// <summary>
@@ -188,7 +189,7 @@ namespace Sokoban_Base.Model
         /// Gets the field definition.
         /// </summary>
         /// <returns>FieldDef.</returns>
-        /// <exception cref="System.ArgumentException">Illegal Item</exception>
+        /// <exception cref="ArgumentException">Illegal Item</exception>
         protected override FieldDef GetFieldDef() => Item switch
         {
             Stone s => FieldDef.StoneInDest,

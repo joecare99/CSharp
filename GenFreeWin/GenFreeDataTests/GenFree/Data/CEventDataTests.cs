@@ -2,9 +2,10 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Interfaces;
 using GenFree.Helper;
 using static BaseLib.Helper.TestHelper;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 
 namespace GenFree.Data.Tests;
@@ -22,32 +23,32 @@ public class CEventDataTests
     {
         testRS = Substitute.For<IRecordset>();
         testRS.NoMatch.Returns(true);
-        testRS.Fields[nameof(EventFields.Art)].Value.Returns(1, 2, 3);
-        testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(2, 3, 4);
-        testRS.Fields[nameof(EventFields.DatumV)].Value.Returns(3, 4, 5);
-        testRS.Fields[nameof(EventFields.DatumV_S)].Value.Returns("DatumV_S");
-        testRS.Fields[nameof(EventFields.DatumB)].Value.Returns(5, 6, 7);
-        testRS.Fields[nameof(EventFields.DatumB_S)].Value.Returns("DatumB_S");
-        testRS.Fields[nameof(EventFields.KBem)].Value.Returns(7,8,9);
-        testRS.Fields[nameof(EventFields.Ort)].Value.Returns(8,9,10);
-        testRS.Fields[nameof(EventFields.Ort_S)].Value.Returns("Ort_S");
-        testRS.Fields[nameof(EventFields.Reg)].Value.Returns("Reg");
-        testRS.Fields[nameof(EventFields.Platz)].Value.Returns(9,10,11);
-        testRS.Fields[nameof(EventFields.VChr)].Value.Returns("VChr");
-        testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(10,11,12);
-        testRS.Fields[nameof(EventFields.Bem1)].Value.Returns("Bem1");
-        testRS.Fields[nameof(EventFields.Bem2)].Value.Returns("Bem2");
-        testRS.Fields[nameof(EventFields.Bem3)].Value.Returns("Bem3");
-        testRS.Fields[nameof(EventFields.Bem4)].Value.Returns("Bem4");
-        testRS.Fields[nameof(EventFields.ArtText)].Value.Returns(11,12,13);
-        testRS.Fields[nameof(EventFields.Zusatz)].Value.Returns("Zusatz");
-        testRS.Fields[nameof(EventFields.priv)].Value.Returns(12,13,14);
-        testRS.Fields[nameof(EventFields.DatumText)].Value.Returns(13,14,15);
-        testRS.Fields[nameof(EventFields.Causal)].Value.Returns(14,15,16);
-        testRS.Fields[nameof(EventFields.an)].Value.Returns(15,16,17);
-        testRS.Fields[nameof(EventFields.tot)].Value.Returns("tot");
-        testRS.Fields[nameof(EventFields.Hausnr)].Value.Returns(16,17,18);
-        testRS.Fields[nameof(EventFields.GrabNr)].Value.Returns(17,18,19);
+        (testRS.Fields[EventFields.Art] as IHasValue).Value.Returns(1, 2, 3);
+        (testRS.Fields[EventFields.PerFamNr] as IHasValue).Value.Returns(2, 3, 4);
+        (testRS.Fields[EventFields.DatumV] as IHasValue).Value.Returns(3, 4, 5);
+        (testRS.Fields[EventFields.DatumV_S] as IHasValue).Value.Returns("DatumV_S");
+        (testRS.Fields[EventFields.DatumB] as IHasValue).Value.Returns(5, 6, 7);
+        (testRS.Fields[EventFields.DatumB_S] as IHasValue).Value.Returns("DatumB_S");
+        (testRS.Fields[EventFields.KBem] as IHasValue).Value.Returns(7,8,9);
+        (testRS.Fields[EventFields.Ort] as IHasValue).Value.Returns(8,9,10);
+        (testRS.Fields[EventFields.Ort_S] as IHasValue).Value.Returns("Ort_S");
+        (testRS.Fields[EventFields.Reg] as IHasValue).Value.Returns("Reg");
+        (testRS.Fields[EventFields.Platz] as IHasValue).Value.Returns(9,10,11);
+        (testRS.Fields[EventFields.VChr] as IHasValue).Value.Returns("VChr");
+        (testRS.Fields[EventFields.LfNr] as IHasValue).Value.Returns(10,11,12);
+        (testRS.Fields[EventFields.Bem1] as IHasValue).Value.Returns("Bem1");
+        (testRS.Fields[EventFields.Bem2] as IHasValue).Value.Returns("Bem2");
+        (testRS.Fields[EventFields.Bem3] as IHasValue).Value.Returns("Bem3");
+        (testRS.Fields[EventFields.Bem4] as IHasValue).Value.Returns("Bem4");
+        (testRS.Fields[EventFields.ArtText] as IHasValue).Value.Returns(11,12,13);
+        (testRS.Fields[EventFields.Zusatz] as IHasValue).Value.Returns("Zusatz");
+        (testRS.Fields[EventFields.priv] as IHasValue).Value.Returns(12,13,14);
+        (testRS.Fields[EventFields.DatumText] as IHasValue).Value.Returns(13,14,15);
+        (testRS.Fields[EventFields.Causal] as IHasValue).Value.Returns(14,15,16);
+        (testRS.Fields[EventFields.an] as IHasValue).Value.Returns(15,16,17);
+        (testRS.Fields[EventFields.tot] as IHasValue).Value.Returns("tot");
+        (testRS.Fields[EventFields.Hausnr] as IHasValue).Value.Returns(16,17,18);
+        (testRS.Fields[EventFields.GrabNr] as IHasValue).Value.Returns(17,18,19);
         testClass = new(testRS);
         CEventData.SetGetText(getTextFnc);
         testRS.ClearReceivedCalls();
@@ -58,7 +59,7 @@ public class CEventDataTests
         return $"Text_{arg}";
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Text_11", EventFields.ArtText)]
     [DataRow("Text_16", EventFields.Hausnr)]
     [DataRow("Text_7", EventFields.KBem)]
@@ -90,7 +91,7 @@ public class CEventDataTests
         Assert.IsInstanceOfType(testClass, typeof(IEventData));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(2, (EEventArt)2)]
     [DataRow(3, 16)]
     [DataRow(4, 12)]
@@ -110,7 +111,7 @@ public class CEventDataTests
         Assert.AreEqual((short)10,testClass.ID.iLfNr);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true,false,true,null)]
     [DataRow(false,false,false,null)]
     [DataRow(false, true, true, new[] { "test" })]
@@ -124,9 +125,9 @@ public class CEventDataTests
         testClass.sBem[4] = "4";
         testRS.NoMatch.Returns(!xMatch);
         if (xSetRS) {
-            testRS.Fields[nameof(EventFields.Art)].Value.Returns(1);
-            testRS.Fields[nameof(EventFields.PerFamNr)].Value.Returns(2);
-            testRS.Fields[nameof(EventFields.LfNr)].Value.Returns(10);
+            (testRS.Fields[EventFields.Art] as IHasValue).Value.Returns(1);
+            (testRS.Fields[EventFields.PerFamNr] as IHasValue).Value.Returns(2);
+            (testRS.Fields[EventFields.LfNr] as IHasValue).Value.Returns(10);
         }
         if (xEd) testRS.EditMode.Returns(1);
         testClass.Update(asS);
@@ -149,8 +150,8 @@ public class CEventDataTests
         }
     }
 
-    [DataTestMethod()]
-    [DataRow(EEventProp.eArt, TypeCode.Int32)]
+    [TestMethod()]
+    [DataRow(EEventProp.eArt, TypeCode.Int16)]
     [DataRow(EEventProp.iArtText, TypeCode.Int32)]
     [DataRow(EEventProp.iPerFamNr, TypeCode.Int32)]
     [DataRow(EEventProp.dDatumV, TypeCode.DateTime)]
@@ -178,7 +179,7 @@ public class CEventDataTests
         Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((EEventProp)(0 - 1), TypeCode.Int32)]
     [DataRow((EEventProp)23, TypeCode.Int32)]
     [DataRow((EEventProp)100, TypeCode.Int32)]
@@ -187,7 +188,7 @@ public class CEventDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.iArtText, 11)]
     [DataRow(EEventProp.iPerFamNr, 2)]
@@ -228,7 +229,7 @@ public class CEventDataTests
             AssertAreEqual(aS, (string[])testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((EEventProp)(0 - 1), TypeCode.Int32)]
     [DataRow((EEventProp)23, TypeCode.Int32)]
     [DataRow((EEventProp)100, TypeCode.Int32)]
@@ -237,7 +238,7 @@ public class CEventDataTests
         Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.eArt, (EEventArt)2)]
     [DataRow(EEventProp.iArtText, 12)]
@@ -283,7 +284,7 @@ public class CEventDataTests
             AssertAreEqual(aS, (string[])testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((EEventProp)(0 - 1), TypeCode.Int32)]
     [DataRow((EEventProp)23, TypeCode.Int32)]
     [DataRow((EEventProp)100, TypeCode.Int32)]
@@ -303,7 +304,7 @@ public class CEventDataTests
         Assert.AreEqual(false, testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.eArt, (EEventArt)2)]
     [DataRow(EEventProp.iArtText, 12)]
@@ -332,7 +333,7 @@ public class CEventDataTests
     [DataRow(EEventProp.xIsDead, false)]
     public void SetDBValueTest(EEventProp eAct, object _)
     {
-        testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+        testClass.SetDBValues(testRS, new[] { (Enum)eAct });
         _ = testRS.Received().Fields[eAct.ToString()];
     }
     [TestMethod()]
@@ -341,10 +342,10 @@ public class CEventDataTests
     [DataRow((EEventProp)100, TypeCode.Int32)]
     public void SetDBValueTest1(EEventProp eAct, object _)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+        Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
 //    [DataRow(EEventProp.eArt, (EEventArt)1)]
     [DataRow(EEventProp.eArt, (EEventArt)2)]
     [DataRow(EEventProp.iArtText, 12)]
@@ -374,7 +375,7 @@ public class CEventDataTests
     public void SetDBValueTest2(EEventProp eAct, object oExp)
     {
         SetPropValueTest(eAct, oExp);
-        testClass.SetDBValue(testRS, null);
+        testClass.SetDBValues(testRS, null);
         _ = testRS.Received().Fields[eAct.ToString()];
     }
 }

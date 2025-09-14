@@ -1,16 +1,16 @@
-﻿using GenFree.Interfaces;
-using GenFree.Interfaces.DB;
+﻿using GenFree.Interfaces.DB;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 
-public class CPersonData : CRSData<EPersonProp, int>, IPersonData
+public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
 {
     #region static Properties
     private static Func<IRecordset> GetPersonTable { get; set; }
@@ -21,81 +21,82 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
 
     public DateTime dEditDat { get; set; }
     public DateTime dAnlDatum { get; private set; }
-
-    private int _iPersNr;
-
-    public Guid gUid { get; internal set; }
-    public string SurName { get; private set; }
-    public string Givennames { get; internal set; }
+    public Guid? gUid { get; internal set; }
+    public string SurName { get; private set; } = "";
+    public string Givennames { get; internal set; } = "";
     public IList<string> Givenname { get; } = new List<string>();
     public IList<string> Nickname { get; } = new List<string>();
     public IList<string> Callname { get; } = new List<string>();
-    public string FullSurName { get; private set; }
+    public string FullSurName { get; private set; } = "";
   //  public string FullName { get; private set; }
-    public string sSex { get; private set; }
-    public string sKonv { get; private set; }
+    public string sSex { get; private set; } = "";
+    public string sKonv { get; private set; } = "";
 
-    public string Prefix { get; internal set; }
-    public string Prae { get; internal set; }
-    public string Suffix { get; internal set; }
-    public string Alias { get; internal set; }
-    public string Clan { get; internal set; }
+    public string Prefix { get; internal set; } = "";
+    public string Prae { get; internal set; } = "";
+    public string Suffix { get; internal set; } = "";
+    public string Alias { get; internal set; } = "";
+    public string Clan { get; internal set; } = "";
 
     public DateTime dBirth { get; private set; }
-    public string Birthday { get; internal set; }
+    public string Birthday { get; internal set; } = "";
     public DateTime dBaptised { get; private set; }
-    public string Baptised { get; internal set; }
+    public string Baptised { get; internal set; } = "";
     public DateTime dDeath { get; private set; }
-    public string Death { get; internal set; }
+    public string Death { get; internal set; } = "";
     public bool xDead { get; internal set; }
     public DateTime dBurial { get; private set; }
-    public string Burial { get; internal set; }
-    public string sBurried { get; internal set; }
-    public string sOFB { get; private set; }
+    public string Burial { get; internal set; } = "";
+    public string sBurried { get; internal set; } = "";
+    /// <summary>
+    /// Events of this person 
+    /// </summary>
+    public IList<IEventData> Events { get; } = [];
+    
+    public string sOFB { get; private set; } = "";
     public string[] sSuch { get; } = new string[7];
-    public string Stat { get; private set; }
+    public string Stat { get; private set; } = "";
     public int iReligi { get; set; }
     public string[] sBem { get; } = new string[4];
-    public string sAge { get; internal set; }
+    public string sAge { get; internal set; } = "";
     public float fAge { get; internal set; }
-    public string sPruefen { get; set; }
+    public string sPruefen { get; set; } = "";
 
+    public IList<ILinkData> Connects => [];
 
-    public CPersonData(IRecordset dB_PersonTable) : base(dB_PersonTable) { }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    static CPersonData() => Reset();
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public CPersonData(IRecordset dB_PersonTable, bool xNoInit=false) : base(dB_PersonTable, xNoInit) { }
 
     public override void FillData(IRecordset dB_PersonTable)
     {
         if (dB_PersonTable?.EOF != false) return;
-        _ID = dB_PersonTable.Fields[nameof(PersonFields.PersNr)].AsInt();
-        sOFB = dB_PersonTable.Fields[nameof(PersonFields.OFB)].AsString();
-        sPruefen = dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].AsString();
-        sSuch[1] = dB_PersonTable.Fields[nameof(PersonFields.Such1)].AsString();
-        sSuch[2] = dB_PersonTable.Fields[nameof(PersonFields.Such2)].AsString();
-        sSuch[3] = dB_PersonTable.Fields[nameof(PersonFields.Such3)].AsString();
-        sSuch[4] = dB_PersonTable.Fields[nameof(PersonFields.Such4)].AsString();
-        sSuch[5] = dB_PersonTable.Fields[nameof(PersonFields.Such5)].AsString();
-        sSuch[6] = dB_PersonTable.Fields[nameof(PersonFields.Such6)].AsString();
-        sSex = dB_PersonTable.Fields[nameof(PersonFields.Sex)].AsString();
-        sKonv = dB_PersonTable.Fields[nameof(PersonFields.Konv)].AsString();
-        iReligi = dB_PersonTable.Fields[nameof(PersonFields.religi)].AsInt();
-        sBem[1] = dB_PersonTable.Fields[nameof(PersonFields.Bem1)].AsString();
-        sBem[2] = dB_PersonTable.Fields[nameof(PersonFields.Bem2)].AsString();
-        sBem[3] = dB_PersonTable.Fields[nameof(PersonFields.Bem3)].AsString();
-        dEditDat = dB_PersonTable.Fields[nameof(PersonFields.EditDat)].AsDate();
-        dAnlDatum = dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].AsDate();
-        gUid = dB_PersonTable.Fields[nameof(PersonFields.PUid)].AsGUID();
-    }
-
-    static CPersonData()
-    {
-        Reset();
+        ReadID(dB_PersonTable);
+        sOFB = dB_PersonTable.Fields[PersonFields.OFB].AsString();
+        sPruefen = dB_PersonTable.Fields[PersonFields.Pruefen].AsString();
+        sSuch[1] = dB_PersonTable.Fields[PersonFields.Such1].AsString();
+        sSuch[2] = dB_PersonTable.Fields[PersonFields.Such2].AsString();
+        sSuch[3] = dB_PersonTable.Fields[PersonFields.Such3].AsString();
+        sSuch[4] = dB_PersonTable.Fields[PersonFields.Such4].AsString();
+        sSuch[5] = dB_PersonTable.Fields[PersonFields.Such5].AsString();
+        sSuch[6] = dB_PersonTable.Fields[PersonFields.Such6].AsString();
+        sSex = dB_PersonTable.Fields[PersonFields.Sex].AsString();
+        sKonv = dB_PersonTable.Fields[PersonFields.Konv].AsString();
+        iReligi = dB_PersonTable.Fields[PersonFields.religi].AsInt();
+        sBem[1] = dB_PersonTable.Fields[PersonFields.Bem1].AsString();
+        sBem[2] = dB_PersonTable.Fields[PersonFields.Bem2].AsString();
+        sBem[3] = dB_PersonTable.Fields[PersonFields.Bem3].AsString();
+        dEditDat = dB_PersonTable.Fields[PersonFields.EditDat].AsDate();
+        dAnlDatum = dB_PersonTable.Fields[PersonFields.AnlDatum].AsDate();
+        gUid = dB_PersonTable.Fields[PersonFields.PUid].AsGUID();
     }
 
     public static void Reset()
     {
         GetPersonTable = () => DataModul.DB_PersonTable;
-        _GetText = (i) => "";
-        _GetText2 = (i) => ("", "");
+        _GetText = DataModul.TextLese1;
+        _GetText2 = DataModul.TextLese2;
     }
 
     public CPersonData(int iPersonNr) : base(GetPersonTable())
@@ -105,14 +106,14 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
             FillData(_dB_PersonTable);
         else
         {
-            _iPersNr = iPersonNr;
+            _ID = iPersonNr;
             gUid = Guid.NewGuid();
         }
     }
 
     public CPersonData() : base(GetPersonTable())
     {
-        _iPersNr = 0;
+        _ID = 0;
         gUid = Guid.NewGuid();
     }
 
@@ -131,22 +132,6 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
         _GetText2 = getText;
     }
 
-    public override int ID => _iPersNr;
-    private int _ID
-    {
-        set
-        {
-            if (_iPersNr != value)
-            {
-                if (_iPersNr != 0)
-                {
-                    Clear();
-                }
-                _iPersNr = value;
-            }
-        }
-    }
-
     public bool isEmpty =>
         string.IsNullOrWhiteSpace(Givennames)
         && string.IsNullOrWhiteSpace(SurName)
@@ -157,6 +142,8 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
         && string.IsNullOrWhiteSpace(sBem[1])
         && string.IsNullOrWhiteSpace(sBem[2])
         && string.IsNullOrWhiteSpace(sBem[3]);
+
+    public bool xVChr { get ; set; }
 
     public void SetPersonNr(int i) { _ID = i; }
 
@@ -243,9 +230,9 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
                 catch { }
             else
               if (p.PropertyType == typeof(IList<string>))
-                ((IList<string>)p.GetValue(this)).Clear();
+                ((IList<string>)p.GetValue(this)!).Clear();
             else if (p.PropertyType == typeof(string[]))
-               new[] {"","","","" }.IntoString( ((string[])p.GetValue(this)));
+               new[] {"","","","" }.IntoString( (string[])p.GetValue(this));
 
 
         }
@@ -303,17 +290,25 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
         {
             case EEventArt.eA_Birth:
                 dBirth = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             case EEventArt.eA_Baptism:
                 dBaptised = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             case EEventArt.eA_Death:
                 xDead = cEvt.xIsDead || cEvt.dDatumV != default;
                 dDeath = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             case EEventArt.eA_Burial:
                 sBurried = "J";
                 dBurial = cEvt.dDatumV;
+                if (!Events.Contains(cEvt))
+                    Events.Add(cEvt);
                 break;
             default:
                 break;
@@ -321,12 +316,18 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
     }
     public void Update()
     {
-        throw new NotImplementedException();
+        if (_ID == 0) return; // no ID, nothing to update
+        var dB_PersonTable = Seek(_ID);
+        if (dB_PersonTable == null) return;
+        dB_PersonTable.Edit();
+        SetDBValues(dB_PersonTable, null);
+        dB_PersonTable.Update();
+        ClearChangedProps();
     }
 
     public void SetSex(string sSex) => SetPropValue(EPersonProp.sSex, sSex);
 
-    public override void SetDBValue(IRecordset dB_PersonTable, Enum[]? asProps)
+    public override void SetDBValues(IRecordset dB_PersonTable, Enum[]? asProps)
     {
         asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
         foreach (var prop in asProps)
@@ -334,13 +335,13 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
             switch (prop)
             {
                 case EPersonProp.ID:
-                    dB_PersonTable.Fields[nameof(PersonFields.PersNr)].Value = ID;
+                    dB_PersonTable.Fields[PersonFields.PersNr].Value = ID;
                     break;
                 case EPersonProp.sSex:
-                    dB_PersonTable.Fields[nameof(PersonFields.Sex)].Value = sSex;
+                    dB_PersonTable.Fields[PersonFields.Sex].Value = sSex;
                     break;
                 case EPersonProp.gUid:
-                    dB_PersonTable.Fields[nameof(PersonFields.PUid)].Value = gUid;
+                    dB_PersonTable.Fields[PersonFields.PUid].Value = gUid;
                     break;
                 case EPersonProp.SurName:
                     break;
@@ -355,35 +356,35 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
                 case EPersonProp.dBurial:
                     break;
                 case EPersonProp.sOFB:
-                    dB_PersonTable.Fields[nameof(PersonFields.OFB)].Value = sOFB;
+                    dB_PersonTable.Fields[PersonFields.OFB].Value = sOFB;
                     break;
                 case EPersonProp.sSuch:
-                    dB_PersonTable.Fields[nameof(PersonFields.Such1)].Value = sSuch[1];
-                    dB_PersonTable.Fields[nameof(PersonFields.Such2)].Value = sSuch[2];
-                    dB_PersonTable.Fields[nameof(PersonFields.Such3)].Value = sSuch[3];
-                    dB_PersonTable.Fields[nameof(PersonFields.Such4)].Value = sSuch[4];
-                    dB_PersonTable.Fields[nameof(PersonFields.Such5)].Value = sSuch[5];
-                    dB_PersonTable.Fields[nameof(PersonFields.Such6)].Value = sSuch[6];
+                    dB_PersonTable.Fields[PersonFields.Such1].Value = sSuch[1];
+                    dB_PersonTable.Fields[PersonFields.Such2].Value = sSuch[2];
+                    dB_PersonTable.Fields[PersonFields.Such3].Value = sSuch[3];
+                    dB_PersonTable.Fields[PersonFields.Such4].Value = sSuch[4];
+                    dB_PersonTable.Fields[PersonFields.Such5].Value = sSuch[5];
+                    dB_PersonTable.Fields[PersonFields.Such6].Value = sSuch[6];
                     break;
                 case EPersonProp.iReligi:
-                    dB_PersonTable.Fields[nameof(PersonFields.religi)].Value = iReligi;
+                    dB_PersonTable.Fields[PersonFields.religi].Value = iReligi;
                     break;
                 case EPersonProp.sKonv:
-                    dB_PersonTable.Fields[nameof(PersonFields.Konv)].Value = sKonv;
+                    dB_PersonTable.Fields[PersonFields.Konv].Value = sKonv;
                     break;
                 case EPersonProp.sBem:
-                    dB_PersonTable.Fields[nameof(PersonFields.Bem1)].Value = sBem[1];
-                    dB_PersonTable.Fields[nameof(PersonFields.Bem2)].Value = sBem[2];
-                    dB_PersonTable.Fields[nameof(PersonFields.Bem3)].Value = sBem[3];
+                    dB_PersonTable.Fields[PersonFields.Bem1].Value = sBem[1];
+                    dB_PersonTable.Fields[PersonFields.Bem2].Value = sBem[2];
+                    dB_PersonTable.Fields[PersonFields.Bem3].Value = sBem[3];
                     break;
                 case EPersonProp.sPruefen:
-                    dB_PersonTable.Fields[nameof(PersonFields.Pruefen)].Value = sPruefen;
+                    dB_PersonTable.Fields[PersonFields.Pruefen].Value = sPruefen;
                     break;
                 case EPersonProp.dAnlDatum:
-                    dB_PersonTable.Fields[nameof(PersonFields.AnlDatum)].Value = dAnlDatum;
+                    dB_PersonTable.Fields[PersonFields.AnlDatum].Value = dAnlDatum;
                     break;
                 case EPersonProp.dEditDat:
-                    dB_PersonTable.Fields[nameof(PersonFields.EditDat)].Value = dEditDat;
+                    dB_PersonTable.Fields[PersonFields.EditDat].Value = dEditDat;
                     break;
                 default:
                     throw new NotImplementedException();
@@ -462,4 +463,17 @@ public class CPersonData : CRSData<EPersonProp, int>, IPersonData
         };
     }
 
+    public override void ReadID(IRecordset dB_PersonTable)
+    {
+        _ID = dB_PersonTable.Fields[PersonFields.PersNr].AsInt();
+    }
+
+    public void SetPersonEvents(IEnumerable<IEventData> acEvents)
+    { Events.Clear();
+        if (acEvents == null) return;
+        foreach (var cEvt in acEvents)
+        {
+            SetData(cEvt);
+        }
+    }
 }

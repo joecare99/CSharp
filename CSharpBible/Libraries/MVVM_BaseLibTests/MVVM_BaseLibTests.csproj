@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net48;net472;net462;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462;net8.0-windows;net9.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 		<IsPackable>false</IsPackable>
 		<Platforms>AnyCPU;x86</Platforms>
@@ -9,17 +9,23 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+	  <Compile Remove="Helper\ObjectHelper2Tests.cs" />
+	  <Compile Remove="Helper\ObjectHelperTests.cs" />
 	  <Compile Remove="Models\SysTimeTests.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="Helper\ObjectHelper2Tests.cs" />
+	  <None Include="Helper\ObjectHelperTests.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="MSTest" Version="3.8.3" />
+		<PackageReference Include="MSTest" Version="3.10.2" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="FluentAssertions" Version="8.2.0" />
+		<PackageReference Include="FluentAssertions" Version="8.5.0" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
 	</ItemGroup>
 	<ItemGroup>

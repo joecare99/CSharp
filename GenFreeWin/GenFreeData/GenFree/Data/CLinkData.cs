@@ -1,30 +1,25 @@
 ﻿using GenFree.Helper;
 using System;
 using System.Collections.Generic;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System.Linq;
 using BaseLib.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Models.Data;
 
 namespace GenFree.Data
 {
 
-    public class CLinkData : ILinkData
+    public class CLinkData : CRSDataC<ELinkProp, (int iFamily, int iPerson, ELinkKennz eKennz)>, ILinkData
     {
-        private static Func<IRecordset> _DB_LinkTable;
-        private List<ELinkProp> _changedPropList;
-        private IRecordset? _db_Table;
-
-        private IRecordset LinkTable => _db_Table ?? _DB_LinkTable();
+        private static Func<IRecordset>? _DB_LinkTable;
 
         public ELinkKennz eKennz { get; internal set; }
-        public int iKennz => eKennz.AsInt();
         public int iFamNr { get; internal set; }
         public int iPersNr { get; internal set; }
 
-        public (int iFamily, int iPerson, ELinkKennz eKennz) ID => (iFamNr, iPersNr, eKennz);
+        public override (int iFamily, int iPerson, ELinkKennz eKennz) ID => (iFamNr, iPersNr, eKennz);
 
-        public IReadOnlyList<ELinkProp> ChangedProps => _changedPropList;
 
         static CLinkData()
         {
@@ -36,9 +31,8 @@ namespace GenFree.Data
             _DB_LinkTable = () => DataModul.DB_LinkTable;
         }
 
-        public CLinkData()
+        public CLinkData() : base(_DB_LinkTable?.Invoke()!, true)
         {
-            _changedPropList = new List<ELinkProp>();
         }
 
         public CLinkData(ELinkKennz kennz, int famInArb, int PersNr) : this()
@@ -48,47 +42,45 @@ namespace GenFree.Data
             iPersNr = PersNr;
         }
 
-        public CLinkData(IRecordset dB_LinkTable) : this()
+        public CLinkData(IRecordset dB_LinkTable, bool xNoInit = false) : base(dB_LinkTable, xNoInit)
         {
-            _db_Table = dB_LinkTable;
-            FillData(dB_LinkTable);
         }
+
         public static void SetTableGtr(Func<IRecordset> fTblGtr) => _DB_LinkTable = fTblGtr;
 
-        public void FillData(IRecordset dB_LinkTable)
+        public override void FillData(IRecordset dB_LinkTable)
         {
-            eKennz = dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>();
-            iFamNr = dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt();
-            iPersNr = dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt();
+            if (dB_LinkTable == null) return;
+            ReadID(dB_LinkTable);
         }
 
         public void AppendDB()
         {
-            var dB_LinkTable = LinkTable;
+            var dB_LinkTable = _db_Table;
             dB_LinkTable.AddNew();
-            dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].Value = eKennz;
-            dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].Value = iFamNr;
-            dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].Value = iPersNr;
+            dB_LinkTable.Fields[ILinkData.LinkFields.Kennz].Value = (int)eKennz;
+            dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].Value = iFamNr;
+            dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].Value = iPersNr;
             dB_LinkTable.Update();
         }
 
-        public void Delete()
+        protected override IRecordset? Seek((int iFamily, int iPerson, ELinkKennz eKennz) iD)
         {
-            var dB_LinkTable = LinkTable;
+            var dB_LinkTable = _db_Table;
             dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
-            dB_LinkTable.Seek("=", iFamNr, iPersNr, eKennz);
-            if (!dB_LinkTable.NoMatch)
-                dB_LinkTable.Delete();
+            dB_LinkTable.Seek("=", ID.iFamily, ID.iPerson, ID.eKennz);
+            return dB_LinkTable.NoMatch ? null : dB_LinkTable;
         }
+
         private bool CkeckRecordset(IRecordset dB_LinkTable, (int iFamily, int iPerson, ELinkKennz eKennz) ID)
         {
             var flag = true;
-            if (dB_LinkTable.Fields[nameof(ILinkData.LinkFields.Kennz)].AsEnum<ELinkKennz>() != ID.eKennz
-            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].AsInt() != ID.iFamily
-            || dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].AsInt() != ID.iPerson)
+            if (dB_LinkTable.Fields[ILinkData.LinkFields.Kennz].AsEnum<ELinkKennz>() != ID.eKennz
+            || dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].AsInt() != ID.iFamily
+            || dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].AsInt() != ID.iPerson)
             {
                 dB_LinkTable.Index = nameof(LinkIndex.FamPruef);
-                dB_LinkTable.Seek("=", iFamNr, iPersNr, iKennz);
+                dB_LinkTable.Seek("=", iFamNr, iPersNr, (int)eKennz);
                 flag = !dB_LinkTable.NoMatch;
             }
             return flag;
@@ -96,25 +88,25 @@ namespace GenFree.Data
 
         public void SetPers(int p2)
         {
-            var dB_LinkTable = LinkTable;
+            var dB_LinkTable = _db_Table;
             if (!CkeckRecordset(dB_LinkTable, ID)) return;
             dB_LinkTable.Edit();
-            dB_LinkTable.Fields[nameof(ILinkData.LinkFields.PerNr)].Value = p2;
+            dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].Value = p2;
             dB_LinkTable.Update();
             iPersNr = p2;
         }
 
         public void SetFam(int _iFamNr)
         {
-            var dB_LinkTable = LinkTable;
+            var dB_LinkTable = _db_Table;
             if (!CkeckRecordset(dB_LinkTable, ID)) return;
             dB_LinkTable.Edit();
-            dB_LinkTable.Fields[nameof(ILinkData.LinkFields.FamNr)].Value = _iFamNr;
+            dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].Value = _iFamNr;
             dB_LinkTable.Update();
             iFamNr = _iFamNr;
         }
 
-        public Type GetPropType(ELinkProp prop)
+        public override Type GetPropType(ELinkProp prop)
         {
             return prop switch
             {
@@ -125,7 +117,7 @@ namespace GenFree.Data
             };
         }
 
-        public object GetPropValue(ELinkProp prop)
+        public override object GetPropValue(ELinkProp prop)
         {
             return prop switch
             {
@@ -136,12 +128,7 @@ namespace GenFree.Data
             };
         }
 
-        public T2 GetPropValue<T2>(ELinkProp prop)
-        {
-            return (T2)GetPropValue(prop);
-        }
-
-        public void SetPropValue(ELinkProp prop, object value)
+        public override void SetPropValue(ELinkProp prop, object value)
         {
             switch (prop)
             {
@@ -165,32 +152,22 @@ namespace GenFree.Data
             }
         }
 
-        public void ClearChangedProps()
-        {
-            _changedPropList.Clear();
-        }
 
-        public void AddChangedProp(ELinkProp prop)
+        public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
         {
-            if (!_changedPropList.Contains(prop))
-                _changedPropList.Add(prop);
-        }
-
-        public void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
-        {
-            asProps ??= _changedPropList.Select((e) => (Enum)e).ToArray();
+            asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
             {
                 switch (prop)
                 {
                     case ELinkProp.eKennz:
-                        dB_Table.Fields[nameof(ILinkData.LinkFields.Kennz)].Value = eKennz;
+                        dB_Table.Fields[ILinkData.LinkFields.Kennz].Value = eKennz;
                         break;
                     case ELinkProp.iFamNr:
-                        dB_Table.Fields[nameof(ILinkData.LinkFields.FamNr)].Value = iFamNr;
+                        dB_Table.Fields[ILinkData.LinkFields.FamNr].Value = iFamNr;
                         break;
                     case ELinkProp.iPersNr:
-                        dB_Table.Fields[nameof(ILinkData.LinkFields.PerNr)].Value = iPersNr;
+                        dB_Table.Fields[ILinkData.LinkFields.PerNr].Value = iPersNr;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -198,5 +175,14 @@ namespace GenFree.Data
             }
 
         }
+
+        public override void ReadID(IRecordset dB_LinkTable)
+        {
+            eKennz = dB_LinkTable.Fields[ILinkData.LinkFields.Kennz].AsEnum<ELinkKennz>();
+            iFamNr = dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].AsInt();
+            iPersNr = dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].AsInt();
+        }
+
+        
     }
 }

@@ -1,12 +1,15 @@
 ﻿using Views;
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFree.ViewModels.Interfaces;
+using Gen_FreeWin.Views;
+
+
 
 #if !NET5_0_OR_GREATER
 #endif
 using System.Windows.Forms;
 
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Menue
 {
@@ -19,7 +22,7 @@ public partial class Menue
     [CommandBinding(nameof(IMenu1ViewModel.OpenPlacesCommand))]
     internal Button btnPlaces;
     [CommandBinding(nameof(IMenu1ViewModel.OpenMandantsCommand))]
-    internal Button btnMandants;
+    public Button btnMandants;
     [CommandBinding(nameof(IMenu1ViewModel.OpenTextsCommand))]
     internal Button btnManageTexts;
     [CommandBinding(nameof(IMenu1ViewModel.OpenPrintCommand))]
@@ -27,7 +30,7 @@ public partial class Menue
     [CommandBinding(nameof(IMenu1ViewModel.OpenImportExportCommand))]
     internal Button btnImportExport; 
     [CommandBinding(nameof(IMenu1ViewModel.OpenAddressCommand))]
-    internal Button btnAddress;
+    public Button btnAddress;
     [CommandBinding(nameof(IMenu1ViewModel.EndProgramCommand))]
     internal Button btnEndProgram;
     [CommandBinding(nameof(IMenu1ViewModel.OpenCalculationsCommand))]
@@ -47,7 +50,7 @@ public partial class Menue
     [CommandBinding(nameof(IMenu1ViewModel.OpenNotesCommand))]
     internal Button btnNotes;
     [CommandBinding(nameof(IMenu1ViewModel.OpenEnterLizenzCommand))]
-    internal Button btnEnterLizenz;
+    public Button btnEnterLizenz;
     [CommandBinding(nameof(IMenu1ViewModel.OpenReorgCommand))]
     internal Button btnReorg;
     [CommandBinding(nameof(IMenu1ViewModel.OpenPropertyCommand))]
@@ -58,7 +61,7 @@ public partial class Menue
     [TextBinding(nameof(IMenu1ViewModel.MandantPath))]
     internal Label lblMandantPath;
     [TextBinding(nameof(IMenu1ViewModel.Owner))]
-    internal Label lblOwner;
+    public Label lblOwner;
     [TextBinding(nameof(IMenu1ViewModel.Menue18))]
     internal Label lblMenue18;
     [TextBinding(nameof(IMenu1ViewModel.HdrOwner))]
@@ -75,7 +78,6 @@ public partial class Menue
 
     internal Timer Timer1;
     internal ListBox ListBox1;
-
     internal Button btnCardMode;
     internal Button btnBachupRead;
     internal Button btnBackupWrite;
@@ -84,101 +86,66 @@ public partial class Menue
     public ListBox File1;
     public ListBox Dir1;
 
-    internal Button btnCheckUpdate;
+    [VisibilityBinding(nameof(IMenu1ViewModel.CheckUpdateVisible))]
+    [CommandBinding(nameof(IMenu1ViewModel.OpenCheckUpdateCommand))]
+    public Button btnCheckUpdate;
+    [VisibilityBinding(nameof(IMenu1ViewModel.UpdateVisible))]
     internal Panel pnlUpdate;
-
     internal CheckBox chbDisableMsg;
-
+    [CommandBinding(nameof(IMenu1ViewModel.UpdateNoCommand))]
     internal Button btnUpdNo;
+    [CommandBinding(nameof(IMenu1ViewModel.UpdateYesCommand))]
     internal Button btnUpdYes;
+    internal Label lblHdrCheckNow;
+    internal Label lblHdrLastCheck;
+    internal Label lblDateLastCheck;
     //            _
 
-    internal Label lblHdrCheckNow;
-
-    internal Label lblHdrLastCheck;
-
-    internal Label lblDateLastCheck;
-
-    internal Button btnSendData;
-    //            _Button27.Click += _Button27_Click;
-
+    public Button btnSendData;
     internal Button btnMerging;
-    //            _Button28.Click += _Button28_Click;
-
     internal TrackBar TrackBar1;
-    //_TrackBar1.ValueChanged += _TrackBar1_ValueChanged;
-    //_TrackBar1.MouseUp += _TrackBar1_MouseUp;
-    //_TrackBar1.Scroll += _TrackBar1_Scroll;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.FrmWindowSizeVisible))]
     internal GroupBox frmWindowSize;
-
     internal Label lblSmaller;
     internal Button btnHelpMain;
-    //           _Button29.Click += _Button29_Click;
 
     [VisibilityBinding(nameof(IMenu1ViewModel.CodeOfArmsVisible))]
-    internal PictureBox pbxCodeOfArms;
-
+    public PictureBox pbxCodeOfArms;
     internal Label lblAutoUpdState;
-
-    internal Button btnRemoteDiag;
-    //           _Button30.Click += _Button30_Click;
-
+    public Button btnRemoteDiag;
+    [VisibilityBinding(nameof(IMenu1ViewModel.PbxLanguage1Visible))]
     internal PictureBox pbxLanguage1;
-    //           _PictureBox2.Click += _PictureBox2_Click_1;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.PbxLanguage2Visible))]
     internal PictureBox pbxLanguage2;
-    //           _PictureBox3.Click += _PictureBox2_Click_1;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.PbxLanguage3Visible))]
     internal PictureBox pbxLanguage3;
-    //           _PictureBox4.Click += _PictureBox2_Click_1;
-
     internal OpenFileDialog OpenFileDialog1;
-
-    internal Button btnTodayBirth;
-    //           _Button31.Click += _Button31_Click;
-
+    public Button btnTodayBirth;
     [VisibilityBinding(nameof(IMenu1ViewModel.ListBox2Visible))]
     internal ListBox ListBox2;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.CreationDateVisible))]
     internal Label lblCreationDate;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.MarkedVisible))]
     internal Label lblMarked;
-    //           _Label27.Click += _Label27_Click;
-
-    internal Button btnTodayDeath;
-    internal Button btnTodayMarriage;
-    internal Button btnTodayMarrRel;
-    //           _Button34.Click += _Button31_Click;
-
+    public Button btnTodayDeath;
+    public Button btnTodayMarriage;
+    public Button btnTodayMarrRel;
+    public Button btnTodayBapt;
+    public Button btnTodayBurial;
+    [VisibilityBinding(nameof(IMenu1ViewModel.NotesVisible))]
     internal Label lblNotes;
-
-
     internal Label lblBigger;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.List3Visible))]
     internal ListBox lstList3;
-    //           _ListBox3.DoubleClick += _ListBox3_DoubleClick;
-    //           _ListBox3.Click += _ListBox3_Click;
-
     internal DateTimePicker DateTimePicker1;
-    //           _DateTimePicker1.ValueChanged += _DateTimePicker1_ValueChanged;
-
+    [VisibilityBinding(nameof(IMenu1ViewModel.SetDateVisible))]
     internal Label lblSetDate;
-
-    internal Button btnTodayBapt;
-    //           _Button36.Click += _Button31_Click;
-
-    internal Button btnTodayBurial;
-    //           _Button37.Click += _Button31_Click;
-
     internal Button btnLoadTestPrint;
-    //           _Button38.Click += _Button38_Click;
 
     [System.Diagnostics.DebuggerStepThrough]
     private void InitializeComponent()
     {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Menue));
             this.btnFamilies = new System.Windows.Forms.Button();
             this.btnSources = new System.Windows.Forms.Button();
             this.btnPersons = new System.Windows.Forms.Button();
@@ -1136,7 +1103,7 @@ public partial class Menue
             this.Controls.Add(this.btnSources);
             this.Controls.Add(this.btnFamilies);
             this.Font = new System.Drawing.Font("Arial", 9F);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+    //        this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Menue";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

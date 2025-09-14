@@ -13,8 +13,7 @@
 // ***********************************************************************
 using BaseLib.Helper;
 using BaseLib.Interfaces;
-using Game_Base.Model;
-using Game_Base.Model.Interfaces;
+using Game.Model.Interfaces;
 using Snake_Base.Models.Interfaces;
 using System;
 using System.Drawing;

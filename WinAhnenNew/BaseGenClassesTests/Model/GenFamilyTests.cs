@@ -21,7 +21,7 @@ public class GenFamilyTests
     [TestInitialize]
     public void Initialize()
     {
-        IoC.GetReqSrv = (t) => (t) switch {
+        IoC.GetReqSrv = (t) => t switch {
             _ when t == typeof(IGenFactBuilder) => new GenFactBuilder(),
             _ when t == typeof(IGenConnectBuilder) => new GenConnectBuilder(),
             _ when t == typeof(IGenILBuilder) => new GenILBuilder(),

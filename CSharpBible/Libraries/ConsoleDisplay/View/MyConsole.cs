@@ -172,7 +172,7 @@ namespace ConsoleDisplay.View
         /// <value>The height of the window.</value>
         public override int WindowHeight
         {
-            get => (int)(windowHeight?.GetValue(instance) ?? 0);
+            get => (int)((instance != null ? windowHeight?.GetValue(instance):null) ?? 0);
             set => windowHeight?.SetValue(instance, value);
         }
 
@@ -195,7 +195,7 @@ namespace ConsoleDisplay.View
         /// </summary>
         /// <value>The width of the window.</value>
         public override int WindowWidth { 
-            get => (int)(windowWidth?.GetValue(instance) ?? 0);
+            get => (int)((instance!=null?windowWidth?.GetValue(instance):null) ?? 0);
             set => windowWidth?.SetValue(instance, value); }
 
         /// <summary>

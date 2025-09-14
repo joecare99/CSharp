@@ -25,15 +25,15 @@ public class GenFact(IGenEntity _owner) : GenObject, IGenFact
     public string? Data { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-    public IList<IGenSources> Sources { get; init; } = new WeakLinkList<IGenSources>();
+    public IList<IGenSource?> Sources { get; init; } = new WeakLinkList<IGenSource>();
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-    public IGenEntity MainEntity => (this as IHasOwner<IGenEntity>).Owner;
+    public IGenEntity? MainEntity => (this as IHasOwner<IGenEntity>).Owner;
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-    IGenEntity IHasOwner<IGenEntity>.Owner { get; } = _owner;
+    IGenEntity IHasOwner<IGenEntity>.Owner => _owner;
     [DataMember]
-    public IList<IGenConnects> Entities { get; init; } = new List<IGenConnects>();
+    public IList<IGenConnects?> Entities { get; init; } = [];
     [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-    public IList<IGenMedia> Medias { get; init; } = new WeakLinkList<IGenMedia>();
+    public IList<IGenMedia?> Medias { get; init; } = new WeakLinkList<IGenMedia>();
 
     public override EGenType eGenType => EGenType.GenFact;
     [JsonConstructor()]
@@ -44,4 +44,11 @@ public class GenFact(IGenEntity _owner) : GenObject, IGenFact
     {
         this.eFactType = eFactType;
     }
+
+    void IHasOwner<IGenEntity>.SetOwner(IGenEntity t)
+    {
+        if (t == null) return;
+        _owner = t;
+    }
+
 }

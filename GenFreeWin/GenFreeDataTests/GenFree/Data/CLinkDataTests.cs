@@ -2,7 +2,8 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -19,9 +20,9 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(ILinkData.LinkFields.Kennz)].Value.Returns(1, 2, 3);
-            testRS.Fields[nameof(ILinkData.LinkFields.FamNr)].Value.Returns(2, 3, 4);
-            testRS.Fields[nameof(ILinkData.LinkFields.PerNr)].Value.Returns(3, 4, 5);
+            (testRS.Fields[ILinkData.LinkFields.Kennz] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[ILinkData.LinkFields.FamNr] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(3, 4, 5);
             testClass = new(testRS);
             testRS.ClearReceivedCalls();
         }
@@ -103,37 +104,37 @@ namespace GenFree.Data.Tests
             testRS.Received(xAct ?1:0).Delete();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1,true,1,2,ELinkKennz.lkNone,3)]
         [DataRow(2,false,3,2,ELinkKennz.lkFather,2)]
         public void SetPersTest(int iAct,bool xPre, int iPre1,int iPre2, ELinkKennz ePre3, int iExp)
         {
             testRS.NoMatch.Returns(xPre);
-            testRS.Fields[nameof(ILinkData.LinkFields.PerNr)].Value.Returns(iPre1);
-            testRS.Fields[nameof(ILinkData.LinkFields.FamNr)].Value.Returns(iPre2);
-            testRS.Fields[nameof(ILinkData.LinkFields.Kennz)].Value.Returns(ePre3);
+            (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(iPre1);
+            (testRS.Fields[ILinkData.LinkFields.FamNr] as IHasValue).Value.Returns(iPre2);
+            (testRS.Fields[ILinkData.LinkFields.Kennz] as IHasValue).Value.Returns(ePre3);
 
             testClass.SetPers(iAct);
 
             Assert.AreEqual(iExp,testClass.iPersNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, true, 1, 2, ELinkKennz.lkNone, 2)]
         [DataRow(3, false, 3, 2, ELinkKennz.lkFather, 3)]
         public void SetFamTest(int iAct, bool xPre, int iPre1, int iPre2, ELinkKennz ePre3, int iExp)
         {
             testRS.NoMatch.Returns(xPre);
-            testRS.Fields[nameof(ILinkData.LinkFields.Kennz)].Value.Returns(iPre1);
-            testRS.Fields[nameof(ILinkData.LinkFields.FamNr)].Value.Returns(iPre2);
-            testRS.Fields[nameof(ILinkData.LinkFields.PerNr)].Value.Returns(ePre3);
+            (testRS.Fields[ILinkData.LinkFields.Kennz] as IHasValue).Value.Returns(iPre1);
+            (testRS.Fields[ILinkData.LinkFields.FamNr] as IHasValue).Value.Returns(iPre2);
+            (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(ePre3);
 
             testClass.SetFam(iAct);
 
             Assert.AreEqual(iExp, testClass.iFamNr);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, TypeCode.Int32)]
         [DataRow(ELinkProp.iFamNr, TypeCode.Int32)]
         [DataRow(ELinkProp.eKennz, TypeCode.Int32)]
@@ -142,7 +143,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         } 
         
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)(0-1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
@@ -151,7 +152,7 @@ namespace GenFree.Data.Tests
             Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 3)]
         [DataRow(ELinkProp.iFamNr, 2)]
         [DataRow(ELinkProp.eKennz, ELinkKennz.lkFather)]
@@ -160,7 +161,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
@@ -175,7 +176,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(3, testClass.GetPropValue<int>(ELinkProp.iPersNr));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 1)]
         [DataRow(ELinkProp.iFamNr, 4)]
         [DataRow(ELinkProp.eKennz, ELinkKennz.lkChild)]
@@ -188,7 +189,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
@@ -214,30 +215,30 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(2, testClass.ChangedProps.Count);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 1)]
         [DataRow(ELinkProp.iFamNr, 2)]
         [DataRow(ELinkProp.eKennz, 3)]
         public void SetDBValueTest(ELinkProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+            testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((ELinkProp)3, 4)]
         public void SetDBValueTest3(ELinkProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(()=> testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsException<NotImplementedException>(()=> testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(ELinkProp.iPersNr, 1)]
         [DataRow(ELinkProp.iFamNr, 4)]
         [DataRow(ELinkProp.eKennz, ELinkKennz.lkChild)]
         public void SetDBValueTest2(ELinkProp eAct, object oVal)
         {
             testClass.SetPropValue(eAct, oVal);
-            testClass.SetDBValue(testRS, null);
+            testClass.SetDBValues(testRS, null);
             _ = testRS.Received().Fields[eAct.ToString()];
         }
     }

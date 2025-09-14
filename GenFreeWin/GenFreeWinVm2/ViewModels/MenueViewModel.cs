@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.ViewModels.Interfaces;
+using CommunityToolkit.Mvvm.Messaging;
+using GenFree.Data;
+using GenFree.Helper;
+using GenFree.Interfaces.UI;
+using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
 namespace GenFreeWin.ViewModels;
@@ -13,62 +20,131 @@ namespace GenFreeWin.ViewModels;
 public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
 {
     private IFraStatisticsViewModel _statistics;
+    private IMessenger _messenger;
 
     #region Properties
-    public bool CreationDateVisible => throw new NotImplementedException();
+    [ObservableProperty]
+    Color _backColor;
+    [ObservableProperty]
+    Color _ownerBackColor;
+    [ObservableProperty]
+    Color _addressBackColor;
+    [ObservableProperty]
+    Color _trackBar1BackColor;
+    [ObservableProperty]
+    Color _mandantPathBackColor;
+    [ObservableProperty]
+    Color _frmWindowSizeBackColor;
 
-    public bool MarkedVisible => throw new NotImplementedException();
-
-    public bool NotesVisible => throw new NotImplementedException();
-
-    public bool CodeOfArmsVisible => throw new NotImplementedException();
-
-    public bool ListBox2Visible => throw new NotImplementedException();
-
-    public bool List3Visible => throw new NotImplementedException();
-
-    public bool WarningVisible => throw new NotImplementedException();
-
-    public bool EnterLizenzVisible => throw new NotImplementedException();
-
-    public string Notes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    public string Mandant => "Some Mandant";
-
-    public string MandantPath => "";
-
-    public string HdrOwner => "Me";
-
-    public string Owner => "";
-
-    public string Menue18 => "Menue18";
-
-    public string HdrProgName => "";
-
-    public string HdrAdt => "";
-
-    public string HdrCopyright => "(c) by Joe Care 2025";
-
-    public string WarningText => "a Warning !";
+    [ObservableProperty]
+    string _notes;
+    [ObservableProperty]
+    string _mandant = "Some Mandant";
+    [ObservableProperty]
+    string _mandantPath = "";
+    [ObservableProperty]
+    string _hdrOwner = "Me";
+    [ObservableProperty]
+    string _owner = "<Owner>";
+    [ObservableProperty]
+    string _menue18 = "Menue18";
+    [ObservableProperty]
+    string _hdrProgName = "<HdrProgName>";
+    [ObservableProperty]
+    string _hdrAdt = "<HdrAdt>";
+    [ObservableProperty]
+    string _hdrCopyright = "(c) by Joe Care 2025";
+    [ObservableProperty]
+    string _warningText = "a Warning !";
 
     public IInteraction Interaction { get; set; }
     public Action<Enum> SetWindowState { get; set; }
     public Func<Enum> GetWindowState { get; set; }
     public Action<float> Grossaend { get; set; }
 
+    public float FontSize { get; set; } = 12f;
     public IFraStatisticsViewModel Statistics => _statistics;
 
-    public float FontSize => throw new NotImplementedException();
+    [ObservableProperty]
+    public Type _adresseType;
+
+    [ObservableProperty]
+    private bool _creationDateVisible;
+    [ObservableProperty]
+    private bool _markedVisible;
+    [ObservableProperty]
+    bool _notesVisible;
+    [ObservableProperty]
+    bool _codeOfArmsVisible;
+    [ObservableProperty]
+    bool _listBox2Visible;
+    [ObservableProperty]
+    bool _list3Visible;
+    [ObservableProperty]
+    bool _warningVisible;
+    [ObservableProperty]
+    bool _enterLizenzVisible;
+    [ObservableProperty]
+    private bool _CheckUpdateVisible;
+    [ObservableProperty]
+    private bool _UpdateVisible;
+    [ObservableProperty]
+    private bool _DateTimePickerVisible;
+    [ObservableProperty]
+    private bool _SetDateVisible;
+    [ObservableProperty]
+    private bool _FrmWindowSizeVisible;
+    [ObservableProperty]
+    private bool _PbxLanguage1Visible;
+    [ObservableProperty]
+    private bool _PbxLanguage2Visible;
+    [ObservableProperty]
+    private bool _PbxLanguage3Visible;
+
+    [ObservableProperty]
+    private string _AutoUpdState;
+
+    [ObservableProperty]
+    private string _CreationDate;
+
+    [ObservableProperty]
+    private int _TrackBar1Maximum;
+
+    [ObservableProperty]
+    private int _TrackBar1Value;
+
+    [ObservableProperty]
+    private DateTime _DateTimePicker1Value;
+
+    [ObservableProperty]
+    System.Collections.ObjectModel.ObservableCollection<ListItem<(EEventArt, int)>> _ListBox2Items = new();
+
+    [ObservableProperty]
+    System.Collections.ObjectModel.ObservableCollection<ListItem<(bool, int)>> _LstList3Items = new();
+
+    [ObservableProperty]
+    private string _LstList3Text;
+
+    [ObservableProperty]
+    private string _DateLastCheckText;
+
+    [ObservableProperty]
+    ListItem<(bool, int)> _LstList3SelectedItem;
+
     #endregion
 
     #region Methods
-    public MenueViewModel(IFraStatisticsViewModel statistics)
+    public MenueViewModel(IFraStatisticsViewModel statistics, IMessenger messenger)
     {
         _statistics = statistics;
+        _messenger = messenger;
         // Initialize other properties or commands if needed
     }
     [RelayCommand]
-   private void FormClosing() => throw new NotImplementedException();
+    private void FormClosing()
+    {
+        // Implement the logic for FormClosing here
+    }
 
     [RelayCommand]
     private void OpenPrint() => throw new NotImplementedException();
@@ -95,7 +171,10 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     private void OpenDuplettes() => throw new NotImplementedException();
 
     [RelayCommand]
-    private void OpenNotes() => throw new NotImplementedException();
+    private void OpenNotes()
+    {
+        Interaction.MsgBox("Test");
+    }
 
     [RelayCommand]
     private void OpenEnterLizenz() => throw new NotImplementedException();
@@ -113,8 +192,21 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     private void OpenSendData() => throw new NotImplementedException();
 
     [RelayCommand]
-    private void OpenCheckUpdate() => throw new NotImplementedException();
+    private void OpenCheckUpdate()
+    {
+        UpdateVisible = true;
+    }
 
+    [RelayCommand]
+    private void UpdateYes()
+    {
+        UpdateVisible = false;
+    }
+    [RelayCommand]
+    private void UpdateNo()
+    {
+        UpdateVisible = false;
+    }
     [RelayCommand]
     private void OpenRemoteDiag() => throw new NotImplementedException();
 
@@ -146,6 +238,8 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     [RelayCommand]
     private void OpenPersons()
     {
+        FontSize = 18f;
+        Grossaend?.Invoke(FontSize);
         // Implement the logic for OpenPersons here
     }
     [RelayCommand]
@@ -161,7 +255,9 @@ public partial class MenueViewModel : BaseViewModelCT, IMenu1ViewModel
     [RelayCommand]
     private void OpenAddress()
     {
-        // Implement the logic for OpenAddress here
+        var _msg = IoC.GetRequiredService<IShowDlgMsg>();
+        _msg.Dialog = IoC.GetReqSrv(AdresseType);
+        _messenger.Send<IShowDlgMsg>(_msg);
     }
     [RelayCommand]
     private void OpenSources()

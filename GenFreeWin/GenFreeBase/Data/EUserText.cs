@@ -98,11 +98,11 @@ public enum EUserText : int
     /// <summary>
     /// Places
     /// </summary>
-    t85 = 85,
+    t85_Places = 85,
     /// <summary>
     /// Mandants
     /// </summary>
-    t86 = 86,
+    t86_Mandants = 86,
     /// <summary>
     /// manage texts
     /// </summary>
@@ -110,7 +110,7 @@ public enum EUserText : int
     /// <summary>
     /// Printing
     /// </summary>
-    t88 = 88,
+    t88_Print = 88,
     /// <summary>
     /// Import/Export
     /// </summary>
@@ -118,7 +118,7 @@ public enum EUserText : int
     /// <summary>
     /// Addresses
     /// </summary>
-    t90 = 90,
+    t90_Address = 90,
     /// <summary>
     /// Calculations
     /// </summary>
@@ -130,7 +130,7 @@ public enum EUserText : int
     /// <summary>
     /// Configuration
     /// </summary>
-    t93 = 93,
+    t93_Config = 93,
     /// <summary>
     /// Check persons
     /// </summary>
@@ -140,7 +140,7 @@ public enum EUserText : int
     /// </summary>
     t95 = 95,
     t96 = 96,
-    t97 = 97,
+    t97_EndProg = 97,
     t98 = 98,
     /// <summary>Orte</summary>
     t99_Places = 99, // Orte
@@ -275,14 +275,14 @@ public enum EUserText : int
     t197 = 197,
     t198 = 198,
     /// <summary>
-    /// Check Family
+    /// Check o04_Family
     /// </summary>
     t200 = 200,
     t201 = 201,
     t202 = 202,
     t204 = 204,    
     /// <summary>
-    /// Family-errors
+    /// o04_Family-errors
     /// </summary>
     t205 = 205,
     t207 = 207,
@@ -359,14 +359,14 @@ public enum EUserText : int
     /// . Proband
     /// </summary>
     t235 = 235,
-    t236 = 236,
-    t237 = 237,
+    t236_Families = 236,
+    t237_Persons = 237,
     /// <summary>
     /// &Nachfahrenberechnung
     /// </summary>
     t238 = 238,
     /// <summary>
-    /// Nachf.-Nr.:
+    /// Nachf.-PerNr.:
     /// </summary>
     t239 = 239,
     /// <summary>
@@ -384,7 +384,7 @@ public enum EUserText : int
     /// <summary>
     /// Bemerkungen duchsuch.
     /// </summary>
-    t249 = 249, // !!!
+    t249_Property = 249, // !!!
     t250 = 250,
     t251 = 251,
     t252 = 252,

@@ -26,7 +26,7 @@ public class CRandomTests
         Assert.IsInstanceOfType(_testClass, typeof(CRandom));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 1, new[] { 0, 0, 0, 0, 0 })]
     [DataRow(0, 2, new[] { 1, 1, 1, 1, 0 })]
 
@@ -40,7 +40,7 @@ public class CRandomTests
         AssertAreEqual(asExp, aoResult);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 0.7262432699679598, 0.8173253595909687, 0.7680226893946634,0.5581611914365372, 0.2060331540210327 })]
     public void NextDoubleTest(double[] adExp)
     {
@@ -52,7 +52,7 @@ public class CRandomTests
         AssertAreEqual(adExp, adResult);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 1559595546, 1755192844, 1649316166, 1198642031, 442452829 })]
     public void NextIntTest(int[] asExp)
     {
@@ -64,7 +64,7 @@ public class CRandomTests
         AssertAreEqual(asExp, aoResult);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, new[] { 1559595546, 1755192844, 1649316166, 1198642031, 442452829 })]
     [DataRow(1, new[] { 534011718, 237820880, 1002897798, 1657007234, 1412011072 })]
     [DataRow(int.MaxValue, new[] { 1559595546, 1755192844, 1649316172, 1198642031, 442452829 })]

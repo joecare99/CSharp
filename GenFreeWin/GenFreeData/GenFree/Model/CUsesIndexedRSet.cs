@@ -1,11 +1,13 @@
-﻿using GenFree.Helper;
+﻿using BaseLib.Helper;
+using BaseLib.Interfaces;
+using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 using System.Collections.Generic;
 
-namespace GenFree.Model
+namespace GenFree.Models
 {
     public abstract class CUsesIndexedRSet<T, T2, T3, T4> : 
         CUsesRecordSet<T>,
@@ -14,7 +16,7 @@ namespace GenFree.Model
         where T2 : Enum where T3 : Enum where T4 : IHasID<T>, IHasIRecordset
     {
         public abstract T3 GetIndex1Field(T2 eIndex);
-        protected abstract T4 GetData(IRecordset rs);
+        protected abstract T4 GetData(IRecordset rs,bool xNoInit = false);
 
         protected abstract T2 _keyIndex { get; }
         protected override string __keyIndex => _keyIndex.AsString();
@@ -28,7 +30,7 @@ namespace GenFree.Model
             var eIdxFld = GetIndex1Field(eIndex);
             while (rs?.NoMatch == false
                   && !rs.EOF
-                  && oIndexVal.Equals(rs.Fields[$"{eIdxFld}"].Value))
+                  && oIndexVal.Equals((rs.Fields[eIdxFld] as IHasValue).Value))
             {
                 yield return GetData(rs);
                 rs.MoveNext();
@@ -65,8 +67,8 @@ namespace GenFree.Model
         public bool ReadData(T2 eIndex, object iValue, out T4? cData)
         {
             var dB_EventTable = Seek(eIndex, iValue);
-            cData = (dB_EventTable == null) ? default : GetData(dB_EventTable);
-            return (cData != null);
+            cData = dB_EventTable == null ? default : GetData(dB_EventTable);
+            return cData != null;
         }
 
         public void ForEachDo(T2 eIndex, T3 eIndexField, object oIndexVal, Func<T4, bool> func)
@@ -74,7 +76,7 @@ namespace GenFree.Model
             var rs = Seek(eIndex, oIndexVal);
             while (rs?.EOF == false
                 && !rs.NoMatch
-                && oIndexVal.Equals(rs.Fields[$"{eIndexField}"].Value)
+                && oIndexVal.Equals((rs.Fields[eIndexField] as IHasValue).Value)
                 && lFunc(GetData(rs)))
             {
                 rs.MoveNext();
@@ -123,8 +125,30 @@ namespace GenFree.Model
             if (dB_Table != null)
             {
                 dB_Table.Edit();
-                data.SetDBValue(dB_Table, asProps);
+                data.SetDBValues(dB_Table, asProps);
                 dB_Table.Update();
+            }
+        }
+        public T4 CreateNew() => GetData(_db_Table, true);
+
+        public void Commit(T4 data)
+        {
+            if (data == null) return;
+            var id = data.ID;
+            var rs = Seek(id);
+            if (rs != null)
+            {
+                rs.Edit();
+                data.SetDBValues(rs, null);
+                rs.Update();
+            }
+            else
+            {
+                rs = _db_Table;
+                data.NewID();
+                rs.AddNew();
+                data.SetDBValues(rs, null);
+                rs.Update();
             }
         }
     }

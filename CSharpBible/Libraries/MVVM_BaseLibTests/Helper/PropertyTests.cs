@@ -250,7 +250,7 @@ public class PropertyHelperTests2
     /// <param name="value">The value.</param>
     /// <param name="bExp">if set to <c>true</c> [b exp].</param>
     /// <param name="expResult">The exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void SetPropertyTest(string Name, TypeCode tt, string value, bool bExp, string expResult)
     {
@@ -318,7 +318,7 @@ public class PropertyHelperTests2
     /// <param name="value">The value.</param>
     /// <param name="bExp">if set to <c>true</c> [b exp].</param>
     /// <param name="expResult">The exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void SetPropertyTest2(string Name, TypeCode tt, string value, bool bExp, string expResStub)
     {

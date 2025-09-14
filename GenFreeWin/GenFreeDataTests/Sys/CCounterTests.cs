@@ -23,7 +23,7 @@ public class CCounterTests
         Assert.IsNotNull(testClass2);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0)]
     [DataRow(1)]
     [DataRow(16)]
@@ -47,7 +47,7 @@ public class CCounterTests
         Assert.AreEqual((short)0, c.Value);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0)]
     [DataRow(1)]
     [DataRow(16)]
@@ -62,7 +62,7 @@ public class CCounterTests
         Assert.AreEqual((512 - iC) % 256, testClass2.Value);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0)]
     [DataRow(1)]
     [DataRow(16)]

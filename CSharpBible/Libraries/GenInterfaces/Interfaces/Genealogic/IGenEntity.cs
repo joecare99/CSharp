@@ -31,12 +31,12 @@ public interface IGenEntity : IGenObject, IHasOwner<IGenealogy>
     /// Gets the facts.
     /// </summary>
     /// <value>The facts.</value>
-    IList<IGenFact> Facts { get; init; }
+    IList<IGenFact?> Facts { get; init; }
     /// <summary>
     /// Gets the connects.
     /// </summary>
     /// <value>The connects.</value>
-    IList<IGenConnects> Connects { get; init; }
+    IList<IGenConnects?> Connects { get; init; }
     /// <summary>
     /// Gets the start.
     /// </summary>
@@ -57,13 +57,13 @@ public interface IGenEntity : IGenObject, IHasOwner<IGenealogy>
     /// </summary>
     /// <value>The sources.</value>
     [JsonIgnore]
-    IList<IGenSources> Sources { get; init; }
+    IList<IGenSource?> Sources { get; init; }
 
     /// <summary>
     /// Gets the media.
     /// </summary>
     /// <value>The media.</value>
     [JsonIgnore]
-    IList<IGenMedia> Media { get; init; }
+    IList<IGenMedia?> Media { get; init; }
 
 }

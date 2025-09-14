@@ -1,0 +1,28 @@
+﻿<Page x:Class="GenFreeWpf.Views.Menue"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GenFreeWpf.Views"
+      xmlns:mvvm="clr-namespace:GenFreeWpf.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="768" d:DesignWidth="1024" d:Background="DarkGray"
+      Title="Menue">
+
+    <Page.DataContext>
+        <mvvm:MenueViewModel />
+    </Page.DataContext>
+
+    <Grid Background="DarkGray">
+        <Border Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="2" CornerRadius="10" Margin="40" Padding="20">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" >
+                <TextBlock Text="GenFree" FontSize="36" FontWeight="Bold" Foreground="DarkSlateGray" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+                <Button Content="Stammdaten" Height="50" Margin="0,0,0,15" FontSize="18" Command="{Binding StammdatenCommand}"/>
+                <Button Content="Eingaben" Height="50" Margin="0,0,0,15" FontSize="18" Command="{Binding EingabenCommand}"/>
+                <Button Content="Auswertungen" Height="50" Margin="0,0,0,15" FontSize="18" Command="{Binding AuswertungenCommand}"/>
+                <Button Content="Extras" Height="50" Margin="0,0,0,15" FontSize="18" Command="{Binding ExtrasCommand}"/>
+                <Button Content="Beenden" Height="50" Margin="0,30,0,0" FontSize="18" Background="IndianRed" Foreground="White" Command="{Binding BeendenCommand}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

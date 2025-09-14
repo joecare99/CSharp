@@ -1,10 +1,9 @@
 ﻿<Project>
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;net481;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <IsPackable>false</IsPackable>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -18,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.8.3" />
+    <PackageReference Include="MSTest" Version="3.9.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

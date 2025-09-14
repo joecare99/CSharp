@@ -35,7 +35,7 @@ public class CommandBindingAttribute(string cmdName) : Attribute
 
     public static void Commit(object obj, object dataContext)
     {
-        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic| BindingFlags.Public | BindingFlags.Instance))
         {
             if (GetCustomAttribute(field, typeof(CommandBindingAttribute)) is CommandBindingAttribute attr
                 && field.GetValue(obj) is Control ctrl)

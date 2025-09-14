@@ -2,21 +2,14 @@
 
 namespace GenFree.Data;
 
-public enum nbTables
-{
-    Ahnen1,
-    Ahnen2,
-    Frauen1,
-    Frauen2
-}
 public enum PersonFields
 {
+    PersNr,
     AnlDatum,
     Sex,
     EditDat,
     Bem1,
     Pruefen,
-    PersNr,
     Konv,
     Such1,
     Bem2,
@@ -90,15 +83,16 @@ public enum EventIndex
     NText,
     PText,
     Reg,
-    Reg1
+    Reg1,
+    BeSu2
 }
 public enum FamilyFields
 {
+    FamNr,
     AnlDatum,
     EditDat,
     Prüfen,
     Bem1,
-    FamNr,
     Aeb,
     Name,
     Bem2,
@@ -132,6 +126,7 @@ public enum OFBFields
 
 public enum PlaceFields
 {
+    OrtNr,
     Ort,
     Ortsteil,
     Kreis,
@@ -144,7 +139,6 @@ public enum PlaceFields
     L,
     B,
     Bem,
-    OrtNr,
     Zusatz,
     GOV,
     PolName,
@@ -182,6 +176,47 @@ public enum PictureIndex
     PerKen2,
     PerKenn
 }
+public enum GBEFields
+{
+    Nr,
+    Akte,
+    Jahr,
+    Name,
+    Geb,
+    Erb,
+    Abg,
+}
+public enum GBEIndex
+{
+    Nr,
+    AkteJa,
+    Akte
+}
+public enum GEDFields
+{
+    PNr,
+}
+public enum GEDIndex
+{
+    PNr,
+}
+public enum HGAFields
+{
+    Nr,
+    Akte,
+    Kirchspiel,
+    Beschr,
+    Flur,
+    Parzelle,
+    Hof,
+    Brandkasse,
+    Bem,
+}
+public enum HGAIndex
+{
+    Nr,
+    Akte
+}
 public enum NameFields
 {
     PersNr,
@@ -190,7 +225,6 @@ public enum NameFields
     LfNr,
     Ruf,
     Spitz,
-    LfNr1 // Only trmporary for conversion
 }
 public enum NameIndex
 {
@@ -236,7 +270,6 @@ public enum TexteIndex
     LTexte,
     SSTexte,
     STexte,
-    TxNr,
     TxNr1,
 }
 
@@ -274,21 +307,49 @@ public enum AhnenFields
 
 public enum QuFields
 {
+    /// <summary>
+    /// The Number of the source
+    /// </summary>
     _1,
+    /// <summary>
+    /// The Title of the source
+    /// </summary>
     _2,
     _3,
-    _4, 
+    _4,
+    /// <summary>
+    /// The Author of the source
+    /// </summary>
     _5,
     _6,
+    /// <summary>
+    /// The Publication date of the source
+    /// </summary>
     _7,
+    /// <summary>
+    /// The Place of the source
+    /// </summary>
     _8,
     _9,
     _10,
     _11,
+    /// <summary>
+    /// The Reference ID of the source
+    /// </summary>
     _12,
+    /// <summary>
+    /// Additional information or comments about the source
+    /// </summary>
     _13
 }
-
+public enum QuIndex
+{
+    Autor,
+    Dopp,
+    Nam,
+    Nr,
+    Zitat
+}
 public enum AhnenIndex
 {
     Spitz,
@@ -315,6 +376,16 @@ public enum WitnessIndex
     FamSu,
     Zeug,
     ZeugSu
+}
+
+public enum DoppelFields
+{
+    Nr,
+    Pr
+}
+public enum DoppelIndex
+{
+    Nr
 }
 
 public enum FrauenFields
@@ -349,25 +420,36 @@ public enum PropertyIndex
 
 public enum SourceLinkIndex
 {
-    Tab, // Person/Family-Index
+    Tab, // Person/o04_Family-Index
     Tab22, // Event-Index
+    Tab21,
+    Tab23,
+    Tab2,
+    Verw,
+    Tab1, // Obsolete, use Tab22
 }
 public enum SourceLinkFields
 {
     /// <summary>
     /// Type of Link
     /// </summary>
-    _1, // Kind    
+    _1, // Kind
     /// <summary>
-    /// The Source Nr (Person/Family/Event)
+    /// The Person/Family PerNr 
     /// </summary>
-    _2, // Nr
-    _3, // NrNeu    
+    _2, // PerFamNr
+    /// <summary>
+    /// The Source PerNr (Person/o04_Family/Event)
+    /// </summary>
+    _3,
+    /// <summary>
+    /// The title of the entry
+    /// </summary>
+    _4,
     /// <summary>
     /// The Page
     /// </summary>
-    _4, // Page
-    Aus,
+    Aus,// Page
     Orig,
     Kom,
     Art,
@@ -399,6 +481,22 @@ public enum SourceIndex
     Nr,
     Zitat
 }
+
+public enum SearchFields
+{
+    Name,
+    Datum,
+    Nummer,
+    Kenn,
+    Sich,
+}
+public enum SearchIndex
+{
+    Nummer,
+    Namen,
+    Persuch
+}
+
 public enum RepoFields
 {
     Nr,
@@ -412,6 +510,77 @@ public enum RepoFields
     Bem,
     Suchname
 }
+
+public enum RepoIndex
+{
+    Nr
+}
+
+public enum RepoTabFields
+{
+    Quelle,
+    Repo,
+    Repoalt
+}
+
+public enum WDFields
+{
+    Nr
+}
+public enum NB_Frau1Fields
+{
+    Nr,
+    Gen,
+    LfNr,
+    Alt,
+    Kek1,
+    Kek2,
+    Name
+}
+public enum NB_Frau1Index
+{
+    LfNr,
+    PerNR
+}
+
+public enum NB_AhnenFields
+{
+    PerNr,
+    Gene,
+    Weiter,
+    Ehe,
+    Ahn1,
+    Ahn2,
+    Ahn3,
+    Name
+}
+public enum NB_AhnenIndex
+{
+    LfNr,
+    PerNR
+}
+public enum ReligionFields
+{
+    PerNr,
+    TextNr
+}
+public enum ReligionIndex
+{
+    T,
+    PerNR
+}
+
+public enum IndexFields
+{
+    Person,
+    Fam,
+    SatzNr
+}
+public enum SperrIdxFields
+{
+    Nr
+}
+
 public enum ENameKennz : int
 {
     nkGivnName = 0,
@@ -468,7 +637,7 @@ public enum EGedSource
     _21 = 21,
 }
 
-public enum ETextKennz : int
+public enum ETextKennz : uint
 {
     tkNone = '\0',
     /// <summary>

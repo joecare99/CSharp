@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Sokoban.Model;
 using System;
 using System.Drawing;
 

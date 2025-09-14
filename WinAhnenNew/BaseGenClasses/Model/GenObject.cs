@@ -54,5 +54,10 @@ namespace BaseGenClasses.Model
         /// </summary>
         /// <value>The last change.</value>
         public DateTime? LastChange { get; protected set; }
+        /// <summary>
+        /// Gets the (local) identifier. This ID is only unique within the application, maybe classes and not across different applications.
+        /// </summary>
+        /// <value>The identifier.</value>
+        public int ID { get ; init ; }
     }
 }

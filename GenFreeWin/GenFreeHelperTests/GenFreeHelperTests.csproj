@@ -1,8 +1,9 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net6.0;net7.0;net8.0</TargetFrameworks>
-		<Nullable>enable</Nullable>
+    <TargetFrameworks>net481;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
@@ -18,8 +19,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageReference Include="MSTest" Version="3.8.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="MSTest" Version="3.10.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,5 +32,4 @@
 		<ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj" />
 		<ProjectReference Include="..\GenFreeHelper\GenFreeHelper.csproj" />
 	</ItemGroup>
-	
 </Project>

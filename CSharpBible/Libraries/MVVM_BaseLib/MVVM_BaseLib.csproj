@@ -8,12 +8,12 @@
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup>
+  <PropertyGroup Condition="Exists('..\sgLib.snk')">
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <UserSecretsId>4772c317-55ff-4251-b766-1c41dfb672e5</UserSecretsId>
     <SignAssembly>True</SignAssembly>
     <DelaySign>False</DelaySign>
-    <AssemblyOriginatorKeyFile>C:\Projekte\CSharp\CSharpBible\Libraries\sgLib.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\sgLib.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -26,8 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
-    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
