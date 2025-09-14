@@ -101,7 +101,8 @@
                             </Style>
                         </Grid.Style>
                         <Rectangle Fill="Transparent" Stroke="Black" StrokeThickness="1" Name="Brdr" />
-                        <TextBox Background="Transparent" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  FontSize="{Binding ActualHeight,ElementName=Brdr, Converter={StaticResource vcDouble}, ConverterParameter=0.7}" TextAlignment="Center"/>
+                        <TextBox Background="Transparent" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                                 FontSize="{Binding ActualHeight,ElementName=Brdr, Converter={StaticResource vcDouble}, ConverterParameter=0.7}" TextAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
