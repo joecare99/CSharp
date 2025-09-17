@@ -202,7 +202,15 @@ public static class HtmlDocumentSerializer
                     if (!string.IsNullOrEmpty(span.Id))
                         sb.Append($" id=\"{System.Net.WebUtility.HtmlEncode(span.Id)}\"");
                     sb.Append(">");
+                    if (span.FontStyle.Bold)
+                        sb.Append("<strong>");
+                    if (span.FontStyle.Italic)
+                        sb.Append("<em>");
                     WriteInline(sb, span);
+                    if (span.FontStyle.Italic)
+                        sb.Append("</em>");
+                    if (span.FontStyle.Bold)
+                        sb.Append("</strong>");
                     sb.Append("</span>");
                     break;
 

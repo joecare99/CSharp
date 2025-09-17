@@ -16,7 +16,7 @@ public sealed class HtmlTOC : HtmlContentBase
 
     public override IDocStyleStyle GetStyle() => new HtmlStyle("TOC");
 
-    public void RebuildFrom(IDocContent root)
+    public void RebuildFrom(IDocSection root)
     {
         // Einfacher TOC: Alle Headlines bis Level einsammeln
         TextContent = string.Empty;

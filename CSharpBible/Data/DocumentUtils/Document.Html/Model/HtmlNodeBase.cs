@@ -55,4 +55,23 @@ public abstract class HtmlNodeBase : IDocElement
         Attributes.TryGetValue(name, out var value);
         return value;
     }
+
+    public IEnumerable<IDocElement> Enumerate()
+    {
+        var stack = new Stack<IDocElement>();
+        stack.Push(this);
+        while (stack.Count > 0)
+        {
+            var cur = stack.Pop();
+            yield return cur;
+            if (cur is HtmlNodeBase b)
+            {
+                for (int i = b.Nodes.Count - 1; i >= 0; i--)
+                {
+                    stack.Push((IDocElement)b.Nodes[i]);
+                }
+            }
+        }
+    }
+
 }

@@ -23,21 +23,4 @@ public sealed class HtmlSection : HtmlNodeBase, IDocSection
         return toc;
     }
 
-    public IEnumerable<IDocElement> Enumerate()
-    {
-        var stack = new Stack<IDocElement>();
-        stack.Push(this);
-        while (stack.Count > 0)
-        {
-            var cur = stack.Pop();
-            yield return cur;
-            if (cur is HtmlNodeBase b)
-            {
-                for (int i = b.Nodes.Count - 1; i >= 0; i--)
-                {
-                    stack.Push((IDocElement)b.Nodes[i]);
-                }
-            }
-        }
-    }
 }
