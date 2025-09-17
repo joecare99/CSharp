@@ -4,6 +4,7 @@ using System.Reflection.Metadata;
 using System;
 using System.IO;
 using Document.Html;
+using Document.Html.Model;
 
 namespace HtmlExample;
 
@@ -31,7 +32,7 @@ public class Program
 
         // Optional: weitere Elemente
         p.AddLineBreak();
-        p.AddSpan("Fetter Text", Document.Html.Model.HtmlFontStyle.Default);
+        p.AddSpan("Fetter Text", HtmlFontStyle.BoldStyle);
 
         // Dokument speichern
         var outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "example.html");
@@ -45,18 +46,18 @@ public class Program
     private static void CreateSampleDocument()
     {
         // Beispiel: Dokument erstellen, schreiben und wieder lesen
-        IDocSection root = new Document.Html.Model.HtmlSection();
-        var h1 = (Document.Html.Model.HtmlHeadline)root.AddHeadline(1);
+        IDocSection root = new HtmlSection();
+        HtmlHeadline h1 = (Document.Html.Model.HtmlHeadline)root.AddHeadline(1);
         h1.TextContent = "Titel";
         var p = root.AddParagraph("Body");
         p.AppendText("Hallo ");
-        p.AddSpan("Welt", Document.Html.Model.HtmlFontStyle.Default);
+        p.AddSpan("Welt", HtmlFontStyle.Default);
         p.AddLineBreak();
-        var toc = (Document.Html.Model.HtmlTOC)root.AddTOC("Inhalt", 2);
+        var toc = (HtmlTOC)root.AddTOC("Inhalt", 2);
         toc.RebuildFrom(root);
 
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "test.html");
-        Document.Html.IO.HtmlDocumentIO.SaveAsync(root, path);
+        Document.Html.IO.HtmlDocumentIO.SaveAsync(root as HtmlSection, path);
         var loaded = Document.Html.IO.HtmlDocumentIO.LoadAsync(path).Result;
         Debug.WriteLine(loaded);
     }
