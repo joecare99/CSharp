@@ -14,7 +14,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-		<PackageReference Include="MSTest" Version="3.9.2" />
+		<PackageReference Include="MSTest" Version="3.10.4" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,6 +26,6 @@
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
 	</ItemGroup>
   <ItemGroup>
-    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.0.3" />
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.0" />
   </ItemGroup>
 </Project>
