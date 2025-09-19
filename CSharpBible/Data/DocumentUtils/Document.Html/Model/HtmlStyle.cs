@@ -23,6 +23,7 @@ public sealed class HtmlFontStyle : IDocFontStyle
     public bool Bold { get; init; }
     public bool Italic { get; init; }
     public bool Underline { get; init; }
+    public bool Strikeout { get; init; }
     public string? Color { get; init; }
     public string? FontFamily { get; init; }
     public double? FontSizePt { get; init; }
@@ -30,5 +31,6 @@ public sealed class HtmlFontStyle : IDocFontStyle
     public static readonly HtmlFontStyle Default = new();
     public static readonly HtmlFontStyle BoldStyle = new() { Name = "Bold", Bold = true };
     public static readonly HtmlFontStyle ItalicStyle = new() { Name = "Italic", Italic = true };
-
+    public static readonly HtmlFontStyle UnderlineStyle = new() { Name = "Underline", Underline = true };
+    public static readonly HtmlFontStyle StrikeoutStyle = new() { Name = "Strikeout", Strikeout= true };
 }

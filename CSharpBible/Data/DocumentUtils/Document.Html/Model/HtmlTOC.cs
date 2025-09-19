@@ -3,7 +3,7 @@ using Document.Base.Models.Interfaces;
 
 namespace Document.Html.Model;
 
-public sealed class HtmlTOC : HtmlContentBase
+public sealed class HtmlTOC : HtmlContentBase, IDocTOC
 {
     public string Name { get; }
     public int Level { get; }
@@ -22,7 +22,7 @@ public sealed class HtmlTOC : HtmlContentBase
         TextContent = string.Empty;
         Nodes.Clear();
 
-        foreach (var h in root.Enumerate().OfType<HtmlHeadline>().Where(h => h.Level <= Level))
+        foreach (var h in root.Enumerate().OfType<IDocHeadline>().Where(h => h.Level <= Level))
         {
             var p = new HtmlParagraph("TOCEntry");
             var anchorText = h.GetTextContent(true);
@@ -40,5 +40,10 @@ public sealed class HtmlTOC : HtmlContentBase
             span.TextContent = anchorText;
             AddChild(p);
         }
+    }
+
+    public void RebuildFrom(IDocElement root)
+    {
+        throw new NotImplementedException();
     }
 }

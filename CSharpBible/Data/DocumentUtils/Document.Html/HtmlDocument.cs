@@ -1,11 +1,13 @@
-using System.Text;
 using Document.Base.Models.Interfaces;
+using Document.Base.Registration;
 using Document.Html.IO;
 using Document.Html.Model;
 using Document.Html.Serialization;
+using System.Text;
 
 namespace Document.Html;
 
+[UserDocumentProvider("html", Extensions = new[] { ".html", ".htm" }, ContentType = "text/html", DisplayName = "HTML Document")]
 public sealed class HtmlDocument : IUserDocument
 {
     private bool _isModified;
@@ -33,14 +35,14 @@ public sealed class HtmlDocument : IUserDocument
         return section.AddParagraph(cStylename);
     }
 
-    public IDocContent AddHeadline(int nLevel)
+    public IDocHeadline AddHeadline(int nLevel)
     {
         var section = EnsureRoot();
         _isModified = true;
         return section.AddHeadline(nLevel);
     }
 
-    public IDocContent AddTOC(string cName, int nLevel)
+    public IDocTOC AddTOC(string cName, int nLevel)
     {
         var section = EnsureRoot();
         _isModified = true;

@@ -2,7 +2,7 @@ using Document.Base.Models.Interfaces;
 
 namespace Document.Html.Model;
 
-public sealed class HtmlHeadline : HtmlContentBase
+public sealed class HtmlHeadline : HtmlContentBase, IDocHeadline
 {
     public int Level { get; }
 

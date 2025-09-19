@@ -10,13 +10,13 @@ public sealed class HtmlSection : HtmlNodeBase, IDocSection
         return (IDocParagraph)AddChild(p);
     }
 
-    public IDocContent AddHeadline(int aLevel)
+    public IDocHeadline AddHeadline(int aLevel)
     {
         var h = new HtmlHeadline(aLevel);
-        return (IDocContent)AddChild(h);
+        return (IDocHeadline)AddChild(h);
     }
 
-    public IDocContent AddTOC(string aName, int aLevel)
+    public IDocTOC AddTOC(string aName, int aLevel)
     {
         var toc = new HtmlTOC(aName, aLevel);
         AddChild(toc);
