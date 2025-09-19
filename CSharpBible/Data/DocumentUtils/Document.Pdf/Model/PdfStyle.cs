@@ -22,5 +22,12 @@ public sealed class PdfFontStyle : IDocFontStyle
     public string? Color { get; init; }
     public string? FontFamily { get; init; } = "Arial";
     public double? FontSizePt { get; init; } = 12;
+    public bool Strikeout { get; init; }
+
     public static readonly PdfFontStyle Default = new();
+    public static readonly PdfFontStyle BoldStyle = new() { Name = "Bold", Bold = true };
+    public static readonly PdfFontStyle ItalicStyle = new() { Name = "Italic", Italic = true };
+    public static readonly PdfFontStyle BoldItalic = new() { Name = "BoldItalic", Bold = true, Italic = true };
+    public static readonly PdfFontStyle UnderlineStyle = new() { Name = "Underline", Underline = true };
+    public static readonly PdfFontStyle StrikeoutStyle = new() { Name = "Strikeout", Strikeout = true };
 }

@@ -1,4 +1,5 @@
 using System.Text;
+using Document.Base.Models;
 using Document.Base.Models.Interfaces;
 
 namespace Document.Pdf.Model;
@@ -71,5 +72,26 @@ public abstract class PdfContentBase : PdfNodeBase, IDocContent
         foreach (var c in _children)
             if (c is IDocContent ic) sb.Append(ic.GetTextContent(true));
         return sb.ToString();
+    }
+
+    public IDocSpan AddSpan(string text, EFontStyle eFontStyle)
+    {
+        switch (eFontStyle)
+        {
+            case EFontStyle.Default:
+                return AddSpan(text, PdfFontStyle.Default);
+            case EFontStyle.Bold:
+                return AddSpan(text, PdfFontStyle.BoldStyle);
+            case EFontStyle.Italic:
+                return AddSpan(text, PdfFontStyle.ItalicStyle);
+            case EFontStyle.BoldItalic:
+                return AddSpan(text, PdfFontStyle.BoldItalic);
+            case EFontStyle.Underline:
+                return AddSpan(text, PdfFontStyle.UnderlineStyle);
+            case EFontStyle.Strikeout:
+                return AddSpan(text, PdfFontStyle.StrikeoutStyle);
+            default:
+                return AddSpan(text, PdfFontStyle.Default);
+        }
     }
 }

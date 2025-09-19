@@ -1,6 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.Annotations;
+using PdfSharp.Pdf.Advanced;
+
 namespace Document.Pdf.Render;
 
 public sealed class PdfSharpEngine : IPdfEngine
@@ -15,6 +21,9 @@ public sealed class PdfSharpEngine : IPdfEngine
     private double _top = 40;
     private double _right = 40;
 
+    // Bookmark-Speicher
+    private readonly Dictionary<string, BookmarkInfo> _bookmarks = new(StringComparer.OrdinalIgnoreCase);
+
     public PdfSharpEngine()
     {
         GlobalFontSettings.UseWindowsFontsUnderWindows = true;
@@ -23,6 +32,8 @@ public sealed class PdfSharpEngine : IPdfEngine
 
     private double ContentWidth => (_page?.Width ?? 595) - _left - _right;
     private double LineHeight => _font.GetHeight();
+
+    public object CurrentPageNumber => throw new NotImplementedException();
 
     public void BeginDocument()
     {
@@ -104,5 +115,79 @@ public sealed class PdfSharpEngine : IPdfEngine
     {
         _gfx?.Dispose();
         _doc?.Dispose();
+    }
+
+    // --- Bookmark-API ---
+
+    // Fügt an der aktuellen Position ein Bookmark ein (optional mit Outline-Eintrag im PDF-Navigationsbaum).
+    public void AddBookmark(string name, bool addOutline = true)
+    {
+        if (string.IsNullOrWhiteSpace(name) || _doc is null || _page is null) return;
+
+        var top = new XUnit(_y);
+        var info = new BookmarkInfo(_page, top);
+
+        if (addOutline)
+        {
+            var outline = _doc.Outlines.Add(name, _page, true);
+            try
+            {
+                var dest = new PdfDestination(_page)
+                {
+                    Mode = PdfDestinationMode.FitH,
+                    Top = top
+                };
+                outline.Destination = dest;
+            }
+            catch
+            {
+                // Fallback: Wenn Destination nicht gesetzt werden kann, bleibt Outline seitenbasiert.
+            }
+
+            info.Outline = outline;
+        }
+
+        _bookmarks[name] = info;
+    }
+
+    // Schreibt klickbaren Text, der zu einem zuvor definierten Bookmark springt.
+    public void WriteLinkToBookmark(string text, string bookmarkName)
+    {
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(bookmarkName)) return;
+        if (_page is null || _gfx is null) return;
+        if (!_bookmarks.TryGetValue(bookmarkName, out var bm)) return;
+
+        EnsurePageSpace();
+
+        var size = _gfx.MeasureString(text, _font);
+        var rect = new XRect(_left, _y, size.Width, LineHeight);
+
+        // Link-Text (optional farbig)
+        _gfx.DrawString(text, _font, XBrushes.Blue, rect, XStringFormats.TopLeft);
+
+        // Annotation mit Ziel
+        var linkRect = new PdfRectangle(rect);
+        var link = _page.AddDocumentLink(linkRect, _doc!.Pages.IndexOf(bm.Page));
+
+        _page.Annotations.Add(link);
+
+        _y += LineHeight;
+    }
+
+    // Prüft, ob ein Bookmark existiert.
+    public bool HasBookmark(string name) => !string.IsNullOrWhiteSpace(name) && _bookmarks.ContainsKey(name);
+
+    // Interner Container für Bookmark-Zielinformationen
+    private sealed class BookmarkInfo
+    {
+        public BookmarkInfo(PdfPage page, XUnit top)
+        {
+            Page = page;
+            Top = top;
+        }
+
+        public PdfPage Page { get; }
+        public XUnit Top { get; }
+        public PdfOutline? Outline { get; set; }
     }
 }

@@ -10,15 +10,15 @@ public sealed class PdfSection : PdfNodeBase, IDocSection
         return AddChild(p);
     }
 
-    public IDocContent AddHeadline(int aLevel)
+    public IDocHeadline AddHeadline(int aLevel)
     {
         var h = new PdfHeadline(aLevel);
         return AddChild(h);
     }
 
-    public IDocContent AddTOC(string aName, int aLevel)
+    public IDocTOC AddTOC(string aName, int aLevel)
     {
-        var p = new PdfParagraph("TOC");
+        var p = new PdfTOC(aName,aLevel);
         p.AppendText($"{aName} (bis H{aLevel})");
         return AddChild(p);
     }

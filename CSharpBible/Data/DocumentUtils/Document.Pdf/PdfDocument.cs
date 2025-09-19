@@ -1,9 +1,11 @@
 using Document.Base.Models.Interfaces;
+using Document.Base.Registration;
 using Document.Pdf.Model;
 using Document.Pdf.Render;
 
 namespace Document.Pdf;
 
+[UserDocumentProvider("pdf", Extensions = new[] { ".pdf" }, ContentType = "application/pdf", DisplayName = "PDF Document")]
 public sealed class PdfDocument : IUserDocument
 {
     private bool _isModified;
@@ -29,13 +31,13 @@ public sealed class PdfDocument : IUserDocument
         return EnsureRoot().AddParagraph(cStylename);
     }
 
-    public IDocContent AddHeadline(int nLevel)
+    public IDocHeadline  AddHeadline(int nLevel)
     {
         _isModified = true;
         return EnsureRoot().AddHeadline(nLevel);
     }
 
-    public IDocContent AddTOC(string cName, int nLevel)
+    public IDocTOC AddTOC(string cName, int nLevel)
     {
         _isModified = true;
         return EnsureRoot().AddTOC(cName, nLevel);

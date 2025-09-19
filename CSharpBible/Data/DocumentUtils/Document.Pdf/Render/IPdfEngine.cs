@@ -2,6 +2,8 @@ namespace Document.Pdf.Render;
 
 public interface IPdfEngine : IDisposable
 {
+    object CurrentPageNumber { get; }
+
     void BeginDocument();
     void AddPage();
     void SetFont(string family, bool bold, bool italic, double sizePt);
