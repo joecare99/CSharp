@@ -1,16 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- story.json weiter ins Output kopieren -->
   <ItemGroup>
-    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.1" />
-    <PackageReference Include="SkiaSharp" Version="3.119.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.9" />
+    <None Update="story.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
+  <!-- Referenzen auf die Dokument-Bibliotheken -->
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentUtils\Document.Base\Document.Base.csproj" />
+    <ProjectReference Include="..\DocumentUtils\Document.Html\Document.Html.csproj" />
+  </ItemGroup>
+
+  <!-- PDFsharp-/Skia-Pakete sind nicht mehr nötig, Rendering steckt in Document.Pdf -->
 </Project>

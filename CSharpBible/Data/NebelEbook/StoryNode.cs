@@ -18,7 +18,7 @@ public class StoryNode
     /// <summary>
     /// Titel des Story-Knotens.
     /// </summary>
-    public string Title { get; }
+    public string Title { get; set; }
 
     /// <summary>
     /// Sammlung der Textabsätze in der vorgesehenen Anzeige-Reihenfolge.

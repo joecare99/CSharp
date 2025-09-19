@@ -9,7 +9,7 @@ public class Choice
     /// <summary>
     /// Der anzuzeigende Text der Auswahl (z. B. Button- oder Link-Beschriftung).
     /// </summary>
-    public string Label { get; }
+    public string Label { get; set; }
 
     /// <summary>
     /// Die Zielkennung (ID), auf die diese Auswahl verweist
