@@ -8,16 +8,20 @@
   </PropertyGroup>
 
   <!-- story.json weiter ins Output kopieren -->
-  <ItemGroup>
-    <None Update="story.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
   <!-- Referenzen auf die Dokument-Bibliotheken -->
   <ItemGroup>
     <ProjectReference Include="..\DocumentUtils\Document.Base\Document.Base.csproj" />
     <ProjectReference Include="..\DocumentUtils\Document.Html\Document.Html.csproj" />
+    <ProjectReference Include="..\DocumentUtils\Document.Xaml\Document.Xaml.csproj" />
+    <ProjectReference Include="..\Story.Base\Story.Base.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <!-- Benchmarks -->
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
   </ItemGroup>
 
   <!-- PDFsharp-/Skia-Pakete sind nicht mehr nötig, Rendering steckt in Document.Pdf -->

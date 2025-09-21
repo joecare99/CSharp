@@ -1,51 +1,33 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Globalization;
 using Document.Base.Factories;
 using Document.Base.Models.Interfaces;
 using Document.Html;
+using Story_Base.Data;
+using Document.Xaml;
 
 namespace NebelEbook;
 
 class Program
 {
+    // Caches für häufig genutzte Daten
+    private static readonly HashSet<char> s_invalidFileNameChars = new(Path.GetInvalidFileNameChars());
+    private static readonly HashSet<string> s_reservedNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "CON","PRN","AUX","NUL",
+        "COM1","COM2","COM3","COM4","COM5","COM6","COM7","COM8","COM9",
+        "LPT1","LPT2","LPT3","LPT4","LPT5","LPT6","LPT7","LPT8","LPT9"
+    };
+
     static int Main(string[] args)
     {
-        var t= typeof(HtmlDocument);
-
-
         try
         {
-            var key = (args.Length > 0 ? args[0] : "html").Trim().ToLowerInvariant();
-            var storyPath = Path.Combine(AppContext.BaseDirectory, "story.json");
 
-            // Ausgabedatei bestimmen
-            var output = args.Length > 1
-                ? args[1]
-                : Path.Combine(
-                    AppContext.BaseDirectory,
-                    key switch
-                    {
-                        "html" => "Nebel_ueber_Bretten_Interaktiv.html",
-                        "pdf" => "Nebel_ueber_Bretten_Interaktiv.pdf",
-                        _ when key.EndsWith(".html", StringComparison.OrdinalIgnoreCase) => Path.GetFileName(key),
-                        _ when key.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase) => Path.GetFileName(key),
-                        _ => $"Nebel_ueber_Bretten_Interaktiv.{(key.Contains('/') ? "out" : key)}"
-                    });
+            Init(args, out Story story, out string output, out IUserDocument doc);
 
-            // Dokument über Factory erstellen (per Key 'pdf'/'html' oder per Dateiendung)
-            IUserDocument doc = UserDocumentFactory.Create(key);
-
-            var story = LoadOrCreateSampleStory(storyPath);
-            BuildDocument(doc, story);
-
-            if (!doc.SaveTo(output))
-            {
-                Console.Error.WriteLine($"Speichern fehlgeschlagen: {output}");
-                return 2;
-            }
-
-            Console.WriteLine($"Erstellt: {Path.GetFullPath(output)}");
-            return 0;
+            return Execute(story, output, doc);
         }
         catch (Exception ex)
         {
@@ -54,19 +36,103 @@ class Program
         }
     }
 
-    private static IUserDocument CreateUserDocument(string key, string output)
+    private static int Execute(Story story, string output, IUserDocument doc)
     {
-        // Versuch nach Key/MIME/Extension/Pfad
-        if (UserDocumentFactory.TryCreate(key, out var byKey) && byKey is not null)
-            return byKey;
+        BuildDocument(doc, story);
 
-        var byExt = UserDocumentFactory.CreateForPath(output)
-                   ?? UserDocumentFactory.CreateForExtension(Path.GetExtension(output));
-        if (byExt is not null)
-            return byExt;
+        if (!doc.SaveTo(output))
+        {
+            Console.Error.WriteLine($"Speichern fehlgeschlagen: {output}");
+            return 2;
+        }
 
-        // Fallback: pdf
-        return UserDocumentFactory.Create("html");
+        Console.WriteLine($"Erstellt: {Path.GetFullPath(output)}");
+        return 0;
+    }
+
+    private static void Init(string[] args, out Story story, out string output, out IUserDocument doc)
+    {
+        UserDocumentFactory.AutoScanOnFirstUse = false;
+
+        // Manuelle Registrierung für HTML
+        UserDocumentFactory.Register<HtmlDocument>("html", [".htm",".html"], "text/html");
+        UserDocumentFactory.Register<XamlDocument>("xaml", [".xaml",".xml"], "text/xaml");
+    //    UserDocumentFactory.Register<PdfDocument>("pdf", [".pdf" ], "application/pdf");
+
+        var key = (args.Length > 0 ? args[0] : "html").Trim().ToLowerInvariant();
+        var storyPath = Path.Combine(AppContext.BaseDirectory,"Resources", "story2.json");
+
+        // Story laden (oder Beispiel erzeugen) -> liefert Titel
+        story = LoadOrCreateSampleStory(storyPath);
+
+        // Aus Titel der Story einen gültigen Dateinamen erzeugen
+        var fileName = BuildOutputFileNameFromTitle(story?.Title, key);
+        output = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+
+        // Dokument über Factory erstellen (per Key 'pdf'/'html' oder per Dateiendung)
+        doc = UserDocumentFactory.Create(key);
+    }
+
+    private static string BuildOutputFileNameFromTitle(string? title, string key)
+    {
+        // Fallback-Titel
+        title = string.IsNullOrWhiteSpace(title) ? "output" : title;
+
+        // Ein-Pass-Aufbereitung: Diakritika entfernen, ungültige Zeichen ersetzen, Separatoren verdichten
+        var sb = new StringBuilder(title.Length);
+        bool lastWasSep = false;
+
+        foreach (var c in title.Normalize(NormalizationForm.FormD))
+        {
+            var uc = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (uc == UnicodeCategory.NonSpacingMark)
+                continue; // Diakritika überspringen
+
+            char mapped;
+            if (char.IsWhiteSpace(c) || c == '-' || c == '_' || c == '.')
+            {
+                mapped = '_';
+            }
+            else if (s_invalidFileNameChars.Contains(c))
+            {
+                mapped = '-';
+            }
+            else
+            {
+                mapped = c;
+            }
+
+            if (mapped == '_')
+            {
+                if (!lastWasSep)
+                {
+                    sb.Append('_');
+                    lastWasSep = true;
+                }
+            }
+            else
+            {
+                sb.Append(mapped);
+                lastWasSep = false;
+            }
+        }
+
+        var baseName = sb.ToString().Normalize(NormalizationForm.FormC).Trim('_');
+        if (string.IsNullOrEmpty(baseName))
+            baseName = "output";
+
+        // Windows-reservierte Namen vermeiden
+        if (s_reservedNames.Contains(baseName))
+        {
+            baseName += "_";
+        }
+
+        // Extension aus key bestimmen (Fallback .html)
+        var ext = key?.Trim().ToLowerInvariant();
+        if (string.IsNullOrEmpty(ext)) ext = "html";
+        if (!ext.StartsWith('.')) ext = "." + ext;
+
+        return baseName + ext;
     }
 
     private static void BuildDocument(IUserDocument doc, Story story)
@@ -81,23 +147,18 @@ class Program
             foreach (var n in story.Nodes)
             {
                 var p = doc.AddParagraph("TOCEntry");
-                var link = p.AddLink(font);
+                var link = p.AddLink("#"+n.Id,font);
                 link.TextContent = TextTemplate.Render(n.Title, story.Variables);
-                // Formatneutrale Link-Zielangabe
-                link.SetStyle(doc, font); // optional, falls Engines Styles nutzen
-                // über IDOMElement.Attributes:
-                // href für HTML; PDF-Engine kann diese Information interpretieren
-                (link as IDOMElement).Attributes["href"] = $"#{n.Id}";
+                link.SetStyle(doc, font);
             }
         }
 
         // Kapitel
         foreach (var node in story.Nodes)
         {
-            var h = doc.AddHeadline(1);
+            var h = doc.AddHeadline(1,node.Id);
             h.TextContent = TextTemplate.Render(node.Title, story.Variables);
 
-            // Anker-Span mit id = node.Id
             var anchor = h.AddSpan(font);
             (anchor as IDOMElement).Attributes["id"] = node.Id;
 
@@ -115,9 +176,8 @@ class Program
                 foreach (var c in node.Choices)
                 {
                     var cp = doc.AddParagraph("Choice");
-                    var l = cp.AddLink(font);
+                    var l = cp.AddLink("#"+c.TargetId,font);
                     l.TextContent = "→ " + TextTemplate.Render(c.Label, story.Variables);
-                    (l as IDOMElement).Attributes["href"] = $"#{c.TargetId}";
                 }
             }
         }
@@ -140,9 +200,9 @@ class Program
         return sample;
     }
 
-    // Minimaler Fallback – vollständige story.json wird bereits mitkopiert.
     static Story CreateSampleStory() => new Story
     {
+        Title = "Nebel über Bretten",
         Variables = new Dictionary<string, string>
         {
             ["strasse"] = "Melanchthonstraße",
