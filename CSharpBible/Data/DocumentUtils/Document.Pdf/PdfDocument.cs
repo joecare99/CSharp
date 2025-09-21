@@ -31,10 +31,10 @@ public sealed class PdfDocument : IUserDocument
         return EnsureRoot().AddParagraph(cStylename);
     }
 
-    public IDocHeadline  AddHeadline(int nLevel)
+    public IDocHeadline  AddHeadline(int nLevel, string Id)
     {
         _isModified = true;
-        return EnsureRoot().AddHeadline(nLevel);
+        return EnsureRoot().AddHeadline(nLevel, Id);
     }
 
     public IDocTOC AddTOC(string cName, int nLevel)

@@ -10,9 +10,9 @@ public sealed class PdfSection : PdfNodeBase, IDocSection
         return AddChild(p);
     }
 
-    public IDocHeadline AddHeadline(int aLevel)
+    public IDocHeadline AddHeadline(int aLevel, string Id)
     {
-        var h = new PdfHeadline(aLevel);
+        var h = new PdfHeadline(aLevel, Id);
         return AddChild(h);
     }
 

@@ -56,9 +56,9 @@ public abstract class PdfContentBase : PdfNodeBase, IDocContent
         return AddChild(span);
     }
 
-    public virtual IDocSpan AddLink(IDocFontStyle docFontStyle)
+    public virtual IDocSpan AddLink(string Href, IDocFontStyle docFontStyle)
     {
-        var span = new PdfSpan(docFontStyle) { IsLink = true };
+        var span = new PdfSpan(docFontStyle) { IsLink = true, Href = Href };
         return AddChild(span);
     }
 

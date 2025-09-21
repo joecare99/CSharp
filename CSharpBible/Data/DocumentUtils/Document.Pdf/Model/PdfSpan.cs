@@ -13,6 +13,8 @@ public sealed class PdfSpan : PdfContentBase, IDocSpan
         set { if (value is null) Attributes.Remove("href"); else Attributes["href"] = value; IsLink = value != null; }
     }
 
+    public string? Id { get ; set ; }
+
     public PdfSpan(IDocFontStyle style) => FontStyle = style;
 
     public override IDocStyleStyle GetStyle() => new PdfStyle(FontStyle.Name);
