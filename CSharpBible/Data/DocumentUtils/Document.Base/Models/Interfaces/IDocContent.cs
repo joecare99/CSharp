@@ -30,7 +30,7 @@ public interface IDocContent : IDocElement
     IDocSpan AddSpan(string text,IList<object> docFontStyle);
     IDocSpan AddSpan(string text,IDocFontStyle docFontStyle);
     IDocSpan AddSpan(string text, EFontStyle eFontStyle);
-    IDocSpan AddLink(IDocFontStyle docFontStyle);
+    IDocSpan AddLink(string Href,IDocFontStyle docFontStyle);
 
     IDocStyleStyle GetStyle();
 

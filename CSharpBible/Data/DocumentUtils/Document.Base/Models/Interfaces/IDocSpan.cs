@@ -13,4 +13,5 @@ public interface IDocSpan: IDocContent
     void SetStyle(IUserDocument doc, object aFont);
     void SetStyle(IUserDocument doc, IDocFontStyle aFont);
     void SetStyle(string aStyleName);
+    string? Id { get; set; }
 }

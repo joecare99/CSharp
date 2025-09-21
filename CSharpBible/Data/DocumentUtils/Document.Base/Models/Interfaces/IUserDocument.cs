@@ -3,7 +3,7 @@
 public interface IUserDocument
 {
     IDocParagraph AddParagraph(string cStylename);
-    IDocHeadline AddHeadline(int nLevel);
+    IDocHeadline AddHeadline(int nLevel,string? Id = null);
     IDocTOC AddTOC(string cName, int nLevel);
     IDocElement Root { get; }
     IEnumerable<IDocElement> Enumerate();

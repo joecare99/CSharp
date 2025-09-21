@@ -9,6 +9,6 @@
 public interface IDocSection : IDocElement
 {
     IDocParagraph AddParagraph(string ATextStyleName);
-    IDocHeadline AddHeadline(int aLevel);
+    IDocHeadline AddHeadline(int aLevel, string Id);
     IDocTOC AddTOC(string aName, int aLevel);
 }
