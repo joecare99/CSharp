@@ -24,9 +24,9 @@ public abstract class HtmlNodeBase : IDocElement
         => AppendDocElement(aType, aClass: null);
 
     public virtual IDocElement AppendDocElement(Enum aType, Type? aClass)
-        => AppendDocElement(aType, aAttribute: default!, value: string.Empty, aClass);
+        => AppendDocElement(aType, aAttribute: default!, value: string.Empty, aClass: aClass);
 
-    public virtual IDocElement AppendDocElement(Enum aType, Enum aAttribute, string value, Type? aClass)
+    public virtual IDocElement AppendDocElement(Enum aType, Enum aAttribute, string value, Type? aClass, string? Id = null)
     {
         if (aType is not HtmlElementType type)
             throw new NotSupportedException($"Element type '{aType}' wird nicht unterstützt.");
@@ -35,7 +35,7 @@ public abstract class HtmlNodeBase : IDocElement
         {
             HtmlElementType.Section   => (IDocSpan)AddChild(new HtmlSection()),
             HtmlElementType.Paragraph => (IDocSpan)AddChild(new HtmlParagraph(styleName: value)),
-            HtmlElementType.Headline  => (IDocSpan)AddChild(new HtmlHeadline(level: TryParseInt(value, 1))),
+            HtmlElementType.Headline  => (IDocSpan)AddChild(new HtmlHeadline(level: TryParseInt(value, 1), id: Id)),
             HtmlElementType.TOC       => (IDocSpan)AddChild(new HtmlTOC(name: value, level: TryParseInt(value, 2))),
             HtmlElementType.Span      => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default)),
             HtmlElementType.Link      => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default) { Href = value }),

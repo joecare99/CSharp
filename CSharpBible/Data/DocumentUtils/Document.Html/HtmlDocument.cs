@@ -35,11 +35,11 @@ public sealed class HtmlDocument : IUserDocument
         return section.AddParagraph(cStylename);
     }
 
-    public IDocHeadline AddHeadline(int nLevel)
+    public IDocHeadline AddHeadline(int nLevel, string Id)
     {
         var section = EnsureRoot();
         _isModified = true;
-        return section.AddHeadline(nLevel);
+        return section.AddHeadline(nLevel, Id);
     }
 
     public IDocTOC AddTOC(string cName, int nLevel)

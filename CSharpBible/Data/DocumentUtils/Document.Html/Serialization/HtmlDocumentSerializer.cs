@@ -45,7 +45,7 @@ public static class HtmlDocumentSerializer
             case "H6":
             {
                 var level = int.Parse(element.TagName[1].ToString());
-                var h = (HtmlHeadline)rootOrContainer.AddHeadline(level);
+                var h = (HtmlHeadline)rootOrContainer.AddHeadline(level, element.Id);
                 MapInline(element, h);
                 break;
             }
@@ -104,8 +104,7 @@ public static class HtmlDocumentSerializer
                     }
                     else if (tag is "A")
                     {
-                        var link = (HtmlSpan)container.AddLink(HtmlFontStyle.Default);
-                        link.Href = el.GetAttribute("href");
+                        var link = (HtmlSpan)container.AddLink(el.GetAttribute("href"), HtmlFontStyle.Default);
                         MapInline(el, link);
                     }
                     else if (tag is "NBSP")

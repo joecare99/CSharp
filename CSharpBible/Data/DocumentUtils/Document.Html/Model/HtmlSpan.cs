@@ -1,11 +1,12 @@
 using Document.Base.Models.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Document.Html.Model;
 
 public sealed class HtmlSpan : HtmlContentBase, IDocSpan
 {
     public IDictionary<string, string> Attributes { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-    public IDocFontStyle FontStyle { get; }
+    public IDocFontStyle FontStyle { get; private set; }
     public bool IsLink { get; set; }
     public string? Href
     {
@@ -33,7 +34,7 @@ public sealed class HtmlSpan : HtmlContentBase, IDocSpan
 
     public void SetStyle(IDocFontStyle fs)
     {
-        throw new NotImplementedException();
+        FontStyle = fs;
     }
 
     public void SetStyle(IUserDocument doc, object aFont)
@@ -43,7 +44,7 @@ public sealed class HtmlSpan : HtmlContentBase, IDocSpan
 
     public void SetStyle(IUserDocument doc, IDocFontStyle aFont)
     {
-        throw new NotImplementedException();
+        FontStyle = aFont;
     }
 
     public void SetStyle(string aStyleName)

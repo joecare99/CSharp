@@ -10,9 +10,9 @@ public sealed class HtmlSection : HtmlNodeBase, IDocSection
         return (IDocParagraph)AddChild(p);
     }
 
-    public IDocHeadline AddHeadline(int aLevel)
+    public IDocHeadline AddHeadline(int aLevel, string Id)
     {
-        var h = new HtmlHeadline(aLevel);
+        var h = new HtmlHeadline(aLevel, Id);
         return (IDocHeadline)AddChild(h);
     }
 

@@ -26,7 +26,7 @@ public sealed class HtmlTOC : HtmlContentBase, IDocTOC
         {
             var p = new HtmlParagraph("TOCEntry");
             var anchorText = h.GetTextContent(true);
-            var span = (HtmlSpan)p.AddLink(HtmlFontStyle.Default);
+            var span = (HtmlSpan)p.AddLink(h.Id, HtmlFontStyle.Default);
             // Generiere (oder finde) eine ID am Headline-Knoten
             var id = h.Nodes.OfType<HtmlSpan>().FirstOrDefault(s => !string.IsNullOrEmpty(s.Id))?.Id
                      ?? Guid.NewGuid().ToString("N");

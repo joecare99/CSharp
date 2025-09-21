@@ -57,9 +57,9 @@ public abstract class HtmlContentBase : HtmlNodeBase, IDocContent
         return (IDocSpan)AddChild(span);
     }
 
-    public virtual IDocSpan AddLink(IDocFontStyle docFontStyle)
+    public virtual IDocSpan AddLink(string Href, IDocFontStyle docFontStyle)
     {
-        var link = new HtmlSpan(docFontStyle) { IsLink = true };
+        var link = new HtmlSpan(docFontStyle) { IsLink = true,Href = Href };
         return (IDocSpan)AddChild(link);
     }
 
