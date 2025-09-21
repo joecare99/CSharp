@@ -1,0 +1,719 @@
+{
+    "title": "Nebel über Bretten",
+  "variables": {
+    "strasse": "Melanchthonstraße",
+    "opfer": "Friedrich von Hohenberg",
+    "detektiv": "Kommissar Keller",
+    "stadt": "Bretten"
+  },
+  "nodes": [
+    {
+      "id": "kap1",
+      "title": "Kapitel 1 – Fund im Nebel",
+      "paragraphs": [
+        "Der Nebel hing schwer über der {{strasse}}. Gelbe Laternenkelche zeichneten milchige Inseln ins Grau, als {{detektiv}} vor der Villa Hohenberg anhielt. Der Kies knirschte, irgendwo tropfte Regen von einer Markise.",
+        "Im Salon: {{opfer}}, tot im Sessel – der Rotwein noch warm. Die Standuhr tickte, das Feuer im Kamin war längst verglommen, und durch eine Spalte im Vorhang drang ein matter Schimmer vom Garten her.",
+        "Auf dem Beistelltisch: zwei Gläser, eines nur benetzt, das andere tiefrot. Der Korken lag sauber daneben. Keine Kampfspuren – aber eine unsichtbare Unruhe füllte den Raum."
+      ],
+      "choices": [
+        { "label": "Clara sofort befragen", "targetId": "kap2_clara" },
+        { "label": "Tatort gründlich untersuchen", "targetId": "kap2_tatort" }
+      ]
+    },
+    {
+      "id": "kap2_clara",
+      "title": "Kapitel 2 – Gespräch mit Clara",
+      "paragraphs": [
+        "Clara Hohenberg öffnete die Tür ihres Zimmers mit verweinten Augen. Der Duft von Terpentin und Kreide lag in der Luft – die Wände voller Skizzen, ein halbfertiges Porträt auf der Staffelei.",
+        "„Wir haben gestritten“, sagte sie leise, „über Geld, über seine Geschäfte. Aber ich habe ihn nicht getötet.“ Ihre Hände zitterten, als sie nach einem Taschentuch griff.",
+        "Im Flur vor dem Zimmer stand ein Schirmständer. Ein Spazierstock lehnte darin – schwer, mit einem silbernen Knauf. Nicht Claras Stil."
+      ],
+      "choices": [
+        { "label": "Nach Alibi fragen", "targetId": "kap3_alibi" },
+        { "label": "Skizzenblock untersuchen", "targetId": "kap3_skizzen" }
+      ]
+    },
+    {
+      "id": "kap2_tatort",
+      "title": "Kapitel 2 – Stille im Salon",
+      "paragraphs": [
+        "Der Salon roch nach kaltem Kaminrauch und teurem Bordeaux. Kein Kampf, keine umgestürzten Möbel – nur eine ordentliche, fast inszeniert wirkende Szenerie.",
+        "Ein Fenster stand spaltbreit offen. Auf der Fensterbank: feine Glasstaubpartikel, als hätte jemand die Verriegelung manipuliert – oder nur so getan.",
+        "Das Teppichmuster verriet subtile Verschiebungen. Eine Spur in Richtung Weinkeller-Tür, kaum sichtbar, als hätte jemand eine Flasche geholt – und etwas zurückgelassen."
+      ],
+      "choices": [
+        { "label": "Rotwein ins Labor geben", "targetId": "kap3_labor" },
+        { "label": "Fenster und Garten prüfen", "targetId": "kap3_fenster" }
+      ]
+    },
+    {
+      "id": "kap3_alibi",
+      "title": "Kapitel 3 – Claras Alibi",
+      "paragraphs": [
+        "Clara atmete tief ein. „Ich war im Theater“, sagte sie. „Premiere im Kleinen Haus, ich habe Freunde getroffen. Danach… bin ich allein nach Hause.“",
+        "Eine eingerissene Eintrittskarte lag auf dem Schreibtisch. Daneben ein Programmheft mit der Zeitangabe der Vorstellung. Wenn das stimmte, blieb ein enger Zeitkorridor.",
+        "„Er war schon tot, als ich kam“, flüsterte sie. „Der Nebel war so dicht, ich habe kaum den Gartenweg gesehen.“"
+      ],
+      "choices": [
+        { "label": "Theaterbesuch verifizieren", "targetId": "kap4_theater" },
+        { "label": "Claras Handy prüfen", "targetId": "kap4_phone" }
+      ]
+    },
+    {
+      "id": "kap3_skizzen",
+      "title": "Kapitel 3 – Skizzenblock",
+      "paragraphs": [
+        "Der Skizzenblock war neu, die oberen Seiten voller Studien mit schnellen Linien. Zwischen Porträtfragmenten fand sich eine überraschend exakte Perspektive auf den Salon – von außen, durch das Fenster.",
+        "Eine kleine Notiz am Rand: „Standpunkt: Nordhecke, 3 m“. Daneben ein Datum, gestern Abend.",
+        "Clara blickte weg. „Ich zeichne oft bei Nacht. Es beruhigt mich…“"
+      ],
+      "choices": [
+        { "label": "Zum Atelier gehen", "targetId": "kap4_atelier" },
+        { "label": "Skizzen mit Tatort abgleichen", "targetId": "kap4_compare" }
+      ]
+    },
+    {
+      "id": "kap3_labor",
+      "title": "Kapitel 3 – Laborauftrag",
+      "paragraphs": [
+        "Die Probe des Weins wanderte in ein beschriftetes Röhrchen. „Wir geben Gaschromatographie“, versprach die Laborantin. „Melden uns, sobald wir ein Ergebnis haben.“",
+        "Zurück im Salon schnürte sich die Zeit zusammen. Der Bordeaux in Glas zwei roch minimal bitter – Einbildung oder Anflug von Mandel? Der Kamin reflektierte stumm.",
+        "Ein Blick zur Kellertür. Wer hatte welche Flasche geholt – und warum diese?"
+      ],
+      "choices": [
+        { "label": "Auf Laborergebnis warten", "targetId": "kap4_lab_result" },
+        { "label": "Weinkeller durchsuchen", "targetId": "kap4_cellar" }
+      ]
+    },
+    {
+      "id": "kap3_fenster",
+      "title": "Kapitel 3 – Spuren am Fenster",
+      "paragraphs": [
+        "Die Verriegelung zeigte feine Kratzer, jedoch ohne eindeutige Hebelspuren. Auf der Außenseite haftete feuchter Lehm – frisch, mit sandigen Einschlüssen.",
+        "Im Beet darunter: Fußabdrücke der Größe 44, deutlich vor dem Regen gesetzt. Der Weg führte zur Seitenpforte und verlor sich am Eisenzaun.",
+        "Die Luft roch nach feuchter Erde und kaltem Blattwerk. Irgendwo knarrte ein Gartentor – oder nur der Nebel, der die Geräusche verzog."
+      ],
+      "choices": [
+        { "label": "Spuren im Garten sichern", "targetId": "kap4_garden" },
+        { "label": "Nachbar befragen", "targetId": "kap4_neighbor" }
+      ]
+    },
+    {
+      "id": "kap4_theater",
+      "title": "Kapitel 4 – Theaterkassen und Zeugen",
+      "paragraphs": [
+        "An der Theaterkasse blätterte die Kassiererin durch Listen. „Clara Hohenberg, zwei Tickets auf ihren Namen – abgeholt um 19:42 Uhr.“",
+        "Ein Bühnenarbeiter nickte. „Ich habe sie in der Pause im Foyer gesehen. Danach… weiß ich nicht.“ Die Premiere endete gegen 21:50 Uhr.",
+        "Die Zeiten ließen Claras Rückweg knapp, aber möglich. Ein Name tauchte in Gesprächen auf: Kurt Baumann, Geschäftspartner des Opfers – vor Ort nicht gesehen, aber häufig Thema."
+      ],
+      "choices": [
+        { "label": "Geschäftspartner Baumann aufsuchen", "targetId": "kap5_partner" },
+        { "label": "Zu Clara zurückkehren", "targetId": "kap5_return_clara" }
+      ]
+    },
+    {
+      "id": "kap4_phone",
+      "title": "Kapitel 4 – Das Telefon",
+      "paragraphs": [
+        "Claras Handy zeigte eine gelöschte Nachricht, die sich teilweise rekonstruieren ließ: „…Schlüssel im Globus… heute Nacht…“. Die Nummer war unterdrückt.",
+        "Der Verlauf wies mehrere kurze Anrufe von einer Prepaid-Nummer aus. Die Funkzelle lag in der Nähe des Dienstbotentrakts der Villa.",
+        "Jemand spielte mit Hinweisen – oder wollte ablenken."
+      ],
+      "choices": [
+        { "label": "Nummer rückverfolgen", "targetId": "kap5_phone_trace" },
+        { "label": "SMS-Inhalt rekonstruieren", "targetId": "kap5_sms" }
+      ]
+    },
+    {
+      "id": "kap4_atelier",
+      "title": "Kapitel 4 – Claras Atelier",
+      "paragraphs": [
+        "Im Atelier mischten sich Ölfarbe, Terpentin und Kaffee zu einem scharfen, lebendigen Geruch. Auf einem Tisch standen verschmierte Lappen, daneben eine Schale mit verblassten Farbresten.",
+        "Ein Kalender an der Wand: Markierungen, rote Kreise, ein kryptisches „E.“ an mehreren Tagen. Die jüngste Notiz: „E. – 21:00 Garten“.",
+        "Clara biss sich auf die Lippe. „Ich wollte reden. Über Geld. Über Freiheit.“"
+      ],
+      "choices": [
+        { "label": "Chemische Probe nehmen", "targetId": "kap5_chem" },
+        { "label": "Kalenderhinweise prüfen", "targetId": "kap5_calendar" }
+      ]
+    },
+    {
+      "id": "kap4_compare",
+      "title": "Kapitel 4 – Perspektive prüfen",
+      "paragraphs": [
+        "Die Skizzenperspektive passte exakt zu einem Punkt an der Nordhecke. Von dort aus sah man in den Salon, wenn der Vorhang offenstand.",
+        "Im Gras glänzte Tau. Zurück blieb ein schwacher Abdruck eines Stativs – oder nur ein Zufall? Ein Zigarettenstummel lag nearby: Filterlos, selten.",
+        "Wer hier stand, beobachtete. Aber hat er auch getötet?"
+      ],
+      "choices": [
+        { "label": "Standpunkt aufsuchen", "targetId": "kap5_vantage" },
+        { "label": "Fensterverriegelung erneut prüfen", "targetId": "kap5_window_recheck" }
+      ]
+    },
+    {
+      "id": "kap4_lab_result",
+      "title": "Kapitel 4 – Laborergebnis",
+      "paragraphs": [
+        "Der Rückruf kam früher als erwartet. „Digitalis-Glykoside im Wein“, sagte die Laborantin. „Keine natürliche Kontamination. Jemand hat nachgeholfen.“",
+        "Das Gift schmeckt bitter, aber im schweren Bordeaux fast verborgen. Die Dosis: tödlich. Das tat jemand mit Wissen – oder mit Skrupellosigkeit."
+      ],
+      "choices": [
+        { "label": "Apotheke/Arzt nach Digitalis-Bezug prüfen", "targetId": "kap5_pharma" },
+        { "label": "Hausapotheke durchsuchen", "targetId": "kap5_medicine_cabinet" }
+      ]
+    },
+    {
+      "id": "kap4_cellar",
+      "title": "Kapitel 4 – Weinkeller",
+      "paragraphs": [
+        "Die Luft war kühl und feucht. Reihenweise ruhende Flaschen, feinsäuberlich katalogisiert. Doch eine Reihe wirkte verstört: Kärtchen vertauscht, Staub verwischt.",
+        "Auf dem Boden: ein kaum wahrnehmbarer Tropfen Bordeaux, daneben ein hauchdünner Rand von dunkler Flüssigkeit – verschüttet und weggewischt.",
+        "Jemand kannte sich aus. Oder hatte Hilfe."
+      ],
+      "choices": [
+        { "label": "Weinkarteikarten prüfen", "targetId": "kap5_cards" },
+        { "label": "Kameralog (falls vorhanden) sichten", "targetId": "kap5_cctv" }
+      ]
+    },
+    {
+      "id": "kap4_garden",
+      "title": "Kapitel 4 – Gartenpfade",
+      "paragraphs": [
+        "Die Abdrücke führten an einem Gartenhaus vorbei. An der Tür klebte feuchter Lehm – als habe jemand mit schmutzigen Stiefeln angestoßen.",
+        "Im Gras lagen zwei dünne Fasern, dunkelblau – Textil? Ein Mantelfaden? Sie klebten am Tau und schimmerten im Laternenlicht.",
+        "Ein Rabe hockte auf dem Zaun und krächzte, als wolle er warnen."
+      ],
+      "choices": [
+        { "label": "Gartenhaus durchsuchen", "targetId": "kap5_shed" },
+        { "label": "Spuren zur Seitenpforte folgen", "targetId": "kap5_gate" }
+      ]
+    },
+    {
+      "id": "kap4_neighbor",
+      "title": "Kapitel 4 – Der Nachbar",
+      "paragraphs": [
+        "Egon Reiter, der Nachbar, öffnete misstrauisch. „Nebel macht die Leute seltsam“, brummte er. „Ich sah eine Gestalt mit Stock, spät. Konnte das Gesicht nicht erkennen.“",
+        "Auf seinem Tisch lag eine alte Zeitung, die vom Börsenrückgang sprach. „Hohenberg“, murmelte er, „immer zu laut, zu stolz.“",
+        "Reiter rauchte filterlose Zigaretten. Ein überquellender Aschenbecher bestätigte die Spur vom Garten."
+      ],
+      "choices": [
+        { "label": "Butler Johann befragen", "targetId": "kap5_butler" },
+        { "label": "Geschäftspartner Baumann befragen", "targetId": "kap5_partner" }
+      ]
+    },
+    {
+      "id": "kap5_partner",
+      "title": "Kapitel 5 – Kurt Baumann",
+      "paragraphs": [
+        "Kurt Baumann empfing in einem gläsernen Büro, zu glatt, zu aufgeräumt. „Furchtbar, was passiert ist“, sagte er, die Hände zu fest auf der Tischplatte.",
+        "Sein Blick flackerte, als das Wort „Versicherung“ fiel. Gerüchte über Investitionen, die ins Wanken geraten waren, verdichteten sich zu Schatten an der Wand.",
+        "„Ich war zu Hause“, behauptete er. „Fragen Sie… keinen.“ Ein dünnes Lächeln. Lügen riechen im Nebel süß."
+      ],
+      "choices": [
+        { "label": "Konten und Verträge prüfen", "targetId": "kap6_accounts" },
+        { "label": "Baumann konfrontieren", "targetId": "kap6_confront_partner" }
+      ]
+    },
+    {
+      "id": "kap5_return_clara",
+      "title": "Kapitel 5 – Zurück zu Clara",
+      "paragraphs": [
+        "Clara saß mit einem Becher kalten Tees am Fenster. „Ich habe ihn geliebt“, sagte sie. „Aber er hat uns alle wie Figuren behandelt.“",
+        "Sie reichte eine Skizze, die Hohenberg lachend zeigte, selbstgefällig. „Er war nicht nur Opfer.“",
+        "Ihre Stimme gewann an Ruhe, als sie von ihren Plänen sprach – wegzugehen, neu zu beginnen."
+      ],
+      "choices": [
+        { "label": "Clara vorläufig entlasten", "targetId": "kap6_clearing_clara" },
+        { "label": "Weitere Spuren im Haus suchen", "targetId": "kap6_continue" }
+      ]
+    },
+    {
+      "id": "kap5_phone_trace",
+      "title": "Kapitel 5 – Prepaid-Spur",
+      "paragraphs": [
+        "Die Nummer führte zu einem Automatenshop, keine Auskunft. Die Funkzellenanalyse ergab Bewegungen rund um den Dienstbotentrakt und den nördlichen Park.",
+        "Ein Datensatz schnitt sich mit den Zeiten des Butlerschichtplans – und mit dem Auto von Baumann, das in der Nähe geparkt gewesen sein musste.",
+        "Zwei Welten trafen sich im Schatten: Pflicht und Profit."
+      ],
+      "choices": [
+        { "label": "Butlers Route prüfen", "targetId": "kap6_butler_route" },
+        { "label": "„E.“ identifizieren (Erpresser?)", "targetId": "kap6_blackmailer" }
+      ]
+    },
+    {
+      "id": "kap5_sms",
+      "title": "Kapitel 5 – Der Globus",
+      "paragraphs": [
+        "Der schwere Globus im Salon ließ sich öffnen. Im Hohlraum: ein kleiner Messingschlüssel, alt, mit eingraviertem Wappen – H für Hohenberg.",
+        "Anhaftungen rochen nach Wein und etwas Bitterem. Wer den Schlüssel kannte, kannte das Haus.",
+        "Eine eingeritzte Markierung im Holz: „G2“. Kellerreihe?"
+      ],
+      "choices": [
+        { "label": "Globus-Hinweis im Keller prüfen", "targetId": "kap4_cellar" },
+        { "label": "Fingerabdrücke sichern", "targetId": "kap6_compare_prints" }
+      ]
+    },
+    {
+      "id": "kap5_chem",
+      "title": "Kapitel 5 – Chemische Spuren",
+      "paragraphs": [
+        "Die Lappen rochen stark nach Terpentin, doch auch nach etwas Pflanzlichem. Ein Abgleich mit dem Labor: Keine Digitalis-Spuren im Atelier.",
+        "Die Farbe an Claras Händen war frisch – aber Farbreste erzählen keine Morde."
+      ],
+      "choices": [
+        { "label": "Digitalis-Bezug über Apotheken prüfen", "targetId": "kap6_pharma" },
+        { "label": "Turpentinspuren weiterverfolgen", "targetId": "kap6_turpentine" }
+      ]
+    },
+    {
+      "id": "kap5_calendar",
+      "title": "Kapitel 5 – Der Kalender",
+      "paragraphs": [
+        "„E.“ tauchte mehrfach in Claras Kalender auf, zuletzt am Tatabend. Egon Reiter? Oder jemand anderes?",
+        "Daneben eine Summe, grob überschlagen – Schulden? Schweigegeld? Liebe ist selten sauber."
+      ],
+      "choices": [
+        { "label": "„E.“ identifizieren", "targetId": "kap6_blackmailer" },
+        { "label": "Zeitleiste präzisieren", "targetId": "kap6_timeline" }
+      ]
+    },
+    {
+      "id": "kap5_vantage",
+      "title": "Kapitel 5 – Standpunkt im Garten",
+      "paragraphs": [
+        "Der Punkt an der Hecke gab den Blick frei. Zigarettenstummel mit Lippenabdruck, filterlos. Egon Reiter bevorzugte diese Marke.",
+        "Ein zerdrücktes Bonbonpapier lag daneben – Hustenbonbons. Der Nebel kratzte in der Kehle aller, die hier warteten."
+      ],
+      "choices": [
+        { "label": "Egon Reiter erneut befragen", "targetId": "kap6_neighbor_egon" },
+        { "label": "Observation einrichten", "targetId": "kap6_stakeout" }
+      ]
+    },
+    {
+      "id": "kap5_window_recheck",
+      "title": "Kapitel 5 – Verriegelung, zweiter Blick",
+      "paragraphs": [
+        "Die Kratzer an der Verriegelung wirkten gesetzt. Kein Hebeln, eher eine gespielte Spur – jemand wollte den Einbruch vortäuschen.",
+        "Im Innenrahmen klebte ein Hauch von Hautschuppen – von innen berührt."
+      ],
+      "choices": [
+        { "label": "Innen-Täter annehmen", "targetId": "kap6_inside_job" },
+        { "label": "Schlüsselverwaltung prüfen", "targetId": "kap6_keys" }
+      ]
+    },
+    {
+      "id": "kap5_pharma",
+      "title": "Kapitel 5 – Apothekenrundgang",
+      "paragraphs": [
+        "Zwei Apotheken bestätigten jüngste Digitalis-Verkäufe – auf Rezept. Ein Name fiel: Kurt Baumann, im Auftrag für einen „kranken Onkel“.",
+        "Die Rezeptkopie zeigte einen Arztstempel, echt, aber alt. Jemand nutzte Schlupflöcher."
+      ],
+      "choices": [
+        { "label": "Durchsuchungsbefehl für Baumann beantragen", "targetId": "kap6_search_partner" },
+        { "label": "Baumann konfrontieren", "targetId": "kap6_confront_partner" }
+      ]
+    },
+    {
+      "id": "kap5_medicine_cabinet",
+      "title": "Kapitel 5 – Hausapotheke",
+      "paragraphs": [
+        "Im Schrank fehlte ein Fläschchen. Der Eindruck im Staub verriet es. Auf der Innenseite: ein fettiger Fingerabdruck, nicht Claras.",
+        "Ein Etikettenrest klebte an der Schranktür: Digitalis – abgerissen."
+      ],
+      "choices": [
+        { "label": "Butler Johann konfrontieren", "targetId": "kap6_confront_butler" },
+        { "label": "Fingerabdrücke vergleichen", "targetId": "kap6_compare_prints" }
+      ]
+    },
+    {
+      "id": "kap5_cards",
+      "title": "Kapitel 5 – Karteikarten",
+      "paragraphs": [
+        "Die Weinkartei zeigte eine seltsame Umbuchung am Vortag. Eine besonders gelobte Flasche war gegen eine gleich aussehende getauscht.",
+        "Die Handschrift passte nicht zu Clara. Eher eckig, gedrungen – männlich, geübt."
+      ],
+      "choices": [
+        { "label": "Sommelier/Weinhändler befragen", "targetId": "kap6_sommelier" },
+        { "label": "Fingerabdrücke im Keller vergleichen", "targetId": "kap6_compare_prints" }
+      ]
+    },
+    {
+      "id": "kap5_cctv",
+      "title": "Kapitel 5 – Kamerasicht",
+      "paragraphs": [
+        "Eine alte Kamera im Seitengang zeichnete in schlechter Qualität. Um 21:22 Uhr huschte eine Gestalt vorbei – dunkler Mantel, breite Schultern.",
+        "Eine auffällige Ziernaht am linken Ärmel war erkennbar. Luxusmarke. Baumann trug etwas Ähnliches."
+      ],
+      "choices": [
+        { "label": "Mantel sicherstellen", "targetId": "kap6_coat" },
+        { "label": "Fahrzeugdaten prüfen", "targetId": "kap6_car" }
+      ]
+    },
+    {
+      "id": "kap5_shed",
+      "title": "Kapitel 5 – Gartenhaus",
+      "paragraphs": [
+        "Im Schrank standen Stiefel, Größe 44, frisch verschlammt. Daneben ein alter Eimer mit Lehm, der die gleichen Einschlüsse wie am Fenster zeigte.",
+        "Ein Lappen roch nach Rotwein, als hätte jemand Spritzer abgewischt."
+      ],
+      "choices": [
+        { "label": "Butler konfrontieren", "targetId": "kap6_confront_butler" },
+        { "label": "Spurenabgleich durchführen", "targetId": "kap6_compare_prints" }
+      ]
+    },
+    {
+      "id": "kap5_gate",
+      "title": "Kapitel 5 – Seitenpforte",
+      "paragraphs": [
+        "Die Kamera an der Pforte erfasste Nummernschilder. Um 21:31 Uhr fuhr ein Wagen vor – Kennzeichen teilverdeckt, aber eindeutig die Serie eines Mietwagens.",
+        "Die Mietdaten führten zu einer Buchung auf einen Strohmann – mit Kreditkarte, die Baumann öfter verwendete."
+      ],
+      "choices": [
+        { "label": "Baumann verhaften", "targetId": "kap6_arrest_partner" },
+        { "label": "Noch Beweise bündeln (Konten)", "targetId": "kap6_accounts" }
+      ]
+    },
+    {
+      "id": "kap5_butler",
+      "title": "Kapitel 5 – Butler Johann",
+      "paragraphs": [
+        "Johann, der Butler, war ein Mann ohne Schnickschnack. Der Stock im Flur gehörte ihm – seit einer Knieverletzung.",
+        "„Ich diene dem Haus“, sagte er. „Und ich diene der Wahrheit.“ Sein Blick wich nicht aus, aber er mochte Clara.",
+        "Ein Schlüsselbund klirrte an seiner Hüfte. Einer fehlte – der mit dem Wappen?"
+      ],
+      "choices": [
+        { "label": "Alibi von Johann prüfen", "targetId": "kap6_butler_alibi" },
+        { "label": "Dienerquartier durchsuchen", "targetId": "kap6_search_quarters" }
+      ]
+    },
+    {
+      "id": "kap6_accounts",
+      "title": "Kapitel 6 – Konten und Verträge",
+      "paragraphs": [
+        "Die Konten offenbarten Risse: riskante Papiere, die ins Minus kippten. Baumann stand mit dem Rücken zur Wand.",
+        "Eine Lebensversicherung auf {{opfer}} – Begünstigter: die Firma, vertreten durch Baumann. Die Summe: genug, um Löcher zu stopfen."
+      ],
+      "choices": [
+        { "label": "Durchsuchungsbefehl beantragen", "targetId": "kap6_search_partner" },
+        { "label": "Baumann erneut konfrontieren", "targetId": "kap6_confront_partner" }
+      ]
+    },
+    {
+      "id": "kap6_confront_partner",
+      "title": "Kapitel 6 – Konfrontation",
+      "paragraphs": [
+        "„Sie haben nichts“, lächelte Baumann dünn. „Nur Vermutungen.“ Doch sein Blick huschte, als die Apotheke, das Rezept und die Kamera zur Sprache kamen.",
+        "Schweiß perlte, als der Globusschlüssel erwähnt wurde. „Das ist absurd“, presste er hervor."
+      ],
+      "choices": [
+        { "label": "Festnehmen", "targetId": "kap_end_partner_guilty" },
+        { "label": "Weitere Beweise sammeln", "targetId": "kap6_accounts" }
+      ]
+    },
+    {
+      "id": "kap6_clearing_clara",
+      "title": "Kapitel 6 – Clara entlastet",
+      "paragraphs": [
+        "Zeugen vom Theater, Uhrzeiten, Wege – die Zeitleiste entlastete Clara weitgehend. Nichts sprach für Gift in ihren Händen.",
+        "Sie weinte, aber da war auch Wut. Auf ein System, das sie klein hielt. Keine Mörderin – eine Gefangene."
+      ],
+      "choices": [
+        { "label": "Fokus auf Baumann", "targetId": "kap5_partner" },
+        { "label": "Butler erneut sprechen", "targetId": "kap5_butler" }
+      ]
+    },
+    {
+      "id": "kap6_continue",
+      "title": "Kapitel 6 – Weitere Spuren",
+      "paragraphs": [
+        "Das Haus atmete Geschichten. Jeder Raum flüsterte eine Spur, doch nicht jede führte ans Ziel.",
+        "Manchmal liegt die Wahrheit im Keller – oder beim Nachbar, der zu viel sieht."
+      ],
+      "choices": [
+        { "label": "Weinkeller erneut prüfen", "targetId": "kap4_cellar" },
+        { "label": "Nachbar erneut befragen", "targetId": "kap4_neighbor" },
+        { "label": "Fall an Kollegen abgeben (Ende offen)", "targetId": "kap_end_case_unsolved" }
+      ]
+    },
+    {
+      "id": "kap6_butler_route",
+      "title": "Kapitel 6 – Johanns Wege",
+      "paragraphs": [
+        "Die Zeiterfassung zeigte Johann zur Tatzeit in der Küche und beim Gästezimmer – mehrere Zeugen, darunter die Köchin.",
+        "Die Funkzellendaten seines alten Telefons passten: kein Abweichen. Der Stock war alt, nicht die Spur."
+      ],
+      "choices": [
+        { "label": "Butler entlasten", "targetId": "kap6_clearing_butler" },
+        { "label": "Baumann verfolgen", "targetId": "kap5_partner" }
+      ]
+    },
+    {
+      "id": "kap6_blackmailer",
+      "title": "Kapitel 6 – „E.“ der Erpresser",
+      "paragraphs": [
+        "„E.“ war Egon Reiter – der Nachbar. Er hatte Hohenberg und Clara beobachtet, um Geld zu erpressen. Aber Gift? Nein. Er mochte Drohungen, keine Endgültigkeit.",
+        "Seine Aussage brachte das Puzzle voran: Er sah Baumann am Zaun – nervös, hastig, als der Nebel dichter wurde."
+      ],
+      "choices": [
+        { "label": "Egon streng verhören", "targetId": "kap6_neighbor_egon" },
+        { "label": "Innen-Täter-Spur stärken", "targetId": "kap6_inside_job" }
+      ]
+    },
+    {
+      "id": "kap6_globe",
+      "title": "Kapitel 6 – Der Schlüsselhinweis",
+      "paragraphs": [
+        "Der Globus-Schlüssel öffnete ein spezifisches Fach im Kellerregal – G2. Dort lag eine identische Flasche wie am Tatort, leer.",
+        "Damit war klar: Jemand hatte bewusst vertauscht."
+      ],
+      "choices": [
+        { "label": "Keller nochmals sichern", "targetId": "kap4_cellar" },
+        { "label": "Fingerabdrücke vergleichen", "targetId": "kap6_compare_prints" }
+      ]
+    },
+    {
+      "id": "kap6_servant",
+      "title": "Kapitel 6 – Dienerflur",
+      "paragraphs": [
+        "Im Dienerflur roch es nach Bohnerwachs und altem Kaffee. Ein Spind stand offen – sauber, ordentlich, ohne Hinweise.",
+        "Ein Zettel an der Pinnwand: Lieferdienst für den Abend abgesagt – Unterschrift unleserlich."
+      ],
+      "choices": [
+        { "label": "Quartier systematisch durchsuchen", "targetId": "kap6_search_quarters" },
+        { "label": "Johann erneut sprechen", "targetId": "kap6_butler_alibi" }
+      ]
+    },
+    {
+      "id": "kap6_pharma",
+      "title": "Kapitel 6 – Apothekenabgleich",
+      "paragraphs": [
+        "Die Apothekerin erinnerte sich: „Der Herr war nervös, sagte, sein Onkel brauche das. Er hatte feine Manschettenknöpfe.“",
+        "Das passte zu Baumann. Ein Mosaikstein mehr."
+      ],
+      "choices": [
+        { "label": "Durchsuchung bei Baumann", "targetId": "kap6_search_partner" },
+        { "label": "Konfrontation vorbereiten", "targetId": "kap6_confront_partner" }
+      ]
+    },
+    {
+      "id": "kap6_turpentine",
+      "title": "Kapitel 6 – Spur im Atelier",
+      "paragraphs": [
+        "Turpentin ist scharf, aber kein Gift wie Digitalis. Claras Atelier war ein Ort der Flucht – nicht des Mordes.",
+        "Die Spur verlor an Kraft. Zeit, den Blick zu heben."
+      ],
+      "choices": [
+        { "label": "Zum Laborergebnis zurück", "targetId": "kap4_lab_result" },
+        { "label": "Baumann prüfen", "targetId": "kap5_partner" }
+      ]
+    },
+    {
+      "id": "kap6_neighbor_egon",
+      "title": "Kapitel 6 – Egons Aussage",
+      "paragraphs": [
+        "Egon gab nach. „Ja, ich hab' geguckt. Ich hab' gedacht, ich krieg' was raus. Aber der mit dem Mantel – das war nicht die Frau.“",
+        "„Breite Schultern. Hat was fallen lassen am Zaun.“ Ein Metallklang, ein Schlüssel?"
+      ],
+      "choices": [
+        { "label": "Aussage protokollieren", "targetId": "kap6_accounts" },
+        { "label": "Observation verstärken", "targetId": "kap6_stakeout" }
+      ]
+    },
+    {
+      "id": "kap6_stakeout",
+      "title": "Kapitel 6 – Observation",
+      "paragraphs": [
+        "Die Nacht atmete Nebel. Gegen Mitternacht bewegte sich eine Gestalt im Garten – dunkler Mantel, gleiche Ziernaht.",
+        "Er hob eine Bodenplatte, holte ein Kuvert. Dokumente. Gier hat einen Rhythmus."
+      ],
+      "choices": [
+        { "label": "Zugreifen", "targetId": "kap_end_partner_guilty" },
+        { "label": "Weiter beobachten", "targetId": "kap6_car" }
+      ]
+    },
+    {
+      "id": "kap6_inside_job",
+      "title": "Kapitel 6 – Der Innentäter",
+      "paragraphs": [
+        "Keine echten Einbruchsspuren, Schlüssel im Spiel, bewusst vertauschte Flaschen. Der Täter kannte das Haus.",
+        "Wer profitierte – und wer hatte Zugang? Butler? Clara? Oder Baumann mit Hilfe?"
+      ],
+      "choices": [
+        { "label": "Schlüsselverwaltung prüfen", "targetId": "kap6_keys" },
+        { "label": "Personalakten durchsuchen", "targetId": "kap6_search_quarters" }
+      ]
+    },
+    {
+      "id": "kap6_keys",
+      "title": "Kapitel 6 – Schlüsselprotokoll",
+      "paragraphs": [
+        "Ein Hauptschlüssel fehlte kurzzeitig in der Liste – vermerkt mit einer unsauberen Signatur. Am nächsten Morgen wieder aufgeführt.",
+        "Später fand sich ein identischer Schlüssel in einem Mantel – nicht im Dienertrakt."
+      ],
+      "choices": [
+        { "label": "Durchsuchung bei Baumann", "targetId": "kap6_search_partner" },
+        { "label": "Butler befragen", "targetId": "kap6_confront_butler" }
+      ]
+    },
+    {
+      "id": "kap6_search_partner",
+      "title": "Kapitel 6 – Durchsuchung bei Baumann",
+      "paragraphs": [
+        "In seinem Schrank: ein Mantel mit der gleichen Ziernaht. In der Innentasche: ein Fläschchen mit Digitalis-Resten.",
+        "In einer Schublade: Weinkarteikarten der Villa – fotografiert, markiert. Und ein Schlüssel mit dem Hohenberg-Wappen."
+      ],
+      "choices": [
+        { "label": "Festnehmen", "targetId": "kap_end_partner_guilty" },
+        { "label": "Presse informieren (trotzdem Festnahme)", "targetId": "kap_end_partner_guilty" }
+      ]
+    },
+    {
+      "id": "kap6_confront_butler",
+      "title": "Kapitel 6 – Gespräch mit Johann",
+      "paragraphs": [
+        "Johann stand aufrecht. „Ich habe den Schlüssel verliehen, ja. An Herrn Baumann. Er sagte, es ginge um eine Überraschung für den Herrn.“",
+        "Scham und Zorn rangen in seiner Stimme. „Ich habe Fehler gemacht. Aber ich töte nicht.“"
+      ],
+      "choices": [
+        { "label": "Johann festnehmen (falsches Ende)", "targetId": "kap_end_butler_guilty" },
+        { "label": "Aussage sichern und Baumann stellen", "targetId": "kap6_search_partner" }
+      ]
+    },
+    {
+      "id": "kap6_compare_prints",
+      "title": "Kapitel 6 – Spurensicherung",
+      "paragraphs": [
+        "Die Abdrücke vom Globus und von der Flasche ergaben ein klares Bild: Baumanns Finger – dazu Textilfasern seines Mantels am Gartenzaun.",
+        "Claras Spuren fanden sich nur dort, wo sie sein mussten. Johann blieb in den Rändern."
+      ],
+      "choices": [
+        { "label": "Baumann festnehmen", "targetId": "kap_end_partner_guilty" },
+        { "label": "Zeitleiste mit Clara final prüfen", "targetId": "kap6_timeline" }
+      ]
+    },
+    {
+      "id": "kap6_sommelier",
+      "title": "Kapitel 6 – Weinhändler",
+      "paragraphs": [
+        "Der Händler erinnerte sich: „Ein Mann bestellte zwei identische Etiketten, wollte eine Flasche ‚aufhübschen‘. Teure Spielchen.“",
+        "Die Beschreibung passte erneut auf Baumann. Fingerzeige wurden Fingerabdrücke."
+      ],
+      "choices": [
+        { "label": "Aussage protokollieren", "targetId": "kap6_accounts" },
+        { "label": "Kellerkameras erneut prüfen", "targetId": "kap5_cctv" }
+      ]
+    },
+    {
+      "id": "kap6_coat",
+      "title": "Kapitel 6 – Der Mantel",
+      "paragraphs": [
+        "Im Stoffsaum: Bordeauxspritzer, im Futter: eine feine Staubspur vom Keller. In der Innentasche: der fehlende Schlüssel.",
+        "Der Mantel erzählte alles, was sein Träger verschwieg."
+      ],
+      "choices": [
+        { "label": "Spurensicherung/DNA", "targetId": "kap6_compare_prints" },
+        { "label": "Sofortige Festnahme", "targetId": "kap_end_partner_guilty" }
+      ]
+    },
+    {
+      "id": "kap6_car",
+      "title": "Kapitel 6 – Fahrzeugspur",
+      "paragraphs": [
+        "Maut- und Kameradaten ergaben eine Linie durch die Nacht. Der Mietwagen kreiste um die Villa wie ein hungriger Wolf.",
+        "Am Ende stand er dort, wo der Nebel am dicksten war."
+      ],
+      "choices": [
+        { "label": "Zugreifen", "targetId": "kap_end_partner_guilty" },
+        { "label": "Noch einmal observieren", "targetId": "kap6_stakeout" }
+      ]
+    },
+    {
+      "id": "kap6_butler_alibi",
+      "title": "Kapitel 6 – Johanns Alibi",
+      "paragraphs": [
+        "Die Köchin bestätigte: „Er war hier, hat Holz gebracht, Tee gekocht. Der Mann ist pünktlich wie die Uhr.“",
+        "Johanns Augen wurden weich, als der Name Clara fiel. Loyalität ist kein Verbrechen."
+      ],
+      "choices": [
+        { "label": "Butler entlasten", "targetId": "kap6_clearing_butler" },
+        { "label": "Blick auf Baumann richten", "targetId": "kap5_partner" }
+      ]
+    },
+    {
+      "id": "kap6_search_quarters",
+      "title": "Kapitel 6 – Dienerquartier",
+      "paragraphs": [
+        "Die Zimmer waren schlicht. In einem Schrank: Stiefel mit Lehm – aber älterer Schmutz, getrocknet, nicht von heute.",
+        "Kein Gift, keine Karten, keine Schlüssel. Nur das Leben hinter den Kulissen."
+      ],
+      "choices": [
+        { "label": "Spuren mit Schuhgröße abgleichen", "targetId": "kap6_compare_prints" },
+        { "label": "Butler erneut vernehmen", "targetId": "kap6_confront_butler" }
+      ]
+    },
+    {
+      "id": "kap6_clearing_butler",
+      "title": "Kapitel 6 – Johann entlastet",
+      "paragraphs": [
+        "Die Spuren entlasteten Johann. Seine Fehler waren menschlich, nicht mörderisch.",
+        "Bleibt, wer vom Tod profitierte – und Zugang hatte."
+      ],
+      "choices": [
+        { "label": "Auf Baumann konzentrieren", "targetId": "kap5_partner" },
+        { "label": "Egon Reiter erneut anhören", "targetId": "kap6_neighbor_egon" }
+      ]
+    },
+    {
+      "id": "kap6_arrest_partner",
+      "title": "Kapitel 6 – Zugriff",
+      "paragraphs": [
+        "Als die Handschellen klickten, blickte Baumann lange in den Nebel. „Er hätte mich ruiniert“, sagte er tonlos.",
+        "Gier ist ein stiller Lehrmeister. Und tödlich, wenn sie Wein trinkt."
+      ],
+      "choices": [
+        { "label": "Fall abschließen", "targetId": "kap_end_partner_guilty" }
+      ]
+    },
+    {
+      "id": "kap6_timeline",
+      "title": "Kapitel 6 – Zeitleiste",
+      "paragraphs": [
+        "Minuten wurden zu Markierungen. Claras Zeiten hielten, Baumanns bröckelten. Der Wein wurde gegen 21:15 manipuliert.",
+        "Um 21:22 die Kameragestalt, um 21:31 der Wagen. Der Tod trat leise um 21:45 ein."
+      ],
+      "choices": [
+        { "label": "Festnahme bei Baumann", "targetId": "kap_end_partner_guilty" },
+        { "label": "Clara endgültig entlasten", "targetId": "kap6_clearing_clara" }
+      ]
+    },
+    {
+      "id": "kap_end_partner_guilty",
+      "title": "Epilog – Der Mantel des Nebels",
+      "paragraphs": [
+        "Kurt Baumann gestand in Stücken, dann im Ganzen: Er hatte die Flaschen getauscht, das Gift dosiert, den Einbruch inszeniert. Schulden, Versicherung, kalte Logik.",
+        "Clara verließ die Villa Wochen später. Johann blieb und hütete die leisen Räume, in denen wieder Holz knisterte und Tee duftete.",
+        "In {{stadt}} blieb der Nebel – aber die Geschichten fanden ihren Weg. {{detektiv}} schrieb einen knappen Bericht: „Der Wein war schwer. Die Wahrheit nicht.“"
+      ],
+      "choices": []
+    },
+    {
+      "id": "kap_end_butler_guilty",
+      "title": "Epilog – Der falsche Schluss",
+      "paragraphs": [
+        "Johann wurde abgeführt. Die Presse liebte das Bild vom Diener, der zu weit ging. Wochen später brachen die Indizien gegen ihn zusammen.",
+        "Die Wahrheit wartete im Mantel eines anderen. Doch manche Fehler lassen sich nicht rückgängig machen.",
+        "Im Nebel verlieren sich nicht nur Schritte – auch Geister der Gerechtigkeit."
+      ],
+      "choices": []
+    },
+    {
+      "id": "kap_end_case_unsolved",
+      "title": "Epilog – Offenes Ende",
+      "paragraphs": [
+        "Der Fall wanderte in eine Mappe. Die Mappe in ein Regal. Die Nacht in {{stadt}} blieb feucht, und der Nebel schwieg.",
+        "Manchmal ist Schweigen die grausamste aller Antworten. Doch Geschichten enden selten – sie warten nur."
+      ],
+      "choices": []
+    }
+  ]
+}
