@@ -1,5 +1,5 @@
 ﻿using Document.Base.Models.Interfaces;
-using Document.Odf.Models;
+using Document_Odf;
 using System.Windows;
 
 namespace OdtBoldTextExample;
