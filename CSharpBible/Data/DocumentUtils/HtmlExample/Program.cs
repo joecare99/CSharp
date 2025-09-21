@@ -45,7 +45,7 @@ public class Program
     {
         // Beispiel: Dokument erstellen, schreiben und wieder lesen
         var root = UserDocumentFactory.Create("html").Root as IDocSection;
-        var h1 = root.AddHeadline(1);
+        var h1 = root.AddHeadline(1, "kap1");
         h1.TextContent = "Titel";
         var p = root.AddParagraph("Body");
         p.AppendText("Hallo ");
