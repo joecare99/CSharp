@@ -1,0 +1,15 @@
+<Window x:Class="AsteroidsModern.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:AsteroidsModern.UI"
+        Title="Asteroids Modern" Height="768" Width="1280"
+        Background="Black" x:Name="RootWindow">
+  <Grid>
+    <Canvas x:Name="GameCanvas" Focusable="True" Background="Black">
+      <i:Interaction.Behaviors>
+        <local:GameCanvasBehavior ViewModel="{Binding ElementName=RootWindow, Path=DataContext}" />
+      </i:Interaction.Behaviors>
+    </Canvas>
+  </Grid>
+</Window>
