@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.6.33815.320
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11012.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EB874EF-C516-4C1C-8CD7-26EB15CA80E1}"
 	ProjectSection(SolutionItems) = preProject
@@ -137,6 +137,61 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Document.Odf", "..\CSharpBible\Data\DocumentUtils\Document.Odf\Document.Odf.csproj", "{0E111F65-9F56-4E0D-89D5-3AB0EFC824A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdtBoldTextExample", "..\CSharpBible\Data\DocumentUtils\OdtBoldTextExample\OdtBoldTextExample.csproj", "{E9D38F51-EB41-4CCD-A59F-FF8A2E5E295F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Document.Html", "..\CSharpBible\Data\DocumentUtils\Document.Html\Document.Html.csproj", "{9C88ADB6-B533-30EA-883E-3F6C49470BD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FPC", "FPC", "{1E65C000-5F80-4D45-9AC4-6323D6700410}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinAhnenCls", "WinAhnenCls", "{2285F289-4D7B-4B59-A12E-6642D02FCDC5}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejAdopData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejAdopData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejBase.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejBase.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejDataFilter.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejDataFilter.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejHelper.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejHelper.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejIndData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejIndData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejMarrData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejMarrData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejPlaceData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejPlaceData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejSourceData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\cls_HejSourceData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AhnenWinClone.lfm = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AhnenWinClone.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AhnenWinClone.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AhnenWinClone.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AWHejView.lfm = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AWHejView.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AWHejView.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_AWHejView.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_HejIndView.lfm = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_HejIndView.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_HejIndView.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_HejIndView.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_IndIndex.lfm = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_IndIndex.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_IndIndex.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\fra_IndIndex.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\frm_FilterEdit.lfm = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\frm_FilterEdit.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\frm_FilterEdit.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\frm_FilterEdit.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsAdopHej.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsAdopHej.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsHej.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsHej.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsHejFilter.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsHejFilter.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsHejHelper.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsHejHelper.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsIndHej.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsIndHej.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsMarrHej.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsMarrHej.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsPlaceHej.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsPlaceHej.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsSourceHej.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_ClsSourceHej.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_fraIndIndex.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_fraIndIndex.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_FrmEditFilter.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\tst_FrmEditFilter.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_AdopTestData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_AdopTestData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_IndTestData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_IndTestData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_MarrTestData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_MarrTestData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_PlaceTestData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_PlaceTestData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_SourceTestData.pas = ..\..\Delphi\Projekte\Genealogie\Source\WinAhnenCls\unt_SourceTestData.pas
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{7B161326-4B7A-460A-9829-0C53409D552F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Projekte\Genealogie\Source\Components\cls_GenHelperBase.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\cls_GenHelperBase.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\fra_NavIData.lfm = ..\..\Delphi\Projekte\Genealogie\Source\Components\fra_NavIData.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\Components\fra_NavIData.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\fra_NavIData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\GBaseClasses.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\GBaseClasses.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\GFacts.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\GFacts.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\GSource.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\GSource.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\Unt_GNameHandler.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\Unt_GNameHandler.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\Unt_IData.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\Unt_IData.pas
+		..\..\Delphi\Projekte\Genealogie\Source\Components\unt_IGenBase2.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\unt_IGenBase2.pas
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -536,6 +591,14 @@ Global
 		{E9D38F51-EB41-4CCD-A59F-FF8A2E5E295F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9D38F51-EB41-4CCD-A59F-FF8A2E5E295F}.Release|x86.ActiveCfg = Release|Any CPU
 		{E9D38F51-EB41-4CCD-A59F-FF8A2E5E295F}.Release|x86.Build.0 = Release|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Debug|x86.Build.0 = Debug|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|x86.ActiveCfg = Release|Any CPU
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -589,6 +652,9 @@ Global
 		{1C5B8DDB-03AC-42F8-8E05-4C5C579A39AF} = {E0561A19-1682-4804-878F-24D4A1CB05C4}
 		{0E111F65-9F56-4E0D-89D5-3AB0EFC824A7} = {5FC2CD13-FCE0-4A26-9944-EE8791512265}
 		{E9D38F51-EB41-4CCD-A59F-FF8A2E5E295F} = {E0561A19-1682-4804-878F-24D4A1CB05C4}
+		{9C88ADB6-B533-30EA-883E-3F6C49470BD3} = {5FC2CD13-FCE0-4A26-9944-EE8791512265}
+		{2285F289-4D7B-4B59-A12E-6642D02FCDC5} = {1E65C000-5F80-4D45-9AC4-6323D6700410}
+		{7B161326-4B7A-460A-9829-0C53409D552F} = {1E65C000-5F80-4D45-9AC4-6323D6700410}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B766B89-B32C-4777-9290-8BF7CEC401B5}
