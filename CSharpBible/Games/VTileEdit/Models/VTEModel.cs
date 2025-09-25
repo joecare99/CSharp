@@ -11,6 +11,8 @@ public class VTEModel : IVTEModel
 
     public Size TileSize => _data.TileSize;
 
+    public Type KeyType => _data.KeyType;
+
     public void Clear() => _data.Clear();
 
     public void LoadFromStream(Stream stream, EStreamType eStreamType) => _data.LoadFromStream(stream, eStreamType);
@@ -21,6 +23,6 @@ public class VTEModel : IVTEModel
 
     public SingleTile GetTileDef(Enum? tile) => _data.GetTileDef(tile);
 
-    public void SetTileDef(Enum tile, string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors)
-        => _data.SetTileDef(tile, new SingleTile(lines, colors.Select(c => new FullColor(c.fgr, c.bgr)).ToArray()));
+    public void SetTileDef(Enum tile, string[] lines, FullColor[] colors)
+        => _data.SetTileDef(tile, new SingleTile(lines, colors));
 }

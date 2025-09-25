@@ -19,12 +19,16 @@ public class VisTileData : ITileDef
 
     public Size TileSize => _size;
 
+    // Expose current keys for selection in UI
+    public IEnumerable<Enum> Keys => _storage.Keys;
+
+    // Expose key type used by storage
+    public Type KeyType => _storage.Count > 0 ? _storage.First().Key.GetType() : typeof(int);
+
     public static bool EqualTo<T>(IEnumerable<T> a, IEnumerable<T> b)
     {
         return a.Zip(b).All((t) => t.First!.Equals(t.Second));
     }
-
-
 
     public SingleTile GetTileDef(Enum? tile)
     {
@@ -41,6 +45,11 @@ public class VisTileData : ITileDef
             return (new string[0], new (ConsoleColor fgr, ConsoleColor bgr)[0]);
     }
 
+    // Allow external editor to change tile-size
+    public void SetTileSize(Size size) => _size = size;
+
+    // Allow external editor to set/replace a tile definition
+    public void SetTileDef(Enum key, SingleTile tile) => _storage[key] = tile;
 
     public void SetTileDefs<T>(ITileDef tiledef) where T : Enum
     {
@@ -405,7 +414,7 @@ public class TileDef : TileDefBase
         return s;
     }
 
-    private void Clear()
+    public void Clear()
         => _storage.Clear();
 
     (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) ITileDef.GetTileDef(Enum? tile)

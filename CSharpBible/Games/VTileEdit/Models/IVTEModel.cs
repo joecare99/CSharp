@@ -12,5 +12,6 @@ public interface IVTEModel
     void SetTileSize(Size size);
     Size TileSize { get; }
     SingleTile GetTileDef(Enum? tile);
-    void SetTileDef(Enum tile, string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors);
+    void SetTileDef(Enum tile, string[] lines, FullColor[] colors);
+    Type KeyType { get; }
  }
