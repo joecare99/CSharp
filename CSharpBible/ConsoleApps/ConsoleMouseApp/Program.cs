@@ -3,13 +3,8 @@
 // Author           : Mir
 // Created          : 12-19-2021
 //
-// Last Modified By : Mir
-// Last Modified On : 08-18-2022
-// ***********************************************************************
-// <copyright file="Program.cs" company="JC-Soft">
-//     Copyright © 2020
-// </copyright>
-// <summary></summary>
+// Last Modified By : AI Assistant
+// Last Modified On : 09-26-2025
 // ***********************************************************************
 using System;
 using System.Drawing;
@@ -21,6 +16,7 @@ using BaseLib.Interfaces;
 using BaseLib.Models;
 using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using ConsoleMouseApp.ViewModels; // added
 
 namespace ConsoleMouseApp
 {
@@ -66,8 +62,8 @@ namespace ConsoleMouseApp
             var sp = new ServiceCollection()
              .AddSingleton<IExtendedConsole, ExtendedConsole>()
              .AddTransient<IConsole, ConsoleProxy>()
+             .AddSingleton<IConsoleMouseViewModel,ConsoleMouseViewModel>()
              .AddSingleton<Application,ConsoleMouseView>()
-             //   .AddTransient<Views.LoadingDialog, Views.LoadingDialog>()
              .BuildServiceProvider();
 
             Ioc.Default.ConfigureServices(sp);
@@ -75,7 +71,6 @@ namespace ConsoleMouseApp
             App = Ioc.Default.GetRequiredService<Application>();
             App.Visible = true;
             App.Draw();
-            App.OnMouseMove += App_MouseMove;
             App.OnCanvasResize += App_CanvasResize;
 
         }
@@ -92,16 +87,6 @@ namespace ConsoleMouseApp
             cl.Inflate(-3, -3);
             if (App != null)
                 App.Dimension = cl;
-        }
-
-        /// <summary>
-        /// Handles the MouseMove event of the App control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
-        private static void App_MouseMove(object? sender, IMouseEvent e)
-        {
-            //         Mouse.Set(Point.Subtract(e.MousePos, (Size?)Mouse.Parent?.Position??Size.Empty));
         }
 
         #endregion

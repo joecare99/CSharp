@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net462;net472;net481;net48</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -19,8 +20,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="*.bak" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
@@ -54,8 +53,5 @@
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 </Project>
