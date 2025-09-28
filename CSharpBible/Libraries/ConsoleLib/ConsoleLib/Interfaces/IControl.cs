@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace ConsoleLib.ConsoleLib.Interfaces
+namespace ConsoleLib.Interfaces
 {
     public interface IControl
     {

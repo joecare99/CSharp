@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleLib.ConsoleLib.Interfaces;
 using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -85,12 +84,14 @@ namespace ConsoleLib
                 if (!value)
                 {
                     Active = false;
+                    Parent?.Invalidate();
                 }
                 _visible = value;
                 if (value)
+                {
                     OnChange?.Invoke(this, EventArgs.Empty);
-                Parent?.Invalidate();
-                Invalidate();
+                    Invalidate();
+                }
             }
         }
 
@@ -355,7 +356,7 @@ namespace ConsoleLib
         /// <param name="dimension">The Dimension.</param>
         public virtual void ReDraw(Rectangle dimension)
         {
-            if (_visible && dimension.IntersectsWith(_dimension))
+            if (_visible && (Parent?.Visible ?? true) && dimension.IntersectsWith(_dimension))
             {
                 Draw();
                 _valid = true;
@@ -585,7 +586,7 @@ namespace ConsoleLib
                 }
             }
             if (!xFlag && M.MouseButtonLeft)
-                OnClick?.Invoke(this, EventArgs.Empty);
+                Click();
 
         }
 

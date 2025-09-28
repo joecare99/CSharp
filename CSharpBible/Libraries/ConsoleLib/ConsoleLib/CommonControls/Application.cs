@@ -12,11 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
-using ConsoleLib.ConsoleLib.Interfaces;
 using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 
 namespace ConsoleLib.CommonControls;
@@ -73,7 +73,7 @@ public class Application : Panel, IApplication
     /// <param name="e">The e.</param>
     private void HandleWinBufEvent(object? sender, Point e)      
     {
-        Console.Clear();
+        ConsoleFramework.console.Clear();
         OnCanvasResize?.Invoke(this, e);
         Invalidate();
     }
@@ -124,11 +124,16 @@ public class Application : Panel, IApplication
 
             MousePos = e.MousePos;
             MButtons = e;
-            foreach (var ctrl in Children)
+            foreach (var ctrl in Children.ToList())
             {
                 if (ctrl.Over(MousePos))
                     ctrl.MouseClick(e);
             }
+        }
+        else 
+        {
+            if (e.MouseWheel != 0)
+               MouseMove(e, e.MousePos);
         }
     }
 
