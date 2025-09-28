@@ -45,7 +45,7 @@ namespace TestConsole
         /// </summary>
         /// <value>The height of the largest window.</value>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override int LargestWindowHeight => throw new NotImplementedException();
+        public override int LargestWindowHeight => form?.WindowHeight ?? 50;
 
         public override string Title { get => form?.Text??""; set => form.Text = value; }
 
