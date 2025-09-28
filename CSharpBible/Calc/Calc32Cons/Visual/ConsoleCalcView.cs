@@ -15,7 +15,7 @@ using ConsoleLib;
 using System;
 using System.Drawing;
 using Calc32.ViewModels.Interfaces;
-using ConsoleLib.ConsoleLib.Interfaces;
+using ConsoleLib.Interfaces;
 using Calc32.Models;
 
 /// <summary>
