@@ -104,7 +104,7 @@ namespace ConsoleDisplay.View.Tests
         public void GetTileDefTest()
         {
             for (var i = 0; i < Enum.GetNames(typeof(TestEnum)).Length; i++)
-                Assert.ThrowsException<NotImplementedException>(()=> new TestTileDef().GetTileDef((TestEnum)i));
+                Assert.ThrowsExactly<NotImplementedException>(()=> new TestTileDef().GetTileDef((TestEnum)i));
         }
 
         /// <summary>
