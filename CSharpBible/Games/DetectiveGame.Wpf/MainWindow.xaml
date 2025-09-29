@@ -4,14 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Detektivspiel"
     Width="800"
-    Height="450">
+    Height="450"
+    KeyDown="Window_KeyDown">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Spacing="8">
+        <StackPanel Orientation="Horizontal">
             <TextBox
                 x:Name="Player1"
                 Width="120"
@@ -25,12 +26,12 @@
                 Width="120"
                 Text="Carol" />
             <Button Click="Start_Click" Content="Start" />
+            <Button Click="Help_Click" Content="?" />
         </StackPanel>
         <ListBox x:Name="Log" Grid.Row="1" />
         <StackPanel
             Grid.Row="2"
-            Orientation="Horizontal"
-            Spacing="8">
+            Orientation="Horizontal" >
             <Button Click="Suggestion_Click" Content="Suggestion" />
             <Button Click="Accusation_Click" Content="Accusation" />
             <Button Click="Next_Click" Content="Next" />

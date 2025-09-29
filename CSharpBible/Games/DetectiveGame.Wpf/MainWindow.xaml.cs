@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using DetectiveGame.Engine.Game;
 using DetectiveGame.Engine.Cards;
 
@@ -10,10 +11,21 @@ public partial class MainWindow : Window
     private readonly GameService _svc = new();
     private GameState? _state;
 
+    private static readonly string Instructions =
+        "Anleitung:\n" +
+        "1. Spielernamen eingeben und Start drücken.\n" +
+        "2. Verdacht: Eine Kombination prüfen (hier derzeit erste Karten).\n" +
+        "3. Anklage: Finale Lösung raten – Fehler => Spieler scheidet aus.\n" +
+        "4. Next: Nächster Spieler.\n" +
+        "Ziel: Richtige Person/Waffe/Raum finden. (F1 oder ? für Hilfe)";
+
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += (_, _) => ShowInstructions();
     }
+
+    private void ShowInstructions() => MessageBox.Show(this, Instructions, "Spielanleitung", MessageBoxButton.OK, MessageBoxImage.Information);
 
     private void Start_Click(object sender, RoutedEventArgs e)
     {
@@ -47,6 +59,17 @@ public partial class MainWindow : Window
         if (_state is null) return;
         _svc.NextTurn(_state);
         ShowTurn();
+    }
+
+    private void Help_Click(object sender, RoutedEventArgs e) => ShowInstructions();
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F1)
+        {
+            ShowInstructions();
+            e.Handled = true;
+        }
     }
 
     private void ShowTurn()
