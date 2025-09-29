@@ -19,7 +19,7 @@ namespace Sokoban.Properties {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource1 {
@@ -169,12 +169,12 @@ namespace Sokoban.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [6]Repository UUID: 885f4a47-7d4f-460f-85f6-059ca52e3f0c
-        ///[7]Revision: 1398
+        ///[7]Revision: 1423
         ///[8]Node Kind: directory
         ///[9]Schedule: normal
         ///[10]Last Changed Author: jc99
-        ///[11]Last Changed Rev: 1317
-        ///[12]Last Changed Date: 2025-04-24 22:33:34 +0200 (Do, 24 Apr 2025)
+        ///[11]Last Changed Rev: 1420
+        ///[12]Last Changed Date: 2025-09-17 11:32:48 +0200 (Mi, 17 Sep 2025)
         ///[13]
         /// ähnelt.
         /// </summary>
