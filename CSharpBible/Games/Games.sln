@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -133,6 +133,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DetectiveGame.Console", "DetectiveGame.Console\DetectiveGame.Console.csproj", "{78BA7302-AB8F-0C32-EBD0-FDE4DD3B27D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DetectiveGame.Wpf", "DetectiveGame.Wpf\DetectiveGame.Wpf.csproj", "{9B8260C3-1264-9915-05B8-313EECE43623}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLib", "..\Libraries\ConsoleLib\ConsoleLib.csproj", "{9F32B398-EE9E-B09C-8023-8A8769315037}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedConsole", "..\Libraries\ExtendedConsole\ExtendedConsole.csproj", "{448CB63B-278E-A7C1-AE2F-3709778245E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -344,6 +348,14 @@ Global
 		{9B8260C3-1264-9915-05B8-313EECE43623}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B8260C3-1264-9915-05B8-313EECE43623}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B8260C3-1264-9915-05B8-313EECE43623}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F32B398-EE9E-B09C-8023-8A8769315037}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F32B398-EE9E-B09C-8023-8A8769315037}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F32B398-EE9E-B09C-8023-8A8769315037}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F32B398-EE9E-B09C-8023-8A8769315037}.Release|Any CPU.Build.0 = Release|Any CPU
+		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -382,6 +394,8 @@ Global
 		{8E1F90C6-43DB-847E-A07D-BACC2CAD767D} = {B87480CD-A73E-41C6-BFD6-3F78F80E3598}
 		{78BA7302-AB8F-0C32-EBD0-FDE4DD3B27D1} = {B87480CD-A73E-41C6-BFD6-3F78F80E3598}
 		{9B8260C3-1264-9915-05B8-313EECE43623} = {B87480CD-A73E-41C6-BFD6-3F78F80E3598}
+		{9F32B398-EE9E-B09C-8023-8A8769315037} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{448CB63B-278E-A7C1-AE2F-3709778245E2} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51252E6F-E712-436A-B391-1C5243F65ABE}
