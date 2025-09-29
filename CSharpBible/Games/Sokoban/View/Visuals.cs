@@ -13,7 +13,7 @@
 // ***********************************************************************
 using ConsoleDisplay.View;
 using Sokoban.Model;
-using Sokoban_Base.Properties;
+using Sokoban.Properties;
 using Sokoban_Base.ViewModels;
 using System;
 using System.Collections.Generic;
