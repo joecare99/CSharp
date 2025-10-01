@@ -45,7 +45,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _tileSource = new HttpTileSource(initialProvider, cache);
         Viewport.Center = new GeoPoint(9, 50);
         Viewport.Zoom = 6;
-        CenterWorldCommand = new RelayCommand(_ => { Viewport.Center = new GeoPoint(9.075, 49.37); });
+        CenterWorldCommand = new RelayCommand(_ => { Viewport.Center = new GeoPoint(9, 50); });
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
