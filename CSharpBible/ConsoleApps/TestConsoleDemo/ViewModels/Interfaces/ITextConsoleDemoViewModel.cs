@@ -11,5 +11,5 @@ public interface ITextConsoleDemoViewModel : INotifyPropertyChanged
     IRelayCommand DoLongTextCommand { get; }
     IRelayCommand DoColorTextCommand { get; }
     IRelayCommand DoDisplayTestCommand { get; }
-
+    string Title { get; set; }
 }

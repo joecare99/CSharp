@@ -71,7 +71,7 @@ public static class ConsoleFramework
     /// </summary>
     public static TextCanvas Canvas => _canvas ??= new TextCanvas(console, new Rectangle(0, 0, console.WindowWidth, Math.Min(50, console.LargestWindowHeight)));
     private static IExtendedConsole? extendedConsole;
-    private static TextCanvas _canvas;
+    private static TextCanvas? _canvas;
 
     /// <summary>
     /// Initializes static members of the <see cref="ConsoleFramework"/> class.

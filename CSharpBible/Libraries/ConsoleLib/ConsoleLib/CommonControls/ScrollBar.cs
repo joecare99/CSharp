@@ -89,18 +89,19 @@ namespace ConsoleLib.CommonControls
 
         #region Appearance / Colors
         public ConsoleColor TrackColor { get; set; } = ConsoleColor.DarkGray;
+      
         public ConsoleColor ThumbColor { get; set; } = ConsoleColor.Gray;
         public ConsoleColor ThumbHotColor { get; set; } = ConsoleColor.White;
         public ConsoleColor ThumbHotBackColor { get; set; } = ConsoleColor.DarkBlue;
-        public ConsoleColor DisabledColor { get; set; } = ConsoleColor.DarkGray;
+        
         public ConsoleColor ArrowColor { get; set; } = ConsoleColor.Gray;
         public ConsoleColor ArrowHotColor { get; set; } = ConsoleColor.White;
         public ConsoleColor ArrowHotBackColor { get; set; } = ConsoleColor.DarkBlue;
+        
+        public ConsoleColor DisabledColor { get; set; } = ConsoleColor.DarkGray;
         public ConsoleColor DisabledBackColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor DisabledThumbBackColor { get; set; } = ConsoleColor.DarkGray;
         #endregion
-
-        public bool Enabled { get; set; } = true;
 
         // Drag state / hover state
         private bool _dragging;
@@ -161,7 +162,7 @@ namespace ConsoleLib.CommonControls
                 bg = DisabledBackColor;
                 thumbBase = DisabledThumbBackColor;
             }
-            ConsoleFramework.Canvas.FillRect(dim, ForeColor, bg, ' ');
+            ConsoleFramework.Canvas.FillRect(dim, ForeColor, bg, ConsoleFramework.chars[3]);
 
             var (thumbPos, thumbLen) = GetThumb();
 
@@ -197,12 +198,12 @@ namespace ConsoleLib.CommonControls
                 if (Vertical)
                 {
                     for (int i = 0; i < thumbLen; i++)
-                        ConsoleFramework.Canvas.OutTextXY(dim.X, dim.Y + thumbPos + i, ' ', fg, tbg);
+                        ConsoleFramework.Canvas.OutTextXY(dim.X, dim.Y + thumbPos + i, ConsoleFramework.chars[1], fg, tbg);
                 }
                 else
                 {
                     for (int i = 0; i < thumbLen; i++)
-                        ConsoleFramework.Canvas.OutTextXY(dim.X + thumbPos + i, dim.Y, ' ', fg, tbg);
+                        ConsoleFramework.Canvas.OutTextXY(dim.X + thumbPos + i, dim.Y, ConsoleFramework.chars[1], fg, tbg);
                 }
             }
             Valid = true;

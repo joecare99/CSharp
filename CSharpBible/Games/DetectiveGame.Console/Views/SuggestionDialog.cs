@@ -92,6 +92,7 @@ public class SuggestionDialog : Panel, IPopup
     {
         Accepted = accept;
         Closed?.Invoke();
+        Hide();
         Parent?.Remove(this);
     }
 

@@ -220,7 +220,7 @@ namespace ConsoleLib.CommonControls
 
         public override void MouseClick(Interfaces.IMouseEvent M)
         {
-            if (!Visible) { base.MouseClick(M); return; }
+            if (!Visible || !Enabled) { base.MouseClick(M); return; }
             var dim = RealDim;
             if (!dim.Contains(M.MousePos)) { base.MouseClick(M); return; }
             int relY = M.MousePos.Y - dim.Y;
@@ -237,6 +237,7 @@ namespace ConsoleLib.CommonControls
 
         public override void MouseMove(Interfaces.IMouseEvent M, Point lastMousePos)
         {
+            if (!Visible || !Enabled) { return; }
             bool invalidate = false;
             if (M.MouseWheel != 0 && ItemCount > 0)
             {
@@ -247,6 +248,8 @@ namespace ConsoleLib.CommonControls
                 invalidate = true;
             }
             var dim = RealDim;
+            if (NeedScrollBar)
+                dim.Inflate(-1,0);
             if (dim.Contains(M.MousePos))
             {
                 int relY = M.MousePos.Y - dim.Y;
@@ -278,6 +281,7 @@ namespace ConsoleLib.CommonControls
 
         public override void HandlePressKeyEvents(Interfaces.IKeyEvent e)
         {
+            if (!Visible || !Enabled) { return; }
             if (!e.bKeyDown) return;
             switch (char.ToUpperInvariant(e.KeyChar))
             {

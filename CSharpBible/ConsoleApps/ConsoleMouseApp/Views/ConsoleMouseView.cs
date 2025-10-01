@@ -56,7 +56,7 @@ namespace ConsoleMouseApp.Views
 
             CreateMenu();
             CreateContent();
-            _panel3.Visible = _vm.Panel3_Visible;
+            _panel3!.Visible = _vm.Panel3_Visible;
             Visible = true;
             OnMouseMove += App_MouseMove;
         }
@@ -127,10 +127,9 @@ namespace ConsoleMouseApp.Views
                 ParentBackground = true,
                 Position = new Point(40, 2),
                 Text = "",
-                size = new Size(15, 1)
+                size = new Size(15, 1),
+                Binding = (_vm, nameof(IConsoleMouseViewModel.MousePosition))
             };
-            // Bind label text to view model MousePosition
-            _lblMousePos.Binding = (_vm, nameof(IConsoleMouseViewModel.MousePosition));
 
             // Add OK / Cancel buttons with commands from view model
             _btnOK = new Button

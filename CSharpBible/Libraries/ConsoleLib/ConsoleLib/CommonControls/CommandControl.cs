@@ -11,19 +11,7 @@ namespace ConsoleLib.CommonControls
 {
     public class CommandControl : Control
     {
-        protected bool _enabled = true;
-        protected ICommand? _command;
-
-        public bool Enabled
-        {
-            get => _enabled;
-            set
-            {
-                if (_enabled == value) return;
-                _enabled = value;
-                OnEnabledChanged();
-            }
-        }
+        private ICommand? _command;
 
         public virtual ICommand? Command
         {
@@ -50,20 +38,16 @@ namespace ConsoleLib.CommonControls
             }
             else
             {
-                bool can = _command.CanExecute(Tag);
-                if (can != Enabled)
-                    Enabled = can;
+                Enabled = _command.CanExecute(Tag);
             }
         }
-
-        protected virtual void OnEnabledChanged() => Invalidate();
 
         public override void Click()
         {
             if (!Enabled) return; // ignore clicks when disabled
-            base.Click(); // raise OnClick event first
             if (_command != null && _command.CanExecute(Tag))
                 _command.Execute(Tag);
+            base.Click(); // raise OnClick event first
         }
     }
 }

@@ -50,8 +50,8 @@ namespace ConsoleLib.CommonControls
         public override void Draw()
         {
             ConsoleFramework.Canvas.FillRect(RealDim,ForeColor, BackColor, ConsoleFramework.chars[3]);
-            if ((Border?.Length ?? 0)> 5)
-                ConsoleFramework.Canvas.DrawRect(RealDim, BoarderColor, BackColor, Border);
+            if (Border?.Length > 5)
+                ConsoleFramework.Canvas.DrawRect(RealDim, BoarderColor, BackColor, Border!);
             foreach( Control c in Children.Reverse()) if (c.Visible)
                 {
                 if (c.Shadow)

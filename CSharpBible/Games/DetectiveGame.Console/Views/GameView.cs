@@ -56,6 +56,7 @@ public class GameView
             Position = new System.Drawing.Point(22, 1),
             size = new System.Drawing.Size(58, 20),
             ItemsSource = _vm.History,
+            Enabled = false,
             Text = "History"
         };
 
