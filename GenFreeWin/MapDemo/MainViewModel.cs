@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using GenFreeBrowser.Map;
+using GenFreeBrowser.Map.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MapDemo;

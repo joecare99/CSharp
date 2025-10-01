@@ -3,6 +3,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using GenFreeBrowser.Map;
 using GenFreeBrowser.Map.DI;
+using GenFreeBrowser.Map.Interfaces;
 
 namespace MapDemo;
 

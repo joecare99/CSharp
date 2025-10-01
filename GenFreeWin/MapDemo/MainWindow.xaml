@@ -11,7 +11,10 @@
             <TextBlock Text="Zoom:" VerticalAlignment="Center" Margin="12,0,4,0"/>
             <Slider Width="150" Minimum="0" Maximum="21" Value="{Binding Viewport.Zoom,Mode=TwoWay}"/>
             <Button Content="Center World" Margin="12,0,0,0" Command="{Binding CenterWorldCommand}"/>
-            <TextBlock Text="{Binding Viewport.Center}" VerticalAlignment="Center" Margin="12,0,0,0"/>
+            <TextBlock Text="Center:" VerticalAlignment="Center" Margin="12,0,4,0"/>
+            <TextBlock Text="{Binding Viewport.Center}" VerticalAlignment="Center"/>
+            <TextBlock Text="Cursor:" VerticalAlignment="Center" Margin="12,0,4,0"/>
+            <TextBlock Text="{Binding Viewport.Cursor}" VerticalAlignment="Center"/>
         </StackPanel>
         <map:MapView Viewport="{Binding Viewport}" TileSource="{Binding TileSource}" />
     </DockPanel>
