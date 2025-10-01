@@ -34,6 +34,7 @@ namespace ConsoleLib.Interfaces
         string Text { get; set; }
         bool Valid { get; set; }
         bool Visible { get; set; }
+        bool Enabled { get; set; }
         IControl? ActiveControl { get; set; }
         ConsoleColor BackColor { get; set; }
         ConsoleColor ForeColor { get; set; }

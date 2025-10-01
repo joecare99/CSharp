@@ -28,8 +28,6 @@ namespace ConsoleLib.CommonControls
         public ConsoleColor DisabledBackColor { get; set; } = ConsoleColor.DarkGray;
         public ConsoleColor DisabledFrontColor { get; set; } = ConsoleColor.Black;
 
-        public bool Enabled { get => _enabled; set => SetEnabled(value); }
-
         public void Set(int X, int Y, string text, ConsoleColor backColor)
         {
             BackColor =
@@ -42,7 +40,7 @@ namespace ConsoleLib.CommonControls
 
         public override void MouseEnter(Point M)
         {
-            if (_enabled)
+            if (Enabled)
             {
                 base.MouseEnter(M);
                 _ActBackColor = HLBackColor;
@@ -53,7 +51,7 @@ namespace ConsoleLib.CommonControls
         public override void MouseLeave(Point M)
         {
             base.MouseLeave(M);
-            _ActBackColor = _enabled ? BackColor : DisabledBackColor;
+            _ActBackColor = Enabled ? BackColor : DisabledBackColor;
             Invalidate();
         }
 
@@ -63,30 +61,19 @@ namespace ConsoleLib.CommonControls
             size = new Size(value.Length + 2, 1);
         }
 
-        private void SetEnabled(bool value)
+        public override void Draw()
         {
-            _enabled = value;
-            _ActBackColor = _enabled ? BackColor : DisabledBackColor;
-            _ActForeColor = _enabled ? ForeColor : DisabledFrontColor;
-            Invalidate();
-        }
-
-        public override ICommand? Command
-        {
-            get => base.Command; set
+            // Beispiel: Farbwahl abhängig von Enabled
+            var oldFore = ForeColor;
+            var oldBack = BackColor;
+            if (!Enabled)
             {
-                base.Command = value;
-                if (value != null)
-                {
-                    Enabled = value.CanExecute(Tag);
-                }
+                ForeColor = ConsoleColor.DarkGray;
+                BackColor = ConsoleColor.Black;
             }
-        }
-
-        protected override void Command_CanExecuteChanged(object? sender, EventArgs e)
-        {
-            Enabled = (sender as ICommand)?.CanExecute(Tag) ?? Enabled;
-            base.Command_CanExecuteChanged(sender, e);
+            base.Draw();
+            ForeColor = oldFore;
+            BackColor = oldBack;
         }
     }
 }
