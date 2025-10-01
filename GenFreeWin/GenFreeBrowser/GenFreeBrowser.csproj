@@ -24,5 +24,7 @@
     <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
     <ProjectReference Include="..\GenFreeData\GenFreeData.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Using Include="GenFreeBrowser.Places" />
+  </ItemGroup>
 </Project>
