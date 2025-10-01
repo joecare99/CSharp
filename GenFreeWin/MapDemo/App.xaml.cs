@@ -28,7 +28,7 @@ public partial class App : Application
         sc.AddSingleton<IMapProvider>(bingareal); // default
         sc.AddSingleton<ITileSource>(sp => new HttpTileSource(sp.GetRequiredService<IMapProvider>(), sp.GetRequiredService<ITileCache>()));
 
-        sc.AddSingleton<MainViewModel>();
+        sc.AddTransient<MainViewModel>();
         Services = sc.BuildServiceProvider();
     }
 }
