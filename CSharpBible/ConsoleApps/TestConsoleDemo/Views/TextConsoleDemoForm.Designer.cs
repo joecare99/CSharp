@@ -113,14 +113,15 @@ namespace TestConsoleDemo.Views
         #endregion
 
         private System.Windows.Forms.Timer timer1;
+        [TextBinding(nameof(ITextConsoleDemoViewModel.Title))]
         private TextBox textBox1;
-        [TextBinding(nameof(ITextConsoleDemoViewModel.DoHelloCommand))]
+        [CommandBinding(nameof(ITextConsoleDemoViewModel.DoHelloCommand))]
         private Button btnHello;
-        [TextBinding(nameof(ITextConsoleDemoViewModel.DoLongTextCommand))]
+        [CommandBinding(nameof(ITextConsoleDemoViewModel.DoLongTextCommand))]
         private Button btnLongText;
-        [TextBinding(nameof(ITextConsoleDemoViewModel.DoColorTextCommand))]
+        [CommandBinding(nameof(ITextConsoleDemoViewModel.DoColorTextCommand))]
         private Button btnColText;
-        [TextBinding(nameof(ITextConsoleDemoViewModel.DoDisplayTestCommand))]
+        [CommandBinding(nameof(ITextConsoleDemoViewModel.DoDisplayTestCommand))]
         private Button btnDisplayTest;
     }
 }
