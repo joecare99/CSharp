@@ -1,0 +1,18 @@
+<Window x:Class="MapDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:map="clr-namespace:GenFreeBrowser.Map.Controls;assembly=GenFreeBrowser"
+        Title="Map Demo" Width="900" Height="600">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
+            <ComboBox Width="220"
+                      ItemsSource="{Binding ProviderCatalog.Providers}"
+                      DisplayMemberPath="Name" SelectedItem="{Binding SelectedProvider}"/>
+            <TextBlock Text="Zoom:" VerticalAlignment="Center" Margin="12,0,4,0"/>
+            <Slider Width="150" Minimum="0" Maximum="21" Value="{Binding Viewport.Zoom,Mode=TwoWay}"/>
+            <Button Content="Center World" Margin="12,0,0,0" Command="{Binding CenterWorldCommand}"/>
+            <TextBlock Text="{Binding Viewport.Center}" VerticalAlignment="Center" Margin="12,0,0,0"/>
+        </StackPanel>
+        <map:MapView Viewport="{Binding Viewport}" TileSource="{Binding TileSource}" />
+    </DockPanel>
+</Window>

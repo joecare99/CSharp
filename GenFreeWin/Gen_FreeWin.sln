@@ -193,6 +193,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", 
 		..\..\Delphi\Projekte\Genealogie\Source\Components\unt_IGenBase2.pas = ..\..\Delphi\Projekte\Genealogie\Source\Components\unt_IGenBase2.pas
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LazMapViewer", "LazMapViewer", "{D12BDC1F-8999-468D-B9A3-7DC6041DF5BB}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvcache.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvcache.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvde_intfgraphics.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvde_intfgraphics.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvde_lcl.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvde_lcl.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdlefpc.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdlefpc.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdownloadengine.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdownloadengine.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdragobj.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdragobj.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdrawingengine.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvdrawingengine.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvengine.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvengine.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvextradata.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvextradata.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvgeonames.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvgeonames.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvgpsobj.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvgpsobj.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvgpx.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvgpx.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvjobqueue.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvjobqueue.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvjobs.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvjobs.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvmapprovider.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvmapprovider.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvmapviewer.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvmapviewer.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvmapviewerreg.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvmapviewerreg.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvtypes.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\source\mvtypes.pas
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example1", "Example1", "{34589D5F-CB9B-4257-BE0B-FBB6C8454273}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\globals.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\globals.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpslistform.lfm = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpslistform.lfm
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpslistform.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpslistform.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpsptform.lfm = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpsptform.lfm
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpsptform.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\gpsptform.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\main.lfm = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\main.lfm
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\main.pas = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\main.pas
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\mapmarker.png = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\mapmarker.png
+		..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\MapViewer_Demo.lpr = ..\..\Lazarus\Package-Repo\packages\LazMapViewer\example\MapViewer_Demo.lpr
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapDemo", "MapDemo\MapDemo.csproj", "{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -599,6 +636,14 @@ Global
 		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|x86.ActiveCfg = Release|Any CPU
 		{9C88ADB6-B533-30EA-883E-3F6C49470BD3}.Release|x86.Build.0 = Release|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Debug|x86.Build.0 = Debug|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Release|x86.ActiveCfg = Release|Any CPU
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -655,6 +700,9 @@ Global
 		{9C88ADB6-B533-30EA-883E-3F6C49470BD3} = {5FC2CD13-FCE0-4A26-9944-EE8791512265}
 		{2285F289-4D7B-4B59-A12E-6642D02FCDC5} = {1E65C000-5F80-4D45-9AC4-6323D6700410}
 		{7B161326-4B7A-460A-9829-0C53409D552F} = {1E65C000-5F80-4D45-9AC4-6323D6700410}
+		{D12BDC1F-8999-468D-B9A3-7DC6041DF5BB} = {1E65C000-5F80-4D45-9AC4-6323D6700410}
+		{34589D5F-CB9B-4257-BE0B-FBB6C8454273} = {D12BDC1F-8999-468D-B9A3-7DC6041DF5BB}
+		{F2C366BA-6E67-ED25-4848-1EF4216CFDB5} = {2365079F-BDCB-455D-BEB4-9C5D270B2E7A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B766B89-B32C-4777-9290-8BF7CEC401B5}
