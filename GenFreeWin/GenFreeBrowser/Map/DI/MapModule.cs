@@ -1,3 +1,4 @@
+using GenFreeBrowser.Map.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GenFreeBrowser.Map.DI;

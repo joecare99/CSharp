@@ -1,3 +1,4 @@
+using GenFreeBrowser.Map.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ public partial class MapView : UserControl
 
     private readonly ConcurrentDictionary<TileId, Image> _tiles = new();
     private Point? _lastDrag;
+    private const int CursorUpdateMinIntervalMs = 50; // 1000 / 20 = 50ms
+    private long _lastCursorUpdateTicks; // Environment.TickCount64 snapshot
 
     public ViewportState? Viewport
     {
@@ -36,6 +39,7 @@ public partial class MapView : UserControl
         InitializeComponent();
         Loaded += (_, _) => { if (Viewport != null) { Viewport.PixelSize = new Size(ActualWidth, ActualHeight); RefreshAsync(); } };
         SizeChanged += (_, _) => { if (Viewport != null) { Viewport.PixelSize = new Size(ActualWidth, ActualHeight); RefreshAsync(); } };
+        MouseMove += OnMapMouseMove;
     }
 
     private static void OnViewportChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -131,6 +135,9 @@ public partial class MapView : UserControl
         base.OnMouseMove(e);
         if (_lastDrag != null && Viewport != null && e.LeftButton == MouseButtonState.Pressed)
         {
+            long now = Environment.TickCount64;
+            if (now - _lastCursorUpdateTicks < CursorUpdateMinIntervalMs) return; // throttle to ~20 Hz
+            _lastCursorUpdateTicks = now;
             var pos = e.GetPosition(this);
             var dx = pos.X - _lastDrag.Value.X;
             var dy = pos.Y - _lastDrag.Value.Y;
@@ -142,6 +149,23 @@ public partial class MapView : UserControl
             var newCenter = WebMercator.Unproject(cx - tilesDx, cy - tilesDy, Viewport.Zoom);
             Viewport.Center = newCenter;
         }
+    }
+
+    private void OnMapMouseMove(object sender, MouseEventArgs e)
+    {
+        if (Viewport == null) return;
+        long now = Environment.TickCount64;
+        if (now - _lastCursorUpdateTicks < CursorUpdateMinIntervalMs) return; // throttle to ~20 Hz
+        _lastCursorUpdateTicks = now;
+        var pos = e.GetPosition(this);
+        // Convert pixel position to geographic coordinate
+        var (centerTileX, centerTileY) = Viewport.CenterTileXY();
+        double pxFromCenterX = pos.X - ActualWidth / 2.0;
+        double pxFromCenterY = pos.Y - ActualHeight / 2.0;
+        double tilesFromCenterX = pxFromCenterX / MapConstants.TileSize;
+        double tilesFromCenterY = pxFromCenterY / MapConstants.TileSize;
+        var geo = WebMercator.Unproject(centerTileX + tilesFromCenterX, centerTileY + tilesFromCenterY, Viewport.Zoom);
+        Viewport.Cursor = geo;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)

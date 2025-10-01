@@ -1,3 +1,4 @@
+using GenFreeBrowser.Map.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -19,11 +20,13 @@ public sealed class MapProvider : IMapProvider
         Func<TileId, string>? YFormatter,
         Func<TileId, string>? ZFormatter);
 
+    public string Id { get; }
     public string Name { get; }
 
-    public MapProvider(string name)
+    public MapProvider(string id, string name)
     {
-        Name = name;
+        Id = id ?? throw new ArgumentNullException(nameof(id));
+        Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
     public int LayerCount => _layers.Count;

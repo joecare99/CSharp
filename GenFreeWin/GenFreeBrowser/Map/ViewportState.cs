@@ -10,6 +10,7 @@ public sealed class ViewportState : INotifyPropertyChanged
     private GeoPoint _center = new(0,50);
     private int _zoom = 5;
     private Size _pixelSize;
+    private GeoPoint _cursor; // current mouse cursor geographic position
 
     public GeoPoint Center
     {
@@ -27,6 +28,12 @@ public sealed class ViewportState : INotifyPropertyChanged
     {
         get => _pixelSize;
         set { if (_pixelSize != value) { _pixelSize = value; OnChanged(); } }
+    }
+
+    public GeoPoint Cursor
+    {
+        get => _cursor;
+        set { if (!_cursor.Equals(value)) { _cursor = GeoPoint.Clamp(value); OnChanged(); } }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

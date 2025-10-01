@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GenFreeBrowser.Map.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GenFreeBrowser.Map;
@@ -13,7 +14,7 @@ public static class MapProviders
 {
     public static MapProvider CreateOpenStreetMap()
     {
-        var mp = new MapProvider("OpenStreetMap");
+        var mp = new MapProvider("osm", "OpenStreetMap");
         mp.AddUrl(
             template: "https://%serv%.tile.openstreetmap.org/%z%/%x%/%y%.png",
             serverCount: 3,
@@ -27,12 +28,12 @@ public static class MapProviders
     public static MapProvider CreateBingRoads()
     {
         // Bing Roads layer (no API key appended here - add your key via query string if needed)
-        var mp = new MapProvider("Bing Roads");
+        var mp = new MapProvider("bing_roads", "Bing Roads");
         mp.AddUrl(
             template: "https://ecn.t%serv%.tiles.virtualearth.net/tiles/r%x%.png?g=0&n=z",
             serverCount: 4,
             minZoom: 0,
-            maxZoom: 21,
+            maxZoom: 20,
             serverFormatter: id => id.ToString(),
             xFormatter: MapProvider.QuadKey,
             yFormatter: null,
@@ -43,12 +44,12 @@ public static class MapProviders
 
     public static MapProvider CreateBingAerial()
     {
-        var mp = new MapProvider("Bing Aerial");
+        var mp = new MapProvider("bing_aerial", "Bing Aerial");
         mp.AddUrl(
             template: "https://ecn.t%serv%.tiles.virtualearth.net/tiles/a%x%.jpg?g=0&n=z",
             serverCount: 4,
             minZoom: 0,
-            maxZoom: 21,
+            maxZoom: 20,
             serverFormatter: id => id.ToString(),
             xFormatter: MapProvider.QuadKey
         );
@@ -58,7 +59,7 @@ public static class MapProviders
     public static MapProvider CreateGoogleMaps()
     {
         // Google tile access may require proper usage of their APIs. This is illustrative only.
-        var mp = new MapProvider("Google Maps");
+        var mp = new MapProvider("google_maps", "Google Maps");
         mp.AddUrl(
             template: "https://mt%serv%.google.com/vt/lyrs=m&x=%x%&y=%y%&z=%z%",
             serverCount: 4,
@@ -71,7 +72,7 @@ public static class MapProviders
 
     public static MapProvider CreateGoogleSatellite()
     {
-        var mp = new MapProvider("Google Satellite");
+        var mp = new MapProvider("google_satellite", "Google Satellite");
         mp.AddUrl(
             template: "https://mt%serv%.google.com/vt/lyrs=s&x=%x%&y=%y%&z=%z%",
             serverCount: 4,
