@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -53,6 +53,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLibTests", "..\Libraries\ConsoleLibTests\ConsoleLibTests.csproj", "{E14A9353-7AD6-1EED-D034-E535DD63D6D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDisplayTests", "..\Libraries\ConsoleDisplayTests\ConsoleDisplayTests.csproj", "{72B19B33-1A94-C2C2-6116-7BC1A70C5316}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleOverlapApp", "ConsoleOverlapApp\ConsoleOverlapApp.csproj", "{A98EAC8F-F8FB-2E15-6652-019D43955849}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{19C800E8-1A0B-4820-816C-005E134A4C42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DetectiveGame.Console", "..\Games\DetectiveGame.Console\DetectiveGame.Console.csproj", "{917266CA-1355-D491-EB84-C09AEFB74E69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DetectiveGame.Engine", "..\Games\DetectiveGame.Engine\DetectiveGame.Engine.csproj", "{736085AA-B9A5-1E79-2E7D-F79D3547242B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +140,18 @@ Global
 		{72B19B33-1A94-C2C2-6116-7BC1A70C5316}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72B19B33-1A94-C2C2-6116-7BC1A70C5316}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72B19B33-1A94-C2C2-6116-7BC1A70C5316}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A98EAC8F-F8FB-2E15-6652-019D43955849}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A98EAC8F-F8FB-2E15-6652-019D43955849}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A98EAC8F-F8FB-2E15-6652-019D43955849}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A98EAC8F-F8FB-2E15-6652-019D43955849}.Release|Any CPU.Build.0 = Release|Any CPU
+		{917266CA-1355-D491-EB84-C09AEFB74E69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917266CA-1355-D491-EB84-C09AEFB74E69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917266CA-1355-D491-EB84-C09AEFB74E69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917266CA-1355-D491-EB84-C09AEFB74E69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{736085AA-B9A5-1E79-2E7D-F79D3547242B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{736085AA-B9A5-1E79-2E7D-F79D3547242B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{736085AA-B9A5-1E79-2E7D-F79D3547242B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{736085AA-B9A5-1E79-2E7D-F79D3547242B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,6 +175,9 @@ Global
 		{448CB63B-278E-A7C1-AE2F-3709778245E2} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 		{E14A9353-7AD6-1EED-D034-E535DD63D6D3} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 		{72B19B33-1A94-C2C2-6116-7BC1A70C5316} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{A98EAC8F-F8FB-2E15-6652-019D43955849} = {854ED3DA-3E2B-4EC4-A59B-4AC6ADD4E6E4}
+		{917266CA-1355-D491-EB84-C09AEFB74E69} = {19C800E8-1A0B-4820-816C-005E134A4C42}
+		{736085AA-B9A5-1E79-2E7D-F79D3547242B} = {19C800E8-1A0B-4820-816C-005E134A4C42}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6EE4894E-A5C0-4C47-86D9-D713DE51D783}
