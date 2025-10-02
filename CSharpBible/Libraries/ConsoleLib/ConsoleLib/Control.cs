@@ -450,7 +450,7 @@ namespace ConsoleLib
             OnResize?.Invoke(this, EventArgs.Empty);
         }
 
-        public void SetBinding(INotifyPropertyChanged model,string sProperty)
+        protected virtual void SetBinding(INotifyPropertyChanged model,string sProperty)
         {
             if (model == null)
                 return;
@@ -655,7 +655,7 @@ namespace ConsoleLib
         {
             if (!CanProcessInput) return;
 
-            if (e.KeyChar == Accelerator)
+            if (e.KeyChar == Accelerator && Accelerator != '\0')
             {
                 Click();
                 e.Handled = true;
@@ -670,6 +670,8 @@ namespace ConsoleLib
                         if (e.Handled)
                             break;
                     }
+                if (!e.Handled)
+                    OnKeyPressed?.Invoke(this, e);
             }
 
         }

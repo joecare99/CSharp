@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ConsoleLib.Interfaces;
+using System.ComponentModel; // Added for binding
+using System.Reflection;
 
 namespace ConsoleLib.CommonControls
 {
@@ -29,16 +31,11 @@ namespace ConsoleLib.CommonControls
         private DateTime _lastBlink = DateTime.Now;
         private bool _showCaret = true;
 
-        // Virtual-Key Codes (Windows)
-        private const ushort VK_LEFT = 0x25;
-        private const ushort VK_UP = 0x26;
-        private const ushort VK_RIGHT = 0x27;
-        private const ushort VK_DOWN = 0x28;
-        private const ushort VK_HOME = 0x24;
-        private const ushort VK_END = 0x23;
-        private const ushort VK_DELETE = 0x2E;
-        private const ushort VK_PRIOR = 0x21; // PageUp
-        private const ushort VK_NEXT = 0x22;  // PageDown
+        // Two-way binding backing fields
+        private INotifyPropertyChanged? _boundModel;
+        private string? _boundProperty;
+        private PropertyInfo? _boundPropInfo;
+        private bool _suppressModelUpdate;
 
         public bool MultiLine
         {
@@ -69,6 +66,55 @@ namespace ConsoleLib.CommonControls
             _lines.Add(string.Empty);
             BackColor = ConsoleColor.DarkBlue;
             ForeColor = ConsoleColor.White;
+        }
+
+        /// <summary>
+        /// Establish or change a two-way binding between this TextBox and a property of a model implementing INotifyPropertyChanged.
+        /// Changing the binding updates the TextBox text from the model immediately.
+        /// </summary>
+        protected override void SetBinding(INotifyPropertyChanged model, string propertyName)
+        {
+            if (_boundModel != null)
+            {
+                _boundModel.PropertyChanged -= OnModelPropertyChanged;
+            }
+            _boundModel = model;
+            _boundProperty = propertyName;
+            _boundPropInfo = model.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (_boundPropInfo == null || !_boundPropInfo.CanRead)
+            {
+                _boundModel = null; _boundProperty = null; _boundPropInfo = null; return;
+            }
+            if (!_boundPropInfo.CanWrite)
+            {
+                // Still allow one-way (model -> TextBox)
+            }
+            _boundModel.PropertyChanged += OnModelPropertyChanged;
+            // Initial sync from model
+            SyncFromModel();
+        }
+
+        private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_boundProperty == null || !string.Equals(e.PropertyName, _boundProperty, StringComparison.OrdinalIgnoreCase)) return;
+            SyncFromModel();
+        }
+
+        private void SyncFromModel()
+        {
+            if (_boundModel == null || _boundPropInfo == null) return;
+            try
+            {
+                var val = _boundPropInfo.GetValue(_boundModel);
+                var str = val?.ToString() ?? string.Empty;
+                if (!string.Equals(str, Text, StringComparison.Ordinal))
+                {
+                    _suppressModelUpdate = true;
+                    SetText(str);
+                    _suppressModelUpdate = false;
+                }
+            }
+            catch { /* ignore */ }
         }
 
         public override void SetText(string value)
@@ -183,7 +229,7 @@ namespace ConsoleLib.CommonControls
                     }
                     break;
                 case (char)27: // ESC ignore
-                    handled = true; break;
+                    handled = false; break;
                 default:
                     if (!char.IsControl(ch))
                     {
@@ -204,15 +250,15 @@ namespace ConsoleLib.CommonControls
         {
             switch (keyCode)
             {
-                case VK_LEFT: return CaretLeft();
-                case VK_RIGHT: return CaretRight();
-                case VK_UP: return CaretUp();
-                case VK_DOWN: return CaretDown();
-                case VK_HOME: return CaretHome();
-                case VK_END: return CaretEnd();
-                case VK_DELETE: return Delete();
-                case VK_PRIOR: return PageUp();
-                case VK_NEXT: return PageDown();
+                case ConsoleFramework.VK_LEFT: return CaretLeft();
+                case ConsoleFramework.VK_RIGHT: return CaretRight();
+                case ConsoleFramework.VK_UP: return CaretUp();
+                case ConsoleFramework.VK_DOWN: return CaretDown();
+                case ConsoleFramework.VK_HOME: return CaretHome();
+                case ConsoleFramework.VK_END: return CaretEnd();
+                case ConsoleFramework.VK_DELETE: return Delete();
+                case ConsoleFramework.VK_PRIOR: return PageUp();
+                case ConsoleFramework.VK_NEXT: return PageDown();
             }
             return false;
         }
@@ -393,6 +439,11 @@ namespace ConsoleLib.CommonControls
             if (Text != newText)
             {
                 base.SetText(newText); // base handles OnChange + Invalidate
+                // push to model if bound (two-way)
+                if (!_suppressModelUpdate && _boundModel != null && _boundPropInfo != null && _boundPropInfo.CanWrite)
+                {
+                    try { _boundPropInfo.SetValue(_boundModel, newText); } catch { /* ignore */ }
+                }
             }
         }
     }

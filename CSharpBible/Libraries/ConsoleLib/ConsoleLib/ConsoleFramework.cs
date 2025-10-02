@@ -41,6 +41,20 @@ public static class ConsoleFramework
     /// </summary>
     public static readonly char[] simpleBoarder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
 
+    // Virtual-Key Codes (Windows)
+    public const ushort VK_ENTER = (ushort)ConsoleKey.Enter;
+    public const ushort VK_ESC = (ushort)ConsoleKey.Escape;
+    public const ushort VK_TAB = (ushort)ConsoleKey.Tab;
+    public const ushort VK_LEFT = 0x25;
+    public const ushort VK_UP = 0x26;
+    public const ushort VK_RIGHT = 0x27;
+    public const ushort VK_DOWN = 0x28;
+    public const ushort VK_HOME = 0x24;
+    public const ushort VK_END = 0x23;
+    public const ushort VK_DELETE = 0x2E;
+    public const ushort VK_PRIOR = 0x21; // PageUp
+    public const ushort VK_NEXT = 0x22;  // PageDown
+
     /// <summary>
     /// Gets the mouse Position.
     /// </summary>
