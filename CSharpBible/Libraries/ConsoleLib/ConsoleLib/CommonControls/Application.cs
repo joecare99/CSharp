@@ -89,15 +89,7 @@ public class Application : Panel, IApplication
 
         if (e.bKeyDown)
         {
-            ActiveControl?.HandlePressKeyEvents(e);
-            if (!e.Handled)
-                foreach (var ctrl in Children)
-                {
-
-                    ctrl.HandlePressKeyEvents(e);
-                    if (e.Handled)
-                        break;
-                }
+             base.HandlePressKeyEvents(e);
         }
         else
         { };
@@ -187,6 +179,7 @@ public class Application : Panel, IApplication
     /// </summary>
     public void Stop()
     {
+        ConsoleFramework.ExtendedConsole.Stop();
         running = false;
     }
 
