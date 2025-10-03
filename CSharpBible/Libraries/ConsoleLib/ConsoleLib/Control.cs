@@ -488,7 +488,7 @@ namespace ConsoleLib
         protected ConsoleColor _ActForeColor;
         protected ConsoleColor _ActBackColor;
         private ConsoleColor _backColor;
-        private ConsoleColor _foreColor;
+        private ConsoleColor _foreColor = ConsoleColor.Gray;
 
         /// <summary>
         /// Gets or sets the Parent.

@@ -85,6 +85,8 @@ namespace ConsoleLib.CommonControls
         private int ItemCount => _itemsSource?.Count ?? 0;
         private bool NeedScrollBar => ItemCount > VisibleRows && VisibleRows > 0;
 
+        public (INotifyPropertyChanged, string) SelectedBinding { set=> BindSelected(value.Item1,value.Item2); }
+
         public ListBox()
         {
             BackColor = ConsoleColor.Black;
