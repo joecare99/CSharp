@@ -8,8 +8,6 @@
 //   - Populate each element by directly mapping the Pascal initializer values to C# object initializers.
 //   - For entries where only ID was specified in Pascal, leave other fields as empty strings (default).
 
-using WinAhnenClsTests.Data;
-
 namespace WinAhnenCls.Data;
 
 public static class SourceTestData
