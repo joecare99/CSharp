@@ -61,10 +61,10 @@ public sealed class ConsoleSearchView : Application
 
         _resultsList = new ListBox {
             Parent = root,
-            Dimension = new System.Drawing.Rectangle(0, 4, Console.WindowWidth - 2, Console.WindowHeight - 6),
+            Dimension = new System.Drawing.Rectangle(0, 4, 30, Console.WindowHeight - 6),
             BackColor = ConsoleColor.Black,
             ForeColor = ConsoleColor.Gray,
-            ItemsSource = _vm.Search.Results // one-way binding
+            ItemsSource = _vm.Search.Results, // one-way binding
             SelectedBinding = (_vm.Search, nameof(_vm.Search.SelectedResult)),
         };
 
