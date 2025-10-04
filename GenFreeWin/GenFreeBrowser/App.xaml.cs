@@ -20,20 +20,21 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        var services = new ServiceCollection();
+        var services = new ServiceCollection()
 
         // Windows
-        services.AddSingleton<MainWindow>();
+        .AddSingleton<MainWindow>()
 
         // ViewModels
-        services.AddSingleton<IPersonenListViewModel, FraPersonenListViewModel>();
-        services.AddSingleton<MainWindowViewModel>();
+        .AddSingleton<IPersonenListViewModel, FraPersonenListViewModel>()
+        .AddSingleton<KernFamilieViewModel>()
+        .AddSingleton<MainWindowViewModel>()
 
         // Domain Services
-        services.AddSingleton<IPersonenService, PersonenService>();
+        .AddSingleton<IPersonenService, PersonenService>()
 
         // Module
-        services.AddMapViewer();
+        .AddMapViewer();
 
         ServiceProvider = services.BuildServiceProvider();
 
