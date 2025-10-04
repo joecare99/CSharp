@@ -4,6 +4,7 @@ namespace GenFree.Interfaces.VB;
 
 public interface IVBConversions
 {
+    string ChangeType(object v, Type type);
     string ErrorToString();
     [Obsolete("use Math.Floor")]
     float Int(double v);
