@@ -1,13 +1,12 @@
+<!-- Directory.Build.props -->
 <Project>
   <PropertyGroup>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Company>JC-Soft</Company>
-    <Authors>Joe Care</Authors>
-    <Copyright>Copyright Â© JC-Soft 2025</Copyright>
+    <!-- Basis für alle Projekte: zwei Ebenen hoch, dann in obj.net bzw. bin -->
+    <BaseIntermediateOutputPath>$(SolutionDir)..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputPath>$(SolutionDir)..\..\bin\$(MSBuildProjectName)\</OutputPath>
+
+    <!-- Optional: Konfigurationsebene (Debug/Release) anhängen -->
+    <BaseIntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</BaseIntermediateOutputPath>
+    <OutputPath>$(OutputPath)$(Configuration)\</OutputPath>
   </PropertyGroup>
-</Project> 
+</Project>

@@ -10,5 +10,6 @@
 		<Authors>Joe Care</Authors>
 		<Copyright>Copyright © JC-Soft 2023</Copyright>
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
+		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 	</PropertyGroup>
 </Project>

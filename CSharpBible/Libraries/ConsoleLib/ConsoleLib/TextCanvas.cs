@@ -211,6 +211,18 @@ namespace ConsoleLib
         }
 
         /// <summary>
+        /// Gibt einen String an einer relativen Position (Point) aus.
+        /// Thread-sicher durch lock.
+        /// </summary>
+        /// <param name="place">Relative Zielposition (X,Y) im Canvas.</param>
+        /// <param name="s">Auszugebender Text (unverändert).</param>
+        public void OutTextXY(Point place, string s, ConsoleColor f, ConsoleColor b)
+        {
+            lock (this)
+                _OutTextXY(place.X, place.Y, s,f,b);
+        }
+
+        /// <summary>
         /// Gibt ein Zeichen an einer relativen Position (Point) aus.
         /// </summary>
         /// <param name="place">Relative Zielposition (X,Y) im Canvas.</param>
@@ -242,6 +254,18 @@ namespace ConsoleLib
         }
 
         /// <summary>
+        /// Thread-sichere Ausgabe eines Strings an relativen Koordinaten.
+        /// </summary>
+        /// <param name="x">Relative X-Koordinate.</param>
+        /// <param name="y">Relative Y-Koordinate.</param>
+        /// <param name="s">Auszugebender Text.</param>
+        public void OutTextXY(int x, int y, string s, ConsoleColor f, ConsoleColor b)
+        {
+            lock (this)
+                _OutTextXY(x, y, s,f,b);
+        }
+
+        /// <summary>
         /// Nicht-thread-sichere interne Implementierung der String-Ausgabe.
         /// Fügt den Canvas-Offset hinzu und positioniert den Cursor global.
         /// </summary>
@@ -250,6 +274,21 @@ namespace ConsoleLib
         /// <param name="s">Auszugebender Text.</param>
         private void _OutTextXY(int x, int y, string s)
         {
+            _console.SetCursorPosition(x + _dimension.X, y + _dimension.Y);
+            _console.Write(s);
+        }
+
+        /// <summary>
+        /// Nicht-thread-sichere interne Implementierung der String-Ausgabe.
+        /// Fügt den Canvas-Offset hinzu und positioniert den Cursor global.
+        /// </summary>
+        /// <param name="x">Relative X-Koordinate.</param>
+        /// <param name="y">Relative Y-Koordinate.</param>
+        /// <param name="s">Auszugebender Text.</param>
+        private void _OutTextXY(int x, int y, string s, ConsoleColor f, ConsoleColor b)
+        {
+            _console.ForegroundColor = f;
+            _console.BackgroundColor = b;
             _console.SetCursorPosition(x + _dimension.X, y + _dimension.Y);
             _console.Write(s);
         }
