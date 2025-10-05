@@ -3,6 +3,7 @@
 // Author           : AI Assistant
 // Created          : 2025-09-27
 // ***********************************************************************
+using BaseLib.Helper;
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -212,8 +213,7 @@ namespace ConsoleLib.CommonControls
                     var fg = selectedLine ? SelectedForeColor : (hoverLine ? HoverForeColor : ForeColor);
                     var bg = selectedLine ? SelectedBackColor : (hoverLine ? HoverBackColor : BackColor);
                     string padded = text.PadRight(colWidth, ' ');
-                    for (int i = 0; i < colWidth; i++)
-                        ConsoleFramework.Canvas.OutTextXY(x + i, y, padded[i], fg, bg);
+                    ConsoleFramework.Canvas.OutTextXY(x, y, padded, fg, bg);
                 }
             }
             _vScroll?.Draw();
