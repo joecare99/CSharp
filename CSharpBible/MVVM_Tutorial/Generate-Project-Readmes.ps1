@@ -1,13 +1,19 @@
 <#!
 .SYNOPSIS
- Generates (or updates) README.md files for all MVVM tutorial example folders (excluding Libraries and Games).
+ Generates (or updates) README.md files for all MVVM tutorial example folders (excluding Libraries and Games) and a central root README with a reverse concept index.
 
 .DESCRIPTION
  The script contains metadata for each example project in the MVVM_Tutorial solution. It writes a README.md
  into the root of each corresponding directory (only if that directory exists relative to the script location).
  Existing README.md files can optionally be overwritten by using -Force.
 
- Each README contains:
+ Additionally, it now generates a central README.md in the script root containing:
+   * Overview of all projects (name, summary, test project)
+   * Reverse concept index (concept -> projects)
+   * Coverage instructions (global)
+   * Regeneration instructions
+
+ Each per-project README contains:
    * Title & short elevator pitch
    * Detailed description / learning goals
    * Implemented MVVM / WPF concepts
@@ -15,6 +21,7 @@
    * Build & run instructions (classic .NET Framework + modern multi-target variants)
    * Testing & coverage status placeholders (line, branch, and complexity coverage)
    * How to locally collect coverage using coverlet + vstest / dotnet test
+   * Link back to central index
 
 .PARAMETER Force
  Overwrite existing README.md files if they already exist.
@@ -140,6 +147,16 @@ $projects = @(
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Push-Location $root
 
+# Build reverse concept index
+$conceptIndex = @{}
+foreach ($proj in $projects) {
+    foreach ($c in $proj.Concepts) {
+        if (-not $conceptIndex.ContainsKey($c)) { $conceptIndex[$c] = New-Object System.Collections.Generic.List[string] }
+        $conceptIndex[$c].Add($proj.Name)
+    }
+}
+
+# Generate per-project README files
 foreach ($p in $projects) {
     $dir = Join-Path $root $p.Folder
     if (-not (Test-Path $dir)) { Write-Warning "Skip (missing directory): $($p.Folder)"; continue }
@@ -155,6 +172,8 @@ foreach ($p in $projects) {
 # $($p.Name)
 
 > $($p.Summary)
+
+[Back to central project index](../README.md)
 
 ## Overview
 $p.Detailed
@@ -204,5 +223,78 @@ This README was auto-generated. You can safely edit and commit refinements (the 
     Write-Host "Written: $($p.Folder)/README.md" -ForegroundColor Green
 }
 
+# Generate central README --------------------------------------------------------------
+$centralReadmePath = Join-Path $root 'README_dir.md'
+if ((Test-Path $centralReadmePath) -and -not $Force) {
+    Write-Host 'Central README_dir.md exists - use -Force to overwrite.' -ForegroundColor Yellow
+} else {
+    # Project overview table
+    $projRows = foreach ($p in $projects) {
+        $test = if ($p.Test -and $p.Test -ne '(none explicit)') { $p.Test } else { '' }
+        "| [$($p.Name)]($($p.Folder)/README_dir.md) | $($p.Summary) | $test |"
+    }
+
+    # Concept reverse index
+    $conceptSections = foreach ($k in ($conceptIndex.Keys | Sort-Object)) {
+        $plist = ($conceptIndex[$k] | Sort-Object | ForEach-Object { "`n  - [$_]($_/README_dir.md)" }) -join ''
+        "### $k$plist"  # already includes newlines via backtick n
+    }
+
+    $central = @"
+# MVVM Tutorial Collection
+
+Comprehensive set of incremental MVVM + WPF examples (classic patterns and CommunityToolkit variants). Each project focuses on a narrowly scoped learning goal so concepts build progressively.
+
+## How To Use This Repository
+1. Start with baseline templates (00*) to understand structure.
+2. Progress through notification, commands, converters, and dialog abstractions.
+3. Explore advanced composition (UserControls, DataGrid, TreeView) and validation patterns.
+4. Compare classic vs Toolkit implementations to evaluate trade-offs.
+5. Use the reverse concept index below to jump directly to examples covering a topic.
+
+## Project Overview
+| Project | Summary | Test Project |
+|---------|---------|--------------|
+$($projRows -join "`n")
+
+## Reverse Concept Index
+Each concept lists all example projects demonstrating it.
+
+$($conceptSections -join "`n`n")
+
+## Global Testing & Coverage
+Execute all tests (multi-target frameworks will run each target):
+```
+dotnet test --collect:"XPlat Code Coverage"
+```
+Custom coverage with coverlet (example):
+```
+dotnet test MVVM_27_DataGridTests -c Debug /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+```
+Merge and report:
+```
+reportgenerator -reports:"**/coverage.info" -targetdir:CoverageReport -reporttypes:HtmlSummary;MarkdownSummaryGithub
+```
+
+## Regenerating READMEs
+Run the script:
+```
+./Generate-Project-Readmes.ps1 -Force
+```
+This will overwrite all per-project README.md files and the central README.md.
+
+## Contributing
+- Add new example metadata to the `$projects` array in the script.
+- Ensure concepts list is accurate (improves the reverse index).
+- Add tests in parallel *Tests projects for higher confidence and coverage.
+
+## License / Usage
+Educational use; adapt freely. Keep attribution to the original authors where appropriate.
+"@
+
+    Set-Content -Path $centralReadmePath -Value $central -Encoding UTF8
+    Write-Host 'Central README.md written.' -ForegroundColor Green
+}
+
 Pop-Location
-Write-Host "Done." -ForegroundColor Cyan
+Write-Host 'Done.' -ForegroundColor Cyan
