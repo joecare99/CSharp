@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
+using BaseLib.Models;
 using System;
 using System.Drawing;
 
@@ -31,7 +32,7 @@ namespace ConsoleDisplay.View
         /// <summary>
         /// My console
         /// </summary>
-        static public IConsole myConsole = new MyConsole();
+        static public IConsole myConsole = new ConsoleProxy();
 
         /// <summary>
         /// The h block

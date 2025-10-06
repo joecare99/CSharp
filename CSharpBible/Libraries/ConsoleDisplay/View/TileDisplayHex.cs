@@ -1,3 +1,5 @@
+using BaseLib.Interfaces;
+using BaseLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -72,7 +74,7 @@ namespace ConsoleDisplay.View
 		/// <summary>
 		/// My console
 		/// </summary>
-		public static MyConsoleBase myConsole { get; set; } = new MyConsole();
+		public static IConsole myConsole { get; set; } = new ConsoleProxy();
 		/// <summary>
 		/// Gets or sets the tile definition.
 		/// it returns the default-tileDef when the local tileDef isn't set.

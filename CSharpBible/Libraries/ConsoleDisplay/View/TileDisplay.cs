@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
+using BaseLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -155,7 +156,7 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
     /// </summary>
-    public TileDisplay() : this(new MyConsole(),tileDef!,Point.Empty,Size.Empty){}
+    public TileDisplay() : this(new ConsoleProxy(),tileDef!,Point.Empty,Size.Empty){}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileDisplay{T}"/> class.
