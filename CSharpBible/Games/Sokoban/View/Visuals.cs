@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
+using BaseLib.Models;
 using ConsoleDisplay.View;
 using Sokoban.Model;
 using Sokoban.Properties;
@@ -38,7 +40,7 @@ namespace Sokoban_Base.View
         /// My console
         /// is a Console-Proxy for debugging &amp; Testing
         /// </summary>
-        public static MyConsole myConsole = new MyConsole();
+        public static IConsole myConsole = new ConsoleProxy();
         /// <summary>
         /// The key action
         /// </summary>
