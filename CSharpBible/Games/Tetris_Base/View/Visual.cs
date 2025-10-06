@@ -1,4 +1,6 @@
-﻿using ConsoleDisplay.View;
+﻿using BaseLib.Interfaces;
+using BaseLib.Models;
+using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,7 +19,7 @@ namespace Tetris_Base.View {
         static public string[] zffrn = {@"/\",@"/|",@"^)",@"^/","/|","^]","/^","^/","()",@"()",
                                         @"\/",@" |",@"(_",@"_)","-|","(_","()","/ ","()",@"_/"};
 
-        static private MyConsoleBase _console = new MyConsole();
+        static private IConsole _console = new ConsoleProxy();
         static private PlayGround? _playGround = null;
 
         #region Properties
@@ -35,7 +37,7 @@ namespace Tetris_Base.View {
         /// Gets or sets the console.
         /// </summary>
         /// <value>The console.</value>
-        static public MyConsoleBase console { get => _console; set => PropertyClass.SetPropertyP(ref _console, value, (o, n) => Display.myConsole = n ); }
+        static public IConsole console { get => _console; set => PropertyClass.SetPropertyP(ref _console, value, (o, n) => Display.myConsole = n ); }
         /// <summary>
         /// Gets or sets the play ground.
         /// </summary>
