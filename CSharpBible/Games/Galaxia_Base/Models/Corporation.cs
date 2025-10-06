@@ -37,14 +37,15 @@ namespace Galaxia.Models
                            string description,
                            Color corpColor,
                            IStarsystem home,
-                           IHyperspaceSys hyperspace)
+                           IList<IStarsystem> stars,
+                           ISpace space)
         {
             Name = name;
             Description = description;
             CorpColor = corpColor;
             Home = home;
-            Stars.Add(Home);
-            this.hyperspace = hyperspace;
+            Stars = stars;
+            hyperspace = new HyperspaceSys(this, space);
         }
 
         /// <summary>
