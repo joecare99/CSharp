@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TranspilerLib.Interfaces;
 
-namespace TranspilerConsTest.Model;
+namespace TranspilerLib.Models;
 
 public class ExtOutput : IOutput
 {
