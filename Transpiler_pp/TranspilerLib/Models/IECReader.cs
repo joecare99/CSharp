@@ -1,66 +1,85 @@
-﻿using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml;
+﻿using System.Xml;
 using TranspilerLib.Interfaces;
 
 namespace TranspilerLib.Models
 {
+    /// <summary>
+    /// Wrapper um <see cref="XmlReader"/> zur Vereinheitlichung des Zugriffs in der Transpiler-Pipeline.
+    /// Dient als Abstraktion, damit Parser / Scanner unabhängig vom konkreten Reader getestet werden können.
+    /// </summary>
     public class IECReader : IReader
     {
-        private XmlReader _xr;
+        /// <summary>
+        /// Der zugrunde liegende <see cref="XmlReader"/>.
+        /// </summary>
+        private readonly XmlReader _xr;
 
+        /// <summary>
+        /// Erstellt eine neue Instanz von <see cref="IECReader"/>.
+        /// </summary>
+        /// <param name="xr">Bereits geöffneter <see cref="XmlReader"/> (Besitz verbleibt beim Aufrufer).</param>
         public IECReader(XmlReader xr)
         {
             _xr = xr;
         }
 
-        public bool Read()
-        {
-            return _xr.Read();
-        }
+        /// <summary>
+        /// Liest den nächsten XML-Knoten.
+        /// </summary>
+        /// <returns><c>true</c>, falls ein weiterer Knoten gelesen werden konnte; andernfalls <c>false</c>.</returns>
+        public bool Read() => _xr.Read();
 
-        public bool EOF()
-        {
-            return _xr.EOF;
-        }
+        /// <summary>
+        /// Prüft ob das Dateiende erreicht wurde.
+        /// </summary>
+        public bool EOF() => _xr.EOF;
 
-        public bool IsStartElement()
-        {
-            return _xr.IsStartElement();
-        }
+        /// <summary>
+        /// Prüft ob sich der Reader aktuell auf einem Start-Element befindet.
+        /// </summary>
+        public bool IsStartElement() => _xr.IsStartElement();
 
-        public bool IsEndElement()
-        {
-            return _xr.NodeType==XmlNodeType.EndElement;
-        }
-        public int GetAttributeCount()
-        {
-            return _xr.AttributeCount;
-        }
+        /// <summary>
+        /// Prüft ob sich der Reader aktuell auf einem End-Element befindet.
+        /// </summary>
+        public bool IsEndElement() => _xr.NodeType == XmlNodeType.EndElement;
 
-        public object GetAttributeValue(int i)
-        {
-            return _xr.GetAttribute(i);
-        }
+        /// <summary>
+        /// Liefert die Anzahl der Attribute des aktuellen Elements.
+        /// </summary>
+        public int GetAttributeCount() => _xr.AttributeCount;
 
+        /// <summary>
+        /// Liefert den Attributwert an Position <paramref name="i"/>.
+        /// </summary>
+        /// <param name="i">Nullbasierter Attributindex.</param>
+        /// <returns>Wert des Attributs oder <c>null</c>.</returns>
+        public object? GetAttributeValue(int i) => _xr.GetAttribute(i);
+
+        /// <summary>
+        /// Liefert den Attributnamen an Position <paramref name="i"/>.
+        /// </summary>
+        /// <param name="i">Nullbasierter Attributindex.</param>
         public string GetAttributeName(int i)
         {
             _xr.MoveToAttribute(i);
             return _xr.Name;
         }
-        public string GetLocalName()
-        {
-            return _xr.LocalName;
-        }
 
-        public object getValue()
-        {
-            return _xr.Value;
-        }
+        /// <summary>
+        /// Liefert den lokalen Namen des aktuellen Knotens.
+        /// </summary>
+        public string GetLocalName() => _xr.LocalName;
 
-        public bool HasValue=>_xr.HasValue;
+        /// <summary>
+        /// Liefert den aktuellen Text/Attributwert.
+        /// </summary>
+        public object getValue() => _xr.Value;
 
+        /// <inheritdoc/>
+        public bool HasValue => _xr.HasValue;
+
+        /// <inheritdoc/>
         public bool IsEmptyElement => _xr.IsEmptyElement;
-
     }
 }

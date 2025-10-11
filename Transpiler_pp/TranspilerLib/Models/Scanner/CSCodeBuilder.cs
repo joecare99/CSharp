@@ -5,13 +5,35 @@ using TranspilerLib.Interfaces.Code;
 
 namespace TranspilerLib.Models.Scanner;
 
+/// <summary>
+/// C#-specific implementation of <see cref="CodeBuilder"/> that interprets tokens emitted by
+/// the C# tokenizer and constructs an <see cref="ICodeBlock"/> tree (operations, labels, blocks, comments, strings).
+/// </summary>
+/// <remarks>
+/// The builder groups tokens into semantic blocks and maintains a mutable state (<see cref="ICodeBuilderData"/>)
+/// for label resolution and control-flow constructs (e.g., <c>goto</c>). It assigns <see cref="CodeBlock.SourcePos"/>
+/// to created blocks to preserve mapping back to the original source.
+/// </remarks>
 public class CSCodeBuilder : CodeBuilder
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSCodeBuilder"/> class and configures the default
+    /// <see cref="CodeBuilder.NewCodeBlock"/> factory to produce <see cref="CodeBlock"/> instances with source positions.
+    /// </summary>
     public CSCodeBuilder()
     {
         NewCodeBlock = (name, type, code, parent, pos) => new CodeBlock() { Name = name, Type = type, Code = code, Parent = parent, SourcePos = pos };
     }
 
+    /// <summary>
+    /// Processes a single token and updates the current builder state, creating or extending blocks as necessary.
+    /// </summary>
+    /// <param name="tokenData">The token to process.</param>
+    /// <param name="data">The mutable builder state tracking the current block, labels, and gotos.</param>
+    /// <remarks>
+    /// Dispatches to specialized handlers for operations, labels, strings, comments, blocks and goto statements.
+    /// Updates <see cref="ICodeBuilderData.cbtLast"/> to assist with context-sensitive decisions for subsequent tokens.
+    /// </remarks>
     public override void OnToken(TokenData tokenData, ICodeBuilderData data)
     {
         switch (tokenData.type)

@@ -1,10 +1,9 @@
 ﻿using System;
 using TranspilerLib.Interfaces;
 
-namespace TranspilerConsTest.Model
+namespace TranspilerLib.Interfaces;
+
+public interface IOutput
 {
-    public interface IOutput
-    {
-        void Output(IReader reader, Action<string> write, Action<string> debug);
-    }
+    void Output(IReader reader, Action<string> write, Action<string> debug);
 }

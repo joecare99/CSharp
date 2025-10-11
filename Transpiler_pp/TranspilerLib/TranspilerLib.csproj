@@ -1,10 +1,13 @@
 ﻿<Project>
 	<Import Project="..\Transpiler.Props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0'">
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>$(OutputPath)Docs\$(MSBuildProjectName).xml</DocumentationFile>
+	</PropertyGroup>	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
 		<ProjectReference Condition="!$(TargetFramework.Contains('net4'))" Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
