@@ -10,6 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Pr
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{8655F273-B5AF-4D9A-B635-7F9168703579}"
+	ProjectSection(SolutionItems) = preProject
+		..\CSharpBible\Libraries\Libraries.props = ..\CSharpBible\Libraries\Libraries.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLib", "..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj", "{624E6963-3DCC-4625-8828-84F8E54C7EC9}"
 EndProject
