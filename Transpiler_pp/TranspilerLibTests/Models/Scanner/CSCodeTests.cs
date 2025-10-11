@@ -137,7 +137,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             ["13", new[] { TestCSDataClass.test13Data, TestCSDataClass.cExp13Log }],
         };
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("0", new[] { TestCSDataClass.testData0, TestCSDataClass.cExpLog0 }, DisplayName = "0")]
         //  [DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.cExp2Log }, DisplayName = "2")]
         [DataRow("3", new[] { TestCSDataClass.testData3, TestCSDataClass.cExpLog3 }, DisplayName = "3")]
@@ -166,7 +166,7 @@ namespace TranspilerLib.Models.Scanner.Tests
                 };
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("0", new[] { TestCSDataClass.testData0, TestCSDataClass.testDataExp0 }, DisplayName = "0")]
         //  [DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.testDataExp2 }, DisplayName = "2")]
         [DataRow("3", new[] { TestCSDataClass.testData3, TestCSDataClass.testDataExp3 }, DisplayName = "3")]
@@ -207,7 +207,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             ["13", new[] { TestCSDataClass.test13Data, TestCSDataClass.cExpCode13 }],
                 };
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("0", new[] { TestCSDataClass.testData0, TestCSDataClass.cExpCode0 }, DisplayName = "0")]
         //[DataRow("1", new[] { TestDataClass.test1Data, TestDataClass.cExpCode1 }, DisplayName = "1")]
         //[DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.cExpCode2 }, DisplayName = "2")]
@@ -227,7 +227,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             AssertAreEqual(data[1], sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow([TestCSDataClass.testData0, TestCSDataClass.cExpLog0], DisplayName = "0")]
         [DataRow([TestCSDataClass.testData5, TestCSDataClass.cExpLog0], DisplayName = "0")]
         public void Tokenize0Test(string[] data)
@@ -238,7 +238,7 @@ namespace TranspilerLib.Models.Scanner.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(TestTokenizeList))]
         public void Tokenize2Test(string _, string[] data, List<TokenData> expList)
         {
@@ -261,7 +261,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(TestListParse))]
         public void ParseEnumTest(string _, List<TokenData> actList, string[] data)
         {
@@ -270,7 +270,7 @@ namespace TranspilerLib.Models.Scanner.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(TestListParse2))]
         public void ParseEnum2Test(string _, List<TokenData> actList, string[] data)
         {
@@ -278,7 +278,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             AssertAreEqual(data[0], act.ToCode());
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(ReorderListData))]
         public void ReorderLabelsTest(string _, List<TokenData> actList, string[] data)
         {
@@ -292,7 +292,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             AssertAreEqual(data[0], sAct);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(RemoveLabelsData))]
         public void RemoveLabelsTest(string _, List<TokenData> actList, string[] data)
         {

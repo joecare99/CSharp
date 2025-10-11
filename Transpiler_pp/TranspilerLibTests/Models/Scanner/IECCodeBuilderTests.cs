@@ -79,7 +79,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             data = GetTokenlist("2");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(OnIECTokenTestData))]
         public void OnTokenTest(string sFNStumb, List<TokenData> tokens, string[] codes)
         {
