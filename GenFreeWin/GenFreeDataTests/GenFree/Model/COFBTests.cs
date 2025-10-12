@@ -57,7 +57,7 @@ namespace GenFree.Models.Tests
         [DataRow(OFBIndex.Indn, OFBFields.PerNr)]
         public void GetIndex1FieldTest1(OFBIndex eAct, OFBFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
         [TestMethod()]

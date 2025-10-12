@@ -164,7 +164,7 @@ namespace GenFree.Data.Tests
         [DataRow((FamilyIndex)7, FamilyFields.FamNr)]
         public void GetIndex1FieldTest2(FamilyIndex eAct, FamilyFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
         [TestMethod()]
