@@ -70,23 +70,28 @@ public partial class MapView : UserControl
 
         int tilesX = (int)Math.Ceiling(Viewport.PixelSize.Width / MapConstants.TileSize) + 2;
         int tilesY = (int)Math.Ceiling(Viewport.PixelSize.Height / MapConstants.TileSize) + 2;
+        double tileOffsetX2 = (Viewport.PixelSize.Width / MapConstants.TileSize) - tilesX - 2;
+        double tileOffsetY2 = (Viewport.PixelSize.Height / MapConstants.TileSize) - tilesY -2;
 
-        int centerTileX = (int)Math.Floor(cx)+1;
-        int centerTileY = (int)Math.Floor(cy)+1;
+        int centerTileX = (int)Math.Floor(cx);
+        int centerTileY = (int)Math.Floor(cy);
 
         for (int dx = -tilesX/2; dx <= tilesX/2; dx++)
+        //int dx = 0;
         {
+
             for (int dy = -tilesY/2; dy <= tilesY/2; dy++)
+           // int dy = 0;
             {
                 long tx = centerTileX + dx;
                 long ty = centerTileY + dy;
                 if (tx < 0 || ty < 0 || tx >= (1 << z) || ty >= (1 << z)) continue; // outside world
                 var id = new TileId(tx, ty, z);
-                double screenX = (tilesX/2 + dx - tileOffsetX) * MapConstants.TileSize;
-                double screenY = (tilesY/2 + dy - tileOffsetY) * MapConstants.TileSize;
+                double screenX = (tilesX/2f + dx - tileOffsetX+ tileOffsetX2/2+1f) * MapConstants.TileSize;
+                double screenY = (tilesY/2f + dy - tileOffsetY+ tileOffsetY2/2+1f) * MapConstants.TileSize;
                 var img = new Image { Width = MapConstants.TileSize, Height = MapConstants.TileSize };
-                Canvas.SetLeft(img, screenX - MapConstants.TileSize/2);
-                Canvas.SetTop(img, screenY - MapConstants.TileSize/2);
+                Canvas.SetLeft(img, screenX);
+                Canvas.SetTop(img, screenY);
                 PART_Canvas.Children.Add(img);
                 _tiles[id] = img;
                 _ = LoadTileAsync(id, img);

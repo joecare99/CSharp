@@ -3,41 +3,54 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ctrls="clr-namespace:GenFreeBrowser.Views.Controls"
              mc:Ignorable="d"
-             d:DesignHeight="400" d:DesignWidth="600">
+             d:DesignHeight="400" d:DesignWidth="900">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="Bool2Visibility" />
+        <Style x:Key="SectionBox" TargetType="GroupBox">
+            <Setter Property="Margin" Value="0 6 0 0"/>
+        </Style>
     </UserControl.Resources>
-    <Grid Margin="8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+
+    <Grid Margin="6">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <GroupBox Header="Person" Margin="0 0 0 8">
-            <StackPanel>
-                <TextBlock Text="Name:" FontWeight="Bold" />
-                <TextBlock Text="{Binding AusgewaehltePerson.Vollname}" />
-                <TextBlock Text="Geburt:" FontWeight="Bold" Margin="0 8 0 0" />
-                <TextBlock Text="{Binding AusgewaehltePerson.GeburtsDatum}" />
-            </StackPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Selected person block with parents header inside summary control -->
+        <GroupBox Header="Person" Grid.Row="0" Grid.Column="0" Style="{StaticResource SectionBox}">
+            <ctrls:PersonSummaryControl
+                ParentsHeader="{Binding ParentsHeader}"
+                DisplayName="{Binding AusgewaehltePerson.Vollname}"
+                VitalData="{Binding SelectedVital}" />
         </GroupBox>
-        <GroupBox Header="Ehepartner" Margin="0 0 0 8" Grid.Row="1" Visibility="{Binding HatEhePartner, Converter={StaticResource Bool2Visibility}}">
-            <StackPanel>
-                <TextBlock Text="{Binding EhePartner.Vollname}" />
-            </StackPanel>
+
+        <!-- Partner block -->
+        <GroupBox Header="Partner" Grid.Row="0" Grid.Column="1" Style="{StaticResource SectionBox}"
+                  Visibility="{Binding HatEhePartner, Converter={StaticResource Bool2Visibility}}">
+            <ctrls:PersonSummaryControl
+							    ParentsHeader="{Binding ParentsHeader2}"
+							    DisplayName="{Binding EhePartner.Vollname}"
+                  VitalData="{Binding PartnerVital}" />
         </GroupBox>
-        <GroupBox Header="Kinder" Grid.Row="2" Visibility="{Binding HatKinder, Converter={StaticResource Bool2Visibility}}">
-            <ItemsControl ItemsSource="{Binding Kinder}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Vollname}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+
+        <!-- Children table -->
+        <GroupBox Header="Kinder" Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource SectionBox}"
+                  Visibility="{Binding HatKinder, Converter={StaticResource Bool2Visibility}}">
+            <DataGrid ItemsSource="{Binding Kinder}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="60"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Vollname}" Width="*"/>
+                    <DataGridTextColumn Header="Geburt" Binding="{Binding GeburtsDatum}" Width="160"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </GroupBox>
     </Grid>
 </UserControl>
