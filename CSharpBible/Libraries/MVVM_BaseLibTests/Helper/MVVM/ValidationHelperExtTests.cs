@@ -43,17 +43,15 @@ public class ValidationHelperExtTests : INotifyDataErrorInfo
         Assert.AreEqual(csExpEmpty, this.ValidationText("Test"));
     }
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [TestMethod]   
     public void ValidationTextTestNull()
     {
-        ((INotifyDataErrorInfo)null!).ValidationText("123");
+        Assert.Throws<ArgumentNullException>(() => ((INotifyDataErrorInfo)null!).ValidationText("123"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void ValidationTextTestNull2()
     {
-        this.ValidationText(null);
+        Assert.Throws<ArgumentNullException>(() => this.ValidationText(null));
     }
 }

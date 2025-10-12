@@ -61,8 +61,8 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
     {
         Assert.AreEqual("test1",_testProperty);
         Assert.AreEqual(123, _testProperty2);
-        Assert.AreEqual(null, exIntEx);
-        Assert.AreEqual(null, xResult);
+        Assert.IsNull(exIntEx);
+        Assert.IsNull(xResult);
         Assert.AreEqual("", DebugLog);
     }
 

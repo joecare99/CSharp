@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11018.127 d18.0
+VisualStudioVersion = 18.0.11018.127
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -137,6 +137,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLib", "..\Libraries\ConsoleLib\ConsoleLib.csproj", "{9F32B398-EE9E-B09C-8023-8A8769315037}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedConsole", "..\Libraries\ExtendedConsole\ExtendedConsole.csproj", "{448CB63B-278E-A7C1-AE2F-3709778245E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{8C496EBC-4485-459D-8214-012DA3E794B5}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Delphi\Idee\source\Frm_BoxFlight.lfm = ..\..\..\Delphi\Idee\source\Frm_BoxFlight.lfm
+		..\..\..\Delphi\Idee\source\Frm_BoxFlight.pas = ..\..\..\Delphi\Idee\source\Frm_BoxFlight.pas
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxFlight", "BoxFlight\BoxFlight.csproj", "{07C4AF86-44A7-C659-025B-1105D42DEBCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -356,6 +364,10 @@ Global
 		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{448CB63B-278E-A7C1-AE2F-3709778245E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07C4AF86-44A7-C659-025B-1105D42DEBCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07C4AF86-44A7-C659-025B-1105D42DEBCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07C4AF86-44A7-C659-025B-1105D42DEBCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07C4AF86-44A7-C659-025B-1105D42DEBCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

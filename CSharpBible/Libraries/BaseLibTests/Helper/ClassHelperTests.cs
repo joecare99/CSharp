@@ -374,7 +374,7 @@ public class ClassHelperTests
     /// <param name="Prop">The property.</param>
     /// <param name="oVal">The o value.</param>
     /// <param name="oVal2">The o val2.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void SetUpTest(string Prop, object oVal, object oVal2)
     {
@@ -400,7 +400,7 @@ public class ClassHelperTests
         Assert.AreNotEqual(oVal2, this[Prop2]);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(nameof(boolProp),true)]
     [DataRow(null,false)]
     [DataRow("NoProp",false)]
@@ -415,7 +415,7 @@ public class ClassHelperTests
     /// <param name="Prop">The property.</param>
     /// <param name="oVal">The o value.</param>
     /// <param name="oVal2">The o val2.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void GetPropTest(string Prop, object oVal, object oVal2)
     {
@@ -425,7 +425,7 @@ public class ClassHelperTests
         SetVal(Prop, oVal);
         Assert.AreEqual(oVal, this.GetProp(Prop));
         Assert.AreNotEqual(oVal2, this.GetProp(Prop));
-        Assert.AreEqual(null, this.GetProp(Prop + "_"));
+        Assert.IsNull(this.GetProp(Prop + "_"));
     }
 
     /// <summary>
@@ -434,7 +434,7 @@ public class ClassHelperTests
     /// <param name="Prop">The property.</param>
     /// <param name="oVal">The o value.</param>
     /// <param name="oVal2">The o val2.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void GetFieldTest(string Prop, object oVal, object oVal2)
     {
@@ -444,7 +444,7 @@ public class ClassHelperTests
         SetVal(Prop, oVal);
         Assert.AreEqual(oVal, this.GetField(Prop + "1"));
         Assert.AreNotEqual(oVal2, this.GetField(Prop + "1"));
-        Assert.AreEqual(null, this.GetField(Prop + "2"));
+        Assert.IsNull(this.GetField(Prop + "2"));
     }
 
     /// <summary>
@@ -453,7 +453,7 @@ public class ClassHelperTests
     /// <param name="Prop">The property.</param>
     /// <param name="oVal">The o value.</param>
     /// <param name="oVal2">The o val2.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void GetPropTest1(string Prop, object oVal, object oVal2)
     {
@@ -474,7 +474,7 @@ public class ClassHelperTests
     /// <param name="Prop">The property.</param>
     /// <param name="oVal">The o value.</param>
     /// <param name="oVal2">The o val2.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(PropTestData))]
     public void SetPropTest(string Prop, object oVal, object oVal2)
     {
@@ -495,7 +495,7 @@ public class ClassHelperTests
     public void SetPropTest2()
     {
         this.SetProp(nameof(stringProp), (string)null!);
-        Assert.AreEqual(null, stringProp);
+        Assert.IsNull(stringProp);
         this.SetProp(nameof(objectProp), "Hallo");
         TestHelper.AssertAreEqual(new object(), objectProp,new string[] { });
     }
@@ -509,7 +509,7 @@ public class ClassHelperTests
 #if NET5_0_OR_GREATER
         Assert.AreEqual(objectProp, this.GetProp<object,object>(nameof(objectProp), null!));
 #else
-        Assert.ThrowsException<ArgumentNullException>(() => this.GetProp<object, object>(nameof(objectProp), null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => this.GetProp<object, object>(nameof(objectProp), null!));
 #endif
     }
 
@@ -519,7 +519,7 @@ public class ClassHelperTests
     /// <param name="item">The item.</param>
     /// <param name="arr">The arr.</param>
     /// <param name="iExp">The i exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(5, new object[] { 1, 3, 5, 7, 9 }, 2)]
     [DataRow(1, new object[] { 1, 3, 5, 7, 9 }, 0)]
     [DataRow(20, new object[] { 1, 3, 5, 7, 9 }, -1)]
@@ -536,7 +536,7 @@ public class ClassHelperTests
     /// </summary>
     /// <param name="name">The name.</param>
     /// <param name="peExp">The pe exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(nameof(intProp), PropEnum.intProp)]
     [DataRow(nameof(boolProp), PropEnum.boolProp)]
     [DataRow(nameof(enumProp), PropEnum.enumProp)]
@@ -554,7 +554,7 @@ public class ClassHelperTests
     [TestMethod()]
     public void EnumMemberTest2()
     {
-        Assert.ThrowsException<ArgumentException>(() => typeof(string).EnumMember("Hallo"));
+        Assert.ThrowsExactly<ArgumentException>(() => typeof(string).EnumMember("Hallo"));
     }
     #endregion
 }

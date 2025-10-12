@@ -49,7 +49,7 @@ public class BindableCollectionTests : BaseTestViewModel
     public void NotifyOnCollectionChangedTest()
     {
         _testClass.Add("5");
-        Assert.AreEqual(1, _testClass.Count);
+        Assert.HasCount(1, _testClass);
         Assert.AreEqual("5", _testClass[0]);
         Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\n", DebugLog);
     }
@@ -59,7 +59,7 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         _testClass.Add("5");
         _testClass.NotifyOfPropertyChange("Test");
-        Assert.AreEqual(1, _testClass.Count);
+        Assert.HasCount(1, _testClass);
         Assert.AreEqual("5", _testClass[0]);
         Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\n", DebugLog);
     }
@@ -69,7 +69,7 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         _testClass.Add("5");
         _testClass[0] = "7";
-        Assert.AreEqual(1, _testClass.Count);
+        Assert.HasCount(1, _testClass);
         Assert.AreEqual("7", _testClass[0]);
         Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\nOnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Replace)\r\n", DebugLog);
     }
@@ -79,7 +79,7 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         _testClass.Add("5");
         _testClass.RemoveAt(0);
-        Assert.AreEqual(0, _testClass.Count);
+        Assert.IsEmpty(_testClass);
         Assert.AreEqual("OnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Add)\r\nOnCollectionChanged(MVVM.ViewModel.BindableCollection`1[System.String],Remove)\r\n", DebugLog);
     }
 
@@ -87,7 +87,7 @@ public class BindableCollectionTests : BaseTestViewModel
     public void AddRangeTest()
     {
         _testClass.AddRange(new[] { "5", "7" });
-        Assert.AreEqual(2, _testClass.Count);
+        Assert.HasCount(2, _testClass);
         Assert.AreEqual("5", _testClass[0]);
         Assert.AreEqual("7", _testClass[1]);
     }
@@ -97,7 +97,7 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         _testClass.AddRange(new[] { "5", "7" });
         _testClass.Clear();
-        Assert.AreEqual(0, _testClass.Count);
+        Assert.IsEmpty(_testClass);
     }
 
     [TestMethod()]
@@ -105,7 +105,7 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         _testClass.AddRange(new[] { "5", "7" });
         _testClass.Refresh();
-        Assert.AreEqual(2, _testClass.Count);
+        Assert.HasCount(2, _testClass);
     }
 
     [TestMethod()]
@@ -113,6 +113,6 @@ public class BindableCollectionTests : BaseTestViewModel
     {
         _testClass.AddRange(new[] { "5", "7", "1" });
         _testClass.RemoveRange(new[] { "5", "1", "0" });
-        Assert.AreEqual(1, _testClass.Count);
+        Assert.HasCount(1, _testClass);
     }
 }

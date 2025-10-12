@@ -11,7 +11,7 @@ namespace BaseLib.Helper.Tests;
 public class TypeUtilsTests
 {
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "System.Object")]
     [DataRow(TypeCode.DBNull, "System.DBNull")]
     [DataRow(TypeCode.Boolean, "System.Boolean")]
@@ -34,7 +34,7 @@ public class TypeUtilsTests
         Assert.AreEqual(tc, tpe.TC());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "System.Object")]
     [DataRow(TypeCode.DBNull, "System.DBNull")]
     [DataRow(TypeCode.Boolean, "System.Boolean")]
@@ -58,7 +58,7 @@ public class TypeUtilsTests
         Assert.AreEqual(tc, TypeUtils.TC(t));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "System.Object")]
     [DataRow(TypeCode.DBNull, "System.DBNull")]
     [DataRow(TypeCode.Boolean, "System.Boolean")]
@@ -81,7 +81,7 @@ public class TypeUtilsTests
         Assert.AreEqual(ts, tc.ToType()?.ToString());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "System.Object")]
     [DataRow(TypeCode.DBNull, "System.DBNull")]
     [DataRow(TypeCode.Boolean, "System.Boolean")]
@@ -104,7 +104,7 @@ public class TypeUtilsTests
         Assert.AreEqual(ts, TypeUtils.ToType(tc)?.ToString());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "Object")]
     [DataRow(TypeCode.DBNull, "DBNull")]
     [DataRow(TypeCode.Boolean, "Boolean")]
@@ -133,7 +133,7 @@ public class TypeUtilsTests
         Assert.AreEqual(typeof(object), "BumLux".ToType());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "Object")]
     [DataRow(TypeCode.DBNull, "DBNull")]
     [DataRow(TypeCode.Boolean, "Boolean")]
@@ -157,7 +157,7 @@ public class TypeUtilsTests
         Assert.AreEqual(tc, ts.ToUpper().ToType().TC());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object,   true)]
     [DataRow(TypeCode.DBNull,   true)]
     [DataRow(TypeCode.Boolean,  true)]
@@ -178,10 +178,10 @@ public class TypeUtilsTests
     public void CompareTest0(TypeCode tc, bool _)
     {
         static bool? f(Type? t) => t?.Compare(t.Get(1), t.Get(0));
-        Assert.AreEqual(false, f(tc.ToType()));
+        Assert.IsFalse(f(tc.ToType()));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, false)]
     [DataRow(TypeCode.DBNull, false)]
     [DataRow(TypeCode.Boolean, true)]
@@ -205,7 +205,7 @@ public class TypeUtilsTests
         Assert.AreEqual(xOK, f(tc.ToType()));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, false)]
     [DataRow(TypeCode.DBNull, false)]
     [DataRow(TypeCode.Boolean, true)]
@@ -229,7 +229,7 @@ public class TypeUtilsTests
         Assert.AreEqual(xOK, f(tc.ToType()));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, false)]
     [DataRow(TypeCode.DBNull, false)]
     [DataRow(TypeCode.Boolean, false)]
@@ -253,7 +253,7 @@ public class TypeUtilsTests
         Assert.AreEqual(xOK, f(tc.ToType()));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object,0)]
     [DataRow(TypeCode.DBNull, 0)]
     [DataRow(TypeCode.Boolean, false)]
@@ -276,7 +276,7 @@ public class TypeUtilsTests
         Assert.AreEqual(oExp, tc.ToType()?.Get(0));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(TypeCode.Object, "")]
     [DataRow(TypeCode.DBNull, "")]
     [DataRow(TypeCode.Boolean, false)]
@@ -303,7 +303,7 @@ public class TypeUtilsTests
     public void GetTest2()
     {
         Assert.AreEqual(0, typeof(int).Get(null));
-        Assert.AreEqual(null, typeof(DBNull).Get(null));
+        Assert.IsNull(typeof(DBNull).Get(null));
         Assert.AreEqual(typeof(object), typeof(Type).Get(null));
         Assert.AreEqual(typeof(object), typeof(Type).Get(""));
         Assert.AreEqual(typeof(bool), typeof(Type).Get(TypeCode.Boolean));
@@ -311,7 +311,7 @@ public class TypeUtilsTests
         Assert.AreEqual(typeof(long), typeof(Type).Get("System.Int64"));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 1, true)]
     [DataRow(1, 0, 1, true)]
     [DataRow(-1, 0, 1, false)]
@@ -325,7 +325,7 @@ public class TypeUtilsTests
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0,0,1,true)]
     [DataRow(1, 0, 1, true)]
     [DataRow(-1, 0, 1, false)]
@@ -338,7 +338,7 @@ public class TypeUtilsTests
         Assert.AreEqual(xExp, i1.IsBetweenIncl(im,ix));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 1, false)]
     [DataRow(1, 0, 1, false)]
     [DataRow(-1, 0, 1, false)]
