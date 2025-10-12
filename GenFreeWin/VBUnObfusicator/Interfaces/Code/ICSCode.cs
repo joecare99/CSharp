@@ -186,19 +186,8 @@ namespace VBUnObfusicator.Interfaces.Code
             /// <returns>string.</returns>
             string ToCode(int indent = 4);
         }
-        /// <summary>
-        /// Gets or sets the original code.
-        /// </summary>
-        /// <value>The original code.</value>
-        string OriginalCode { get; set; }
         bool DoWhile { get; set; }
 
-        /// <summary>
-        /// Parses the specified values.
-        /// </summary>
-        /// <param name="values">The values.</param>
-        /// <returns>VBUnObfusicator.Models.ICSCode.ICodeBlock.</returns>
-        ICodeBlock Parse(IEnumerable<TokenData>? values = null);
         /// <summary>
         /// Removes the single source labels1.
         /// </summary>
@@ -209,19 +198,6 @@ namespace VBUnObfusicator.Interfaces.Code
         /// </summary>
         /// <param name="cStruct">The c structure.</param>
         void ReorderLabels(ICodeBlock cStruct);
-        /// <summary>
-        /// Converts to code.
-        /// </summary>
-        /// <param name="cStruct">The c structure.</param>
-        /// <param name="indent">The indent.</param>
-        /// <returns>string.</returns>
-        string ToCode(ICodeBlock cStruct, int indent = 4);
-        /// <summary>
-        /// Tokenizes the specified token.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        void Tokenize(TokenDelegate? token);
-        IEnumerable<TokenData> Tokenize();
     }
 
     public record struct TokenData(string Code, ICSCode.CodeBlockType type, int Level)
