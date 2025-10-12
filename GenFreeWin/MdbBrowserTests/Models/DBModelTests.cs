@@ -98,7 +98,7 @@ namespace MdbBrowser.Models.Tests
         [DataRow("Users", new[] { "" })]
         public void QuerySchemaTest2(string sName, string[] asExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => _ = testModel.QuerySchema(sName));
+            Assert.ThrowsExactly<ArgumentException>(() => _ = testModel.QuerySchema(sName));
         }
 
         [TestMethod()]
