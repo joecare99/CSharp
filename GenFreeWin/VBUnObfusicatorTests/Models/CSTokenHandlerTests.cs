@@ -83,7 +83,7 @@ public class CSTokenHandlerTests
             handler.TryGetValue(0, out var action);
             action?.Invoke(collector.Collect, code, data);
         }
-        Assert.IsTrue(collector.Tokens.Count==(expectedState==0?0: 1));
+        Assert.AreEqual(expectedState == 0 ? 0 : 1, collector.Tokens.Count);
         Assert.AreEqual(expectedState, data.State);
     }
 
