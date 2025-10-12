@@ -78,9 +78,8 @@ public class VTEVisual : IVisual
         var s = Console.ReadLine();
         if (int.TryParse(s, out int val))
         {
-            var enumType = _viewModel.Model.KeyType;
-            var key = (Enum)Enum.ToObject(enumType, val);
-            _viewModel.SelectTile(key);
+            var key = (Enum)(object)val;
+            _viewModel.SelectTileCommand.Execute(key);
         }
     }
 
@@ -91,7 +90,7 @@ public class VTEVisual : IVisual
             Console.WriteLine("Kein Tile ausgewählt.");
             return;
         }
-        var size = _viewModel.Model.TileSize;
+        var size = _viewModel.TileSize;
         if (size == Size.Empty)
         {
             Console.WriteLine("TileSize nicht gesetzt. Bitte zuerst laden oder Größe definieren.");

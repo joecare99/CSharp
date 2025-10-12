@@ -39,7 +39,7 @@ public class CRandomTests
     public void Next_Throws_WhenMinGreaterThanMax()
     {
         var rnd = new CRandom();
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => rnd.Next(10, 0));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => rnd.Next(10, 0));
     }
 
     [TestMethod]

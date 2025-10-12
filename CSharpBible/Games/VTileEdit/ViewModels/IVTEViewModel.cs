@@ -18,4 +18,5 @@ public interface IVTEViewModel : INotifyPropertyChanged
     string[] CurrentLines { get; set; }
     FullColor[] CurrentColors { get; set; }
     Func<Size> DoNewTileDialog { get; set; }
+    Size TileSize { get; }
 }

@@ -1,4 +1,10 @@
 # Werner_Flaschbier
+    __        __                            ______                           
+    \ \      / /                           |  ____)_               _     _    _
+     \ \ /\ / /__ _ __ _ __   ___ _ __     |  __) | | ____ ___ ___| |__ | |__(_) ___ _ __
+      \ V  V / _ \ '__) '_ \ / _ \ '__)    | |    | |/ _  | __)  _) '_ \| '_ \ |/ _ \ '__)
+       \_/\_/  __/ |  | | | |  __/ |       |_|    | | (_| |__ \ (_| | | | |_| ||  __/ |
+             \___/_|  |_| |_|\___|_|              |_|\____|___/___)_| |_|____/_|\___/_|
 
 A classic style platform / arcade puzzle hybrid game implementation. Consists of a base engine (`Werner_Flaschbier_Base`) and one or more console front ends.
 
@@ -34,7 +40,6 @@ dotnet run --project Werner_Flaschbier/Werner_Flaschbier_Console.csproj
 | Key | Action |
 |-----|--------|
 | Arrow keys | Move |
-| Space | Jump / action |
 | Q / Esc | Quit |
 
 Adjust actual mapping according to implemented input layer.

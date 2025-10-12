@@ -173,9 +173,9 @@ public class NotificationObjectTests : NotificationObject
             _ => (s) => TestString = s
         };
         if (xCh && xITsHasVl && eReact == eValidReact.GeneralException)
-            Assert.ThrowsException<Exception>(() => Setter(sVal), $"{name}.T{iTs}");
+            Assert.ThrowsExactly<Exception>(() => Setter(sVal), $"{name}.T{iTs}");
         else if (xCh && xITsHasVl && eReact == eValidReact.ArgumentException)
-            Assert.ThrowsException<ArgumentException>(() => Setter(sVal), $"{name}.T{iTs}");
+            Assert.ThrowsExactly<ArgumentException>(() => Setter(sVal), $"{name}.T{iTs}");
         else
             Setter(sVal);
 
@@ -224,9 +224,9 @@ public class NotificationObjectTests : NotificationObject
         };
 
         if (xCh && xITsHasVl && eReact == eValidReact.GeneralException)
-            Assert.ThrowsException<Exception>(() => Setter(sVal), $"{name}.T{iTs}");
+            Assert.ThrowsExactly<Exception>(() => Setter(sVal), $"{name}.T{iTs}");
         else if (xCh && xITsHasVl && eReact == eValidReact.ArgumentException) 
-            Assert.ThrowsException<ArgumentException>(() => Setter(sVal), $"{name}.T{iTs}");
+            Assert.ThrowsExactly<ArgumentException>(() => Setter(sVal), $"{name}.T{iTs}");
         else
             Setter(sVal);
 
