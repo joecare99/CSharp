@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using GenFreeBrowser.ViewModels;
 using GenFreeBrowser.ViewModels.Interfaces;
@@ -26,4 +27,15 @@ public class DummyHostViewModel
         KernFamilieVM = new KernFamilieViewModel();
         _ = PersonenVM.LadeAsync();
     }
+}
+
+public class PersonCardVM
+{
+    public PersonCardVM(string name)
+    {
+        Vollname = name;
+    }
+
+    public string Vollname { get; set; }
+    public string? GeburtsDatum { get; set; }
 }
