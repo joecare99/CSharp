@@ -27,7 +27,7 @@ namespace WinAhnenCls.Model.GenBase.Tests
             using var ms = new MemoryStream();
             using var gbr = new GedComBaseReader(ms);
             gbr.Close();
-            Assert.ThrowsException<ObjectDisposedException>(() => gbr.ReadLine());
+            Assert.ThrowsExactly<ObjectDisposedException>(() => gbr.ReadLine());
         }
 
         [TestMethod()]
