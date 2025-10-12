@@ -48,7 +48,7 @@ namespace VBUnObfusicator.ViewModels.Tests
             Assert.IsInstanceOfType(_testViewModel, typeof(CodeUnObFusViewModel));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Code", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code\r\n" })]
         [DataRow("Code2", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code2\r\n" })]
         public void CodeTest(string code, string[] asExp)
@@ -60,7 +60,7 @@ namespace VBUnObfusicator.ViewModels.Tests
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Result", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Result\r\n" })]
         [DataRow("Result2", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Result2\r\n" })]
         public void ResultTest(string result, string[] asExp)
@@ -72,30 +72,30 @@ namespace VBUnObfusicator.ViewModels.Tests
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Reorder)=True\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Reorder)=False\r\n" })]
         [DataRow(true, new[] { "" })]
         public void ReorderTest(bool reorder, string[] asExp)
         {
             Assert.IsNotNull(_testViewModel.Reorder);
-            Assert.AreEqual(true, _testViewModel.Reorder);
+            Assert.IsTrue(_testViewModel.Reorder);
             _testViewModel.Reorder = reorder;
             Assert.AreEqual(reorder, _testViewModel.Reorder);
             Assert.AreEqual(asExp[0], DebugLog);
         }
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,RemoveLbl)=True\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,RemoveLbl)=False\r\n" })]
         [DataRow(true, new[] { "" })]
         public void RemoveLblTest(bool removeLbl, string[] asExp)
         {
             Assert.IsNotNull(_testViewModel.RemoveLbl);
-            Assert.AreEqual(true, _testViewModel.RemoveLbl);
+            Assert.IsTrue(_testViewModel.RemoveLbl);
             _testViewModel.RemoveLbl = removeLbl;
             Assert.AreEqual(removeLbl, _testViewModel.RemoveLbl);
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("0-Empty", new object[] { "", true, true ,true}, new[] { "Please enter some code ...", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Please enter some code ...
 " })]

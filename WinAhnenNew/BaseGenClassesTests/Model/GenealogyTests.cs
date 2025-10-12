@@ -81,7 +81,7 @@ namespace BaseGenClasses.Model.Tests
             {
                 _ = ex switch
                 {
-                    ArgumentException argEx => Exec(() => Assert.ThrowsException<ArgumentException>(() => _genealogy.GetEntity(param?.ToList()))),
+                    ArgumentException argEx => Exec(() => Assert.ThrowsExactly<ArgumentException>(() => _genealogy.GetEntity(param?.ToList()))),
                     _ => Exec(() => Assert.Fail("Unknown exception"))
                 };
                 return;

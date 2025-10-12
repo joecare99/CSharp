@@ -627,7 +627,7 @@ namespace GenFree.Data.Tests
         [DataRow("ArtNr", EventIndex.ArtNr, EventFields.ArtText)]
         public void GetIndex2FieldTest(string sName, EventIndex eIx, EventFields eExp)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetIndex1Field(eIx));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetIndex1Field(eIx));
         }
 
         [TestMethod()]

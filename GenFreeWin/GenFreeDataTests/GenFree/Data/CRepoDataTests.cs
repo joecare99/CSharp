@@ -91,7 +91,7 @@ namespace GenFree.Data.Tests
         [DataRow((ERepoProp)100, TypeCode.DateTime)]
         public void GetPropTypeTest2(ERepoProp pAct, TypeCode eExp)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
         [TestMethod()]
@@ -116,7 +116,7 @@ namespace GenFree.Data.Tests
         [DataRow((ERepoProp)100, TypeCode.DateTime)]
         public void GetPropValueTest2(ERepoProp eProp, object oExp)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eProp));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropValue(eProp));
         }
 
         [TestMethod()]
@@ -143,7 +143,7 @@ namespace GenFree.Data.Tests
         [DataRow((ERepoProp)100, TypeCode.DateTime)]
         public void SetPropValueTest1(ERepoProp eAct, object iVal)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
         }
 
 
@@ -172,7 +172,7 @@ namespace GenFree.Data.Tests
         [DataRow((ERepoProp)100, TypeCode.DateTime)]
         public void SetDBValueTest1(ERepoProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
         [TestMethod()]

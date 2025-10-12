@@ -36,12 +36,20 @@ public partial class PersonSummaryControl : UserControl
                 }
                 catch { }
             }
-            else
+            else if (TryFindResource("FallbackSilhouette") is DrawingImage fallback)
             {
-                if (TryFindResource("FallbackSilhouette") is DrawingImage fallback)
-                    PersonImage.Source = fallback;
+                PersonImage.Source = fallback;
             }
         }
+    }
+
+    public static readonly DependencyProperty ParentsHeaderProperty = DependencyProperty.Register(
+        nameof(ParentsHeader), typeof(string), typeof(PersonSummaryControl), new PropertyMetadata(string.Empty));
+
+    public string ParentsHeader
+    {
+        get => (string)GetValue(ParentsHeaderProperty);
+        set => SetValue(ParentsHeaderProperty, value);
     }
 
     public static readonly DependencyProperty DisplayNameProperty = DependencyProperty.Register(

@@ -14,7 +14,7 @@ namespace MdbBrowser.Tests
         {
            var testClass = new App();
             Assert.IsNotNull(testClass);
-            Assert.ThrowsException<InvalidOperationException>(()=>_=IoC.GetRequiredService<IDBViewViewModel>());
+            Assert.ThrowsExactly<InvalidOperationException>(()=>_=IoC.GetRequiredService<IDBViewViewModel>());
         }
     }
 }

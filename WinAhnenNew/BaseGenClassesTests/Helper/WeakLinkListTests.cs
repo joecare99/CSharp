@@ -145,7 +145,7 @@ public class WeakLinkListTests
     {
         Arrange(aInts);
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(()=> _testClass.Insert(iAct, new TestClass(iAct2)));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(()=> _testClass.Insert(iAct, new TestClass(iAct2)));
     }
 
     [TestMethod()]
@@ -177,7 +177,7 @@ public class WeakLinkListTests
     {
         Arrange(aInts);
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _testClass.RemoveAt(iAct));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _testClass.RemoveAt(iAct));
     }
 
     [TestMethod()]

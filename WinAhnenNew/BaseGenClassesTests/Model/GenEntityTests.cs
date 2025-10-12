@@ -60,12 +60,12 @@ public class GenEntityTests
     [TestMethod]
     public void StartTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => _testClass.Start);
+        Assert.ThrowsExactly<NotImplementedException>(() => _testClass.Start);
     }
     [TestMethod]
     public void EndTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => _testClass.End);
+        Assert.ThrowsExactly<NotImplementedException>(() => _testClass.End);
     }
     [TestMethod]
     public void SourcesTest()

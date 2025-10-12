@@ -69,7 +69,7 @@ public class CCodeBlockTests : TestBase
         Assert.IsNotNull(_testClass);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListMove))]
     public void MoveBlocksTest(string _, List<TokenData> actList, (int[], int, int, int) movedata, bool xSucc, string[] data)
     {
@@ -84,7 +84,7 @@ public class CCodeBlockTests : TestBase
         AssertAreEqual(data[0], sAct);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListMove))]
     public void MoveBlocksTest2(string _, List<TokenData> actList, (int[], int, int, int) movedata, bool xSucc, string[] data)
     {
@@ -100,7 +100,7 @@ public class CCodeBlockTests : TestBase
         AssertAreEqual(data[0], sAct);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListDelete))]
     public void DeleteBlocksTest(string _, List<TokenData> actList, (int[], int, int) deldata, bool xSucc, string[] data)
     {
@@ -115,23 +115,23 @@ public class CCodeBlockTests : TestBase
         AssertAreEqual(data[0], sAct);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     public void GetItemIndex()
     {
         var act = _testClass.Parse(TestDataClass.TestDataList1() as List<TokenData>);
         var act2 = act.SubBlocks[7];
         ((CSCode.CodeBlock)act2).SourcesIndex = new() { new() { 1 } };
-        Assert.AreEqual(true, act2.Sources[0].TryGetTarget(out var act3));
+        Assert.IsTrue(act2.Sources[0].TryGetTarget(out var act3));
         Assert.AreEqual(act, act3);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     public void GetItemByIndexIndexTest()
     {
         var act = _testClass.Parse(TestDataClass.TestDataList1() as List<TokenData>);
         var act2 = act.SubBlocks[7];
         ((CSCode.CodeBlock)act2).DestinationIndex = new() { 1 };
-        Assert.AreEqual(true, act2.Destination.TryGetTarget(out var act3));
+        Assert.IsTrue(act2.Destination.TryGetTarget(out var act3));
         Assert.AreEqual(act, act3);
     }
 
@@ -260,7 +260,7 @@ public class CSCodeTests : TestBase
         new object[] {"13", new[] { TestDataClass.test13Data, TestDataClass.cExp13Log } },
     };
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0", new[] { TestDataClass.testData0, TestDataClass.cExpLog0 }, DisplayName = "0")]
     //  [DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.cExp2Log }, DisplayName = "2")]
     [DataRow("3", new[] { TestDataClass.testData3, TestDataClass.cExpLog3 }, DisplayName = "3")]
@@ -289,7 +289,7 @@ public class CSCodeTests : TestBase
             };
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0", new[] { TestDataClass.testData0, TestDataClass.testDataExp0 }, DisplayName = "0")]
     //  [DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.testDataExp2 }, DisplayName = "2")]
     [DataRow("3", new[] { TestDataClass.testData3, TestDataClass.testDataExp3 }, DisplayName = "3")]
@@ -330,7 +330,7 @@ public class CSCodeTests : TestBase
         new object[] { "13", new[] { TestDataClass.test13Data, TestDataClass.cExpCode13 } },
             };
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0", new[] { TestDataClass.testData0, TestDataClass.cExpCode0 }, DisplayName = "0")]
     //[DataRow("1", new[] { TestDataClass.test1Data, TestDataClass.cExpCode1 }, DisplayName = "1")]
     //[DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.cExpCode2 }, DisplayName = "2")]
@@ -350,7 +350,7 @@ public class CSCodeTests : TestBase
         AssertAreEqual(data[1], sAct);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { TestDataClass.testData0, TestDataClass.cExpLog0 }, DisplayName = "0")]
     [DataRow(new[] { TestDataClass.testData5, TestDataClass.cExpLog0 }, DisplayName = "0")]
     public void Tokenize0Test(string[] data)
@@ -361,7 +361,7 @@ public class CSCodeTests : TestBase
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestTokenizeList))]
     public void Tokenize2Test(string _, string[] data, List<TokenData> expList)
     {
@@ -384,7 +384,7 @@ public class CSCodeTests : TestBase
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListParse))]
     public void ParseEnumTest(string _, List<TokenData> actList, string[] data)
     {
@@ -393,7 +393,7 @@ public class CSCodeTests : TestBase
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListParse2))]
     public void ParseEnum2Test(string _, List<TokenData> actList, string[] data)
     {
@@ -401,7 +401,7 @@ public class CSCodeTests : TestBase
         AssertAreEqual(data[0], act.ToCode());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(ReorderListData))]
     public void ReorderLabelsTest(string _, List<TokenData> actList, string[] data)
     {
@@ -415,7 +415,7 @@ public class CSCodeTests : TestBase
         AssertAreEqual(data[0], sAct);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(RemoveLabelsData))]
     public void RemoveLabelsTest(string _, List<TokenData> actList, string[] data)
     {

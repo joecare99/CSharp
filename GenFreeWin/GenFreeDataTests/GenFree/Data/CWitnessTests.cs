@@ -59,7 +59,7 @@ namespace GenFree.Data.Tests
         [DataRow(WitnessIndex.Zeug, WitnessFields.PerNr)]
         public void GetIndex1FieldTest1(WitnessIndex eAct, WitnessFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
         [TestMethod()]

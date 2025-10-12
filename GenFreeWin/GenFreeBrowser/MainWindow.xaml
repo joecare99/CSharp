@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="GenFree Browser" Height="600" Width="1000">
     <Window.Resources>
-        <!-- DataTemplate für Personenliste -->
+        <!-- DataTemplate für Personenliste - >
         <DataTemplate DataType="{x:Type vm:FraPersonenListViewModel}" xmlns:vm="clr-namespace:GenFreeBrowser.ViewModels">
             <views:FraPersonenList />
-        </DataTemplate>
+        </DataTemplate-->
     </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top">

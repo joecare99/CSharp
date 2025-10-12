@@ -149,7 +149,7 @@ namespace GenFree.Data.Tests
         [DataRow((ELinkProp)100, TypeCode.Int32)]
         public void GetPropTypeTest2(ELinkProp pAct, TypeCode eExp)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
         [TestMethod()]
@@ -167,7 +167,7 @@ namespace GenFree.Data.Tests
         [DataRow((ELinkProp)100, TypeCode.Int32)]
         public void GetPropValueTest1(ELinkProp eExp, object oAct)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropValue(eExp));
         }
 
         [TestMethod()]
@@ -195,7 +195,7 @@ namespace GenFree.Data.Tests
         [DataRow((ELinkProp)100, TypeCode.Int32)]
         public void SetPropValueTest2(ELinkProp eAct, object iVal)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
         }
 
         [TestMethod()]
@@ -228,7 +228,7 @@ namespace GenFree.Data.Tests
         [DataRow((ELinkProp)3, 4)]
         public void SetDBValueTest3(ELinkProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(()=> testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsExactly<NotImplementedException>(()=> testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
         [TestMethod()]
