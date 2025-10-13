@@ -42,7 +42,7 @@ public class IoCTests : BaseTest
         _gsOld = IoC.GetSrv;
         _grsOld = IoC.GetReqSrv;
         _gscOld = IoC.GetScope;
-        Assert.ThrowsException<NotImplementedException>(() => _gscOld?.Invoke());
+        Assert.ThrowsExactly<NotImplementedException>(() => _gscOld?.Invoke());
         IoC.GetSrv = GetSrv;
         IoC.GetReqSrv = GetReqSrv;
         IoC.GetScope = GetScope;
@@ -62,8 +62,8 @@ public class IoCTests : BaseTest
     [TestMethod()]
     public void SetupTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => _grsOld?.Invoke(typeof(object)));
-        Assert.AreEqual(null, _gsOld?.Invoke(typeof(object)));
+        Assert.ThrowsExactly<NotImplementedException>(() => _grsOld?.Invoke(typeof(object)));
+        Assert.IsNull(_gsOld?.Invoke(typeof(object)));
     }
 
     [TestMethod()]
@@ -76,7 +76,7 @@ public class IoCTests : BaseTest
     [TestMethod()]
     public void GetServiceTest()
     {
-        Assert.AreEqual(null, IoC.GetService<Object>());
+        Assert.IsNull(IoC.GetService<Object>());
         Assert.AreEqual("GetSrv(System.Object)\r\n", DebugLog);
     }
 
@@ -106,7 +106,7 @@ public class IoCTests : BaseTest
         Assert.IsNotNull(IoC.GetRequiredService<Object>());
         IoC.SetCurrentScope(s);
         Assert.AreEqual(s, IoC.Scope);
-        Assert.ThrowsException<InvalidOperationException>(()=> IoC.GetRequiredService<Object>());
+        Assert.ThrowsExactly<InvalidOperationException>(()=> IoC.GetRequiredService<Object>());
         Assert.AreEqual("GetScope()\r\nGetScope()\r\n", DebugLog);
     }
 

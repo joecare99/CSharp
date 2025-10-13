@@ -174,15 +174,15 @@ public class PropertyHelperTests
             && iTs is 2 or 4;
         switch (eReact)
         {
-            case eValidReact.GeneralException when eRIsEx: Assert.ThrowsException<Exception>(Setter, $"{name}.T2"); break;
-            case eValidReact.ArgumentException when eRIsEx: Assert.ThrowsException<ArgumentException>(Setter, $"{name}.T2"); break;
+            case eValidReact.GeneralException when eRIsEx: Assert.ThrowsExactly<Exception>(Setter, $"{name}.T2"); break;
+            case eValidReact.ArgumentException when eRIsEx: Assert.ThrowsExactly<ArgumentException>(Setter, $"{name}.T2"); break;
             default: Setter(); break;
         }
         Assert.AreEqual(sExp, _testString, $"{name}.Result");
         Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [TestProperty("Author", "J.C.")]
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
@@ -193,7 +193,7 @@ public class PropertyHelperTests
         4 => TestString6 = sVal,
         _ => TestString = sVal});
 
-    [DataTestMethod()]
+    [TestMethod()]
     [TestProperty("Author", "J.C.")]
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
@@ -205,7 +205,7 @@ public class PropertyHelperTests
             _ => TestString1 = sVal
         });
 
-    [DataTestMethod()]
+    [TestMethod()]
     [TestProperty("Author", "J.C.")]
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
@@ -217,7 +217,7 @@ public class PropertyHelperTests
             _ => TestString_0 = sVal
         });
 
-    [DataTestMethod()]
+    [TestMethod()]
     [TestProperty("Author", "J.C.")]
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
