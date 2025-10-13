@@ -18,7 +18,7 @@ public class ListHelperTests
     {
         var aoResult = aoSrc.ToList();
         if (iDst > asExp.Length)
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => aoResult.MoveItem(iSrc, iDst));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => aoResult.MoveItem(iSrc, iDst));
         else
         aoResult.MoveItem(iSrc, iDst);
         AssertAreEqual(asExp, aoResult.ToArray());
