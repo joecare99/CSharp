@@ -13,7 +13,7 @@ namespace Avalonia_App02.Tests
             try
             {
                 Program.GetAppBuilder = () => AppBuilder.Configure<App>();
-                Assert.ThrowsException<InvalidOperationException>(()=> Program.Main(new string[] { }));
+                Assert.ThrowsExactly<InvalidOperationException>(()=> Program.Main(new string[] { }));
             }
             finally
             {

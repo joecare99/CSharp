@@ -104,7 +104,7 @@ namespace BaseLib.ViewModel.Tests
             Clear();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestProperty("Author","J.C.")]
         [TestCategory("SetData")]
         [DataRow("00 Empty",0,"",eValidReact.OK,"","")]
@@ -160,20 +160,20 @@ namespace BaseLib.ViewModel.Tests
             switch (iTs)
             {
                 //case 1: TestString1 = sVal; break;
-                case 1 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(()=>TestString1 = sVal,$"{name}.T1"); break;
-                case 1 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString1 = sVal, $"{name}.T1"); break;
+                case 1 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(()=>TestString1 = sVal,$"{name}.T1"); break;
+                case 1 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString1 = sVal, $"{name}.T1"); break;
                 case 1: TestString1 = sVal; break;
                 case 2: TestString2 = sVal; break;
-                case 3 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString3 = sVal, $"{name}.T3"); break;
-                case 3 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString3 = sVal, $"{name}.T3"); break;
+                case 3 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString3 = sVal, $"{name}.T3"); break;
+                case 3 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString3 = sVal, $"{name}.T3"); break;
                 case 3: TestString3 = sVal; break;
                 case 4: TestString4 = sVal; break;
-                case 5 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString5 = sVal, $"{name}.T5"); break;
-                case 5 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString5 = sVal, $"{name}.T5"); break;
+                case 5 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString5 = sVal, $"{name}.T5"); break;
+                case 5 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString5 = sVal, $"{name}.T5"); break;
                 case 5: TestString5 = sVal; break;
                 case 6: TestString6 = sVal; break;
-                case 7 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString7 = sVal, $"{name}.T7"); break;
-                case 7 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString7 = sVal, $"{name}.T7"); break;
+                case 7 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString7 = sVal, $"{name}.T7"); break;
+                case 7 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString7 = sVal, $"{name}.T7"); break;
                 case 7: TestString7 = sVal; break;
                 default: TestString = sVal; break;
             }
@@ -181,7 +181,7 @@ namespace BaseLib.ViewModel.Tests
             Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");    
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestProperty("Author", "J.C.")]
         [TestCategory("SetData")]
         [DataRow("00 Empty", 0, "", eValidReact.OK, "", "")]
@@ -238,20 +238,20 @@ namespace BaseLib.ViewModel.Tests
             switch (iTs)
             {
                 //case 1: TestString1 = sVal; break;
-                case 1 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString1 = sVal, $"{name}.T1"); break;
-                case 1 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString1 = sVal, $"{name}.T1"); break;
+                case 1 when xCh && eReact == eValidReact.GeneralException: Assert.Throws<Exception>(() => TestString1 = sVal, $"{name}.T1"); break;
+                case 1 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString1 = sVal, $"{name}.T1"); break;
                 case 1: TestString1 = sVal; break;
                 case 2: TestString2 = sVal; break;
-                case 3 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString3 = sVal, $"{name}.T3"); break;
-                case 3 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString3 = sVal, $"{name}.T3"); break;
+                case 3 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString3 = sVal, $"{name}.T3"); break;
+                case 3 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString3 = sVal, $"{name}.T3"); break;
                 case 3: TestString3 = sVal; break;
                 case 4: TestString4 = sVal; break;
-                case 5 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString5 = sVal, $"{name}.T5"); break;
-                case 5 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString5 = sVal, $"{name}.T5"); break;
+                case 5 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString5 = sVal, $"{name}.T5"); break;
+                case 5 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString5 = sVal, $"{name}.T5"); break;
                 case 5: TestString5 = sVal; break;
                 case 6: TestString6 = sVal; break;
-                case 7 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsException<Exception>(() => TestString7 = sVal, $"{name}.T7"); break;
-                case 7 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsException<ArgumentException>(() => TestString7 = sVal, $"{name}.T7"); break;
+                case 7 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString7 = sVal, $"{name}.T7"); break;
+                case 7 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString7 = sVal, $"{name}.T7"); break;
                 case 7: TestString7 = sVal; break;
                 default: TestString = sVal; break;
             }

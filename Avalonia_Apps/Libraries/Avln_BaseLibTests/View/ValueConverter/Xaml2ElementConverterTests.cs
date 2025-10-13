@@ -32,7 +32,7 @@ namespace Avalonia.Views.ValueConverter.Tests
         [TestMethod()]
         public void ConvertBackTest()
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.ConvertBack(null!, typeof(string), null!, System.Globalization.CultureInfo.CurrentCulture));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.ConvertBack(null!, typeof(string), null!, System.Globalization.CultureInfo.CurrentCulture));
         }
     }
 }

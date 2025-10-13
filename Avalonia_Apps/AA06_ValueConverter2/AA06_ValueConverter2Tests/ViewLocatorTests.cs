@@ -90,7 +90,7 @@ namespace AA06_ValueConverter2.Tests
             object? result = null;
             if (sAct.EndsWith(nameof(AA06_ValueConverter2)))
             {
-                Assert.ThrowsException<MissingMethodException>(() => testClass.Build(obj));
+                Assert.ThrowsExactly<MissingMethodException>(() => testClass.Build(obj));
                 tAct = null;    
             }
             else

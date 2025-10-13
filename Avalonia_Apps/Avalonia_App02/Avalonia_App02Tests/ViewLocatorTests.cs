@@ -86,7 +86,7 @@ namespace Avalonia_App02.Tests
             object? result = null;
             if (sAct.EndsWith(nameof(Avalonia_App02)))
             {
-                Assert.ThrowsException<MissingMethodException>(() => testClass.Build(obj));
+                Assert.ThrowsExactly<MissingMethodException>(() => testClass.Build(obj));
                 tAct = null;    
             }
             else
