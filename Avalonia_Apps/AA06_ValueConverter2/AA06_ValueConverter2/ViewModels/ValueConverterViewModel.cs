@@ -38,10 +38,10 @@ public partial class ValueConverterViewModel : ViewModelBase, IValueConverterVie
     /// </summary>
     /// <value>The greeting.</value>
     [ObservableProperty]
-    private string _greeting  = "Welcome to Avalonia!";
+    public partial string Greeting { get; set; } = "Welcome to Avalonia!";
 
     [ObservableProperty]
-    private string _title  = "Main Menu";
+    public partial string Title { get; set; } = "Main Menu";
 
     /// <summary>
     /// Gets the now.
@@ -50,7 +50,7 @@ public partial class ValueConverterViewModel : ViewModelBase, IValueConverterVie
     public DateTime Now => _model.Now;
 
     [ObservableProperty]
-    private double _inputValue; 
+    public partial double InputValue { get; set; }
     public double ResultValue => _model.ResultValue;
 
     /// <summary>
