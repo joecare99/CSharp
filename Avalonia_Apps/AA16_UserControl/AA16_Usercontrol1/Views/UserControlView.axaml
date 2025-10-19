@@ -4,8 +4,8 @@
              xmlns:vm="clr-namespace:AA16_UserControl1.ViewModels"
              x:DataType="vm:UserControlViewModel"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Grid Background="Silver" RowDefinitions="43*,47*">
-    <local:LabeldMaxLengthTextbox Caption="Bitte Motto Eingeben" Text="{Binding Text}" Command="{Binding Do1Command}" HorizontalAlignment="Left" Margin="40,35,0,0" VerticalAlignment="Top" Width="512"/>
+  <Grid RowDefinitions="45*,47*">
+    <local:LabeldMaxLengthTextbox Caption="Bitte Motto Eingeben" Text="{Binding Text}" Command="{Binding Do1Command}" HorizontalAlignment="Left" Margin="40,30,0,0" VerticalAlignment="Top" Width="512"/>
     <local:LabeldMaxLengthTextbox Caption="Bitte Daten Eingeben" Text="{Binding Daten}" Command="{Binding Do2Command}" HorizontalAlignment="Left" Margin="40,95,0,0" VerticalAlignment="Top" Width="512" Grid.Row="0"/>
     <StackPanel Grid.Row="1">
       <TextBlock Text="Daten:"/>

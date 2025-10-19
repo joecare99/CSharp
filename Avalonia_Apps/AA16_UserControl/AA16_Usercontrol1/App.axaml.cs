@@ -37,7 +37,6 @@ public partial class App : Application
         // ViewModels
         services.AddTransient<ViewModels.MainWindowViewModel>();
         services.AddTransient<ViewModels.UserControlViewModel>();
-        services.AddTransient<ViewModels.CurrencyViewViewModel>();
 
         // Views
         services.AddTransient<MainWindow>();
