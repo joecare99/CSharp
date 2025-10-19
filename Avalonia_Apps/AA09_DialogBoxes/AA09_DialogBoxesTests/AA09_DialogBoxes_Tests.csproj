@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\AA16_UserControl\AA16_Usercontrol1\AA16_UserControl1.csproj" />
 		<ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
 		<ProjectReference Include="..\AA09_DialogBoxes\AA09_DialogBoxes.csproj" />
 	</ItemGroup>

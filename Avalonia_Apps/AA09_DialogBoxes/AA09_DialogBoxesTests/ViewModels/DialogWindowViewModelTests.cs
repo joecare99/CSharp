@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 using System;
 using System.ComponentModel;
 

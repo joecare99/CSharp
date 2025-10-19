@@ -12,10 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
+using MsBox.Avalonia.Enums;
 
 /// <summary>
 /// The Tests namespace.
@@ -38,7 +39,7 @@ public class DialogViewModelTests : BaseTestViewModel
     /// <summary>
     /// The mb result
     /// </summary>
-    System.Windows.MessageBoxResult mbResult;
+    ButtonResult mbResult;
     /// <summary>
     /// The t result
     /// </summary>
@@ -66,7 +67,7 @@ public class DialogViewModelTests : BaseTestViewModel
     /// <param name="title">The title.</param>
     /// <param name="name">The name.</param>
     /// <returns>System.Windows.MessageBoxResult.</returns>
-    private System.Windows.MessageBoxResult DoOpenMessageBoxTest(string title, string name)
+    private ButtonResult DoOpenMessageBoxTest(string title, string name)
     {
         DoLog($"DoOpenMessageBox({title},{name})=>{mbResult}");
         return mbResult;
@@ -107,24 +108,24 @@ public class DialogViewModelTests : BaseTestViewModel
     /// <param name="mrExp">The mr exp.</param>
     /// <param name="asExp">As exp.</param>
     [DataTestMethod()]
-    [DataRow(true,MessageBoxResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
+    [DataRow(true,ButtonResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameTrue
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
 PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
 PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=42 Entwickler
 ", "42 Entwickler" })]
-    [DataRow(false, MessageBoxResult.OK, new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameFalse
+    [DataRow(false, ButtonResult.Ok, new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameFalse
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
 PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
 PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=Nö
 ", "Nö" })]
-    [DataRow(null, MessageBoxResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
+    [DataRow(null, ButtonResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestName
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
 PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
 PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=Nö
 ", "Nö" })]
-    public void OpenMsgCommandTest(bool? oAct,MessageBoxResult mrExp, string[] asExp)
+    public void OpenMsgCommandTest(bool? oAct,ButtonResult mrExp, string[] asExp)
     {
         // Arrange
         testModel.Name = $"TestName{oAct}";

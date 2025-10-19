@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 using AA09_DialogBoxes.ViewModels;
 using System.ComponentModel;
 using System.Threading;
