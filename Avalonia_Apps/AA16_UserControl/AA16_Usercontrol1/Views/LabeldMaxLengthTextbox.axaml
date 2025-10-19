@@ -1,0 +1,26 @@
+<UserControl x:Class="AA16_UserControl1.Views.LabeldMaxLengthTextbox"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AA16_UserControl1.Views"
+             x:DataType="local:LabeldMaxLengthTextbox">
+  <Grid DataContext="{Binding $parent[local:LabeldMaxLengthTextbox]}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
+    <Label x:Name="lblCaption" Content="{Binding Caption}"/>
+    <Label Grid.Column="1">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding #txt.Text.Length}"/>
+        <TextBlock Text="/"/>
+        <TextBlock Text="{Binding MaxLength}"/>
+      </StackPanel>
+    </Label>
+    <TextBox x:Name="txt" Grid.Row="1" Grid.ColumnSpan="1" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, Delay=200 }"/>
+    <Button Grid.Column="1" Grid.Row="1" Content="..." Command="{Binding Command}"/>
+  </Grid>
+</UserControl>

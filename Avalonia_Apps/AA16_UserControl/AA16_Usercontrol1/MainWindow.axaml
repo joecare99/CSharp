@@ -1,0 +1,8 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AA16_UserControl1.ViewModels"
+        x:Class="AA16_UserControl1.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="User Controls" Width="800" Height="450">
+  <ContentPresenter Content="{Binding CurrentViewModel}"/>
+</Window>
