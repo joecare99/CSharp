@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 
 namespace AA16_UserControl1.ViewModels.Tests;
 
@@ -12,7 +12,7 @@ public class MainWindowViewModelTests
     [TestInitialize]
     public void Init()
     {
-        testModel = new();
+        testModel = new(null);
     }
 
     [TestMethod()]
@@ -20,7 +20,7 @@ public class MainWindowViewModelTests
     {
         Assert.IsNotNull(testModel);
         Assert.IsInstanceOfType(testModel, typeof(MainWindowViewModel));
-        Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
+        Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
         Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
     }
 }

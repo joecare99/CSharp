@@ -78,6 +78,6 @@ public class CurrencyValueConverterTests
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => testConv.ConvertBack(null, typeof(object), null, null));
+        Assert.ThrowsExactly<NotImplementedException>(() => testConv.ConvertBack(null, typeof(object), null, null));
     }
 }
