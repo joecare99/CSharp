@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:AA09_DialogBoxes.ViewModels"
+        x:Class="AA09_DialogBoxes.Views.MainWindow"
+        Width="600" Height="400"
+        Title="Dialog Demo"
+				x:DataType="vm:MainWindowViewModel"
+        mc:Ignorable="d">
+  <Design.DataContext>
+    <vm:MainWindowViewModel />
+  </Design.DataContext>
+  <StackPanel Margin="16" Spacing="8">
+    <TextBox Text="{Binding Name, Mode=TwoWay}" Watermark="Name"/>
+    <TextBox Text="{Binding Email, Mode=TwoWay}" Watermark="Email"/>
+    <StackPanel Orientation="Horizontal" Spacing="8">
+      <Button Content="Open Dialog" Command="{Binding OpenDialogCommand}"/>
+      <Button Content="Open Message" Command="{Binding OpenMsgCommand}"/>
+    </StackPanel>
+    <TextBlock Text="{Binding Cnt}"/>
+  </StackPanel>
+</Window>
