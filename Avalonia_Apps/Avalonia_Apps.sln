@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11111.16 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -75,6 +75,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA09_DialogBoxes", "AA09_DialogBoxes\AA09_DialogBoxes\AA09_DialogBoxes.csproj", "{291BFE74-F64A-D263-170E-6CF138F96265}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA09_DialogBoxes_Tests", "AA09_DialogBoxes\AA09_DialogBoxesTests\AA09_DialogBoxes_Tests.csproj", "{7905A0A7-25D3-6FF8-7C24-E97BF4ABBCCD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA16_UserControl", "AA16_UserControl", "{83C66B02-E701-4626-8DD0-FEF0EF839DEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA16_UserControl1", "AA16_UserControl\AA16_Usercontrol1\AA16_UserControl1.csproj", "{79124D87-74BE-F687-684B-51288C64ABE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA16_UserControl1_Tests", "AA16_UserControl\AA16_UserControl1Tests\AA16_UserControl1_Tests.csproj", "{00FC121D-0DBA-34F8-CE25-B5E980C9AF9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +156,14 @@ Global
 		{7905A0A7-25D3-6FF8-7C24-E97BF4ABBCCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7905A0A7-25D3-6FF8-7C24-E97BF4ABBCCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7905A0A7-25D3-6FF8-7C24-E97BF4ABBCCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79124D87-74BE-F687-684B-51288C64ABE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79124D87-74BE-F687-684B-51288C64ABE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79124D87-74BE-F687-684B-51288C64ABE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79124D87-74BE-F687-684B-51288C64ABE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00FC121D-0DBA-34F8-CE25-B5E980C9AF9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00FC121D-0DBA-34F8-CE25-B5E980C9AF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00FC121D-0DBA-34F8-CE25-B5E980C9AF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00FC121D-0DBA-34F8-CE25-B5E980C9AF9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,6 +186,8 @@ Global
 		{A943C3B6-9BE3-443D-A561-212E203A8A83} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
 		{291BFE74-F64A-D263-170E-6CF138F96265} = {5326A8F8-1CB1-4690-80E1-5BC0664D8EC0}
 		{7905A0A7-25D3-6FF8-7C24-E97BF4ABBCCD} = {5326A8F8-1CB1-4690-80E1-5BC0664D8EC0}
+		{79124D87-74BE-F687-684B-51288C64ABE2} = {83C66B02-E701-4626-8DD0-FEF0EF839DEE}
+		{00FC121D-0DBA-34F8-CE25-B5E980C9AF9B} = {83C66B02-E701-4626-8DD0-FEF0EF839DEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}
