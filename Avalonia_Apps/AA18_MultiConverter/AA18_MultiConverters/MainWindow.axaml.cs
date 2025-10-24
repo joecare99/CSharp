@@ -4,9 +4,9 @@ namespace AA18_MultiConverter;
 
 public partial class MainWindow : Window
 {
- public MainWindow(View.DateDifView view)
- {
- InitializeComponent();
- Content = view;
- }
+    public MainWindow(Views.DateDifView view)
+    {
+        InitializeComponent();
+        Content = view;
+    }
 }
