@@ -4,7 +4,6 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<RootNamespace>AA16_UserControl2</RootNamespace>
 	</PropertyGroup>
