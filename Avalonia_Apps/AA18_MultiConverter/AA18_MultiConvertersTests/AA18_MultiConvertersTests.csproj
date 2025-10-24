@@ -1,7 +1,7 @@
 ﻿<Project>
-	<Import Project="..\MVVM_Tutorial_net.props" />
+	<Import Project="..\Application.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -17,19 +17,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-		<PackageReference Include="MSTest" Version="3.11.0" />
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="Microsoft.NET.Test.Sdk"  />
+		<PackageReference Include="MSTest"  />
+		<PackageReference Include="coverlet.collector">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
-		<ProjectReference Include="..\MVVM_18_MultiConverters\MVVM_18_MultiConverters_net.csproj" />
+		<Folder Include="Helper\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Helper\" />
+	  <ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+	  <ProjectReference Include="..\AA18_MultiConverters\AA18_MultiConverters.csproj" />
 	</ItemGroup>
 
 </Project>
