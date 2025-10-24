@@ -1,0 +1,18 @@
+<Application xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:views="clr-namespace:AA16_UserControl2.Views"
+ x:Class="AA16_UserControl2.App">
+ <Application.Styles>
+ <FluentTheme />
+ <!-- Style and template for custom TestControl -->
+ <Style Selector="views|TestControl">
+ <Setter Property="Template">
+ <ControlTemplate>
+ <Border Padding="4">
+ <TextBlock Text="{TemplateBinding Text2}" />
+ </Border>
+ </ControlTemplate>
+ </Setter>
+ </Style>
+ </Application.Styles>
+</Application>

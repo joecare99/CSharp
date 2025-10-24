@@ -1,0 +1,5 @@
+<Window xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ x:Class="AA16_UserControl2.MainWindow"
+ Width="800" Height="450" Title="MainWindow">
+</Window>
