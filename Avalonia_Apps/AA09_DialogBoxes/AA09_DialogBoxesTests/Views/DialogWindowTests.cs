@@ -82,21 +82,20 @@ public class DialogWindowTests : BaseTestViewModel
     [TestMethod]
     public void DoOKTest()
     {
-        bool? xRes = null;
+        (bool,(string,string))? xRes = null;
         bool xVisible = false;
         var t = new Thread(() =>
         {
             testView = new();
             vm = (DialogWindowViewModel)testView.DataContext;
             ExecOK();
-            xRes = testView.ShowDialog();
-            // xResult = testView.ShowDialog();
+            xRes = testView.ShowDialog<(bool, (string, string))>(null).GetAwaiter().GetResult(); // Übergabe eines Besitzers (hier null)
             xVisible = testView.IsVisible;
 
             async void ExecOK()
             {
                 await System.Threading.Tasks.Task.Delay(50);
-                testView.Dispatcher.Invoke(() => vm.OKCommand.Execute(null));
+                vm.OKCommand.Execute(null);
             }
 
         });
@@ -105,7 +104,7 @@ public class DialogWindowTests : BaseTestViewModel
         t.Join(); //Wait for the thread to end
         Assert.IsFalse(xVisible);
         Assert.IsTrue(xRes.HasValue);
-        Assert.IsTrue(xRes.Value);
+        Assert.IsTrue(xRes.Value.Item1);
     }
 
 }
