@@ -5,5 +5,5 @@
  xmlns:views="clr-namespace:AA19_FilterLists.Views"
  mc:Ignorable="d" x:Class="AA19_FilterLists.Views.MainWindow"
  Width="700" Height="500" Title="AA19 Filter Lists">
- <views:PersonView />
+	<views:PersonView />
 </Window>

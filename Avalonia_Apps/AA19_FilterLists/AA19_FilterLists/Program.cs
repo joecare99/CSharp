@@ -1,15 +1,17 @@
-using System;
 using Avalonia;
+using System;
 
 namespace AA19_FilterLists;
 
-internal class Program
+internal static class Program
 {
- [STAThread]
- public static void Main(string[] args) => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+  [STAThread]
+  public static void Main(string[] args)
+   => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
- public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
- .UsePlatformDetect()
- .WithInterFont()
- .LogToTrace();
-}
+  public static AppBuilder BuildAvaloniaApp()
+   => AppBuilder.Configure<App>()
+   .UsePlatformDetect()
+   .WithInterFont()
+   .LogToTrace();
+ }

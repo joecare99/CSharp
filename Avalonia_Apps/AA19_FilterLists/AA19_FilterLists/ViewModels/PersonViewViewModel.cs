@@ -23,7 +23,7 @@ public class PersonViewViewModel : ObservableObject
 {
     private Person newPerson = new Person();
     private readonly IPersons _persons;
-    private string _filter;
+    private string _filter = string.Empty;
 
     public event EventHandler? MissingData;
 

@@ -12,20 +12,10 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Runtime.Serialization;
 
 namespace AA19_FilterLists.Model;
 
-/// <summary>
-/// Class Person.
-/// Implements the <see cref="BaseViewModel" />
-/// Implements the <see cref="ISafeSerializationData" />
-/// </summary>
-/// <seealso cref="BaseViewModel" />
-/// <seealso cref="ISafeSerializationData" />
-[Serializable]
-public class Person : ObservableObject, ISafeSerializationData
+public class Person : ObservableObject
 {
     #region Properties
     private int _id;
@@ -67,30 +57,9 @@ public class Person : ObservableObject, ISafeSerializationData
 
     public Person() { }
 
-    public Person(SerializationInfo info, StreamingContext context)
-    {
-        Id = info.GetInt32("Id");
-        FirstName = info.GetString(nameof(FirstName)) ?? "";
-        LastName = info.GetString(nameof(LastName)) ?? "";
-        Title = info.GetString(nameof(Title)) ?? "";
-    }
-
     public override string ToString()
     {
         return $"{Id}, {FullName}";
-    }
-
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue(nameof(Id), Id, typeof(int));
-        info.AddValue(nameof(FirstName), FirstName, typeof(string));
-        info.AddValue(nameof(LastName), LastName, typeof(string));
-        info.AddValue(nameof(Title), Title, typeof(string));
-    }
-
-    public void CompleteDeserialization(object deserialized)
-    {
-        throw new NotImplementedException();
     }
     #endregion
 }
