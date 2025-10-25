@@ -68,7 +68,7 @@ public class DialogWindowTests : BaseTestViewModel
         Assert.IsInstanceOfType(vm, typeof(DialogWindowViewModel));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     public void DoCancelTest()
     {
         var t = new Thread(() => { testView = new(); vm = (DialogWindowViewModel)testView.DataContext; testView.Show(); vm.CancelCommand.Execute(null); });

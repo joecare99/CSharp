@@ -106,7 +106,7 @@ public class MainWindowTests : BaseTestViewModel
         Assert.IsNotNull(vm.DoOpenMessageBox);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("OKTitle", "OKLine", ButtonResult.Ok, new[] { "MyMBShow(OKTitle,OKLine,YesNo)=>OK\r\n" })]
     [DataRow("CancelTitle", "CancelLine", ButtonResult.Cancel, new[] { "MyMBShow(CancelTitle,CancelLine,YesNo)=>Cancel\r\n" })]
     [DataRow("YesTitle", "YesLine", ButtonResult.Yes, new[] { "MyMBShow(YesTitle,YesLine,YesNo)=>Yes\r\n" })]
@@ -118,7 +118,7 @@ public class MainWindowTests : BaseTestViewModel
     }
 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("OKName", "OKMail", "OKName1", "OKMail1", true, new[] { "ShowDialog()=>True\r\n", "OKName1", "OKMail1" })]
     [DataRow("NoName", "NoMail", "NoName1", "NoMail1", false, new[] { "ShowDialog()=>False\r\n", "NoName", "NoMail" })]
     [DataRow("Name", "Mail", "Name1", "Mail1", null, new[] { "ShowDialog()=>\r\n", "Name", "Mail" })]
