@@ -15,17 +15,16 @@
 	<ItemGroup>
 		<None Remove="Helper\.info" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk"  />
-		<PackageReference Include="MSTest"  />
-		<PackageReference Include="coverlet.collector">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Helper\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="coverlet.collector">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" />
+	  <PackageReference Include="MSTest" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />

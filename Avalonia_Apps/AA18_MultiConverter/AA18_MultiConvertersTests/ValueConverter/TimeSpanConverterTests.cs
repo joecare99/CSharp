@@ -1,11 +1,10 @@
 ﻿using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM_18_MultiConverters.Model;
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using AA18_MultiConverter.Model;
 
-namespace MVVM_18_MultiConverters.ValueConverter.Tests;
+namespace AA18_MultiConverter.ValueConverter.Tests;
 
 [TestClass()]
 public class TimeSpanConverterTests
@@ -23,11 +22,11 @@ public class TimeSpanConverterTests
     public void SetupTest()
     {
         Assert.IsNotNull(testConverter);
-        Assert.IsInstanceOfType(testConverter,typeof(IMultiValueConverter));
+        Assert.IsInstanceOfType(testConverter,typeof(Avalonia.Data.Converters.IMultiValueConverter));
         Assert.IsInstanceOfType(testConverter, typeof(TimeSpanConverter));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Null", TypeCode.String, null,null,"0")]
     [DataRow("Null2", TypeCode.String, new object[] { },  null, "0")]
     [DataRow("1", TypeCode.String, new object[] {"1" },  null, "0")]
@@ -45,9 +44,4 @@ public class TimeSpanConverterTests
         Assert.AreEqual(oExp,testConverter.Convert(oVal,tVal,oPar,CultureInfo.InvariantCulture), $"Convert({name}).result");
     }
 
-    [TestMethod()]
-    public void ConvertBackTest()
-    {
-        Assert.ThrowsException<NotImplementedException>(()=>testConverter.ConvertBack(null!,null!,null!,null!));
-    }
 }

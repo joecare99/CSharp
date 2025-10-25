@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace MVVM_18_MultiConverters.View.Tests;
+namespace AA18_MultiConverter.Views.Tests;
 
 [TestClass()]
 public class DateDifViewTests
