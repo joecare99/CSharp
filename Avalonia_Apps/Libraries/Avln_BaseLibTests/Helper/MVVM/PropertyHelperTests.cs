@@ -66,7 +66,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual("", DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("",true, new[] {"", "PropChg(PropertyHelperTests,TestProperty)=\r\n" })]
     [DataRow("test1",false, new[] { "test1", "" })]
     [DataRow("test2",true, new[] { "test2", "PropChg(PropertyHelperTests,TestProperty)=test2\r\n" })]
@@ -80,7 +80,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1],DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, false,true, new object[] { 0, "IntAction(TestProperty2,123,0)\r\nPropChg(PropertyHelperTests,TestProperty2)=0\r\n" })]
     [DataRow(123,false,false, new object[] { 123, "" })]
     [DataRow(124,true,true, new object[] { 124, "IntAction(TestProperty2,123,124)\r\nPropChg(PropertyHelperTests,TestProperty2)=124\r\n" })]
@@ -93,7 +93,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", true, true, new[] { "", "StringCond(TestProperty3,test1,)=True\r\nPropChg(PropertyHelperTests,TestProperty3)=\r\n" })]
     [DataRow("", false, false, new[] { "test1", "StringCond(TestProperty3,test1,)=False\r\n" })]
     [DataRow("test1", true, false, new[] { "test1", "" })]
@@ -109,7 +109,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, true, false, true, new object[] { 0, "IntCond(TestProperty4,123,0)=True\r\nIntAction(TestProperty4,123,0)\r\nPropChg(PropertyHelperTests,TestProperty4)=0\r\n" })]
     [DataRow(0, false, false, false, new object[] { 123, "IntCond(TestProperty4,123,0)=False\r\n" })]
     [DataRow(123, true, false, false, new object[] { 123, "" })]
@@ -126,7 +126,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", true, true, new[] { "", "StringCond(TestProperty5,test1,)=True\r\nPropChg(PropertyHelperTests,TestProperty5)=\r\n" })]
     [DataRow("", false, false, new[] { "test1", "StringCond(TestProperty5,test1,)=False\r\n" })]
     [DataRow("test1", true, false, new[] { "test1", "" })]
@@ -142,7 +142,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0,  true,   false, false, true, new object[] { 0, "IntCond(TestProperty6,123,0)=True\r\nIntAction(TestProperty6,123,0)\r\nPropChg(PropertyHelperTests,TestProperty6)=0\r\n" })]
     [DataRow(100,  false,  false, false, false, new object[] { 123, "IntCond(TestProperty6,123,100)=False\r\n" })]
     [DataRow(102, false, false, true, false, new object[] { 123, "IntCond(TestProperty6,123,102)=False\r\n" })]
