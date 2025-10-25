@@ -91,6 +91,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA18_MultiConvertersTests", "AA18_MultiConverter\AA18_MultiConvertersTests\AA18_MultiConvertersTests.csproj", "{253CFD5F-BA04-BF1F-34C3-26D8941C3B8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA19_Filterlists", "AA19_Filterlists", "{5C4D544A-1369-4B89-ACA8-0BFAE40FC55F}"
+	ProjectSection(SolutionItems) = preProject
+		AA19_FilterLists\Application.props = AA19_FilterLists\Application.props
+		AA19_FilterLists\Directory.Packages.props = AA19_FilterLists\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA19_FilterLists", "AA19_FilterLists\AA19_FilterLists\AA19_FilterLists.csproj", "{1B2B2859-16F2-545A-0283-ECB16FCA474C}"
 EndProject
