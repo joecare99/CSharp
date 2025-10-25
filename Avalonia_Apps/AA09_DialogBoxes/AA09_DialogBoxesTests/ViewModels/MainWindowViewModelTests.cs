@@ -66,7 +66,7 @@ public class MainWindowViewModelTests : BaseTestViewModel
         Assert.IsInstanceOfType(testModel.OpenDialogCommand, typeof(IRelayCommand));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true,ButtonResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestNameTrue
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2
@@ -101,7 +101,7 @@ PropChg(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=Nö
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true,"0", new[] { @"DoOpenMessageBox(TestNameTrue,TestEmailTrue)=>(TestName0, TestMail0)
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Name)=TestNameTrue
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.MainWindowViewModel,Cnt)=2

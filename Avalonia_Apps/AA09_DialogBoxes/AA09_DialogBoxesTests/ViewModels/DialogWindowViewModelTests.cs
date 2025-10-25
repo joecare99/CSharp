@@ -60,7 +60,7 @@ public class DialogWindowViewModelTests : BaseTestViewModel
         Assert.IsInstanceOfType(testModel.OKCommand, typeof(IRelayCommand));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
     [DataRow(false, new[] { @"" })]
@@ -74,7 +74,7 @@ public class DialogWindowViewModelTests : BaseTestViewModel
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
     [DataRow(false, new[] { @"" })]

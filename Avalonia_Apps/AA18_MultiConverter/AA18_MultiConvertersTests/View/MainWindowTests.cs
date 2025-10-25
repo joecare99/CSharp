@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace MVVM_18_MultiConverters.View.Tests;
+namespace AA18_MultiConverter.Views.Tests;
 
 [TestClass()]
 public class MainWindowTests
@@ -12,7 +12,7 @@ public class MainWindowTests
     public void MainWindowTest()
     {
         testView = null;
-        var t = new Thread(() => testView = new());
+        var t = new Thread(() => testView = new(null));
         t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
         t.Start();
         t.Join(); //Wait for the thread to end

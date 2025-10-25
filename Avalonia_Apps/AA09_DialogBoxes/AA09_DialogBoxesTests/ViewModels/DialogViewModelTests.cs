@@ -107,7 +107,7 @@ public class DialogViewModelTests : BaseTestViewModel
     /// <param name="oAct">if set to <c>true</c> [o act].</param>
     /// <param name="mrExp">The mr exp.</param>
     /// <param name="asExp">As exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true,ButtonResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameTrue
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
@@ -148,7 +148,7 @@ PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=Nö
     /// <param name="oAct">if set to <c>true</c> [o act].</param>
     /// <param name="sAct">The s act.</param>
     /// <param name="asExp">As exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(true,"0", new[] { @"DoOpenMessageBox(TestNameTrue,TestEmailTrue)=>(TestName0, TestMail0)
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameTrue
 PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
