@@ -14,7 +14,7 @@
 		<StackPanel Orientation="Horizontal" Spacing="6">
 			<Button Content="Neu" Click="OnNewClick"/>
 			<CheckBox Content="Lösung" IsChecked="{Binding DrawSolution}"/>
-			<Slider Minimum="6" Maximum="24" Value="{Binding CellSize}" Width="160"/>
+			<Slider Minimum="3" Maximum="24" Value="{Binding CellSize}" Width="160"/>
 		</StackPanel>
 		<v:LabyrinthView Grid.Row="1"/>
 	</Grid>

@@ -1,3 +1,8 @@
+using System.Data;
+using System.Security.Cryptography;
+using System;
+using System.Collections.Generic;
+
 namespace AA15_Labyrinth.Model;
 
 //12-direction grid step (projected to integer lattice)
@@ -6,15 +11,17 @@ public readonly record struct Dir(int Dx, int Dy)
     public static readonly Dir[] All = BuildAll();
     private static Dir[] BuildAll()
     {
-        var list = new System.Collections.Generic.HashSet<(int, int)>();
-        var baseDirs = new (int dx, int dy)[] { (1, 0), (0, 1), (2, 1), (1, 2) };
-        foreach (var (dx, dy) in baseDirs)
+        HashSet<(int, int)> list = new HashSet<(int, int)>();
+        (int dx, int dy)[] baseDirs = new (int dx, int dy)[] { (2, 0), (2, 1), (1, 2) };
+        foreach ((int dx, int dy) in baseDirs)
         {
-            list.Add((dx, dy)); list.Add((dx, -dy));
-            list.Add((-dx, dy)); list.Add((-dx, -dy));
+            list.Add((dx, dy));
+            list.Add((dy, -dx));
+            list.Add((-dy, dx));
+            list.Add((-dx, -dy));
         }
-        var arr = new Dir[list.Count];
-        int i = 0; foreach (var v in list) arr[i++] = new Dir(v.Item1, v.Item2);
+        Dir[] arr = new Dir[list.Count];
+        int i = 0; foreach ((int, int) v in list) arr[i++] = new Dir(v.Item1, v.Item2);
         return arr;
     }
 }
@@ -22,7 +29,7 @@ public readonly record struct Dir(int Dx, int Dy)
 public interface ILabyrinthGenerator
 {
     // progress: reports values in [0,1]
-    Labyrinth Generate(int cols, int rows, int seed, System.IProgress<double>? progress = null);
+    Labyrinth Generate(int cols, int rows, int seed, IProgress<double>? progress = null);
 }
 
 public sealed class Labyrinth
@@ -35,41 +42,29 @@ public sealed class Labyrinth
 
 public sealed class LabyrinthGenerator : ILabyrinthGenerator
 {
-    public Labyrinth Generate(int cols, int rows, int seed, System.IProgress<double>? progress = null)
+    public Labyrinth Generate(int cols, int rows, int seed, IProgress<double>? progress = null)
     {
-        cols = System.Math.Max(2, cols);
-        rows = System.Math.Max(2, rows);
+        cols = Math.Max(2, cols);
+        rows = Math.Max(2, rows);
         int N = cols * rows;
-        int Id(int x, int y) => x + y * cols;
-        (int x, int y) FromId(int id) => (id % cols, id / cols);
-        var rnd = new System.Random(seed);
-        var visited = new bool[N];
-        var parent = new int[N];
-        System.Array.Fill(parent, -1);
+
+        int Id(int x, int y)
+            => x + y * cols;
+
+        (int x, int y) FromId(int id)
+            => (id % cols, id / cols);
+
+        Random rnd = new Random(seed);
+        bool[] visited = new bool[N];
+        int[] parent = new int[N];
+        Array.Fill(parent, -1);
 
         // Kanten-Speicher + räumlicher Index
-        var edges = new System.Collections.Generic.List<(int a, int b)>();
-        var edgeMinX = new System.Collections.Generic.List<int>();
-        var edgeMaxX = new System.Collections.Generic.List<int>();
-        var edgeMinY = new System.Collections.Generic.List<int>();
-        var edgeMaxY = new System.Collections.Generic.List<int>();
-        var buckets = new System.Collections.Generic.Dictionary<long, System.Collections.Generic.List<int>>();
-        static long BucketKey(int x, int y) => ((long)x << 32) | (uint)y;
-        void AddEdgeToBuckets(int edgeIndex, int minx, int maxx, int miny, int maxy)
-        {
-            for (int x = minx; x <= maxx; x++)
-            {
-                for (int y = miny; y <= maxy; y++)
-                {
-                    var key = BucketKey(x, y);
-                    if (!buckets.TryGetValue(key, out var list))
-                        buckets[key] = list = new System.Collections.Generic.List<int>(4);
-                    list.Add(edgeIndex);
-                }
-            }
-        }
+        List<(int a, int b)> edges = new List<(int a, int b)>();
 
-        var stack = new System.Collections.Generic.Stack<int>();
+        Dictionary<long, List<int>> buckets = new Dictionary<long, List<int>>();
+
+        Stack<int> stack = new Stack<int>();
         int start = Id(cols - 1, rows / 2);
         visited[start] = true; parent[start] = start; stack.Push(start);
 
@@ -78,51 +73,75 @@ public sealed class LabyrinthGenerator : ILabyrinthGenerator
 
         bool WouldCross(int a, int b)
         {
-          /*  var (ax, ay) = FromId(a); var (bx, by) = FromId(b);
-            int minx = System.Math.Min(ax, bx), maxx = System.Math.Max(ax, bx);
-            int miny = System.Math.Min(ay, by), maxy = System.Math.Max(ay, by);
+            (int ax, int ay) = FromId(a);
+            (int bx, int by) = FromId(b);
+            int minx = Math.Min(ax, bx), maxx = Math.Max(ax, bx);
+            int miny = Math.Min(ay, by), maxy = Math.Max(ay, by);
 
-            var seen = new System.Collections.Generic.HashSet<int>();
-            for (int x = minx; x <= maxx; x++)
+            HashSet<int> seen = new HashSet<int>();
+            for (int x = minx - 1; x <= maxx + 1; x++)
             {
-                for (int y = miny; y <= maxy; y++)
+                for (int y = miny - 1; y <= maxy + 1; y++)
                 {
-                    if (!buckets.TryGetValue(BucketKey(x, y), out var list)) continue;
-                    foreach (var ei in list)
+                    //  if (Id(x, y) == a || Id(x, y) == b) continue;
+                    if (!buckets.TryGetValue(BucketKey(x, y), out List<int>? list)) continue;
+                    foreach (int ei in list)
                     {
                         if (!seen.Add(ei)) continue; // avoid duplicates
-                        var (ea, eb) = edges[ei];
+                        (int ea, int eb) = edges[ei];
                         if (ea == a || ea == b || eb == a || eb == b) continue;
-                        var (x1, y1) = FromId(ea); var (x2, y2) = FromId(eb);
-                        if (SegmentsIntersect(ax, ay, bx, by, x1, y1, x2, y2)) return true;
+                        (int x1, int y1) = FromId(ea);
+                        (int x2, int y2) = FromId(eb);
+                        if (SegmentsIntersect(ax, ay, bx, by, x1, y1, x2, y2))
+                            return true;
                     }
                 }
-            }*/
+            }
             return false;
         }
 
         while (stack.Count > 0)
         {
             int cur = stack.Peek();
-            var (cx, cy) = FromId(cur);
-            var neigh = new System.Collections.Generic.List<(int x, int y)>();
-            foreach (var d in Dir.All) { int nx = cx + d.Dx, ny = cy + d.Dy; if (nx >= 0 && ny >= 0 && nx < cols && ny < rows && !visited[Id(nx, ny)]) neigh.Add((nx, ny)); }
-            if (neigh.Count == 0) { stack.Pop(); continue; }
+            (int cx, int cy) = FromId(cur);
+            List<(int x, int y)> neigh = new List<(int x, int y)>();
+            foreach (Dir d in Dir.All)
+            {
+                int nx = cx + d.Dx,
+                    ny = cy + d.Dy;
+                if (nx >= 0 && ny >= 0 && nx < cols && ny < rows
+                    && !visited[Id(nx, ny)]
+                    && !buckets.ContainsKey(BucketKey((cx + nx) / 2, (cy + ny) / 2))
+                    && !buckets.ContainsKey(BucketKey(nx, ny))
+                    && !WouldCross(cur, Id(nx, ny)))
+                    neigh.Add((nx, ny));
+            }
+            if (neigh.Count == 0)
+            {
+                stack.Pop();
+                continue;
+            }
             while (neigh.Count > 0)
             {
-                int k = rnd.Next(neigh.Count); var (nx, ny) = neigh[k]; neigh.RemoveAt(k); int nid = Id(nx, ny);
-                if (!WouldCross(cur, nid)) { visited[nid] = true; parent[nid] = cur; edges.Add((cur, nid));
+                int k = rnd.Next(neigh.Count);
+                (int nx, int ny) = neigh[k];
+                neigh.RemoveAt(k);
+                int nid = Id(nx, ny);
+                if (true)
+                {
+                    visited[nid] = true;
+                    parent[nid] = cur;
+                    edges.Add((cur, nid));
                     // add to buckets
-                    var (ax, ay) = FromId(cur); var (bx, by) = FromId(nid);
-                    int minx = System.Math.Min(ax, bx), maxx = System.Math.Max(ax, bx);
-                    int miny = System.Math.Min(ay, by), maxy = System.Math.Max(ay, by);
-                    edgeMinX.Add(minx); edgeMaxX.Add(maxx); edgeMinY.Add(miny); edgeMaxY.Add(maxy);
-                    AddEdgeToBuckets(edges.Count - 1, minx, maxx, miny, maxy);
+                    (int ax, int ay) = FromId(cur);
+                    (int bx, int by) = FromId(nid);
+                    AddEdgeToBuckets(edges.Count - 1, ax, ay, bx, by, buckets);
 
                     visitedCount++;
                     if (visitedCount % 16 == 0) // report every 16 visits
-                        progress?.Report(System.Math.Min(1.0, visitedCount / (double)N));
-                    stack.Push(nid); break; }
+                        progress?.Report(Math.Min(1.0, visitedCount / (double)N));
+                    stack.Push(nid); break;
+                }
             }
         }
 
@@ -130,14 +149,45 @@ public sealed class LabyrinthGenerator : ILabyrinthGenerator
         return new Labyrinth { Cols = cols, Rows = rows, Parent = parent };
     }
 
-    private static bool SegmentsIntersect(int ax, int ay, int bx, int by, int cx, int cy, int dx, int dy)
+    private static long BucketKey(int x, int y) => ((long)x << 32) | (uint)y;
+
+    public static void AddEdgeToBuckets(int edgeIndex, int ax, int ay, int bx, int by, Dictionary<long, List<int>> buckets)
+    {
+        for (int i = 0; i <= 3; i++)
+        {
+            (int x, int y) = i switch
+            {
+                0 => (ax, ay),
+                1 => ((ax + bx) / 2, (ay + by) / 2),
+                2 => ((ax + bx + 1) / 2, (ay + by + 1) / 2),
+                _ => (bx, by)
+            };
+            long key = BucketKey(x, y);
+            if (!buckets.TryGetValue(key, out List<int>? list))
+                buckets[key] = list = new List<int>(4);
+            if (!list.Contains(edgeIndex))
+                list.Add(edgeIndex);
+
+        }
+    }
+
+    public static bool SegmentsIntersect(int ax, int ay, int bx, int by, int cx, int cy, int dx, int dy)
     {
         static int Orient(long px, long py, long qx, long qy, long rx, long ry)
-        { long v = (qx - px) * (ry - py) - (qy - py) * (rx - px); return v == 0 ? 0 : (v > 0 ? 1 : -1); }
+        {
+            long v = (qx - px) * (ry - py) - (qy - py) * (rx - px);
+            return v == 0 ? 0 : (v > 0 ? 1 : -1);
+        }
         static bool OnSeg(long px, long py, long qx, long qy, long rx, long ry)
-        => System.Math.Min(px, rx) <= qx && qx <= System.Math.Max(px, rx) && System.Math.Min(py, ry) <= qy && qy <= System.Math.Max(py, ry);
-        int o1 = Orient(ax, ay, bx, by, cx, cy); int o2 = Orient(ax, ay, bx, by, dx, dy); int o3 = Orient(cx, cy, dx, dy, ax, ay); int o4 = Orient(cx, cy, dx, dy, bx, by);
-        if (o1 == 0 && OnSeg(ax, ay, cx, cy, bx, by)) return true; if (o2 == 0 && OnSeg(ax, ay, dx, dy, bx, by)) return true; if (o3 == 0 && OnSeg(cx, cy, ax, ay, dx, dy)) return true; if (o4 == 0 && OnSeg(cx, cy, bx, by, dx, dy)) return true;
-        return (o1 > 0 && o2 < 0 || o1 < 0 && o2 > 0) && (o3 > 0 && o4 < 0 || o3 < 0 && o4 > 0);
+        => Math.Min(px, rx) <= qx && qx <= Math.Max(px, rx) && Math.Min(py, ry) <= qy && qy <= Math.Max(py, ry);
+        int o1 = Orient(ax, ay, bx, by, cx, cy);
+        int o2 = Orient(ax, ay, bx, by, dx, dy);
+        int o3 = Orient(cx, cy, dx, dy, ax, ay);
+        int o4 = Orient(cx, cy, dx, dy, bx, by);
+        if (o1 == 0 && OnSeg(ax, ay, cx, cy, bx, by)) return true;
+        if (o2 == 0 && OnSeg(ax, ay, dx, dy, bx, by)) return true;
+        if (o3 == 0 && OnSeg(cx, cy, ax, ay, dx, dy)) return true;
+        if (o4 == 0 && OnSeg(cx, cy, bx, by, dx, dy)) return true;
+        return (o1 > 0 == o2 > 0) && (o3 > 0 == o4 > 0);
     }
 }
