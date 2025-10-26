@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.0.11111.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -105,6 +105,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA15_Labyrinth", "AA15_Labyrinth", "{37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA15_Labyrinth", "AA15_Labyrinth\AA15_Labyrinth\AA15_Labyrinth.csproj", "{39616C08-0F2A-4EBB-6FB2-39BCD999ACA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA15_LabyrinthTests", "AA15_Labyrinth\AA15_LabyrinthTests\AA15_LabyrinthTests.csproj", "{B0117DC5-4192-48DE-B8A9-54D869E9DC8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -216,6 +218,10 @@ Global
 		{39616C08-0F2A-4EBB-6FB2-39BCD999ACA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39616C08-0F2A-4EBB-6FB2-39BCD999ACA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39616C08-0F2A-4EBB-6FB2-39BCD999ACA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0117DC5-4192-48DE-B8A9-54D869E9DC8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0117DC5-4192-48DE-B8A9-54D869E9DC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0117DC5-4192-48DE-B8A9-54D869E9DC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0117DC5-4192-48DE-B8A9-54D869E9DC8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -246,6 +252,7 @@ Global
 		{1B2B2859-16F2-545A-0283-ECB16FCA474C} = {5C4D544A-1369-4B89-ACA8-0BFAE40FC55F}
 		{121694BC-F51B-36E6-E960-127ADF96FE43} = {5C4D544A-1369-4B89-ACA8-0BFAE40FC55F}
 		{39616C08-0F2A-4EBB-6FB2-39BCD999ACA1} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
+		{B0117DC5-4192-48DE-B8A9-54D869E9DC8F} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}
