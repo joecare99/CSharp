@@ -21,7 +21,7 @@
 
   <!-- Benchmarks -->
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.4" />
   </ItemGroup>
 
   <!-- PDFsharp-/Skia-Pakete sind nicht mehr nötig, Rendering steckt in Document.Pdf -->
