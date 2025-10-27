@@ -1,0 +1,41 @@
+<Window x:Class="DataAnalysis.WPF.Views.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:vm="clr-namespace:DataAnalysis.WPF.ViewModels"
+ mc:Ignorable="d"
+ Title="DataAnalysis" Height="600" Width="1100">
+ <Grid Margin="12">
+ <Grid.RowDefinitions>
+ <RowDefinition Height="Auto"/>
+ <RowDefinition Height="2*"/>
+ <RowDefinition Height="*"/>
+ <RowDefinition Height="Auto"/>
+ </Grid.RowDefinitions>
+
+ <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+ <TextBox Width="420" Text="{Binding InputPath, UpdateSourceTrigger=PropertyChanged}"/>
+ <Button Content="Datei waehlen" Command="{Binding BrowseCommand}"/>
+ <Button Content="Vorschau" Command="{Binding PreviewCommand}"/>
+ <Button Content="Auswerten" Command="{Binding AnalyzeCommand}"/>
+ </StackPanel>
+
+ <!-- Preview: DataTable/DataView for core and dynamic attribute fields -->
+ <DataGrid Grid.Row="1" ItemsSource="{Binding PreviewTable}" AutoGenerateColumns="True" IsReadOnly="True"/>
+
+ <!-- Summary after analysis -->
+ <DataGrid Grid.Row="2" ItemsSource="{Binding SummaryItems}" AutoGenerateColumns="False" IsReadOnly="True">
+ <DataGrid.Columns>
+ <DataGridTextColumn Header="Kategorie" Binding="{Binding Key}"/>
+ <DataGridTextColumn Header="Wert" Binding="{Binding Value}"/>
+ </DataGrid.Columns>
+ </DataGrid>
+
+ <StatusBar Grid.Row="3">
+ <StatusBarItem>
+ <TextBlock Text="{Binding Status}"/>
+ </StatusBarItem>
+ </StatusBar>
+ </Grid>
+</Window>
