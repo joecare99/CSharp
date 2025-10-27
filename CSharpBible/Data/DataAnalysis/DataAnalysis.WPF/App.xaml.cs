@@ -38,7 +38,7 @@ public partial class App : Application
                     },
                     ExtractionRules =
                     {
-                        new FieldExtractionRule { SourceColumn = "eventmessage", RegexPattern = "-\\s*(?<EventName>.+?)(?<Rest>X=.*|$)" },
+                        new FieldExtractionRule { SourceColumn = "eventmessage", RegexPattern = "-\\s*(?<EventName>.+?)(?<Rest>X=.*|;.*|$)" },
                         new FieldExtractionRule { SourceColumn = "Rest", RegexPattern = "(?<key>[A-Za-z][A-Za-z0-9_]*)=(?<value>[^;]*)(;(?<Rest>.*)|$)", Multible=true  }
                     }
                 });
@@ -53,7 +53,7 @@ public partial class App : Application
                 // ViewModels
                 services.AddSingleton<ViewModels.MainViewModel>();
                 // Models aus Core (nutzt weiterhin ISyslogEntryReader)
-                services.AddSingleton<SyslogAnalysisModel>();
+                services.AddSingleton<AnalysisModel>();
                 // Views
                 services.AddSingleton<Views.MainWindow>();
             })
