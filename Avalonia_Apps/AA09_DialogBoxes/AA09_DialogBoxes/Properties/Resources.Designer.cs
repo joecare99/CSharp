@@ -79,7 +79,7 @@ namespace AA09_DialogBoxes.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #09: Handling of dialogboxes using Comunity-Toolkit ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tutorial #00: Handling of dialogboxes using Comunity-Toolkit ähnelt.
         /// </summary>
         public static string Description {
             get {
@@ -94,10 +94,10 @@ namespace AA09_DialogBoxes.Properties {
         ///             xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
         ///             xmlns:vm=&quot;clr-namespace:AA09_DialogBoxes.ViewModels&quot;
         ///             x:Class=&quot;AA09_DialogBoxes.Views.DialogView&quot;
+        ///						 x:DataType=&quot;vm:DialogViewModel&quot;
         ///             mc:Ignorable=&quot;d&quot;&gt;
         ///  &lt;Design.DataContext&gt;
-        ///    &lt;vm:DialogViewModel /&gt;
-        ///  &lt;/Design [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///    &lt;vm:Di [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string DialogView {
             get {
@@ -127,7 +127,7 @@ namespace AA09_DialogBoxes.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #09a CTDialogBoxes ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #00 BaseTests ähnelt.
         /// </summary>
         public static string Title {
             get {
