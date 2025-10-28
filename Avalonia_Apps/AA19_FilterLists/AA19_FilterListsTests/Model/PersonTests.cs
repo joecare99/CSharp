@@ -92,7 +92,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="aLastname">a lastname.</param>
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "", "", "", "")]
         [DataRow(1, "1", "2", "3", "2,1,3")]
         [DataRow(2, "1", "", "", ",1")]
@@ -118,7 +118,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="ExpLastname">The exp lastname.</param>
         /// <param name="ExpTitle">The exp title.</param>
         /// <param name="aFullname">a fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "", "", "", "")]
         [DataRow(1, "1", "2", "3", "2,1,3")]
         [DataRow(2, "1", "", "", ",1")]
@@ -146,7 +146,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="aLastname">a lastname.</param>
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "", "", "", "")]
         [DataRow(1, "1", "2", "3", "2,1,3")]
         [DataRow(2, "1", "", "", ",1")]
@@ -175,7 +175,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="aLastname">a lastname.</param>
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n <Id>0</Id>\r\n <FirstName />\r\n <LastName />\r\n <Title />\r\n</Person>" })]
         [DataRow(1, "1", "2", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n <Id>1</Id>\r\n <FirstName>1</FirstName>\r\n <LastName>2</LastName>\r\n <Title>3</Title>\r\n</Person>" })]
         [DataRow(2, "1", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n <Id>2</Id>\r\n <FirstName>1</FirstName>\r\n <LastName />\r\n <Title />\r\n</Person>" })]
@@ -209,7 +209,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="aLastname">a lastname.</param>
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "", "", "", "0, ")]
         [DataRow(1, "1", "2", "3", "1,2,1,3")]
         [DataRow(2, "1", "", "", "2, ,1")]
@@ -238,7 +238,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="aLastname">a lastname.</param>
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n <Id>0</Id>\r\n <FirstName />\r\n <LastName />\r\n <Title />\r\n</Person>" })]
         [DataRow(1, "1", "2", "3", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n <Id>1</Id>\r\n <FirstName>1</FirstName>\r\n <LastName>2</LastName>\r\n <Title>3</Title>\r\n</Person>" })]
         [DataRow(2, "1", "", "", new[] { "<?xml version=\"1.0\"?>\r\n<Person xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n <Id>2</Id>\r\n <FirstName>1</FirstName>\r\n <LastName />\r\n <Title />\r\n</Person>" })]
@@ -277,7 +277,7 @@ namespace AA19_FilterLists.Model.Tests
         /// <param name="aLastname">a lastname.</param>
         /// <param name="aTitle">a title.</param>
         /// <param name="ExpFullname">The exp fullname.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null, null, null, null, new string[] { "", "" })]
         [DataRow(-1, null, null, null,new string[] { "", "PropChg: -1, Mustermann, Max, Dr., P:Id, V:-1\r\n" })]
         [DataRow(0, null, null, null, new string[] { "PropChg:0,2,1,3, P:Id, V:0\r\n", "" })]
