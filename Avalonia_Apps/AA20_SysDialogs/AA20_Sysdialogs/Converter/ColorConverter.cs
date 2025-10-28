@@ -13,10 +13,10 @@
 // ***********************************************************************
 using System;
 using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Media;
+using Avalonia.Data.Converters;
+using Avalonia.Media;
 
-namespace MVVM_20_Sysdialogs.Converter;
+namespace AA20_SysDialogs.Converter;
 
 /// <summary>
 /// Class ColorConverter.
@@ -33,33 +33,36 @@ public class ColorConverter : IValueConverter
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
     /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is Color c)
-            return c.ToString();
-        if (value is System.Drawing.Color cl)
+        if (value is System.Drawing.Color drawingColor)
         {
-            Color cc = default;
-            cc.A = cl.A;
-            cc.B = cl.B; 
-            cc.R = cl.R;
-            cc.G = cl.G;
-            return cc.ToString();
+            return new SolidColorBrush(Color.FromArgb(
+                drawingColor.A,
+                drawingColor.R,
+                drawingColor.G,
+                drawingColor.B));
         }
-        return string.Empty;
+        return new SolidColorBrush(Colors.White);
     }
 
     /// <summary>
-    /// Converts a value.
+    /// Konvertiert einen Wert vom Bindungsziel zurück zum Bindungsquelltyp.
+    /// Wandelt einen Avalonia <see cref="SolidColorBrush"/> zurück in einen <see cref="System.Drawing.Color"/>.
     /// </summary>
-    /// <param name="value">The value that is produced by the binding target.</param>
-    /// <param name="targetType">The type to convert to.</param>
-    /// <param name="parameter">The converter parameter to use.</param>
-    /// <param name="culture">The culture to use in the converter.</param>
-    /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    /// <param name="value">Der Wert, der vom Bindungsziel erzeugt wird. Erwartet wird ein <see cref="SolidColorBrush"/>-Objekt.</param>
+    /// <param name="targetType">Der Typ, in den konvertiert werden soll. In diesem Fall <see cref="System.Drawing.Color"/>.</param>
+    /// <param name="parameter">Der zu verwendende Konverterparameter. Wird in dieser Implementierung nicht verwendet.</param>
+    /// <param name="culture">Die im Konverter zu verwendende Kultur. Wird in dieser Implementierung nicht verwendet.</param>
+    /// <returns>Ein <see cref="System.Drawing.Color"/>-Objekt, das aus den ARGB-Werten des Avalonia-Farbpinsels erstellt wurde.</returns>
+    /// <exception cref="NotImplementedException">Wird ausgelöst, wenn der übergebene Wert kein <see cref="SolidColorBrush"/> ist.</exception>
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (value is SolidColorBrush brush)
+        {
+            var color = brush.Color;
+            return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+        }
+        throw new NotImplementedException("ConvertBack requires a SolidColorBrush");
     }
 }
