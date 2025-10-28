@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using MsBox.Avalonia.Enums;
+using MessageBox.Avalonia.Enums;
 
 /// <summary>
 /// The Tests namespace.
@@ -85,7 +86,7 @@ public class MainWindowTests : BaseTestViewModel
         };
     }
 
-    private ButtonResult MyMBShow(string arg1, string arg2, MessageBoxButton button)
+    private ButtonResult MyMBShow(string arg1, string arg2,  ButtonEnum button)
     {
         DoLog($"MyMBShow({arg1},{arg2},{button})=>{mbResult}");
         return mbResult;
