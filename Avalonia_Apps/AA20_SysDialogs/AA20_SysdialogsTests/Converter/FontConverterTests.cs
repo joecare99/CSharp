@@ -1,38 +1,44 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
+using Avalonia.Media;
 
-namespace MVVM_20_Sysdialogs.Converter.Tests;
+namespace AA20_SysDialogs.Converter.Tests;
 
 [TestClass]
 public class FontConverterTests
 {
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    private FontConverter _testConverter;
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+#pragma warning disable CS8618
+ private FontConverter _testConverter;
+#pragma warning restore CS8618
 
-    static IEnumerable<object[]> FontConverterData => new[] {
-                new object[] { new System.Drawing.Font("Arial", 12f), new System.Windows.Media.FontFamily("Arial") },
-                new object[] { null!, null! },
-    };
+ [TestInitialize()]
+ public void Init()
+ {
+ _testConverter = new FontConverter();
+ }
 
-    [TestInitialize()]
-    public void Init()
-    {
-        _testConverter = new FontConverter();
-    }
+#pragma warning disable CA1416 // Platform compatibility
+ [TestMethod()]
+ public void ConvertTest_Arial()
+ {
+ var result = _testConverter.Convert(new System.Drawing.Font("Arial", 12f), typeof(FontFamily), null!, CultureInfo.InvariantCulture);
+ Assert.IsInstanceOfType(result, typeof(FontFamily));
+ var fontFamily = (FontFamily)result!;
+ Assert.AreEqual("Arial", fontFamily.Name);
+ }
+#pragma warning restore CA1416
 
+ [TestMethod()]
+ public void ConvertTest_Null()
+ {
+ var result = _testConverter.Convert(null!, typeof(FontFamily), null!, CultureInfo.InvariantCulture);
+ Assert.IsNull(result);
+ }
 
-    [DataTestMethod()]
-    [DynamicData(nameof(FontConverterData))]
-    public void ConvertTest(object value, object sExp)
-    {
-        Assert.AreEqual(sExp, _testConverter.Convert(value, typeof(string), null!, CultureInfo.InvariantCulture));
-    }
-    [TestMethod()]
-    public void ConvertBackTest()
-    {
-        Assert.ThrowsException<NotImplementedException>(() => _testConverter.ConvertBack(null!, typeof(string), null!, CultureInfo.InvariantCulture));
-    }
+ [TestMethod()]
+ public void ConvertBackTest()
+ {
+ Assert.ThrowsExactly<NotImplementedException>(() => _testConverter.ConvertBack(null!, typeof(string), null!, CultureInfo.InvariantCulture));
+ }
 }

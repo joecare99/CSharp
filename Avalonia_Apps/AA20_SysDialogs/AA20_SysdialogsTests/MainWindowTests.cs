@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading;
 
-namespace MVVM_20_Sysdialogs.Tests;
+namespace AA20_SysDialogs.Tests;
 
 [TestClass()]
 public class MainWindowTests
@@ -9,12 +8,8 @@ public class MainWindowTests
     [TestMethod()]
     public void MainWindowTest()
     {
-        MainWindow? mw=null;
-        var t = new Thread(()=> mw = new());
-        t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-        t.Start();
-        t.Join(); //Wait for the thread to end
+        var mw = new MainWindow();
         Assert.IsNotNull(mw);
-        Assert.IsInstanceOfType(mw, typeof(MainWindow));    
+        Assert.IsInstanceOfType(mw, typeof(MainWindow));
     }
 }

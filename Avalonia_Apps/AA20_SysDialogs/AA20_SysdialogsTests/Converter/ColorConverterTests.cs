@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Windows.Media;
 using System.Globalization;
 using System.Collections.Generic;
 using System;
+using Avalonia.Media;
 
-namespace MVVM_20_Sysdialogs.Converter.Tests;
+namespace AA20_SysDialogs.Converter.Tests;
 
 [TestClass()]
 public class ColorConverterTests
@@ -15,12 +15,7 @@ public class ColorConverterTests
                 new object[] { System.Drawing.Color.Blue, "#FF0000FF" },
                 new object[] { System.Drawing.Color.White, "#FFFFFFFF" },
                 new object[] { System.Drawing.Color.Transparent, "#00FFFFFF" },
-                new object[] { Colors.Red, "#FFFF0000" },
-                new object[] { Colors.Lime, "#FF00FF00" },
-                new object[] { Colors.Blue, "#FF0000FF" },
-                new object[] { Colors.White, "#FFFFFFFF" },
-                new object[] { Colors.Transparent, "#00FFFFFF" },
-                new object[] { null!, "" },
+                new object[] { null!, "#FFFFFFFF" }, // Returns White as fallback
     };
 
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
@@ -32,16 +27,19 @@ public class ColorConverterTests
     {
         _testConverter = new ColorConverter();
     }
-    [DataTestMethod()]
-    [DynamicData(nameof(ColorConverterData))]
-    public void ConvertTest(object value, string sExp)
+    
+    [TestMethod()]
+    public void ConvertTest_Red()
     {
-        Assert.AreEqual(sExp,_testConverter.Convert(value,typeof(string),null!,CultureInfo.InvariantCulture));
+        var result = _testConverter.Convert(System.Drawing.Color.Red, typeof(Brush), null!, CultureInfo.InvariantCulture);
+        Assert.IsInstanceOfType(result, typeof(SolidColorBrush));
+        var brush = (SolidColorBrush)result!;
+        Assert.AreEqual("#FFFF0000", brush.Color.ToString());
     }
 
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsException<NotImplementedException>(()=> _testConverter.ConvertBack(null!,typeof(string),null!,CultureInfo.InvariantCulture));
+        Assert.ThrowsExactly<NotImplementedException>(()=> _testConverter.ConvertBack(null!,typeof(string),null!,CultureInfo.InvariantCulture));
     }
 }

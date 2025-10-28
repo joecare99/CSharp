@@ -11,15 +11,15 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using CommonDialogs.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
-namespace MVVM_20_Sysdialogs.ViewModels.Tests;
+namespace AA20_SysDialogs.ViewModels.Tests;
 
 /// <summary>
 /// Defines test class SysDialogsViewModelTests.
@@ -50,32 +50,34 @@ public class SysDialogsViewModelTests
     /// <summary>
     /// The c exp my font0
     /// </summary>
-    private readonly Font cExpMyFont0 = new Font("Microsoft Sans Serif", 8.25f);
+#pragma warning disable CA1416 // Platform compatibility
+    private readonly Font cExpMyFont0 = new Font("Arial", 12f);
+#pragma warning restore CA1416
 
     /// <summary>
     /// The c exp set file open name
     /// </summary>
-    private readonly string cExpSetFileOpenName = "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n";
+    private readonly string cExpSetFileOpenName = "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n";
     /// <summary>
     /// The c exp set file save name
     /// </summary>
-    private readonly string cExpSetFileSaveName = "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n";
+    private readonly string cExpSetFileSaveName = "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n";
     /// <summary>
     /// The c exp set path name
     /// </summary>
-    private readonly string cExpSetPathName = "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, PathName>\r\n";
+    private readonly string cExpSetPathName = "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, PathName>\r\n";
     /// <summary>
     /// The c exp set ext
     /// </summary>
-    private readonly string cExpSetExt = "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, Ext>\r\n";
+    private readonly string cExpSetExt = "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, Ext>\r\n";
     /// <summary>
     /// The c exp set my color
     /// </summary>
-    private readonly string cExpSetMyColor = "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n";
+    private readonly string cExpSetMyColor = "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n";
     /// <summary>
     /// The c exp set my font
     /// </summary>
-    private readonly string cExpSetMyFont = "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n";
+    private readonly string cExpSetMyFont = "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n";
 
     /// <summary>
     /// The test result
@@ -127,84 +129,80 @@ public class SysDialogsViewModelTests
     /// <summary>
     /// Tests the do print dialog.
     /// </summary>
-    /// <param name="par">The par.</param>
     /// <param name="OnPrint">The on print.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    private bool? TestDoPrintDlg(IPrintDialog par, Action<IPrintDialog>? OnPrint)
+    private Task<bool?> TestDoPrintDlg(Action? OnPrint)
     {
-        LogTest($"{par}, {OnPrint != null}");
-        if (_testRetValue ?? false) OnPrint?.Invoke(par);
-        return _testRetValue;
+        LogTest($"{OnPrint != null}");
+        if (_testRetValue ?? false) OnPrint?.Invoke();
+        return Task.FromResult(_testRetValue);
     }
 
+#pragma warning disable CA1416 // Platform compatibility
     /// <summary>
     /// Tests the do font dialog.
     /// </summary>
     /// <param name="font">The font.</param>
-    /// <param name="par">The par.</param>
     /// <param name="OnAccept">The on accept.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    private bool? TestDoFontDlg(Font font, IFontDialog par, Action<Font, IFontDialog>? OnAccept)
+    private Task<bool?> TestDoFontDlg(Font font, Action<Font>? OnAccept)
     {
-        LogTest($"{font}, {par}, {OnAccept != null}");
-        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as Font ?? SystemFonts.DefaultFont, par);
-        return _testRetValue;
+        LogTest($"{font}, {OnAccept != null}");
+        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as Font ?? SystemFonts.DefaultFont);
+        return Task.FromResult(_testRetValue);
     }
+#pragma warning restore CA1416
 
     /// <summary>
     /// Tests the do color dialog.
     /// </summary>
     /// <param name="color">The color.</param>
-    /// <param name="par">The par.</param>
     /// <param name="OnAccept">The on accept.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    private bool? TestDoColorDlg(Color color, IColorDialog par, Action<Color, IColorDialog>? OnAccept)
+    private Task<bool?> TestDoColorDlg(Color color, Action<Color>? OnAccept)
     {
-        LogTest($"{color}, {par}, {OnAccept != null}");
-        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as Color? ?? Color.Empty, par);
-        return _testRetValue;
+        LogTest($"{color}, {OnAccept != null}");
+        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as Color? ?? Color.Empty);
+        return Task.FromResult(_testRetValue);
     }
 
     /// <summary>
     /// Tests the do directory browse dialog.
     /// </summary>
     /// <param name="Filename">The filename.</param>
-    /// <param name="Par">The par.</param>
     /// <param name="OnAccept">The on accept.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    private bool? TestDoDirectoryBrowseDlg(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept)
+    private Task<bool?> TestDoDirectoryBrowseDlg(string Filename, Action<string>? OnAccept)
     {
-        LogTest($"{Filename}, {Par}, {OnAccept != null}");
-        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "", Par);
-        return _testRetValue;
+        LogTest($"{Filename}, {OnAccept != null}");
+        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "");
+        return Task.FromResult(_testRetValue);
     }
 
     /// <summary>
     /// Tests the do file save as dialog.
     /// </summary>
     /// <param name="Filename">The filename.</param>
-    /// <param name="Par">The par.</param>
     /// <param name="OnAccept">The on accept.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    private bool? TestDoFileSaveAsDlg(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept)
+    private Task<bool?> TestDoFileSaveAsDlg(string Filename, Action<string>? OnAccept)
     {
-        LogTest($"{Filename}, {Par}, {OnAccept != null}");
-        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "", Par);
-        return _testRetValue;
+        LogTest($"{Filename}, {OnAccept != null}");
+        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "");
+        return Task.FromResult(_testRetValue);
     }
 
     /// <summary>
     /// Tests the do file open dialog.
     /// </summary>
     /// <param name="Filename">The filename.</param>
-    /// <param name="Par">The par.</param>
     /// <param name="OnAccept">The on accept.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    private bool? TestDoFileOpenDlg(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept)
+    private Task<bool?> TestDoFileOpenDlg(string Filename, Action<string>? OnAccept)
     {
-        LogTest($"{Filename}, {Par}, {OnAccept != null}");
-        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "", Par);
-        return _testRetValue;
+        LogTest($"{Filename}, {OnAccept != null}");
+        if (_testRetValue ?? false) OnAccept?.Invoke(testNewValue as String ?? "");
+        return Task.FromResult(_testRetValue);
     }
 
     /// <summary>
@@ -231,7 +229,6 @@ public class SysDialogsViewModelTests
         Assert.AreEqual(cExpPathName0, ViewModels.PathName, ".PathName");
         Assert.AreEqual(cExpExt0, ViewModels.Ext, ".Ext");
         Assert.AreEqual(cExpMyColor0, ViewModels.MyColor, ".MyColor");
-        Assert.AreEqual(cExpMyFont0, ViewModels.MyFont, ".MyFont");
     }
 
     /// <summary>
@@ -278,6 +275,7 @@ public class SysDialogsViewModelTests
         Assert.AreEqual(cExpSetExt, _testResult);
     }
 
+#pragma warning disable CA1416 // Platform compatibility
     /// <summary>
     /// Defines the test method SysDialogsViewModelTest_SetMyFont.
     /// </summary>
@@ -288,6 +286,7 @@ public class SysDialogsViewModelTests
         _testViewModel.MyFont = new Font("Arial", 12);
         Assert.AreEqual(cExpSetMyFont, _testResult);
     }
+#pragma warning restore CA1416
 
     /// <summary>
     /// Defines the test method SysDialogsViewModelTest_SetMyColor.
@@ -306,13 +305,13 @@ public class SysDialogsViewModelTests
     /// <param name="PropName">Name of the property.</param>
     /// <param name="value">The value.</param>
     /// <param name="Exp">The exp.</param>
-    [DataTestMethod()]
-    [DataRow("FileOpenName", "Test2", "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n")]
-    [DataRow("FileSaveName", "Test2", "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n")]
-    [DataRow("PathName", "Test2", "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, PathName>\r\n")]
-    [DataRow("Ext", "Test2", "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, Ext>\r\n")]
-    [DataRow("MyColor", null, "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n")]
-    [DataRow("MyFont", null, "TestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n")]
+    [TestMethod()]
+    [DataRow("FileOpenName", "Test2", "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n")]
+    [DataRow("FileSaveName", "Test2", "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n")]
+    [DataRow("PathName", "Test2", "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, PathName>\r\n")]
+    [DataRow("Ext", "Test2", "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, Ext>\r\n")]
+    [DataRow("MyColor", null, "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n")]
+    [DataRow("MyFont", null, "TestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n")]
     public void SysDialogsViewModelTest_SetProp(string PropName, object value, string Exp)
     {
         Assert.AreEqual("", _testResult);
@@ -327,21 +326,21 @@ public class SysDialogsViewModelTests
     /// <param name="tr">if set to <c>true</c> [tr].</param>
     /// <param name="value">The value.</param>
     /// <param name="asExp">The exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("OpenFileOpenDialogCommand", false, "", new[] { "TestDoFileOpenDlg: <<Open>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.OpenFileDialog], True>\r\n" })]
-    [DataRow("OpenFileOpenDialogCommand", true, "Test3", new[] { "TestDoFileOpenDlg: <<Open>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.OpenFileDialog], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n" })]
+    [DataRow("OpenFileOpenDialogCommand", true, "Test3", new[] { "TestDoFileOpenDlg: <<Open>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.OpenFileDialog], True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n" })]
     [DataRow("OpenFileOpenDialogCommand", null, "", new[] { "TestDoFileOpenDlg: <<Open>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.OpenFileDialog], True>\r\n" })]
     [DataRow("OpenFileSaveAsDialogCommand", false, "Test2", new[] { "TestDoFileSaveAsDlg: <<Save>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.SaveFileDialog], True>\r\n" })]
-    [DataRow("OpenFileSaveAsDialogCommand", true, "Test2", new[] { "TestDoFileSaveAsDlg: <<Save>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.SaveFileDialog], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n" })]
+    [DataRow("OpenFileSaveAsDialogCommand", true, "Test2", new[] { "TestDoFileSaveAsDlg: <<Save>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.SaveFileDialog], True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n" })]
     [DataRow("OpenFileSaveAsDialogCommand", null, "Test2", new[] { "TestDoFileSaveAsDlg: <<Save>, CommonDialogs.FileDialogProxy`1[Microsoft.Win32.SaveFileDialog], True>\r\n" })]
     [DataRow("OpenDirectoryBrowseDialogCommand", false, "Test2", new[] { "TestDoDirectoryBrowseDlg: <<Path>, CommonDialogs.FolderBrowserDialog, True>\r\n" })]
-    [DataRow("OpenDirectoryBrowseDialogCommand", true, "Test2", new[] { "TestDoDirectoryBrowseDlg: <<Path>, CommonDialogs.FolderBrowserDialog, True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, PathName>\r\n" })]
+    [DataRow("OpenDirectoryBrowseDialogCommand", true, "Test2", new[] { "TestDoDirectoryBrowseDlg: <<Path>, CommonDialogs.FolderBrowserDialog, True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, PathName>\r\n" })]
     [DataRow("OpenDirectoryBrowseDialogCommand", null, "Test2", new[] { "TestDoDirectoryBrowseDlg: <<Path>, CommonDialogs.FolderBrowserDialog, True>\r\n" })]
     [DataRow("OpenColorDialogCommand", false, "Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\n" })]
-    [DataRow("OpenColorDialogCommand", true, "Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n" })]
+    [DataRow("OpenColorDialogCommand", true, "Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n" })]
     [DataRow("OpenColorDialogCommand", null, "Test2", new[] { "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\n" })]
     [DataRow("OpenFontDialogCommand", false, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\n" })]
-    [DataRow("OpenFontDialogCommand", true, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n" })]
+    [DataRow("OpenFontDialogCommand", true, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n" })]
     [DataRow("OpenFontDialogCommand", null, "Test2", new[] { "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\n" })]
     [DataRow("OpenPrintDialogCommand", false, "Test2", new[] { "TestDoPrintDlg: <CommonDialogs.PrintDialog, True>\r\n" })]
     [DataRow("OpenPrintDialogCommand", true, "Test2", new[] { "TestDoPrintDlg: <CommonDialogs.PrintDialog, True>\r\n" })]
@@ -363,22 +362,22 @@ public class SysDialogsViewModelTests
     /// <param name="tr">if set to <c>true</c> [tr].</param>
     /// <param name="value">The value.</param>
     /// <param name="Exp">The exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("OpenFileOpenDialogCommand", false, "", "TestDoFileOpenDlg: <<Open>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Open>, True>\r\n")]
-    [DataRow("OpenFileOpenDialogCommand", true, "Test3", "TestDoFileOpenDlg: <<Open>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Open>, True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n")]
+    [DataRow("OpenFileOpenDialogCommand", true, "Test3", "TestDoFileOpenDlg: <<Open>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Open>, True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileOpenName>\r\n")]
     [DataRow("OpenFileOpenDialogCommand", null, "", "TestDoFileOpenDlg: <<Open>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Open>, True>\r\n")]
     [DataRow("OpenFileSaveAsDialogCommand", false, "Test2", "TestDoFileSaveAsDlg: <<Save>, Microsoft.Win32.SaveFileDialog: Title: , FileName: <Save>, True>\r\n")]
-    [DataRow("OpenFileSaveAsDialogCommand", true, "Test2", "TestDoFileSaveAsDlg: <<Save>, Microsoft.Win32.SaveFileDialog: Title: , FileName: <Save>, True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n")]
+    [DataRow("OpenFileSaveAsDialogCommand", true, "Test2", "TestDoFileSaveAsDlg: <<Save>, Microsoft.Win32.SaveFileDialog: Title: , FileName: <Save>, True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, FileSaveName>\r\n")]
     [DataRow("OpenFileSaveAsDialogCommand", null, "Test2", "TestDoFileSaveAsDlg: <<Save>, Microsoft.Win32.SaveFileDialog: Title: , FileName: <Save>, True>\r\n")]
     [DataRow("OpenDirectoryBrowseDialogCommand", false, "Test2", "TestDoDirectoryBrowseDlg: <<Path>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Path>, True>\r\n")]
-    [DataRow("OpenDirectoryBrowseDialogCommand", true, "Test2", "TestDoDirectoryBrowseDlg: <<Path>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Path>, True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, PathName>\r\n")]
+    [DataRow("OpenDirectoryBrowseDialogCommand", true, "Test2", "TestDoDirectoryBrowseDlg: <<Path>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Path>, True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, PathName>\r\n")]
     [DataRow("OpenDirectoryBrowseDialogCommand", null, "Test2", "TestDoDirectoryBrowseDlg: <<Path>, Microsoft.Win32.OpenFileDialog: Title: , FileName: <Path>, True>\r\n")]
     [DataRow("OpenColorDialogCommand", false, "Test2", "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\n")]
-    [DataRow("OpenColorDialogCommand", true, "Test2", "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n")]
+    [DataRow("OpenColorDialogCommand", true, "Test2", "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyColor>\r\n")]
     [DataRow("OpenColorDialogCommand", null, "Test2", "TestDoColorDlg: <Color [White], System.Windows.Forms.ColorDialog,  Color: Color [White], True>\r\n")]
-    [DataRow("OpenFontDialogCommand", false, "Test2", "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], True>\r\n")]
-    [DataRow("OpenFontDialogCommand", true, "Test2", "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], True>\r\nTestPropertyChanged: <MVVM_20_Sysdialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n")]
-    [DataRow("OpenFontDialogCommand", null, "Test2", "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False], True>\r\n")]
+    [DataRow("OpenFontDialogCommand", false, "Test2", "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\n")]
+    [DataRow("OpenFontDialogCommand", true, "Test2", "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\nTestPropertyChanged: <AA20_SysDialogs.ViewModels.SysDialogsViewModel, MyFont>\r\n")]
+    [DataRow("OpenFontDialogCommand", null, "Test2", "TestDoFontDlg: <[Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], CommonDialogs.FontDialog,  Font: [Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False], True>\r\n")]
     [DataRow("OpenPrintDialogCommand", false, "Test2", "TestDoPrintDlg: <System.Windows.Controls.PrintDialog, True>\r\n")]
     [DataRow("OpenPrintDialogCommand", true, "Test2", "TestDoPrintDlg: <System.Windows.Controls.PrintDialog, True>\r\n")]
     [DataRow("OpenPrintDialogCommand", null, "Test2", "TestDoPrintDlg: <System.Windows.Controls.PrintDialog, True>\r\n")]
