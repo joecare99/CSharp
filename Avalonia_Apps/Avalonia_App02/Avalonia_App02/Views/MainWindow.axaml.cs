@@ -8,13 +8,5 @@ namespace Avalonia_App02.Views
         {
             InitializeComponent();
         }
-
-        private void OnNewClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            if (this.FindControl<LabyrinthView>("Maze") is { } maze)
-            {
-                maze.Regenerate();
-            }
-        }
     }
 }
