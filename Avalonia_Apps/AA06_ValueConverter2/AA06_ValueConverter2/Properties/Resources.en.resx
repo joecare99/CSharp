@@ -138,4 +138,7 @@
   <data name="btnReports" xml:space="preserve">
     <value>Reports</value>
   </data>
+  <data name="txtPromptInput" xml:space="preserve">
+    <value>Here, you enter a floating-point value:</value>
+  </data>
 </root>
