@@ -8,12 +8,12 @@ namespace BaseLib.Helper.MVVM.Tests;
 [TestClass()]
 public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
 {
-    private string _testProperty="";
+    private string _testProperty = "";
     private int _testProperty2;
     private Exception? exIntEx = null;
     private Exception? exCondEx = null;
-    private bool? xResult=null;
-    private bool? xCondResult=false;
+    private bool? xResult = null;
+    private bool? xCondResult = false;
     private bool xforce = false;
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -61,8 +61,8 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
     {
         Assert.AreEqual("test1",_testProperty);
         Assert.AreEqual(123, _testProperty2);
-        Assert.AreEqual(null, exIntEx);
-        Assert.AreEqual(null, xResult);
+        Assert.IsNull(exIntEx);
+        Assert.IsNull(xResult);
         Assert.AreEqual("", DebugLog);
     }
 
@@ -168,7 +168,7 @@ public class PropertyHelperTests :BaseTestViewModel,IRaisePropChangedEvents
         Assert.AreEqual(asExp[1], DebugLog);
     }
 
-    public void OnPropertyChanged(string propertyName)
+    public void OnPropertyChanged(string? propertyName)
     {
      //   DoLog($"PropChg({propertyName})={this.GetProp(propertyName)}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

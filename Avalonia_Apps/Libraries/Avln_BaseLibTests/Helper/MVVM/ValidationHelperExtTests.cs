@@ -17,7 +17,9 @@ public class ValidationHelperExtTests : INotifyDataErrorInfo
 
     public bool HasErrors => _xHasErrors;
 
+#pragma warning disable CS0067 // Das Ereignis wird nie verwendet
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+#pragma warning restore CS0067
 
     public IEnumerable GetErrors(string? propertyName)
     {

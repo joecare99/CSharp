@@ -24,8 +24,8 @@ namespace Avalonia.Views.ValueConverter.Tests
         {
             var result=testClass.Convert(sAct,typeof(object),null,System.Globalization.CultureInfo.CurrentCulture);
             if (result == null ) 
-                Assert.AreEqual(sExp,"null");
-                else
+                Assert.AreEqual("null", sExp);
+            else
                 Assert.AreEqual(sExp,result.GetType().Name);
         }
 

@@ -63,7 +63,7 @@ public class IoCTests : BaseTestViewModel
     public void SetupTest()
     {
         Assert.ThrowsExactly<NotImplementedException>(() => _grsOld?.Invoke(typeof(object)));
-        Assert.AreEqual(null, _gsOld?.Invoke(typeof(object)));
+        Assert.IsNull(_gsOld?.Invoke(typeof(object)));
     }
 
     [TestMethod()]
@@ -76,7 +76,7 @@ public class IoCTests : BaseTestViewModel
     [TestMethod()]
     public void GetServiceTest()
     {
-        Assert.AreEqual(null, IoC.GetService<Object>());
+        Assert.IsNull(IoC.GetService<Object>());
         Assert.AreEqual("GetSrv(System.Object)\r\n", DebugLog);
     }
 

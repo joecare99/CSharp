@@ -258,7 +258,7 @@ public class PropertyHelperTests2
         {
             case TypeCode.Object when value.Contains(";"): // struct
                 Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
-                Assert.AreEqual(expResult, DataResult,Name);
+                Assert.AreEqual(expResult, DataResult, Name);
                 break;
             case TypeCode.Object when value.StartsWith("Ex"): // struct
                 DoEx = new NotSupportedException();

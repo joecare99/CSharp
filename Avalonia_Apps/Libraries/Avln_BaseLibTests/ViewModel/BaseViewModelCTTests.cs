@@ -25,10 +25,10 @@ public class BaseViewModelCTTests : BaseViewModelCT
     }
 
     private void OnCanExChanged(object? sender, EventArgs e)
-        => DebugResult += $"OnCanExChanged: o:{sender.GetType().Name}{Environment.NewLine}";
+        => DebugResult += $"OnCanExChanged: o:{sender?.GetType().Name}{Environment.NewLine}";
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        => DebugResult += $"OnPropChanged: o:{sender.GetType().Name}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName??"")?.GetValue(sender)}{Environment.NewLine}";
+        => DebugResult += $"OnPropChanged: o:{sender?.GetType().Name}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName??"")?.GetValue(sender)}{Environment.NewLine}";
 
     public int Property1 { get => property1; set => SetProperty(ref property1 , value); }
     public int Property2 { get => property2; set => SetProperty(ref property2, value); }

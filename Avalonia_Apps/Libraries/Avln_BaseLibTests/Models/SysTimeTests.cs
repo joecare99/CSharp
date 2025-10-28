@@ -33,7 +33,6 @@ public class SysTimeTests
         // Act
         var result = sysTime.Now;
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(new DateTime(2021, 1, 1, 12, 01, 59), result);
     }
 
@@ -45,7 +44,6 @@ public class SysTimeTests
         // Act
         var result = sysTime.Today;
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(new DateTime(2021, 1, 1), result);
     }
 }
