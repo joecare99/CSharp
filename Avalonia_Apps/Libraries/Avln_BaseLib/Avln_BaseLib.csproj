@@ -20,8 +20,8 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="11.3.7" />
-	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.7" />
+	  <PackageReference Include="Avalonia" Version="11.3.8" />
+	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.8" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
 	</ItemGroup>
