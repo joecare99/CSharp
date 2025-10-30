@@ -1,20 +1,21 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-       xmlns:vm="using:Avln_Hello_World.ViewModels"
- mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-       x:Class="Avln_Hello_World.Views.HelloWorldView"
-       x:DataType="vm:HelloWorldViewModel">
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Avln_Hello_World.ViewModels"
+		mc:Ignorable="d"
+		x:Class="Avln_Hello_World.Views.HelloWorldView"
+		d:DesignWidth="800" d:DesignHeight="450"
+		x:DataType="vm:HelloWorldViewModel">
 
-    <Design.DataContext>
-        <vm:HelloWorldViewModel/>
-    </Design.DataContext>
+	<Design.DataContext>
+		<vm:HelloWorldViewModel/>
+	</Design.DataContext>
 
-    <Grid>
-   <TextBlock Text="{Binding Greeting}" 
- VerticalAlignment="Center" 
-  HorizontalAlignment="Center"
-      FontSize="24"/>
-    </Grid>
+	<Grid>
+		<TextBlock Text="{Binding Greeting}"
+  		VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			FontSize="24"/>
+	</Grid>
 </UserControl>

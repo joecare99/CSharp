@@ -11,7 +11,7 @@ public partial class HelloWorldView : UserControl
 {
     public HelloWorldView()
     {
-  InitializeComponent();
-   DataContext = Ioc.Default.GetService<HelloWorldViewModel>();
+        InitializeComponent();
+        DataContext = Ioc.Default.GetService<HelloWorldViewModel>();
     }
 }

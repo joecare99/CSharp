@@ -34,7 +34,7 @@ public partial class HelloWorldViewModel : BaseViewModelCT
     private string _greeting = string.Empty;
     #endregion
 
-#region Methods
+    #region Methods
     public HelloWorldViewModel() : this(Ioc.Default.GetRequiredService<IHelloWorldModel>()) { }
 
     /// <summary>
@@ -42,14 +42,14 @@ public partial class HelloWorldViewModel : BaseViewModelCT
     /// </summary>
     public HelloWorldViewModel(IHelloWorldModel model)
     {
-  this.model = model;
+        this.model = model;
         model.PropertyChanged += Model_PropertyChanged;
     }
 
     private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Greeting))
-          Greeting = Resources.ResourceManager.GetString($"{model.Greeting}Text") ?? string.Empty;
+            Greeting = Resources.ResourceManager.GetString($"{model.Greeting}Text") ?? string.Empty;
     }
 
     #endregion
