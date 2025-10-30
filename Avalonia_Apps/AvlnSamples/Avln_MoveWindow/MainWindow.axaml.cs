@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Avalonia;
 using Avalonia.Controls;
 
 namespace Avln_MoveWindow

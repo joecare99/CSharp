@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using Avalonia;
 using Avalonia.Controls;
 using System.Windows.Automation;
 using System.Windows.Threading;
