@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Avalonia;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +24,7 @@ public class WindowPortToGridLinesTests
     public void TestInit()
     {
         testVC = new WindowPortToGridLines();
-        testVC.WindowSize = new System.Windows.Size(200, 100);
+        testVC.WindowSize = new Size(200, 100);
         wp = new ViewModels.SWindowPort() { Parent=null!,port=new System.Drawing.RectangleF(-10,-10,20,20) };
     }
 
@@ -52,6 +53,6 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => testVC.ConvertBack(null!, null, null, null));
+        Assert.ThrowsExactly<NotImplementedException>(() => testVC.ConvertBack(null!, null, null, null));
     }
 }

@@ -25,7 +25,7 @@ public class PlotFrameTests
             _ => throw new System.NotImplementedException($"No Service for {t}")
         }; 
         testView = new PlotFrame();
-        testView.Visibility = System.Windows.Visibility.Visible;
+        testView.IsVisible = true;
     }
 
     [TestCleanup]

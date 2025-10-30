@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AA06_Converters_4\AA06_Converters_4.csproj" />
+    <ProjectReference Include="..\AA06_Converters4\AA06_Converters4.csproj" />
 	  <ProjectReference Include="$(UpDir)\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
   </ItemGroup>
 
