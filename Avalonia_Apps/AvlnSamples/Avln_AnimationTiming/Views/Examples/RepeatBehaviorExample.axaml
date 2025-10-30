@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+       x:Class="Avln_AnimationTiming.Views.Examples.RepeatBehaviorExample">
+    
+    <UserControl.Styles>
+  <Style Selector="Rectangle.animated">
+            <Setter Property="Fill" Value="#AA3333FF" />
+            <Setter Property="Width" Value="50" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+  </Style>
+    </UserControl.Styles>
+
+    <Border HorizontalAlignment="Stretch" Padding="20">
+ <StackPanel Spacing="10">
+            
+         <Border Classes="IntroTextBorder" Padding="20">
+        <TextBlock TextWrapping="Wrap">
+           This example shows how IterationCount works in Avalonia animations.
+               Several rectangles are animated by DoubleAnimation with identical durations 
+                    and target values, but with different IterationCount settings.
+        </TextBlock>
+            </Border>
+
+      <TextBlock>IterationCount="Infinite" (Forever)</TextBlock>
+            <Rectangle Name="foreverRepeatingRectangle" Classes="animated" />
+
+            <TextBlock Margin="0,20,0,0">IterationCount="2" (Twice)</TextBlock>
+  <Rectangle Name="twiceRepeatingRectangle" Classes="animated" />
+
+            <TextBlock Margin="0,20,0,0">IterationCount="1" (Once - Default)</TextBlock>
+            <Rectangle Name="onceRepeatingRectangle" Classes="animated" />
+
+    <TextBlock Margin="0,20,0,0">PlaybackDirection="Alternate" with IterationCount="4"</TextBlock>
+            <Rectangle Name="alternateRepeatingRectangle" Classes="animated" />
+
+            <!-- Control Buttons -->
+       <StackPanel Orientation="Horizontal" Margin="0,20,0,0" Spacing="10">
+        <Button Name="startButton" Content="Start Animations" />
+      <Button Name="stopButton" Content="Stop" Background="#669900FF" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

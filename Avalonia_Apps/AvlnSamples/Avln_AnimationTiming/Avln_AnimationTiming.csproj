@@ -1,0 +1,68 @@
+<Project>
+	<Import Project="..\Avln_Samples.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<None Remove="Assets\avalonia-logo.ico" />
+		<None Remove="Images\AccDec.png" />
+		<None Remove="Images\AutoRev.png" />
+		<None Remove="Images\BeginTime.png" />
+		<None Remove="Images\Databinding.png" />
+		<None Remove="Images\FillBehavior.png" />
+		<None Remove="Images\Handoff.png" />
+		<None Remove="Images\IsAdditive.png" />
+		<None Remove="Images\IsCumulative.png" />
+		<None Remove="Images\Repeat.png" />
+		<None Remove="Images\Speed.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\avalonia-logo.ico" />
+		<AvaloniaResource Include="Images\AccDec.png" />
+		<AvaloniaResource Include="Images\IsCumulative.png" />
+		<AvaloniaResource Include="Images\IsAdditive.png" />
+		<AvaloniaResource Include="Images\Databinding.png" />
+		<AvaloniaResource Include="Images\Handoff.png" />
+		<AvaloniaResource Include="Images\Speed.png" />
+		<AvaloniaResource Include="Images\FillBehavior.png" />
+		<AvaloniaResource Include="Images\BeginTime.png" />
+		<AvaloniaResource Include="Images\AutoRev.png" />
+		<AvaloniaResource Include="Images\Repeat.png" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.8" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+</Project>
