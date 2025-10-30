@@ -30,17 +30,17 @@ public class MainWindowViewModel : BaseViewModelCT
     private IHelloWorldModel? model;
 
     #region Properties
- 
+
     /// <summary>
     /// Gets the HelloWorldView AXAML code for display
     /// </summary>
     public string HelloWorldViewCode => LoadEmbeddedResource("Avln_Hello_World.Views.HelloWorldView.axaml");
-    
+
     /// <summary>
- /// Gets the HelloWorldViewModel C# code for display
+    /// Gets the HelloWorldViewModel C# code for display
     /// </summary>
     public string HelloWorldViewModelCode => LoadEmbeddedResource("Avln_Hello_World.ViewModels.HelloWorldViewModel.cs");
-    
+
     #endregion
 
     #region Methods
@@ -60,7 +60,7 @@ public class MainWindowViewModel : BaseViewModelCT
     {
         model?.ClosingCommand.Execute(null);
     }
-    
+
     /// <summary>
     /// Loads an embedded resource as string
     /// </summary>
@@ -71,18 +71,18 @@ public class MainWindowViewModel : BaseViewModelCT
         try
         {
             var assembly = Assembly.GetExecutingAssembly();
-    using var stream = assembly.GetManifestResourceStream(resourceName);
-          if (stream == null)
-        return $"Resource not found: {resourceName}";
-       
-       using var reader = new StreamReader(stream);
-  return reader.ReadToEnd();
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+                return $"Resource not found: {resourceName}";
+
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
         catch (Exception ex)
         {
             return $"Error loading resource: {ex.Message}";
         }
     }
-    
+
     #endregion
 }
