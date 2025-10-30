@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11123.170 d18.0
+VisualStudioVersion = 18.0.11123.170
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -55,6 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_BaseLibTests", "Librar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA06_ValueConverter2", "AA06_ValueConverter2", "{2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}"
 	ProjectSection(SolutionItems) = preProject
+		AA06_ValueConverter2\Application.props = AA06_ValueConverter2\Application.props
 		AA06_ValueConverter2\Directory.Packages.props = AA06_ValueConverter2\Directory.Packages.props
 	EndProjectSection
 EndProject
@@ -117,6 +118,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA20_SysDialogs", "AA20_Sys
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA20_SysdialogsTests", "AA20_SysDialogs\AA20_SysdialogsTests\AA20_SysdialogsTests.csproj", "{1A4E9721-4029-22E8-883C-2395C9025557}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA06_Converters4", "AA06_ValueConverter2\AA06_Converters4\AA06_Converters4.csproj", "{D0705704-F704-D681-59FF-C65E5EBCDF9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA06_Converters4Tests", "AA06_ValueConverter2\AA06_Converters4Tests\AA06_Converters4Tests.csproj", "{72C83AA9-1059-6DB1-68DE-5178F70197E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathLibrary", "Libraries\MathLibrary\MathLibrary.csproj", "{490FE0F3-0D68-FE00-09CB-67B262519444}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -240,6 +247,18 @@ Global
 		{1A4E9721-4029-22E8-883C-2395C9025557}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A4E9721-4029-22E8-883C-2395C9025557}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A4E9721-4029-22E8-883C-2395C9025557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0705704-F704-D681-59FF-C65E5EBCDF9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0705704-F704-D681-59FF-C65E5EBCDF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0705704-F704-D681-59FF-C65E5EBCDF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0705704-F704-D681-59FF-C65E5EBCDF9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72C83AA9-1059-6DB1-68DE-5178F70197E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72C83AA9-1059-6DB1-68DE-5178F70197E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72C83AA9-1059-6DB1-68DE-5178F70197E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72C83AA9-1059-6DB1-68DE-5178F70197E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{490FE0F3-0D68-FE00-09CB-67B262519444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{490FE0F3-0D68-FE00-09CB-67B262519444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{490FE0F3-0D68-FE00-09CB-67B262519444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{490FE0F3-0D68-FE00-09CB-67B262519444}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -273,6 +292,9 @@ Global
 		{B0117DC5-4192-48DE-B8A9-54D869E9DC8F} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
 		{5491F846-27B1-4FD9-70B8-072B840288F7} = {BE3C4175-29CB-4B10-A72B-45259D58A33C}
 		{1A4E9721-4029-22E8-883C-2395C9025557} = {BE3C4175-29CB-4B10-A72B-45259D58A33C}
+		{D0705704-F704-D681-59FF-C65E5EBCDF9F} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
+		{72C83AA9-1059-6DB1-68DE-5178F70197E1} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
+		{490FE0F3-0D68-FE00-09CB-67B262519444} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}
