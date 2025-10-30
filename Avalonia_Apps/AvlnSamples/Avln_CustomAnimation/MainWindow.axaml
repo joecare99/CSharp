@@ -1,0 +1,139 @@
+<Window xmlns="https://github.com/avaloniaui"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:vm="using:Avln_CustomAnimation.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+        x:Class="Avln_CustomAnimation.MainWindow"
+   x:DataType="vm:MainWindowViewModel"
+        Title="Custom Animations - Avalonia"
+ Width="900" Height="700">
+
+<Design.DataContext>
+   <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+  <DockPanel>
+   <TextBlock DockPanel.Dock="Top" 
+     Classes="header"
+    Margin="20,15,20,10"
+          FontSize="18">
+   Avalonia Custom Animations - Migrated from WPF
+  </TextBlock>
+
+        <TabControl>
+  <TabItem Header="Bounce Easing">
+       <ScrollViewer>
+      <StackPanel Margin="20" Spacing="15">
+       <TextBlock Classes="header">Bounce Easing Example</TextBlock>
+        <TextBlock TextWrapping="Wrap" MaxWidth="600">
+      This demonstrates custom bounce easing migrated from WPF's BounceDoubleAnimation.
+    The element bounces with configurable bounces and bounciness parameters.
+                    </TextBlock>
+          
+  <Border Classes="demoArea" MinHeight="200">
+  <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
+     FontSize="14" TextWrapping="Wrap">
+   Bounce animation demo - Click "Start Animation" button to see the effect.
+     (Implementation in CustomAnimations/BounceExample.axaml)
+      </TextBlock>
+     </Border>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+     <Button Classes="demo" Content="Start Animation" />
+     <Button Classes="demo" Content="Stop" />
+   </StackPanel>
+ </StackPanel>
+   </ScrollViewer>
+  </TabItem>
+
+<TabItem Header="Elastic Easing">
+            <ScrollViewer>
+       <StackPanel Margin="20" Spacing="15">
+        <TextBlock Classes="header">Elastic Easing Example</TextBlock>
+    <TextBlock TextWrapping="Wrap" MaxWidth="600">
+        Custom elastic easing - like something attached to a rubber band.
+   Migrated from WPF's ElasticDoubleAnimation.
+      </TextBlock>
+   
+     <Border Classes="demoArea" MinHeight="200">
+      <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+  Elastic animation demo area
+     </TextBlock>
+            </Border>
+  </StackPanel>
+      </ScrollViewer>
+  </TabItem>
+
+  <TabItem Header="Exponential Easing">
+     <ScrollViewer>
+              <StackPanel Margin="20" Spacing="15">
+          <TextBlock Classes="header">Exponential Easing Example</TextBlock>
+       <TextBlock TextWrapping="Wrap" MaxWidth="600">
+Exponential easing - gets exponentially faster or slower.
+       Migrated from WPF's ExponentialDoubleAnimation.
+     </TextBlock>
+      
+      <Border Classes="demoArea" MinHeight="200">
+     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+     Exponential animation demo area
+      </TextBlock>
+      </Border>
+  </StackPanel>
+   </ScrollViewer>
+  </TabItem>
+
+    <TabItem Header="Circle Animation">
+    <ScrollViewer>
+     <StackPanel Margin="20" Spacing="15">
+     <TextBlock Classes="header">Circle Animation Example</TextBlock>
+       <TextBlock TextWrapping="Wrap" MaxWidth="600">
+     Animates elements in circular/elliptical paths using polar coordinates.
+     Migrated from WPF's CircleAnimation.
+      </TextBlock>
+         
+   <Border Classes="demoArea" MinHeight="300">
+   <Canvas Width="400" Height="300">
+      <Ellipse Width="30" Height="30" Fill="Blue" 
+        Canvas.Left="185" Canvas.Top="135" />
+         <TextBlock Canvas.Left="150" Canvas.Top="270">
+    Click "Start" to animate in a circle
+        </TextBlock>
+ </Canvas>
+   </Border>
+   <StackPanel Orientation="Horizontal" Spacing="10">
+ <Button Classes="demo" Content="Start Circle" />
+    <Button Classes="demo" Content="Stop" />
+     </StackPanel>
+    </StackPanel>
+                </ScrollViewer>
+  </TabItem>
+
+  <TabItem Header="About">
+      <ScrollViewer>
+    <StackPanel Margin="20" Spacing="10">
+    <TextBlock Classes="header">About This Migration</TextBlock>
+          <TextBlock TextWrapping="Wrap" MaxWidth="700">
+      This project demonstrates the migration of WPF's custom animations
+    to Avalonia using custom Easing functions.
+        </TextBlock>
+            
+    <TextBlock Classes="header" Margin="0,20,0,0">Migrated Animations</TextBlock>
+     <TextBlock TextWrapping="Wrap" MaxWidth="700">
+     • BounceEasing - Configurable bounce effect<LineBreak/>
+   • ElasticEasing - Rubber band effect<LineBreak/>
+• ExponentialEasing - Power-based acceleration<LineBreak/>
+       • CircleAnimator - Circular motion paths
+   </TextBlock>
+         
+ <TextBlock Classes="header" Margin="0,20,0,0">Key Differences</TextBlock>
+    <TextBlock TextWrapping="Wrap" MaxWidth="700">
+     WPF used DoubleAnimationBase classes. Avalonia uses simpler
+     Easing classes that work with ALL animation types. This makes
+  the code more reusable and maintainable.
+       </TextBlock>
+</StackPanel>
+ </ScrollViewer>
+ </TabItem>
+     </TabControl>
+    </DockPanel>
+</Window>
