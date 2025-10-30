@@ -23,20 +23,20 @@ public partial class MainWindow : Window
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
-  /// </summary>
+    /// </summary>
     public MainWindow(VehicleView1 vehicleView, PlotFrame plotFrame)
     {
-  InitializeComponent();
-        
+        InitializeComponent();
+
         // Set up the content via code-behind since Avalonia doesn't support Frame navigation
         var grid = this.FindControl<Grid>("MainGrid");
-    if (grid != null)
+        if (grid != null)
         {
-          grid.Children.Add(vehicleView);
+            grid.Children.Add(vehicleView);
             Grid.SetColumn(vehicleView, 0);
-            
+
             grid.Children.Add(plotFrame);
-          Grid.SetColumn(plotFrame, 1);
+            Grid.SetColumn(plotFrame, 2);
         }
     }
 }

@@ -32,6 +32,7 @@ namespace AA06_Converters_4.View.Controls;
 public class DynamicPlotCanvas : Control
 {
     private PointF? _dragStartPos;
+    private RectangleF? _dragStartViewport; // Viewport beim Drag-Start
     private bool _isDragging;
     private RectangleF _isometricViewport; // Cache für isometrischen Viewport
     private bool _isRenderScheduled; // Flag für Render-Throttling
@@ -43,7 +44,7 @@ public class DynamicPlotCanvas : Control
     public static readonly StyledProperty<PlotFrameViewModel?> ViewModelProperty =
         AvaloniaProperty.Register<DynamicPlotCanvas, PlotFrameViewModel?>(nameof(ViewModel));
 
- /// <summary>
+    /// <summary>
     /// Styled Property für den Hintergrund
     /// </summary>
   public static readonly StyledProperty<IBrush?> BackgroundProperty =
@@ -253,12 +254,18 @@ AffectsRender<DynamicPlotCanvas>(ViewModelProperty, BoundsProperty, BackgroundPr
         if (ViewModel == null)
             return;
 
-        UpdateIsometricViewport();
-        var viewport = _isometricViewport;
-      var windowPort = ViewModel.WindowPort;
+        // Während Dragging: Verwende gecachten Viewport (verhindert Wackeln)
+        // Außerhalb Dragging: Berechne isometrischen Viewport neu
+        if (!_isDragging)
+        {
+   UpdateIsometricViewport();
+     }
+        
+     var viewport = _isometricViewport;
+     var windowPort = ViewModel.WindowPort;
 
         // Zeichne Koordinatensystem
-     DrawCoordinateSystem(context, viewport, windowPort);
+        DrawCoordinateSystem(context, viewport, windowPort);
 
         // Zeichne Polygone (Fahrzeug)
         if (ViewModel.Polynomes?.Count > 0)
@@ -330,19 +337,19 @@ AffectsRender<DynamicPlotCanvas>(ViewModelProperty, BoundsProperty, BackgroundPr
     private void DrawArrow(DrawingContext context, RectangleF viewport, ArrowData arrow)
     {
         var start = Real2Vis(arrow.Start, viewport);
-     var end = Real2Vis(arrow.End, viewport);
+        var end = Real2Vis(arrow.End, viewport);
 
-   var brush = ViewModel?.Arrows?.Pen?.Brush ?? Brushes.Red;
+        var brush = ViewModel?.Arrows?.Pen?.Brush ?? Brushes.Red;
         var thickness = ViewModel?.Arrows?.Pen?.Thickness ?? 2.0;
 
-      // Hauptlinie
+  // Hauptlinie
         context.DrawLine(new Pen(brush, thickness), start, end);
 
-        // Pfeilspitze
+     // Pfeilspitze
         DrawArrowHead(context, start, end, brush, thickness);
-  }
+    }
 
-  private void DrawCoordinateSystem(DrawingContext context, RectangleF viewport, SWindowPort windowPort)
+    private void DrawCoordinateSystem(DrawingContext context, RectangleF viewport, SWindowPort windowPort)
     {
         var pen = new Pen(Brushes.LightGray, 0.5);
         var axisPen = new Pen(Brushes.Black, 1.5);
@@ -548,27 +555,44 @@ return baseStep / 5;
    var point = e.GetCurrentPoint(this);
         if (point.Properties.IsLeftButtonPressed)
         {
-      _dragStartPos = Vis2Real(point.Position, _isometricViewport);
-     _isDragging = true;
+            // Speichere Drag-Start in REAL-Koordinaten (basierend auf aktuellem isometrischen Viewport)
+         _dragStartPos = Vis2Real(point.Position, _isometricViewport);
+      _dragStartViewport = ViewModel.VPWindow;
+       _isDragging = true;
   e.Handled = true;
         }
     }
 
     private void OnPointerMoved(object? sender, PointerEventArgs e)
     {
-     if (!_isDragging || ViewModel == null || _dragStartPos == null) return;
+        if (!_isDragging || ViewModel == null || _dragStartPos == null || _dragStartViewport == null) 
+            return;
 
-        var currentPos = Vis2Real(e.GetPosition(this), _isometricViewport);
-   var delta = new PointF(
-            _dragStartPos.Value.X - currentPos.X,
-    _dragStartPos.Value.Y - currentPos.Y);
-
- var newViewport = ViewModel.VPWindow;
-        newViewport.Offset(delta.X, delta.Y);
+        // Berechne aktuelle Position in REAL-Koordinaten
+      var currentPos = Vis2Real(e.GetPosition(this), _isometricViewport);
         
-        // Während Dragging: Direkt setzen ohne PropertyChanged zu triggern
-        // (verhindert zusätzliche Event-Kaskaden)
-    ViewModel.VPWindow = newViewport;
+      // Berechne Delta in REAL-Koordinaten
+      var deltaX = _dragStartPos.Value.X - currentPos.X;
+        var deltaY = _dragStartPos.Value.Y - currentPos.Y;
+
+        // Verschiebe den URSPRÜNGLICHEN Viewport (nicht den aktuellen!)
+        // Das verhindert das Akkumulieren von Rundungsfehlern
+        var newViewport = new RectangleF(
+          _dragStartViewport.Value.Left + deltaX,
+    _dragStartViewport.Value.Top + deltaY,
+      _dragStartViewport.Value.Width,
+       _dragStartViewport.Value.Height);
+
+    // Setze neuen Viewport
+        ViewModel.VPWindow = newViewport;
+        
+        // Aktualisiere isometrischen Viewport für diesen Frame
+        // (aber nur die Translation, nicht die Größenanpassung)
+        _isometricViewport = new RectangleF(
+  _isometricViewport.Left + deltaX,
+    _isometricViewport.Top + deltaY,
+     _isometricViewport.Width,
+      _isometricViewport.Height);
 
         e.Handled = true;
     }
@@ -576,32 +600,34 @@ return baseStep / 5;
     private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         _isDragging = false;
-        _dragStartPos = null;
+   _dragStartPos = null;
+     _dragStartViewport = null;
         
-    // Nach Dragging: Ein finales Render ohne Throttling
+      // Nach Dragging: Isometrischen Viewport neu berechnen und ein finales Render
+        UpdateIsometricViewport();
         _isRenderScheduled = false;
         InvalidateVisual();
     }
 
-    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+  private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-   if (ViewModel == null) return;
+        if (ViewModel == null) return;
 
         var viewport = ViewModel.VPWindow;
         var zoomFactor = e.Delta.Y > 0 ? 0.9f : 1.1f;
 
-     var newWidth = viewport.Width * zoomFactor;
-        var newHeight = viewport.Height * zoomFactor;
+    var newWidth = viewport.Width * zoomFactor;
+    var newHeight = viewport.Height * zoomFactor;
 
-  var centerX = viewport.Left + viewport.Width / 2;
+        var centerX = viewport.Left + viewport.Width / 2;
         var centerY = viewport.Top + viewport.Height / 2;
 
-        ViewModel.VPWindow = new RectangleF(
- centerX - newWidth / 2,
- centerY - newHeight / 2,
-          newWidth,
+     ViewModel.VPWindow = new RectangleF(
+        centerX - newWidth / 2,
+     centerY - newHeight / 2,
+            newWidth,
             newHeight);
 
-  e.Handled = true;
+        e.Handled = true;
     }
 }

@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input; // Für RelayCommand
 using MathLibrary.TwoDim;
 using AA06_Converters_4.Model;
 using System;
@@ -189,6 +190,12 @@ public partial class PlotFrameViewModel : ObservableObject
     private PolynomeList _polynomes;
 
     private IAGVModel _agv_Model;
+    private RectangleF _initialViewport;
+
+    /// <summary>
+/// Gets the AGV Model
+/// </summary>
+public IAGVModel? AGVModel => _agv_Model;
 
  public SWindowPort WindowPort { get => _windowPort; set => SetProperty(ref _windowPort, value); }
     /// <summary>
@@ -208,30 +215,70 @@ public partial class PlotFrameViewModel : ObservableObject
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlotFrameViewModel"/> class.
-  /// </summary>
+    /// </summary>
     public PlotFrameViewModel(IAGVModel agv_Model)
     {
-        //        VPWindow = new RectangleF(-300, 300, 9, 6);
-   VPWindow = new RectangleF(-2000, -1500, 5000, 3000);
-        //     VPWindow = new RectangleF(-3, -3, 900, 600);
-        //    VPWindow = new RectangleF(-0.03f, -0.03f, 0.09f, 0.06f);
-     WindowSize = new Avalonia.Size(600, 400);
+        VPWindow = new RectangleF(-2000, -1500, 5000, 3000);
+        _initialViewport = VPWindow;
+   WindowSize = new Avalonia.Size(600, 400);
         _windowPort.Parent = this;
 
         _dataset1 = new DataSet();
-        _arrows = new ArrowList();
-    _arrows.Pen = new Avalonia.Media.Pen(Avalonia.Media.Brushes.Red, 2.0);
+       _arrows = new ArrowList();
+        _arrows.Pen = new Avalonia.Media.Pen(Avalonia.Media.Brushes.Red, 2.0);
         _circles = new CircleList();
         _circles.Pen = new Avalonia.Media.Pen(Avalonia.Media.Brushes.Green, 1.0);
- _polynomes = new PolynomeList();
-   _polynomes.Pen = new Avalonia.Media.Pen(Avalonia.Media.Brushes.Blue, 2.0);
+      _polynomes = new PolynomeList();
+    _polynomes.Pen = new Avalonia.Media.Pen(Avalonia.Media.Brushes.Blue, 2.0);
 
-        // DemoData();
+        _agv_Model = agv_Model;
+     _agv_Model.PropertyChanged += OnModelPropChanged;
+        AsyncInit();
+    }
 
-  _agv_Model = agv_Model;
-  _agv_Model.PropertyChanged += OnModelPropChanged;
- AsyncInit();
-  }
+    [RelayCommand]
+    private void ZoomIn()
+    {
+      var viewport = VPWindow;
+   var zoomFactor = 0.8f;
+
+  var newWidth = viewport.Width * zoomFactor;
+  var newHeight = viewport.Height * zoomFactor;
+
+        var centerX = viewport.Left + viewport.Width / 2;
+     var centerY = viewport.Top + viewport.Height / 2;
+
+   VPWindow = new RectangleF(
+    centerX - newWidth / 2,
+     centerY - newHeight / 2,
+    newWidth,
+   newHeight);
+    }
+
+    [RelayCommand]
+    private void ZoomOut()
+    {
+     var viewport = VPWindow;
+    var zoomFactor = 1.25f;
+
+        var newWidth = viewport.Width * zoomFactor;
+        var newHeight = viewport.Height * zoomFactor;
+
+    var centerX = viewport.Left + viewport.Width / 2;
+        var centerY = viewport.Top + viewport.Height / 2;
+
+        VPWindow = new RectangleF(
+     centerX - newWidth / 2,
+          centerY - newHeight / 2,
+       newWidth,
+  newHeight);
+    }
+
+   [RelayCommand]
+    private void ResetView()
+    {
+        VPWindow = _initialViewport;
+    }
 
     async void AsyncInit()
     {
