@@ -4,7 +4,7 @@
 // Created          : 01-15-2025
 // ***********************************************************************
 using Avln_CustomAnimation.Models;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 using System;
 using System.ComponentModel;
 

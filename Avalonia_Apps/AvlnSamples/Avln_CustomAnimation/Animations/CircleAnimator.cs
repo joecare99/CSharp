@@ -38,62 +38,64 @@ public class CircleAnimator
         TimeSpan duration,
         IterationCount? iterationCount = null)
     {
-  var centerX = Canvas.GetLeft(element) + element.Bounds.Width / 2;
-   var centerY = Canvas.GetTop(element) + element.Bounds.Height / 2;
+        var centerX = Canvas.GetLeft(element) + element.Bounds.Width / 2;
+        var centerY = Canvas.GetTop(element) + element.Bounds.Height / 2;
 
-      var xAnimation = CreateCircleAnimation(
-   Canvas.LeftProperty,
-      radiusX,
-  centerX,
-       duration,
-      iterationCount,
-    isXDirection: true);
-
-  var yAnimation = CreateCircleAnimation(
-          Canvas.TopProperty,
-            radiusY,
-     centerY,
- duration,
+        var xAnimation = CreateCircleAnimation(
+     Canvas.LeftProperty,
+        radiusX,
+    centerX,
+         duration,
         iterationCount,
-   isXDirection: false);
+      isXDirection: true);
 
-     // Run both animations in parallel
+        var yAnimation = CreateCircleAnimation(
+                Canvas.TopProperty,
+                  radiusY,
+           centerY,
+       duration,
+              iterationCount,
+         isXDirection: false);
+
+        // Run both animations in parallel
         await Task.WhenAll(
  xAnimation.RunAsync(element),
     yAnimation.RunAsync(element)
   );
     }
 
-  private static Animation CreateCircleAnimation(
-        AvaloniaProperty property,
-  double radius,
-        double center,
-   TimeSpan duration,
-  IterationCount? iterationCount,
-        bool isXDirection)
+    private static Animation CreateCircleAnimation(
+          AvaloniaProperty property,
+    double radius,
+          double center,
+     TimeSpan duration,
+    IterationCount? iterationCount,
+          bool isXDirection)
     {
         var keyframes = new System.Collections.Generic.List<KeyFrame>();
 
- // Create keyframes for smooth circular motion
-      for (int i = 0; i <= 360; i += 10)
-     {
-        var angle = i * Math.PI / 180.0;
-         var value = isXDirection
-                ? Math.Cos(angle) * radius + center
-     : Math.Sin(angle) * radius + center;
+        // Create keyframes for smooth circular motion
+        for (int i = 0; i <= 360; i += 10)
+        {
+            var angle = i * Math.PI / 180.0;
+            var value = isXDirection
+                   ? Math.Cos(angle) * radius + center
+        : Math.Sin(angle) * radius + center;
 
- keyframes.Add(new KeyFrame
+            keyframes.Add(new KeyFrame
             {
-     Cue = new Cue(i / 360.0),
-      Setters = { new Setter(property, value) }
-  });
+                Cue = new Cue(i / 360.0),
+                Setters = { new Setter(property, value) }
+            });
         }
 
-   return new Animation
-   {
-      Duration = duration,
-        IterationCount = iterationCount ?? new IterationCount(1),
-            Children = new KeyFrames(keyframes)
-      };
+        // Füge nach dem Erstellen des Animation-Objekts die Keyframes hinzu:
+        var animation = new Animation
+        {
+            Duration = duration,
+            IterationCount = iterationCount ?? new IterationCount(1)
+        };
+        animation.Children.AddRange(keyframes);
+        return animation;
     }
 }

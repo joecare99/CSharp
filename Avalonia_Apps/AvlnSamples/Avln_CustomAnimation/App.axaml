@@ -3,28 +3,28 @@
      x:Class="Avln_CustomAnimation.App"
     RequestedThemeVariant="Default">
 
-    <Application.Styles>
-   <FluentTheme />
-        
-     <Style Selector="TextBlock.header">
-        <Setter Property="FontSize" Value="16" />
-<Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Margin" Value="0,10,0,10" />
-        </Style>
-        
-  <Style Selector="Button.demo">
-   <Setter Property="Margin" Value="5" />
-    <Setter Property="Padding" Value="10,5" />
-         <Setter Property="MinWidth" Value="120" />
-        </Style>
-        
- <Style Selector="Border.demoArea">
-    <Setter Property="Background" Value="#F0F0F0" />
-      <Setter Property="BorderBrush" Value="#CCCCCC" />
-  <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="4" />
-       <Setter Property="Padding" Value="15" />
-     <Setter Property="Margin" Value="10" />
-   </Style>
-    </Application.Styles>
+	<Application.Styles>
+		<FluentTheme />
+
+		<Style Selector="TextBlock.header">
+			<Setter Property="FontSize" Value="16" />
+			<Setter Property="FontWeight" Value="Bold" />
+			<Setter Property="Margin" Value="0,10,0,10" />
+		</Style>
+
+		<Style Selector="Button.demo">
+			<Setter Property="Margin" Value="5" />
+			<Setter Property="Padding" Value="10,5" />
+			<Setter Property="MinWidth" Value="120" />
+		</Style>
+
+		<Style Selector="Border.demoArea">
+			<Setter Property="Background" Value="#F0F0F0" />
+			<Setter Property="BorderBrush" Value="#CCCCCC" />
+			<Setter Property="BorderThickness" Value="1" />
+			<Setter Property="CornerRadius" Value="4" />
+			<Setter Property="Padding" Value="15" />
+			<Setter Property="Margin" Value="10" />
+		</Style>
+	</Application.Styles>
 </Application>

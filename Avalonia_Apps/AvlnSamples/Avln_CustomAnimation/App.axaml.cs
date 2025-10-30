@@ -41,7 +41,3 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 }
-
-namespace Avln_CustomAnimation.Models { }
-namespace Avln_CustomAnimation.ValueConverter { }
-namespace Avln_CustomAnimation.Services { }

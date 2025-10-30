@@ -3,7 +3,7 @@
 // Author : Mir
 // Created          : 01-15-2025
 // ***********************************************************************
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 
 namespace Avln_CustomAnimation.ViewModels;
 
