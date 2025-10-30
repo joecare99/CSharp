@@ -33,9 +33,9 @@
 	
 	<!-- Embed code files for display in the application -->
 	<ItemGroup>
-		<EmbeddedResource Include="Views\HelloWorldView.axaml" />
-		<EmbeddedResource Include="ViewModels\HelloWorldViewModel.cs" />
-		<EmbeddedResource Include="Models\HelloWorldModel.cs" />
+		<EmbeddedResource Include="Views\MoveWindowView.axaml" />
+		<EmbeddedResource Include="ViewModels\MoveWindowViewModel.cs" />
+		<EmbeddedResource Include="Models\MoveWindowModel.cs" />
 	</ItemGroup>
 	
 	<ItemGroup>

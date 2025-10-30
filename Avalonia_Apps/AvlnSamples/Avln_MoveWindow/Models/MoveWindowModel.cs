@@ -9,8 +9,6 @@ using System.Globalization;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Automation;
-using System.Windows.Threading;
 using Avln_MoveWindow.Properties;
 
 namespace Avln_MoveWindow.Models
