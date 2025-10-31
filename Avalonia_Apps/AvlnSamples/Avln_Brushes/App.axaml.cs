@@ -28,12 +28,14 @@ public partial class App : Application
         services.AddTransient<BrushOpacityViewModel>();
         services.AddTransient<DashExampleViewModel>();
         services.AddTransient<PredefinedBrushesViewModel>();
+        services.AddTransient<BrushTransformViewModel>();
 
         // Register Views
         services.AddTransient<GradientBrushesView>();
         services.AddTransient<InteractiveLinearGradientView>();
         services.AddTransient<DashExampleView>();
         services.AddTransient<PredefinedBrushesView>();
+        services.AddTransient<BrushTransformView>();
 
         var serviceProvider = services.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);

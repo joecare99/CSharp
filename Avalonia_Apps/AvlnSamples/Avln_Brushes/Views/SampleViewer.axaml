@@ -34,7 +34,11 @@
 
     <DataTemplate DataType="vm:PredefinedBrushesViewModel">
       <views:PredefinedBrushesView />
-  </DataTemplate>
+    </DataTemplate>
+
+    <DataTemplate DataType="vm:BrushTransformViewModel">
+      <views:BrushTransformView />
+    </DataTemplate>
   </Window.DataTemplates>
 
   <DockPanel>
@@ -47,6 +51,7 @@
 <MenuItem Header="_Interactive Linear Gradient" Command="{Binding ShowInteractiveGradientCommand}" />
         <MenuItem Header="_Dash Patterns" Command="{Binding ShowDashExampleCommand}" />
         <MenuItem Header="_Predefined Colors" Command="{Binding ShowPredefinedBrushesCommand}" />
+        <MenuItem Header="Brush _Transforms" Command="{Binding ShowBrushTransformCommand}" />
       </MenuItem>
     </Menu>
 

@@ -1,0 +1,365 @@
+<!-- BrushTransformView.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  x:Class="Avln_Brushes.Views.BrushTransformView"
+  x:DataType="vm:BrushTransformViewModel">
+
+	<Design.DataContext>
+		<vm:BrushTransformViewModel />
+	</Design.DataContext>
+
+	<ScrollViewer>
+		<StackPanel Spacing="10" Margin="10">
+
+			<!-- Header -->
+			<Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
+				<TextBlock TextWrapping="Wrap" Foreground="White">
+					<Bold>Brush Transformations</Bold><LineBreak />
+					Brushes can be transformed using the <Bold>Transform</Bold> property.
+					The examples below demonstrate <Bold>RotateTransform</Bold>, <Bold>ScaleTransform</Bold>, and <Bold>SkewTransform</Bold>
+					applied to different brush types.
+					<LineBreak /><Italic>💡 Hover over examples for detailed explanations!</Italic>
+				</TextBlock>
+			</Border>
+
+			<!-- Info Note -->
+			<Border Background="LightYellow" Padding="10" CornerRadius="5" BorderBrush="Orange" BorderThickness="2">
+				<StackPanel Spacing="5">
+					<TextBlock FontWeight="Bold">ℹ️ Note on Transform vs. RelativeTransform</TextBlock>
+					<TextBlock TextWrapping="Wrap">
+						WPF supports both <Bold>Transform</Bold> and <Bold>RelativeTransform</Bold> properties on brushes.
+						Avalonia currently supports only <Bold>Transform</Bold> (absolute coordinates).
+						The examples below show various transform types applied to different brushes.
+					</TextBlock>
+				</StackPanel>
+			</Border>
+
+			<!-- 1. RotateTransform Examples -->
+			<TextBlock FontWeight="Bold" FontSize="16">1. RotateTransform</TextBlock>
+
+			<Grid ColumnDefinitions="150,10,*,10,*,10,*" RowSpacing="10">
+				<!-- Headers -->
+				<TextBlock Grid.Column="0" FontWeight="Bold" />
+				<TextBlock Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center">No Transform</TextBlock>
+				<TextBlock Grid.Column="4" FontWeight="Bold" HorizontalAlignment="Center">Rotate 45°</TextBlock>
+				<TextBlock Grid.Column="6" FontWeight="Bold" HorizontalAlignment="Center">Rotate 90°</TextBlock>
+
+				<!-- LinearGradient Row -->
+				<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Linear Gradient:</TextBlock>
+				
+				<!-- No Transform -->
+				<Rectangle Grid.Row="1" Grid.Column="2" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="LinearGradientBrush without any transform.&#x0a;Default gradient from top to bottom (0,0) to (0,1).">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<!-- Rotate 45° -->
+				<Rectangle Grid.Row="1" Grid.Column="4" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="RotateTransform with Angle=45°&#x0a;Rotates the gradient 45 degrees clockwise.&#x0a;&#x0a;XAML:&#x0a;&lt;LinearGradientBrush.Transform&gt;&#x0a;  &lt;RotateTransform Angle='45' /&gt;&#x0a;&lt;/LinearGradientBrush.Transform&gt;">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<LinearGradientBrush.Transform>
+								<RotateTransform Angle="45" />
+							</LinearGradientBrush.Transform>
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<!-- Rotate 90° -->
+				<Rectangle Grid.Row="1" Grid.Column="6" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="RotateTransform with Angle=90°&#x0a;Rotates the gradient 90 degrees (quarter turn).&#x0a;Vertical gradient becomes horizontal.&#x0a;&#x0a;XAML:&#x0a;&lt;LinearGradientBrush.Transform&gt;&#x0a;  &lt;RotateTransform Angle='90' /&gt;&#x0a;&lt;/LinearGradientBrush.Transform&gt;">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<LinearGradientBrush.Transform>
+								<RotateTransform Angle="90" />
+							</LinearGradientBrush.Transform>
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+
+				<!-- RadialGradient Row -->
+				<TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Radial Gradient:</TextBlock>
+				
+				<Rectangle Grid.Row="2" Grid.Column="2" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="RadialGradientBrush without transform.&#x0a;Radial gradient from center outward.">
+					<Rectangle.Fill>
+						<RadialGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+						</RadialGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="2" Grid.Column="4" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="RadialGradientBrush rotated 45°&#x0a;Note: Circular gradients may not show rotation visibly.&#x0a;Effect is more noticeable with elliptical gradients.">
+					<Rectangle.Fill>
+						<RadialGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<RadialGradientBrush.Transform>
+								<RotateTransform Angle="45" />
+							</RadialGradientBrush.Transform>
+						</RadialGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="2" Grid.Column="6" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="RadialGradientBrush rotated 90°&#x0a;Rotation of circular gradients is subtle.&#x0a;More visible with non-uniform RadiusX/RadiusY.">
+					<Rectangle.Fill>
+						<RadialGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<RadialGradientBrush.Transform>
+								<RotateTransform Angle="90" />
+							</RadialGradientBrush.Transform>
+						</RadialGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+			</Grid>
+
+			<Separator />
+
+			<!-- 2. ScaleTransform Examples -->
+			<TextBlock FontWeight="Bold" FontSize="16">2. ScaleTransform</TextBlock>
+
+			<Grid ColumnDefinitions="150,10,*,10,*,10,*" RowSpacing="10">
+				<!-- Headers -->
+				<TextBlock Grid.Column="0" FontWeight="Bold" />
+				<TextBlock Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center">No Transform</TextBlock>
+				<TextBlock Grid.Column="4" FontWeight="Bold" HorizontalAlignment="Center">Scale 1.5x</TextBlock>
+				<TextBlock Grid.Column="6" FontWeight="Bold" HorizontalAlignment="Center">Scale 0.5x</TextBlock>
+
+				<!-- LinearGradient Row -->
+				<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Linear Gradient:</TextBlock>
+				
+				<Rectangle Grid.Row="1" Grid.Column="2" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				  ToolTip.Tip="LinearGradientBrush without scaling.&#x0a;Gradient fills the entire rectangle.">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="1" Grid.Column="4" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="ScaleTransform 1.5x enlarges the brush.&#x0a;Gradient pattern appears larger (zoomed in).&#x0a;Center portions become more visible.&#x0a;&#x0a;XAML:&#x0a;&lt;ScaleTransform ScaleX='1.5' ScaleY='1.5' /&gt;">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<LinearGradientBrush.Transform>
+								<ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+							</LinearGradientBrush.Transform>
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="1" Grid.Column="6" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				      ToolTip.Tip="ScaleTransform 0.5x shrinks the brush.&#x0a;Gradient pattern appears smaller.&#x0a;More gradient cycles fit in the same space.&#x0a;&#x0a;XAML:&#x0a;&lt;ScaleTransform ScaleX='0.5' ScaleY='0.5' /&gt;">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<LinearGradientBrush.Transform>
+								<ScaleTransform ScaleX="0.5" ScaleY="0.5" />
+							</LinearGradientBrush.Transform>
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+			</Grid>
+
+			<Separator />
+
+			<!-- 3. SkewTransform Examples -->
+			<TextBlock FontWeight="Bold" FontSize="16">3. SkewTransform</TextBlock>
+
+			<Grid ColumnDefinitions="150,10,*,10,*,10,*" RowSpacing="10">
+				<!-- Headers -->
+				<TextBlock Grid.Column="0" FontWeight="Bold" />
+				<TextBlock Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center">No Transform</TextBlock>
+				<TextBlock Grid.Column="4" FontWeight="Bold" HorizontalAlignment="Center">Skew X: 30°</TextBlock>
+				<TextBlock Grid.Column="6" FontWeight="Bold" HorizontalAlignment="Center">Skew Y: 30°</TextBlock>
+
+				<!-- LinearGradient Row -->
+				<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Linear Gradient:</TextBlock>
+				
+				<Rectangle Grid.Row="1" Grid.Column="2" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				 ToolTip.Tip="LinearGradientBrush without skewing.&#x0a;Gradient flows vertically.">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="1" Grid.Column="4" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				   ToolTip.Tip="SkewTransform along X-axis (30°).&#x0a;Shears the brush horizontally.&#x0a;Creates a parallelogram distortion effect.&#x0a;&#x0a;XAML:&#x0a;&lt;SkewTransform AngleX='30' /&gt;&#x0a;&#x0a;Think: 'Italicizing' the brush.">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<LinearGradientBrush.Transform>
+								<SkewTransform AngleX="30" />
+							</LinearGradientBrush.Transform>
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="1" Grid.Column="6" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				       ToolTip.Tip="SkewTransform along Y-axis (30°).&#x0a;Shears the brush vertically.&#x0a;Creates vertical slant effect.&#x0a;&#x0a;XAML:&#x0a;&lt;SkewTransform AngleY='30' /&gt;&#x0a;&#x0a;Like leaning a building.">
+					<Rectangle.Fill>
+						<LinearGradientBrush>
+							<GradientStop Offset="0.0" Color="Blue" />
+							<GradientStop Offset="0.4" Color="Black" />
+							<GradientStop Offset="0.5" Color="White" />
+							<GradientStop Offset="0.6" Color="Black" />
+							<GradientStop Offset="0.7" Color="Blue" />
+							<LinearGradientBrush.Transform>
+								<SkewTransform AngleY="30" />
+							</LinearGradientBrush.Transform>
+						</LinearGradientBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+			</Grid>
+
+			<Separator />
+
+			<!-- 4. ImageBrush with Transform -->
+			<TextBlock FontWeight="Bold" FontSize="16">4. ImageBrush Transforms</TextBlock>
+
+			<Grid ColumnDefinitions="150,10,*,10,*,10,*" RowSpacing="10">
+				<!-- Headers -->
+				<TextBlock Grid.Column="0" FontWeight="Bold" />
+				<TextBlock Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center">Normal</TextBlock>
+				<TextBlock Grid.Column="4" FontWeight="Bold" HorizontalAlignment="Center">Rotated</TextBlock>
+				<TextBlock Grid.Column="6" FontWeight="Bold" HorizontalAlignment="Center">Scaled</TextBlock>
+
+				<!-- ImageBrush Row -->
+				<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Image:</TextBlock>
+				
+				<Rectangle Grid.Row="1" Grid.Column="2" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				           ToolTip.Tip="ImageBrush without transform.&#x0a;Image fills rectangle with Stretch=UniformToFill.&#x0a;Aspect ratio preserved, may crop.">
+					<Rectangle.Fill>
+						<ImageBrush Source="avares://Avln_Brushes/Assets/avalonia-logo.ico" Stretch="UniformToFill" />
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="1" Grid.Column="4" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				        ToolTip.Tip="ImageBrush with RotateTransform 25°.&#x0a;Tilts the image slightly.&#x0a;&#x0a;XAML:&#x0a;&lt;ImageBrush.Transform&gt;&#x0a;  &lt;RotateTransform Angle='25' /&gt;&#x0a;&lt;/ImageBrush.Transform&gt;&#x0a;&#x0a;Useful for dynamic effects!">
+					<Rectangle.Fill>
+						<ImageBrush Source="avares://Avln_Brushes/Assets/avalonia-logo.ico" Stretch="UniformToFill">
+							<ImageBrush.Transform>
+								<RotateTransform Angle="25" />
+							</ImageBrush.Transform>
+						</ImageBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+				
+				<Rectangle Grid.Row="1" Grid.Column="6" Width="150" Height="80" Stroke="Black" HorizontalAlignment="Center"
+				         ToolTip.Tip="ImageBrush with ScaleTransform 1.5x.&#x0a;Zooms into the center of the image.&#x0a;&#x0a;XAML:&#x0a;&lt;ScaleTransform ScaleX='1.5' ScaleY='1.5' /&gt;&#x0a;&#x0a;Creates a 'magnified' effect.">
+					<Rectangle.Fill>
+						<ImageBrush Source="avares://Avln_Brushes/Assets/avalonia-logo.ico" Stretch="UniformToFill">
+							<ImageBrush.Transform>
+								<ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+							</ImageBrush.Transform>
+						</ImageBrush>
+					</Rectangle.Fill>
+				</Rectangle>
+			</Grid>
+
+			<Separator />
+
+			<!-- Info Footer -->
+			<Border Background="LightCyan" Padding="10" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
+				<StackPanel Spacing="5">
+					<TextBlock Text="💡 Transform Types Explained" FontWeight="Bold" />
+
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBlock Text="•" VerticalAlignment="Top" />
+						<TextBlock TextWrapping="Wrap">
+							<Bold>RotateTransform</Bold>: Rotates the brush around a center point by a specified angle (degrees).
+							Positive angles = clockwise, negative = counter-clockwise.
+						</TextBlock>
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBlock Text="•" VerticalAlignment="Top" />
+						<TextBlock TextWrapping="Wrap">
+							<Bold>ScaleTransform</Bold>: Scales the brush by specified X and Y factors.
+							Values &gt; 1 = enlarge, values &lt; 1 = shrink. Independent X/Y scaling possible.
+						</TextBlock>
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBlock Text="•" VerticalAlignment="Top" />
+						<TextBlock TextWrapping="Wrap">
+							<Bold>SkewTransform</Bold>: Skews (shears) the brush by specified angles along X or Y axes.
+							AngleX = horizontal slant, AngleY = vertical slant. Creates parallelogram effect.
+						</TextBlock>
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBlock Text="•" VerticalAlignment="Top" />
+						<TextBlock TextWrapping="Wrap">
+							<Bold>TransformGroup</Bold>: Combine multiple transforms. Example:
+							&lt;TransformGroup&gt;&lt;RotateTransform.../&gt;&lt;ScaleTransform.../&gt;&lt;/TransformGroup&gt;
+						</TextBlock>
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBlock Text="•" VerticalAlignment="Top" />
+						<TextBlock TextWrapping="Wrap">
+							<Bold>💡 Learning Tip</Bold>: Hover over each example above to see the exact XAML code and explanations!
+						</TextBlock>
+					</StackPanel>
+				</StackPanel>
+			</Border>
+
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>

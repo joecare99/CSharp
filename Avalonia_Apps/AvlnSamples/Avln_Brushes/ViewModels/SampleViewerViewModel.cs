@@ -59,5 +59,11 @@ public partial class SampleViewerViewModel : ObservableObject, ISampleViewerView
     {
         CurrentView = new PredefinedBrushesViewModel();
     }
+
+    [RelayCommand]
+    private void ShowBrushTransform()
+    {
+        CurrentView = new BrushTransformViewModel();
+    }
 }
 
