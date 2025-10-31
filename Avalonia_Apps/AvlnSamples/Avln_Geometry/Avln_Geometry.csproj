@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 	<Import Project="..\Avln_Samples.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -11,16 +11,18 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-	  <AvaloniaXaml Remove="Views_WPF_Legacy\**" />
-	  <Compile Remove="Views_WPF_Legacy\**" />
-	  <EmbeddedResource Remove="Views_WPF_Legacy\**" />
-	  <None Remove="Views_WPF_Legacy\**" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="Assets\avalonia-logo.ico" />
+		<None Remove="Assets\*.jpg" />
+		<None Remove="Assets\*.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\avalonia-logo.ico" />
+		<AvaloniaResource Include="Assets\*.jpg" />
+		<AvaloniaResource Include="Assets\*.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="Assets\bluetexture.png" />
+	  <None Include="Assets\waterlilies.jpg" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="11.3.8" />
@@ -32,13 +34,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Compile Update="Properties\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Properties\Resources.resx">

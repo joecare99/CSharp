@@ -124,6 +124,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_CustomAnimation", "Avln_CustomAnimation\Avln_CustomAnimation.csproj", "{B14E8BCB-2C64-C1AD-EB45-F49036FB6A04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migration", "Migration", "{5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}"
+	ProjectSection(SolutionItems) = preProject
+		Migration\Migrate-WpfToAvalonia.ps1 = Migration\Migrate-WpfToAvalonia.ps1
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{A1B71644-54D3-43F7-8783-D836172F53F9}"
 	ProjectSection(SolutionItems) = preProject
@@ -140,6 +143,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{4A317A
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Brushes", "Avln_Brushes\Avln_Brushes.csproj", "{28FEFA40-1A58-D0FC-8789-DB494D631CAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Geometry", "Avln_Geometry\Avln_Geometry.csproj", "{7C0E06C5-5818-4F29-3630-BC5AAFC58344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_ImageView", "Avln_ImageView\Avln_ImageView.csproj", "{449032D0-996D-9D12-5722-4C6543136942}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -331,6 +338,14 @@ Global
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -379,6 +394,8 @@ Global
 		{A1B71644-54D3-43F7-8783-D836172F53F9} = {5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}
 		{4A317AB2-F1B5-4F6D-A28A-E9DCF5884A5C} = {5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{449032D0-996D-9D12-5722-4C6543136942} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {538D0F12-3E9F-4868-8689-63796F14BD11}
