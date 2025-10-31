@@ -1,0 +1,54 @@
+<!--
+  SampleViewer.axaml
+  Provides a UI for navigating through the different brush examples. 
+-->
+<Window 
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Class="Avln_Brushes.Views.SampleViewer"
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  xmlns:views="clr-namespace:Avln_Brushes.Views"
+  Title="Brush Examples - Avalonia"
+  Width="900" Height="700"
+ Background="White"
+  Icon="/Assets/avalonia-logo.ico">
+
+    <Design.DataContext>
+        <vm:SampleViewerViewModel />
+    </Design.DataContext>
+
+  <Window.Resources>
+    <!-- DataTemplates für View-ViewModel-Mapping -->
+    <DataTemplate DataType="vm:GradientBrushesViewModel">
+    <views:GradientBrushesView />
+    </DataTemplate>
+  
+  <DataTemplate DataType="vm:InteractiveLinearGradientViewModel">
+    <views:InteractiveLinearGradientView />
+ </DataTemplate>
+  </Window.Resources>
+
+  <DockPanel>
+
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="_File">
+        <MenuItem Header="E_xit" Command="{Binding ExitCommand}" InputGesture="Alt+F4" />
+ </MenuItem>
+   <MenuItem Header="_Examples">
+  <MenuItem Header="Gradient _Brushes" Command="{Binding ShowGradientBrushesCommand}" />
+     <MenuItem Header="_Interactive Linear Gradient" Command="{Binding ShowInteractiveGradientCommand}" />
+      </MenuItem>
+    </Menu>
+
+    <Border DockPanel.Dock="Top" Padding="10" Background="{DynamicResource BlueHorizontalGradientBrush}">
+   <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Brush Examples</TextBlock>
+    </Border>
+
+    <ScrollViewer>
+      <ContentControl Content="{Binding CurrentView}" Margin="10" />
+    </ScrollViewer>
+  </DockPanel>
+</Window>
+
+
+

@@ -1,0 +1,121 @@
+<!-- GradientBrushesView.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui" 
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  x:Class="Avln_Brushes.Views.GradientBrushesView"
+  x:DataType="vm:GradientBrushesViewModel">
+
+  <Design.DataContext>
+    <vm:GradientBrushesViewModel />
+  </Design.DataContext>
+
+  <StackPanel Spacing="10">
+
+    <!-- Header -->
+    <Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
+      <TextBlock TextWrapping="Wrap">
+        This example shows linear and radial gradients with different configurations.
+      </TextBlock>
+    </Border>
+
+    <!-- Controls -->
+  <Border Background="LightGray" Padding="10" CornerRadius="5">
+      <StackPanel Spacing="5">
+     <CheckBox IsChecked="{Binding ShowGradientStops}">
+          Highlight Gradient Stops
+        </CheckBox>
+      </StackPanel>
+    </Border>
+
+    <!-- Examples Grid -->
+    <UniformGrid Columns="2" Rows="3" ColumnSpacing="10" RowSpacing="10">
+      
+  <!-- Diagonal Linear Gradient -->
+      <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+    <TextBlock Text="Diagonal Linear Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+          <Border Width="200" Height="100" BorderBrush="Black" BorderThickness="1">
+     <Border.Background>
+           <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+    <GradientStop Color="Yellow" Offset="0" />
+     <GradientStop Color="Red" Offset="0.25" />
+       <GradientStop Color="Blue" Offset="0.75" />
+      <GradientStop Color="LimeGreen" Offset="1" />
+   </LinearGradientBrush>
+      </Border.Background>
+   </Border>
+      </StackPanel>
+      </Border>
+
+      <!-- Horizontal Linear Gradient -->
+    <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+    <TextBlock Text="Horizontal Linear Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+       <Border Width="200" Height="100" BorderBrush="Black" BorderThickness="1">
+       <Border.Background>
+    <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+<GradientStop Color="Yellow" Offset="0" />
+       <GradientStop Color="Red" Offset="0.25" />
+       <GradientStop Color="Blue" Offset="0.75" />
+   <GradientStop Color="LimeGreen" Offset="1" />
+      </LinearGradientBrush>
+    </Border.Background>
+   </Border>
+ </StackPanel>
+      </Border>
+
+      <!-- Vertical Linear Gradient -->
+      <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+   <StackPanel>
+    <TextBlock Text="Vertical Linear Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+          <Border Width="200" Height="100" BorderBrush="Black" BorderThickness="1">
+       <Border.Background>
+      <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+   <GradientStop Color="Yellow" Offset="0" />
+    <GradientStop Color="Red" Offset="0.25" />
+                <GradientStop Color="Blue" Offset="0.75" />
+       <GradientStop Color="LimeGreen" Offset="1" />
+    </LinearGradientBrush>
+      </Border.Background>
+ </Border>
+   </StackPanel>
+  </Border>
+
+   <!-- Radial Gradient -->
+  <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+  <StackPanel>
+      <TextBlock Text="Radial Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+     <Border Width="200" Height="100" BorderBrush="Black" BorderThickness="1">
+     <Border.Background>
+      <RadialGradientBrush GradientOrigin="50%,50%" Center="50%,50%" RadiusX="100" RadiusY="100">
+     <GradientStop Color="Yellow" Offset="0" />
+             <GradientStop Color="Red" Offset="0.25" />
+    <GradientStop Color="Blue" Offset="0.75" />
+     <GradientStop Color="LimeGreen" Offset="1" />
+       </RadialGradientBrush>
+     </Border.Background>
+          </Border>
+  </StackPanel>
+  </Border>
+
+      <!-- Condensed Horizontal -->
+      <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+     <StackPanel>
+  <TextBlock Text="Condensed Horizontal" FontWeight="Bold" Margin="0,0,0,5" />
+          <Border Width="200" Height="100" BorderBrush="Black" BorderThickness="1">
+      <Border.Background>
+       <LinearGradientBrush StartPoint="25%,50%" EndPoint="75%,50%">
+          <GradientStop Color="Yellow" Offset="0" />
+       <GradientStop Color="Red" Offset="0.25" />
+     <GradientStop Color="Blue" Offset="0.75" />
+    <GradientStop Color="LimeGreen" Offset="1" />
+      </LinearGradientBrush>
+  </Border.Background>
+       </Border>
+ </StackPanel>
+      </Border>
+
+    </UniformGrid>
+
+  </StackPanel>
+</UserControl>
