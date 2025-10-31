@@ -67,35 +67,34 @@ public class CircleAnimator
     private static Animation CreateCircleAnimation(
           AvaloniaProperty property,
     double radius,
-          double center,
+      double center,
      TimeSpan duration,
-    IterationCount? iterationCount,
+ IterationCount? iterationCount,
           bool isXDirection)
-    {
-        var keyframes = new System.Collections.Generic.List<KeyFrame>();
+ {
+     var keyframes = new System.Collections.Generic.List<KeyFrame>();
 
         // Create keyframes for smooth circular motion
         for (int i = 0; i <= 360; i += 10)
         {
-            var angle = i * Math.PI / 180.0;
-            var value = isXDirection
-                   ? Math.Cos(angle) * radius + center
-        : Math.Sin(angle) * radius + center;
+    var angle = i * Math.PI / 180.0;
+    var value = isXDirection
+    ? Math.Cos(angle) * radius + center
+   : Math.Sin(angle) * radius + center;
 
-            keyframes.Add(new KeyFrame
-            {
-                Cue = new Cue(i / 360.0),
-                Setters = { new Setter(property, value) }
+          keyframes.Add(new KeyFrame
+     {
+Cue = new Cue(i / 360.0),
+      Setters = { new Setter(property, value) }
             });
         }
 
-        // Füge nach dem Erstellen des Animation-Objekts die Keyframes hinzu:
         var animation = new Animation
-        {
-            Duration = duration,
+    {
+       Duration = duration,
             IterationCount = iterationCount ?? new IterationCount(1)
-        };
-        animation.Children.AddRange(keyframes);
-        return animation;
+  };
+animation.Children.AddRange(keyframes);
+   return animation;
     }
 }

@@ -61,6 +61,26 @@ dotnet build Avln_ControlsAndLayout\Avln_ControlsAndLayout.csproj
 dotnet run --project Avln_ControlsAndLayout\Avln_ControlsAndLayout.csproj
 ```
 
+## ?? Migrationsskripte
+
+Der Unterordner `Migration` enthält PowerShell-Skripte zur automatischen Migration von WPF-Projekten zu Avalonia UI.
+
+### Verfügbare Skripte:
+
+1. **Migrate-WpfToAvalonia.ps1** - Hauptmodul für die Migration
+2. **Test-Migration.ps1** - Test-Skript für WPF_MasterDetail
+3. **Config/MigrationConfig.ps1** - Zentrale Konfiguration
+4. **Modules/** - Verschiedene Module für spezifische Aufgaben
+
+### Verwendung:
+
+```powershell
+cd Migration
+.\Migrate-WpfToAvalonia.ps1 -WpfProjectName "WPF_MasterDetail" -IncludeTests
+```
+
+Weitere Informationen siehe `Migration\README.md`
+
 ## ?? Modular Migration Framework
 
 ### Benefits of Modular Approach
