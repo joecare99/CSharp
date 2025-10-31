@@ -5,47 +5,47 @@
  
     <Application.Styles>
         <FluentTheme />
-  </Application.Styles>
+
+        <!-- Common Styles -->
+ <Style Selector="TextBlock.MyIntroTextBlock">
+   <Setter Property="Margin" Value="10" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+   <Setter Property="FontSize" Value="14" />
+    </Style>
+
+  <Style Selector="Rectangle.FooterRectangle">
+     <Setter Property="Height" Value="30" />
+  <Setter Property="Margin" Value="0,10,0,0" />
+  </Style>
+
+   <Style Selector="Ellipse.MarkerEllipse">
+  <Setter Property="Width" Value="20" />
+   <Setter Property="Height" Value="20" />
+   <Setter Property="Fill" Value="Yellow" />
+<Setter Property="Stroke" Value="Black" />
+          <Setter Property="StrokeThickness" Value="2" />
+        </Style>
+
+  <Style Selector="TextBlock.EntryLabel">
+   <Setter Property="Margin" Value="0,0,5,0" />
+     <Setter Property="VerticalAlignment" Value="Center" />
+          <Setter Property="HorizontalAlignment" Value="Right" />
+      </Style>
+    </Application.Styles>
 
     <Application.Resources>
-  <ResourceDictionary>
-      
-      <!-- Common Brushes -->
+        <ResourceDictionary>
+   
+        <!-- Common Brushes -->
       <LinearGradientBrush x:Key="BlueHorizontalGradientBrush" StartPoint="0%,50%" EndPoint="100%,50%">
-     <GradientStop Color="#FF4A90E2" Offset="0" />
-        <GradientStop Color="#FF2E5C8A" Offset="1" />
-   </LinearGradientBrush>
+             <GradientStop Color="#FF4A90E2" Offset="0" />
+   <GradientStop Color="#FF2E5C8A" Offset="1" />
+     </LinearGradientBrush>
 
    <SolidColorBrush x:Key="GlassBrushResource" Color="#33FFFFFF" />
       <SolidColorBrush x:Key="MySteelBrushResource" Color="#FF708090" />
- <SolidColorBrush x:Key="MyCloudyGlassBrushResource" Color="#22FFFFFF" />
+      <SolidColorBrush x:Key="MyCloudyGlassBrushResource" Color="#22FFFFFF" />
 
-      <!-- Common Styles -->
-  <Style Selector="TextBlock.MyIntroTextBlock">
-   <Setter Property="Margin" Value="10" />
-        <Setter Property="TextWrapping" Value="Wrap" />
-   <Setter Property="FontSize" Value="14" />
-      </Style>
-
-      <Style Selector="Rectangle.FooterRectangle">
-     <Setter Property="Height" Value="30" />
-  <Setter Property="Margin" Value="0,10,0,0" />
-   </Style>
-
-  <Style Selector="Ellipse.MarkerEllipse">
-        <Setter Property="Width" Value="20" />
-   <Setter Property="Height" Value="20" />
-   <Setter Property="Fill" Value="Yellow" />
-   <Setter Property="Stroke" Value="Black" />
-     <Setter Property="StrokeThickness" Value="2" />
-  </Style>
-
- <Style Selector="TextBlock.EntryLabel">
-        <Setter Property="Margin" Value="0,0,5,0" />
-   <Setter Property="VerticalAlignment" Value="Center" />
-  <Setter Property="HorizontalAlignment" Value="Right" />
- </Style>
-
-    </ResourceDictionary>
-  </Application.Resources>
+      </ResourceDictionary>
+    </Application.Resources>
 </Application>

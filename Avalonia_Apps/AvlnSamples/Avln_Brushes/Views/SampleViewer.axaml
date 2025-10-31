@@ -11,38 +11,38 @@
   Title="Brush Examples - Avalonia"
 	x:DataType="vm:SampleViewerViewModel"
   Width="900" Height="700"
- Background="White"
+  Background="White"
   Icon="/Assets/avalonia-logo.ico">
 
     <Design.DataContext>
-        <vm:SampleViewerViewModel />
+<vm:SampleViewerViewModel />
     </Design.DataContext>
 
-  <Window.Resources>
+  <Window.DataTemplates>
     <!-- DataTemplates für View-ViewModel-Mapping -->
     <DataTemplate DataType="vm:GradientBrushesViewModel">
-    <views:GradientBrushesView />
-    </DataTemplate>
-  
-  <DataTemplate DataType="vm:InteractiveLinearGradientViewModel">
-    <views:InteractiveLinearGradientView />
+   <views:GradientBrushesView />
  </DataTemplate>
-  </Window.Resources>
+    
+    <DataTemplate DataType="vm:InteractiveLinearGradientViewModel">
+      <views:InteractiveLinearGradientView />
+  </DataTemplate>
+  </Window.DataTemplates>
 
   <DockPanel>
 
     <Menu DockPanel.Dock="Top">
       <MenuItem Header="_File">
-        <MenuItem Header="E_xit" Command="{Binding ExitCommand}" InputGesture="Alt+F4" />
- </MenuItem>
-   <MenuItem Header="_Examples">
-  <MenuItem Header="Gradient _Brushes" Command="{Binding ShowGradientBrushesCommand}" />
-     <MenuItem Header="_Interactive Linear Gradient" Command="{Binding ShowInteractiveGradientCommand}" />
-      </MenuItem>
-    </Menu>
+  <MenuItem Header="E_xit" Command="{Binding ExitCommand}" InputGesture="Alt+F4" />
+   </MenuItem>
+      <MenuItem Header="_Examples">
+        <MenuItem Header="Gradient _Brushes" Command="{Binding ShowGradientBrushesCommand}" />
+        <MenuItem Header="_Interactive Linear Gradient" Command="{Binding ShowInteractiveGradientCommand}" />
+   </MenuItem>
+</Menu>
 
-    <Border DockPanel.Dock="Top" Padding="10" Background="{DynamicResource BlueHorizontalGradientBrush}">
-   <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Brush Examples</TextBlock>
+ <Border DockPanel.Dock="Top" Padding="10" Background="{DynamicResource BlueHorizontalGradientBrush}">
+      <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Brush Examples</TextBlock>
     </Border>
 
     <ScrollViewer>
