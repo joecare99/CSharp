@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:mvvm="using:Avln_Geometry.ViewModels"
+ xmlns:views="using:Avln_Geometry.Views"
+             x:Class="Avln_Geometry.Views.SampleViewer"
+    mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+         x:DataType="mvvm:SampleViewerViewModel">
+    
+    <Design.DataContext>
+        <mvvm:SampleViewerViewModel />
+    </Design.DataContext>
+
+ <DockPanel>
+        <!-- Navigation Panel -->
+        <Border DockPanel.Dock="Left" Background="#4D9999FF" Padding="10">
+            <StackPanel VerticalAlignment="Top" Spacing="10">
+  <RadioButton x:Name="Example1RadioButton" 
+      Command="{Binding SampleSelectedCommand}" 
+                 CommandParameter="0" 
+      Content="Geometry Usage" />
+             <RadioButton Command="{Binding SampleSelectedCommand}" 
+           CommandParameter="1" 
+            Content="Shape Geometries" />
+       <RadioButton Command="{Binding SampleSelectedCommand}" 
+     CommandParameter="2" 
+        Content="Path Geometry" />
+                <RadioButton Command="{Binding SampleSelectedCommand}" 
+          CommandParameter="3" 
+        Content="Attribute Syntax" />
+   <RadioButton Command="{Binding SampleSelectedCommand}" 
+   CommandParameter="4" 
+               Content="Combining Geometries" />
+          </StackPanel>
+        </Border>
+
+        <!-- Content Area -->
+    <Border Background="White">
+  <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+        VerticalScrollBarVisibility="Auto">
+        <ContentControl Content="{Binding ActView}" />
+   </ScrollViewer>
+        </Border>
+    </DockPanel>
+</UserControl>
