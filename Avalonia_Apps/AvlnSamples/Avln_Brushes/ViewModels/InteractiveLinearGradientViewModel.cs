@@ -14,7 +14,7 @@ public partial class InteractiveLinearGradientViewModel : ObservableObject
     private RelativePoint _startPoint = new(0, 0, RelativeUnit.Relative);
 
     [ObservableProperty]
- private RelativePoint _endPoint = new(1, 1, RelativeUnit.Relative);
+    private RelativePoint _endPoint = new(1, 1, RelativeUnit.Relative);
 
     [ObservableProperty]
     private double _opacity = 1.0;
@@ -54,7 +54,7 @@ public partial class InteractiveLinearGradientViewModel : ObservableObject
         UpdateMarkup();
     }
 
- partial void OnStartPointChanged(RelativePoint value)
+    partial void OnStartPointChanged(RelativePoint value)
     {
         // Use invariant culture for consistent formatting
         StartPointText = $"{value.Point.X.ToString("F4", CultureInfo.InvariantCulture)};{value.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}";
@@ -64,7 +64,7 @@ public partial class InteractiveLinearGradientViewModel : ObservableObject
     partial void OnEndPointChanged(RelativePoint value)
     {
         // Use invariant culture for consistent formatting
-      EndPointText = $"{value.Point.X.ToString("F4", CultureInfo.InvariantCulture)};{value.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}";
+        EndPointText = $"{value.Point.X.ToString("F4", CultureInfo.InvariantCulture)};{value.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}";
         UpdateMarkup();
     }
 
@@ -80,15 +80,15 @@ public partial class InteractiveLinearGradientViewModel : ObservableObject
     [RelayCommand]
     private void UpdateStartPointFromText()
     {
-      try
-     {
-    var point = ParsePoint(StartPointText);
-  StartPoint = new RelativePoint(point.X, point.Y, RelativeUnit.Relative);
-        }
-    catch
+        try
         {
-   // Ignore parse errors - could show validation message here
-  }
+            var point = ParsePoint(StartPointText);
+            StartPoint = new RelativePoint(point.X, point.Y, RelativeUnit.Relative);
+        }
+        catch
+        {
+            // Ignore parse errors - could show validation message here
+        }
     }
 
     [RelayCommand]
@@ -96,35 +96,35 @@ public partial class InteractiveLinearGradientViewModel : ObservableObject
     {
         try
         {
-         var point = ParsePoint(EndPointText);
+            var point = ParsePoint(EndPointText);
             EndPoint = new RelativePoint(point.X, point.Y, RelativeUnit.Relative);
         }
         catch
         {
- // Ignore parse errors - could show validation message here
-     }
+            // Ignore parse errors - could show validation message here
+        }
     }
 
     /// <summary>
     /// Parse a point from text. Supports both ";" and "," as separators.
     /// Uses InvariantCulture for number parsing to avoid localization issues.
     /// </summary>
-  private Point ParsePoint(string text)
+    private Point ParsePoint(string text)
     {
-     if (string.IsNullOrWhiteSpace(text))
+        if (string.IsNullOrWhiteSpace(text))
             return new Point(0, 0);
 
-      // Try semicolon separator first (preferred)
+        // Try semicolon separator first (preferred)
         var parts = text.Split(';');
-        
+
         // Fall back to comma if semicolon didn't work
         if (parts.Length != 2)
-         parts = text.Split(',');
+            parts = text.Split(',');
 
         if (parts.Length != 2)
-       throw new FormatException("Point must be in format 'X;Y' or 'X,Y'");
+            throw new FormatException("Point must be in format 'X;Y' or 'X,Y'");
 
-    // Use InvariantCulture to parse numbers consistently
+        // Use InvariantCulture to parse numbers consistently
         var x = double.Parse(parts[0].Trim(), CultureInfo.InvariantCulture);
         var y = double.Parse(parts[1].Trim(), CultureInfo.InvariantCulture);
 
@@ -133,17 +133,17 @@ public partial class InteractiveLinearGradientViewModel : ObservableObject
 
     private void UpdateMarkup()
     {
-     var sBuilder = new StringBuilder();
+        var sBuilder = new StringBuilder();
         sBuilder.Append("<LinearGradientBrush\n");
-    
-        // Use invariant culture for XAML output
-    sBuilder.Append($"  StartPoint=\"{StartPoint.Point.X.ToString("F4", CultureInfo.InvariantCulture)},{StartPoint.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}\"\n");
-        sBuilder.Append($"  EndPoint=\"{EndPoint.Point.X.ToString("F4", CultureInfo.InvariantCulture)},{EndPoint.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}\"\n");
-    sBuilder.Append($"  SpreadMethod=\"{SpreadMethod}\"\n");
-     sBuilder.Append($"  Opacity=\"{Opacity.ToString(CultureInfo.InvariantCulture)}\">\n");
 
-  sBuilder.Append($"  <GradientStop Offset=\"{GradientStop1Offset.ToString("F4", CultureInfo.InvariantCulture)}\" Color=\"{GradientStop1Color}\" />\n");
-   sBuilder.Append($"  <GradientStop Offset=\"{GradientStop2Offset.ToString("F4", CultureInfo.InvariantCulture)}\" Color=\"{GradientStop2Color}\" />\n");
+        // Use invariant culture for XAML output
+        sBuilder.Append($"  StartPoint=\"{StartPoint.Point.X.ToString("F4", CultureInfo.InvariantCulture)},{StartPoint.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}\"\n");
+        sBuilder.Append($"  EndPoint=\"{EndPoint.Point.X.ToString("F4", CultureInfo.InvariantCulture)},{EndPoint.Point.Y.ToString("F4", CultureInfo.InvariantCulture)}\"\n");
+        sBuilder.Append($"  SpreadMethod=\"{SpreadMethod}\"\n");
+        sBuilder.Append($"  Opacity=\"{Opacity.ToString(CultureInfo.InvariantCulture)}\">\n");
+
+        sBuilder.Append($"  <GradientStop Offset=\"{GradientStop1Offset.ToString("F4", CultureInfo.InvariantCulture)}\" Color=\"{GradientStop1Color}\" />\n");
+        sBuilder.Append($"  <GradientStop Offset=\"{GradientStop2Offset.ToString("F4", CultureInfo.InvariantCulture)}\" Color=\"{GradientStop2Color}\" />\n");
         sBuilder.Append($"  <GradientStop Offset=\"{GradientStop3Offset.ToString("F4", CultureInfo.InvariantCulture)}\" Color=\"{GradientStop3Color}\" />\n");
 
         sBuilder.Append("</LinearGradientBrush>");

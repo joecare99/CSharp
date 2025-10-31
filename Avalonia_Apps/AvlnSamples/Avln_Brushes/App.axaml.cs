@@ -20,24 +20,29 @@ public partial class App : Application
     {
         // Configure Dependency Injection
         var services = new ServiceCollection();
-        
-   // Register ViewModels
+
+        // Register ViewModels
         services.AddSingleton<ISampleViewerViewModel, SampleViewerViewModel>();
         services.AddTransient<GradientBrushesViewModel>();
         services.AddTransient<InteractiveLinearGradientViewModel>();
-   
-     // Register Views
+        services.AddTransient<BrushOpacityViewModel>();
+        services.AddTransient<DashExampleViewModel>();
+        services.AddTransient<PredefinedBrushesViewModel>();
+
+        // Register Views
         services.AddTransient<GradientBrushesView>();
         services.AddTransient<InteractiveLinearGradientView>();
+        services.AddTransient<DashExampleView>();
+        services.AddTransient<PredefinedBrushesView>();
 
         var serviceProvider = services.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-   // Create main window with DI
-   var mainViewModel = serviceProvider.GetRequiredService<ISampleViewerViewModel>();
- desktop.MainWindow = new SampleViewer(mainViewModel);
+            // Create main window with DI
+            var mainViewModel = serviceProvider.GetRequiredService<ISampleViewerViewModel>();
+            desktop.MainWindow = new SampleViewer(mainViewModel);
         }
 
         base.OnFrameworkInitializationCompleted();

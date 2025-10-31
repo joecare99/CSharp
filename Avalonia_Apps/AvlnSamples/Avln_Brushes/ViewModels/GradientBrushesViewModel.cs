@@ -23,7 +23,7 @@ public partial class GradientBrushesViewModel : ObservableObject
 
 public class GradientExample
 {
- public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public GradientType Type { get; set; }
 }
 

@@ -2,53 +2,68 @@
   SampleViewer.axaml
   Provides a UI for navigating through the different brush examples. 
 -->
-<Window
+<Window 
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   x:Class="Avln_Brushes.Views.SampleViewer"
   xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
   xmlns:views="clr-namespace:Avln_Brushes.Views"
   Title="Brush Examples - Avalonia"
-	x:DataType="vm:SampleViewerViewModel"
+  x:DataType="vm:SampleViewerViewModel"
   Width="900" Height="700"
   Background="White"
   Icon="/Assets/avalonia-logo.ico">
 
-	<Design.DataContext>
-		<vm:SampleViewerViewModel />
-	</Design.DataContext>
+  <Design.DataContext>
+    <vm:SampleViewerViewModel />
+  </Design.DataContext>
 
-	<Window.DataTemplates>
-		<!-- DataTemplates für View-ViewModel-Mapping -->
-		<DataTemplate DataType="vm:GradientBrushesViewModel">
-			<views:GradientBrushesView />
-		</DataTemplate>
+  <Window.DataTemplates>
+    <!-- DataTemplates für View-ViewModel-Mapping -->
+    <DataTemplate DataType="vm:GradientBrushesViewModel">
+      <views:GradientBrushesView />
+    </DataTemplate>
 
-		<DataTemplate DataType="vm:InteractiveLinearGradientViewModel">
-			<views:InteractiveLinearGradientView />
-		</DataTemplate>
-	</Window.DataTemplates>
+    <DataTemplate DataType="vm:InteractiveLinearGradientViewModel">
+      <views:InteractiveLinearGradientView />
+    </DataTemplate>
 
-	<DockPanel>
-		<Menu DockPanel.Dock="Top">
-			<MenuItem Header="_File">
-				<MenuItem Header="E_xit" Command="{Binding ExitCommand}" InputGesture="Alt+F4" />
-			</MenuItem>
-			<MenuItem Header="_Examples">
-				<MenuItem Header="Gradient _Brushes" Command="{Binding ShowGradientBrushesCommand}" />
-				<MenuItem Header="_Interactive Linear Gradient" Command="{Binding ShowInteractiveGradientCommand}" />
-			</MenuItem>
-		</Menu>
+    <DataTemplate DataType="vm:DashExampleViewModel">
+      <views:DashExampleView />
+    </DataTemplate>
 
-		<Border DockPanel.Dock="Top" Padding="10" Background="{DynamicResource BlueHorizontalGradientBrush}">
-			<TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Brush Examples</TextBlock>
-		</Border>
+    <DataTemplate DataType="vm:PredefinedBrushesViewModel">
+      <views:PredefinedBrushesView />
+  </DataTemplate>
+  </Window.DataTemplates>
 
-		<ScrollViewer>
-			<ContentControl Content="{Binding CurrentView}" Margin="10" />
-		</ScrollViewer>
-	</DockPanel>
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="_File">
+ <MenuItem Header="E_xit" Command="{Binding ExitCommand}" InputGesture="Alt+F4" />
+      </MenuItem>
+      <MenuItem Header="_Examples">
+        <MenuItem Header="Gradient _Brushes" Command="{Binding ShowGradientBrushesCommand}" />
+<MenuItem Header="_Interactive Linear Gradient" Command="{Binding ShowInteractiveGradientCommand}" />
+        <MenuItem Header="_Dash Patterns" Command="{Binding ShowDashExampleCommand}" />
+        <MenuItem Header="_Predefined Colors" Command="{Binding ShowPredefinedBrushesCommand}" />
+      </MenuItem>
+    </Menu>
+
+    <Border DockPanel.Dock="Top" Padding="10" Background="{DynamicResource BlueHorizontalGradientBrush}">
+      <TextBlock FontSize="20" FontWeight="Bold" Foreground="White">Brush Examples</TextBlock>
+    </Border>
+
+    <!-- ContentControl ohne ScrollViewer - Views verwalten ihr eigenes Scrolling -->
+    <ContentControl Content="{Binding CurrentView}" />
+  </DockPanel>
 </Window>
+
+
+
+
+
+
 
 
 

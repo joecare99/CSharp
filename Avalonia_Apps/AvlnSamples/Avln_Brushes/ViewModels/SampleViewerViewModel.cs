@@ -15,8 +15,8 @@ public partial class SampleViewerViewModel : ObservableObject, ISampleViewerView
 
     public SampleViewerViewModel()
     {
-  // Default to GradientBrushesExample
-   CurrentView = new GradientBrushesViewModel();
+        // Default to GradientBrushesExample
+        CurrentView = new GradientBrushesViewModel();
     }
 
     public event EventHandler? DoExit;
@@ -29,14 +29,14 @@ public partial class SampleViewerViewModel : ObservableObject, ISampleViewerView
         DoExit?.Invoke(this, EventArgs.Empty);
     }
 
-  [RelayCommand]
+    [RelayCommand]
     private void TransitionRelay()
     {
         // Implement view transition logic here
-    // For now, cycle between different examples
+        // For now, cycle between different examples
     }
 
- [RelayCommand]
+    [RelayCommand]
     private void ShowGradientBrushes()
     {
         CurrentView = new GradientBrushesViewModel();
@@ -45,7 +45,19 @@ public partial class SampleViewerViewModel : ObservableObject, ISampleViewerView
     [RelayCommand]
     private void ShowInteractiveGradient()
     {
- CurrentView = new InteractiveLinearGradientViewModel();
+        CurrentView = new InteractiveLinearGradientViewModel();
+    }
+
+    [RelayCommand]
+    private void ShowDashExample()
+    {
+        CurrentView = new DashExampleViewModel();
+    }
+
+    [RelayCommand]
+    private void ShowPredefinedBrushes()
+    {
+        CurrentView = new PredefinedBrushesViewModel();
     }
 }
 

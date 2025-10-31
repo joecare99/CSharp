@@ -10,7 +10,7 @@
 	</Design.DataContext>
 
 	<ScrollViewer>
-		<StackPanel Spacing="10" MaxWidth="800">
+		<StackPanel Spacing="10" MaxWidth="800" Margin="10" HorizontalAlignment="Left">
 
 			<!-- Header -->
 			<Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
