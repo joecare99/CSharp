@@ -11,6 +11,12 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
+	  <AvaloniaXaml Remove="Views_WPF_Legacy\**" />
+	  <Compile Remove="Views_WPF_Legacy\**" />
+	  <EmbeddedResource Remove="Views_WPF_Legacy\**" />
+	  <None Remove="Views_WPF_Legacy\**" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Remove="Assets\avalonia-logo.ico" />
 	</ItemGroup>
 	<ItemGroup>

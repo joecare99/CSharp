@@ -9,6 +9,7 @@
   xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
   xmlns:views="clr-namespace:Avln_Brushes.Views"
   Title="Brush Examples - Avalonia"
+	x:DataType="vm:SampleViewerViewModel"
   Width="900" Height="700"
  Background="White"
   Icon="/Assets/avalonia-logo.ico">
@@ -18,7 +19,7 @@
     </Design.DataContext>
 
   <Window.Resources>
-    <!-- DataTemplates für View-ViewModel-Mapping -->
+    <!-- DataTemplates fÃ¼r View-ViewModel-Mapping -->
     <DataTemplate DataType="vm:GradientBrushesViewModel">
     <views:GradientBrushesView />
     </DataTemplate>
