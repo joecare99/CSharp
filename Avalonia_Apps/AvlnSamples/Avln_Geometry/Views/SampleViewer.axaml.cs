@@ -13,7 +13,7 @@ public partial class SampleViewer : UserControl
     {
         InitializeComponent();
         DataContext = data;
-        
+ 
         // Add all example views
         data.AddView(new GeometryUsageExample());
         data.AddView(new ShapeGeometriesExample());
