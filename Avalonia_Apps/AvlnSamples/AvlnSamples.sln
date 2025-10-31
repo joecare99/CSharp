@@ -146,6 +146,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Brushes", "Avln_Brushe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Geometry", "Avln_Geometry\Avln_Geometry.csproj", "{7C0E06C5-5818-4F29-3630-BC5AAFC58344}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_ImageView", "Avln_ImageView\Avln_ImageView.csproj", "{449032D0-996D-9D12-5722-4C6543136942}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -340,6 +342,10 @@ Global
 		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -389,6 +395,7 @@ Global
 		{4A317AB2-F1B5-4F6D-A28A-E9DCF5884A5C} = {5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
 		{7C0E06C5-5818-4F29-3630-BC5AAFC58344} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{449032D0-996D-9D12-5722-4C6543136942} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {538D0F12-3E9F-4868-8689-63796F14BD11}
