@@ -159,6 +159,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderImage.Base", "RenderI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderImage.BaseTests", "RenderImage.BaseTests\RenderImage.BaseTests.csproj", "{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScreenX", "ScreenX", "{E97BBD48-DAEE-49AB-B2E6-F88DF401E107}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.dfm = ..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.dfm
+		..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.lfm = ..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.lfm
+		..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.pas = ..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.pas
+		..\..\Delphi\Grafik\Source\ScreenX\Unt_RenderTask.pas = ..\..\Delphi\Grafik\Source\ScreenX\Unt_RenderTask.pas
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA14_ScreenX", "AA14_ScreenX", "{FA06343F-69FC-4E49-AFAC-AC472C653528}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA14_ScreenX", "AA14_ScreenX\AA14_ScreenX\AA14_ScreenX.csproj", "{A26B3928-B89E-AE2E-BFFF-537C09B35D81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenX.Base", "AA14_ScreenX\ScreenX.Base\ScreenX.Base.csproj", "{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenX.BaseTests", "AA14_ScreenX\ScreenX.BaseTests\ScreenX.BaseTests.csproj", "{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -301,6 +317,18 @@ Global
 		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -338,6 +366,10 @@ Global
 		{72C83AA9-1059-6DB1-68DE-5178F70197E1} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
 		{490FE0F3-0D68-FE00-09CB-67B262519444} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
 		{3B5E8F31-67DF-4FF9-8DA6-7697DC9A5998} = {BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}
+		{E97BBD48-DAEE-49AB-B2E6-F88DF401E107} = {BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81} = {FA06343F-69FC-4E49-AFAC-AC472C653528}
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E} = {FA06343F-69FC-4E49-AFAC-AC472C653528}
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9} = {FA06343F-69FC-4E49-AFAC-AC472C653528}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}
