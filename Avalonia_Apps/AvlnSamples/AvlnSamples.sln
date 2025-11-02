@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.0.11123.170
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -149,6 +149,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_ImageView", "Avln_ImageView\Avln_ImageView.csproj", "{449032D0-996D-9D12-5722-4C6543136942}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Complex_Layout", "Avln_Complex_Layout\Avln_Complex_Layout.csproj", "{F98CED88-216F-1447-AB52-7BD01FFAF17C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_TextTestApp", "Avln_TextTestApp\Avln_TextTestApp.csproj", "{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_RenderDemo", "Avln_RenderDemo\Avln_RenderDemo.csproj", "{B704530D-E9FA-62AA-8492-6AEE8957D268}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_IntegrationTestApp", "Avln_IntegrationTestApp\Avln_IntegrationTestApp.csproj", "{A578C3E7-589A-31AC-C810-8769FAE711C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlSamples.Pack", "SampleControls\ControlSamples.Pack.csproj", "{C99E3466-DB4E-EE2D-ED07-35808EE20E84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -352,6 +360,22 @@ Global
 		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
