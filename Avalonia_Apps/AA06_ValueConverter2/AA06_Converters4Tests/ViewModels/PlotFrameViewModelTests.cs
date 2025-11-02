@@ -2,16 +2,16 @@
 using Avalonia.ViewModels; // BaseTestViewModel
 using System.Collections.Generic;
 using System;
-using AA06_Converters_4.Model;
 using NSubstitute;
+using AA06_Converters_4.Models.Interfaces;
 
 namespace AA06_Converters_4.ViewModels.Tests;
 
 [TestClass()]
-public class PlotFrameViewModelTests: BaseTestViewModel
+public class PlotFrameViewModelTests : BaseTestViewModel
 {
 #pragma warning disable CS8618
-  private IAGVModel _model;
+    private IAGVModel _model;
     protected PlotFrameViewModel testModel;
     protected PlotFrameViewModel testModel2;
 #pragma warning restore CS8618
@@ -20,11 +20,11 @@ public class PlotFrameViewModelTests: BaseTestViewModel
     public void Init()
     {
         _model = Substitute.For<IAGVModel>();
-    _model.SwivelKoor.Returns(new MathLibrary.TwoDim.Math2d.Vector());
- _model.AGVVelocity.Returns(new MathLibrary.TwoDim.Math2d.Vector());
-_model.VehicleDim.Returns(new MathLibrary.TwoDim.Math2d.Vector());
-   
-     testModel = new PlotFrameViewModel(_model);
+        _model.SwivelKoor.Returns(new MathLibrary.TwoDim.Math2d.Vector());
+        _model.AGVVelocity.Returns(new MathLibrary.TwoDim.Math2d.Vector());
+        _model.VehicleDim.Returns(new MathLibrary.TwoDim.Math2d.Vector());
+
+        testModel = new PlotFrameViewModel(_model);
         testModel2 = new PlotFrameViewModel(_model);
     }
 

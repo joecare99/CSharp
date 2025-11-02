@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AA06_Converters_4.Model;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
 using BaseLib.Helper; // Extension-Methods (TC, SetProp, GetProp)
 using Avalonia.ViewModels; // BaseTestViewModel
 using System.ComponentModel;
+using AA06_Converters_4.Models.Interfaces;
 
 namespace AA06_Converters_4.ViewModels.Tests;
 
@@ -105,19 +105,17 @@ else if (p.PropertyType == typeof(Int32))
     }
     
     [DataTestMethod()]
-    [DataRow(nameof(IAGVModel.VehicleDim), new[] { @"PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,VehicleLength)=0
-PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,VehicleWidth)=0
+    [DataRow(nameof(IAGVModel.VehicleDim), new[] { @"PropChg(VehicleViewModel,VehicleLength)=0
+PropChg(VehicleViewModel,VehicleWidth)=0
 " })]
-    [DataRow(nameof(IAGVModel.SwivelKoor), new[] { @"PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,SwivelKoorX)=0
-PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,SwivelKoorY)=0
+    [DataRow(nameof(IAGVModel.SwivelKoor), new[] { @"PropChg(VehicleViewModel,SwivelKoorX)=0
+PropChg(VehicleViewModel,SwivelKoorY)=0
 " })]
-    [DataRow(nameof(IAGVModel.AxisOffset), new[] { @"PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,AxisOffset)=0
+    [DataRow(nameof(IAGVModel.AxisOffset), new[] { @"PropChg(VehicleViewModel,AxisOffset)=0
 " })]
-  [DataRow(nameof(IAGVModel.AGVVelocity), new[] { @"PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,VehicleVelocityX)=0
-PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,VehicleVelocityY)=0
-PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,AGVVelocity)=( 0, 0)
+  [DataRow(nameof(IAGVModel.AGVVelocity), new[] { @"PropChg(VehicleViewModel,AGVVelocity)=( 0, 0)
 " })]
-    [DataRow(nameof(IAGVModel.VehicleRotation), new[] { @"PropChg(AA06_Converters_4.ViewModels.VehicleViewModel,VehicleRotation)=0
+    [DataRow(nameof(IAGVModel.VehicleRotation), new[] { @"PropChg(VehicleViewModel,VehicleRotation)=0
 " })]
     [DataRow(null, new[] { @"" })]
     public void OnPropertyChangedTest(string sProp, string[] asExp)
