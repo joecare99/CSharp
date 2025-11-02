@@ -1,40 +1,33 @@
 ﻿<Project>
 	<Import Project="..\Application.props" />
 	<PropertyGroup>
- <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
- <IsPackable>false</IsPackable>
- <RootNamespace>AA20_SysDialogs.Tests</RootNamespace>
- <EnableMSTestRunner>true</EnableMSTestRunner>
- </PropertyGroup>
- <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
- <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
- <ItemGroup>
- <Compile Remove="obj\**" />
- <EmbeddedResource Remove="obj\**" />
- <None Remove="obj\**" />
- </ItemGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<IsPackable>false</IsPackable>
+
+
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
 
 	<ItemGroup>
- <PackageReference Include="Microsoft.NET.Test.Sdk" />
- <PackageReference Include="MSTest" />
- <PackageReference Include="coverlet.collector">
- <PrivateAssets>all</PrivateAssets>
- <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
- </PackageReference>
- <PackageReference Include="NSubstitute" />
- <PackageReference Include="Avalonia.Headless" />
- </ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="MSTest" />
+		<PackageReference Include="coverlet.collector">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="NSubstitute" />
+		<PackageReference Include="Avalonia.Headless" />
+	</ItemGroup>
 
- <ItemGroup>
- <ProjectReference Include="..\AA20_Sysdialogs\AA20_Sysdialogs.csproj" />
- </ItemGroup>
- 
- <!-- MSTest Assembly Configuration -->
- <ItemGroup>
- <AssemblyAttribute Include="Microsoft.VisualStudio.TestTools.UnitTesting.ParallelizeAttribute">
- <_Parameter1>Microsoft.VisualStudio.TestTools.UnitTesting.ExecutionScope.MethodLevel</_Parameter1>
- <_Parameter1_TypeName>Microsoft.VisualStudio.TestTools.UnitTesting.ExecutionScope</_Parameter1_TypeName>
- </AssemblyAttribute>
- </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+		<ProjectReference Include="..\AA20_Sysdialogs\AA20_Sysdialogs.csproj" />
+	</ItemGroup>
 
 </Project>
