@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ mc:Ignorable="d"
+ x:Class="AA14_ScreenX.Views.ScreenXView">
+	<Grid ColumnDefinitions="168, *" RowDefinitions="*">
+		<!-- Left panel -->
+		<StackPanel Grid.Column="0" Margin="6">
+			<StackPanel Margin="0,0,0,6">
+				<TextBlock Text="Auswahl:" FontWeight="Bold" Margin="0,0,0,6"/>
+				<ItemsControl ItemsSource="{Binding AvailableTransforms}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+			<ListBox ItemsSource="{Binding SelectedTransforms}" Height="120" />
+			<StackPanel Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
+				<StackPanel>
+					<TextBlock Text="X-Offset"/>
+					<TextBox Text="{Binding XOffset, Mode=TwoWay}"/>
+				</StackPanel>
+				<StackPanel>
+					<TextBlock Text="X-Breite"/>
+					<TextBox Text="{Binding XWidth, Mode=TwoWay}"/>
+				</StackPanel>
+				<StackPanel>
+					<TextBlock Text="Y-Offset"/>
+					<TextBox Text="{Binding YOffset, Mode=TwoWay}"/>
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" Margin="0,6,0,0" Spacing="6">
+				<CheckBox Content="Invers" IsChecked="{Binding IsInverse, Mode=TwoWay}"/>
+				<ComboBox SelectedIndex="{Binding PatternIndex, Mode=TwoWay}" Width="150">
+					<ComboBoxItem>1 - Mosaik</ComboBoxItem>
+					<ComboBoxItem>2 - Farbstreifen</ComboBoxItem>
+					<ComboBoxItem>3 - Bild (Lazarus)</ComboBoxItem>
+					<ComboBoxItem>4 - Winkelfarbe</ComboBoxItem>
+				</ComboBox>
+			</StackPanel>
+			<Button Content="Execute" Command="{Binding RenderAsyncCommand}" Margin="0,6,0,0" />
+		</StackPanel>
+
+		<!-- Right: image area -->
+		<ScrollViewer Grid.Column="1" Margin="12">
+			<Image Source="{Binding Image}" Stretch="Uniform"/>
+		</ScrollViewer>
+	</Grid>
+</UserControl>
