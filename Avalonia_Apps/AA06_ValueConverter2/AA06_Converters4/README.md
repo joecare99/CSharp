@@ -47,7 +47,7 @@ dotnet run --project AA06_Converters_4
 
 ## Testing
 ```bash
-dotnet test AA06_Converters4Tests
+dotnet test AA06_Converters_4Tests
 ```
 
 ## Test & Coverage Status

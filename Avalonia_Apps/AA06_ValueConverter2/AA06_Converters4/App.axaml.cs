@@ -16,9 +16,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using AA06_Converters_4.Model;
+using AA06_Converters_4.Models;
 using AA06_Converters_4.ViewModels;
 using AA06_Converters_4.View;
+using AA06_Converters_4.Models.Interfaces;
 
 namespace AA06_Converters_4;
 

@@ -204,7 +204,7 @@ result.Add(CreateLine(b, GetStroke(X1, Step, BigStep), P1x, P2x));
                 {
            var P1 = real2VisP(sh.Start, actPort);
              var P2 = real2VisP(sh.End, actPort);
-  foreach (var el in CreateArrow(al.Pen?.Brush, al.Pen?.Thickness ?? 1, P1, P2))
+  foreach (var el in CreateArrow(al.PenData?.Item1, al.PenData?.Item2 ?? 1, P1, P2))
      result.Add(el);
      }
          return result;
@@ -215,7 +215,7 @@ result.Add(CreateLine(b, GetStroke(X1, Step, BigStep), P1x, P2x));
           {
 var P1 = real2VisP(sh.Center, actPort);
            var r = Real2VisP(PointF.Add(sh.Center, new SizeF((float)sh.Radius, 0)), actPort).X - P1.X;
-      result.Add(CreateCircle(cl.Pen?.Brush, cl.Pen?.Thickness ?? 1, P1, (float)r));
+      result.Add(CreateCircle(cl.PenData?.Item1, cl.PenData?.Item2 ?? 1, P1, (float)r));
          }
     return result;
      
@@ -226,7 +226,7 @@ var P1 = real2VisP(sh.Center, actPort);
           var p = new List<Avalonia.Point>();
              foreach (var pnt in sh.Points)
              p.Add(real2VisP(pnt, actPort));
-        result.Add(CreatePolynome(pl.Pen?.Brush, pl.Pen?.Thickness ?? 1, p));
+        result.Add(CreatePolynome(pl.PenData?.Item1, pl.PenData?.Item2 ?? 1, p));
      }
       return result;
      
