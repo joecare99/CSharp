@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avln_BaseLibTests.Properties;
 using static BaseLib.Helper.TestHelper;
+using System.Globalization;
 
 namespace Avalonia.ViewModels.Tests;
 
@@ -32,16 +33,26 @@ public class BaseTestViewModelTest : BaseTestViewModel
 {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     TestVM testModel;
+    private CultureInfo _c;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
     [TestInitialize]
     public void Init()
     {
+        _c = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
         testModel = new TestVM();
         testModel.PropertyChanged += OnVMPropertyChanged;
         testModel.PropertyChanging += OnVMPropertyChanging;
         testModel.ErrorsChanged += OnVMErrorsChanged;
         testModel.DoSomethingCommand.CanExecuteChanged += OnCanExChanged;
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        CultureInfo.CurrentUICulture = _c;
     }
 
     [TestMethod]

@@ -19,7 +19,7 @@ namespace Avalonia.Views.ValueConverter.Tests
         }
         [TestMethod()]
         [DataRow(null,"null")]
-        [DataRow("<Button />","")]
+        [DataRow("<Button xmlns=\"https://github.com/avaloniaui\"/>", "Button")]
         public void ConvertTest(string sAct,string sExp)
         {
             var result=testClass.Convert(sAct,typeof(object),null,System.Globalization.CultureInfo.CurrentCulture);
