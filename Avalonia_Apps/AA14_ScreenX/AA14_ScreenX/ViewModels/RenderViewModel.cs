@@ -43,7 +43,7 @@ public partial class RenderViewModel : ObservableObject
     [ObservableProperty] private int xWidth = 32;
     [ObservableProperty] private int xOffset = 0;
     [ObservableProperty] private int yOffset = 0;
-    [ObservableProperty] private int mandelBrLoop = 0;
+    [ObservableProperty] private int mandelBrLoop = 64;
 
     // Available transforms (CheckGroup)
     public ObservableCollection<SelectableItem> AvailableTransforms { get; } = new(
@@ -89,22 +89,49 @@ public partial class RenderViewModel : ObservableObject
 
     private List<DFunction> BuildFunctions()
     {
-        // For now, only identity or simple placeholders. Real math can be ported incrementally.
         var list = new List<DFunction>();
-
-        // base identity
+        // always start from identity
         list.Add((ExPoint p, ExPoint p0, ref bool brk) => p);
 
-        // Placeholder examples for some transforms (no-op until implemented)
         foreach (var t in AvailableTransforms.Where(t => t.IsSelected))
         {
             switch (t.Name)
             {
                 case "Null":
-                    list.Add((ExPoint p, ExPoint p0, ref bool brk) => p);
+                    list.Add(Transformations.Null);
+                    break;
+                case "Wobble":
+                    list.Add(Transformations.Wobble3);
+                    break;
+                case "Strudel":
+                    list.Add(Transformations.Strudel2);
+                    break;
+                case "Ballon":
+                    list.Add(Transformations.Ballon);
+                    break;
+                case "Sauger":
+                    list.Add(Transformations.Sauger);
+                    break;
+                case "Schnecke":
+                    list.Add(Transformations.Schnecke2);
+                    break;
+                case "Strflucht":
+                    list.Add(Transformations.Strflucht);
+                    break;
+                case "Kugel":
+                    list.Add(Transformations.Kugel);
+                    break;
+                case "Tunnel":
+                    list.Add(Transformations.Tunnel);
+                    break;
+                case "MandelBr1":
+                    list.Add((ExPoint p, ExPoint p0, ref bool brk) => Transformations.MandelbrStepN(p, p0, ref brk, MandelBrLoop));
+                    break;
+                case "MandelBr2":
+                    list.Add((ExPoint p, ExPoint p0, ref bool brk) => Transformations.MandelbrFull(p, p0, ref brk, MandelBrLoop));
                     break;
                 default:
-                    list.Add((ExPoint p, ExPoint p0, ref bool brk) => p);
+                    list.Add(Transformations.Null);
                     break;
             }
         }
@@ -113,7 +140,6 @@ public partial class RenderViewModel : ObservableObject
 
     private CFunction BuildColorizer()
     {
-        // Map RadioGroup patterns
         return PatternIndex switch
         {
             0 => // Mosaik

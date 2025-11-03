@@ -8,16 +8,18 @@
  x:Class="AA14_ScreenX.Views.ScreenXView">
 	<Grid ColumnDefinitions="168, *" RowDefinitions="*">
 		<!-- Left panel -->
-		<StackPanel Grid.Column="0" Margin="6">
+		<StackPanel Grid.Column="0" Margin="6" MinWidth="168">
 			<StackPanel Margin="0,0,0,6">
 				<TextBlock Text="Auswahl:" FontWeight="Bold" Margin="0,0,0,6"/>
-				<ItemsControl ItemsSource="{Binding AvailableTransforms}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
+				<ScrollViewer Height="220">
+					<ItemsControl ItemsSource="{Binding AvailableTransforms}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
 			</StackPanel>
 			<ListBox ItemsSource="{Binding SelectedTransforms}" Height="120" />
 			<StackPanel Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
@@ -43,7 +45,7 @@
 					<ComboBoxItem>4 - Winkelfarbe</ComboBoxItem>
 				</ComboBox>
 			</StackPanel>
-			<Button Content="Execute" Command="{Binding RenderAsyncCommand}" Margin="0,6,0,0" />
+			<Button Content="Execute" Command="{Binding RenderCommand}" Margin="0,6,0,0" />
 		</StackPanel>
 
 		<!-- Right: image area -->
@@ -52,3 +54,4 @@
 		</ScrollViewer>
 	</Grid>
 </UserControl>
+	
