@@ -19,7 +19,7 @@ public static class Directions2D
 
     public static int GetDirNo(IntPoint v)
     {
-        if (v.X == 0 && v.Y == 0) return0;
+        if (v.X == 0 && v.Y == 0) return 0;
         var m = v.MLen();
         if (m == 1) { for (int i = 1; i < Dir8.Length; i++) if (Dir8[i] == v) return i; }
         else if (m == 2) { for (int i = 1; i < Dir12.Length; i++) if (Dir12[i] == v) return i; }
