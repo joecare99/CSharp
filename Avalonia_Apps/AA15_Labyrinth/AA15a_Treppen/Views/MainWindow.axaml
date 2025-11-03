@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AA15a_Treppen.ViewModels"
+        xmlns:views="using:AA15a_Treppen.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
@@ -18,12 +19,12 @@
     <DockPanel Margin="8">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Spacing="8">
             <TextBlock Text="Size:" VerticalAlignment="Center"/>
-            <NumericUpDown Minimum="5" Maximum="99" Width="80" Value="{Binding Size}"/>
+            <NumericUpDown Minimum="5" Maximum="99" Width="110" Value="{Binding Size}"/>
             <Button Content="Generate" Command="{Binding GenerateCommand}"/>
         </StackPanel>
-        <ScrollViewer>
-            <TextBlock Text="Generated grid ready (rendering placeholder)"/>
-        </ScrollViewer>
+        <Border BorderBrush="DarkGray" BorderThickness="1">
+            <views:LabyrinthCanvas Data="{Binding Grid}"/>
+        </Border>
     </DockPanel>
 
 </Window>
