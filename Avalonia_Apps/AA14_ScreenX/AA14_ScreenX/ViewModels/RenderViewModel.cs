@@ -141,7 +141,7 @@ public partial class RenderViewModel : ObservableObject
     private CFunction BuildColorizer()
     {
         return PatternIndex switch
-        {
+        {  
             0 => // Mosaik
              (ExPoint p) => Color32.FromRgb((byte)(((int)(p.X * XWidth + XOffset)) % 256), (byte)(((int)(p.Y * XWidth + YOffset)) % 256), 128),
             1 => // Farbstreifen
