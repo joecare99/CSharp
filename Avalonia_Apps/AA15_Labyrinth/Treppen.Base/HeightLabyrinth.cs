@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using MathLibrary.TwoDim;
 using static MathLibrary.TwoDim.Directions2D;
@@ -10,9 +10,43 @@ namespace Treppen.Base;
 /// </summary>
 public sealed class HeightLabyrinth : IHeightLabyrinth
 {
+    /*
+    Pseudocode/Plan:
+    - Ziel: Das Seed-Pattern (Signatur) aus Pascal (FPrest2) analog mittels SetLData in das Raster _z schreiben.
+      • Das Pattern besteht aus Ziffern und '.'-Zeichen; in Pascal wird jedes Zeichen in eine Zahl umgewandelt:
+        val = Ord(char) - Ord('0') + Offset. Für '.' (ASCII 46) mit Offset=2 ergibt das 0 => "unbesetzt".
+      • Die Indizierung in Pascal liest Sdat rückwärts:
+        index = (xm*ym) - y*xm - x, wobei Strings 1-basiert sind.
+        In C# (0-basiert) wird daraus: idx0 = index - 1 = (xm*ym) - y*xm - x - 1.
+      • Schleifenbereiche: x in [0..xm-1], y in [0..ym-1]; schreiben nach _z[x,y].
+      • Sicherheitsgrenzen: Nur schreiben, wenn (x < _dimension.Width && y < _dimension.Height).
+    - Implementierung:
+      • private const string FPrest2 = "4465452.
+                                        7575331.
+                                        6566211.
+                                        21326510
+                                        30213422
+                                        43312434";
+      • private void SetLData(string sdat, int xm, int ym, int offset)
+         - prüfe sdat.Length >= xm*ym
+         - für x=0..xm-1
+           für y=0..ym-1
+             idx0 = (xm*ym) - y*xm - x - 1
+             val = (sdat[idx0] - '0') + offset
+             wenn InBounds(x,y) dann _z[x,y] = val
+      • In Generate():
+         - Nach Array.Clear(_z, 0, _z.Length) SetLData(FPrest2, 8, 6, 2) aufrufen.
+      • Rest der Logik bleibt unverändert.
+    */
+
     private Rectangle _dimension;
     private int[,] _z;
     private readonly Random _rnd = new();
+
+    // Seed-Pattern (Signatur) wie im Pascal-Original
+    private const string FPrest2 = "4465452.7575331.6566211.213265103021342243312434";
+    private readonly uint[] FPrest3 = [0x4465452E,0x7575331E,0x6566211E,0x21326510,0x30213422,0x43312434];
+
     public event Action<object, Point>? UpdateCell;
 
     public Rectangle Dimension
@@ -26,17 +60,59 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
 
     public int BaseLevel(int x, int y) => (int)Math.Truncate(x / 1.3 + y / 1.3) + 1;
 
+    // Mappt die kompakten Seed-Daten in das Raster, wie in Pascal SetLData
+    private void SetLData(string sdat, int xm, int ym, int offset)
+    {
+        if (string.IsNullOrEmpty(sdat)) return;
+        int total = xm * ym;
+        if (sdat.Length < total) return;
+
+        for (int x = 0; x < xm; x++)
+        {
+            for (int y = 0; y < ym; y++)
+            {
+                int idx0 = total - (y * xm) - x - 1; // 0-basierte Entsprechung zu Pascal
+                char ch = sdat[idx0];
+                int val = (ch - '0') + offset; // '.' -> -2 + 2 => 0
+                if (InBounds(x, y))
+                    _z[x, y] = val;
+            }
+        }
+    }
+
+    private void SetLData2(uint[] data, int xm, int ym, int offset)
+    {
+        if (data.Length < ym - 1) return;
+
+        for (int x = 0; x < xm; x++)
+        {
+            for (int y = 0; y < ym; y++)
+            {
+                var nibble = (int)((data[ym-y-1] >> (4 * (x))) & 0x0F);
+                int val = (nibble == 14 ? 0 : nibble + offset); // 14='.'→0
+                if (InBounds(x, y))
+                    _z[x, y] = val;
+            }
+        }
+    }
+
     public void Generate()
     {
         Array.Clear(_z, 0, _z.Length);
-        // Seed pattern skipped for brevity; not required functionally
+
+        // Seed-Pattern (Signatur) initial aufbringen
+        SetLData2(FPrest3, 8, 6, 2);
+
         var start = new Point(1, Math.Min(6, Math.Max(0, _dimension.Height - 1)));
         if (!InBounds(start.X, start.Y)) return;
+
         _z[start.X, start.Y] = BaseLevel(start.X, start.Y) - 1;
+
         var fifo = new Point[_dimension.Width * _dimension.Height];
         int push = 0, pop = 0;
         var act = start; var stored = act;
         int dirCount = 1;
+
         while (dirCount != 0 || push >= pop)
         {
             // swap
@@ -45,13 +121,19 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
             dirCount = 0;
             var pos = new Point[4];
             var hh = new int[4];
+
             for (int i = 1; i < Dir4.Length; i++)
             {
                 pos[dirCount] = new Point(Dir4[i].X, Dir4[i].Y);
                 var next = new Point(act.X - pos[dirCount].X, act.Y - pos[dirCount].Y);
-                if (InBounds(next.X, next.Y) && CalcStepHeight(act, next, out var h) && Math.Abs(h - BaseLevel(next.X, next.Y) - 1) < 3)
-                { hh[dirCount] = h; dirCount++; }
+                if (InBounds(next.X, next.Y) &&
+                    CalcStepHeight(act, next, out var h) &&
+                    Math.Abs(h - BaseLevel(next.X, next.Y) - 1) < 3)
+                {
+                    hh[dirCount] = h; dirCount++;
+                }
             }
+
             if (dirCount > 0)
             {
                 var pick = _rnd.Next(dirCount);
@@ -60,25 +142,33 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
                 act = next; _z[next.X, next.Y] = hh[pick];
             }
             else if (push >= pop)
-            { act = fifo[pop++]; }
+            { 
+                act = fifo[pop++];
+            }
         }
-        // fill remaining zeros heuristically
+
+        // restliche 0-Zellen heuristisch füllen
         for (int x = (_dimension.Width - 1) | 1; x >= 0; x--)
             for (int y = (_dimension.Height - 1) | 1; y >= 0; y--)
             {
                 var pp = new Point(x ^ 1, y ^ 1);
                 if (!InBounds(pp.X, pp.Y) || _z[pp.X, pp.Y] != 0) continue;
+
                 bool first = true; int zm = 0, cn = 0, zx = 0, cx = 0;
+
                 for (int i = 1; i < Dir4.Length; i++)
                 {
                     var n = new Point(pp.X + Dir4[i].X, pp.Y + Dir4[i].Y);
                     var zz = InBounds(n.X, n.Y) ? _z[n.X, n.Y] : 0;
+
                     if (zz > 0 && (first || zz <= zm)) { if (zz < zm) cn = 0; zm = zz; if (cn < 2) cn++; }
                     if (zz > 0 && (first || zz >= zx)) { if (zz > zx) cx = 0; zx = zz; if (cx < 2) cx++; first = false; }
                 }
+
                 if (zm > 0)
                     _z[pp.X, pp.Y] = (cx == 1 && zx - zm < 6) ? zx + cx : zm - cn;
-                else _z[pp.X, pp.Y] = BaseLevel(pp.X, pp.Y);
+                else
+                    _z[pp.X, pp.Y] = BaseLevel(pp.X, pp.Y);
             }
     }
 
@@ -87,8 +177,10 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
         height = 0;
         var ph = this[act.X, act.Y];
         if (ph == 0 || this[next.X, next.Y] != 0) return false;
+
         bool canm1 = true, canz = true, canp1 = true;
         IntPoint dd = default;
+
         for (int i = 1; i < Dir4.Length; i++)
         {
             var t = new Point(next.X + Dir4[i].X, next.Y + Dir4[i].Y);
@@ -96,45 +188,53 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
             {
                 var lb = this[t.X, t.Y];
                 canm1 &= (lb == 0) || (lb < ph - 2) || (lb > ph);
-                canz &= (lb == 0) || (lb < ph - 1) || (lb > ph + 1);
-                canp1 &= (lb == 0) || (lb < ph) || (lb > ph + 2);
+                canz  &= (lb == 0) || (lb < ph - 1) || (lb > ph + 1);
+                canp1 &= (lb == 0) || (lb < ph)     || (lb > ph + 2);
             }
             else dd = Dir4[i];
         }
+
         var dr = new IntPoint(-dd.Y, dd.X);
+
         var left = new Point(next.X - dr.X, next.Y - dr.Y);
         if (InBounds(left.X, left.Y) && this[left.X, left.Y] == 0)
         {
             var fl = new Point(left.X + dd.X, left.Y + dd.Y);
             var lb = InBounds(fl.X, fl.Y) ? this[fl.X, fl.Y] : 0;
             canm1 &= (lb == 0) || (lb != ph - 1);
-            canz &= (lb == 0) || (lb != ph);
+            canz  &= (lb == 0) || (lb != ph);
             canp1 &= (lb == 0) || (lb != ph + 1);
+
             var bl = new Point(left.X - dd.X, left.Y - dd.Y);
             lb = InBounds(bl.X, bl.Y) ? this[bl.X, bl.Y] : 0;
             canm1 &= (lb == 0) || (lb != ph - 1);
-            canz &= (lb == 0) || (lb != ph);
+            canz  &= (lb == 0) || (lb != ph);
             canp1 &= (lb == 0) || (lb != ph + 1);
         }
+
         var right = new Point(next.X + dr.X, next.Y + dr.Y);
         if (InBounds(right.X, right.Y) && this[right.X, right.Y] == 0)
         {
             var fr = new Point(right.X + dd.X, right.Y + dd.Y);
             var lb = InBounds(fr.X, fr.Y) ? this[fr.X, fr.Y] : 0;
             canm1 &= (lb == 0) || (lb != ph - 1);
-            canz &= (lb == 0) || (lb != ph);
+            canz  &= (lb == 0) || (lb != ph);
             canp1 &= (lb == 0) || (lb != ph + 1);
+
             var br = new Point(right.X - dd.X, right.Y - dd.Y);
             lb = InBounds(br.X, br.Y) ? this[br.X, br.Y] : 0;
             canm1 &= (lb == 0) || (lb != ph - 1);
-            canz &= (lb == 0) || (lb != ph);
+            canz  &= (lb == 0) || (lb != ph);
             canp1 &= (lb == 0) || (lb != ph + 1);
         }
+
         var blv = BaseLevel(next.X, next.Y);
         if (!(canm1 || canz || canp1)) return false;
+
         if (canp1 && (blv > ph || (!canz && (!canm1 || blv == ph)))) { height = ph + 1; return true; }
         if (canm1 && (blv < ph || (!canz && (!canp1 || blv == ph)))) { height = ph - 1; return true; }
         if (canz) { height = ph; return true; }
+
         return false;
     }
 }
