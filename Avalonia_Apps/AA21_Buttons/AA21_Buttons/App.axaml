@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AA21_Buttons.App"
+             RequestedThemeVariant="Light">
+    
+    <Application.Styles>
+        <FluentTheme />
+        
+        <!-- Global Button Style -->
+        <Style Selector="Button">
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Padding" Value="15,10" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </Application.Styles>
+
+</Application>
