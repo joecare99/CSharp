@@ -11,13 +11,52 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Windows;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using AA21_Buttons.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using Avalonia.Controls.ApplicationLifetimes;
 
-namespace MVVM_21_Buttons;
+namespace AA21_Buttons;
 
 /// <summary>
-/// Interaction logic for App.xaml
+/// Avalonia Application mit Dependency Injection.
 /// </summary>
 public partial class App : Application
 {
+    private ServiceProvider? _serviceProvider;
+
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+
+        _serviceProvider = services.BuildServiceProvider();
+
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            desktop.MainWindow = mainWindow;
+        }
+
+
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// Konfiguriert die Dependency Injection Container.
+    /// </summary>
+    private static void ConfigureServices(ServiceCollection services)
+    {
+        services.AddSingleton<ButtonsViewViewModel>();
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<MainWindow>();
+    }
 }

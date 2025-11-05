@@ -11,12 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Windows;
+using Avalonia.Controls;
 
-namespace MVVM_21_Buttons;
+namespace AA21_Buttons;
 
 /// <summary>
-/// Interaction logic for MainWindow.xaml
+/// Hauptfenster für die Avalonia-Anwendung.
 /// </summary>
 public partial class MainWindow : Window
 {

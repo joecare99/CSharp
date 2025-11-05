@@ -11,14 +11,14 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Windows.Controls;
+using Avalonia.Controls;
 
-namespace MVVM_21_Buttons.Views;
+namespace AA21_Buttons.Views;
 
 /// <summary>
-/// Interaktionslogik für ButtonsView.xaml
+/// ButtonsView: UserControl mit 3x3 Button-Grid für Flip-Spiel.
 /// </summary>
-public partial class ButtonsView : Page
+public partial class ButtonsView : UserControl
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ButtonsView"/> class.
