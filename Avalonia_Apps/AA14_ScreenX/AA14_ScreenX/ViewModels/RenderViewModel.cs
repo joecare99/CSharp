@@ -17,10 +17,10 @@ public partial class RenderViewModel : ObservableObject
     // Image size and source rectangle
     [ObservableProperty] private int width = 256;
     [ObservableProperty] private int height = 256;
-    [ObservableProperty] private ExRect source = new(0, 0, 1, 1);
+    [ObservableProperty] private ExRect source = new(-16, -16, 16, 16);
 
-    [ObservableProperty] private double x1;
-    [ObservableProperty] private double y1;
+    [ObservableProperty] private double x1=-1;
+    [ObservableProperty] private double y1=-1;
     [ObservableProperty] private double x2 = 1;
     [ObservableProperty] private double y2 = 1;
 
@@ -40,9 +40,9 @@ public partial class RenderViewModel : ObservableObject
     // UI parameters (from LFM)
     [ObservableProperty] private int patternIndex = 1; // rgpBasePattern.ItemIndex =1
     [ObservableProperty] private bool isInverse;
-    [ObservableProperty] private int xWidth = 32;
-    [ObservableProperty] private int xOffset = 0;
-    [ObservableProperty] private int yOffset = 0;
+    [ObservableProperty] private double xWidth = 16;
+    [ObservableProperty] private double xOffset = -8;
+    [ObservableProperty] private double yOffset = -8;
     [ObservableProperty] private int mandelBrLoop = 64;
 
     // Available transforms (CheckGroup)
@@ -145,15 +145,17 @@ public partial class RenderViewModel : ObservableObject
             0 => // Mosaik
              (ExPoint p) => Color32.FromRgb((byte)(((int)(p.X * XWidth + XOffset)) % 256), (byte)(((int)(p.Y * XWidth + YOffset)) % 256), 128),
             1 => // Farbstreifen
-             (ExPoint p) => Color32.FromRgb((byte)((int)(p.X * 255) & 0xFF), 0, (byte)((int)(p.Y * 255) & 0xFF)),
+             (ExPoint p) => Color32.FromRgb((byte)((int)(Math.Sin((p.X+p.Y*0.5) * Math.PI) * 127.5 + 127.5)&0xff),
+                                            (byte)((int)(Math.Sin((p.X - p.Y * 0.5) * Math.PI) * 127.5 + 127.5) & 0xff),
+                                            (byte)((int)(Math.Sin((p.Y+0.25) * Math.PI) * 127.5 + 127.5) & 0xFF)),
             2 => // Bild (Platzhalter)
              (ExPoint p) => Color32.FromRgb((byte)(p.X * 255), (byte)(p.Y * 255), 0),
             3 => // Winkelfarbe (approx)
              (ExPoint p) =>
              {
-                 var ang = System.Math.Atan2(p.Y + YOffset, p.X + XOffset); // -pi..pi
+                 var ang = System.Math.Atan2(p.Y , p.X ); // -pi..pi
                  var hue = (ang + System.Math.PI) / (2 * System.Math.PI); //0..1
-                 return HsvToColor(hue, 1.0, 1.0);
+                 return HsvToColor(hue,1.0,1.0- Math.Sqrt(p.X*p.X+p.Y*p.Y)*0.25);
              }
             ,
             _ => (ExPoint p) => Color32.FromRgb((byte)(p.X * 255), (byte)(p.Y * 255), 0)
