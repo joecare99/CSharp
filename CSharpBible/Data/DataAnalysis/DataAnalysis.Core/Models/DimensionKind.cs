@@ -5,5 +5,7 @@ public enum DimensionKind
  Severity,
  Source,
  Hour, // Hour bucket of timestamp
- MessageNormalized
+ MessageNormalized,
+ X,
+ Y
 }

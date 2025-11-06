@@ -18,4 +18,14 @@ public sealed class AnalysisQuery
 
  // Optional: TopN pro Zeile für2D-Kreuztabellen
  public int? RowTopN { get; init; }
+
+ // Optional: DBSCAN-Clustering der Punkte (bei2D X/Y)
+ public bool IsDBScan { get; init; } = false;
+ // Optional: Radius (Epsilon) für DBSCAN (gleiche Einheit wie X/Y)
+ public double? DbEps { get; init; }
+ // Optional: Mindestanzahl Punkte pro Cluster
+ public int? DbMinPts { get; init; }
+
+ // Optional: Auswertungsspezifischer Filter (DTO, serialisierbar)
+ public FilterDefinition? Filter { get; init; }
 }
