@@ -201,6 +201,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA21_Button", "AA21_Button"
 		AA21_Buttons\Directory.Packages.props = AA21_Buttons\Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Hello_World", "AvlnSamples\Avln_Hello_World\Avln_Hello_World.csproj", "{57B337DC-7F63-22C8-728C-08DC2459FA23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -371,6 +373,10 @@ Global
 		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
