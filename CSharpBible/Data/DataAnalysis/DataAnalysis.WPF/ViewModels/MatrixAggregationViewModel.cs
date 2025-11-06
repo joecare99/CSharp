@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DataAnalysis.Core.Models;
 
@@ -15,7 +15,7 @@ public sealed partial class MatrixAggregationViewModel : AggregationItemViewMode
         var dt = new DataTable();
         dt.Columns.Add("Key", typeof(string));
         var columns = agg.Columns ?? Array.Empty<string>();
-        foreach (var col in columns) dt.Columns.Add(col, typeof(int));
+        foreach (var col in columns) dt.Columns.Add(col.Replace(".", "˳"), typeof(int));
         if (agg.Matrix is not null)
         {
             var rows = agg.Matrix.Keys.ToList();

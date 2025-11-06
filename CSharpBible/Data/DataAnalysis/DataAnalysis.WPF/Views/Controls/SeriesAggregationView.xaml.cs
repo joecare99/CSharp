@@ -4,8 +4,8 @@ namespace DataAnalysis.WPF.Views.Controls;
 
 public partial class SeriesAggregationView : UserControl
 {
- public SeriesAggregationView()
- {
- InitializeComponent();
- }
+    public SeriesAggregationView()
+    {
+        InitializeComponent();
+    }
 }

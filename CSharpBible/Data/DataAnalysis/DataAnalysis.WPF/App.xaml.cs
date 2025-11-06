@@ -5,6 +5,8 @@ using Microsoft.Extensions.Hosting;
 using DataAnalysis.Core.Models;
 using DataAnalysis.Core.Export;
 using DataAnalysis.Core.Import;
+using DataAnalysis.Core.Export.Interfaces;
+using DataAnalysis.Core.Import.Interfaces;
 
 namespace DataAnalysis.WPF;
 
@@ -33,12 +35,12 @@ public partial class App : Application
                     {
                         new FixedColumnMapping { Source = "eventdatetime", Target = "Timestamp" , IsDateTime = true},
                         new FixedColumnMapping { Source = "eventlevel", Target = "Severity" },
-                        new FixedColumnMapping { Source = "eventhostname", Target = "Source" },
+                        new FixedColumnMapping { Source = "eventhostname", Target = "Source"  },
                         new FixedColumnMapping { Source = "EventName", Target = "Message" },
                     },
                     ExtractionRules =
                     {
-                        new FieldExtractionRule { SourceColumn = "eventmessage", RegexPattern = "-\\s*(?<EventName>.+?)(?<Rest>X=.*|;.*|$)" },
+                        new FieldExtractionRule { SourceColumn = "eventmessage", RegexPattern = "^(.+? +- +)?(?<EventName>.+?)(?<Rest>X=.*|;.*|$)" },
                         new FieldExtractionRule { SourceColumn = "Rest", RegexPattern = "(?<key>[A-Za-z][A-Za-z0-9_]*)=(?<value>[^;]*)(;(?<Rest>.*)|$)", Multible=true  }
                     }
                 });

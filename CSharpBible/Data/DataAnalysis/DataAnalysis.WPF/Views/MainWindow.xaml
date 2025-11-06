@@ -15,6 +15,9 @@
         <DataTemplate DataType="{x:Type vm:MatrixAggregationViewModel}">
             <ctrls:MatrixAggregationView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ClusterAggregationViewModel}">
+            <ctrls:ClusterAggregationView/>
+        </DataTemplate>
     </Window.Resources>
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -33,36 +36,23 @@
         </StackPanel>
 
         <!-- Analysis/Summary tabs moved to upper area -->
-        <TabControl Grid.Row="1">
-            <TabItem Header="Preview">
-                <!-- Preview moved to lower area -->
-                <DataGrid  ItemsSource="{Binding PreviewTable}" AutoGenerateColumns="True" IsReadOnly="True"/>
-               
-            </TabItem>
-            <TabItem Header="Analysis" DataContext="{Binding AnalysisVM}">
-                <ListBox ItemsSource="{Binding Aggregations}"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Margin" Value="0,6,0,6"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
-            </TabItem>
-        </TabControl>
+            <TabControl  DataContext="{Binding AnalysisVM}" ItemsSource="{Binding Aggregations}"  Grid.Row="1">
+                <!-- Header shows the aggregation title -->
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <!-- Content is resolved via Window.Resources DataTemplates by type -->
+            </TabControl>
+        <GridSplitter Grid.Row="1" Cursor="ScrollNS" ResizeDirection="Rows" />
 
         <DataGrid Grid.Row="2" ItemsSource="{Binding SummaryItems}" AutoGenerateColumns="False" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="{x:Static p:Resources.GridCategoryHeader}" Binding="{Binding Key}"/>
-                <DataGridTextColumn Header="{x:Static p:Resources.GridValueHeader}" Binding="{Binding Value}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static p:Resources.GridCategoryHeader}" Binding="{Binding Key}"/>
+                    <DataGridTextColumn Header="{x:Static p:Resources.GridValueHeader}" Binding="{Binding Value}"/>
+                </DataGrid.Columns>
+            </DataGrid>
         <StatusBar Grid.Row="3">
             <StatusBarItem>
                 <TextBlock Text="{Binding Status}"/>
