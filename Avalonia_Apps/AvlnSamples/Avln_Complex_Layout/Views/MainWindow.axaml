@@ -1,0 +1,17 @@
+<Window xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:vm="clr-namespace:Avln.ComplexLayout.ViewModels"
+ xmlns:views="clr-namespace:Avln.ComplexLayout.Views"
+ x:Class="Avln.ComplexLayout.Views.MainWindow"
+ Title="Complex Layout"
+ Width="800" Height="600">
+ <Design.DataContext>
+ <vm:MainWindowViewModel />
+ </Design.DataContext>
+ <Window.DataTemplates>
+ <DataTemplate DataType="{x:Type vm:ComplexLayoutViewModel}">
+ <views:ComplexLayoutView />
+ </DataTemplate>
+ </Window.DataTemplates>
+ <ContentControl Content="{Binding CurrentViewModel}" />
+</Window>

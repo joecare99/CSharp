@@ -1,0 +1,70 @@
+<UserControl 
+  xmlns="https://github.com/avaloniaui" 
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+  x:Class="Avln_Geometry.Views.GeometryUsageExample">
+  
+  <UserControl.Styles>
+    <Style Selector="Border">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+  </UserControl.Styles>
+  
+  <DockPanel>
+  
+    <TextBlock DockPanel.Dock="Top" Margin="10" TextWrapping="Wrap">
+      Geometries are versatile and can be drawn directly with a Path Shape,
+      used with a DrawingBrush to paint an area with a geometric pattern,
+ used to define the clip region of an element, and more. 
+    </TextBlock>
+    
+ 
+    <StackPanel Orientation="Horizontal" Background="White">
+    
+      <StackPanel Margin="10" Spacing="5">
+   <TextBlock>Drawn with a Path Shape</TextBlock>
+      <Border Height="200" Width="200" BorderBrush="Black" BorderThickness="1">
+ <Path Stroke="Black" StrokeThickness="1" Fill="#CCCCFF">
+            <Path.Data>
+    <GeometryGroup>
+            <RectangleGeometry Rect="50,5,100,10" />
+          <RectangleGeometry Rect="5,5,95,180" />
+   <EllipseGeometry Center="100,100" RadiusX="20" RadiusY="30"/>
+    <RectangleGeometry Rect="50,175,100,10" />
+     <PathGeometry>
+          <PathFigure IsClosed="True" StartPoint="50,50">
+ <BezierSegment Point1="75,300" Point2="125,100" Point3="150,50"/>
+           <BezierSegment Point1="125,300" Point2="75,100" Point3="50,50"/>
+    </PathFigure>
+          </PathGeometry>      
+           </GeometryGroup>
+      </Path.Data>
+          </Path>
+        </Border>    
+      </StackPanel>
+   
+      <StackPanel Margin="10" Spacing="5">
+     <TextBlock>Used as a Clip</TextBlock>
+    <Border BorderBrush="Black" BorderThickness="1" Width="200" Height="200">
+          <Image Source="avares://Avln_Geometry/Assets/waterlilies.jpg" Width="200" Height="200">
+      <Image.Clip>
+    <GeometryGroup>
+          <RectangleGeometry Rect="50,5,100,10" />
+     <RectangleGeometry Rect="5,5,95,180" />
+         <EllipseGeometry Center="100,100" RadiusX="20" RadiusY="30"/>
+       <RectangleGeometry Rect="50,175,100,10" />
+            <PathGeometry>
+<PathFigure IsClosed="True" StartPoint="50,50">
+     <BezierSegment Point1="75,300" Point2="125,100" Point3="150,50"/>
+        <BezierSegment Point1="125,300" Point2="75,100" Point3="50,50"/>
+        </PathFigure>
+    </PathGeometry>
+ </GeometryGroup> 
+       </Image.Clip>
+          </Image>
+      </Border>
+      </StackPanel>
+    
+    </StackPanel>
+  </DockPanel>
+</UserControl>
+

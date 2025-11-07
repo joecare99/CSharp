@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11123.170
+VisualStudioVersion = 18.0.11201.2 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -78,6 +78,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA09_DialogBoxes_Tests", "AA09_DialogBoxes\AA09_DialogBoxesTests\AA09_DialogBoxes_Tests.csproj", "{7905A0A7-25D3-6FF8-7C24-E97BF4ABBCCD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA16_UserControl", "AA16_UserControl", "{83C66B02-E701-4626-8DD0-FEF0EF839DEE}"
+	ProjectSection(SolutionItems) = preProject
+		AA16_UserControl\Directory.Packages.props = AA16_UserControl\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA16_UserControl1", "AA16_UserControl\AA16_Usercontrol1\AA16_UserControl1.csproj", "{79124D87-74BE-F687-684B-51288C64ABE2}"
 EndProject
@@ -104,6 +107,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkSuite1", "BenchmarkSuite1\BenchmarkSuite1.csproj", "{A20861A9-411E-6150-BF5C-69E8196E5D22}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA15_Labyrinth", "AA15_Labyrinth", "{37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}"
+	ProjectSection(SolutionItems) = preProject
+		AA15_Labyrinth\Directory.Packages.props = AA15_Labyrinth\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA15_Labyrinth", "AA15_Labyrinth\AA15_Labyrinth\AA15_Labyrinth.csproj", "{39616C08-0F2A-4EBB-6FB2-39BCD999ACA1}"
 EndProject
@@ -124,6 +130,78 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA06_Converters4Tests", "AA06_ValueConverter2\AA06_Converters4Tests\AA06_Converters4Tests.csproj", "{72C83AA9-1059-6DB1-68DE-5178F70197E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathLibrary", "Libraries\MathLibrary\MathLibrary.csproj", "{490FE0F3-0D68-FE00-09CB-67B262519444}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RenderImage", "RenderImage", "{3B5E8F31-67DF-4FF9-8DA6-7697DC9A5998}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderBase.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderBase.pas
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderBoundary.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderBoundary.pas
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderCamera.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderCamera.pas
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderColor.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderColor.pas
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderEngine.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderEngine.pas
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderLightSource.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderLightSource.pas
+		..\..\Delphi\Grafik\Source\RenderImage\cls_RenderSimpleObjects.pas = ..\..\Delphi\Grafik\Source\RenderImage\cls_RenderSimpleObjects.pas
+		..\..\Delphi\Grafik\Source\RenderImage\frm_DisplTestColor.lfm = ..\..\Delphi\Grafik\Source\RenderImage\frm_DisplTestColor.lfm
+		..\..\Delphi\Grafik\Source\RenderImage\frm_DisplTestColor.pas = ..\..\Delphi\Grafik\Source\RenderImage\frm_DisplTestColor.pas
+		..\..\Delphi\Grafik\Source\RenderImage\Frm_RenderImage.lfm = ..\..\Delphi\Grafik\Source\RenderImage\Frm_RenderImage.lfm
+		..\..\Delphi\Grafik\Source\RenderImage\Frm_RenderImage.pas = ..\..\Delphi\Grafik\Source\RenderImage\Frm_RenderImage.pas
+		..\..\Delphi\Grafik\Source\RenderImage\tst_RenderBase.pas = ..\..\Delphi\Grafik\Source\RenderImage\tst_RenderBase.pas
+		..\..\Delphi\Grafik\Source\RenderImage\tst_RenderBase2.pas = ..\..\Delphi\Grafik\Source\RenderImage\tst_RenderBase2.pas
+		..\..\Delphi\Grafik\Source\RenderImage\tst_RenderBaseAngle.pas = ..\..\Delphi\Grafik\Source\RenderImage\tst_RenderBaseAngle.pas
+		..\..\Delphi\Grafik\Source\RenderImage\tst_RenderColor.pas = ..\..\Delphi\Grafik\Source\RenderImage\tst_RenderColor.pas
+		..\..\Delphi\Grafik\Source\RenderImage\tst_RenderEngine.pas = ..\..\Delphi\Grafik\Source\RenderImage\tst_RenderEngine.pas
+		..\..\Delphi\Grafik\Source\RenderImage\tst_RenderMath.pas = ..\..\Delphi\Grafik\Source\RenderImage\tst_RenderMath.pas
+		..\..\Delphi\Grafik\Source\RenderImage\unt_RenderMath.pas = ..\..\Delphi\Grafik\Source\RenderImage\unt_RenderMath.pas
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderImage.Base", "RenderImage.Base\RenderImage.Base.csproj", "{A87B46F3-6063-4DCD-8F3D-8D32F4562BAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderImage.BaseTests", "RenderImage.BaseTests\RenderImage.BaseTests.csproj", "{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScreenX", "ScreenX", "{E97BBD48-DAEE-49AB-B2E6-F88DF401E107}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.dfm = ..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.dfm
+		..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.lfm = ..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.lfm
+		..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.pas = ..\..\Delphi\Grafik\Source\ScreenX\Frm_ScreenXMain.pas
+		..\..\Delphi\Grafik\Source\ScreenX\Unt_RenderTask.pas = ..\..\Delphi\Grafik\Source\ScreenX\Unt_RenderTask.pas
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA14_ScreenX", "AA14_ScreenX", "{FA06343F-69FC-4E49-AFAC-AC472C653528}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA14_ScreenX", "AA14_ScreenX\AA14_ScreenX\AA14_ScreenX.csproj", "{A26B3928-B89E-AE2E-BFFF-537C09B35D81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenX.Base", "AA14_ScreenX\ScreenX.Base\ScreenX.Base.csproj", "{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenX.BaseTests", "AA14_ScreenX\ScreenX.BaseTests\ScreenX.BaseTests.csproj", "{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA15a_Treppen", "AA15_Labyrinth\AA15a_Treppen\AA15a_Treppen.csproj", "{2A1AA816-B936-0119-984D-F6F2081F10E3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Laby4", "Laby4", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4.dfm = ..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4.dfm
+		..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4.lfm = ..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4.lfm
+		..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4.pas = ..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4.pas
+		..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4b.lfm = ..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4b.lfm
+		..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4b.pas = ..\..\Delphi\Diverses\Source\Labyrinth\frm_laby4b.pas
+		..\..\Delphi\Diverses\Source\Labyrinth\tst_Laby4.pas = ..\..\Delphi\Diverses\Source\Labyrinth\tst_Laby4.pas
+		..\..\Delphi\Diverses\Source\Labyrinth\unt_Laby4.pas = ..\..\Delphi\Diverses\Source\Labyrinth\unt_Laby4.pas
+		..\..\Delphi\Diverses\Source\Labyrinth\unt_Point2d.pas = ..\..\Delphi\Diverses\Source\Labyrinth\unt_Point2d.pas
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Treppen.Base", "AA15_Labyrinth\Treppen.Base\Treppen.Base.csproj", "{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Treppen.BaseTests", "AA15_Labyrinth\Treppen.BaseTests\Treppen.BaseTests.csproj", "{ADC9F066-7F21-A823-9DB0-8788A4DE27FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA21_Buttons", "AA21_Buttons\AA21_Buttons\AA21_Buttons.csproj", "{F4972A4C-6BC3-AE06-6391-35E91D4C6515}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA21_Button", "AA21_Button", "{642C08B0-0EF7-4CBF-BE71-ACD49185867A}"
+	ProjectSection(SolutionItems) = preProject
+		AA21_Buttons\Application.props = AA21_Buttons\Application.props
+		AA21_Buttons\Directory.Packages.props = AA21_Buttons\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Hello_World", "AvlnSamples\Avln_Hello_World\Avln_Hello_World.csproj", "{57B337DC-7F63-22C8-728C-08DC2459FA23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -259,6 +337,46 @@ Global
 		{490FE0F3-0D68-FE00-09CB-67B262519444}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{490FE0F3-0D68-FE00-09CB-67B262519444}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{490FE0F3-0D68-FE00-09CB-67B262519444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A87B46F3-6063-4DCD-8F3D-8D32F4562BAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A87B46F3-6063-4DCD-8F3D-8D32F4562BAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A87B46F3-6063-4DCD-8F3D-8D32F4562BAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A87B46F3-6063-4DCD-8F3D-8D32F4562BAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7520BBCD-3367-4ECE-9ABF-D4B6C6361F27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A1AA816-B936-0119-984D-F6F2081F10E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A1AA816-B936-0119-984D-F6F2081F10E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A1AA816-B936-0119-984D-F6F2081F10E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A1AA816-B936-0119-984D-F6F2081F10E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC9F066-7F21-A823-9DB0-8788A4DE27FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC9F066-7F21-A823-9DB0-8788A4DE27FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC9F066-7F21-A823-9DB0-8788A4DE27FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC9F066-7F21-A823-9DB0-8788A4DE27FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4972A4C-6BC3-AE06-6391-35E91D4C6515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -295,6 +413,16 @@ Global
 		{D0705704-F704-D681-59FF-C65E5EBCDF9F} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
 		{72C83AA9-1059-6DB1-68DE-5178F70197E1} = {2CD7E877-976E-44E8-B5D9-B43AB83AE5D9}
 		{490FE0F3-0D68-FE00-09CB-67B262519444} = {FBC48B38-56FA-4530-850A-8A68B3A959CF}
+		{3B5E8F31-67DF-4FF9-8DA6-7697DC9A5998} = {BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}
+		{E97BBD48-DAEE-49AB-B2E6-F88DF401E107} = {BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}
+		{A26B3928-B89E-AE2E-BFFF-537C09B35D81} = {FA06343F-69FC-4E49-AFAC-AC472C653528}
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E} = {FA06343F-69FC-4E49-AFAC-AC472C653528}
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9} = {FA06343F-69FC-4E49-AFAC-AC472C653528}
+		{2A1AA816-B936-0119-984D-F6F2081F10E3} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}
+		{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
+		{ADC9F066-7F21-A823-9DB0-8788A4DE27FA} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
+		{F4972A4C-6BC3-AE06-6391-35E91D4C6515} = {642C08B0-0EF7-4CBF-BE71-ACD49185867A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}

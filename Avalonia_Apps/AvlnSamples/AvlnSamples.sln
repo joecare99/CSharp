@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.0.11123.170
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -124,6 +124,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_CustomAnimation", "Avln_CustomAnimation\Avln_CustomAnimation.csproj", "{B14E8BCB-2C64-C1AD-EB45-F49036FB6A04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migration", "Migration", "{5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}"
+	ProjectSection(SolutionItems) = preProject
+		Migration\Migrate-WpfToAvalonia.ps1 = Migration\Migrate-WpfToAvalonia.ps1
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{A1B71644-54D3-43F7-8783-D836172F53F9}"
 	ProjectSection(SolutionItems) = preProject
@@ -140,6 +143,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{4A317A
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Brushes", "Avln_Brushes\Avln_Brushes.csproj", "{28FEFA40-1A58-D0FC-8789-DB494D631CAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Geometry", "Avln_Geometry\Avln_Geometry.csproj", "{7C0E06C5-5818-4F29-3630-BC5AAFC58344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_ImageView", "Avln_ImageView\Avln_ImageView.csproj", "{449032D0-996D-9D12-5722-4C6543136942}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Complex_Layout", "Avln_Complex_Layout\Avln_Complex_Layout.csproj", "{F98CED88-216F-1447-AB52-7BD01FFAF17C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_TextTestApp", "Avln_TextTestApp\Avln_TextTestApp.csproj", "{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_RenderDemo", "Avln_RenderDemo\Avln_RenderDemo.csproj", "{B704530D-E9FA-62AA-8492-6AEE8957D268}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_IntegrationTestApp", "Avln_IntegrationTestApp\Avln_IntegrationTestApp.csproj", "{A578C3E7-589A-31AC-C810-8769FAE711C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlSamples.Pack", "SampleControls\ControlSamples.Pack.csproj", "{C99E3466-DB4E-EE2D-ED07-35808EE20E84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -331,6 +348,34 @@ Global
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449032D0-996D-9D12-5722-4C6543136942}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F98CED88-216F-1447-AB52-7BD01FFAF17C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7193AC-0CB8-9E05-4A05-7964AC79E9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B704530D-E9FA-62AA-8492-6AEE8957D268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A578C3E7-589A-31AC-C810-8769FAE711C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C99E3466-DB4E-EE2D-ED07-35808EE20E84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -379,6 +424,9 @@ Global
 		{A1B71644-54D3-43F7-8783-D836172F53F9} = {5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}
 		{4A317AB2-F1B5-4F6D-A28A-E9DCF5884A5C} = {5B1A8338-F43D-4C7D-8B37-D425EECD1EA1}
 		{28FEFA40-1A58-D0FC-8789-DB494D631CAE} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{7C0E06C5-5818-4F29-3630-BC5AAFC58344} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{449032D0-996D-9D12-5722-4C6543136942} = {451900FA-E9CE-4C5B-B6F3-F7FDCDAAA8FA}
+		{F98CED88-216F-1447-AB52-7BD01FFAF17C} = {511E9A44-5A33-430F-9C8A-5D94488BC4B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {538D0F12-3E9F-4868-8689-63796F14BD11}

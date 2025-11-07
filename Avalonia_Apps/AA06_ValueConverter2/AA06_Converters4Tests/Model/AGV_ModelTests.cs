@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace AA06_Converters_4.Model.Tests;
+namespace AA06_Converters_4.Models.Tests;
 
 [TestClass()]
 public class AGV_ModelTests

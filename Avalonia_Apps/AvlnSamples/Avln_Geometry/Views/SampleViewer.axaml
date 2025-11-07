@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:mvvm="using:Avln_Geometry.ViewModels"
+             x:Class="Avln_Geometry.Views.SampleViewer"
+    mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:DataType="mvvm:SampleViewerViewModel">
+
+	<Design.DataContext>
+		<mvvm:SampleViewerViewModel />
+	</Design.DataContext>
+
+	<UserControl.Styles>
+		<!-- Radio Button Style -->
+		<Style Selector="RadioButton">
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="Padding" Value="10,5"/>
+			<Setter Property="Background" Value="#40FFFFFF"/>
+			<Setter Property="BorderBrush" Value="#60000000"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="5"/>
+		</Style>
+		<Style Selector="RadioButton:pointerover">
+			<Setter Property="Background" Value="#60FFFFFF"/>
+		</Style>
+		<Style Selector="RadioButton:checked">
+			<Setter Property="Background" Value="#80ADD8E6"/>
+			<Setter Property="BorderBrush" Value="#FF4682B4"/>
+			<Setter Property="BorderThickness" Value="2"/>
+		</Style>
+	</UserControl.Styles>
+
+	<DockPanel>
+		<!-- Navigation Panel -->
+		<Border DockPanel.Dock="Left" Background="#4D9999FF" Padding="10">
+			<StackPanel VerticalAlignment="Top" Spacing="10">
+				<TextBlock Text="Geometry Examples"
+		 FontSize="16"
+		 FontWeight="Bold"
+			 Foreground="White"
+			Margin="5,0,5,15"/>
+
+				<RadioButton x:Name="Example1RadioButton"
+							 Command="{Binding SampleSelectedCommand}"
+						CommandParameter="0"
+								Content="Geometry Usage" />
+				<RadioButton Command="{Binding SampleSelectedCommand}"
+			CommandParameter="1"
+	Content="Shape Geometries" />
+				<RadioButton Command="{Binding SampleSelectedCommand}"
+			CommandParameter="2"
+						Content="Path Geometry" />
+				<RadioButton Command="{Binding SampleSelectedCommand}"
+						CommandParameter="3"
+						 Content="Attribute Syntax" />
+				<RadioButton Command="{Binding SampleSelectedCommand}"
+			CommandParameter="4"
+	Content="Combining Geometries" />
+			</StackPanel>
+		</Border>
+
+		<!-- Content Area mit Übergang -->
+		<Border Background="White" ClipToBounds="True">
+			<ScrollViewer HorizontalScrollBarVisibility="Auto"
+		VerticalScrollBarVisibility="Auto">
+				<!-- ContentControl mit kombinierten Übergängen -->
+				<ContentControl Content="{Binding ActView}">
+						<CompositePageTransition>
+							<CrossFade Duration="0:00:00.500" />
+							<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
+							<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
+						</CompositePageTransition>
+				</ContentControl>
+			</ScrollViewer>
+		</Border>
+	</DockPanel>
+</UserControl>

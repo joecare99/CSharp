@@ -1,4 +1,4 @@
-﻿# AA06_Converters4 - Avalonia UI Implementierung
+﻿# AA06_Converters_4 - Avalonia UI Implementierung
 
 ## Gelöste Probleme
 
@@ -353,8 +353,8 @@ private PointF SnapToGrid(PointF point, double gridSize)
 ## Build & Run
 
 ```bash
-dotnet build AA06_Converters4
-dotnet run --project AA06_Converters4
+dotnet build AA06_Converters_4
+dotnet run --project AA06_Converters_4
 ```
 
 ---
@@ -362,7 +362,7 @@ dotnet run --project AA06_Converters4
 ## Tests
 
 ```bash
-dotnet test AA06_Converters4Tests
+dotnet test AA06_Converters_4Tests
 ```
 
 ---

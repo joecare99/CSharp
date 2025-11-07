@@ -1,55 +1,57 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseLib.Helper;
-using AA06_Converters_4.Model;
 using NSubstitute;
-using System;
+using AA06_Converters_4.Models.Interfaces;
+using AA06_Converters_4.ViewModels;
+using AA06_Converters_4.View;
+using Avalonia.Headless;
+using Avalonia.Headless.MSTest;
 
 namespace AA06_Converters_4.View.Tests;
 
 [TestClass()]
 public class PlotFrameTests
 {
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    PlotFrame testView;
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    private Func<Type, object> _grsOld;
-    private IAGVModel? _model;
-
-    [TestInitialize]
-    public void TestInitialize()
-    {
-        _grsOld = IoC.GetReqSrv;
-        IoC.GetReqSrv = (t) => t switch
-        {
-            Type _t when _t == typeof(IAGVModel) => _model ??= Substitute.For<IAGVModel>(),
-            _ => throw new System.NotImplementedException($"No Service for {t}")
-        }; 
-        testView = new PlotFrame();
-        testView.IsVisible = true;
-    }
-
-    [TestCleanup]
-    public void TestCleanup()
-    {
-        IoC.GetReqSrv = _grsOld;
-    }
-
-    [TestMethod()]
+    [AvaloniaTestMethod()]
     public void PlotFrameTest()
     {
-        Assert.IsNotNull(testView);
-        Assert.IsNotNull(_model);
+        // Arrange
+        var model = Substitute.For<IAGVModel>();
+        var viewModel = new PlotFrameViewModel(model);
+
+        // Act
+        var view = new PlotFrame(viewModel)
+        {
+            Width = 800,
+            Height = 600
+        };
+
+        // Assert
+        Assert.IsNotNull(view);
+        Assert.IsInstanceOfType(view, typeof(PlotFrame));
+        Assert.AreSame(viewModel, view.DataContext);
     }
 
-    [TestMethod()]
+    [AvaloniaTestMethod()]
     public void OnSizeChangeTest()
     {
-        testView.Height = testView.Height+2;
+        var model = Substitute.For<IAGVModel>();
+        var viewModel = new PlotFrameViewModel(model);
+        var view = new PlotFrame(viewModel) { Height = 100 };
+
+        var old = view.Height;
+        view.Height = old + 2;
+
+        Assert.AreEqual(old + 2, view.Height);
     }
 
-    [TestMethod()]
+    [AvaloniaTestMethod()]
     public void OnVInitializedTest()
     {
-       // testView.OnInitialized(;
+        var model = Substitute.For<IAGVModel>();
+        var viewModel = new PlotFrameViewModel(model);
+        var view = new PlotFrame(viewModel);
+
+        Assert.IsNotNull(view.DataContext);
+        Assert.IsInstanceOfType(view.DataContext, typeof(PlotFrameViewModel));
     }
 }

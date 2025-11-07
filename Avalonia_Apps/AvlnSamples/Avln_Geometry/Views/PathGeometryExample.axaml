@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        x:Class="Avln_Geometry.Views.PathGeometryExample"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <UserControl.Styles>
+        <Style Selector="Border">
+ <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+    </UserControl.Styles>
+
+    <Border Background="White" HorizontalAlignment="Stretch">
+        <ScrollViewer>
+  <StackPanel Margin="10" Orientation="Vertical" Spacing="10">
+
+<TextBlock>Line</TextBlock>
+    <Border Height="100" Width="250" BorderBrush="Black" BorderThickness="1">
+   <Path Stroke="Black" StrokeThickness="1">
+     <Path.Data>
+   <PathGeometry>
+ <PathFigure StartPoint="100,50">
+          <LineSegment Point="200,70" />
+ </PathFigure>
+          </PathGeometry>
+    </Path.Data>
+   </Path>
+        </Border>
+
+        <TextBlock>Horizontal Line</TextBlock>
+     <Border Height="100" Width="250" BorderBrush="Black" BorderThickness="1">
+           <Path Stroke="Black" StrokeThickness="1">
+     <Path.Data>
+            <PathGeometry>
+             <PathFigure StartPoint="100,50">
+                 <LineSegment Point="200,50" />
+            </PathFigure>
+                  </PathGeometry>
+         </Path.Data>
+   </Path>
+    </Border>
+
+                <TextBlock>Vertical Line</TextBlock>
+       <Border Height="210" Width="250" BorderBrush="Black" BorderThickness="1">
+   <Path Stroke="Black" StrokeThickness="1">
+      <Path.Data>
+     <PathGeometry>
+    <PathFigure StartPoint="100,50">
+         <LineSegment Point="10,200" />
+                </PathFigure>
+              </PathGeometry>
+     </Path.Data>
+       </Path>
+    </Border>
+
+            <TextBlock>Cubic Bezier Curve</TextBlock>
+          <Border Height="200" Width="310" BorderBrush="Black" BorderThickness="1">
+            <Path Stroke="Black" StrokeThickness="1">
+          <Path.Data>
+<PathGeometry>
+    <PathFigure StartPoint="10,100">
+    <BezierSegment Point1="100,0" Point2="200,200" Point3="300,100" />
+    </PathFigure>
+ </PathGeometry>
+     </Path.Data>
+      </Path>
+      </Border>
+
+   <TextBlock>Quadratic Bezier Curve</TextBlock>
+      <Border Height="200" Width="310" BorderBrush="Black" BorderThickness="1">
+<Path Stroke="Black" StrokeThickness="1">
+             <Path.Data>
+<PathGeometry>
+            <PathFigure StartPoint="10,100">
+   <QuadraticBezierSegment Point1="200,200" Point2="300,100" />
+            </PathFigure>
+          </PathGeometry>
+         </Path.Data>
+        </Path>
+  </Border>
+
+<TextBlock>Elliptical Arc</TextBlock>
+    <Border Height="300" Width="310" BorderBrush="Black" BorderThickness="1">
+         <Path Stroke="Black" StrokeThickness="1">
+     <Path.Data>
+ <PathGeometry>
+               <PathFigure StartPoint="10,100">
+          <ArcSegment Size="100,50" RotationAngle="45" IsLargeArc="True" SweepDirection="CounterClockwise" Point="200,100" />
+              </PathFigure>
+    </PathGeometry>
+             </Path.Data>
+            </Path>
+          </Border>
+
+         <TextBlock>Close Path Command</TextBlock>
+  <Border Height="200" Width="250" BorderBrush="Black" BorderThickness="1">
+          <Path Stroke="Black" StrokeThickness="1">
+        <Path.Data>
+   <PathGeometry>
+   <PathFigure IsClosed="True" StartPoint="10,100">
+                <LineSegment Point="100,100" />
+      <LineSegment Point="100,50" />
+       </PathFigure>
+           </PathGeometry>
+     </Path.Data>
+      </Path>
+          </Border>
+
+        <TextBlock>Multiple Subpaths</TextBlock>
+       <Border Height="200" Width="250" BorderBrush="Black" BorderThickness="1">
+ <Path Stroke="Black" StrokeThickness="1">
+  <Path.Data>
+               <PathGeometry>
+     <PathFigure IsClosed="True" StartPoint="10,100">
+       <LineSegment Point="100,100" />
+      <LineSegment Point="100,50" />
+    </PathFigure>
+   <PathFigure IsClosed="True" StartPoint="10,10">
+    <LineSegment Point="100,10" />
+     <LineSegment Point="100,40" />
+         </PathFigure>
+      </PathGeometry>
+             </Path.Data>
+         </Path>
+    </Border>
+       </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>
+

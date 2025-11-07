@@ -25,13 +25,13 @@
     <None Remove="MainWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia"  />
-    <PackageReference Include="Avalonia.Desktop"  />
-    <PackageReference Include="Avalonia.Themes.Fluent"  />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
-    <PackageReference Include="Avalonia.Diagnostics"  />
-    <PackageReference Include="CommunityToolkit.Mvvm"  />
-  <PackageReference Include="Microsoft.Extensions.DependencyInjection"  />
+    <PackageReference Include="Avalonia.Diagnostics" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +50,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
   </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Interfaces\" />
   </ItemGroup>
 
 </Project>

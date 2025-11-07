@@ -5,6 +5,12 @@ namespace AA15_Labyrinth.Views;
 
 public partial class MainWindow : Window
 {
+    public MainWindow(ILabyrinthViewModel vm)
+    {
+        InitializeComponent();
+        DataContext = vm;
+    }
+
     public MainWindow()
     {
         InitializeComponent();

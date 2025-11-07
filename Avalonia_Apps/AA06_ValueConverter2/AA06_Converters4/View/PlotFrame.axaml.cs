@@ -27,9 +27,9 @@ public partial class PlotFrame : UserControl
     /// </summary>
     public PlotFrame(PlotFrameViewModel viewModel)
     {
-InitializeComponent();
-DataContext = viewModel;
-      
- // Window Size wird automatisch durch DynamicPlotCanvas behandelt
+        InitializeComponent();
+        DataContext = viewModel;
+
+        // Window Size wird automatisch durch DynamicPlotCanvas behandelt
     }
 }

@@ -22,8 +22,8 @@ public class ObjectHelper2Tests
         _testClass.SetIndex(2, 1);
          // Assert
         Assert.HasCount(2, _testClass);
-        Assert.AreEqual(8, _testClass[5]);
-        Assert.AreEqual(2, _testClass[2]);
+        Assert.AreEqual(8, _testClass[4]);
+        Assert.AreEqual(2, _testClass[1]);
     }
 
     [TestMethod()]

@@ -13,10 +13,10 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using MathLibrary.TwoDim;
-using AA06_Converters_4.Model;
 using System.ComponentModel;
 using System;
 using CommunityToolkit.Mvvm.Input;
+using AA06_Converters_4.Models.Interfaces;
 
 namespace AA06_Converters_4.ViewModels;
 
@@ -59,29 +59,31 @@ public partial class VehicleViewModel : ObservableObject
 
     [RelayCommand]
     private void Save() => _agv_Model.Save();
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VehicleViewModel"/> class.
     /// </summary>
     public VehicleViewModel(IAGVModel model)
- {
+    {
         _agv_Model = model;
-    _agv_Model.PropertyChanged += OnModelPropChanged;
+        _agv_Model.PropertyChanged += OnModelPropChanged;
     }
 
     ~VehicleViewModel()
     {
- _agv_Model.Save();
+        _agv_Model.Save();
     }
-    
+
     private void OnModelPropChanged(object? sender, PropertyChangedEventArgs e) => (_ = e.PropertyName switch
     {
         nameof(IAGVModel.VehicleDim)
- => () => { OnPropertyChanged(nameof(VehicleLength)); OnPropertyChanged(nameof(VehicleWidth)); },
+ => () => { OnPropertyChanged(nameof(VehicleLength)); OnPropertyChanged(nameof(VehicleWidth)); }
+        ,
         nameof(IAGVModel.SwivelKoor)
-=> () => { OnPropertyChanged(nameof(SwivelKoorX)); OnPropertyChanged(nameof(SwivelKoorY)); },
+=> () => { OnPropertyChanged(nameof(SwivelKoorX)); OnPropertyChanged(nameof(SwivelKoorY)); }
+        ,
         string s => () => OnPropertyChanged(s),
-    _ => (Action)(() => { })
+        _ => (Action)(() => { })
     })();
 
     /// <summary>

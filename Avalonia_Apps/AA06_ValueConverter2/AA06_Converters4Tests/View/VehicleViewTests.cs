@@ -13,11 +13,12 @@
 // ***********************************************************************
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
 using NSubstitute;
-using BaseLib.Helper;
-using AA06_Converters_4.Model;
+using AA06_Converters_4.Models.Interfaces;
+using AA06_Converters_4.ViewModels;
+using AA06_Converters_4.View;
+using Avalonia.Headless;
+using Avalonia.Headless.MSTest;
 
 /// <summary>
 /// The Tests namespace.
@@ -33,20 +34,23 @@ public class VehicleViewTests
     /// <summary>
     /// Defines the test method VehicleViewTest.
     /// </summary>
-    [TestMethod]
+    [AvaloniaTestMethod]
     public void VehicleViewTest()
     {
-        IoC.GetReqSrv = (t)=>t switch
+        // Arrange
+        var model = Substitute.For<IAGVModel>();
+        var viewModel = new VehicleViewModel(model);
+
+        // Act
+        var testView = new VehicleView1(viewModel)
         {
-            _ when t == typeof(IAGVModel) => Substitute.For<IAGVModel>(),
-            _ => throw new NotImplementedException()
+            Width = 800,
+            Height = 600
         };
-        VehicleView1? testView = null;
-        var t = new Thread(() => testView = new());
-        t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-        t.Start();
-        t.Join(); //Wait for the thread to end
+
+        // Assert
         Assert.IsNotNull(testView);
         Assert.IsInstanceOfType(testView, typeof(VehicleView1));
+        Assert.AreSame(viewModel, testView.DataContext);
     }
 }
