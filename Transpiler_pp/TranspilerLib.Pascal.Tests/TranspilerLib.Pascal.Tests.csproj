@@ -21,6 +21,13 @@
 		<PackageReference Include="MSTest" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Remove="Resources\**" />
+		<None Include="Resources\**" />
+		<Content Include="Resources\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
 		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
 	</ItemGroup>
 

@@ -22,6 +22,10 @@ namespace TranspilerLib.Data;
 public enum CodeBlockType
 {
     /// <summary>
+    /// The unknown
+    /// </summary>
+    Unknown,
+    /// <summary>
     /// The main block
     /// </summary>
     MainBlock,
@@ -82,10 +86,6 @@ public enum CodeBlockType
     /// </summary>
     Comment,
     /// <summary>
-    /// The unknown
-    /// </summary>
-    Unknown,
-    /// <summary>
     /// The string(-constant)
     /// </summary>
     String,
@@ -105,4 +105,5 @@ public enum CodeBlockType
     /// An Assignment-Operation 
     /// </summary> 
     Assignment,
+    Separator,
 }
