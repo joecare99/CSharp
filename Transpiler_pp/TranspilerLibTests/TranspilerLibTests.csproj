@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Transpiler.Props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
@@ -35,7 +35,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
+		<ProjectReference Include="..\TranspilerLib.IEC\TranspilerLib.IEC.csproj" />
 		<ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
+    <ProjectReference Include="..\TranspilerLib.Pascal\TranspilerLib.Pascal.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
