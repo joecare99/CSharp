@@ -242,6 +242,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenFreeBrowser.Tests", "Gen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenFreeBrowser.ViewHost", "GenFreeBrowser.ViewHost\GenFreeBrowser.ViewHost.csproj", "{3AD3A181-1AFA-9CB1-6005-2427B2258418}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1", "1", "{AF45F0AD-C44B-407B-BB87-22991B49C8F4}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\cls_TestParseFBEntry.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\cls_TestParseFBEntry.pas
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\fra_OFBView.lfm = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\fra_OFBView.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\fra_OFBView.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\fra_OFBView.pas
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_OFBToGedComMain.lfm = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_OFBToGedComMain.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_OFBToGedComMain.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_OFBToGedComMain.pas
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_ParseFBEntryMain.lfm = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_ParseFBEntryMain.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_ParseFBEntryMain.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\Frm_ParseFBEntryMain.pas
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\frm_TestOFBFrame.lfm = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\frm_TestOFBFrame.lfm
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\frm_TestOFBFrame.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\frm_TestOFBFrame.pas
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\unt_FBParser.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\unt_FBParser.pas
+		..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\unt_TestFBData.pas = ..\..\Delphi\Projekte\Genealogie\Source\ParseFBEntry\unt_TestFBData.pas
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Document.Docx", "..\CSharpBible\Data\DocumentUtils\Document.Docx\Document.Docx.csproj", "{F2554EC5-027D-4670-9423-0C6A12E8CC7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -704,6 +721,14 @@ Global
 		{3AD3A181-1AFA-9CB1-6005-2427B2258418}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3AD3A181-1AFA-9CB1-6005-2427B2258418}.Release|x86.ActiveCfg = Release|Any CPU
 		{3AD3A181-1AFA-9CB1-6005-2427B2258418}.Release|x86.Build.0 = Release|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -769,6 +794,8 @@ Global
 		{A71737F6-40BA-B9B9-3505-85D435D8B5E8} = {2365079F-BDCB-455D-BEB4-9C5D270B2E7A}
 		{62F6BEF6-654A-D786-280F-CFBF02A688D2} = {2365079F-BDCB-455D-BEB4-9C5D270B2E7A}
 		{3AD3A181-1AFA-9CB1-6005-2427B2258418} = {2365079F-BDCB-455D-BEB4-9C5D270B2E7A}
+		{AF45F0AD-C44B-407B-BB87-22991B49C8F4} = {1E65C000-5F80-4D45-9AC4-6323D6700410}
+		{F2554EC5-027D-4670-9423-0C6A12E8CC7D} = {5FC2CD13-FCE0-4A26-9944-EE8791512265}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B766B89-B32C-4777-9290-8BF7CEC401B5}
