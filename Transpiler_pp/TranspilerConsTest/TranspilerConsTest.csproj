@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\TranspilerLib.IEC\TranspilerLib.IEC.csproj" />
 		<ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
 	</ItemGroup>
 
