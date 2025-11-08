@@ -24,7 +24,7 @@ namespace TranspilerLib.Data;
 /// <param name="type">The semantic kind of the token.</param>
 /// <param name="Level">The block nesting level at which the token was observed.</param>
 /// <param name="Pos">Optional absolute character position in the source.</param>
-public record struct TokenData(string Code, CodeBlockType type, int Level,int Pos=0)
+public record struct TokenData(string Code, CodeBlockType type = CodeBlockType.Unknown, int Level=-1,int Pos=0)
 {
     /* 
        public static implicit operator (string, ICSCode.CodeBlockType, int)(TokenData value)
