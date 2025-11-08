@@ -8,6 +8,7 @@ namespace TranspilerLib.Pascal.Models.Scanner;
 
 /// <summary>
 /// Pascal-specific builder. Interprets BEGIN/END and statement boundaries to form blocks.
+/// Adds simple support for FUNCTION/PROCEDURE declarations.
 /// </summary>
 public class PasCodeBuilder : CodeBuilder
 {
@@ -46,39 +47,41 @@ public class PasCodeBuilder : CodeBuilder
     private void BuildOperation(TokenData tokenData, ICodeBuilderData data)
     {
         var text = tokenData.Code.Trim();
-        switch (text.ToUpper())
+        var upper = text.ToUpperInvariant();
+        switch (upper)
         {
             case "BEGIN":
-                tokenData.type = CodeBlockType.Block;
-                tokenData.Level = Math.Max(data.actualBlock.Level - 1, 0);
-                base.OnToken(tokenData, data);
+                // open a compound statement as child of current context
+                data.actualBlock = NewCodeBlock("Block", CodeBlockType.Block, "begin", data.actualBlock, tokenData.Pos);
                 break;
             case "END":
-            case "END;":
-                // Emit block end as block token to step up
-                var td = tokenData; td.type = CodeBlockType.Block; td.Level = Math.Max(data.actualBlock.Level - 2, 0);
-                base.OnToken(td, data);
-                // climb up until statement level
+                // close the current compound statement only (semicolon is a separator in Pascal)
                 if (data.actualBlock?.Parent != null)
                     data.actualBlock = data.actualBlock.Parent;
                 break;
             default:
+                // function/procedure header starts
+                if (upper.StartsWith("FUNCTION ") || upper.StartsWith("PROCEDURE "))
+                {
+                    // create a new function/procedure sibling at the parent level
+                    var parent = data.actualBlock.Parent ?? data.actualBlock;
+                    data.actualBlock = NewCodeBlock("Function", CodeBlockType.Function, text, parent, tokenData.Pos);
+                    break;
+                }
                 // generic statement accumulation similar to CS builder
                 if (data.actualBlock.Type is not CodeBlockType.Operation and not CodeBlockType.MainBlock
                     || (!string.IsNullOrEmpty(data.actualBlock.Code) && data.actualBlock.Code.EndsWith(";")))
                 {
-                    data.actualBlock = NewCodeBlock("Operation", CodeBlockType.Operation, text, data.actualBlock.Parent, tokenData.Pos);
+                    var parent = (data.actualBlock.Type is CodeBlockType.Function or CodeBlockType.Block)
+                        ? data.actualBlock
+                        : data.actualBlock.Parent;
+                    data.actualBlock = NewCodeBlock("Operation", CodeBlockType.Operation, text, parent, tokenData.Pos);
                 }
                 else
                 {
                     var pad = (data.actualBlock.Code.EndsWith("\"") && text.StartsWith("+")) || text.StartsWith("(")
                         ? " " : string.Empty;
                     data.actualBlock.Code += pad + tokenData.Code;
-                }
-                if (text.EndsWith(";"))
-                {
-                    var b = new TokenData(";", CodeBlockType.Block, Math.Max(data.actualBlock.Level - 1, 0), tokenData.Pos);
-                    base.OnToken(b, data);
                 }
                 break;
         }
