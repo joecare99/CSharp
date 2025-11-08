@@ -1,0 +1,28 @@
+<UserControl x:Class="DataAnalysis.WPF.Views.Controls.BarItemView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:conv="clr-namespace:DataAnalysis.WPF.Views.Converters"
+ mc:Ignorable="d">
+	<UserControl.Resources>
+		<conv:RelativeScaleConverter x:Key="RelativeScaleConverter"/>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Column="0" Text="{Binding Category}" TextTrimming="CharacterEllipsis"/>
+		<Border Grid.Column="1" Background="#2D89EF" Height="18" HorizontalAlignment="Left">
+			<Border.Width>
+				<MultiBinding Converter="{StaticResource RelativeScaleConverter}">
+					<Binding Path="Percentage"/>
+					<Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ActualWidth"/>
+				</MultiBinding>
+			</Border.Width>
+		</Border>
+		<TextBlock Grid.Column="2" Text="{Binding Value}" Margin="8,0,0,0"/>
+	</Grid>
+</UserControl>
