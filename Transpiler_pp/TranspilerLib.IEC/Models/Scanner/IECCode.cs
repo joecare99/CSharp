@@ -80,11 +80,11 @@ namespace TranspilerLib.Models.Scanner
             {IECResWords.rw_WSTRING, TypeCode.String},
         };
 
-        public bool DoWhile { get => !codeOptimizer._noWhile; set => codeOptimizer._noWhile = !value; }
+     //   public bool DoWhile { get => !codeOptimizer._noWhile; set => codeOptimizer._noWhile = !value; }
 
         private ITokenHandler tokenHandler = new IECTokenHandler() { reservedWords = ReservedWords2, blockWords = IECBlocksWords, sysTypes = IECSysTypes };
         private ICodeBuilder codeBuilder = new IECCodeBuilder() { };
-        private ICodeOptimizer codeOptimizer = new CodeOptimizer();
+ //       private ICodeOptimizer codeOptimizer = new CodeOptimizer();
         //   public string Code { get; set; }
 
         private static string GetDebug(TokenizeData data, string code) => $"{code.Substring(Math.Max(0, data.Pos - 20), data.Pos - Math.Max(0, data.Pos - 20))}" +
