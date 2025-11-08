@@ -11,7 +11,8 @@
  </Grid.RowDefinitions>
  <StackPanel Orientation="Horizontal" Margin="8">
  <Button Content="Load Sample Series" Click="OnLoadSeries" Margin="0,0,8,0"/>
- <Button Content="Load Sample Matrix" Click="OnLoadMatrix"/>
+ <Button Content="Load Sample Matrix" Click="OnLoadMatrix" Margin="0,0,8,0"/>
+ <Button Content="Load Sample Clusters" Click="OnLoadClusters"/>
  </StackPanel>
  <ContentControl Grid.Row="1" x:Name="Host"/>
  </Grid>

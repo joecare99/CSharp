@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using DataAnalysis.Core.Export;
+using DataAnalysis.Core.Export.Interfaces;
 using DataAnalysis.Core.Import;
 
 namespace DataAnalysis.Core.Models;
@@ -33,6 +34,7 @@ public sealed partial class AnalysisModel
             ParsedLines = meta.ParsedLines,
             FirstTimestamp = meta.First,
             LastTimestamp = meta.Last,
+            GlobalFilterText = FilterTextFormatter.Describe(_profile.GlobalFilter),
             Aggregations = aggregations
         };
     }
@@ -68,12 +70,36 @@ public sealed partial class AnalysisModel
     {
         var list = new List<AggregationResult>();
         if (profile.Queries.Count ==0) return list;
-        var builders = profile.Queries.Select(q => new QueryBuilder(q)).ToArray();
+
+        var globalPredicate = FilterCompiler.Compile(profile.GlobalFilter);
+
+        var items = profile.Queries
+        .Select(q =>
+        {
+            var qb = new QueryBuilder(q) { FilterText = FilterTextFormatter.Describe(q.Filter) };
+            return new { Builder = qb, Predicate = Combine(globalPredicate, FilterCompiler.Compile(q.Filter)) };
+        })
+        .ToArray();
+
         foreach (var e in read.Entries)
         {
-            foreach (var b in builders) b.Observe(e);
+            foreach (var it in items)
+            {
+                if (it.Predicate is null || it.Predicate(e))
+                {
+                    it.Builder.Observe(e);
+                }
+            }
         }
-        foreach (var b in builders) list.Add(b.Build());
+
+        foreach (var it in items) list.Add(it.Builder.Build());
         return list;
+    }
+
+    private static Func<SyslogEntry,bool>? Combine(Func<SyslogEntry,bool>? a, Func<SyslogEntry,bool>? b)
+    {
+        if (a is null) return b;
+        if (b is null) return a;
+        return e => a(e) && b(e);
     }
 }

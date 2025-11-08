@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace DataAnalysis.Core.Import;
+namespace DataAnalysis.Core.Import.Interfaces;
 
 public interface ITableReader
 {

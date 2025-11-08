@@ -4,6 +4,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using DataAnalysis.Core.Import;
+using DataAnalysis.Core.Import.Interfaces;
 
 namespace DataAnalysis.Core.Models;
 

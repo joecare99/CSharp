@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataAnalysis.Core.Models;
 
-namespace DataAnalysis.Core.Export;
+namespace DataAnalysis.Core.Export.Interfaces;
 
 /// <summary>
 /// Abstraktion für den Export von Analyseergebnissen in beliebige Zielformate.

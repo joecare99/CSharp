@@ -1,4 +1,4 @@
-﻿namespace DataAnalysis.Core.Import;
+﻿namespace DataAnalysis.Core.Import.Interfaces;
 
 public interface IDelimitedTableParsingProfile
 {

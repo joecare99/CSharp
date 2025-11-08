@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,7 +21,7 @@ public partial class MainWindow : Window
         {
             Title = "Series Demo",
             Dimensions = new[] { DimensionKind.Severity },
-            Series = new Dictionary<string, int> { ["A"] = 5, ["B"] = 12, ["C"] = 3 }
+            Series = new Dictionary<object, int> { { "A", 5 }, { "B", 120 }, { "C", 30000 } }
         };
         var vm = new SeriesAggregationViewModel(agg);
         var view = new SeriesAggregationView { DataContext = vm };
@@ -46,5 +47,26 @@ public partial class MainWindow : Window
         var vm = new MatrixAggregationViewModel(agg);
         var view = new MatrixAggregationView { DataContext = vm };
         Host.Content = new Border { BorderBrush = Brushes.DarkGray, BorderThickness = new Thickness(1), Padding = new Thickness(8), Child = view };
+    }
+
+    private void OnLoadClusters(object sender, RoutedEventArgs e)
+    {
+        Debug.WriteLine("OnLoadClusters clicked");
+        var series = new Dictionary<object, int>
+        {
+            [new Vector2(0, 0)] = 15000,
+            [new Vector2(100000, 50000)] = 2000,
+            [new Vector2(-50000, 80000)] = 8000,
+            [new Vector2(800000, -230000)] = 300
+        };
+        var agg = new AggregationResult
+        {
+            Title = "Cluster Demo",
+            Dimensions = new[] { DimensionKind.X, DimensionKind.Y },
+            Series = series
+        };
+        var vm = new ClusterAggregationViewModel(agg);
+        var view = new ClusterAggregationView { DataContext = vm };
+        Host.Content = new Border { BorderBrush = Brushes.DarkGray, BorderThickness = new Thickness(3), Padding = new Thickness(8), Child = view };
     }
 }

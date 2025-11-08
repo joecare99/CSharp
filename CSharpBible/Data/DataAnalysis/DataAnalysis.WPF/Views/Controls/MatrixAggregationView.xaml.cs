@@ -4,8 +4,8 @@ namespace DataAnalysis.WPF.Views.Controls;
 
 public partial class MatrixAggregationView : UserControl
 {
- public MatrixAggregationView()
- {
- InitializeComponent();
- }
+    public MatrixAggregationView()
+    {
+        InitializeComponent();
+    }
 }

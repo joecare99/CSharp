@@ -1,2 +1,5 @@
-/Avalonia_Apps/AA21_Buttons/AA21_Buttons/*.user
 .vs
+bin
+obj
+*.bak
+*.user

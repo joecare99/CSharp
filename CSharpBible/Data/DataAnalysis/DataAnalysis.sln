@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAnalysis.WPF", "DataAna
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAnalysis.WPF.TestHarness", "DataAnalysis.WPF.TestHarness\DataAnalysis.WPF.TestHarness.csproj", "{EAAB2A83-69FF-591F-2DA9-732FA0F1AE4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataConvert.Console", "DataConvert.Console\DataConvert.Console.csproj", "{E9D94D2B-42BA-4AD6-9CB2-D2D889B289FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{EAAB2A83-69FF-591F-2DA9-732FA0F1AE4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAAB2A83-69FF-591F-2DA9-732FA0F1AE4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAAB2A83-69FF-591F-2DA9-732FA0F1AE4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9D94D2B-42BA-4AD6-9CB2-D2D889B289FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9D94D2B-42BA-4AD6-9CB2-D2D889B289FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9D94D2B-42BA-4AD6-9CB2-D2D889B289FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9D94D2B-42BA-4AD6-9CB2-D2D889B289FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

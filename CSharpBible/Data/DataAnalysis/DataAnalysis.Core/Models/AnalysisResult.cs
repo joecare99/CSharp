@@ -9,6 +9,9 @@ public sealed class AnalysisResult
  public DateTimeOffset? FirstTimestamp { get; init; }
  public DateTimeOffset? LastTimestamp { get; init; }
 
+ // Optional: Textuelle Beschreibung des globalen Filters
+ public string? GlobalFilterText { get; init; }
+
  // Alle Auswertungen als Aggregationen
  public IReadOnlyList<AggregationResult> Aggregations { get; init; } = Array.Empty<AggregationResult>();
 }

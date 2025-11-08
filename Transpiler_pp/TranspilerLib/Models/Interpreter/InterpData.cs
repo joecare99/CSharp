@@ -5,7 +5,7 @@ namespace TranspilerLib.Models.Interpreter;
 /// <summary>
 /// Laufzeitdaten für den Interpreter (Program Counter und ggf. weitere Statusinformationen in Zukunft).
 /// </summary>
-internal class InterpData
+public class InterpData
 {
     /// <summary>
     /// Erstellt eine neue Instanz und setzt den Program Counter auf <paramref name="next"/>.

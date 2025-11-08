@@ -10,6 +10,7 @@ public sealed partial class SeriesAggregationViewModel : AggregationItemViewMode
     {
         public string Category { get; init; } = string.Empty;
         public int Value { get; init; }
+        public double Percentage { get; init; } //0..100
     }
 
     public ObservableCollection<Item> Items { get; } = new();
@@ -30,15 +31,21 @@ public sealed partial class SeriesAggregationViewModel : AggregationItemViewMode
     {
         Items.Clear();
         int max = 0;
+        var temp = new List<Item>();
         if (agg.Series is not null)
         {
             foreach (var kv in agg.Series)
             {
-                Items.Add(new Item { Category = kv.Key, Value = kv.Value });
+                temp.Add(new Item { Category = kv.Key.ToString(), Value = kv.Value });
                 if (kv.Value > max) max = kv.Value;
             }
         }
         MaxValue = max;
         BarScale = max > 0 ? 300.0 / max : 1.0;
+        foreach (var it in temp)
+        {
+            var pct = max > 0 ? (double)it.Value / max * 100.0 : 0.0;
+            Items.Add(new Item { Category = it.Category, Value = it.Value, Percentage = pct });
+        }
     }
 }

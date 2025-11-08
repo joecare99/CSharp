@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataAnalysis.Core.Models;
-using DataAnalysis.Core.Import;
 using Microsoft.Win32;
 using DataAnalysis.WPF.Properties;
-using DataAnalysis.Core.Export;
+using DataAnalysis.Core.Export.Interfaces;
+using DataAnalysis.Core.Import.Interfaces;
 
 namespace DataAnalysis.WPF.ViewModels;
 
@@ -73,7 +73,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             var table = await _tableReader.ReadTableAsync(InputPath!, CancellationToken.None).ConfigureAwait(false);
-            var limited = table.AsEnumerable().Take(200).CopyToDataTableOrEmpty();
+            var limited = table.AsEnumerable().CopyToDataTableOrEmpty();
             await App.Current.Dispatcher.InvokeAsync(() => { PreviewTable = limited.DefaultView; });
             Status = string.Format(Resources.StatusPreviewFmt, limited.Rows.Count);
         }

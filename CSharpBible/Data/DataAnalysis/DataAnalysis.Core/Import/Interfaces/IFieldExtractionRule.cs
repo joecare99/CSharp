@@ -1,7 +1,6 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace DataAnalysis.Core.Import;
+namespace DataAnalysis.Core.Import.Interfaces;
 
 public interface IFieldExtractionRule
 {
