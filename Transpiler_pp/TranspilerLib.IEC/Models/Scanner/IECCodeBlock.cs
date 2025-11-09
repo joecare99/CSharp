@@ -9,7 +9,7 @@ namespace TranspilerLib.Models.Scanner
     /// Repräsentiert einen IEC Code-Block mit auf IEC zugeschnittener Formatierungslogik für die Code-Generierung.
     /// Ableitung von <see cref="CodeBlock"/> zur Spezialisierung der Ausgabe (<see cref="ToCode"/>).
     /// </summary>
-    public class IECCodeBlock : CodeBlock, ICodeBlock
+    public class IECCodeBlock : CodeBlock
     {
         /// <summary>
         /// Erzeugt den (formatierten) Quellcode für diesen Block und seine Unter-Blöcke.
