@@ -5,6 +5,7 @@ using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models;
 using TranspilerLib.Models.Scanner;
+using TranspilerLib.Pascal.Data;
 using static TranspilerLib.Interfaces.Code.ICodeBase;
 
 namespace TranspilerLib.Pascal.Models.Scanner;
@@ -41,7 +42,7 @@ public class PasCode : CodeBase
 
     public override ICodeBlock Parse(IEnumerable<TokenData>? values = null)
     {
-        ICodeBlock root = new CodeBlock() { Name = "PascalRoot", Code = string.Empty, Parent = null };
+        ICodeBlock root = new PasCodeBlock() { Name = "PascalRoot", Code = string.Empty, Parent = null, Type=CodeBlockType.MainBlock  };
         var data = _codeBuilder.NewData(root);
 
         if (values == null)
