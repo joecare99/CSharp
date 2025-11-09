@@ -45,7 +45,7 @@ public class IECCodeTests : TestBase
            ["2", new[] { IECTestDataClass.testData2, IECTestDataClass.cExpLog2 }],
 };
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0", new[] { IECTestDataClass.testData0, IECTestDataClass.cExpLog0 }, DisplayName = "0")]
     [DynamicData(nameof(TokenizeTestData))]
     public void TokenizeTest(string _, string[] data)
@@ -55,7 +55,7 @@ public class IECCodeTests : TestBase
         AssertAreEqual(data[1], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0", new[] { IECTestDataClass.testData0, IECTestDataClass.cExpLog0 }, DisplayName = "0")]
     [DynamicData(nameof(TokenizeTestData))]
     public void TokenizeTest2(string _, string[] data)
@@ -68,7 +68,7 @@ public class IECCodeTests : TestBase
         AssertAreEqual(data[1], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestTokenizeList))]
     public void Tokenize2Test(string _, string[] data, List<TokenData> expList)
     {
@@ -92,7 +92,7 @@ public class IECCodeTests : TestBase
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListParse))]
     public void ParseEnumTest(string _, List<TokenData> actList, string[] data)
     {
@@ -101,7 +101,7 @@ public class IECCodeTests : TestBase
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(TestListParse2))]
     public void ParseEnum2Test(string _, List<TokenData> actList, string[] data)
     {

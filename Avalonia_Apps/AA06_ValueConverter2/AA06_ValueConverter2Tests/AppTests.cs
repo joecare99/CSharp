@@ -48,7 +48,7 @@ public class AppTests
     public void InitDesktopTest()
     {
         // Act
-        Assert.ThrowsException<InvalidOperationException>(()=> testApp.CallInitDesktopApp());
+        Assert.ThrowsExactly<InvalidOperationException>(()=> testApp.CallInitDesktopApp());
 
         // Assert
         Assert.IsNotNull(testApp.Services);
@@ -60,7 +60,7 @@ public class AppTests
     {
         testApp.ApplicationLifetime = Substitute.For<IClassicDesktopStyleApplicationLifetime>();
         // Act
-        Assert.ThrowsException<InvalidOperationException>(()=> testApp.OnFrameworkInitializationCompleted());
+        Assert.ThrowsExactly<InvalidOperationException>(()=> testApp.OnFrameworkInitializationCompleted());
     }
 
     [TestMethod()]

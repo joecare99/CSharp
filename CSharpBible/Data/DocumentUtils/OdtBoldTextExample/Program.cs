@@ -1,5 +1,5 @@
 ﻿using Document.Base.Models.Interfaces;
-using Document.Odf.Models;
+using Document.Odf;
 using System.Windows;
 
 namespace OdtBoldTextExample;
@@ -22,7 +22,7 @@ public class Program
             cOutputPath = args[0];
         }
 
-        userDocument = OdfTextDocument.CreateUserDocument();
+        userDocument = new OdfTextDocument();
     }
 
     static void Run()

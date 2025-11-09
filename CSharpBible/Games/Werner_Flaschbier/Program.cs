@@ -14,6 +14,7 @@
 
 using BaseLib.Helper;
 using BaseLib.Interfaces;
+using BaseLib.Models;
 using ConsoleDisplay.View;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
@@ -41,7 +42,7 @@ namespace Werner_Flaschbier_Base
                 .AddTransient<IWernerViewModel, WernerViewModel>()
                 .AddSingleton<ITileDef, VTileDef>()
                 .AddSingleton<IVisual, Visual>()
-                .AddSingleton<IConsole, MyConsole>();
+                .AddSingleton<IConsole, ConsoleProxy>();
             
             var sp = sc.BuildServiceProvider();
 

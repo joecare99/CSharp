@@ -1,0 +1,25 @@
+<Project>
+	<Import Project="..\Avln_Samples.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+		<PackageReference Include="MSTest" Version="4.0.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Avalonia.Headless.XUnit" Version="11.3.8" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\Avln_Hello_World\Avln_Hello_World.csproj" />
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+	</ItemGroup>
+</Project>

@@ -11,7 +11,7 @@ public sealed class HtmlParagraph : HtmlContentBase, IDocParagraph
         StyleName = styleName;
     }
 
-    public IDocSpan AddBookmark(IDocFontStyle docFontStyle)
+    public IDocSpan AddBookmark(string Id, IDocFontStyle docFontStyle)
     {
         var span = new HtmlSpan(docFontStyle);
         span.Id = Guid.NewGuid().ToString("N");

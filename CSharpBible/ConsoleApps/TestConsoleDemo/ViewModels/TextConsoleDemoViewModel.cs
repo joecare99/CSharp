@@ -12,6 +12,8 @@ public partial class TextConsoleDemoViewModel : ObservableObject, ITextConsoleDe
     private IDisplayTest _model;
     private IRandom _random;
 
+    [ObservableProperty]
+    public partial string Title { get; set; } = "Text Console Demo";
     public IConsole? console { get; set; }
 
     public TextConsoleDemoViewModel(IDisplayTest model,IRandom random)

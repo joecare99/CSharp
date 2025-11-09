@@ -1,0 +1,173 @@
+<!-- PredefinedBrushesView.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+  x:Class="Avln_Brushes.Views.PredefinedBrushesView"
+  x:DataType="vm:PredefinedBrushesViewModel">
+
+  <Design.DataContext>
+    <vm:PredefinedBrushesViewModel />
+  </Design.DataContext>
+
+  <ScrollViewer>
+    <StackPanel Spacing="10" Margin="10">
+
+    <!-- Header -->
+      <Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
+ <StackPanel Spacing="5">
+    <TextBlock Text="Predefined Colors" FontSize="20" FontWeight="Bold" Foreground="White" />
+  <TextBlock TextWrapping="Wrap" Foreground="White">
+            All predefined colors from <Bold>Avalonia.Media.Colors</Bold> class.
+            Each color is shown with its name and hexadecimal value (#AARRGGBB format).
+          </TextBlock>
+        </StackPanel>
+      </Border>
+
+      <!-- Controls -->
+      <Border Background="LightGray" Padding="10" CornerRadius="5">
+      <Grid ColumnDefinitions="Auto,10,*,20,Auto,10,Auto" RowDefinitions="Auto,5,Auto">
+          <!-- Total Count -->
+          <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
+            <Bold>Total Colors:</Bold>
+            <Run Text="{Binding PredefinedColors.Count}" />
+      </TextBlock>
+
+        <!-- Sort Mode Selection -->
+          <TextBlock Grid.Column="4" Grid.Row="0" Text="Sort by:" 
+         VerticalAlignment="Center" FontWeight="Bold" />
+          <ComboBox Grid.Column="6" Grid.Row="0" 
+          MinWidth="200"
+        SelectedItem="{Binding SelectedSortMode}">
+     <vm:ColorSortMode>Alphabetical</vm:ColorSortMode>
+   <vm:ColorSortMode>Hue</vm:ColorSortMode>
+            <vm:ColorSortMode>Brightness</vm:ColorSortMode>
+            <vm:ColorSortMode>Saturation</vm:ColorSortMode>
+          <vm:ColorSortMode>Red</vm:ColorSortMode>
+            <vm:ColorSortMode>Green</vm:ColorSortMode>
+            <vm:ColorSortMode>Blue</vm:ColorSortMode>
+          <vm:ColorSortMode>HilbertRGB</vm:ColorSortMode>
+      <vm:ColorSortMode>HilbertHSV</vm:ColorSortMode>
+     </ComboBox>
+
+          <!-- Help Text -->
+          <TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="7"
+  Text="Choose different sorting methods to explore color relationships. Window width adjusts columns automatically." 
+       FontSize="11" FontStyle="Italic" Foreground="Gray" />
+        </Grid>
+      </Border>
+
+   <!-- Color List with Responsive Layout -->
+      <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
+        <ItemsControl ItemsSource="{Binding PredefinedColors}" Margin="10">
+          <ItemsControl.ItemsPanel>
+   <ItemsPanelTemplate>
+          <!-- WrapPanel wraps automatically based on available width -->
+         <WrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+  </ItemsControl.ItemsPanel>
+
+          <ItemsControl.ItemTemplate>
+    <DataTemplate>
+            <!-- Fixed width for each color card -->
+ <Border Width="110" Margin="5" Padding="5" 
+              BorderBrush="LightGray" BorderThickness="1" CornerRadius="3">
+      <StackPanel Spacing="5">
+                <!-- Color Name -->
+    <TextBlock Text="{Binding Name}" 
+     FontWeight="Bold" 
+   FontSize="10"
+                 HorizontalAlignment="Center"
+          TextTrimming="CharacterEllipsis"
+     MaxWidth="100" />
+
+           <!-- Color Swatch -->
+         <Rectangle Width="80" Height="30" 
+         Stroke="Black" 
+       StrokeThickness="1">
+   <Rectangle.Fill>
+    <SolidColorBrush Color="{Binding Color}" />
+            </Rectangle.Fill>
+       </Rectangle>
+
+      <!-- Hex Value -->
+   <TextBlock Text="{Binding HexValue}" 
+        FontFamily="Courier New"
+   FontSize="9"
+         HorizontalAlignment="Center"
+       Foreground="Gray" />
+</StackPanel>
+            </Border>
+    </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+  </Border>
+
+      <!-- Info Footer -->
+      <Border Background="LightYellow" Padding="10" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
+        <StackPanel Spacing="5">
+        <TextBlock Text="?? Sorting Methods Explained" FontWeight="Bold" />
+
+          <StackPanel Orientation="Horizontal" Spacing="5">
+      <TextBlock Text="•" VerticalAlignment="Top" />
+     <TextBlock TextWrapping="Wrap">
+   <Bold>Alphabetical</Bold>: Colors sorted by name (A-Z)
+      </TextBlock>
+ </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBlock Text="•" VerticalAlignment="Top" />
+       <TextBlock TextWrapping="Wrap">
+  <Bold>Hue</Bold>: Colors sorted by position on color wheel (Red?Yellow?Green?Cyan?Blue?Magenta)
+          </TextBlock>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBlock Text="•" VerticalAlignment="Top" />
+            <TextBlock TextWrapping="Wrap">
+     <Bold>Brightness</Bold>: Colors sorted by perceived luminance (bright to dark)
+    </TextBlock>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="5">
+     <TextBlock Text="•" VerticalAlignment="Top" />
+          <TextBlock TextWrapping="Wrap">
+            <Bold>Saturation</Bold>: Colors sorted by color intensity (vivid to gray)
+            </TextBlock>
+          </StackPanel>
+
+   <StackPanel Orientation="Horizontal" Spacing="5">
+       <TextBlock Text="•" VerticalAlignment="Top" />
+            <TextBlock TextWrapping="Wrap">
+              <Bold>RGB Components</Bold>: Colors sorted by red, green, or blue channel values
+        </TextBlock>
+ </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="5">
+        <TextBlock Text="•" VerticalAlignment="Top" />
+       <TextBlock TextWrapping="Wrap">
+   <Bold>HilbertRGB</Bold>: Space-filling curve through RGB color cube - groups spatially similar colors
+      </TextBlock>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="5">
+   <TextBlock Text="•" VerticalAlignment="Top" />
+         <TextBlock TextWrapping="Wrap">
+              <Bold>HilbertHSV</Bold>: Space-filling curve through HSV color cylinder - perceptually similar colors grouped
+            </TextBlock>
+   </StackPanel>
+          
+          <Separator Margin="0,5" />
+    
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBlock Text="??" VerticalAlignment="Top" />
+            <TextBlock TextWrapping="Wrap">
+            <Bold>Responsive Layout</Bold>: Resize the window to see columns adjust automatically!
+          </TextBlock>
+  </StackPanel>
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

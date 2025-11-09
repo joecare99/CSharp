@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>false</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\DetectiveGame.Engine\DetectiveGame.Engine.csproj" />
+    <ProjectReference Include="..\..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Direkte Referenz erforderlich für Source-Generatoren von CommunityToolkit.Mvvm -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+  </ItemGroup>
+</Project>

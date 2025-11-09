@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
+    <TargetFrameworks>net481;net48;net472;net462;net6.0-Windows;net7.0-Windows;net8.0-Windows;net9.0-Windows</TargetFrameworks>
 	  <SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />

@@ -62,7 +62,7 @@ public class ParentedItemsListTests : ITestItf
     [TestMethod()]
     public void IsReadonlyTest()
     {
-        Assert.AreEqual(false,testClass.IsReadOnly);
+        Assert.IsFalse(testClass.IsReadOnly);
     }
 
     [TestMethod()]
@@ -130,9 +130,9 @@ public class ParentedItemsListTests : ITestItf
     public void ContainsTest()
     {
         AddTest();
-        Assert.AreEqual(true, testClass.Contains( new TestClass(3)));
-        Assert.AreEqual(false, testClass.Contains(new TestClass(2)));
-        Assert.AreEqual(false, testClass.Contains(this));
+        Assert.IsTrue(testClass.Contains( new TestClass(3)));
+        Assert.IsFalse(testClass.Contains(new TestClass(2)));
+        Assert.IsFalse(testClass.Contains(this));
     }
 
     [TestMethod()]

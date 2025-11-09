@@ -13,7 +13,7 @@ namespace AA05_CommandParCalc.Tests
             try
             {
                 Program.GetAppBuilder = () => AppBuilder.Configure<App>();
-                Assert.ThrowsException<InvalidOperationException>(()=> Program.Main(new string[] { }));
+                Assert.ThrowsExactly<InvalidOperationException>(()=> Program.Main(new string[] { }));
             }
             finally
             {

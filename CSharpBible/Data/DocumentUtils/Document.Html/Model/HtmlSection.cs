@@ -10,34 +10,17 @@ public sealed class HtmlSection : HtmlNodeBase, IDocSection
         return (IDocParagraph)AddChild(p);
     }
 
-    public IDocContent AddHeadline(int aLevel)
+    public IDocHeadline AddHeadline(int aLevel, string Id)
     {
-        var h = new HtmlHeadline(aLevel);
-        return (IDocContent)AddChild(h);
+        var h = new HtmlHeadline(aLevel, Id);
+        return (IDocHeadline)AddChild(h);
     }
 
-    public IDocContent AddTOC(string aName, int aLevel)
+    public IDocTOC AddTOC(string aName, int aLevel)
     {
         var toc = new HtmlTOC(aName, aLevel);
         AddChild(toc);
         return toc;
     }
 
-    public IEnumerable<IDocElement> Enumerate()
-    {
-        var stack = new Stack<IDocElement>();
-        stack.Push(this);
-        while (stack.Count > 0)
-        {
-            var cur = stack.Pop();
-            yield return cur;
-            if (cur is HtmlNodeBase b)
-            {
-                for (int i = b.Nodes.Count - 1; i >= 0; i--)
-                {
-                    stack.Push((IDocElement)b.Nodes[i]);
-                }
-            }
-        }
-    }
 }

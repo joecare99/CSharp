@@ -11,5 +11,5 @@
         Title="Avalonia_App02">
   <Grid>
     <view:SomeTemplateView Name="AppView" />
-  </Grid>     
+  </Grid> 
 </Window>

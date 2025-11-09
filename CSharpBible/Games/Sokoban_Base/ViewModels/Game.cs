@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Sokoban.Model;
 using Sokoban_Base.Model;
-using Sokoban_Base.Properties;
+using Sokoban.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

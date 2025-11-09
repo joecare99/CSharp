@@ -1,0 +1,58 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+	<PropertyGroup>
+  <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="App.xaml.cs" />
+    <Compile Remove="AssemblyInfo.cs" />
+    <Compile Remove="MainWindow.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="App.xaml" />
+    <None Remove="MainWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="Avalonia.Diagnostics" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  <PackageReference Include="System.Configuration.ConfigurationManager" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\MathLibrary\MathLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+   <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+  </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Interfaces\" />
+  </ItemGroup>
+
+</Project>

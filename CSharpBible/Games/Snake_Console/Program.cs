@@ -33,7 +33,7 @@ namespace Snake_Console
                 .AddSingleton<IVisual, Visual>()
                 .AddTransient<ITileDisplay<SnakeTiles>, TileDisplay<SnakeTiles>>()
                 .AddTransient<ITileDef,TileDef>()
-                .AddSingleton<IConsole, MyConsole>();
+                .AddSingleton<IConsole, ConsoleProxy>();
             var sp = sc.BuildServiceProvider();
 
             IoC.Configure(sp);

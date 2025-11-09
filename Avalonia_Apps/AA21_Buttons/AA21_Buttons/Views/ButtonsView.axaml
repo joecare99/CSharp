@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AA21_Buttons.Views"
+             xmlns:converters="clr-namespace:AA21_Buttons.Converters"
+             x:Class="AA21_Buttons.Views.ButtonsView"
+             Padding="20">
+
+  <UserControl.Resources>
+    <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+  </UserControl.Resources>
+
+  <Grid RowDefinitions="1*,5*,1*" ColumnDefinitions="1*,5*,1*" Margin="20">
+    <!-- Main Grid mit 3x3 Button Layout -->
+    <Grid Grid.Row="1" 
+          Grid.Column="1" 
+          RowDefinitions="*,*,*" 
+          ColumnDefinitions="*,*,*"
+          Margin="20">
+
+      <!-- Row 1 -->
+      <Button Grid.Row="0" Grid.Column="0" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="1"
+              Content="1"
+              Background="{Binding Flip, ConverterParameter=1, Converter={StaticResource BoolToColorConverter}}" />
+
+      <Button Grid.Row="0" Grid.Column="1" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="2"
+              Content="2"
+              Background="{Binding Flip, ConverterParameter=2, Converter={StaticResource BoolToColorConverter}}" />
+
+      <Button Grid.Row="0" Grid.Column="2" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="3"
+              Content="3"
+              Background="{Binding Flip, ConverterParameter=3, Converter={StaticResource BoolToColorConverter}}" />
+
+      <!-- Row 2 -->
+      <Button Grid.Row="1" Grid.Column="0" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="4"
+              Content="4"
+              Background="{Binding Flip, ConverterParameter=4, Converter={StaticResource BoolToColorConverter}}" />
+
+      <Button Grid.Row="1" Grid.Column="1" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="5"
+              Content="5"
+              Background="{Binding Flip, ConverterParameter=5, Converter={StaticResource BoolToColorConverter}}" />
+
+      <Button Grid.Row="1" Grid.Column="2" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="6"
+              Content="6"
+              Background="{Binding Flip, ConverterParameter=6, Converter={StaticResource BoolToColorConverter}}" />
+
+      <!-- Row 3 -->
+      <Button Grid.Row="2" Grid.Column="0" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="7"
+              Content="7"
+              Background="{Binding Flip, ConverterParameter=7, Converter={StaticResource BoolToColorConverter}}" />
+
+      <Button Grid.Row="2" Grid.Column="1" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="8"
+              Content="8"
+              Background="{Binding Flip, ConverterParameter=8, Converter={StaticResource BoolToColorConverter}}" />
+
+      <Button Grid.Row="2" Grid.Column="2" 
+              Command="{Binding PlayCommand}" 
+              CommandParameter="9"
+              Content="9"
+              Background="{Binding Flip, ConverterParameter=9, Converter={StaticResource BoolToColorConverter}}" />
+    </Grid>
+
+    <!-- Reset Button -->
+    <Button Grid.Row="2" 
+            Grid.Column="2"
+            Command="{Binding ResetCommand}"
+            Content="Reset"
+            Padding="20"
+            Margin="10"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom" />
+  </Grid>
+
+</UserControl>

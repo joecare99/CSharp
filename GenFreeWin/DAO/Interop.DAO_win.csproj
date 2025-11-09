@@ -1,0 +1,22 @@
+<Project>
+	<Import Project="..\GenFreeWin.props" />
+  <PropertyGroup>
+    <AssemblyName>Interop.DAO</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFrameworks>net4.8.1-windows</TargetFrameworks>
+	  <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+</Project>

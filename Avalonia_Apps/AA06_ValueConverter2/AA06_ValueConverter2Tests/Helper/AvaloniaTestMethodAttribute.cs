@@ -11,7 +11,7 @@ namespace Avalonia.Headless.MSTest;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public sealed class AvaloniaTestMethodAttribute : TestMethodAttribute
 {
-    public override TestResult[] Execute(ITestMethod testMethod)
+    public override async Task<TestResult[]> ExecuteAsync(ITestMethod testMethod)
     {
         var assembly = testMethod.MethodInfo.DeclaringType!.Assembly;
         var appBuilderEntryPointType = assembly.GetCustomAttribute<AvaloniaTestApplicationAttribute>()
@@ -28,8 +28,8 @@ public sealed class AvaloniaTestMethodAttribute : TestMethodAttribute
     /// <summary>Executes the test method.</summary>
     /// <param name="testMethod">The test method.</param>
     /// <returns>TestResult[].</returns>
-    private static TestResult[] ExecuteTestMethod(ITestMethod testMethod)
+    private static async Task<TestResult[]> ExecuteTestMethod(ITestMethod testMethod)
     {
-        return [testMethod.Invoke(null)];
+        return [await testMethod.InvokeAsync(null).ConfigureAwait(false)];
     }
 }

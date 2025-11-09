@@ -3,7 +3,7 @@ using Document.Base.Models.Interfaces;
 
 namespace Document.Html.Model;
 
-public sealed class HtmlTOC : HtmlContentBase
+public sealed class HtmlTOC : HtmlContentBase, IDocTOC
 {
     public string Name { get; }
     public int Level { get; }
@@ -16,17 +16,17 @@ public sealed class HtmlTOC : HtmlContentBase
 
     public override IDocStyleStyle GetStyle() => new HtmlStyle("TOC");
 
-    public void RebuildFrom(IDocContent root)
+    public void RebuildFrom(IDocSection root)
     {
         // Einfacher TOC: Alle Headlines bis Level einsammeln
         TextContent = string.Empty;
         Nodes.Clear();
 
-        foreach (var h in root.Enumerate().OfType<HtmlHeadline>().Where(h => h.Level <= Level))
+        foreach (var h in root.Enumerate().OfType<IDocHeadline>().Where(h => h.Level <= Level))
         {
             var p = new HtmlParagraph("TOCEntry");
             var anchorText = h.GetTextContent(true);
-            var span = (HtmlSpan)p.AddLink(HtmlFontStyle.Default);
+            var span = (HtmlSpan)p.AddLink(h.Id, HtmlFontStyle.Default);
             // Generiere (oder finde) eine ID am Headline-Knoten
             var id = h.Nodes.OfType<HtmlSpan>().FirstOrDefault(s => !string.IsNullOrEmpty(s.Id))?.Id
                      ?? Guid.NewGuid().ToString("N");
@@ -40,5 +40,10 @@ public sealed class HtmlTOC : HtmlContentBase
             span.TextContent = anchorText;
             AddChild(p);
         }
+    }
+
+    public void RebuildFrom(IDocElement root)
+    {
+        throw new NotImplementedException();
     }
 }

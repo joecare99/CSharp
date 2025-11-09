@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
+  x:Class="Avln_AnimationTiming.Views.Examples.EasingFunctionsExample">
+    
+    <UserControl.Styles>
+      <Style Selector="Ellipse.easingBall">
+       <Setter Property="Fill" Value="#FF4444FF" />
+    <Setter Property="Width" Value="40" />
+  <Setter Property="Height" Value="40" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+ <Setter Property="Margin" Value="5,0,0,0" />
+     </Style>
+        
+     <Style Selector="Border.track">
+   <Setter Property="Background" Value="#20000000" />
+      <Setter Property="Height" Value="50" />
+<Setter Property="CornerRadius" Value="25" />
+       <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+ </UserControl.Styles>
+
+    <Border HorizontalAlignment="Stretch" Padding="20">
+   <StackPanel Spacing="10">
+            
+     <Border Classes="IntroTextBorder" Padding="20">
+<TextBlock TextWrapping="Wrap">
+   This example demonstrates various Easing Functions in Avalonia.
+     Each ball animates with a different easing function when you click "Animate".
+ Watch how the acceleration and deceleration differs!
+       </TextBlock>
+   </Border>
+
+     <StackPanel Spacing="3">
+      <TextBlock FontSize="12">Linear (no easing):</TextBlock>
+   <Border Classes="track">
+       <Ellipse Name="linearBall" Classes="easingBall" />
+       </Border>
+  
+ <TextBlock FontSize="12" Margin="0,10,0,0">Quadratic EaseIn:</TextBlock>
+  <Border Classes="track">
+   <Ellipse Name="quadInBall" Classes="easingBall" />
+   </Border>
+      
+     <TextBlock FontSize="12">Quadratic EaseOut:</TextBlock>
+      <Border Classes="track">
+        <Ellipse Name="quadOutBall" Classes="easingBall" />
+    </Border>
+  
+      <TextBlock FontSize="12">Quadratic EaseInOut:</TextBlock>
+  <Border Classes="track">
+   <Ellipse Name="quadInOutBall" Classes="easingBall" />
+   </Border>
+        
+   <TextBlock FontSize="12" Margin="0,10,0,0">Cubic EaseInOut:</TextBlock>
+     <Border Classes="track">
+         <Ellipse Name="cubicBall" Classes="easingBall" />
+   </Border>
+                
+    <TextBlock FontSize="12">Exponential EaseOut:</TextBlock>
+     <Border Classes="track">
+     <Ellipse Name="expoBall" Classes="easingBall" />
+     </Border>
+    
+   <TextBlock FontSize="12">Bounce EaseOut:</TextBlock>
+ <Border Classes="track">
+     <Ellipse Name="bounceBall" Classes="easingBall" />
+        </Border>
+       
+<TextBlock FontSize="12">Elastic EaseOut:</TextBlock>
+      <Border Classes="track">
+  <Ellipse Name="elasticBall" Classes="easingBall" />
+   </Border>
+      
+        <TextBlock FontSize="12">Back EaseInOut:</TextBlock>
+      <Border Classes="track">
+<Ellipse Name="backBall" Classes="easingBall" />
+  </Border>
+   </StackPanel>
+
+   <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,20,0,0">
+<Button Name="animateButton" Content="Animate" Width="120" />
+  <Button Name="resetButton" Content="Reset" Width="120" />
+   </StackPanel>
+    </StackPanel>
+    </Border>
+</UserControl>

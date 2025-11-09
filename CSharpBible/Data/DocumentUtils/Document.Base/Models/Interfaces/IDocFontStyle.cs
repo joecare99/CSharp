@@ -6,6 +6,7 @@ public interface IDocFontStyle
     bool Bold { get; }
     bool Italic { get; }
     bool Underline { get; }
+    bool Strikeout { get; }
     string? Color { get; }
     string? FontFamily { get; }
     double? FontSizePt { get; }

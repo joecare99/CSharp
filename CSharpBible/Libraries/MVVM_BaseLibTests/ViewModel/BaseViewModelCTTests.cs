@@ -134,7 +134,7 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
     [TestMethod]
     public void RemovePropertyDependencyTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
+        Assert.ThrowsExactly<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
     }
 
     [TestMethod]

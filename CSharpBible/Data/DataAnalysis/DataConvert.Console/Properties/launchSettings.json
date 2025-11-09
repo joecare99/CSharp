@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "DataConvert.Console": {
+      "commandName": "Project"
+    },
+    "Profil \"1\"": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Projekte\\2024\\RoyalMail\\OnSite\\SEW Syslog 29-10-25.txt\""
+    },
+    "Profil \"2\"": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\DEROSCHR\\Documents\\MyJabberFiles\\elmar.nitz@sew-eurodrive.de\\Syslog.txt\""
+    }
+  }
+}

@@ -539,7 +539,7 @@ public class CLinkTests
     [DataRow("ArtNr", LinkIndex.FamPruef, ILinkData.LinkFields.FamNr)]
     public void GetIndex2FieldTest(string sName, LinkIndex eIx, ILinkData.LinkFields eExp)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.GetIndex1Field(eIx));
+        Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetIndex1Field(eIx));
     }
 
 

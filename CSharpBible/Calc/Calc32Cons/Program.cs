@@ -21,7 +21,7 @@ using Calc32.Models.Interfaces;
 using Calc32.ViewModels;
 using Calc32.Models;
 using Calc32.ViewModels.Interfaces;
-using ConsoleLib.ConsoleLib.Interfaces;
+using ConsoleLib.Interfaces;
 using BaseLib.Interfaces;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ConsoleLib.Interfaces;

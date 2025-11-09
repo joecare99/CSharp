@@ -1,0 +1,8 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Avln_Geometry.Views.MainWindow"
+        Title="Geometry Examples"
+        Width="1200"
+        Height="800">
+    <!-- Content wird im Code-Behind gesetzt -->
+</Window>

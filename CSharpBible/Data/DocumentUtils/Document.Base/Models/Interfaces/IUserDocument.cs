@@ -3,8 +3,8 @@
 public interface IUserDocument
 {
     IDocParagraph AddParagraph(string cStylename);
-    IDocContent AddHeadline(int nLevel);
-    IDocContent AddTOC(string cName, int nLevel);
+    IDocHeadline AddHeadline(int nLevel,string? Id = null);
+    IDocTOC AddTOC(string cName, int nLevel);
     IDocElement Root { get; }
     IEnumerable<IDocElement> Enumerate();
     bool IsModified { get; }

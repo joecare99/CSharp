@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avln_BaseLibTests.Properties;
 using static BaseLib.Helper.TestHelper;
+using System.Globalization;
 
 namespace Avalonia.ViewModels.Tests;
 
@@ -32,11 +33,15 @@ public class BaseTestViewModelTest : BaseTestViewModel
 {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     TestVM testModel;
+    private CultureInfo _c;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
     [TestInitialize]
     public void Init()
     {
+        _c = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
         testModel = new TestVM();
         testModel.PropertyChanged += OnVMPropertyChanged;
         testModel.PropertyChanging += OnVMPropertyChanging;
@@ -44,7 +49,13 @@ public class BaseTestViewModelTest : BaseTestViewModel
         testModel.DoSomethingCommand.CanExecuteChanged += OnCanExChanged;
     }
 
-    [DataTestMethod]
+    [TestCleanup]
+    public void Cleanup()
+    {
+        CultureInfo.CurrentUICulture = _c;
+    }
+
+    [TestMethod]
     [DataRow(0,0,new[] { "" })]
     [DataRow(-1,0,new[] { @"PropChgn(TestVM,TestInt)=0
 PropChg(TestVM,HasErrors)=True
@@ -79,7 +90,7 @@ CanExChanged(RelayCommand)=True
         Assert.AreEqual(iAct, testModel.TestInt);
         AssertAreEqual(asExp[0], DebugLog);
     }
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("<TestStr>", new[] { "","<TestStr>" })]
     [DataRow(null, new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
 PropChg(TestVM,HasErrors)=True
@@ -109,7 +120,7 @@ PropChg(TestVM,TestStr)=Test
 public class BaseTestViewModelTest_T : BaseTestViewModel<TestVM>
 {
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 0, new[] { "" })]
     [DataRow(-1, 0, new[] { @"PropChgn(TestVM,TestInt)=0
 PropChg(TestVM,HasErrors)=True
@@ -144,7 +155,7 @@ CanExChanged(RelayCommand)=True
         Assert.AreEqual(iAct, testModel.TestInt);
         Assert.AreEqual(asExp[0], DebugLog);
     }
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("<TestStr>", new[] { "", "<TestStr>" })]
     [DataRow(null, new[] { @"PropChgn(TestVM,TestStr)=<TestStr>
 PropChg(TestVM,HasErrors)=True

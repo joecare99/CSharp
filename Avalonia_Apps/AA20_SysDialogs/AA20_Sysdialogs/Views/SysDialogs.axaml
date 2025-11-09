@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:vm="clr-namespace:AA20_SysDialogs.ViewModels"
+ xmlns:conv="clr-namespace:AA20_SysDialogs.Converter"
+ x:Class="AA20_SysDialogs.Views.SysDialogs"
+ x:DataType="vm:SysDialogsViewModel"
+ mc:Ignorable="d">
+ <UserControl.Resources>
+ <conv:ColorConverter x:Key="ColorConverter"/>
+ <conv:FontConverter x:Key="FontConverter"/>
+ </UserControl.Resources>
+ 
+ <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" Margin="20">
+ <StackPanel Grid.Row="0" Spacing="10">
+ <TextBlock Text="File Dialogs" FontWeight="Bold" FontSize="16"/>
+ <Button Content="Open File Dialog" Command="{Binding OpenFileOpenDialogCommand}" HorizontalAlignment="Stretch"/>
+ <TextBlock Text="{Binding FileOpenName}" Margin="10,0,0,0"/>
+ 
+ <Button Content="Save File Dialog" Command="{Binding OpenFileSaveAsDialogCommand}" HorizontalAlignment="Stretch"/>
+ <TextBlock Text="{Binding FileSaveName}" Margin="10,0,0,0"/>
+ 
+ <Button Content="Browse Directory" Command="{Binding OpenDirectoryBrowseDialogCommand}" HorizontalAlignment="Stretch"/>
+ <TextBlock Text="{Binding PathName}" Margin="10,0,0,0"/>
+ </StackPanel>
+
+ <StackPanel Grid.Row="1" Spacing="10" Margin="0,20,0,0">
+ <TextBlock Text="Color Dialog" FontWeight="Bold" FontSize="16"/>
+ <Button Content="Select Color" Command="{Binding OpenColorDialogCommand}" HorizontalAlignment="Stretch"/>
+ <ColorPicker Color="{Binding MyColor, Converter={StaticResource ColorConverter}}" HorizontalAlignment="Stretch" />
+ <Border Background="{Binding MyColor, Converter={StaticResource ColorConverter}}" 
+ Height="40" Margin="10,0,0,0" BorderBrush="Black" BorderThickness="1"/>
+ </StackPanel>
+
+ <StackPanel Grid.Row="2" Spacing="10" Margin="0,20,0,0">
+ <TextBlock Text="Font Dialog" FontWeight="Bold" FontSize="16"/>
+ <Button Content="Select Font" Command="{Binding OpenFontDialogCommand}" HorizontalAlignment="Stretch"/>
+ <TextBlock FontFamily="{Binding MyFont, Converter={StaticResource FontConverter}}" 
+ Text="Sample Text" Margin="10,0,0,0"/>
+ </StackPanel>
+
+ <StackPanel Grid.Row="3" Spacing="10" Margin="0,20,0,0">
+ <TextBlock Text="Print Dialog" FontWeight="Bold" FontSize="16"/>
+ <Button Content="Print" Command="{Binding OpenPrintDialogCommand}" HorizontalAlignment="Stretch"/>
+ </StackPanel>
+ </Grid>
+</UserControl>

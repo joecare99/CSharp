@@ -1,0 +1,64 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+		<None Remove="*.bak" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Desktop" />
+		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia.Fonts.Inter" />
+		<PackageReference Include="Avalonia.Diagnostics">
+			<IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="MsBox.Avalonia" />
+	</ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Views\DialogView.axaml.cs">
+		  <DependentUpon>DialogView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\MainWindow.axaml.cs">
+		  <DependentUpon>MainWindow.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\DialogWindow.axaml.cs">
+		  <DependentUpon>DialogWindow.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="App.axaml.cs">
+		  <DependentUpon>App.axaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+</Project>

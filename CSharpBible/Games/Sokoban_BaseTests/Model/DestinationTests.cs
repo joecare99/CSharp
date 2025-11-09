@@ -51,7 +51,7 @@ namespace Sokoban_Base.Model.Tests
         public void GetFieldDef2Test()
         {
             testItem.Item = new Key(null);
-            Assert.ThrowsException<ArgumentException>(() => testItem.fieldDef);
+            Assert.ThrowsExactly<ArgumentException>(() => testItem.fieldDef);
         }
     }
 }

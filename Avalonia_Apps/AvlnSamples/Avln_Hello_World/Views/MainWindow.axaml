@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Avln_Hello_World.ViewModels"
+		xmlns:views="using:Avln_Hello_World.Views"
+		xmlns:p="using:Avln_Hello_World.Properties"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="Avln_Hello_World.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="Hello World - Avalonia"
+		Icon="/Assets/avalonia-logo.ico">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<TabControl>
+		<TabItem Header="Hello World">
+			<views:HelloWorldView/>
+		</TabItem>
+		<TabItem Header="aXaml">
+			<DockPanel>
+				<TextBlock DockPanel.Dock="Top" Text="the aXaml-Code" />
+				<TextBox IsReadOnly="True" AcceptsReturn="True"
+					TextWrapping="Wrap"
+				  ScrollViewer.VerticalScrollBarVisibility="Visible"
+					Text="{Binding HelloWorldViewCode}"/>
+			</DockPanel>
+		</TabItem>
+		<TabItem Header="ViewModel">
+			<DockPanel>
+				<TextBlock DockPanel.Dock="Top" Text="the ViewModel-Code" />
+				<TextBox IsReadOnly="True" AcceptsReturn="True"
+				  TextWrapping="Wrap"
+	      	ScrollViewer.VerticalScrollBarVisibility="Visible"
+				  Text="{Binding HelloWorldViewModelCode}"/>
+			</DockPanel>
+		</TabItem>
+	</TabControl>
+</Window>

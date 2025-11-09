@@ -1,0 +1,142 @@
+<!-- DashExampleView.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  x:Class="Avln_Brushes.Views.DashExampleView"
+  x:DataType="vm:DashExampleViewModel">
+
+  <Design.DataContext>
+    <vm:DashExampleViewModel />
+  </Design.DataContext>
+
+  <ScrollViewer>
+    <StackPanel Spacing="10" Margin="10">
+
+      <!-- Header -->
+  <Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
+    <TextBlock TextWrapping="Wrap" Foreground="White">
+       The following examples show how to use <Bold>dashes</Bold> and <Bold>offsets</Bold> on a stroke to make dashed borders.
+    <LineBreak />
+          StrokeDashArray defines the pattern (dash length, gap length), and StrokeDashOffset shifts the pattern.
+ </TextBlock>
+    </Border>
+
+  <Grid RowDefinitions="Auto,20,Auto,Auto,20,Auto,Auto,Auto" 
+        ColumnDefinitions="*,10,*,10,*">
+
+   <!-- Rectangle Examples with Different Offsets -->
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
+     <Bold>StrokeDashArray</Bold>: 4,2<LineBreak />
+          <Bold>StrokeDashOffset</Bold>: 0
+        </TextBlock>
+        <Rectangle Grid.Row="1" Grid.Column="0" 
+   Width="150" Height="150"
+         StrokeDashArray="4,2" 
+        StrokeDashOffset="0"
+            Stroke="Black" 
+         StrokeThickness="3" 
+   Fill="Blue" 
+ HorizontalAlignment="Center" />
+
+        <TextBlock Grid.Row="0" Grid.Column="2" Margin="0,0,10,0">
+  <Bold>StrokeDashArray</Bold>: 4,2<LineBreak />
+   <Bold>StrokeDashOffset</Bold>: 1
+        </TextBlock>
+   <Rectangle Grid.Row="1" Grid.Column="2" 
+   Width="150" Height="150"
+StrokeDashArray="4,2" 
+         StrokeDashOffset="1"
+    Stroke="Black" 
+ StrokeThickness="3" 
+       Fill="Blue" 
+            HorizontalAlignment="Center" />
+
+        <TextBlock Grid.Row="0" Grid.Column="4">
+    <Bold>StrokeDashArray</Bold>: 4,2<LineBreak />
+     <Bold>StrokeDashOffset</Bold>: 2
+        </TextBlock>
+        <Rectangle Grid.Row="1" Grid.Column="4" 
+  Width="150" Height="150"
+     StrokeDashArray="4,2" 
+         StrokeDashOffset="2"
+          Stroke="Black" 
+     StrokeThickness="3" 
+  Fill="Blue" 
+         HorizontalAlignment="Center" />
+
+      <!-- Ellipse Examples with Different Dash Patterns -->
+        <TextBlock Grid.Row="3" Grid.Column="0">
+    <Bold>StrokeDashArray</Bold>: 4,1,4,3<LineBreak />
+     <Bold>StrokeDashOffset</Bold>: 1
+        </TextBlock>
+        <Ellipse Grid.Row="4" Grid.Column="0" 
+ Width="150" Height="150"
+            StrokeDashArray="4,1,4,3" 
+      StrokeDashOffset="1"
+     Stroke="Black" 
+ StrokeThickness="3" 
+            Fill="Blue" 
+  HorizontalAlignment="Center" />
+
+        <TextBlock Grid.Row="3" Grid.Column="2">
+  <Bold>StrokeDashArray</Bold>: 1,4,1,2<LineBreak />
+          <Bold>StrokeDashOffset</Bold>: 1
+        </TextBlock>
+        <Ellipse Grid.Row="4" Grid.Column="2" 
+          Width="150" Height="150"
+  StrokeDashArray="1,4,1,2" 
+  StrokeDashOffset="1"
+   Stroke="Black" 
+     StrokeThickness="3" 
+         Fill="Blue" 
+        HorizontalAlignment="Center" />
+
+    <TextBlock Grid.Row="3" Grid.Column="4">
+          <Bold>StrokeDashArray</Bold>: 1<LineBreak />
+     <Bold>StrokeDashOffset</Bold>: 1
+        </TextBlock>
+        <Ellipse Grid.Row="4" Grid.Column="4" 
+Width="150" Height="150"
+       StrokeDashArray="1" 
+   StrokeDashOffset="1"
+  Stroke="Black" 
+   StrokeThickness="3" 
+  Fill="Blue" 
+    HorizontalAlignment="Center" />
+
+     <!-- Info Panel -->
+   <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5"
+          Background="LightYellow" 
+      Padding="10" 
+          CornerRadius="5" 
+            BorderBrush="Gray" 
+         BorderThickness="1"
+         Margin="0,20,0,0">
+          <StackPanel Spacing="5">
+          <TextBlock Text="💡 Stroke Dash Properties" FontWeight="Bold" />
+         <StackPanel Orientation="Horizontal" Spacing="5">
+ <TextBlock Text="•" VerticalAlignment="Top" />
+            <TextBlock TextWrapping="Wrap">
+       <Bold>StrokeDashArray</Bold>: Pattern of dashes and gaps (e.g., "4,2" = 4 units dash, 2 units gap)
+   </TextBlock>
+         </StackPanel>
+       <StackPanel Orientation="Horizontal" Spacing="5">
+       <TextBlock Text="•" VerticalAlignment="Top" />
+          <TextBlock TextWrapping="Wrap">
+     <Bold>StrokeDashOffset</Bold>: Shifts the dash pattern along the stroke
+         </TextBlock>
+   </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="5">
+ <TextBlock Text="•" VerticalAlignment="Top" />
+     <TextBlock TextWrapping="Wrap">
+    <Bold>Complex Patterns</Bold>: Use multiple values (e.g., "4,1,4,3") for varied dash/gap sequences
+  </TextBlock>
+     </StackPanel>
+      </StackPanel>
+        </Border>
+
+      </Grid>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,26 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+  <PropertyGroup>
+  <TargetFrameworks>net9.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Avalonia.Headless" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AA06_Converters4\AA06_Converters4.csproj" />
+	  <ProjectReference Include="$(UpDir)\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+  </ItemGroup>
+
+</Project>

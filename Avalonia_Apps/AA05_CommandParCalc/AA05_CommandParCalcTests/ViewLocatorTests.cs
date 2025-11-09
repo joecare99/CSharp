@@ -86,7 +86,7 @@ namespace AA05_CommandParCalc.Tests
             object? result = null;
             if (sAct.EndsWith(nameof(AA05_CommandParCalc)))
             {
-                Assert.ThrowsException<MissingMethodException>(() => testClass.Build(obj));
+                Assert.ThrowsExactly<MissingMethodException>(() => testClass.Build(obj));
                 tAct = null;    
             }
             else

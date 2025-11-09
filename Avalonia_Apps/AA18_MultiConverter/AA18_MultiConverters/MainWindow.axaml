@@ -1,0 +1,7 @@
+<Window xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:view="clr-namespace:AA18_MultiConverter.Views"
+ x:Class="AA18_MultiConverter.MainWindow"
+ Width="800" Height="450" Title="Multi Converter">
+	<view:DateDifView />
+</Window>

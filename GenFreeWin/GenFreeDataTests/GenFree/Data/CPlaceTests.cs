@@ -147,7 +147,7 @@ namespace GenFree.Data.Tests
         [DataRow((PlaceIndex)100, PlaceFields.OrtNr)]
         public void GetIndex1FieldTest2(PlaceIndex eAct, PlaceFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(()=>testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(()=>testClass.GetIndex1Field(eAct));
         }
     }
 }

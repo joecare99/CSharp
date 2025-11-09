@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net462;net472;net481;net48</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -19,13 +20,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="*.bak" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
   </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib.csproj" />
@@ -54,8 +53,5 @@
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 </Project>

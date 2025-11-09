@@ -31,8 +31,8 @@ namespace TestConsole.View
         }
 
 
-        private ConsoleCharInfo[] screenBuffer = new ConsoleCharInfo[80 * 25];
-        private ConsoleCharInfo[] outBuffer = new ConsoleCharInfo[80 * 25];
+        private ConsoleCharInfo[] screenBuffer = new ConsoleCharInfo[120 * 40];
+        private ConsoleCharInfo[] outBuffer = new ConsoleCharInfo[120 * 40];
         private Size consoleSize = new Size(80, 25);
 
         private Color[] ccolors = new Color[typeof(ConsoleColor).GetEnumValues().Length];

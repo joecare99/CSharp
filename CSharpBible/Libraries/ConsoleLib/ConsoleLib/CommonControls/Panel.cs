@@ -11,8 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
+using System.Linq;
 
 namespace ConsoleLib.CommonControls
 {
@@ -21,7 +23,7 @@ namespace ConsoleLib.CommonControls
     /// Implements the <see cref="ConsoleLib.Control" />
     /// </summary>
     /// <seealso cref="ConsoleLib.Control" />
-    public class Panel : Control
+    public class Panel : Control, IGroupControl
     {
         /// <summary>
         /// The boarder
@@ -32,15 +34,25 @@ namespace ConsoleLib.CommonControls
         /// </summary>
         public ConsoleColor BoarderColor;
 
+        public void BringToFront(IControl menuPopup)
+        {
+            if (Children.Contains(menuPopup))
+            {
+                // Bring the specified menuPopup to the front
+                Children.Remove(menuPopup);
+                Children.Insert(0, menuPopup);
+            }
+        }
+
         /// <summary>
         /// Draws this instance.
         /// </summary>
         public override void Draw()
         {
             ConsoleFramework.Canvas.FillRect(RealDim,ForeColor, BackColor, ConsoleFramework.chars[3]);
-            if (Border != null && Border.Length > 5)
-                ConsoleFramework.Canvas.DrawRect(RealDim, BoarderColor, BackColor, Border);
-            foreach( Control c in Children) if (c.Visible)
+            if (Border?.Length > 5)
+                ConsoleFramework.Canvas.DrawRect(RealDim, BoarderColor, BackColor, Border!);
+            foreach( Control c in Children.Reverse()) if (c.Visible)
                 {
                 if (c.Shadow)
                 {

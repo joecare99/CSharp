@@ -81,6 +81,9 @@ namespace ConsoleLib
                                 case EventType.WINDOW_BUFFER_SIZE_EVENT:
                                     WindowBufferSizeEvent?.Invoke(null, record[0].WindowBufferSizeEvent.dwSize.AsPoint);
                                     break;
+                                case EventType.FOCUS_EVENT:
+                                    Thread.Sleep(0);
+                                    break;
                                 default:
                                     Thread.Sleep(0);
                                     break;
@@ -490,7 +493,18 @@ namespace ConsoleLib
 
             public bool MouseButtonMiddle => dwButtonState == ButtonState.FROM_LEFT_2ND_BUTTON_PRESSED;
 
-            public int MouseWheel => throw new NotImplementedException();
+            public int MouseWheel
+            {
+                get
+                {
+                    if (dwEventFlags !=  EventFlags.MOUSE_MOVED)
+                    return  (Int16)((uint)dwButtonState >> 16);
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
 
             public bool MouseMoved => dwEventFlags == EventFlags.MOUSE_MOVED ;
 

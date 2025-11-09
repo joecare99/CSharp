@@ -25,10 +25,10 @@ public class BaseViewModelCTTests : BaseViewModelCT
     }
 
     private void OnCanExChanged(object? sender, EventArgs e)
-        => DebugResult += $"OnCanExChanged: o:{sender.GetType().Name}{Environment.NewLine}";
+        => DebugResult += $"OnCanExChanged: o:{sender?.GetType().Name}{Environment.NewLine}";
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        => DebugResult += $"OnPropChanged: o:{sender.GetType().Name}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName??"")?.GetValue(sender)}{Environment.NewLine}";
+        => DebugResult += $"OnPropChanged: o:{sender?.GetType().Name}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName??"")?.GetValue(sender)}{Environment.NewLine}";
 
     public int Property1 { get => property1; set => SetProperty(ref property1 , value); }
     public int Property2 { get => property2; set => SetProperty(ref property2, value); }
@@ -41,7 +41,7 @@ public class BaseViewModelCTTests : BaseViewModelCT
 
     public IRelayCommand? doSomething { get; set; }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0 - 1 =>  2",1,2,new string[] {
         @"OnPropChanged: o:BaseViewModelCTTests, p:Property3:7
 OnCanExChanged: o:RelayCommand`1
@@ -135,10 +135,10 @@ OnPropChanged: o:BaseViewModelCTTests, p:Property2:4
     [TestMethod]
     public void RemovePropertyDependencyTest()
     {
-        Assert.ThrowsException<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
+        Assert.ThrowsExactly<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1,false)]
     [DataRow(2, false)]
     [DataRow(0, false)]
@@ -147,7 +147,7 @@ OnPropChanged: o:BaseViewModelCTTests, p:Property2:4
         Assert.AreEqual (xExp,FuncProxy(dVal, Prop2IsGreater));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1, true)]
     [DataRow(2, true)]
     [DataRow(0.5, false)]

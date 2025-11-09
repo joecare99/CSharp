@@ -1,0 +1,28 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<RootNamespace>AA16_UserControl2</RootNamespace>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<None Remove="*.bak" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Desktop" />
+		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia.Fonts.Inter" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<!-- Optional during development -->
+		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+	</ItemGroup>
+</Project>

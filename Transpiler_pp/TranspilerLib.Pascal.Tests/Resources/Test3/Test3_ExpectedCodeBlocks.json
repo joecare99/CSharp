@@ -1,0 +1,135 @@
+{
+  "name": "PascalRoot",
+  "type": "mainBlock",
+  "code": "Program",
+  "subBlocks": [
+    {
+      "name": "Declaration",
+      "type": "declaration",
+      "code": "var",
+      "subBlocks": [
+        {
+          "name": "Operation",
+          "type": "operation",
+          "code": ":",
+          "subBlocks": [
+            {
+              "name": "Operation",
+              "type": "operation",
+              "code": ",",
+              "subBlocks": [
+                {
+                  "name": "Variable",
+                  "type": "variable",
+                  "code": "a",
+                  "subBlocks": []
+                },
+                {
+                  "name": "Variable",
+                  "type": "variable",
+                  "code": "b",
+                  "subBlocks": []
+                },
+                {
+                  "name": "Variable",
+                  "type": "variable",
+                  "code": "c",
+                  "subBlocks": []
+                }
+              ]
+            },
+            {
+              "name": "Type",
+              "type": "variable",
+              "code": "Integer",
+              "subBlocks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Body",
+      "type": "block",
+      "code": "begin",
+      "subBlocks": [
+        {
+          "name": "Assignment",
+          "type": "assignment",
+          "code": ":=",
+          "subBlocks": [
+            {
+              "name": "Variable",
+              "type": "variable",
+              "code": "a",
+              "subBlocks": []
+            },
+            {
+              "name": "Number",
+              "type": "number",
+              "code": "1",
+              "subBlocks": []
+            }
+          ]
+        },
+        {
+          "name": "Assignment",
+          "type": "assignment",
+          "code": ":=",
+          "subBlocks": [
+            {
+              "name": "Variable",
+              "type": "variable",
+              "code": "b",
+              "subBlocks": []
+            },
+            {
+              "name": "Number",
+              "type": "number",
+              "code": "2",
+              "subBlocks": []
+            }
+          ]
+        },
+        {
+          "name": "Assignment",
+          "type": "assignment",
+          "code": ":=",
+          "subBlocks": [
+            {
+              "name": "Variable",
+              "type": "variable",
+              "code": "c",
+              "subBlocks": []
+            },
+            {
+              "name": "Operation",
+              "type": "operation",
+              "code": "+",
+              "subBlocks": [
+                {
+                  "name": "Variable",
+                  "type": "variable",
+                  "code": "a",
+                  "subBlocks": []
+                },
+                {
+                  "name": "Variable",
+                  "type": "variable",
+                  "code": "b",
+                  "subBlocks": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Operation",
+      "type": "operation",
+      "code": ".",
+      "subBlocks": []
+    }
+  ]
+}

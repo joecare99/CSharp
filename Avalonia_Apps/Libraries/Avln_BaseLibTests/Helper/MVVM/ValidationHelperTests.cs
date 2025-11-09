@@ -38,17 +38,17 @@ public class ValidationHelperTests
     {
         Assert.IsNotNull(_helper);
         Assert.IsInstanceOfType(_helper, typeof(ValidationHelper));
-        Assert.IsInstanceOfType(_helper, typeof(INotifyDataErrorInfo));
-        Assert.AreEqual(false, _helper.HasErrors);
-        Assert.AreEqual("", DebugLog);
+      Assert.IsInstanceOfType(_helper, typeof(INotifyDataErrorInfo));
+      Assert.IsFalse(_helper.HasErrors);
+  Assert.AreEqual("", DebugLog);
     }
 
     [TestMethod()]
     public void SetupTest2()
     {
         CreateTestData(_helper);
-        Assert.AreEqual(true, _helper.HasErrors);
-        Assert.AreEqual("", DebugLog);
+        Assert.IsTrue(_helper.HasErrors);
+    Assert.AreEqual("", DebugLog);
     }
 
     private void CreateTestData(ValidationHelper helper)
@@ -74,22 +74,22 @@ ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
         AssertAreEqual(new List<string>() { "Not a valid property" }, (_helper.GetErrors("SomeProp") as List<ValidationResult>)?.ConvertAll(o=>o.ErrorMessage??"")!);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new string []{}, new[] { "" },DisplayName ="Empty")]
     [DataRow(new[] { "SomeProp", "Not a valid property" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
     "SomeProp","Not a valid property" }, DisplayName = "1 SomeProp")]
-    [DataRow(new[] { "SomeProp", "Not a valid property","SomeProp2", "Not a valid property (2)" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)\r\n",
+  [DataRow(new[] { "SomeProp", "Not a valid property","SomeProp2", "Not a valid property (2)" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)\r\n",
     "SomeProp","Not a valid property","SomeProp2", "Not a valid property (2)" }, DisplayName = "2 SomeProp,SomeProp2")]
     [DataRow(new[] { "SomeProp", "Not a valid property", "SomeProp", "Something else" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
     "SomeProp","Not a valid property","SomeProp2", null! }, DisplayName = "3 SomeProp,SomeProp")]
     public void AddErrorTest(string[] Props, string[] asExp)
     {
         for (int i=0;i< Props.Length ;i+=2)
-            Assert.AreEqual(null, _helper[Props[i]]);
-        for (int i = 0; i < Props.Length; i += 2)
-            _helper.AddError(Props[i], Props[i+1]);
+    Assert.IsNull(_helper[Props[i]]);
+  for (int i = 0; i < Props.Length; i += 2)
+  _helper.AddError(Props[i], Props[i+1]);
         for (int i = 1; i < asExp.Length; i += 2)
-            Assert.AreEqual(asExp[i+1], _helper[asExp[i]], asExp[i]);
+    Assert.AreEqual(asExp[i+1], _helper[asExp[i]], asExp[i]);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
@@ -105,17 +105,17 @@ ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
     public void ClearErrorsTest()
     {
         CreateTestData(_helper);
-        _helper.ClearErrors("SomeProp");
-        Assert.AreEqual(true, _helper.HasErrors);
+     _helper.ClearErrors("SomeProp");
+ Assert.IsTrue(_helper.HasErrors);
         _helper.ClearErrors("SomeProp1");
-        Assert.AreEqual(true, _helper.HasErrors);
+        Assert.IsTrue(_helper.HasErrors);
+      _helper.ClearErrors("SomeProp2");
+        Assert.IsTrue(_helper.HasErrors);
         _helper.ClearErrors("SomeProp2");
-        Assert.AreEqual(true, _helper.HasErrors);
-        _helper.ClearErrors("SomeProp2");
-        Assert.AreEqual(true, _helper.HasErrors);
-        _helper.ClearErrors("SomeProp3");
-        Assert.AreEqual(false, _helper.HasErrors);
-        Assert.AreEqual(@"ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)
+        Assert.IsTrue(_helper.HasErrors);
+     _helper.ClearErrors("SomeProp3");
+        Assert.IsFalse(_helper.HasErrors);
+  Assert.AreEqual(@"ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)
 ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp1)
 ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
 ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)
@@ -125,11 +125,10 @@ ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
 
     [TestMethod()]
     public void ClearErrors2Test()
-    {
+  {
         CreateTestData(_helper);
         _helper.ErrorsChanged -= OnErrorsChanged;
-        _helper.ClearErrors("SomeProp");
-        Assert.AreEqual(true, _helper.HasErrors);
+    _helper.ClearErrors("SomeProp");
+ Assert.IsTrue(_helper.HasErrors);
         Assert.AreEqual(@"", DebugLog);
-    }
-}
+    }}

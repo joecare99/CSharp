@@ -1,0 +1,11 @@
+<UserControl x:Class="AA16_UserControl1.Views.DoubleButtonUC"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:AA16_UserControl1.Views">
+  <Canvas DataContext="{Binding $parent[local:DoubleButtonUC]}">
+    <Button Canvas.Left="0" Canvas.Top="0" Command="{Binding Command1}" CommandParameter="{Binding CommandParameter1}" IsVisible="{Binding VisData1}" ToolTip.Tip="{Binding Tooltip1}">
+    </Button>
+    <Button Canvas.Left="75" Canvas.Top="0" Command="{Binding Command2}" CommandParameter="{Binding CommandParameter2}" IsVisible="{Binding VisData2}" ToolTip.Tip="{Binding Tooltip2}">
+    </Button>
+  </Canvas>
+</UserControl>

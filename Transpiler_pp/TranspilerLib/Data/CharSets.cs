@@ -3,38 +3,41 @@ using System.Linq;
 
 namespace TranspilerLib.Data
 {
+    /// <summary>
+    /// Provides reusable character sets used by tokenizers for quick membership checks.
+    /// </summary>
     public static class CharSets
     {
         /// <summary>
-        /// The set of operators    
+        /// The set of operator characters.
         /// </summary>
         public static readonly char[] operatorSet = [';', ',', '.', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '=', '<', '>', '?', ':', '"', '\'', '\\', '#'];
         /// <summary>
-        /// The set of brackets
+        /// The set of bracket characters: (), {}, [].
         /// </summary>
         public static readonly char[] bracketsSet = ['(', ')', '{', '}', '[', ']'];
         /// <summary>
-        /// The set of whitespaces
+        /// The set of whitespace characters considered by tokenizers.
         /// </summary>
         public static readonly char[] whitespace = [' ', '\t', '\r', '\n', '\u0000'];
         /// <summary>
-        /// The set of numbers
+        /// The set of decimal digit characters.
         /// </summary>
         public static readonly char[] numbers = '0'.To('9');
         /// <summary>
-        /// The set of extended numbers
+        /// Extended number characters including exponent and sign.
         /// </summary>
         public static readonly char[] numbersExt = numbers.Concat(['e', '.', '-']).ToArray();
         /// <summary>
-        /// The hexadecimal numbers/
+        /// Hexadecimal digits (0-9, A-F, a-f).
         /// </summary>
         public static readonly char[] hexNumbers = numbers.Concat('A'.To('F')).Concat('a'.To('f')).ToArray();
         /// <summary>
-        /// The set of letters
+        /// ASCII letters (A-Z, a-z).
         /// </summary>
         public static readonly char[] letters = 'A'.To('Z').Concat('a'.To('z')).ToArray();
         /// <summary>
-        /// The set of letters and numbers
+        /// Alphanumeric set combining letters and digits.
         /// </summary>
         public static readonly char[] lettersAndNumbers = letters.Concat(numbers).ToArray();
     }

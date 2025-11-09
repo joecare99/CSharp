@@ -157,7 +157,7 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
             _fact = _fact ?? ((item is IGenFact f) ? f : null);
             if (item is string s)
             {
-                if (s.StartsWith("http")) _www = s;
+                if (s.StartsWith("http")) _www = new(s);
                 else if (s.Length < 100 && !s.Contains('\n')) _description = s;
                 else if (_data == null) _data = s;
             }
@@ -167,7 +167,6 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
             throw new ArgumentException("Not enough data to create an entity");
 
         var knownFact = Sources.FirstOrDefault(e => e?.UId == _uid);
-        if (knownFact != null)
             return knownFact;
 
     }
@@ -177,7 +176,7 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
         throw new NotImplementedException();
     }
 
-    private IGenEntity _GetTransaction(IList<object?> o)
+    private IGenTransaction _GetTransaction(IList<object?> o)
     {
         throw new NotImplementedException();
     }

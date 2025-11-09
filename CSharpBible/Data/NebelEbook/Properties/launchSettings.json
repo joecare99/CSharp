@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "NebelEbook": {
+      "commandName": "Project"
+    },
+    "Profil \"1\"": {
+      "commandName": "Project",
+      "commandLineArgs": "html"
+    },
+    "Profil \"2\"": {
+      "commandName": "Project",
+      "commandLineArgs": "pdf"
+    },
+    "Profil \"3\"": {
+      "commandName": "Project",
+      "commandLineArgs": "xaml"
+    }
+  }
+}

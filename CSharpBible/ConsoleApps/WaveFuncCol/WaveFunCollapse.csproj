@@ -24,7 +24,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
   </ItemGroup>
 
 </Project>

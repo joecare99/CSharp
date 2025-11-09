@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+ <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+ <resheader name="version"><value>2.0</value></resheader>
+ <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+ <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+ <data name="AppTitle" xml:space="preserve"><value>Datenanalyse</value></data>
+ <data name="BtnBrowse" xml:space="preserve"><value>Durchsuchen</value></data>
+ <data name="BtnPreview" xml:space="preserve"><value>Vorschau</value></data>
+ <data name="BtnAnalyze" xml:space="preserve"><value>Auswerten</value></data>
+ <data name="BtnExport" xml:space="preserve"><value>Exportieren</value></data>
+ <data name="GridCategoryHeader" xml:space="preserve"><value>Kategorie</value></data>
+ <data name="GridValueHeader" xml:space="preserve"><value>Wert</value></data>
+ <data name="StatusReady" xml:space="preserve"><value>Bereit</value></data>
+ <data name="StatusLoadingPreview" xml:space="preserve"><value>Lade Vorschau...</value></data>
+ <data name="StatusPreviewFmt" xml:space="preserve"><value>Vorschau: {0} Zeilen</value></data>
+ <data name="StatusPreviewErrorFmt" xml:space="preserve"><value>Fehler (Vorschau): {0}</value></data>
+ <data name="StatusAnalyzing" xml:space="preserve"><value>Analysiere...</value></data>
+ <data name="StatusDoneFmt" xml:space="preserve"><value>Fertig: {0}</value></data>
+ <data name="StatusErrorFmt" xml:space="preserve"><value>Fehler: {0}</value></data>
+ <data name="DialogFilter" xml:space="preserve"><value>Syslog (*.txt)|*.txt|Alle Dateien (*.*)|*.*</value></data>
+</root>

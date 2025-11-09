@@ -1,0 +1,17 @@
+<UserControl x:Class="AA16_UserControl1.Views.UserControlView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:local="clr-namespace:AA16_UserControl1.Views"
+             xmlns:vm="clr-namespace:AA16_UserControl1.ViewModels"
+             x:DataType="vm:UserControlViewModel"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid RowDefinitions="45*,47*">
+    <local:LabeldMaxLengthTextbox Caption="Bitte Motto Eingeben" Text="{Binding Text}" Command="{Binding Do1Command}" HorizontalAlignment="Left" Margin="40,30,0,0" VerticalAlignment="Top" Width="512"/>
+    <local:LabeldMaxLengthTextbox Caption="Bitte Daten Eingeben" Text="{Binding Daten}" Command="{Binding Do2Command}" HorizontalAlignment="Left" Margin="40,95,0,0" VerticalAlignment="Top" Width="512" Grid.Row="0"/>
+    <StackPanel Grid.Row="1">
+      <TextBlock Text="Daten:"/>
+      <TextBlock Text="{Binding Daten}"/>
+      <TextBlock Text="Motto:"/>
+      <TextBlock Text="{Binding Text}"/>
+    </StackPanel>
+  </Grid>
+</UserControl>

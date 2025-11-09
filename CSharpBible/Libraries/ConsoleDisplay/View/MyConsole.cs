@@ -24,7 +24,7 @@ namespace ConsoleDisplay.View
     /// Implements the <see cref="ConsoleDisplay.View.MyConsoleBase" />
     /// </summary>
     /// <seealso cref="ConsoleDisplay.View.MyConsoleBase" />
-    public class MyConsole : MyConsoleBase, IConsole
+    public class MyConsole : IConsole
     {
         /// <summary>
         /// Gets or sets the color of the foreground.

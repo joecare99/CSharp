@@ -62,7 +62,7 @@ namespace GenFree.Constants.Tests
         [DataRow("", 0)]
         public void MonthShortToMonthTest2(string sAct, int iExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => sAct.MonthShortToMonth());
+            Assert.ThrowsExactly<ArgumentException>(() => sAct.MonthShortToMonth());
         }
 
         [TestMethod()]
@@ -91,7 +91,7 @@ namespace GenFree.Constants.Tests
         [DataRow(13, "")]
         public void MonthToMonthShortTest2(int iAct, string sExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => iAct.MonthToMonthShort());
+            Assert.ThrowsExactly<ArgumentException>(() => iAct.MonthToMonthShort());
         }
 
 

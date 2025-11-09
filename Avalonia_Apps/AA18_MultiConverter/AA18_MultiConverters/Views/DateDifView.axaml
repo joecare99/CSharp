@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:vm="clr-namespace:AA18_MultiConverter.ViewModels"
+ xmlns:model="clr-namespace:AA18_MultiConverter.Model"
+ xmlns:conv="clr-namespace:AA18_MultiConverter.ValueConverter"
+ x:Class="AA18_MultiConverter.Views.DateDifView"
+ x:DataType="vm:DateDifViewModel">
+	<UserControl.Resources>
+		<conv:TimeSpanConverter x:Key="TimeSpanConverter" />
+	</UserControl.Resources>
+
+	<StackPanel Margin="12" Spacing="8">
+		<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+			<TextBlock Text="Start:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+			<DatePicker SelectedDate="{Binding StartDate}" Grid.Row="0" Grid.Column="1"/>
+
+			<TextBlock Text="End:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+			<DatePicker SelectedDate="{Binding EndDate}" Grid.Row="1" Grid.Column="1"/>
+
+			<TextBlock Text="Format:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+			<ComboBox SelectedItem="{Binding Format}" ItemsSource="{Binding DateFormats}" Grid.Row="2" Grid.Column="1"/>
+
+			<TextBlock Text="Diff:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+			<TextBlock Grid.Row="3" Grid.Column="1">
+				<TextBlock.Text>
+					<MultiBinding Converter="{StaticResource TimeSpanConverter}" ConverterParameter="F2">
+						<Binding Path="DateDif" />
+						<Binding Path="Format" />
+					</MultiBinding>
+				</TextBlock.Text>
+			</TextBlock>
+		</Grid>
+	</StackPanel>
+</UserControl>

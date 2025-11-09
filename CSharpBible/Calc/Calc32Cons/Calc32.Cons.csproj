@@ -24,8 +24,8 @@
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
 		<ProjectReference Include="..\..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
+		<ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
 		<ProjectReference Include="..\Calc32\Calc32.Model.csproj" />
 	</ItemGroup>
   <ItemGroup>

@@ -1,0 +1,345 @@
+{
+  "Title": "Kalter Grund – Mord an der Mühlenbrücke",
+  "Variables": {
+    "protagonist": "Lea Bertram",
+    "detektiv": "Kommissar Keller",
+    "stadt": "Bretten",
+    "wetter": "kalter Niesel",
+    "uhrzeit": "05:16",
+    "ort": "Mühlenbrücke",
+    "geruch1": "feuchtes Holz",
+    "geruch2": "Maschinenöl",
+    "geraesch": "fernes Rumpeln"
+  },
+  "Nodes": [
+    {
+      "Id": "kap0",
+      "Title": "Prolog – Fund an der {{ort}}",
+      "Paragraphs": [
+        "Nebelschwaden kleben am Geländer der {{ort}} von {{stadt}}; im {{wetter}} glimmt eine Absperrleuchte.",
+        "Auf den Bohlen ein Mensch, reglos, die Kleidung vom Sprühregen dunkel.",
+        "Es riecht nach {{geruch1}} und Kälte; irgendwo schlägt Wasser an Holz, Takt gegen Takt.",
+        "{{protagonist}} kniet neben dem Körper, tastet nach Puls – zu spät.",
+        "In der Jackentasche ein Handy, feucht, der Bildschirm gesprungen."
+      ],
+      "Choices": [
+        { "Label": "Tatort sichern", "TargetId": "kap1_tatort" },
+        { "Label": "Zeugen in der Nähe befragen", "TargetId": "kap1_zeugen" }
+      ]
+    },
+    {
+      "Id": "kap1_tatort",
+      "Title": "Kapitel 1 – Spurensuche",
+      "Paragraphs": [
+        "Kreidespuren begrenzen den Fundort; der Niesel verwischt, was er kriegen kann.",
+        "Zwischen den Brettern steckt Faserrest – kein Wollfilz, eher technisches Gewebe.",
+        "Neben der Brücke ein Abrutsch im Ufergras, Fußspuren in zwei Größen.",
+        "Das Handy vibriert einmal, dann erlischt es; Feuchtigkeit im Gehäuse."
+      ],
+      "Choices": [
+        { "Label": "Spur zum Wasser verfolgen", "TargetId": "kap2_wasser" },
+        { "Label": "Handy sichern und auslesen", "TargetId": "kap2_handy" },
+        { "Label": "Schuhabdrücke dokumentieren", "TargetId": "kap2_spuren" }
+      ]
+    },
+    {
+      "Id": "kap1_zeugen",
+      "Title": "Kapitel 1 – Stimmen im Morgengrau",
+      "Paragraphs": [
+        "Ein Bäcker liefert, Mehlstaub am Ärmel; der Atem steht weiß in der Luft.",
+        "Im Wirtshaus gegenüber brennt eine einzelne Lampe; Stühle stehen kopfüber auf Tischen.",
+        "Von der Rathausseite blinzelt eine Kamera in Richtung {{ort}}.",
+        "Ein Mann behauptet, er habe kurz vor {{uhrzeit}} laute Worte gehört."
+      ],
+      "Choices": [
+        { "Label": "Bäcker befragen", "TargetId": "kap2_baecker" },
+        { "Label": "CCTV-Material anfordern", "TargetId": "kap2_cctv" },
+        { "Label": "Im Wirtshaus umhören", "TargetId": "kap2_wirt" }
+      ]
+    },
+    {
+      "Id": "kap2_wasser",
+      "Title": "Kapitel 2 – Am Ufer",
+      "Paragraphs": [
+        "Feuchte Erde, Gräser mit Wassertropfen; die Spur knickt zweimal abrupt.",
+        "Zwischen Steinen glänzt ein kleiner Metallspan, riecht nach {{geruch2}}.",
+        "Ein Sohlabdruck zeigt eine Kerbe in der Ferse – wiederkehrendes Muster.",
+        "Das {{geraesch}} rollt von der Bundesstraße herüber, gedämpft durch den Nebel."
+      ],
+      "Choices": [
+        { "Label": "Dem Pfad am Ufer folgen", "TargetId": "kap3_ufer" },
+        { "Label": "Wasserstand und Strömung prüfen", "TargetId": "kap3_muster" }
+      ]
+    },
+    {
+      "Id": "kap2_handy",
+      "Title": "Kapitel 2 – Kalte Daten",
+      "Paragraphs": [
+        "Im Trocknungsbeutel erwacht das Display kurz; Notrufe: keine.",
+        "Letzte Anrufe an eine Nummer ohne Namen; die IMEI ist notiert.",
+        "Eine Chat-App zeigt entwürfeweise: \"Brücke\" und \"Beweis\".",
+        "Die SIM ist leicht verschoben – jemand hat sie kurz gezogen."
+      ],
+      "Choices": [
+        { "Label": "Letzte Anrufe rückverfolgen", "TargetId": "kap3_daten" },
+        { "Label": "SIM wechseln und Nummer testweise anrufen", "TargetId": "kap3_streit" }
+      ]
+    },
+    {
+      "Id": "kap2_spuren",
+      "Title": "Kapitel 2 – Muster im Schlamm",
+      "Paragraphs": [
+        "Der größere Abdruck trägt ein industrielles Profil, kleine Steinchen in den Rillen.",
+        "Die kleinere Spur knickt nach innen – unsicherer Gang, vielleicht verletzt.",
+        "Eine Faser hängt an einem Schraubenkopf im Brückengeländer, grau-blau.",
+        "Am Rand der Spur eine Rillung, wie sie Ladeflächen oft hinterlassen."
+      ],
+      "Choices": [
+        { "Label": "Sohlenprofil mit Datenbank abgleichen", "TargetId": "kap3_muster" },
+        { "Label": "Spurensicherung ans Ufer koordinieren", "TargetId": "kap3_ufer" }
+      ]
+    },
+    {
+      "Id": "kap2_baecker",
+      "Title": "Kapitel 2 – Backstube",
+      "Paragraphs": [
+        "Warme Luft schlägt entgegen; es riecht nach Teig und Blech.",
+        "\"Zwischen vier und fünf kam ein weißer Transporter\", sagt der Bäcker.",
+        "Der Fahrer trug Handschuhe ohne Fingerkuppen; am Ärmel dunkle Flecken.",
+        "Die Lieferliste zeigt eine Abweichung bei einer Route Richtung Gewerbegebiet."
+      ],
+      "Choices": [
+        { "Label": "Lieferzeiten abgleichen", "TargetId": "kap3_backstube" },
+        { "Label": "Fahrerlisten anfordern", "TargetId": "kap3_muster" }
+      ]
+    },
+    {
+      "Id": "kap2_cctv",
+      "Title": "Kapitel 2 – Bilder vom Rathaus",
+      "Paragraphs": [
+        "Die Kamera rauscht im {{wetter}}; Zeitstempel springen gelegentlich.",
+        "Kurz nach {{uhrzeit}} hält ein Van an der {{ort}}, Licht aus.",
+        "Eine Gestalt mit Kapuze, daneben eine zweite, kleiner, blickt sich um.",
+        "Der Van fährt an, Stop-and-Go, als ob er Last ausbalanciert."
+      ],
+      "Choices": [
+        { "Label": "Kennzeichen identifizieren", "TargetId": "kap3_kamera" },
+        { "Label": "Tankstellenkamera entlang der Route prüfen", "TargetId": "kap3_kamera2" }
+      ]
+    },
+    {
+      "Id": "kap2_wirt",
+      "Title": "Kapitel 2 – Wirtshausdunst",
+      "Paragraphs": [
+        "Der Wirt poliert Gläser, die Lampe summt leise.",
+        "\"Streit gab’s draußen – 'Beweisen? Hier? Spinnst du?'\"",
+        "Am Stammtisch: \"Riedel vom Amt war gestern spät unterwegs\", murmelt jemand.",
+        "An der Garderobe hängt eine Jacke mit Fettspur und einem Faden grau-blau."
+      ],
+      "Choices": [
+        { "Label": "Wirt intensiver befragen", "TargetId": "kap3_streit" },
+        { "Label": "Stammtischnotiz aufnehmen", "TargetId": "kap3_backstube" }
+      ]
+    },
+    {
+      "Id": "kap3_ufer",
+      "Title": "Kapitel 3 – Kalte Fährte",
+      "Paragraphs": [
+        "Die Spur führt zu einem alten Schuppen an der Böschung.",
+        "Zwischen Brettern glänzt ein Vorhängeschloss, frisch, kaum Flugrost.",
+        "Am Türrahmen Fußabrieb, dunkler als die Umgebung.",
+        "Hinter der Hütte verlaufen Reifenspuren parallel zur Straße."
+      ],
+      "Choices": [
+        { "Label": "Zum alten Schuppen vorrücken", "TargetId": "kap4_schuppen" },
+        { "Label": "Spur markieren und zum Muster zurück", "TargetId": "kap3_muster" }
+      ]
+    },
+    {
+      "Id": "kap3_daten",
+      "Title": "Kapitel 3 – Nummern und Namen",
+      "Paragraphs": [
+        "Die letzte Nummer führt zu einer Prepaid-Karte.",
+        "Zwei weitere Anrufe stammen aus einer Behörde mit Durchwahlblock.",
+        "Die IMEI taucht am Rande eines Funkzellenausdrucks nahe dem Gewerbegebiet auf.",
+        "In den Kontakten: ein Eintrag \"Riegel\" – Tippfehler oder Name?"
+      ],
+      "Choices": [
+        { "Label": "IMEI-Ortung über Amtswege", "TargetId": "kap4_amt" },
+        { "Label": "Van-Route mit Funkzellen abgleichen", "TargetId": "kap4_lager" }
+      ]
+    },
+    {
+      "Id": "kap3_muster",
+      "Title": "Kapitel 3 – Das Bild fügt sich",
+      "Paragraphs": [
+        "Sohlenprofil passt zu Arbeitsschuhen einer regionalen Spedition.",
+        "Die Faser ist Polyester-Mix, genutzt in robusten Arbeitsjacken.",
+        "Lieferlisten zeigen eine ungemeldete Fahrt kurz vor {{uhrzeit}}.",
+        "Die Karte von {{stadt}} zeichnet eine Linie vom Gewerbegebiet zur {{ort}}."
+      ],
+      "Choices": [
+        { "Label": "Verbindung zur Spedition prüfen", "TargetId": "kap4_lager" },
+        { "Label": "Akte im Amt zu Riedel prüfen", "TargetId": "kap4_amt" }
+      ]
+    },
+    {
+      "Id": "kap3_backstube",
+      "Title": "Kapitel 3 – Weiße Kante",
+      "Paragraphs": [
+        "Der Bäcker nennt eine Teiglieferung, die nie kam.",
+        "Ein weißer Transporter bog in eine Seitenstraße zur alten Lagerhalle.",
+        "Auf dem Asphalt eine Spur von Öl und Mehlstaub – seltene Kombination.",
+        "Jemand hat die Kennzeichenleuchte mit Klebeband abgeklebt."
+      ],
+      "Choices": [
+        { "Label": "Transporter zur Lagerhalle verfolgen", "TargetId": "kap4_lager" },
+        { "Label": "Quittungen im Amt gegenprüfen", "TargetId": "kap4_amt" }
+      ]
+    },
+    {
+      "Id": "kap3_kamera",
+      "Title": "Kapitel 3 – Kennzeichen und Kälte",
+      "Paragraphs": [
+        "Das Kennzeichen ist teilweise verdeckt, doch ein Aufkleber verrät die Flotte.",
+        "Der Fahrer trägt Fingerling-Handschuhe; am Ärmel ein graublauer Faden.",
+        "Im Hintergrund eine Person, die sich bewusst vom Blickfeld hält.",
+        "Ein Lichtreflex an einer Kante – vielleicht eine Werksplombe."
+      ],
+      "Choices": [
+        { "Label": "Flottenfirma ansteuern (Lager)", "TargetId": "kap4_lager" },
+        { "Label": "Schattenperson über Datenabgleich ermitteln (Amt)", "TargetId": "kap4_amt" }
+      ]
+    },
+    {
+      "Id": "kap3_kamera2",
+      "Title": "Kapitel 3 – Zapfsäulenblicke",
+      "Paragraphs": [
+        "Die Tankstellenkamera zeigt den Van ohne Hintertürgriff – Sondermodell.",
+        "Zeitstempel weichen exakt drei Minuten ab – bekannte Manipulation.",
+        "Im Spiegel der Kasse spiegelt sich der Beifahrer, Kinnnarbe, Kapuze.",
+        "Der Kassenbon vermerkt {{uhrzeit}} minus drei – Tippfehler oder Absicht."
+      ],
+      "Choices": [
+        { "Label": "Route rekonstruieren und Lager zuordnen", "TargetId": "kap4_lager" },
+        { "Label": "Zeiten mit Behördenlog prüfen", "TargetId": "kap4_amt" }
+      ]
+    },
+    {
+      "Id": "kap3_streit",
+      "Title": "Kapitel 3 – Worte wie Klingen",
+      "Paragraphs": [
+        "Der Testanruf wird sofort weggedrückt.",
+        "Kurze Nachricht: \"Zu spät. Lass es.\"",
+        "Der Name Riedel fällt erneut – Bauamt, Zuständigkeit Brücken.",
+        "Ein Informant bietet ein Treffen am alten Schuppen an."
+      ],
+      "Choices": [
+        { "Label": "Riedel konfrontieren (Amt)", "TargetId": "kap4_amt" },
+        { "Label": "Informanten am Schuppen treffen", "TargetId": "kap4_schuppen" }
+      ]
+    },
+    {
+      "Id": "kap4_lager",
+      "Title": "Kapitel 4 – Alte Lagerhalle",
+      "Paragraphs": [
+        "Wellblech knarzt, Lichtstreifen zittern über Beton.",
+        "Ein Van steht halb im Dunkeln; auf der Ladefläche Spanngurte, feucht.",
+        "An der Wand hängt eine Jacke mit Polyester-Mix – grau-blau.",
+        "Unter einer Palette klebt eine Werksplombe, frisch gebrochen."
+      ],
+      "Choices": [
+        { "Label": "Zugang erzwingen – sofort handeln", "TargetId": "kap5_ende_jagd" },
+        { "Label": "Observation und Zugriff planen", "TargetId": "kap5_ende_aufklaerung" }
+      ]
+    },
+    {
+      "Id": "kap4_amt",
+      "Title": "Kapitel 4 – Flure des Amts",
+      "Paragraphs": [
+        "Neonlicht, Aktenwagen, Kaffeeduft; Türen mit Namensschildern.",
+        "Riedels Termine sind voller Baustellenabnahmen nahe der {{ort}}.",
+        "E-Mails zeigen außergewöhnliche Ausnahmegenehmigungen für Nachtlieferungen.",
+        "Ein unterschriebener Zettel: \"Brücke – Beweis – neutralisieren\"."
+      ],
+      "Choices": [
+        { "Label": "Durchsuchungsbeschluss erwirken", "TargetId": "kap5_ende_korruption" },
+        { "Label": "Beweise anonym leaken", "TargetId": "kap5_ende_offen" }
+      ]
+    },
+    {
+      "Id": "kap4_schuppen",
+      "Title": "Kapitel 4 – Der Schuppen",
+      "Paragraphs": [
+        "Das Schloss gibt nach einem kurzen Druck nach – schlecht geschlossen.",
+        "Drinnen: Spanngurt, ein nasser Mantel, Sand mit Metallspänen.",
+        "Ein Umschlag: Fotos von der {{ort}}, Datumsmuster, Pfeile.",
+        "Eine frische Spur führt zur Rückseite und verliert sich im Gestrüpp."
+      ],
+      "Choices": [
+        { "Label": "Versteck öffnen und sichern", "TargetId": "kap5_ende_aufklaerung" },
+        { "Label": "Spur falsch interpretiert? Rückzug", "TargetId": "kap5_ende_irrtum" }
+      ]
+    },
+    {
+      "Id": "kap5_ende_aufklaerung",
+      "Title": "Epilog – Aufklärung",
+      "Paragraphs": [
+        "Zugriff im Lager gelingt; im Van liegen Sicherungen, Fotos, Chatprotokolle.",
+        "Die Verbindung zwischen Spedition und Amt wird belastbar – Riedel tritt zurück.",
+        "Die Faser, der Abdruck, die Zeiten: das Bild ist vollständig.",
+        "{{protagonist}} und {{detektiv}} stehen an der {{ort}}, der {{wetter}} lässt nach.",
+        "In {{stadt}} spricht man von gründlicher Arbeit – und von einer Brücke, die wieder trägt."
+      ],
+      "Choices": []
+    },
+    {
+      "Id": "kap5_ende_korruption",
+      "Title": "Epilog – Tiefer Schnitt",
+      "Paragraphs": [
+        "Die Durchsuchung legt ein Netzwerk offen: Freigaben gegen Gefälligkeiten.",
+        "Riedel wird verhaftet; mehrere Firmen geraten unter Druck.",
+        "Der Mord an der {{ort}} war Schweigen erzwingen – und ist nun laut.",
+        "Zeitungen titeln, Bürger fragen, Zeugen reden.",
+        "{{protagonist}} schließt die Akte, doch der nächste Termin liegt schon bereit."
+      ],
+      "Choices": []
+    },
+    {
+      "Id": "kap5_ende_jagd",
+      "Title": "Epilog – Jagd durchs Blech",
+      "Paragraphs": [
+        "Die Halle bebt, Schritte hallen; ein Motor heult auf.",
+        "Zwischen Paletten jagt ein Schatten; ein Sprung, ein Sturz.",
+        "Handschellen klicken, die Jacke reißt – graublauer Faden bleibt an der Kante.",
+        "Draußen fällt {{wetter}} leiser; Sirenen kommen näher.",
+        "{{protagonist}} lehnt am Van, atmet aus – Ende einer kalten Nacht."
+      ],
+      "Choices": []
+    },
+    {
+      "Id": "kap5_ende_offen",
+      "Title": "Epilog – Offene Stadt",
+      "Paragraphs": [
+        "Die Leaks schlagen Wellen; Transparenz wird verlangt.",
+        "Die Spur ist offen genug, dass sie nicht mehr verschwindet.",
+        "Manches bleibt im Halbdunkel, doch die Richtung stimmt.",
+        "{{protagonist}} geht die {{ort}} entlang; Wasser schlägt ruhig an Holz.",
+        "Ein Fall ist gelöst, ein System in Bewegung."
+      ],
+      "Choices": []
+    },
+    {
+      "Id": "kap5_ende_irrtum",
+      "Title": "Epilog – Falscher Pfad",
+      "Paragraphs": [
+        "Der Schuppen birgt nur Nebenspuren; die Hauptlinie lief anders.",
+        "Doch auch Irrtümer markieren Wege, die man nicht noch einmal geht.",
+        "Neue Hinweise führen zurück zur Halle, zur Uhrzeit, zum Van.",
+        "In {{stadt}} schweigt der {{wetter}}; morgen spricht man weiter.",
+        "{{protagonist}} klappt das Notizbuch zu – Fall noch offen."
+      ],
+      "Choices": []
+    }
+  ]
+}

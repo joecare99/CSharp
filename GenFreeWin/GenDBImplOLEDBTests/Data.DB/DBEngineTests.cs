@@ -57,7 +57,7 @@ public class DBEngineTests
         System.IO.File.Delete(source);
 
         // Act & Assert
-        Assert.ThrowsException<System.IO.FileNotFoundException>(() => _dbEngine.CompactDatabase(source, destination));
+        Assert.ThrowsExactly<System.IO.FileNotFoundException>(() => _dbEngine.CompactDatabase(source, destination));
     }
 
     [TestMethod]
@@ -89,7 +89,7 @@ public class DBEngineTests
         }
 
         // Act & Assert
-        Assert.ThrowsException<NotSupportedException>(() => _dbEngine.CompactDatabase(source, destination));
+        Assert.ThrowsExactly<NotSupportedException>(() => _dbEngine.CompactDatabase(source, destination));
     }
 
     [TestMethod]

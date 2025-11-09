@@ -53,6 +53,7 @@
 	  <Resource Include="Properties\Resource1.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+	    <CustomToolNamespace>Sokoban.Properties</CustomToolNamespace>
 	  </Resource>
 	</ItemGroup>
 

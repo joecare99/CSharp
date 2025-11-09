@@ -1,0 +1,158 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:AA06_Converters_4.ViewModels"
+		xmlns:vc="using:AA06_Converters_4.ValueConverter"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="AA06_Converters_4.View.VehicleView1"
+		x:DataType="vm:VehicleViewModel">
+	<UserControl.Resources>
+		<vc:DoubleValueConverter x:Key="vcMmDisplay" />
+		<vc:DoubleValueConverter x:Key="vcAngleDisplay" FixedFactor="57.295779513082320876798154814105" />
+		<vc:Bool2VisibilityConverter x:Key="vcBool2Visibility"/>
+	</UserControl.Resources>
+	<UserControl.Styles>
+		<Style Selector="TextBlock.Label">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Margin" Value="10,2,10,2"/>
+			<Setter Property="Width" Value="170"/>
+			<Setter Property="TextAlignment" Value="Left"/>
+		</Style>
+		<Style Selector="TextBox">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Margin" Value="10,2,10,2"/>
+			<Setter Property="Padding" Value="1"/>
+			<Setter Property="Width" Value="170"/>
+			<Setter Property="TextAlignment" Value="Right"/>
+		</Style>
+	</UserControl.Styles>
+	<Grid Margin="0,0,0,0">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10">
+			<StackPanel>
+				<TextBlock Classes="Label" FontWeight="Bold">Fahrzeug-Dimensionen</TextBlock>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Länge</TextBlock>
+						<TextBox Text="{Binding VehicleLength, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm'}"/>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Breite</TextBlock>
+						<TextBox Text="{Binding VehicleWidth, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm'}"/>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10">
+			<StackPanel>
+				<Grid>
+					<TextBlock Classes="Label" FontWeight="Bold" HorizontalAlignment="Left">DrehSchemel-Koordinaten (Stammdaten)</TextBlock>
+					<Button Content="Save" Command="{Binding SaveCommand}"
+					 IsVisible="{Binding ValueIsNotZero, Converter={StaticResource vcBool2Visibility}}"
+					 HorizontalAlignment="Right" VerticalAlignment="Center"
+								Height="28" Width="60" Margin="0,0,10,0"/>
+				</Grid>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">X</TextBlock>
+						<TextBox Text="{Binding SwivelKoorX, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm'}"/>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Y</TextBlock>
+						<TextBox Text="{Binding SwivelKoorY, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm'}"/>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Achsdistanz</TextBlock>
+						<TextBox Text="{Binding AxisOffset, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm'}"/>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10">
+			<StackPanel>
+				<TextBlock Classes="Label" FontWeight="Bold">Ist-Werte Drehschemel1</TextBlock>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Ausrichtung (Geber)</TextBlock>
+						<TextBox Text="{Binding Swivel1Angle, Converter={StaticResource vcAngleDisplay}, ConverterParameter='0.00°'}"/>
+						<Slider Margin="10,2,10,2" Height="18" Maximum="3" Minimum="-3" SmallChange="0.01" TickFrequency="0.1" Value="{Binding Swivel1Angle}" />
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Rad 1(4) (links)</TextBlock>
+						<TextBox Text="{Binding Wheel1Velocity, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s'}"/>
+						<Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel1Velocity}" />
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Rad 2(4) (rechts)</TextBlock>
+						<TextBox Text="{Binding Wheel2Velocity, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s'}"/>
+						<Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel2Velocity}" />
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Drehschemel1</TextBlock>
+						<TextBox Text="{Binding Swivel1Velocity, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s', Mode=OneWay}" IsReadOnly="True"/>
+						<TextBox Text="{Binding Swivel1Rot, Converter={StaticResource vcAngleDisplay}, ConverterParameter='0.00°/s', Mode=OneWay}" IsReadOnly="True"/>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="3" BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10">
+			<StackPanel>
+				<TextBlock Classes="Label" FontWeight="Bold">Ist-Werte Drehschemel2</TextBlock>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Ausrichtung (Geber)</TextBlock>
+						<TextBox Text="{Binding Swivel2Angle, Converter={StaticResource vcAngleDisplay}, ConverterParameter='0.00°'}"/>
+						<Slider Margin="10,2,10,2" Height="18" Maximum="3" Minimum="-3" SmallChange="0.01" TickFrequency="0.1" Value="{Binding Swivel2Angle}" />
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Rad 3(4) (links)</TextBlock>
+						<TextBox Text="{Binding Wheel3Velocity, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s'}"/>
+						<Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel3Velocity}" />
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Rad 4(4) (rechts)</TextBlock>
+						<TextBox Text="{Binding Wheel4Velocity, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s'}"/>
+						<Slider Margin="10,2,10,2" Height="18" Maximum="2000" Minimum="-2000" SmallChange="10" TickFrequency="100" Value="{Binding Wheel4Velocity}" />
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Drehschemel</TextBlock>
+						<TextBox Text="{Binding Swivel2Velocity, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s', Mode=OneWay}" IsReadOnly="True"/>
+						<TextBox Text="{Binding Swivel2Rot, Converter={StaticResource vcAngleDisplay}, ConverterParameter='0.00°/s', Mode=OneWay}" IsReadOnly="True"/>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="4" BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10">
+			<StackPanel>
+				<TextBlock Classes="Label" FontWeight="Bold">Ergebnisse:</TextBlock>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. X</TextBlock>
+						<TextBox Text="{Binding VehicleVelocityX, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s', Mode=OneWay}" IsReadOnly="True"/>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Geschw. Y</TextBlock>
+						<TextBox Text="{Binding VehicleVelocityY, Converter={StaticResource vcMmDisplay}, ConverterParameter='0.00mm/s', Mode=OneWay}" IsReadOnly="True"/>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Classes="Label">Rotation</TextBlock>
+						<TextBox Text="{Binding VehicleRotation, Converter={StaticResource vcAngleDisplay}, ConverterParameter='0.00°/s', Mode=OneWay}" IsReadOnly="True"/>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Grid>
+</UserControl>

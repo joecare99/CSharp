@@ -1,0 +1,40 @@
+<Window
+    x:Class="DetectiveGame.Wpf.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Detektivspiel"
+    Width="800"
+    Height="450"
+    KeyDown="Window_KeyDown">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <TextBox
+                x:Name="Player1"
+                Width="120"
+                Text="Alice" />
+            <TextBox
+                x:Name="Player2"
+                Width="120"
+                Text="Bob" />
+            <TextBox
+                x:Name="Player3"
+                Width="120"
+                Text="Carol" />
+            <Button Click="Start_Click" Content="Start" />
+            <Button Click="Help_Click" Content="?" />
+        </StackPanel>
+        <ListBox x:Name="Log" Grid.Row="1" />
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal" >
+            <Button Click="Suggestion_Click" Content="Suggestion" />
+            <Button Click="Accusation_Click" Content="Accusation" />
+            <Button Click="Next_Click" Content="Next" />
+        </StackPanel>
+    </Grid>
+</Window>

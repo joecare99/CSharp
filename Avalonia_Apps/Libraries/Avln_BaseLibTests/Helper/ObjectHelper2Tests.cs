@@ -21,18 +21,18 @@ public class ObjectHelper2Tests
         _testClass.SetIndex(8, 4);
         _testClass.SetIndex(2, 1);
          // Assert
-        Assert.AreEqual(2, _testClass.Count);
-        Assert.AreEqual(8, _testClass[5]);
-        Assert.AreEqual(2, _testClass[2]);
+        Assert.HasCount(2, _testClass);
+        Assert.AreEqual(8, _testClass[4]);
+        Assert.AreEqual(2, _testClass[1]);
     }
 
     [TestMethod()]
     public void GetIndexTest()
     {
         // Arrange
-        _testClass[5] = 8;
-        _testClass[1] = null!;
-        _testClass[2] = 2;
+        _testClass.SetIndex(8, 4);
+        _testClass.SetIndex(null, 0);
+        _testClass.SetIndex(2, 1);
 
         // Assert
         Assert.AreEqual(4,_testClass.GetIndex(8));

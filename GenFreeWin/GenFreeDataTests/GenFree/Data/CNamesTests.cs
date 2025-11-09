@@ -231,7 +231,7 @@ namespace GenFree.Data.Tests
         [DataRow((NameIndex)5, NameFields.PersNr)]
         public void GetIndex1FieldTest1(NameIndex eAct, NameFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
         [TestMethod()]

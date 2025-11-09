@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   xmlns:vm="using:Avln_AnimationTiming.ViewModels"
+     xmlns:views="using:Avln_AnimationTiming.Views"
+        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="800"
+        x:Class="Avln_AnimationTiming.MainWindow"
+   x:DataType="vm:MainWindowViewModel"
+        Title="Animation Timing - Avalonia"
+        Width="1024" Height="800">
+
+<Design.DataContext>
+      <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+ <TabControl>
+   <TabItem Header="Animation Timing">
+       <views:AnimationTimingView/>
+   </TabItem>
+        <TabItem Header="Xaml">
+   <DockPanel>
+  <TextBlock DockPanel.Dock="Top" Text="the Xaml-Code" />
+       <TextBox IsReadOnly="True" AcceptsReturn="True" 
+    TextWrapping="Wrap"
+           ScrollViewer.VerticalScrollBarVisibility="Visible">
+             Sample XAML Code will be here
+        </TextBox>
+            </DockPanel>
+        </TabItem>
+      <TabItem Header="ViewModel">
+         <DockPanel>
+  <TextBlock DockPanel.Dock="Top" Text="the ViewModel-Code" />
+       <TextBox IsReadOnly="True" AcceptsReturn="True" 
+     TextWrapping="Wrap"
+       ScrollViewer.VerticalScrollBarVisibility="Visible">
+    Sample ViewModel Code will be here
+     </TextBox>
+      </DockPanel>
+        </TabItem>
+    </TabControl>
+</Window>

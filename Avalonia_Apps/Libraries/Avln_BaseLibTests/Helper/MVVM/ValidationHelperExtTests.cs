@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BaseLib.Helper.MVVM.Tests;
 
@@ -17,43 +17,45 @@ public class ValidationHelperExtTests : INotifyDataErrorInfo
 
     public bool HasErrors => _xHasErrors;
 
+#pragma warning disable CS0067 // Das Ereignis wird nie verwendet
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+#pragma warning restore CS0067
 
     public IEnumerable GetErrors(string? propertyName)
     {
-        if (propertyName == _sPropName)                
+        if (propertyName == _sPropName)
             return _ErrList;
-    else
-            return new List<string>();    
+        else
+            return new List<string>();
     }
 
-    [DataTestMethod()]
-    [DataRow("Test",false,new string[] { },null)]
-    [DataRow("Test2",true, new[] { "Error1" }, "Error1")]
+    [TestMethod()]
+    [DataRow("Test", false, new string[] { }, null)]
+    [DataRow("Test2", true, new[] { "Error1" }, "Error1")]
     [DataRow("TTest2", true, new[] { "Error1", "Error2" }, "Error1, Error2")]
     [DataRow("TTest3", true, new[] { "Error1", "Error2", "Error3" }, "Error1, Error2, Error3")]
-    public void ValidationTextTest(string sProp,bool xHasErrors, string[] Errs,string? sExp)
+    public void ValidationTextTest(string sProp, bool xHasErrors, string[] Errs, string? sExp)
     {
         _xHasErrors = xHasErrors;
-        _sPropName = sProp.Remove(0,1);
+        _sPropName = sProp.Remove(0, 1);
         _ErrList.Clear();
         foreach (var s in Errs)
-            _ErrList.Add(new ValidationResult(s));  
-        Assert.AreEqual(sExp,this.ValidationText(sProp));
+            _ErrList.Add(new ValidationResult(s));
+        Assert.AreEqual(sExp, this.ValidationText(sProp));
         Assert.AreEqual(csExpEmpty, this.ValidationText("Test"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void ValidationTextTestNull()
     {
-        ((INotifyDataErrorInfo)null!).ValidationText("123");
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
+            ((INotifyDataErrorInfo)null!).ValidationText("123"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void ValidationTextTestNull2()
     {
-        this.ValidationText(null);
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
+            this.ValidationText(null));
     }
 }

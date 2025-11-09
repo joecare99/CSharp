@@ -11,11 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleLib.ConsoleLib.Interfaces;
+using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 
 namespace ConsoleLib
@@ -85,11 +86,25 @@ namespace ConsoleLib
                 if (!value)
                 {
                     Active = false;
+                    Parent?.Invalidate();
                 }
                 _visible = value;
                 if (value)
+                {
                     OnChange?.Invoke(this, EventArgs.Empty);
-                Parent?.Invalidate();
+                    Invalidate();
+                }
+            }
+        }
+
+        public virtual bool Enabled
+        {
+            get => _enabled;
+            set
+            {
+                if (value == _enabled) return;
+                _enabled = value;
+                OnEnabledChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate();
             }
         }
@@ -254,6 +269,8 @@ namespace ConsoleLib
         /// Occurs when [on key pressed].
         /// </summary>
         public event EventHandler<IKeyEvent>? OnKeyPressed;
+
+        public event EventHandler? OnEnabledChanged;
         #endregion
 
         #region private properties
@@ -274,6 +291,7 @@ namespace ConsoleLib
         /// </summary>
         private bool _visible = true;
 
+        private bool _enabled = true;
         /// <summary>
         /// The Parent
         /// </summary>
@@ -286,8 +304,9 @@ namespace ConsoleLib
         /// <summary>
         /// The Children
         /// </summary>
-        public List<IControl> _children = new();
+        protected List<IControl> _children = new();
 
+        protected virtual bool CanProcessInput => Enabled && Visible;
         #endregion
 
 
@@ -308,10 +327,36 @@ namespace ConsoleLib
             else
             {
                 _lastDim.Location = Point.Add(_lastDim.Location, (Size)Parent.Position);
+                if (Shadow)
+                {
+                     _lastDim.Inflate(1,1); 
+                }
                 Parent.ReDraw(_lastDim);
             }
             if (IsVisible)
             {
+                
+                var mp = Application.Default?.MousePos;
+                if (mp != null )
+                {
+                    Point lastMousePos = mp.Value + (Size)Position - (Size)_lastDim.Location;
+                    bool _mouseInside = Over(lastMousePos);
+                    bool nowInside = Over(mp.Value);
+                        if (nowInside)
+                        {
+                            if (!_mouseInside)
+                                MouseEnter(mp.Value); // setzt _mouseInside
+                            var se = new VirtMouseEvent(mp.Value);
+                            // lastMousePos = mp -> reiner "Refresh"-Move
+                            MouseMove(se, mp.Value);
+                        }
+                        else if (_mouseInside)
+                        {
+                            MouseLeave(lastMousePos);
+                        }
+                    
+                }
+
                 Invalidate();
             }
         }
@@ -355,16 +400,16 @@ namespace ConsoleLib
         /// <param name="dimension">The Dimension.</param>
         public virtual void ReDraw(Rectangle dimension)
         {
-            if (_visible && dimension.IntersectsWith(_dimension))
+            if (_visible && (Parent?.Visible ?? true) && dimension.IntersectsWith(_dimension))
             {
                 Draw();
                 _valid = true;
             }
         }
         /// <summary>
-        /// Overs the specified m.
+        /// Overs the specified lastMousePos.
         /// </summary>
-        /// <param name="M">The m.</param>
+        /// <param name="M">The lastMousePos.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public bool Over(Point M) => RealDim.Contains(M);
 
@@ -385,7 +430,12 @@ namespace ConsoleLib
         private void DoRedraw(object sender, EventArgs a)
         {
             if (!_valid)
-                ReDraw(((Control)sender).Dimension);
+            {
+                var dim = ((Control)sender).Dimension;
+                if (((Control)sender).Shadow)
+                    dim.Inflate(1, 1);
+                ReDraw(dim);
+            }
         }
 
         /// <summary>Sets the size.</summary>
@@ -400,7 +450,7 @@ namespace ConsoleLib
             OnResize?.Invoke(this, EventArgs.Empty);
         }
 
-        public void SetBinding(INotifyPropertyChanged model,string sProperty)
+        protected virtual void SetBinding(INotifyPropertyChanged model,string sProperty)
         {
             if (model == null)
                 return;
@@ -438,7 +488,7 @@ namespace ConsoleLib
         protected ConsoleColor _ActForeColor;
         protected ConsoleColor _ActBackColor;
         private ConsoleColor _backColor;
-        private ConsoleColor _foreColor;
+        private ConsoleColor _foreColor = ConsoleColor.Gray;
 
         /// <summary>
         /// Gets or sets the Parent.
@@ -523,7 +573,7 @@ namespace ConsoleLib
         /// <summary>
         /// Mouse enters the Control.
         /// </summary>
-        /// <param name="M">The m.</param>
+        /// <param name="M">The lastMousePos.</param>
         public virtual void MouseEnter(Point M)
         {
             OnMouseEnter?.Invoke(this, EventArgs.Empty);
@@ -536,7 +586,7 @@ namespace ConsoleLib
         /// <summary>
         /// Mouse leaves the control.
         /// </summary>
-        /// <param name="M">The m.</param>
+        /// <param name="M">The lastMousePos.</param>
         public virtual void MouseLeave(Point M)
         {
             OnMouseLeave?.Invoke(this, EventArgs.Empty);
@@ -554,6 +604,7 @@ namespace ConsoleLib
         /// <param name="lastMousePos">The last mouse Position.</param>
         public virtual void MouseMove(IMouseEvent M, Point lastMousePos)
         {
+            if (!CanProcessInput) return;
             OnMouseMove?.Invoke(this, M);
             foreach (var ctrl in Children)
             {
@@ -563,10 +614,16 @@ namespace ConsoleLib
                     ctrl.MouseLeave(lastMousePos);
                 // Invoke Mouse Leave
                 if (!xoHit && xnHit)
+                {
                     ctrl.MouseEnter(M.MousePos);
+                    ctrl.MouseMove(M, lastMousePos);
+                }
                 // Invoke Mouse Enter
                 if (xoHit && xnHit)
+                {
                     ctrl.MouseMove(M, lastMousePos);
+                    break;
+                }
             }
         }
         /// <summary>
@@ -575,6 +632,7 @@ namespace ConsoleLib
         /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         public virtual void MouseClick(IMouseEvent M)
         {
+            if (!CanProcessInput) return;
             bool xFlag = false;
             foreach (var ctrl in Children)
             {
@@ -585,7 +643,7 @@ namespace ConsoleLib
                 }
             }
             if (!xFlag && M.MouseButtonLeft)
-                OnClick?.Invoke(this, EventArgs.Empty);
+                Click();
 
         }
 
@@ -595,7 +653,9 @@ namespace ConsoleLib
         /// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
         public virtual void HandlePressKeyEvents(IKeyEvent e)
         {
-            if (e.KeyChar == Accelerator)
+            if (!CanProcessInput) return;
+
+            if (e.KeyChar == Accelerator && Accelerator != '\0')
             {
                 Click();
                 e.Handled = true;
@@ -610,6 +670,8 @@ namespace ConsoleLib
                         if (e.Handled)
                             break;
                     }
+                if (!e.Handled)
+                    OnKeyPressed?.Invoke(this, e);
             }
 
         }
@@ -625,5 +687,24 @@ namespace ConsoleLib
         }
         #endregion
 
+    }
+
+    internal class VirtMouseEvent(Point _mp) : IMouseEvent
+    {
+        public Point MousePos => _mp;
+
+        public bool MouseButtonLeft => false;
+
+        public bool MouseButtonRight => false;
+
+        public bool MouseButtonMiddle => false;
+
+        public int MouseWheel => 0;
+
+        public bool MouseMoved => true;
+
+        public bool ButtonEvent => false;
+
+        public bool Handled { get ; set ; }
     }
 }

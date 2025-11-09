@@ -1,0 +1,207 @@
+[
+  {
+    "name": "PascalRoot",
+    "type": "mainBlock",
+    "code": "Unit Unt_iopcc",
+    "subBlocks": [
+      { "name": "Comment", "type": "comment", "code": "{ $mode        delphi}", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{$H+}", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "Interface", "subBlocks": [] },
+      {
+        "name": "Operation",
+        "type": "operation",
+        "code": "Procedure Main",
+        "subBlocks": []
+      },
+      { "name": "Operation", "type": "operation", "code": "Implementation", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{ $defin _}", "subBlocks": [] },
+      {
+        "name": "Declaration",
+        "type": "declaration",
+        "code": "type",
+        "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] },
+              { "name": "Type", "type": "variable", "code": "integer", "subBlocks": [] }
+            ] }
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "I", "subBlocks": [] },
+                  { "name": "Operation", "type": "operation", "code": "..", "subBlocks": [
+                      { "name": "Number", "type": "number", "code": "0", "subBlocks": [] },
+                      { "name": "Number", "type": "number", "code": "3", "subBlocks": [] }
+                ] }
+            ] },
+        ]
+      },
+      {
+        "name": "Declaration",
+        "type": "declaration",
+        "code": "const",
+        "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "Z", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "shl", "subBlocks": [
+                  { "name": "Number", "type": "number", "code": "1", "subBlocks": [] },
+                  { "name": "Number", "type": "number", "code": "11", "subBlocks": [] }
+                ] }
+            ] }
+        ]
+      },
+      {
+        "name": "Declaration",
+        "type": "declaration",
+        "code": "const",
+        "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "+", "subBlocks": [
+                  { "name": "Operation", "type": "operation", "code": "shl", "subBlocks": [
+                      { "name": "Number", "type": "number", "code": "$13", "subBlocks": [] },
+                      { "name": "Number", "type": "number", "code": "1", "subBlocks": [] }
+                    ] },
+                  { "name": "Number", "type": "number", "code": "1", "subBlocks": [] }
+                ] }
+            ] }
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+              { "name": "Declaration", "type": "declaration", "code": "O", "subBlocks": []},
+              { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [
+                    { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] },
+                    { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] }
+                ] }
+            ] },
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+                { "name": "Declaration", "type": "declaration", "code": "D", "subBlocks": [] },
+                { "name": "Operation", "type": "operation", "code": "shl", "subBlocks": [
+                    { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] },
+                    { "name": "Operation", "type": "operation", "code": "+", "subBlocks": [
+                        { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] },
+                        { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] }
+                    ] }
+                ] }
+            ] },
+        ]
+      },
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+      { "name": "Declaration", "type": "declaration", "code": "C", "subBlocks": [
+              { "name": "String", "type": "string", "code": "'_|'", "subBlocks": [] }
+            ] }
+        ] },
+      { "name": "Declaration", "type": "declaration", "code": "B", "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+              { "name": "Number", "type": "number", "code": "$597B", "subBlocks": [] }
+            ] }
+        ] },
+      { "name": "Declaration", "type": "declaration", "code": "l0", "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [
+              { "name": "Operation", "type": "operation", "code": "array", "subBlocks": [
+                  { "name": "Variable", "type": "variable", "code": "I", "subBlocks": [] }
+                ] },
+              { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+                  { "name": "Number", "type": "number", "code": "0", "subBlocks": [] },
+                  { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] },
+                  { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] } ] },
+                  { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] } ] }
+                ] }
+            ] }
+        ] },
+      { "name": "Declaration", "type": "declaration", "code": "lQ", "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [
+              { "name": "Operation", "type": "operation", "code": "array", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "I", "subBlocks": [] } ] },
+              { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [
+                  { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] },
+                  { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] },
+                  { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] } ] },
+                  { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] } ] }
+                ] }
+            ] }
+        ] },
+      { "name": "Declaration", "type": "declaration", "code": "var", "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "E", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "array", "subBlocks": [ { "name": "Number", "type": "number", "code": "0", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "Z", "subBlocks": [] } ] },
+              { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] }
+            ] }
+        ] },
+      { "name": "Function", "type": "function", "code": "function", "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": "H", "subBlocks": [] }
+        ] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [
+          { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "H", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "Q", "subBlocks": [] } ] },
+          { "name": "Operation", "type": "operation", "code": "Inc(Q)", "subBlocks": [] }
+        ] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Procedure", "type": "function", "code": "procedure", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "Q", "subBlocks": [] } ] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [
+          { "name": "Operation", "type": "operation", "code": "if U < D then", "subBlocks": [] },
+          { "name": "Operation", "type": "operation", "code": "Write(...)", "subBlocks": [] },
+          { "name": "Operation", "type": "operation", "code": "else", "subBlocks": [] },
+          { "name": "Operation", "type": "operation", "code": "Write(Copy(...))", "subBlocks": [] }
+        ] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{!}", "subBlocks": [] },
+      { "name": "Procedure", "type": "function", "code": "Procedure Main", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{!!!}", "subBlocks": [] },
+      { "name": "Declaration", "type": "declaration", "code": "var", "subBlocks": [ { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "ll", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "array", "subBlocks": [ { "name": "Number", "type": "number", "code": "0", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "Z", "subBlocks": [] } ] }, { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] } ] } ] },
+      { "name": "LComment", "type": "lComment", "code": "// #            This        is     Just an Dum-       my Comment   to ~      fill  the Gaps ********", "subBlocks": [] },
+      { "name": "Declaration", "type": "declaration", "code": "Hel", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [ { "name": "Number", "type": "number", "code": "0", "subBlocks": [] } ] } ] },
+      { "name": "LComment", "type": "lComment", "code": "//LGPL 2017", "subBlocks": [] },
+      { "name": "Declaration", "type": "declaration", "code": "Wor", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "D", "subBlocks": [] } ] }, { "name": "Variable", "type": "variable", "code": "d", "subBlocks": [] } ] } ] },
+      { "name": "LComment", "type": "lComment", "code": "// by Joe", "subBlocks": [] },
+      { "name": "Declaration", "type": "declaration", "code": "P,A,S,CA", "subBlocks": [ { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] } ] } ] },
+      { "name": "LComment", "type": "lComment", "code": "//Care", "subBlocks": [] },
+      { "name": "Declaration", "type": "declaration", "code": "_fe", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "z", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "z", "subBlocks": [] } ] } ] } ] },
+      { "name": "Declaration", "type": "declaration", "code": "_C,oo", "subBlocks": [ { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "l", "subBlocks": [] } ] } ] },
+      { "name": "Declaration", "type": "declaration", "code": "l1", "subBlocks": [ { "name": "Operation", "type": "operation", "code": ":", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "array", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "I", "subBlocks": [] } ] }, { "name": "Variable", "type": "variable", "code": "L", "subBlocks": [] } ] } ] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{Randomize;}", "subBlocks": [] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "E[0]", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "d", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "CA", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "*", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "U", "subBlocks": [] } ] }, { "name": "Variable", "type": "variable", "code": "O", "subBlocks": [] } ] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "A", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "CA", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "E[CA]", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "+", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "Z", "subBlocks": [] }, { "name": "Number", "type": "number", "code": "2", "subBlocks": [] } ] } ] },
+      { "name": "Operation", "type": "operation", "code": "while (...) do", "subBlocks": [] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "oO", "subBlocks": [] }, { "name": "Number", "type": "number", "code": "0", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "S", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "CA", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "CA", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "A", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "_C", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "E[S]", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "Wor", "subBlocks": [] }, { "name": "Number", "type": "number", "code": "0", "subBlocks": [] } ] },
+      { "name": "Operation", "type": "operation", "code": "for P in (l0) do", "subBlocks": [] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Variable", "type": "variable", "code": "A", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "+", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "lQ[P and 3]", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "S", "subBlocks": [] } ] } ] },
+      { "name": "Operation", "type": "operation", "code": "if (...) then", "subBlocks": [] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "l1[H(Wor)]", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "P", "subBlocks": [] } ] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "if (...) then", "subBlocks": [] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "P", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "l1[Random(Wor)]", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "A", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "lQ[P] + S", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "E[S]", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "_C or O shl P", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "E[A]", "subBlocks": [] }, { "name": "Operation", "type": "operation", "code": "E[A] or Z or (O shl ((P+2) mod 4))", "subBlocks": [] } ] },
+      { "name": "Assignment", "type": "assignment", "code": ":=", "subBlocks": [ { "name": "Operation", "type": "operation", "code": "ll[H(_fe)]", "subBlocks": [] }, { "name": "Variable", "type": "variable", "code": "A", "subBlocks": [] } ] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "Q(d-2)", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "for S := O to U - O do", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "Q(D shr O)", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "Q(D + O)", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "for S := O to U do", "subBlocks": [] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "for A := O to U do", "subBlocks": [] },
+      { "name": "Body", "type": "block", "code": "begin", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "Q(E[H(Oo)] and 6)", "subBlocks": [] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{$IFDEF _}", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": "Readln", "subBlocks": [] },
+      { "name": "Comment", "type": "comment", "code": "{$ENDIF}", "subBlocks": [] },
+      { "name": "Block", "type": "block", "code": "End", "subBlocks": [] },
+      { "name": "Block", "type": "block", "code": "end", "subBlocks": [] },
+      { "name": "Operation", "type": "operation", "code": ".", "subBlocks": [] },
+      { "name": "LComment", "type": "lComment", "code": "//         (C)ode an                (O)pen             (O)bjectoriented         (L)anguage !!!!!", "subBlocks": [] }
+    ]
+  }
+]

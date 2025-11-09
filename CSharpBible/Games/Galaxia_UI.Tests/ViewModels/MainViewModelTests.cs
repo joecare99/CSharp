@@ -19,7 +19,7 @@ namespace Galaxia_UI.Tests.ViewModels
             space.Initialize();
             var firstSector = space.Sectors.Values.First();
             var homeStar = firstSector.Starsystems.First();
-            var corp = new Corporation("Test", "Desc", Color.Gold, homeStar, new System.Collections.Generic.List<IStarsystem> { homeStar }, space);
+            var corp = new Corporation("Test", "Desc", Color.Gold, homeStar, [homeStar ], space);
             return new MainViewModel(space, corp);
         }
 

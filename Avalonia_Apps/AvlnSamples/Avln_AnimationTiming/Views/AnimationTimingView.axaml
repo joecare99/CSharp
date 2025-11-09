@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vm="using:Avln_AnimationTiming.ViewModels"
+      xmlns:vc="using:Avln_AnimationTiming.ValueConverter"
+xmlns:examples="using:Avln_AnimationTiming.Views.Examples"
+      mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Avln_AnimationTiming.Views.AnimationTimingView"
+    x:DataType="vm:TemplateViewModel">
+ 
+    <UserControl.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </UserControl.Resources>
+
+    <Design.DataContext>
+        <vm:TemplateViewModel/>
+</Design.DataContext>
+
+    <DockPanel Background="White">
+  <TextBlock DockPanel.Dock="Top" 
+         Margin="20,10,20,10"
+       FontWeight="Bold"
+    FontSize="14"
+      TextWrapping="Wrap">
+     Avalonia Animation Examples - Demonstrating Transitions, KeyFrame Animations, and Easing Functions
+        </TextBlock>
+        
+<TabControl Name="sampleSelector" SelectedIndex="0" TabStripPlacement="Top">
+   
+  <!-- Repeat Behavior Example -->
+         <TabItem>
+   <TabItem.Header>
+   <StackPanel Orientation="Horizontal">
+     <Image Source="/Images/Repeat.png" Width="24" Height="24"/>
+     <TextBlock Margin="12,6,12,6" Text="Repeat / Iterations" VerticalAlignment="Center"/>
+ </StackPanel>
+        </TabItem.Header>
+ <examples:RepeatBehaviorExample />
+     </TabItem>
+        
+     <!-- Transitions Example -->
+<TabItem>
+          <TabItem.Header>
+       <StackPanel Orientation="Horizontal">
+   <Image Source="/Images/Speed.png" Width="24" Height="24"/>
+     <TextBlock Margin="12,6,12,6" Text="Transitions" VerticalAlignment="Center"/>
+      </StackPanel>
+   </TabItem.Header>
+      <examples:TransitionsExample />
+     </TabItem>
+  
+ <!-- Easing Functions -->
+          <TabItem>
+      <TabItem.Header>
+    <StackPanel Orientation="Horizontal">
+    <Image Source="/Images/AccDec.png" Width="24" Height="24"/>
+       <TextBlock Margin="12,6,12,6" Text="Easing Functions" VerticalAlignment="Center"/>
+   </StackPanel>
+    </TabItem.Header>
+   <examples:EasingFunctionsExample />
+       </TabItem>
+         
+      <!-- Delay Example -->
+      <TabItem>
+      <TabItem.Header>
+  <StackPanel Orientation="Horizontal">
+        <Image Source="/Images/BeginTime.png" Width="24" Height="24"/>
+        <TextBlock Margin="12,6,12,6" Text="Delay / BeginTime" VerticalAlignment="Center"/>
+  </StackPanel>
+      </TabItem.Header>
+        <examples:DelayExample />
+        </TabItem>
+
+     <!-- Coming Soon placeholders for other examples -->
+ <TabItem>
+<TabItem.Header>
+   <StackPanel Orientation="Horizontal">
+       <Image Source="/Images/AutoRev.png" Width="24" Height="24"/>
+ <TextBlock Margin="12,6,12,6" Text="More Examples" VerticalAlignment="Center"/>
+  </StackPanel>
+       </TabItem.Header>
+  <Border Padding="20">
+        <StackPanel Spacing="15">
+   <TextBlock FontWeight="Bold" FontSize="16">More Animation Examples Coming Soon!</TextBlock>
+        <TextBlock TextWrapping="Wrap">
+     Additional examples will demonstrate:
+    - FillMode (HoldEnd, Stop)
+- PlaybackDirection (Normal, Reverse, Alternate)
+            - Complex KeyFrame sequences
+         - Animating multiple properties simultaneously
+    - Storyboard-like coordinated animations
+     </TextBlock>
+      </StackPanel>
+    </Border>
+     </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>

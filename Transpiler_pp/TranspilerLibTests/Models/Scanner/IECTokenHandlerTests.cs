@@ -120,7 +120,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             Assert.AreEqual(iExpCnt, iCnt,nameof(iCnt));
             Assert.AreEqual(iExpState, data.State, nameof(data.State));
             Assert.AreEqual(iExpPos, data.Pos, nameof(data.Pos));
-            Assert.AreEqual(iExpCnt, lData.Count, nameof(lData.Count));
+            Assert.HasCount(iExpCnt, lData, nameof(lData.Count));
             if (lData.Count >0)
             {
                 Assert.AreEqual(CodeBlockType.Number, lData[0].type);

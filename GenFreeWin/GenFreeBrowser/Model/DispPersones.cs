@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFreeBrowser.Model;
 
-public record DispPersones(int ID,string sName,DateTime dBirth,DateTime dDesth)
+public record DispPersones(int Id = 0, string Vollname = "", DateTime? GeburtsDatum = null, DateTime? SterbeDatum = null)
 {
-
+    public int LebensAlter => (GeburtsDatum.HasValue ? (SterbeDatum ?? DateTime.Today).Year - GeburtsDatum.Value.Year : 0);
 }

@@ -3,6 +3,7 @@ using System;
 using TestConsole;
 using System.Windows.Forms;
 using System.Threading;
+using BaseLib.Interfaces;
 
 namespace ConsoleDisplay.View.Tests
 {
@@ -12,7 +13,7 @@ namespace ConsoleDisplay.View.Tests
     [TestClass()]
     public class DisplayTests
     {
-        MyConsoleBase? console = null;
+        IConsole? console = null;
 
         /// <summary>
         /// Initializes this instance.

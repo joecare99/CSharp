@@ -1,0 +1,201 @@
+<!-- InteractiveLinearGradientView.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  x:Class="Avln_Brushes.Views.InteractiveLinearGradientView"
+  x:DataType="vm:InteractiveLinearGradientViewModel">
+
+	<Design.DataContext>
+		<vm:InteractiveLinearGradientViewModel />
+	</Design.DataContext>
+
+	<ScrollViewer>
+		<StackPanel Spacing="10" MaxWidth="800" Margin="10" HorizontalAlignment="Left">
+
+			<!-- Header -->
+			<Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
+				<TextBlock TextWrapping="Wrap" Foreground="White">
+					<Bold>Interactive LinearGradientBrush Example</Bold><LineBreak />
+					This example enables you to preview the effects of setting LinearGradientBrush properties.
+				</TextBlock>
+			</Border>
+
+			<!-- Brush Settings -->
+			<Border Background="LightGray" Padding="10" CornerRadius="5">
+				<StackPanel Spacing="10">
+					<TextBlock Text="Brush Settings" FontWeight="Bold" FontSize="16" />
+
+					<Grid ColumnDefinitions="Auto,10,*,10,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+						<!-- StartPoint -->
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="StartPoint:" VerticalAlignment="Center" />
+						<TextBox Grid.Column="2" Grid.Row="0"
+								Text="{Binding StartPointText, Mode=TwoWay}"
+										 Watermark="0.0000;0.0000" />
+						<Button Grid.Column="4" Grid.Row="0" Content="Update"
+		 	          Command="{Binding UpdateStartPointFromTextCommand}" />
+
+						<!-- StartPoint Help -->
+						<TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="3"
+						Text="Format: X;Y (z.B. 0.5000;0.5000 für Mitte)"
+									 FontSize="11" Foreground="Gray" FontStyle="Italic" />
+
+						<!-- EndPoint -->
+						<TextBlock Grid.Column="0" Grid.Row="2" Text="EndPoint:" VerticalAlignment="Center" />
+						<TextBox Grid.Column="2" Grid.Row="2"
+								Text="{Binding EndPointText, Mode=TwoWay}"
+							Watermark="1.0000;1.0000" />
+						<Button Grid.Column="4" Grid.Row="2" Content="Update"
+					     Command="{Binding UpdateEndPointFromTextCommand}" />
+
+						<!-- EndPoint Help -->
+						<TextBlock Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="3"
+                Text="Format: X;Y (Semikolon als Trennzeichen)"
+                FontSize="11" Foreground="Gray" FontStyle="Italic" />
+
+						<!-- Opacity -->
+						<TextBlock Grid.Column="0" Grid.Row="4" Text="Opacity:" VerticalAlignment="Center" />
+						<Slider Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3"
+					    Minimum="0" Maximum="1"
+							Value="{Binding Opacity}"
+							 TickFrequency="0.1"
+		        	 IsSnapToTickEnabled="False" />
+
+						<!-- Opacity Value Display -->
+						<TextBlock Grid.Column="2" Grid.Row="5" Grid.ColumnSpan="3"
+				       Text="{Binding Opacity, StringFormat='Aktuell: {0:F2}'}"
+							 FontSize="11" Foreground="Gray" />
+					</Grid>
+				</StackPanel>
+			</Border>
+
+			<!-- Gradient Stops -->
+			<Border Background="LightGray" Padding="10" CornerRadius="5">
+				<StackPanel Spacing="10">
+					<TextBlock Text="Gradient Stops" FontWeight="Bold" FontSize="16" />
+
+					<!-- Stop 1 -->
+					<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,*" RowDefinitions="Auto,5,Auto">
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Stop 1 - Color:" VerticalAlignment="Center" FontWeight="Bold" />
+						<ComboBox Grid.Column="2" Grid.Row="0"
+							 SelectedIndex="0"
+							SelectionChanged="OnColor1Changed">
+							<ComboBoxItem Content="Blue" Tag="Blue" />
+							<ComboBoxItem Content="Red" Tag="Red" />
+							<ComboBoxItem Content="Yellow" Tag="Yellow" />
+							<ComboBoxItem Content="Purple" Tag="Purple" />
+							<ComboBoxItem Content="LimeGreen" Tag="LimeGreen" />
+							<ComboBoxItem Content="Orange" Tag="Orange" />
+						</ComboBox>
+
+						<TextBlock Grid.Column="4" Grid.Row="0" Text="Offset:" VerticalAlignment="Center" />
+						<StackPanel Grid.Column="6" Grid.Row="0" Orientation="Horizontal" Spacing="5">
+							<Slider Minimum="0" Maximum="1"
+								Value="{Binding GradientStop1Offset}"
+				 Width="150"
+							TickFrequency="0.01" />
+							<TextBlock Text="{Binding GradientStop1Offset, StringFormat={}{0:F4}}"
+					 VerticalAlignment="Center"
+									FontFamily="Courier New"
+									MinWidth="60" />
+						</StackPanel>
+					</Grid>
+
+					<!-- Stop 2 -->
+					<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,*">
+						<TextBlock Grid.Column="0" Text="Stop 2 - Color:" VerticalAlignment="Center" FontWeight="Bold" />
+						<ComboBox Grid.Column="2"
+     SelectedIndex="1"
+       SelectionChanged="OnColor2Changed">
+							<ComboBoxItem Content="Blue" Tag="Blue" />
+							<ComboBoxItem Content="Purple" Tag="Purple" />
+							<ComboBoxItem Content="Red" Tag="Red" />
+							<ComboBoxItem Content="Yellow" Tag="Yellow" />
+							<ComboBoxItem Content="LimeGreen" Tag="LimeGreen" />
+							<ComboBoxItem Content="Orange" Tag="Orange" />
+						</ComboBox>
+
+						<TextBlock Grid.Column="4" Text="Offset:" VerticalAlignment="Center" />
+						<StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="5">
+							<Slider Minimum="0" Maximum="1"
+												 Value="{Binding GradientStop2Offset}"
+						Width="150"
+					 TickFrequency="0.01" />
+							<TextBlock Text="{Binding GradientStop2Offset, StringFormat={}{0:F4}}"
+						 VerticalAlignment="Center"
+							FontFamily="Courier New"
+							 MinWidth="60" />
+						</StackPanel>
+					</Grid>
+
+					<!-- Stop 3 -->
+					<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,*">
+						<TextBlock Grid.Column="0" Text="Stop 3 - Color:" VerticalAlignment="Center" FontWeight="Bold" />
+						<ComboBox Grid.Column="2"
+					 SelectedIndex="0"
+							SelectionChanged="OnColor3Changed">
+							<ComboBoxItem Content="Red" Tag="Red" />
+							<ComboBoxItem Content="Blue" Tag="Blue" />
+							<ComboBoxItem Content="Yellow" Tag="Yellow" />
+							<ComboBoxItem Content="Purple" Tag="Purple" />
+							<ComboBoxItem Content="LimeGreen" Tag="LimeGreen" />
+							<ComboBoxItem Content="Orange" Tag="Orange" />
+						</ComboBox>
+
+						<TextBlock Grid.Column="4" Text="Offset:" VerticalAlignment="Center" />
+						<StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="5">
+							<Slider Minimum="0" Maximum="1"
+					 Value="{Binding GradientStop3Offset}"
+								 Width="150"
+								 TickFrequency="0.01" />
+							<TextBlock Text="{Binding GradientStop3Offset, StringFormat={}{0:F4}}"
+						VerticalAlignment="Center"
+										FontFamily="Courier New"
+									MinWidth="60" />
+						</StackPanel>
+					</Grid>
+
+				</StackPanel>
+			</Border>
+
+			<!-- Preview -->
+			<Border Background="LightGray" Padding="10" CornerRadius="5">
+				<StackPanel Spacing="10">
+					<TextBlock Text="Preview" FontWeight="Bold" FontSize="16" />
+
+					<Border Width="400" Height="200"
+       BorderBrush="Black" BorderThickness="2"
+    CornerRadius="5">
+						<Border.Background>
+							<LinearGradientBrush
+										 StartPoint="{Binding StartPoint}"
+								EndPoint="{Binding EndPoint}"
+											 Opacity="{Binding Opacity}"
+						SpreadMethod="{Binding SpreadMethod}">
+								<GradientStop Offset="{Binding GradientStop1Offset}" Color="{Binding GradientStop1Color}" />
+								<GradientStop Offset="{Binding GradientStop2Offset}" Color="{Binding GradientStop2Color}" />
+								<GradientStop Offset="{Binding GradientStop3Offset}" Color="{Binding GradientStop3Color}" />
+							</LinearGradientBrush>
+						</Border.Background>
+					</Border>
+				</StackPanel>
+			</Border>
+
+			<!-- Markup Output -->
+			<Expander Header="XAML Markup" IsExpanded="True">
+				<Border Background="LightGray"
+				 BorderBrush="Gray" BorderThickness="1"
+						 Padding="10"
+						 CornerRadius="5">
+					<ScrollViewer MaxHeight="200">
+						<SelectableTextBlock Text="{Binding MarkupOutput}"
+						FontFamily="Courier New"
+								TextWrapping="Wrap"
+						FontSize="12" />
+					</ScrollViewer>
+				</Border>
+			</Expander>
+
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>

@@ -25,6 +25,7 @@ namespace TestConsoleDemo.Views
             this._console = console;
             viewModel.console = console;
             CommandBindingAttribute.Commit(this, viewModel);
+            TextBindingAttribute.Commit(this, viewModel);
         }
 
         private void timer1_Tick(object sender, EventArgs e)

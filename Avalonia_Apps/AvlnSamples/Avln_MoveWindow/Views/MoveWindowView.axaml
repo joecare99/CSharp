@@ -1,0 +1,46 @@
+<UserControl 
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="using:Avln_MoveWindow.Views"
+      xmlns:p="using:Avln_MoveWindow.Properties"
+      xmlns:mvvm="using:Avln_MoveWindow.ViewModels"
+    x:Class="Avln_MoveWindow.Views.MoveWindowView"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static p:Resources.Title}">
+
+    <Design.DataContext>
+        <mvvm:MoveWindowViewModel/>
+ </Design.DataContext>
+
+    <UserControl.Resources>
+
+    <Design.DataContext>
+        <mvvm:MoveWindowViewModel/>
+ </Design.DataContext>
+
+    </UserControl.Resources>
+    <UserControl.DataContext>
+
+    <Design.DataContext>
+        <mvvm:MoveWindowViewModel/>
+ </Design.DataContext>
+
+        <mvvm:MoveWindowViewModel/>
+    </UserControl.DataContext>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="{x:Static p:Resources.txtXKoor}" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding LocationX}" VerticalAlignment="Center" MaxLength="4" Width="50" IsEnabled="{Binding EnableKoorInput}"/>
+            <TextBlock Text="{x:Static p:Resources.txtYKoor}" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding LocationY}" VerticalAlignment="Center" MaxLength="4" Width="50" IsEnabled="{Binding EnableKoorInput}"/>
+            <Button Content="{x:Static p:Resources.btnMove}" Command="{Binding MoveBtnCommand}" Margin="10,0,0,0"/>
+        </StackPanel>
+        <ListBox ItemsSource="{Binding FeedBackList}" DockPanel.Dock="Left">
+        </ListBox>
+    </DockPanel>
+
+</UserControl>
+

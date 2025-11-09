@@ -1,0 +1,38 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<RootNamespace>AA20_SysDialogs</RootNamespace>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="App.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Controls.ColorPicker" />
+		<PackageReference Include="Avalonia.Desktop" />
+		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia.Fonts.Inter" />
+		<PackageReference Include="FontPickerAvalonia" />
+		<PackageReference Include="MessageBox.Avalonia" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="System.Drawing.Common" />
+		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+	</ItemGroup>
+</Project>

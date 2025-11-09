@@ -8,8 +8,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-    <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\ConsoleLib\ConsoleLib.csproj" />
-    <ProjectReference Condition="!$(TargetFramework.StartsWith('net4'))" Include="..\ConsoleLib\ConsoleLib_net.csproj" />
+    <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
   </ItemGroup>
 
 </Project>

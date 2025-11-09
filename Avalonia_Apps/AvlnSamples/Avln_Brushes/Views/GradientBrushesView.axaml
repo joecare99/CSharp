@@ -1,0 +1,249 @@
+<!-- GradientBrushesView.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui" 
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+  xmlns:vm="clr-namespace:Avln_Brushes.ViewModels"
+  x:Class="Avln_Brushes.Views.GradientBrushesView"
+  x:DataType="vm:GradientBrushesViewModel">
+
+  <Design.DataContext>
+    <vm:GradientBrushesViewModel />
+  </Design.DataContext>
+
+  <ScrollViewer>
+    <StackPanel Spacing="10" Margin="10">
+
+      <!-- Header -->
+      <Border Background="{DynamicResource BlueHorizontalGradientBrush}" Padding="10" CornerRadius="5">
+        <TextBlock TextWrapping="Wrap" Foreground="White">
+      This example shows linear and radial gradients with different configurations.
+          Enable "Highlight Gradient Stops" to see visual markers for gradient stop positions.
+</TextBlock>
+      </Border>
+
+      <!-- Controls -->
+  <Border Background="LightGray" Padding="10" CornerRadius="5">
+        <StackPanel Spacing="5">
+    <CheckBox IsChecked="{Binding ShowGradientStops}">
+      Highlight Gradient Stops
+          </CheckBox>
+    <TextBlock Text="Shows/hides markers indicating gradient stop positions" 
+       FontSize="11" Foreground="Gray" FontStyle="Italic" 
+            Margin="25,0,0,0" />
+        </StackPanel>
+</Border>
+
+      <!-- Examples Grid -->
+  <UniformGrid Columns="2" Rows="3" ColumnSpacing="10" RowSpacing="10">
+    
+      <!-- Diagonal Linear Gradient -->
+      <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+          <TextBlock Text="Diagonal Linear Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+       <Grid Width="200" Height="100">
+ <Border BorderBrush="Black" BorderThickness="1">
+       <Border.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+    <GradientStop Color="Yellow" Offset="0" />
+                  <GradientStop Color="Red" Offset="0.25" />
+      <GradientStop Color="Blue" Offset="0.75" />
+          <GradientStop Color="LimeGreen" Offset="1" />
+          </LinearGradientBrush>
+     </Border.Background>
+    </Border>
+          
+     <!-- Gradient Stop Markers -->
+            <Canvas IsVisible="{Binding ShowGradientStops}">
+           <!-- Diagonal line from 0,0 to 200,100 -->
+              <Line StartPoint="0,0" EndPoint="200,100" Stroke="Black" StrokeThickness="2" 
+            StrokeDashArray="3,2" Opacity="0.7" />
+          
+   <!-- Stop markers at offset positions along diagonal -->
+    <Ellipse Width="10" Height="10" Fill="Yellow" Stroke="Black" StrokeThickness="1"
+    Canvas.Left="-5" Canvas.Top="-5" />
+              <Ellipse Width="10" Height="10" Fill="Red" Stroke="Black" StrokeThickness="1"
+         Canvas.Left="45" Canvas.Top="20" />
+              <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" StrokeThickness="1"
+     Canvas.Left="145" Canvas.Top="70" />
+   <Ellipse Width="10" Height="10" Fill="LimeGreen" Stroke="Black" StrokeThickness="1"
+          Canvas.Left="195" Canvas.Top="95" />
+            </Canvas>
+     </Grid>
+        </StackPanel>
+    </Border>
+
+      <!-- Horizontal Linear Gradient -->
+ <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+          <TextBlock Text="Horizontal Linear Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+   <Grid Width="200" Height="100">
+         <Border BorderBrush="Black" BorderThickness="1">
+              <Border.Background>
+       <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                  <GradientStop Color="Yellow" Offset="0" />
+    <GradientStop Color="Red" Offset="0.25" />
+          <GradientStop Color="Blue" Offset="0.75" />
+    <GradientStop Color="LimeGreen" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+            </Border>
+      
+   <!-- Gradient Stop Markers -->
+     <Canvas IsVisible="{Binding ShowGradientStops}">
+              <!-- Horizontal line at y=50 -->
+       <Line StartPoint="0,50" EndPoint="200,50" Stroke="Black" StrokeThickness="2" 
+  StrokeDashArray="3,2" Opacity="0.7" />
+  
+       <!-- Stop markers -->
+              <Ellipse Width="10" Height="10" Fill="Yellow" Stroke="Black" StrokeThickness="1"
+         Canvas.Left="-5" Canvas.Top="45" />
+      <Ellipse Width="10" Height="10" Fill="Red" Stroke="Black" StrokeThickness="1"
+       Canvas.Left="45" Canvas.Top="45" />
+     <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" StrokeThickness="1"
+    Canvas.Left="145" Canvas.Top="45" />
+  <Ellipse Width="10" Height="10" Fill="LimeGreen" Stroke="Black" StrokeThickness="1"
+       Canvas.Left="195" Canvas.Top="45" />
+     </Canvas>
+    </Grid>
+     </StackPanel>
+      </Border>
+
+      <!-- Vertical Linear Gradient -->
+      <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+     <TextBlock Text="Vertical Linear Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+          <Grid Width="200" Height="100">
+     <Border BorderBrush="Black" BorderThickness="1">
+    <Border.Background>
+       <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+      <GradientStop Color="Yellow" Offset="0" />
+              <GradientStop Color="Red" Offset="0.25" />
+         <GradientStop Color="Blue" Offset="0.75" />
+   <GradientStop Color="LimeGreen" Offset="1" />
+                </LinearGradientBrush>
+              </Border.Background>
+          </Border>
+            
+ <!-- Gradient Stop Markers -->
+  <Canvas IsVisible="{Binding ShowGradientStops}">
+              <!-- Vertical line at x=100 -->
+      <Line StartPoint="100,0" EndPoint="100,100" Stroke="Black" StrokeThickness="2" 
+            StrokeDashArray="3,2" Opacity="0.7" />
+    
+      <!-- Stop markers -->
+     <Ellipse Width="10" Height="10" Fill="Yellow" Stroke="Black" StrokeThickness="1"
+           Canvas.Left="95" Canvas.Top="-5" />
+    <Ellipse Width="10" Height="10" Fill="Red" Stroke="Black" StrokeThickness="1"
+               Canvas.Left="95" Canvas.Top="20" />
+        <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" StrokeThickness="1"
+    Canvas.Left="95" Canvas.Top="70" />
+              <Ellipse Width="10" Height="10" Fill="LimeGreen" Stroke="Black" StrokeThickness="1"
+           Canvas.Left="95" Canvas.Top="95" />
+         </Canvas>
+ </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Radial Gradient -->
+ <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+     <TextBlock Text="Radial Gradient" FontWeight="Bold" Margin="0,0,0,5" />
+     <Grid Width="200" Height="100">
+            <Border BorderBrush="Black" BorderThickness="1">
+     <Border.Background>
+           <RadialGradientBrush GradientOrigin="50%,50%" Center="50%,50%" RadiusX="100" RadiusY="100">
+         <GradientStop Color="Yellow" Offset="0" />
+   <GradientStop Color="Red" Offset="0.25" />
+   <GradientStop Color="Blue" Offset="0.75" />
+   <GradientStop Color="LimeGreen" Offset="1" />
+ </RadialGradientBrush>
+            </Border.Background>
+      </Border>
+       
+            <!-- Gradient Stop Markers -->
+       <Canvas IsVisible="{Binding ShowGradientStops}">
+        <!-- Radial line from center to right edge -->
+         <Line StartPoint="100,50" EndPoint="200,50" Stroke="Black" StrokeThickness="2" 
+       StrokeDashArray="3,2" Opacity="0.7" />
+      
+   <!-- Stop markers along radius -->
+          <Ellipse Width="10" Height="10" Fill="Yellow" Stroke="Black" StrokeThickness="1"
+            Canvas.Left="95" Canvas.Top="45" />
+        <Ellipse Width="10" Height="10" Fill="Red" Stroke="Black" StrokeThickness="1"
+           Canvas.Left="120" Canvas.Top="45" />
+              <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" StrokeThickness="1"
+       Canvas.Left="170" Canvas.Top="45" />
+              <Ellipse Width="10" Height="10" Fill="LimeGreen" Stroke="Black" StrokeThickness="1"
+     Canvas.Left="195" Canvas.Top="45" />
+  </Canvas>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Condensed Horizontal -->
+<Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <StackPanel>
+   <TextBlock Text="Condensed Horizontal" FontWeight="Bold" Margin="0,0,0,5" />
+        <Grid Width="200" Height="100">
+     <Border BorderBrush="Black" BorderThickness="1">
+        <Border.Background>
+         <LinearGradientBrush StartPoint="25%,50%" EndPoint="75%,50%">
+  <GradientStop Color="Yellow" Offset="0" />
+        <GradientStop Color="Red" Offset="0.25" />
+ <GradientStop Color="Blue" Offset="0.75" />
+       <GradientStop Color="LimeGreen" Offset="1" />
+    </LinearGradientBrush>
+  </Border.Background>
+  </Border>
+         
+            <!-- Gradient Stop Markers -->
+            <Canvas IsVisible="{Binding ShowGradientStops}">
+              <!-- Horizontal line from 25% to 75% -->
+     <Line StartPoint="50,50" EndPoint="150,50" Stroke="Black" StrokeThickness="2" 
+        StrokeDashArray="3,2" Opacity="0.7" />
+              
+<!-- Stop markers (condensed to middle 50% of width) -->
+          <Ellipse Width="10" Height="10" Fill="Yellow" Stroke="Black" StrokeThickness="1"
+         Canvas.Left="45" Canvas.Top="45" />
+          <Ellipse Width="10" Height="10" Fill="Red" Stroke="Black" StrokeThickness="1"
+    Canvas.Left="70" Canvas.Top="45" />
+       <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" StrokeThickness="1"
+     Canvas.Left="120" Canvas.Top="45" />
+       <Ellipse Width="10" Height="10" Fill="LimeGreen" Stroke="Black" StrokeThickness="1"
+        Canvas.Left="145" Canvas.Top="45" />
+            </Canvas>
+     </Grid>
+    </StackPanel>
+ </Border>
+
+      <!-- Info Panel -->
+      <Border BorderBrush="Gray" BorderThickness="1" Padding="5" Background="LightYellow">
+        <StackPanel Spacing="5">
+          <TextBlock Text="Gradient Stop Legend" FontWeight="Bold" />
+          <StackPanel Spacing="3">
+    <StackPanel Orientation="Horizontal" Spacing="5">
+    <Ellipse Width="10" Height="10" Fill="Yellow" Stroke="Black" StrokeThickness="1" />
+   <TextBlock Text="Offset 0.00 (Start)" FontSize="11" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+       <Ellipse Width="10" Height="10" Fill="Red" Stroke="Black" StrokeThickness="1" />
+           <TextBlock Text="Offset 0.25 (25%)" FontSize="11" VerticalAlignment="Center" />
+     </StackPanel>
+         <StackPanel Orientation="Horizontal" Spacing="5">
+    <Ellipse Width="10" Height="10" Fill="Blue" Stroke="Black" StrokeThickness="1" />
+              <TextBlock Text="Offset 0.75 (75%)" FontSize="11" VerticalAlignment="Center" />
+            </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="5">
+              <Ellipse Width="10" Height="10" Fill="LimeGreen" Stroke="Black" StrokeThickness="1" />
+    <TextBlock Text="Offset 1.00 (End)" FontSize="11" VerticalAlignment="Center" />
+   </StackPanel>
+    </StackPanel>
+          <TextBlock Text="Dashed line shows gradient axis" FontSize="11" FontStyle="Italic" 
+   Foreground="Gray" Margin="0,5,0,0" />
+  </StackPanel>
+      </Border>
+
+    </UniformGrid>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

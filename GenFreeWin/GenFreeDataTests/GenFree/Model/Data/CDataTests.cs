@@ -113,6 +113,6 @@ public class CDataTests
     [DataRow((TestProp)3, 322, 1)]
     public void SetPropValueTest1(TestProp eAct, object? oExp, int iExp)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eAct, oExp));
+        Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetPropValue(eAct, oExp));
     }
 }
