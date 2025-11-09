@@ -1,0 +1,60 @@
+[
+  {
+    "name": "PascalRoot",
+    "type": "mainBlock",
+    "code": "Program",
+    "subBlocks": [
+      {
+        "name": "Declaration",
+        "type": "declaration",
+        "code": "var",
+        "subBlocks": [
+          {
+            "name": "Operation",
+            "type": "operation",
+            "code": ":",
+            "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "x", "subBlocks": [] },
+              { "name": "Type", "type": "variable", "code": "Integer", "subBlocks": [] }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Body",
+        "type": "block",
+        "code": "begin",
+        "subBlocks": [
+          { "name": "LComment", "type": "lComment", "code": "// Kommentar", "subBlocks": [] },
+          {
+            "name": "Assignment",
+            "type": "assignment",
+            "code": ":=",
+            "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "x", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "+", "subBlocks": [
+                  { "name": "Number", "type": "number", "code": "$10", "subBlocks": [] },
+                  { "name": "Number", "type": "number", "code": "$0F", "subBlocks": [] }
+                ] }
+            ]
+          },
+          { "name": "Comment", "type": "comment", "code": "(* hex addition *)", "subBlocks": [] },
+          {
+            "name": "Assignment",
+            "type": "assignment",
+            "code": ":=",
+            "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "x", "subBlocks": [] },
+              { "name": "Operation", "type": "operation", "code": "-", "subBlocks": [
+                  { "name": "Variable", "type": "variable", "code": "x", "subBlocks": [] },
+                  { "name": "Number", "type": "number", "code": "1", "subBlocks": [] }
+                ] }
+            ]
+          },
+          { "name": "Comment", "type": "comment", "code": "{ block comment }", "subBlocks": [] }
+        ]
+      },
+      { "name": "Operation", "type": "operation", "code": ".", "subBlocks": [] }
+    ]
+  }
+]

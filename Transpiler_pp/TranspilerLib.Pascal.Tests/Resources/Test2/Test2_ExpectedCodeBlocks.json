@@ -1,0 +1,42 @@
+[
+  {
+    "name": "PascalRoot",
+    "type": "mainBlock",
+    "code": "",
+    "subBlocks": [
+      {
+        "name": "Declaration",
+        "type": "declaration",
+        "code": "var",
+        "subBlocks": [
+          {
+            "name": "Operation",
+            "type": "operation",
+            "code": ":",
+            "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "x", "subBlocks": [] },
+              { "name": "Type", "type": "variable", "code": "integer", "subBlocks": [] }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Body",
+        "type": "block",
+        "code": "begin",
+        "subBlocks": [
+          {
+            "name": "Assignment",
+            "type": "assignment",
+            "code": ":=",
+            "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "x", "subBlocks": [] },
+              { "name": "Number", "type": "number", "code": "$B10F", "subBlocks": [] }
+            ]
+          }
+        ]
+      },
+      { "name": "Operation", "type": "operation", "code": ".", "subBlocks": [] }
+    ]
+  }
+]

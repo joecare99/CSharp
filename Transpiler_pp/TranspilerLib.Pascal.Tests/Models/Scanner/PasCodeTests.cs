@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models.Scanner;
 using TranspilerLib.Pascal.Models.Scanner;
 using TranspilerLibTests.TestData;
 using static TranspilerLib.Helper.TestHelper;
@@ -41,6 +44,30 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         }
     }
 
+    public static IEnumerable<object[]> TestCodeBuilderList
+    {
+        get
+        {
+            foreach (var dir in Directory.EnumerateDirectories(".\\Resources"))
+            {
+                // require expected tokens to drive Parse() and optionally expected code blocks
+                var tokensPath = Path.Combine(dir, Path.GetFileName(dir) + "_ExpectedTokens.json");
+                if (!File.Exists(tokensPath))
+                    continue;
+
+                var codeBlocksPath = Path.Combine(dir, Path.GetFileName(dir) + "_ExpectedCodeBlocks.json");
+
+                var value = new object[]
+                {
+                    Path.GetFileName(dir)!,
+                    File.ReadAllText(tokensPath),
+                    File.Exists(codeBlocksPath) ? File.ReadAllText(codeBlocksPath) : string.Empty
+                };
+                yield return value;
+            }
+        }
+    } 
+
 
     [TestInitialize]
     public void Init() => _testClass = new PasCode();
@@ -71,10 +98,14 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         PropertyNameCaseInsensitive = true,
         ReadCommentHandling = JsonCommentHandling.Skip,
         AllowTrailingCommas = true,
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) }
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true),
+            new ICodeBlockPasCodeBlockConverter()
+        }
     };
 
-    private static List<TokenData> DeserializeExpected(string? json)
+    private static List<TokenData> DeserializeTokens(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))
             return new();
@@ -89,6 +120,23 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
             return new();
         }
     }
+
+    private static List<PasCodeBlock> DeserializeCodeBlocks(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+            return new();
+        try
+        {
+            var list = JsonSerializer.Deserialize<List<PasCodeBlock>>(json, _jsonOptions);
+            return list ?? new();
+        }
+        catch (Exception ex)
+        {
+            Assert.Fail($"Fehler beim Deserialisieren der Expected-Tokenliste: {ex.Message}\nJSON:\n{json}");
+            return new();
+        }
+    }
+
 
     [DataTestMethod]
     [DataRow("", null, null, 0)]
@@ -127,16 +175,16 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
     }
 
     [TestMethod]
-    [DataRow("begin end;", "[{\"code\":\"begin\",\"type\":\"Block\"},{\"code\":\"end\",\"type\":\"Block\"},{\"code\":\";\"}]")]
-    [DataRow("begin begin end; end;", "[{\"code\":\"begin\"},{\"code\":\"begin\"},{\"code\":\"end\"},{\"code\":\";\"},{\"code\":\"end\"},{\"code\":\";\"}]")]
-    [DataRow("begin 'a''b'; end;", "[{\"code\":\"begin\"},{\"code\":\"'a''b'\",\"type\":\"String\"},{\"code\":\";\"},{\"code\":\"end\"},{\"code\":\";\"}]")]
-    [DataRow("begin //x\n(* abc *) {def} end;", "[{\"code\":\"begin\"},{\"code\":\"//x\",\"type\":\"LComment\"},{\"code\":\"(* abc *)\",\"type\":\"Comment\"},{\"code\":\"{def}\",\"type\":\"Comment\"},{\"code\":\"end\"},{\"code\":\";\"}]")]
-    [DataRow("var x: integer; begin end;", "[{\"code\":\"var\"},{\"code\":\"x\"},{\"code\":\":\"},{\"code\":\"integer\"},{\"code\":\";\"},{\"code\":\"begin\"},{\"code\":\"end\"},{\"code\":\";\"}]")]
-    [DataRow(" \t\r\n begin   end ;  ", "[{\"code\":\"begin\"},{\"code\":\"end\"},{\"code\":\";\"}]")]
+    [DataRow("begin end;", "[{\"code\":\"begin\",\"type\":\"Block\",\"Level\":1},{\"code\":\"end\",\"type\":\"Block\",\"Level\":1},{\"code\":\";\"}]")]
+    [DataRow("begin begin end; end;", "[{\"code\":\"begin\",\"Level\":1},{\"code\":\"begin\",\"Level\":2},{\"code\":\"end\",\"Level\":2},{\"code\":\";\",\"Level\":1},{\"code\":\"end\",\"Level\":1},{\"code\":\";\"}]")]
+    [DataRow("begin 'a''b'; end;", "[{\"code\":\"begin\",\"Level\":1},{\"code\":\"'a''b'\",\"type\":\"String\",\"Level\":1},{\"code\":\";\",\"Level\":1},{\"code\":\"end\",\"Level\":1},{\"code\":\";\"}]")]
+    [DataRow("begin //x\n(* abc *) {def} end;", "[{\"code\":\"begin\",\"Level\":1},{\"code\":\"//x\",\"type\":\"LComment\",\"Level\":1},{\"code\":\"(* abc *)\",\"type\":\"Comment\",\"Level\":1},{\"code\":\"{def}\",\"type\":\"Comment\",\"Level\":1},{\"code\":\"end\",\"Level\":1},{\"code\":\";\"}]")]
+    [DataRow("var x: integer; begin end;", "[{\"code\":\"var\"},{\"code\":\"x\"},{\"code\":\":\"},{\"code\":\"integer\"},{\"code\":\";\"},{\"code\":\"begin\",\"Level\":1},{\"code\":\"end\",\"Level\":1},{\"code\":\";\"}]")]
+    [DataRow(" \t\r\n begin   end ;  ", "[{\"code\":\"begin\",\"Level\":1},{\"code\":\"end\",\"Level\":1},{\"code\":\";\"}]")]
     [DataRow("", "[]")]
     public void Tokenize_Scenarios_Json(string source, string? expectedJson)
     {
-        var expected = DeserializeExpected(expectedJson);
+        var expected = DeserializeTokens(expectedJson);
         _testClass.OriginalCode = source;
         var tokens = _testClass.Tokenize().ToList();
 
@@ -168,7 +216,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
     [DynamicData(nameof(TestTokenizeList))]
     public void Tokenize_Scenarios_Dyn(string name, string source, string? expectedJson)
     {
-        var expected = DeserializeExpected(expectedJson);
+        var expected = DeserializeTokens(expectedJson);
         _testClass.OriginalCode = source;
         var tokens = _testClass.Tokenize().ToList();
 
@@ -214,4 +262,40 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         Assert.IsTrue(code.ToLower().Contains("begin"));
         Assert.IsTrue(code.ToLower().Contains("end"));
     }
+
+    [TestMethod]
+    [DynamicData(nameof(TestCodeBuilderList))]
+    public void Parse_CodeBlockList(string name, string tokens, string codeBlocks)
+    {
+        var tokenlist = DeserializeTokens(tokens);
+        var codeBlockList = DeserializeCodeBlocks(codeBlocks);
+
+        var result = _testClass.Parse(tokenlist);
+        Assert.IsNotNull(result);
+        try
+        {
+            Assert.AreEqual(codeBlockList.Count, result.SubBlocks.Count,
+                $"CodeBlock-Anzahl stimmt nicht. Erwartet: {codeBlockList.Count}, Ist: {result.SubBlocks.Count} für Testcase: '{name}'.");
+            for (int i = 0; i < codeBlockList.Count; i++)
+            {
+                var expectedBlock = codeBlockList[i];
+                var actualBlock = result.SubBlocks[i] as PasCodeBlock;
+                Assert.IsNotNull(actualBlock, $"CodeBlock an Index {i} ist null oder nicht vom Typ PasCodeBlock für Testcase: '{name}'.");
+                Assert.AreEqual(expectedBlock.Name, actualBlock!.Name,
+                    $"CodeBlock-Name stimmt nicht an Index {i}. Erwartet: '{expectedBlock.Name}', Ist: '{actualBlock.Name}' für Testcase: '{name}'.");
+                Assert.AreEqual(expectedBlock.Type, actualBlock.Type,
+                    $"CodeBlock-Type stimmt nicht an Index {i}. Erwartet: '{expectedBlock.Type}', Ist: '{actualBlock.Type}' für Testcase: '{name}'.");
+                Assert.AreEqual(expectedBlock.Code, actualBlock.Code,
+                    $"CodeBlock-Code stimmt nicht an Index {i}. Erwartet: '{expectedBlock.Code}', Ist: '{actualBlock.Code}' für Testcase: '{name}'.");
+            }
+        }
+        catch (AssertFailedException ex)
+        {
+            if (File.Exists(Path.Combine(".","Resources", name, name + "_actual_codeblocks.json")))
+                File.Delete(Path.Combine(".","Resources", name, name + "_actual_codeblocks.json"));
+            File.WriteAllText(Path.Combine(".","Resources", name, name + "_actual_codeblocks.json"), JsonSerializer.Serialize(result, _jsonOptions));
+            throw;
+        }
+    }
+
 }
