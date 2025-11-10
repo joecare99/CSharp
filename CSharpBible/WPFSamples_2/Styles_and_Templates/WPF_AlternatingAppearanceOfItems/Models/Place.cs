@@ -1,14 +1,16 @@
 // // Copyright (c) Microsoft. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using AlternatingAppearanceOfItems.Models.Interfaces;
+
 namespace AlternatingAppearanceOfItems.Models;
 
-public class Place
+public class Place : IPlace
 {
     public Place()
     {
-        CityName = "";
-        State = "";
+        CityName = string.Empty;
+        State = string.Empty;
     }
 
     public Place(string name, string state)

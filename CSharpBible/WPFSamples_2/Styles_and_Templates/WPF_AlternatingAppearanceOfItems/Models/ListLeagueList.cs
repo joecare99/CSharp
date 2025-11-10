@@ -1,52 +1,93 @@
-// // Copyright (c) Microsoft. All rights reserved.
-// // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 using System.Collections.Generic;
+using AlternatingAppearanceOfItems.Models.Interfaces;
 
 namespace AlternatingAppearanceOfItems.Models;
 
-public class ListLeagueList : List<League>
-{
-    public ListLeagueList()
-    {
-        League l;
-        Division d;
+// Pseudocode:
+// - Verwende C# 12 Collection Expressions, um die List<ILeague>-Basisliste direkt im Konstruktor zu befüllen.
+// - Nutze base([...]) für Übergabe an List<T>-Konstruktor.
+// - Für verschachtelte Listen (Divisions, Teams) Collection-/Objektinitialisierer mit Divisions = { ... } und Teams = { ... } (kein Setter nötig).
+// - Ersetze alle Add-Aufrufe durch deklarative Initialisierung.
 
-        Add(l = new League("League A"));
-        l.Divisions.Add(d = new Division("Division A"));
-        d.Teams.Add(new Team("Team I"));
-        d.Teams.Add(new Team("Team II"));
-        d.Teams.Add(new Team("Team III"));
-        d.Teams.Add(new Team("Team IV"));
-        d.Teams.Add(new Team("Team V"));
-        l.Divisions.Add(d = new Division("Division B"));
-        d.Teams.Add(new Team("Team Blue"));
-        d.Teams.Add(new Team("Team Red"));
-        d.Teams.Add(new Team("Team Yellow"));
-        d.Teams.Add(new Team("Team Green"));
-        d.Teams.Add(new Team("Team Orange"));
-        l.Divisions.Add(d = new Division("Division C"));
-        d.Teams.Add(new Team("Team East"));
-        d.Teams.Add(new Team("Team West"));
-        d.Teams.Add(new Team("Team North"));
-        d.Teams.Add(new Team("Team South"));
-        Add(l = new League("League B"));
-        l.Divisions.Add(d = new Division("Division A"));
-        d.Teams.Add(new Team("Team 1"));
-        d.Teams.Add(new Team("Team 2"));
-        d.Teams.Add(new Team("Team 3"));
-        d.Teams.Add(new Team("Team 4"));
-        d.Teams.Add(new Team("Team 5"));
-        l.Divisions.Add(d = new Division("Division B"));
-        d.Teams.Add(new Team("Team Diamond"));
-        d.Teams.Add(new Team("Team Heart"));
-        d.Teams.Add(new Team("Team Club"));
-        d.Teams.Add(new Team("Team Spade"));
-        l.Divisions.Add(d = new Division("Division C"));
-        d.Teams.Add(new Team("Team Alpha"));
-        d.Teams.Add(new Team("Team Beta"));
-        d.Teams.Add(new Team("Team Gamma"));
-        d.Teams.Add(new Team("Team Delta"));
-        d.Teams.Add(new Team("Team Epsilon"));
-    }
+public class ListLeagueList : List<ILeague>
+{
+    public ListLeagueList() : base([
+        new League("League A")
+        {
+            Divisions =
+            {
+                new Division("Division A")
+                {
+                    Teams =
+                    {
+                        new Team("Team I"),
+                        new Team("Team II"),
+                        new Team("Team III"),
+                        new Team("Team IV"),
+                        new Team("Team V")
+                    }
+                },
+                new Division("Division B")
+                {
+                    Teams =
+                    {
+                        new Team("Team Blue"),
+                        new Team("Team Red"),
+                        new Team("Team Yellow"),
+                        new Team("Team Green"),
+                        new Team("Team Orange")
+                    }
+                },
+                new Division("Division C")
+                {
+                    Teams =
+                    {
+                        new Team("Team East"),
+                        new Team("Team West"),
+                        new Team("Team North"),
+                        new Team("Team South")
+                    }
+                }
+            }
+        },
+        new League("League B")
+        {
+            Divisions =
+            {
+                new Division("Division A")
+                {
+                    Teams =
+                    {
+                        new Team("Team1"),
+                        new Team("Team2"),
+                        new Team("Team3"),
+                        new Team("Team4"),
+                        new Team("Team5")
+                    }
+                },
+                new Division("Division B")
+                {
+                    Teams =
+                    {
+                        new Team("Team Diamond"),
+                        new Team("Team Heart"),
+                        new Team("Team Club"),
+                        new Team("Team Spade")
+                    }
+                },
+                new Division("Division C")
+                {
+                    Teams =
+                    {
+                        new Team("Team Alpha"),
+                        new Team("Team Beta"),
+                        new Team("Team Gamma"),
+                        new Team("Team Delta"),
+                        new Team("Team Epsilon")
+                    }
+                }
+            }
+        }
+    ])
+    { }
 }
