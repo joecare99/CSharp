@@ -1,4 +1,6 @@
-﻿namespace PrimePlotter.Services;
+﻿using PrimePlotter.Services.Interfaces;
+
+namespace PrimePlotter.Services;
 
 /// <summary>
 /// Statische Helferklasse zum Rendern einer Primzahlen-Spirale auf einen ARGB-Pixelpuffer.
@@ -38,7 +40,7 @@
 /// int[] argb = PlotService.PlotPoints(primes, 1920, 1080, progress, cts.Token);
 /// </code>
 /// </example>
-public static class PlotService
+public class PlotService : IPlotService
 {
     /// <summary>
     /// Rendert eine Punktdarstellung der Primzahlen auf einen ARGB-Puffer (Schwarz = Hintergrund, Weiß = Primzahlpunkt).
@@ -68,7 +70,7 @@ public static class PlotService
     /// int[] pixels = PlotService.PlotPoints(primes, 1024, 1024);
     /// </code>
     /// </example>
-    public static int[] PlotPoints(
+    public int[] PlotPoints(
         IReadOnlyList<int> primes,
         int width, int height,
         IProgress<double>? progress = null,
@@ -156,7 +158,7 @@ public static class PlotService
     /// int[] smooth = PlotService.PlotPointsDownsampled(primes, 800, 800, scaleFactor: 4);
     /// </code>
     /// </example>
-    public static int[] PlotPointsDownsampled(
+    public int[] PlotPointsDownsampled(
         IReadOnlyList<int> primes,
         int width, int height,
         int scaleFactor,

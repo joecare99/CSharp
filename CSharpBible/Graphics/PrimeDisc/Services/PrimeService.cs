@@ -1,20 +1,11 @@
 ﻿// Services/PrimeService.cs
+using PrimePlotter.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 
 namespace PrimePlotter.Services;
 
-/// <summary>
-/// Stellt Funktionen zur Erzeugung von Primzahlfolgen bereit.
-/// </summary>
-/// <remarks>
-/// Aktuell enthält diese Klasse eine effiziente Implementierung zur Ermittlung der ersten
-/// <c>n</c> Primzahlen mittels eines modifizierten Sieb des Eratosthenes. Zur Abschätzung der
-/// notwendigen Siebgröße wird eine analytische obere Schranke für die n-te Primzahl nach Dusart
-/// (Form: n (ln n + ln ln n) + 3) verwendet, um Speicher und Laufzeit zu begrenzen ohne vorherige
-/// exakte Kenntnis der n-ten Primzahl.
-/// </remarks>
-public static class PrimeService
+public class PrimeService : IPrimeService
 {
     /// <summary>
     /// Ermittelt die ersten <paramref name="n"/> Primzahlen in aufsteigender Reihenfolge.
@@ -81,7 +72,7 @@ public static class PrimeService
     /// </code>
     /// </example>
     /// <seealso cref="System.IProgress{T}"/>
-    public static List<int> FirstNPrimes(int n, IProgress<double>? progress = null, System.Threading.CancellationToken ct = default)
+    public List<int> FirstNPrimes(int n, IProgress<double>? progress = null, System.Threading.CancellationToken ct = default)
     {
         if (n <= 0) return new List<int>();
         if (n <= 6) // kleine Grenzfälle direkt
