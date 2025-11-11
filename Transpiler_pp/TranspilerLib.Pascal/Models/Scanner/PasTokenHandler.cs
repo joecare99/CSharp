@@ -10,7 +10,7 @@ using static TranspilerLib.Interfaces.Code.ICodeBase;
 namespace TranspilerLib.Pascal.Models.Scanner;
 
 /// <summary>
-/// Sehr kleiner initialer Pascal/Delphi Token Handler.
+/// Sehr kleiner initialer Pascal/Delphi LfmToken Handler.
 /// Erweiterung: Unterstützung für Hexadezimalzahlen beginnend mit '$'.
 /// </summary>
 public class PasTokenHandler : TokenHandlerBase, ITokenHandler
@@ -77,7 +77,7 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
         var nxtChar = GetNxtChar(data.Pos, code);
         if (!IsHexDigit(nxtChar))
         {
-            // Ganzes Token inkl. '$' emittieren
+            // Ganzes LfmToken inkl. '$' emittieren
             EmitToken(token, data, CodeBlockType.Number, code, 1);
             data.Pos2 = data.Pos + 1;
             data.State = 0;
