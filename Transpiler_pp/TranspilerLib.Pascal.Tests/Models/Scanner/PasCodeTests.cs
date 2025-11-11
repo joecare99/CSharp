@@ -138,7 +138,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
     }
 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("", null, null, 0)]
     [DataRow("begin end;", new[] { "begin", "end",";" }, null, 3)]
     [DataRow("begin begin end; end;", new[] { "begin", "begin", "end",";", "end",";" }, null, null)]
@@ -153,7 +153,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         _testClass.Tokenize(t => tokens.Add(t));
 
         if (expectedCount.HasValue)
-            Assert.AreEqual(expectedCount.Value, tokens.Count, $"Tokenanzahl stimmt nicht für Source: '{source}'.");
+            Assert.HasCount(expectedCount.Value, tokens, $"Tokenanzahl stimmt nicht für Source: '{source}'.");
 
         if (expectedCodes != null)
         {
@@ -188,7 +188,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         _testClass.OriginalCode = source;
         var tokens = _testClass.Tokenize().ToList();
 
-        Assert.AreEqual(expected.Count, tokens.Count,
+        Assert.HasCount(expected.Count, tokens,
             $"Tokenanzahl stimmt nicht. Erwartet: {expected.Count}, Ist: {tokens.Count} für Source: '{source}'. Gefundene Codes: {string.Join(", ", tokens.Select(t => t.Code))}");
 
         for (int i = 0; i < expected.Count; i++)
@@ -222,7 +222,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
 
         try
         {
-        Assert.AreEqual(expected.Count, tokens.Count,
+        Assert.HasCount(expected.Count, tokens,
             $"Tokenanzahl stimmt nicht. Erwartet: {expected.Count}, Ist: {tokens.Count} für Source: '{source}'. Gefundene Codes: {string.Join(", ", tokens.Select(t => t.Code))}");
             for (int i = 0; i < expected.Count; i++)
             {
@@ -259,8 +259,8 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         _testClass.OriginalCode = "begin end;";
         var root = _testClass.Parse();
         var code = root.ToCode();
-        Assert.IsTrue(code.ToLower().Contains("begin"));
-        Assert.IsTrue(code.ToLower().Contains("end"));
+        Assert.Contains("begin",code.ToLower());
+        Assert.Contains("end",code.ToLower());
     }
 
     [TestMethod]
@@ -274,7 +274,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
         Assert.IsNotNull(result);
         try
         {
-            Assert.AreEqual(codeBlockList.Count, result.SubBlocks.Count,
+            Assert.HasCount(codeBlockList.Count, result.SubBlocks,
                 $"CodeBlock-Anzahl stimmt nicht. Erwartet: {codeBlockList.Count}, Ist: {result.SubBlocks.Count} für Testcase: '{name}'.");
             for (int i = 0; i < codeBlockList.Count; i++)
             {

@@ -11,12 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
-using System.Collections.Generic;
-
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Interfaces.Code;
 
 /// <summary>
