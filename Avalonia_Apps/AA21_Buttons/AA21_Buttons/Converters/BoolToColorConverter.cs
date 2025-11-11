@@ -2,10 +2,13 @@
 //     Copyright © JC-Soft 2022
 // </copyright>
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using System;
-using System.Globalization;
 
 namespace AA21_Buttons.Converters;
 
@@ -17,48 +20,58 @@ public class BoolToColorConverter : IValueConverter
     /// <summary>
     /// Farbe für true-Werte (aktiver Button)
     /// </summary>
-    public static Color TrueColor = Colors.Green;
+    public IBrush? TrueColor { get; set; } = Brushes.Lime;
 
     /// <summary>
     /// Farbe für false-Werte (inaktiver Button)
     /// </summary>
-    public static Color FalseColor = Colors.DarkRed;
+    public IBrush? FalseColor { get; set; } = Brushes.Maroon;
 
     /// <summary>
     /// Konvertiert einen Wert zu einer Farbe.
     /// </summary>
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value switch
+        bool result = false;
+
+        // Direkter boolescher Wert
+        if (value is bool b)
         {
-            bool b when parameter is string s && s.StartsWith("#") =>
-                new SolidColorBrush(ParseColorFromParameter(s, b)),
-            bool b =>
-                new SolidColorBrush(b ? TrueColor : FalseColor),
-            bool[] ba when parameter is string s && int.TryParse(s, out int idx) =>
-                new SolidColorBrush(ba[idx] ? TrueColor : FalseColor),
-            _ => new SolidColorBrush(FalseColor)
-        };
+            result = b;
+        }
+        // Array-/Listen mit Index-Parameter
+        else if (parameter != null && TryGetIndex(parameter, out var index))
+        {
+            if (value is bool[] arr && index >= 0 && index < arr.Length)
+                result = arr[index];
+            else if (value is IList list && index >= 0 && index < list.Count && list[index] is bool lb)
+                result = lb;
+            else if (value is IReadOnlyList<bool> ro && index >= 0 && index < ro.Count)
+                result = ro[index];
+        }
+
+        return result ? TrueColor : FalseColor;
     }
 
     /// <summary>
-    /// Umgekehrte Konvertierung nicht unterstützt.
+    /// Umgekehrte Konvertierung nicht verwendet.
     /// </summary>
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
+        => BindingOperations.DoNothing;
 
-    /// <summary>
-    /// Parsed Farben aus Parameter-String (Format: "#color1:#color2").
-    /// </summary>
-    private static Color ParseColorFromParameter(string parameter, bool value)
+    private static bool TryGetIndex(object parameter, out int index)
     {
-        var colors = parameter.Split(':');
-        if (colors.Length < 2)
-            return value ? TrueColor : FalseColor;
-
-        string colorStr = colors[value ? 1 : 0];
-        return Color.Parse(colorStr);
+        index = -1;
+        switch (parameter)
+        {
+            case int i:
+                index = i ; // Annahme: Buttons verwenden 1-basierte Indizes
+                return true;
+            case string s when int.TryParse(s, out var parsed):
+                index = parsed ;
+                return true;
+            default:
+                return false;
+        }
     }
 }
