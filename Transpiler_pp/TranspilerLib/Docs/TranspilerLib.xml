@@ -1,0 +1,998 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TranspilerLib</name>
+    </assembly>
+    <members>
+        <member name="T:TranspilerLib.Data.CharSets">
+            <summary>
+            Provides reusable character sets used by tokenizers for quick membership checks.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.operatorSet">
+            <summary>
+            The set of operator characters.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.bracketsSet">
+            <summary>
+            The set of bracket characters: (), {}, [].
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.whitespace">
+            <summary>
+            The set of whitespace characters considered by tokenizers.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.numbers">
+            <summary>
+            The set of decimal digit characters.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.numbersExt">
+            <summary>
+            Extended number characters including exponent and sign.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.hexNumbers">
+            <summary>
+            Hexadecimal digits (0-9, A-F, a-f).
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.letters">
+            <summary>
+            ASCII letters (A-Z, a-z).
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CharSets.lettersAndNumbers">
+            <summary>
+            Alphanumeric set combining letters and digits.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Data.CodeBlockType">
+            <summary>
+            Enum CodeBlockType
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Unknown">
+            <summary>
+            The unknown
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.MainBlock">
+            <summary>
+            The main block
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.SubBlock">
+            <summary>
+            The sub block
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Label">
+            <summary>
+            The label
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Variable">
+            <summary>
+            The variable
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Function">
+            <summary>
+            The function
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Declaration">
+            <summary>
+            The declaration
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Class">
+            <summary>
+            The class
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Operation">
+            <summary>
+            The instruction
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Parameter">
+            <summary>
+            The parameter
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Namespace">
+            <summary>
+            The namespace
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Using">
+            <summary>
+            The using
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Goto">
+            <summary>
+            The goto
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.LComment">
+            <summary>
+            The Linecomment (starts with '//', usually after the element) 
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.FLComment">
+            <summary>
+            The full Linecomment (starts with '//', usually before the element)
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Comment">
+            <summary>
+            The comment
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.String">
+            <summary>
+            The string(-constant)
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Block">
+            <summary>
+            The block 
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Number">
+            <summary>
+            A number-constant
+            </summary> 
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Bracket">
+            <summary>
+            A bracket (e.g. '(' or ')')
+            </summary> 
+        </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Assignment">
+            <summary>
+            An Assignment-Operation 
+            </summary> 
+        </member>
+        <member name="T:TranspilerLib.Data.TokenData">
+            <summary>
+            Represents a single token with its lexeme, token kind and nesting level information.
+            </summary>
+            <param name="Code">The token text as found in the source.</param>
+            <param name="type">The semantic kind of the token.</param>
+            <param name="Level">The block nesting level at which the token was observed.</param>
+            <param name="Pos">Optional absolute character position in the source.</param>
+        </member>
+        <member name="M:TranspilerLib.Data.TokenData.#ctor(System.String,TranspilerLib.Data.CodeBlockType,System.Int32,System.Int32)">
+            <summary>
+            Represents a single token with its lexeme, token kind and nesting level information.
+            </summary>
+            <param name="Code">The token text as found in the source.</param>
+            <param name="type">The semantic kind of the token.</param>
+            <param name="Level">The block nesting level at which the token was observed.</param>
+            <param name="Pos">Optional absolute character position in the source.</param>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.Code">
+            <summary>The token text as found in the source.</summary>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.type">
+            <summary>The semantic kind of the token.</summary>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.Level">
+            <summary>The block nesting level at which the token was observed.</summary>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.Pos">
+            <summary>Optional absolute character position in the source.</summary>
+        </member>
+        <member name="M:TranspilerLib.Data.TokenData.op_Implicit(System.ValueTuple{System.String,TranspilerLib.Data.CodeBlockType,System.Int32})~TranspilerLib.Data.TokenData">
+            <summary>
+            Implicitly constructs a <see cref="T:TranspilerLib.Data.TokenData"/> from a tuple of (code, type, level).
+            </summary>
+            <param name="value">Tuple containing the token fields.</param>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICodeBase">
+            <summary>
+            Defines the common lifecycle for code processors: accept raw input (<see cref="P:TranspilerLib.Interfaces.Code.ICodeBase.OriginalCode"/>),
+            tokenize it (<see cref="M:TranspilerLib.Interfaces.Code.ICodeBase.Tokenize"/> or the streaming variant), build a structured representation
+            (<see cref="M:TranspilerLib.Interfaces.Code.ICodeBase.Parse(System.Collections.Generic.IEnumerable{TranspilerLib.Data.TokenData})"/>), and finally render
+            it back to formatted code (<see cref="M:TranspilerLib.Interfaces.Code.ICodeBase.ToCode(TranspilerLib.Interfaces.Code.ICodeBlock,System.Int32)"/>).
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate">
+            <summary>
+            Delegate used to stream tokens during tokenization. Implementations receive each produced <see cref="T:TranspilerLib.Data.TokenData"/>.
+            </summary>
+            <param name="data">The token produced by the tokenizer.</param>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBase.OriginalCode">
+            <summary>
+            Gets or sets the raw source text (e.g., file contents, code fragment) to be processed.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBase.Parse(System.Collections.Generic.IEnumerable{TranspilerLib.Data.TokenData})">
+            <summary>
+            Parses the specified token sequence or, when <paramref name="values"/> is <c>null</c>, the tokens produced from
+            the current <see cref="P:TranspilerLib.Interfaces.Code.ICodeBase.OriginalCode"/>.
+            </summary>
+            <param name="values">Optional predetermined token sequence.</param>
+            <returns>The root <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/> of the generated syntax/structure tree.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBase.ToCode(TranspilerLib.Interfaces.Code.ICodeBlock,System.Int32)">
+            <summary>
+            Converts a code block tree into formatted source code.
+            </summary>
+            <param name="cStruct">The root of the code block tree to emit.</param>
+            <param name="indent">Base indentation width (default 4).</param>
+            <returns>The formatted code as a string.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBase.Tokenize">
+            <summary>
+            Performs a full tokenization of the currently set <see cref="P:TranspilerLib.Interfaces.Code.ICodeBase.OriginalCode"/> and returns the resulting sequence.
+            </summary>
+            <returns>An enumerable of all produced <see cref="T:TranspilerLib.Data.TokenData"/> in lexical order.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBase.Tokenize(TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate)">
+            <summary>
+            Tokenizes the source and invokes the optional callback for each produced token.
+            </summary>
+            <param name="token">Optional delegate for streaming processing of individual tokens; may be <c>null</c>.</param>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICodeBlock">
+            <summary>
+            Interface ICodeBlock
+            Extends the <see cref="!:Models.IHasParents&lt;ICodeBlock&gt;" />
+            Extends the <see cref="T:System.IEquatable`1" />
+            </summary>
+            <seealso cref="!:Models.IHasParents&lt;ICodeBlock&gt;" />
+            <seealso cref="T:System.IEquatable`1" />
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.SubBlocks">
+            <summary>
+            Gets the sub blocks.
+            </summary>
+            <value>The sub blocks.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Type">
+            <summary>
+            Gets or sets the type.
+            </summary>
+            <value>The type.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Code">
+            <summary>
+            Gets or sets the code.
+            </summary>
+            <value>The code.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Destination">
+            <summary>
+            Gets or sets the destination.
+            </summary>
+            <value>The destination.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Level">
+            <summary>
+            Gets the level.
+            </summary>
+            <value>The level.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Index">
+            <summary>
+            Gets the index.
+            </summary>
+            <value>The index.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Sources">
+            <summary>
+            Gets the sources.
+            </summary>
+            <value>The sources.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Next">
+            <summary>
+            Gets the next.
+            </summary>
+            <value>The next.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.Prev">
+            <summary>
+            Gets the previous.
+            </summary>
+            <value>The previous.</value>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBlock.SourcePos">
+            <summary>
+            Gets the position in the original source from which this block was created.
+            </summary>
+            <value>The zero-based character index in the source text.</value>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBlock.DeleteSubBlocks(System.Int32,System.Int32)">
+            <summary>
+            Deletes the sub blocks.
+            </summary>
+            <param name="iSrc">The index of the first sub block to delete.</param>
+            <param name="cnt">The number of sub blocks to delete.</param>
+            <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBlock.MoveSubBlocks(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Moves the sub blocks.
+            </summary>
+            <param name="iSrc">The index of the first sub block to move.</param>
+            <param name="iDst">The destination index within the same parent.</param>
+            <param name="cnt">The number of sub blocks to move.</param>
+            <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBlock.MoveSubBlocks(System.Int32,TranspilerLib.Interfaces.Code.ICodeBlock,System.Int32)">
+            <summary>
+            Moves the sub blocks to a different destination block.
+            </summary>
+            <param name="iSrc">The index of the first sub block to move.</param>
+            <param name="cDst">The destination block reference.</param>
+            <param name="cnt">The number of sub blocks to move.</param>
+            <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBlock.MoveToSub(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Moves this block into the sub blocks of the specified destination.
+            </summary>
+            <param name="cDst">The destination block to move under.</param>
+            <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBlock.ToCode(System.Int32)">
+            <summary>
+            Converts to code.
+            </summary>
+            <param name="indent">The indent.</param>
+            <returns>string.</returns>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICodeBuilder">
+            <summary>
+            Builds an <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/> tree from a stream of <see cref="T:TranspilerLib.Data.TokenData"/>.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBuilder.NewData(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Creates a new builder state object used to accumulate blocks, labels, and gotos while parsing tokens.
+            </summary>
+            <param name="block">The root block the builder should attach newly created nodes to.</param>
+            <returns>A fresh <see cref="T:TranspilerLib.Interfaces.Code.ICodeBuilderData"/> context.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeBuilder.OnToken(TranspilerLib.Data.TokenData,TranspilerLib.Interfaces.Code.ICodeBuilderData)">
+            <summary>
+            Processes a single token and mutates the provided <paramref name="data"/> accordingly
+            (creating/moving/emitting blocks and control-flow constructs as needed).
+            </summary>
+            <param name="tokenData">The token to handle.</param>
+            <param name="data">The active builder state.</param>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICodeBuilderData">
+            <summary>
+            Represents the mutable state used by an <see cref="T:TranspilerLib.Interfaces.Code.ICodeBuilder"/> while constructing an <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/> tree.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBuilderData.actualBlock">
+            <summary>
+            Gets or sets the current block being appended to or modified.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBuilderData.labels">
+            <summary>
+            Gets or sets the map of encountered label identifiers to their corresponding blocks.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBuilderData.gotos">
+            <summary>
+            Gets or sets the list of encountered goto statements for later target resolution.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBuilderData.xBreak">
+            <summary>
+            Gets or sets a flag used by builders to detect statement boundaries (e.g., after breaks or strings).
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeBuilderData.cbtLast">
+            <summary>
+            Gets or sets the last processed <see cref="T:TranspilerLib.Data.CodeBlockType"/> to aid context-sensitive decisions.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICodeOptimizer">
+            <summary>
+            Provides optimization hooks for post-parse code structure clean-up and control-flow reconstruction.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICodeOptimizer._noWhile">
+            <summary>
+            Gets or sets the flag to disable while/do-while reconstruction. When <c>true</c>, such rewrites are suppressed.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeOptimizer.TestItem(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Analyzes and potentially rewrites the supplied <paramref name="item"/> to simplify the block graph.
+            </summary>
+            <param name="item">The code block candidate to test and optimize.</param>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ICSCode">
+            <summary>
+            Interface ICSCode
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ICSCode.DoWhile">
+            <summary>
+            Gets or sets the original code.
+            </summary>
+            <value>The original code.</value>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICSCode.RemoveSingleSourceLabels1(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Removes the single source labels1.
+            </summary>
+            <param name="cStruct">The c structure.</param>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICSCode.ReorderLabels(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Reorders the labels.
+            </summary>
+            <param name="cStruct">The c structure.</param>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.Code.ITokenHandler">
+            <summary>
+            Abstraction for a stateful token handler used during lexical analysis.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.Code.ITokenHandler.reservedWords">
+            <summary>
+            Sets the reserved words used to distinguish identifiers from keywords during scanning.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ITokenHandler.TryGetValue(System.Int32,System.Action{TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate,System.String,TranspilerLib.Models.TokenizeData}@)">
+            <summary>
+            Retrieves a handler delegate for the given <paramref name="state"/>.
+            </summary>
+            <param name="state">The current tokenizer state.</param>
+            <param name="handler">When this method returns, contains the state handler delegate if found.</param>
+            <returns><c>true</c> if a handler for the state exists; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:TranspilerLib.Models.CFileScanner">
+            <summary>
+            Provides file scanning related types and callbacks used by the transpiler to process resources and warnings.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.CFileScanner.TResourceHandler">
+            <summary>
+            Represents a callback that handles an individual resource file discovered by the scanner.
+            </summary>
+            <param name="Sender">The sender that triggered the callback, typically the scanner instance.</param>
+            <param name="aFileName">The full path or name of the resource file being handled.</param>
+            <param name="aOptions">Additional options or parameters associated with the resource handling.</param>
+        </member>
+        <member name="T:TranspilerLib.Models.CFileScanner.TResourceHandlerRecord">
+            <summary>
+            Describes a mapping between a file extension and a corresponding <see cref="T:TranspilerLib.Models.CFileScanner.TResourceHandler"/>.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.CFileScanner.TWarnMsgNumberState">
+            <summary>
+            Represents a warning-number specific state used while scanning files.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.EMessageType">
+            <summary>
+            Defines the severity or kind of diagnostic messages that can be emitted by components in this library.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtFatal">
+            <summary>
+            A fatal error indicating that processing cannot continue.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtError">
+            <summary>
+            A non-recoverable error condition for a particular operation.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtWarning">
+            <summary>
+            A recoverable issue that may affect output or behavior.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtNote">
+            <summary>
+            An informational note providing additional context.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtHint">
+            <summary>
+            A suggestion or hint to improve readability or performance.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtInfo">
+            <summary>
+            General informational message.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EMessageType.mtDebug">
+            <summary>
+            Debug-only message useful during development.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.Interpreter.InterpData">
+            <summary>
+            Laufzeitdaten für den Interpreter (Program Counter und ggf. weitere Statusinformationen in Zukunft).
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Models.Interpreter.InterpData.#ctor(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Erstellt eine neue Instanz und setzt den Program Counter auf <paramref name="next"/>.
+            </summary>
+            <param name="next">Erster auszuführender Codeblock.</param>
+        </member>
+        <member name="P:TranspilerLib.Models.Interpreter.InterpData.pc">
+            <summary>
+            Program Counter – zeigt auf den aktuell auszuführenden Block.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.Scanner.CodeBase">
+            <summary>
+            Abstrakte Basisklasse für IEC / C / andere Quellcode-Repräsentationen.
+            Bietet den gemeinsamen Lebenszyklus: <see cref="P:TranspilerLib.Models.Scanner.CodeBase.OriginalCode"/> setzen, <see cref="M:TranspilerLib.Models.Scanner.CodeBase.Tokenize"/> (oder Callback-Variante),
+            anschließend <see cref="M:TranspilerLib.Models.Scanner.CodeBase.Parse(System.Collections.Generic.IEnumerable{TranspilerLib.Data.TokenData})"/> zum Aufbau eines <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/>-Baums
+            und abschließend <see cref="M:TranspilerLib.Models.Scanner.CodeBase.ToCode(TranspilerLib.Interfaces.Code.ICodeBlock,System.Int32)"/> zur Re-Emission / Transformation.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBase.OriginalCode">
+            <summary>
+            Roh-Quelltext der Einheit (z.B. eine Datei, Funktionsblock, Fragment).
+            Kann von konkreten Implementierungen beim Tokenisieren ausgewertet werden.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBase.Tokenize">
+            <summary>
+            Vollständige Tokenisierung des aktuell gesetzten <see cref="P:TranspilerLib.Models.Scanner.CodeBase.OriginalCode"/>.
+            </summary>
+            <returns>Enumerable aller erzeugten <see cref="T:TranspilerLib.Data.TokenData"/> in lexikalischer Reihenfolge.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBase.Tokenize(TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate)">
+            <summary>
+            Tokenisiert den Quelltext und ruft für jedes Token den optionalen Callback auf.
+            </summary>
+            <param name="token">Optionaler Delegat zur Streaming-Verarbeitung einzelner Tokens (kann <c>null</c> sein).</param>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBase.Parse(System.Collections.Generic.IEnumerable{TranspilerLib.Data.TokenData})">
+            <summary>
+            Parst entweder die übergebenen Tokens oder – falls <paramref name="values"/> <c>null</c> ist – das Ergebnis von <see cref="M:TranspilerLib.Models.Scanner.CodeBase.Tokenize"/>.
+            </summary>
+            <param name="values">Vorgegebene Token-Sequenz (optional).</param>
+            <returns>Wurzel-<see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/> des generierten Syntax-/Strukturbaumes.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBase.ToCode(TranspilerLib.Interfaces.Code.ICodeBlock,System.Int32)">
+            <summary>
+            Konvertiert einen vorhandenen Block-Baum in formatierten Code.
+            </summary>
+            <param name="codeBlock">Wurzel des auszugebenden Codeblock-Baumes.</param>
+            <param name="indent">Basis-Einrückung (Default 4).</param>
+            <returns>Formatierter Code als String.</returns>
+        </member>
+        <member name="T:TranspilerLib.Models.Scanner.CodeBlock">
+            <summary>
+            Class CodeBlock.
+            Implements the <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock" />
+            </summary>
+            <seealso cref="T:TranspilerLib.Interfaces.Code.ICodeBlock" />
+        </member>
+        <member name="F:TranspilerLib.Models.Scanner.CodeBlock._parent">
+            <summary>
+            The parent
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Level">
+            <summary>
+            Gets the level.
+            </summary>
+            <value>The level.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Index">
+            <summary>
+            Gets the index.
+            </summary>
+            <value>The index.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Code">
+            <summary>
+            Gets or sets the code.
+            </summary>
+            <value>The code.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Type">
+            <summary>
+            Gets or sets the type.
+            </summary>
+            <value>The type.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.SubBlocks">
+            <summary>
+            Gets the sub blocks.
+            </summary>
+            <value>The sub blocks.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Next">
+            <summary>
+            Gets the next.
+            </summary>
+            <value>The next.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Prev">
+            <summary>
+            Gets the previous.
+            </summary>
+            <value>The previous.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Destination">
+            <summary>
+            Gets or sets the destination.
+            </summary>
+            <value>The destination.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.DestinationIndex">
+            <summary>
+            Gets or sets the index of the destination.
+            </summary>
+            <value>The index of the destination.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Sources">
+            <summary>
+            Gets the sources.
+            </summary>
+            <value>The sources.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.Parent">
+            <summary>
+            Gets or sets the parent.
+            </summary>
+            <value>The parent.</value>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBlock.SourcePos">
+            <summary>
+            Gets or sets the position in the source.
+            </summary>
+            <value>The position.</value>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TranspilerLib.Models.Scanner.CodeBlock"/> class.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.SetDestByIdx(TranspilerLib.Interfaces.Code.ICodeBlock,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Sets the index of the DST.
+            </summary>
+            <param name="item">The item.</param>
+            <param name="value">The value.</param>
+            <returns>System.WeakReference&lt;VBUnObfusicator.Models.ICSCode.ICodeBlock&gt;?.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.SetSourceByIdx(TranspilerLib.Interfaces.Code.ICodeBlock,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Sets the index of the DST.
+            </summary>
+            <param name="item">The item.</param>
+            <param name="value">The value.</param>
+            <returns>System.WeakReference&lt;VBUnObfusicator.Models.ICSCode.ICodeBlock&gt;?.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.GetItemIdx(System.WeakReference{TranspilerLib.Interfaces.Code.ICodeBlock})">
+            <summary>
+            Gets the index of the DST.
+            </summary>
+            <param name="Dst">The DST.</param>
+            <returns>System.Collections.Generic.List&lt;int&gt;.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.ToString">
+            <summary>
+            Converts to string.
+            </summary>
+            <returns>string.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.ToCode(System.Int32)">
+            <summary>
+            Converts to code.
+            </summary>
+            <param name="indent">The indent.</param>
+            <returns>string.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.MoveSubBlocks(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Moves the sub blocks.
+            </summary>
+            <param name="iSrc">The i source.</param>
+            <param name="iDst">The i DST.</param>
+            <param name="cnt">The count.</param>
+            <returns>bool.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.MoveSubBlocks(System.Int32,TranspilerLib.Interfaces.Code.ICodeBlock,System.Int32)">
+            <summary>
+            Moves the sub blocks.
+            </summary>
+            <param name="iSrc">The i source.</param>
+            <param name="cDst">The c DST.</param>
+            <param name="cnt">The count.</param>
+            <returns>bool.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.DeleteSubBlocks(System.Int32,System.Int32)">
+            <summary>
+            Deletes the sub blocks.
+            </summary>
+            <param name="iSrc">The i source.</param>
+            <param name="cnt">The count.</param>
+            <returns>bool.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.Equals(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Equalses the specified other.
+            </summary>
+            <param name="other">The other.</param>
+            <returns>bool.</returns>
+        </member>
+        <member name="T:TranspilerLib.Models.Scanner.CodeBuilder">
+            <summary>
+            Abstrakte Basisklasse zur Erstellung eines hierarchischen <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/>-Baumes
+            aus einer Sequenz von <see cref="T:TranspilerLib.Data.TokenData"/>. Konkrete Ableitungen übersteuern
+            üblicherweise <see cref="M:TranspilerLib.Models.Scanner.CodeBuilder.OnToken(TranspilerLib.Data.TokenData,TranspilerLib.Interfaces.Code.ICodeBuilderData)"/>, um sprachspezifische
+            Strukturierungsregeln (z.B. Blockgrenzen) zu implementieren.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBuilder.NewCodeBlock">
+            <summary>
+            Fabrik-Delegate zum Anlegen eines neuen <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/>. Kann von außen ersetzt werden
+            (z.B. für spezielle Block-Typen oder Instrumentierung / Tests).
+            </summary>
+            <remarks>
+            Parameter: (name, type, code, parent, pos)
+            </remarks>
+        </member>
+        <member name="T:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData">
+            <summary>
+            Interne Standard-Implementierung der zur Laufzeit gehaltenen Build-Daten.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData.labels">
+            <inheritdoc />
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData.gotos">
+            <inheritdoc />
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData.actualBlock">
+            <inheritdoc />
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData.xBreak">
+            <inheritdoc />
+        </member>
+        <member name="P:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData.cbtLast">
+            <inheritdoc />
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBuilder.CodeBuilderData.#ctor(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Erstellt eine neue Dateninstanz für den angegebenen Startblock.
+            </summary>
+            <param name="codeBlock">Aktueller (Start-)Block.</param>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBuilder.NewData(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Erzeugt eine neue Build-Datenstruktur für einen gegebenen Wurzelblock.
+            Kann in Ableitungen übersteuert werden um angepasste Implementierungen bereitzustellen.
+            </summary>
+            <param name="block">Wurzel / Startblock.</param>
+            <returns>Datencontainer zur Fortschrittsverwaltung.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBuilder.OnToken(TranspilerLib.Data.TokenData,TranspilerLib.Interfaces.Code.ICodeBuilderData)">
+            <summary>
+            Verarbeitet ein einzelnes Token und erzeugt (bzw. verschiebt) den aktuellen Block-Kontext.
+            Die Default-Implementierung leitet anhand der Level-Differenz die Elternebene ab.
+            </summary>
+            <param name="tokenData">Aktuelles Token.</param>
+            <param name="data">Mutable Builder-Daten (enthält u.a. den aktuellen Block).</param>
+            <exception cref="T:System.NotImplementedException">Geworfen wenn eine unvorhergesehene Level-Differenz auftritt.</exception>
+        </member>
+        <member name="T:TranspilerLib.Properties.Resources">
+            <summary>
+              Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.ResourceManager">
+            <summary>
+              Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.Culture">
+            <summary>
+              Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+              Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrDivByZero">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrIfXXXNestingLimitReached">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Nesting of $IFxxx too deep ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrIncludeFileNotFound">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Could not find include file &apos;{0}&apos; ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrIncludeLimitReached">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrInvalidCharacter">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Invalid character &apos;{0}&apos; ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrInvalidMode">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrInvalidModeSwitch">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrInvalidPPElse">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die $ELSE without matching $IFxxx ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrInvalidPPEndif">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die $ENDIF without matching $IFxxx ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrOpenString">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die string exceeds end of line ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrOperandAndOperatorMismatch">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrRangeCheck">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrWrongSwitchToggle">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SErrXExpectedButYFound">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SIllegalStateForWarnDirective">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SInvalidDispatchFieldName">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogELSEIFAccepted">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogELSEIFRejected">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogIFAccepted">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogIFDefAccepted">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die IFDEF {0} found, accepting. ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogIFDefRejected">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogIFNDefAccepted">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogIFNDefRejected">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogIFRejected">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogLineNumber">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Reading line {0}. ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogMacroDefined">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogMacroUnDefined">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogMacroXSetToY">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SLogOpeningFile">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Opening source file &quot;{0}&quot;. ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SMisplacedGlobalCompilerSwitch">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SNoResourceSupport">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.StrinSErrResourceFileNotFound">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Could not find resource file &apos;{0}&apos; ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SUserDefined">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Properties.Resources.SWarnIllegalCompilerDirectiveX">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+            </summary>
+        </member>
+    </members>
+</doc>

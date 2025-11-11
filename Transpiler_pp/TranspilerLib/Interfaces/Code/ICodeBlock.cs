@@ -22,7 +22,7 @@ namespace TranspilerLib.Interfaces.Code;
 
 /// <summary>
 /// Interface ICodeBlock
-/// Extends the <see cref="Models.IHasParents{ICodeBlock}" />
+/// Extends the <see cref="IHasParents{ICodeBlock}" />
 /// Extends the <see cref="IEquatable{ICodeBlock}" />
 /// </summary>
 /// <seealso cref="Models.IHasParents{ICodeBlock}" />
