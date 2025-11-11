@@ -2,13 +2,16 @@
 <Window x:Class="PrimePlotter.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mvvm="clr-namespace:PrimePlotter.ViewModels"
         xmlns:local="clr-namespace:PrimePlotter.Views"
         Title="Prime Plotter" Width="1100" Height="800"
+        mc:Ignorable="d"
         WindowStartupLocation="CenterScreen">
-    <Window.DataContext>
+    <d:Window.DataContext>
         <mvvm:MainViewModel />
-    </Window.DataContext>
+    </d:Window.DataContext>
 
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
