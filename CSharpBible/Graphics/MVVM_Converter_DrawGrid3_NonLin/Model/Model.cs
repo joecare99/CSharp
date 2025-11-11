@@ -15,6 +15,7 @@ using System;
 using Sokoban_Base.Model;
 using System.Drawing;
 using BaseLib.Helper;
+using Sokoban.Model;
 
 namespace MVVM_Converter_DrawGrid3_NonLin.Model
 {
