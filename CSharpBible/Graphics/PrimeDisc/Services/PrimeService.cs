@@ -1,12 +1,78 @@
 ﻿// Services/PrimeService.cs
+using PrimePlotter.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 
 namespace PrimePlotter.Services;
 
-public static class PrimeService
+public class PrimeService : IPrimeService
 {
-    public static List<int> FirstNPrimes(int n, IProgress<double>? progress = null, System.Threading.CancellationToken ct = default)
+    /// <summary>
+    /// Ermittelt die ersten <paramref name="n"/> Primzahlen in aufsteigender Reihenfolge.
+    /// </summary>
+    /// <param name="n">Anzahl der gewünschten Primzahlen (falls kleiner oder gleich 0: leere Liste).</param>
+    /// <param name="progress">
+    /// Optionaler Fortschritts-Reporter (0.0–50.0). Die Methode meldet:
+    ///  - Groben Fortschritt (0–40%) während der Eliminierung von Vielfachen im Sieb (äußere <c>p</c>-Schleife).
+    ///  - Verfeinerung (40–50%) während des Sammelns der Primzahlen aus dem fertigen Sieb.
+    /// Ein Endwert von 50.0 signalisiert Abschluss. Werte >50% sind hier absichtlich nicht genutzt, um ggf.
+    /// nachgelagerte Verarbeitung (Visualisierung etc.) separat abzubilden.
+    /// </param>
+    /// <param name="ct">
+    /// Optionales Cancellation Token zur vorzeitigen Unterbrechung. Bei Auslösung wird
+    /// <see cref="OperationCanceledException"/> geworfen, sobald der nächste Abbruchpunkt erreicht ist.
+    /// </param>
+    /// <returns>Liste der ersten <paramref name="n"/> Primzahlen (leer, wenn <paramref name="n"/> &lt;= 0).</returns>
+    /// <remarks>
+    /// <para>
+    /// Algorithmus:
+    ///  1. Behandlung kleiner Grenzfälle (n ≤ 6) durch direkte Rückgabe einer vordefinierten Liste.
+    ///  2. Abschätzung einer oberen Schranke für die n-te Primzahl nach Dusart zur Bestimmung der Siebgröße.
+    ///  3. Initialisierung eines booleschen Arrays (<c>true</c> = potentiell prim).
+    ///  4. Klassisches Sieb des Eratosthenes: Streichen der Vielfachen jedes gefundenen Primkandidaten p ab p².
+    ///  5. Sammeln der ersten n Primzahlen durch lineares Durchlaufen des Siebs.
+    /// </para>
+    /// <para>
+    /// Komplexität:
+    ///  - Zeit: O(L log log L) für das Sieben, wobei L die berechnete obere Schranke ist.
+    ///  - Speicher: O(L) für das boolesche Sieb.
+    /// Die Dusart-Schätzung führt zu einer leichten Überdimensionierung, reduziert aber die Gefahr,
+    /// das Sieb zu klein zu wählen und neu allokieren zu müssen.
+    /// </para>
+    /// <para>
+    /// Thread-Sicherheit: Die Methode erzeugt ausschließlich lokale Datenstrukturen und ist daher
+    /// reentrant und nebenläufig sicher (sofern <paramref name="progress"/> selbst thread-sicher
+    /// implementiert ist).
+    /// </para>
+    /// <para>
+    /// Fortschritt: Der Fortschritt endet bewusst bei 50%, um weiteren nachgelagerten Verarbeitungsschritten
+    /// (z.B. grafische Darstellung) eigenen Fortschrittsspielraum zu lassen.
+    /// </para>
+    /// </remarks>
+    /// <exception cref="OperationCanceledException">
+    /// Falls das übergebene <paramref name="ct"/> während der Berechnung abgebrochen wird.
+    /// </exception>
+    /// <example>
+    /// <code>
+    /// // Einfache Nutzung:
+    /// var primes = PrimeService.FirstNPrimes(10);
+    /// // Ergebnis: [2,3,5,7,11,13,17,19,23,29]
+    ///
+    /// // Mit Fortschritts-Reporting und Abbruch:
+    /// var cts = new System.Threading.CancellationTokenSource();
+    /// var progress = new Progress&lt;double&gt;(p =&gt; Console.WriteLine($"Fortschritt: {p:F1}%"));
+    /// try
+    /// {
+    ///     var firstThousand = PrimeService.FirstNPrimes(1000, progress, cts.Token);
+    /// }
+    /// catch (OperationCanceledException)
+    /// {
+    ///     Console.WriteLine("Berechnung abgebrochen.");
+    /// }
+    /// </code>
+    /// </example>
+    /// <seealso cref="System.IProgress{T}"/>
+    public List<int> FirstNPrimes(int n, IProgress<double>? progress = null, System.Threading.CancellationToken ct = default)
     {
         if (n <= 0) return new List<int>();
         if (n <= 6) // kleine Grenzfälle direkt
