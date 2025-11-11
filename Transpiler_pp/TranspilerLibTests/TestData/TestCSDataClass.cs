@@ -2675,39 +2675,39 @@ T:Block,1,}
 
     #region Intermediste token-list
     public static object TestDataList0() => new List<TokenData>(){
-    ("public const string TestData()", CodeBlockType.Operation, 0),
-    ("{", CodeBlockType.Block, 1),
-    ("", CodeBlockType.Operation, 1),
-    ("// Discarded unreachable code: IL_0085", CodeBlockType.LComment, 1),
-    ("string test =", CodeBlockType.Operation, 1),
-    ("\"test\"", CodeBlockType.String, 1),
-    (";", CodeBlockType.Operation, 1),
-    ("goto IL_0001;", CodeBlockType.Goto, 1),
-    ("", CodeBlockType.Operation, 1),
-    ("/* Only one IL_0001 is allowed */", CodeBlockType.Comment, 1),
-    ("IL_0001:", CodeBlockType.Label, 1),
-    ("Test(test:", CodeBlockType.Label, 1),
-    ("", CodeBlockType.Operation, 1),
-    ("\"Some Test\"", CodeBlockType.String, 1),
-    (");", CodeBlockType.Operation, 1),
-    ("switch", CodeBlockType.Operation, 1),
-("(test)", CodeBlockType.Operation, 1),
-    ("{", CodeBlockType.Block, 2),
-    ("case", CodeBlockType.Operation, 2),
-    ("\"test\"", CodeBlockType.String, 2),
-    (":", CodeBlockType.Label, 2),
-    ("case", CodeBlockType.Operation, 2),
-    ("\"test2\"", CodeBlockType.String, 2),
-    (":", CodeBlockType.Label, 2),
-    ("break;", CodeBlockType.Operation, 2),
-    ("default:", CodeBlockType.Label, 2),
-    ("goto IL_0002;", CodeBlockType.Goto, 2),
-    ("}", CodeBlockType.Block, 2),
-    ("goto IL_0002;", CodeBlockType.Goto, 1),
-    ("IL_0002:", CodeBlockType.Label, 1),
-    ("return", CodeBlockType.Operation, 1),
-("test;", CodeBlockType.Operation, 1),
-    ("}", CodeBlockType.Block, 1),};
+        ("public const string TestData()", CodeBlockType.Operation, 0),
+        ("{", CodeBlockType.Block, 1),
+        ("", CodeBlockType.Operation, 1),
+        ("// Discarded unreachable code: IL_0085", CodeBlockType.LComment, 1),
+        ("string test =", CodeBlockType.Operation, 1),
+        ("\"test\"", CodeBlockType.String, 1),
+        (";", CodeBlockType.Operation, 1),
+        ("goto IL_0001;", CodeBlockType.Goto, 1),
+        ("", CodeBlockType.Operation, 1),
+        ("/* Only one IL_0001 is allowed */", CodeBlockType.Comment, 1),
+        ("IL_0001:", CodeBlockType.Label, 1),
+        ("Test(test:", CodeBlockType.Label, 1),
+        ("", CodeBlockType.Operation, 1),
+        ("\"Some Test\"", CodeBlockType.String, 1),
+        (");", CodeBlockType.Operation, 1),
+        ("switch", CodeBlockType.Operation, 1),
+        ("(test)", CodeBlockType.Operation, 1),
+        ("{", CodeBlockType.Block, 2),
+        ("case", CodeBlockType.Operation, 2),
+        ("\"test\"", CodeBlockType.String, 2),
+        (":", CodeBlockType.Label, 2),
+        ("case", CodeBlockType.Operation, 2),
+        ("\"test2\"", CodeBlockType.String, 2),
+        (":", CodeBlockType.Label, 2),
+        ("break;", CodeBlockType.Operation, 2),
+        ("default:", CodeBlockType.Label, 2),
+        ("goto IL_0002;", CodeBlockType.Goto, 2),
+        ("}", CodeBlockType.Block, 2),
+        ("goto IL_0002;", CodeBlockType.Goto, 1),
+        ("IL_0002:", CodeBlockType.Label, 1),
+        ("return", CodeBlockType.Operation, 1),
+        ("test;", CodeBlockType.Operation, 1),
+        ("}", CodeBlockType.Block, 1),};
     public static object TestDataList1_org() => new List<TokenData>() {
     ("private void Befehl_Click(object eventSender, EventArgs eventArgs)", CodeBlockType.Operation, 0),
     ("{", CodeBlockType.Block, 1),
@@ -3066,7 +3066,7 @@ T:Block,1,}
     ("}", CodeBlockType.Block, 2),
     ("}", CodeBlockType.Block, 1),
     };
-    public static object? TestDataList1() => ReadObject(Resources.Test1DataList);
+    public static object TestDataList1() => ReadObject(Resources.Test1DataList)!;
 
     public static object TestDataList2_org() => new List<TokenData>() {
         ("private void Button2_Click(object sender, EventArgs e)", CodeBlockType.Operation, 0),
@@ -3197,7 +3197,7 @@ T:Block,1,}
         ("}", CodeBlockType.Block, 1),
     };
 
-    public static object? TestDataList2() => ReadObject(Resources.Test2DataList);
+    public static object TestDataList2() => ReadObject(Resources.Test2DataList)!;
 
     public static object TestDataList3() => new List<TokenData>(){
         ("public void Test3()", CodeBlockType.Operation, 0),
@@ -3324,11 +3324,11 @@ T:Block,1,}
     ("return;", CodeBlockType.Operation, 1),
     ("}", CodeBlockType.Block, 1),
     };
-    public static object? TestDataList8() => ReadObject(Resources.Test8DataList);
-    public static object? TestDataList9() => ReadObject(Resources.Test9DataList);
-    public static object? TestDataList10() => ReadObject(Resources.Test10DataList);
-    public static object? TestDataList11() => ReadObject(Resources.Test11DataList);
-    public static object? TestDataList12() => ReadObject(Resources.Test12DataList);
-    public static object? TestDataList13() => ReadObject(Resources.Test13DataList);
+    public static object TestDataList8() => ReadObject(Resources.Test8DataList)!;
+    public static object TestDataList9() => ReadObject(Resources.Test9DataList)!;
+    public static object TestDataList10() => ReadObject(Resources.Test10DataList)!;
+    public static object TestDataList11() => ReadObject(Resources.Test11DataList)!;
+    public static object TestDataList12() => ReadObject(Resources.Test12DataList)!;
+    public static object TestDataList13() => ReadObject(Resources.Test13DataList)!;
     #endregion
 }

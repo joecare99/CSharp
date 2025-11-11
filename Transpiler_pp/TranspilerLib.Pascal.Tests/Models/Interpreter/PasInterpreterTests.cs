@@ -31,7 +31,7 @@ public class PasInterpreterTests
     {
         var sut = new PasInterpreter();
 
-        Assert.AreEqual(0, sut.Variables.Count);
+        Assert.IsEmpty(sut.Variables);
         sut.Variables["x"] = 42;
         Assert.AreEqual(42, sut.Variables["x"]);
     }
@@ -40,7 +40,7 @@ public class PasInterpreterTests
     public void Externals_DefaultEmpty_AndInvocable()
     {
         var sut = new PasInterpreter();
-        Assert.AreEqual(0, sut.Externals.Count);
+        Assert.IsEmpty(sut.Externals);
 
         bool called = false;
         sut.Externals["id"] = o => { called = true; return o; };

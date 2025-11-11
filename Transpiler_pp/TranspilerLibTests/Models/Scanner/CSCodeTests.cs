@@ -56,7 +56,7 @@ namespace TranspilerLib.Models.Scanner.Tests
 
         public static IEnumerable<object[]> TestListParse => new object[][]
  {
-            ["0", TestCSDataClass.TestDataList0(), new[] { TestCSDataClass.testDataExp0 }],
+            ["0", TestCSDataClass.TestDataList0()!, new[] { TestCSDataClass.testDataExp0 }],
             ["1", TestCSDataClass.TestDataList1()!, new[] { TestCSDataClass.testDataExp1 }],
             ["2", TestCSDataClass.TestDataList2()!, new[] { TestCSDataClass.testDataExp2 }],
             ["3", TestCSDataClass.TestDataList3(), new[] { TestCSDataClass.testDataExp3 }],
