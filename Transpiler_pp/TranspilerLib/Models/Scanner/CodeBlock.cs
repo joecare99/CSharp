@@ -19,9 +19,6 @@ using System.Runtime.Serialization;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Models.Scanner;
 
 

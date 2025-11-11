@@ -15,9 +15,6 @@ using System;
 using System.Collections.Generic;
 using TranspilerLib.Data;
 
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Interfaces.Code;
 
 /// <summary>

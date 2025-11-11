@@ -11,10 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-
-/// <summary>
-/// Token representation produced by the tokenizer and consumed by builders and parsers.
-/// </summary>
 namespace TranspilerLib.Data;
 
 /// <summary>

@@ -11,9 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Data;
 
 /// <summary>
