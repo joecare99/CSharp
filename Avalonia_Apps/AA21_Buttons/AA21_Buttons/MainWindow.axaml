@@ -10,7 +10,7 @@
   <TabControl>
     <!-- Buttons Tab -->
     <TabItem Header="Buttons">
-      <views:ButtonsView DataContext="{Binding ButtonsViewViewModel}" />
+      <views:ButtonsView />
     </TabItem>
 
     <!-- XAML Code Tab -->

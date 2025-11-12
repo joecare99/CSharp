@@ -11,7 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using AA21_Buttons.ViewModels;
 using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AA21_Buttons.Views;
 
@@ -26,5 +28,9 @@ public partial class ButtonsView : UserControl
     public ButtonsView()
     {
         InitializeComponent();
+        if (Design.IsDesignMode) return;
+
+        var vm = App.Services.GetRequiredService<ButtonsViewViewModel>();
+        DataContext = vm;
     }
 }

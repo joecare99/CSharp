@@ -334,7 +334,7 @@ public class PasCodeBuilder : CodeBuilder
     }
 
     /// <summary>
-    /// Ersetzt alle früheren base.OnToken-Verwendungen: Fügt ein generisches Token
+    /// Ersetzt alle früheren base.OnToken-Verwendungen: Fügt ein generisches LfmToken
     /// als eigener Block unter dem aktuellen Kontext hinzu ohne Level-Logik.
     /// </summary>
     private void AddRawToken(TokenData tokenData, ICodeBuilderData data)
