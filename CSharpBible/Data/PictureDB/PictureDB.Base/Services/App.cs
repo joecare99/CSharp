@@ -15,6 +15,7 @@ public class App
     private readonly ICategorizer _categorizer;
     private readonly IEvaluator _evaluator;
     private readonly ISorter _sorter;
+    private readonly IResultStore _store;
 
     public App(
         IImageLoader loader,
@@ -22,7 +23,8 @@ public class App
         ILLMClient llm,
         ICategorizer categorizer,
         IEvaluator evaluator,
-        ISorter sorter)
+        ISorter sorter,
+        IResultStore store)
     {
         _loader = loader;
         _processor = processor;
@@ -30,6 +32,7 @@ public class App
         _categorizer = categorizer;
         _evaluator = evaluator;
         _sorter = sorter;
+        _store = store;
     }
 
     public async Task RunAsync(string folderPath)
@@ -55,6 +58,17 @@ public class App
         foreach (var res in sorted)
         {
             Console.WriteLine($"{res.FilePath} | {res.Category} | Score: {res.Score}");
+        }
+
+        try
+        {
+            var outPath = System.IO.Path.Combine(folderPath, "picturedb-results.json");
+            _store.SaveResults(sorted, outPath);
+            Console.WriteLine($"Results saved to: {outPath}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to save results: {ex.Message}");
         }
     }
 }
