@@ -1,0 +1,68 @@
+﻿<Page x:Class="MVVM_40_Wizzard.Views.WizzardView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM_40_Wizzard.Views"
+      xmlns:p="clr-namespace:MVVM_40_Wizzard.Properties"
+      xmlns:vc="clr-namespace:MVVM_40_Wizzard.ValueConverter"
+      xmlns:mvvm="clr-namespace:MVVM_40_Wizzard.ViewModels"
+      xmlns:model="clr-namespace:MVVM_40_Wizzard.Models"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static p:Resources.Title}">
+    <Page.Resources>
+        <vc:DateTimeValueConverter x:Key="DateTimeValueConverter"/>
+    </Page.Resources>
+    <Page.DataContext>
+        <mvvm:WizzardViewModel/>
+    </Page.DataContext>
+    <DockPanel Background="Silver">
+        <Label DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{x:Static p:Resources.Title}"/>
+                <Button Content="DE" Command="{Binding LangDeCommand}"/>
+                <Button Content="EN" Command="{Binding LangEnCommand}"/>
+                <Button Content="FR" Command="{Binding LangFrCommand}"/>
+            </StackPanel>
+        </Label>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Now, ConverterParameter=yyyy-MM-dd HH:mm:ss, Converter={StaticResource DateTimeValueConverter}, Mode=OneWay}"/>
+            <Button Grid.Column="1" Command="{Binding PrevTabCommand}" Content="{x:Static p:Resources.PrevTab}" Margin="5" Padding="10"/>
+            <Button Grid.Column="2" Command="{Binding NextTabCommand}" Content="{x:Static p:Resources.NextTab}" Margin="5" Padding="10"/>
+        </Grid>
+        <TabControl SelectedIndex="{Binding SelectedTab}">
+            <TabItem Margin="5" Height="40" >
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page1}" Padding="20,0,30,10" />
+                </TabItem.Header>
+                <Frame Source="{Binding Page1FrameName}" Margin="5"/>
+            </TabItem>
+            <TabItem IsEnabled="{Binding Tab2Enabled}" Margin="5">
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page2}" Padding="20,0,30,0"/>
+                </TabItem.Header>
+                <Frame Source="{Binding Page2FrameName}" Margin="5"/>
+            </TabItem>
+            <TabItem IsEnabled="{Binding Tab3Enabled}" Margin="5">
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page3}" Padding="20,0,30,0"/>
+                </TabItem.Header>
+                <Frame Source="{Binding Page3FrameName}" Margin="5"/>
+            </TabItem>
+            <TabItem IsEnabled="{Binding Tab4Enabled}" Margin="5">
+                <TabItem.Header >
+                    <TextBlock Text="{x:Static p:Resources.Page4}" Padding="20,0,30,0"/>
+                </TabItem.Header>
+                <Frame Source="{Binding Page4FrameName}" Margin="5"/>
+            </TabItem>
+        </TabControl>
+        
+    </DockPanel>
+</Page>
