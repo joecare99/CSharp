@@ -20,7 +20,7 @@ public class VectorTests
         Assert.AreEqual(0, _v.y);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, "( 0, 0)")]
     [DataRow(0, 1, "( 0, 1)")]
     [DataRow(1, 0, "( 1, 0)")]
@@ -41,7 +41,7 @@ public class VectorTests
     /// <param name="x">The x.</param>
     /// <param name="y">The y.</param>
     /// <param name="exp">The exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, "( 0, 0)")]
     [DataRow(0, 1, "( 0, 1)")]
     [DataRow(1, 0, "( 1, 0)")]
@@ -59,7 +59,7 @@ public class VectorTests
     /// Gets or sets the vector as a tuple.
     /// </summary>
     /// <value>The vector as a tuple.</value>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, "( 0, 0)")]
     [DataRow(0, 1, "( 0, 1)")]
     [DataRow(1, 0, "( 1, 0)")]
@@ -76,7 +76,7 @@ public class VectorTests
     /// Gets or sets the vector as a tuple.
     /// </summary>
     /// <value>The vector as a tuple.</value>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, "( 0, 0)")]
     [DataRow(0, 1, "( 0, 1)")]
     [DataRow(1, 0, "( 1, 0)")]
@@ -96,7 +96,7 @@ public class VectorTests
     /// Gets or sets the vector as a tuple.
     /// </summary>
     /// <value>The vector as a tuple.</value>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, "( 0, 0)")]
     [DataRow(0, 1, "( 0, 1)")]
     [DataRow(1, 0, "( 1, 0)")]
@@ -113,7 +113,7 @@ public class VectorTests
     /// Gets or sets the vector as a tuple.
     /// </summary>
     /// <value>The vector as a tuple.</value>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, "( 0, 0)")]
     [DataRow(0, 1, "( 0, 1)")]
     [DataRow(1, 0, "( 1, 0)")]
@@ -132,7 +132,7 @@ public class VectorTests
     /// Gets or sets the vector as a tuple.
     /// </summary>
     /// <value>The vector as a tuple.</value>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0, true)]
     [DataRow(0, 1, 0, 0, false)]
     [DataRow(1, 0, 0, 0, false)]
@@ -159,7 +159,7 @@ public class VectorTests
         Assert.AreEqual(xExp, v2.Equals(v1), $"({x2},{y2}).Equals(({x},{y}))");
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0)]
     [DataRow(0, 1, -4194304)]
     [DataRow(1, 0, 1072693248)]

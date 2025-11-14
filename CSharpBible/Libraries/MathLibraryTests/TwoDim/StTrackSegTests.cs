@@ -16,7 +16,7 @@ public class StTrackSegTests
         Assert.AreEqual(double.NaN, st.lrRadius);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] { 1d, 2d }, new[] { 3d, 4d },5d)]
     [DataRow(new[] { 6d, 5d }, new[] { 4d, 3d },2d)]
     public void StTrackSegTests2(double[] adAct1, double[] adAct2,double fAct3)
