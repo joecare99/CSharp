@@ -10,24 +10,6 @@ public class OpenFileDialogProxy : FileDialogProxy<OpenFileDialog>, IOpenFileDia
     {
     }
 
-    public string Filter
-    {
-        get => This.Filter;
-        set => This.Filter = value;
-    }
-
-    public string InitialDirectory
-    {
-        get => This.InitialDirectory;
-        set => This.InitialDirectory = value;
-    }
-
-    public string Title
-    {
-        get => This.Title;
-        set => This.Title = value;
-    }
-
     public bool Multiselect
     {
         get => This.Multiselect;
@@ -39,12 +21,6 @@ public class OpenFileDialogProxy : FileDialogProxy<OpenFileDialog>, IOpenFileDia
     public string SafeFileName => This.SafeFileName;
 
     public string[] SafeFileNames => This.SafeFileNames;
-
-    public string DefaultExt
-    {
-        get => This.DefaultExt;
-        set => This.DefaultExt = value;
-    }
 
     public string FileNameExtension => This.DefaultExt;
 }
