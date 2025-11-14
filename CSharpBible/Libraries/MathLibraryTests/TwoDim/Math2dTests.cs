@@ -199,7 +199,7 @@ public class Math2dTests
         AssertAreEqual(exp, Math2d.eY, $"{exp} = eY");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0.0, 0.0)]
     [DataRow(1.0, 0.0)]
     [DataRow(0.0, 1.0)]
@@ -214,7 +214,7 @@ public class Math2dTests
     /// </summary>
     /// <param name="x">The x.</param>
     /// <param name="y">The y.</param>
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0.0, 0.0)]
     [DataRow(1.0, 0.0)]
     [DataRow(0.0, 1.0)]
@@ -233,7 +233,7 @@ public class Math2dTests
     /// <param name="v2y">The v2y.</param>
     /// <param name="expx">The expx.</param>
     /// <param name="expy">The expy.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0, 0, 0)]
     [DataRow(0, 1, 0, 0, 0, 1)]
     [DataRow(1, 0, 0, 0, 1, 0)]
@@ -264,7 +264,7 @@ public class Math2dTests
     /// <param name="v2y">The v2y.</param>
     /// <param name="expx">The expx.</param>
     /// <param name="expy">The expy.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0, 0, 0)]
     [DataRow(0, 1, 0, 0, 0, 1)]
     [DataRow(1, 0, 0, 0, 1, 0)]
@@ -292,7 +292,7 @@ public class Math2dTests
     /// <param name="angle">The angle.</param>
     /// <param name="middle">The middle.</param>
     /// <param name="exp">The exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0)]
     [DataRow(0, Double.NaN, 0)]
     [DataRow(Math.PI, 0, -Math.PI)]
@@ -322,7 +322,7 @@ public class Math2dTests
     /// <param name="v_y">The v y.</param>
     /// <param name="exp_x">The exp x.</param>
     /// <param name="exp_y">The exp y.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0)]
 
     [DataRow(0, 1, -1, 0)]
@@ -353,7 +353,7 @@ public class Math2dTests
     /// <param name="v_y">The v y.</param>
     /// <param name="exp_x">The exp x.</param>
     /// <param name="exp_y">The exp y.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0)]
 
     [DataRow(0, 1, 0, -1)]
@@ -386,7 +386,7 @@ public class Math2dTests
     /// <param name="exp">if set to <c>true</c> [exp].</param>
     /// <param name="exlength">The exlength.</param>
     /// <param name="exangle">The exangle.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, false, 0, 0)]
 
     [DataRow(1, 0, true, 1, 0)]
@@ -424,7 +424,7 @@ public class Math2dTests
     /// <param name="exv_y">The exv y.</param>
     /// <param name="length">The length.</param>
     /// <param name="angle">The angle.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0)]
 
     [DataRow(1, 0, 1, 0)]
@@ -480,7 +480,7 @@ public class Math2dTests
     /// <param name="v2_x">The v2 x.</param>
     /// <param name="v2_y">The v2 y.</param>
     /// <param name="exp">The exp.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0, 0)]
 
     [DataRow(0, 1, 1, 0, 0)]
@@ -544,7 +544,7 @@ public class Math2dTests
     /// <param name="v2_y">The v2 y.</param>
     /// <param name="exp_x">The exp x.</param>
     /// <param name="exp_y">The exp y.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0, 0, 0)]
 
     [DataRow(0, 1, 1, 0, 0, 1)]
@@ -608,7 +608,7 @@ public class Math2dTests
     /// <param name="s">The s.</param>
     /// <param name="v_x">The v x.</param>
     /// <param name="v_y">The v y.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(VectorMultiplyTestData))]
     public void DivTest(double exp_x, double exp_y, double s, double v_x, double v_y)
     {
@@ -627,7 +627,7 @@ public class Math2dTests
     /// <param name="w">The w.</param>
     /// <param name="exp_x">The exp x.</param>
     /// <param name="exp_y">The exp y.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     // Null
     [DataRow(0, 0, 0, 0, 0)]
     [DataRow(0, 0, 1, 0, 0)]
@@ -666,7 +666,7 @@ public class Math2dTests
     /// <param name="w">The w.</param>
     /// <param name="exp_x">The exp x.</param>
     /// <param name="exp_y">The exp y.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     // Null
     [DataRow(0, 0, 0, 0, 0)]
     [DataRow(0, 0, 1, 0, 0)]
@@ -697,7 +697,7 @@ public class Math2dTests
         AssertAreEqual(v, exp.Rotate(-w), $"{v} = {exp}.Rotate({-w})");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("00", 0, new double[] { 1, 0 }, new double[] { 1, 0 })]
     [DataRow("01", 1, new double[] { 1, 0 }, new double[] { 1, 0 })]
     [DataRow("02", 2, new double[] { 1, 0 }, new double[] { 0, -1 })]
@@ -721,7 +721,7 @@ public class Math2dTests
 
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("00", 0, new double[] { 1, 0 }, new double[] { 1, 0 })]
     [DataRow("01", 1, new double[] { 1, 0 }, new double[] { 1, 0 })]
     [DataRow("02", 2, new double[] { 1, 0 }, new double[] { 0, -1 })]
@@ -745,7 +745,7 @@ public class Math2dTests
 
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("00", new[] { 1d, 0d }, new[] { 1d, 0d }, true, 0d)]
     [DataRow("01", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
     [DataRow("02", new double[] { 1, 0 }, new double[] { 0, -1 }, true, 4.71238898038469d)]
@@ -765,7 +765,7 @@ public class Math2dTests
         Assert.AreEqual(fExp == 0 ? 0d : 2 * Math.PI - fExp, wnkl2, $"{name} W2");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("00", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
     [DataRow("01", new double[] { 1, 0 }, new double[] { 1, 0 }, true, 0d)]
     [DataRow("02", new double[] { 1, 0 }, new double[] { 0, -1 }, true, 4.71238898038469d)]
@@ -784,7 +784,7 @@ public class Math2dTests
         Assert.AreEqual(fExp == 0 ? 0d : 2 * Math.PI - fExp, wnkl2, $"{name} W2");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("00", new double[] { 1, 0 }, new double[] { 1, 0 }, new double[] { 1, 0 }, new double[] { 0, 0 }, 0d)]
     [DataRow("01", new double[] { 1, 0 }, new double[] { 0, 0 }, new double[] { 1, 0 }, new double[] { 0, 0 }, 0d)]
     [DataRow("02", new double[] { 1, 0 }, new double[] { 1, 0 }, new double[] { 0, 0 }, new double[] { 0, 0 }, 0d)]

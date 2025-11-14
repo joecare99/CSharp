@@ -70,7 +70,7 @@ public class CProcAntennaValuesTests
         public int Compare(object? x, object? y) => x is double dx && y is double dy ? (Math.Abs(dx - dy) < 1e-8 ? 0 : -1) : x!.Equals(y) ? 0 : -1;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] {300.0, 0, 280, 0, 260, 0, 240, 0, 220, 0, 200, 0, 180, 0, 160, 0, 140, 0, 120, 0, 100, 0, 80, 0, 60, 0, 40, 0, 20, 0, 0, 0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, false, double.NaN,
         new[] {300.0, 0, 280, 0, 260, 0, 240, 0, 220, 0, 200, 0, 180, 0, 160, 0, 140, 0, 120, 0, 100, 0, 80, 0, 60, 0, 40, 0, 20, 0, 0, 0,
@@ -100,7 +100,7 @@ public class CProcAntennaValuesTests
         CollectionAssert.AreEqual(adExp, ToDArr(testClass.Debug.aPoints), new DObjComaprer());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] {300.0, 0, 280, 0, 260, 0, 240, 0, 220, 0, 200, 0, 180, 0, 160, 0, 140, 0, 120, 0, 100, 0, 80, 0, 60, 0, 40, 0, 20, 0, 0, 0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, new[] { 150d, 0d }, new[] { 45d, 0d }, new[] { 1.25d, 0d }, DisplayName = "1 - Default")]
     [DataRow(new[] {300.0, 1d, 280, 0, 260, 0, 240, 0, 220, 0, 200, 0, 180, 0, 160, 0, 140, 0, 120, 0, 100, 0, 80, 0, 60, 0, 40, 0, 20, 0, 0, 0,
@@ -129,7 +129,7 @@ public class CProcAntennaValuesTests
         Assert.AreEqual(adExp3[1], _v3.y, 1e-8, "v3.y");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] { 150d, 0d, 45d, 0d, 1.25d, 0d }, 0d, 0d, 0.5d, new[] { 150d, 0d, 45d, 0d, 1.25d, 0d }, DisplayName = "0 - No Movement")]
     [DataRow(new[] { 150d, 0d, 45d, 0d, 1.25d, 0d }, Math.PI, 1000d, 0d, new[] { 150d, 0d, 45d, 0d, 1.25d, 0d }, DisplayName = "1 - No Time")]
     [DataRow(new[] { 150d, 0.0625d, 45d, 0d, 1.25d, 0d }, 0d, 100d, 0.5d, new[] { 100d, 0.0625d, -5d, 0d, -48.75d, 0d }, DisplayName = "2 - only linear")]
@@ -143,7 +143,7 @@ public class CProcAntennaValuesTests
         CollectionAssert.AreEqual(adExp, ToDArr(aPoints), new DObjComaprer());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] { 150d, 0d, 100d, 0d, 150d, 0d }, new[] { 150d, 0d, 0d, 0d, 0d }, 0d, 0d, double.NaN, DisplayName = "0 - Nothing")]
     [DataRow(new[] { 150d, 0d, 100d, 0d, 50d, 0d }, new[] { 0d, 0d, 0d, 1d, 0d }, 0d, 0d, 0d, DisplayName = "1 - Gerade bei y=0")]
     [DataRow(new[] { 150d, 10d, 100d, 10d, 50d, 10d }, new[] { 0d, 10d, 0d, 1d, 0d }, 0d, 0d, -10d, DisplayName = "1a - Gerade bei y=10")]

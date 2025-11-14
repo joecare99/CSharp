@@ -7,7 +7,7 @@ namespace MathLibrary.TwoDim.Tests;
 public class AGVHandlingTests
 {
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 1)]
     [DataRow(0.5 * Math.PI, -0.25, 0.6366197723675814)]
     [DataRow(-0.5 * Math.PI, 0.25, 0.6366197723675814)]
@@ -25,7 +25,7 @@ public class AGVHandlingTests
         Assert.AreEqual(dExp - dx * _eps, AGVHandling.SinX_X(x - _eps), 1e-8, $"SinX_X({x - _eps}) == {dExp} (-1)");
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, 0, 0, 0, 0, 0, 0)]
     [DataRow(0, 0, 0, 1, 0, 0, 0)]
     [DataRow(0, 0, 0, 2, 0, 0, 0)]
@@ -56,7 +56,7 @@ public class AGVHandlingTests
         Assert.AreEqual(xAng, ang, 1e-8, $"Angle({ang}) == {xAng}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] { 1.0d, 0.0d }, 0.0, new[] { 1.0, 0.0 }, new[] { 1.0, 0.0 })]
     [DataRow(new[] { 0.0d, -1.0d }, 1.0, new[] { 0.0, 0.0 }, new[] { 1.0, 0.0 })]
     public void AGVSteeringTest(double[] afPos, double fActRot, double[] afVel, double[] afExp)

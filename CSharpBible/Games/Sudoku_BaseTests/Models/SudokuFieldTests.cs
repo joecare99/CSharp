@@ -32,7 +32,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         Assert.AreEqual(0, testModel.PossibleValues.Count);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 5)]
     [DataRow(new int[] { 1 }, 1)]
     [DataRow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 9)]
@@ -48,7 +48,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         Assert.AreEqual(iCnt, testModel.PossibleValues.Count);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 1)]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 3)]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 5)]
@@ -85,7 +85,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         AssertAreEqual(field, testModel, []);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(SudokuFieldTestData))]
     public void WriteToStreamTest(byte[] bytes, SudokuField field)
     {
@@ -98,7 +98,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         CollectionAssert.AreEqual(bytes, stream.ToArray());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 3, 5 }, null, false, new[] { 1, 3, 7 })]
     [DataRow(new[] { 0, 0 }, 5, true, new int[] { })]
     [DataRow(new[] { 0, 0 }, 5, true, new int[] { 0, 1, 2 })]

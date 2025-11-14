@@ -8,7 +8,7 @@ namespace Sudoku_Base.Models.Tests;
 [TestClass()]
 public class UndoInformationTests
 {
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, null)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, true)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, new[] {3,5,7 })]
@@ -117,7 +117,7 @@ public class UndoInformationTests
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, 5,null)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, null,5)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, true,false)]
