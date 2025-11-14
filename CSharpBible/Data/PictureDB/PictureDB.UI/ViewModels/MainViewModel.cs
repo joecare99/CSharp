@@ -5,9 +5,10 @@ using CommunityToolkit.Mvvm.Input;
 using PictureDB.Base.Models;
 using PictureDB.Base.Models.Interfaces;
 using PictureDB.Base.Services.Interfaces;
-using System.Windows.Forms;
+using CommonDialogs;
 using System.Windows.Threading;
 using System;
+using CommonDialogs.Interfaces;
 
 namespace PictureDB.UI.ViewModels;
 
@@ -29,6 +30,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _status = string.Empty;
 
+    public Func<IFileDialog, bool?>? onShowDialog;
+
     public MainViewModel(IImageLoader loader, IImageProcessor processor, ILLMClient llm, ICategorizer categorizer, IEvaluator evaluator, ISorter sorter, IResultStore store)
     {
         _loader = loader;
@@ -40,18 +43,31 @@ public partial class MainViewModel : ObservableObject
         _store = store;
     }
 
-    [ICommand]
+    // Pseudocode:
+    // - Create CommonDialogs FolderBrowserDialog instance
+    // - Configure description, root folder, and optionally preselect current FolderPath
+    // - Show dialog (returns bool?)
+    // - If user accepted (true), update FolderPath with SelectedPath
+    // - Otherwise, do nothing
+
+    [RelayCommand]
     private void Browse()
     {
-        var dlg = new FolderBrowserDialog();
-        var res = dlg.ShowDialog();
-        if (res == DialogResult.OK)
+        var dlg = new FolderBrowserDialog
+        {
+            Description = "Ordner mit Bildern wählen",
+            RootFolder = Environment.SpecialFolder.MyComputer,
+            ShowNewFolderButton = true,
+            SelectedPath = string.IsNullOrWhiteSpace(FolderPath) ? string.Empty : FolderPath
+        };
+
+        if (onShowDialog?.Invoke(dlg) == true)
         {
             FolderPath = dlg.SelectedPath;
         }
     }
 
-    [ICommand]
+    [RelayCommand]
     private async Task AnalyzeAsync(string folder)
     {
         if (string.IsNullOrWhiteSpace(folder))
