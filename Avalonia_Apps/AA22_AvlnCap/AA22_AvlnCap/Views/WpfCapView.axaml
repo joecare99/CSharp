@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cvt="clr-namespace:AA22_AvlnCap.Converter"
+             xmlns:vm="clr-namespace:AA22_AvlnCap.ViewModels"
+             x:DataType="vm:IWpfCapViewModel"
+             x:Class="AA22_AvlnCap.Views.WpfCapView">
+  <UserControl.Resources>
+    <cvt:EnumToColorConverter x:Key="EnumToColorStringConverter"/>
+    <cvt:IntToStringConverter x:Key="IntToStringConverter"/>
+  </UserControl.Resources>
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8">
+      <Button Content="Shuffle" Command="{Binding ShuffleCommand}"/>
+    </StackPanel>
+    <StackPanel Grid.Row="1" Spacing="4">
+      <ItemsControl Items="{Binding Rows}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Button Content="◀" Command="{Binding DataContext.MoveLeftCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding .}"/>
+              <ItemsControl Items="{Binding TileColor}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Width="40" Height="40" Margin="2" Background="{Binding Converter={StaticResource EnumToColorStringConverter}}"/>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <Button Content="▶" Command="{Binding DataContext.MoveRightCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding .}"/>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </Grid>
+</UserControl>
