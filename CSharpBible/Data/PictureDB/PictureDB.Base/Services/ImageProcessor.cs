@@ -9,7 +9,7 @@ namespace PictureDB.Base.Services;
 
 public class ImageProcessor : IImageProcessor
 {
-    private const int MaxDimension = 1024; // max width or height in pixels
+    private const int MaxDimension = 512; // max width or height in pixels
     private const int JpegQuality = 85;
 
     public string ConvertToBase64(string filePath)
