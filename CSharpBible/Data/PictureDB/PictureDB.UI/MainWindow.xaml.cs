@@ -9,6 +9,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = vm;
-        vm.onShowDialog = dlg => dlg.ShowDialog(this);
+        vm.onShowDialog = dlg => dlg.ShowDialog(this.Parent as Window);
     }
 }
