@@ -117,7 +117,7 @@ public class WindowPortToGridLinesTests
                 var result = conv.Convert(wp, null, null, System.Globalization.CultureInfo.InvariantCulture)
                     as System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>;
                 Assert.IsNotNull(result);
-                Assert.IsTrue(result.Count > 0, "Es wurden keine Elemente erzeugt.");
+                Assert.IsNotEmpty(result, "Es wurden keine Elemente erzeugt.");
 
                 int axisCount = 0, majorCount = 0, minorCount = 0, labelZeroCount = 0, ellipseCount = 0;
                 foreach (var fe in result)
@@ -139,10 +139,10 @@ public class WindowPortToGridLinesTests
                     }
                 }
 
-                Assert.IsTrue(axisCount >= 2, "Achsenlinien (Stärke 1.5) fehlen.");
-                Assert.IsTrue(majorCount > 0, "Haupt-Gitternetzlinien (Stärke 0.8) fehlen.");
-                Assert.IsTrue(minorCount > 0, "Neben-Gitternetzlinien (Stärke 0.3) fehlen.");
-                Assert.IsTrue(labelZeroCount >= 1, "Mindestens eine '0'-Beschriftung wird erwartet.");
+                Assert.IsGreaterThanOrEqualTo(2, axisCount, "Achsenlinien (Stärke 1.5) fehlen.");
+                Assert.IsGreaterThan(0, majorCount, "Haupt-Gitternetzlinien (Stärke 0.8) fehlen.");
+                Assert.IsGreaterThan(0, minorCount, "Neben-Gitternetzlinien (Stärke 0.3) fehlen.");
+                Assert.IsGreaterThanOrEqualTo(1, labelZeroCount, "Mindestens eine '0'-Beschriftung wird erwartet.");
                 Assert.AreEqual(1, ellipseCount, "Der Nullpunkt (Ellipse) wird erwartet.");
             });
         }
