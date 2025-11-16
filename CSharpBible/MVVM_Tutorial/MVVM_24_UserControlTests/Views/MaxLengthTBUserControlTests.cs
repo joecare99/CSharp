@@ -28,7 +28,7 @@ public class MaxLengthTBUserControlTests
         Assert.IsNotNull(mw!);
         Assert.IsInstanceOfType(mw, typeof(MaxLengthTextBoxUserControl)); 
         Assert.AreEqual(0, mw.MaxLength);
-        Assert.AreEqual(null, asIO[0]);
+        Assert.IsNull(asIO[0]);
         Assert.AreEqual("", asIO[1]);
         Assert.AreEqual("10", asIO[4]);
         Assert.AreEqual("20", asIO[5]);
