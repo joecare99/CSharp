@@ -135,7 +135,7 @@ public class WpfCapViewModelTests
     {
         var _rd = testWpfCapVM.Rows[row].TileColor;
         Assert.IsNotNull(_rd);
-        Assert.AreEqual(4,_rd.Length);
+        Assert.HasCount(4, _rd);
 
         for (var i =0; i<_rd.Length;i++)
             Assert.AreEqual(i+row*8, _rd[i]);
