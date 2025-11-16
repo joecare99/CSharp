@@ -30,7 +30,7 @@ namespace ListBinding.ViewModel.Tests
             var model = new PersonViewViewModel();
             Assert.IsNotNull(model.NewPerson);
             Assert.IsNotNull(model.Persons);
-            Assert.AreEqual(1, model.Persons.Count);
+            Assert.HasCount(1, model.Persons);
             Assert.IsTrue(model.NewPerson.IsEmpty);
         }
     }
