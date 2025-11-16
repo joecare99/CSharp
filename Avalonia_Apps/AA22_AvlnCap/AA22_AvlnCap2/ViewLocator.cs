@@ -1,9 +1,9 @@
-using AA20_AvlnCap2.ViewModels;
+using AA22_AvlnCap2.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using System;
 
-namespace AA20_AvlnCap2
+namespace AA22_AvlnCap2
 {
     public class ViewLocator : IDataTemplate
     {

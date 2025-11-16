@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using System;
 
-namespace AA20_AvlnCap2;
+namespace AA22_AvlnCap2;
 
 internal sealed class Program
 {
