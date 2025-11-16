@@ -96,14 +96,14 @@ public class CommunityToolkit2ViewModelTests : BaseTestViewModel<CommunityToolki
     [TestMethod]
     public void ShowLoginTest()
     {
-        Assert.AreEqual(false, testModel.ShowLogin);
+        Assert.IsFalse(testModel.ShowLogin);
         if (testModel is IRecipient<ShowLoginMessage> rslm)
             rslm.Receive(new ShowLoginMessage());
-        Assert.AreEqual(true, testModel.ShowLogin);
+        Assert.IsTrue(testModel.ShowLogin);
         Assert.AreEqual("PropChgn(MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel,ShowLogin)=False\r\nPropChg(MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel,ShowLogin)=True\r\n", DebugLog);
         ClearLog();
         testModel.Receive(new CommunityToolkit.Mvvm.Messaging.Messages.ValueChangedMessage<User>(new User()));
-        Assert.AreEqual(false, testModel.ShowLogin);
+        Assert.IsFalse(testModel.ShowLogin);
         Assert.AreEqual("PropChgn(MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel,ShowLogin)=True\r\nPropChg(MVVM_36_ComToolKtSavesWork.ViewModels.CommunityToolkit2ViewModel,ShowLogin)=False\r\n", DebugLog);
     }
 
