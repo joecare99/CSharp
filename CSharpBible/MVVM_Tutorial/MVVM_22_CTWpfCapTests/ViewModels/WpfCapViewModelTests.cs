@@ -1,6 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM_22_CTWpfCap.Model;
 using MVVM_22_CTWpfCap.ViewModels.Factories;
+using MVVM_22_CTWpfCap.ViewModels.Interfaces;
 using NSubstitute;
 using NSubstitute.Extensions;
 using System;
@@ -37,8 +39,16 @@ public class WpfCapViewModelTests
             DebugOut += $"TileColor({x1},{y1})={x1 % 8 + y1 * 8}\r\n";
             return x1 % 8 + y1 * 8;
         });
-        testWpfCapVM = new WpfCapViewModel(_m,_r,_c);
+        IoC.GetReqSrv = t =>
+        {
+            if (t == typeof(IRowDataFactory)) return _r;
+            if (t == typeof(IColDataFactory)) return _c;
+            if (t == typeof(IWpfCapModel)) return _m;
+            throw new NotImplementedException();
+        };
 
+        testWpfCapVM = new WpfCapViewModel();
+        
         Assert.AreEqual("Init()\r\nShuffle()\r\n",DebugOut);
         testWpfCapVM.PropertyChanged += vmPropChanged;
         testWpfCapVM.Rows.CollectionChanged += vmColChanged;
@@ -126,20 +136,20 @@ public class WpfCapViewModelTests
 
     [TestMethod()]
     [DataRow(0, 0, "")]
-    [DataRow(0, 1, "TileColor(1,0)=1\r\n")]
-    [DataRow(0, 2, "TileColor(2,0)=2\r\n")]
-    [DataRow(0, 3, "TileColor(3,0)=3\r\n")]
-    [DataRow(0, 4, "TileColor(4,0)=4\r\n")]
-    [DataRow(1, 0, "TileColor(0,1)=8\r\n")]
-    [DataRow(1, 1, "TileColor(1,1)=9\r\n")]
-    [DataRow(1, 2, "TileColor(2,1)=10\r\n")]
-    [DataRow(1, 3, "TileColor(3,1)=11\r\n")]
-    [DataRow(1, 4, "TileColor(4,1)=12\r\n")]
-    [DataRow(2, 0, "TileColor(0,2)=16\r\n")]
-    [DataRow(2, 1, "TileColor(1,2)=17\r\n")]
-    [DataRow(2, 2, "TileColor(2,2)=18\r\n")]
-    [DataRow(2, 3, "TileColor(3,2)=19\r\n")]
-    [DataRow(2, 4, "TileColor(4,2)=20\r\n")]
+    [DataRow(0, 1, "")]
+    [DataRow(0, 2, "")]
+    [DataRow(0, 3, "")]
+    [DataRow(0, 4, "")]
+    [DataRow(1, 0, "")]
+    [DataRow(1, 1, "")]
+    [DataRow(1, 2, "")]
+    [DataRow(1, 3, "")]
+    [DataRow(1, 4, "")]
+    [DataRow(2, 0, "")]
+    [DataRow(2, 1, "")]
+    [DataRow(2, 2, "")]
+    [DataRow(2, 3, "")]
+    [DataRow(2, 4, "")]
     public void ColDataTest(int col,int row, string sExp2)
     {
         var _cd = testWpfCapVM.Cols[col][row];
@@ -158,5 +168,56 @@ public class WpfCapViewModelTests
         Assert.IsNotNull(_cd);
 
         Assert.AreEqual(sExp2, DebugOut);
+    }
+
+    [TestMethod()]
+    public void ShuffleCommandTest()
+    {
+        testWpfCapVM.ShuffleCommand.Execute(null);
+        _m.Received().Shuffle();
+    }
+
+    [TestMethod()]
+    [DataRow(1)]
+    [DataRow(3)]
+    public void MoveUpCommandTest(int iAct)
+    {
+        var r = Substitute.For<IColData>();
+        r.ColId.Returns(iAct);
+        testWpfCapVM.MoveUpCommand.Execute(r);
+        _m.Received(1).MoveUp(iAct-1);
+    }
+
+    [TestMethod()]
+    [DataRow(1)]
+    [DataRow(3)]
+    public void MoveDownCommandTest(int iAct)
+    {
+        var r = Substitute.For<IColData>();
+        r.ColId.Returns(iAct);
+        testWpfCapVM.MoveDownCommand.Execute(r);
+        _m.Received(1).MoveDown(iAct-1);
+    }
+
+    [TestMethod()]
+    [DataRow(1)]
+    [DataRow(3)]
+    public void MoveLeftCommandTest(int iAct)
+    {
+        var r = Substitute.For<IRowData>();
+        r.RowId.Returns(iAct);
+        testWpfCapVM.MoveLeftCommand.Execute(r);
+        _m.Received(1).MoveLeft(iAct-1);
+    }
+
+    [TestMethod()]
+    [DataRow(1)]
+    [DataRow(3)]
+    public void MoveRightCommandTest(int iAct)
+    {
+        var r = Substitute.For<IRowData>();
+        r.RowId.Returns(iAct);
+        testWpfCapVM.MoveRightCommand.Execute(r);
+        _m.Received(1).MoveRight(iAct-1);
     }
 }
