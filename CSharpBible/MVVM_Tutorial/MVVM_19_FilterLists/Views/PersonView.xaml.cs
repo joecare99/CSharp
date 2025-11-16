@@ -29,7 +29,7 @@ public partial class PersonView : Page
     public PersonView()
     {
         InitializeComponent();
-        ((PersonViewViewModel)DataContext).MissingData += (object sender, EventArgs e)=>ShowError();
+        ((PersonViewViewModel)DataContext).MissingData += (object? sender, EventArgs e)=>ShowError();
     }
 
     /// <summary>
