@@ -98,7 +98,7 @@ public class Page2ViewModelTests:BaseTestViewModel<Page2ViewModel>
     {
         testModel.SubSelection = new ListEntry(iAct, "Test");
         testModel.ClearCommand.Execute(null);
-        Assert.AreEqual(null, testModel.SubSelection);
+        Assert.IsNull(testModel.SubSelection);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
