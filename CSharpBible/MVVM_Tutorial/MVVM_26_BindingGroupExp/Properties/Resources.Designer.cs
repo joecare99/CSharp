@@ -94,7 +94,7 @@ public class Resources {
     ///            Loaded += Page_Loaded;
     ///
     ///        }
-    ///        private void Page_Loaded(object sender, RoutedEventArgs e)
+    ///        private void Page_Loaded(object? sender, RoutedEventArgs e)
     ///        {
     ///       [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
     /// </summary>

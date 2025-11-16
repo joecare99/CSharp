@@ -15,7 +15,7 @@ public partial class BindingGroupView : Page
         Loaded += Page_Loaded;
 
     }
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    private void Page_Loaded(object? sender, RoutedEventArgs e)
     {
         if (DataContext is BindingGroupViewModel vm)
         {
@@ -31,10 +31,10 @@ public partial class BindingGroupView : Page
 
     // This event occurs when a ValidationRule in the BindingGroup
     // or in a Binding fails.
-    private void ItemError(object sender, ValidationErrorEventArgs e) 
+    private void ItemError(object? sender, ValidationErrorEventArgs e) 
         => (DataContext as BindingGroupViewModel)?.ItemError(sender, e);
 
-    void stackPanel1_Loaded(object sender, RoutedEventArgs e)
+    void stackPanel1_Loaded(object? sender, RoutedEventArgs e)
     {
         // Begin an edit transaction that enables
         // the object to accept or roll back changes.
