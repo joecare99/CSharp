@@ -36,7 +36,7 @@ public partial class SysDialogsView : Page {
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    public void Page_Loaded(object sender, RoutedEventArgs e)
+    public void Page_Loaded(object? sender, RoutedEventArgs e)
     {
         var vm = (SysDialogsViewModel)DataContext;
         vm.FileOpenDialog = DoFileDialog;

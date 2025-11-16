@@ -35,20 +35,20 @@ public partial class DialogWindow : Window, IDialogWindow
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private void Window_Loaded(object? sender, RoutedEventArgs e)
     {
         var vm = (DialogWindowViewModel)DataContext;
         vm.DoCancel += DoCancel;
         vm.DoOK += DoOK;
     }
 
-    private void DoOK(object sender,EventArgs e)
+    private void DoOK(object? sender,EventArgs e)
     {
         DialogResult = true;
         Hide();
     }
 
-    private void DoCancel(object sender, EventArgs e)
+    private void DoCancel(object? sender, EventArgs e)
     {
         Hide();
     }

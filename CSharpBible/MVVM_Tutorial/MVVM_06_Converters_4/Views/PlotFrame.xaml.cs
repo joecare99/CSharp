@@ -46,7 +46,7 @@ public partial class PlotFrame : Page
         }
     }
 
-    public void OnSizeChange(object sender,SizeChangedEventArgs e)
+    public void OnSizeChange(object? sender,SizeChangedEventArgs e)
     {
         if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
         {

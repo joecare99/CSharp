@@ -25,7 +25,7 @@ public class ValidationPageViewModelTests : BaseTestViewModel
     [DataRow("DS1234", 0, true, new[] { "PropChg(MVVM_31_Validation2.ViewModels.ValidationPageViewModel,VHelper)=BaseLib.Helper.MVVM.ValidationHelper\r\nErrorsChanged(MVVM_31_Validation2.ViewModels.ValidationPageViewModel,UserName)=\r\n" })]
     public void TestUsernameTest(string sVal, int _, bool xExp, string[] asExp)
     {
-        Assert.AreEqual(true,testModel.TestUsername(sVal,nameof(testModel.UserName)));
+        Assert.IsTrue(testModel.TestUsername(sVal,nameof(testModel.UserName)));
         Assert.AreEqual(!xExp, testModel.HasErrors);
         Assert.AreEqual(asExp[0], DebugLog);
     }
@@ -35,7 +35,7 @@ public class ValidationPageViewModelTests : BaseTestViewModel
     {
         testModel.ErrorsChanged -= OnVMErrorsChanged;
         testModel.UserName = "DS12";
-        Assert.AreEqual(true, testModel.HasErrors);
+        Assert.IsTrue(testModel.HasErrors);
         Assert.AreEqual("Username must have min. 6 Chars", testModel.ValidationText(nameof(testModel.UserName)));
         Assert.AreEqual("PropChg(MVVM_31_Validation2.ViewModels.ValidationPageViewModel,VHelper)=BaseLib.Helper.MVVM.ValidationHelper\r\nPropChg(MVVM_31_Validation2.ViewModels.ValidationPageViewModel,VHelper)=BaseLib.Helper.MVVM.ValidationHelper\r\nPropChg(MVVM_31_Validation2.ViewModels.ValidationPageViewModel,UserName)=DS12\r\n", DebugLog);
     }

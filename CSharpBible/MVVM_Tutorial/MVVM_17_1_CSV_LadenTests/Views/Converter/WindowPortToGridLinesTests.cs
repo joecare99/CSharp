@@ -38,7 +38,7 @@ public class WindowPortToGridLinesTests
     [DynamicData(nameof(ConvertTestData))]
     public void ConvertTest(object o)
     {
-        var test = testVC.Convert(o, null, null, null);
+        var test = testVC.Convert(o, null!, null!, null!);
         Assert.Fail();
     }
 
@@ -53,7 +53,7 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsExactly<NotImplementedException>(() => testVC.ConvertBack(null!, null, null, null));
+        Assert.ThrowsExactly<NotImplementedException>(() => testVC.ConvertBack(null!, null!, null!, null!));
     }
 
     private static void RunSTA(Action a)
@@ -113,10 +113,10 @@ public class WindowPortToGridLinesTests
                 Parent = null!
             };
 
-            var result = conv.Convert(wp, null, null, System.Globalization.CultureInfo.InvariantCulture)
+            var result = conv.Convert(wp, null!, null!, System.Globalization.CultureInfo.InvariantCulture)
                 as System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>;
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Count > 0, "Es wurden keine Elemente erzeugt.");
+            Assert.IsNotEmpty(result, "Es wurden keine Elemente erzeugt.");
 
             int axisCount = 0, majorCount = 0, minorCount = 0, labelZeroCount = 0, ellipseCount = 0;
             foreach (var fe in result)
@@ -138,10 +138,10 @@ public class WindowPortToGridLinesTests
                 }
             }
 
-            Assert.IsTrue(axisCount >= 2, "Achsenlinien (Stärke 1.5) fehlen.");
-            Assert.IsTrue(majorCount > 0, "Haupt-Gitternetzlinien (Stärke 0.8) fehlen.");
-            Assert.IsTrue(minorCount > 0, "Neben-Gitternetzlinien (Stärke 0.3) fehlen.");
-            Assert.IsTrue(labelZeroCount >= 1, "Mindestens eine '0'-Beschriftung wird erwartet.");
+            Assert.IsGreaterThanOrEqualTo(2, axisCount, "Achsenlinien (Stärke 1.5) fehlen.");
+            Assert.IsGreaterThan(0, majorCount, "Haupt-Gitternetzlinien (Stärke 0.8) fehlen.");
+            Assert.IsGreaterThan(0, minorCount, "Neben-Gitternetzlinien (Stärke 0.3) fehlen.");
+            Assert.IsGreaterThanOrEqualTo(1, labelZeroCount, "Mindestens eine '0'-Beschriftung wird erwartet.");
             Assert.AreEqual(1, ellipseCount, "Der Nullpunkt (Ellipse) wird erwartet.");
         });
     }
@@ -167,7 +167,7 @@ public class WindowPortToGridLinesTests
                 WindowSize = new System.Windows.Size(winW, winH),
                 Parent = null!
             };
-            _ = conv.Convert(wp, null, null, System.Globalization.CultureInfo.InvariantCulture);
+            _ = conv.Convert(wp, null!, null!, System.Globalization.CultureInfo.InvariantCulture);
 
             var ds = new System.Collections.ObjectModel.ObservableCollection<Model.DataPoint>
             {
@@ -175,7 +175,7 @@ public class WindowPortToGridLinesTests
                     new Model.DataPoint { X = x2, Y = y2 }
             };
 
-            var res = conv.Convert(ds, null, null, System.Globalization.CultureInfo.InvariantCulture)
+            var res = conv.Convert(ds, null!, null!, System.Globalization.CultureInfo.InvariantCulture)
                 as System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>;
             Assert.IsNotNull(res);
 
@@ -210,7 +210,7 @@ public class WindowPortToGridLinesTests
             var res = conv.Convert(arr, null, null, System.Globalization.CultureInfo.InvariantCulture)
                 as System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>;
             Assert.IsNotNull(res);
-            Assert.AreEqual(0, res.Count);
+            Assert.IsEmpty(res);
         });
     }
 

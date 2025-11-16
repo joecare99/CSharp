@@ -32,8 +32,8 @@ public class DataGridViewModelTests:BaseTestViewModel<DataGridViewModel>
     public void SetupTest() {
         Assert.IsNotNull(testModel);
         Assert.IsInstanceOfType(testModel, typeof(DataGridViewModel));
-        Assert.AreEqual(1, testModel.Persons.Count);
-        Assert.AreEqual(1, testModel.Departments.Count);
+        Assert.HasCount(1, testModel.Persons);
+        Assert.HasCount(1, testModel.Departments);
     }
 
     protected override Dictionary<string, object?> GetDefaultData() 
@@ -61,6 +61,6 @@ public class DataGridViewModelTests:BaseTestViewModel<DataGridViewModel>
     {
         var aExp = _testPS.GetPersons().First();
         testModel.RemoveCommand.Execute(aExp);
-        Assert.AreEqual(0,testModel.Persons.Count);
+        Assert.IsEmpty(testModel.Persons);
     }
 }

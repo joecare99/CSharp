@@ -24,7 +24,7 @@ public partial class DialogView : Page
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-    public void Dialog_Loaded(object sender, RoutedEventArgs e)
+    public void Dialog_Loaded(object? sender, RoutedEventArgs e)
     {
         var vm = (DialogViewModel)DataContext;
         vm.DoOpenDialog = (Name, email) =>

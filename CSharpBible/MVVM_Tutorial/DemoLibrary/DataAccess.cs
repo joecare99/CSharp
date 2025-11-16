@@ -67,7 +67,7 @@ namespace DemoLibrary
         /// The days from low date
         /// </summary>
         static readonly int daysFromLowDate = (DateTime.Today - lowEndDate).Days;
-        private static Random _rnd;
+        private static Random? _rnd;
 
         //		public DataAccess() {
         //			daysFromLowDate = (DateTime.Today - lowEndDate).Days;

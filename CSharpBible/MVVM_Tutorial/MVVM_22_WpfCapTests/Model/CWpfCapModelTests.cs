@@ -35,7 +35,7 @@ public class CWpfCapModelTests
         Assert.IsInstanceOfType(testWpfCapModel, typeof(IWpfCapModel));
         Assert.AreEqual(4, testWpfCapModel.Width, "testWpfCapModel.Width");
         Assert.AreEqual(4, testWpfCapModel.Height, "testWpfCapModel.Width");
-        Assert.AreEqual(false, testWpfCapModel.IsSorted, "testWpfCapModel.IsSorted");
+        Assert.IsFalse(testWpfCapModel.IsSorted, "testWpfCapModel.IsSorted");
         for (var i = 0; i < 16; i++)
         {
             Assert.AreEqual((i+i/4) % 4 +1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
@@ -54,7 +54,7 @@ public class CWpfCapModelTests
         Assert.IsInstanceOfType(_wcm,typeof(IWpfCapModel));
         Assert.AreEqual(4,_wcm.Width, "_wcm.Width");
         Assert.AreEqual(4, _wcm.Height, "_wcm.Width");
-        Assert.AreEqual(false, _wcm.IsSorted, "_wcm.IsSorted");
+        Assert.IsFalse(_wcm.IsSorted, "_wcm.IsSorted");
         for (var i = 0; i < 16; i++)
         {
             Assert.AreEqual(0, _wcm.TileColor(i/4,i%4), $"_wcm.TileColor({i})==0");
@@ -68,7 +68,7 @@ public class CWpfCapModelTests
     {
         testWpfCapModel.Init();
         TestTileCount(4);
-        Assert.AreEqual(true, testWpfCapModel.IsSorted, "testWpfCapModel.IsSorted");
+        Assert.IsTrue(testWpfCapModel.IsSorted, "testWpfCapModel.IsSorted");
         for (var i = 0; i < 16; i++)
         {
             Assert.AreEqual(i % 4+1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={i % 4 +1}");
@@ -82,7 +82,7 @@ public class CWpfCapModelTests
         testWpfCapModel.TileColorChanged -= TestTileColorChanged;
         testWpfCapModel.Init();
         TestTileCount(4);
-        Assert.AreEqual(true, testWpfCapModel.IsSorted, "testWpfCapModel.IsSorted");
+        Assert.IsTrue(testWpfCapModel.IsSorted, "testWpfCapModel.IsSorted");
         for (var i = 0; i < 16; i++)
         {
             Assert.AreEqual(i % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={i % 4 + 1}");
