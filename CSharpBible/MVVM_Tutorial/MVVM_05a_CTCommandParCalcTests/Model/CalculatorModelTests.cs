@@ -78,13 +78,13 @@ public class CalculatorModelTests
         Assert.IsInstanceOfType(testModel, typeof(ICalculatorModel));
         Assert.IsInstanceOfType(CalculatorModel.Instance, typeof(CalculatorModel));
         Assert.AreEqual(0d, testModel.Accumulator);
-        Assert.AreEqual(null, testModel.Register);
-        Assert.AreEqual(null, testModel.Memory);
-        Assert.AreEqual(false, testModel.DecMode);
-        Assert.AreEqual(false, testModel.canOperator(EOperations.CalcResult));
-        Assert.AreEqual(false, testModel.canOperator(EOperations.Add));
-        Assert.AreEqual(true, testModel.canCommand(ECommands.DecMode));
-        Assert.AreEqual(true, testModel.canCommand(ECommands.MR));
+        Assert.IsNull(testModel.Register);
+        Assert.IsNull(testModel.Memory);
+        Assert.IsFalse(testModel.DecMode);
+        Assert.IsFalse(testModel.canOperator(EOperations.CalcResult));
+        Assert.IsFalse(testModel.canOperator(EOperations.Add));
+        Assert.IsTrue(testModel.canCommand(ECommands.DecMode));
+        Assert.IsTrue(testModel.canCommand(ECommands.MR));
         Assert.AreEqual(ETrigMode.Grad, testModel.TrigMode);
         Assert.AreEqual(ECalcError.None, testModel.CalcError);
         Assert.AreEqual(0, testModel.StackSize);
@@ -140,7 +140,7 @@ PropChg(MVVM_05a_CTCommandParCalc.Model.CalculatorModel,Accumulator)=987
 
         // Assert
         Assert.AreEqual(dExp, testModel.Accumulator);
-        Assert.AreEqual(true, testModel.canOperator(EOperations.Add));
+        Assert.IsTrue(testModel.canOperator(EOperations.Add));
         Assert.AreEqual(asExp[0], DebugOut);
     }
 
@@ -243,7 +243,7 @@ PropChg(MVVM_05a_CTCommandParCalc.Model.CalculatorModel,Register)=
         testModel.OperatorCmd(EOperations.CalcResult);
         // Assert2
         Assert.AreEqual(dExp, testModel.Accumulator);
-        Assert.AreEqual(null, testModel.Register);
+        Assert.IsNull(testModel.Register);
         Assert.AreEqual(asExp[1], DebugOut);
     }
 
@@ -305,7 +305,7 @@ PropChg(MVVM_05a_CTCommandParCalc.Model.CalculatorModel,Accumulator)=0
 
         // Assert
         Assert.AreEqual(dExp, testModel.Accumulator, 1e-10);
-        Assert.AreEqual(null, testModel.Register);
+        Assert.IsNull(testModel.Register);
         Assert.AreEqual(asExp[0], DebugOut);
 
     }
