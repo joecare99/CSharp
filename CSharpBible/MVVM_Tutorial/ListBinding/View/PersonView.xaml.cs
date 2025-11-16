@@ -28,7 +28,7 @@ namespace ListBinding.View
         public PersonView()
         {
             InitializeComponent();
-            ((PersonViewViewModel)DataContext).MissingData += (object sender, EventArgs e)=>ShowError();
+            ((PersonViewViewModel)DataContext).MissingData += (object? sender, EventArgs e)=>ShowError();
         }
 
         /// <summary>
