@@ -116,7 +116,7 @@ namespace BaseLib.Interfaces
 #if !NET6_0_OR_GREATER
     [HostProtection(SecurityAction.LinkDemand, SharedState = true)]
 #endif
-    public delegate void PropertyChangedAdvEventHandler(object sender, PropertyChangedAdvEventArgs e);
+    public delegate void PropertyChangedAdvEventHandler(object? sender, PropertyChangedAdvEventArgs e);
 
     //
     // Zusammenfassung:
