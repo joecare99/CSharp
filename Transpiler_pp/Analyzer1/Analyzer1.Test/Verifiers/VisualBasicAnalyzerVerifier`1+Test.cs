@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.VisualBasic.Testing;
 
 namespace Analyzer1.Test

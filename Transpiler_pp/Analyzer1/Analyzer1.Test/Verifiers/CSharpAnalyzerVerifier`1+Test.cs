@@ -1,13 +1,12 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 
 namespace Analyzer1.Test;
 
 public static partial class CSharpAnalyzerVerifier<TAnalyzer>
     where TAnalyzer : DiagnosticAnalyzer, new()
 {
-    public class Test : CSharpAnalyzerTest<TAnalyzer, MSTestVerifier>
+    public class Test : CSharpAnalyzerTest<TAnalyzer, MSTestVerifyer>
     {
         public Test()
         {
