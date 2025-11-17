@@ -57,7 +57,7 @@ public partial class AllExamplesViewModel : BaseViewModelCT
         OnExFilterChanged(ExFilter);
     }
 
-    private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnMPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         OnPropertyChanged(e.PropertyName); 
     }

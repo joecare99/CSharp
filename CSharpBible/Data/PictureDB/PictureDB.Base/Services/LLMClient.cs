@@ -9,7 +9,7 @@ public class LLMClient : ILLMClient
     private readonly string _model;
     private readonly TimeSpan _timeout;
 
-    public LLMClient(string model = "mistral", int timeoutSeconds = 60)
+    public LLMClient(string model = "gemma3:1b", int timeoutSeconds = 400)
     {
         _model = model;
         _timeout = TimeSpan.FromSeconds(timeoutSeconds);

@@ -1,13 +1,20 @@
 ﻿<Project>
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net48;net472;net462;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462;net8.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 		<IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
 		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+  </PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Helper\ObjectHelper2Tests.cs" />
 	  <Compile Remove="Helper\ObjectHelperTests.cs" />

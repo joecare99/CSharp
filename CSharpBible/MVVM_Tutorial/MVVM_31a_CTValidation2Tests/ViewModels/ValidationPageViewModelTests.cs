@@ -65,7 +65,7 @@ PropChg(MVVM_31a_CTValidation2.ViewModels.ValidationPageViewModel,UserName)=DS12
     {
         testModel.ErrorsChanged -= OnVMErrorsChanged;
         testModel.UserName = "DS12";
-        Assert.AreEqual(true, testModel.HasErrors);
+        Assert.IsTrue(testModel.HasErrors);
         Assert.AreEqual("Username must have min. 6 Chars", testModel.ValidationText(nameof(testModel.UserName)));
         Assert.AreEqual(@"PropChg(MVVM_31a_CTValidation2.ViewModels.ValidationPageViewModel,VHelper)=BaseLib.Helper.MVVM.ValidationHelper
 PropChg(MVVM_31a_CTValidation2.ViewModels.ValidationPageViewModel,VHelper)=BaseLib.Helper.MVVM.ValidationHelper

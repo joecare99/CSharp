@@ -13,7 +13,7 @@ public partial class CommandParCalculatorView : Page
         InitializeComponent();
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void Button_Click(object? sender, RoutedEventArgs e)
     {
 
     }

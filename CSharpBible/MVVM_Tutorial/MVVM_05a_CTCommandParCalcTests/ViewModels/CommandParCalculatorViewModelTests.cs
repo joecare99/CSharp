@@ -69,10 +69,10 @@ public class CommandParCalculatorViewModelTests : BaseTestViewModel
         
         testModel = new();
         testModel.PropertyChanged += OnVMPropertyChanged;
-        Assert.AreEqual(false, testModel.canOperator(EOperations.CalcResult));
-        Assert.AreEqual(false, testModel.canOperator(EOperations.Add));
-        Assert.AreEqual(false, testModel.canCommand(ECommands.DecMode));
-        Assert.AreEqual(false, testModel.canCommand(ECommands.MR));
+        Assert.IsFalse(testModel.canOperator(EOperations.CalcResult));
+        Assert.IsFalse(testModel.canOperator(EOperations.Add));
+        Assert.IsFalse(testModel.canCommand(ECommands.DecMode));
+        Assert.IsFalse(testModel.canCommand(ECommands.MR));
         ClearLog();
     }
 
@@ -90,10 +90,10 @@ public class CommandParCalculatorViewModelTests : BaseTestViewModel
         Assert.AreEqual(double.NaN, testModel.Register);
         Assert.AreEqual(double.NaN, testModel.Memory);
         Assert.AreEqual("None Grad ", testModel.Status);
-        Assert.AreEqual(false, testModel.canOperator(EOperations.CalcResult));
-        Assert.AreEqual(false, testModel.canOperator(EOperations.Add));
-        Assert.AreEqual(false, testModel.canCommand(ECommands.DecMode));
-        Assert.AreEqual(false, testModel.canCommand(ECommands.MR));
+        Assert.IsFalse(testModel.canOperator(EOperations.CalcResult));
+        Assert.IsFalse(testModel.canOperator(EOperations.Add));
+        Assert.IsFalse(testModel.canCommand(ECommands.DecMode));
+        Assert.IsFalse(testModel.canCommand(ECommands.MR));
         Assert.IsNotNull( testModel.NumberCommand);
         Assert.IsNotNull( testModel.OperatorCommand);
         Assert.IsNotNull( testModel.CalculatorCommand);

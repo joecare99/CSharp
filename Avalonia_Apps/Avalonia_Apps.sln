@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11201.2 d18.0
+VisualStudioVersion = 18.0.11201.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia_App01", "Avalonia_App01", "{EB34413E-8AAB-408B-9415-DC2FCDB9A1EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,7 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia_App02", "Avalonia_
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{1F1DA5C0-206D-4682-8648-3BBFB5CFFC3C}"
 	ProjectSection(SolutionItems) = preProject
-		Directory.Packages.props = Directory.Packages.props
+		CONTRIBUTING.md = CONTRIBUTING.md
+		Packages.props = Packages.props
 		Solution.props = Solution.props
 	EndProjectSection
 EndProject
@@ -89,6 +90,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA16_UserControl2", "AA16_UserControl\AA16_Usercontrol2\AA16_UserControl2.csproj", "{8EAD2216-526E-8735-4400-EF1B275501FE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA18_MultiConverter", "AA18_MultiConverter", "{D11B6CD5-0C28-4D50-9FDE-4339DFC917B4}"
+	ProjectSection(SolutionItems) = preProject
+		AA18_MultiConverter\Directory.Packages.props = AA18_MultiConverter\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA18_MultiConverters", "AA18_MultiConverter\AA18_MultiConverters\AA18_MultiConverters.csproj", "{6E221A46-05EA-8EFA-FC50-44F1D99321CB}"
 EndProject
@@ -168,6 +172,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScreenX", "ScreenX", "{E97B
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA14_ScreenX", "AA14_ScreenX", "{FA06343F-69FC-4E49-AFAC-AC472C653528}"
+	ProjectSection(SolutionItems) = preProject
+		AA14_ScreenX\Application.props = AA14_ScreenX\Application.props
+		AA14_ScreenX\Directory.Packages.props = AA14_ScreenX\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA14_ScreenX", "AA14_ScreenX\AA14_ScreenX\AA14_ScreenX.csproj", "{A26B3928-B89E-AE2E-BFFF-537C09B35D81}"
 EndProject
@@ -202,6 +210,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA21_Button", "AA21_Button"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avln_Hello_World", "AvlnSamples\Avln_Hello_World\Avln_Hello_World.csproj", "{57B337DC-7F63-22C8-728C-08DC2459FA23}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA22_AvlnCap", "AA22_AvlnCap", "{E1173210-7A7A-448C-B4E4-B6FBF22FD1C7}"
+	ProjectSection(SolutionItems) = preProject
+		AA22_AvlnCap\Application.props = AA22_AvlnCap\Application.props
+		AA22_AvlnCap\Directory.Packages.props = AA22_AvlnCap\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA22_AvlnCap", "AA22_AvlnCap\AA22_AvlnCap\AA22_AvlnCap.csproj", "{FEC2F575-5BEF-9C87-FE82-D6CD5AE3AE87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA22_AvlnCapTests", "AA22_AvlnCap\AA22_AvlnCapTests\AA22_AvlnCapTests.csproj", "{9175CE78-D6A5-55BB-D4B1-E025BBA1B329}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA22_AvlnCap2", "AA22_AvlnCap\AA22_AvlnCap2\AA22_AvlnCap2.csproj", "{BC312318-3671-5E97-5256-467F6FAEFC0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_22_CTWpfCap_net", "..\CSharpBible\MVVM_Tutorial\MVVM_22_CTWpfCap\MVVM_22_CTWpfCap_net.csproj", "{26CF6F6D-5935-E022-7B8B-CDABA251EB72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -377,6 +399,22 @@ Global
 		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57B337DC-7F63-22C8-728C-08DC2459FA23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC2F575-5BEF-9C87-FE82-D6CD5AE3AE87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC2F575-5BEF-9C87-FE82-D6CD5AE3AE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC2F575-5BEF-9C87-FE82-D6CD5AE3AE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC2F575-5BEF-9C87-FE82-D6CD5AE3AE87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9175CE78-D6A5-55BB-D4B1-E025BBA1B329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9175CE78-D6A5-55BB-D4B1-E025BBA1B329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9175CE78-D6A5-55BB-D4B1-E025BBA1B329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9175CE78-D6A5-55BB-D4B1-E025BBA1B329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC312318-3671-5E97-5256-467F6FAEFC0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC312318-3671-5E97-5256-467F6FAEFC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC312318-3671-5E97-5256-467F6FAEFC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC312318-3671-5E97-5256-467F6FAEFC0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26CF6F6D-5935-E022-7B8B-CDABA251EB72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26CF6F6D-5935-E022-7B8B-CDABA251EB72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26CF6F6D-5935-E022-7B8B-CDABA251EB72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26CF6F6D-5935-E022-7B8B-CDABA251EB72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -423,6 +461,10 @@ Global
 		{ECDEDABF-3AB8-8D94-2A87-8BBE2A18A758} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
 		{ADC9F066-7F21-A823-9DB0-8788A4DE27FA} = {37C95503-4D2D-4EEB-AAD1-0E9C7B264E34}
 		{F4972A4C-6BC3-AE06-6391-35E91D4C6515} = {642C08B0-0EF7-4CBF-BE71-ACD49185867A}
+		{FEC2F575-5BEF-9C87-FE82-D6CD5AE3AE87} = {E1173210-7A7A-448C-B4E4-B6FBF22FD1C7}
+		{9175CE78-D6A5-55BB-D4B1-E025BBA1B329} = {E1173210-7A7A-448C-B4E4-B6FBF22FD1C7}
+		{BC312318-3671-5E97-5256-467F6FAEFC0B} = {E1173210-7A7A-448C-B4E4-B6FBF22FD1C7}
+		{26CF6F6D-5935-E022-7B8B-CDABA251EB72} = {BEF0C2FD-7280-45BF-9A9F-1BB804B4A8C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CCEB9146-C458-415E-BB4B-E073B0B24876}

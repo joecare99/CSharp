@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
-using MVVM_06_Converters_4.View.Converter;
+using MVVM_06_Converters_4.Views.Converter;
 
 namespace MVVM_06_Converters_4.ViewModels;
 

@@ -11,13 +11,15 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 using BaseLib.Helper;
-using MVVM_22_CTWpfCap.Model;
-using MVVM_22_CTWpfCap.ViewModels;
 using BaseLib.Models;
 using BaseLib.Models.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using MVVM_22_CTWpfCap.Model;
+using MVVM_22_CTWpfCap.ViewModels;
+using MVVM_22_CTWpfCap.ViewModels.Factories;
+using MVVM_22_CTWpfCap.ViewModels.Interfaces;
+using System.Windows;
 
 namespace MVVM_22_CTWpfCap;
 
@@ -33,7 +35,9 @@ public partial class App : Application
         var services = new ServiceCollection();
         services.AddTransient<IWpfCapModel, CWpfCapModel>();
         services.AddTransient<IRandom, CRandom>();
-        services.AddTransient<WpfCapViewModel, WpfCapViewModel>();
+        services.AddTransient<IWpfCapViewModel, WpfCapViewModel>();
+        services.AddTransient<IRowDataFactory, RowDataFactory>();
+        services.AddTransient<IColDataFactory, ColDataFactory>();
 
         ServiceProvider container = services.BuildServiceProvider();
         IoC.GetReqSrv = (type) => container.GetRequiredService(type);

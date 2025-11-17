@@ -103,7 +103,7 @@ public partial class MainWindowViewModel : BaseViewModelCT
         }
     }
 
-    public void ItemError(object sender, ValidationErrorEventArgs e)
+    public void ItemError(object? sender, ValidationErrorEventArgs e)
     {
         if (e.Action == ValidationErrorEventAction.Added)
         {

@@ -32,7 +32,7 @@ namespace WpfDemoUI.Views
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
-		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		private void DataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
 
 		}
 	}

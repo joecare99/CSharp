@@ -23,7 +23,7 @@ public class UndoInformationTests
         Assert.IsNotNull(testModel);
         Assert.IsTrue(testModel.Field.TryGetTarget(out var f2));
         AssertAreEqual(field, f2, []);
-        Assert.AreEqual(1, testModel.list.Count);
+        Assert.HasCount(1, testModel.list);
         Assert.AreEqual((ov, null), testModel.list[0]);
     }
 
@@ -132,7 +132,7 @@ public class UndoInformationTests
         // Act
         testModel.TryUpdateNewValue(nv);
         // Assert
-        Assert.AreEqual(1, testModel.list.Count);
+        Assert.HasCount(1, testModel.list);
         Assert.AreEqual((ov, nv is string?null:nv), testModel.list[0]);
     }
 }

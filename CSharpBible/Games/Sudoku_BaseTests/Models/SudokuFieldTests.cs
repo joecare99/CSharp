@@ -27,9 +27,9 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
     {
         Assert.IsNotNull(testModel);
         Assert.IsInstanceOfType(testModel, typeof(SudokuField));
-        Assert.AreEqual(null, testModel.Value);
-        Assert.AreEqual(false, testModel.IsPredefined);
-        Assert.AreEqual(0, testModel.PossibleValues.Count);
+        Assert.IsNull(testModel.Value);
+        Assert.IsFalse(testModel.IsPredefined);
+        Assert.IsEmpty(testModel.PossibleValues);
     }
 
     [TestMethod()]
@@ -43,9 +43,9 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         foreach (var iAct in aiAct)
         {
             testModel.AddPossibleValue(iAct);
-            Assert.IsTrue(testModel.PossibleValues.Contains(iAct));
+            Assert.Contains(iAct, testModel.PossibleValues);
         }
-        Assert.AreEqual(iCnt, testModel.PossibleValues.Count);
+        Assert.HasCount(iCnt, testModel.PossibleValues);
     }
 
     [TestMethod()]
@@ -70,7 +70,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         // Act
         testModel.RemovePossibleValue(iAct);
         // Assert
-        Assert.IsFalse(testModel.PossibleValues.Contains(iAct));
+        Assert.DoesNotContain(iAct, testModel.PossibleValues);
     }
 
     [TestMethod()]
@@ -128,8 +128,8 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         // Act
         field.Clear();
         // Assert
-        Assert.AreEqual(null,field.Value);
-        Assert.AreEqual(false, field.IsPredefined);
-        Assert.AreEqual(0, field.PossibleValues.Count);
+        Assert.IsNull(field.Value);
+        Assert.IsFalse(field.IsPredefined);
+        Assert.IsEmpty(field.PossibleValues);
     }
 }
