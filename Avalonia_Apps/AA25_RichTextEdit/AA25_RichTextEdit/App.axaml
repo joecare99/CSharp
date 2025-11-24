@@ -1,0 +1,31 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AA25_RichTextEdit"
+             x:Class="AA25_RichTextEdit.App"
+             RequestedThemeVariant="Light">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+        <Style>
+            <Style.Resources>
+                <FontFamily x:Key="FluentIcons">avares://Avalonia.Themes.Fluent/Assets/FluentIcons.ttf#FluentSystemIcons-Regular</FontFamily>
+            </Style.Resources>
+        </Style>
+        <Style Selector="Button.toolbar">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.toolbar TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource FluentIcons}"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </Application.Styles>
+</Application>
+
+
