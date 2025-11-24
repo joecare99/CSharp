@@ -1,4 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AA18_MultiConverter.ViewModels;
+using AA18_MultiConverter.ViewModels.Interfaces;
+using Avalonia.Headless.MSTest;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 using System.Threading;
 
 namespace AA18_MultiConverter.Views.Tests;
@@ -8,14 +14,18 @@ public class DateDifViewTests
 {
     DateDifView? testView;
 
-    [TestMethod()]
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        var services = typeof(App).GetProperty(nameof(App.Services));
+        services.SetValue(null,Substitute.For<IServiceProvider>());
+        App.Services.GetService(typeof(IDateDifViewModel)).Returns(Substitute.For<IDateDifViewModel>());
+    }
+
+    [AvaloniaTestMethod()]
     public void DateDifViewTest()
     {
-        testView = null;
-        var t = new Thread(() => testView = new());
-        t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-        t.Start();
-        t.Join(); //Wait for the thread to end
+        testView = new();
         Assert.IsNotNull(testView);
         Assert.IsInstanceOfType(testView, typeof(DateDifView));
     }
