@@ -1,13 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AA16_UserControl1.ViewModels.Interfaces;
+using Avalonia.Views.Extension;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace AA16_UserControl1.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 {
-    public MainWindowViewModel(UserControlViewModel content)
+    public MainWindowViewModel()
+        : this(IoC.GetRequiredService<IUserControlViewModel>())
+    {
+    }
+
+    public MainWindowViewModel(IUserControlViewModel content)
     {
         CurrentViewModel = content;
     }
 
-    public ViewModelBase CurrentViewModel { get; }
+    public INotifyPropertyChanged CurrentViewModel { get; }
 }

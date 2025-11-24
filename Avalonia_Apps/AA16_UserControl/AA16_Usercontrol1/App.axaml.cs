@@ -1,6 +1,8 @@
+using AA16_UserControl1.ViewModels.Interfaces;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Views.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -8,7 +10,6 @@ namespace AA16_UserControl1;
 
 public partial class App : Application
 {
-    public static IServiceProvider Services { get; set; } = null!;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -20,12 +21,12 @@ public partial class App : Application
 
         ConfigureServices(services);
 
-        Services = services.BuildServiceProvider();
+        IoC.Configure(services.BuildServiceProvider());
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainWindow = Services.GetRequiredService<MainWindow>();
-            mainWindow.DataContext = Services.GetRequiredService<ViewModels.MainWindowViewModel>();
+            var mainWindow = IoC.GetRequiredService<MainWindow>();
+            mainWindow.DataContext = IoC.GetRequiredService<ViewModels.MainWindowViewModel>();
             desktop.MainWindow = mainWindow;
         }
 
@@ -36,7 +37,7 @@ public partial class App : Application
     {
         // ViewModels
         services.AddTransient<ViewModels.MainWindowViewModel>();
-        services.AddTransient<ViewModels.UserControlViewModel>();
+        services.AddTransient<IUserControlViewModel,ViewModels.UserControlViewModel>();
 
         // Views
         services.AddTransient<MainWindow>();
