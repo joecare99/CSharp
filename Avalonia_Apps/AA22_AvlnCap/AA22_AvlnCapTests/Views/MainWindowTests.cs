@@ -3,11 +3,11 @@
 // Author           : Mir
 // Created          : 05-14-2023
 // ***********************************************************************
-using AA22_AvlnCap.ViewModels;
+using AA22_AvlnCap.ViewModels.Interfaces;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.MSTest;
-using Avalonia.VisualTree; 
+using Avalonia.VisualTree;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System.Threading;
