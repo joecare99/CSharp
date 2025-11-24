@@ -36,4 +36,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
   </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
 </Project>
