@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Document.Base.Models.Interfaces.IUserDocument" Collapsed="true">
+    <Position X="2.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Interfaces\IUserDocument.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Document.Base.Models.Interfaces.IDocElement" Collapsed="true">
+    <Position X="2.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Interfaces\IDocElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Document.Base.Models.Interfaces.IDocParagraph" Collapsed="true">
+    <Position X="3.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Models\Interfaces\IDocParagraph.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Document.Base.Models.Interfaces.IDocContent" Collapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AECgAAAAgAACAAEAAAAAAAAAAAAAQAAAAAAQAAEAAAA=</HashCode>
+      <FileName>Models\Interfaces\IDocContent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Document.Base.Models.Interfaces.IDocSection" Collapsed="true">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAACAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Models\Interfaces\IDocSection.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Document.Base.Models.Interfaces.IDocSpan" Collapsed="true">
+    <Position X="6" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Interfaces\IDocSpan.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

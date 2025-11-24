@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using MVVM_06_Converters_4.ViewModels;
 using MVVM_06_Converters_4.Model;
+using System.Collections;
 
 namespace MVVM_06_Converters_4.Views.Converter.Tests;
 
@@ -32,7 +33,9 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void WindowPortToGridLinesTest()
     {
-        Assert.Fail();
+        Assert.IsInstanceOfType(testVC, typeof(WindowPortToGridLines));
+        Assert.AreEqual(new System.Windows.Size(200, 100), testVC.WindowSize);
+        Assert.IsInstanceOfType(wp, typeof(SWindowPort));
     }
 
     [TestMethod()]
@@ -40,7 +43,9 @@ public class WindowPortToGridLinesTests
     public void ConvertTest(object o)
     {
         var test = testVC.Convert(o, null, null, null);
-        Assert.Fail();
+        Assert.IsNotNull(test);
+        Assert.IsInstanceOfType(test, typeof(System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>));
+        Assert.HasCount(19, test as IList);
     }
 
     [TestMethod()]

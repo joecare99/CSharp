@@ -12,18 +12,15 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
 
-namespace AA22_AvlnCap.ViewModels;
+namespace AA22_AvlnCap.ViewModels.Interfaces;
 
-public interface IWpfCapViewModel
+public interface IColData
 {
-    ObservableCollection<RowData> Rows { get; set; }
-    ObservableCollection<ColData> Cols { get; set; }
+    int this[int ix] { get; }
 
-    IRelayCommand ShuffleCommand { get; }
-    IRelayCommand<ColData> MoveUpCommand { get; }
-    IRelayCommand<ColData> MoveDownCommand { get; }
-    IRelayCommand<RowData> MoveLeftCommand { get; }
-    IRelayCommand<RowData> MoveRightCommand { get; }
+    int ColId { get; set; }
+    object This { get; }
+    IRelayCommand<object>? MoveUpCommand { get; }
+    IRelayCommand<object>? MoveDownCommand { get; }
 }

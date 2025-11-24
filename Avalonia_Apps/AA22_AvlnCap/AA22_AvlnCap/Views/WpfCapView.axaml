@@ -1,8 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:cvt="clr-namespace:AA22_AvlnCap.Converter"
-			 xmlns:vm="clr-namespace:AA22_AvlnCap.ViewModels"
-			 x:DataType="vm:IWpfCapViewModel"
+			 xmlns:vmi="clr-namespace:AA22_AvlnCap.ViewModels.Interfaces"
+			 x:DataType="vmi:IWpfCapViewModel"
 			 x:Class="AA22_AvlnCap.Views.WpfCapView">
 	<UserControl.Resources>
 		<cvt:EnumToColorConverter x:Key="EnumToColorStringConverter"/>
@@ -31,7 +31,7 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
-			<ItemsControl Items="{Binding Rows}">
+			<ItemsControl ItemsSource="{Binding Rows}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Grid Width="420" Height="50">

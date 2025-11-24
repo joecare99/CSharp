@@ -1,9 +1,10 @@
+using AA16_UserControl1.ViewModels.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AA16_UserControl1.ViewModels;
 
-public partial class UserControlViewModel : ViewModelBase
+public partial class UserControlViewModel : ViewModelBase, IUserControlViewModel
 {
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(Do1Command))]

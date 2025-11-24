@@ -10,7 +10,7 @@ using Avalonia.Headless.MSTest;
 using System;
 using System.Threading;
 using NSubstitute;
-using AA22_AvlnCap.ViewModels;
+using AA22_AvlnCap.ViewModels.Interfaces;
 
 namespace AA22_AvlnCap.Views.Tests;
 
@@ -30,7 +30,7 @@ public class WpfCapViewTests
         };
     }
 
-    [AvoloniaTestMethod]
+    [AvaloniaTestMethod]
     public void WpfCapViewTest()
     {
         Assert.IsNotNull(testView);
