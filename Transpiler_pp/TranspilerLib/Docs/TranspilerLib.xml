@@ -159,6 +159,11 @@
             An Assignment-Operation 
             </summary> 
         </member>
+        <member name="F:TranspilerLib.Data.CodeBlockType.Separator">
+            <summary>
+            A code-separator (e.g. ';' or ',') 
+            </summary> 
+        </member>
         <member name="T:TranspilerLib.Data.TokenData">
             <summary>
             Represents a single token with its lexeme, token kind and nesting level information.
@@ -446,6 +451,14 @@
             </summary>
             <param name="cStruct">The c structure.</param>
         </member>
+        <member name="T:TranspilerLib.Interfaces.Code.IIECCode">
+            <summary>
+            Represents an interface for IEC (International Electrotechnical Commission) codes,  extending the functionality of
+            the <see cref="T:TranspilerLib.Interfaces.Code.ICodeBase"/> interface.
+            </summary>
+            <remarks>This interface serves as a marker or base for defining IEC-specific code implementations. It inherits
+            from <see cref="T:TranspilerLib.Interfaces.Code.ICodeBase"/>, allowing for shared functionality across code-related types.</remarks>
+        </member>
         <member name="T:TranspilerLib.Interfaces.Code.ITokenHandler">
             <summary>
             Abstraction for a stateful token handler used during lexical analysis.
@@ -463,6 +476,121 @@
             <param name="state">The current tokenizer state.</param>
             <param name="handler">When this method returns, contains the state handler delegate if found.</param>
             <returns><c>true</c> if a handler for the state exists; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.IHasParents`1">
+            <summary>
+            Definiert ein Objekt, das einen Verweis auf sein übergeordnetes Objekt (Parent) besitzt.
+            </summary>
+            <typeparam name="T">Der Typ des übergeordneten Objekts. Muss eine Referenztyp-Klasse sein.</typeparam>
+            <remarks>
+            Diese Schnittstelle unterstützt hierarchische Strukturen (z. B. AST-Knoten),
+            indem jedes Element optional auf sein Parent-Element verweist. Der Wert kann
+            <c>null</c> sein, wenn das Objekt an der Wurzel der Hierarchie steht.
+            </remarks>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.IHasParents`1.Parent">
+            <summary>
+            Ruft das übergeordnete Objekt ab oder legt es fest.
+            </summary>
+            <value>
+            Das Parent-Objekt vom Typ <typeparamref name="T"/> oder <c>null</c>, wenn kein Parent vorhanden ist.
+            </value>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.IReader">
+            <summary>
+            Definiert einen vorwärtsgerichteten, zustandsbehafteten Reader über eine
+            strukturierte Eingabe (z. B. Token-, Knoten- oder Elementsequenz).
+            Der Reader erlaubt sequenzielles Lesen von Start-/End-Elementen, Attributen und Werten.
+            </summary>
+            <remarks>
+            Das Interface abstrahiert typische Funktionen ähnlich eines XML- oder AST-Readers:
+            - Navigation erfolgt ausschließlich vorwärts mittels <see cref="M:TranspilerLib.Interfaces.IReader.Read"/>.
+            - Attribute eines aktuellen Start-Elements können über Index abgefragt werden.
+            - Werte sind nur verfügbar, wenn <see cref="P:TranspilerLib.Interfaces.IReader.HasValue"/> wahr ist.
+            - Elementgrenzen werden über <see cref="M:TranspilerLib.Interfaces.IReader.IsStartElement"/> und <see cref="M:TranspilerLib.Interfaces.IReader.IsEndElement"/> kenntlich.
+            Implementierungen sollten nach Erreichen des Endes <see cref="M:TranspilerLib.Interfaces.IReader.EOF"/> dauerhaft true zurückgeben.
+            </remarks>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.IReader.IsEmptyElement">
+            <summary>
+            Gibt an, ob das aktuelle Start-Element leer ist (d. h. kein separates End-Element folgt).
+            </summary>
+            <remarks>Typisch für Konstrukte wie &lt;element /&gt; in XML-ähnlichen Strukturen.</remarks>
+        </member>
+        <member name="P:TranspilerLib.Interfaces.IReader.HasValue">
+            <summary>
+            Gibt an, ob am aktuellen Readerpunkt ein Wert verfügbar ist.
+            </summary>
+            <remarks>
+            Ist <c>true</c>, kann <see cref="M:TranspilerLib.Interfaces.IReader.getValue"/> aufgerufen werden, um den Inhalt zu lesen.
+            Ein Wert kann z. B. Text- oder Literalinhalt sein.
+            </remarks>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.EOF">
+            <summary>
+            Bestimmt, ob das Ende des Datenstroms erreicht wurde.
+            </summary>
+            <returns><c>true</c>, wenn keine weiteren Elemente gelesen werden können; andernfalls <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.GetAttributeCount">
+            <summary>
+            Liefert die Anzahl der Attribute des aktuellen Start-Elements.
+            </summary>
+            <returns>Anzahl der verfügbaren Attribute (0, wenn keine vorhanden).</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.GetAttributeName(System.Int32)">
+            <summary>
+            Liefert den lokalen Namen eines Attributes anhand seines Index.
+            </summary>
+            <param name="i">Der nullbasierte Attributindex.</param>
+            <returns>Der Name des Attributs.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Wenn der Index außerhalb des gültigen Bereichs liegt.</exception>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.GetAttributeValue(System.Int32)">
+            <summary>
+            Liefert den Wert eines Attributes anhand seines Index.
+            </summary>
+            <param name="i">Der nullbasierte Attributindex.</param>
+            <returns>Der Attributwert (typischerweise <see cref="T:System.String"/>), oder ein typ-spezifisches Objekt.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Wenn der Index außerhalb des gültigen Bereichs liegt.</exception>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.GetLocalName">
+            <summary>
+            Liefert den lokalen Namen des aktuellen Elements oder Knotens.
+            </summary>
+            <returns>Der lokale Elementname, oder <c>null</c>, falls nicht anwendbar.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.getValue">
+            <summary>
+            Liefert den Wert am aktuellen Positionierungspunkt.
+            </summary>
+            <remarks>
+            Nur aufrufen, wenn <see cref="P:TranspilerLib.Interfaces.IReader.HasValue"/> wahr ist. Rückgabewert kann je nach Implementierung
+            typisiert sein (z. B. <see cref="T:System.String"/>, numerische Literaltypen oder komplexe Objekte).
+            </remarks>
+            <returns>Der aktuelle Wert oder <c>null</c>, falls keiner vorhanden.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.IsEndElement">
+            <summary>
+            Gibt an, ob sich der Reader aktuell auf einem End-Element befindet.
+            </summary>
+            <returns><c>true</c>, wenn ein End-Element erkannt wurde; andernfalls <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.IsStartElement">
+            <summary>
+            Gibt an, ob sich der Reader aktuell auf einem Start-Element befindet.
+            </summary>
+            <returns><c>true</c>, wenn ein Start-Element erkannt wurde; andernfalls <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IReader.Read">
+            <summary>
+            Liest den nächsten Knoten / das nächste Element aus der Eingabesequenz.
+            </summary>
+            <remarks>
+            Bei erfolgreichem Lesen wird der interne Cursor weitergeschoben und die Eigenschaften
+            spiegeln den neuen Zustand wider. Bei Ende des Stroms liefert der Aufruf <c>false</c>.
+            </remarks>
+            <returns><c>true</c>, wenn ein weiterer Eintrag gelesen wurde; <c>false</c> bei Ende.</returns>
         </member>
         <member name="T:TranspilerLib.Models.CFileScanner">
             <summary>
@@ -601,7 +729,9 @@
         <member name="F:TranspilerLib.Models.EToken.tkSemicolon">
             <summary>';'</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkLessThan" -->
+        <member name="F:TranspilerLib.Models.EToken.tkLessThan">
+            <summary>'%lt;'</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkAssign">
             <summary>'=' (single assign)</summary>
         </member>
@@ -620,7 +750,9 @@
         <member name="F:TranspilerLib.Models.EToken.tkBackslash">
             <summary>'\'</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkSingleAnd" -->
+        <member name="F:TranspilerLib.Models.EToken.tkSingleAnd">
+            <summary>'&amp;'</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkSingleOr">
             <summary>'|'</summary>
         </member>
@@ -648,12 +780,18 @@
         <member name="F:TranspilerLib.Models.EToken.tkNotEqual">
             <summary>'!=' not equal operator.</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkLessEqualThan" -->
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkGreaterEqualThan" -->
+        <member name="F:TranspilerLib.Models.EToken.tkLessEqualThan">
+            <summary>'&lt;=' less or equal operator.</summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EToken.tkGreaterEqualThan">
+            <summary>'&gt;=' greater or equal operator.</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkPower">
             <summary>'**' power operator.</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkSymmetricalDifference" -->
+        <member name="F:TranspilerLib.Models.EToken.tkSymmetricalDifference">
+            <summary>'>&lt;' symmetrical difference operator.</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkAskAsk">
             <summary>'??' null-coalescing operator.</summary>
         </member>
@@ -678,23 +816,33 @@
         <member name="F:TranspilerLib.Models.EToken.tkAssignModulo">
             <summary>'%=' modulo assignment.</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkAssignAnd" -->
+        <member name="F:TranspilerLib.Models.EToken.tkAssignAnd">
+            <summary>'&amp;=' bitwise and assignment.</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkAssignOr">
             <summary>'|=' bitwise or assignment.</summary>
         </member>
         <member name="F:TranspilerLib.Models.EToken.tkAssignXor">
             <summary>'^=' bitwise xor assignment.</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkAnd" -->
+        <member name="F:TranspilerLib.Models.EToken.tkAnd">
+            <summary>'&amp;&amp;' logical and operator.</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkOr">
             <summary>'||' logical or operator.</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkShl" -->
+        <member name="F:TranspilerLib.Models.EToken.tkShl">
+            <summary>'%lt;%lt;' shift-left operator.</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkShr">
             <summary>'>>' shift-right operator.</summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkAssignShl" -->
-        <!-- Badly formed XML comment ignored for member "F:TranspilerLib.Models.EToken.tkAssignShr" -->
+        <member name="F:TranspilerLib.Models.EToken.tkAssignShl">
+            <summary>'&lt;%lt;=' shift-left assignment.</summary>
+        </member>
+        <member name="F:TranspilerLib.Models.EToken.tkAssignShr">
+            <summary>'>>=' shift-right assignment.</summary>
+        </member>
         <member name="F:TranspilerLib.Models.EToken.tkAssignAsk">
             <summary>'??=' null-coalescing assignment.</summary>
         </member>
@@ -944,6 +1092,123 @@
             <summary>
             Program Counter – zeigt auf den aktuell auszuführenden Block.
             </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.ParentedItemsList`1">
+            <summary>
+            Stellt eine Liste von Elementen bereit, die jeweils einen Verweis auf ihr übergeordnetes Objekt (Parent) besitzen.
+            Beim Einfügen oder Hinzufügen eines Elements wird dessen <see cref="P:TranspilerLib.Interfaces.IHasParents`1.Parent"/> automatisch auf den Parent dieser Liste gesetzt,
+            sofern es noch keinen Parent hat oder ein anderer Parent hinterlegt ist.
+            </summary>
+            <typeparam name="T">
+            Der Elementtyp. Muss eine Klassen-Referenz sein, <see cref="T:TranspilerLib.Interfaces.IHasParents`1"/> implementieren und vergleichbar über <see cref="T:System.IEquatable`1"/> sein.
+            </typeparam>
+            <remarks>
+            Typisches Einsatzszenario sind hierarchische oder baumartige Strukturen (z. B. AST-Knoten),
+            bei denen ein konsistenter Parent-Verweis gepflegt werden soll.
+            </remarks>
+        </member>
+        <member name="F:TranspilerLib.Models.ParentedItemsList`1.list">
+            <summary>
+            Interne Speicherliste der Elemente.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.ParentedItemsList`1.Parent">
+            <summary>
+            Der Parent, der allen eingefügten Elementen zugewiesen wird (sofern erforderlich).
+            </summary>
+            <remarks>
+            Ist dieser Wert <c>null</c>, werden neue Elemente nicht verändert, selbst wenn sie keinen Parent besitzen.
+            </remarks>
+        </member>
+        <member name="P:TranspilerLib.Models.ParentedItemsList`1.Count">
+            <summary>
+            Gibt die Anzahl der enthaltenen Elemente zurück.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.ParentedItemsList`1.IsReadOnly">
+            <summary>
+            Immer <c>false</c>, da diese Liste veränderbar ist.
+            </summary>
+        </member>
+        <member name="P:TranspilerLib.Models.ParentedItemsList`1.Item(System.Int32)">
+            <summary>
+            Ruft das Element am angegebenen Index ab oder legt es fest.
+            </summary>
+            <param name="index">Der nullbasierte Index.</param>
+            <returns>Das Element am angegebenen Index.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Wenn <paramref name="index"/> ungültig ist.</exception>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.#ctor(`0)">
+            <summary>
+            Erstellt eine neue Instanz der <see cref="T:TranspilerLib.Models.ParentedItemsList`1"/> mit dem angegebenen Parent.
+            </summary>
+            <param name="_parent">Der Parent, der neuen Elementen zugewiesen wird (falls nötig).</param>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.IndexOf(`0)">
+            <summary>
+            Ermittelt den Index eines bestimmten Elements.
+            </summary>
+            <param name="item">Das zu suchende Element.</param>
+            <returns>Der Index oder -1, falls nicht gefunden.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.Insert(System.Int32,`0)">
+            <summary>
+            Fügt ein Element an einer bestimmten Position ein und setzt dessen Parent falls erforderlich.
+            </summary>
+            <param name="index">Der nullbasierte Insert-Index.</param>
+            <param name="item">Das einzufügende Element.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Wenn <paramref name="index"/> ungültig ist.</exception>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.RemoveAt(System.Int32)">
+            <summary>
+            Entfernt das Element am angegebenen Index.
+            </summary>
+            <param name="index">Der nullbasierte Index.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Wenn <paramref name="index"/> ungültig ist.</exception>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.Add(`0)">
+            <summary>
+            Fügt ein Element am Ende ein und setzt dessen Parent falls erforderlich.
+            </summary>
+            <param name="item">Das hinzuzufügende Element.</param>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.Clear">
+            <summary>
+            Entfernt alle Elemente aus der Liste.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.Contains(`0)">
+            <summary>
+            Prüft, ob ein Element enthalten ist.
+            </summary>
+            <param name="item">Das zu prüfende Element.</param>
+            <returns><c>true</c>, wenn enthalten; andernfalls <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Kopiert die Elemente in ein Zielarray ab einem Startindex.
+            </summary>
+            <param name="array">Das Zielarray.</param>
+            <param name="arrayIndex">Startindex im Zielarray.</param>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.Remove(`0)">
+            <summary>
+            Entfernt ein bestimmtes Element, sofern vorhanden.
+            </summary>
+            <param name="item">Das zu entfernende Element.</param>
+            <returns><c>true</c>, wenn entfernt; andernfalls <c>false</c>.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.GetEnumerator">
+            <summary>
+            Gibt einen Enumerator über die Elemente zurück.
+            </summary>
+            <returns>Enumerator über die Liste.</returns>
+        </member>
+        <member name="M:TranspilerLib.Models.ParentedItemsList`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Nicht-generischer Enumerator.
+            </summary>
+            <returns>Enumerator über die Liste.</returns>
         </member>
         <member name="T:TranspilerLib.Models.Scanner.CodeBase">
             <summary>
@@ -1305,6 +1570,116 @@
             <param name="tokenData">Aktuelles Token.</param>
             <param name="data">Mutable Builder-Daten (enthält u.a. den aktuellen Block).</param>
             <exception cref="T:System.NotImplementedException">Geworfen wenn eine unvorhergesehene Level-Differenz auftritt.</exception>
+        </member>
+        <member name="T:TranspilerLib.Models.Scanner.TokenHandlerBase">
+            <summary>
+            Basisklasse für spezifische Token-Handler innerhalb des Scannervorgangs.
+            Stellt Hilfsmethoden bereit, um Zeichen aus dem Originalcode zu lesen und aus dem Scan-Bereich Tokens zu emittieren.
+            </summary>
+            <remarks>
+            Die Klasse kapselt wiederkehrende Operationen wie:
+            1. Ermitteln des nächsten / vorherigen Zeichens ohne Ausnahme auszulösen.
+            2. Extraktion des aktuell gescannten Textsegments (Bereich zwischen <see cref="F:TranspilerLib.Models.TokenizeData.Pos2"/> und <see cref="F:TranspilerLib.Models.TokenizeData.Pos"/>).
+            3. Erzeugung und Übergabe eines <see cref="T:TranspilerLib.Data.TokenData"/> an einen bereitgestellten Delegaten (<see cref="T:TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate"/>).
+            </remarks>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.TokenHandlerBase.EmitToken(TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate,TranspilerLib.Models.TokenizeData,TranspilerLib.Data.CodeBlockType,System.String,System.Int32)">
+            <summary>
+            Erzeugt aus dem aktuellen Scanbereich ein <see cref="T:TranspilerLib.Data.TokenData"/> und übergibt es an den angegebenen Delegaten.
+            </summary>
+            <param name="token">Delegat, der das erzeugte Token verarbeitet (kann null sein).</param>
+            <param name="data">Scan-Zustandsdaten (Positionsmarker, Stacktiefe etc.).</param>
+            <param name="type">Der zuzuweisende <see cref="T:TranspilerLib.Data.CodeBlockType"/> für das erzeugte Token.</param>
+            <param name="originalCode">Der vollständige Quellcode, aus dem gescannt wird.</param>
+            <param name="offs">
+            Optionaler Off-Set, um den Endbereich zu erweitern (z. B. um abschließende Zeichen einzuschließen).
+            Typischer Einsatz bei Abschlusszeichen oder nachlaufenden Trennern.
+            </param>
+            <remarks>
+            Der extrahierte Text reicht von <c>data.Pos2</c> bis <c>data.Pos + offs</c> (inklusive) und wird vor Übergabe getrimmt.
+            Wenn <paramref name="token"/> null ist, passiert nichts.
+            </remarks>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.TokenHandlerBase.GetNxtChar(System.Int32,System.String)">
+            <summary>
+            Liefert das nächste Zeichen relativ zur übergebenen Position.
+            </summary>
+            <param name="Pos">Aktuelle Indexposition im Quellcode.</param>
+            <param name="OriginalCode">Der vollständige Quelltext.</param>
+            <returns>
+            Das Zeichen an Position <c>Pos + 1</c>, oder das Null-Zeichen <c>'\0'</c>, wenn das Ende erreicht ist.
+            </returns>
+            <remarks>
+            Sicherer Zugriff ohne Ausnahme am Ende des Strings.
+            </remarks>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.TokenHandlerBase.GetPrvChar(System.Int32,System.String)">
+            <summary>
+            Liefert das vorherige Zeichen relativ zur übergebenen Position.
+            </summary>
+            <param name="Pos">Aktuelle Indexposition im Quellcode.</param>
+            <param name="OriginalCode">Der vollständige Quelltext.</param>
+            <returns>
+            Das Zeichen an Position <c>Pos - 1</c>, oder das erste Zeichen, wenn <paramref name="Pos"/> gleich 0 ist.
+            </returns>
+            <remarks>
+            Negative Indizes werden abgefangen, indem auf Index 0 zurückgegriffen wird.
+            </remarks>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.TokenHandlerBase.GetText(TranspilerLib.Models.TokenizeData,System.String,System.Int32)">
+            <summary>
+            Extrahiert den aktuell gescannten Text zwischen <see cref="F:TranspilerLib.Models.TokenizeData.Pos2"/> und <see cref="F:TranspilerLib.Models.TokenizeData.Pos"/>.
+            </summary>
+            <param name="data">Aktuelle Scan-Daten mit Start- und Endposition.</param>
+            <param name="OriginalCode">Optional: Vollständiger Quellcode. Wenn leer, wird ein leerer String zurückgegeben.</param>
+            <param name="offs">Optionaler Erweiterungs-Offset (positiv oder 0). Negative Werte werden als 0 behandelt.</param>
+            <returns>
+            Das nicht getrimmte Rohsegment des Quelltexts. Bei ungültigen Längen wird ein leerer String geliefert.
+            </returns>
+            <remarks>
+            Diese Methode führt kein Trimming durch (im Gegensatz zu <see cref="M:TranspilerLib.Models.Scanner.TokenHandlerBase.EmitToken(TranspilerLib.Interfaces.Code.ICodeBase.TokenDelegate,TranspilerLib.Models.TokenizeData,TranspilerLib.Data.CodeBlockType,System.String,System.Int32)"/>).
+            </remarks>
+        </member>
+        <member name="T:TranspilerLib.Models.TokenizeData">
+            <summary>
+            Kapselt den veränderlichen Zustand während des Tokenisierungs-/Scan-Vorgangs.
+            </summary>
+            <remarks>
+            Diese Struktur dient als einfacher Container für Positions- und Zustandsinformationen,
+            die typischerweise von einem Scanner oder Lexer inkrementell aktualisiert werden.
+            Alle Felder sind absichtlich öffentlich und als einfache Felder (keine Properties) gehalten,
+            um Overhead bei sehr häufigen Aktualisierungen zu vermeiden.
+            </remarks>
+        </member>
+        <member name="F:TranspilerLib.Models.TokenizeData.Pos">
+            <summary>
+            Primärer Positionszeiger im Quellpuffer (aktuelles Zeichen / aktueller Index).
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.TokenizeData.Pos2">
+            <summary>
+            Sekundärer Positionszeiger (z. B. Start eines Tokens oder Lookahead-Beginn).
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.TokenizeData.Stack">
+            <summary>
+            Allgemeiner Zähler / Stack-Level (z. B. für Verschachtelungen wie Klammern).
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.TokenizeData.State">
+            <summary>
+            Aktueller Zustandswert der zustandsbasierten Tokenisierungs- / FSM-Logik.
+            </summary>
+        </member>
+        <member name="F:TranspilerLib.Models.TokenizeData.flag">
+            <summary>
+            Allgemeines Flag für temporäre Markierungen oder bedingte Pfade im Scan-Prozess.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Models.TokenizeData.#ctor">
+            <summary>
+            Initialisiert eine neue Instanz mit Standardwerten (alle numerischen Felder = 0, Flag = false).
+            </summary>
         </member>
         <member name="T:TranspilerLib.Properties.Resources">
             <summary>
