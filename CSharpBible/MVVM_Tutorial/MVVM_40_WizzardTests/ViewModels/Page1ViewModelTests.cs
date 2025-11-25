@@ -97,7 +97,7 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
     {
         testModel.MainSelection = new ListEntry(iAct, "Test");
         testModel.ClearCommand.Execute(null);
-        Assert.AreEqual(null, testModel.MainSelection);
+        Assert.IsNull(testModel.MainSelection);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 

@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AA16_UserControl1.ViewModels.Interfaces;
+using Avalonia.Headless.MSTest;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using System.Threading;
 
 namespace AA16_UserControl1.Views.Tests;
@@ -6,15 +9,16 @@ namespace AA16_UserControl1.Views.Tests;
 [TestClass()]
 public class MainWindowTests
 {
-    [TestMethod()]
+    [AvaloniaTestMethod]
     public void MainWindowTest()
     {
-        MainWindow? mw=null;
-        var t = new Thread(()=> mw = new());
-        t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-        t.Start();
-        t.Join(); //Wait for the thread to end
+        MainWindow? mw = new()
+        {
+            Height = 600,
+            Width = 800,
+            DataContext = Substitute.For<IMainWindowViewModel>()
+        };
         Assert.IsNotNull(mw);
-        Assert.IsInstanceOfType(mw, typeof(MainWindow));    
+        Assert.IsInstanceOfType(mw, typeof(MainWindow));
     }
 }

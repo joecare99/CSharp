@@ -50,7 +50,7 @@ namespace MVVM_19_FilterLists.Model.Tests
             DebugResult = "";
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             DebugResult += $"PropChg: {sender}, P:{e.PropertyName}, V:{sender?.GetType().GetProperty(e.PropertyName)?.GetValue(sender)}{Environment.NewLine}";
         }

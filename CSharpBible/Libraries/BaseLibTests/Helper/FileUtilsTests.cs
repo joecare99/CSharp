@@ -159,7 +159,7 @@ namespace BaseLib.Helper.Tests
 
             PrepareFiles(ePreMode, Path.Combine(sLocalTestPath, sFileName));
             sUserData = "Test 123";
-            Assert.IsTrue(FileUtils.SaveFile(SaveTestFile, Path.Combine(sLocalTestPath, sFileName), this));
+            Assert.IsTrue(FileUtils.SaveFile(SaveTestFile!, Path.Combine(sLocalTestPath, sFileName), this));
             Assert.IsTrue(File.Exists(Path.Combine(sLocalTestPath, sFileName)));
 
         }
@@ -196,7 +196,7 @@ namespace BaseLib.Helper.Tests
             PrepareFiles(ePreMode, Path.Combine(sLocalTestPath, sFileName));
             sUserData = "Test 123";
             eException = new FieldAccessException("Dummy Dummy");
-            Assert.ThrowsExactly<FieldAccessException>(() => FileUtils.SaveFile(SaveTestFile, Path.Combine(sLocalTestPath, sFileName), this));
+            Assert.ThrowsExactly<FieldAccessException>(() => FileUtils.SaveFile(SaveTestFile!, Path.Combine(sLocalTestPath, sFileName), this));
             Assert.AreEqual(xExp, File.Exists(Path.Combine(sLocalTestPath, sFileName)));
         }
 
@@ -214,7 +214,7 @@ namespace BaseLib.Helper.Tests
             var sFileName = "test.nix";
             try
             {
-                Assert.ThrowsExactly<KeyNotFoundException>(()=>FileUtils.SaveFile(SaveTestFile2, Path.Combine(sLocalTestPath, sFileName), this));
+                Assert.ThrowsExactly<KeyNotFoundException>(()=>FileUtils.SaveFile(SaveTestFile2!, Path.Combine(sLocalTestPath, sFileName), this));
                 Assert.IsFalse(File.Exists(Path.Combine(sLocalTestPath, sFileName)));
             }
             finally

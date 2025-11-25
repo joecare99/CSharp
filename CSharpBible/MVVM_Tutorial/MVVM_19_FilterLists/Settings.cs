@@ -17,11 +17,11 @@ public sealed partial class Settings {
         //
     }
     
-    private void SettingChangingEventHandler(object sender, System.Configuration.SettingChangingEventArgs e) {
+    private void SettingChangingEventHandler(object? sender, System.Configuration.SettingChangingEventArgs e) {
         // Fügen Sie hier Code zum Behandeln des SettingChangingEvent-Ereignisses hinzu.
     }
     
-    private void SettingsSavingEventHandler(object sender, System.ComponentModel.CancelEventArgs e) {
+    private void SettingsSavingEventHandler(object? sender, System.ComponentModel.CancelEventArgs e) {
         // Fügen Sie hier Code zum Behandeln des SettingsSaving-Ereignisses hinzu.
     }
 }

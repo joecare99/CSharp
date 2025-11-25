@@ -29,7 +29,7 @@ public partial class DataPointsView : Page
     public DataPointsView()
     {
         InitializeComponent();
-        DataContextChanged += (object sender, DependencyPropertyChangedEventArgs e) =>
+        DataContextChanged += (object? sender, DependencyPropertyChangedEventArgs e) =>
         {
             if (e.NewValue is DataPointsViewModel vm && this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
             {
@@ -40,7 +40,7 @@ public partial class DataPointsView : Page
         };
 
         var f = this.FindName("ViewPort") as FrameworkElement;
-        f.SizeChanged += (object sender, SizeChangedEventArgs e) =>
+        f.SizeChanged += (object? sender, SizeChangedEventArgs e) =>
         {
             if (this.Resources["vcPortGrid"] is WindowPortToGridLines pc)
             {

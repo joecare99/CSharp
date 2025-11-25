@@ -118,9 +118,9 @@ public class Page3ViewModelTests:BaseTestViewModel<Page3ViewModel>
         testModel.Additional1 = new ListEntry(iAct+1, "Test1");
         testModel.Additional1 = new ListEntry(iAct+2, "Test2");
         testModel.ClearCommand.Execute(null);
-        Assert.AreEqual(null, testModel.Additional1);
-        Assert.AreEqual(null, testModel.Additional2);
-        Assert.AreEqual(null, testModel.Additional3);
+        Assert.IsNull(testModel.Additional1);
+        Assert.IsNull(testModel.Additional2);
+        Assert.IsNull(testModel.Additional3);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
