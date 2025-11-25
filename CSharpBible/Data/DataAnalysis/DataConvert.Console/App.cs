@@ -18,6 +18,7 @@ internal class App
             {
                 // Exporter: table only
                 services.AddSingleton<ITableExporter, TableExcelExporter>();
+                services.AddSingleton<IConsoleWriter, ConsoleWriter>();
 
                 services.AddSingleton<IDelimitedTableParsingProfile>(sp => new DelimitedTableParsingProfile
                 {
@@ -44,6 +45,8 @@ internal class App
             .Build();
     }
 
+    IConsoleWriter? console;
+    
     public async Task<int> RunAsync(string[] args)
     {
         await _host.StartAsync();
@@ -57,10 +60,12 @@ internal class App
             var inputPath = args[0];
             var tableReader = _host.Services.GetRequiredService<ITableReader>();
             var exporter = _host.Services.GetRequiredService<ITableExporter>();
-
-            var table = await tableReader.ReadTableAsync(inputPath, CancellationToken.None);
-            var output = await exporter.ExportAsync(table, inputPath, null, CancellationToken.None);
-            System.Console.WriteLine(output);
+            console = _host.Services.GetRequiredService<IConsoleWriter>();
+            console.WriteLine("Reading ...");
+            var table = await tableReader.ReadTableAsync(inputPath, CancellationToken.None,onProgress);
+            console.WriteLine("\nConverting ...");
+            var output = await exporter.ExportAsync(table, inputPath, null, CancellationToken.None,onProgress);
+            console.WriteLine("\n"+output);
             return 0;
         }
         catch (Exception ex)
@@ -73,5 +78,15 @@ internal class App
             await _host.StopAsync();
             _host.Dispose();
         }
+    }
+
+    private void onProgress(double obj)
+    {
+        console.Write("[");
+        int totalBlocks = 70;
+        int filledBlocks = (int)(obj * totalBlocks);
+        console.Write(new string('#', filledBlocks));
+        console.Write(new string('-', totalBlocks - filledBlocks));
+        console.Write($"] {obj:P0}\r");
     }
 }
