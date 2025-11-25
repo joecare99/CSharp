@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11201.2 d18.0
+VisualStudioVersion = 18.0.11201.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{FB9836CD-815C-4901-B10D-8CCF99B18E30}"
 	ProjectSection(SolutionItems) = preProject
@@ -51,6 +51,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranspilerLib.CSharp", "TranspilerLib.CSharp\TranspilerLib.CSharp.csproj", "{1CCC7458-4422-4370-8540-3BE92F479BEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranspilerLib.Pascal.Tests", "TranspilerLib.Pascal.Tests\TranspilerLib.Pascal.Tests.csproj", "{DD21FC5F-2FFF-4BD6-847B-7B5006DB3389}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmd", "cmd", "{0E2C6B7C-A659-45E8-AD73-092473A0572D}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Cmd\CheckIn2.cmd = ..\..\Cmd\CheckIn2.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
