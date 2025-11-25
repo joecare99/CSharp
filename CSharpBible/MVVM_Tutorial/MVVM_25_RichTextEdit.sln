@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,6 +29,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs", "..\Libraries\CommonDialogs\CommonDialogs.csproj", "{BC3F2FCE-0AA3-413F-BC36-D6EEFFC1964B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs_net", "..\Libraries\CommonDialogs\CommonDialogs_net.csproj", "{7CF63553-BD9F-4999-B6D8-669405EA230E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_25a_CTRichTextEdit", "MVVM_25_CTRichTextEdit\MVVM_25a_CTRichTextEdit.csproj", "{83BA34EF-0E3B-A999-B15B-8757CD718FF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_25a_CTRichTextEdit_net", "MVVM_25_CTRichTextEdit\MVVM_25a_CTRichTextEdit_net.csproj", "{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +106,22 @@ Global
 		{7CF63553-BD9F-4999-B6D8-669405EA230E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7CF63553-BD9F-4999-B6D8-669405EA230E}.Release|x86.ActiveCfg = Release|x86
 		{7CF63553-BD9F-4999-B6D8-669405EA230E}.Release|x86.Build.0 = Release|x86
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Debug|x86.Build.0 = Debug|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Release|x86.ActiveCfg = Release|Any CPU
+		{83BA34EF-0E3B-A999-B15B-8757CD718FF0}.Release|x86.Build.0 = Release|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Debug|x86.Build.0 = Debug|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Release|x86.ActiveCfg = Release|Any CPU
+		{2946216E-E3F5-CDF0-45EC-A1B03BD3BC9B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

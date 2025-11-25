@@ -8,12 +8,12 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Threading.Channels;
 
 namespace DataAnalysis.Core.Import;
 
@@ -30,7 +30,7 @@ public sealed class DelimitedTableReader : ITableReader
         _profile = profile ?? throw new ArgumentNullException(nameof(profile));
     }
 
-    public async Task<DataTable> ReadTableAsync(string inputPath, CancellationToken cancellationToken = default)
+    public async Task<DataTable> ReadTableAsync(string inputPath, CancellationToken cancellationToken = default, Action<double>? progressCallback = null)
     {
         if (string.IsNullOrWhiteSpace(inputPath))
             throw new ArgumentException(ErrorPathEmpty, nameof(inputPath));
@@ -39,6 +39,8 @@ public sealed class DelimitedTableReader : ITableReader
 
         var dt = new DataTable(_profile.TableName);
         using var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        long totalBytes = fs.Length;
+        long processedBytes = 0;
         using var reader = new StreamReader(fs, DetectEncoding(fs) ?? Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
 
         // Header
@@ -50,10 +52,11 @@ public sealed class DelimitedTableReader : ITableReader
             var headerLine = await reader.ReadLineAsync().ConfigureAwait(false);
             if (headerLine is not null)
             {
+                processedBytes += Encoding.UTF8.GetByteCount(headerLine) + Environment.NewLine.Length;
                 var headers = SplitLine(headerLine, _profile.Delimiter, _profile.Quote, _profile.TrimWhitespace);
                 headerMap = headers.Select((h, i) => new { Name = (h ?? string.Empty).Trim(), i })
-                .GroupBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key, g => g.First().i, StringComparer.OrdinalIgnoreCase);
+                    .GroupBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(g => g.Key, g => g.First().i, StringComparer.OrdinalIgnoreCase);
                 inclFields.AddRange(headerMap.Select((h, i) => i));
                 foreach (var h in headerMap)
                 {
@@ -62,7 +65,6 @@ public sealed class DelimitedTableReader : ITableReader
                     if (_profile.ExtractionRules.Any((r) => r.SourceColumn == h.Key))
                         inclFields.Remove(h.Value);
                 }
-
             }
         }
 
@@ -71,50 +73,144 @@ public sealed class DelimitedTableReader : ITableReader
         {
             EnsureColumn(dt, mapping.Target, mapping.IsDateTime);
         }
-        foreach (var i in inclFields)
+        if (headerMap is not null)
         {
-            var hmi = headerMap.Values.FirstOrDefault((v) => (v == i));
-            EnsureColumn(dt, headerMap.Keys.ToArray()[hmi]);
+            foreach (var i in inclFields)
+            {
+                var hmi = headerMap.Values.FirstOrDefault(v => v == i);
+                EnsureColumn(dt, headerMap.Keys.ToArray()[hmi]);
+            }
         }
 
-        string? line;
-        while ((line = await reader.ReadLineAsync().ConfigureAwait(false)) is not null)
+        DateTime lastReport = DateTime.UtcNow;
+        void ReportProgress()
+        {
+            if (progressCallback is null || totalBytes == 0)
+                return;
+            if ((DateTime.UtcNow - lastReport).TotalSeconds >= 1)
+            {
+                progressCallback(Math.Clamp((double)processedBytes / totalBytes, 0d, 1d));
+                lastReport = DateTime.UtcNow;
+            }
+        }
+        ;
+
+        var headerKeys = headerMap?.Keys.ToArray();
+
+
+        /*
+        // PARALLELE VERARBEITUNG (Producer / Consumer)
+        var channel = Channel.CreateBounded<string?>(new BoundedChannelOptions(2048)
+        {
+            SingleWriter = true,
+            SingleReader = false,
+            FullMode = BoundedChannelFullMode.Wait
+        });
+
+        int workerCount = Math.Max(1, Environment.ProcessorCount);
+
+        var consumers = Enumerable.Range(0, workerCount).Select(_ => Task.Run(async () =>
+        {
+            await foreach (var line in channel.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var flowControl = ProcessLine(dt, headerMap, inclFields, headerKeys, line);
+                if (!flowControl)
+                {
+                    continue;
+                }
+
+            }
+        }, cancellationToken)).ToArray();
+
+        // Producer liest Datei
+        string? readLine;
+        while ((readLine = await reader.ReadLineAsync().ConfigureAwait(false)) is not null)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (string.IsNullOrWhiteSpace(line))
+            processedBytes += Encoding.UTF8.GetByteCount(readLine) + Environment.NewLine.Length;
+            ReportProgress();
+            await channel.Writer.WriteAsync(readLine, cancellationToken).ConfigureAwait(false);
+        }
+        channel.Writer.Complete();
+
+        await Task.WhenAll(consumers).ConfigureAwait(false);
+        */
+        while (!reader.EndOfStream)
+        {
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            processedBytes += Encoding.UTF8.GetByteCount(line) + Environment.NewLine.Length;
+            ReportProgress();
+            var flowControl = ProcessLine(dt, headerMap, inclFields, headerKeys, line);
+            if (!flowControl)
+            {
                 continue;
-            var fields = SplitLine(line, _profile.Delimiter, _profile.Quote, _profile.TrimWhitespace);
+            }
+        }
 
-            // extraction rules
-            var attributes = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
-            ApplyExtractionRules(fields, headerMap, attributes);
+        progressCallback?.Invoke(1.0);
+        return dt;
+    }
 
-            // grow columns for attributes if needed
+    private bool ProcessLine(DataTable dt, Dictionary<string, int>? headerMap, List<int> inclFields, string[]? headerKeys, string? line)
+    {
+        if (string.IsNullOrWhiteSpace(line))
+            return false;
+
+        var fields = SplitLine(line, _profile.Delimiter, _profile.Quote, _profile.TrimWhitespace);
+
+        // extraction rules
+        var attributes = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        ApplyExtractionRules(fields, headerMap, attributes);
+
+        // grow columns for attributes if needed
+        if (attributes.Count > 0)
+        {
             foreach (var key in attributes.Keys)
             {
                 if (!_profile.FixedColumns.Any((f) => f.Source == key))
                     EnsureColumn(dt, key);
             }
-
-            var row = dt.NewRow();
-
-            foreach (var mapping in _profile.FixedColumns)
-                row[mapping.Target] = Extract(mapping, fields, headerMap, attributes);
-
-            foreach (var i in inclFields)
-            {
-                var hmi = headerMap.Values.FirstOrDefault((v) => (v == i));
-                if (fields.Count>i)
-                row[headerMap.Keys.ToArray()[hmi]] = fields[i];
-            }
-
-            foreach (var kv in attributes)
-                if (!_profile.FixedColumns.Any((f) => f.Source == kv.Key))
-                    row[kv.Key] = kv.Value ?? string.Empty;
-            dt.Rows.Add(row);
         }
 
-        return dt;
+        // DataRow füllen
+        var rowValues = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var mapping in _profile.FixedColumns)
+        {
+            var value = Extract(mapping, fields, headerMap, attributes);
+            rowValues[mapping.Target] = value ?? string.Empty;
+        }
+
+        if (headerMap is not null && headerKeys is not null)
+        {
+            foreach (var iField in inclFields)
+            {
+                if (fields.Count > iField)
+                {
+                    var hmi = headerMap.Values.FirstOrDefault(v => v == iField);
+                    var colName = headerKeys[hmi];
+                    rowValues[colName] = fields[iField] ?? string.Empty;
+                }
+            }
+        }
+
+        foreach (var kv in attributes)
+        {
+            if (!_profile.FixedColumns.Any((f) => f.Source == kv.Key))
+                rowValues[kv.Key] = kv.Value ?? string.Empty;
+        }
+
+
+        lock (dt)
+        {
+            var row = dt.NewRow();
+            foreach (var kv in rowValues)
+                row[kv.Key] = kv.Value ?? string.Empty;
+
+            dt.Rows.Add(row);
+        }
+        return true;
     }
 
     private void ApplyExtractionRules(IReadOnlyList<string?> fields, Dictionary<string, int>? headerMap, Dictionary<string, string?> attributes)
@@ -152,7 +248,6 @@ public sealed class DelimitedTableReader : ITableReader
                         attrName = m.Groups["key"].Value;
                     if (attrName.ToLower() != "key")
                         attributes[attrName] = m.Groups[gName].Success ? m.Groups[gName].Value : null;
-
                 }
                 xFlag = rule.Multible;
             }
@@ -162,18 +257,17 @@ public sealed class DelimitedTableReader : ITableReader
 
     private static void EnsureColumn(DataTable dt, string name, bool IsDateTime = false)
     {
-        if (!dt.Columns.Contains(name))
-            dt.Columns.Add(name, IsDateTime?typeof(DateTime): typeof(string));
+        lock (dt)
+            if (!dt.Columns.Contains(name))
+                dt.Columns.Add(name, IsDateTime ? typeof(DateTime) : typeof(string));
     }
 
-    // helpers reused
     private string Extract(
-    FixedColumnMapping mapping,
-    IReadOnlyList<string?> fields,
-    Dictionary<string, int>? headerMap,
-    IReadOnlyDictionary<string, string?>? attributes = null)
+        FixedColumnMapping mapping,
+        IReadOnlyList<string?> fields,
+        Dictionary<string, int>? headerMap,
+        IReadOnlyDictionary<string, string?>? attributes = null)
     {
-        // Hilfsfunktionen
         int? ResolveFieldIndex(string? selector)
         {
             if (string.IsNullOrWhiteSpace(selector))
@@ -199,9 +293,7 @@ public sealed class DelimitedTableReader : ITableReader
             return null;
         }
 
-        // Werte über fields (Index/Header) ODER attributes extrahieren
-        var tsRaw = GetBySelector(mapping.Source, out var _);
-
+        var tsRaw = GetBySelector(mapping.Source, out _);
         return tsRaw;
     }
 
@@ -233,9 +325,14 @@ public sealed class DelimitedTableReader : ITableReader
             if (quote.HasValue && c == q)
             {
                 if (inQuotes && i + 1 < line.Length && line[i + 1] == q)
-                { sb.Append(q); i++; }
+                {
+                    sb.Append(q);
+                    i++;
+                }
                 else
-                { inQuotes = !inQuotes; }
+                {
+                    inQuotes = !inQuotes;
+                }
                 continue;
             }
             if (!inQuotes && c == delimiter)

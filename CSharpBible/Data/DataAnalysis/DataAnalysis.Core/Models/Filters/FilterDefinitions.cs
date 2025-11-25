@@ -9,7 +9,7 @@ namespace DataAnalysis.Core.Models;
 /// </summary>
 public abstract class FilterDefinition
 {
-    [JsonPropertyName("type")] public required string Type { get; init; }
+    [JsonPropertyName("type")] public string Type { get; init; }
 }
 
 public sealed class ValueFilterDefinition : FilterDefinition
