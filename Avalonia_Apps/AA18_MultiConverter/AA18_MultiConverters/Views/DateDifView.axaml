@@ -1,10 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- xmlns:vm="clr-namespace:AA18_MultiConverter.ViewModels"
+ xmlns:vmi="clr-namespace:AA18_MultiConverter.ViewModels.Interfaces"
  xmlns:model="clr-namespace:AA18_MultiConverter.Model"
  xmlns:conv="clr-namespace:AA18_MultiConverter.ValueConverter"
  x:Class="AA18_MultiConverter.Views.DateDifView"
- x:DataType="vm:DateDifViewModel">
+ x:DataType="vmi:IDateDifViewModel">
 	<UserControl.Resources>
 		<conv:TimeSpanConverter x:Key="TimeSpanConverter" />
 	</UserControl.Resources>

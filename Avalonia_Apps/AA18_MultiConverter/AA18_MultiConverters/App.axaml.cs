@@ -1,3 +1,4 @@
+using AA18_MultiConverter.ViewModels.Interfaces;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -33,7 +34,7 @@ public partial class App : Application
     private static void ConfigureServices(IServiceCollection services)
     {
         // ViewModels
-        services.AddTransient<ViewModels.DateDifViewModel>();
+        services.AddTransient<IDateDifViewModel,ViewModels.DateDifViewModel>();
 
         // Views
         services.AddTransient<MainWindow>();
