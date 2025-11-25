@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Windows.Input;
 
 /// <summary>
 /// The ViewModels namespace.
@@ -80,7 +81,15 @@ public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, 
         Assert.AreEqual(xCanRead, p!.CanRead);
         Assert.AreEqual(xCanWrite, p!.CanWrite);
         if (xCanRead && GetDefaultData()?.TryGetValue(sPropName, out var oDefVal) == true)
-            Assert.AreEqual(oDefVal, testModel.GetProp(sPropName));
+            if (typeof(ICommand).IsAssignableFrom(p.PropertyType))
+            {
+                var cmd = testModel.GetProp(sPropName) as ICommand;
+                Assert.IsNotNull(cmd);
+                Assert.AreEqual(oDefVal, cmd.CanExecute(null));
+            }
+            else
+                Assert.AreEqual(oDefVal, testModel.GetProp(sPropName));
+        
     }
 }
 

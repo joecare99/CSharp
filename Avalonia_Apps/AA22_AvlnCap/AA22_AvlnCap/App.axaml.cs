@@ -22,6 +22,7 @@ using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using AA22_AvlnCap.ViewModels.Interfaces;
 
 namespace AA22_AvlnCap;
 

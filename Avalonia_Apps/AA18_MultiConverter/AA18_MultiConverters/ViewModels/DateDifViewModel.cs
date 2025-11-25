@@ -14,10 +14,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using AA18_MultiConverter.Model;
 using System;
+using AA18_MultiConverter.ViewModels.Interfaces;
 
 namespace AA18_MultiConverter.ViewModels;
 
-public partial class DateDifViewModel : ObservableObject
+public partial class DateDifViewModel : ObservableObject, IDateDifViewModel
 {
     public static Func<DateTimeOffset> GetNow { get; set; } = () => DateTimeOffset.Now;
 

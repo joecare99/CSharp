@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using MVVM_17_1_CSV_Laden.ViewModels;
+using System.Collections;
 
 namespace MVVM_17_1_CSV_Laden.Views.Converter.Tests;
 
@@ -31,7 +32,11 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void WindowPortToGridLinesTest()
     {
-        Assert.Fail();
+        Assert.IsNotNull(testVC);
+        Assert.IsInstanceOfType(testVC, typeof(WindowPortToGridLines));
+        Assert.AreEqual(new System.Windows.Size(200, 100), testVC.WindowSize);
+        Assert.IsNotNull(wp);
+        Assert.IsInstanceOfType(wp, typeof(SWindowPort));
     }
 
     [TestMethod()]
@@ -39,7 +44,9 @@ public class WindowPortToGridLinesTests
     public void ConvertTest(object o)
     {
         var test = testVC.Convert(o, null!, null!, null!);
-        Assert.Fail();
+        Assert.IsNotNull(test);
+        Assert.IsInstanceOfType(test, typeof(System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>));
+        Assert.HasCount(19, test as IList);
     }
 
     [TestMethod()]
