@@ -24,7 +24,29 @@ public sealed class AnalysisAggregateProfile
              new AnalysisQuery { Title = "Top-Events2", Dimensions = new [] { DimensionKind.MessageNormalized }, TopN =30, Filter = new ValueFilterDefinition  { Field = "Severity", Type = "Enum", Operator = FilterOperator.Le, Value = "Error" }, },
              new AnalysisQuery { Title = "Severity x Source", Dimensions = new [] { DimensionKind.Source, DimensionKind.Severity }, Columns = Enum.GetValues<SyslogSeverity>().Select(s => s.ToString()).ToArray() },
              new AnalysisQuery { Title = "Events x Source (Top50)", Dimensions = new [] { DimensionKind.Source, DimensionKind.MessageNormalized }, TopN =300},
-             new AnalysisQuery { Title = "Koordinate Cluster", Dimensions = new [] { DimensionKind.X, DimensionKind.Y }, TopN = 30, IsDBScan = true, DbEps = 10.0, DbMinPts = 3, Filter = new ValueFilterDefinition  { Field = "Severity", Type = "Enum", Operator = FilterOperator.Le, Value = "Error" }, }
+             new AnalysisQuery { Title = "Error Cluster", Dimensions = new [] { DimensionKind.X, DimensionKind.Y }, TopN = 30, IsDBScan = true, DbEps = 2.0, DbMinPts = 3, Filter = new ValueFilterDefinition  { Field = "Severity", Type = "Enum", Operator = FilterOperator.Le, Value = "Error" }, },
+             new AnalysisQuery { Title = "Max-G Cluster (1.0)", Dimensions = new [] { DimensionKind.X, DimensionKind.Y }, TopN = 30, IsDBScan = true, DbEps = 1.0, DbMinPts = 3, Filter = new GroupFilterDefinition { Mode="And", Type = "group",
+                        Filters=[ new ValueFilterDefinition  { Field = "Message", Type = "String", Operator = FilterOperator.Eq, Value = "Max. G-Force" },
+                            new ValueFilterDefinition  { Field = "X", Type = "value", Operator = FilterOperator.Gt, Value = "10" }
+                        ] }, },
+             new AnalysisQuery { Title = "Max-G Cluster (0.5)", Dimensions = new [] { DimensionKind.X, DimensionKind.Y }, TopN = 50, IsDBScan = true, DbEps = 0.5, DbMinPts = 3, Filter = 
+                 new GroupFilterDefinition { Mode="And", Type = "group",
+                        Filters=[ 
+                            new ValueFilterDefinition  { Field = "Message", Type = "String", Operator = FilterOperator.Eq, Value = "Max. G-Force" },
+                            new ValueFilterDefinition  { Field = "X", Type = "value", Operator = FilterOperator.Gt, Value = "10" }
+                        ] }, },
+             new AnalysisQuery { Title = "SSCU Cluster (0.5)", Dimensions = new [] { DimensionKind.X, DimensionKind.Y }, TopN = 30, IsDBScan = true, DbEps = 0.5, DbMinPts = 3, Filter =
+                 new GroupFilterDefinition { Mode="And", Type = "group", Filters=[
+                     new ValueFilterDefinition  { Field = "Message", Type = "String", Operator = FilterOperator.StartsWith, Value = "SSCU" },
+                     new ValueFilterDefinition  { Field = "X", Type = "value", Operator = FilterOperator.Gt, Value = "10" },
+                     ] 
+                 },  },
+             new AnalysisQuery { Title = "SSCU Cluster (0.25)", Dimensions = new [] { DimensionKind.X, DimensionKind.Y }, TopN = 50, IsDBScan = true, DbEps = 0.25, DbMinPts = 3, Filter =
+                new GroupFilterDefinition { Mode="And", Type = "group", Filters=[ 
+                    new ValueFilterDefinition  { Field = "Message", Type = "String", Operator = FilterOperator.StartsWith, Value = "SSCU" },
+                     new ValueFilterDefinition  { Field = "X", Type = "value", Operator = FilterOperator.Gt, Value = "10" },
+                    ] },
+             }
         }
     };
 }
