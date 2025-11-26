@@ -293,6 +293,8 @@ public interface IModul1
     IOperators Operators { get; }
     ISystem System { get; }
     IUserData User { get; }
+    [Obsolete]
+    long Kek { get; set; }
 
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
