@@ -10,7 +10,7 @@
     <ProjectReference Include="..\GenFreeBrowser\GenFreeBrowser.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <!-- CommunityToolkit.Mvvm removed: provided transitively via MVVM_BaseLib -->
   </ItemGroup>
 </Project>

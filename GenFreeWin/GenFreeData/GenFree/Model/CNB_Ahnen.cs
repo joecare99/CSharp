@@ -79,17 +79,17 @@ public class CNB_Ahnen(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Ah
         return (iGene, iPers, iFam);
     }
 
-    public void Commit(int persInArb, int famInArb, int iGen, int iAhn1, int iAhn2, string name)
+    public void Commit(int persInArb, int famInArb, int iGen, long iAhn1, long iAhn2, string name)
     {
         bool noMatch = !PersonExists(persInArb);
         if (noMatch)
         {
-            AddRow(persInArb, iGen, iAhn1, iAhn2, 0, famInArb);
+            AddRow(persInArb, iGen,0, iAhn1, iAhn2, famInArb);
         }
         else if (_db_Table.Fields[NB_AhnenFields.Ahn1].AsInt() != 0)
         {
             SetWeiterRaw();
-            AddRow(persInArb, iGen, iAhn1, iAhn2, 1, famInArb);
+            AddRow(persInArb, iGen,1, iAhn1, iAhn2, famInArb);
         }
         else
         {
@@ -97,7 +97,7 @@ public class CNB_Ahnen(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Ah
         }
     }
 
-    public void AddRow(int iPersNr, int iGen, int iWtr, int iAhn1, int iAhn2, int iFamNr)
+    public void AddRow(int iPersNr, int iGen, int iWtr, long iAhn1, long iAhn2, int iFamNr)
     {
         IRecordset nB_AhnenTable = _db_Table;
         nB_AhnenTable.AddNew();
@@ -105,12 +105,12 @@ public class CNB_Ahnen(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Ah
         nB_AhnenTable.Fields[NB_AhnenFields.Gene].Value = iGen;
         nB_AhnenTable.Fields[NB_AhnenFields.Ahn1].Value = iAhn1;
         nB_AhnenTable.Fields[NB_AhnenFields.Ahn2].Value = iAhn2;
-        nB_AhnenTable.Fields[NB_AhnenFields.Ahn3].Value = 0;
+        nB_AhnenTable.Fields[NB_AhnenFields.Ahn3].Value = 0L;
         nB_AhnenTable.Fields[NB_AhnenFields.Weiter].Value = iWtr;
         nB_AhnenTable.Fields[NB_AhnenFields.Ehe].Value = iFamNr;
         nB_AhnenTable.Update();
     }
-    public void EditRaw(int iGene, int iAhn1, int iAhn2, int famInArb, string surName)
+    public void EditRaw(int iGene, long iAhn1, long iAhn2, int famInArb, string surName)
     {
         IRecordset nB_AhnenTable = _db_Table;
         nB_AhnenTable.Edit();
