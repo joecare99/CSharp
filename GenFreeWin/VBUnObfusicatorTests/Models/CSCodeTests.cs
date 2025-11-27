@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using VBUnObfusicator.Interfaces.Code;
+using VBUnObfusicator.Data;
 using VBUnObfusicatorTests.TestData;
 using static VBUnObfusicator.Helper.TestHelper;
 

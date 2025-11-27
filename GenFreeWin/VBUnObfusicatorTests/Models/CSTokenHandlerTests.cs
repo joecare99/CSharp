@@ -5,6 +5,7 @@ using NSubstitute;
 using VBUnObfusicator.Models;
 using VBUnObfusicator.Interfaces.Code;
 using static VBUnObfusicator.Interfaces.Code.ICSCode;
+using VBUnObfusicator.Data;
 
 namespace VBUnObfusicator.Tests.Models;
 

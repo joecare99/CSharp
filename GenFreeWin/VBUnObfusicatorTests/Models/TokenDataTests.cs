@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using VBUnObfusicator.Interfaces.Code;
+using VBUnObfusicator.Data;
 using static VBUnObfusicator.Interfaces.Code.ICSCode;
 
 namespace VBUnObfusicator.Models.Tests

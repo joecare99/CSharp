@@ -18,23 +18,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Resources\*.cs" />
-	  <Compile Remove="Resources\Test11Dat.cs" />
-	  <Compile Remove="Resources\Test12Dat.cs" />
-	  <Compile Remove="Resources\Test13Dat.cs" />
-	  <Compile Remove="Resources\Test14Dat.cs" />
-	  <Compile Remove="Resources\Test1Dat.cs" />
-	  <Compile Remove="Resources\Test2Dat.cs" />
-	  <Compile Remove="Resources\Test8Dat.cs" />
-	  <Compile Remove="Resources\Test9Dat.cs" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="Resources\*.cs" />
-	  <None Include="Resources\Test12Dat.cs" />
-	  <None Include="Resources\Test13Dat.cs" />
-	  <None Include="Resources\Test14Dat.cs" />
-	  <None Include="Resources\Test2Dat.cs" />
-	  <None Include="Resources\Test8Dat.cs" />
-	  <None Include="Resources\Test9Dat.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
