@@ -27,6 +27,7 @@
 // ***********************************************************************
 
 using System.Collections.Generic;
+using VBUnObfusicator.Data;
 using static VBUnObfusicator.Interfaces.Code.ICSCode;
 
 namespace VBUnObfusicator.Interfaces.Code;

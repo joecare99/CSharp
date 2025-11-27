@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using VBUnObfusicator.Data;
+using VBUnObfusicator.Interfaces.Code;
 using static VBUnObfusicator.Interfaces.Code.ICSCode;
 
 /// <summary>
@@ -83,14 +85,6 @@ namespace VBUnObfusicator.Models
             public ICodeBlock? Prev => Parent is ICodeBlock pcb && 0 < Index ? pcb.SubBlocks[Index - 1] : null;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="CodeBlock"/> class.
-            /// </summary>
-            public CodeBlock()
-            {
-                SubBlocks = new ParentedItemsList<ICodeBlock>(this);
-            }
-
-            /// <summary>
             /// Gets or sets the destination.
             /// </summary>
             /// <value>The destination.</value>
@@ -103,6 +97,46 @@ namespace VBUnObfusicator.Models
             /// <value>The index of the destination.</value>
             [DataMember(EmitDefaultValue = false)]
             public List<int> DestinationIndex { get => GetItemIdx(Destination); set => Destination = SetDestByIdx(this, value); }
+            /// <summary>
+            /// Initializes a new instance of the <see cref="CodeBlock"/> class.
+            /// </summary>
+            /// 
+            /// <summary>
+            /// Gets the sources.
+            /// </summary>
+            /// <value>The sources.</value>
+            [IgnoreDataMember]
+            public virtual IList<WeakReference<ICodeBlock>> Sources { get; private set; } = [];
+
+            [DataMember(EmitDefaultValue = false)]
+            public List<List<int>> SourcesIndex
+            {
+                get => Sources.Select((s) => GetItemIdx(s)).ToList();
+                set => Sources = value.Select((s) => SetSourceByIdx(this, s)).Where((s) => s != null).ToList();
+            }
+            /// <summary>
+            /// Gets or sets the parent.
+            /// </summary>
+            /// <value>The parent.</value>
+            [IgnoreDataMember]
+            public virtual ICodeBlock? Parent
+            {
+                get => _parent; set
+                {
+                    if (_parent != value)
+                    {
+                        _ = (_parent?.SubBlocks.Remove(this));
+                        _parent = value;
+                        _parent?.SubBlocks.Add(this);
+                    }
+                }
+            }
+
+            public CodeBlock()
+            {
+                SubBlocks = new ParentedItemsList<ICodeBlock>(this);
+            }
+
 
             /// <summary>
             /// Sets the index of the DST.
@@ -189,36 +223,6 @@ namespace VBUnObfusicator.Models
 
             }
 
-            /// <summary>
-            /// Gets the sources.
-            /// </summary>
-            /// <value>The sources.</value>
-            [IgnoreDataMember]
-            public virtual List<WeakReference<ICodeBlock>> Sources { get; private set; } = new();
-
-            [DataMember(EmitDefaultValue = false)]
-            public List<List<int>> SourcesIndex 
-            { 
-                get => Sources.Select((s) => GetItemIdx(s)).ToList();
-                set => Sources = value.Select((s) => SetSourceByIdx(this, s)).Where((s)=>s != null).ToList(); 
-            }
-            /// <summary>
-            /// Gets or sets the parent.
-            /// </summary>
-            /// <value>The parent.</value>
-            [IgnoreDataMember]
-            public virtual ICodeBlock? Parent
-            {
-                get => _parent; set
-                {
-                    if (_parent != value)
-                    {
-                        _ = (_parent?.SubBlocks.Remove(this));
-                        _parent = value;
-                        _parent?.SubBlocks.Add(this);
-                    }
-                }
-            }
 
             /// <summary>
             /// Converts to string.
