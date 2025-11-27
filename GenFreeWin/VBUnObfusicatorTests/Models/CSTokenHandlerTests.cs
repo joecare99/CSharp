@@ -43,10 +43,10 @@ public class CSTokenHandlerTests
     }
 
     [TestMethod]
-    [DataRow("abc();", 0, 6, CodeBlockType.Instruction)]
-    [DataRow("label:", 0, 6, CodeBlockType.Label)]
-    [DataRow("goto label;", 0, 11, CodeBlockType.Goto)]
-    [DataRow("if (x) {", 0, 8, CodeBlockType.Instruction)]
+    [DataRow("abc();", 0, 5, CodeBlockType.Instruction)]
+    [DataRow("label:", 0, 5, CodeBlockType.Label)]
+    [DataRow("goto label;", 0, 10, CodeBlockType.Goto)]
+    [DataRow("if (x) {", 0, 7, CodeBlockType.Instruction)]
     [DataRow("{", 0, 0, CodeBlockType.Block)]
     [DataRow("}", 0, 0, CodeBlockType.Block)]
     public void HandleDefault_EmitsExpectedToken(string code, int pos2, int pos, CodeBlockType expectedType)
@@ -90,14 +90,24 @@ public class CSTokenHandlerTests
 
     [TestMethod]
     [DataRow("/* comment */", 2, 11, CodeBlockType.Comment)]
+    [DataRow("/* comment *", 2, 11, CodeBlockType.Unknown)]
     public void HandleBlockComments_EmitsComment(string code, int pos2, int pos, CodeBlockType expectedType)
     {
         var handler = CreateHandler();
         var collector = new TokenCollector();
-        var data = new TokenizeData { Pos2 = pos2, Pos = pos };
-        if( handler.TryGetValue(3, out var action))
-           action(collector.Collect, code, data);
-        Assert.IsTrue(collector.Tokens.Exists(t => t.type == expectedType));
+        var data = new TokenizeData { Pos2 = pos2, Pos = pos, State = 3 };
+        if (handler.TryGetValue(3, out var action))
+            action(collector.Collect, code, data);
+        if (expectedType == CodeBlockType.Unknown)
+        {
+            Assert.AreEqual(3, data.State); // Ensure state exited comment
+            Assert.HasCount(0, collector.Tokens);
+        }
+        else
+        {
+            Assert.AreEqual(0, data.State); // Ensure state return to 
+            Assert.IsTrue(collector.Tokens.Exists(t => t.type == expectedType));
+        }
     }
 
     [TestMethod]
@@ -114,7 +124,7 @@ public class CSTokenHandlerTests
 
     [TestMethod]
     [DataRow("\"string\"\r", 0, 7, CodeBlockType.String)]
-    [DataRow("@\"multi\rline\"", 0, 10, CodeBlockType.String)]
+    [DataRow("@\"multi\rline\"", 0, 12, CodeBlockType.String)]
     public void HandleStrings_EmitsString(string code, int pos2, int pos, CodeBlockType expectedType)
     {
         // stringEndChars is assumed to contain '"' and '\r'
@@ -124,7 +134,9 @@ public class CSTokenHandlerTests
 
         var handler = CreateHandler();
         var collector = new TokenCollector();
+        // Act
         var data = new TokenizeData { Pos2 = pos2, Pos = pos, State = 4 };
+        // Assert
         if (handler.TryGetValue(4, out var action))
             action(collector.Collect, code, data);
         Assert.IsTrue(collector.Tokens.Exists(t => t.type == expectedType));

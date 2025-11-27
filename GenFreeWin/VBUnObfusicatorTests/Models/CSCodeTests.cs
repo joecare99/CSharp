@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -352,7 +353,7 @@ public class CSCodeTests : TestBase
 
     [TestMethod()]
     [DataRow(new[] { TestDataClass.testData0, TestDataClass.cExpLog0 }, DisplayName = "0")]
-    [DataRow(new[] { TestDataClass.testData5, TestDataClass.cExpLog0 }, DisplayName = "0")]
+    [DataRow(new[] { TestDataClass.testData5, TestDataClass.cExpLog5 }, DisplayName = "5")]
     public void Tokenize0Test(string[] data)
     {
         _testClass.OriginalCode = data[0];
@@ -360,6 +361,15 @@ public class CSCodeTests : TestBase
         AssertAreEqual("", DebugLog);
     }
 
+    [TestMethod()]
+    [DataRow(new[] { TestDataClass.testData0, "33" }, DisplayName = "0")]
+    [DataRow(new[] { TestDataClass.testData5, "22" }, DisplayName = "5")]
+    public void Tokenize0aTest(string[] data)
+    {
+        _testClass.OriginalCode = data[0];
+        var result = _testClass.Tokenize();
+        Assert.HasCount(data[1].AsInt(), result);
+    }
 
     [TestMethod()]
     [DynamicData(nameof(TestTokenizeList))]
