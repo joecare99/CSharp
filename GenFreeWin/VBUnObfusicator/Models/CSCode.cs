@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VBUnObfusicator.Interfaces.Code;
-using static VBUnObfusicator.Interfaces.Code.ICSCode;
+using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models;
 
 namespace VBUnObfusicator.Models;
 

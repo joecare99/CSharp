@@ -1,7 +1,8 @@
 ﻿using BaseLib.Helper;
 using System.Collections.Generic;
 using System.Linq;
-using static VBUnObfusicator.Interfaces.Code.ICSCode;
+using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
 
 namespace VBUnObfusicator.Models
 {
@@ -63,7 +64,7 @@ namespace VBUnObfusicator.Models
             private static void TestMoveToLowerLevel(ICodeBlock source)
             {
                 if (source.Prev is ICodeBlock prev
-                    && prev.Type == CodeBlockType.Instruction
+                    && prev.Type == CodeBlockType.Operation
                     && prev.SubBlocks.Count == 0
                     && ((prev.Code == "else")
                     || prev.Code.StartsWith("if ")))
@@ -169,7 +170,7 @@ namespace VBUnObfusicator.Models
 
             private static bool IsIfStatement(ICodeBlock a)
             {
-                return a.Type == CodeBlockType.Instruction
+                return a.Type == CodeBlockType.Operation
                     && (a.Code.StartsWith("if ")
                         || a.Code.StartsWith("if("));
             }
@@ -216,7 +217,7 @@ namespace VBUnObfusicator.Models
                             // Delete goto
                             DeleteItem(source);
                             if (ifItem.Next is ICodeBlock elseItem
-                               && elseItem.Type == CodeBlockType.Instruction
+                               && elseItem.Type == CodeBlockType.Operation
                                && elseItem.Code == "else")
                             {
                                 elseItem.MoveSubBlocks(1, elseItem.Next, elseItem.SubBlocks.Count - 2);
@@ -250,7 +251,7 @@ namespace VBUnObfusicator.Models
                 while(result && test is CodeBlock c && !(c.Type is CodeBlockType.Label))
                        {
                     result = (c.Type is CodeBlockType.LComment or CodeBlockType.Comment or CodeBlockType.Block)
-                        || (c.Type is CodeBlockType.Instruction && c.Code.StartsWith("num ="));
+                        || (c.Type is CodeBlockType.Operation && c.Code.StartsWith("num ="));
                     test = c.Prev;
                 }
                 return result;

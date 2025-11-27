@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VBUnObfusicator.Interfaces.Code;
-using static VBUnObfusicator.Interfaces.Code.ICodeBase;
-using static VBUnObfusicator.Interfaces.Code.ICSCode;
+using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models;
+using static TranspilerLib.Interfaces.Code.ICodeBase;
 
 namespace VBUnObfusicator.Models
 {
@@ -126,7 +127,7 @@ required
                 if (!data.flag && (data.flag = true)
                     && GetText(data, OriginalCode).Trim().EndsWith(")"))
                 {
-                    EmitToken(token, data, CodeBlockType.Instruction, OriginalCode);
+                    EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
                     data.Pos2 = data.Pos;
                 }
             }
@@ -136,14 +137,14 @@ required
                 if (data.flag && !(data.flag = false)
                     && GetText(data, OriginalCode).EndswithAny(_reservedWords))
                 {
-                    EmitToken(token, data, CodeBlockType.Instruction, OriginalCode);
+                    EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
                     data.Pos2 = data.Pos;
                 }
             }
 
             private static void DefaultComment(TokenDelegate? token, string OriginalCode, TokenizeData data, int iNewState)
             {
-                EmitToken(token, data, CodeBlockType.Instruction, OriginalCode);
+                EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
                 data.Pos2 = data.Pos;
                 data.State = iNewState;
                 data.Pos++;
@@ -162,7 +163,7 @@ required
                     data.State = 5; // "@"-String
                     data.Pos--;
                 }
-                EmitToken(token, data, CodeBlockType.Instruction, OriginalCode);
+                EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
                 data.Pos2 = data.Pos;
                 if (data.State != 1)
                     data.Pos++;
@@ -180,14 +181,14 @@ required
             private static void DefaultInstructionEnd(TokenDelegate? token, string OriginalCode, TokenizeData data)
             {
                 var text = GetText(data, OriginalCode, 1);
-                EmitToken(token, data, text.Contains("goto ") ? CodeBlockType.Goto : CodeBlockType.Instruction, OriginalCode, 1);
+                EmitToken(token, data, text.Contains("goto ") ? CodeBlockType.Goto : CodeBlockType.Operation, OriginalCode, 1);
                 data.Pos2 = data.Pos + 1;
             }
 
             private static void DefaultBlock(TokenDelegate? token, string OriginalCode, TokenizeData data, bool xStart = false, bool xEnd = false)
             {
                 if (!string.IsNullOrEmpty(GetText(data, OriginalCode).Trim()))
-                    EmitToken(token, data, CodeBlockType.Instruction, OriginalCode);
+                    EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
                 if (xStart)
                     data.Stack += 1;
                 data.Pos2 = data.Pos;

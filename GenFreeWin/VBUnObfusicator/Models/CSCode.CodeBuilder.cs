@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VBUnObfusicator.Interfaces.Code;
-using static VBUnObfusicator.Interfaces.Code.ICSCode;
+using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
 
 namespace VBUnObfusicator.Models
 {
@@ -28,7 +28,7 @@ namespace VBUnObfusicator.Models
                 {
                     default:
                         break;
-                    case CodeBlockType.Instruction when !string.IsNullOrEmpty(tokenData.Code):
+                    case CodeBlockType.Operation when !string.IsNullOrEmpty(tokenData.Code):
                         BuildInstruction(tokenData, data);
                         break;
                     case CodeBlockType.Goto:
@@ -71,14 +71,14 @@ namespace VBUnObfusicator.Models
             {
                 if (!data.actualBlock.Code.StartsWith("case ") && (tokenData.Code.Contains(",") || tokenData.Code.Contains("("))) //not cElse label
                 {
-                    if (data.actualBlock.Type is not CodeBlockType.Instruction || data.actualBlock.Code.EndsWith(";"))
-                        data.actualBlock = new CodeBlock() { Name = $"Instruction", Type = CodeBlockType.Instruction, Code = "", Parent = data.actualBlock.Parent };
+                    if (data.actualBlock.Type is not CodeBlockType.Operation || data.actualBlock.Code.EndsWith(";"))
+                        data.actualBlock = new CodeBlock() { Name = $"Instruction", Type = CodeBlockType.Operation, Code = "", Parent = data.actualBlock.Parent };
                     data.actualBlock.Code += tokenData.Code + " ";
-                    tokenData.type = CodeBlockType.Instruction; //!! not cElse label
+                    tokenData.type = CodeBlockType.Operation; //!! not cElse label
                 }
                 else
                 {
-                    if (data.actualBlock.Type is CodeBlockType.Instruction 
+                    if (data.actualBlock.Type is CodeBlockType.Operation 
                         && data.actualBlock.Code.StartsWith("case ") 
                         && tokenData.Code.EndsWith(":"))
                     {
@@ -99,8 +99,8 @@ namespace VBUnObfusicator.Models
 
             private static void BuildString(TokenData tokenData, CodeBuilderData data)
             {
-                if (data.actualBlock.Type is not CodeBlockType.Instruction)
-                    data.actualBlock = new CodeBlock() { Name = $"Instruction", Type = CodeBlockType.Instruction, Code = "", Parent = data.actualBlock.Parent };
+                if (data.actualBlock.Type is not CodeBlockType.Operation)
+                    data.actualBlock = new CodeBlock() { Name = $"Instruction", Type = CodeBlockType.Operation, Code = "", Parent = data.actualBlock.Parent };
                 else if (data.actualBlock.Code.EndsWith("+") || data.actualBlock.Code.EndsWith("=") || data.actualBlock.Code.EndsWith(",") || data.actualBlock.Code.EndsWith("case"))
                     data.actualBlock.Code += " ";
                 data.actualBlock.Code += tokenData.Code;
@@ -120,8 +120,8 @@ namespace VBUnObfusicator.Models
 
             private static void BuildInstruction(TokenData tokenData, CodeBuilderData data)
             {
-                if (data.actualBlock.Type is not CodeBlockType.Instruction and not CodeBlockType.MainBlock
-                    || (data.cbtLast is not CodeBlockType.Instruction and not CodeBlockType.String and not CodeBlockType.Unknown)
+                if (data.actualBlock.Type is not CodeBlockType.Operation and not CodeBlockType.MainBlock
+                    || (data.cbtLast is not CodeBlockType.Operation and not CodeBlockType.String and not CodeBlockType.Unknown)
                     || (!string.IsNullOrEmpty(data.actualBlock.Code) && data.actualBlock.Code.EndsWith(";")))
                 {
                     data.actualBlock = new CodeBlock() { Name = $"{tokenData.type}", Type = tokenData.type, Code = tokenData.Code, Parent = data.actualBlock.Parent };

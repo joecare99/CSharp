@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM.View.Extension;
-using VBUnObfusicator.Interfaces.Code;
+using TranspilerLib.Interfaces.Code;
 using VBUnObfusicator.Properties;
 
 namespace VBUnObfusicator.ViewModels
