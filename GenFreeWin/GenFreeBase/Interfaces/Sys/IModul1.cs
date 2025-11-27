@@ -380,4 +380,5 @@ public interface IModul1
     void Datles10(ref short listart, bool m1_Ki);
     int System_TestForm_Height();
     int DataModul_PeekMandant_RecordCount();
+    void Famles(int famInArb, IFamilyData family);
 }
