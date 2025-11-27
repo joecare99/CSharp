@@ -10,7 +10,7 @@ namespace VBUnObfusicator.Models
 {
     public partial class CSCode
     {
-        public static ITokenHandler csTokenHandler { get; } = new CSTokenHandler() { reservedWords = reservedWords};
+        public static ITokenHandler csTokenHandler { get; } = new CSTokenHandler() { reservedWords = CSCode.reservedWords };
         public class CSTokenHandler : ITokenHandler
         {
             private static readonly Dictionary<int, Action<TokenDelegate?, string, TokenizeData>> _tokenStateHandler = new()
@@ -23,6 +23,7 @@ namespace VBUnObfusicator.Models
                     { 5, HandleStrings },
                     { 6, (_, s, d) => d.State = s[d.Pos] == '}' ? 4 : d.State},
                 };
+            private static char[] stringEndChars = CSCode.stringEndChars;
 
             private static string[] _reservedWords { get; set; } = []; 
 
@@ -31,14 +32,14 @@ namespace VBUnObfusicator.Models
 required
 #endif
                 string[] reservedWords { set => _reservedWords = value; }
-
+            internal char[] sEndChars { set => stringEndChars = value; }
 
             private static void EmitToken(TokenDelegate? token, TokenizeData data, CodeBlockType type, string originalCode, int offs = 0)
                 => token?.Invoke(new TokenData(originalCode.Substring(data.Pos2, data.Pos - data.Pos2 + offs).Trim(), type, data.Stack));
 
             internal static void HandleBlockComments(TokenDelegate? token, string code, TokenizeData data)
             {
-                if (code[data.Pos] == '*' && data.Pos < code.Length - 2 && code[data.Pos + 1] == '/')
+                if (code[data.Pos] == '*' && data.Pos < code.Length - 1 && code[data.Pos + 1] == '/')
                 {
                     EmitToken(token, data, CodeBlockType.Comment, code, 2);
                     data.Pos2 = data.Pos + 2;
