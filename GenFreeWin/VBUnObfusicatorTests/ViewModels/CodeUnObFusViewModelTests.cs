@@ -8,6 +8,7 @@ using System.Globalization;
 using VBUnObfusicator.Data;
 using VBUnObfusicator.Interfaces.Code;
 using VBUnObfusicator.Models;
+using VBUnObfusicator.Models.Scanner;
 using VBUnObfusicator.Models.Tests;
 using static VBUnObfusicator.Helper.TestHelper;
 
@@ -21,7 +22,7 @@ namespace VBUnObfusicator.ViewModels.Tests
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private CodeUnObFusViewModel _testViewModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        private ICodeBlock _parseResult = new CSCode.CodeBlock() { Type = CodeBlockType.Unknown, Code = "<ParseResult>", Name = "ParseResult" };
+        private ICodeBlock _parseResult = new CodeBlock() { Type = CodeBlockType.Unknown, Code = "<ParseResult>", Name = "ParseResult" };
         private string _toCodeResult = "<ToCodeResult>";
         private string _orginalCode = string.Empty;
         private bool _doWhile = false;
