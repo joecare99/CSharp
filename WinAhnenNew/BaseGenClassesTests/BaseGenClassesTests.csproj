@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="..\WinAhnen.props" />
   <PropertyGroup>
-    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net481;net8.0;net9.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
