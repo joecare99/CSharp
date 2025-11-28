@@ -428,29 +428,6 @@
             </summary>
             <param name="item">The code block candidate to test and optimize.</param>
         </member>
-        <member name="T:TranspilerLib.Interfaces.Code.ICSCode">
-            <summary>
-            Interface ICSCode
-            </summary>
-        </member>
-        <member name="P:TranspilerLib.Interfaces.Code.ICSCode.DoWhile">
-            <summary>
-            Gets or sets the original code.
-            </summary>
-            <value>The original code.</value>
-        </member>
-        <member name="M:TranspilerLib.Interfaces.Code.ICSCode.RemoveSingleSourceLabels1(TranspilerLib.Interfaces.Code.ICodeBlock)">
-            <summary>
-            Removes the single source labels1.
-            </summary>
-            <param name="cStruct">The c structure.</param>
-        </member>
-        <member name="M:TranspilerLib.Interfaces.Code.ICSCode.ReorderLabels(TranspilerLib.Interfaces.Code.ICodeBlock)">
-            <summary>
-            Reorders the labels.
-            </summary>
-            <param name="cStruct">The c structure.</param>
-        </member>
         <member name="T:TranspilerLib.Interfaces.Code.IIECCode">
             <summary>
             Represents an interface for IEC (International Electrotechnical Commission) codes,  extending the functionality of
