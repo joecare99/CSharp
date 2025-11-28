@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -111,6 +111,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics", "Graphics", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeDisc", "PrimeDisc\PrimeDisc.csproj", "{0444BD50-EA3E-48E3-9EBF-1A04C2254432}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HilpertColorMap", "HilpertColorMap\HilpertColorMap.csproj", "{1F252B08-7E3C-41A9-8C28-E6A5F8A7BD71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenX.Base", "ScreenX.Base\ScreenX.Base.csproj", "{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenX.BaseTests", "ScreenX.BaseTests\ScreenX.BaseTests.csproj", "{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,6 +288,18 @@ Global
 		{0444BD50-EA3E-48E3-9EBF-1A04C2254432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0444BD50-EA3E-48E3-9EBF-1A04C2254432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0444BD50-EA3E-48E3-9EBF-1A04C2254432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F252B08-7E3C-41A9-8C28-E6A5F8A7BD71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F252B08-7E3C-41A9-8C28-E6A5F8A7BD71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F252B08-7E3C-41A9-8C28-E6A5F8A7BD71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F252B08-7E3C-41A9-8C28-E6A5F8A7BD71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -298,6 +316,9 @@ Global
 		{27DAC5E1-BE1F-4B3B-91B3-4CF40A61A59F} = {2D82C624-6758-46A6-B7BE-B985F6145CC4}
 		{DA21C175-58F7-4701-B0B1-E0AA5EB624FA} = {ED69D2D6-14A4-4EC3-AA1A-6C094F21F4C0}
 		{0444BD50-EA3E-48E3-9EBF-1A04C2254432} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1F252B08-7E3C-41A9-8C28-E6A5F8A7BD71} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{9E4A987B-74C2-FFE1-78F7-716DEF2F613E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{FAAA3EDE-52A8-704C-8810-B1060F2C38F9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1671921B-67F7-474B-A77C-6D6A7F6DF943}
