@@ -3,7 +3,7 @@ using CommonDialogs.Interfaces;
 
 namespace CommonDialogs;
 
-public class SaveFileDialogProxy : FileDialogProxy<SaveFileDialog>, IFileDialog
+public class SaveFileDialogProxy : FileDialogProxy<object>, IFileDialog
 {
     public SaveFileDialogProxy()
         : base(new SaveFileDialog())
@@ -12,9 +12,9 @@ public class SaveFileDialogProxy : FileDialogProxy<SaveFileDialog>, IFileDialog
 
     public bool OverwritePrompt
     {
-        get => This.OverwritePrompt;
-        set => This.OverwritePrompt = value;
+        get => ((SaveFileDialog)This).OverwritePrompt;
+        set => ((SaveFileDialog)This).OverwritePrompt = value;
     }
 
-     public string FileNameExtension => This.DefaultExt;
+     public string FileNameExtension => ((SaveFileDialog)This).DefaultExt;
 }

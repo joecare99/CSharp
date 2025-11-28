@@ -3,15 +3,15 @@ using CommonDialogs.Interfaces;
 
 namespace CommonDialogs;
 
-public class FileDialogProxy<T> : IFileDialog where T : FileDialog
+public class FileDialogProxy<T> : IFileDialog where T : class
 {
-    private T _fileDialog;
+    private FileDialog _fileDialog;
     public FileDialogProxy(T fileDialog)
     {
-        _fileDialog = fileDialog;
+        _fileDialog = fileDialog as FileDialog;
     }
 
-    public T This => _fileDialog;
+    public T This => _fileDialog as T;
 
     public string FileName
     {
