@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Transpiler.Props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>net481;net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
