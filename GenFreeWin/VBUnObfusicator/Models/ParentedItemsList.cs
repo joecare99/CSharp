@@ -5,50 +5,49 @@ using VBUnObfusicator.Interfaces;
 
 namespace VBUnObfusicator.Models;
 
-public partial class CSCode
+public class ParentedItemsList<T> : IHasParents<T>, IList<T> where T : class, IHasParents<T>, IEquatable<T>
 {
-    public class ParentedItemsList<T> : IHasParents<T>, IList<T> where T : class, IHasParents<T>, IEquatable<T>
+    List<T> list = new();
+    public T? Parent { get; set; }
+    public int Count => list.Count;
+
+    public bool IsReadOnly => false;
+
+    public T this[int index] { get => list[index]; set => list[index] = value; }
+
+    public ParentedItemsList(T _parent)
     {
-        List<T> list = new();
-        public T Parent { get; set; }
-        public int Count => list.Count;
+        Parent = _parent;
+    }
 
-        public bool IsReadOnly => false;
+    public int IndexOf(T item) => list.IndexOf(item);
 
-        public T this[int index] { get => list[index]; set => list[index] = value; }
+    public void Insert(int index, T item)
+    {
+        if (!item.Parent?.Equals(Parent) ?? Parent != null)
+            item.Parent = Parent;
+        list.Insert(index, item);
+    }
 
-        public ParentedItemsList(T _parent) {
-            Parent = _parent;
-        }
+    public void RemoveAt(int index) => list.RemoveAt(index);
 
-        public int IndexOf(T item) => list.IndexOf(item);
+    public void Add(T item)
+    {
+        if (!item.Parent?.Equals(Parent) ?? Parent != null)
+            item.Parent = Parent;
+        list.Add(item);
+    }
 
-        public void Insert(int index, T item)
-        {
-            if (!item.Parent?.Equals(Parent) ?? Parent != null)
-                item.Parent = Parent;
-            list.Insert(index, item);   
-        }
+    public void Clear() => list.Clear();
 
-        public void RemoveAt(int index) => list.RemoveAt(index);
+    public bool Contains(T item) => list.Contains(item);
 
-        public void Add(T item)
-        {
-            if (!item.Parent?.Equals(Parent) ?? Parent != null)
-                item.Parent = Parent;
-            list.Add(item);
-        }
+    public void CopyTo(T[] array, int arrayIndex) => list.CopyTo(array, arrayIndex);
 
-        public void Clear() => list.Clear();
+    public bool Remove(T item) => list.Remove(item);
 
-        public bool Contains(T item) => list.Contains(item);
+    public IEnumerator<T> GetEnumerator() => list.GetEnumerator();
 
-        public void CopyTo(T[] array, int arrayIndex) => list.CopyTo(array,arrayIndex);
-
-        public bool Remove(T item) => list.Remove(item);
-
-        public IEnumerator<T> GetEnumerator() => list.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => list.GetEnumerator();
-     }
+    IEnumerator IEnumerable.GetEnumerator() => list.GetEnumerator();
 }
+

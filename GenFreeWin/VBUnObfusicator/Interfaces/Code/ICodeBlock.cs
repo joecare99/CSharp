@@ -73,6 +73,11 @@ public interface ICodeBlock : IHasParents<ICodeBlock>, IEquatable<ICodeBlock>
     /// </summary>
     /// <value>The previous.</value>
     ICodeBlock? Prev { get; }
+    /// <summary>
+    /// Gets the position in the original source from which this block was created.
+    /// </summary>
+    /// <value>The zero-based character index in the source text.</value>
+    int SourcePos { get; init; }
 
     /// <summary>
     /// Deletes the sub blocks.

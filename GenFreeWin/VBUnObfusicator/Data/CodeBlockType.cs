@@ -43,9 +43,9 @@ public enum CodeBlockType
     /// </summary>
     Class,
     /// <summary>
-    /// The instruction
+    /// The operation
     /// </summary>
-    Instruction,
+    Operation,
     /// <summary>
     /// The parameter
     /// </summary>
