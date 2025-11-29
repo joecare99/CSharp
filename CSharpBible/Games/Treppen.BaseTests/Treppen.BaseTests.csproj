@@ -1,5 +1,6 @@
 <Project>
-	<Import Project="..\Application.props" />
+	<Import Project="..\Games_net.props" />
+	<Import Project="..\Packages.props" />
 	<PropertyGroup>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
