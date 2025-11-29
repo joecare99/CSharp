@@ -44,7 +44,7 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
     private readonly Random _rnd = new();
 
     // Seed-Pattern (Signatur) wie im Pascal-Original
-    private const string FPrest2 = "4465452.7575331.6566211.213265103021342243312434";
+    // private const string FPrest2 = "4465452.7575331.6566211.213265103021342243312434";
     private readonly uint[] FPrest3 = [0x4465452E,0x7575331E,0x6566211E,0x21326510,0x30213422,0x43312434];
 
     public event Action<object, Point>? UpdateCell;
@@ -58,7 +58,7 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
     public int this[int x, int y] => InBounds(x, y) ? _z[x, y] : 0;
     private bool InBounds(int x, int y) => x >= 0 && y >= 0 && x < _dimension.Width && y < _dimension.Height;
 
-    public int BaseLevel(int x, int y) => (int)Math.Truncate(x / 1.3 + y / 1.3) + 1;
+    public int BaseLevel(int x, int y) => (int)Math.Truncate((x / 1.3 + y / 1.3) + 1);
 
     // Mappt die kompakten Seed-Daten in das Raster, wie in Pascal SetLData
     private void SetLData(string sdat, int xm, int ym, int offset)
