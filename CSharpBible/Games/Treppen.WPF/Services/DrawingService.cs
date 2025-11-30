@@ -1,13 +1,9 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Treppen.Base;
+using Treppen.WPF.Services.Interfaces;
 
 namespace Treppen.WPF.Services;
-
-public interface IDrawingService
-{
-    BitmapSource CreateLabyrinthPreview(IHeightLabyrinth labyrinth);
-}
 
 public class DrawingService : IDrawingService
 {

@@ -14,7 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\Treppen.Base\Treppen.Base.csproj" />
+    <ProjectReference Include="..\Treppen.Export\Treppen.Export.csproj" />
+    <ProjectReference Include="..\Treppen.Print\Treppen.Print.csproj" />
   </ItemGroup>
 
 </Project>

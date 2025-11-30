@@ -23,6 +23,7 @@
             <Button Content="Generate" Command="{Binding GenerateCommand}" Margin="5" />
             <Button Content="Draw" Command="{Binding DrawCommand}" Margin="5" />
             <Button Content="Print" Command="{Binding PrintCommand}" Margin="5" />
+            <Button Content="Export" Command="{Binding SaveAsCommand}" Margin="5" />
         </StackPanel>
     </Grid>
 </Window>
