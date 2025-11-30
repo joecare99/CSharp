@@ -13,5 +13,9 @@ public interface IHeightLabyrinth
     int this[int x, int y] { get; }
     int BaseLevel(int x, int y);
     void Generate();
+
     event Action<object, Point>? UpdateCell;
+
+    bool LoadFromStream(System.IO.Stream stream);
+    void SaveToStream(System.IO.Stream stream, bool xBinary=false);
 }

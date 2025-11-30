@@ -29,4 +29,30 @@ public class HeightLabyrinthTests
         hl.Generate();
         for (int x = 0; x < 8; x++) for (int y = 0; y < 8; y++) Assert.AreNotEqual(0, hl[x, y]);
     }
+
+    [TestMethod]
+    public void Generate_Raises_UpdateCell_Event()
+    {
+        var hl = new HeightLabyrinth { Dimension = new Rectangle(0, 0, 8, 8) };
+        bool eventRaised = false;
+        hl.UpdateCell += (s, p) => { eventRaised = true; };
+        hl.Generate();
+        Assert.IsTrue(eventRaised);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void Save_And_Load_Maintains_Data(bool xBin)
+    {
+        var hl = new HeightLabyrinth { Dimension = new Rectangle(0, 0, 5, 5) };
+        hl.Generate();
+        using var ms = new System.IO.MemoryStream();
+        hl.SaveToStream(ms,xBin);
+        ms.Position = 0;
+        var hl2 = new HeightLabyrinth { Dimension = new Rectangle(0, 0, 5, 5) };
+        bool loaded = hl2.LoadFromStream(ms);
+        Assert.IsTrue(loaded);
+        for (int x = 0; x < 5; x++) for (int y = 0; y < 5; y++) Assert.AreEqual(hl[x, y], hl2[x, y]);
+    }
 }

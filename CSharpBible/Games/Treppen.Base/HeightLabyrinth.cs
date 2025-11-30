@@ -45,7 +45,12 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
 
     // Seed-Pattern (Signatur) wie im Pascal-Original
     // private const string FPrest2 = "4465452.7575331.6566211.213265103021342243312434";
-    private readonly uint[] FPrest3 = [0x4465452E,0x7575331E,0x6566211E,0x21326510,0x30213422,0x43312434];
+    private readonly uint[] FPrest3 = [0x7645452E,
+                                       0x5746331E,
+                                       0x6655211E,
+                                       0x44125510,
+                                       0x35213422
+                                      ,0x32312434];
 
     public event Action<object, Point>? UpdateCell;
 
@@ -88,7 +93,7 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
         {
             for (int y = 0; y < ym; y++)
             {
-                var nibble = (int)((data[ym-y-1] >> (4 * (x))) & 0x0F);
+                var nibble = (int)((data[ym-y-1] >> 4 * x) & 0x0F);
                 int val = (nibble == 14 ? 0 : nibble + offset); // 14='.'→0
                 if (InBounds(x, y))
                     _z[x, y] = val;
@@ -236,5 +241,167 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
         if (canz) { height = ph; return true; }
 
         return false;
+    }
+
+    public bool LoadFromStream(Stream stream)
+    {
+        if (stream is null) throw new ArgumentNullException(nameof(stream));
+        try
+        {
+            long startPos = stream.CanSeek ? stream.Position : 0;
+
+            // Erkennung Binary-Header (UTF-16 little endian char[] von BinaryWriter.Write(char[]))
+            Span<byte> hdr = stackalloc byte[3];
+            int r = stream.Read(hdr);
+            bool isBinary = false;
+            if (r == hdr.Length)
+            {
+                Span<byte> magic = stackalloc byte[]
+                {
+                    (byte)'H',(byte)'L',(byte)'B'
+                };
+                isBinary = hdr.SequenceEqual(magic);
+            }
+
+            if (stream.CanSeek)
+                stream.Position = startPos;
+
+            if (isBinary)
+            {
+                var br = new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true);
+                // Header überspringen (8 chars)
+                var headerChars = br.ReadChars(8);
+                var header = new string(headerChars);
+                if (header != "HLB1.00\0") return false;
+
+                int w = br.ReadInt32();
+                int h = br.ReadInt32();
+                if (w <= 0 || h <= 0) return false;
+
+                Dimension = new Rectangle(0, 0, w, h);
+
+                for (int y = 0; y < h; y++)
+                {
+                    for (int x = 0; x < w; x++)
+                    {
+                        if (!InBounds(x, y)) return false;
+                        _z[x, y] = br.ReadInt32();
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                // JSON laden
+                using var doc = System.Text.Json.JsonDocument.Parse(stream);
+                var root = doc.RootElement;
+
+                if (!root.TryGetProperty("version", out var sVersion) ||
+                    !root.TryGetProperty("width", out var wProp) ||
+                    !root.TryGetProperty("height", out var hProp) ||
+                    !root.TryGetProperty("data", out var dProp))
+                    return false;
+
+                int w = wProp.GetInt32();
+                int h = hProp.GetInt32();
+                if (w <= 0 || h <= 0) return false;
+
+                Dimension = new Rectangle(0, 0, w, h);
+
+                if (dProp.ValueKind != System.Text.Json.JsonValueKind.Array || dProp.GetArrayLength() != h)
+                    return false;
+
+                int y = 0;
+                foreach (var rowEl in dProp.EnumerateArray())
+                {
+                    if (rowEl.ValueKind != System.Text.Json.JsonValueKind.Array || rowEl.GetArrayLength() != w)
+                        return false;
+
+                    int x = 0;
+                    foreach (var cellEl in rowEl.EnumerateArray())
+                    {
+                        _z[x, y] = cellEl.GetInt32();
+                        x++;
+                    }
+                    y++;
+                }
+                return true;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /*
+    Pseudocode/Plan:
+    - Ziel: Stream-Inhalt als binär (xBinary=true) oder JSON (xBinary=false) speichern.
+    - Vorbedingungen: _z ist initialisiert; Dimension gibt Breite/Höhe vor.
+    - Binärformat:
+      • Verwende BinaryWriter (leaveOpen=true).
+      • Schreibe Header: Int32 Width, Int32 Height.
+      • Schleife über y=0..Height-1, x=0..Width-1 (stabile Reihenfolge) und schreibe Int32 _z[x,y].
+    - JSON-Format:
+      • Erzeuge DTO mit:
+        { width: int, height: int, data: int[][] }
+      • Konvertiere _z (int[,]) zu int[height][width] (Zeilen = y, Spalten = x).
+      • Verwende System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(dto) und schreibe in Stream.
+      • JsonSerializerOptions: WriteIndented=false für kompakten Output.
+    - Ressourcen:
+      • Writer nicht disposen, leaveOpen verwenden; Stream bleibt Eigentum des Aufrufers.
+    */
+
+    public void SaveToStream(Stream stream, bool xBinary = false)
+    {
+        if (stream is null) throw new ArgumentNullException(nameof(stream));
+        int width = _dimension.Width;
+        int height = _dimension.Height;
+
+        if (width <= 0 || height <= 0 || _z is null || _z.Length == 0)
+            throw new InvalidOperationException("Leeres Labyrinth kann nicht gespeichert werden.");
+
+        if (xBinary)
+        {
+            using var bw = new BinaryWriter(stream, System.Text.Encoding.UTF8, leaveOpen: true);
+            bw.Write([(byte)'H',(byte)'L', (byte)'B', (byte)'1', (byte)'.', (byte)'0', (byte)'0', (byte)0]); // Header
+            bw.Write(width);
+            bw.Write(height);
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    bw.Write(_z[x, y]);
+                }
+            }
+            bw.Flush();
+            return;
+        }
+
+        // JSON-Ausgabe
+        var data = new int[height][];
+        for (int y = 0; y < height; y++)
+        {
+            var row = new int[width];
+            for (int x = 0; x < width; x++)
+            {
+                row[x] = _z[x, y];
+            }
+            data[y] = row;
+        }
+
+        var dto = new
+        {
+            version="1.00",
+            width,
+            height,
+            data
+        };
+
+        var json = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(dto, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = false
+        });
+        stream.Write(json, 0, json.Length);
     }
 }
