@@ -4,3 +4,6 @@ obj
 *.bak
 *.user
 /obj.net
+/CSharpBible/Data/obj.net
+/CSharpBible/obj.net
+*.log
