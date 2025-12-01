@@ -1,108 +1,37 @@
 ﻿// Sie müssen das NuGet-Paket "System.Drawing.Common" zu Ihrem Projekt hinzufügen, um Bitmap und andere Typen aus System.Drawing zu verwenden.
 // Beispiel (in Visual Studio): Rechtsklick auf das Projekt > NuGet-Pakete verwalten > System.Drawing.Common suchen und installieren.
 
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-
-// Stellen Sie sicher, dass Ihr Projekt einen Verweis auf das NuGet-Paket "System.Drawing.Common" hat.
-// In Visual Studio: Rechtsklick auf das Projekt > NuGet-Pakete verwalten > System.Drawing.Common suchen und installieren.
-
-class HilbertColorMap
+internal static class HilpertMath
 {
     // Die Hilfsfunktion zur Rotation und Spiegelung, übersetzt aus Python
-    private static void Rot(int n, ref int x, ref int y, int rx, int ry)
+    private static (int, int) Rot(int n, int x, int y, bool rx, bool ry)
     {
-        if (ry == 0)
+        if (!ry)
         {
-            if (rx == 1)
+            if (rx)
             {
-                x = n - 1 - x;
-                y = n - 1 - y;
+                (x, y) = (n - 1 - x, n - 1 - y);
             }
             // Tausche x und y
-            int temp = x;
-            x = y;
-            y = temp;
+            (x, y) = (y, x);
         }
+        return (x, y);
     }
 
     // Koordinate (x, y) zu Distanz (d) auf der Hilbert-Kurve abbilden
-    private static int Xy2d(int n, int x, int y)
+    public static int Xy2d(int n, int x, int y)
     {
         int d = 0;
         int s = n / 2;
         while (s > 0)
         {
-            int rx = (x & s) > 0 ? 1 : 0;
-            int ry = (y & s) > 0 ? 1 : 0;
-            d += s * s * ((3 * rx) ^ ry);
-            Rot(s, ref x, ref y, rx, ry);
+            bool rx = (x & s) > 0;
+            bool ry = (y & s) > 0;
+            d += s * s * ((3 * (rx ? 1 : 0)) ^ (ry ? 1 : 0));
+            (x, y) = Rot(s, x, y, rx, ry);
             s /= 2;
         }
         return d;
-    }
-
-
-
-    // Hilfsfunktion zur Konvertierung von HSV zu RGB (C# hat keine direkte eingebaute HSV-Unterstützung in System.Drawing)
-    private static Color ColorFromHSV(double hue, double saturation, double value)
-    {
-        int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
-        double f = hue / 60 - Math.Floor(hue / 60);
-
-        value = value * 255;
-        int v = Convert.ToInt32(value);
-        int p = Convert.ToInt32(value * (1 - saturation));
-        int q = Convert.ToInt32(value * (1 - f * saturation));
-        int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
-
-        if (hi == 0) return Color.FromArgb(255, v, t, p);
-        if (hi == 1) return Color.FromArgb(255, q, v, p);
-        if (hi == 2) return Color.FromArgb(255, p, v, t);
-        if (hi == 3) return Color.FromArgb(255, p, q, v);
-        if (hi == 4) return Color.FromArgb(255, t, p, v);
-        if (hi == 5) return Color.FromArgb(255, v, p, q);
-        return Color.FromArgb(255, 0, 0, 0); // Fehlerfarbe
-    }
-
-    private static Bitmap Map3DTo2DColor(int sizeExponent, int i, int j)
-    {
-        int n = (int)Math.Pow(2, sizeExponent);
-        int totalPixels = n * n;
-        Bitmap img = new Bitmap(n, n, PixelFormat.Format24bppRgb);
-
-        for (int x = 0; x < n; x++)
-        {
-            for (int y = 0; y < n; y++)
-            {
-                int distance = Xy2d(n, x, y);
-                double normDist = (double)distance / (totalPixels - 1);
-                var r = GetCubeCoordinateFromDistance(normDist, i);
-                // HSV Werte zuweisen
-                // Hue: 0 bis 360 Grad
-                // Saturation: 1.0 (voll)
-                // Value (Helligkeit): 1.0 (voll)
-                var (hue, saturation, value) = j switch
-                {
-                    1 => (r.X, r.Z, r.Y),
-                    2 => (r.Y, r.X, r.Z),
-                    3 => (r.Z, r.Y, r.X),
-                    4 => (r.X, r.Y, r.Z),
-                    5 => (r.Y, r.Z, r.X),
-                    _ => (r.Z, r.X, r.Y),
-                };
-                Color pixelColor = Color.FromArgb(
-                    (int)(hue * 255),
-                    (int)(saturation * 255),
-                    (int)(value * 255)
-                );
-                //     Color pixelColor = ColorFromHSV(hue*360.0, saturation, value);
-                img.SetPixel(x, y, pixelColor);
-            }
-        }
-        return img;
     }
 
     /// <summary>
@@ -213,31 +142,4 @@ class HilbertColorMap
         return (x[0], x[1], x[2]);
     }
 
-    static void Main(string[] args)
-    {
-        // Kantenlänge des Bildes wählen (2 hoch 10 = 1024 Pixel)
-        int exponent = 11;
-        var PictureDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "HilbertColorMaps");
-        Directory.CreateDirectory(PictureDir);
-        for (int i = 1; i < 7; i++)
-        {
-            for (int j = 1; j < 7; j++)
-            {
-                Bitmap resultImage = Map3DTo2DColor(exponent, i, j);
-                int size = (int)Math.Pow(2, exponent);
-                string filename = $"Hilbert_Color_Map_RGB_{size}_{j}{" abcdefg"[i]}.png";
-
-                // Bild speichern
-                try
-                {
-                    resultImage.Save(Path.Combine(PictureDir, filename), ImageFormat.Png);
-                    Console.WriteLine($"Bild wurde als '{filename}' gespeichert.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Fehler beim Speichern des Bildes: {ex.Message}");
-                }
-            }
-        }
-    }
 }
