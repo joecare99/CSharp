@@ -14,6 +14,7 @@
 using BaseLib.Interfaces;
 using BaseLib.Models;
 using ConsoleDisplay.View;
+using Sokoban;
 using Sokoban.Model;
 using Sokoban.Properties;
 using Sokoban_Base.ViewModels;
@@ -29,6 +30,7 @@ namespace Sokoban_Base.View
     /// </summary>
     public static class Visuals
     {
+        public static IGame? SokobanGame { get; set; }
 
         #region Properties
         /// <summary>
@@ -96,11 +98,11 @@ namespace Sokoban_Base.View
                 return;
             }
 
-            dBuffer = new TileDef[Game.PFSize.Width* Game.PFSize.Height];
+            dBuffer = new TileDef[SokobanGame.PFSize.Width* SokobanGame.PFSize.Height];
             var p = new Point();
-            for (p.Y = 0; p.Y < Game.PFSize.Height; p.Y++)
-                for (p.X = 0; p.X < Game.PFSize.Width; p.X++)                
-                    WriteTile(p, dBuffer[p.X + p.Y * Game.PFSize.Width] = Game.GetTile(p));
+            for (p.Y = 0; p.Y < SokobanGame.PFSize.Height; p.Y++)
+                for (p.X = 0; p.X < SokobanGame.PFSize.Width; p.X++)                
+                    WriteTile(p, dBuffer[p.X + p.Y * SokobanGame.PFSize.Width] = SokobanGame.GetTile(p));
                 
 			ShowStatistics();
         }
@@ -116,7 +118,7 @@ namespace Sokoban_Base.View
 
             myConsole.ForegroundColor = ConsoleColor.Gray;
             myConsole.BackgroundColor = ConsoleColor.Black;
-            myConsole.SetCursorPosition(40, Game.PFSize.Height * 2 + 7);
+            myConsole.SetCursorPosition(40, SokobanGame.PFSize.Height * 2 + 7);
 
             Thread.Sleep(40);
             for (int i = 0; i < 3; i++)
@@ -155,18 +157,18 @@ namespace Sokoban_Base.View
         private static List<(Point, TileDef, Point)> ComputeUpdateList()
         {
             List<(Point, TileDef, Point)> diffFields = new();
-            for (int y = 0; y < Game.PFSize.Height; y++)
+            for (int y = 0; y < SokobanGame.PFSize.Height; y++)
             {
-                for (int x = 0; x < Game.PFSize.Width; x++)
+                for (int x = 0; x < SokobanGame.PFSize.Width; x++)
                 {
                     var p = new Point(x, y);
-                    var td = Game.GetTile(p);
-                    if (td != dBuffer[x + y * Game.PFSize.Width])
+                    var td = SokobanGame.GetTile(p);
+                    if (td != dBuffer[x + y * SokobanGame.PFSize.Width])
                     {
 #pragma warning disable CS8604 // Mögliches Nullverweisargument.
-                        diffFields.Add((p, td, Game.GetOldPos(p)));
+                        diffFields.Add((p, td, SokobanGame.GetOldPos(p)));
 #pragma warning restore CS8604 // Mögliches Nullverweisargument.
-                        dBuffer[x + y * Game.PFSize.Width] = td;
+                        dBuffer[x + y * SokobanGame.PFSize.Width] = td;
                     }
                 }
             }
@@ -182,7 +184,7 @@ namespace Sokoban_Base.View
         public static UserAction? WaitforUser(UserAction? uAction)
         {
             myConsole.Write(Resource1.SelectAction);
-            if (Game.GameSolved || uAction==UserAction.Help || uAction == UserAction.Restart) 
+            if (SokobanGame.GameSolved || uAction==UserAction.Help || uAction == UserAction.Restart) 
                 myConsole.Write(Resource1.Continue);
             else 
                 foreach (Direction dir in Enum.GetValues(typeof(Direction))) Console.Write($", {MarkFirst(dir.ToString())}"); 
@@ -236,29 +238,29 @@ namespace Sokoban_Base.View
         {
             myConsole.ForegroundColor = ConsoleColor.Gray;
             myConsole.BackgroundColor = ConsoleColor.Black;
-            myConsole.SetCursorPosition(0, Game.PFSize.Height * 2);
+            myConsole.SetCursorPosition(0, SokobanGame.PFSize.Height * 2);
 #if DEBUG    
-            foreach (var s in Game.Stones)
+            foreach (var s in SokobanGame.Stones)
                 myConsole.Write($" {Resource1.stone} ({s.Position.X},{s.Position.Y}) {(s.field is Destination ? "OK " : "   ")}\t");
 #endif
-            myConsole.Write($"\r\n" + String.Format(Resource1.StonesInDest, Game.StonesInDest));
+            myConsole.Write($"\r\n" + String.Format(Resource1.StonesInDest, SokobanGame.StonesInDest));
 
 
-            if (Game.player != null)
+            if (SokobanGame.player != null)
             {
-                myConsole.SetCursorPosition(0, Game.PFSize.Height * 2 + 3);
+                myConsole.SetCursorPosition(0, SokobanGame.PFSize.Height * 2 + 3);
 #if DEBUG
-                Console.WriteLine($"Player ({Game.player.Position.X},{Game.player.Position.Y})");
+                Console.WriteLine($"Player ({SokobanGame.player.Position.X},{SokobanGame.player.Position.Y})");
                 Console.Write(Resource1.PosibMoves);
-                foreach (var d in Game.player.MoveableDirs())
+                foreach (var d in SokobanGame.player.MoveableDirs())
                 {
                     Console.Write($"\t{typeof(Direction).GetEnumName(d)},");
                 }
                 Console.WriteLine("                     ");
 #endif
-                myConsole.SetCursorPosition(0, Game.PFSize.Height * 2 + 6);
+                myConsole.SetCursorPosition(0, SokobanGame.PFSize.Height * 2 + 6);
                 myConsole.Write(Message + "                                   ");
-                myConsole.SetCursorPosition(0, Game.PFSize.Height * 2 + 7);
+                myConsole.SetCursorPosition(0, SokobanGame.PFSize.Height * 2 + 7);
 
             }
         }

@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Sokoban.Model;
 using Sokoban_Base.Model;
 using Sokoban_Base.View;
 using Sokoban_Base.ViewModels;
@@ -22,6 +23,7 @@ namespace Sokoban
     /// </summary>
     public class Program
     {
+        static IGame? _SokobanGame;
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Sokoban
         /// </summary>
         public static void Cleanup()
         {
-            Game.Cleanup();
+            _SokobanGame?.Cleanup();
         }
 
         /// <summary>
@@ -47,9 +49,9 @@ namespace Sokoban
         public static void Run()
         {
             UserAction? direction = null;
-            while (direction!=UserAction.Quit && LabDefs.SLevels.Length > Game.level)
+            while (direction!=UserAction.Quit && LabDefs.SLevels.Length > _SokobanGame.level)
             {
-                direction = Game.Run();
+                direction = _SokobanGame?.Run();
             }
 
         }
@@ -59,11 +61,14 @@ namespace Sokoban
         /// </summary>
         public static void Init()
         {
-            Game.Init();
-            Game.visSetMessage = (s) => Visuals.Message = s;
-            Game.visShow = Visuals.Show;
-            Game.visUpdate = Visuals.Update;
-            Game.visGetUserAction = Visuals.WaitforUser;
+            // Setup Visuals
+            _SokobanGame = new Game();
+            Visuals.SokobanGame = _SokobanGame;
+            _SokobanGame.Init();
+            _SokobanGame.visSetMessage = (s) => Visuals.Message = s;
+            _SokobanGame.visShow = Visuals.Show;
+            _SokobanGame.visUpdate = Visuals.Update;
+            _SokobanGame.visGetUserAction = Visuals.WaitforUser;
         }
 
     }
