@@ -15,6 +15,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="View\Interfaces\IConsole.cs" />
+	  <Compile Remove="View\MyConsoleBase.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.1" />
