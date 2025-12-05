@@ -1,4 +1,4 @@
-using ConsoleDisplay.View;MyConsole c=new();Rnd r=new();const int 
+ConsoleDisplay.View.MyConsole c=new();Rnd r=new();const int 
 Z=1<<11,u=(0x13<<1)+1,O=u&-u,D=O<<((O<<O)+1),B=0x597b;var C=" _|";int[]l0=new 
 int[]{0,O-4,u-O,-O},lQ=new int[]{O,u,-O,-u},E=new int[Z];void Q(int x)=>c.Write
 ((x<D)?$"{C[((B>>(x++<<O))&3)-1]}{C[((B>>(x<<O))&3)-1]}":$"{C}{C}{C}\r\n"[x..]);int
