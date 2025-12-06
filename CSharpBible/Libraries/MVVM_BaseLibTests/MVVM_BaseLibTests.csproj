@@ -15,15 +15,6 @@
   <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
     <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
   </PropertyGroup>
-	<ItemGroup>
-	  <Compile Remove="Helper\ObjectHelper2Tests.cs" />
-	  <Compile Remove="Helper\ObjectHelperTests.cs" />
-	  <Compile Remove="Models\SysTimeTests.cs" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Include="Helper\ObjectHelper2Tests.cs" />
-	  <None Include="Helper\ObjectHelperTests.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
