@@ -48,6 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranspilerLib.Pascal.Tests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmd", "cmd", "{0E2C6B7C-A659-45E8-AD73-092473A0572D}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\Cmd\CheckIn.cmd = ..\..\Cmd\CheckIn.cmd
 		..\..\Cmd\CheckIn2.cmd = ..\..\Cmd\CheckIn2.cmd
 	EndProjectSection
 EndProject
