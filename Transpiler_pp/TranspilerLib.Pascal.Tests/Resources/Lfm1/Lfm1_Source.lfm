@@ -1,0 +1,149 @@
+object Form1: TForm1
+  Left = 242
+  Height = 823
+  Top = 127
+  Width = 1348
+  Caption = 'Form1'
+  ClientHeight = 823
+  ClientWidth = 1348
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.0.12.0'
+  object PaintBox1: TPaintBox
+    Left = 14
+    Height = 105
+    Top = 12
+    Width = 514
+  end
+  object BitBtn1: TBitBtn
+    Left = 451
+    Height = 30
+    Top = 120
+    Width = 75
+    Caption = 'BitBtn1'
+    OnClick = BitBtn1Click
+    TabOrder = 0
+  end
+  object TrackBar1: TTrackBar
+    Left = 16
+    Height = 25
+    Top = 120
+    Width = 428
+    Max = 1000
+    Min = -1000
+    OnChange = BitBtn1Click
+    Position = 0
+    TabOrder = 1
+  end
+  object PaintBox2: TPaintBox
+    Left = 14
+    Height = 105
+    Top = 160
+    Width = 514
+  end
+  object BitBtn2: TBitBtn
+    Left = 453
+    Height = 30
+    Top = 268
+    Width = 75
+    Caption = 'BitBtn2'
+    OnClick = BitBtn2Click
+    TabOrder = 2
+  end
+  object TrackBar2: TTrackBar
+    Left = 28
+    Height = 25
+    Top = 268
+    Width = 428
+    Max = 1000
+    Min = -1000
+    OnChange = BitBtn2Click
+    Position = 0
+    TabOrder = 3
+  end
+  object PaintBox3: TPaintBox
+    Left = 536
+    Height = 800
+    Top = 12
+    Width = 800
+  end
+  object CheckBox1: TCheckBox
+    Left = 56
+    Height = 19
+    Top = 303
+    Width = 85
+    Caption = 'Autochange'
+    OnChange = CheckBox1Change
+    OnClick = CheckBox1Click
+    TabOrder = 4
+  end
+  object btnReset: TButton
+    Left = 56
+    Height = 25
+    Top = 328
+    Width = 75
+    Caption = 'Reset'
+    OnClick = btnResetClick
+    TabOrder = 5
+  end
+  object btnStep: TButton
+    Left = 168
+    Height = 25
+    Top = 312
+    Width = 75
+    Caption = 'Step'
+    OnClick = Timer1Timer
+    TabOrder = 6
+  end
+  object btnExport: TButton
+    Left = 310
+    Height = 25
+    Top = 311
+    Width = 75
+    Caption = 'Export ...'
+    OnClick = btnExportClick
+    TabOrder = 7
+  end
+  object btnPrint: TButton
+    Left = 310
+    Height = 25
+    Top = 348
+    Width = 75
+    Caption = 'Print ...'
+    OnClick = btnPrintClick
+    TabOrder = 8
+  end
+  object TrackBar3: TTrackBar
+    Left = 28
+    Height = 25
+    Top = 384
+    Width = 428
+    Max = 6298
+    OnChange = TrackBar3Change
+    Position = 0
+    TabOrder = 9
+  end
+  object Label1: TLabel
+    Left = 39
+    Height = 15
+    Top = 413
+    Width = 34
+    Caption = 'Label1'
+    ParentColor = False
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 25
+    OnTimer = Timer1Timer
+    Left = 16
+    Top = 304
+  end
+  object SavePictureDialog1: TSavePictureDialog
+    Left = 392
+    Top = 304
+  end
+  object PrintDialog1: TPrintDialog
+    Left = 392
+    Top = 344
+  end
+end
