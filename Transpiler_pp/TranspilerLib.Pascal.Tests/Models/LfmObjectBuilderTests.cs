@@ -24,7 +24,7 @@ public class LfmObjectBuilderTests
                 var value = new object[]
                 {
                     Path.GetFileName(dir)!,
-                    File.ReadAllText(Path.Combine(dir, Path.GetFileName(dir) + "_Source.lfm"))
+                    dir,
                 };
                 yield return value;
             }
@@ -246,8 +246,10 @@ end";
 
     [TestMethod]
     [DynamicData(nameof(TestBuildList))]
-    public void Build_FromTestResources_BuildsSuccessfully(string testName, string source)
+    public void Build_FromTestResources_BuildsSuccessfully(string testName, string dir)
     {
+        var source = File.ReadAllText(Path.Combine(dir, testName + "_Source.lfm"));
+
         // Arrange
         _tokenizer.SetInput(source);
         var tokens = _tokenizer.Tokenize();
@@ -261,8 +263,8 @@ end";
         Assert.IsFalse(string.IsNullOrEmpty(result.TypeName), $"Object type should not be empty for {testName}");
 
         // Output for debugging
-        var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
-        var outputPath = Path.Combine(".", "Resources", testName, testName + "_ObjectTree.json");
+        var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = false });
+        var outputPath = Path.Combine(dir, testName + "_ObjectTree.json");
         File.WriteAllText(outputPath, json);
     }
 }

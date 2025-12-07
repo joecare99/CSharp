@@ -28,8 +28,7 @@ public class LfmTokenizerTests
                 var value = new object[]
                 {
                     Path.GetFileName(dir)!,
-                    File.ReadAllText(Path.Combine(dir, Path.GetFileName(dir)+ "_Source.lfm")) ,
-                    File.Exists(Path.Combine(dir,Path.GetFileName(dir)+"_ExpectedTokens.json"))?File.ReadAllText(Path.Combine(dir,Path.GetFileName(dir)+"_ExpectedTokens.json")):""
+                    dir ,
                 };
                 yield return value;
             }
@@ -52,8 +51,10 @@ public class LfmTokenizerTests
 
     [TestMethod]
     [DynamicData(nameof(TestTokenizeList))]
-    public void Tokenize_tests(string sTestName, string sSource, string sExpectedTokens)
+    public void Tokenize_tests(string sTestName, string dir)
     {
+        var sSource = File.ReadAllText(Path.Combine(dir, Path.GetFileName(dir) + "_Source.lfm"));
+        var sExpectedTokens = File.Exists(Path.Combine(dir, Path.GetFileName(dir) + "_Expected.json")) ? File.ReadAllText(Path.Combine(dir, Path.GetFileName(dir) + "_Expected.json")):"";
         // Arrange
         testClass.SetInput(sSource);
         // Act

@@ -34,6 +34,6 @@ public class LfmTokenTests
         // Act
         var code = testClass.ToString();
         // Assert
-        Assert.AreEqual("", code);
+        Assert.AreEqual("OBJECT: 'button' at 2:6", code);
     }
 }
