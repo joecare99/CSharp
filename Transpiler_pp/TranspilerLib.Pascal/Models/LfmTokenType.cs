@@ -16,5 +16,12 @@ public enum LfmTokenType
     STRING,
     NUMBER,
     BOOLEAN,
-    EOF
+    EOF,
+    LBRACKET,
+    RBRACKET,
+    LBRACE,
+    RBRACE,
+    COMMA,
+    PLUS,
+    MINUS
 }
