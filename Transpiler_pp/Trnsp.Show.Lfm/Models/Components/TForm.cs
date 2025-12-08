@@ -40,11 +40,11 @@ public partial class TForm : LfmComponentBase
         {
             case "clientwidth":
                 ClientWidth = ConvertToInt(value, 800);
-                if (Width == 100) Width = ClientWidth + 16;
+                Width = ClientWidth + 16;
                 break;
             case "clientheight":
                 ClientHeight = ConvertToInt(value, 600);
-                if (Height == 25) Height = ClientHeight + 39;
+                Height = ClientHeight + 39;
                 break;
             case "borderstyle":
                 BorderStyle = ParseBorderStyle(value?.ToString());

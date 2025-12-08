@@ -12,6 +12,11 @@ public partial class TActionList : LfmComponentBase
     [ObservableProperty]
     private string _images = string.Empty;
 
+    /// <summary>
+    /// Reference to the resolved ImageList component.
+    /// </summary>
+    public TImageList? ImageList { get; set; }
+
     public List<TAction> Actions { get; } = [];
 
     public TActionList()
@@ -156,36 +161,8 @@ public partial class TFileExit : TAction
     }
 }
 
-/// <summary>
-/// Represents a TImageList component.
-/// </summary>
-public partial class TImageList : LfmComponentBase
-{
-    [ObservableProperty]
-    private int _imageWidth = 16;
-
-    [ObservableProperty]
-    private int _imageHeight = 16;
-
-    public TImageList()
-    {
-        Width = 28;
-        Height = 28;
-    }
-
-    protected override void ApplyProperty(string name, object? value)
-    {
-        switch (name.ToLower())
-        {
-            case "width":
-                ImageWidth = ConvertToInt(value, 16);
-                break;
-            case "height":
-                ImageHeight = ConvertToInt(value, 16);
-                break;
-            default:
-                base.ApplyProperty(name, value);
-                break;
-        }
-    }
-}
+public partial class TEditCut : TAction { }
+public partial class TEditCopy : TAction { }
+public partial class TEditPaste : TAction { }
+public partial class TEditUndo : TAction { }
+public partial class TEditDelete : TAction { }

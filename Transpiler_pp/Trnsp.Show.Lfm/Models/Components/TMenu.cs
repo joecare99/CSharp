@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Trnsp.Show.Lfm.Models.Components;
@@ -11,6 +12,11 @@ public partial class TMainMenu : LfmComponentBase
 {
     [ObservableProperty]
     private string _images = string.Empty;
+
+    /// <summary>
+    /// Reference to the resolved ImageList component.
+    /// </summary>
+    public TImageList? ImageList { get; set; }
 
     public List<TMenuItem> MenuItems { get; } = [];
 
@@ -32,6 +38,14 @@ public partial class TMainMenu : LfmComponentBase
                 break;
         }
     }
+
+    /// <summary>
+    /// Gets an image from the associated ImageList by index.
+    /// </summary>
+    public ImageSource? GetMenuImage(int imageIndex)
+    {
+        return ImageList?.GetImage(imageIndex);
+    }
 }
 
 /// <summary>
@@ -46,9 +60,6 @@ public partial class TPopupMenu : TMainMenu
 /// </summary>
 public partial class TMenuItem : LfmComponentBase
 {
-    [ObservableProperty]
-    private string _linkedAction = string.Empty;
-
     [ObservableProperty]
     private int _imageIndex = -1;
 
@@ -70,7 +81,43 @@ public partial class TMenuItem : LfmComponentBase
     [ObservableProperty]
     private bool _isSeparator;
 
+    /// <summary>
+    /// Indicates whether ShortCut was explicitly set.
+    /// </summary>
+    private bool _shortCutExplicitlySet;
+
+    /// <summary>
+    /// Indicates whether ImageIndex was explicitly set.
+    /// </summary>
+    private bool _imageIndexExplicitlySet;
+
+    /// <summary>
+    /// Gets the ImageSource for the menu item bitmap (from embedded Bitmap.Data).
+    /// </summary>
+    public ImageSource? BitmapImageSource => Glyph?.ImageSource;
+
+    /// <summary>
+    /// Gets whether this menu item has an embedded bitmap icon.
+    /// </summary>
+    public bool HasBitmap => Glyph?.HasData == true;
+
     public List<TMenuItem> SubItems { get; } = [];
+
+    /// <summary>
+    /// Gets the effective shortcut, considering linked action.
+    /// </summary>
+    public string EffectiveShortCut =>
+        _shortCutExplicitlySet || LinkedAction == null
+            ? ShortCut
+            : (string.IsNullOrEmpty(LinkedAction.ShortCut) ? ShortCut : LinkedAction.ShortCut);
+
+    /// <summary>
+    /// Gets the effective image index, considering linked action.
+    /// </summary>
+    public int EffectiveImageIndex =>
+        _imageIndexExplicitlySet || LinkedAction == null
+            ? ImageIndex
+            : (LinkedAction.ImageIndex >= 0 ? LinkedAction.ImageIndex : ImageIndex);
 
     public TMenuItem()
     {
@@ -82,14 +129,13 @@ public partial class TMenuItem : LfmComponentBase
     {
         switch (name.ToLower())
         {
-            case "action":
-                LinkedAction = value?.ToString() ?? string.Empty;
-                break;
             case "imageindex":
                 ImageIndex = ConvertToInt(value, -1);
+                _imageIndexExplicitlySet = ImageIndex >= 0;
                 break;
             case "shortcut":
                 ShortCut = value?.ToString() ?? string.Empty;
+                _shortCutExplicitlySet = !string.IsNullOrEmpty(ShortCut);
                 break;
             case "checked":
                 MenuItemChecked = ConvertToBool(value);
@@ -112,5 +158,57 @@ public partial class TMenuItem : LfmComponentBase
                 }
                 break;
         }
+    }
+
+    protected override void OnActionLinked()
+    {
+        base.OnActionLinked();
+        
+        if (LinkedAction == null) return;
+
+        // Inherit ShortCut if not explicitly set
+        if (!_shortCutExplicitlySet && !string.IsNullOrEmpty(LinkedAction.ShortCut))
+        {
+            ShortCut = LinkedAction.ShortCut;
+        }
+
+        // Inherit ImageIndex if not explicitly set
+        if (!_imageIndexExplicitlySet && LinkedAction.ImageIndex >= 0)
+        {
+            ImageIndex = LinkedAction.ImageIndex;
+        }
+
+        // Notify property changes for effective values
+        OnPropertyChanged(nameof(EffectiveShortCut));
+        OnPropertyChanged(nameof(EffectiveImageIndex));
+        OnPropertyChanged(nameof(EffectiveCaption));
+    }
+
+    /// <summary>
+    /// Gets the image for this menu item, either from embedded bitmap or from parent menu's ImageList.
+    /// </summary>
+    public ImageSource? GetEffectiveImage()
+    {
+        // First, check if there's an embedded bitmap
+        if (HasBitmap)
+            return BitmapImageSource;
+
+        // Otherwise, try to get from parent menu's ImageList
+        var effectiveIndex = EffectiveImageIndex;
+        if (effectiveIndex < 0)
+            return null;
+
+        // Walk up the tree to find the MainMenu/PopupMenu
+        var current = Parent;
+        while (current != null)
+        {
+            if (current is TMainMenu mainMenu)
+            {
+                return mainMenu.GetMenuImage(effectiveIndex);
+            }
+            current = current.Parent;
+        }
+
+        return null;
     }
 }

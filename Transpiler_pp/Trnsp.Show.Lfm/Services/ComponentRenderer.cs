@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Trnsp.Show.Lfm.Models.Components;
 
@@ -30,21 +32,29 @@ public class ComponentRenderer : IComponentRenderer
         var element = component switch
         {
             TForm form => RenderForm(form),
+          
             TStaticText staticText => RenderStaticText(staticText),  // Before TLabel
             TLabel label => RenderLabel(label),
+            
             TLabeledEdit labeledEdit => RenderLabeledEdit(labeledEdit),  // Before TEdit
             TMemo memo => RenderMemo(memo),  // TMemo before TEdit
             TEdit edit => RenderEdit(edit),
+           
             TBitBtn bitBtn => RenderBitBtn(bitBtn),  // TBitBtn before TButton
             TButton button => RenderButton(button),
             TSpeedButton speedBtn => RenderSpeedButton(speedBtn),
+           
             TScrollBox scrollBox => RenderScrollBox(scrollBox),  // Before TPanel
+            TTabSheet tabSheet => RenderTabSheet(tabSheet),  // Before TPanel
+            TPageControl pageControl => RenderPageControl(pageControl),  // Tab controls
             TPanel panel => RenderPanel(panel),
             TRadioGroup radioGroup => RenderRadioGroup(radioGroup),  // Before TGroupBox
             TCheckGroup checkGroup => RenderCheckGroup(checkGroup),  // Before TGroupBox
             TGroupBox groupBox => RenderGroupBox(groupBox),
+          
             TCheckBox checkBox => RenderCheckBox(checkBox),
             TRadioButton radioBtn => RenderRadioButton(radioBtn),
+           
             TComboBox comboBox => RenderComboBox(comboBox),
             TListBox listBox => RenderListBox(listBox),
             TTrackBar trackBar => RenderTrackBar(trackBar),
@@ -62,12 +72,14 @@ public class ComponentRenderer : IComponentRenderer
             TStatusBar statusBar => RenderStatusBar(statusBar),
             TToolBar toolBar => RenderToolBar(toolBar),
             TToolButton toolBtn => RenderToolButton(toolBtn),
-            TPopupMenu popupMenu => RenderNonVisual(popupMenu, "📋"),  // Before TMainMenu
-            TMainMenu mainMenu => RenderNonVisual(mainMenu, "📋"),
-            TMenuItem menuItem => RenderMenuItem(menuItem),
-            TFileSaveAs fileSaveAs => RenderNonVisual(fileSaveAs, "💾"),  // Before TFileOpen
-            TFileOpen fileOpen => RenderNonVisual(fileOpen, "📂"),  // Before TAction
-            TFileExit fileExit => RenderNonVisual(fileExit, "🚪"),  // Before TAction
+
+            TPopupMenu popupMenu => RenderNonVisual(popupMenu, "📋"),  // PopupMenu still non-visual
+            TMainMenu mainMenu => RenderMainMenu(mainMenu),  // MainMenu now rendered as menu bar
+            TMenuItem menuItem => RenderMenuItemStandalone(menuItem),
+           
+            TFileSaveAs fileSaveAs => RenderNonVisual(fileSaveAs, "💾"),
+            TFileOpen fileOpen => RenderNonVisual(fileOpen, "📂"),
+            TFileExit fileExit => RenderNonVisual(fileExit, "🚪"),
             TAction action => RenderNonVisual(action, "▶"),
             TActionList actionList => RenderNonVisual(actionList, "⚡"),
             TImageList imageList => RenderNonVisual(imageList, "🖼"),
@@ -83,7 +95,8 @@ public class ComponentRenderer : IComponentRenderer
             Canvas.SetTop(fe, component.Top);
             fe.Width = component.Width;
             fe.Height = component.Height;
-            fe.ToolTip = string.IsNullOrEmpty(component.Hint) ? null : component.Hint;
+            // Use EffectiveHint for tooltip (considers linked action)
+            fe.ToolTip = string.IsNullOrEmpty(component.EffectiveHint) ? null : component.EffectiveHint;
             fe.IsEnabled = component.Enabled;
             fe.Visibility = component.Visible ? Visibility.Visible : Visibility.Collapsed;
             
@@ -105,8 +118,18 @@ public class ComponentRenderer : IComponentRenderer
         };
 
         var grid = new Grid();
-        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(28) });
-        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(28) }); // Title bar
+        
+        // Check if form has a MainMenu
+        var mainMenu = form.Children.OfType<TMainMenu>().FirstOrDefault();
+        if (mainMenu != null)
+        {
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Menu bar
+        }
+        
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }); // Client area
+
+        int currentRow = 0;
 
         // Title bar
         var titleBar = new Border
@@ -126,8 +149,16 @@ public class ComponentRenderer : IComponentRenderer
             Margin = new Thickness(10, 0, 0, 0)
         };
         titleBar.Child = titleText;
-        Grid.SetRow(titleBar, 0);
+        Grid.SetRow(titleBar, currentRow++);
         grid.Children.Add(titleBar);
+
+        // Menu bar (if present)
+        if (mainMenu != null)
+        {
+            var menuBar = CreateMenuBar(mainMenu);
+            Grid.SetRow(menuBar, currentRow++);
+            grid.Children.Add(menuBar);
+        }
 
         // Client area
         var clientCanvas = new Canvas
@@ -135,18 +166,233 @@ public class ComponentRenderer : IComponentRenderer
             Background = new SolidColorBrush(form.Color),
             ClipToBounds = true
         };
-        Grid.SetRow(clientCanvas, 1);
+        Grid.SetRow(clientCanvas, currentRow);
         grid.Children.Add(clientCanvas);
 
-        // Render children
+        // Render children (except MainMenu which is handled above)
         foreach (var child in form.Children)
         {
+            if (child is TMainMenu)
+                continue; // Already rendered as menu bar
+                
             var childElement = Render(child);
             clientCanvas.Children.Add(childElement);
         }
 
         border.Child = grid;
         return border;
+    }
+
+    /// <summary>
+    /// Creates a WPF Menu from a TMainMenu component.
+    /// </summary>
+    private static Menu CreateMenuBar(TMainMenu mainMenu)
+    {
+        var menu = new Menu
+        {
+            Background = new SolidColorBrush(Color.FromRgb(240, 240, 240)),
+            Padding = new Thickness(0)
+        };
+
+        // Get menu items from Children (TMenuItem children of TMainMenu)
+        foreach (var child in mainMenu.Children.OfType<TMenuItem>())
+        {
+            var menuItem = CreateMenuItem(child);
+            menu.Items.Add(menuItem);
+        }
+
+        return menu;
+    }
+
+    /// <summary>
+    /// Creates a WPF MenuItem from a TMenuItem component (recursive for submenus).
+    /// </summary>
+    private MenuItem CreateMenuItem(TMenuItem lfmItem)
+    {
+        if (lfmItem.IsSeparator || lfmItem.EffectiveCaption == "-")
+        {
+            // Return a separator-like menu item
+            return new MenuItem
+            {
+                Header = new Separator(),
+                IsEnabled = false
+            };
+        }
+
+        var menuItem = new MenuItem
+        {
+            Header = FormatMenuCaption(lfmItem.EffectiveCaption),
+            IsCheckable = lfmItem.MenuItemChecked || lfmItem.RadioItem,
+            IsChecked = lfmItem.MenuItemChecked,
+            InputGestureText = FormatShortcut(lfmItem.EffectiveShortCut)
+        };
+
+        // Add icon - try embedded bitmap first, then ImageList
+        var iconSource = lfmItem.GetEffectiveImage();
+        if (iconSource != null)
+        {
+            menuItem.Icon = new Image
+            {
+                Source = iconSource,
+                Width = 16,
+                Height = 16
+            };
+        }
+
+        // Add submenu items from Children
+        foreach (var subChild in lfmItem.Children.OfType<TMenuItem>())
+        {
+            if (subChild.IsSeparator || subChild.EffectiveCaption == "-")
+            {
+                menuItem.Items.Add(new Separator());
+            }
+            else
+            {
+                menuItem.Items.Add(CreateMenuItem(subChild));
+            }
+        }
+
+        // Also check SubItems list (in case it's used)
+        foreach (var subItem in lfmItem.SubItems)
+        {
+            if (subItem.IsSeparator || subItem.EffectiveCaption == "-")
+            {
+                menuItem.Items.Add(new Separator());
+            }
+            else
+            {
+                menuItem.Items.Add(CreateMenuItem(subItem));
+            }
+        }
+
+        return menuItem;
+    }
+
+    /// <summary>
+    /// Formats menu caption, converting & to _ for WPF accelerator keys.
+    /// </summary>
+    private static string FormatMenuCaption(string caption)
+    {
+        // WPF uses _ for accelerator keys, Delphi uses &
+        return caption.Replace("&", "_");
+    }
+
+    /// <summary>
+    /// Formats shortcut string for display.
+    /// </summary>
+    private static string FormatShortcut(string shortcut)
+    {
+        if (string.IsNullOrEmpty(shortcut))
+            return string.Empty;
+
+        // Convert Delphi shortcut format to readable format
+        // e.g., "16463" (Ctrl+O) or "Ctrl+O"
+        if (int.TryParse(shortcut, out int keyCode))
+        {
+            // Decode Delphi shortcut value
+            return DecodeDelphiShortcut(keyCode);
+        }
+
+        return shortcut;
+    }
+
+    /// <summary>
+    /// Decodes a Delphi shortcut integer value to a readable string.
+    /// </summary>
+    private static string DecodeDelphiShortcut(int shortcut)
+    {
+        if (shortcut == 0) return string.Empty;
+
+        var modifiers = new System.Text.StringBuilder();
+        
+        // Delphi shortcut modifiers:
+        // Shift = $2000 (8192)
+        // Ctrl = $4000 (16384)
+        // Alt = $8000 (32768)
+        
+        if ((shortcut & 0x4000) != 0) modifiers.Append("Ctrl+");
+        if ((shortcut & 0x2000) != 0) modifiers.Append("Shift+");
+        if ((shortcut & 0x8000) != 0) modifiers.Append("Alt+");
+
+        int keyCode = shortcut & 0xFF;
+        string keyName = keyCode switch
+        {
+            >= 65 and <= 90 => ((char)keyCode).ToString(), // A-Z
+            >= 48 and <= 57 => ((char)keyCode).ToString(), // 0-9
+            112 => "F1", 113 => "F2", 114 => "F3", 115 => "F4",
+            116 => "F5", 117 => "F6", 118 => "F7", 119 => "F8",
+            120 => "F9", 121 => "F10", 122 => "F11", 123 => "F12",
+            13 => "Enter", 27 => "Esc", 32 => "Space",
+            8 => "Backspace", 9 => "Tab", 46 => "Del", 45 => "Ins",
+            36 => "Home", 35 => "End", 33 => "PgUp", 34 => "PgDn",
+            37 => "Left", 38 => "Up", 39 => "Right", 40 => "Down",
+            _ => $"Key{keyCode}"
+        };
+
+        return modifiers.ToString() + keyName;
+    }
+
+    /// <summary>
+    /// Renders MainMenu as a standalone component (when not attached to a form).
+    /// </summary>
+    private UIElement RenderMainMenu(TMainMenu mainMenu)
+    {
+        var menu = CreateMenuBar(mainMenu);
+        menu.Width = double.NaN; // Auto width
+        menu.HorizontalAlignment = HorizontalAlignment.Left;
+        
+        return new Border
+        {
+            Background = new SolidColorBrush(Color.FromRgb(240, 240, 240)),
+            BorderBrush = Brushes.Gray,
+            BorderThickness = new Thickness(1),
+            Child = menu
+        };
+    }
+
+    /// <summary>
+    /// Renders a standalone MenuItem (not part of a menu structure).
+    /// </summary>
+    private UIElement RenderMenuItemStandalone(TMenuItem menuItem)
+    {
+        if (menuItem.IsSeparator)
+        {
+            return new Separator();
+        }
+
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        if (menuItem.BitmapImageSource != null)
+        {
+            var icon = new Image
+            {
+                Source = menuItem.BitmapImageSource,
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(2)
+            };
+            Grid.SetColumn(icon, 0);
+            grid.Children.Add(icon);
+        }
+
+        var textBlock = new TextBlock
+        {
+            Text = menuItem.EffectiveCaption.Replace("&", ""),
+            Padding = new Thickness(5, 2, 5, 2),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        Grid.SetColumn(textBlock, 1);
+        grid.Children.Add(textBlock);
+
+        return new Border
+        {
+            Background = Brushes.WhiteSmoke,
+            BorderBrush = Brushes.Gray,
+            BorderThickness = new Thickness(1),
+            Child = grid
+        };
     }
 
     private UIElement RenderLabel(TLabel label)
@@ -304,7 +550,7 @@ public class ComponentRenderer : IComponentRenderer
     {
         var btn = new Button
         {
-            Content = button.Caption,
+            Content = button.EffectiveCaption,
             FontFamily = new FontFamily(button.FontName),
             FontSize = button.FontSize,
             Padding = new Thickness(5, 2, 5, 2)
@@ -332,16 +578,34 @@ public class ComponentRenderer : IComponentRenderer
                 ? Orientation.Vertical : Orientation.Horizontal
         };
 
-        var icon = new TextBlock
+        UIElement icon;
+        
+        // Use actual glyph image if available
+        if (bitBtn.GlyphImageSource != null)
         {
-            Text = GetBitBtnIcon(bitBtn.Kind),
-            Margin = new Thickness(0, 0, bitBtn.Spacing, 0),
-            VerticalAlignment = VerticalAlignment.Center
-        };
+            icon = new Image
+            {
+                Source = bitBtn.GlyphImageSource,
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, bitBtn.Spacing, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
+        else
+        {
+            // Fallback to text icon
+            icon = new TextBlock
+            {
+                Text = GetBitBtnIcon(bitBtn.Kind),
+                Margin = new Thickness(0, 0, bitBtn.Spacing, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
 
         var text = new TextBlock
         {
-            Text = bitBtn.Caption,
+            Text = bitBtn.EffectiveCaption,
             VerticalAlignment = VerticalAlignment.Center
         };
 
@@ -379,7 +643,7 @@ public class ComponentRenderer : IComponentRenderer
     {
         var btn = new ToggleButton
         {
-            Content = speedBtn.Caption,
+            Content = speedBtn.EffectiveCaption,
             IsChecked = speedBtn.Down,
             Padding = new Thickness(2)
         };
@@ -705,31 +969,27 @@ public class ComponentRenderer : IComponentRenderer
             ? (ButtonBase)new ToggleButton { IsChecked = toolBtn.Down }
             : new Button();
 
-        btn.Content = string.IsNullOrEmpty(toolBtn.Caption) ? "🔲" : toolBtn.Caption;
+        // TToolButton: Show image from ImageList (not caption from Action!)
+        var imageSource = toolBtn.GetImage();
+        if (imageSource != null)
+        {
+            btn.Content = new Image
+            {
+                Source = imageSource,
+                Width = 16,
+                Height = 16
+            };
+        }
+        else
+        {
+            // Fallback: show placeholder icon
+            btn.Content = "🔲";
+        }
+
         btn.Padding = new Thickness(4, 2, 4, 2);
         btn.Margin = new Thickness(1);
 
         return btn;
-    }
-
-    private UIElement RenderMenuItem(TMenuItem menuItem)
-    {
-        if (menuItem.IsSeparator)
-        {
-            return new Separator();
-        }
-
-        return new Border
-        {
-            Background = Brushes.WhiteSmoke,
-            BorderBrush = Brushes.Gray,
-            BorderThickness = new Thickness(1),
-            Child = new TextBlock
-            {
-                Text = menuItem.Caption.Replace("&", ""),
-                Padding = new Thickness(5, 2, 5, 2)
-            }
-        };
     }
 
     private UIElement RenderPanel(TPanel panel)
@@ -796,6 +1056,120 @@ public class ComponentRenderer : IComponentRenderer
 
         sv.Content = canvas;
         return sv;
+    }
+
+    private UIElement RenderPageControl(TPageControl pageControl)
+    {
+        var tabControl = new TabControl
+        {
+            Background = new SolidColorBrush(pageControl.Color),
+            TabStripPlacement = pageControl.TabPosition switch
+            {
+                TabPosition.Bottom => Dock.Bottom,
+                TabPosition.Left => Dock.Left,
+                TabPosition.Right => Dock.Right,
+                _ => Dock.Top
+            }
+        };
+
+        // Find the active page index
+        int activeIndex = 0;
+        int currentIndex = 0;
+
+        // Add tab sheets
+        foreach (var child in pageControl.Children.OfType<TTabSheet>())
+        {
+            if (!child.TabVisible)
+                continue;
+
+            var tabItem = new TabItem
+            {
+                Header = child.Caption,
+                Tag = child
+            };
+
+            // Create content canvas for the tab
+            var canvas = new Canvas
+            {
+                Background = new SolidColorBrush(child.Color),
+                ClipToBounds = true
+            };
+
+            // Render children of the tab sheet
+            foreach (var tabChild in child.Children)
+            {
+                var childElement = Render(tabChild);
+                canvas.Children.Add(childElement);
+            }
+
+            tabItem.Content = canvas;
+            tabControl.Items.Add(tabItem);
+
+            // Check if this is the active page
+            if (child.Name == pageControl.ActivePage)
+            {
+                activeIndex = currentIndex;
+            }
+            currentIndex++;
+        }
+
+        // Set the selected tab
+        if (tabControl.Items.Count > 0)
+        {
+            tabControl.SelectedIndex = activeIndex;
+        }
+
+        return tabControl;
+    }
+
+    private UIElement RenderTabSheet(TTabSheet tabSheet)
+    {
+        // TabSheet rendered standalone (not inside a PageControl)
+        var border = new Border
+        {
+            Background = new SolidColorBrush(tabSheet.Color),
+            BorderBrush = Brushes.Gray,
+            BorderThickness = new Thickness(1)
+        };
+
+        var grid = new Grid();
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+        // Tab header
+        var header = new Border
+        {
+            Background = new SolidColorBrush(Color.FromRgb(240, 240, 240)),
+            BorderBrush = Brushes.Gray,
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            Padding = new Thickness(10, 5, 10, 5)
+        };
+        header.Child = new TextBlock
+        {
+            Text = tabSheet.Caption,
+            FontWeight = FontWeights.SemiBold
+        };
+        Grid.SetRow(header, 0);
+        grid.Children.Add(header);
+
+        // Content canvas
+        var canvas = new Canvas
+        {
+            Background = Brushes.Transparent,
+            ClipToBounds = true
+        };
+
+        foreach (var child in tabSheet.Children)
+        {
+            var childElement = Render(child);
+            canvas.Children.Add(childElement);
+        }
+
+        Grid.SetRow(canvas, 1);
+        grid.Children.Add(canvas);
+
+        border.Child = grid;
+        return border;
     }
 
     private static Thickness GetBevelThickness(PanelBevelStyle style, int width)
@@ -994,6 +1368,29 @@ public class ComponentRenderer : IComponentRenderer
 
     private UIElement RenderImage(TImage image)
     {
+        // Check if there's actual image data
+        if (image.ImageSource != null)
+        {
+            var img = new Image
+            {
+                Source = image.ImageSource,
+                Stretch = GetStretchMode(image)
+            };
+
+            if (image.Center)
+            {
+                img.HorizontalAlignment = HorizontalAlignment.Center;
+                img.VerticalAlignment = VerticalAlignment.Center;
+            }
+
+            return new Border
+            {
+                Background = Brushes.Transparent,
+                Child = img
+            };
+        }
+
+        // Fallback placeholder
         return new Border
         {
             Background = Brushes.LightGray,
@@ -1007,6 +1404,15 @@ public class ComponentRenderer : IComponentRenderer
                 VerticalAlignment = VerticalAlignment.Center
             }
         };
+    }
+
+    private static Stretch GetStretchMode(TImage image)
+    {
+        if (image.Proportional)
+            return Stretch.Uniform;
+        if (image.Stretch)
+            return Stretch.Fill;
+        return Stretch.None;
     }
 
     private UIElement RenderNonVisual(LfmComponentBase component, string icon)

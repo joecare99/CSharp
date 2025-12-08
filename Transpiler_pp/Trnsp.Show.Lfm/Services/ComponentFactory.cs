@@ -11,6 +11,8 @@ namespace Trnsp.Show.Lfm.Services;
 /// </summary>
 public class ComponentFactory : IComponentFactory
 {
+    private readonly IActionResolver _actionResolver;
+
     // Properties that indicate a TForm-derived component
     private static readonly HashSet<string> _formIndicatorProperties = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -29,13 +31,16 @@ public class ComponentFactory : IComponentFactory
         
         // Labels
         ["TLabel"] = () => new TLabel(),
+        ["TDBText"] = () => new TStaticText(),
         ["TStaticText"] = () => new TStaticText(),
         
         // Edit controls
         ["TEdit"] = () => new TEdit(),
         ["TMaskEdit"] = () => new TEdit(),
+        ["TDBEdit"] = () => new TEdit(),
         ["TLabeledEdit"] = () => new TLabeledEdit(),
         ["TMemo"] = () => new TMemo(),
+        ["TDBMemo"] = () => new TMemo(),
         ["TRichEdit"] = () => new TMemo(),
         
         // Buttons
@@ -50,12 +55,21 @@ public class ComponentFactory : IComponentFactory
         ["TRadioGroup"] = () => new TRadioGroup(),
         ["TCheckGroup"] = () => new TCheckGroup(),
         
+        // Page controls (tabs)
+        ["TPageControl"] = () => new TPageControl(),
+        ["TTabSheet"] = () => new TTabSheet(),
+        ["TTabbedNotebook"] = () => new TTabbedNotebook(),
+        ["TNotebook"] = () => new TNotebook(),
+        ["TPage"] = () => new TPage(),
+        
         // Checkboxes and radio buttons
         ["TCheckBox"] = () => new TCheckBox(),
+        ["TDBCheckBox"] = () => new TCheckBox(),
         ["TRadioButton"] = () => new TRadioButton(),
         
         // List controls
         ["TComboBox"] = () => new TComboBox(),
+        ["TDBComboBox"] = () => new TComboBox(),
         ["TListBox"] = () => new TListBox(),
         ["TCheckListBox"] = () => new TListBox(),
         
@@ -97,6 +111,11 @@ public class ComponentFactory : IComponentFactory
         ["TFileOpen"] = () => new TFileOpen(),
         ["TFileSaveAs"] = () => new TFileSaveAs(),
         ["TFileExit"] = () => new TFileExit(),
+        ["TEditCut"] = () => new TEditCut(),
+        ["TEditPaste"] = () => new TEditPaste(),
+        ["TEditCopy"] = () => new TEditCopy(),
+        ["TEditDelete"] = () => new TEditDelete(),
+        ["TEditUndo"] = () => new TEditUndo(),
 
         // Image lists
         ["TImageList"] = () => new TImageList(),
@@ -110,9 +129,23 @@ public class ComponentFactory : IComponentFactory
         ["TPrintDialog"] = () => new TUnknownComponent(),
         ["TFontDialog"] = () => new TUnknownComponent(),
         ["TColorDialog"] = () => new TUnknownComponent(),
-        ["TAboutBox"] = () => new TUnknownComponent(),
         ["TConfig"] = () => new TUnknownComponent(),
     };
+
+    /// <summary>
+    /// Creates a new ComponentFactory with default ActionResolver.
+    /// </summary>
+    public ComponentFactory() : this(new ActionResolver())
+    {
+    }
+
+    /// <summary>
+    /// Creates a new ComponentFactory with the specified ActionResolver.
+    /// </summary>
+    public ComponentFactory(IActionResolver actionResolver)
+    {
+        _actionResolver = actionResolver;
+    }
 
     /// <inheritdoc/>
     public LfmComponentBase CreateComponent(LfmObject lfmObject)
@@ -182,6 +215,9 @@ public class ComponentFactory : IComponentFactory
         // Root object is always treated with isRoot=true
         var rootComponent = CreateComponent(rootObject, isRoot: true);
         BuildChildComponents(rootComponent, rootObject);
+        
+        // After building the tree, resolve all action links
+        _actionResolver.ResolveActions(rootComponent);
         
         return rootComponent;
     }

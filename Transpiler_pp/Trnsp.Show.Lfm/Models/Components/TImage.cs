@@ -1,3 +1,4 @@
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Trnsp.Show.Lfm.Models.Components;
@@ -15,6 +16,11 @@ public partial class TImage : LfmComponentBase
 
     [ObservableProperty]
     private bool _center;
+
+    /// <summary>
+    /// Gets the ImageSource for rendering, derived from the Picture property.
+    /// </summary>
+    public ImageSource? ImageSource => Picture?.ImageSource;
 
     public TImage()
     {

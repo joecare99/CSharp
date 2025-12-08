@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Media;
 
 namespace Trnsp.Show.Lfm.Models.Components;
 
@@ -26,6 +27,11 @@ public partial class TToolBar : LfmComponentBase
 
     [ObservableProperty]
     private int _buttonHeight = 22;
+
+    /// <summary>
+    /// Reference to the resolved ImageList component.
+    /// </summary>
+    public TImageList? ImageList { get; set; }
 
     public List<TToolButton> Buttons { get; } = [];
 
@@ -62,6 +68,14 @@ public partial class TToolBar : LfmComponentBase
                 break;
         }
     }
+
+    /// <summary>
+    /// Gets an image from the associated ImageList by index.
+    /// </summary>
+    public ImageSource? GetButtonImage(int imageIndex)
+    {
+        return ImageList?.GetImage(imageIndex);
+    }
 }
 
 /// <summary>
@@ -69,9 +83,6 @@ public partial class TToolBar : LfmComponentBase
 /// </summary>
 public partial class TToolButton : LfmComponentBase
 {
-    [ObservableProperty]
-    private string _action = string.Empty;
-
     [ObservableProperty]
     private int _imageIndex = -1;
 
@@ -93,6 +104,19 @@ public partial class TToolButton : LfmComponentBase
     [ObservableProperty]
     private bool _wrap;
 
+    /// <summary>
+    /// Indicates whether ImageIndex was explicitly set.
+    /// </summary>
+    private bool _imageIndexExplicitlySet;
+
+    /// <summary>
+    /// Gets the effective image index, considering linked action.
+    /// </summary>
+    public int EffectiveImageIndex =>
+        _imageIndexExplicitlySet || LinkedAction == null
+            ? ImageIndex
+            : (LinkedAction.ImageIndex >= 0 ? LinkedAction.ImageIndex : ImageIndex);
+
     public TToolButton()
     {
         Width = 23;
@@ -104,10 +128,12 @@ public partial class TToolButton : LfmComponentBase
         switch (name.ToLower())
         {
             case "action":
-                Action = value?.ToString() ?? string.Empty;
+                // Use the base class ActionName property
+                ActionName = value?.ToString() ?? string.Empty;
                 break;
             case "imageindex":
                 ImageIndex = ConvertToInt(value, -1);
+                _imageIndexExplicitlySet = ImageIndex >= 0;
                 break;
             case "style":
                 Style = ParseStyle(value?.ToString());
@@ -131,6 +157,46 @@ public partial class TToolButton : LfmComponentBase
                 base.ApplyProperty(name, value);
                 break;
         }
+    }
+
+    protected override void OnActionLinked()
+    {
+        // For TToolButton: inherit Hint from Action (not Caption!)
+        if (LinkedAction == null) return;
+
+        // Inherit Hint if not set locally
+        if (string.IsNullOrEmpty(Hint) && !string.IsNullOrEmpty(LinkedAction.Hint))
+        {
+            Hint = LinkedAction.Hint;
+        }
+
+        // Inherit ImageIndex if not explicitly set
+        if (!_imageIndexExplicitlySet && LinkedAction.ImageIndex >= 0)
+        {
+            ImageIndex = LinkedAction.ImageIndex;
+        }
+
+        OnPropertyChanged(nameof(EffectiveImageIndex));
+        OnPropertyChanged(nameof(EffectiveHint));
+        // Note: We do NOT call base.OnActionLinked() because TToolButton 
+        // does NOT inherit Caption from Action
+    }
+
+    /// <summary>
+    /// Gets the image from the parent ToolBar's ImageList.
+    /// </summary>
+    public ImageSource? GetImage()
+    {
+        var effectiveIndex = EffectiveImageIndex;
+        if (effectiveIndex < 0) return null;
+
+        // Find parent ToolBar
+        if (Parent is TToolBar toolBar)
+        {
+            return toolBar.GetButtonImage(effectiveIndex);
+        }
+
+        return null;
     }
 
     private static ToolButtonStyle ParseStyle(string? value) => value?.ToLower() switch

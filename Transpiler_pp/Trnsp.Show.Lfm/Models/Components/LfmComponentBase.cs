@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
@@ -66,9 +67,65 @@ public abstract partial class LfmComponentBase : ObservableObject
     [ObservableProperty]
     private LfmComponentBase? _parent;
 
+    /// <summary>
+    /// Picture/Bitmap data for components that support images.
+    /// </summary>
+    private TBitmap? _picture;
+    public TBitmap? Picture
+    {
+        get => _picture;
+        set => SetProperty(ref _picture, value);
+    }
+
+    /// <summary>
+    /// Glyph/Icon bitmap data for buttons and similar components.
+    /// </summary>
+    private TBitmap? _glyph;
+    public TBitmap? Glyph
+    {
+        get => _glyph;
+        set => SetProperty(ref _glyph, value);
+    }
+
+    /// <summary>
+    /// Name of the linked action (from Action property in LFM).
+    /// </summary>
+    private string _actionName = string.Empty;
+    public string ActionName
+    {
+        get => _actionName;
+        set => SetProperty(ref _actionName, value);
+    }
+
+    /// <summary>
+    /// Reference to the resolved TAction component.
+    /// </summary>
+    private TAction? _linkedAction;
+    public TAction? LinkedAction
+    {
+        get => _linkedAction;
+        set
+        {
+            if (SetProperty(ref _linkedAction, value))
+            {
+                OnActionLinked();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Indicates whether the Caption was explicitly set in the LFM file.
+    /// </summary>
+    protected bool CaptionExplicitlySet { get; private set; }
+
     public ObservableCollection<LfmComponentBase> Children { get; } = [];
 
     public string TypeName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Temporary storage for multi-line hex data during property parsing.
+    /// </summary>
+    private readonly Dictionary<string, List<string>> _pendingHexData = [];
 
     /// <summary>
     /// Applies properties from an LfmObject to this component.
@@ -82,6 +139,9 @@ public abstract partial class LfmComponentBase : ObservableObject
         {
             ApplyProperty(prop.Name, prop.Value);
         }
+
+        // Process any pending hex data
+        FinalizePendingHexData();
     }
 
     /// <summary>
@@ -89,7 +149,8 @@ public abstract partial class LfmComponentBase : ObservableObject
     /// </summary>
     protected virtual void ApplyProperty(string name, object? value)
     {
-        switch (name.ToLower())
+        var lowerName = name.ToLower();
+        switch (lowerName)
         {
             case "left":
                 Left = ConvertToInt(value);
@@ -105,9 +166,11 @@ public abstract partial class LfmComponentBase : ObservableObject
                 break;
             case "caption":
                 Caption = value?.ToString() ?? string.Empty;
+                CaptionExplicitlySet = !string.IsNullOrEmpty(Caption);
                 break;
             case "text":
                 Caption = value?.ToString() ?? string.Empty;
+                CaptionExplicitlySet = !string.IsNullOrEmpty(Caption);
                 break;
             case "visible":
                 Visible = ConvertToBool(value, true);
@@ -136,7 +199,115 @@ public abstract partial class LfmComponentBase : ObservableObject
             case "parentcolor":
                 // Handled by parent assignment
                 break;
+            case "action":
+                ActionName = value?.ToString() ?? string.Empty;
+                break;
+            case "picture.data":
+                ApplyHexData("picture", value);
+                break;
+            case "glyph.data":
+                ApplyHexData("glyph", value);
+                break;
+            case "bitmap.data":
+                ApplyHexData("bitmap", value);
+                break;
         }
+    }
+
+    /// <summary>
+    /// Called when an action is linked to this component.
+    /// Override in derived classes to inherit specific properties from the action.
+    /// </summary>
+    protected virtual void OnActionLinked()
+    {
+        if (LinkedAction == null) return;
+
+        // Default behavior: inherit Caption if not explicitly set
+        if (!CaptionExplicitlySet && !string.IsNullOrEmpty(LinkedAction.Caption))
+        {
+            Caption = LinkedAction.Caption;
+        }
+
+        // Inherit Hint if not set
+        if (string.IsNullOrEmpty(Hint) && !string.IsNullOrEmpty(LinkedAction.Hint))
+        {
+            Hint = LinkedAction.Hint;
+        }
+
+        // Inherit Enabled state
+        // Note: In Delphi, Action.Enabled typically controls the component's enabled state
+    }
+
+    /// <summary>
+    /// Gets the effective caption, considering linked action.
+    /// </summary>
+    public virtual string EffectiveCaption => 
+        CaptionExplicitlySet || LinkedAction == null 
+            ? Caption 
+            : (string.IsNullOrEmpty(LinkedAction.Caption) ? Caption : LinkedAction.Caption);
+
+    /// <summary>
+    /// Gets the effective hint, considering linked action.
+    /// </summary>
+    public virtual string EffectiveHint =>
+        !string.IsNullOrEmpty(Hint) || LinkedAction == null
+            ? Hint
+            : LinkedAction.Hint;
+
+    /// <summary>
+    /// Applies hex data for bitmap properties.
+    /// </summary>
+    protected void ApplyHexData(string propertyName, object? value)
+    {
+        if (value is IEnumerable<object> lines)
+        {
+            if (!_pendingHexData.ContainsKey(propertyName))
+                _pendingHexData[propertyName] = [];
+
+            foreach (var line in lines)
+            {
+                var lineStr = line?.ToString()?.Trim();
+                if (!string.IsNullOrEmpty(lineStr))
+                {
+                    _pendingHexData[propertyName].Add(lineStr);
+                }
+            }
+        }
+        else if (value is string hexStr && !string.IsNullOrWhiteSpace(hexStr))
+        {
+            if (!_pendingHexData.ContainsKey(propertyName))
+                _pendingHexData[propertyName] = [];
+            _pendingHexData[propertyName].Add(hexStr.Trim());
+        }
+    }
+
+    /// <summary>
+    /// Finalizes pending hex data into TBitmap objects.
+    /// </summary>
+    protected virtual void FinalizePendingHexData()
+    {
+        foreach (var kvp in _pendingHexData)
+        {
+            var combinedHex = string.Join("", kvp.Value);
+            if (!string.IsNullOrEmpty(combinedHex))
+            {
+                var bitmap = TBitmap.FromHexData(combinedHex);
+                switch (kvp.Key)
+                {
+                    case "picture":
+                        Picture = bitmap;
+                        break;
+                    case "glyph":
+                        Glyph = bitmap;
+                        break;
+                    case "bitmap":
+                        // Default to glyph for generic bitmap property
+                        Glyph ??= bitmap;
+                        break;
+                }
+            }
+        }
+        _pendingHexData.Clear();
     }
 
     protected static int ConvertToInt(object? value, int defaultValue = 0)

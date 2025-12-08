@@ -1,3 +1,4 @@
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Trnsp.Show.Lfm.Models.Components;
@@ -18,6 +19,35 @@ public partial class TBitBtn : TButton
 
     [ObservableProperty]
     private int _margin = -1;
+
+    [ObservableProperty]
+    private int _numGlyphs = 1;
+
+    [ObservableProperty]
+    private int _imageIndex = -1;
+
+    /// <summary>
+    /// Indicates whether ImageIndex was explicitly set.
+    /// </summary>
+    private bool _imageIndexExplicitlySet;
+
+    /// <summary>
+    /// Gets the ImageSource for the glyph, derived from the Glyph property.
+    /// </summary>
+    public ImageSource? GlyphImageSource => Glyph?.ImageSource;
+
+    /// <summary>
+    /// Gets whether this button has a custom glyph image.
+    /// </summary>
+    public bool HasGlyph => Glyph?.HasData == true;
+
+    /// <summary>
+    /// Gets the effective image index, considering linked action.
+    /// </summary>
+    public int EffectiveImageIndex =>
+        _imageIndexExplicitlySet || LinkedAction == null
+            ? ImageIndex
+            : (LinkedAction.ImageIndex >= 0 ? LinkedAction.ImageIndex : ImageIndex);
 
     public TBitBtn()
     {
@@ -41,10 +71,33 @@ public partial class TBitBtn : TButton
             case "margin":
                 Margin = ConvertToInt(value, -1);
                 break;
+            case "numglyphs":
+                NumGlyphs = ConvertToInt(value, 1);
+                break;
+            case "imageindex":
+                ImageIndex = ConvertToInt(value, -1);
+                _imageIndexExplicitlySet = ImageIndex >= 0;
+                break;
             default:
                 base.ApplyProperty(name, value);
                 break;
         }
+    }
+
+    protected override void OnActionLinked()
+    {
+        base.OnActionLinked();
+
+        if (LinkedAction == null) return;
+
+        // Inherit ImageIndex if not explicitly set
+        if (!_imageIndexExplicitlySet && LinkedAction.ImageIndex >= 0)
+        {
+            ImageIndex = LinkedAction.ImageIndex;
+        }
+
+        OnPropertyChanged(nameof(EffectiveImageIndex));
+        OnPropertyChanged(nameof(EffectiveCaption));
     }
 
     private static BitBtnKind ParseKind(string? value) => value?.ToLower() switch
