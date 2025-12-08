@@ -245,6 +245,50 @@ end";
     }
 
     [TestMethod]
+    public void Build_ObjectWithItemListProperty_ParsesItemListCorrectly()
+    {
+        // Arrange
+        const string input = @"object StatusBar1: TStatusBar
+  Panels = <    
+    item
+      Width = 50
+    end    
+    item
+      Width = 80
+    end>
+end";
+        _tokenizer.SetInput(input);
+        var tokens = _tokenizer.Tokenize();
+
+        // Act
+        var result = _builder.Build(tokens);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual("StatusBar1", result.Name);
+        Assert.AreEqual("TStatusBar", result.TypeName);
+        Assert.AreEqual(1, result.Properties.Count);
+        
+        var panelsProperty = result.Properties[0];
+        Assert.AreEqual("Panels", panelsProperty.Name);
+        Assert.AreEqual(LfmPropertyType.ItemList, panelsProperty.PropertyType);
+        
+        var items = panelsProperty.Value as List<LfmItem>;
+        Assert.IsNotNull(items);
+        Assert.AreEqual(2, items.Count);
+        
+        // Check first item
+        Assert.AreEqual(1, items[0].Properties.Count);
+        Assert.AreEqual("Width", items[0].Properties[0].Name);
+        Assert.AreEqual(50, items[0].Properties[0].Value);
+        
+        // Check second item
+        Assert.AreEqual(1, items[1].Properties.Count);
+        Assert.AreEqual("Width", items[1].Properties[0].Name);
+        Assert.AreEqual(80, items[1].Properties[0].Value);
+    }
+
+    [TestMethod]
     [DynamicData(nameof(TestBuildList))]
     public void Build_FromTestResources_BuildsSuccessfully(string testName, string dir)
     {

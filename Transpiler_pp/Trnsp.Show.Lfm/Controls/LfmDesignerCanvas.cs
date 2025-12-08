@@ -109,6 +109,7 @@ public class LfmDesignerCanvas : Canvas
             
             // Add click handler for selection
             fe.MouseLeftButtonDown += OnElementClicked;
+            fe.Visibility = Visibility.Visible;
         }
 
         Children.Add(element);

@@ -5,6 +5,7 @@ public enum LfmTokenType
     OBJECT,
     END,
     INHERITED,
+    INLINE,
     COLON,
     EQUALS,
     DOT,
