@@ -1,0 +1,58 @@
+object Form1: TForm1
+  Left = 1457
+  Height = 340
+  Top = 5
+  Width = 440
+  Caption = 'Form1'
+  ClientHeight = 340
+  ClientWidth = 440
+  OnCreate = FormCreate
+  LCLVersion = '1.4.4.0'
+  inline Frame1_1: TFrame1
+    Left = 24
+    Height = 81
+    Top = 23
+    Width = 86
+    ClientHeight = 81
+    ClientWidth = 86
+    inherited StaticText2: TStaticText
+      Top = 64
+      Width = 86
+    end
+  end
+  object TrackBar1: TTrackBar
+    Left = 17
+    Height = 30
+    Top = 128
+    Width = 100
+    Frequency = 10
+    Max = 200
+    Min = -50
+    OnChange = TrackBar1Change
+    PageSize = 50
+    Position = 0
+    TabOrder = 1
+  end
+  object Shape1: TShape
+    Left = 96
+    Height = 65
+    Top = 72
+    Width = 65
+    Shape = stDiamond
+  end
+  object Shape2: TShape
+    Left = 144
+    Height = 65
+    Top = 23
+    Width = 65
+    Shape = stEllipse
+  end
+  object BitBtn1: TBitBtn
+    Left = 145
+    Height = 30
+    Top = 188
+    Width = 75
+    Caption = 'BitBtn1'
+    TabOrder = 2
+  end
+end
