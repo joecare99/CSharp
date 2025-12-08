@@ -227,6 +227,7 @@ public class LfmTokenizer
             case "object": return LfmTokenType.OBJECT;
             case "end": return LfmTokenType.END;
             case "inherited": return LfmTokenType.INHERITED;
+            case "inline": return LfmTokenType.INLINE;
             case "true":
             case "false": return LfmTokenType.BOOLEAN;
             default: return LfmTokenType.IDENTIFIER;

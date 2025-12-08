@@ -24,7 +24,9 @@ public class LfmObjectBuilder
         _tokenEnumerator = tokens.GetEnumerator();
         Advance();
 
-        if (_currentToken.Type == LfmTokenType.OBJECT || _currentToken.Type == LfmTokenType.INHERITED)
+        if (_currentToken.Type == LfmTokenType.OBJECT || 
+            _currentToken.Type == LfmTokenType.INHERITED ||
+            _currentToken.Type == LfmTokenType.INLINE)
         {
             return ParseObject();
         }
@@ -60,10 +62,11 @@ public class LfmObjectBuilder
     {
         var obj = new LfmObject
         {
-            IsInherited = _currentToken.Type == LfmTokenType.INHERITED
+            IsInherited = _currentToken.Type == LfmTokenType.INHERITED,
+            IsInline = _currentToken.Type == LfmTokenType.INLINE
         };
 
-        Advance(); // consume 'object' or 'inherited'
+        Advance(); // consume 'object', 'inherited', or 'inline'
 
         // Parse object name
         var nameToken = Expect(LfmTokenType.IDENTIFIER);
@@ -78,7 +81,9 @@ public class LfmObjectBuilder
         // Parse properties and nested objects until 'end'
         while (_currentToken.Type != LfmTokenType.END && _currentToken.Type != LfmTokenType.EOF)
         {
-            if (_currentToken.Type == LfmTokenType.OBJECT || _currentToken.Type == LfmTokenType.INHERITED)
+            if (_currentToken.Type == LfmTokenType.OBJECT || 
+                _currentToken.Type == LfmTokenType.INHERITED ||
+                _currentToken.Type == LfmTokenType.INLINE)
             {
                 var childObject = ParseObject();
                 if (childObject != null)
@@ -252,7 +257,12 @@ public class LfmObjectBuilder
                 return binaryData;
 
             case LfmTokenType.LPAREN:
+                property.PropertyType = LfmPropertyType.Collection;
                 return ParseCollection();
+
+            case LfmTokenType.LANGLE:
+                property.PropertyType = LfmPropertyType.ItemList;
+                return ParseItemList();
 
             default:
                 Advance();
@@ -308,5 +318,76 @@ public class LfmObjectBuilder
         }
 
         return items;
+    }
+
+    /// <summary>
+    /// Parses an item list like: &lt;item ... end item ... end&gt;
+    /// </summary>
+    private List<LfmItem> ParseItemList()
+    {
+        var items = new List<LfmItem>();
+        Advance(); // consume <
+
+        while (_currentToken.Type != LfmTokenType.RANGLE && _currentToken.Type != LfmTokenType.EOF)
+        {
+            // Expect 'item' keyword (as IDENTIFIER with value "item")
+            if (_currentToken.Type == LfmTokenType.IDENTIFIER && 
+                _currentToken.Value.Equals("item", StringComparison.OrdinalIgnoreCase))
+            {
+                var item = ParseItem();
+                items.Add(item);
+            }
+            else
+            {
+                // Skip unexpected tokens
+                Advance();
+            }
+        }
+
+        if (_currentToken.Type == LfmTokenType.RANGLE)
+        {
+            Advance();
+        }
+
+        return items;
+    }
+
+    /// <summary>
+    /// Parses a single item block: item PropertyName = Value ... end
+    /// </summary>
+    private LfmItem ParseItem()
+    {
+        var item = new LfmItem();
+        Advance(); // consume 'item'
+
+        // Parse properties until 'end'
+        while (_currentToken.Type != LfmTokenType.END && _currentToken.Type != LfmTokenType.EOF)
+        {
+            if (_currentToken.Type == LfmTokenType.IDENTIFIER)
+            {
+                var property = ParseProperty();
+                if (property != null)
+                {
+                    item.Properties.Add(property);
+                }
+            }
+            else if (_currentToken.Type == LfmTokenType.RANGLE)
+            {
+                // End of item list reached without explicit 'end' - stop parsing this item
+                break;
+            }
+            else
+            {
+                Advance();
+            }
+        }
+
+        // Consume 'end' if present
+        if (_currentToken.Type == LfmTokenType.END)
+        {
+            Advance();
+        }
+
+        return item;
     }
 }
