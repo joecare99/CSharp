@@ -11,9 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Data;
 
 /// <summary>
@@ -21,6 +18,10 @@ namespace TranspilerLib.Data;
 /// </summary>
 public enum CodeBlockType
 {
+    /// <summary>
+    /// The unknown
+    /// </summary>
+    Unknown,
     /// <summary>
     /// The main block
     /// </summary>
@@ -82,10 +83,6 @@ public enum CodeBlockType
     /// </summary>
     Comment,
     /// <summary>
-    /// The unknown
-    /// </summary>
-    Unknown,
-    /// <summary>
     /// The string(-constant)
     /// </summary>
     String,
@@ -105,4 +102,8 @@ public enum CodeBlockType
     /// An Assignment-Operation 
     /// </summary> 
     Assignment,
+    /// <summary>
+    /// A code-separator (e.g. ';' or ',') 
+    /// </summary> 
+    Separator,
 }

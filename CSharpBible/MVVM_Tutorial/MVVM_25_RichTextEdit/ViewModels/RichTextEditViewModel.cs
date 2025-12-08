@@ -16,7 +16,7 @@ using CommonDialogs;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_25_RichTextEdit.Models;
 using System;
@@ -24,8 +24,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Windows.Documents;
-using MVVM.View.ValueConverter;
-using System.Globalization;
 
 namespace MVVM_25_RichTextEdit.ViewModels;
 

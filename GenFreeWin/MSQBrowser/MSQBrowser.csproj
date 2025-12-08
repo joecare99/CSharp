@@ -2,7 +2,7 @@
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net481-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net472;net462;net8.0-windows;net9.0-windows;net10.0-windows</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
@@ -19,11 +19,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="IsExternalInit" Version="1.0.3" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="MySqlConnector" Version="2.4.0" />
-		<PackageReference Include="System.Data.OleDb" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="MySqlConnector" Version="2.5.0" />
+		<PackageReference Include="System.Data.OleDb" Version="10.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />

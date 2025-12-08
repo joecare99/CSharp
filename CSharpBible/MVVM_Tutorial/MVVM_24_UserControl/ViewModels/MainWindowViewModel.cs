@@ -13,30 +13,29 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_24_UserControl.ViewModels
+namespace MVVM_24_UserControl.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class MainWindowViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public MainWindowViewModel()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public MainWindowViewModel()
-        {
-
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~MainWindowViewModel()
-        {
-            return;
-        }
 
     }
+
+    /// <summary>
+    /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
+    /// </summary>
+    ~MainWindowViewModel()
+    {
+        return;
+    }
+
 }

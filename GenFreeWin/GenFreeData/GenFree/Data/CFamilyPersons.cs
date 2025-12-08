@@ -5,18 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GenFree.Sys;
-using GenFree.Model.Data;
+using GenFree.Models.Data;
+using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {
-    public class CFamilyPersons : CRSData<EFamilyProp, int>, IFamilyPersons, IFamilyData
+    public class CFamilyPersons : CRSDataInt<EFamilyProp>, IFamilyPersons, IFamilyData
     {
         private CArrayProxy<int> _kind;
         private CArrayProxy<string> _kiatext;
-        private static Func<int, string>? _getText;
-        private List<EFamilyProp> _changedPropsList = new();
+        private static Func<int, string> _getText = DataModul.TextLese1;
         private static Func<IRecordset> _getTable = () => DataModul.DB_FamilyTable;
-        private IRecordset _db_Table;
         private string? _sName;
         private string? _sPrefix;
         private string? _sSuffix;
@@ -27,9 +27,6 @@ namespace GenFree.Data
         public IArrayProxy<int> Kind => _kind;
         public IArrayProxy<string> KiAText => _kiatext;
         public IList<(int nr, string aTxt)> Kinder { get; } = new List<(int nr, string aTxt)>();
-        public override int ID => _ID;
-
-        private int _ID;
 
         public DateTime dAnlDatum { get; internal set; }
         public DateTime dEditDat { get; internal set; }
@@ -40,23 +37,22 @@ namespace GenFree.Data
         public int iSuf { get; internal set; }
         public string sSuffix => _sSuffix ??= _getText(iSuf);
         public int iEltern { get; internal set; }
-        public string sPruefen { get; internal set; }
+        public string sPruefen { get; internal set; } = "";
         public string[] sBem { get; } = new string[4];
         public int iGgv { get; internal set; }
         public bool xAeB { get; internal set; }
 
-        public Guid? gUID { get; internal set; }
-
-        public IReadOnlyList<EFamilyProp> ChangedProps => _changedPropsList;
+        public Guid? gUid { get; internal set; }
 
         protected override Enum _keyIndex => FamilyIndex.Fam;
 
-        public CFamilyPersons() : base(_getTable())
-        {
-            Init();
-        }
+        public IList<IEventData> Events { get; } =[];
 
-        private void Init()
+        public IList<ILinkData> Connects { get; } =[];
+
+        public CFamilyPersons() : this(_getTable(),true) { }
+
+        public CFamilyPersons(IRecordset dB_FamilyTable, bool xNoInit=false) : base(dB_FamilyTable,xNoInit)
         {
             sBem.Initialize();
             Mann = 0;
@@ -65,28 +61,23 @@ namespace GenFree.Data
             _kiatext = new((i) => Kinder[i.AsInt()].aTxt, (i, v) => Kinder[i.AsInt()] = (Kinder[i.AsInt()].nr, v));
         }
 
-        public CFamilyPersons(IRecordset dB_FamilyTable) : base(dB_FamilyTable)
-        {
-            Init();
-        }
-
         public override void FillData(IRecordset dB_FamilyTable)
         {
             if (dB_FamilyTable?.EOF != false) return;
-            _ID = dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].AsInt();
-            dAnlDatum = dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].AsDate();
-            dEditDat = dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].AsDate();
-            iName = dB_FamilyTable.Fields[nameof(FamilyFields.Name)].AsInt();
-            iPrae = dB_FamilyTable.Fields[nameof(FamilyFields.Prae)].AsInt();
-            iSuf = dB_FamilyTable.Fields[nameof(FamilyFields.Suf)].AsInt();
-            sPruefen = dB_FamilyTable.Fields[nameof(FamilyFields.Prüfen)].AsString();
-            sBem[1] = dB_FamilyTable.Fields[nameof(FamilyFields.Bem1)].AsString();
-            sBem[2] = dB_FamilyTable.Fields[nameof(FamilyFields.Bem2)].AsString();
-            sBem[3] = dB_FamilyTable.Fields[nameof(FamilyFields.Bem3)].AsString();
-            iEltern = dB_FamilyTable.Fields[nameof(FamilyFields.Eltern)].AsInt();
-            iGgv = dB_FamilyTable.Fields[nameof(FamilyFields.ggv)].AsInt();
-            xAeB = dB_FamilyTable.Fields[nameof(FamilyFields.Aeb)].AsBool();
-            gUID = dB_FamilyTable.Fields[nameof(FamilyFields.Fuid)].AsGUID();
+            ReadID(dB_FamilyTable);
+            dAnlDatum = dB_FamilyTable.Fields[FamilyFields.AnlDatum].AsDate();
+            dEditDat = dB_FamilyTable.Fields[FamilyFields.EditDat].AsDate();
+            iName = dB_FamilyTable.Fields[FamilyFields.Name].AsInt();
+            iPrae = dB_FamilyTable.Fields[FamilyFields.Prae].AsInt();
+            iSuf = dB_FamilyTable.Fields[FamilyFields.Suf].AsInt();
+            sPruefen = dB_FamilyTable.Fields[FamilyFields.Prüfen].AsString();
+            sBem[1] = dB_FamilyTable.Fields[FamilyFields.Bem1].AsString();
+            sBem[2] = dB_FamilyTable.Fields[FamilyFields.Bem2].AsString();
+            sBem[3] = dB_FamilyTable.Fields[FamilyFields.Bem3].AsString();
+            iEltern = dB_FamilyTable.Fields[FamilyFields.Eltern].AsInt();
+            iGgv = dB_FamilyTable.Fields[FamilyFields.ggv].AsInt();
+            xAeB = dB_FamilyTable.Fields[FamilyFields.Aeb].AsBool();
+            gUid = dB_FamilyTable.Fields[FamilyFields.Fuid].AsGUID();
             _sName = null;
             _sPrefix = null;
             _sSuffix = null;
@@ -104,14 +95,14 @@ namespace GenFree.Data
             if (default == dAnlDatum)
             {
                 dB_FamilyTable.Edit();
-                dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value = (dAnlDatum = DateTime.Today).ToString("yyyyMMdd");
-                dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = "0";
+                dB_FamilyTable.Fields[FamilyFields.AnlDatum].Value = (dAnlDatum = DateTime.Today).ToString("yyyyMMdd");
+                dB_FamilyTable.Fields[FamilyFields.EditDat].Value = "0";
                 dB_FamilyTable.Update();
                 dEditDat = default;
             }
         }
 
-        public override void SetDBValue(IRecordset dB_PersonTable, Enum[]? asProps)
+        public override void SetDBValues(IRecordset dB_PersonTable, Enum[]? asProps)
         {
             asProps ??= _changedPropsList.Select((e) => (Enum)e).ToArray();
             foreach (var prop in asProps)
@@ -119,42 +110,42 @@ namespace GenFree.Data
                 switch (prop)
                 {
                     case EFamilyProp.dAnlDatum:
-                        dB_PersonTable.Fields[nameof(FamilyFields.AnlDatum)].Value = dAnlDatum.ToString("yyyyMMdd");
+                        dB_PersonTable.Fields[FamilyFields.AnlDatum].Value = dAnlDatum.ToString("yyyyMMdd");
                         break;
                     case EFamilyProp.dEditDat:
-                        dB_PersonTable.Fields[nameof(FamilyFields.EditDat)].Value = dEditDat.ToString("yyyyMMdd");
+                        dB_PersonTable.Fields[FamilyFields.EditDat].Value = dEditDat.ToString("yyyyMMdd");
                         break;
                     case EFamilyProp.sPruefen:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Prüfen)].Value = sPruefen;
+                        dB_PersonTable.Fields[FamilyFields.Prüfen].Value = sPruefen;
                         break;
                     case EFamilyProp.sBem:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Bem1)].Value = sBem[1];
-                        dB_PersonTable.Fields[nameof(FamilyFields.Bem2)].Value = sBem[2];
-                        dB_PersonTable.Fields[nameof(FamilyFields.Bem3)].Value = sBem[3];
+                        dB_PersonTable.Fields[FamilyFields.Bem1].Value = sBem[1];
+                        dB_PersonTable.Fields[FamilyFields.Bem2].Value = sBem[2];
+                        dB_PersonTable.Fields[FamilyFields.Bem3].Value = sBem[3];
                         break;
                     case EFamilyProp.ID:
-                        dB_PersonTable.Fields[nameof(FamilyFields.FamNr)].Value = ID;
+                        dB_PersonTable.Fields[FamilyFields.FamNr].Value = ID;
                         break;
                     case EFamilyProp.xAeB:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Aeb)].Value = xAeB ? "J" : " ";
+                        dB_PersonTable.Fields[FamilyFields.Aeb].Value = xAeB ? "J" : " ";
                         break;
                     case EFamilyProp.iName:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Name)].Value = iName;
+                        dB_PersonTable.Fields[FamilyFields.Name].Value = iName;
                         break;
                     case EFamilyProp.iGgv:
-                        dB_PersonTable.Fields[nameof(FamilyFields.ggv)].Value = iGgv;
+                        dB_PersonTable.Fields[FamilyFields.ggv].Value = iGgv;
                         break;
                     case EFamilyProp.gUID:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Fuid)].Value = gUID;
+                        dB_PersonTable.Fields[FamilyFields.Fuid].Value = gUid ?? Guid.Empty;
                         break;
                     case EFamilyProp.iPrae:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Prae)].Value = iPrae;
+                        dB_PersonTable.Fields[FamilyFields.Prae].Value = iPrae;
                         break;
                     case EFamilyProp.iSuf:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Suf)].Value = iSuf;
+                        dB_PersonTable.Fields[FamilyFields.Suf].Value = iSuf;
                         break;
                     case EFamilyProp.iEltern:
-                        dB_PersonTable.Fields[nameof(FamilyFields.Eltern)].Value = iEltern;
+                        dB_PersonTable.Fields[FamilyFields.Eltern].Value = iEltern;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -194,7 +185,7 @@ namespace GenFree.Data
                 EFamilyProp.xAeB => xAeB,
                 EFamilyProp.iName => iName,
                 EFamilyProp.iGgv => iGgv,
-                EFamilyProp.gUID => gUID,
+                EFamilyProp.gUID => gUid,
                 EFamilyProp.iPrae => iPrae,
                 EFamilyProp.iSuf => iSuf,
                 EFamilyProp.iEltern => iEltern,
@@ -208,7 +199,7 @@ namespace GenFree.Data
             try
             {
                 t = GetPropType(prop);
-                if ((bool)t.GetMethod("Equals", new[] { t })!.Invoke(GetPropValue(prop), new[] { value }))
+                if ((bool?)t.GetMethod("Equals", new[] { t })!.Invoke(GetPropValue(prop), new[] { value }) ?? false)
                     return;
             }
             catch { t = typeof(object); }
@@ -224,7 +215,7 @@ namespace GenFree.Data
                 EFamilyProp.xAeB => xAeB = (bool)value,
                 EFamilyProp.iName => iName = (int)value,
                 EFamilyProp.iGgv => iGgv = (int)value,
-                EFamilyProp.gUID => gUID = (Guid)value,
+                EFamilyProp.gUID => gUid = (Guid)value,
                 EFamilyProp.iPrae => iPrae = (int)value,
                 EFamilyProp.iSuf => iSuf = (int)value,
                 EFamilyProp.iEltern => iEltern = (int)value,
@@ -232,16 +223,6 @@ namespace GenFree.Data
             };
         }
 
-        public void ClearChangedProps()
-        {
-            _changedPropsList.Clear();
-        }
-
-        public void AddChangedProp(EFamilyProp prop)
-        {
-            if (!_changedPropsList.Contains(prop))
-                _changedPropsList.Add(prop);
-        }
 
         public static void SetGetText(Func<int, string> getTextFnc)
         {
@@ -251,6 +232,11 @@ namespace GenFree.Data
         public static void SetTableGtr(Func<IRecordset> value)
         {
             _getTable = value;
+        }
+
+        public override void ReadID(IRecordset dB_FamilyTable)
+        {
+            _ID = dB_FamilyTable.Fields[FamilyFields.FamNr].AsInt();
         }
     }
 }

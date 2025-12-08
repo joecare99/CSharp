@@ -11,11 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-namespace GenFree2Base.Interfaces;
+namespace GenInterfaces.Interfaces;
 
-public interface IListEntry<T> where T : IListEntry<T>
+public interface IListEntry<T> : IHasOwner where T : IListEntry<T>
 {
-    IIndexedList<object> Owner { get; }
+    IIndexedList<object> Items { get; }
     T Next { get; }
     T Prev { get; }
     T First { get; }

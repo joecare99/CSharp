@@ -13,16 +13,15 @@
 // ***********************************************************************
 using System.Timers;
 
-namespace MVVM_38_CTDependencyInjection.Models.Interfaces
+namespace MVVM_38_CTDependencyInjection.Models.Interfaces;
+
+public interface ITimer
 {
-    public interface ITimer
-    {
-        double Interval { get; set; }
-        bool Enabled { get; }
+    double Interval { get; set; }
+    bool Enabled { get; }
 
-        event ElapsedEventHandler? Elapsed; 
+    event ElapsedEventHandler? Elapsed; 
 
-        void Start();
-        void Stop();
-    }
+    void Start();
+    void Stop();
 }

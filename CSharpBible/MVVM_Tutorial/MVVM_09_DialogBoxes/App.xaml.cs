@@ -13,12 +13,11 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_09_DialogBoxes
+namespace MVVM_09_DialogBoxes;
+
+/// <summary>
+/// Interaktionslogik für "App.xaml"
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application
-    {
-    }
 }

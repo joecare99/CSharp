@@ -1,6 +1,6 @@
 ﻿namespace GenFree.Data;
 
-public enum EEventArt : int
+public enum EEventArt : short
 {
     eA_Unknown = 0,
     eA_100 = 100,
@@ -27,6 +27,7 @@ public enum EEventArt : int
     /// <summary>The person dummy-event (last)</summary>
     eA_107 = 107,
     eA_120 = 120,
+    eA_135 = 135,
     eA_200 = 200,
     /// <summary>The baptism HLT</summary>
     eA_201 = 201,

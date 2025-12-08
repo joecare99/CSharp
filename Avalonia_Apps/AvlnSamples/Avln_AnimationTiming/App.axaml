@@ -1,0 +1,43 @@
+<Application xmlns="https://github.com/avaloniaui"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Avln_AnimationTiming.App"
+     RequestedThemeVariant="Default">
+	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+	<Application.Styles>
+		<FluentTheme />
+
+		<!-- Custom Styles -->
+		<Style Selector="TextBlock">
+			<Setter Property="FontFamily" Value="Verdana" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="TextWrapping" Value="Wrap" />
+			<Setter Property="FontWeight" Value="Normal" />
+			<Setter Property="MaxWidth" Value="500" />
+		</Style>
+
+		<Style Selector="TextBlock.CodeTextBlock">
+			<Setter Property="FontFamily" Value="Courier New" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="TextWrapping" Value="Wrap" />
+			<Setter Property="FontWeight" Value="Normal" />
+			<Setter Property="MaxWidth" Value="500" />
+		</Style>
+
+		<Style Selector="Border.IntroTextBorder">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+						<GradientStop Offset="0.0" Color="#CCCCFF" />
+						<GradientStop Offset="1.0" Color="White" />
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="BorderBrush" Value="Gray" />
+			<Setter Property="BorderThickness" Value="1" />
+			<Setter Property="Margin" Value="0,0,0,40" />
+			<Setter Property="VerticalAlignment" Value="Top" />
+		</Style>
+	</Application.Styles>
+</Application>

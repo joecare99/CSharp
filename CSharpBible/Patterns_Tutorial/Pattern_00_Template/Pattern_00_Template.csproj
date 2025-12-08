@@ -2,7 +2,7 @@
 	<Import Project="..\Pattern_Tutorial.props" />
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -12,7 +12,13 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="$(UpDir)\ConsoleDisplay\ConsoleDisplay.csproj" />
+	  <Compile Condition="!$(TargetFramework.StartsWith(net4))" Remove="Properties\Settings.Designer.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 	  <ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -21,12 +27,17 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
-		<Compile Update="Properties\Settings.Designer.cs">
+		<Compile Condition="$(TargetFramework.StartsWith(net4))" Update="Properties\Settings.Designer.cs">
 			<DesignTimeSharedInput>True</DesignTimeSharedInput>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
-	</ItemGroup>
+    <Compile Condition="!$(TargetFramework.StartsWith(net4))" Update="Properties\Settings.core.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
@@ -34,9 +45,13 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<None Update="Properties\Settings.settings">
+		<None Condition="$(TargetFramework.StartsWith(net4))" Update="Properties\Settings.settings">
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
-	</ItemGroup>
+    <None Condition="!$(TargetFramework.StartsWith(net4))" Update="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.core.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
 </Project>

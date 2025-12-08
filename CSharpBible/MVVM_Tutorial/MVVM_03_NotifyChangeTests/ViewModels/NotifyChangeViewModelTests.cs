@@ -30,7 +30,7 @@ public class NotifyChangeViewModelTests : BaseTestViewModel
         Assert.AreEqual("", DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "","Dev, ", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, \r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=\r\n" })]
     [DataRow("Peter", new string[] { "Peter", "Dev, Peter", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Peter\r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Peter\r\n" })]
     [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Dev, Steve
@@ -51,7 +51,7 @@ PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Firstname)=Eugene
         Assert.AreEqual(asExp[2], DebugLog, "DebugOut");
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "", ", Dave", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=, Dave\r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=\r\n" })]
     [DataRow("Miller", new string[] { "Miller", "Miller, Dave", "PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Miller, Dave\r\nPropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Lastname)=Miller\r\n" })]
     [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChg(MVVM_03_NotifyChange.ViewModels.NotifyChangeViewModel,Fullname)=Fry, Dave

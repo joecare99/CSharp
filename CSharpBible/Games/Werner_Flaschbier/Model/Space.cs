@@ -63,8 +63,8 @@ namespace Werner_Flaschbier_Base.Model
             {
                 if (Item != null)
                 {
-                    Item.OldPosition = Item.Position;
-                    Item.Position = new Point(0, 0);
+                    Item.OldPosition = Item.Place;
+                    Item.Place = new Point(0, 0);
                     Item.field = null;
                     OldItem = Item;
                     _item = null;
@@ -77,8 +77,8 @@ namespace Werner_Flaschbier_Base.Model
                     var f = value.field;
                     f.Item = null;
                 }
-//                value.OldPosition = value.Position;
-                value.Position = Position;
+//                value.OldPosition = value.Place;
+                value.Place = Position;
                 value.field = this;
                 OldItem = Item;
                 _item = value;

@@ -2,7 +2,6 @@
 using MVVM_Converter_CTDrawGrid.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace MVVM_Converter_CTDrawGrid.Views
 {

@@ -1,0 +1,33 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Desktop" />
+		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia.Fonts.Inter" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="Avalonia" Version="11.3.9" />
+	  <PackageVersion Update="Avalonia.Desktop" Version="11.3.9" />
+	  <PackageVersion Update="Avalonia.Fonts.Inter" Version="11.3.9" />
+	  <PackageVersion Update="Avalonia.Themes.Fluent" Version="11.3.9" />
+	</ItemGroup>
+</Project>

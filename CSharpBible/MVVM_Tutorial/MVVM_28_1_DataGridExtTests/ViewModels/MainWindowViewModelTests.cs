@@ -2,26 +2,25 @@
 using System.ComponentModel;
 using MVVM.ViewModel;
 
-namespace MVVM_28_1_DataGridExt.ViewModels.Tests
+namespace MVVM_28_1_DataGridExt.ViewModels.Tests;
+
+[TestClass()]
+public class MainWindowViewModelTests
 {
-    [TestClass()]
-    public class MainWindowViewModelTests
+    MainWindowViewModel testModel;
+
+    [TestInitialize]
+    public void Init()
     {
-        MainWindowViewModel testModel;
+        testModel = new();
+    }
 
-        [TestInitialize]
-        public void Init()
-        {
-            testModel = new();
-        }
-
-        [TestMethod()]
-        public void SetupTest()
-        {
-            Assert.IsNotNull(testModel);
-            Assert.IsInstanceOfType(testModel, typeof(MainWindowViewModel));
-            Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
-            Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
-        }
+    [TestMethod()]
+    public void SetupTest()
+    {
+        Assert.IsNotNull(testModel);
+        Assert.IsInstanceOfType(testModel, typeof(MainWindowViewModel));
+        Assert.IsInstanceOfType(testModel, typeof(BaseViewModel));
+        Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
     }
 }

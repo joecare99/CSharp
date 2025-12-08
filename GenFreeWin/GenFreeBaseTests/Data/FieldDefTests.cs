@@ -15,7 +15,7 @@ namespace GenFree.Data.Tests
         public void Init()
         {
             testTable = new(null!, "test");
-            testClass = new FieldDef(testTable, "test", nameof(TypeCode.Int32), 4);
+            testClass = new FieldDef(testTable, "test", TypeCode.Int32, 4);
         }
 
         [TestMethod()]
@@ -24,7 +24,7 @@ namespace GenFree.Data.Tests
             Assert.IsNotNull(testClass);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("test")]
         [DataRow("")]
         [DataRow(null)]
@@ -35,7 +35,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(sAct, testClass.Name);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(TypeCode.Byte)]
         [DataRow(TypeCode.Double)]
         [DataRow(TypeCode.String)]
@@ -46,7 +46,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eAct, testClass.Type);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0)]
         [DataRow(1)]
         [DataRow(16)]
@@ -57,7 +57,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iAct, testClass.Size);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true)]
         [DataRow(false)]
         public void xNullPropTest(bool xAct)
@@ -66,7 +66,7 @@ namespace GenFree.Data.Tests
             testClass.xNull = xAct;
             Assert.AreEqual(xAct, testClass.xNull);
         }
-        [DataTestMethod()]
+        [TestMethod()]
         public void RequiredTest()
         {
             Assert.AreEqual(false, testClass.Required);

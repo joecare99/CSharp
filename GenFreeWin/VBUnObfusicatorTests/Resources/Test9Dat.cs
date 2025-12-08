@@ -1097,7 +1097,7 @@
                                 case 574:
                                 case 575:
                                     num = 575;
-                                    if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+                                    if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                                     {
                                         goto case 576;
                                     }
@@ -1850,7 +1850,7 @@
                             goto IL_4044;
                         IL_4044:
                             num = 736;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
                             {
                                 goto IL_4076;
                             }
@@ -1864,7 +1864,7 @@
                             goto IL_4091;
                         IL_4091:
                             num = 739;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
                             {
                                 goto IL_40c3;
                             }
@@ -1878,7 +1878,7 @@
                             goto IL_40de;
                         IL_40de:
                             num = 742;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
                             {
                                 goto IL_4110;
                             }
@@ -1892,7 +1892,7 @@
                             goto IL_412b;
                         IL_412b:
                             num = 745;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
                             {
                                 goto IL_415d;
                             }
@@ -1906,7 +1906,7 @@
                             goto IL_4178;
                         IL_4178:
                             num = 748;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
                             {
                                 goto IL_41aa;
                             }
@@ -2804,7 +2804,7 @@
                             }
                         IL_2bee:
                             num = 529;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_2c29;
                             }
@@ -2852,7 +2852,7 @@
                             }
                         IL_2ad3:
                             num = 515;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_2b0e;
                             }
@@ -3840,7 +3840,7 @@
                             goto IL_16e5;
                         IL_16e5:
                             num = 281;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_1720;
                             }
@@ -3868,7 +3868,7 @@
                             goto IL_1638;
                         IL_1638:
                             num = 273;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_1673;
                             }
@@ -3896,7 +3896,7 @@
                             goto IL_158b;
                         IL_158b:
                             num = 265;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_15c6;
                             }
@@ -3924,7 +3924,7 @@
                             goto IL_14de;
                         IL_14de:
                             num = 257;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_1519;
                             }
@@ -3952,7 +3952,7 @@
                             goto IL_1431;
                         IL_1431:
                             num = 249;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_146c;
                             }
@@ -4015,7 +4015,7 @@
                             goto IL_18f0;
                         IL_18f0:
                             num = 301;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_192b;
                             }
@@ -4382,7 +4382,7 @@
                             goto IL_0a68;
                         IL_0a68:
                             num = 134;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_0aa3;
                             }
@@ -4438,7 +4438,7 @@
                             goto IL_0929;
                         IL_0929:
                             num = 120;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_0961;
                             }
@@ -4494,7 +4494,7 @@
                             goto IL_07f6;
                         IL_07f6:
                             num = 106;
-                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
+                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
                             {
                                 goto IL_082e;
                             }

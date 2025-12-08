@@ -1,0 +1,102 @@
+﻿<UserControl
+    x:Class="AA06_ValueConverter2.Views.ValueConverterView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:AA06_ValueConverter2.Properties"
+    xmlns:vc="clr-namespace:AA06_ValueConverter2.Views.ValueConverter"
+    xmlns:vm="clr-namespace:AA06_ValueConverter2.ViewModels"
+    xmlns:vmi="clr-namespace:AA06_ValueConverter2.ViewModels.Interfaces"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vmi:IValueConverterViewModel"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <vm:ValueConverterViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <vc:DoubleValueConverter x:Key="DoubleValueConverter"  FixedFactor="2.5"/>
+        <vc:DateTimeToStringConverter x:Key="DateValueConverter" />
+    </UserControl.Resources>
+    <Grid Background="{DynamicResource ResourceKey=AppDefaultBackground}" ColumnDefinitions="220, *">
+        <Border Padding="10" Background="{DynamicResource ResourceKey=SideBarBackground}">
+            <Grid RowDefinitions="*, Auto">
+
+                <StackPanel Spacing="10">
+                    <Grid>
+                        <Image
+                            Height="50"
+                            HorizontalAlignment="Left"
+                            Source="avares://AA06_ValueConverter2/Assets/Images/Logo_2.png" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{Binding Title}" />
+                    </Grid>
+                    <Button
+                        Name="btnHome"
+                        Classes="Menu"
+                        Command="{Binding HomeCommand}"
+                        Content="{x:Static p:Resources.btnHome}" />
+                    <Button
+                        Name="btnProcess"
+                        Classes="Menu"
+                        Command="{Binding ProcessCommand}"
+                        Content="{x:Static p:Resources.btnProcess}" />
+                    <Button
+                        Name="btnActions"
+                        Classes="Menu"
+                        Command="{Binding ActionsCommand}"
+                        Content="{x:Static p:Resources.btnActions}" />
+                    <Button
+                        Name="btnMacros"
+                        Classes="Menu"
+                        Command="{Binding MacrosCommand}"
+                        Content="{x:Static p:Resources.btnMacros}" />
+                    <Button
+                        Name="btnReports"
+                        Classes="Menu"
+                        Command="{Binding ReportsCommand}"
+                        Content="{x:Static p:Resources.btnReports}" />
+                    <Button
+                        Name="btnHistory"
+                        Classes="Menu"
+                        Command="{Binding HistoryCommand}"
+                        Content="{x:Static p:Resources.btnHistory}" />
+                </StackPanel>
+
+                <Button
+                    Name="btnConfig"
+                    Grid.Row="1"
+                    Classes="Menu"
+                    Command="{Binding ConfigCommand}"
+                    Content="{x:Static p:Resources.btnConfig}" />
+            </Grid>
+        </Border>
+        <Border Grid.Column="1" Padding="10">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="{Binding Greeting}" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="{Binding Now, ConverterParameter=D, Converter={StaticResource DateValueConverter}, Mode=OneWay}" />
+              <StackPanel Margin="20">
+              <TextBlock Text="{x:Static p:Resources.txtPromptInput}"/>
+              <TextBox Text="{Binding InputValue, UpdateSourceTrigger=PropertyChanged}"  />
+               </StackPanel>
+              <StackPanel Margin="20">
+                <TextBlock Text="{x:Static p:Resources.txtPromptOutput}"/>
+                <TextBlock Text="{Binding ResultValue, ConverterParameter='0.00 €', Converter={StaticResource DoubleValueConverter}, Mode=OneWay}" />
+              </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

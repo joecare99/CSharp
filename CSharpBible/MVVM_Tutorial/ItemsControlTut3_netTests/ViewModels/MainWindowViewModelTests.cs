@@ -105,7 +105,7 @@ namespace ItemsControlTut3.ViewModel.Tests
             Assert.AreEqual(TestToDoItem, TestToDoItem.This);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Title",ETestAction.SetTitle,"ABC",new string[] { "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title:ABC\r\n" })]
         [DataRow("Title1", ETestAction.SetTitle, "TestItem", new string[] { "" })]
         [DataRow("Title2", ETestAction.SetTitle, "TestItem2", new string[] { "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title:TestItem2\r\n" })]
@@ -121,7 +121,7 @@ namespace ItemsControlTut3.ViewModel.Tests
             Assert.AreEqual(sExp[0], DebugResult);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Title", ETestAction.SetTitle, "ABC", new string[] { "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title:ABC\r\n" })]
         [DataRow("Title1", ETestAction.SetTitle, "TestItem", new string[] { "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title:TestItem\r\n" })]
         [DataRow("Title2", ETestAction.SetTitle, "TestItem2", new string[] { "" })]
@@ -179,7 +179,7 @@ namespace ItemsControlTut3.ViewModel.Tests
                Assert.IsInstanceOfType(item, typeof(TodoItem));          
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Title-0", 0, ETestAction.SetTitle, "ABC", new string[]{ "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title\r\n"})]
         [DataRow("Title-1", 1, ETestAction.SetTitle, "ABC", new string[]{ "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title\r\n"})]
         [DataRow("Title-2", 2, ETestAction.SetTitle, "ABC", new string[]{ "OnPropChanged: o:ItemsControlTut3.ViewModel.TodoItem, p:Title\r\n"})]

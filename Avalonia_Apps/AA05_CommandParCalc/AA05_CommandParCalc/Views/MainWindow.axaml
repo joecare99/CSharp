@@ -1,0 +1,15 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AA05_CommandParCalc.ViewModels"
+        xmlns:view="using:AA05_CommandParCalc.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="600"
+        x:Class="AA05_CommandParCalc.Views.MainWindow"
+        x:DataType="vm:CommandParCalcViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AA05_CommandParCalc">
+  <Grid>
+    <view:CommandParCalcView Name="AppView" />
+  </Grid>     
+</Window>

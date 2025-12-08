@@ -1,0 +1,36 @@
+﻿<Project>
+	<ImportGroup Label="SolutionProps">
+		<Import Project="..\Solution_net.props" />
+	</ImportGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net481;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="Exists('..\sgLib.snk')">
+		<!-- Sign the assembly if the key exists -->
+		<UserSecretsId>85d7cf50-cf51-4539-ba76-0a882d37b3ec</UserSecretsId>
+		<DefineConstants>$(DefineConstants);SIGNED_BUILD</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
+		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PluginBase\PluginBase.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\..\bin\OtherPlugin\Debug\net6.0\OtherPlugin.dll" Link="..\PlugIns\OtherPlugin.dll" CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="..\..\bin\OtherPlugin\Debug\net6.0\de\OtherPlugin.resources.dll" Link="..\PlugIns\de\OtherPlugin.resources.dll" CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="..\..\bin\OtherPlugin\Debug\net6.0\en\OtherPlugin.resources.dll" Link="..\PlugIns\en\OtherPlugin.resources.dll" CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="..\..\bin\OtherPlugin\Debug\net6.0\fr\OtherPlugin.resources.dll" Link="..\PlugIns\fr\OtherPlugin.resources.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+</Project>

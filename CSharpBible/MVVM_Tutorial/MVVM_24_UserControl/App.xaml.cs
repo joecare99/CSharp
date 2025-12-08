@@ -13,12 +13,11 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_24_UserControl
+namespace MVVM_24_UserControl;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-    }
 }

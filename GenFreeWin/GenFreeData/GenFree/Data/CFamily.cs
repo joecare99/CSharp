@@ -1,11 +1,12 @@
 ﻿//using DAO;
-using System;
-using GenFree.Model;
+using BaseLib.Helper;
+using GenFree.Models;
 using GenFree.Helper;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
+using System;
 
 namespace GenFree.Data;
 
@@ -31,20 +32,20 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
         {
             dB_FamilyTable = _db_Table;
             dB_FamilyTable.AddNew();
-            dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value = _sysTime.Now;
-            dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = 0;
-            dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].Value = iFamInArb;
-            dB_FamilyTable.Fields[nameof(FamilyFields.Bem1)].Value = " ";
-            dB_FamilyTable.Fields[nameof(FamilyFields.Bem2)].Value = " ";
-            dB_FamilyTable.Fields[nameof(FamilyFields.Bem3)].Value = " ";
-            dB_FamilyTable.Fields[nameof(FamilyFields.Name)].Value = iName;
-            dB_FamilyTable.Fields[nameof(FamilyFields.Prüfen)].Value = "1";
+            dB_FamilyTable.Fields[FamilyFields.AnlDatum].Value = _sysTime.Now;
+            dB_FamilyTable.Fields[FamilyFields.EditDat].Value = 0;
+            dB_FamilyTable.Fields[FamilyFields.FamNr].Value = iFamInArb;
+            dB_FamilyTable.Fields[FamilyFields.Bem1].Value = " ";
+            dB_FamilyTable.Fields[FamilyFields.Bem2].Value = " ";
+            dB_FamilyTable.Fields[FamilyFields.Bem3].Value = " ";
+            dB_FamilyTable.Fields[FamilyFields.Name].Value = iName;
+            dB_FamilyTable.Fields[FamilyFields.Prüfen].Value = "1";
         }
         else
         {
             dB_FamilyTable.Edit();
-            dB_FamilyTable.Fields[nameof(FamilyFields.Name)].Value = iName;
-            dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = _sysTime.Now;
+            dB_FamilyTable.Fields[FamilyFields.Name].Value = iName;
+            dB_FamilyTable.Fields[FamilyFields.EditDat].Value = _sysTime.Now;
 
         }
         dB_FamilyTable.Update();
@@ -59,7 +60,7 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
             switch (eProp)
             {
                 case EFamilyProp.xAeB:
-                    _db_Table.Fields[nameof(FamilyFields.Aeb)].Value = oVal;
+                    _db_Table.Fields[FamilyFields.Aeb].Value = oVal;
                     break;
                 default:
                     break;
@@ -70,7 +71,7 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
 
     protected override int GetID(IRecordset recordset)
     {
-        return recordset.Fields[nameof(FamilyFields.FamNr)].AsInt();
+        return recordset.Fields[FamilyFields.FamNr].AsInt();
     }
 
     public override FamilyFields GetIndex1Field(FamilyIndex eIndex) => eIndex switch
@@ -81,7 +82,7 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
         _ => throw new ArgumentException(nameof(eIndex)),
     };
 
-    protected override IFamilyData GetData(IRecordset rs) => new CFamilyPersons(rs);
+    protected override IFamilyData GetData(IRecordset rs, bool xNoInit = false) => new CFamilyPersons(rs,xNoInit);
 
     public void AllSetEditDate()
     {
@@ -94,10 +95,10 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
             dB_FamilyTable.Seek("=", 1);
             while (!dB_FamilyTable.EOF)
             {
-                if (dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].AsDate() == default)
+                if (dB_FamilyTable.Fields[FamilyFields.EditDat].AsDate() == default)
                 {
                     dB_FamilyTable.Edit();
-                    dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value;
+                    dB_FamilyTable.Fields[FamilyFields.EditDat].Value = dB_FamilyTable.Fields[FamilyFields.AnlDatum].Value;
                     dB_FamilyTable.Update();
                 }
                 dB_FamilyTable.MoveNext();
@@ -110,15 +111,23 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
     {
         IRecordset dB_FamilyTable = _db_Table;
         dB_FamilyTable.AddNew();
-        dB_FamilyTable.Fields[nameof(FamilyFields.AnlDatum)].Value = _sysTime.Now.ToString("yyyyMMdd");
-        dB_FamilyTable.Fields[nameof(FamilyFields.EditDat)].Value = _sysTime.Now.ToString("yyyyMMdd");
-        dB_FamilyTable.Fields[nameof(FamilyFields.Prüfen)].Value = "1    ";
-        dB_FamilyTable.Fields[nameof(FamilyFields.Bem1)].Value = sBem1;
-        dB_FamilyTable.Fields[nameof(FamilyFields.FamNr)].Value = iFamNr;
-        dB_FamilyTable.Fields[nameof(FamilyFields.Name)].Value = iName;
-        dB_FamilyTable.Fields[nameof(FamilyFields.Aeb)].Value = iAeb;
-        dB_FamilyTable.Fields[nameof(FamilyFields.Fuid)].Value = Guid.NewGuid();
+        dB_FamilyTable.Fields[FamilyFields.AnlDatum].Value = _sysTime.Now.ToString("yyyyMMdd");
+        dB_FamilyTable.Fields[FamilyFields.EditDat].Value = _sysTime.Now.ToString("yyyyMMdd");
+        dB_FamilyTable.Fields[FamilyFields.Prüfen].Value = "1    ";
+        dB_FamilyTable.Fields[FamilyFields.Bem1].Value = sBem1;
+        dB_FamilyTable.Fields[FamilyFields.FamNr].Value = iFamNr;
+        dB_FamilyTable.Fields[FamilyFields.Name].Value = iName;
+        dB_FamilyTable.Fields[FamilyFields.Aeb].Value = iAeb;
+        dB_FamilyTable.Fields[FamilyFields.Fuid].Value = Guid.NewGuid();
         dB_FamilyTable.Update();
+    }
+
+    public bool Get_Aeb(int iFam)
+    {
+        IRecordset dB_FamilyTable = _db_Table;
+        dB_FamilyTable.Index = nameof(FamilyIndex.Fam);
+        dB_FamilyTable.Seek("=", iFam);
+        return !dB_FamilyTable.NoMatch && dB_FamilyTable.Fields[FamilyFields.Aeb].AsBool();
     }
 }
 

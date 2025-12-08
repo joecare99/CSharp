@@ -20,6 +20,7 @@ namespace WPF_MasterDetail
     /// </summary>
     public partial class App : Application
     {
+
     }
 }
 namespace WPF_MasterDetail.Models { }

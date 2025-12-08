@@ -3,10 +3,8 @@ using System;
 
 namespace GenFree.Sys
 {
-    public class CSysTime : ISysTime
+    public class CSysTime : BaseLib.Models.SysTime, ISysTime
     {
-        public DateTime Now => DateTime.Now;
-        public DateTime Default => default;
-
+        public int TodayInt => Today.Year * 10000 + Today.Month * 100 + Today.Day;
     }
 }

@@ -1,28 +1,41 @@
 ﻿<Project>
 	<Import Project="..\Transpiler.Props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net8.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0'">
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>$(OutputPath)Docs\$(MSBuildProjectName).xml</DocumentationFile>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
-		<ProjectReference Condition="!$(TargetFramework.Contains('net4'))" Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
-		<ProjectReference Condition="$(TargetFramework.Contains('net4'))" Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+  <ItemGroup>
+    <PackageReference Condition="'$(TargetFrameWork)'=='net481'" Include="IsExternalInit" Version="1.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+		<ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
+  
 	<ItemGroup>
-	  <Compile Update="Properties\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Properties\Resources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 
 </Project>

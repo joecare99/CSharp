@@ -13,7 +13,7 @@
 // ***********************************************************************
 using System.Drawing;
 
-namespace Sokoban_Base.Model
+namespace Sokoban.Model
 {
     /// <summary>
     /// Enum Direction

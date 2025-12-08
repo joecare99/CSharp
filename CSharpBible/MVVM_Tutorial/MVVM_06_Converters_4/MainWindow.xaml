@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM_06_Converters_4"
-        xmlns:view="clr-namespace:MVVM_06_Converters_4.View"
+        xmlns:view="clr-namespace:MVVM_06_Converters_4.Views"
         xmlns:mvvm="clr-namespace:MVVM_06_Converters_4.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1200">

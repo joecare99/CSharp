@@ -7,20 +7,20 @@ namespace WinAhnenCls.Model.GenBase;
 
 public class GedComBaseReader : TextReader
 {
-    public struct SGedComLine
+    public struct SGedComLine()
     {
         // Field for the level
-        public int iLevel;
+        public int iLevel =0;
         // Field for the GedCom-ID if there is any
-        public string? sID;
+        public string? sID =null;
         // Field for the GedCom-tag
-        public string sTag;
+        public string sTag="";
         // Field for data 
-        public string? sData;
+        public string? sData=null;
         // Prepared field for cross-references
-        public string? sXRef;
+        public string? sXRef = null;
         // Prepared field for rest of line
-        public string? sRest;
+        public string? sRest = null;
 
         public object?[] ToOArray()
         {

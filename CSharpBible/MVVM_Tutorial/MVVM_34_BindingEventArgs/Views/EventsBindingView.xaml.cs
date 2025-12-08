@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace MVVM_34_BindingEventArgs.Views
+namespace MVVM_34_BindingEventArgs.Views;
+
+/// <summary>
+/// Interaktionslogik für TemplateView.xaml
+/// </summary>
+public partial class EventBindingView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für TemplateView.xaml
-    /// </summary>
-    public partial class EventBindingView : Page
+    public EventBindingView()
     {
-        public EventBindingView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

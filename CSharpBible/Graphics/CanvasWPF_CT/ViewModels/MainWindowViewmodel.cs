@@ -16,18 +16,19 @@ using MVVM.ViewModel;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
-using BaseLib.Helper.MVVM;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace CanvasWPF_CT.ViewModel
 {
-	/// <summary>
-	/// Class MainWindowViewModel.
-	/// Implements the <see cref="BaseViewModel" />
-	/// </summary>
-	/// <seealso cref="BaseViewModel" />
-	public partial class MainWindowViewModel : BaseViewModelCT
+    /// <summary>
+    /// Class MainWindowViewModel.
+    /// Implements the <see cref="BaseViewModel" />
+    /// </summary>
+    /// <seealso cref="BaseViewModel" />
+    public partial class MainWindowViewModel : BaseViewModelCT
 	{
 
 		/// <summary>

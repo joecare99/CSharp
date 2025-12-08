@@ -6,9 +6,6 @@ using System.ComponentModel;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using WPF_StickyNotesDemo.Models.Interfaces;
 
 namespace WPF_StickyNotesDemo.Models;

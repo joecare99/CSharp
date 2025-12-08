@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_17_1_CSV_Laden
+namespace MVVM_17_1_CSV_Laden;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Finalizes an instance of the <see cref="MainWindow"/> class.
     /// </summary>
-    public partial class MainWindow : Window
+    ~MainWindow()
     {
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindow"/> class.
-        /// </summary>
-        ~MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

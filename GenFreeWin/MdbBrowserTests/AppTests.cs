@@ -2,6 +2,7 @@
 using System;
 using MVVM.View.Extension;
 using MdbBrowser.ViewModels.Interfaces;
+using BaseLib.Helper;
 
 namespace MdbBrowser.Tests
 {
@@ -13,7 +14,7 @@ namespace MdbBrowser.Tests
         {
            var testClass = new App();
             Assert.IsNotNull(testClass);
-            Assert.ThrowsException<InvalidOperationException>(()=>_=IoC.GetRequiredService<IDBViewViewModel>());
+            Assert.ThrowsExactly<InvalidOperationException>(()=>_=IoC.GetRequiredService<IDBViewViewModel>());
         }
     }
 }

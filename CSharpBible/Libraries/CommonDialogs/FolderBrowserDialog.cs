@@ -97,6 +97,30 @@ public class FolderBrowserDialog : Component, IFileDialog
     [DefaultValue(null)]
     [TypeConverter(typeof(StringConverter))]
     public object? Tag { get => _fbd.Tag; set => _fbd.Tag = value; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public string Filter { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public int FilterIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+#if NET5_0_OR_GREATER
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public string InitialDirectory { get => _fbd.InitialDirectory; set => _fbd.InitialDirectory = value; }
+#else
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public string InitialDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+#endif
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool RestoreDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool AddExtension { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool CheckFileExists { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    [Localizable(true)]
+    [Bindable(true)]
+    public string Title { get => _fbd.Description; set => _fbd.Description = value; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public string DefaultExt { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     /// <summary>
     /// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.

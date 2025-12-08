@@ -135,5 +135,73 @@ namespace BaseLib.Helper
         /// <returns></returns>
         public static long BitMask64(this int bit) 
             => bit < 64 && bit >= 0 ? 0x01L << bit : throw new ArgumentException("out of range");
+
+            private static readonly sbyte[] bitCounts = [
+                0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,
+                1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
+                1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
+                1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
+                2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
+                3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
+                3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
+                4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
+            ];
+
+        /// <summary>
+        /// returns the number of bits set in the bit array
+        /// </summary>
+        /// <param name="bit"></param>
+        /// <returns></returns>
+        public static int BitCount(this long bit)
+            => BitCount(unchecked((ulong)bit));
+
+        /// <summary>
+        /// returns the number of bits set in the bit array
+        /// </summary>
+        /// <param name="bit"></param>
+        /// <returns></returns>
+        public static int BitCount(this ulong bit)
+        {
+            int count = 0;
+            for (; bit != 0; bit >>= 8)
+                count += bitCounts[bit & 0xff];
+            return count;
+        }
+
+        /// <summary>
+        /// returns the number of bits set in the bit array
+        /// </summary>
+        /// <param name="_bit"></param>
+        /// <returns></returns>
+/*
+    SET @num = @num - ((@num / 2) & 0x5555555555555555)
+    SET @num = (@num & 0x3333333333333333) + ((@num / 4) & 0x3333333333333333)
+    SET @num = (@num + @num / 0x10) & 0x0F0F0F0F0F0F0F0F
+    SET @num = @num + @num / 0x100
+    SET @num = @num + @num / 0x10000
+    SET @num = @num + @num / 0x100000000
+
+    RETURN(@num & 0x3F) + @msb */
+        public static int BitCount2(this long bit)
+            =>BitCount2(unchecked((ulong) bit));
+        public static int BitCount2(this ulong bit)
+        {
+            bit = bit - ((bit >> 1) & 0x5555555555555555);
+            bit = (bit & 0x3333333333333333) + ((bit >> 2) & 0x3333333333333333);
+            bit = (bit + (bit >> 4)) & 0x0F0F0F0F0F0F0F0F;
+            bit = bit + (bit >> 8);
+            bit = bit + (bit >> 16);
+            bit = bit + (bit >> 32);
+            return (int)(bit & 0x7F);
+        }
+
     }
 }

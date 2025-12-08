@@ -8,128 +8,127 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MVVM_36_ComToolKtSavesWork.Properties {
-    using System;
+namespace MVVM_36_ComToolKtSavesWork.Properties; 
+using System;
+
+
+/// <summary>
+///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+/// </summary>
+// Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
+// -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
+// Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
+// mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+public class Resources {
     
+    private static global::System.Resources.ResourceManager resourceMan;
+    
+    private static global::System.Globalization.CultureInfo resourceCulture;
+    
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+    internal Resources() {
+    }
     
     /// <summary>
-    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
     /// </summary>
-    // Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
-    // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
-    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
-    // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
-        
-        private static global::System.Resources.ResourceManager resourceMan;
-        
-        private static global::System.Globalization.CultureInfo resourceCulture;
-        
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Resources.ResourceManager ResourceManager {
+        get {
+            if (object.ReferenceEquals(resourceMan, null)) {
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_36_ComToolKtSavesWork.Properties.Resources", typeof(Resources).Assembly);
+                resourceMan = temp;
+            }
+            return resourceMan;
         }
-        
-        /// <summary>
-        ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_36_ComToolKtSavesWork.Properties.Resources", typeof(Resources).Assembly);
-                    resourceMan = temp;
-                }
-                return resourceMan;
-            }
+    }
+    
+    /// <summary>
+    ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+    ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+    /// </summary>
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Globalization.CultureInfo Culture {
+        get {
+            return resourceCulture;
         }
-        
-        /// <summary>
-        ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
-                return resourceCulture;
-            }
-            set {
-                resourceCulture = value;
-            }
+        set {
+            resourceCulture = value;
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Login ähnelt.
-        /// </summary>
-        public static string lgn_Login {
-            get {
-                return ResourceManager.GetString("lgn_Login", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Login ähnelt.
+    /// </summary>
+    public static string lgn_Login {
+        get {
+            return ResourceManager.GetString("lgn_Login", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Password: ähnelt.
-        /// </summary>
-        public static string lgn_Password {
-            get {
-                return ResourceManager.GetString("lgn_Password", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Password: ähnelt.
+    /// </summary>
+    public static string lgn_Password {
+        get {
+            return ResourceManager.GetString("lgn_Password", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Username: ähnelt.
-        /// </summary>
-        public static string lgn_Username {
-            get {
-                return ResourceManager.GetString("lgn_Username", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Username: ähnelt.
+    /// </summary>
+    public static string lgn_Username {
+        get {
+            return ResourceManager.GetString("lgn_Username", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Comunity Toolkit saves Work-View: ähnelt.
-        /// </summary>
-        public static string pg1_Title {
-            get {
-                return ResourceManager.GetString("pg1_Title", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Comunity Toolkit saves Work-View: ähnelt.
+    /// </summary>
+    public static string pg1_Title {
+        get {
+            return ResourceManager.GetString("pg1_Title", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Login ähnelt.
-        /// </summary>
-        public static string uictrl_Login {
-            get {
-                return ResourceManager.GetString("uictrl_Login", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Login ähnelt.
+    /// </summary>
+    public static string uictrl_Login {
+        get {
+            return ResourceManager.GetString("uictrl_Login", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Not logged In ähnelt.
-        /// </summary>
-        public static string uictrl_NotLoggedIn {
-            get {
-                return ResourceManager.GetString("uictrl_NotLoggedIn", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Not logged In ähnelt.
+    /// </summary>
+    public static string uictrl_NotLoggedIn {
+        get {
+            return ResourceManager.GetString("uictrl_NotLoggedIn", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Welcome  ähnelt.
-        /// </summary>
-        public static string uictrl_Welcome {
-            get {
-                return ResourceManager.GetString("uictrl_Welcome", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Welcome  ähnelt.
+    /// </summary>
+    public static string uictrl_Welcome {
+        get {
+            return ResourceManager.GetString("uictrl_Welcome", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Comunity-Toolkit saves work ähnelt.
-        /// </summary>
-        public static string wnd_Title {
-            get {
-                return ResourceManager.GetString("wnd_Title", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Comunity-Toolkit saves work ähnelt.
+    /// </summary>
+    public static string wnd_Title {
+        get {
+            return ResourceManager.GetString("wnd_Title", resourceCulture);
         }
     }
 }

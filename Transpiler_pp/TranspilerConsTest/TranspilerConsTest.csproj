@@ -2,7 +2,7 @@
 	<Import Project="..\Transpiler.Props" />
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\TranspilerLib.IEC\TranspilerLib.IEC.csproj" />
 		<ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
 	</ItemGroup>
 

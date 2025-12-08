@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="clr-namespace:AA16_UserControl2.Views"
+ xmlns:vm="clr-namespace:AA16_UserControl2.ViewModels"
+ x:DataType="vm:UserControlViewModel"
+ x:Class="AA16_UserControl2.Views.UserControlView">
+ <StackPanel Orientation="Horizontal" Spacing="8">
+ <TextBlock Height="30" Width="200" Text="{Binding Text}"/>
+ <TextBox TextWrapping="Wrap" Text="{Binding Text}" Width="120"/>
+ <local:TestControl Width="200" Text2="{Binding Text}"/>
+ </StackPanel>
+</UserControl>

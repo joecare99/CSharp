@@ -35,7 +35,7 @@ namespace DemoLibraryTests.Models
 		/// <param name="aZip">a zip.</param>
 		/// <param name="aCountry">a.</param>
 		/// <param name="ExpToString">The exp to string.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow("1", "2", "3", "4", "5", "1, 2, 3 4, 5")]
 		[DataRow("123 test street","Los Angelos","WI","90210","", "123 test street, Los Angelos, WI 90210")]
         [DataRow("321 ocean drive", "Santa Monica", "CA", "90901", "USA", "321 ocean drive, Santa Monica, CA 90901, USA")]

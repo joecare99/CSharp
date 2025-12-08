@@ -1,0 +1,24 @@
+﻿<Project>
+  <Import Project="..\Avalonia_App01.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0-browser</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk.WebAssembly" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk.WebAssembly" Project="Sdk.targets" />
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <Content Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Avalonia_App_01\Avalonia_App_01.csproj" />
+  </ItemGroup>
+</Project>

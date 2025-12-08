@@ -4487,7 +4487,7 @@
                             else
                             {
                                 goto IL_07f6;
-                            }
+                            } 
                         IL_07dc:
                             num = 104;
                             StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);

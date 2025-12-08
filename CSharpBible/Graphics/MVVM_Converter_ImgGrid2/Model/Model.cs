@@ -15,6 +15,7 @@ using BaseLib.Helper;
 using System;
 using Sokoban_Base.Model;
 using System.Drawing;
+using Sokoban.Model;
 
 namespace MVVM_Converter_ImgGrid2.Model
 {

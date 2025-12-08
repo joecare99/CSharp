@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading;
 using BaseLib.Model.Tests;
 
@@ -82,6 +81,7 @@ namespace Basic_Del03_General.Views.Tests
         {
             testView.Execute(null!);
             Assert.AreEqual(@"WriteLine(Hello World !)
+WriteLine(Result: 0)
 ", DebugLog);
         }
 

@@ -1,0 +1,12 @@
+<!-- Directory.Build.props -->
+<Project>
+  <PropertyGroup>
+    <!-- Basis für alle Projekte: zwei Ebenen hoch, dann in obj.net bzw. bin -->
+    <BaseIntermediateOutputPath>$(SolutionDir)..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputPath>$(SolutionDir)..\..\bin\$(MSBuildProjectName)\</OutputPath>
+
+    <!-- Optional: Konfigurationsebene (Debug/Release) anhängen -->
+    <BaseIntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</BaseIntermediateOutputPath>
+    <OutputPath>$(OutputPath)$(Configuration)\</OutputPath>
+  </PropertyGroup>
+</Project>

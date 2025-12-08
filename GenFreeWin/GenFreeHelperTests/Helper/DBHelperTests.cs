@@ -11,7 +11,7 @@ namespace GenFree.Helper.Tests
     public class DBHelperTests
     {
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Exception", PersonFields.Sex, false)]
         [DataRow("NoException", FamilyFields.Suf, false)]
         [DataRow("Test", LinkFields.Kennz, true)]
@@ -30,7 +30,7 @@ namespace GenFree.Helper.Tests
             testWS.Received(1).GetSchema("Columns");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Exception", false)]
         [DataRow("NoException", false)]
         [DataRow("Test", true)]
@@ -49,7 +49,7 @@ namespace GenFree.Helper.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Exception", null)]
         [DataRow("NoException", null)]
         [DataRow("NoException", "Test")]
@@ -82,6 +82,7 @@ namespace GenFree.Helper.Tests
         [TestMethod()]
         public void TableDefsTest()
         {
+            //Arrange
             var testDB = Substitute.For<IDatabase>();
             var tTables = new DataTable("Tables");
             tTables.Columns.Add("TABLE_NAME", typeof(string));
@@ -93,11 +94,20 @@ namespace GenFree.Helper.Tests
             tCols.Rows.Add("Test", "Int32", 0);
             testDB.GetSchema("Tables").Returns(tTables);
             testDB.GetSchema("Columns", new[] { null, null, "Test" }).Returns(tCols);
+            var tIdx = new DataTable("Tables");
+            tIdx.Columns.Add("TABLE_NAME", typeof(string));
+            tIdx.Columns.Add("INDEX_NAME", typeof(string));
+            tIdx.Columns.Add("COLUMN_NAME", typeof(string));
+            tIdx.Columns.Add("PRIMARY_KEY", typeof(bool));
+            tIdx.Columns.Add("UNIQUE", typeof(bool));
+            tIdx.Rows.Add("Test", "TestIdx", "Test", true,false);
+            testDB.GetSchema("Indexes").Returns(tIdx);
 
+            //Act
             foreach (var td in testDB.TableDefs())
             {
-                Assert.AreEqual(2, td.Fields.Count);
-                Assert.AreEqual(0, td.Indexes.Count);
+                Assert.AreEqual(1, td.Fields.Count);
+                Assert.AreEqual(1, td.Indexes.Count);
             }
         }
     }

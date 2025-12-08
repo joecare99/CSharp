@@ -1,7 +1,6 @@
-﻿namespace MVVM_38_CTDependencyInjection.Models.Interfaces
+﻿namespace MVVM_38_CTDependencyInjection.Models.Interfaces;
+
+public interface ILog
 {
-    public interface ILog
-    {
-        void Log(string message);
-    }
+    void Log(string message);
 }

@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:vm="using:Avln_ImageView.ViewModels"
+ xmlns:io="using:System.IO"
+ x:Class="Avln_ImageView.Views.MainWindow"
+ x:DataType="vm:ImageViewerViewModel"
+ Title="Image Viewer"
+ Width="1000" Height="700">
+    <DockPanel>
+        <Border Margin="3" DockPanel.Dock="Left">
+            <StackPanel>
+                <ListBox x:Name="imageListBox"
+                ItemsSource="{Binding ImageFiles}"
+                SelectedIndex="{Binding SelectedImage}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="io:FileInfo">
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Margin="0,10,0,10">
+                    <TextBlock Text="Image Size"/>
+                    <TextBlock Text="{Binding ImageSize}"/>
+                    <TextBlock Text="Image Format"/>
+                    <TextBlock Text="{Binding ImageFormat}"/>
+                    <TextBlock Text="File Size"/>
+                    <TextBlock Text="{Binding FileSize}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <DockPanel Width="800" Height="600">
+            <Border DockPanel.Dock="Top">
+                <Image x:Name="currentImage"
+                Margin="10"
+                Source="{Binding Image}"/>
+            </Border>
+        </DockPanel>
+    </DockPanel>
+</Window>

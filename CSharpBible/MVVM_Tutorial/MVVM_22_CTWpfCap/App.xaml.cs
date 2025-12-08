@@ -11,33 +11,36 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Interfaces;
 using BaseLib.Helper;
-using MVVM.View.Extension;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using MVVM_22_CTWpfCap.Model;
 using MVVM_22_CTWpfCap.ViewModels;
+using MVVM_22_CTWpfCap.ViewModels.Factories;
+using MVVM_22_CTWpfCap.ViewModels.Interfaces;
+using System.Windows;
 
-namespace MVVM_22_CTWpfCap
+namespace MVVM_22_CTWpfCap;
+
+/// <summary>
+/// Interaktionslogik für "App.xaml"
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application
+    protected override void OnStartup(StartupEventArgs e)
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            //...
-            var services = new ServiceCollection();
-            services.AddTransient<IWpfCapModel, CWpfCapModel>();
-            services.AddTransient<IRandom, CRandom>();
-            services.AddTransient<WpfCapViewModel, WpfCapViewModel>();
+        base.OnStartup(e);
+        //...
+        var services = new ServiceCollection();
+        services.AddTransient<IWpfCapModel, CWpfCapModel>();
+        services.AddTransient<IRandom, CRandom>();
+        services.AddTransient<IWpfCapViewModel, WpfCapViewModel>();
+        services.AddTransient<IRowDataFactory, RowDataFactory>();
+        services.AddTransient<IColDataFactory, ColDataFactory>();
 
-            ServiceProvider container = services.BuildServiceProvider();
-            IoC.GetReqSrv = (type) => container.GetRequiredService(type);
-            IoC.GetSrv = (type) => container.GetService(type);
-        }
+        ServiceProvider container = services.BuildServiceProvider();
+        IoC.GetReqSrv = (type) => container.GetRequiredService(type);
+        IoC.GetSrv = (type) => container.GetService(type);
     }
 }

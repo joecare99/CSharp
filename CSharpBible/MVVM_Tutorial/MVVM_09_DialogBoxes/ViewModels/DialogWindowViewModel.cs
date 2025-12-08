@@ -14,68 +14,67 @@
 using MVVM.ViewModel;
 using System;
 
-namespace MVVM_09_DialogBoxes.ViewModels
+namespace MVVM_09_DialogBoxes.ViewModels;
+
+/// <summary>
+/// Class DialogWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class DialogWindowViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class DialogWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// The name
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class DialogWindowViewModel : BaseViewModel
+    private string _name = "";
+    /// <summary>
+    /// The email
+    /// </summary>
+    private string _email = "";
+
+    /// <summary>
+    /// Occurs when [ok].
+    /// </summary>
+    public event EventHandler? DoOK;
+    /// <summary>
+    /// Occurs when [cancel].
+    /// </summary>
+    public event EventHandler? DoCancel;
+    /// <summary>
+    /// Gets or sets the ok command.
+    /// </summary>
+    /// <value>The ok command.</value>
+    public DelegateCommand OKCommand { get; set; }
+    /// <summary>
+    /// Gets or sets the cancel command.
+    /// </summary>
+    /// <value>The cancel command.</value>
+    public DelegateCommand CancelCommand { get; set;}
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DialogWindowViewModel"/> class.
+    /// </summary>
+    public DialogWindowViewModel()
     {
-        /// <summary>
-        /// The name
-        /// </summary>
-        private string _name = "";
-        /// <summary>
-        /// The email
-        /// </summary>
-        private string _email = "";
-
-        /// <summary>
-        /// Occurs when [ok].
-        /// </summary>
-        public event EventHandler? DoOK;
-        /// <summary>
-        /// Occurs when [cancel].
-        /// </summary>
-        public event EventHandler? DoCancel;
-        /// <summary>
-        /// Gets or sets the ok command.
-        /// </summary>
-        /// <value>The ok command.</value>
-        public DelegateCommand OKCommand { get; set; }
-        /// <summary>
-        /// Gets or sets the cancel command.
-        /// </summary>
-        /// <value>The cancel command.</value>
-        public DelegateCommand CancelCommand { get; set;}
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DialogWindowViewModel"/> class.
-        /// </summary>
-        public DialogWindowViewModel()
+        this.OKCommand = new DelegateCommand((o) =>
         {
-            this.OKCommand = new DelegateCommand((o) =>
-            {
-                this.DoOK?.Invoke(this, EventArgs.Empty);
-            });
-            this.CancelCommand = new DelegateCommand((o) =>
-            {
-                Name = String.Empty;
-                Email = String.Empty;
-                this.DoCancel?.Invoke(this, EventArgs.Empty);
-            });
-        }
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name { get => _name; set => SetProperty(ref _name, value); }
-        /// <summary>
-        /// Gets or sets the email.
-        /// </summary>
-        /// <value>The email.</value>
-        public string Email { get => _email; set => SetProperty(ref _email, value); }
+            this.DoOK?.Invoke(this, EventArgs.Empty);
+        });
+        this.CancelCommand = new DelegateCommand((o) =>
+        {
+            Name = String.Empty;
+            Email = String.Empty;
+            this.DoCancel?.Invoke(this, EventArgs.Empty);
+        });
     }
+    /// <summary>
+    /// Gets or sets the name.
+    /// </summary>
+    /// <value>The name.</value>
+    public string Name { get => _name; set => SetProperty(ref _name, value); }
+    /// <summary>
+    /// Gets or sets the email.
+    /// </summary>
+    /// <value>The email.</value>
+    public string Email { get => _email; set => SetProperty(ref _email, value); }
 }

@@ -6,7 +6,9 @@ namespace DemoLibrary.Tests
     [TestClass()]
     public class DataAccessTests
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private Random _rnd;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
         [TestInitialize]
         public void Init()
@@ -16,7 +18,7 @@ namespace DemoLibrary.Tests
             DataAccess.GetNext = (mn, mx) => _rnd.Next(mn, mx);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "Prof. Steve Taylor")]
         [DataRow(1, "Dr. med. Richard Santiago")]
         [DataRow(2, "M.D. Andrew Hernandez")]
@@ -30,12 +32,12 @@ namespace DemoLibrary.Tests
         public void GetPeopleTest(int iNr, string sExp)
         {
             var peoples = DataAccess.GetPeople();
-            Assert.AreEqual(10, peoples.Count);
+            Assert.HasCount(10, peoples);
             for (int i = 0; i < peoples.Count; i++)
                 Assert.AreEqual(sExp, peoples[iNr].FullName, $"p[{iNr}].FullName");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "Prof. Steve Taylor")]
         [DataRow(1, "Dipl.Ing. Georgina Jones")]
         [DataRow(2, "M.D. Urban Miller")]

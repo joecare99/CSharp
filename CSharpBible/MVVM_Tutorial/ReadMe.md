@@ -6,12 +6,17 @@ flowchart LR;
    subgraph View
     A[View]==>B[Converter];
     A==>C[Validator];
+    click A href "https://github.com/joecare99/CSharp/wiki/MVVM_View"
+    click B href "https://github.com/joecare99/CSharp/wiki/MVVM_Converter"
+    click C href "https://github.com/joecare99/CSharp/wiki/MVVM_Validator"
    end
 subgraph ViewModel
     D[ViewModel];
+   click D href "https://github.com/joecare99/CSharp/wiki/MVVM_ViewModel"
 end
 subgraph Model
     E[Model];
+  click E href "https://github.com/joecare99/CSharp/wiki/MVVM_Model"
 end    
 A -- read/write properties --> D
 A -- read/execute commands --> D

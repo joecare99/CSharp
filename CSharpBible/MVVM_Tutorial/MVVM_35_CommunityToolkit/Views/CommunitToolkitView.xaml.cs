@@ -1,15 +1,14 @@
 using System.Windows.Controls;
 
-namespace MVVM_35_CommunityToolkit.Views
+namespace MVVM_35_CommunityToolkit.Views;
+
+/// <summary>
+/// Interaktionslogik für TemplateView.xaml
+/// </summary>
+public partial class CommunitToolkitView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für TemplateView.xaml
-    /// </summary>
-    public partial class CommunitToolkitView : Page
+    public CommunitToolkitView()
     {
-        public CommunitToolkitView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

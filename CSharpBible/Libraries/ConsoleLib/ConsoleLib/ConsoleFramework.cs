@@ -11,115 +11,122 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Interfaces;
+using BaseLib.Models;
+using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
 
-namespace ConsoleLib
+namespace ConsoleLib;
+
+/// <summary>
+/// Class ConsoleFramework.
+/// </summary>
+public static class ConsoleFramework
 {
     /// <summary>
-    /// Class ConsoleFramework.
+    /// The chars
     /// </summary>
-    public static class ConsoleFramework
+    public static readonly char[] chars = { '█', '▓', '▒', '░',' ' };
+    /// <summary>
+    /// The single boarder
+    /// </summary>
+    public static readonly char[] singleBorder = { '─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼' };
+    /// <summary>
+    /// The double boarder
+    /// </summary>
+    public static readonly char[] doubleBoarder = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
+    /// <summary>
+    /// The simple boarder
+    /// </summary>
+    public static readonly char[] simpleBoarder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
+
+    // Virtual-Key Codes (Windows)
+    public const ushort VK_ENTER = (ushort)ConsoleKey.Enter;
+    public const ushort VK_ESC = (ushort)ConsoleKey.Escape;
+    public const ushort VK_TAB = (ushort)ConsoleKey.Tab;
+    public const ushort VK_LEFT = 0x25;
+    public const ushort VK_UP = 0x26;
+    public const ushort VK_RIGHT = 0x27;
+    public const ushort VK_DOWN = 0x28;
+    public const ushort VK_HOME = 0x24;
+    public const ushort VK_END = 0x23;
+    public const ushort VK_DELETE = 0x2E;
+    public const ushort VK_PRIOR = 0x21; // PageUp
+    public const ushort VK_NEXT = 0x22;  // PageDown
+
+    /// <summary>
+    /// Gets the mouse Position.
+    /// </summary>
+    /// <value>The mouse Position.</value>
+    public static Point MousePos { get; private set; }
+
+    public static IConsole console { get; set; } = new ConsoleProxy();
+
+    public static IExtendedConsole? ExtendedConsole
     {
-        /// <summary>
-        /// The chars
-        /// </summary>
-        public static readonly char[] chars = { '█', '▓', '▒', '░',' ' };
-        /// <summary>
-        /// The single boarder
-        /// </summary>
-        public static readonly char[] singleBoarder = { '─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼' };
-        /// <summary>
-        /// The double boarder
-        /// </summary>
-        public static readonly char[] doubleBoarder = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
-        /// <summary>
-        /// The simple boarder
-        /// </summary>
-        public static readonly char[] simpleBoarder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
-
-        /// <summary>
-        /// Gets the mouse position.
-        /// </summary>
-        /// <value>The mouse position.</value>
-        public static Point MousePos { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether [mouse button left].
-        /// </summary>
-        /// <value><c>true</c> if [mouse button left]; otherwise, <c>false</c>.</value>
-        public static bool MouseButtonLeft => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left;
-        /// <summary>
-        /// Gets a value indicating whether [mouse button right].
-        /// </summary>
-        /// <value><c>true</c> if [mouse button right]; otherwise, <c>false</c>.</value>
-        public static bool MouseButtonRight => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right;
-        /// <summary>
-        /// Gets a value indicating whether [mouse button middle].
-        /// </summary>
-        /// <value><c>true</c> if [mouse button middle]; otherwise, <c>false</c>.</value>
-        public static bool MouseButtonMiddle => System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Middle;
-
-        /// <summary>
-        /// The canvas
-        /// </summary>
-        public static TextCanvas Canvas = new TextCanvas(new Rectangle(0, 0, Console.BufferWidth, Math.Min(50,Console.LargestWindowHeight)));
-        /// <summary>
-        /// Initializes static members of the <see cref="ConsoleFramework"/> class.
-        /// </summary>
-        static ConsoleFramework()
+        get => extendedConsole; set
         {
-            ExtendedConsole.MouseEvent += OnMouseEvent;
-            ExtendedConsole.WindowBufferSizeEvent += OnWindowSizeEvent;
+            if (extendedConsole != null)
+            {
+                extendedConsole.MouseEvent -= OnMouseEvent;
+                extendedConsole.WindowBufferSizeEvent -= OnWindowSizeEvent;
+            }
+            extendedConsole = value;
+            if (extendedConsole != null)
+            {
+                extendedConsole.MouseEvent += OnMouseEvent;
+                extendedConsole.WindowBufferSizeEvent += OnWindowSizeEvent;
+            }
         }
-
-        /// <summary>
-        /// Called when [window size event].
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private static void OnWindowSizeEvent(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            sender, NativeMethods.WINDOW_BUFFER_SIZE_RECORD e)
-        {
-            (Canvas._dimension.Width, Canvas._dimension.Height) = (e.dwSize.X, e.dwSize.Y);
-        }
-
-        /// <summary>
-        /// Called when [mouse event].
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private static void OnMouseEvent(
-#if NET5_0_OR_GREATER
-            object?
-#else
-            object
-#endif
-            sender, NativeMethods.MOUSE_EVENT_RECORD e)
-        {
-            MousePos = e.dwMousePosition.AsPoint;
-        }
-
-        /// <summary>
-        /// Sets the pixel.
-        /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="color">The color.</param>
-        static public void SetPixel(int x, int y, ConsoleColor color)
-        {
-            Console.SetCursorPosition(x, y);
-            Console.BackgroundColor = color;
-            Console.Write(" ");
-            Console.BackgroundColor = ConsoleColor.Black;
-        }
-
- 
     }
+    /// <summary>
+    /// The canvas
+    /// </summary>
+    public static TextCanvas Canvas => _canvas ??= new TextCanvas(console, new Rectangle(0, 0, console.WindowWidth, Math.Min(50, console.LargestWindowHeight)));
+    private static IExtendedConsole? extendedConsole;
+    private static TextCanvas? _canvas;
+
+    /// <summary>
+    /// Initializes static members of the <see cref="ConsoleFramework"/> class.
+    /// </summary>
+    static ConsoleFramework()
+    {
+    }
+
+    /// <summary>
+    /// Called when [window size event].
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
+    private static void OnWindowSizeEvent(object? sender, Point e)
+    {
+        Canvas.SetDimension(e.X, e.Y);
+    }
+
+    /// <summary>
+    /// Called when [mouse event].
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
+    private static void OnMouseEvent(    object?            sender, IMouseEvent e)
+    {
+        MousePos = e.MousePos;
+    }
+
+    /// <summary>
+    /// Sets the pixel.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="y">The y.</param>
+    /// <param name="color">The color.</param>
+    static public void SetPixel(int x, int y, ConsoleColor color)
+    {
+        console.SetCursorPosition(x, y);
+        console.BackgroundColor = color;
+        console.Write(" ");
+        console.BackgroundColor = ConsoleColor.Black;
+    }
+
 
 }

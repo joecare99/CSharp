@@ -11,7 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using Calc32.Models.Interfaces;
+using Calc32.ViewModels.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using NSubstitute.ReceivedExtensions;
+using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -32,6 +37,7 @@ namespace Calc32.Visual.Tests
         /// </summary>
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private FrmCalc32Main testFrame;
+        private ICalculatorViewModel _vm;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
         /// <summary>
@@ -40,7 +46,7 @@ namespace Calc32.Visual.Tests
         [TestInitialize]
         public void Init()
         {
-            testFrame = new FrmCalc32Main();
+            testFrame = new FrmCalc32Main(_vm=Substitute.For<ICalculatorViewModel>());
         }
 
         /// <summary>
@@ -69,7 +75,9 @@ namespace Calc32.Visual.Tests
         [TestMethod()]
         public void calculatorClassChangeTest()
         {
-            var i=( testFrame.calculatorClass1.Accumulator+=1);
+            var i=( testFrame.DataContext.Accumulator+=1);
+            _vm.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(this,
+                new PropertyChangedEventArgs(nameof(ICalculatorClass.Accumulator)));
             Assert.AreEqual(i.ToString(), testFrame.lblResult.Text);
         }
 
@@ -77,9 +85,19 @@ namespace Calc32.Visual.Tests
         public void btnNumber_ClickTest()
         {
             testFrame.Show();
-            var i = testFrame.calculatorClass1.Accumulator;
-            testFrame.btnOne.PerformClick();
-            Assert.AreNotEqual(i, testFrame.calculatorClass1.Accumulator);
+            var i = testFrame.DataContext.Accumulator;
+            testFrame.btnNum1.PerformClick();
+            _vm.NumberCommand.ReceivedWithAnyArgs(1).Execute(null);
+            testFrame.Hide();
+        }
+
+        [TestMethod()]
+        public void btnOperator_ClickTest()
+        {
+            testFrame.Show();
+            var i = testFrame.DataContext.Accumulator;
+            testFrame.btnResult.PerformClick();
+            _vm.OperationCommand.ReceivedWithAnyArgs(1).Execute(null);
             testFrame.Hide();
         }
 
@@ -87,9 +105,9 @@ namespace Calc32.Visual.Tests
         public void btnBack_ClickTest()
         {
             testFrame.Show();
-            var i = testFrame.calculatorClass1.Accumulator=123;
+            var i = testFrame.DataContext.Accumulator=123;
             testFrame.btnBack.PerformClick();
-            Assert.AreNotEqual(i, testFrame.calculatorClass1.Accumulator);
+            _vm.BackSpaceCommand.ReceivedWithAnyArgs(1).Execute(null);
             testFrame.Hide();
         }
 

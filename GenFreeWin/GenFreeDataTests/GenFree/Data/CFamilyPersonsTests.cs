@@ -4,8 +4,9 @@ using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Helper;
 using BaseLib.Helper;
-using GenFree.Interfaces;
 using static BaseLib.Helper.TestHelper;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -23,20 +24,20 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(FamilyFields.AnlDatum)].Value.Returns(new DateTime(1980, 12, 31));
-            testRS.Fields[nameof(FamilyFields.EditDat)].Value.Returns(new DateTime(2024, 01, 01));
-            testRS.Fields[nameof(FamilyFields.Prüfen)].Value.Returns("Pruefen");
-            testRS.Fields[nameof(FamilyFields.Bem1)].Value.Returns("Bem1");
-            testRS.Fields[nameof(FamilyFields.FamNr)].Value.Returns(3, 4, 5);
-            testRS.Fields[nameof(FamilyFields.Aeb)].Value.Returns(4, 5, 6);
-            testRS.Fields[nameof(FamilyFields.Name)].Value.Returns(5, 6, 7);
-            testRS.Fields[nameof(FamilyFields.Bem2)].Value.Returns("Bem2");
-            testRS.Fields[nameof(FamilyFields.Bem3)].Value.Returns("Bem3");
-            testRS.Fields[nameof(FamilyFields.Eltern)].Value.Returns(6, 7, 8);
-            testRS.Fields[nameof(FamilyFields.Fuid)].Value.Returns(_guid = new Guid("0123456789ABCDEF0123456789ABCDEF"));
-            testRS.Fields[nameof(FamilyFields.Prae)].Value.Returns(7, 8, 9);
-            testRS.Fields[nameof(FamilyFields.Suf)].Value.Returns(8, 9, 10);
-            testRS.Fields[nameof(FamilyFields.ggv)].Value.Returns(9, 10, 11);
+            (testRS.Fields[FamilyFields.AnlDatum] as IHasValue).Value.Returns(new DateTime(1980, 12, 31));
+            (testRS.Fields[FamilyFields.EditDat] as IHasValue).Value.Returns(new DateTime(2024, 01, 01));
+            (testRS.Fields[FamilyFields.Prüfen] as IHasValue).Value.Returns("Pruefen");
+            (testRS.Fields[FamilyFields.Bem1] as IHasValue).Value.Returns("Bem1");
+            (testRS.Fields[FamilyFields.FamNr] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[FamilyFields.Aeb] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[FamilyFields.Name] as IHasValue).Value.Returns(5, 6, 7);
+            (testRS.Fields[FamilyFields.Bem2] as IHasValue).Value.Returns("Bem2");
+            (testRS.Fields[FamilyFields.Bem3] as IHasValue).Value.Returns("Bem3");
+            (testRS.Fields[FamilyFields.Eltern] as IHasValue).Value.Returns(6, 7, 8);
+            (testRS.Fields[FamilyFields.Fuid] as IHasValue).Value.Returns(_guid = new Guid("0123456789ABCDEF0123456789ABCDEF"));
+            (testRS.Fields[FamilyFields.Prae] as IHasValue).Value.Returns(7, 8, 9);
+            (testRS.Fields[FamilyFields.Suf] as IHasValue).Value.Returns(8, 9, 10);
+            (testRS.Fields[FamilyFields.ggv] as IHasValue).Value.Returns(9, 10, 11);
             testClass = new(testRS);
             CFamilyPersons.SetGetText(getTextFnc);
             testRS.ClearReceivedCalls();
@@ -47,21 +48,20 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        public void SetTableTest()
-        {
-            var testTable = Substitute.For<IRecordset>();
-            CFamilyPersons.SetTableGtr(() => testRS);
-        }
-
-        [TestMethod()]
         public void CFamilyPersonsTest()
         {
-            var testTable = Substitute.For<IRecordset>();
-            CFamilyPersons.SetTableGtr(() => testRS);
+            //act
             var testClass = new CFamilyPersons();
+            //assert
             Assert.IsNotNull(testClass);
             Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
-            Assert.AreEqual(4, testClass.ID);
+
+            var testTable = Substitute.For<IRecordset>();
+            CFamilyPersons.SetTableGtr(() => testRS);
+            testClass = new CFamilyPersons();
+            Assert.IsNotNull(testClass);
+            Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
+            Assert.AreEqual(0, testClass.ID);
             Assert.AreEqual(0, testClass.Mann);
             Assert.AreEqual(0, testClass.Frau);
             Assert.AreEqual(0, testClass.Kinder.Count);
@@ -74,9 +74,9 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IFamilyData));
         }
 
-        [DataTestMethod()]
-        [DataRow(3,6)]
-        [DataRow(4, 8)]
+        [TestMethod()]
+        [DataRow((EFamilyProp)3,6)]
+        [DataRow((EFamilyProp)4, 8)]
         public void FillDataTest(EFamilyProp eProp, object oExp)
         {
             testClass.FillData(testRS);
@@ -94,7 +94,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(0, testClass.Kinder.Count);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void CheckSetAnlDatumTest(bool xAct)
@@ -105,7 +105,7 @@ namespace GenFree.Data.Tests
             testRS.Received(xAct?1:0).Update();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, 3)]
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]
@@ -122,7 +122,7 @@ namespace GenFree.Data.Tests
         [DataRow(EFamilyProp.sPruefen, "Pruefe")]
         public void SetDBValueTest(EFamilyProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+            testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
         [TestMethod()]
@@ -131,10 +131,10 @@ namespace GenFree.Data.Tests
         [DataRow((EFamilyProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EFamilyProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]
         [DataRow(EFamilyProp.sBem, new[] { "", "Bem1-", "Bem2-", "Bem3" })]
@@ -151,11 +151,11 @@ namespace GenFree.Data.Tests
         public void SetDBValueTest2(EFamilyProp eAct, object oExp)
         {
             SetPropValueTest(eAct, oExp);
-            testClass.SetDBValue(testRS, null );
+            testClass.SetDBValues(testRS, null );
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)
@@ -175,7 +175,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual("A",testClass.KiAText[0]);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("sName","Text_5")]
         [DataRow("sPrefix", "Text_7")]
         [DataRow("sSuffix", "Text_8")]
@@ -186,7 +186,7 @@ namespace GenFree.Data.Tests
 
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, TypeCode.Int32)]
         [DataRow(EFamilyProp.iName, TypeCode.Int32)]
         [DataRow(EFamilyProp.sBem, TypeCode.Object)]
@@ -210,7 +210,7 @@ namespace GenFree.Data.Tests
         [DataRow((EFamilyProp)100, TypeCode.Int32)]
         public void GetPropTypeTest1(EFamilyProp pAct, TypeCode eExp)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
         [TestMethod()]
@@ -245,7 +245,7 @@ namespace GenFree.Data.Tests
         [DataRow((EFamilyProp)100, TypeCode.Int32)]
         public void GetPropValueTest2(EFamilyProp eExp, object? oAct)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropValue(eExp));
         }
 
         [TestMethod()]
@@ -254,7 +254,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(3, testClass.GetPropValue<int>(EFamilyProp.ID));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EFamilyProp.ID, 3)]
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]
@@ -293,7 +293,7 @@ namespace GenFree.Data.Tests
         [DataRow((EFamilyProp)100, TypeCode.Int32)]
         public void SetPropValueTest1(EFamilyProp eExp, object? oAct)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eExp, oAct));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetPropValue(eExp, oAct));
         }
 
         [TestMethod()]

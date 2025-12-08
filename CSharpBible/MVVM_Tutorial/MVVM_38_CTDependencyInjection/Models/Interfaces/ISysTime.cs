@@ -13,10 +13,9 @@
 // ***********************************************************************
 using System;
 
-namespace MVVM_38_CTDependencyInjection.Models.Interfaces
+namespace MVVM_38_CTDependencyInjection.Models.Interfaces;
+
+public interface ISysTime
 {
-    public interface ISysTime
-    {
-        DateTime Now { get; }
-    }
+    DateTime Now { get; }
 }

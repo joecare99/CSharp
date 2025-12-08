@@ -88,23 +88,22 @@ namespace CanvasWPF2_CTItemTemplateSelector.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die using System;
         ///using MVVM.ViewModel;
-        ///using System.Collections.Generic;
-        ///using System.Linq;
-        ///using System.Text;
         ///using System.Threading.Tasks;
         ///using System.Collections.ObjectModel;
         ///using System.Threading;
-        ///using BaseLib.Helper.MVVM;
         ///using CommunityToolkit.Mvvm.ComponentModel;
         ///using CommunityToolkit.Mvvm.Input;
+        ///using BaseLib.Interfaces;
+        ///using BaseLib.Models.Interfaces;
+        ///using BaseLib.Models;
         ///
         ///namespace CanvasWPF2_CTItemTemplateSelector.ViewModel
         ///{
-        ///	/// &lt;summary&gt;
-        ///	/// Class MainWindowViewModel.
-        ///	/// Implements the &lt;see cref=&quot;BaseViewModel&quot; /&gt;
-        ///	/// &lt;/summary&gt;
-        ///	/// &lt;seealso cref= [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///    /// &lt;summary&gt;
+        ///    /// Class MainWindowViewModel.
+        ///    /// Implements the &lt;see cref=&quot;BaseViewModel&quot; /&gt;
+        ///    /// &lt;/summary&gt;
+        ///    /// &lt;seealso cref=&quot;Bas [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string MainWindowViewModel {
             get {

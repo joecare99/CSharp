@@ -5,6 +5,7 @@ using TestConsole;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using BaseLib.Interfaces;
 
 namespace Tetris_Base.Model.Tests
 {
@@ -14,7 +15,7 @@ namespace Tetris_Base.Model.Tests
     [TestClass()]
     public class BlockTests
     {
-        static MyConsoleBase? console = new TstConsole();
+        static IConsole? console = new TstConsole();
         const string cExpHideBlock = "ConsoleDisplay.View.Display.(5;6),000000000000000000000000000000";
         static readonly string[] cExpShowBlock = {
             "ConsoleDisplay.View.Display.(5;6),000000090000900009000090000000","ConsoleDisplay.View.Display.(5;6),000000000009999000000000000000",

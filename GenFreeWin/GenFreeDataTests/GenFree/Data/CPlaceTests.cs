@@ -3,7 +3,8 @@ using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
 using GenFree.Interfaces.Model;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -21,10 +22,10 @@ namespace GenFree.Data.Tests
             testRS = Substitute.For<IRecordset>();
             testClass = new CPlace(() => testRS);
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(PlaceFields.OrtNr)].Value.Returns(2, 6, 4, 9);
-            testRS.Fields[nameof(PlaceFields.Ort)].Value.Returns('N', 'V', 'V', 'A', 'B');
-            testRS.Fields[nameof(PlaceFields.PLZ)].Value.Returns("F", 'M', '_', 'C', 'B');
-            testRS.Fields[nameof(PlaceFields.Bem)].Value.Returns(1, 3, 5);
+            (testRS.Fields[PlaceFields.OrtNr] as IHasValue).Value.Returns(2, 6, 4, 9);
+            (testRS.Fields[PlaceFields.Ort] as IHasValue).Value.Returns('N', 'V', 'V', 'A', 'B');
+            (testRS.Fields[PlaceFields.PLZ] as IHasValue).Value.Returns("F", 'M', '_', 'C', 'B');
+            (testRS.Fields[PlaceFields.Bem] as IHasValue).Value.Returns(1, 3, 5);
             testRS.ClearReceivedCalls();
         }
 
@@ -45,7 +46,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Fields[0].Value = 0;
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 1, ETextKennz.tkName, 2, true)]
@@ -56,15 +57,17 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             testRS.EOF.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             var iCnt = 0;
-            Action<float, int>? onProgress = ((int)(EEventArt)eTKennz == 0) ? null : (f, i) => _ = i;
+            Action<float, int>? onProgress = ((int)(ETextKennz)eTKennz == 0) ? null : (f, i) => _ = i;
+           
             testClass.ForeEachTextDo(i => $"i", (i, aS) => iCnt++, onProgress);
+            
             Assert.AreEqual(xExp ? 3 : 0, iCnt);
             Assert.AreEqual(nameof(PlaceIndex.OrtNr), testRS.Index);
             testRS.Received(xExp ? 3 : 0).MoveNext();
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -78,7 +81,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).Seek("=", iActPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -90,7 +93,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("2-Name-4", 1, ETextKennz.tkName, 2, true)]
@@ -113,7 +116,7 @@ namespace GenFree.Data.Tests
             testRS.Received(1).MoveFirst();
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Null", 0, ETextKennz.tkNone, 0, false)]
         [DataRow("1-None-0", 1, ETextKennz.tkNone, 0, false)]
         [DataRow("1-Name-2", 1, ETextKennz.tkName, 2, true)]
@@ -126,7 +129,7 @@ namespace GenFree.Data.Tests
             testRS.Received().Seek("=", iActPlace);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(PlaceIndex.OrtNr,PlaceFields.OrtNr)]
         [DataRow(PlaceIndex.Orte, PlaceFields.Ort)]
         [DataRow(PlaceIndex.OT, PlaceFields.Ortsteil)]
@@ -138,13 +141,13 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(PlaceIndex.Pol, PlaceFields.OrtNr)]
         [DataRow(PlaceIndex.O, PlaceFields.OrtNr)]
         [DataRow((PlaceIndex)100, PlaceFields.OrtNr)]
         public void GetIndex1FieldTest2(PlaceIndex eAct, PlaceFields eExp)
         {
-            Assert.ThrowsException<ArgumentException>(()=>testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(()=>testClass.GetIndex1Field(eAct));
         }
     }
 }

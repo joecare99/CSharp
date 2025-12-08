@@ -6,7 +6,7 @@ namespace GenFree.Helper.Tests
     [TestClass()]
     public class FontHelperTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true, true)]
         [DataRow(false, false)]
         [DataRow(true, false)]
@@ -21,7 +21,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(12, f.Size);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(true, true)]
         [DataRow(false, false)]
         [DataRow(true, false)]
@@ -36,7 +36,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(12, f.Size);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(12, 14)]
         [DataRow(14, 12)]
         [DataRow(12, 12)]
@@ -50,7 +50,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(fExp, f.Size);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Arial", "Times New Roman")]
         [DataRow("Times New Roman", "Arial")]
         [DataRow("Arial", "Arial")]

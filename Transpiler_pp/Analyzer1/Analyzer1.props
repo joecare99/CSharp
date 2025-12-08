@@ -1,0 +1,8 @@
+<Project>
+	<Import Project="..\Transpiler.Props" />
+	<PropertyGroup>
+		<UpDir>..</UpDir>
+		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	</PropertyGroup>
+</Project>

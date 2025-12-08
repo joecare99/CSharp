@@ -11,14 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-#region Assembly PresentationFramework, Version=6.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35
-// C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\6.0.8\ref\net6.0\PresentationFramework.dll
-#endregion
-
 using System.Globalization;
 
 namespace System.Windows.Data
 {
+    #if !NET6_0_OR_GREATER
     //
     // Zusammenfassung:
     //     Provides a way to apply custom logic to a binding.
@@ -84,4 +81,5 @@ namespace System.Windows.Data
         /// <returns>System.Object.</returns>
         object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
     }
+#endif
 }

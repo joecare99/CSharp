@@ -13,32 +13,31 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_31a_CTValidation2.ViewModels
+namespace MVVM_31a_CTValidation2.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+public class MainWindowViewModel : BaseViewModel
 {
     /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
+    /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
     /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    public class MainWindowViewModel : BaseViewModel
+    public MainWindowViewModel()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        public MainWindowViewModel()
-        {
-
-        }
-
-#if !NET5_0_OR_GREATER
-        /// <summary>
-        /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
-        /// </summary>
-        ~MainWindowViewModel()
-        {
-            return;
-        }
-#endif
 
     }
+
+#if !NET5_0_OR_GREATER
+    /// <summary>
+    /// Finalizes an instance of the <see cref="MainWindowViewModel"/> class.
+    /// </summary>
+    ~MainWindowViewModel()
+    {
+        return;
+    }
+#endif
+
 }

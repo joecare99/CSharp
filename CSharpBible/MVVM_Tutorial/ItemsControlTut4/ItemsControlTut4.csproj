@@ -1,10 +1,8 @@
 ﻿<Project>
-
+  <Import Project="..\MVVM_Tutorial_net.props"/>
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <TargetFrameworks>net481;net48</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
@@ -24,15 +22,13 @@
 
   <ItemGroup>
     <Folder Include="View\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib_net.csproj" />
+    <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
   </ItemGroup>
 
 </Project>

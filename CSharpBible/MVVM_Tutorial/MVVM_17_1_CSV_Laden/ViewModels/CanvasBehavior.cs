@@ -16,52 +16,51 @@ using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 using MVVM_17_1_CSV_Laden.Views.Converter;
 
-namespace MVVM_17_1_CSV_Laden.ViewModels
+namespace MVVM_17_1_CSV_Laden.ViewModels;
+
+/// <summary>
+/// Class CanvasBehavior.
+/// Implements the <see cref="Behavior{FrameworkElement}" />
+/// </summary>
+/// <seealso cref="Behavior{FrameworkElement}" />
+public class CanvasBehavior : Behavior<FrameworkElement>
 {
     /// <summary>
-    /// Class CanvasBehavior.
-    /// Implements the <see cref="Behavior{FrameworkElement}" />
+    /// Called after the behavior is attached to an AssociatedObject.
     /// </summary>
-    /// <seealso cref="Behavior{FrameworkElement}" />
-    public class CanvasBehavior : Behavior<FrameworkElement>
+    /// <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
+    protected override void OnAttached()
     {
-        /// <summary>
-        /// Called after the behavior is attached to an AssociatedObject.
-        /// </summary>
-        /// <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
-        protected override void OnAttached()
+        var iObjParent = AssociatedObject.Parent as Page;
+        var cCoordinateConverter = iObjParent?.Resources["vcPortGrid"] as WindowPortToGridLines;
+
+        AssociatedObject.MouseWheel += (s, e) =>
         {
-            var iObjParent = AssociatedObject.Parent as Page;
-            var cCoordinateConverter = iObjParent?.Resources["vcPortGrid"] as WindowPortToGridLines;
-
-            AssociatedObject.MouseWheel += (s, e) =>
+            if (AssociatedObject.DataContext is DataPointsViewModel vm)
             {
-                if (AssociatedObject.DataContext is DataPointsViewModel vm)
+                var mousePosition = e.GetPosition(s as IInputElement);
+                System.Drawing.RectangleF ActPort = vm.VPWindow;
+                if (e.Delta > 0)
                 {
-                    var mousePosition = e.GetPosition(s as IInputElement);
-                    System.Drawing.RectangleF ActPort = vm.VPWindow;
-                    if (e.Delta > 0)
-                    {
-                        ActPort.Inflate(ActPort.Size.Width * 0.1f, ActPort.Size.Height * 0.1f);
-                        vm.VPWindow = ActPort;
-                    }
-                    else if (e.Delta < 0)
-                    {
-                        ActPort.Inflate(-ActPort.Size.Width * 0.1f, -ActPort.Size.Height * 0.1f);
-                        vm.VPWindow = ActPort;
-                    }
-
+                    ActPort.Inflate(ActPort.Size.Width * 0.1f, ActPort.Size.Height * 0.1f);
+                    vm.VPWindow = ActPort;
                 }
-            };
+                else if (e.Delta < 0)
+                {
+                    ActPort.Inflate(-ActPort.Size.Width * 0.1f, -ActPort.Size.Height * 0.1f);
+                    vm.VPWindow = ActPort;
+                }
 
-            AssociatedObject.MouseLeftButtonDown += (s, e) =>
+            }
+        };
+
+        AssociatedObject.MouseLeftButtonDown += (s, e) =>
+        {
+            if (AssociatedObject.DataContext is DataPointsViewModel vm)
             {
-                if (AssociatedObject.DataContext is DataPointsViewModel vm)
-                {
-                    var mousePosition = e.GetPosition(s as IInputElement);
-                    var RealPos = cCoordinateConverter?.Vis2RealP(mousePosition, cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
-                }
-            };
-        }
+                var mousePosition = e.GetPosition(s as IInputElement);
+                var RealPos = cCoordinateConverter?.Vis2RealP(mousePosition, cCoordinateConverter.GetAdjustedRect(vm.WindowPort));
+            }
+        };
     }
 }

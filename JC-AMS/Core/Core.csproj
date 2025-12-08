@@ -9,12 +9,6 @@
 	<PropertyGroup>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<PlatformTarget>x64</PlatformTarget>
-	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Core\Logging\CProtocol.cs" />
 	</ItemGroup>
@@ -33,17 +27,18 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-		<PackageReference Include="System.IO.Ports" Version="7.0.0" />
-		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" Version="4.3.0" />
-		<PackageReference Include="System.Management" Version="7.0.0" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.0" />
-		<PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Include="System.Data.SqlClient" />
+		<PackageReference Include="System.IO.Ports" />
+		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" />
+		<PackageReference Include="System.Management" />
+		<PackageReference Include="System.Text.RegularExpressions"  />
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Resource\" />
 	</ItemGroup>
-	<Target Condition="'$(TargetFramework)'=='net60-windows'" Name="PreBuild" BeforeTargets="PreBuildEvent">
+	<Target Condition="'$(TargetFramework)'=='net8.0-windows'" Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="svn up --accept p -q&#xD;&#xA;echo ---&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;echo ===&#xD;&#xA;set errorlevel=" />
 	</Target>
 </Project>

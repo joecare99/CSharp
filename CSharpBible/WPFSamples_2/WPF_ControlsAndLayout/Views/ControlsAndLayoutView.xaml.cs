@@ -1,9 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
-using System;
-using System.Windows.Controls;
 using System.Windows.Markup;
-using System.Windows.Media;
 using WPF_ControlsAndLayout.ViewModels;
 
 namespace WPF_ControlsAndLayout.Views

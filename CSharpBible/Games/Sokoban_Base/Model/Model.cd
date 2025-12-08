@@ -1,39 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Sokoban_Base.Model.Field" Collapsed="true">
-    <Position X="6" Y="2" Width="1.5" />
+  <Class Name="Sokoban.Model.Field" Collapsed="true">
+    <Position X="6" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABEAAAAAAABAAgAAAAQAAEABAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\Field.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Parent" />
-      <Property Name="Item" />
       <Property Name="fieldDef" />
     </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Sokoban_Base.Model.Wall" Collapsed="true">
-    <Position X="7.75" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Field.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Sokoban_Base.Model.Floor" Collapsed="true">
-    <Position X="4.25" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Field.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Sokoban_Base.Model.Destination" Collapsed="true">
-    <Position X="4.25" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Field.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Sokoban_Base.Model.PlayObject" Collapsed="true">
+  <Class Name="Sokoban.Model.PlayObject" Collapsed="true">
     <Position X="12.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAACAAAAAAAAAgAAAAAAAAAAEAAAAAAAAAAAAAAgA=</HashCode>
@@ -42,36 +20,38 @@
     <ShowAsAssociation>
       <Property Name="field" />
     </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Sokoban_Base.Model.Stone" Collapsed="true">
+  <Class Name="Sokoban.Model.Stone" Collapsed="true">
     <Position X="10.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Model\Stone.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Sokoban_Base.Model.Player" Collapsed="true">
+  <Class Name="Sokoban.Model.Player" Collapsed="true">
     <Position X="14.25" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQACAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAgA=</HashCode>
+      <HashCode>AAAQACAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Model\Player.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Sokoban_Base.Model.Playfield">
+  <Class Name="Sokoban.Model.Playfield" Collapsed="true">
     <Position X="1.25" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AACAAAAACAABkAgACACAAAAQAAAAAAABEAAAgABAAAA=</HashCode>
+      <HashCode>AACAAAAACAABEAgACQCAAAAQAAAAAAABEgAAgABAAAA=</HashCode>
       <FileName>Model\Playfield.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="player" />
+      <Property Name="player" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Field Name="Stones" />
-      <Field Name="_fields" />
+      <Property Name="Stones" />
     </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Sokoban_Base.Model.Offsets" Collapsed="true">
+  <Class Name="Sokoban.Model.Offsets" Collapsed="true">
     <Position X="12.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
@@ -81,18 +61,60 @@
   <Class Name="Sokoban_Base.Model.LabDefs" Collapsed="true">
     <Position X="1.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAIBAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQBAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Model\LabDefs.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="Sokoban_Base.Model.FieldDef" Collapsed="true">
-    <Position X="6" Y="0.5" Width="1.5" />
+  <Class Name="Sokoban.Model.Floor" Collapsed="true">
+    <Position X="4.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Floor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sokoban.Model.Destination" Collapsed="true">
+    <Position X="4.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Destination.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sokoban.Model.Wall" Collapsed="true">
+    <Position X="7.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Wall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Sokoban.Model.Interfaces.IPlayObject" Collapsed="true">
+    <Position X="3.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAACAAAAAAAAAgAAAAAAAAAAEAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Model\Interfaces\IPlayObject.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Sokoban.Model.Interfaces.IPlayer" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Interfaces\IPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Sokoban.Model.Interfaces.IField" Collapsed="true">
+    <Position X="15.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAgAAAAQAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Interfaces\IField.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Sokoban.Model.FieldDef" Collapsed="true">
+    <Position X="6" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAAAAAAgAAAIAAAAAAAAAAAQEkAAAAQAAAAA=</HashCode>
       <FileName>Model\FieldDef.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="Sokoban_Base.Model.Direction" Collapsed="true">
+  <Enum Name="Sokoban.Model.Direction" Collapsed="true">
     <Position X="10.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAABAAQ=</HashCode>

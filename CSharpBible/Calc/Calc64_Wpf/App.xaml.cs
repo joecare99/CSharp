@@ -1,10 +1,9 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Calc64Base;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using System;
+using Calc64Base.Models.Interfaces;
+using Calc64Base.Models;
 
 
 namespace Calc64_Wpf

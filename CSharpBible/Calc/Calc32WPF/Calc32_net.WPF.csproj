@@ -1,0 +1,61 @@
+﻿<Project>
+	<Import Project="..\Calc_net.props"/>
+	<PropertyGroup>
+      <OutputType>WinExe</OutputType>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+        <UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+      <Nullable>enable</Nullable>
+      <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="obj\**" />
+	  <Compile Remove="Properties\AssemblyInfo.cs" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="obj\**" />
+	  <None Remove="*.bak" />
+	</ItemGroup>
+	<ItemGroup>
+    <Compile Include="..\Calc32\Models\CalculatorClass.cs" Link="Models\CalculatorClass.cs" />
+    <Compile Include="..\Calc32\Models\Interfaces\ICalculatorClass.cs" Link="Models\Interfaces\ICalculatorClass.cs" />
+    <Compile Include="..\Calc32\ViewModels\CalculatorViewModel.cs" Link="ViewModels\CalculatorViewModel.cs" />
+    <Compile Include="..\Calc32\ViewModels\Interfaces\ICalculatorViewModel.cs" Link="ViewModels\Interfaces\ICalculatorViewModel.cs" />
+  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+
+</Project>

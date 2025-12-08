@@ -7,17 +7,21 @@ using Snake_Base.ViewModels;
 using BaseLib.Interfaces;
 using BaseLib.Helper;
 using Snake_Console.View;
-using System;
 using System.Threading;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
+using Game.Model.Interfaces;
+using Game.Model;
 
 namespace Snake_Console
 {
     public static class Program
     {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private static ISnakeGame _game;
-		private static UserAction action;
-		private static int iDelay;
         private static IVisual _visual;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+		private static int iDelay;
 
         private static void OnStartUp()
         {
@@ -25,9 +29,11 @@ namespace Snake_Console
                 .AddTransient<ISnakeViewModel, SnakeViewModel>()
                 .AddTransient<IRandom, CRandom>()
                 .AddSingleton<ISnakeGame, SnakeGame>()
+                .AddSingleton<IPlayfield2D<ISnakeGameObject>, Playfield2D<ISnakeGameObject>>()
                 .AddSingleton<IVisual, Visual>()
-                .AddSingleton<ITileDisplay<SnakeTiles>, TileDisplay<SnakeTiles>>()
-                .AddSingleton<IConsole, MyConsole>();
+                .AddTransient<ITileDisplay<SnakeTiles>, TileDisplay<SnakeTiles>>()
+                .AddTransient<ITileDef,TileDef>()
+                .AddSingleton<IConsole, ConsoleProxy>();
             var sp = sc.BuildServiceProvider();
 
             IoC.Configure(sp);

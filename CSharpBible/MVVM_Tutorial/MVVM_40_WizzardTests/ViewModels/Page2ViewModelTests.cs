@@ -18,11 +18,11 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
 using BaseLib.Helper;
 using static BaseLib.Helper.TestHelper;
 using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Properties;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 /// <summary>
 /// The Tests namespace.
@@ -83,7 +83,7 @@ public class Page2ViewModelTests:BaseTestViewModel<Page2ViewModel>
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 1, 2, 3 })]
     public void SubOptionsTest(int[] aiAct)
     {
@@ -98,11 +98,11 @@ public class Page2ViewModelTests:BaseTestViewModel<Page2ViewModel>
     {
         testModel.SubSelection = new ListEntry(iAct, "Test");
         testModel.ClearCommand.Execute(null);
-        Assert.AreEqual(null, testModel.SubSelection);
+        Assert.IsNull(testModel.SubSelection);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(nameof(IWizzardModel.AdditOptions), new[] { "" })]
     [DataRow(nameof(IWizzardModel.Now), new[] { "" })]
     [DataRow(nameof(IWizzardModel.SubSelection), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page2ViewModel,SubSelection)=\r\n" })]

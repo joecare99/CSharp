@@ -2,16 +2,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace MVVM_16_UserControl1.Views
+namespace MVVM_16_UserControl1.Views;
+
+/// <summary>
+/// Interaktionslogik für CurrencyView.xaml
+/// </summary>
+public partial class DoubleButtonUC : UserControl
 {
-    /// <summary>
-    /// Interaktionslogik für CurrencyView.xaml
-    /// </summary>
-    public partial class DoubleButtonUC : UserControl
+    public DoubleButtonUC()
     {
-        public DoubleButtonUC()
-        {
-            InitializeComponent();
+        InitializeComponent();
 			visData1 = Visibility.Visible;
 			visData2 = Visibility.Visible;
 		}
@@ -33,4 +33,3 @@ namespace MVVM_16_UserControl1.Views
 		public string Image1 { get; set; }
 		public string Image2 { get; set; }
 	}
-}

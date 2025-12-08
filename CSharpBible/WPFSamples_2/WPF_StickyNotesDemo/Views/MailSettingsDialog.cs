@@ -32,7 +32,7 @@ public class MailSettingsDialog : Window
 
         var b = new Button
         {
-            Background = Window.ChangeBackgroundColor(Colors.SkyBlue),
+            Background = new SolidColorBrush(Colors.SkyBlue),
             Height = 245
         };
 

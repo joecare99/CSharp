@@ -1,6 +1,5 @@
-﻿namespace TranspilerLib.Models.Interpreter
+﻿namespace TranspilerLib.Models.Interpreter;
+
+public class InterpreterBase
 {
-    public class InterpreterBase
-    {
-    }
 }

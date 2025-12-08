@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading;
 using BaseLib.Model.Tests;
 using static BaseLib.Helper.TestHelper;

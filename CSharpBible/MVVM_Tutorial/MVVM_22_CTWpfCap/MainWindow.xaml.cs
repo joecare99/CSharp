@@ -13,19 +13,18 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_22_CTWpfCap
+namespace MVVM_22_CTWpfCap;
+
+/// <summary>
+/// Interaktionslogik für MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// </summary>
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

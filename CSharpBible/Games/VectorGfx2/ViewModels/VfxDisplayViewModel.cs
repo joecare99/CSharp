@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
-using System.Timers;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace VectorGfx2.ViewModels;
 
@@ -21,8 +17,6 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
 
     [ObservableProperty]
     private string _dataText;
-
-    private Timer timer;
 
     private double dTime;
 
@@ -51,9 +45,10 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
              Pnts=[new(-5,-10), new(5, -10), new(10, 0), new(0, 10), new(-10, 0)]},
         };
         dTime = 0;
-        timer = new Timer(40);
-        timer.Elapsed += Update;
-        timer.Start();
+        var dt = new DispatcherTimer(DispatcherPriority.Background);
+        dt.Interval = TimeSpan.FromMilliseconds(40);
+        dt.Tick += (s, e) => UpdateOnUi();
+        dt.Start();
         var rnd = new Random();
         for (int i = 0; i < 12; i++)
         {
@@ -62,7 +57,7 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
         }
     }
 
-    private void Update(object? sender, ElapsedEventArgs e)
+    private void UpdateOnUi()
     {
         dTime += 0.04;
         var _l = VisObjects.ToList();
@@ -74,16 +69,12 @@ public partial class VfxDisplayViewModel : BaseViewModelCT
         }
 
         Pnts2.Clear();
-            
         Pnts2.Add(new Point(10 + Math.Sin(dTime) * 10, 10 + Math.Cos(dTime) * 10));
-        Pnts2.Add(new Point(10 + Math.Sin(dTime+1) * 10, 10 + Math.Cos(dTime+1) * 10));
-        Pnts2.Add(new Point(10 + Math.Sin(dTime+2) * 10, 10 + Math.Cos(dTime+2) * 10));
+        Pnts2.Add(new Point(10 + Math.Sin(dTime + 1) * 10, 10 + Math.Cos(dTime + 1) * 10));
+        Pnts2.Add(new Point(10 + Math.Sin(dTime + 2) * 10, 10 + Math.Cos(dTime + 2) * 10));
 
-
-        //VisObjects = _l;
         OnPropertyChanged(nameof(VisObjects));
         OnPropertyChanged(nameof(Pnts2));
-
     }
 
     [RelayCommand]

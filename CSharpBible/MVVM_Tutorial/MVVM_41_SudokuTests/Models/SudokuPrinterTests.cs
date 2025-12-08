@@ -10,7 +10,7 @@ using System.Windows.Xps.Packaging;
 using Sudoku_Base.Models.Interfaces;
 using Sudoku_Base.Models;
 using NSubstitute;
-using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
 
 namespace MVVM_41_Sudoku.Models.Tests;
 [TestClass]
@@ -27,7 +27,7 @@ public class SudokuPrinterTests
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] {1,0,3,0,0,0,7,0,0,
                     9,4,5,0,3,0,2,3,4,
                     8,0,3,0,0,0,7,0,0,

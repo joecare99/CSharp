@@ -17,21 +17,20 @@ using BaseLib.Helper.MVVM;
 using MVVM.ViewModel.Tests;
 using MVVM_36_ComToolKtSavesWork.Models;
 
-namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests
+namespace MVVM_36_ComToolKtSavesWork.ViewModels.Tests;
+
+public class TestUserModel : ICommunityToolkit2Model, IRaisePropChangedEvents
 {
-    public class TestUserModel : ICommunityToolkit2Model, IRaisePropChangedEvents
-    {
-        private IGetResult _getResult;
+    private IGetResult _getResult;
 
-        public TestUserModel(IGetResult getResult) {
-            _getResult = getResult;
-        }
-        public DateTime Now => (DateTime)_getResult.Get(new object[] { })!;
-
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public void RaisePropertyChanged(string propertyName) 
-            => PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
+    public TestUserModel(IGetResult getResult) {
+        _getResult = getResult;
     }
+    public DateTime Now => (DateTime)_getResult.Get(new object[] { })!;
+
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public void RaisePropertyChanged(string propertyName) 
+        => PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
 }

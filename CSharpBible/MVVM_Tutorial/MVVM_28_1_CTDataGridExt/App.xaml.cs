@@ -13,29 +13,28 @@
 // ***********************************************************************
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using BaseLib.Interfaces;
 using BaseLib.Helper;
-using MVVM.View.Extension;
 using MVVM_28_1_CTDataGridExt.Services;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 
-namespace MVVM_28_1_CTDataGridExt
+namespace MVVM_28_1_CTDataGridExt;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    protected override void OnStartup(StartupEventArgs e)
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
+        base.OnStartup(e);
 
-            var sp = new ServiceCollection()
-                .AddTransient<IRandom, CRandom>()
-                .AddSingleton<IPersonService, PersonService>()
+        var sp = new ServiceCollection()
+            .AddTransient<IRandom, CRandom>()
+            .AddSingleton<IPersonService, PersonService>()
 
-             .BuildServiceProvider();
-            
-            IoC.Configure(sp);
-        }
+         .BuildServiceProvider();
+        
+        IoC.Configure(sp);
     }
 }

@@ -89,7 +89,7 @@ namespace MVVM_Converter_CTDrawGrid.Properties {
         ///   Sucht eine lokalisierte Zeichenfolge, die using CommunityToolkit.Mvvm.ComponentModel;
         ///using MVVM.ViewModel;
         ///using System.Drawing;
-        ///using Werner_Flaschbier_Base.Model;
+        ///using Werner_Flaschbier_Base.DrawGridModel;
         ///
         ///namespace MVVM_Converter_CTDrawGrid.ViewModel
         ///{

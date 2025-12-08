@@ -1,42 +1,41 @@
-﻿using GenFree.Helper;
+﻿using BaseLib.Helper;
+using GenFree.Data;
+using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
 
-namespace GenFree.Model
+namespace GenFree.Models;
+
+public class CNB_Family : CUsesRecordSet<int>, INB_Family
 {
-    public class CNB_Family : CUsesRecordSet<int>, INB_Family
+    private Func<IRecordset> _value;
+
+    public CNB_Family(Func<IRecordset> value)
     {
-        private Func<IRecordset> _value;
+        _value = value;
+    }
+    protected override string __keyIndex => nameof(FamilyIndex.Fam);
 
-        public CNB_Family(Func<IRecordset> value)
-        {
-            _value = value;
-        }
-        protected override string __keyIndex => "Fam";
+    protected override IRecordset _db_Table => _value();
 
-        protected override IRecordset _db_Table => _value();
+    public override IRecordset? Seek(int key, out bool xBreak)
+    {
+        var NB_FamilyTable = _db_Table;
+        NB_FamilyTable.Index = __keyIndex;
+        NB_FamilyTable.Seek("=", key);
+        xBreak = NB_FamilyTable.NoMatch;
+        return xBreak ? null : NB_FamilyTable;
+    }
 
-        public override IRecordset? Seek(int key, out bool xBreak)
-        {
-            var NB_FamilyTable = _db_Table;
-            NB_FamilyTable.Index = __keyIndex;
-            NB_FamilyTable.Seek("=", key);
-            xBreak = NB_FamilyTable.NoMatch;
-            return xBreak ? null : NB_FamilyTable;
-        }
+    protected override int GetID(IRecordset recordset) 
+        => recordset.Fields[FamilyFields.FamNr].AsInt();
 
-        protected override int GetID(IRecordset recordset)
-        {
-            return recordset.Fields["Fam"].AsInt();
-        }
-
-        public void Append(int famInArb, bool xAppenWitt = true)
-        {
-            var NB_FamilyTable = _db_Table;
-            NB_FamilyTable.AddNew();
-            NB_FamilyTable.Fields["Fam"].Value = famInArb;
-            NB_FamilyTable.Update();
-        }
+    public void Append(int famInArb, bool xAppenWitt = true)
+    {
+        var NB_FamilyTable = _db_Table;
+        NB_FamilyTable.AddNew();
+        NB_FamilyTable.Fields[FamilyFields.FamNr].Value = famInArb;
+        NB_FamilyTable.Update();
     }
 }

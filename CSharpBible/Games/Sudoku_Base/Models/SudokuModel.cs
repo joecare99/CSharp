@@ -25,6 +25,7 @@ using BaseLib.Helper;
 using System.Windows.Media;
 using System.Globalization;
 using System.Windows;
+using BaseLib.Models.Interfaces;
 
 /// <summary>
 /// The Models namespace.

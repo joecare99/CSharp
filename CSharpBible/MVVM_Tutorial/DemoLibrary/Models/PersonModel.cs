@@ -29,22 +29,22 @@ namespace DemoLibrary.Models
 		/// Gets or sets the title.
 		/// </summary>
 		/// <value>The title.</value>
-		public string Title { get; set; }
+		public string Title { get; set; } = "";
 		/// <summary>
 		/// Gets or sets the first names.
 		/// </summary>
 		/// <value>The first names.</value>
-		public string FirstNames { get; set; }
-		/// <summary>
-		/// Gets or sets the last name.
-		/// </summary>
-		/// <value>The last name.</value>
-		public string LastName { get; set; }
-		/// <summary>
-		/// Gets or sets the age.
-		/// </summary>
-		/// <value>The age.</value>
-		public int Age { get; set; }
+		public string FirstNames { get; set; } = "";
+        /// <summary>
+        /// Gets or sets the last name.
+        /// </summary>
+        /// <value>The last name.</value>
+        public string LastName { get; set; } = "";
+        /// <summary>
+        /// Gets or sets the age.
+        /// </summary>
+        /// <value>The age.</value>
+        public int Age { get; set; }
 		/// <summary>
 		/// Gets or sets the date of birth.
 		/// </summary>

@@ -14,7 +14,7 @@ namespace GenFree.Helper.Tests
             DateHelper.SetDate(() => new DateTime(2022, 12, 31));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Dat0:", null, 0, "")]
         [DataRow("Dat1:", null, 1, "Dat1:31.12.2022")]
         [DataRow("Dat2:", "", 2, "")]
@@ -30,7 +30,7 @@ namespace GenFree.Helper.Tests
             FormatDatumTest("Dat4:", new DateTime(2022,12,29),4, "Dat4:29.12.2022");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("19800101", "01.01.1980")]
         [DataRow("", "")]
         public void Date2DotDateStrTest(string sAct, string sExp)
@@ -38,7 +38,7 @@ namespace GenFree.Helper.Tests
             Assert.AreEqual(sExp, sAct.Date2DotDateStr(), $"{sAct}.Date2DotDateStr()");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(3, new[] { "" }, 0, new[] { "1980.01.01" })]
         [DataRow(3, null, 0, new[] { "1980.01.01", "1980.09.12", "1999.12.31" })]
         [DataRow(3, null, 1, new[] { "", "1980.01.01", "1980.09.12", "1999.12.31" })]

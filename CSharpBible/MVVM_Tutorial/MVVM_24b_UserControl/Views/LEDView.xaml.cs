@@ -2,12 +2,12 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace MVVM_24b_UserControl.Views
-{
-    /// <summary>
-    /// Interaktionslogik für LEDView.xaml
-    /// </summary>
-    public partial class LEDView : UserControl
+namespace MVVM_24b_UserControl.Views;
+
+/// <summary>
+/// Interaktionslogik für LEDView.xaml
+/// </summary>
+public partial class LEDView : UserControl
 	{
 		public static readonly DependencyProperty LEDBrushProperty =
 			DependencyProperty.Register(nameof(LEDBrush), typeof(Brush),
@@ -26,4 +26,3 @@ namespace MVVM_24b_UserControl.Views
 			set { SetValue(LEDBrushProperty, value); }
 		}
 	}
-}

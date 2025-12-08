@@ -14,11 +14,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace MVVM_38_CTDependencyInjection.Models.Interfaces
+namespace MVVM_38_CTDependencyInjection.Models.Interfaces;
+
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        Guid GetUser(string name, string password);
-        IEnumerable<string> GetUsers();
-    }
+    Guid GetUser(string name, string password);
+    IEnumerable<string> GetUsers();
 }

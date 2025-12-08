@@ -1,12 +1,17 @@
 ﻿<Project>
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFrameworks>net481;net48;net472;net462;net6.0-Windows;net7.0-Windows;net8.0-Windows</TargetFrameworks>
 	  <SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
@@ -19,6 +24,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Condition="'$(TargetFramework)'=='net462-windows'" Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 </Project>

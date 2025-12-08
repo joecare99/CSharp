@@ -35,7 +35,7 @@ public class DelegateCommandViewModelTests : BaseTestViewModel
         Assert.AreEqual("", DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "","Dev, ", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, \r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=\r\n" })]
     [DataRow("Peter", new string[] { "Peter", "Dev, Peter", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Peter\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=Peter\r\n" })]
     [DataRow("Steve\tEugene", new string[] { "Eugene", "Dev, Eugene", @"PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Dev, Steve
@@ -58,7 +58,7 @@ PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Firstname)=E
         AssertAreEqual(asExp[2], DebugLog, "DebugOut");
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "", ", Dave", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=, Dave\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=\r\n" })]
     [DataRow("Miller", new string[] { "Miller", "Miller, Dave", "PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Miller, Dave\r\nCanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand`1[System.Object])=True\r\nPropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Lastname)=Miller\r\n" })]
     [DataRow("Fry\tWebb", new string[] { "Webb", "Webb, Dave", @"PropChg(MVVM_04_DelegateCommand.ViewModels.DelegateCommandViewModel,Fullname)=Fry, Dave

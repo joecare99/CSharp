@@ -18,11 +18,11 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
 using BaseLib.Helper;
 using static BaseLib.Helper.TestHelper;
 using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Properties;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 /// <summary>
 /// The Tests namespace.
@@ -101,7 +101,7 @@ public class Page3ViewModelTests:BaseTestViewModel<Page3ViewModel>
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 1, 2, 3 })]
     public void AdditOptionsTest(int[] aiAct)
     {
@@ -118,13 +118,13 @@ public class Page3ViewModelTests:BaseTestViewModel<Page3ViewModel>
         testModel.Additional1 = new ListEntry(iAct+1, "Test1");
         testModel.Additional1 = new ListEntry(iAct+2, "Test2");
         testModel.ClearCommand.Execute(null);
-        Assert.AreEqual(null, testModel.Additional1);
-        Assert.AreEqual(null, testModel.Additional2);
-        Assert.AreEqual(null, testModel.Additional3);
+        Assert.IsNull(testModel.Additional1);
+        Assert.IsNull(testModel.Additional2);
+        Assert.IsNull(testModel.Additional3);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(nameof(IWizzardModel.Now), new[] { "" })]
     [DataRow(nameof(IWizzardModel.Additional1), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page3ViewModel,Additional1)=\r\n" })]
     [DataRow(nameof(IWizzardModel.Additional2), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page3ViewModel,Additional2)=\r\n" })]

@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace MVVM_36_ComToolKtSavesWork.Views.UserControls
+namespace MVVM_36_ComToolKtSavesWork.Views.UserControls;
+
+/// <summary>
+/// Interaktionslogik für LoginControl.xaml
+/// </summary>
+public partial class LoginControl : UserControl
 {
-    /// <summary>
-    /// Interaktionslogik für LoginControl.xaml
-    /// </summary>
-    public partial class LoginControl : UserControl
+    public LoginControl()
     {
-        public LoginControl()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

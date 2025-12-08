@@ -26,7 +26,7 @@ public class BoolToBrushConverterTests
 		Assert.IsInstanceOfType(testClass, typeof(IValueConverter));
 	}
 
-	[DataTestMethod]
+	[TestMethod]
 	[DataRow(true)]
 	[DataRow(false)]
 	[DataRow(null)]
@@ -67,6 +67,6 @@ public class BoolToBrushConverterTests
 	[TestMethod]
 	public void ConvertBackTest()
 	{
-		Assert.ThrowsException<NotImplementedException>(() => testClass.ConvertBack(null!, null!, null!, null!));
+		Assert.ThrowsExactly<NotImplementedException>(() => testClass.ConvertBack(null!, null!, null!, null!));
 	}
 }

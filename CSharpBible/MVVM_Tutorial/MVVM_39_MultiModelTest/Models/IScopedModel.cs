@@ -15,16 +15,15 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.ComponentModel;
 
-namespace MVVM_39_MultiModelTest.Models
-{
-    public interface IScopedModel : INotifyPropertyChanged,INotifyPropertyChanging
-    {
-        string Name { get; }
-        string Description { get; }
-        ISystemModel? parent { get; set; }
-        Guid Id { get; }
-        IServiceScope? Scope { get; set; }
+namespace MVVM_39_MultiModelTest.Models;
 
-        int ICommonValue { get; set; }
-    }
+public interface IScopedModel : INotifyPropertyChanged,INotifyPropertyChanging
+{
+    string Name { get; }
+    string Description { get; }
+    ISystemModel? parent { get; set; }
+    Guid Id { get; }
+    IServiceScope? Scope { get; set; }
+
+    int ICommonValue { get; set; }
 }

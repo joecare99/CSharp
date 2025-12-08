@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using ConsoleDisplay.View;
 using Basic_Del01_Action.ViewModels;
+using BaseLib.Interfaces;
 
 namespace Basic_Del01_Action.Views
 {

@@ -13,12 +13,11 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_28_1_DataGridExt
+namespace MVVM_28_1_DataGridExt;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-    }
 }

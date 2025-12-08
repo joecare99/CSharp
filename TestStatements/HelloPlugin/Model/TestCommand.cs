@@ -26,7 +26,7 @@ public class TestCommand : ICommand
         _time = _env.GetService<ISysTime>();
     }
 
-    public int Execute()
+    public int Execute(object? param = null)
     {
         _logger?.LogDebug($"{nameof(TestCommand)}.{nameof(Execute)}");
         if (_env != null)

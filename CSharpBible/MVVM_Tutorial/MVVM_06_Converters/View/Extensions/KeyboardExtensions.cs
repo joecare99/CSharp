@@ -43,7 +43,7 @@ public static class EnterKeyExtensions
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="args">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
-    private static void OnKeyDown(object sender, KeyEventArgs args)
+    private static void OnKeyDown(object? sender, KeyEventArgs args)
     {
         if (args.Key == Key.Enter)
         {

@@ -1,4 +1,5 @@
 ﻿using GenFree.Interfaces.Model;
+using BaseLib.Interfaces;
 
 namespace GenFree.Interfaces.Sys
 {

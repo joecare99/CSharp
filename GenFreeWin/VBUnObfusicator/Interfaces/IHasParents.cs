@@ -1,7 +1,6 @@
-﻿namespace VBUnObfusicator.Interfaces
+﻿namespace VBUnObfusicator.Interfaces;
+
+public interface IHasParents<T> where T : class
 {
-    public interface IHasParents<T> where T : class
-    {
-        T Parent { get; set; }
-    }
+    T? Parent { get; set; }
 }

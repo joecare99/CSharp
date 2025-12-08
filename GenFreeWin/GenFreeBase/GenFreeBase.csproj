@@ -1,9 +1,8 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6.0;net481-windows</TargetFrameworks>
+    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
-		<TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <Nullable>enable</Nullable>
     <RootNamespace>GenFree</RootNamespace>
   </PropertyGroup>
@@ -18,7 +17,18 @@
 	  <None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+	  <Compile Remove="Interfaces\Model\IHasValue.cs" />
+	  <Compile Remove="Interfaces\Sys\IHasValue.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="System.Drawing.Common" Version="10.0.0" />
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>
 
 </Project>

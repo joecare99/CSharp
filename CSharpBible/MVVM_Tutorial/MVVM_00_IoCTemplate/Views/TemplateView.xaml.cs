@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace MVVM_00_IoCTemplate.Views
+namespace MVVM_00_IoCTemplate.Views;
+
+/// <summary>
+/// Interaktionslogik für TemplateView.xaml
+/// </summary>
+public partial class TemplateView : Page
 {
-    /// <summary>
-    /// Interaktionslogik für TemplateView.xaml
-    /// </summary>
-    public partial class TemplateView : Page
+    public TemplateView()
     {
-        public TemplateView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

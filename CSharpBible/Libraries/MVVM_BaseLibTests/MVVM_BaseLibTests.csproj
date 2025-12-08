@@ -1,36 +1,34 @@
 ﻿<Project>
 	<Import Project="..\Libraries_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462;net8.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 		<IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
 		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Condition="'!$(TargetFramework.StartsWith(net4))'" Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Include="MSTest" Version="3.7.0" />
-		<PackageReference Include="coverlet.collector" Version="6.0.3">
+		<PackageReference Include="MSTest" Version="4.0.2" />
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="FluentAssertions" Version="7.0.0" />
+		<PackageReference Include="FluentAssertions" Version="8.8.0" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="..\BaseLibTests\Helper\TestHelper.cs" Link="Helper\TestHelper.cs" />
-		<Compile Include="..\BaseLibTests\Helper\TestHelperTests.cs" Link="Helper\TestHelperTests.cs" />
-		<Compile Include="..\BaseLibTests\Helper\PropertyHelperTests.cs" Link="Helper\PropertyHelperTests.cs" />
-		<Compile Include="..\BaseLibTests\Helper\StringUtilsTests.cs" Link="Helper\StringUtilsTests.cs" />
-		<Compile Include="..\BaseLibTests\Helper\TypeUtilsTests.cs" Link="Helper\TypeUtilsTests.cs" />
-		<Compile Include="..\BaseLibTests\Helper\ClassHelperTests.cs" Link="Helper\ClassHelperTests.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+    <ProjectReference Include="..\BaseLibTests\BaseLibTests.csproj" />
+    <ProjectReference Include="..\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resource.Designer.cs">

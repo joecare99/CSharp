@@ -6,7 +6,7 @@ namespace GenFree.Constants.Tests
     [TestClass()]
     public class CMonthShortTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Jan", true)]
         [DataRow("January", false)]
         [DataRow("Feb", true)]
@@ -31,7 +31,7 @@ namespace GenFree.Constants.Tests
             Assert.AreEqual(xExp, sAct.IsMonthShort());
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Jan", 1)]
         [DataRow("January", 0)]
         [DataRow("Feb", 2)]
@@ -56,16 +56,16 @@ namespace GenFree.Constants.Tests
             Assert.AreEqual(iExp, sAct.MonthShortToMonth(true));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("January", 0)]
         [DataRow("Hello", 0)]
         [DataRow("", 0)]
         public void MonthShortToMonthTest2(string sAct, int iExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => sAct.MonthShortToMonth());
+            Assert.ThrowsExactly<ArgumentException>(() => sAct.MonthShortToMonth());
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "???")]
         [DataRow(13, "???")]
         [DataRow(1, "JAN")]
@@ -86,16 +86,16 @@ namespace GenFree.Constants.Tests
             Assert.AreEqual(sExp, iAct.MonthToMonthShort(true));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "")]
         [DataRow(13, "")]
         public void MonthToMonthShortTest2(int iAct, string sExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => iAct.MonthToMonthShort());
+            Assert.ThrowsExactly<ArgumentException>(() => iAct.MonthToMonthShort());
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("???", "?", "???")]
         [DataRow("12 12 1212", " ", "12 DEC 1212")]
         [DataRow("01/11/1212", "/", "01 NOV 1212")]

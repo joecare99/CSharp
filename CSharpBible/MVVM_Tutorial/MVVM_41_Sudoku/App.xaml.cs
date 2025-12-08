@@ -11,13 +11,13 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Helper;
-using BaseLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using Sudoku_Base.Models;
 using Sudoku_Base.Models.Interfaces;
 using System.Windows;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 
 namespace MVVM_41_Sudoku

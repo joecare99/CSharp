@@ -1,9 +1,8 @@
-﻿namespace MVVM_09a_CTDialogBoxes.Views
-{
-    public interface IDialogWindow
-    {
-        object DataContext { get; }
+﻿namespace MVVM_09a_CTDialogBoxes.Views;
 
-        bool? ShowDialog();
-    }
+public interface IDialogWindow
+{
+    object DataContext { get; }
+
+    bool? ShowDialog();
 }

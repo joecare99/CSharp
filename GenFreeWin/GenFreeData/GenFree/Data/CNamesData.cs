@@ -1,15 +1,16 @@
-﻿using GenFree.Model.Data;
+﻿using GenFree.Models.Data;
 using GenFree.Helper;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
 using System.Linq;
+using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 
 public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesData
 {
-    public CNamesData(IRecordset dB_NamesTable) : base(dB_NamesTable)
+    public CNamesData(IRecordset dB_NamesTable, bool xNoInit=false) : base(dB_NamesTable,xNoInit)
     {
     }
 
@@ -22,14 +23,19 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
     public bool bRuf { get; private set; }
     public bool bSpitz { get; private set; }
 
+    public override void ReadID(IRecordset dB_Table)
+    {
+        iPersNr = dB_Table.Fields[NameFields.PersNr].AsInt();
+        eTKennz = dB_Table.Fields[NameFields.Kennz].AsEnum<ETextKennz>();
+        iLfNr = dB_Table.Fields[NameFields.LfNr].AsInt();
+    }
+
     public override void FillData(IRecordset dB_Table)
     {
-        iPersNr = dB_Table.Fields[NameFields.PersNr.AsFld()].AsInt();
-        eTKennz = dB_Table.Fields[NameFields.Kennz.AsFld()].AsEnum<ETextKennz>();
-        iTextNr = dB_Table.Fields[NameFields.Text.AsFld()].AsInt();
-        iLfNr = dB_Table.Fields[NameFields.LfNr.AsFld()].AsInt();
-        bRuf = dB_Table.Fields[NameFields.Ruf.AsFld()].AsBool();
-        bSpitz = dB_Table.Fields[NameFields.Spitz.AsFld()].AsBool();
+        ReadID(dB_Table);
+        iTextNr = dB_Table.Fields[NameFields.Text].AsInt();
+        bRuf = dB_Table.Fields[NameFields.Ruf].AsBool();
+        bSpitz = dB_Table.Fields[NameFields.Spitz].AsBool();
     }
 
     public override Type GetPropType(ENamesProp prop) => prop switch
@@ -57,29 +63,30 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
         };
     }
 
-    public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+
+    public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
     {
         asProps ??= _changedPropsList.Select(i => (Enum)i).ToArray();
         foreach (var prop in asProps)
             switch (prop.AsEnum<ENamesProp>())
             {
                 case ENamesProp.iPersNr:
-                    dB_Table.Fields[NameFields.PersNr.AsFld()].Value = iPersNr;
+                    dB_Table.Fields[NameFields.PersNr].Value = iPersNr;
                     break;
                 case ENamesProp.eTKennz:
-                    dB_Table.Fields[NameFields.Kennz.AsFld()].Value = eTKennz;
+                    dB_Table.Fields[NameFields.Kennz].Value = eTKennz;
                     break;
                 case ENamesProp.iTextNr:
-                    dB_Table.Fields[NameFields.Text.AsFld()].Value = iTextNr;
+                    dB_Table.Fields[NameFields.Text].Value = iTextNr;
                     break;
                 case ENamesProp.iLfNr:
-                    dB_Table.Fields[NameFields.LfNr.AsFld()].Value = iLfNr;
+                    dB_Table.Fields[NameFields.LfNr].Value = iLfNr;
                     break;
                 case ENamesProp.bRuf:
-                    dB_Table.Fields[NameFields.Ruf.AsFld()].Value = bRuf;
+                    dB_Table.Fields[NameFields.Ruf].Value = bRuf;
                     break;
                 case ENamesProp.bSpitz:
-                    dB_Table.Fields[NameFields.Spitz.AsFld()].Value = bSpitz;
+                    dB_Table.Fields[NameFields.Spitz].Value = bSpitz;
                     break;
                 default:
                     throw new NotImplementedException();

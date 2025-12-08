@@ -2,4 +2,5 @@
 
 public interface IGedComObjects
 {
+    void AddLine(GedComBaseReader.SGedComLine sLine);
 }

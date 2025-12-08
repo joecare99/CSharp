@@ -33,13 +33,13 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" />
 		<!--<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />-->
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
-	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib_net.csproj" />
+	  <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
+	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 	  <ProjectReference Include="..\MyComponent\Shared\MyComponent.csproj" />
 	</ItemGroup>
 

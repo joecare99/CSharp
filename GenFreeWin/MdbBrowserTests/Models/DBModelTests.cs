@@ -66,7 +66,7 @@ namespace MdbBrowser.Models.Tests
             Assert.AreEqual("", string.Join("\r\n", testModel.dbDataTypes));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", new[] { "" })]
         [DataRow("Test", new[] { "" })]
         [DataRow("Users", new[] { "(N:Id, K:Column D:(Long, )), (N:Name, K:Column D:(VarChar, 60)), (N:Surname, K:Column D:(VarChar, 60))" })]
@@ -76,7 +76,7 @@ namespace MdbBrowser.Models.Tests
             Assert.AreEqual(asExp[0], string.Join(", ", r));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", new[] { "" })]
         [DataRow("Test", new[] { "" })]
         [DataRow("Users", new[] { "" })]
@@ -86,7 +86,7 @@ namespace MdbBrowser.Models.Tests
             Assert.AreEqual(asExp[0], string.Join(", ", r));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("", new[] { "" })]
         [DataRow("Tables", new[] { "Tables" })]
         public void QuerySchemaTest(string sName, string[] asExp)
@@ -94,14 +94,14 @@ namespace MdbBrowser.Models.Tests
             var r = testModel.QuerySchema(sName);
             Assert.AreEqual(asExp[0], string.Join(", ", r));
         }
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Users", new[] { "" })]
         public void QuerySchemaTest2(string sName, string[] asExp)
         {
-            Assert.ThrowsException<ArgumentException>(() => _ = testModel.QuerySchema(sName));
+            Assert.ThrowsExactly<ArgumentException>(() => _ = testModel.QuerySchema(sName));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(2, "Short")]
         [DataRow(130, "VarChar")]
         [DataRow(131, "Decimal")]

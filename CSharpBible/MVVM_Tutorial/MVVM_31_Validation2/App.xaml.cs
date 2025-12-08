@@ -13,12 +13,11 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_31_Validation2
+namespace MVVM_31_Validation2;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-    }
 }

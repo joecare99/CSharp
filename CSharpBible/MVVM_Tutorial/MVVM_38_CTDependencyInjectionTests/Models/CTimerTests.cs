@@ -15,7 +15,7 @@ public class CTimerTests
         //t.Join(); //Wait for the thread to end
         Assert.IsNotNull(testTimer);
         Assert.IsInstanceOfType(testTimer, typeof(CTimer));
-        Assert.AreEqual(false, testTimer.Enabled);
+        Assert.IsFalse(testTimer.Enabled);
     }
 
     [TestMethod()]
@@ -31,17 +31,17 @@ public class CTimerTests
     [TestMethod()]
     public void StartTest()
     {
-        Assert.AreEqual(false, testTimer?.Enabled);
+        Assert.IsFalse(testTimer?.Enabled);
         testTimer!.Start();
-        Assert.AreEqual(true, testTimer.Enabled);
+        Assert.IsTrue(testTimer.Enabled);
     }
 
     [TestMethod()]
     public void StopTest()
     {
         testTimer?.Start();
-        Assert.AreEqual(true, testTimer?.Enabled);
+        Assert.IsTrue(testTimer?.Enabled);
         testTimer!.Stop();
-        Assert.AreEqual(false, testTimer.Enabled);
+        Assert.IsFalse(testTimer.Enabled);
     }
 }

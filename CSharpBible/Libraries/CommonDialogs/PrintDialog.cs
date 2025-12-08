@@ -1,8 +1,7 @@
 ﻿using CommonDialogs.Interfaces;
 
-namespace CommonDialogs
+namespace CommonDialogs;
+
+public class PrintDialog: System.Windows.Controls.PrintDialog, IPrintDialog
 {
-    public class PrintDialog: System.Windows.Controls.PrintDialog, IPrintDialog
-    {
-    }
 }

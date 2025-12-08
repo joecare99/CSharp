@@ -2,8 +2,10 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Interfaces;
 using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
+using BaseLib.Helper;
 
 namespace GenFree.Data.Tests;
 
@@ -20,12 +22,12 @@ public class CNamesDataTests
     {
         testRS = Substitute.For<IRecordset>();
         testRS.NoMatch.Returns(true);
-        testRS.Fields[NameFields.PersNr.AsFld()].Value.Returns(1, 2, 3);
-        testRS.Fields[NameFields.Kennz.AsFld()].Value.Returns(2, 3, 4);
-        testRS.Fields[NameFields.Text.AsFld()].Value.Returns(3, 4, 5);
-        testRS.Fields[NameFields.LfNr.AsFld()].Value.Returns(4, 5, 6);
-        testRS.Fields[NameFields.Ruf.AsFld()].Value.Returns(5, 6, 7);
-        testRS.Fields[NameFields.Spitz.AsFld()].Value.Returns(6, 7, 8);
+        (testRS.Fields[NameFields.PersNr] as IHasValue).Value.Returns(1, 2, 3);
+        (testRS.Fields[NameFields.Kennz] as IHasValue).Value.Returns(2, 3, 4);
+        (testRS.Fields[NameFields.Text] as IHasValue).Value.Returns(3, 4, 5);
+        (testRS.Fields[NameFields.LfNr] as IHasValue).Value.Returns(4, 5, 6);
+        (testRS.Fields[NameFields.Ruf] as IHasValue).Value.Returns(5, 6, 7);
+        (testRS.Fields[NameFields.Spitz] as IHasValue).Value.Returns(6, 7, 8);
         testClass = new(testRS);
         testRS.ClearReceivedCalls();
     }
@@ -38,21 +40,21 @@ public class CNamesDataTests
         Assert.IsInstanceOfType(testClass, typeof(INamesData));
     }
 
-    [DataTestMethod()]
-    [DataRow(1, (ETextKennz)3)]
-    [DataRow(2, 4)]
-    [DataRow(3, 5)]
-    [DataRow(4, true)]
-    [DataRow(5, true)]
+    [TestMethod()]
+    [DataRow((ENamesProp)1, (ETextKennz)3)]
+    [DataRow((ENamesProp)2, 4)]
+    [DataRow((ENamesProp)3, 5)]
+    [DataRow((ENamesProp)4, true)]
+    [DataRow((ENamesProp)5, true)]
     public void FillDataTest(ENamesProp eProp, object oExp)
     {
         testClass.FillData(testRS);
         Assert.AreEqual(oExp, testClass.GetPropValue(eProp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, TypeCode.Int32)]
-    [DataRow(ENamesProp.eTKennz, TypeCode.Int32)]
+    [DataRow(ENamesProp.eTKennz, TypeCode.UInt32)]
     [DataRow(ENamesProp.iTextNr, TypeCode.Int32)]
     [DataRow(ENamesProp.iLfNr, TypeCode.Int32)]
     [DataRow(ENamesProp.bRuf, TypeCode.Boolean)]
@@ -62,16 +64,16 @@ public class CNamesDataTests
         Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
     public void GetPropTypeTest2(ENamesProp pAct, TypeCode eExp)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
+        Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropType(pAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 1)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)2)]
     [DataRow(ENamesProp.iTextNr, 3)]
@@ -83,40 +85,40 @@ public class CNamesDataTests
         Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
     public void GetPropValueTest2(ENamesProp eExp, object oAct)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
+        Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropValue(eExp));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 1)]
     [DataRow(ENamesProp.iPersNr, 2)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
     [DataRow(ENamesProp.iTextNr, 4)]
     [DataRow(ENamesProp.iLfNr, 5)]
-    [DataRow(ENamesProp.bRuf, false)]
-    [DataRow(ENamesProp.bSpitz, false)]
+    [DataRow(ENamesProp.bRuf, true)]
+    [DataRow(ENamesProp.bSpitz, true)]
     public void SetPropValueTest(ENamesProp eAct, object iVal)
     {
         testClass.SetPropValue(eAct, iVal);
         Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
     public void SetPropValueTest1(ENamesProp eAct, object iVal)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
+        Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
     }
 
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 1)]
     [DataRow(ENamesProp.iPersNr, 2)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
@@ -126,20 +128,20 @@ public class CNamesDataTests
     [DataRow(ENamesProp.bSpitz, false)]
     public void SetDBValueTest(ENamesProp eAct, object _)
     {
-        testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+        testClass.SetDBValues(testRS, new[] { (Enum)eAct });
         _ = testRS.Received().Fields[eAct.ToString()];
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow((ENamesProp)(0 - 1), TypeCode.Int32)]
     [DataRow((ENamesProp)6, TypeCode.Int32)]
     [DataRow((ENamesProp)100, TypeCode.Int32)]
     public void SetDBValueTest1(ENamesProp eAct, object _)
     {
-        Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+        Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(ENamesProp.iPersNr, 2)]
     [DataRow(ENamesProp.eTKennz, (ETextKennz)3)]
     [DataRow(ENamesProp.iTextNr, 4)]
@@ -149,11 +151,11 @@ public class CNamesDataTests
     public void SetDBValueTest2(ENamesProp eAct, object oVal)
     {
         testClass.SetPropValue(eAct, oVal);
-        testClass.SetDBValue(testRS, null);
-        _ = testRS.Received().Fields[eAct.ToString()];
+        testClass.SetDBValues(testRS, null);
+        _ = testRS.Received().Fields[eAct.AsEnum<RepoFields>()];
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(false)]
     [DataRow(true)]
     public void DeleteTest(bool xAct)

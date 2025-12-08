@@ -13,12 +13,11 @@
 // ***********************************************************************
 using System.Windows;
 
-namespace MVVM_19_FilterLists
+namespace MVVM_19_FilterLists;
+
+/// <summary>
+/// Interaktionslogik für "App.xaml"
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application
-    {
-    }
 }

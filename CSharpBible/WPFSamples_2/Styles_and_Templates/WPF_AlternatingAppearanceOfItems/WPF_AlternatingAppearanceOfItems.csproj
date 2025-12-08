@@ -1,0 +1,12 @@
+﻿<Project>
+	<Import Project="..\WPF_Samples.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+		<UseWpf>true</UseWpf>
+		<Platforms>AnyCPU;x64</Platforms>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+</Project>

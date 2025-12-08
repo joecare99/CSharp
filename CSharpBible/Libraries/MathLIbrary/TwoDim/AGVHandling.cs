@@ -13,8 +13,8 @@
 // ***********************************************************************
 using System;
 
-namespace MathLibrary.TwoDim
-{
+namespace MathLibrary.TwoDim;
+
 	/// <summary>
 	/// Class AGVHandling.
 	/// </summary>
@@ -52,4 +52,3 @@ namespace MathLibrary.TwoDim
 
 
 	}
-}

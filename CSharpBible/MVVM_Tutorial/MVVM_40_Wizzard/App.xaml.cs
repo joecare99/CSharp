@@ -13,15 +13,16 @@
 // ***********************************************************************
 using Microsoft.Extensions.DependencyInjection;
 using MVVM_40_Wizzard.Models;
-using BaseLib.Interfaces;
-using BaseLib.Helper;
 using System.Windows;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using System.Globalization;
 using System.Threading;
 using System;
+using MVVM_40_Wizzard.Models.Interfaces;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace MVVM_40_Wizzard;
 

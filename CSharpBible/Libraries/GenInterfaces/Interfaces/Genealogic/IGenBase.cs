@@ -11,8 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using GenFree2Base;
+using GenInterfaces.Data;
 using System;
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// The Interfaces namespace.
@@ -23,15 +24,18 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Interface IGenBase
 /// </summary>
 public interface IGenBase
-{
+{        
     /// <summary>
-    /// Gets the u identifier.
+    /// Gets the unique identifier.
     /// </summary>
-    /// <value>The u identifier.</value>
+    /// <value>The unique identifier.</value>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonPropertyOrder(-98)]
     Guid UId { get; init; }
     /// <summary>
-    /// Gets the type of the e gen.
+    /// Gets the type of the genealogy-object.
     /// </summary>
-    /// <value>The type of the e gen.</value>
-    EGenType eGenType { get; init; }
+    /// <value>The type of the object.</value>
+    [JsonPropertyOrder(-99)]
+    EGenType eGenType { get; }
 }

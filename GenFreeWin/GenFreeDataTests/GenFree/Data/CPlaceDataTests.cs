@@ -2,7 +2,8 @@
 using System;
 using GenFree.Interfaces.DB;
 using NSubstitute;
-using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
+using BaseLib.Interfaces;
 
 namespace GenFree.Data.Tests
 {
@@ -19,23 +20,23 @@ namespace GenFree.Data.Tests
         {
             testRS = Substitute.For<IRecordset>();
             testRS.NoMatch.Returns(true);
-            testRS.Fields[nameof(PlaceFields.OrtNr)].Value.Returns(1, 2, 3);
-            testRS.Fields[nameof(PlaceFields.Ort)].Value.Returns(2, 3, 4);
-            testRS.Fields[nameof(PlaceFields.Ortsteil)].Value.Returns(3, 4, 5);
-            testRS.Fields[nameof(PlaceFields.Kreis)].Value.Returns(4, 5, 6);
-            testRS.Fields[nameof(PlaceFields.Land)].Value.Returns(5, 6, 7);
-            testRS.Fields[nameof(PlaceFields.Staat)].Value.Returns(6, 7, 8);
-            testRS.Fields[nameof(PlaceFields.Staatk)].Value.Returns("Staatk");
-            testRS.Fields[nameof(PlaceFields.PLZ)].Value.Returns("PLZ");
-            testRS.Fields[nameof(PlaceFields.Terr)].Value.Returns("Terr");
-            testRS.Fields[nameof(PlaceFields.Loc)].Value.Returns("Loc");
-            testRS.Fields[nameof(PlaceFields.L)].Value.Returns("Lat");
-            testRS.Fields[nameof(PlaceFields.B)].Value.Returns("Long");
-            testRS.Fields[nameof(PlaceFields.Bem)].Value.Returns("Bem");
-            testRS.Fields[nameof(PlaceFields.Zusatz)].Value.Returns("Zusatz");
-            testRS.Fields[nameof(PlaceFields.GOV)].Value.Returns("GOV");
-            testRS.Fields[nameof(PlaceFields.PolName)].Value.Returns("PolName");
-            testRS.Fields[nameof(PlaceFields.g)].Value.Returns("g");
+            (testRS.Fields[PlaceFields.OrtNr] as IHasValue).Value.Returns(1, 2, 3);
+            (testRS.Fields[PlaceFields.Ort] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[PlaceFields.Ortsteil] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[PlaceFields.Kreis] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[PlaceFields.Land] as IHasValue).Value.Returns(5, 6, 7);
+            (testRS.Fields[PlaceFields.Staat] as IHasValue).Value.Returns(6, 7, 8);
+            (testRS.Fields[PlaceFields.Staatk] as IHasValue).Value.Returns("Staatk");
+            (testRS.Fields[PlaceFields.PLZ] as IHasValue).Value.Returns("PLZ");
+            (testRS.Fields[PlaceFields.Terr] as IHasValue).Value.Returns("Terr");
+            (testRS.Fields[PlaceFields.Loc] as IHasValue).Value.Returns("Loc");
+            (testRS.Fields[PlaceFields.L] as IHasValue).Value.Returns("Lat");
+            (testRS.Fields[PlaceFields.B] as IHasValue).Value.Returns("Long");
+            (testRS.Fields[PlaceFields.Bem] as IHasValue).Value.Returns("Bem");
+            (testRS.Fields[PlaceFields.Zusatz] as IHasValue).Value.Returns("Zusatz");
+            (testRS.Fields[PlaceFields.GOV] as IHasValue).Value.Returns("GOV");
+            (testRS.Fields[PlaceFields.PolName] as IHasValue).Value.Returns("PolName");
+            (testRS.Fields[PlaceFields.g] as IHasValue).Value.Returns("g");
             testClass = new(testRS);
             CPlaceData.SetGetText(getTextFnc);
             testRS.ClearReceivedCalls();
@@ -46,7 +47,7 @@ namespace GenFree.Data.Tests
             return $"Text_{arg}";
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Text_2", PlaceFields.Ort)]
         [DataRow("Text_3", PlaceFields.Ortsteil)]
         [DataRow("Text_4", PlaceFields.Kreis)]
@@ -72,12 +73,12 @@ namespace GenFree.Data.Tests
             Assert.IsInstanceOfType(testClass, typeof(IPlaceData));
         }
 
-        [DataTestMethod()]
-        [DataRow(1, 3)]
-        [DataRow(2, 4)]
-        [DataRow(3, 5)]
-        [DataRow(4, 6)]
-        [DataRow(5, 7)]
+        [TestMethod()]
+        [DataRow((EPlaceProp)1, 3)]
+        [DataRow((EPlaceProp)2, 4)]
+        [DataRow((EPlaceProp)3, 5)]
+        [DataRow((EPlaceProp)4, 6)]
+        [DataRow((EPlaceProp)5, 7)]
         public void FillDataTest(EPlaceProp eProp, object oExp)
         {
             testClass.FillData(testRS);
@@ -101,7 +102,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(0, testClass.ChangedProps.Count);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, TypeCode.Int32)]
         [DataRow(EPlaceProp.iOrt, TypeCode.Int32)]
         [DataRow(EPlaceProp.iOrtsteil, TypeCode.Int32)]
@@ -129,16 +130,16 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)22, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void GetPropTypeTest2(EPlaceProp pAct, TypeCode eExp)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropType(pAct));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropType(pAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 1)]
         [DataRow(EPlaceProp.iOrt, 2)]
         [DataRow(EPlaceProp.iOrtsteil, 3)]
@@ -166,13 +167,13 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(oAct, testClass.GetPropValue(eExp));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)22, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void GetPropValueTest2(EPlaceProp eExp, object oAct)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.GetPropValue(eExp));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.GetPropValue(eExp));
         }
 
         [TestMethod()]
@@ -181,7 +182,7 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(1, testClass.GetPropValue<int>(EPlaceProp.ID));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 1)]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
@@ -206,17 +207,17 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(iVal, testClass.GetPropValue(eAct));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)17, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void SetPropValueTest1(EPlaceProp eAct, object iVal)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetPropValue(eAct, iVal));
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
         [DataRow(EPlaceProp.iOrtsteil, 4)]
@@ -236,20 +237,20 @@ namespace GenFree.Data.Tests
         [DataRow(EPlaceProp.ig, 1)]
         public void SetDBValueTest(EPlaceProp eAct, object _)
         {
-            testClass.SetDBValue(testRS, new[] { (Enum)eAct });
+            testClass.SetDBValues(testRS, new[] { (Enum)eAct });
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow((EPlaceProp)(0 - 1), TypeCode.Int32)]
         [DataRow((EPlaceProp)17, TypeCode.Int32)]
         [DataRow((EPlaceProp)100, TypeCode.Int32)]
         public void SetDBValueTest1(EPlaceProp eAct, object _)
         {
-            Assert.ThrowsException<NotImplementedException>(() => testClass.SetDBValue(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(EPlaceProp.ID, 2)]
         [DataRow(EPlaceProp.iOrt, 3)]
         [DataRow(EPlaceProp.iOrtsteil, 4)]
@@ -270,11 +271,11 @@ namespace GenFree.Data.Tests
         public void SetDBValueTest2(EPlaceProp eAct, object oVal)
         {
             testClass.SetPropValue(eAct, oVal);
-            testClass.SetDBValue(testRS, null);
+            testClass.SetDBValues(testRS, null);
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(false)]
         [DataRow(true)]
         public void DeleteTest(bool xAct)

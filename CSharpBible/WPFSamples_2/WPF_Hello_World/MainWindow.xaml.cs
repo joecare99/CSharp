@@ -11,7 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using System.ComponentModel;
 using System.Windows;
+using WPF_Hello_World.ViewModels;
 
 namespace WPF_Hello_World
 {
@@ -26,6 +28,12 @@ namespace WPF_Hello_World
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            (DataContext as MainWindowViewModel).Closing();
+            base.OnClosing(e);
         }
     }
 }

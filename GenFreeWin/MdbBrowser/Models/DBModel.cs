@@ -14,7 +14,10 @@ namespace MdbBrowser.Models
     {
         OleDbConnectionStringBuilder connectionStringBuilder = new();
 
-        public DBModel(string filename) : this(new OleDbConnectionStringBuilder() { Provider = "Microsoft.ACE.OLEDB.16.0", DataSource = filename, PersistSecurityInfo = false })
+        public DBModel(string filename) : this(new OleDbConnectionStringBuilder() {
+        
+            Provider = IntPtr.Size==8? "Microsoft.ACE.OLEDB.16.0": "Microsoft.Jet.OLEDB.4.0", DataSource = filename, PersistSecurityInfo = false 
+        })
         { }
         public DBModel(DbConnectionStringBuilder connect)
         {
@@ -43,27 +46,30 @@ namespace MdbBrowser.Models
             if (oleDbConnection != null && oleDbConnection.State == ConnectionState.Open)
             {
                 dbMetaData.Clear();
-                foreach (var (schema, field, kind) in new (string, string, EKind)[] {
-                    ("MetaDataCollections","CollectionName",EKind.Schema),
-                    ("Tables","TABLE_NAME",EKind.Table),
-                    ("Views","TABLE_NAME",EKind.Query),
-                    ("Columns","COLUMN_NAME",EKind.Column),
-                    ("Indexes","INDEX_NAME",EKind.Index)
+                foreach (var (schema, field, kind) in new (string, string[], EKind)[] {
+                    ("MetaDataCollections",["CollectionName"],EKind.Schema),
+                    ("Tables",["TABLE_NAME"],EKind.Table),
+                    ("Views",["TABLE_NAME"],EKind.Query),
+                    ("Columns",["TABLE_NAME","COLUMN_NAME"],EKind.Column),
+                    ("Indexes",["TABLE_NAME","INDEX_NAME"],EKind.Index)
                 })
-                {
-                    var schemaDat = oleDbConnection.GetSchema(schema);
-                    foreach (DataRow schemaDef in schemaDat.Rows)
+                    try
                     {
-                        if (kind != EKind.Table || !schemaDef[field].ToString().StartsWith("MSys"))
+                        var schemaDat = oleDbConnection.GetSchema(schema);
+                        foreach (DataRow schemaDef in schemaDat.Rows)
+                        {
+                            if (kind != EKind.Table || !schemaDef[field.First()].ToString().StartsWith("MSys"))
 
-                            dbMetaData.Add(new DBMetaData(schemaDef[field].ToString(), kind, schemaDef, null));
+                                dbMetaData.Add(new DBMetaData(string.Join(".", field.Select(f => schemaDef[f].ToString())), kind, schemaDef, null));
+                        }
                     }
-                }
+                    catch { }
                 dbDataTypes.Clear();
                 var datatypes = oleDbConnection.GetSchema("DataTypes");
                 foreach (DataRow datatype in datatypes.Rows)
                 {
-                    dbDataTypes.Add(new DBMetaData(datatype[0].ToString(), EKind.DataTypes, datatype, new[] { datatype[5].ToString(), datatype[1].ToString(), datatype[2].ToString() }));
+                    dbDataTypes.Add(new DBMetaData(datatype[0].ToString(), EKind.DataTypes, datatype, 
+                        new[] { datatype[5].ToString(), datatype[1].ToString(), datatype[2].ToString() }));
                 }
 
             }

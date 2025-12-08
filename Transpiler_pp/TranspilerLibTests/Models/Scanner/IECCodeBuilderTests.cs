@@ -29,7 +29,7 @@ namespace TranspilerLib.Models.Scanner.Tests
               ["7" , GetTokenlist("07"), GetBuildCommands("07") ],
             ];
 
-        private static string[] GetBuildCommands(string sFNStumb)
+        private static string[]? GetBuildCommands(string sFNStumb)
         {
             var sFile = BlocksTextPath.Format(sFNStumb.PadLeft(2, '0'));
             if (File.Exists(sFile))
@@ -79,7 +79,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             data = GetTokenlist("2");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(OnIECTokenTestData))]
         public void OnTokenTest(string sFNStumb, List<TokenData> tokens, string[] codes)
         {
@@ -95,6 +95,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             }
 
             var sFile = BlocksFilePath.Format(sFNStumb.PadLeft(2, '0'))+"_";
+            Directory.CreateDirectory(Path.GetDirectoryName(sFile));
             using var ms = new FileStream(sFile, FileMode.Create);
             new DataContractJsonSerializer(
                 type: typeof(List<ICodeBlock>),

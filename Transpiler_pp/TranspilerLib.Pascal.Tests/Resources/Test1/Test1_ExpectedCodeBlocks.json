@@ -1,0 +1,26 @@
+[
+  {
+    "name": "PascalRoot",
+    "type": "mainBlock",
+    "code": "",
+    "subBlocks": [
+      {
+        "name": "Body",
+        "type": "block",
+        "code": "begin",
+        "subBlocks": [
+          {
+            "name": "Assignment",
+            "type": "assignment",
+            "code": ":=",
+            "subBlocks": [
+              { "name": "Variable", "type": "variable", "code": "X", "subBlocks": [] },
+              { "name": "Number", "type": "number", "code": "10", "subBlocks": [] }
+            ]
+          }
+        ]
+      },
+      { "name": "Operation", "type": "operation", "code": ".", "subBlocks": [] }
+    ]
+  }
+]

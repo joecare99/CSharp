@@ -27,6 +27,7 @@
 // ***********************************************************************
 
 using System.Collections.Generic;
+using VBUnObfusicator.Data;
 using static VBUnObfusicator.Interfaces.Code.ICSCode;
 
 namespace VBUnObfusicator.Interfaces.Code;
@@ -35,6 +36,10 @@ public interface ICodeBase
 {
     public delegate void TokenDelegate(TokenData data);
 
+    /// <summary>
+    /// Gets or sets the original code.
+    /// </summary>
+    /// <value>The original code.</value>
     string OriginalCode { get; set; }
 
     /// <summary>
@@ -55,5 +60,9 @@ public interface ICodeBase
     /// </summary>
     /// <param name="token">The token.</param>
     IEnumerable<TokenData> Tokenize();
+    /// <summary>
+    /// Tokenizes the specified token.
+    /// </summary>
+    /// <param name="token">The token.</param>
     void Tokenize(TokenDelegate? token);
 }

@@ -1,0 +1,30 @@
+﻿<Project>
+	<Import Project="..\ConsoleApps.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Resources\GreenDot.png" />
+	  <None Remove="Resources\Joe_Care_n_h64.jpg" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Resources\**">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

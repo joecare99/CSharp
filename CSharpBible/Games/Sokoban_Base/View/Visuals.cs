@@ -53,6 +53,8 @@ namespace Sokoban_Base.View
             { 'Q', UserAction.Quit },
             { '\u001b', UserAction.Quit } };
 
+        private static ITileDef _visualDef;
+
         /// <summary>
         /// Gets or sets the message.
         /// </summary>
@@ -72,6 +74,8 @@ namespace Sokoban_Base.View
                 KeyAction.Add(dir.ToString()?[0] ?? '\0', (UserAction)dir);
             }
             catch { }
+
+            _visualDef = new VisualsDef();
         }
 
         /// <summary>
@@ -200,13 +204,13 @@ namespace Sokoban_Base.View
             var sDirs = "";
             foreach (string d in typeof(Direction).GetEnumNames()) sDirs += $", {MarkFirst(d)}";
 
-            myConsole.WriteLine(String.Format(Resource1.InfoText,
+            myConsole.WriteLine(string.Format(Resource1.InfoText,
                 Resource1.stone,
                 sDirs.TrimStart(','),
-                $"{VisualsDef.GetTileStr(TileDef.Stone)[0]}\r\n{VisualsDef.GetTileStr(TileDef.Stone)[1]}",
-                $"{VisualsDef.GetTileStr(TileDef.Player)[0]}\r\n{VisualsDef.GetTileStr(TileDef.Player)[1]}",
-                $"{VisualsDef.GetTileStr(TileDef.Wall)[0]}\r\n{VisualsDef.GetTileStr(TileDef.Wall)[1]}",
-                $"{VisualsDef.GetTileStr(TileDef.Destination)[0]}\r\n{VisualsDef.GetTileStr(TileDef.Destination)[1]}"
+                $"{_visualDef.GetTileDef(TileDef.Stone).lines[0]}\r\n{_visualDef.GetTileDef(TileDef.Stone).lines[1]}",
+                $"{_visualDef.GetTileDef(TileDef.Player).lines[0]} \r\n {_visualDef.GetTileDef(TileDef.Player).lines[1]}",
+                $"{_visualDef.GetTileDef(TileDef.Wall).lines[0]} \r\n {_visualDef.GetTileDef(TileDef.Wall).lines[1]}",
+                $"{_visualDef.GetTileDef(TileDef.Destination).lines[0]}  \r\n  {_visualDef.GetTileDef(TileDef.Destination).lines[1]}"
                 ));
             var cp = myConsole.GetCursorPosition();
             WriteTile(new PointF(0, (cp.Top - 3) * 0.5f), TileDef.Destination);
@@ -269,14 +273,13 @@ namespace Sokoban_Base.View
 #endif
         static void WriteTile(PointF p, TileDef td)
         {
-            var colors = VisualsDef.GetTileColors(td);
-            var sTileStr=VisualsDef.GetTileStr(td);
-            myConsole.ForegroundColor = colors[0];
-			myConsole.BackgroundColor = colors[1];
-            for (int i = 0; i < sTileStr.Length; i++)
+            var tld = _visualDef.GetTileDef(td);
+            myConsole.ForegroundColor = tld.colors[0].fgr;
+			myConsole.BackgroundColor = tld.colors[0].bgr;
+            for (int i = 0; i < tld.lines.Length; i++)
             {
                myConsole.SetCursorPosition((int)(p.X * 4), (int)(p.Y * 2) + i);
-               myConsole.Write(sTileStr[i]);
+               myConsole.Write(tld.lines[i]);
             }
         }
 

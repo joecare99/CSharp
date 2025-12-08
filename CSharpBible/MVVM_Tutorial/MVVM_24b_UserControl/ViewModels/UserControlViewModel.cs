@@ -13,8 +13,8 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_24b_UserControl.ViewModels
-{
+namespace MVVM_24b_UserControl.ViewModels;
+
 	/// <summary>
 	/// Class MainWindowViewModel.
 	/// Implements the <see cref="BaseViewModel" />
@@ -50,4 +50,3 @@ namespace MVVM_24b_UserControl.ViewModels
 		}
 
 	}
-}

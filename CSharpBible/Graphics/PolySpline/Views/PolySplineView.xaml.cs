@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Windows;
 using System.Windows.Controls;
 
 namespace PolySpline.Views

@@ -13,11 +13,10 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
-using System.Windows;
 using BaseLib.Helper;
-using BaseLib.Helper.MVVM;
-using BaseLib.Interfaces;
+using System.Windows;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 
 namespace MVVM_AllExamples
 {
@@ -38,7 +37,9 @@ namespace MVVM_AllExamples
                 .AddSingleton<MVVM_22_WpfCap.Model.IWpfCapModel, MVVM_22_WpfCap.Model.CWpfCapModel>()
                 .AddSingleton<MVVM_22_CTWpfCap.Model.IWpfCapModel, MVVM_22_CTWpfCap.Model.CWpfCapModel>()
                 .AddTransient<MVVM_22_WpfCap.ViewModels.WpfCapViewModel>()
-                .AddTransient<MVVM_22_CTWpfCap.ViewModels.WpfCapViewModel>()
+                .AddTransient<MVVM_22_CTWpfCap.ViewModels.Factories.IColDataFactory,MVVM_22_CTWpfCap.ViewModels.Factories.ColDataFactory>()
+                .AddTransient<MVVM_22_CTWpfCap.ViewModels.Factories.IRowDataFactory,MVVM_22_CTWpfCap.ViewModels.Factories.RowDataFactory>()
+                .AddTransient<MVVM_22_CTWpfCap.ViewModels.Interfaces.IWpfCapViewModel,MVVM_22_CTWpfCap.ViewModels.WpfCapViewModel>()
                 .AddSingleton<MVVM_28_1_CTDataGridExt.Services.IPersonService, MVVM_28_1_CTDataGridExt.Services.PersonService>()
                 .AddSingleton<MVVM_25_RichTextEdit.Models.IRichTextEditModel, MVVM_25_RichTextEdit.Models.RichTextEditModel>()
                 .AddSingleton<MVVM_36_ComToolKtSavesWork.Models.IUserRepository, MVVM_36_ComToolKtSavesWork.Models.UserRepository>()
@@ -61,7 +62,7 @@ namespace MVVM_AllExamples
                 .AddSingleton<MVVM_39_MultiModelTest.Models.ISystemModel, MVVM_39_MultiModelTest.Models.SystemModel>()
                 .AddScoped<MVVM_39_MultiModelTest.Models.IScopedModel, MVVM_39_MultiModelTest.Models.ScopedModel>()
 
-                .AddSingleton<MVVM_40_Wizzard.Models.IWizzardModel, MVVM_40_Wizzard.Models.WizzardModel>()
+                .AddSingleton<MVVM_40_Wizzard.Models.Interfaces.IWizzardModel, MVVM_40_Wizzard.Models.WizzardModel>()
                 .AddSingleton<Sudoku_Base.Models.Interfaces.ISudokuModel, Sudoku_Base.Models.SudokuModel>()
                 ;
 

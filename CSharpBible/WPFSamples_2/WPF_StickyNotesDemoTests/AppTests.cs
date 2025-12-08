@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using WPF_StickyNotesDemo.Models;
 using System;
+using WPF_StickyNotesDemo.Models.Interfaces;
 
 namespace WPF_StickyNotesDemo.Tests
 {

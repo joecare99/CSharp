@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
 using MVVM_ImageHandling.Models;
 
 namespace MVVM_ImageHandling.Tests
@@ -52,7 +47,7 @@ namespace MVVM_ImageHandling.Tests
         public void AppTest2()
         {
             app.DoStartUp();
-            Assert.IsNotNull(IoC.GetReqSrv(typeof(ITemplateModel)));
+            Assert.IsNotNull(IoC.GetReqSrv(typeof(IImageHandlingModel)));
             Assert.IsNull(IoC.GetSrv(typeof(App)));
         }
     }

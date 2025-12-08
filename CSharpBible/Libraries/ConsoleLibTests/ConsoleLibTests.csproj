@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <!-- Adjust relative path to actual ConsoleLib project (outside ConsoleApps folder) -->
+    <ProjectReference Include="..\..\ConsoleApps\TestConsole\TestConsole.csproj" />
+    <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestAdapter" Version="3.10.4" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.10.4" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+  </ItemGroup>
+</Project>

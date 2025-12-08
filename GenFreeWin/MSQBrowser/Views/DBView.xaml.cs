@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using CommonDialogs.Interfaces;
 using MVVM.View.Extension;
 using System.Security;
+using BaseLib.Helper;
 
 namespace MSQBrowser.Views
 {
@@ -28,7 +29,7 @@ namespace MSQBrowser.Views
         private bool? DoDBConDialog(string[] Params,SecureString p, Action<string[], SecureString>? OnAccept)
         {
             IDialogWindow dialog = IoC.GetRequiredService<IDialogWindow>();
-            var dialogViewModel = ((DBConnectViewModel)dialog.DataContext);
+            var dialogViewModel = (DBConnectViewModel)dialog.DataContext;
             (dialogViewModel.Server, 
                 dialogViewModel.User,
                 dialogViewModel.Password,

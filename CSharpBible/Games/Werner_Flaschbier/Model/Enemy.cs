@@ -49,7 +49,7 @@ namespace Werner_Flaschbier_Base.Model
             if (dir == null) dir = _direction;
             var result = false;
 
-            var dest = field?.Parent?[Offsets.DirOffset(dir, Position)];
+            var dest = field?.Parent?[Offsets.DirOffset(dir, Place)];
             if (dest is Space s )
             {
                 result = s.Item == null || s.Item is Player;
@@ -70,7 +70,7 @@ namespace Werner_Flaschbier_Base.Model
             foreach (int dd in new int[] { 0, 3, 1, 2 })
             {
                 var dir2 = (Direction)(((int)dir + dd) % 4);
-                if (field?.Parent?[Offsets.DirOffset(dir2, Position)] is Space s && s is not Destination)
+                if (field?.Parent?[Offsets.DirOffset(dir2, Place)] is Space s && s is not Destination)
                 {
                     result = s.Item == null || s.Item is Player || (s.Item is Enemy e && !e.Handled && e.TryMove());
                     if (s.Item == null)

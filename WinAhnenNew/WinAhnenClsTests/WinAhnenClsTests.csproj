@@ -2,23 +2,28 @@
 	<Import Project="..\WinAhnen.props" />
 
 	<PropertyGroup>
-		<TargetFrameworks>net481-windows;net6.0;net7.0;net8.0</TargetFrameworks>
-		<ImplicitUsings>disable</ImplicitUsings>
+    <TargetFrameworks>net481;net8.0</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.6.3" />
-		<PackageReference Include="coverlet.collector" Version="6.0.2">
+  <ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="MSTest" Version="4.0.2" />
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MSTest.TestFramework" Version="3.6.3" />
-		<PackageReference Include="System.Text.Json" Version="9.0.0" />
+		<PackageReference Include="System.Text.Json" Version="10.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

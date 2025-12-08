@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AA21_Buttons"
+        xmlns:views="clr-namespace:AA21_Buttons.Views"
+        x:Class="AA21_Buttons.MainWindow"
+        Title="AA21 Buttons - Avalonia"
+        Width="800"
+        Height="450">
+
+  <TabControl>
+    <!-- Buttons Tab -->
+    <TabItem Header="Buttons">
+      <views:ButtonsView />
+    </TabItem>
+
+    <!-- XAML Code Tab -->
+    <TabItem Header="XAML">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" 
+                   Text="ButtonsView XAML Code" 
+                   FontSize="14" 
+                   FontWeight="Bold" 
+                   Margin="10" />
+        <TextBox IsReadOnly="True" 
+                 AcceptsReturn="True" 
+                 TextWrapping="Wrap"
+                 FontFamily="Consolas"
+                 FontSize="10"
+                 Margin="10" />
+      </DockPanel>
+    </TabItem>
+
+    <!-- ViewModel Code Tab -->
+    <TabItem Header="ViewModel">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" 
+                   Text="ButtonsViewViewModel Code" 
+                   FontSize="14" 
+                   FontWeight="Bold" 
+                   Margin="10" />
+        <TextBox IsReadOnly="True" 
+                 AcceptsReturn="True" 
+                 TextWrapping="Wrap"
+                 FontFamily="Consolas"
+                 FontSize="10"
+                 Margin="10" />
+      </DockPanel>
+    </TabItem>
+
+    <!-- Converter Code Tab -->
+    <TabItem Header="Converter">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" 
+                   Text="BoolToColorConverter Code" 
+                   FontSize="14" 
+                   FontWeight="Bold" 
+                   Margin="10" />
+        <TextBox IsReadOnly="True" 
+                 AcceptsReturn="True" 
+                 TextWrapping="Wrap"
+                 FontFamily="Consolas"
+                 FontSize="10"
+                 Margin="10" />
+      </DockPanel>
+    </TabItem>
+  </TabControl>
+
+</Window>

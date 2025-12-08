@@ -15,18 +15,15 @@ using System;
 using System.Collections.Generic;
 using TranspilerLib.Data;
 
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Interfaces.Code;
 
 /// <summary>
 /// Interface ICodeBlock
-/// Extends the <see cref="Models.IHasParents`1" />
-/// Extends the <see cref="IEquatable`1" />
+/// Extends the <see cref="IHasParents{ICodeBlock}" />
+/// Extends the <see cref="IEquatable{ICodeBlock}" />
 /// </summary>
-/// <seealso cref="Models.IHasParents`1" />
-/// <seealso cref="IEquatable`1" />
+/// <seealso cref="Models.IHasParents{ICodeBlock}" />
+/// <seealso cref="IEquatable{ICodeBlock}" />
 public interface ICodeBlock : IHasParents<ICodeBlock>, IEquatable<ICodeBlock>
 {
     /// <summary>
@@ -80,37 +77,40 @@ public interface ICodeBlock : IHasParents<ICodeBlock>, IEquatable<ICodeBlock>
     /// </summary>
     /// <value>The previous.</value>
     ICodeBlock? Prev { get; }
+    /// <summary>
+    /// Gets the position in the original source from which this block was created.
+    /// </summary>
+    /// <value>The zero-based character index in the source text.</value>
     int SourcePos { get; init; }
 
     /// <summary>
     /// Deletes the sub blocks.
     /// </summary>
-    /// <param name="iSrc">The i source.</param>
-    /// <param name="cnt">The count.</param>
-    /// <returns>bool.</returns>
+    /// <param name="iSrc">The index of the first sub block to delete.</param>
+    /// <param name="cnt">The number of sub blocks to delete.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     bool DeleteSubBlocks(int iSrc, int cnt);
     /// <summary>
     /// Moves the sub blocks.
     /// </summary>
-    /// <param name="iSrc">The i source.</param>
-    /// <param name="iDst">The i DST.</param>
-    /// <param name="cnt">The count.</param>
-    /// <returns>bool.</returns>
+    /// <param name="iSrc">The index of the first sub block to move.</param>
+    /// <param name="iDst">The destination index within the same parent.</param>
+    /// <param name="cnt">The number of sub blocks to move.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     bool MoveSubBlocks(int iSrc, int iDst, int cnt);
     /// <summary>
-    /// Moves the sub blocks.
+    /// Moves the sub blocks to a different destination block.
     /// </summary>
-    /// <param name="iSrc">The i source.</param>
-    /// <param name="cDst">The c DST.</param>
-    /// <param name="cnt">The count.</param>
-    /// <returns>bool.</returns>
+    /// <param name="iSrc">The index of the first sub block to move.</param>
+    /// <param name="cDst">The destination block reference.</param>
+    /// <param name="cnt">The number of sub blocks to move.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     bool MoveSubBlocks(int iSrc, ICodeBlock cDst, int cnt);
     /// <summary>
-    /// Moves the block to the sub blocks of the destination.
+    /// Moves this block into the sub blocks of the specified destination.
     /// </summary>
-    /// <param name="cDst">The destination</param>
-    /// <param name="cnt">The count.</param>
-    /// <returns>bool.</returns>
+    /// <param name="cDst">The destination block to move under.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     bool MoveToSub(ICodeBlock cDst);
     /// <summary>
     /// Converts to code.

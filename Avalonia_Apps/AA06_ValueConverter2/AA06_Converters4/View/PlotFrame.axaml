@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:AA06_Converters_4.ViewModels"
+		xmlns:controls="using:AA06_Converters_4.View.Controls"
+		x:Class="AA06_Converters_4.View.PlotFrame"
+		x:DataType="vm:PlotFrameViewModel"
+		mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="800">
+
+	<Grid Background="White">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<!-- Toolbar für Zoom/Pan-Controls -->
+		<Border Grid.Row="0" Background="LightGray" Padding="5" BorderBrush="Gray" BorderThickness="0,0,0,1">
+			<StackPanel Orientation="Horizontal" Spacing="10">
+				<TextBlock Text="AGV Visualisierung" FontWeight="Bold" VerticalAlignment="Center" />
+
+				<!-- Zoom Buttons -->
+				<Button Content="+" Width="30" Height="30" Command="{Binding ZoomInCommand}" ToolTip.Tip="Zoom In" />
+				<Button Content="-" Width="30" Height="30" Command="{Binding ZoomOutCommand}" ToolTip.Tip="Zoom Out" />
+				<Button Content="⌂" Width="30" Height="30" Command="{Binding ResetViewCommand}" ToolTip.Tip="Reset View" />
+
+				<Separator />
+
+				<!-- Info -->
+				<TextBlock Text="{Binding WindowSize, StringFormat='Größe: {0}'}" VerticalAlignment="Center" Margin="10,0,0,0" />
+			</StackPanel>
+		</Border>
+
+		<!-- Dynamisches Plot-Canvas mit MVVM-Bindung -->
+		<controls:DynamicPlotCanvas Grid.Row="1"
+      ViewModel="{Binding}"
+			ClipToBounds="True" />
+
+	</Grid>
+</UserControl>

@@ -1,10 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MVVM_Converter_CTDrawGrid.ViewModel
 {
@@ -35,21 +31,21 @@ namespace MVVM_Converter_CTDrawGrid.ViewModel
         /// <value>The load level command.</value>
         [RelayCommand]
         private void LoadLevel() 
-            => Model.Model.LoadLevel();
+            => _drawGridModel.LoadLevel();
         /// <summary>
         /// Gets or sets the next level command.
         /// </summary>
         /// <value>The next level command.</value>
         [RelayCommand]
         private void NextLevel() 
-            => Model.Model.NextLevel();
+            => _drawGridModel.NextLevel();
         /// <summary>
         /// Gets or sets the previous level command.
         /// </summary>
         /// <value>The previous level command.</value>
         [RelayCommand]
         private void PrevLevel() 
-            => Model.Model.PrevLevel();
+            => _drawGridModel.PrevLevel();
 
     }
 }

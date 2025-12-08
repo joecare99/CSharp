@@ -19,7 +19,7 @@ public class TestClass : ITestItf
     public TestClass(int v)
     {
         iData = v;
-        _list = new CSCode.ParentedItemsList<ITestItf>(this);
+        _list = new ParentedItemsList<ITestItf>(this);
     }
 
     public ITestItf this[int idx] => _list[idx];
@@ -27,7 +27,7 @@ public class TestClass : ITestItf
     public ITestItf Parent { get; set; }
     public int iData { get ; set ; }
 
-    private CSCode.ParentedItemsList<ITestItf> _list;
+    private ParentedItemsList<ITestItf> _list;
 
     public bool Equals(ITestItf? other)
     {
@@ -50,7 +50,7 @@ public class ParentedItemsListTests : ITestItf
 
     public ITestItf this[int idx] => testClass[idx];
 
-    private CSCode.ParentedItemsList<ITestItf> testClass;
+    private ParentedItemsList<ITestItf> testClass;
 
 
     [TestInitialize()]
@@ -62,7 +62,7 @@ public class ParentedItemsListTests : ITestItf
     [TestMethod()]
     public void IsReadonlyTest()
     {
-        Assert.AreEqual(false,testClass.IsReadOnly);
+        Assert.IsFalse(testClass.IsReadOnly);
     }
 
     [TestMethod()]
@@ -130,9 +130,9 @@ public class ParentedItemsListTests : ITestItf
     public void ContainsTest()
     {
         AddTest();
-        Assert.AreEqual(true, testClass.Contains( new TestClass(3)));
-        Assert.AreEqual(false, testClass.Contains(new TestClass(2)));
-        Assert.AreEqual(false, testClass.Contains(this));
+        Assert.IsTrue(testClass.Contains( new TestClass(3)));
+        Assert.IsFalse(testClass.Contains(new TestClass(2)));
+        Assert.IsFalse(testClass.Contains(this));
     }
 
     [TestMethod()]

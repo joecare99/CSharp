@@ -1,4 +1,4 @@
-﻿using BaseLib.Interfaces;
+﻿using BaseLib.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using NSubstitute;
@@ -35,7 +35,7 @@ public class SimpleLogTests:BaseTestViewModel
         SimpleLog.LogAction = _gsOld;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Test message",new[] { "08/24/2022 12:00:00: Msg: Test message\r\n" })]
     [DataRow(null, new[] { "08/24/2022 12:00:00: Msg: \r\n" })]
     [DataRow("Some other test", new[] { "08/24/2022 12:00:00: Msg: Some other test\r\n" })]

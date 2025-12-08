@@ -10,14 +10,14 @@ namespace WinAhnenCls.Model.HejInd.Tests
     [TestClass()]
     public class CHejIndiDataTests2
     {
-        public static readonly CHejIndiData[] cInd = new[] {
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
-            new CHejIndiData() { },
+        public static readonly CHejIndiReader[] cInd = new[] {
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
+            new CHejIndiReader() { },
         };
 
         public static readonly CHejSourceData[] cSource = new[] {
@@ -75,7 +75,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
                 Assert.AreEqual(1, FHejClass.GetActID, "1 Update");
             }
 
-            FHejClass.ActualInd = cInd[1];
+            FHejClass.ActualInd = (GenInterfaces.Interfaces.Genealogic.IGenPerson)cInd[1];
             if (Tested)
                 Assert.AreEqual(1, FDataChCount, "1 DataChange");
 
@@ -85,12 +85,12 @@ namespace WinAhnenCls.Model.HejInd.Tests
                 Assert.AreEqual(2, FHejClass.MarriagesCount, "2 Marriages");
                 Assert.AreEqual(2, FHejClass.IndividualCount, "2 Individuals");
                 Assert.AreEqual(2, FHejClass.GetActID, "ID:2");
-                Assert.AreEqual(1, FHejClass.ActualInd.Marriages.Length, "length(ActInd.Marriage)");
-                Assert.AreEqual(1, FHejClass.PeekInd(1).Marriages.Length, "length(peekInd[0].Marriage)");
+                Assert.AreEqual(1, FHejClass.ActualInd.Marriages.Count, "length(ActInd.Marriage)");
+                Assert.AreEqual(1, FHejClass.PeekInd(1).Marriages.Count, "length(peekInd[0].Marriage)");
                 Assert.AreEqual(2, FUpdateCount, "2 Update");
             }
 
-            FHejClass.ActualInd = cInd[2];
+            FHejClass.ActualInd = (GenInterfaces.Interfaces.Genealogic.IGenPerson)cInd[2];
             if (Tested)
                 Assert.AreEqual(2, FDataChCount, "2 DataChange");
 
@@ -108,7 +108,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
                 Assert.AreEqual(3, FHejClass.GetData(2, EHejIndDataFields.hind_idFather), "IDFather:3");
             }
 
-            FHejClass.ActualInd = cInd[3];
+            FHejClass.ActualInd = (GenInterfaces.Interfaces.Genealogic.IGenPerson)cInd[3];
             if (Tested)
                 Assert.AreEqual(4, FDataChCount, "4 DataChange");
 
@@ -117,7 +117,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
             {
                 Assert.AreEqual(4, FUpdateCount, "4 Update");
                 Assert.AreEqual(2, FHejClass.GetActID, "ID:2");
-                Assert.AreEqual(3, FHejClass.ActualInd.idFather, "IDFather:3");
+                Assert.AreEqual(3, FHejClass.ActualInd.Father.ID, "IDFather:3");
             }
 
             FHejClass.AppendParent(EHejIndDataFields.hind_idMother);
@@ -130,7 +130,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
                 Assert.AreEqual(4, FHejClass.GetData(2, EHejIndDataFields.hind_idMother), "IDMother:4");
             }
 
-            FHejClass.ActualInd = cInd[4];
+            FHejClass.ActualInd = (GenInterfaces.Interfaces.Genealogic.IGenPerson)cInd[4];
             if (Tested)
             {
                 Assert.AreEqual(5, FDataChCount, "5 DataChange");

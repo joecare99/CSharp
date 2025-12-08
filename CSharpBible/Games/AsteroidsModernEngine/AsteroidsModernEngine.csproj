@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
+    <AssemblyName>AsteroidsModernEngine</AssemblyName>
+    <RootNamespace>AsteroidsModern.Engine</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_SdkVersion>$(NETCoreSdkVersion)</_SdkVersion>
+    <!-- Build TargetFrameworks list based on available SDK version -->
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(_SdkVersion)', '6.0.100'))">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(_SdkVersion)', '7.0.100'))">$(TargetFrameworks);net7.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(_SdkVersion)', '8.0.100'))">$(TargetFrameworks);net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(_SdkVersion)', '9.0.100'))">$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+  </ItemGroup>
+</Project>

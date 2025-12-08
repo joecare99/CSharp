@@ -87,24 +87,29 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die T:FLComment,0,0,// Dies ist ein Kommentar zum Typ ST_01
-        ///T:Block,40,0,TYPE
-        ///T:Variable,45,1,ST_01
-        ///T:Operation,51,1,:
-        ///T:Block,53,1,STRUCT
-        ///T:FLComment,67,2,// Dies ist ein Kommentar zum Element a
-        ///T:Variable,107,2,a
-        ///T:Operation,111,2,:
-        ///T:Function,112,2,INT
-        ///T:Operation,116,2,:=
-        ///T:Number,119,2,INT#1
-        ///T:Operation,125,2,;
-        ///T:LComment,127,2,// Dies ist ein 2. Kommentar zum Element a
-        ///T:FLComment,173,2,// Dies ist ein Kommentar zum Element b
-        ///T:Variable,213,2,b
-        ///T:Operation,217,2,:
-        ///T:Function,218,2,LREAL
-        ///T [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Block,0,0,FUNCTION
+        ///T:Variable,8,1,fbCalcWinkelvVector
+        ///T:Operation,28,1,:
+        ///T:Function,30,1,LREAL
+        ///T:Operation,36,1,;
+        ///T:Block,37,1,VAR_INPUT
+        ///T:Variable,48,2,Vec
+        ///T:Operation,57,2,:
+        ///T:Variable,59,2,udtVector
+        ///T:Operation,69,2,;
+        ///T:Block,70,1,END_VAR
+        ///T:Block,79,1,VAR_OUTPUT
+        ///T:Function,91,2,Len
+        ///T:Operation,100,2,:
+        ///T:Function,102,2,LREAL
+        ///T:Operation,108,2,;
+        ///T:Block,109,1,END_VAR
+        ///T:Block,118,1,VAR
+        ///T:Variable,123,2,ZwErg
+        ///T:Operation,134,2,:
+        ///T:Function,136,2,LREAL
+        ///T:Operation,142,2,;
+        ///T:Block,143,1 [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ExpLog02 {
             get {
@@ -1237,7 +1242,23 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die FUNCTION fbCalcWinkelvVector : LREAL;
+        ///VAR_INPUT
+        ///    Vec : udtVector;
+        ///END_VAR
+        ///VAR_OUTPUT
+        ///    Len : LREAL;
+        ///END_VAR
+        ///VAR
+        ///    ZwErg : LREAL;
+        ///END_VAR
+        ///BEGIN
+        ///IF ABS(Vec.v.x) &gt; ABS(Vec.v.y) THEN
+        ///   ZwErg :=SEL(Vec.v.x&lt;0.0,ATAN(Vec.v.y/vec.v.x),ATAN(Vec.v.y/vec.v.x)+pi);
+        ///   len:=Vec.v.x/COS(ZwErg);
+        ///   fbCalcWinkelvVector := ZwErg+pi*2.0-DINT_TO_REAL(TRUNC(Zwerg/pi*0.5+1.5))*pi*2.0;
+        ///ELSIF ABS(Vec.v.y) &gt; epsilon THEN
+        ///    fbCalcWinkelvVector := SEL(Vec.v.y &lt; 0.0,ATAN(-Vec.v.x/vec.v.y)+0.5*pi,ATAN(-Vec.v. [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string TestCode02 {
             get {

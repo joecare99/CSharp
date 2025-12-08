@@ -16,16 +16,16 @@ using MVVM.ViewModel;
 using BaseLib.Helper.MVVM;
 using System.ComponentModel.DataAnnotations;
 
-namespace MVVM_24a_CTUserControl.ViewModels
+namespace MVVM_24a_CTUserControl.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+[NotifyDataErrorInfo]
+public partial class UserControlViewModel : BaseViewModelCT
 {
-    /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
-    /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    [NotifyDataErrorInfo]
-    public partial class UserControlViewModel : BaseViewModelCT
-    {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UserControlViewModel"/> class.
 		/// </summary>
@@ -51,9 +51,8 @@ namespace MVVM_24a_CTUserControl.ViewModels
 		/// Finalizes an instance of the <see cref="UserControlViewModel"/> class.
 		/// </summary>
 		~UserControlViewModel()
-        {
-            return;
-        }
-
+    {
+        return;
     }
+
 }

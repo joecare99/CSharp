@@ -1,15 +1,16 @@
-﻿using GenFree.Model.Data;
+﻿using GenFree.Models.Data;
 using GenFree.Helper;
-using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using System;
 using System.Linq;
+using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {
     public class CWitnessData : CRSDataC<EWitnessProp, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, IWitnessData
     {
-        public CWitnessData(IRecordset db_Table) : base(db_Table)
+        public CWitnessData(IRecordset db_Table, bool xNoInit=false) : base(db_Table,xNoInit)
         {
         }
 
@@ -24,11 +25,7 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_Table)
         {
-            iPers = dB_Table.Fields[nameof(WitnessFields.PerNr)].AsInt();
-            iWKennz = dB_Table.Fields[nameof(WitnessFields.Kennz)].AsInt();
-            iLink = dB_Table.Fields[nameof(WitnessFields.FamNr)].AsInt();
-            eArt = dB_Table.Fields[nameof(WitnessFields.Art)].AsEnum<EEventArt>();
-            iLfNr = (short)dB_Table.Fields[nameof(WitnessFields.LfNr)].AsInt();
+            ReadID(dB_Table);
         }
 
         public override Type GetPropType(EWitnessProp prop)
@@ -64,7 +61,7 @@ namespace GenFree.Data
             return _db_Table.NoMatch ? null : _db_Table;
         }
 
-        public override void SetDBValue(IRecordset dB_Table, Enum[]? asProps)
+        public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
         {
             asProps ??= _changedPropsList.Select(e => (Enum)e).ToArray();
             foreach (var prop in asProps)
@@ -72,19 +69,19 @@ namespace GenFree.Data
                 switch (prop.AsEnum<EWitnessProp>())
                 {
                     case EWitnessProp.iPers:
-                        dB_Table.Fields[WitnessFields.PerNr.AsFld()].Value = iPers;
+                        dB_Table.Fields[WitnessFields.PerNr].Value = iPers;
                         break;
                     case EWitnessProp.iWKennz:
-                        dB_Table.Fields[WitnessFields.Kennz.AsFld()].Value = iWKennz;
+                        dB_Table.Fields[WitnessFields.Kennz].Value = iWKennz;
                         break;
                     case EWitnessProp.iLink:
-                        dB_Table.Fields[WitnessFields.FamNr.AsFld()].Value = iLink;
+                        dB_Table.Fields[WitnessFields.FamNr].Value = iLink;
                         break;
                     case EWitnessProp.eArt:
-                        dB_Table.Fields[WitnessFields.Art.AsFld()].Value = eArt;
+                        dB_Table.Fields[WitnessFields.Art].Value = eArt;
                         break;
                     case EWitnessProp.iLfNr:
-                        dB_Table.Fields[WitnessFields.LfNr.AsFld()].Value = iLfNr;
+                        dB_Table.Fields[WitnessFields.LfNr].Value = iLfNr;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -107,6 +104,15 @@ namespace GenFree.Data
                 EWitnessProp.iLfNr => iLfNr = (short)value,
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        public override void ReadID(IRecordset dB_Table)
+        {
+            iPers = dB_Table.Fields[WitnessFields.PerNr].AsInt();
+            iWKennz = dB_Table.Fields[WitnessFields.Kennz].AsInt();
+            iLink = dB_Table.Fields[WitnessFields.FamNr].AsInt();
+            eArt = dB_Table.Fields[WitnessFields.Art].AsEnum<EEventArt>();
+            iLfNr = (short)dB_Table.Fields[WitnessFields.LfNr].AsInt();
         }
     }
 }

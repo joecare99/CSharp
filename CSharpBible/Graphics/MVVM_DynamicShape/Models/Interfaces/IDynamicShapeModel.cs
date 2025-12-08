@@ -1,6 +1,4 @@
 ﻿using MVVM.ViewModel;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace MVVM_DynamicShape.Models.Interfaces;
 

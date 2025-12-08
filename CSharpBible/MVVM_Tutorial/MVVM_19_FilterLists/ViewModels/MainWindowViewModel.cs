@@ -13,14 +13,13 @@
 // ***********************************************************************
 using MVVM.ViewModel;
 
-namespace MVVM_19_FilterLists.ViewModels
+namespace MVVM_19_FilterLists.ViewModels;
+
+/// <summary>
+/// Class MainWindowViewModel.
+/// Implements the <see cref="BaseViewModel" />
+/// </summary>
+/// <seealso cref="BaseViewModel" />
+internal class MainWindowViewModel : BaseViewModel
 {
-    /// <summary>
-    /// Class MainWindowViewModel.
-    /// Implements the <see cref="BaseViewModel" />
-    /// </summary>
-    /// <seealso cref="BaseViewModel" />
-    internal class MainWindowViewModel : BaseViewModel
-    {
-    }
 }

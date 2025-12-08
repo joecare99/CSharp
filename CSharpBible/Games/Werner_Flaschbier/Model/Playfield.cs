@@ -143,11 +143,11 @@ namespace Werner_Flaschbier_Base.Model
 
                     case FieldDef.Stone:
                         result.Item = CreateStone();
-                        result.Item.OldPosition = result.Item.Position;
+                        result.Item.OldPosition = result.Item.Place;
                         break;
                     case FieldDef.Enemy:
                         result.Item = CreateEnemy();
-                        result.Item.OldPosition = result.Item.Position;
+                        result.Item.OldPosition = result.Item.Place;
                         break;
                     case FieldDef.Dirt:
                         result.Item = new Dirt(null); ;

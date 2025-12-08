@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+      x:Class="Avln_AnimationTiming.Views.Examples.TransitionsExample">
+    
+    <UserControl.Styles>
+   <Style Selector="Rectangle.transitionRect">
+      <Setter Property="Fill" Value="#AA3333FF" />
+    <Setter Property="Width" Value="100" />
+     <Setter Property="Height" Value="100" />
+   <Setter Property="Margin" Value="10" />
+   <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+    </UserControl.Styles>
+
+ <Border HorizontalAlignment="Stretch" Padding="20">
+    <StackPanel Spacing="15">
+            
+ <Border Classes="IntroTextBorder" Padding="20">
+     <TextBlock TextWrapping="Wrap">
+     This example demonstrates Avalonia Transitions - a simple way to animate property changes.
+ Transitions automatically animate whenever a property value changes.
+        </TextBlock>
+    </Border>
+
+     <TextBlock FontWeight="Bold">Click rectangles to see different transition effects:</TextBlock>
+
+            <!-- Simple Linear Transition -->
+    <StackPanel Spacing="5">
+ <TextBlock>Linear Transition (1 second):</TextBlock>
+    <Rectangle Name="linearRect" Classes="transitionRect" PointerPressed="OnRectPressed">
+        <Rectangle.Transitions>
+      <Transitions>
+    <DoubleTransition Property="Width" Duration="0:0:1" />
+     <DoubleTransition Property="Height" Duration="0:0:1" />
+ </Transitions>
+   </Rectangle.Transitions>
+       </Rectangle>
+    </StackPanel>
+
+   <!-- Eased Transition with Elastic Effect -->
+<StackPanel Spacing="5">
+      <TextBlock>Elastic Ease Out (1.5 seconds):</TextBlock>
+  <Rectangle Name="elasticRect" Classes="transitionRect" PointerPressed="OnRectPressed">
+<Rectangle.Transitions>
+      <Transitions>
+  <DoubleTransition Property="Width" Duration="0:0:1.5" Easing="ElasticEaseOut" />
+  <DoubleTransition Property="Height" Duration="0:0:1.5" Easing="ElasticEaseOut" />
+      </Transitions>
+   </Rectangle.Transitions>
+</Rectangle>
+   </StackPanel>
+
+   <!-- Bounce Transition -->
+      <StackPanel Spacing="5">
+        <TextBlock>Bounce Ease Out (1 second):</TextBlock>
+      <Rectangle Name="bounceRect" Classes="transitionRect" PointerPressed="OnRectPressed">
+      <Rectangle.Transitions>
+ <Transitions>
+  <DoubleTransition Property="Width" Duration="0:0:1" Easing="BounceEaseOut" />
+          <DoubleTransition Property="Height" Duration="0:0:1" Easing="BounceEaseOut" />
+ </Transitions>
+       </Rectangle.Transitions>
+</Rectangle>
+    </StackPanel>
+
+ <!-- Cubic Ease In/Out -->
+    <StackPanel Spacing="5">
+<TextBlock>Cubic Ease InOut (0.8 seconds):</TextBlock>
+  <Rectangle Name="cubicRect" Classes="transitionRect" PointerPressed="OnRectPressed">
+     <Rectangle.Transitions>
+      <Transitions>
+   <DoubleTransition Property="Width" Duration="0:0:0.8" Easing="CubicEaseInOut" />
+ <DoubleTransition Property="Height" Duration="0:0:0.8" Easing="CubicEaseInOut" />
+      </Transitions>
+  </Rectangle.Transitions>
+      </Rectangle>
+      </StackPanel>
+
+  <!-- Delay Transition -->
+   <StackPanel Spacing="5">
+         <TextBlock>With Delay (0.5s delay, 1s duration):</TextBlock>
+   <Rectangle Name="delayRect" Classes="transitionRect" PointerPressed="OnRectPressed">
+  <Rectangle.Transitions>
+     <Transitions>
+  <DoubleTransition Property="Width" Duration="0:0:1" Delay="0:0:0.5" />
+<DoubleTransition Property="Height" Duration="0:0:1" Delay="0:0:0.5" />
+   </Transitions>
+       </Rectangle.Transitions>
+</Rectangle>
+      </StackPanel>
+
+      <Button Name="resetButton" Content="Reset All" Width="150" HorizontalAlignment="Left" 
+   Margin="0,20,0,0" Click="OnResetClick" />
+</StackPanel>
+    </Border>
+</UserControl>

@@ -89,7 +89,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             Assert.AreEqual(iExpCnt, iCnt, nameof(iCnt));
             Assert.AreEqual(iExpState, data.State, nameof(data.State));
             Assert.AreEqual(iExpPos, data.Pos, nameof(data.Pos));
-            Assert.AreEqual(iExpCnt, lData.Count, nameof(lData.Count));
+            Assert.HasCount(iExpCnt, lData, nameof(lData.Count));
             if (lData.Count > 0)
             {
                 if (sExpCode.EndsWith(':'))
@@ -126,7 +126,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             Assert.AreEqual(iExpCnt, iCnt, nameof(iCnt));
             Assert.AreEqual(iExpState, data.State, nameof(data.State));
             Assert.AreEqual(iExpPos, data.Pos, nameof(data.Pos));
-            Assert.AreEqual(iExpCnt, lData.Count, nameof(lData.Count));
+            Assert.HasCount(iExpCnt, lData, nameof(lData.Count));
             if (lData.Count > 0)
             {
                 Assert.AreEqual(CodeBlockType.Comment, lData[0].type);
@@ -155,7 +155,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             Assert.AreEqual(iExpCnt, iCnt, nameof(iCnt));
             Assert.AreEqual(iExpState, data.State, nameof(data.State));
             Assert.AreEqual(iExpPos, data.Pos, nameof(data.Pos));
-            Assert.AreEqual(iExpCnt, lData.Count, nameof(lData.Count));
+            Assert.HasCount(iExpCnt, lData, nameof(lData.Count));
             if (lData.Count > 0)
             {
                 Assert.AreEqual(CodeBlockType.LComment, lData[0].type);
@@ -193,7 +193,7 @@ namespace TranspilerLib.Models.Scanner.Tests
             Assert.AreEqual(iExpCnt, iCnt, nameof(iCnt));
             Assert.AreEqual(iExpState, data.State, nameof(data.State));
             Assert.AreEqual(iExpPos, data.Pos, nameof(data.Pos));
-            Assert.AreEqual(iExpCnt, lData.Count, nameof(lData.Count));
+            Assert.HasCount(iExpCnt, lData, nameof(lData.Count));
             if (lData.Count > 0)
             {
                 Assert.AreEqual(CodeBlockType.String, lData[0].type);

@@ -1,4 +1,23 @@
-﻿namespace CSharpBible.AboutEx.Visual
+﻿// ***********************************************************************
+// Assembly         : AboutEx
+// Author           : Mir
+// Created          : 11-11-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 11-08-2022
+// ***********************************************************************
+// <copyright file="FrmAboutExMain.Designer.cs" company="HP Inc.">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using CSharpBible.AboutEx.ViewModels.Interfaces;
+using Views;
+
+/// <summary>
+/// The Visual namespace.
+/// </summary>
+namespace CSharpBible.AboutEx.Visual
 {
     /// <summary>
     /// Class FrmAboutExMain.
@@ -49,7 +68,6 @@
             this.btnClickMe.TabIndex = 0;
             this.btnClickMe.Text = "Click Me! ...";
             this.btnClickMe.UseVisualStyleBackColor = true;
-            this.btnClickMe.Click += new System.EventHandler(this.btnClickMe_Click);
             // 
             // btnClickMe2
             // 
@@ -63,7 +81,6 @@
             this.btnClickMe2.TabIndex = 1;
             this.btnClickMe2.Text = "Click Me! ...";
             this.btnClickMe2.UseVisualStyleBackColor = true;
-            this.btnClickMe2.Click += new System.EventHandler(this.btnClickMe2_Click);
             // 
             // FrmAboutExMain
             // 
@@ -81,7 +98,15 @@
 
         #endregion
 
+        /// <summary>
+        /// The BTN click me
+        /// </summary>
+        [CommandBinding(nameof(IFrmAboutExMainViewModel.ShowAbout1Command))]
         private System.Windows.Forms.Button btnClickMe;
+        /// <summary>
+        /// The BTN click me2
+        /// </summary>
+        [CommandBinding(nameof(IFrmAboutExMainViewModel.ShowAbout2Command))]
         private System.Windows.Forms.Button btnClickMe2;
     }
 }

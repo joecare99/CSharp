@@ -39,7 +39,7 @@ namespace DemoLibraryTests.Models
 		/// <param name="aLastName">a last name.</param>
 		/// <param name="aTitle">a title.</param>
 		/// <param name="expFullName">The exp fullName.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow("","","","")]
 		[DataRow("", "1", "", "1")]
 		[DataRow("1", "2", "", "1 2")]

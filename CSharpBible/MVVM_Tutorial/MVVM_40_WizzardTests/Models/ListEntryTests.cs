@@ -12,11 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /// <summary>
 /// The Tests namespace.
@@ -35,7 +30,7 @@ public class ListEntryTests
     /// <summary>
     /// Defines the test method ListEntryTest.
     /// </summary>
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1, "Test")]
     [DataRow(2, "")]
     [DataRow(-1, null)]
@@ -55,7 +50,6 @@ public class ListEntryTests
     /// Defines the test method ToStringTest.
     /// </summary>
     [TestMethod]
-    [DataTestMethod]
     [DataRow(1, "Test")]
     [DataRow(2, "")]
     [DataRow(-1, null)]

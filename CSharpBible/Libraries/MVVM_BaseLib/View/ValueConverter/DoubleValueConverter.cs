@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM.View.Converter
+// Assembly         : MVVM.Views.Converter
 // Author           : Mir
 // Created          : 07-03-2022
 //
@@ -15,7 +15,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MVVM.View.ValueConverter;
+namespace MVVM.Views.ValueConverter;
 
 /// <summary>
 /// Class CurrencyValueConverter.

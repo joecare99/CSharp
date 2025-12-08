@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GenFree.Helper.Tests
 {
@@ -11,7 +12,7 @@ namespace GenFree.Helper.Tests
             { 4, "CCC" },
             { 9, null! } };
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(4,"DD")]
         [DataRow(1,"AAA")]
         [DataRow(0,"??")]
@@ -22,7 +23,7 @@ namespace GenFree.Helper.Tests
 
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1,"A")]
         [DataRow(2,"BB")]
         [DataRow(3,"CCC")]

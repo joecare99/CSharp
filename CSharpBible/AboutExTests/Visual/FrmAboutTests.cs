@@ -11,7 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CSharpBible.AboutEx.ViewModels.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -27,6 +29,8 @@ namespace CSharpBible.AboutEx.Visual.Tests
         /// The FRM about
         /// </summary>
         private FrmAbout frmAbout;
+        private IAboutViewModel _vm;
+
         /// <summary>
         /// The c expected productname
         /// </summary>
@@ -44,6 +48,7 @@ namespace CSharpBible.AboutEx.Visual.Tests
         /// </summary>
         private const string cExpectedComments= "Beta Test Version.\n!!! CONFIDENTIAL !!!\n Do not copy. Do not trade. All rights re" +
     "served.\n This means you.\n Violators shot at dawn.";
+        private const string cExpectedCompany = "BigCorp.";
         /// <summary>
         /// The c some other product
         /// </summary>
@@ -67,7 +72,13 @@ namespace CSharpBible.AboutEx.Visual.Tests
         [TestInitialize()]
         public void Init()
         {
-            frmAbout = new FrmAbout();
+            _vm = Substitute.For<IAboutViewModel>();
+            _vm.Author.Returns(cExpectedProductname);
+            _vm.Version.Returns(cExpectedVersion);
+            _vm.Company.Returns(cExpectedCompany);
+            _vm.Copyright.Returns(cExpectedCopyright);
+            _vm.Description.Returns(cExpectedComments);
+            frmAbout = new FrmAbout(_vm);
         }
 
         /// <summary>
@@ -77,10 +88,6 @@ namespace CSharpBible.AboutEx.Visual.Tests
         public void TestSetup()
         {
             Assert.IsNotNull(frmAbout);
-            Assert.AreEqual(cExpectedProductname, frmAbout.ProductName);
-            Assert.AreEqual(cExpectedVersion, frmAbout.Version);
-            Assert.AreEqual(cExpectedCopyright, frmAbout.Copyright);
-            Assert.AreEqual(cExpectedComments, frmAbout.Comments);
         }
 
         /// <summary>
@@ -93,45 +100,11 @@ namespace CSharpBible.AboutEx.Visual.Tests
         }
 
         /// <summary>
-        /// Defines the test method ProductNameTest.
-        /// </summary>
-        [TestMethod()]
-        public void ProductNameTest()
-        {
-            frmAbout.ProductName = cSomeOtherProduct;
-            Assert.AreEqual(cSomeOtherProduct, frmAbout.ProductName);
-        }
-
-        /// <summary>
-        /// Defines the test method VersionTest.
-        /// </summary>
-        [TestMethod()]
-        public void VersionTest()
-        {
-            frmAbout.Version = cSomeVersion;
-            Assert.AreEqual(cSomeVersion, frmAbout.Version);
-        }
-
-        /// <summary>
-        /// Defines the test method CopyrightTest.
-        /// </summary>
-        [TestMethod()]
-        public void CopyrightTest()
-        {
-            frmAbout.Copyright = cSomeCopyright;
-            Assert.AreEqual(cSomeCopyright, frmAbout.Copyright);
-        }
-
-        /// <summary>
         /// Defines the test method BtnOKTest.
         /// </summary>
         [TestMethod()]
         public void BtnOKTest()
         {
-            frmAbout.ProductName = cSomeOtherProduct;
-            frmAbout.Version = cSomeVersion;
-            frmAbout.Copyright = cSomeCopyright;
-            frmAbout.Comments = cSomeComments;
             frmAbout.Show();
             for (int i = 0; i < 50; i++)
             {

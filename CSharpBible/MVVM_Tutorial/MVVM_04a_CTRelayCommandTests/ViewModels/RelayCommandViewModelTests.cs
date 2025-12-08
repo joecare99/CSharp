@@ -36,7 +36,7 @@ public class RelayCommandViewModelTests : BaseTestViewModel
         Assert.AreEqual("", DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "","Dev, ", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=Dave
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Firstname)=
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=Dev, 
@@ -69,7 +69,7 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
         AssertAreEqual(asExp[2], DebugLog, "DebugOut");
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "", ", Dave", @"PropChgn(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=Dev
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Lastname)=
 PropChg(MVVM_04a_CTRelayCommand.ViewModels.RelayCommandViewModel,Fullname)=, Dave

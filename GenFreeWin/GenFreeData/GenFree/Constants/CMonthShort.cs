@@ -1,4 +1,5 @@
-﻿using GenFree.Helper;
+﻿using BaseLib.Helper;
+using GenFree.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace GenFree.Constants
             if (text6.Length > 6
                 && text6.Substring(2, 1) == sSep
                 && text6.Substring(5, 1) == sSep
-                && (text6.Substring(3, 2).AsInt() is int i && i > 0))
+                && text6.Substring(3, 2).AsInt() is int i && i > 0)
             {
                 text6 = $"{text6.Left(2)} {_dicMonthShort.ElementAt(i - 1).Key} {text6.Substring(6).Right(4)}";
             }

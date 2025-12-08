@@ -2,8 +2,8 @@
 	<Import Project="..\Games.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
-	</PropertyGroup>
+    <TargetFrameworks>net481;net48;net472;net462;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+  </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup>
@@ -13,7 +13,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.6.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />

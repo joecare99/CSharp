@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using BaseLib.Interfaces;
+using BaseLib.Models.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Globalization;

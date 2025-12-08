@@ -18,11 +18,11 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
 using BaseLib.Helper;
-using static BaseLib.Helper.TestHelper;
 using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Properties;
+using MVVM_40_Wizzard.Models.Interfaces;
+using static BaseLib.Helper.TestHelper;
 
 /// <summary>
 /// The Tests namespace.
@@ -82,7 +82,7 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 0, 1, 3 })]
     public void MainOptionsTest(int[] aiAct)
     {
@@ -97,11 +97,11 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
     {
         testModel.MainSelection = new ListEntry(iAct, "Test");
         testModel.ClearCommand.Execute(null);
-        Assert.AreEqual(null, testModel.MainSelection);
+        Assert.IsNull(testModel.MainSelection);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(nameof(IWizzardModel.AdditOptions), new[] { "" })]
     [DataRow(nameof(IWizzardModel.Now), new[] { "" })]
     [DataRow(nameof(IWizzardModel.MainSelection), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,MainSelection)=1. Entry\r\n" })]

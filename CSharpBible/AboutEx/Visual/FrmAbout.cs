@@ -1,6 +1,24 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : AboutEx
+// Author           : Mir
+// Created          : 11-11-2022
+//
+// Last Modified By : Mir
+// Last Modified On : 02-18-2024
+// ***********************************************************************
+// <copyright file="FrmAbout.cs" company="HP Inc.">
+//     Copyright (c) HP Inc.. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Windows.Forms;
+using CSharpBible.AboutEx.ViewModels.Interfaces;
+using Views;
 
+/// <summary>
+/// The Visual namespace.
+/// </summary>
 namespace CSharpBible.AboutEx.Visual
 {
     /// <summary>
@@ -10,40 +28,26 @@ namespace CSharpBible.AboutEx.Visual
     /// <seealso cref="Form" />
     public partial class FrmAbout : Form
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FrmAbout"/> class.
-        /// </summary>
-        public FrmAbout()
-        {
-            InitializeComponent();
-        }
+#if !NET7_0_OR_GREATER
+        public object? DataContext {get;set;}
+#endif
 
         /// <summary>
-        /// Gets or sets the name of the product.
+        /// Initializes a new instance of the <see cref="FrmAbout" /> class.
         /// </summary>
-        /// <value>The name of the product.</value>
-        public new string ProductName { get => lblProductName.Text; set => lblProductName.Text = value; }
-        /// <summary>
-        /// Gets or sets the version.
-        /// </summary>
-        /// <value>The version.</value>
-        public string Version { get => lblVersion.Text; set => lblVersion.Text = value; }
-        /// <summary>
-        /// Gets or sets the copyright.
-        /// </summary>
-        /// <value>The copyright.</value>
-        public string Copyright { get => lblCopyright.Text; set => lblCopyright.Text = value; }
-        /// <summary>
-        /// Gets or sets the comments.
-        /// </summary>
-        /// <value>The comments.</value>
-        public string Comments { get => lblComments.Text; set => lblComments.Text = value; }
+        public FrmAbout(IAboutViewModel viewModel)
+        {
+            InitializeComponent();
+            DataContext = viewModel;
+            CommandBindingAttribute.Commit(this, viewModel);
+            TextBindingAttribute.Commit(this, viewModel);
+        }
 
         /// <summary>
         /// Handles the Click event of the btnOK control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         public void btnOK_Click(object sender, EventArgs e)
         {
             Close();

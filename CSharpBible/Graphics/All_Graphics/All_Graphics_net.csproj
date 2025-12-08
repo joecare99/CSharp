@@ -10,7 +10,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\ConsoleDisplay\ConsoleDisplay_net.csproj" />
+		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 		<ProjectReference Include="..\CanvasWPF2_CTItemTemplateSelector\CanvasWPF2_CTItemTemplateSelector.csproj" />
 		<ProjectReference Include="..\CanvasWPF2_ItemTemplateSelector\CanvasWPF2_ItemTemplateSelector.csproj" />
 		<ProjectReference Include="..\CanvasWPF\CanvasWPF.csproj" />
@@ -27,8 +27,12 @@
 		<ProjectReference Include="..\MVVM_Lines_on_Grid2\MVVM_Lines_on_Grid2.csproj" />
 		<ProjectReference Include="..\Polyline\Polyline_net.csproj" />
 	</ItemGroup>
-
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+	  <PackageReference Include="System.Drawing.Common" Version="10.0.0" />
+	</ItemGroup>
+
+  <ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DependentUpon>Resources.resx</DependentUpon>
 			<DesignTime>True</DesignTime>

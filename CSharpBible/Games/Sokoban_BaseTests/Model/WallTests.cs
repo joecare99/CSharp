@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sokoban.Model;
 using System;
 using System.Drawing;
 
@@ -29,7 +30,7 @@ namespace Sokoban_Base.Model.Tests
             Assert.AreEqual(new Point(2, 3), w.Position);
             Assert.IsNull(w.Item);
             w.Item = null;
-            Assert.ThrowsException<ArgumentException>(()=>w.Item = new Stone(null));
+            Assert.ThrowsExactly<ArgumentException>(()=>w.Item = new Stone(null));
         }
 
         /// <summary>

@@ -70,15 +70,14 @@ namespace WPF_StickyNotesDemo.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;WPF_StickyNotesDemo.Views.StickyNotesView&quot;
         ///      xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///      xmlns:i=&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
         ///      xmlns:local=&quot;clr-namespace:WPF_StickyNotesDemo.Views&quot;
-        ///      xmlns:p=&quot;clr-namespace:WPF_StickyNotesDemo.Properties&quot;
-        ///      xmlns:vc=&quot;clr-namespace:WPF_StickyNotesDemo.ValueConverter&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace: [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:p=&quot;clr-namespace:WPF_ [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string StickyNotesView {
             get {

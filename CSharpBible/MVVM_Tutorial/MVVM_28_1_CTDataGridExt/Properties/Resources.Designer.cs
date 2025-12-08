@@ -8,173 +8,172 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MVVM_28_1_CTDataGridExt.Properties {
-    using System;
+namespace MVVM_28_1_CTDataGridExt.Properties; 
+using System;
+
+
+/// <summary>
+///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+/// </summary>
+// Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
+// -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
+// Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
+// mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+public class Resources {
     
+    private static global::System.Resources.ResourceManager resourceMan;
+    
+    private static global::System.Globalization.CultureInfo resourceCulture;
+    
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+    internal Resources() {
+    }
     
     /// <summary>
-    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
     /// </summary>
-    // Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
-    // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
-    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
-    // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
-        
-        private static global::System.Resources.ResourceManager resourceMan;
-        
-        private static global::System.Globalization.CultureInfo resourceCulture;
-        
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Resources.ResourceManager ResourceManager {
+        get {
+            if (object.ReferenceEquals(resourceMan, null)) {
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_28_1_CTDataGridExt.Properties.Resources", typeof(Resources).Assembly);
+                resourceMan = temp;
+            }
+            return resourceMan;
         }
-        
-        /// <summary>
-        ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_28_1_CTDataGridExt.Properties.Resources", typeof(Resources).Assembly);
-                    resourceMan = temp;
-                }
-                return resourceMan;
-            }
+    }
+    
+    /// <summary>
+    ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+    ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+    /// </summary>
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    public static global::System.Globalization.CultureInfo Culture {
+        get {
+            return resourceCulture;
         }
-        
-        /// <summary>
-        ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
-        /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
-                return resourceCulture;
-            }
-            set {
-                resourceCulture = value;
-            }
+        set {
+            resourceCulture = value;
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Engineering ähnelt.
-        /// </summary>
-        public static string dep_1 {
-            get {
-                return ResourceManager.GetString("dep_1", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Engineering ähnelt.
+    /// </summary>
+    public static string dep_1 {
+        get {
+            return ResourceManager.GetString("dep_1", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The Engineering-department ähnelt.
-        /// </summary>
-        public static string dep_1_Desc {
-            get {
-                return ResourceManager.GetString("dep_1_Desc", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die The Engineering-department ähnelt.
+    /// </summary>
+    public static string dep_1_Desc {
+        get {
+            return ResourceManager.GetString("dep_1_Desc", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Sales ähnelt.
-        /// </summary>
-        public static string dep_2 {
-            get {
-                return ResourceManager.GetString("dep_2", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Sales ähnelt.
+    /// </summary>
+    public static string dep_2 {
+        get {
+            return ResourceManager.GetString("dep_2", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The Sales-department ähnelt.
-        /// </summary>
-        public static string dep_2_Desc {
-            get {
-                return ResourceManager.GetString("dep_2_Desc", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die The Sales-department ähnelt.
+    /// </summary>
+    public static string dep_2_Desc {
+        get {
+            return ResourceManager.GetString("dep_2_Desc", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Management ähnelt.
-        /// </summary>
-        public static string dep_3 {
-            get {
-                return ResourceManager.GetString("dep_3", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Management ähnelt.
+    /// </summary>
+    public static string dep_3 {
+        get {
+            return ResourceManager.GetString("dep_3", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The Management ähnelt.
-        /// </summary>
-        public static string dep_3_Desc {
-            get {
-                return ResourceManager.GetString("dep_3_Desc", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die The Management ähnelt.
+    /// </summary>
+    public static string dep_3_Desc {
+        get {
+            return ResourceManager.GetString("dep_3_Desc", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Service ähnelt.
-        /// </summary>
-        public static string dep_4 {
-            get {
-                return ResourceManager.GetString("dep_4", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Service ähnelt.
+    /// </summary>
+    public static string dep_4 {
+        get {
+            return ResourceManager.GetString("dep_4", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The Service-department ähnelt.
-        /// </summary>
-        public static string dep_4_Desc {
-            get {
-                return ResourceManager.GetString("dep_4_Desc", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die The Service-department ähnelt.
+    /// </summary>
+    public static string dep_4_Desc {
+        get {
+            return ResourceManager.GetString("dep_4_Desc", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Birthday ähnelt.
-        /// </summary>
-        public static string text_Birthday {
-            get {
-                return ResourceManager.GetString("text_Birthday", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Birthday ähnelt.
+    /// </summary>
+    public static string text_Birthday {
+        get {
+            return ResourceManager.GetString("text_Birthday", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Departmant ähnelt.
-        /// </summary>
-        public static string text_Department {
-            get {
-                return ResourceManager.GetString("text_Department", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Departmant ähnelt.
+    /// </summary>
+    public static string text_Department {
+        get {
+            return ResourceManager.GetString("text_Department", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die eMail ähnelt.
-        /// </summary>
-        public static string text_eMail {
-            get {
-                return ResourceManager.GetString("text_eMail", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die eMail ähnelt.
+    /// </summary>
+    public static string text_eMail {
+        get {
+            return ResourceManager.GetString("text_eMail", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Givenname ähnelt.
-        /// </summary>
-        public static string text_Firstname {
-            get {
-                return ResourceManager.GetString("text_Firstname", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Givenname ähnelt.
+    /// </summary>
+    public static string text_Firstname {
+        get {
+            return ResourceManager.GetString("text_Firstname", resourceCulture);
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Surname ähnelt.
-        /// </summary>
-        public static string text_Lastname {
-            get {
-                return ResourceManager.GetString("text_Lastname", resourceCulture);
-            }
+    }
+    
+    /// <summary>
+    ///   Sucht eine lokalisierte Zeichenfolge, die Surname ähnelt.
+    /// </summary>
+    public static string text_Lastname {
+        get {
+            return ResourceManager.GetString("text_Lastname", resourceCulture);
         }
     }
 }

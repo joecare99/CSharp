@@ -1,0 +1,23 @@
+<Project>
+	<Import Project="..\Avln_Samples.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+		<PackageReference Include="MSTest" Version="4.0.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Avln_AnimationTiming\Avln_AnimationTiming.csproj" />
+		<ProjectReference Include="$(Updir)\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+	</ItemGroup>
+</Project>

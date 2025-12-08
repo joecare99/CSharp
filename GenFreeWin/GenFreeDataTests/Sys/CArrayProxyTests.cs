@@ -44,7 +44,7 @@ public class CArrayProxyTests
 
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, "1")]
     [DataRow(1, "2")]
     [DataRow(2, "3")]
@@ -54,7 +54,7 @@ public class CArrayProxyTests
         Assert.AreEqual(sExp, _testClass[iIdx]);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, "A")]
     [DataRow(1, "B")]
     [DataRow(2, "C")]
@@ -70,7 +70,7 @@ public class CArrayProxyTests
             }
         }
     }
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(0, "A")]
     [DataRow(1, "B")]
     [DataRow(2, "C")]

@@ -11,17 +11,16 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MVVM.ViewModel;
 using MVVM_ImageHandling.Models;
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -35,9 +34,8 @@ namespace MVVM_ImageHandling.ViewModels
     public partial class ImageViewModel : BaseViewModelCT
     {
         #region Properties
-        public static Func<ITemplateModel> GetModel { get; set; } = () => new TemplateModel();
 
-        private readonly ITemplateModel _model;
+        private readonly IImageHandlingModel _model;
 
         public DateTime Now => _model.Now;
 
@@ -53,20 +51,23 @@ namespace MVVM_ImageHandling.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public ImageViewModel():this(GetModel())
+        public ImageViewModel():this(IoC.GetRequiredService<IImageHandlingModel>())
         {
         }
 
-        public ImageViewModel(ITemplateModel model)
+        public ImageViewModel(IImageHandlingModel model)
         {
             _model = model;
             _model.PropertyChanged += OnMPropertyChanged;
             _assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
             Image2 = $"pack://application:,,,/{_assemblyName};component/Resources/card_♣Ace.png";
-            var ms = new MemoryStream();
-        //    Properties.Resources.card_D10_emf.Save(ms, ImageFormat.Png);
-            ms.Position = 0L;
-      //      Image3 = LoadImageFromStream(ms); 
+
+            using var emf = new System.Drawing.Imaging.Metafile(new MemoryStream(Properties.Resources.card_D10_emf));
+            using var bmp = new System.Drawing.Bitmap(emf.Width, emf.Height);
+            bmp.SetResolution(emf.HorizontalResolution, emf.VerticalResolution);
+            using System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
+            g.DrawImage(emf, 0, 0);
+            Image3 = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         public BitmapImage LoadImageFromStream(Stream memoryStream)

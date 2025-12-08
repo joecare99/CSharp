@@ -1,44 +1,71 @@
-﻿<Page x:Class="VBUnObfusicator.Views.CodeUnObFusView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:VBUnObfusicator.Views"
-      xmlns:mvvm="clr-namespace:VBUnObfusicator.ViewModels"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="CodeUnObFusView">
+﻿<Page
+    x:Class="VBUnObfusicator.Views.CodeUnObFusView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:VBUnObfusicator.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="clr-namespace:VBUnObfusicator.ViewModels"
+    Title="CodeUnObFusView"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <Page.DataContext>
-        <mvvm:CodeUnObFusViewModel/>
+        <mvvm:CodeUnObFusViewModel />
     </Page.DataContext>
     <Grid d:Background="DarkGray">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Label Content="Orginal Code" HorizontalContentAlignment="Center"/>
-            <TextBox Grid.Row="1" Text="{Binding Code}" d:Text="TextBox: Code" TextWrapping="NoWrap" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="5,5,5,5" FontFamily="Cascadia Code" />
+            <Label HorizontalContentAlignment="Center" Content="Orginal Code" />
+            <TextBox
+                Grid.Row="1"
+                Margin="5,5,5,5"
+                d:Text="TextBox: Code"
+                AcceptsReturn="True"
+                FontFamily="Cascadia Code"
+                HorizontalScrollBarVisibility="Auto"
+                Text="{Binding Code}"
+                TextWrapping="NoWrap"
+                VerticalScrollBarVisibility="Auto" />
         </Grid>
         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-            <CheckBox Content="Reorder Labels" IsChecked="{Binding Reorder}"/>
-            <CheckBox Content="Remove Labels" IsChecked="{Binding RemoveLbl}"/>
-            <CheckBox Content="Create While" IsChecked="{Binding DoWhile}"/>
-            <Button Content="Work -->" Height="80" Command="{Binding ExecuteCommand}"/>
-            <TextBlock Text="{Binding Result2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <CheckBox Content="Reorder Labels" IsChecked="{Binding Reorder}" />
+            <CheckBox Content="Remove Labels" IsChecked="{Binding RemoveLbl}" />
+            <CheckBox Content="Create While" IsChecked="{Binding DoWhile}" />
+            <Button
+                Height="80"
+                Command="{Binding ExecuteCommand}"
+                Content="Work --&gt;" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="{Binding Result2}" />
         </StackPanel>
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Label Content="Generated Code" HorizontalContentAlignment="Center"/>
-            <TextBox Grid.Row="1" Text="{Binding Result}" TextWrapping="NoWrap" d:Text="TextBox: Result" Margin="5" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Code" AllowDrop="False" IsReadOnly="True"/>
+            <Label HorizontalContentAlignment="Center" Content="Generated Code" />
+            <TextBox
+                Grid.Row="1"
+                Margin="5"
+                d:Text="TextBox: Result"
+                AllowDrop="False"
+                FontFamily="Cascadia Code"
+                HorizontalScrollBarVisibility="Auto"
+                IsReadOnly="True"
+                Text="{Binding Result}"
+                TextWrapping="NoWrap"
+                VerticalScrollBarVisibility="Auto" />
         </Grid>
     </Grid>
 </Page>

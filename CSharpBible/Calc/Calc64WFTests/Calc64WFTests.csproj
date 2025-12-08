@@ -7,19 +7,20 @@
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<RootNamespace>Calc64WF</RootNamespace>
 		<AssemblyName>Calc64WFTests</AssemblyName>
-		<TargetFrameworks>net481-windows;net48-windows;net472-windows;net462-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
 		<ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Include="MSTest" Version="3.7.0" />
-		<PackageReference Include="coverlet.collector" Version="6.0.3">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="MSTest" />
+		<PackageReference Include="coverlet.collector">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="NSubstitute" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="*.csproj" />
@@ -31,9 +32,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj">
 		</ProjectReference>
-		<ProjectReference Include="..\Calc64Base\Calc64Base_win.csproj">
-		</ProjectReference>
-		<ProjectReference Include="..\Calc64WF\Calc64WF.csproj">
-		</ProjectReference>
+		<ProjectReference Include="..\Calc64Base\Calc64Base.csproj" />
+		<ProjectReference Include="..\Calc64WF\Calc64WF_net.csproj" />
 	</ItemGroup>
 </Project>

@@ -15,16 +15,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="MSTest" Version="3.7.0" />
-    <PackageReference Include="coverlet.collector" Version="6.0.3">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="MSTest" Version="4.0.2" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TestConsole\TestConsole_net.csproj" />
+    <ProjectReference Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
     <ProjectReference Include="..\Tetris_Base\Tetris_Base.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,62 @@
+<Window x:Class="DataAnalysis.WPF.Views.MainWindow"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:vm="clr-namespace:DataAnalysis.WPF.ViewModels"
+     xmlns:p="clr-namespace:DataAnalysis.WPF.Properties"
+     xmlns:ctrls="clr-namespace:DataAnalysis.WPF.Views.Controls"
+     mc:Ignorable="d"
+     Title="{x:Static p:Resources.AppTitle}" Height="700" Width="1200">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:SeriesAggregationViewModel}">
+            <ctrls:SeriesAggregationView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MatrixAggregationViewModel}">
+            <ctrls:MatrixAggregationView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ClusterAggregationViewModel}">
+            <ctrls:ClusterAggregationView/>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+            <TextBox Width="420" Text="{Binding InputPath, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="{x:Static p:Resources.BtnBrowse}" Command="{Binding BrowseCommand}"/>
+            <Button Content="{x:Static p:Resources.BtnPreview}" Command="{Binding PreviewCommand}"/>
+            <Button Content="{x:Static p:Resources.BtnAnalyze}" Command="{Binding AnalyzeCommand}"/>
+            <Button Content="{x:Static p:Resources.BtnExport}" Command="{Binding ExportCommand}"/>
+        </StackPanel>
+
+        <!-- Analysis/Summary tabs moved to upper area -->
+            <TabControl  DataContext="{Binding AnalysisVM}" ItemsSource="{Binding Aggregations}"  Grid.Row="1">
+                <!-- Header shows the aggregation title -->
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <!-- Content is resolved via Window.Resources DataTemplates by type -->
+            </TabControl>
+        <GridSplitter Grid.Row="1" Cursor="ScrollNS" ResizeDirection="Rows" />
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding SummaryItems}" AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static p:Resources.GridCategoryHeader}" Binding="{Binding Key}"/>
+                    <DataGridTextColumn Header="{x:Static p:Resources.GridValueHeader}" Binding="{Binding Value}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        <StatusBar Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Status}"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

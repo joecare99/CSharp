@@ -24,10 +24,13 @@ namespace WinAhnenCls.Model.GenBase.Tests
         [TestMethod()]
         public void CloseTest()
         {
-            Assert.Fail();
+            using var ms = new MemoryStream();
+            using var gbr = new GedComBaseReader(ms);
+            gbr.Close();
+            Assert.ThrowsExactly<ObjectDisposedException>(() => gbr.ReadLine());
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Resources\\Muster_GEDCOM_UTF-8.ged", new object[] { new object[] { 0, null!, "HEAD" }, new object[] { 1, null!, "CHAR", "UTF-8" } })]
         [DataRow("Resources\\Care_exp.ged", new object[] { new object[] { 0, null!, "HEAD" }, new object[] { 1, null!, "CHAR", "UTF-8" } })]
         public void ReadLineTest(string sFile, object[] aoExp)
@@ -48,7 +51,7 @@ namespace WinAhnenCls.Model.GenBase.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("Resources\\Muster_GEDCOM_UTF-8.ged")]
         [DataRow("Resources\\Care_exp.ged")]
         public void GetGedComLinesTest(string sFile)

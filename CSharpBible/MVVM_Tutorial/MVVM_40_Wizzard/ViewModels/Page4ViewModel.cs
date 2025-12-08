@@ -11,18 +11,14 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Collections.Generic;
 using System.ComponentModel;
-using MVVM.View.Extension;
-using MVVM.ViewModel;
-using MVVM_40_Wizzard.Models;
 using BaseLib.Helper;
-using CommunityToolkit.Mvvm.Input;
-using System.Linq;
+using MVVM.ViewModel;
 using MVVM_40_Wizzard.Properties;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Globalization;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 
 /// <summary>

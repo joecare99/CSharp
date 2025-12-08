@@ -3,11 +3,12 @@
 		<UpDir>..</UpDir>
 		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>$(UpDir)\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<LangVersion>13.0</LangVersion>
+		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>
-		<Copyright>Copyright © JC-Soft 2023</Copyright>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<Copyright>Copyright © JC-Soft 2025</Copyright>
 	</PropertyGroup>
 </Project>

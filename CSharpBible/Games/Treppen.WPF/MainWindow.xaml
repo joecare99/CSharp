@@ -1,0 +1,29 @@
+﻿<Window x:Class="Treppen.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Treppen.WPF"
+        xmlns:controls="clr-namespace:Treppen.WPF.Controls"
+        mc:Ignorable="d"
+        Title="Labyrinth 4" Height="600" Width="800"
+        DataContext="{Binding MainWindowViewModel, Source={StaticResource Locator}}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <controls:Labyrinth3DView Grid.Column="0" Background="LightGray" Labyrinth="{Binding Labyrinth}"/>
+
+        <StackPanel Grid.Column="1" Margin="10">
+            <Image Source="{Binding PreviewImage}" Width="200" Height="200" Margin="5" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Label Content="Size:" />
+            <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
+            <Button Content="Generate" Command="{Binding GenerateCommand}" Margin="5" />
+            <Button Content="Draw" Command="{Binding DrawCommand}" Margin="5" />
+            <Button Content="Print" Command="{Binding PrintCommand}" Margin="5" />
+            <Button Content="Export" Command="{Binding SaveAsCommand}" Margin="5" />
+        </StackPanel>
+    </Grid>
+</Window>

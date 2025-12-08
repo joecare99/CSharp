@@ -5,7 +5,7 @@ namespace WinAhnenCls.Model.Tests;
 [TestClass()]
 public class CHejBaseTests
 {
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", "", "", false, "")]
     [DataRow("", "", "1", false, "01.01.0001")]
     [DataRow("1", "1", "1", false, "01.01.0001")]
@@ -16,7 +16,7 @@ public class CHejBaseTests
         Assert.AreEqual(sExp, CHejBase.HejDate2DateStr(Day, Month, Year, dtOnly));
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new string[] { "", "", "" })]
     [DataRow("1", new string[] { "", "", "" })]
     [DataRow("1.2", new string[] { "", "", "" })]

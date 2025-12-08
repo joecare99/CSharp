@@ -1,16 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MVVM.ViewModel;
 using System.Windows;
-using System.Windows.Interop;
 
 namespace CanvasWPF2_CTItemTemplateSelector.ViewModel
 {
-	/// <summary>
-	/// Class ObservablePoint.
-	/// Implements the <see cref="NotificationObject" />
-	/// </summary>
-	/// <seealso cref="NotificationObject" />
-	public partial class ShapeData : NotificationObjectCT
+    /// <summary>
+    /// Class ObservablePoint.
+    /// Implements the <see cref="NotificationObject" />
+    /// </summary>
+    /// <seealso cref="NotificationObject" />
+    public partial class ShapeData : NotificationObjectCT
 	{
 		#region Properties
 		/// <summary>

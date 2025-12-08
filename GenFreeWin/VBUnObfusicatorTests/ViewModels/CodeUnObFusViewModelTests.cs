@@ -4,8 +4,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.View.Extension;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using VBUnObfusicator.Data;
 using VBUnObfusicator.Interfaces.Code;
 using VBUnObfusicator.Models;
+using VBUnObfusicator.Models.Scanner;
 using VBUnObfusicator.Models.Tests;
 using static VBUnObfusicator.Helper.TestHelper;
 
@@ -19,7 +22,7 @@ namespace VBUnObfusicator.ViewModels.Tests
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private CodeUnObFusViewModel _testViewModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        private ICSCode.ICodeBlock _parseResult = new CSCode.CodeBlock() { Type = ICSCode.CodeBlockType.Unknown, Code = "<ParseResult>", Name = "ParseResult" };
+        private ICodeBlock _parseResult = new CodeBlock() { Type = CodeBlockType.Unknown, Code = "<ParseResult>", Name = "ParseResult" };
         private string _toCodeResult = "<ToCodeResult>";
         private string _orginalCode = string.Empty;
         private bool _doWhile = false;
@@ -30,6 +33,8 @@ namespace VBUnObfusicator.ViewModels.Tests
         [TestInitialize]
         public void TestInitialize()
         {
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+
             IoC.GetReqSrv = (t) => t switch
             {
                 Type tp when tp == typeof(ICSCode) => this,
@@ -48,7 +53,7 @@ namespace VBUnObfusicator.ViewModels.Tests
             Assert.IsInstanceOfType(_testViewModel, typeof(CodeUnObFusViewModel));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Code", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code\r\n" })]
         [DataRow("Code2", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=Code2\r\n" })]
         public void CodeTest(string code, string[] asExp)
@@ -60,7 +65,7 @@ namespace VBUnObfusicator.ViewModels.Tests
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Result", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Result\r\n" })]
         [DataRow("Result2", new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Result2\r\n" })]
         public void ResultTest(string result, string[] asExp)
@@ -72,30 +77,30 @@ namespace VBUnObfusicator.ViewModels.Tests
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Reorder)=True\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Reorder)=False\r\n" })]
         [DataRow(true, new[] { "" })]
         public void ReorderTest(bool reorder, string[] asExp)
         {
             Assert.IsNotNull(_testViewModel.Reorder);
-            Assert.AreEqual(true, _testViewModel.Reorder);
+            Assert.IsTrue(_testViewModel.Reorder);
             _testViewModel.Reorder = reorder;
             Assert.AreEqual(reorder, _testViewModel.Reorder);
             Assert.AreEqual(asExp[0], DebugLog);
         }
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, new[] { "PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,RemoveLbl)=True\r\nPropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,RemoveLbl)=False\r\n" })]
         [DataRow(true, new[] { "" })]
         public void RemoveLblTest(bool removeLbl, string[] asExp)
         {
             Assert.IsNotNull(_testViewModel.RemoveLbl);
-            Assert.AreEqual(true, _testViewModel.RemoveLbl);
+            Assert.IsTrue(_testViewModel.RemoveLbl);
             _testViewModel.RemoveLbl = removeLbl;
             Assert.AreEqual(removeLbl, _testViewModel.RemoveLbl);
             Assert.AreEqual(asExp[0], DebugLog);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("0-Empty", new object[] { "", true, true ,true}, new[] { "Please enter some code ...", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Please enter some code ...
 " })]
@@ -199,22 +204,44 @@ Lines 0 => 0
             AssertAreEqual(asExp[1], DebugLog);
         }
 
-        public ICSCode.ICodeBlock Parse(IEnumerable<TokenData>? values = null)
+        public ICodeBlock Parse(IEnumerable<TokenData>? values = null)
         {
             DoLog($"Parse({values?.ToString() ?? "null"})");
             return _parseResult;
         }
 
-        public void RemoveSingleSourceLabels1(ICSCode.ICodeBlock cStruct)
+        public void RemoveSingleSourceLabels1(ICodeBlock cStruct)
             => DoLog($"RemoveSingleSourceLabels1({cStruct?.ToString() ?? "null"})");
 
-        public void ReorderLabels(ICSCode.ICodeBlock cStruct)
+        public void ReorderLabels(ICodeBlock cStruct)
             => DoLog($"ReorderLabels({cStruct?.ToString() ?? "null"})");
 
-        public string ToCode(ICSCode.ICodeBlock cStruct, int indent = 4)
+        public string ToCode(ICodeBlock cStruct, int indent = 4)
         {
             DoLog($"ToCode({cStruct?.ToString() ?? "null"}, indent: {indent})");
             return _toCodeResult;
+        }
+
+        [TestMethod]
+        public void Execute_ExceptionIsThrown_Result2ContainsExceptionMessage()
+        {
+            // Arrange
+            var viewModel = new CodeUnObFusViewModel();
+            IoC.GetReqSrv = (t) => t switch
+            {              
+                _ => throw new NotImplementedException()
+            };
+
+            // Simuliere einen Fehler durch ungültigen Code, der im Parser eine Exception auslöst
+            viewModel.Code = "\u0000"; // ungültiges Zeichen
+
+            // Act
+            var method = typeof(CodeUnObFusViewModel).GetMethod("Execute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method.Invoke(viewModel, null);
+
+            // Assert
+            Assert.IsFalse(string.IsNullOrEmpty(viewModel.Result2), "Result2 sollte eine Fehlermeldung enthalten.");
+            Assert.AreEqual(string.Empty, viewModel.Result, "Result sollte leer sein, wenn eine Exception auftritt.");
         }
 
         public void Tokenize(ICSCode.TokenDelegate? token)

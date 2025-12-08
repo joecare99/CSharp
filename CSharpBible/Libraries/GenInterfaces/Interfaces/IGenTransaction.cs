@@ -17,13 +17,14 @@ using System;
 /// <summary>
 /// The Interfaces namespace.
 /// </summary>
-namespace GenFree2Base.Interfaces;
+namespace GenInterfaces.Interfaces;
 
 /// <summary>
 /// Interface IGenTransaction
-/// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenBase" />
+/// Extends the <see cref="IGenBase" />
+/// a transaction is a change of a class or entry with data at a timestamp
 /// </summary>
-/// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenBase" />
+/// <seealso cref="IGenBase" />
 public interface IGenTransaction : IGenBase, IListEntry<IGenTransaction>
 {
     /// <summary>
@@ -55,5 +56,5 @@ public interface IGenTransaction : IGenBase, IListEntry<IGenTransaction>
     /// Gets the previous.
     /// </summary>
     /// <value>The previous.</value>
-    IGenTransaction? Prev { get; init; }
+    new IGenTransaction? Prev { get; init; }
 }

@@ -13,12 +13,12 @@
 // ***********************************************************************
 using System.Collections.Generic;
 using System.ComponentModel;
-using MVVM.View.Extension;
+using BaseLib.Helper;
 using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models;
-using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using System.Linq;
+using MVVM_40_Wizzard.Models.Interfaces;
 
 
 /// <summary>
