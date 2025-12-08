@@ -186,7 +186,7 @@ public class ComponentRenderer : IComponentRenderer
     /// <summary>
     /// Creates a WPF Menu from a TMainMenu component.
     /// </summary>
-    private static Menu CreateMenuBar(TMainMenu mainMenu)
+    private Menu CreateMenuBar(TMainMenu mainMenu)
     {
         var menu = new Menu
         {
