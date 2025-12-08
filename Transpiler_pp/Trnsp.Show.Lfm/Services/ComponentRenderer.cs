@@ -102,7 +102,6 @@ public class ComponentRenderer : IComponentRenderer
             BorderBrush = Brushes.DarkGray,
             BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(3),
-            Visibility = Visibility.Visible
         };
 
         var grid = new Grid();
