@@ -1,0 +1,58 @@
+﻿<!-- Generated from LFM file -->
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="WpfApp.Views.Frm_W2kMain"
+    Title="Client-Anwendung für Windows 2000"
+    Width="485"
+    Height="365"
+    Background="#F0F0F0"
+    WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Datei" x:Name="File1">
+                <MenuItem Header="_Neu" InputGestureText="Ctrl+N" x:Name="FileNewItem" />
+                <MenuItem Header="Ö_ffnen" InputGestureText="Ctrl+O" x:Name="FileOpenItem" />
+                <MenuItem Header="_Speichern" InputGestureText="Ctrl+S" x:Name="FileSaveItem" />
+                <MenuItem Header="Speichern _unter..." x:Name="FileSaveAsItem" />
+                <Separator />
+                <MenuItem Header="Sen_den" x:Name="FileSendItem" />
+                <Separator />
+                <MenuItem Header="_Beenden" x:Name="FileExitItem" />
+            </MenuItem>
+            <MenuItem Header="_Bearbeiten" x:Name="Edit1">
+                <MenuItem Header="_Ausschneiden" InputGestureText="Ctrl+X" x:Name="CutItem" />
+                <MenuItem Header="_Kopieren" InputGestureText="Ctrl+C" x:Name="CopyItem" />
+                <MenuItem Header="_Einfügen" InputGestureText="Ctrl+V" x:Name="PasteItem" />
+            </MenuItem>
+            <MenuItem Header="_Hilfe" x:Name="Help1">
+                <MenuItem Header="_Info..." x:Name="HelpAboutItem" />
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Height="23" x:Name="StatusBar"/>
+        <ToolBar DockPanel.Dock="Top" Height="24" x:Name="ToolBar1">
+                <!-- ImageIndex: 6 -->
+                <Button Width="20" Height="20" ToolTip="Neu|Neue Datei erstellen" x:Name="ToolButton1" />
+                <!-- ImageIndex: 7 -->
+                <Button Width="20" Height="20" ToolTip="Öffnen|Datei öffnen" x:Name="ToolButton2" />
+                <!-- ImageIndex: 8 -->
+                <Button Width="20" Height="20" ToolTip="Speichern|Aktuelle Datei speichern" x:Name="ToolButton3" />
+                <Separator />
+                <!-- ImageIndex: 15 -->
+                <Button Width="20" Height="20" ToolTip="Senden|Aktuelle Datei per E-Mail verschicken" x:Name="ToolButton5" />
+                <Separator />
+                <!-- ImageIndex: 0 -->
+                <Button Width="20" Height="20" ToolTip="Ausschneiden|Markiertes Objekt in die Zwischenablage verschieben" x:Name="ToolButton7" />
+                <!-- ImageIndex: 1 -->
+                <Button Width="20" Height="20" ToolTip="Kopieren|Markiertes Objekt in die Zwischenablage kopieren" x:Name="ToolButton8" />
+                <!-- ImageIndex: 2 -->
+                <Button Width="20" Height="20" ToolTip="Einfügen|Inhalt der Zwischenablage einfügen" x:Name="ToolButton9" />
+            </ToolBar>
+            <RichTextBox  AcceptsReturn="True" AcceptsTab="True" x:Name="RichEdit1" />
+            <!-- Non-visual: TActionList Name="ActionList1" -->
+            <!-- Non-visual: TImageList Name="ImageList1" -->
+            <!-- Unknown component: TOpenDialog Name="OpenDialog" -->
+            <!-- Unknown component: TSaveDialog Name="SaveDialog" -->
+            <!-- Unknown component: TSaveDialog Name="SaveDialog1" -->
+    </DockPanel>
+</Window>
