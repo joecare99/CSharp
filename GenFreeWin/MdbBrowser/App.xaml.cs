@@ -4,7 +4,7 @@ using MdbBrowser.Models.Interfaces;
 using MdbBrowser.ViewModels;
 using MdbBrowser.ViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using System;
 using System.Windows;
 
