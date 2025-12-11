@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BaseLib.Helper;
 using MVVM.ViewModel;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using VBUnObfusicator.Interfaces.Code;
 using VBUnObfusicator.Properties;
 
