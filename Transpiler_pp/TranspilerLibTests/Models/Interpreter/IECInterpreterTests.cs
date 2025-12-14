@@ -156,8 +156,8 @@ public class IECInterpreterTests
         Assert.AreEqual(xExp, IECInterpreter.systemfunctions.TryGetValue(eAct,out var methods));
         if (value is object[] values)
         {
-            var m = methods.FirstOrDefault(m => (values.Count() == m?.GetParameters().Count()) && m.GetParameters().First().ParameterType.IsAssignableFrom(values[0].GetType()));
-            if (m.ReturnType.IsAssignableTo(typeof(double)))
+            var m = methods!.FirstOrDefault(m => (values.Count() == m?.GetParameters().Count()) && m.GetParameters().First().ParameterType.IsAssignableFrom(values[0].GetType()));
+            if (m!.ReturnType.IsAssignableTo(typeof(double)))
                 Assert.AreEqual((double)exp, (double)(m?.Invoke(null, values) ?? throw new InvalidOperationException("Method returned null")), 1e-7d);
             else if (m.ReturnType.IsAssignableTo(typeof((int, int))) && exp is object[] aexp)
                 Assert.AreEqual((aexp[0], aexp[1]), ((int,int))(m?.Invoke(null, values) ?? throw new InvalidOperationException("Method returned null")));
@@ -167,7 +167,7 @@ public class IECInterpreterTests
         else
         {
            // if (value is int i && exp is int ) value = (double)i;
-            var m = methods.First(m => m?.GetParameters().First().ParameterType.IsAssignableFrom(value.GetType())??false);
+            var m = methods!.First(m => m?.GetParameters().First().ParameterType.IsAssignableFrom(value.GetType())??false);
             if (m.ReturnType.IsAssignableTo(typeof(double)))
                 Assert.AreEqual((double)exp, (double)(m?.Invoke(null, [value]) ?? throw new InvalidOperationException("Method returned null")), 1e-7);
             else

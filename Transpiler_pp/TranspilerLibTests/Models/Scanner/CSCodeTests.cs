@@ -266,7 +266,7 @@ namespace TranspilerLib.Models.Scanner.Tests
         public void ParseEnumTest(string _, List<TokenData> actList, string[] data)
         {
             var act = _testClass.Parse(actList);
-            AssertAreEqual(data[0], act?.ToString().Replace("\"+", "\" +"));
+            AssertAreEqual(data[0], act?.ToString()?.Replace("\"+", "\" +"));
         }
 
 
