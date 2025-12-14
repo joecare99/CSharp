@@ -12,6 +12,9 @@ namespace Trnsp.Show.Pas.ViewModels
 
         public ObservableCollection<CodeBlockNode> RootNodes { get; } = new();
 
+        [ObservableProperty]
+        private CodeBlockNode? _selectedNode;
+
         public IRelayCommand LoadFileCommand { get; }
 
         public MainViewModel(IFileService fileService, IPascalParserService parserService)
