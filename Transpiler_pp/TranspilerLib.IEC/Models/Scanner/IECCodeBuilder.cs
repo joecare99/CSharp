@@ -211,7 +211,7 @@ public class IECCodeBuilder : CodeBuilder
                     td.Level = data.actualBlock.Level - 1;
                     td.type = CodeBlockType.Block;
                     base.OnToken(td, data);
-                    while (data.actualBlock.Level > tokenData.Level)
+                    while (data.actualBlock?.Level > tokenData.Level && data.actualBlock.Parent!= null)
                         data.actualBlock = data.actualBlock.Parent;
                 }
                 break;
@@ -245,10 +245,10 @@ public class IECCodeBuilder : CodeBuilder
                     else
                     if (block.Type == CodeBlockType.Operation
                         && new[] { "*", "/" }.Contains(block.Code)
-                        && new[] { "+", "-" }.Contains(block.Parent.Code)
+                        && new[] { "+", "-" }.Contains(block.Parent?.Code)
                         && new[] { "+", "-" }.Contains(td.Code))
                     {
-                        data.actualBlock.Parent = block.Parent.Parent;
+                        data.actualBlock.Parent = block.Parent!.Parent;
                         block.Parent.Parent = data.actualBlock;
                     }
                     else
