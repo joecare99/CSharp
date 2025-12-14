@@ -15,5 +15,13 @@ namespace Transp.Show.Pas
             InitializeComponent();
             DataContext = App.Current.Services.GetService<MainViewModel>();
         }
+
+        private void CodeStructureTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.SelectedNode = e.NewValue as CodeBlockNode;
+            }
+        }
     }
 }

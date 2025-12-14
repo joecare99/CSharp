@@ -4,9 +4,73 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Transp.Show.Pas"
+        xmlns:vm="clr-namespace:Trnsp.Show.Pas.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Pascal Code Visualizer" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=True}">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Background="#F0F0F0">
+            <Button Content="Load File" Command="{Binding LoadFileCommand}" Margin="5" Padding="5,2"/>
+        </StackPanel>
+
+        <!-- TreeView -->
+        <TreeView x:Name="CodeStructureTreeView" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding RootNodes}" BorderThickness="0"
+                  SelectedItemChanged="CodeStructureTreeView_SelectedItemChanged">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Type}" FontWeight="Bold" Foreground="Blue" Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding Name}"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, FallbackValue=False}"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+        
+        <!-- Splitter -->
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+
+        <!-- Properties View -->
+        <ScrollViewer Grid.Row="1" Grid.Column="2">
+            <StackPanel Margin="10">
+                <TextBlock Text="Properties" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <Grid DataContext="{Binding SelectedNode}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Name:" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,10,5"/>
+                    <TextBox Text="{Binding Name, Mode=OneWay}" Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True"/>
+
+                    <TextBlock Text="Type:" FontWeight="Bold" Grid.Row="1" Grid.Column="0" Margin="0,0,10,5"/>
+                    <TextBox Text="{Binding Type, Mode=OneWay}" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True"/>
+
+                    <TextBlock Text="Code:" FontWeight="Bold" Grid.Row="2" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding Code, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="100"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
