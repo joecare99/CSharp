@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:GenFreeWpf.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvmi="clr-namespace:GenFree.ViewModels.Interfaces;assembly=GenFreeUIItfs"
-    xmlns:vex="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
+    xmlns:vex="clr-namespace:MVVM.Views.Extension;assembly=MVVM_BaseLib"
     xmlns:viewmodels="clr-namespace:GenFreeWpf.ViewModels"
     d:DesignHeight="768"
     d:DesignWidth="1024"

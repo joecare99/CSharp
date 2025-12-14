@@ -127,7 +127,7 @@ public class CCodeBlockTests : TestBase
         var act = _testClass.Parse(TestCSDataClass.TestDataList1() as List<TokenData>);
         var act2 = act.SubBlocks[7];
         ((CodeBlock)act2).DestinationIndex = new() { 1 };
-        Assert.IsTrue(act2.Destination.TryGetTarget(out var act3));
+        Assert.IsTrue(act2!.Destination!.TryGetTarget(out var act3));
         Assert.AreEqual(act, act3);
     }
 

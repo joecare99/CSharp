@@ -34,6 +34,49 @@ public partial class TImageList : LfmComponentBase
         }
     }
 
+    static bool TryParseLazarusImageListHeader(byte[] data, out int width, out int height, out int payloadOffset)
+    {
+        width = height = 0;
+        payloadOffset = -1;
+        if (data.Length < 8) return false;
+        // "Lz" signature
+        if (data[0] != 0x4C || data[1] != 0x7A) return false;
+        // Beispielformat: 4C 7A <ver?> <ver?> <width 4 bytes little-endian> <height 4 bytes little-endian>
+        // In Ihren Beispielen folgen oft 3*4-Byte ints; wir lesen die nächsten zwei ints als width/height (sicherstellen)
+        // Anpassung falls Format abweicht.
+        // Hier: bytes 2..5 = int32 (evtl version), bytes 6..9 = width, bytes 10..13 = height
+        // Wir versuchen mehrere Offsets robust:
+        try
+        {
+            // Versuch: nach signature kommt 4 bytes (ver), dann width (4), height (4)
+            int ver = BitConverter.ToInt32(data, 2);
+            width = BitConverter.ToInt32(data, 6);
+            height = BitConverter.ToInt32(data, 10);
+            // sanity check
+            if (width <= 0 || height <= 0 || width > 1024 || height > 1024)
+            {
+                // alternative: maybe width/height direkt nach signature
+                width = BitConverter.ToInt32(data, 2);
+                height = BitConverter.ToInt32(data, 6);
+                payloadOffset = 10;
+            }
+            else
+            {
+                payloadOffset = 14;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+        // find start of zlib (0x78 0x9C or 0x78 0xDA)
+        for (int i = payloadOffset; i < data.Length - 1; i++)
+        {
+            if (data[i] == 0x78 && (data[i + 1] == 0x9C || data[i + 1] == 0xDA)) { payloadOffset = i; return true; }
+        }
+        return false;
+    }
+
     /// <summary>
     /// Collection of individual images extracted from the combined bitmap.
     /// </summary>
@@ -77,15 +120,9 @@ public partial class TImageList : LfmComponentBase
         }
     }
 
-    partial void OnImageWidthChanged(int value)
-    {
-        ExtractImagesFromBitmap();
-    }
+    partial void OnImageWidthChanged(int value) => ExtractImagesFromBitmap();
 
-    partial void OnImageHeightChanged(int value)
-    {
-        ExtractImagesFromBitmap();
-    }
+    partial void OnImageHeightChanged(int value) => ExtractImagesFromBitmap();
 
     /// <summary>
     /// Extracts individual images from the combined bitmap strip.

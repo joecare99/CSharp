@@ -54,6 +54,13 @@
                 </StackPanel>
             </Button>
             <Separator/>
+            <Button Command="{Binding ExportXamlCommand}" Padding="10,5" ToolTip="Dialog nach Xaml exportieren">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="+" Margin="0,0,5,0"/>
+                    <TextBlock Text="Export XAML"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
             <Button Command="{Binding ExpandAllCommand}" Padding="10,5" ToolTip="Alle aufklappen">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="+" Margin="0,0,5,0"/>

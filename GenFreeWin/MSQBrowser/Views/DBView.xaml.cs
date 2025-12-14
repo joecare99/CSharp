@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Controls;
 using CommonDialogs.Interfaces;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using System.Security;
 using BaseLib.Helper;
 

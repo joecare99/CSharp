@@ -65,7 +65,7 @@ public class LfmTokenizerTests
         {
             Assert.AreEqual(sExpectedTokens, sActualTokens, $"Testcase: {sTestName}");
         }
-        catch (AssertFailedException ex)
+        catch (AssertFailedException)
         {
             if (File.Exists(Path.Combine(".", "Resources", sTestName, sTestName + "_actual.json")))
                 File.Delete(Path.Combine(".", "Resources", sTestName, sTestName + "_actual.json"));

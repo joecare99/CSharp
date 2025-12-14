@@ -72,10 +72,7 @@ public partial class TToolBar : LfmComponentBase
     /// <summary>
     /// Gets an image from the associated ImageList by index.
     /// </summary>
-    public ImageSource? GetButtonImage(int imageIndex)
-    {
-        return ImageList?.GetImage(imageIndex);
-    }
+    public ImageSource? GetButtonImage(int imageIndex) => ImageList?.GetImage(imageIndex);
 }
 
 /// <summary>
@@ -113,9 +110,9 @@ public partial class TToolButton : LfmComponentBase
     /// Gets the effective image index, considering linked action.
     /// </summary>
     public int EffectiveImageIndex =>
-        _imageIndexExplicitlySet || LinkedAction == null
+        _imageIndexExplicitlySet || LinkedAction == null || !LinkedAction.TryGetTarget(out var t)
             ? ImageIndex
-            : (LinkedAction.ImageIndex >= 0 ? LinkedAction.ImageIndex : ImageIndex);
+            : (t.ImageIndex >= 0 ? t.ImageIndex : ImageIndex);
 
     public TToolButton()
     {
@@ -127,10 +124,6 @@ public partial class TToolButton : LfmComponentBase
     {
         switch (name.ToLower())
         {
-            case "action":
-                // Use the base class ActionName property
-                ActionName = value?.ToString() ?? string.Empty;
-                break;
             case "imageindex":
                 ImageIndex = ConvertToInt(value, -1);
                 _imageIndexExplicitlySet = ImageIndex >= 0;
@@ -159,21 +152,21 @@ public partial class TToolButton : LfmComponentBase
         }
     }
 
-    protected override void OnActionLinked()
+    protected override void OnActionChanged(TAction target)
     {
         // For TToolButton: inherit Hint from Action (not Caption!)
-        if (LinkedAction == null) return;
+        if (target == null) return;
 
         // Inherit Hint if not set locally
-        if (string.IsNullOrEmpty(Hint) && !string.IsNullOrEmpty(LinkedAction.Hint))
+        if (string.IsNullOrEmpty(Hint) && !string.IsNullOrEmpty(target.Hint))
         {
-            Hint = LinkedAction.Hint;
+            Hint = target.Hint;
         }
 
         // Inherit ImageIndex if not explicitly set
-        if (!_imageIndexExplicitlySet && LinkedAction.ImageIndex >= 0)
+        if (!_imageIndexExplicitlySet && target.ImageIndex >= 0)
         {
-            ImageIndex = LinkedAction.ImageIndex;
+            ImageIndex = target.ImageIndex;
         }
 
         OnPropertyChanged(nameof(EffectiveImageIndex));
