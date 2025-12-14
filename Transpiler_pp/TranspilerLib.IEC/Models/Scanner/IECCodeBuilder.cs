@@ -93,7 +93,7 @@ public class IECCodeBuilder : CodeBuilder
                     var td = tokenData;
                     td.type = CodeBlockType.Block;
                     td.Level = tokenData.Level - 1;
-                    while (data.actualBlock.Level > tokenData.Level)
+                    while (data.actualBlock?.Level > tokenData.Level)
                         data.actualBlock = data.actualBlock.Parent;
                     base.OnToken(td, data);
                 }
