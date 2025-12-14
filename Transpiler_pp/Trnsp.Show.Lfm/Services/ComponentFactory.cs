@@ -11,8 +11,6 @@ namespace Trnsp.Show.Lfm.Services;
 /// </summary>
 public class ComponentFactory : IComponentFactory
 {
-    private readonly IActionResolver _actionResolver;
-
     // Properties that indicate a TForm-derived component
     private static readonly HashSet<string> _formIndicatorProperties = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -135,23 +133,12 @@ public class ComponentFactory : IComponentFactory
     /// <summary>
     /// Creates a new ComponentFactory with default ActionResolver.
     /// </summary>
-    public ComponentFactory() : this(new ActionResolver())
+    public ComponentFactory()
     {
-    }
-
-    /// <summary>
-    /// Creates a new ComponentFactory with the specified ActionResolver.
-    /// </summary>
-    public ComponentFactory(IActionResolver actionResolver)
-    {
-        _actionResolver = actionResolver;
     }
 
     /// <inheritdoc/>
-    public LfmComponentBase CreateComponent(LfmObject lfmObject)
-    {
-        return CreateComponent(lfmObject, isRoot: false);
-    }
+    public LfmComponentBase CreateComponent(LfmObject lfmObject) => CreateComponent(lfmObject, isRoot: false);
 
     /// <summary>
     /// Creates a component from an LfmObject, with optional root detection.
@@ -199,12 +186,10 @@ public class ComponentFactory : IComponentFactory
     /// <summary>
     /// Checks if an LfmObject has properties typical of a TForm.
     /// </summary>
-    private static bool IsFormLikeObject(LfmObject lfmObject)
-    {
+    private static bool IsFormLikeObject(LfmObject lfmObject) =>
         // Check if the object has any Form-indicator properties
-        return lfmObject.Properties.Any(p => 
+        lfmObject.Properties.Any(p =>
             _formIndicatorProperties.Contains(p.Name));
-    }
 
     /// <inheritdoc/>
     public LfmComponentBase? CreateComponentTree(LfmObject? rootObject)
@@ -215,10 +200,7 @@ public class ComponentFactory : IComponentFactory
         // Root object is always treated with isRoot=true
         var rootComponent = CreateComponent(rootObject, isRoot: true);
         BuildChildComponents(rootComponent, rootObject);
-        
-        // After building the tree, resolve all action links
-        _actionResolver.ResolveActions(rootComponent);
-        
+              
         return rootComponent;
     }
 

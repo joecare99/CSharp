@@ -1,6 +1,6 @@
 using TranspilerLib.Pascal.Models;
 
-namespace Trnsp.Show.Lfm.Services;
+namespace Trnsp.Show.Lfm.Services.Interfaces;
 
 /// <summary>
 /// Service interface for parsing LFM files.

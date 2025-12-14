@@ -1,7 +1,7 @@
 using System.Text;
 using Trnsp.Show.Lfm.Models.Components;
 
-namespace Trnsp.Show.Lfm.Services;
+namespace Trnsp.Show.Lfm.Services.Interfaces;
 
 /// <summary>
 /// Interface for exporting LFM components to XAML.

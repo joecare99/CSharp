@@ -16,7 +16,7 @@ public partial class TMainMenu : LfmComponentBase
     /// <summary>
     /// Reference to the resolved ImageList component.
     /// </summary>
-    public TImageList? ImageList { get; set; }
+    public WeakReference<TImageList>? ImageList { get; set; }
 
     public List<TMenuItem> MenuItems { get; } = [];
 
@@ -31,7 +31,7 @@ public partial class TMainMenu : LfmComponentBase
         switch (name.ToLower())
         {
             case "images":
-                Images = value?.ToString() ?? string.Empty;
+                ObjectResolver.ResolveOrDefer(value as string, this, (o)=>ImageList = new WeakReference<TImageList>(o as TImageList));
                 break;
             default:
                 base.ApplyProperty(name, value);
@@ -42,10 +42,7 @@ public partial class TMainMenu : LfmComponentBase
     /// <summary>
     /// Gets an image from the associated ImageList by index.
     /// </summary>
-    public ImageSource? GetMenuImage(int imageIndex)
-    {
-        return ImageList?.GetImage(imageIndex);
-    }
+    public ImageSource? GetMenuImage(int imageIndex) => ImageList?.TryGetTarget(out var i) ?? false?i.GetImage(imageIndex):null;
 }
 
 /// <summary>
@@ -61,9 +58,11 @@ public partial class TPopupMenu : TMainMenu
 public partial class TMenuItem : LfmComponentBase
 {
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EffectiveImageIndex))]
     private int _imageIndex = -1;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EffectiveShortCut))]
     private string _shortCut = string.Empty;
 
     [ObservableProperty]
@@ -107,17 +106,17 @@ public partial class TMenuItem : LfmComponentBase
     /// Gets the effective shortcut, considering linked action.
     /// </summary>
     public string EffectiveShortCut =>
-        _shortCutExplicitlySet || LinkedAction == null
+        _shortCutExplicitlySet || LinkedAction == null || !LinkedAction.TryGetTarget(out var t)
             ? ShortCut
-            : (string.IsNullOrEmpty(LinkedAction.ShortCut) ? ShortCut : LinkedAction.ShortCut);
+            : (string.IsNullOrEmpty(t.ShortCut) ? ShortCut : t.ShortCut);
 
     /// <summary>
     /// Gets the effective image index, considering linked action.
     /// </summary>
     public int EffectiveImageIndex =>
-        _imageIndexExplicitlySet || LinkedAction == null
+        _imageIndexExplicitlySet || LinkedAction == null || !LinkedAction.TryGetTarget(out var t)
             ? ImageIndex
-            : (LinkedAction.ImageIndex >= 0 ? LinkedAction.ImageIndex : ImageIndex);
+            : (t.ImageIndex >= 0 ? t.ImageIndex : ImageIndex);
 
     public TMenuItem()
     {
@@ -160,28 +159,24 @@ public partial class TMenuItem : LfmComponentBase
         }
     }
 
-    protected override void OnActionLinked()
+    protected override void OnActionChanged(TAction action)
     {
-        base.OnActionLinked();
+        base.OnActionChanged(action);
         
-        if (LinkedAction == null) return;
+        if (action == null) return;
 
         // Inherit ShortCut if not explicitly set
-        if (!_shortCutExplicitlySet && !string.IsNullOrEmpty(LinkedAction.ShortCut))
+        if (!_shortCutExplicitlySet && !string.IsNullOrEmpty(action.ShortCut))
         {
-            ShortCut = LinkedAction.ShortCut;
+            ShortCut = action.ShortCut;
         }
 
         // Inherit ImageIndex if not explicitly set
-        if (!_imageIndexExplicitlySet && LinkedAction.ImageIndex >= 0)
+        if (!_imageIndexExplicitlySet && action.ImageIndex >= 0)
         {
-            ImageIndex = LinkedAction.ImageIndex;
+            ImageIndex = action.ImageIndex;
         }
 
-        // Notify property changes for effective values
-        OnPropertyChanged(nameof(EffectiveShortCut));
-        OnPropertyChanged(nameof(EffectiveImageIndex));
-        OnPropertyChanged(nameof(EffectiveCaption));
     }
 
     /// <summary>

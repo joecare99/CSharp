@@ -1,10 +1,13 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using TranspilerLib.Pascal.Models;
+using Trnsp.Show.Lfm.Services;
+using Trnsp.Show.Lfm.Services.Interfaces;
 
 namespace Trnsp.Show.Lfm.Models.Components;
 
@@ -68,6 +71,13 @@ public abstract partial class LfmComponentBase : ObservableObject
     private LfmComponentBase? _parent;
 
     /// <summary>
+    /// Globale Auflösung von benannten LFM-Objekten.
+    /// Muss von außen (z. B. im Loader) gesetzt werden,
+    /// bevor Properties angewendet werden.
+    /// </summary>
+    public static IObjectResolver? ObjectResolver { get; set; } = new LfmObjectResolver();
+
+    /// <summary>
     /// Picture/Bitmap data for components that support images.
     /// </summary>
     private TBitmap? _picture;
@@ -88,30 +98,10 @@ public abstract partial class LfmComponentBase : ObservableObject
     }
 
     /// <summary>
-    /// Name of the linked action (from Action property in LFM).
-    /// </summary>
-    private string _actionName = string.Empty;
-    public string ActionName
-    {
-        get => _actionName;
-        set => SetProperty(ref _actionName, value);
-    }
-
-    /// <summary>
     /// Reference to the resolved TAction component.
     /// </summary>
-    private TAction? _linkedAction;
-    public TAction? LinkedAction
-    {
-        get => _linkedAction;
-        set
-        {
-            if (SetProperty(ref _linkedAction, value))
-            {
-                OnActionLinked();
-            }
-        }
-    }
+    [ObservableProperty]
+    private WeakReference<TAction>? _linkedAction;
 
     /// <summary>
     /// Indicates whether the Caption was explicitly set in the LFM file.
@@ -139,6 +129,9 @@ public abstract partial class LfmComponentBase : ObservableObject
         {
             ApplyProperty(prop.Name, prop.Value);
         }
+
+        // Dieses Objekt für andere auflösbar machen
+        ObjectResolver?.RegisterObject(Name, this);
 
         // Process any pending hex data
         FinalizePendingHexData();
@@ -200,7 +193,7 @@ public abstract partial class LfmComponentBase : ObservableObject
                 // Handled by parent assignment
                 break;
             case "action":
-                ActionName = value?.ToString() ?? string.Empty;
+                ObjectResolver.ResolveOrDefer(value as string,this,(o)=>LinkedAction=new WeakReference<TAction>(o as TAction));
                 break;
             case "picture.data":
                 ApplyHexData("picture", value);
@@ -208,6 +201,7 @@ public abstract partial class LfmComponentBase : ObservableObject
             case "glyph.data":
                 ApplyHexData("glyph", value);
                 break;
+            case "bitmap":
             case "bitmap.data":
                 ApplyHexData("bitmap", value);
                 break;
@@ -218,41 +212,29 @@ public abstract partial class LfmComponentBase : ObservableObject
     /// Called when an action is linked to this component.
     /// Override in derived classes to inherit specific properties from the action.
     /// </summary>
-    protected virtual void OnActionLinked()
+    partial void OnLinkedActionChanged(WeakReference<TAction> reference)
     {
-        if (LinkedAction == null) return;
+        if (reference == null || !reference.TryGetTarget(out var target)) return;
+         
+        OnActionChanged(target);
 
-        // Default behavior: inherit Caption if not explicitly set
-        if (!CaptionExplicitlySet && !string.IsNullOrEmpty(LinkedAction.Caption))
-        {
-            Caption = LinkedAction.Caption;
-        }
-
-        // Inherit Hint if not set
-        if (string.IsNullOrEmpty(Hint) && !string.IsNullOrEmpty(LinkedAction.Hint))
-        {
-            Hint = LinkedAction.Hint;
-        }
-
-        // Inherit Enabled state
-        // Note: In Delphi, Action.Enabled typically controls the component's enabled state
     }
 
     /// <summary>
     /// Gets the effective caption, considering linked action.
     /// </summary>
     public virtual string EffectiveCaption => 
-        CaptionExplicitlySet || LinkedAction == null 
+        CaptionExplicitlySet || LinkedAction == null || !LinkedAction.TryGetTarget(out var t) 
             ? Caption 
-            : (string.IsNullOrEmpty(LinkedAction.Caption) ? Caption : LinkedAction.Caption);
+            : (string.IsNullOrEmpty(t.Caption) ? Caption : t.Caption);
 
     /// <summary>
     /// Gets the effective hint, considering linked action.
     /// </summary>
     public virtual string EffectiveHint =>
-        !string.IsNullOrEmpty(Hint) || LinkedAction == null
+        !string.IsNullOrEmpty(Hint) || LinkedAction == null || !LinkedAction.TryGetTarget(out var t)
             ? Hint
-            : LinkedAction.Hint;
+            : t.Hint;
 
     /// <summary>
     /// Applies hex data for bitmap properties.
@@ -310,36 +292,27 @@ public abstract partial class LfmComponentBase : ObservableObject
         _pendingHexData.Clear();
     }
 
-    protected static int ConvertToInt(object? value, int defaultValue = 0)
+    protected static int ConvertToInt(object? value, int defaultValue = 0) => value switch
     {
-        return value switch
-        {
-            int i => i,
-            string s when int.TryParse(s, out var result) => result,
-            _ => defaultValue
-        };
-    }
+        int i => i,
+        string s when int.TryParse(s, out var result) => result,
+        _ => defaultValue
+    };
 
-    protected static double ConvertToDouble(object? value, double defaultValue = 0)
+    protected static double ConvertToDouble(object? value, double defaultValue = 0) => value switch
     {
-        return value switch
-        {
-            double d => d,
-            int i => i,
-            string s when double.TryParse(s, out var result) => result,
-            _ => defaultValue
-        };
-    }
+        double d => d,
+        int i => i,
+        string s when double.TryParse(s, out var result) => result,
+        _ => defaultValue
+    };
 
-    protected static bool ConvertToBool(object? value, bool defaultValue = false)
+    protected static bool ConvertToBool(object? value, bool defaultValue = false) => value switch
     {
-        return value switch
-        {
-            bool b => b,
-            string s => s.Equals("true", StringComparison.OrdinalIgnoreCase),
-            _ => defaultValue
-        };
-    }
+        bool b => b,
+        string s => s.Equals("true", StringComparison.OrdinalIgnoreCase),
+        _ => defaultValue
+    };
 
     protected static Color ConvertToColor(object? value, Color? defaultColor = null)
     {
@@ -403,5 +376,25 @@ public abstract partial class LfmComponentBase : ObservableObject
         }
         catch { }
         return Colors.Transparent;
+    }
+
+    protected virtual void OnActionChanged(TAction? target)
+    {
+
+        if (target == null) return;
+        // Default behavior: inherit Caption if not explicitly set
+        if (!CaptionExplicitlySet && !string.IsNullOrEmpty(target.Caption))
+        {
+            Caption = target.Caption;
+        }
+
+        // Inherit Hint if not set
+        if (string.IsNullOrEmpty(Hint) && !string.IsNullOrEmpty(target.Hint))
+        {
+            Hint = target.Hint;
+        }
+
+        // Inherit Enabled state
+        // Note: In Delphi, Action.Enabled typically controls the component's enabled state
     }
 }

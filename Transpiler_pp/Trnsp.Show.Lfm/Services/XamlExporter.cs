@@ -4,14 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Trnsp.Show.Lfm.Models.Components;
+using Trnsp.Show.Lfm.Services.Interfaces;
 
 namespace Trnsp.Show.Lfm.Services;
 
 /// <summary>
 /// Exports LFM components to XAML Window markup.
 /// </summary>
-public class XamlExporter : IXamlExporter
+public partial class XamlExporter : IXamlExporter
 {
     private readonly StringBuilder _sb = new();
     private int _indentLevel;
@@ -42,11 +44,28 @@ public class XamlExporter : IXamlExporter
     /// <inheritdoc/>
     public void ExportToFile(LfmComponentBase component, string filePath)
     {
+        // First export XAML (in-memory) as before
         var xaml = ExportToXaml(component);
+
+        // Then export image resources next to the XAML file
+        try
+        {
+            var baseDirectory = Path.GetDirectoryName(filePath) ?? string.Empty;
+            var imagesDirectory = Path.Combine(baseDirectory, "Images");
+
+            ExportImagesRecursive(component, imagesDirectory);
+        }
+        catch
+        {
+            // Ignore image export failures for now, XAML export should still work
+        }
+
         File.WriteAllText(filePath, xaml, Encoding.UTF8);
     }
 
-    private void ExportWindow(TForm form)
+    private void ExportWindow(TForm form) => ExportWindow(form, null);
+
+    private void ExportWindow(TForm form, string? imagesDirectory)
     {
         AppendLine("<Window");
         _indentLevel++;
@@ -73,7 +92,7 @@ public class XamlExporter : IXamlExporter
             AppendLine("<DockPanel>");
             _indentLevel++;
             
-            ExportMainMenu(mainMenu);
+            ExportMainMenu(mainMenu, imagesDirectory);
             
             // Canvas for other controls
             AppendLine("<Canvas>");
@@ -81,7 +100,7 @@ public class XamlExporter : IXamlExporter
             
             foreach (var child in form.Children.Where(c => c is not TMainMenu))
             {
-                ExportComponent(child);
+                ExportComponent(child, imagesDirectory);
             }
             
             _indentLevel--;
@@ -97,7 +116,7 @@ public class XamlExporter : IXamlExporter
             
             foreach (var child in form.Children)
             {
-                ExportComponent(child);
+                ExportComponent(child, imagesDirectory);
             }
             
             _indentLevel--;
@@ -108,7 +127,9 @@ public class XamlExporter : IXamlExporter
         AppendLine("</Window>");
     }
 
-    private void ExportUserControl(LfmComponentBase component)
+    private void ExportUserControl(LfmComponentBase component) => ExportUserControl(component, null);
+
+    private void ExportUserControl(LfmComponentBase component, string? imagesDirectory)
     {
         AppendLine("<UserControl");
         _indentLevel++;
@@ -119,7 +140,7 @@ public class XamlExporter : IXamlExporter
         
         AppendLine("<Canvas>");
         _indentLevel++;
-        ExportComponent(component);
+        ExportComponent(component, imagesDirectory);
         _indentLevel--;
         AppendLine("</Canvas>");
         
@@ -127,6 +148,9 @@ public class XamlExporter : IXamlExporter
     }
 
     private void ExportComponent(LfmComponentBase component)
+        => ExportComponent(component, null);
+
+    private void ExportComponent(LfmComponentBase component, string? imagesDirectory)
     {
         switch (component)
         {
@@ -232,285 +256,6 @@ public class XamlExporter : IXamlExporter
                 break;
         }
     }
-
-    #region Label Components
-
-    private void ExportLabel(TLabel label)
-    {
-        var attrs = new List<string>
-        {
-            $"Content=\"{EscapeXml(label.Caption)}\"",
-            GetPositionAttributes(label),
-            GetSizeAttributes(label)
-        };
-
-        if (label.FontSize != 12)
-            attrs.Add($"FontSize=\"{label.FontSize}\"");
-        if (!string.IsNullOrEmpty(label.FontName) && label.FontName != "Segoe UI")
-            attrs.Add($"FontFamily=\"{label.FontName}\"");
-        if (label.FontColor != Colors.Black)
-            attrs.Add($"Foreground=\"{ColorToString(label.FontColor)}\"");
-        if (!label.Transparent && label.Color != Colors.Transparent)
-            attrs.Add($"Background=\"{ColorToString(label.Color)}\"");
-
-        AppendSingleElement("Label", attrs, label.Name);
-    }
-
-    private void ExportStaticText(TStaticText staticText)
-    {
-        var attrs = new List<string>
-        {
-            GetPositionAttributes(staticText),
-            GetSizeAttributes(staticText)
-        };
-
-        if (staticText.StaticBorderStyleKind != EStaticBorderStyle.None)
-        {
-            attrs.Add("BorderBrush=\"Gray\"");
-            attrs.Add("BorderThickness=\"1\"");
-        }
-
-        AppendLine($"<Border {string.Join(" ", attrs)}>");
-        _indentLevel++;
-        AppendLine($"<TextBlock Text=\"{EscapeXml(staticText.Caption)}\" VerticalAlignment=\"Center\" Padding=\"2\" />");
-        _indentLevel--;
-        AppendLine("</Border>");
-    }
-
-    #endregion
-
-    #region Edit Components
-
-    private void ExportEdit(TEdit edit)
-    {
-        var attrs = new List<string>
-        {
-            $"Text=\"{EscapeXml(edit.Caption)}\"",
-            GetPositionAttributes(edit),
-            GetSizeAttributes(edit)
-        };
-
-        if (edit.ReadOnly)
-            attrs.Add("IsReadOnly=\"True\"");
-        if (edit.MaxLength > 0)
-            attrs.Add($"MaxLength=\"{edit.MaxLength}\"");
-
-        AppendSingleElement("TextBox", attrs, edit.Name);
-    }
-
-    private void ExportLabeledEdit(TLabeledEdit labeledEdit)
-    {
-        // Export as StackPanel with Label and TextBox
-        var attrs = new List<string>
-        {
-            GetPositionAttributes(labeledEdit),
-            GetSizeAttributes(labeledEdit),
-            $"Orientation=\"{(labeledEdit.LabelPosKind == ELabelPosition.Left || labeledEdit.LabelPosKind == ELabelPosition.Right ? "Horizontal" : "Vertical")}\""
-        };
-
-        AppendLine($"<StackPanel {string.Join(" ", attrs)}>");
-        _indentLevel++;
-        
-        if (labeledEdit.LabelPosKind == ELabelPosition.Above || labeledEdit.LabelPosKind == ELabelPosition.Left)
-        {
-            AppendLine($"<Label Content=\"{EscapeXml(labeledEdit.LabelCaption)}\" />");
-            AppendLine($"<TextBox Text=\"{EscapeXml(labeledEdit.Caption)}\" />");
-        }
-        else
-        {
-            AppendLine($"<TextBox Text=\"{EscapeXml(labeledEdit.Caption)}\" />");
-            AppendLine($"<Label Content=\"{EscapeXml(labeledEdit.LabelCaption)}\" />");
-        }
-        
-        _indentLevel--;
-        AppendLine("</StackPanel>");
-    }
-
-    private void ExportMemo(TMemo memo)
-    {
-        var attrs = new List<string>
-        {
-            $"Text=\"{EscapeXml(memo.Caption)}\"",
-            GetPositionAttributes(memo),
-            GetSizeAttributes(memo),
-            "AcceptsReturn=\"True\"",
-            "AcceptsTab=\"True\""
-        };
-
-        if (memo.WordWrap)
-            attrs.Add("TextWrapping=\"Wrap\"");
-        if (memo.ScrollBars == ScrollStyle.Vertical || memo.ScrollBars == ScrollStyle.Both)
-            attrs.Add("VerticalScrollBarVisibility=\"Auto\"");
-        if (memo.ScrollBars == ScrollStyle.Horizontal || memo.ScrollBars == ScrollStyle.Both)
-            attrs.Add("HorizontalScrollBarVisibility=\"Auto\"");
-
-        AppendSingleElement("TextBox", attrs, memo.Name);
-    }
-
-    #endregion
-
-    #region Button Components
-
-    private void ExportButton(TButton button)
-    {
-        var attrs = new List<string>
-        {
-            $"Content=\"{EscapeXml(button.EffectiveCaption)}\"",
-            GetPositionAttributes(button),
-            GetSizeAttributes(button)
-        };
-
-        if (button.Default)
-            attrs.Add("IsDefault=\"True\"");
-
-        AppendSingleElement("Button", attrs, button.Name);
-    }
-
-    private void ExportBitBtn(TBitBtn bitBtn)
-    {
-        var attrs = new List<string>
-        {
-            GetPositionAttributes(bitBtn),
-            GetSizeAttributes(bitBtn)
-        };
-
-        AppendLine($"<Button {string.Join(" ", attrs)} x:Name=\"{SanitizeName(bitBtn.Name)}\">");
-        _indentLevel++;
-        
-        var orientation = bitBtn.Layout == ButtonLayout.Top || bitBtn.Layout == ButtonLayout.Bottom 
-            ? "Vertical" : "Horizontal";
-        
-        AppendLine($"<StackPanel Orientation=\"{orientation}\">");
-        _indentLevel++;
-        
-        // Icon placeholder
-        var icon = GetBitBtnIconContent(bitBtn.Kind);
-        if (!string.IsNullOrEmpty(icon))
-        {
-            AppendLine($"<TextBlock Text=\"{icon}\" Margin=\"0,0,4,0\" />");
-        }
-        
-        AppendLine($"<TextBlock Text=\"{EscapeXml(bitBtn.EffectiveCaption)}\" />");
-        
-        _indentLevel--;
-        AppendLine("</StackPanel>");
-        _indentLevel--;
-        AppendLine("</Button>");
-    }
-
-    private void ExportSpeedButton(TSpeedButton speedBtn)
-    {
-        var attrs = new List<string>
-        {
-            $"Content=\"{EscapeXml(speedBtn.EffectiveCaption)}\"",
-            GetPositionAttributes(speedBtn),
-            GetSizeAttributes(speedBtn)
-        };
-
-        if (speedBtn.Down)
-            attrs.Add("IsChecked=\"True\"");
-
-        AppendSingleElement("ToggleButton", attrs, speedBtn.Name);
-    }
-
-    #endregion
-
-    #region Selection Components
-
-    private void ExportCheckBox(TCheckBox checkBox)
-    {
-        var attrs = new List<string>
-        {
-            $"Content=\"{EscapeXml(checkBox.Caption)}\"",
-            GetPositionAttributes(checkBox),
-            GetSizeAttributes(checkBox)
-        };
-
-        if (checkBox.State == CheckBoxState.Checked)
-            attrs.Add("IsChecked=\"True\"");
-        else if (checkBox.State == CheckBoxState.Grayed)
-            attrs.Add("IsChecked=\"{x:Null}\"");
-
-        if (checkBox.AllowGrayed)
-            attrs.Add("IsThreeState=\"True\"");
-
-        AppendSingleElement("CheckBox", attrs, checkBox.Name);
-    }
-
-    private void ExportRadioButton(TRadioButton radioBtn)
-    {
-        var attrs = new List<string>
-        {
-            $"Content=\"{EscapeXml(radioBtn.Caption)}\"",
-            GetPositionAttributes(radioBtn),
-            GetSizeAttributes(radioBtn)
-        };
-
-        if (radioBtn.Checked)
-            attrs.Add("IsChecked=\"True\"");
-
-        AppendSingleElement("RadioButton", attrs, radioBtn.Name);
-    }
-
-    private void ExportComboBox(TComboBox comboBox)
-    {
-        var attrs = new List<string>
-        {
-            GetPositionAttributes(comboBox),
-            GetSizeAttributes(comboBox)
-        };
-
-        if (comboBox.Style != ComboBoxStyle.DropDownList)
-            attrs.Add("IsEditable=\"True\"");
-        if (comboBox.ItemIndex >= 0)
-            attrs.Add($"SelectedIndex=\"{comboBox.ItemIndex}\"");
-
-        if (comboBox.Items.Count == 0)
-        {
-            AppendSingleElement("ComboBox", attrs, comboBox.Name);
-        }
-        else
-        {
-            AppendLine($"<ComboBox {string.Join(" ", attrs)} x:Name=\"{SanitizeName(comboBox.Name)}\">");
-            _indentLevel++;
-            foreach (var item in comboBox.Items)
-            {
-                AppendLine($"<ComboBoxItem Content=\"{EscapeXml(item)}\" />");
-            }
-            _indentLevel--;
-            AppendLine("</ComboBox>");
-        }
-    }
-
-    private void ExportListBox(TListBox listBox)
-    {
-        var attrs = new List<string>
-        {
-            GetPositionAttributes(listBox),
-            GetSizeAttributes(listBox)
-        };
-
-        if (listBox.MultiSelect)
-            attrs.Add("SelectionMode=\"Multiple\"");
-
-        if (listBox.Items.Count == 0)
-        {
-            AppendSingleElement("ListBox", attrs, listBox.Name);
-        }
-        else
-        {
-            AppendLine($"<ListBox {string.Join(" ", attrs)} x:Name=\"{SanitizeName(listBox.Name)}\">");
-            _indentLevel++;
-            foreach (var item in listBox.Items)
-            {
-                AppendLine($"<ListBoxItem Content=\"{EscapeXml(item)}\" />");
-            }
-            _indentLevel--;
-            AppendLine("</ListBox>");
-        }
-    }
-
-    #endregion
 
     #region Container Components
 
@@ -742,8 +487,8 @@ public class XamlExporter : IXamlExporter
         else
             attrs.Add("Stretch=\"None\"");
 
-        // Source would need to be set separately
-        attrs.Add("Source=\"{Binding ImageSource}\" <!-- Set image source -->\"");
+        // Source would need to be set separately (step 2 will adjust this)
+        attrs.Add("Source=\"{Binding ImageSource}\" <!-- Set image source -->");
 
         AppendSingleElement("Image", attrs, image.Name);
     }
@@ -842,7 +587,7 @@ public class XamlExporter : IXamlExporter
 
     #region Menu and Toolbar
 
-    private void ExportMainMenu(TMainMenu mainMenu)
+    private void ExportMainMenu(TMainMenu mainMenu, string? imagesDirectory)
     {
         AppendLine("<Menu DockPanel.Dock=\"Top\">");
         _indentLevel++;
@@ -958,7 +703,7 @@ public class XamlExporter : IXamlExporter
         }
 
         var attrs = new List<string>();
-        
+
         if (!string.IsNullOrEmpty(toolBtn.EffectiveHint))
             attrs.Add($"ToolTip=\"{EscapeXml(toolBtn.EffectiveHint)}\"");
 
@@ -973,17 +718,85 @@ public class XamlExporter : IXamlExporter
 
     #endregion
 
+
+    #region Image Export Helpers
+
+    private static void ExportImagesRecursive(LfmComponentBase component, string imagesDirectory)
+    {
+        if (string.IsNullOrEmpty(imagesDirectory))
+            return;
+
+        // Export image for TImage/TPaintBox
+        if (component is TImage image && image.ImageSource is not null)
+        {
+            Directory.CreateDirectory(imagesDirectory);
+            var fileName = SanitizeName(string.IsNullOrEmpty(image.Name) ? "Image" : image.Name) + ".png";
+            var fullPath = Path.Combine(imagesDirectory, fileName);
+            SaveImageSourceAsPng(image.ImageSource, fullPath);
+        }
+
+        // Export combined bitmap for TImageList (the strip); individual images could be added later if needed
+        if (component is TImageList imageList && imageList.Bitmap?.ImageSource is not null)
+        {
+            Directory.CreateDirectory(imagesDirectory);
+            var fileName = SanitizeName(string.IsNullOrEmpty(imageList.Name) ? "ImageList" : imageList.Name) + ".png";
+            var fullPath = Path.Combine(imagesDirectory, fileName);
+            SaveImageSourceAsPng(imageList.Bitmap.ImageSource, fullPath);
+        }
+
+        // Recurse into children for containers/forms
+        switch (component)
+        {
+            case TForm form:
+                foreach (var child in form.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+            case TScrollBox scrollBox:
+                foreach (var child in scrollBox.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+            case TPanel panel:
+                foreach (var child in panel.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+            case TGroupBox groupBox:
+                foreach (var child in groupBox.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+            case TPageControl pageControl:
+                foreach (var child in pageControl.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+            case TTabSheet tabSheet:
+                foreach (var child in tabSheet.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+            case TToolBar toolBar:
+                foreach (var child in toolBar.Children)
+                    ExportImagesRecursive(child, imagesDirectory);
+                break;
+        }
+    }
+
+    private static void SaveImageSourceAsPng(ImageSource source, string fullPath)
+    {
+        if (source is not System.Windows.Media.Imaging.BitmapSource bitmapSource)
+            return;
+
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+        using var stream = File.Create(fullPath);
+        encoder.Save(stream);
+    }
+
+    #endregion
+
     #region Non-Visual Components
 
-    private void ExportNonVisualComment(LfmComponentBase component)
-    {
-        AppendLine($"<!-- Non-visual: {component.TypeName} Name=\"{component.Name}\" -->");
-    }
+    private void ExportNonVisualComment(LfmComponentBase component) => AppendLine($"<!-- Non-visual: {component.TypeName} Name=\"{component.Name}\" -->");
 
-    private void ExportUnknownComment(LfmComponentBase component)
-    {
-        AppendLine($"<!-- Unknown component: {component.TypeName} Name=\"{component.Name}\" -->");
-    }
+    private void ExportUnknownComment(LfmComponentBase component) => AppendLine($"<!-- Unknown component: {component.TypeName} Name=\"{component.Name}\" -->");
 
     #endregion
 
@@ -1002,15 +815,9 @@ public class XamlExporter : IXamlExporter
         AppendLine($"<{elementName}{attrString}{nameAttr} />");
     }
 
-    private static string GetPositionAttributes(LfmComponentBase component)
-    {
-        return $"Canvas.Left=\"{component.Left}\" Canvas.Top=\"{component.Top}\"";
-    }
+    private static string GetPositionAttributes(LfmComponentBase component) => $"Canvas.Left=\"{component.Left}\" Canvas.Top=\"{component.Top}\"";
 
-    private static string GetSizeAttributes(LfmComponentBase component)
-    {
-        return $"Width=\"{component.Width}\" Height=\"{component.Height}\"";
-    }
+    private static string GetSizeAttributes(LfmComponentBase component) => $"Width=\"{component.Width}\" Height=\"{component.Height}\"";
 
     private static string ColorToString(Color color)
     {

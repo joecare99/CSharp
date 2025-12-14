@@ -271,11 +271,9 @@ public class ComponentRenderer : IComponentRenderer
     /// <summary>
     /// Formats menu caption, converting & to _ for WPF accelerator keys.
     /// </summary>
-    private static string FormatMenuCaption(string caption)
-    {
+    private static string FormatMenuCaption(string caption) =>
         // WPF uses _ for accelerator keys, Delphi uses &
-        return caption.Replace("&", "_");
-    }
+        caption.Replace("&", "_");
 
     /// <summary>
     /// Formats shortcut string for display.
@@ -395,21 +393,18 @@ public class ComponentRenderer : IComponentRenderer
         };
     }
 
-    private UIElement RenderLabel(TLabel label)
+    private UIElement RenderLabel(TLabel label) => new TextBlock
     {
-        return new TextBlock
-        {
-            Text = label.Caption,
-            Foreground = new SolidColorBrush(label.FontColor),
-            FontFamily = new FontFamily(label.FontName),
-            FontSize = label.FontSize,
-            FontWeight = label.FontWeight,
-            FontStyle = label.FontStyle,
-            TextAlignment = label.Alignment,
-            TextWrapping = label.WordWrap ? TextWrapping.Wrap : TextWrapping.NoWrap,
-            Background = label.Transparent ? Brushes.Transparent : new SolidColorBrush(label.Color)
-        };
-    }
+        Text = label.Caption,
+        Foreground = new SolidColorBrush(label.FontColor),
+        FontFamily = new FontFamily(label.FontName),
+        FontSize = label.FontSize,
+        FontWeight = label.FontWeight,
+        FontStyle = label.FontStyle,
+        TextAlignment = label.Alignment,
+        TextWrapping = label.WordWrap ? TextWrapping.Wrap : TextWrapping.NoWrap,
+        Background = label.Transparent ? Brushes.Transparent : new SolidColorBrush(label.Color)
+    };
 
     private UIElement RenderStaticText(TStaticText staticText)
     {
@@ -528,23 +523,20 @@ public class ComponentRenderer : IComponentRenderer
         return container;
     }
 
-    private UIElement RenderMemo(TMemo memo)
+    private UIElement RenderMemo(TMemo memo) => new TextBox
     {
-        return new TextBox
-        {
-            Text = memo.Caption,
-            AcceptsReturn = true,
-            AcceptsTab = true,
-            TextWrapping = memo.WordWrap ? TextWrapping.Wrap : TextWrapping.NoWrap,
-            VerticalScrollBarVisibility = memo.ScrollBars is ScrollStyle.Vertical or ScrollStyle.Both 
+        Text = memo.Caption,
+        AcceptsReturn = true,
+        AcceptsTab = true,
+        TextWrapping = memo.WordWrap ? TextWrapping.Wrap : TextWrapping.NoWrap,
+        VerticalScrollBarVisibility = memo.ScrollBars is ScrollStyle.Vertical or ScrollStyle.Both
                 ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
-            HorizontalScrollBarVisibility = memo.ScrollBars is ScrollStyle.Horizontal or ScrollStyle.Both 
+        HorizontalScrollBarVisibility = memo.ScrollBars is ScrollStyle.Horizontal or ScrollStyle.Both
                 ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
-            FontFamily = new FontFamily(memo.FontName),
-            FontSize = memo.FontSize,
-            Padding = new Thickness(2)
-        };
-    }
+        FontFamily = new FontFamily(memo.FontName),
+        FontSize = memo.FontSize,
+        Padding = new Thickness(2)
+    };
 
     private UIElement RenderButton(TButton button)
     {
@@ -783,10 +775,7 @@ public class ComponentRenderer : IComponentRenderer
         return border;
     }
 
-    private UIElement RenderStringGrid(TStringGrid stringGrid)
-    {
-        return RenderDrawGrid(stringGrid);
-    }
+    private UIElement RenderStringGrid(TStringGrid stringGrid) => RenderDrawGrid(stringGrid);
 
     private UIElement RenderShape(TShape shape)
     {
@@ -823,19 +812,16 @@ public class ComponentRenderer : IComponentRenderer
         return wpfShape;
     }
 
-    private static Polygon CreateDiamond(double width, double height)
+    private static Polygon CreateDiamond(double width, double height) => new Polygon
     {
-        return new Polygon
-        {
-            Points =
+        Points =
             [
                 new Point(width / 2, 0),
                 new Point(width, height / 2),
                 new Point(width / 2, height),
                 new Point(0, height / 2)
             ]
-        };
-    }
+    };
 
     private static Polygon CreateTriangle(EShapeType type, double width, double height)
     {
@@ -868,14 +854,11 @@ public class ComponentRenderer : IComponentRenderer
         };
     }
 
-    private UIElement RenderSplitter(TSplitter splitter)
+    private UIElement RenderSplitter(TSplitter splitter) => new GridSplitter
     {
-        return new GridSplitter
-        {
-            Background = Brushes.LightGray,
-            ShowsPreview = true
-        };
-    }
+        Background = Brushes.LightGray,
+        ShowsPreview = true
+    };
 
     private UIElement RenderStatusBar(TStatusBar statusBar)
     {
@@ -1172,20 +1155,14 @@ public class ComponentRenderer : IComponentRenderer
         return border;
     }
 
-    private static Thickness GetBevelThickness(PanelBevelStyle style, int width)
-    {
-        return style == PanelBevelStyle.None ? new Thickness(0) : new Thickness(width);
-    }
+    private static Thickness GetBevelThickness(PanelBevelStyle style, int width) => style == PanelBevelStyle.None ? new Thickness(0) : new Thickness(width);
 
-    private static void SetBevelBorderBrush(Border border, PanelBevelStyle style)
+    private static void SetBevelBorderBrush(Border border, PanelBevelStyle style) => border.BorderBrush = style switch
     {
-        border.BorderBrush = style switch
-        {
-            PanelBevelStyle.Raised => Brushes.White,
-            PanelBevelStyle.Lowered => Brushes.DarkGray,
-            _ => Brushes.Transparent
-        };
-    }
+        PanelBevelStyle.Raised => Brushes.White,
+        PanelBevelStyle.Lowered => Brushes.DarkGray,
+        _ => Brushes.Transparent
+    };
 
     private UIElement RenderGroupBox(TGroupBox groupBox)
     {
@@ -1260,31 +1237,25 @@ public class ComponentRenderer : IComponentRenderer
         return gb;
     }
 
-    private UIElement RenderCheckBox(TCheckBox checkBox)
+    private UIElement RenderCheckBox(TCheckBox checkBox) => new CheckBox
     {
-        return new CheckBox
-        {
-            Content = checkBox.Caption,
-            IsChecked = checkBox.State == CheckBoxState.Checked ? true 
+        Content = checkBox.Caption,
+        IsChecked = checkBox.State == CheckBoxState.Checked ? true
                 : checkBox.State == CheckBoxState.Grayed ? null : false,
-            IsThreeState = checkBox.AllowGrayed,
-            FontFamily = new FontFamily(checkBox.FontName),
-            FontSize = checkBox.FontSize,
-            VerticalContentAlignment = VerticalAlignment.Center
-        };
-    }
+        IsThreeState = checkBox.AllowGrayed,
+        FontFamily = new FontFamily(checkBox.FontName),
+        FontSize = checkBox.FontSize,
+        VerticalContentAlignment = VerticalAlignment.Center
+    };
 
-    private UIElement RenderRadioButton(TRadioButton radioBtn)
+    private UIElement RenderRadioButton(TRadioButton radioBtn) => new RadioButton
     {
-        return new RadioButton
-        {
-            Content = radioBtn.Caption,
-            IsChecked = radioBtn.Checked,
-            FontFamily = new FontFamily(radioBtn.FontName),
-            FontSize = radioBtn.FontSize,
-            VerticalContentAlignment = VerticalAlignment.Center
-        };
-    }
+        Content = radioBtn.Caption,
+        IsChecked = radioBtn.Checked,
+        FontFamily = new FontFamily(radioBtn.FontName),
+        FontSize = radioBtn.FontSize,
+        VerticalContentAlignment = VerticalAlignment.Center
+    };
 
     private UIElement RenderComboBox(TComboBox comboBox)
     {
@@ -1320,51 +1291,42 @@ public class ComponentRenderer : IComponentRenderer
         return lb;
     }
 
-    private UIElement RenderTrackBar(TTrackBar trackBar)
+    private UIElement RenderTrackBar(TTrackBar trackBar) => new Slider
     {
-        return new Slider
-        {
-            Minimum = trackBar.Min,
-            Maximum = trackBar.Max,
-            Value = trackBar.Position,
-            Orientation = trackBar.Orientation == TrackBarOrientation.Vertical 
+        Minimum = trackBar.Min,
+        Maximum = trackBar.Max,
+        Value = trackBar.Position,
+        Orientation = trackBar.Orientation == TrackBarOrientation.Vertical
                 ? Orientation.Vertical : Orientation.Horizontal,
-            TickFrequency = trackBar.Frequency,
-            IsSnapToTickEnabled = true,
-            TickPlacement = TickPlacement.BottomRight
-        };
-    }
+        TickFrequency = trackBar.Frequency,
+        IsSnapToTickEnabled = true,
+        TickPlacement = TickPlacement.BottomRight
+    };
 
-    private UIElement RenderProgressBar(TProgressBar progressBar)
+    private UIElement RenderProgressBar(TProgressBar progressBar) => new ProgressBar
     {
-        return new ProgressBar
-        {
-            Minimum = progressBar.Min,
-            Maximum = progressBar.Max,
-            Value = progressBar.Position,
-            Orientation = progressBar.Orientation == ProgressBarOrientation.Vertical 
+        Minimum = progressBar.Min,
+        Maximum = progressBar.Max,
+        Value = progressBar.Position,
+        Orientation = progressBar.Orientation == ProgressBarOrientation.Vertical
                 ? Orientation.Vertical : Orientation.Horizontal
-        };
-    }
+    };
 
-    private UIElement RenderPaintBox(TPaintBox paintBox)
+    private UIElement RenderPaintBox(TPaintBox paintBox) => new Border
     {
-        return new Border
-        {
-            Background = new SolidColorBrush(paintBox.Color == Colors.Transparent 
+        Background = new SolidColorBrush(paintBox.Color == Colors.Transparent
                 ? Color.FromRgb(240, 240, 240) : paintBox.Color),
-            BorderBrush = Brushes.Gray,
-            BorderThickness = new Thickness(1),
-            Child = new TextBlock
-            {
-                Text = $"[{paintBox.TypeName}]",
-                Foreground = Brushes.Gray,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                FontStyle = FontStyles.Italic
-            }
-        };
-    }
+        BorderBrush = Brushes.Gray,
+        BorderThickness = new Thickness(1),
+        Child = new TextBlock
+        {
+            Text = $"[{paintBox.TypeName}]",
+            Foreground = Brushes.Gray,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            FontStyle = FontStyles.Italic
+        }
+    };
 
     private UIElement RenderImage(TImage image)
     {
@@ -1452,22 +1414,19 @@ public class ComponentRenderer : IComponentRenderer
         return border;
     }
 
-    private UIElement RenderUnknown(LfmComponentBase component)
+    private UIElement RenderUnknown(LfmComponentBase component) => new Border
     {
-        return new Border
+        Background = Brushes.LightYellow,
+        BorderBrush = Brushes.Orange,
+        BorderThickness = new Thickness(1),
+        Child = new TextBlock
         {
-            Background = Brushes.LightYellow,
-            BorderBrush = Brushes.Orange,
-            BorderThickness = new Thickness(1),
-            Child = new TextBlock
-            {
-                Text = $"[{component.TypeName}]\n{component.Name}",
-                FontSize = 9,
-                TextAlignment = TextAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                TextWrapping = TextWrapping.Wrap
-            }
-        };
-    }
+            Text = $"[{component.TypeName}]\n{component.Name}",
+            FontSize = 9,
+            TextAlignment = TextAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            TextWrapping = TextWrapping.Wrap
+        }
+    };
 }
