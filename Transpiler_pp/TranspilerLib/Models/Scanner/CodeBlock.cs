@@ -129,7 +129,7 @@ public class CodeBlock : ICodeBlock
     /// </remarks>
     /// <value>List of weak references to source blocks.</value>
     [IgnoreDataMember]
-    public virtual IList<WeakReference<ICodeBlock>?> Sources { get; private set; } = new List<WeakReference<ICodeBlock>?>();
+    public virtual IList<WeakReference<ICodeBlock>> Sources { get; private set; } = new List<WeakReference<ICodeBlock>>();
 
     /// <summary>
     /// Gets or sets the index-paths for each source referring to this block.
@@ -247,7 +247,7 @@ public class CodeBlock : ICodeBlock
             else if (item2 != null && v >= item2.SubBlocks.Count || v < 0)
             { item2 = null; break; }
             else
-                item2 = item2.SubBlocks[v];
+                item2 = item2!.SubBlocks[v];
         }
         return item2;
     }
@@ -392,7 +392,7 @@ public class CodeBlock : ICodeBlock
         {
             (c = SubBlocks[iSrc]).Parent = null;
             if (c.Destination != null && c.Destination.TryGetTarget(out var target))
-                foreach (var item in target.Sources)
+                foreach (var item in target!.Sources)
                     if (item.TryGetTarget(out var source))
                         if (source == c)
                         {
