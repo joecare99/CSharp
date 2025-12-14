@@ -326,4 +326,38 @@ public class StringUtilsTests
     {
         Assert.AreEqual(xExp,sAct.IsValidIdentifyer());
     }
+
+    [TestMethod()]
+    [DataRow("This is a test",14, "This is a test")]
+    [DataRow("This is a test",0, "")]
+    [DataRow("This is a test",-1, "This is a tes")]
+    [DataRow("This is a test",1, "T")]
+    [DataRow("This is a test",20, "This is a test")]
+    public void LeftTest(string sAct,int iAct, string sExp)
+    {
+        Assert.AreEqual(sExp, sAct.Left(iAct));
+    }
+
+    [TestMethod()]
+    [DataRow("This is a test",14, "This is a test")]
+    [DataRow("This is a test",0, "")]
+    [DataRow("This is a test",-1, "his is a test")]
+    [DataRow("This is a test",1, "t")]
+    [DataRow("This is a test",20, "This is a test")]
+    public void RightTest(string sAct,int iAct, string sExp)
+    {
+        Assert.AreEqual(sExp, sAct.Right(iAct));
+    }
+
+    [TestMethod()]
+    [DataRow(null, "")]
+    [DataRow("", "")]
+    [DataRow(true, "")]
+    [DataRow(false, "False")]
+    [DataRow(1234, "1234")]
+
+    public void AsStringTest(object? oAct,string sExp)
+    {
+        Assert.AreEqual(sExp, oAct.AsString());
+    }
 }
