@@ -140,7 +140,7 @@ public class CodeBlock : ICodeBlock
     public List<List<int>> SourcesIndex
     {
         get => Sources.Select((s) => GetItemIdx(s)).ToList();
-        set => Sources = value.Select((s) => SetSourceByIdx(this, s)).Where((s) => s != null).ToList();
+        set => Sources = value.Select((s) => SetSourceByIdx(this, s)).Where((s) => s != null).Select(s=>s!).ToList();
     }
 
     /// <summary>
@@ -433,7 +433,7 @@ public class CodeBlock : ICodeBlock
     /// </summary>
     /// <param name="other">Other block to compare.</param>
     /// <returns><c>true</c> if same reference; otherwise <c>false</c>.</returns>
-    public bool Equals(ICodeBlock other)
+    public bool Equals(ICodeBlock? other)
     {
         return this == other;
     }
