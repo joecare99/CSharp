@@ -473,6 +473,24 @@
             Das Parent-Objekt vom Typ <typeparamref name="T"/> oder <c>null</c>, wenn kein Parent vorhanden ist.
             </value>
         </member>
+        <member name="T:TranspilerLib.Interfaces.IInterpreter">
+            <summary>
+            Interface for interpreters that can execute code blocks.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Interfaces.IOutput">
+            <summary>
+            Interface for output handlers that process reader data and produce output.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Interfaces.IOutput.Output(TranspilerLib.Interfaces.IReader,System.Action{System.String},System.Action{System.String})">
+            <summary>
+            Outputs the specified reader.
+            </summary>
+            <param name="reader">The reader.</param>
+            <param name="write">The write.</param>
+            <param name="debug">The debug.</param>
+        </member>
         <member name="T:TranspilerLib.Interfaces.IReader">
             <summary>
             Definiert einen vorwärtsgerichteten, zustandsbehafteten Reader über eine
@@ -591,6 +609,12 @@
             <summary>
             Represents a warning-number specific state used while scanning files.
             </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.CPascalScanner">
+            <summary>
+            Scanner for Pascal source files.
+            </summary>
+            <seealso cref="T:TranspilerLib.Models.CFileScanner" />
         </member>
         <member name="T:TranspilerLib.Models.EMessageType">
             <summary>
@@ -1068,6 +1092,11 @@
         <member name="P:TranspilerLib.Models.Interpreter.InterpData.pc">
             <summary>
             Program Counter – zeigt auf den aktuell auszuführenden Block.
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.Interpreter.InterpreterBase">
+            <summary>
+            Base class for interpreters that can execute code blocks.
             </summary>
         </member>
         <member name="T:TranspilerLib.Models.ParentedItemsList`1">
@@ -1656,6 +1685,11 @@
         <member name="M:TranspilerLib.Models.TokenizeData.#ctor">
             <summary>
             Initialisiert eine neue Instanz mit Standardwerten (alle numerischen Felder = 0, Flag = false).
+            </summary>
+        </member>
+        <member name="T:TranspilerLib.Models.TStrings">
+            <summary>
+            Represents a collection of strings.
             </summary>
         </member>
         <member name="T:TranspilerLib.Properties.Resources">
