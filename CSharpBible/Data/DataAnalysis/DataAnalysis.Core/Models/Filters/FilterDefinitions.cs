@@ -10,6 +10,9 @@ namespace DataAnalysis.Core.Models;
 public abstract class FilterDefinition
 {
     [JsonPropertyName("type")] public string Type { get; init; }
+
+    public bool Negate { get; init; } = false;
+
 }
 
 public sealed class ValueFilterDefinition : FilterDefinition
@@ -34,5 +37,4 @@ public sealed class GroupFilterDefinition : FilterDefinition
     // "and" oder "or"
     public required string Mode { get; init; }
     public required IReadOnlyList<FilterDefinition> Filters { get; init; }
-    public bool Negate { get; init; } = false;
 }
