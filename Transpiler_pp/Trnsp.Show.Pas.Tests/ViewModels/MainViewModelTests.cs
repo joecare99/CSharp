@@ -55,5 +55,27 @@ namespace Trnsp.Show.Pas.Tests.ViewModels
             Assert.AreEqual(1, _testViewModel.RootNodes.Count);
 #pragma warning restore MSTEST0037
         }
+
+        [TestMethod]
+        public void SelectedNode_PropertyChange_RaisesNotification()
+        {
+            // Arrange
+            var node = new CodeBlockNode(Substitute.For<ICodeBlock>());
+            bool propertyChangedRaised = false;
+            _testViewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(MainViewModel.SelectedNode))
+                {
+                    propertyChangedRaised = true;
+                }
+            };
+
+            // Act
+            _testViewModel.SelectedNode = node;
+
+            // Assert
+            Assert.IsTrue(propertyChangedRaised);
+            Assert.AreEqual(node, _testViewModel.SelectedNode);
+        }
     }
 }
