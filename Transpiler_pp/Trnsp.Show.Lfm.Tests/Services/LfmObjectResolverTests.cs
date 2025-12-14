@@ -46,7 +46,7 @@ public class LfmObjectResolverTests
             }
         });
 
-        Assert.AreSame(action, comp.LinkedAction.TryGetTarget(out var t)?t:t);
+        Assert.AreSame(action, comp.LinkedAction!.TryGetTarget(out var t)?t:t);
         Assert.AreEqual("TestCaption", comp.EffectiveCaption);
         Assert.AreEqual("TestHint", comp.EffectiveHint);
     }
@@ -73,7 +73,7 @@ public class LfmObjectResolverTests
         var action = new TestAction();
         resolver.RegisterObject("TestAction", action);
 
-        Assert.AreSame(action, comp.LinkedAction.TryGetTarget(out var t) ? t : t);
+        Assert.AreSame(action, comp.LinkedAction!.TryGetTarget(out var t) ? t : t);
         Assert.AreEqual("TestCaption", comp.EffectiveCaption);
         Assert.AreEqual("TestHint", comp.EffectiveHint);
     }
