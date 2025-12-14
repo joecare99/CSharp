@@ -352,7 +352,7 @@ public class StringUtilsTests
     [TestMethod()]
     [DataRow(null, "")]
     [DataRow("", "")]
-    [DataRow(true, "")]
+    [DataRow(true, "True")]
     [DataRow(false, "False")]
     [DataRow(1234, "1234")]
 
