@@ -244,7 +244,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
                 }
             }
         }
-        catch (AssertFailedException ex)
+        catch (AssertFailedException)
         {
             if (File.Exists(Path.Combine(".","Resources", name, name + "_actual.json")))
                 File.Delete(Path.Combine(".","Resources", name, name + "_actual.json"));
@@ -289,7 +289,7 @@ public class PasCodeTests : TranspilerLib.Models.Tests.TestBase
                     $"CodeBlock-Code stimmt nicht an Index {i}. Erwartet: '{expectedBlock.Code}', Ist: '{actualBlock.Code}' für Testcase: '{name}'.");
             }
         }
-        catch (AssertFailedException ex)
+        catch (AssertFailedException)
         {
             if (File.Exists(Path.Combine(".","Resources", name, name + "_actual_codeblocks.json")))
                 File.Delete(Path.Combine(".","Resources", name, name + "_actual_codeblocks.json"));
