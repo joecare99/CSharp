@@ -8,10 +8,10 @@ public class FileDialogProxy<T> : IFileDialog where T : class
     private FileDialog _fileDialog;
     public FileDialogProxy(T fileDialog)
     {
-        _fileDialog = fileDialog as FileDialog;
+        _fileDialog = (fileDialog as FileDialog)!;
     }
 
-    public T This => _fileDialog as T;
+    public T This => (_fileDialog as T)!;
 
     public string FileName
     {
