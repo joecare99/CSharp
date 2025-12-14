@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Transp.Show.Pas"
         xmlns:vm="clr-namespace:Trnsp.Show.Pas.ViewModels"
         mc:Ignorable="d"
-        Title="Pascal Code Visualizer" Height="450" Width="800"
+        Title="Pascal Code Visualizer" Height="600" Width="1000"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=True}">
     <Grid>
         <Grid.RowDefinitions>
@@ -16,11 +16,13 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Toolbar -->
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Background="#F0F0F0">
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Background="#F0F0F0">
             <Button Content="Load File" Command="{Binding LoadFileCommand}" Margin="5" Padding="5,2"/>
         </StackPanel>
 
@@ -30,8 +32,8 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Type}" FontWeight="Bold" Foreground="Blue" Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding TypeIcon}" FontWeight="Bold" Foreground="Blue" Margin="0,0,5,0" Width="20" TextAlignment="Center"/>
+                        <TextBlock Text="{Binding DisplayInfo}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
@@ -42,11 +44,25 @@
             </TreeView.ItemContainerStyle>
         </TreeView>
         
-        <!-- Splitter -->
+        <!-- Splitter 1 -->
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
 
+        <!-- Source View -->
+        <TextBox x:Name="SourceCodeEditor" Grid.Row="1" Grid.Column="2" 
+                 Text="{Binding FullSourceCode, Mode=OneWay}" 
+                 IsReadOnly="True" 
+                 FontFamily="Consolas" 
+                 FontSize="14"
+                 VerticalScrollBarVisibility="Auto" 
+                 HorizontalScrollBarVisibility="Auto"
+                 AcceptsReturn="True" 
+                 BorderThickness="0"/>
+
+        <!-- Splitter 2 -->
+        <GridSplitter Grid.Row="1" Grid.Column="3" Width="5" HorizontalAlignment="Stretch"/>
+
         <!-- Properties View -->
-        <ScrollViewer Grid.Row="1" Grid.Column="2">
+        <ScrollViewer Grid.Row="1" Grid.Column="4">
             <StackPanel Margin="10">
                 <TextBlock Text="Properties" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
                 <Grid DataContext="{Binding SelectedNode}">
@@ -55,6 +71,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -67,8 +85,14 @@
                     <TextBlock Text="Type:" FontWeight="Bold" Grid.Row="1" Grid.Column="0" Margin="0,0,10,5"/>
                     <TextBox Text="{Binding Type, Mode=OneWay}" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True"/>
 
-                    <TextBlock Text="Code:" FontWeight="Bold" Grid.Row="2" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding Code, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="100"/>
+                    <TextBlock Text="Pos:" FontWeight="Bold" Grid.Row="2" Grid.Column="0" Margin="0,0,10,5"/>
+                    <TextBox Text="{Binding SourcePos, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True"/>
+
+                    <TextBlock Text="Length:" FontWeight="Bold" Grid.Row="3" Grid.Column="0" Margin="0,0,10,5"/>
+                    <TextBox Text="{Binding Length, Mode=OneWay}" Grid.Row="3" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True"/>
+
+                    <TextBlock Text="Code:" FontWeight="Bold" Grid.Row="4" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding Code, Mode=OneWay}" Grid.Row="4" Grid.Column="1" Margin="0,0,0,5" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="100"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
