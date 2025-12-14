@@ -20,7 +20,7 @@ public class IoC2Tests : BaseTestViewModel
     public void Init()
     {
         _grsOld = IoC.GetReqSrv;
-        Assert.ThrowsExactly<NotImplementedException>(() => _grsOld?.Invoke(null));
+        Assert.ThrowsExactly<NotImplementedException>(() => _grsOld?.Invoke(null!));
         IoC.GetReqSrv = GetReqSrv;
     }
 
