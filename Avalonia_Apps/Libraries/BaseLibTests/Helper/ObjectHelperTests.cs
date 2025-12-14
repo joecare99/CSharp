@@ -36,7 +36,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsInt(obj,-1);
         
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(iExp, result);
 
     }
@@ -69,7 +68,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsLong(obj, -1);
 
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(lExp, result);
     }
 
@@ -111,7 +109,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsEnum<TestEnum>(obj);
 
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(expected, result);
     }
 
@@ -149,7 +146,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsDate(obj);
 
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(DateTime.Parse(expected), result);
     }
 
@@ -186,7 +182,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsDouble(obj);
 
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(dExp, result);
     }
 
@@ -225,7 +220,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsBool(obj);
 
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(bExp, result);
     }
 
@@ -257,7 +251,6 @@ public class ObjectHelperTests
         var result = ObjectHelper.AsGUID(obj);
 
         // Assert
-        Assert.IsNotNull(result);
         Assert.AreEqual(Guid.Parse(expected), result);
     }
 
@@ -280,6 +273,6 @@ public class ObjectHelperTests
         // Assert
         Assert.AreEqual(expected, result);
         Assert.AreEqual(input, _o);
-        Assert.AreEqual(true, actionCalled);
+        Assert.IsTrue(actionCalled);
     }
 }
