@@ -1,29 +1,28 @@
 using System.IO;
-using Microsoft.Win32;
+using CommonDialogs;
 
-namespace Trnsp.Show.Pas.Services
+namespace Trnsp.Show.Pas.Services;
+
+public class FileService : IFileService
 {
-    public class FileService : IFileService
+    public string? OpenFileDialog(string title, string filter)
     {
-        public string? OpenFileDialog(string title, string filter)
+        var dialog = new OpenFileDialogProxy
         {
-            var dialog = new OpenFileDialog
-            {
-                Title = title,
-                Filter = filter
-            };
+            Title = title,
+            Filter = filter
+        };
 
-            if (dialog.ShowDialog() == true)
-            {
-                return dialog.FileName;
-            }
-
-            return null;
+        if (dialog.ShowDialog() == true)
+        {
+            return dialog.FileName;
         }
 
-        public string ReadAllText(string path)
-        {
-            return File.ReadAllText(path);
-        }
+        return null;
+    }
+
+    public string ReadAllText(string path)
+    {
+        return File.ReadAllText(path);
     }
 }

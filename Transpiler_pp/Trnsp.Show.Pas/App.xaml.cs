@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Pascal.Models.Scanner;
 using Trnsp.Show.Pas.Services;
 using Trnsp.Show.Pas.ViewModels;
 
@@ -26,6 +28,7 @@ namespace Transp.Show.Pas
 
             // Services
             services.AddSingleton<IFileService, FileService>();
+            services.AddSingleton<ICodeBase, PasCode>();
             services.AddSingleton<IPascalParserService, PascalParserService>();
 
             // ViewModels

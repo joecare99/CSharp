@@ -1,15 +1,12 @@
 using TranspilerLib.Interfaces.Code;
-using TranspilerLib.Pascal.Models.Scanner;
 
-namespace Trnsp.Show.Pas.Services
+namespace Trnsp.Show.Pas.Services;
+
+public class PascalParserService(ICodeBase parser) : IPascalParserService
 {
-    public class PascalParserService : IPascalParserService
+    public ICodeBlock Parse(string code)
     {
-        public ICodeBlock Parse(string code)
-        {
-            var parser = new PasCode();
-            parser.OriginalCode = code;
-            return parser.Parse();
-        }
+        parser.OriginalCode = code;
+        return parser.Parse();
     }
 }

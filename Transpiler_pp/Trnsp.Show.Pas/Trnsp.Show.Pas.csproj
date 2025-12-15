@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
     <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
     <ProjectReference Include="..\TranspilerLib.Pascal\TranspilerLib.Pascal.csproj" />
   </ItemGroup>

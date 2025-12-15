@@ -13,7 +13,19 @@ namespace Trnsp.Show.Pas.ViewModels
         public ObservableCollection<CodeBlockNode> RootNodes { get; } = new();
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(SourceSelectionStart))]
+        [NotifyPropertyChangedFor(nameof(SourceSelectionLength))]
         private CodeBlockNode? _selectedNode;
+
+        public int SourceSelectionStart => SelectedNode != null ? SelectedNode.CodeBlockStart : -1;
+        public int SourceSelectionLength => SelectedNode != null ? SelectedNode.Length : 0;
+
+        private string _fullSourceCode = string.Empty;
+        public string FullSourceCode
+        {
+            get => _fullSourceCode;
+            set => SetProperty(ref _fullSourceCode, value);
+        }
 
         public IRelayCommand LoadFileCommand { get; }
 
@@ -24,7 +36,7 @@ namespace Trnsp.Show.Pas.ViewModels
             LoadFileCommand = new RelayCommand(LoadFile);
         }
 
-        public MainViewModel() : this(new FileService(), new PascalParserService())
+        public MainViewModel() : this(new FileService(), new PascalParserService(null!))
         {
         }
 
@@ -34,6 +46,7 @@ namespace Trnsp.Show.Pas.ViewModels
             if (filePath != null)
             {
                 var content = _fileService.ReadAllText(filePath);
+                FullSourceCode = content;
                 var rootBlock = _parserService.Parse(content);
                 RootNodes.Clear();
                 RootNodes.Add(new CodeBlockNode(rootBlock));
