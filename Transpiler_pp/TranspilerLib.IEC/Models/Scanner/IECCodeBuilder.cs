@@ -47,7 +47,7 @@ public class IECCodeBuilder : CodeBuilder
                     var td = tokenData;
                     td.Level = data.actualBlock.Level - 1;
                     base.OnToken(td, data);
-                    data.actualBlock = data.actualBlock.Parent;
+                    data.actualBlock = data.actualBlock.Parent!;
                 }
                 break;
             case "(" when data.actualBlock.Type is CodeBlockType.Variable or CodeBlockType.Function:
