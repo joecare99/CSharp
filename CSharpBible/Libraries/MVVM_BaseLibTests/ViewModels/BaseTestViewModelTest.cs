@@ -111,7 +111,7 @@ PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
 public class BaseTestViewModelTest_T : BaseTestViewModel<TestVM>
 {
     [TestInitialize]
-    public void Init()
+    public override void Init()
     {
         CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
         base.Init();
