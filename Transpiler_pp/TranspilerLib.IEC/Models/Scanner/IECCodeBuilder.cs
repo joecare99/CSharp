@@ -2,8 +2,9 @@
 using System.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models.Scanner;
 
-namespace TranspilerLib.Models.Scanner;
+namespace TranspilerLib.IEC.Models.Scanner;
 
 public class IECCodeBuilder : CodeBuilder
 {

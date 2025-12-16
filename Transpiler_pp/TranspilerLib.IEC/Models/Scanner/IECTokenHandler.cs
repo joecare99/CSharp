@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models;
+using TranspilerLib.Models.Scanner;
 using static TranspilerLib.Interfaces.Code.ICodeBase;
 
-namespace TranspilerLib.Models.Scanner;
+namespace TranspilerLib.IEC.Models.Scanner;
 
 public class IECTokenHandler : TokenHandlerBase, ITokenHandler
 {

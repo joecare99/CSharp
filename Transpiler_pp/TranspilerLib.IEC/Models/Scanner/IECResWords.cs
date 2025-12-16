@@ -1,4 +1,4 @@
-﻿namespace TranspilerLib.Models.Scanner;
+﻿namespace TranspilerLib.IEC.Models.Scanner;
 
 public enum IECResWords
 {
