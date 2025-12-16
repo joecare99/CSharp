@@ -117,14 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SErrDivByZero" xml:space="preserve">
+    <value>Fehler: Division durch Null</value>
+  </data>
   <data name="SErrIfXXXNestingLimitReached" xml:space="preserve">
     <value>Verschachtelung von $IFxxx zu tief</value>
   </data>
   <data name="SErrIncludeFileNotFound" xml:space="preserve">
-    <value>Die Include-Datei „{0}“ konnte nicht gefunden werden.</value>
+    <value>Die Include-Datei „{0}" konnte nicht gefunden werden.</value>
+  </data>
+  <data name="SErrIncludeLimitReached" xml:space="preserve">
+    <value>Fehler: Das Include-Limit wurde erreicht</value>
   </data>
   <data name="SErrInvalidCharacter" xml:space="preserve">
-    <value>Ungültiges Zeichen „{0}“</value>
+    <value>Ungültiges Zeichen „{0}"</value>
+  </data>
+  <data name="SErrInvalidMode" xml:space="preserve">
+    <value>Fehler: Ungültiger Modus</value>
+  </data>
+  <data name="SErrInvalidModeSwitch" xml:space="preserve">
+    <value>Fehler: Ungültiger Modus-Schalter</value>
   </data>
   <data name="SErrInvalidPPElse" xml:space="preserve">
     <value>$ELSE ohne Übereinstimmung mit $IFxxx</value>
@@ -135,16 +147,76 @@
   <data name="SErrOpenString" xml:space="preserve">
     <value>Die Zeichenfolge überschreitet das Zeilenende</value>
   </data>
+  <data name="SErrOperandAndOperatorMismatch" xml:space="preserve">
+    <value>Operand und Operator stimmen nicht überein</value>
+  </data>
+  <data name="SErrRangeCheck" xml:space="preserve">
+    <value>Bereichsprüfungsfehler</value>
+  </data>
+  <data name="SErrWrongSwitchToggle" xml:space="preserve">
+    <value>Falscher Schalterwert, erwartet '+' oder '-'</value>
+  </data>
+  <data name="SErrXExpectedButYFound" xml:space="preserve">
+    <value>„{0}" erwartet, aber „{1}" gefunden</value>
+  </data>
+  <data name="SIllegalStateForWarnDirective" xml:space="preserve">
+    <value>Ungültiger Zustand für WARN-Direktive</value>
+  </data>
+  <data name="SInvalidDispatchFieldName" xml:space="preserve">
+    <value>Ungültiger Dispatch-Feldname „{0}"</value>
+  </data>
+  <data name="SLogELSEIFAccepted" xml:space="preserve">
+    <value>ELSEIF-Bedingung akzeptiert.</value>
+  </data>
+  <data name="SLogELSEIFRejected" xml:space="preserve">
+    <value>ELSEIF-Bedingung abgelehnt.</value>
+  </data>
+  <data name="SLogIFAccepted" xml:space="preserve">
+    <value>IF-Bedingung akzeptiert.</value>
+  </data>
   <data name="SLogIFDefAccepted" xml:space="preserve">
     <value>IFDEF {0} gefunden, akzeptiert.</value>
+  </data>
+  <data name="SLogIFDefRejected" xml:space="preserve">
+    <value>IFDEF {0} nicht definiert, abgelehnt.</value>
+  </data>
+  <data name="SLogIFNDefAccepted" xml:space="preserve">
+    <value>IFNDEF {0} nicht definiert, akzeptiert.</value>
+  </data>
+  <data name="SLogIFNDefRejected" xml:space="preserve">
+    <value>IFNDEF {0} definiert, abgelehnt.</value>
+  </data>
+  <data name="SLogIFRejected" xml:space="preserve">
+    <value>IF-Bedingung abgelehnt.</value>
   </data>
   <data name="SLogLineNumber" xml:space="preserve">
     <value>Lesezeile {0}.</value>
   </data>
+  <data name="SLogMacroDefined" xml:space="preserve">
+    <value>Makro „{0}" definiert.</value>
+  </data>
+  <data name="SLogMacroUnDefined" xml:space="preserve">
+    <value>Makro „{0}" entfernt.</value>
+  </data>
+  <data name="SLogMacroXSetToY" xml:space="preserve">
+    <value>Makro „{0}" auf „{1}" gesetzt.</value>
+  </data>
   <data name="SLogOpeningFile" xml:space="preserve">
-    <value>Quelldatei „{0}“ wird geöffnet.</value>
+    <value>Quelldatei „{0}" wird geöffnet.</value>
+  </data>
+  <data name="SMisplacedGlobalCompilerSwitch" xml:space="preserve">
+    <value>Fehlplatzierter globaler Compiler-Schalter</value>
+  </data>
+  <data name="SNoResourceSupport" xml:space="preserve">
+    <value>Ressourcendateien werden nicht unterstützt</value>
   </data>
   <data name="StrinSErrResourceFileNotFound" xml:space="preserve">
-    <value>Die Ressourcendatei „{0}“ konnte nicht gefunden werden.</value>
+    <value>Die Ressourcendatei „{0}" konnte nicht gefunden werden.</value>
+  </data>
+  <data name="SUserDefined" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="SWarnIllegalCompilerDirectiveX" xml:space="preserve">
+    <value>Warnung: Ungültige Compiler-Direktive „{0}"</value>
   </data>
 </root>

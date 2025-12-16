@@ -1710,7 +1710,7 @@
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrDivByZero">
             <summary>
-              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+              Sucht eine lokalisierte Zeichenfolge, die Error: Division by Zero ähnelt.
             </summary>
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrIfXXXNestingLimitReached">
@@ -1725,7 +1725,7 @@
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrIncludeLimitReached">
             <summary>
-              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+              Sucht eine lokalisierte Zeichenfolge, die Error: The include-limit is reached ähnelt.
             </summary>
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrInvalidCharacter">
@@ -1735,12 +1735,12 @@
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrInvalidMode">
             <summary>
-              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+              Sucht eine lokalisierte Zeichenfolge, die Error: Invalid mode ähnelt.
             </summary>
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrInvalidModeSwitch">
             <summary>
-              Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+              Sucht eine lokalisierte Zeichenfolge, die Error: Invalid mode-swich ähnelt.
             </summary>
         </member>
         <member name="P:TranspilerLib.Properties.Resources.SErrInvalidPPElse">

@@ -61,7 +61,7 @@ namespace TranspilerLib.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error: Division by Zero ähnelt.
         /// </summary>
         internal static string SErrDivByZero {
             get {
@@ -88,7 +88,7 @@ namespace TranspilerLib.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error: The include-limit is reached ähnelt.
         /// </summary>
         internal static string SErrIncludeLimitReached {
             get {
@@ -106,7 +106,7 @@ namespace TranspilerLib.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error: Invalid mode ähnelt.
         /// </summary>
         internal static string SErrInvalidMode {
             get {
@@ -115,7 +115,7 @@ namespace TranspilerLib.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error: Invalid mode-swich ähnelt.
         /// </summary>
         internal static string SErrInvalidModeSwitch {
             get {
