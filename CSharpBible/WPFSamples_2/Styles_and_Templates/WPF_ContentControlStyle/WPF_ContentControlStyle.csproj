@@ -56,8 +56,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
 	</ItemGroup>
 	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
