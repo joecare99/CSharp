@@ -29,7 +29,7 @@
 	  <PackageReference Include="Avalonia" Version="11.3.9" />
 	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.9" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />

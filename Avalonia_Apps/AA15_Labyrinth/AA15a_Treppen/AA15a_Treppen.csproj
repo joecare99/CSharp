@@ -43,6 +43,6 @@
     <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.9" />
     <PackageVersion Update="Avalonia.Fonts.Inter" Version="11.3.9" />
     <PackageVersion Update="Avalonia.Themes.Fluent" Version="11.3.9" />
-    <PackageVersion Update="System.Drawing.Common" Version="10.0.0" />
+    <PackageVersion Update="System.Drawing.Common" Version="10.0.1" />
   </ItemGroup>
 </Project>
