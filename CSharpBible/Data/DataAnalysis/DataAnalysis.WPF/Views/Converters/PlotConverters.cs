@@ -4,8 +4,10 @@ using System.Windows.Data;
 
 namespace DataAnalysis.WPF.Views.Converters;
 
-public sealed class PlotXConverter : IMultiValueConverter
+public sealed class PlotConverter : IMultiValueConverter
 {
+    // Half of maximum bubble size (SizeByCountConverter.MaxSize) to keep bubbles inside plot.
+    private const double EdgePadding = 60d; // MaxSize (120) / 2
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
         if (values is null || values.Length < 4) return 0d;
@@ -15,62 +17,22 @@ public sealed class PlotXConverter : IMultiValueConverter
             var minX = System.Convert.ToDouble(values[1], CultureInfo.InvariantCulture);
             var maxX = System.Convert.ToDouble(values[2], CultureInfo.InvariantCulture);
             var width = System.Convert.ToDouble(values[3], CultureInfo.InvariantCulture);
-            if (maxX <= minX) return 0d;
+            var Offset = parameter != null?System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture):0d;
+            if (width <= 0) return 0d;
+            if (maxX == minX)
+            {
+                // Degenerate range: place at center with padding consideration
+                var usable = Math.Max(0, width - 2 * EdgePadding);
+                return EdgePadding + usable / 2;
+            }
+            var usableWidth = Math.Max(0, width - 2 * EdgePadding);
             var t = (x - minX) / (maxX - minX);
-            return Math.Max(0, Math.Min(width, t * width));
+            t = Math.Max(0, Math.Min(1, t));
+            return EdgePadding + t * usableWidth+Offset;
         }
         catch
         {
             return 0d;
-        }
-    }
-
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
-}
-
-public sealed class PlotYConverter : IMultiValueConverter
-{
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (values is null || values.Length < 4) return 0d;
-        try
-        {
-            var y = System.Convert.ToDouble(values[0], CultureInfo.InvariantCulture);
-            var minY = System.Convert.ToDouble(values[1], CultureInfo.InvariantCulture);
-            var maxY = System.Convert.ToDouble(values[2], CultureInfo.InvariantCulture);
-            var height = System.Convert.ToDouble(values[3], CultureInfo.InvariantCulture);
-            if (maxY <= minY) return 0d;
-            var t = (y - minY) / (maxY - minY);
-            return Math.Max(0, Math.Min(height, (1 - t) * height));
-        }
-        catch
-        {
-            return 0d;
-        }
-    }
-
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
-}
-
-public sealed class SizeByCountConverter : IMultiValueConverter
-{
-    public double MinSize { get; set; } = 6;
-    public double MaxSize { get; set; } = 120;
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (values is null || values.Length < 2) return MinSize;
-        try
-        {
-            var count = System.Convert.ToDouble(values[0], CultureInfo.InvariantCulture);
-            var max = System.Convert.ToDouble(values[1], CultureInfo.InvariantCulture);
-            if (max <= 0) return MinSize;
-            var t = Math.Max(0, Math.Min(1, count / max));
-            t = Math.Sqrt(t);
-            return MinSize + (MaxSize - MinSize) * t;
-        }
-        catch
-        {
-            return MinSize;
         }
     }
 

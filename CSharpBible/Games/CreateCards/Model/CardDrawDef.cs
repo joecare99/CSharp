@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace CreateCards.Model
 {
@@ -12,6 +13,10 @@ namespace CreateCards.Model
         public PointF[] PntVals = new[] { new PointF(hOffs, vOffs), new PointF(hOffs, 1f-vOffs), new PointF(1f-hOffs, vOffs), new PointF(1f-hOffs, 1f- vOffs) };
         public PointF[] PntSVals = new[] { new PointF(hOffs, vOffs*2), new PointF(hOffs, 1f - vOffs*2), new PointF(1f-hOffs, vOffs*2), new PointF(1f-hOffs, 1f - vOffs*2) };
         public PointF[] PntSuits = { };
+
+        // Optional custom drawing callback for face cards or other special layouts
+        public Action<Graphics, Rectangle, Color>? CustomDraw;
+
         public CardDrawDef(string _pv,double _ss=0.2d) { 
             PrintValue = _pv; SuitSize = _ss;
         }

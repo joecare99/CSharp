@@ -29,7 +29,7 @@ namespace TranspilerLib.Models.Scanner.Tests
               ["7" , GetTokenlist("07"), GetBuildCommands("07") ],
             ];
 
-        private static string[] GetBuildCommands(string sFNStumb)
+        private static string[]? GetBuildCommands(string sFNStumb)
         {
             var sFile = BlocksTextPath.Format(sFNStumb.PadLeft(2, '0'));
             if (File.Exists(sFile))

@@ -3,7 +3,7 @@
 using System.Threading;
 using ConsoleDisplay.View;
 
-MyConsoleBase console = new MyConsole();
+MyConsole console = new();
 const int T2k = 1<<11, //2048 (2^11)
           CellPerDimension = (0x13 << 1) + 1, // 39 
           One = CellPerDimension & -CellPerDimension, // 1

@@ -37,7 +37,7 @@ public partial class ButtonsViewViewModel : ObservableObject
     /// <summary>
     /// Kann die Play-Aktion ausgeführt werden?
     /// </summary>
-    private bool CanPlay => LastPara != null;
+    private bool CanPlay(object? parameter) => true;// LastPara == null || LastPara != parameter;
 
     /// <summary>
     /// Play-Befehl: Wechselt den Zustand des angeklickten Buttons und benachbarter Buttons.

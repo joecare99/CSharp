@@ -27,12 +27,12 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
     {
         Assert.IsNotNull(testModel);
         Assert.IsInstanceOfType(testModel, typeof(SudokuField));
-        Assert.AreEqual(null, testModel.Value);
-        Assert.AreEqual(false, testModel.IsPredefined);
-        Assert.AreEqual(0, testModel.PossibleValues.Count);
+        Assert.IsNull(testModel.Value);
+        Assert.IsFalse(testModel.IsPredefined);
+        Assert.IsEmpty(testModel.PossibleValues);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 5)]
     [DataRow(new int[] { 1 }, 1)]
     [DataRow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 9)]
@@ -43,12 +43,12 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         foreach (var iAct in aiAct)
         {
             testModel.AddPossibleValue(iAct);
-            Assert.IsTrue(testModel.PossibleValues.Contains(iAct));
+            Assert.Contains(iAct, testModel.PossibleValues);
         }
-        Assert.AreEqual(iCnt, testModel.PossibleValues.Count);
+        Assert.HasCount(iCnt, testModel.PossibleValues);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 1)]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 3)]
     [DataRow(new int[] { 1, 2, 3, 4, 5 }, 5)]
@@ -70,7 +70,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         // Act
         testModel.RemovePossibleValue(iAct);
         // Assert
-        Assert.IsFalse(testModel.PossibleValues.Contains(iAct));
+        Assert.DoesNotContain(iAct, testModel.PossibleValues);
     }
 
     [TestMethod()]
@@ -85,7 +85,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         AssertAreEqual(field, testModel, []);
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DynamicData(nameof(SudokuFieldTestData))]
     public void WriteToStreamTest(byte[] bytes, SudokuField field)
     {
@@ -98,7 +98,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         CollectionAssert.AreEqual(bytes, stream.ToArray());
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new[] { 3, 5 }, null, false, new[] { 1, 3, 7 })]
     [DataRow(new[] { 0, 0 }, 5, true, new int[] { })]
     [DataRow(new[] { 0, 0 }, 5, true, new int[] { 0, 1, 2 })]
@@ -128,8 +128,8 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         // Act
         field.Clear();
         // Assert
-        Assert.AreEqual(null,field.Value);
-        Assert.AreEqual(false, field.IsPredefined);
-        Assert.AreEqual(0, field.PossibleValues.Count);
+        Assert.IsNull(field.Value);
+        Assert.IsFalse(field.IsPredefined);
+        Assert.IsEmpty(field.PossibleValues);
     }
 }

@@ -1,12 +1,12 @@
 ﻿// ***********************************************************************
-// Assembly         : MVVM.View.Converters
+// Assembly         : MVVM.Views.Converters
 // Author           : Mir
 // Created          : 07-03-2022
 //
 // Last Modified By : Mir
 // Last Modified On : 07-04-2022
 // ***********************************************************************
-// <copyright file="Bool2VisibilityConverter.cs" company="MVVM.View.Converter">
+// <copyright file="Bool2VisibilityConverter.cs" company="MVVM.Views.Converter">
 //     Copyright (c) JC-Soft. All rights reserved.
 // </copyright>
 // <summary></summary>
@@ -16,7 +16,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace MVVM.View.ValueConverter;
+namespace MVVM.Views.ValueConverter;
 
 /// <summary>
 /// Class Bool2VisibilityConverter.

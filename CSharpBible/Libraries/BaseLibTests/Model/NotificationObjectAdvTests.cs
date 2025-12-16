@@ -19,7 +19,7 @@ namespace BaseLib.ViewModel.Tests
             ArgumetException,
         }
 
-        private string _testString;
+        private string _testString = "";
         private int _testInt;
         private float _testFloat;
         private double _testDouble;
@@ -95,7 +95,7 @@ namespace BaseLib.ViewModel.Tests
             DebugResult = "";
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedAdvEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedAdvEventArgs e)
             => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName)?.GetValue(sender)}, o:{e.OldVal}, n:{e.NewVal}{Environment.NewLine}";
 
         [TestInitialize]

@@ -3,58 +3,48 @@ using CommonDialogs.Interfaces;
 
 namespace CommonDialogs;
 
-public class SaveFileDialogProxy : FileDialogProxy<SaveFileDialog>, IFileDialog
+/// <summary>
+/// Represents a proxy for the <see cref="SaveFileDialog"/> class.
+/// <para>
+/// This class encapsulates the functionality of the standard WPF <see cref="SaveFileDialog"/>
+/// and adapts it to the <see cref="IFileDialog"/> interface, facilitating dependency injection
+/// and testing within an MVVM architecture.
+/// </para>
+/// </summary>
+/// <seealso cref="FileDialogProxy{T}" />
+/// <seealso cref="IFileDialog" />
+public class SaveFileDialogProxy : FileDialogProxy<object>, IFileDialog
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveFileDialogProxy"/> class.
+    /// </summary>
+    /// <remarks>
+    /// This constructor instantiates the underlying <see cref="SaveFileDialog"/> which is used
+    /// to perform the actual dialog operations.
+    /// </remarks>
     public SaveFileDialogProxy()
         : base(new SaveFileDialog())
     {
     }
 
-    public string Filter
-    {
-        get => This.Filter;
-        set => This.Filter = value;
-    }
-
-    public int FilterIndex
-    {
-        get => This.FilterIndex;
-        set => This.FilterIndex = value;
-    }
-
-    public string InitialDirectory
-    {
-        get => This.InitialDirectory;
-        set => This.InitialDirectory = value;
-    }
-
-    public string Title
-    {
-        get => This.Title;
-        set => This.Title = value;
-    }
-
-    public string DefaultExt
-    {
-        get => This.DefaultExt;
-        set => This.DefaultExt = value;
-    }
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the Save As dialog displays a warning if the user specifies a file name that already exists.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if the dialog should prompt the user before overwriting an existing file; otherwise, <c>false</c>.
+    /// The default value is <c>true</c>.
+    /// </value>
     public bool OverwritePrompt
     {
-        get => This.OverwritePrompt;
-        set => This.OverwritePrompt = value;
+        get => ((SaveFileDialog)This).OverwritePrompt;
+        set => ((SaveFileDialog)This).OverwritePrompt = value;
     }
 
-    public bool AddExtension
-    {
-        get => This.AddExtension;
-        set => This.AddExtension = value;
-    }
-    public bool RestoreDirectory
-    {
-        get => This.RestoreDirectory;
-        set => This.RestoreDirectory = value;
-    }
-    public string FileNameExtension => This.DefaultExt;
+    /// <summary>
+    /// Gets the default file name extension.
+    /// </summary>
+    /// <value>
+    /// The default file name extension string. The returned string does not include the period (.).
+    /// </value>
+    public string FileNameExtension => ((SaveFileDialog)This).DefaultExt;
 }

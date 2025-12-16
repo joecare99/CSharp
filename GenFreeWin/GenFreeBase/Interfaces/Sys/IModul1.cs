@@ -293,6 +293,9 @@ public interface IModul1
     IOperators Operators { get; }
     ISystem System { get; }
     IUserData User { get; }
+    [Obsolete]
+    long Kek { get; set; }
+    string OrtBem { get; set; }
 
     void Ahnles(int PersInArb, out string[] asAhnData);
     DateTime AtomicTime(string sTimeServer);
@@ -378,4 +381,5 @@ public interface IModul1
     void Datles10(ref short listart, bool m1_Ki);
     int System_TestForm_Height();
     int DataModul_PeekMandant_RecordCount();
+    void Family_Les(int famInArb, IFamilyData family);
 }

@@ -1,0 +1,153 @@
+﻿<Window x:Class="Trnsp.Show.Lfm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Trnsp.Show.Lfm"
+        xmlns:vm="clr-namespace:Trnsp.Show.Lfm.ViewModels"
+        xmlns:controls="clr-namespace:Trnsp.Show.Lfm.Controls"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="800" Width="1400"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}">
+    <Window.Resources>
+        <HierarchicalDataTemplate x:Key="LfmObjectTemplate" 
+                                   DataType="{x:Type vm:LfmObjectViewModel}"
+                                   ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Vertical" Margin="2">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Icon}" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="DarkBlue"/>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Properties}" Margin="20,2,0,2">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:LfmPropertyViewModel}">
+                            <StackPanel Orientation="Horizontal" Margin="0,1">
+                                <TextBlock Text="{Binding Icon}" Margin="0,0,5,0" FontSize="10"/>
+                                <TextBlock Text="{Binding Name}" Foreground="DarkGreen" FontWeight="Medium"/>
+                                <TextBlock Text=" = " Foreground="Gray"/>
+                                <TextBlock Text="{Binding DisplayValue}" Foreground="DarkRed"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ToolBar Grid.Row="0" Padding="5">
+            <Button Command="{Binding OpenFileCommand}" Padding="10,5" ToolTip="LFM Datei öffnen">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="📂" Margin="0,0,5,0"/>
+                    <TextBlock Text="Öffnen"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Command="{Binding ParseTextCommand}" Padding="10,5" ToolTip="Text parsen">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="▶" Margin="0,0,5,0"/>
+                    <TextBlock Text="Parsen"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Command="{Binding ExportXamlCommand}" Padding="10,5" ToolTip="Dialog nach Xaml exportieren">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="+" Margin="0,0,5,0"/>
+                    <TextBlock Text="Export XAML"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Command="{Binding ExpandAllCommand}" Padding="10,5" ToolTip="Alle aufklappen">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="+" Margin="0,0,5,0"/>
+                    <TextBlock Text="Aufklappen"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding CollapseAllCommand}" Padding="10,5" ToolTip="Alle zuklappen">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="-" Margin="0,0,5,0"/>
+                    <TextBlock Text="Zuklappen"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Command="{Binding ZoomOutCommand}" Padding="8,5" ToolTip="Verkleinern" Content="-"/>
+            <TextBlock Text="{Binding Zoom, StringFormat='{}{0:P0}'}" VerticalAlignment="Center" Margin="5,0" MinWidth="50" TextAlignment="Center"/>
+            <Button Command="{Binding ZoomInCommand}" Padding="8,5" ToolTip="Vergrössern" Content="+"/>
+            <Button Command="{Binding ZoomResetCommand}" Padding="8,5" ToolTip="100%" Content="1:1"/>
+        </ToolBar>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="350" MinWidth="200"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*" MinWidth="400"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Row="0" Header="LFM Quelltext" Margin="5">
+                    <TextBox Text="{Binding SourceText, UpdateSourceTrigger=PropertyChanged}" 
+                             AcceptsReturn="True" 
+                             AcceptsTab="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"
+                             FontFamily="Consolas"
+                             FontSize="11"/>
+                </GroupBox>
+                <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" 
+                              Background="LightGray" ResizeBehavior="PreviousAndNext"/>
+                <GroupBox Grid.Row="2" Header="Objektstruktur" Margin="5">
+                    <TreeView ItemsSource="{Binding RootObjects}"
+                              ItemTemplate="{StaticResource LfmObjectTemplate}"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling"
+                              FontSize="11">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                <Setter Property="Padding" Value="2"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                </GroupBox>
+            </Grid>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" 
+                          Background="LightGray" ResizeBehavior="PreviousAndNext"/>
+            <GroupBox Grid.Column="2" Header="Visuelle Darstellung" Margin="5">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                              VerticalScrollBarVisibility="Auto"
+                              Background="#F0F0F0">
+                    <controls:LfmDesignerCanvas x:Name="DesignerCanvas"
+                                                RootComponent="{Binding DesignerRoot}"
+                                                Zoom="{Binding Zoom, Mode=TwoWay}"
+                                                SelectedComponent="{Binding SelectedComponent, Mode=TwoWay}"
+                                                MinWidth="800"
+                                                MinHeight="600"/>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Text="{Binding FilePath}" Foreground="Gray" MaxWidth="400" TextTrimming="CharacterEllipsis"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Zoom: " Foreground="Gray"/>
+                    <TextBlock Text="{Binding Zoom, StringFormat='{}{0:P0}'}"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

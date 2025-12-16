@@ -16,6 +16,6 @@
   <ItemGroup>
     <!-- Direkte Referenz erforderlich für Source-Generatoren von CommunityToolkit.Mvvm -->
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 </Project>

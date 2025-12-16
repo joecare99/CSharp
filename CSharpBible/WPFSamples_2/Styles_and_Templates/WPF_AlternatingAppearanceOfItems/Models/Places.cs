@@ -1,11 +1,9 @@
-// // Copyright (c) Microsoft. All rights reserved.
-// // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 using System.Collections.ObjectModel;
+using AlternatingAppearanceOfItems.Models.Interfaces;
 
 namespace AlternatingAppearanceOfItems.Models;
 
-public class Places : ObservableCollection<Place>
+public class Places : ObservableCollection<IPlace>
 {
     public Places()
     {

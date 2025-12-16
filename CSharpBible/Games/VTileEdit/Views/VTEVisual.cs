@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using VTileEdit.ViewModels;
 using VTileEdit.Models;
+using Microsoft.Win32;
 
 namespace VTileEdit.Views;
 
@@ -187,7 +188,7 @@ public class VTEVisual : IVisual
         {
             var t = new System.Threading.Thread(() =>
             {
-                using var ofd = new System.Windows.Forms.OpenFileDialog
+                var ofd = new OpenFileDialog
                 {
                     Title = "Datei öffnen",
                     Filter = "Tile-Dateien (*.tdf;*.tdt;*.tdj;*.tdx)|*.tdf;*.tdt;*.tdj;*.tdx|Alle Dateien (*.*)|*.*",
@@ -200,7 +201,7 @@ public class VTEVisual : IVisual
                 };
 
                 var result = ofd.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
+                if (result == true)
                 {
                     chosenPath = ofd.FileName;
                 }

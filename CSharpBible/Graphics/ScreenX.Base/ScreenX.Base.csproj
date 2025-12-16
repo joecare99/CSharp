@@ -1,0 +1,11 @@
+﻿<Project>
+	<Import Project="..\Application.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+</Project>

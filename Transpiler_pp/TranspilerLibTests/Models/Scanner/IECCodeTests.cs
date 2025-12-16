@@ -12,7 +12,9 @@ namespace TranspilerLib.Models.Scanner.Tests;
 [TestClass]
 public class IECCodeTests : TestBase
 {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     private IECCode _testClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
     public static IEnumerable<object[]> TestTokenizeList =>
  [
@@ -97,7 +99,7 @@ public class IECCodeTests : TestBase
     public void ParseEnumTest(string _, List<TokenData> actList, string[] data)
     {
         var act = _testClass.Parse(actList);
-        AssertAreEqual(data[0], act?.ToString().Replace("\"+", "\" +"));
+        AssertAreEqual(data[0], act?.ToString()?.Replace("\"+", "\" +"));
     }
 
 

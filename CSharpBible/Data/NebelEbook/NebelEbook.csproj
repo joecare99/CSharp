@@ -7,12 +7,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Benchmarks\**" />
+    <EmbeddedResource Remove="Benchmarks\**" />
+    <None Remove="Benchmarks\**" />
+  </ItemGroup>
+
   <!-- story.json weiter ins Output kopieren -->
 
   <!-- Referenzen auf die Dokument-Bibliotheken -->
   <ItemGroup>
     <ProjectReference Include="..\DocumentUtils\Document.Base\Document.Base.csproj" />
+    <ProjectReference Include="..\DocumentUtils\Document.Docx\Document.Docx.csproj" />
     <ProjectReference Include="..\DocumentUtils\Document.Html\Document.Html.csproj" />
+    <ProjectReference Include="..\DocumentUtils\Document.Pdf\Document.Pdf.csproj" />
     <ProjectReference Include="..\DocumentUtils\Document.Xaml\Document.Xaml.csproj" />
     <ProjectReference Include="..\Story.Base\Story.Base.csproj" />
   </ItemGroup>
@@ -20,9 +28,6 @@
   </ItemGroup>
 
   <!-- Benchmarks -->
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.4" />
-  </ItemGroup>
 
   <!-- PDFsharp-/Skia-Pakete sind nicht mehr nötig, Rendering steckt in Document.Pdf -->
 </Project>

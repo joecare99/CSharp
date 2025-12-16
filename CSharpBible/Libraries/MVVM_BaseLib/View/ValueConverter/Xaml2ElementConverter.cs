@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace MVVM.View.ValueConverter;
+namespace MVVM.Views.ValueConverter;
 
 public class Xaml2ElementConverter : IValueConverter
 {

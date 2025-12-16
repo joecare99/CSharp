@@ -18,33 +18,19 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Resources\*.cs" />
-	  <Compile Remove="Resources\Test11Dat.cs" />
-	  <Compile Remove="Resources\Test12Dat.cs" />
-	  <Compile Remove="Resources\Test13Dat.cs" />
-	  <Compile Remove="Resources\Test14Dat.cs" />
-	  <Compile Remove="Resources\Test1Dat.cs" />
-	  <Compile Remove="Resources\Test2Dat.cs" />
-	  <Compile Remove="Resources\Test8Dat.cs" />
-	  <Compile Remove="Resources\Test9Dat.cs" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="Resources\*.cs" />
-	  <None Include="Resources\Test12Dat.cs" />
-	  <None Include="Resources\Test13Dat.cs" />
-	  <None Include="Resources\Test14Dat.cs" />
-	  <None Include="Resources\Test2Dat.cs" />
-	  <None Include="Resources\Test8Dat.cs" />
-	  <None Include="Resources\Test9Dat.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-		<PackageReference Include="MSTest" Version="4.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="MSTest" Version="4.0.2" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
-		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="9.0.9" />
+		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="10.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -18,38 +18,38 @@ public class CCodeBlockTests : TestBase
 {
         ["0a", TestCSDataClass.TestDataList0(), (new int[] { }, 3, 3, 1), false, new[] { TestCSDataClass.testDataExp0 }],
 
-        ["1a", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 5, 5, 1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1b", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, -1, 5, 1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1c", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 5, -1, 1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1d", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 131, 5, 1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1e", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 5, 131, 1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1f", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 125, 5, 6), false, new[] { TestCSDataClass.testDataExp1 }],
-           ["1g0", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 6, 9, 3), true, new[] { TestCSDataClass.testDataExp1 }],
-           ["1gd", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 6, 13, 3), true, new[] { TestCSDataClass.testDataMoveExp }],
-           ["1gu", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 9, 6, 4), true, new[] { TestCSDataClass.testDataMoveExp }],
+        ["1a", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 5, 5, 1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1b", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, -1, 5, 1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1c", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 5, -1, 1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1d", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 131, 5, 1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1e", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 5, 131, 1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1f", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 125, 5, 6), false, new[] { TestCSDataClass.testDataExp1 }],
+           ["1g0", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 6, 9, 3), true, new[] { TestCSDataClass.testDataExp1 }],
+           ["1gd", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 6, 13, 3), true, new[] { TestCSDataClass.testDataMoveExp }],
+           ["1gu", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 9, 6, 4), true, new[] { TestCSDataClass.testDataMoveExp }],
 
-        ["2a", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 5, 5, 1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2b", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, -1, 5, 1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2c", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 5, -1, 1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2d", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 34, 5, 1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2e", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 5, 34, 1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2f", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 30, 5, 5), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2a", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 5, 5, 1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2b", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, -1, 5, 1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2c", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 5, -1, 1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2d", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 34, 5, 1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2e", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 5, 34, 1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2f", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 30, 5, 5), false, new[] { TestCSDataClass.testDataExp2 }],
 
      };
 
     public static IEnumerable<object[]> TestListDelete => new object[][]
 {
-        ["0a", TestCSDataClass.TestDataList0(), (new int[] { }, 5, 9), false, new[] { TestCSDataClass.testDataExp0 }],
+        ["0a", TestCSDataClass.TestDataList0()!, (new int[] { }, 5, 9), false, new[] { TestCSDataClass.testDataExp0 }],
 
-        ["1b", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, -1,  1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1d", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 131,  1), false, new[] { TestCSDataClass.testDataExp1 }],
-        ["1f", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 125, 6), false, new[] { TestCSDataClass.testDataExp1 }],
-           ["1gd", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 6, 3), true, new[] { TestCSDataClass.testDataDeleteExp }],
-           ["1gu", TestCSDataClass.TestDataList1(), (new[] { 8, 1, 5 }, 9, 4), true, new[] { TestCSDataClass.testDataDelete2Exp }],
+        ["1b", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, -1,  1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1d", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 131,  1), false, new[] { TestCSDataClass.testDataExp1 }],
+        ["1f", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 125, 6), false, new[] { TestCSDataClass.testDataExp1 }],
+           ["1gd", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 6, 3), true, new[] { TestCSDataClass.testDataDeleteExp }],
+           ["1gu", TestCSDataClass.TestDataList1()!, (new[] { 8, 1, 5 }, 9, 4), true, new[] { TestCSDataClass.testDataDelete2Exp }],
 
-        ["2b", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, -1,  1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2d", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 34,  1), false, new[] { TestCSDataClass.testDataExp2 }],
-        ["2f", TestCSDataClass.TestDataList2(), (new[] { 7, 1, 3 }, 30,  5), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2b", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, -1,  1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2d", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 34,  1), false, new[] { TestCSDataClass.testDataExp2 }],
+        ["2f", TestCSDataClass.TestDataList2()!, (new[] { 7, 1, 3 }, 30,  5), false, new[] { TestCSDataClass.testDataExp2 }],
 
       };
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
@@ -127,7 +127,7 @@ public class CCodeBlockTests : TestBase
         var act = _testClass.Parse(TestCSDataClass.TestDataList1() as List<TokenData>);
         var act2 = act.SubBlocks[7];
         ((CodeBlock)act2).DestinationIndex = new() { 1 };
-        Assert.IsTrue(act2.Destination.TryGetTarget(out var act3));
+        Assert.IsTrue(act2!.Destination!.TryGetTarget(out var act3));
         Assert.AreEqual(act, act3);
     }
 

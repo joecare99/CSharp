@@ -32,7 +32,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
   </ItemGroup>

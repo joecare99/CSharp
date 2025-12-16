@@ -1,0 +1,70 @@
+<UserControl x:Class="AA25_RichTextEdit.Views.RichTextEditView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:avrichtextbox="using:AvRichTextBox"
+             xmlns:vmi="clr-namespace:AA25_RichTextEdit.ViewModels.Interfaces"
+             x:DataType="vmi:IRichTextEditViewModel">
+  <DockPanel Background="Silver">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" FlowDirection="LeftToRight" UseLayoutRounding="True">
+      <Button Classes="toolbar" Command="{Binding NewTextCommand}" ToolTip.Tip="New Document">
+        <TextBlock Text="&#xE7C3;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding OpenTextCommand}" ToolTip.Tip="Open Document">
+        <TextBlock Text="&#xE8E5;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding SaveTextCommand}" ToolTip.Tip="Save Document">
+        <TextBlock Text="&#xE74E;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding PrintTextCommand}" ToolTip.Tip="Print">
+        <TextBlock Text="&#xE749;" />
+      </Button>
+      <Separator/>
+      <Button Classes="toolbar" Command="{Binding #rtb.CutCommand}" ToolTip.Tip="Cut">
+        <TextBlock Text="&#xE8C6;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding #rtb.CopyCommand}" ToolTip.Tip="Copy">
+        <TextBlock Text="&#xE8C8;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding #rtb.PasteCommand}" ToolTip.Tip="Paste">
+        <TextBlock Text="&#xE77F;" />
+      </Button>
+      <Separator/>
+      <Button Classes="toolbar" Command="{Binding #rtb.UndoCommand}" ToolTip.Tip="Undo">
+        <TextBlock Text="&#xE7A7;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding #rtb.RedoCommand}" ToolTip.Tip="Redo">
+        <TextBlock Text="&#xE7A6;" />
+      </Button>
+      <Separator/>
+      <ToggleButton Classes="toolbar" Command="{Binding #rtb.ToggleBoldCommand}" ToolTip.Tip="Bold">
+        <TextBlock Text="&#xE8DD;" />
+      </ToggleButton>
+      <ToggleButton Classes="toolbar" Command="{Binding #rtb.ToggleItalicCommand}" ToolTip.Tip="Italic">
+        <TextBlock Text="&#xE8DB;" />
+      </ToggleButton>
+      <ToggleButton Classes="toolbar" Command="{Binding #rtb.ToggleUnderlineCommand}" ToolTip.Tip="Underline">
+        <TextBlock Text="&#xE8DC;" />
+      </ToggleButton>
+      <Separator/>
+      <Button Classes="toolbar" Command="{Binding #rtb.AlignLeftCommand}" ToolTip.Tip="Align Left">
+        <TextBlock Text="&#xE8E4;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding #rtb.AlignCenterCommand}" ToolTip.Tip="Align Center">
+        <TextBlock Text="&#xE8E3;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding #rtb.AlignRightCommand}" ToolTip.Tip="Align Right">
+        <TextBlock Text="&#xE8E2;" />
+      </Button>
+      <Button Classes="toolbar" Command="{Binding #rtb.AlignJustifyCommand}" ToolTip.Tip="Align Justify">
+        <TextBlock Text="&#xE8E1;" />
+      </Button>
+    </StackPanel>
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*">
+      <TextBlock Text="{Binding Now}" Margin="4"/>
+      <avrichtextbox:RichTextBox x:Name="rtb" Grid.Row="1" Grid.Column="0" FlowDocument="{Binding Document}" />
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Document}" IsReadOnly="True"/>
+    </Grid>
+  </DockPanel>
+</UserControl>
+
+

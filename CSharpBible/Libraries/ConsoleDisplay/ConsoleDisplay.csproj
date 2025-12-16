@@ -15,7 +15,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="View\Interfaces\IConsole.cs" />
-	  <Compile Remove="View\MyConsole.cs" />
 	  <Compile Remove="View\MyConsoleBase.cs" />
 	</ItemGroup>
 	<ItemGroup>

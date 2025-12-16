@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using System;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;

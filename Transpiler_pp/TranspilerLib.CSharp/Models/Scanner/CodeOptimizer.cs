@@ -206,18 +206,19 @@ public class CodeOptimizer : ICodeOptimizer
                 while (c?.Next is ICodeBlock next
                     && c.Type is CodeBlockType.LComment or CodeBlockType.Comment)
                     c = next;
-                if (c.Next is ICodeBlock next2
+                if (c?.Next is ICodeBlock next2
                     && c.Code.StartsWith("num ="))
                     c = next2;
                 // move Instructions to While-Goto
-                if (item.Parent.MoveSubBlocks(c.Index, source, ifItem.Index - c.Index))
+                if (item.Parent?.MoveSubBlocks(c!.Index, source, ifItem.Index - c.Index) ?? false)
                 {
                     ifItem.Code = ifItem.Code.Replace("if", "while");
                     // Delete goto
                     DeleteItem(source);
                     if (ifItem.Next is ICodeBlock elseItem
                        && elseItem.Type == CodeBlockType.Operation
-                       && elseItem.Code == "else")
+                       && elseItem.Code == "else" 
+                       && elseItem.Next != null)
                     {
                         elseItem.MoveSubBlocks(1, elseItem.Next, elseItem.SubBlocks.Count - 2);
                         DeleteItem(elseItem);

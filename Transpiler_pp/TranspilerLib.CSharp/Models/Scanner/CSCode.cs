@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TranspilerLib.CSharp.Data;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using static TranspilerLib.Interfaces.Code.ICodeBase;
@@ -30,27 +31,9 @@ public partial class CSCode : CodeBase, ICSCode
     /// This set is consumed by <see cref="CSTokenHandler"/> to drive lexical decisions while scanning control-flow
     /// and other language elements. Extend with care to avoid misclassification of identifiers.
     /// </remarks>
-    public static readonly string[] ReservedWords = new[] {
-        "catch", "do", "else", "if", "try",
-        "while", "switch", "for", "foreach", "return",
-        "throw", "using", "lock", "get", "set", "break",
-    };
+    public static readonly string[] ReservedWords = CSReservedWords.ReservedWords;
 
-    private static readonly string[] reservedWords2 = new[] {
-        "case", "default", "goto", "break", "continue",
-        "new", "var", "const", "static", "public",
-        "private", "protected", "internal", "class", "struct",
-        "interface", "enum", "delegate", "event", "namespace",
-        "abstract", "sealed", "override", "virtual",            "extern",
-        "readonly", "volatile", "unsafe", "ref", "out",
-        "in", "is", "as", "sizeof", "typeof",
-        "checked", "unchecked", "fixed", "operator", "implicit",
-        "explicit", "this", "base", "params",            "true",
-        "false", "null", "void", "object", "string",
-        "bool", "byte", "sbyte", "short", "ushort",
-        "int", "uint", "long", "ulong", "float",
-        "double", "decimal"
-    };
+    private static readonly string[] reservedWords2 = CSReservedWords.ReservedWords2;
 
     /// <summary>
     /// Characters that signal the end (or state transition) of a string/interpolated string during tokenization.
@@ -158,7 +141,7 @@ public partial class CSCode : CodeBase, ICSCode
     public override ICodeBlock Parse(IEnumerable<TokenData>? values = null)
     {
         string BlockCode = string.Empty;
-        ICodeBlock codeBlock = new CodeBlock() { Name = "Declaration", Code = "", Parent = null };
+        ICodeBlock codeBlock = new CodeBlock() { Name = "Declaration",Type=CodeBlockType.MainBlock, Code = "", Parent = null };
         var data = codeBuilder.NewData(codeBlock);
 
         if (values == null)

@@ -1,15 +1,21 @@
-<Project >
+﻿<Project >
 	<Import Project="..\Application.props" />
 	<PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-
-	<ItemGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />

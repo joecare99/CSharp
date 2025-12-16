@@ -1,25 +1,25 @@
-﻿using MVVM.View.Extension;
+﻿using MVVM.Views.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using VBUnObfusicator.Models;
 using VBUnObfusicator.Interfaces.Code;
+using VBUnObfusicator.Models.Scanner;
 using BaseLib.Helper;
 
-namespace VBUnObfusicator
+namespace VBUnObfusicator;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public App() : base()
     {
-        public App() : base()
-        {
-            // Build the DependencyInjection container
-            var builder = new ServiceCollection()
-               .AddTransient<ICSCode, CSCode>();
+        // Build the DependencyInjection container
+        var builder = new ServiceCollection()
+           .AddTransient<ICSCode, CSCode>();
 
-            IoC.GetReqSrv = builder.BuildServiceProvider().GetRequiredService;
-        }
-
+        IoC.GetReqSrv = builder.BuildServiceProvider().GetRequiredService;
     }
+
 }

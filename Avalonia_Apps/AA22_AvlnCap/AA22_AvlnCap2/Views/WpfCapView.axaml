@@ -1,0 +1,85 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:cvt="clr-namespace:AA22_AvlnCap2.Views.Converter"
+			 xmlns:vmi="clr-namespace:AA22_AvlnCap2.ViewModels.Interfaces"
+			 x:DataType="vmi:IWpfCapViewModel"
+			 x:Class="AA22_AvlnCap2.Views.WpfCapView">
+	<UserControl.Resources>
+		<cvt:EnumToColorConverter x:Key="vcToColor"/>
+		<cvt:IntToStringConverter x:Key="IntToStringConverter"/>
+	</UserControl.Resources>
+	<Grid RowDefinitions="3*,20*,3*,3*" ColumnDefinitions="60*,460*,100*,180*">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8">
+			<Button Content="Shuffle" Command="{Binding ShuffleCommand}"/>
+		</StackPanel>
+		<StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+			<ItemsControl ItemsSource="{Binding Cols}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Width="320" Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button	Width="72"
+						Height="30"
+						Margin="4"
+						Command="{Binding MoveUpCommand}"
+						CommandParameter="{Binding This}"
+						Content="U" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<ItemsControl ItemsSource="{Binding Rows}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid Width="420" Height="50">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="50" />
+								<ColumnDefinition Width="80" />
+								<ColumnDefinition Width="80" />
+								<ColumnDefinition Width="80" />
+								<ColumnDefinition Width="80" />
+								<ColumnDefinition Width="50" />
+							</Grid.ColumnDefinitions>
+							<Button
+								Command="{Binding MoveLeftCommand}"
+								CommandParameter="{Binding This}"
+								Content="L" />
+							<Button
+								Grid.Column="5"
+								Command="{Binding MoveRightCommand}"
+								CommandParameter="{Binding This}"
+								Content="R" />
+							<Rectangle Grid.Column="1" Margin="4" Fill="{Binding TileColor, ConverterParameter=0, Converter={StaticResource vcToColor}, Mode=OneWay}"/>
+							<Rectangle Grid.Column="2" Margin="4" Fill="{Binding TileColor, ConverterParameter=1, Converter={StaticResource vcToColor}, Mode=OneWay}"/>
+							<Rectangle Grid.Column="3" Margin="4" Fill="{Binding TileColor, ConverterParameter=2, Converter={StaticResource vcToColor}, Mode=OneWay}"/>
+							<Rectangle Grid.Column="4" Margin="4" Fill="{Binding TileColor, ConverterParameter=3, Converter={StaticResource vcToColor}, Mode=OneWay}"/>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<ItemsControl ItemsSource="{Binding Cols}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Width="320" Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button
+						Width="72"
+			            Margin="4"
+						Height="30"
+						Command="{Binding MoveDownCommand}"
+						CommandParameter="{Binding This}"
+						Content="D"
+						/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+		</StackPanel>
+	</Grid>
+</UserControl>

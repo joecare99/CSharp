@@ -1,0 +1,26 @@
+﻿<Window x:Class="MidiSwing.MVVM.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:MidiSwing.MVVM.ViewModels"
+        xmlns:local="clr-namespace:MidiSwing.MVVM.Views"
+        xmlns:vc="clr-namespace:MidiSwing.MVVM.Views.Converters"
+        mc:Ignorable="d"
+        Title="Swingin' Big Band" Height="200" Width="350">
+    <Window.DataContext>
+        <viewModel:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <vc:BoolToTextConverter x:Key="BoolToTextConverter"/>
+    </Window.Resources>
+    <Grid Margin="20">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Command="{Binding PlayCommand}" 
+                    Content="{Binding IsPlaying, Converter={StaticResource BoolToTextConverter}}" 
+                    Padding="10,5" FontSize="16"/>
+            <TextBlock Text="Stellen Sie sicher, dass Ihr Standard-MIDI-Gerät (Synthesizer) aktiv ist." 
+                       TextWrapping="Wrap" Margin="0,20,0,0" FontStyle="Italic" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

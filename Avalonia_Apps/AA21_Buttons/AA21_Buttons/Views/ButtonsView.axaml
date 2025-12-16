@@ -1,13 +1,26 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:AA21_Buttons.Views"
              xmlns:converters="clr-namespace:AA21_Buttons.Converters"
+             xmlns:vm="clr-namespace:AA21_Buttons.ViewModels"
+             x:DataType="vm:ButtonsViewViewModel"
              x:Class="AA21_Buttons.Views.ButtonsView"
+             mc:Ignorable="d"
              Padding="20">
-
   <UserControl.Resources>
-    <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+    <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
   </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="Button.play">
+      <Setter Property="Margin" Value="3"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="Command" Value="{Binding PlayCommand}"/>
+    </Style>
+  </UserControl.Styles>
 
   <Grid RowDefinitions="1*,5*,1*" ColumnDefinitions="1*,5*,1*" Margin="20">
     <!-- Main Grid mit 3x3 Button Layout -->
@@ -18,58 +31,58 @@
           Margin="20">
 
       <!-- Row 1 -->
-      <Button Grid.Row="0" Grid.Column="0" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="0" Grid.Column="0"
+              Classes="play"
               CommandParameter="1"
               Content="1"
               Background="{Binding Flip, ConverterParameter=1, Converter={StaticResource BoolToColorConverter}}" />
 
-      <Button Grid.Row="0" Grid.Column="1" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="0" Grid.Column="1"
+              Classes="play"
               CommandParameter="2"
               Content="2"
               Background="{Binding Flip, ConverterParameter=2, Converter={StaticResource BoolToColorConverter}}" />
 
-      <Button Grid.Row="0" Grid.Column="2" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="0" Grid.Column="2"
+              Classes="play"
               CommandParameter="3"
               Content="3"
               Background="{Binding Flip, ConverterParameter=3, Converter={StaticResource BoolToColorConverter}}" />
 
       <!-- Row 2 -->
-      <Button Grid.Row="1" Grid.Column="0" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="1" Grid.Column="0"
+              Classes="play"
               CommandParameter="4"
               Content="4"
               Background="{Binding Flip, ConverterParameter=4, Converter={StaticResource BoolToColorConverter}}" />
 
-      <Button Grid.Row="1" Grid.Column="1" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="1" Grid.Column="1"
+              Classes="play"
               CommandParameter="5"
               Content="5"
               Background="{Binding Flip, ConverterParameter=5, Converter={StaticResource BoolToColorConverter}}" />
 
-      <Button Grid.Row="1" Grid.Column="2" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="1" Grid.Column="2"
+              Classes="play"
               CommandParameter="6"
               Content="6"
               Background="{Binding Flip, ConverterParameter=6, Converter={StaticResource BoolToColorConverter}}" />
 
       <!-- Row 3 -->
-      <Button Grid.Row="2" Grid.Column="0" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="2" Grid.Column="0"
+              Classes="play"
               CommandParameter="7"
               Content="7"
               Background="{Binding Flip, ConverterParameter=7, Converter={StaticResource BoolToColorConverter}}" />
 
-      <Button Grid.Row="2" Grid.Column="1" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="2" Grid.Column="1"
+              Classes="play"
               CommandParameter="8"
               Content="8"
               Background="{Binding Flip, ConverterParameter=8, Converter={StaticResource BoolToColorConverter}}" />
 
-      <Button Grid.Row="2" Grid.Column="2" 
-              Command="{Binding PlayCommand}" 
+      <Button Grid.Row="2" Grid.Column="2"
+              Classes="play"
               CommandParameter="9"
               Content="9"
               Background="{Binding Flip, ConverterParameter=9, Converter={StaticResource BoolToColorConverter}}" />

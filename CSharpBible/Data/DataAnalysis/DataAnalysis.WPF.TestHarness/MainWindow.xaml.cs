@@ -56,8 +56,8 @@ public partial class MainWindow : Window
         {
             [new Vector2(0, 0)] = 15000,
             [new Vector2(100000, 50000)] = 2000,
-            [new Vector2(-50000, 80000)] = 8000,
-            [new Vector2(800000, -230000)] = 300
+            [new Vector2(-50000, 80000)] = 800,
+            [new Vector2(800000, -230000)] = 300000
         };
         var agg = new AggregationResult
         {

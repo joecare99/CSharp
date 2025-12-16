@@ -1,1 +1,1 @@
-[{"Code":"private void Test10Dat()","Level":0,"type":7},{"Code":"{","Level":1,"type":17},{"Code":"writeln((xText ? 1 : 0).AsString());","Level":1,"type":7},{"Code":"}","Level":1,"type":17}]
+[{"Code":"private void Test10Dat()","type":"operation","Level":0,"Pos":0},{"Code":"{","type":"block","Level":1,"Pos":26},{"Code":"writeln((xText ? 1 : 0).AsString());","type":"operation","Level":1,"Pos":27},{"Code":"}","type":"block","Level":1,"Pos":71}]

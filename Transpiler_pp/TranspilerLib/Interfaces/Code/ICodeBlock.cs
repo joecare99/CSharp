@@ -15,17 +15,14 @@ using System;
 using System.Collections.Generic;
 using TranspilerLib.Data;
 
-/// <summary>
-/// The Models namespace.
-/// </summary>
 namespace TranspilerLib.Interfaces.Code;
 
 /// <summary>
 /// Interface ICodeBlock
-/// Extends the <see cref="Models.IHasParents{ICodeBlock}" />
+/// Extends the <see cref="IHasParents{ICodeBlock}" />
 /// Extends the <see cref="IEquatable{ICodeBlock}" />
 /// </summary>
-/// <seealso cref="Models.IHasParents{ICodeBlock}" />
+/// <seealso cref="IHasParents{ICodeBlock}" />
 /// <seealso cref="IEquatable{ICodeBlock}" />
 public interface ICodeBlock : IHasParents<ICodeBlock>, IEquatable<ICodeBlock>
 {
@@ -68,7 +65,7 @@ public interface ICodeBlock : IHasParents<ICodeBlock>, IEquatable<ICodeBlock>
     /// Gets the sources.
     /// </summary>
     /// <value>The sources.</value>
-    IList<WeakReference<ICodeBlock>?> Sources { get; }
+    IList<WeakReference<ICodeBlock>> Sources { get; }
     //  new ICodeBlock? Parent { get; set; }
     /// <summary>
     /// Gets the next.

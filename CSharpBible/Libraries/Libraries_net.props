@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
     <Company>JC-Soft</Company>
     <Authors>Joe Care</Authors>
     <Copyright>Copyright © JC-Soft 2025</Copyright>

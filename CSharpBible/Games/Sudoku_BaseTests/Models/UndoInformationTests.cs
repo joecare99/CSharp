@@ -8,7 +8,7 @@ namespace Sudoku_Base.Models.Tests;
 [TestClass()]
 public class UndoInformationTests
 {
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, null)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, true)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, new[] {3,5,7 })]
@@ -23,7 +23,7 @@ public class UndoInformationTests
         Assert.IsNotNull(testModel);
         Assert.IsTrue(testModel.Field.TryGetTarget(out var f2));
         AssertAreEqual(field, f2, []);
-        Assert.AreEqual(1, testModel.list.Count);
+        Assert.HasCount(1, testModel.list);
         Assert.AreEqual((ov, null), testModel.list[0]);
     }
 
@@ -117,7 +117,7 @@ public class UndoInformationTests
         }
     }
 
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, 5,null)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, null,5)]
     [DataRow(new int[] { 1, 2 }, 5, true, new int[] { 1, 2, 3, 4, 5 }, true,false)]
@@ -132,7 +132,7 @@ public class UndoInformationTests
         // Act
         testModel.TryUpdateNewValue(nv);
         // Assert
-        Assert.AreEqual(1, testModel.list.Count);
+        Assert.HasCount(1, testModel.list);
         Assert.AreEqual((ov, nv is string?null:nv), testModel.list[0]);
     }
 }

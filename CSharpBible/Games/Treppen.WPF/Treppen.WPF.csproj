@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\Treppen.Base\Treppen.Base.csproj" />
+    <ProjectReference Include="..\Treppen.Export\Treppen.Export.csproj" />
+    <ProjectReference Include="..\Treppen.Print\Treppen.Print.csproj" />
+  </ItemGroup>
+
+</Project>

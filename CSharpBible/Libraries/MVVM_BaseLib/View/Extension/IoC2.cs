@@ -18,7 +18,7 @@ using System.Windows.Markup;
 /// <summary>
 /// The Extension namespace.
 /// </summary>
-namespace MVVM.View.Extension;
+namespace MVVM.Views.Extension;
 
 /// <summary>
 /// Class IoC.

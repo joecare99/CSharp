@@ -3,7 +3,7 @@ using MSQBrowser.Models.Interfaces;
 using MSQBrowser.ViewModels;
 using MSQBrowser.ViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using System;
 using System.Data.Common;
 using System.Windows;

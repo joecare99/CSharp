@@ -59,7 +59,7 @@ namespace TranspilerLib.Models.Scanner
                 return $" {Code}";
             // Standardformatierung (Einrückung abhängig vom Blocktyp)
             else
-                return $"{new string(' ', Type is CodeBlockType.Block or CodeBlockType.Label ? indent - 4 : 1)}{Code}{codeComment}{(SubBlocks.Count > 0 ? "\r\n" : string.Empty)}{subCode}";
+                return $"{new string(' ', Type is CodeBlockType.Block or CodeBlockType.Label ? indent - 4 : 1)}{Code}{codeComment}{(SubBlocks?.Count > 0 ? "\r\n" : string.Empty)}{subCode}";
         }
 
         /// <summary>

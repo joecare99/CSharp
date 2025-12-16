@@ -34,6 +34,8 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     public partial FullColor[] CurrentColors { get; set; } = Array.Empty<FullColor>();
     public Func<Size> DoNewTileDialog { get; set; }
 
+    public Size TileSize => _model.TileSize;
+
     public void LoadFromPath(string path)
     {
         using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);

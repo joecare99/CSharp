@@ -2,18 +2,24 @@
 	<Import Project="..\MVVM_Tutorial_net.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net8.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
 	  <None Remove="Resources\all64.png" />
 	  <None Remove="Resources\all64_2.png" />
 	  <None Remove="Resources\document_new_unlined_256.png" />
 	</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
   </ItemGroup>
   <ItemGroup>
 		<ProjectReference Include="..\..\Games\Sudoku_Base\Sudoku_Base.csproj" />
