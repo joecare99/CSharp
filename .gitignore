@@ -3,7 +3,8 @@ bin
 obj
 *.bak
 *.user
+*.log
 /obj.net
 /CSharpBible/Data/obj.net
 /CSharpBible/obj.net
-*.log
+/TestStatements/Help
