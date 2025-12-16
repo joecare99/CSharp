@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLibTests.Properties;
@@ -9,6 +11,18 @@ namespace TranspilerLibTests.TestData;
 
 public class TestCSDataClass
 {
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        AllowTrailingCommas = true,
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true),
+        }
+    };
+
     #region Raw TestData
     public const string testData0 = @"public const string TestData()
 {
@@ -2671,7 +2685,7 @@ T:Block,1,}
     public static string cExpCode12 { get; } = Resources.Test12ExpCode;
     public static string cExpCode13 { get; } = Resources.Test13ExpCode;
     #endregion
-    private static object? ReadObject(byte[] JsonData) => new DataContractJsonSerializer(typeof(List<TokenData>)).ReadObject(new MemoryStream(JsonData));
+    private static object? ReadObject(byte[] JsonData) => JsonSerializer.Deserialize<List<TokenData>>(new MemoryStream(JsonData),_jsonOptions);
 
     #region Intermediste token-list
     public static object TestDataList0() => new List<TokenData>(){
