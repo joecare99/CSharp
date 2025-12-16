@@ -1,26 +1,41 @@
 [
   {
-    "name": "PascalRoot",
-    "type": "mainBlock",
-    "code": "",
-    "subBlocks": [
+    "Name": "PascalRoot",
+    "Code": "",
+    "Type": "MainBlock",
+    "SubBlocks": [
       {
-        "name": "Body",
-        "type": "block",
-        "code": "begin",
-        "subBlocks": [
+        "Name": "Body",
+        "Code": "begin",
+        "Type": "Block",
+        "SubBlocks": [
           {
-            "name": "Assignment",
-            "type": "assignment",
-            "code": ":=",
-            "subBlocks": [
-              { "name": "Variable", "type": "variable", "code": "X", "subBlocks": [] },
-              { "name": "Number", "type": "number", "code": "10", "subBlocks": [] }
+            "Name": "Assignment",
+            "Code": ":=",
+            "Type": "Assignment",
+            "SubBlocks": [
+              {
+                "Name": "Variable",
+                "Code": "X",
+                "Type": "Variable",
+                "SubBlocks": []
+              },
+              {
+                "Name": "Number",
+                "Code": "10",
+                "Type": "Number",
+                "SubBlocks": []
+              }
             ]
           }
         ]
       },
-      { "name": "Operation", "type": "operation", "code": ".", "subBlocks": [] }
+      {
+        "Name": "Operation",
+        "Code": ".",
+        "Type": "Operation",
+        "SubBlocks": []
+      }
     ]
   }
 ]

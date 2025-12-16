@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using TranspilerLib.Pascal.Helper;
 
 namespace TranspilerLib.Pascal.Models.Tests;
 
@@ -15,6 +17,18 @@ public class LfmTokenizerTests
     #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     private LfmTokenizer testClass;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        AllowTrailingCommas = true,
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true),
+        }
+    };
+
 
     public static IEnumerable<object[]> TestTokenizeList
     {
@@ -60,7 +74,7 @@ public class LfmTokenizerTests
         // Act
         var tokens = testClass.Tokenize();
         // Assert
-        var sActualTokens = JsonSerializer.Serialize(tokens);
+        var sActualTokens = JsonSerializer.Serialize(tokens, _jsonOptions);
         try
         {
             Assert.AreEqual(sExpectedTokens, sActualTokens, $"Testcase: {sTestName}");
