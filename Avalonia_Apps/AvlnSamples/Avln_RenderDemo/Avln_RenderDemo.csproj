@@ -13,13 +13,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
+    <PackageReference Include="Avalonia" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SampleControls\ControlSamples.Pack.csproj" />
