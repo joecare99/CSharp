@@ -18,6 +18,8 @@ public class PasCodeBlock : CodeBlock
                 return $"{new string(' ', indent)}{Code};\r\n{string.Join(string.Empty, SubBlocks.Select(sb => sb.ToCode(indent + 4)))}{new string(' ', indent)}end;\r\n";
             case CodeBlockType.Block:
                 return $"{new string(' ', indent)}begin\r\n{string.Join(string.Empty, SubBlocks.Select(sb => sb.ToCode(indent + 4)))}{new string(' ', indent)}end;\r\n";
+            case CodeBlockType.MainBlock:
+                return $"{new string(' ', indent)}{Code}{(string.IsNullOrEmpty(Code) ? "" : ";")}\r\n{string.Join(string.Empty, SubBlocks.Select(sb => sb.ToCode(indent)))}";
             default:
                 return $"{new string(' ', indent)}{Code};\r\n";
         }

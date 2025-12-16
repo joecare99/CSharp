@@ -111,7 +111,10 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         if (code[data.Pos] == '\n' || data.Pos == code.Length - 1)
         {
-            EmitToken(token, data, CodeBlockType.LComment, code);
+            var p= data.Pos2-1;
+            while (p > 0 && code[p] == ' ')
+                p--;
+            EmitToken(token, data, ((IList<char>)[ '\r', '\n' ]).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.LComment, code);
             data.Pos2 = data.Pos + 1;
             data.State = 0;
         }
@@ -121,7 +124,10 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         if (code[data.Pos] == '*' && GetNxtChar(data.Pos, code) == ')')
         {
-            EmitToken(token, data, CodeBlockType.Comment, code, 2);
+        var p = data.Pos2 - 1;
+        while (p > 0 && code[p] == ' ')
+            p--;
+            EmitToken(token, data, ((IList<char>)['\r', '\n']).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.Comment, code, 2);
             data.Pos2 = data.Pos + 2;
             data.State = 0;
             data.Pos++; // skip )
@@ -131,7 +137,10 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         if (code[data.Pos] == '}')
         {
-            EmitToken(token, data, CodeBlockType.Comment, code, 1);
+        var p = data.Pos2 - 1;
+        while (p > 0 && code[p] == ' ')
+            p--;
+            EmitToken(token, data, ((IList<char>)['\r', '\n']).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.Comment, code, 1);
             data.Pos2 = data.Pos + 1;
             data.State = 0;
         }
@@ -239,5 +248,5 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     }
 
     public bool TryGetValue(int state, out Action<TokenDelegate?, string, TokenizeData> handler)
-        => _tokenStateHandler.TryGetValue((PasTokenState)state, out handler);
+        => _tokenStateHandler.TryGetValue((PasTokenState)state, out handler!);
 }
