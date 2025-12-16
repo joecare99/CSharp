@@ -14,7 +14,7 @@
     <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 	</ItemGroup>
 	<ItemGroup>
