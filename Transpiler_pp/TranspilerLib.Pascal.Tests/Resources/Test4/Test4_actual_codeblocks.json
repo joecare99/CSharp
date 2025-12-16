@@ -1,0 +1,130 @@
+[
+  {
+    "Name": "Test4",
+    "Code": "Program",
+    "Type": "MainBlock",
+    "SubBlocks": [
+      {
+        "Name": "Declaration",
+        "Code": "var",
+        "Type": "Declaration",
+        "SubBlocks": [
+          {
+            "Name": "Operation",
+            "Code": ":",
+            "Type": "Operation",
+            "SubBlocks": [
+              {
+                "Name": "Variable",
+                "Code": "x",
+                "Type": "Variable",
+                "SubBlocks": []
+              },
+              {
+                "Name": "Type",
+                "Code": "Integer",
+                "Type": "Variable",
+                "SubBlocks": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Body",
+        "Code": "begin",
+        "Type": "Block",
+        "SubBlocks": [
+          {
+            "Name": "FLComment",
+            "Code": "// Kommentar",
+            "Type": "FLComment",
+            "SubBlocks": []
+          },
+          {
+            "Name": "Assignment",
+            "Code": ":=",
+            "Type": "Assignment",
+            "SubBlocks": [
+              {
+                "Name": "Variable",
+                "Code": "x",
+                "Type": "Variable",
+                "SubBlocks": []
+              },
+              {
+                "Name": "Operation",
+                "Code": "\u002B",
+                "Type": "Operation",
+                "SubBlocks": [
+                  {
+                    "Name": "Number",
+                    "Code": "$10",
+                    "Type": "Number",
+                    "SubBlocks": []
+                  },
+                  {
+                    "Name": "Number",
+                    "Code": "$0F",
+                    "Type": "Number",
+                    "SubBlocks": []
+                  }
+                ]
+              },
+              {
+                "Name": "Comment",
+                "Code": "(* hex addition *)",
+                "Type": "Comment",
+                "SubBlocks": []
+              }
+            ]
+          },
+          {
+            "Name": "Assignment",
+            "Code": ":=",
+            "Type": "Assignment",
+            "SubBlocks": [
+              {
+                "Name": "Variable",
+                "Code": "x",
+                "Type": "Variable",
+                "SubBlocks": []
+              },
+              {
+                "Name": "Operation",
+                "Code": "-",
+                "Type": "Operation",
+                "SubBlocks": [
+                  {
+                    "Name": "Variable",
+                    "Code": "x",
+                    "Type": "Variable",
+                    "SubBlocks": []
+                  },
+                  {
+                    "Name": "Number",
+                    "Code": "1",
+                    "Type": "Number",
+                    "SubBlocks": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "Name": "FLComment",
+            "Code": "{ block comment }",
+            "Type": "FLComment",
+            "SubBlocks": []
+          }
+        ]
+      },
+      {
+        "Name": "Operation",
+        "Code": ".",
+        "Type": "Operation",
+        "SubBlocks": []
+      }
+    ]
+  }
+]
