@@ -193,7 +193,7 @@ public abstract partial class LfmComponentBase : ObservableObject
                 // Handled by parent assignment
                 break;
             case "action":
-                ObjectResolver.ResolveOrDefer(value as string,this,(o)=>LinkedAction=new WeakReference<TAction>(o as TAction));
+                ObjectResolver?.ResolveOrDefer(value as string??"",this,(o)=>LinkedAction=new WeakReference<TAction>((o as TAction)!));
                 break;
             case "picture.data":
                 ApplyHexData("picture", value);
@@ -212,7 +212,7 @@ public abstract partial class LfmComponentBase : ObservableObject
     /// Called when an action is linked to this component.
     /// Override in derived classes to inherit specific properties from the action.
     /// </summary>
-    partial void OnLinkedActionChanged(WeakReference<TAction> reference)
+    partial void OnLinkedActionChanged(WeakReference<TAction>? reference)
     {
         if (reference == null || !reference.TryGetTarget(out var target)) return;
          
