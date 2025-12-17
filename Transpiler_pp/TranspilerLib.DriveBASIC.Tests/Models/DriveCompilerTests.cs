@@ -201,4 +201,37 @@ public class DriveCompilerTests
             Assert.AreEqual(new DriveCommand(token[i], oExp[i] as object[]), FCompiler.TokenCode[i], $"Token[{i}]");
     }
 
+    [TestMethod]
+    [DataRow("1 + 2", 0, true, new[] { "(0, False, 1 + 2)" })]
+    [DataRow("Wert2: <Wert2>", 0, true, new[] { "(0, False, Wert2: <Float:Param3>)", "(32, False, Wert2: <Identifyer:Param3>)" })]
+    public void BuildExpressionNormalTests(string line,int iStart,bool xAct,string[]? lExp)
+    {
+        List<string> result = [];
+        // Act
+        FCompiler.BuildExpressionNormal(line, (o) => result.Add($"{o}"), 0, false);
+        // Assert
+        Assert.HasCount(lExp?.Length ?? 0, result, "Result Count");
+        for (int i = 0; i < lExp.Length; i++)
+            Assert.AreEqual(lExp[i], result[i], $"Result[{i}]");
+    }
+
+    [TestMethod]
+    [DataRow("<Float:", "123.45", true)]
+    [DataRow("<Float:", "123", true)]
+    [DataRow("<Float:", "123.45.", false)]
+    [DataRow("<Float:", "abc", false)]
+    [DataRow("<Identifyer:", "MyVar", true)]
+    [DataRow("<Identifyer:", "My_Var1", true)]
+    [DataRow("<Identifyer:", "1MyVar", false)]
+    [DataRow("<Identifyer:", "MyVar.", true)]
+    [DataRow("<Identifyer:", "MyVar.x", true)]
+    [DataRow("<UnknownPH>", "123", false)]
+    public void TestPlaceHolderCharsetTests(string placeholder, string text, bool expected)
+    {
+        // Act
+        var result = FCompiler.TestPlaceHolderCharset(placeholder, text);
+
+        // Assert
+        Assert.AreEqual(expected, result, $"Placeholder: {placeholder}, Text: {text}");
+    }
 }
