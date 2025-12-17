@@ -49,6 +49,11 @@
             Alphanumeric set combining letters and digits.
             </summary>
         </member>
+        <member name="F:TranspilerLib.Data.CharSets.allVisible">
+            <summary>
+            All visible characters combining letters, digits, operators, and brackets.
+            </summary>
+        </member>
         <member name="T:TranspilerLib.Data.CodeBlockType">
             <summary>
             Enum CodeBlockType
