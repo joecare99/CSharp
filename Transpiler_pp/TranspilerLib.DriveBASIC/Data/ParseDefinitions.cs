@@ -71,7 +71,7 @@ public class ParseDefinitions
         new(){Token= EDriveToken.tte_let,    SubToken= 1, text= "<Variable1> := " + CExpression},
         new(){Token= EDriveToken.tte_wait,    SubToken= 0, text= "WAIT " + CExpression},
         new(){Token= EDriveToken.tt_Msg, SubToken= 0,    text= "(*<Text:Message>*)"},
-        new(){Token= EDriveToken.tt_Msg, SubToken= 1,    text= "//<Text=Message>"},
+        new(){Token= EDriveToken.tt_Msg, SubToken= 1,    text= "//<Text:Message>"},
         new(){Token= EDriveToken.tte_Msg2, SubToken= 1,    text= "ERROR " + CExpression},
         new(){Token= EDriveToken.tt_Msg, SubToken= 2,    text= "STATE \"<Text:Message>\""},
         new(){Token= EDriveToken.tte_Msg2, SubToken= 2,    text= "STATE " + CExpression},
