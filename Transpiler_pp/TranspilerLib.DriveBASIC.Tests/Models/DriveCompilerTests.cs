@@ -234,4 +234,40 @@ public class DriveCompilerTests
         // Assert
         Assert.AreEqual(expected, result, $"Placeholder: {placeholder}, Text: {text}");
     }
+
+    [TestMethod]
+    [DataRow("   ", " ")]
+    [DataRow("  Both  ", " Both ")]
+    [DataRow("  Leading", " Leading")]
+    [DataRow("", "")]
+    [DataRow("< Identifyer >", "< Identifyer >")] // Leerzeichen innerhalb von <> werden entfernt, wenn sie am Rand stehen
+    [DataRow("<Identifyer>", "<Identifyer>")]
+    [DataRow("1 + 2 * 3", "1 + 2 * 3")]
+    [DataRow("A + B", "A + B")]
+    [DataRow("A  +  B", "A  +  B")]
+    [DataRow("IF A > B THEN", "IF A > B THEN")]
+    [DataRow("IF A < B THEN", "IF A < B THEN")]
+    [DataRow("VAR < 10", "VAR < 10")]
+    [DataRow("VAR > 10", "VAR > 10")]
+    [DataRow("Label:", "Label:")]
+    [DataRow("Label :", "Label :")]
+    [DataRow("A := B", "A := B")]
+    [DataRow("A : = B", "A : = B")]
+    [DataRow("A <Identifyer> B", "A <Identifyer> B")]
+    [DataRow("A < Identifyer > B", "A < Identifyer > B")]
+    [DataRow("String \"  Text  \"", "String \"  Text  \"")] // Anführungszeichen werden hier nicht gesondert behandelt, Logik entfernt Spaces basierend auf Nachbarn
+    [DataRow("Trailing  ", "Trailing ")]
+    [DataRow("A . B", "A . B")]
+    [DataRow("Func ( A , B )", "Func ( A , B )")]
+    [DataRow("A<B>C", "A<B>C")]
+    [DataRow("A < B > C", "A < B > C")]
+    [DataRow("Name : <Type>", "Name:<Type>")]
+    public void MTSpaceTrimTests(string input, string expected)
+    {
+        // Act
+        var result = DriveCompiler.MTSpaceTrim(input);
+
+        // Assert
+        Assert.AreEqual(expected, result, $"Input: '{input}'");
+    }
 }
