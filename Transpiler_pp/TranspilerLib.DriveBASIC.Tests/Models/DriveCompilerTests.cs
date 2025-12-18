@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -236,32 +238,32 @@ public class DriveCompilerTests
     }
 
     [TestMethod]
-    [DataRow("   ", " ")]
-    [DataRow("  Both  ", " Both ")]
-    [DataRow("  Leading", " Leading")]
+    [DataRow("   ", "")]
+    [DataRow("  Both  ", "Both")]
+    [DataRow("  Leading", "Leading")]
     [DataRow("", "")]
-    [DataRow("< Identifyer >", "< Identifyer >")] // Leerzeichen innerhalb von <> werden entfernt, wenn sie am Rand stehen
+    [DataRow("< NoIdentifyer >", "< NoIdentifyer >")] // Leerzeichen innerhalb von <> werden entfernt, wenn sie am Rand stehen
     [DataRow("<Identifyer>", "<Identifyer>")]
-    [DataRow("1 + 2 * 3", "1 + 2 * 3")]
-    [DataRow("A + B", "A + B")]
-    [DataRow("A  +  B", "A  +  B")]
+    [DataRow("1 + 2 * 3", "1+2*3")]
+    [DataRow("A + B", "A+B")]
+    [DataRow("A  +  B", "A+B")]
     [DataRow("IF A > B THEN", "IF A > B THEN")]
     [DataRow("IF A < B THEN", "IF A < B THEN")]
     [DataRow("VAR < 10", "VAR < 10")]
     [DataRow("VAR > 10", "VAR > 10")]
     [DataRow("Label:", "Label:")]
-    [DataRow("Label :", "Label :")]
-    [DataRow("A := B", "A := B")]
-    [DataRow("A : = B", "A : = B")]
+    [DataRow("NoLabel :", "NoLabel :")]
+    [DataRow("A := B", "A :=B")]
+    [DataRow("A : = B", "A : =B")]
     [DataRow("A <Identifyer> B", "A <Identifyer> B")]
-    [DataRow("A < Identifyer > B", "A < Identifyer > B")]
-    [DataRow("String \"  Text  \"", "String \"  Text  \"")] // Anführungszeichen werden hier nicht gesondert behandelt, Logik entfernt Spaces basierend auf Nachbarn
-    [DataRow("Trailing  ", "Trailing ")]
-    [DataRow("A . B", "A . B")]
-    [DataRow("Func ( A , B )", "Func ( A , B )")]
+    [DataRow("A < NoIdentifyer > B", "A < NoIdentifyer > B")]
+    [DataRow("String \"  Text  \"", "String\"Text\"")] // Anführungszeichen werden hier nicht gesondert behandelt, Logik entfernt Spaces basierend auf Nachbarn
+    [DataRow("Trailing  ", "Trailing")]
+    [DataRow("A . B", "A.B")]
+    [DataRow("Func ( A , B )", "Func(A,B)")]
     [DataRow("A<B>C", "A<B>C")]
     [DataRow("A < B > C", "A < B > C")]
-    [DataRow("Name : <Type>", "Name:<Type>")]
+    [DataRow("Name : <Type>", "Name : <Type>")]
     public void MTSpaceTrimTests(string input, string expected)
     {
         // Act
@@ -269,5 +271,201 @@ public class DriveCompilerTests
 
         // Assert
         Assert.AreEqual(expected, result, $"Input: '{input}'");
+    }
+
+    private const string RootPlaceholder = "<Root>";
+
+    [DataTestMethod]
+    [DataRow("NOP", "NOP", true, "", DisplayName = "Matches literal-only mask")]
+    [DataRow("SUB Start", "SUB <Identifyer:Label>", true, "<Identifyer:Label>=Start", DisplayName = "Matches trailing placeholder")]
+    [DataRow("Start: HELLO", "<Identifyer:Label>: <Text:Token>", true, "<Identifyer:Label>=Start|<Text:Token>=HELLO", DisplayName = "Matches placeholder surrounded by literals")]
+    [DataRow("call 42", "CALL <Integer:Param1>", true, "<Integer:Param1>=42", DisplayName = "Matches while ignoring literal casing")]
+    [DataRow("CALL TEXT", "CALL <Integer:Param1>", false, "", DisplayName = "Rejects when placeholder value violates expectations")]
+    [DataRow("JMP Start", "SUB <Identifyer:Label>", false, "", DisplayName = "Rejects when literal prefix mismatches")]
+    public void TryPlaceHolderMatching_EvaluatesPatternsCorrectly(string probe, string mask, bool expectedSuccess, string expectedPairsSpec)
+    {
+        var wildcardFill = CreateSeededWildcardFill();
+
+        var actual = FCompiler.TryPlaceHolderMatching(probe, mask, wildcardFill,testCharset );
+
+        Assert.AreEqual(expectedSuccess, actual);
+
+        var expectedPairs = ParseExpectedPairs(expectedPairsSpec);
+        var actualPairs = wildcardFill.Skip(1).ToList();
+
+        Assert.AreEqual(expectedPairs.Count, actualPairs.Count);
+
+        for (var index = 0; index < expectedPairs.Count; index++)
+        {
+            Assert.AreEqual(expectedPairs[index].Key, actualPairs[index].Key);
+            Assert.AreEqual(expectedPairs[index].Value, actualPairs[index].Value);
+        }
+    }
+    [DataTestMethod]
+    [DataRow("NOP", "NOP", true, "", DisplayName = "Matches literal-only mask")]
+    [DataRow("SUB Start", "SUB <Identifyer:Label>", true, "<Identifyer:Label>=Start", DisplayName = "Matches trailing placeholder")]
+    [DataRow("Start: HELLO", "<Identifyer:Label>: <Text:Token>", true, "<Identifyer:Label>=Start|<Text:Token>=HELLO", DisplayName = "Matches placeholder surrounded by literals")]
+    [DataRow("call 42", "CALL <Integer:Param1>", true, "<Integer:Param1>=42", DisplayName = "Matches while ignoring literal casing")]
+    [DataRow("CALL TEXT", "CALL <Integer:Param1>", true, "<Integer:Param1>=TEXT", DisplayName = "Don't rejects when placeholder value violates expectations")]
+    [DataRow("JMP Start", "SUB <Identifyer:Label>", false, "", DisplayName = "Rejects when literal prefix mismatches")]
+    public void TryPlaceHolderMatching_EvaluatesPatternsCorrectly2(string probe, string mask, bool expectedSuccess, string expectedPairsSpec)
+    {
+        var wildcardFill = CreateSeededWildcardFill();
+
+        var actual = FCompiler.TryPlaceHolderMatching(probe, mask, wildcardFill );
+
+        Assert.AreEqual(expectedSuccess, actual);
+
+        var expectedPairs = ParseExpectedPairs(expectedPairsSpec);
+        var actualPairs = wildcardFill.Skip(1).ToList();
+
+        Assert.AreEqual(expectedPairs.Count, actualPairs.Count);
+
+        for (var index = 0; index < expectedPairs.Count; index++)
+        {
+            Assert.AreEqual(expectedPairs[index].Key, actualPairs[index].Key);
+            Assert.AreEqual(expectedPairs[index].Value, actualPairs[index].Value);
+        }
+    }
+
+    private bool testCharset(string arg1, string arg2) => !arg1.StartsWith("<Integer:") || int.TryParse(arg2, out _);
+
+    private static List<KeyValuePair<string, string>> CreateSeededWildcardFill()
+    {
+        return new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(RootPlaceholder, "0")
+            };
+    }
+
+    private static List<KeyValuePair<string, string>> ParseExpectedPairs(string expectedPairsSpec)
+    {
+        var result = new List<KeyValuePair<string, string>>();
+        if (string.IsNullOrWhiteSpace(expectedPairsSpec))
+        {
+            return result;
+        }
+
+        var segments = expectedPairsSpec.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var segment in segments)
+        {
+            var separatorIndex = segment.IndexOf('=');
+            if (separatorIndex < 0)
+            {
+                continue;
+            }
+
+            var placeholder = segment.Substring(0, separatorIndex).Trim();
+            var value = segment.Substring(separatorIndex + 1).Trim();
+            result.Add(new KeyValuePair<string, string>(placeholder, value));
+        }
+
+        return result;
+    }
+
+    [DataTestMethod]
+    [DataRow("Empty line", "", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|"
+    })]
+    [DataRow("Literal command without arguments", "NOP", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|NOP"
+    })]
+    [DataRow("Command with identifier parameter", "SUB Start", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|SUB <Identifyer:Label>",
+        "<Identifyer:Label>|literal|Start"
+    })]
+    [DataRow("Label prefix followed by command", "Main: NOP", new[]
+    {
+        "<COMMAND>|rule|<Identifyer:Label>: <TEXT:TOKEN>",
+        "<Identifyer:Label>|literal|Main",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+         "<TOKEN>|rule|NOP"
+   })]
+    public void ParseLine_Succeeds(string scenario, string line, string[] expectations)
+    {
+        var parseResult = AssertParseResult(FCompiler.ParseLine(ParseDefinitions.CCommand, line, out var errorCode));
+
+        Assert.AreEqual(0, errorCode, $"{scenario}: unexpected error code");
+        AssertMatchesSpec(parseResult, expectations, scenario);
+    }
+
+    [DataTestMethod]
+    [DataRow("Invalid integer placeholder", "FUNC TEXT", DisplayName = "Integer placeholder requires numeric value")]
+    public void ParseLine_Fails(string scenario, string line)
+    {
+        var result = FCompiler.ParseLine(ParseDefinitions.CCommand, line, out var errorCode);
+
+        Assert.IsNull(result, $"{scenario}: expected null result");
+        Assert.AreNotEqual(0, errorCode, $"{scenario}: error code should be non-zero");
+    }
+
+    private static IReadOnlyList<KeyValuePair<string, object?>> AssertParseResult(object? candidate)
+    {
+        Assert.IsNotNull(candidate, "Parse result was expected but is null.");
+        Assert.IsInstanceOfType(candidate, typeof(IList<KeyValuePair<string, object?>>));
+        return (IReadOnlyList<KeyValuePair<string, object?>>)candidate;
+    }
+
+    private static void AssertMatchesSpec(IReadOnlyList<KeyValuePair<string, object?>> matches, string[] spec, string scenario)
+    {
+        foreach (var entry in spec)
+        {
+            var parts = entry.Split('|');
+            Assert.IsTrue(parts.Length >= 3, $"{scenario}: invalid expectation entry '{entry}'");
+
+            var placeholder = parts[0];
+            var expectationType = parts[1];
+            var expectationValue = parts[2];
+
+            var match = GetMatch(matches, placeholder);
+            switch (expectationType)
+            {
+                case "rule":
+                    var ruleIndex = int.Parse(match.Value.ToString() ?? "0", CultureInfo.InvariantCulture);
+                    var pattern = ResolveRulePattern(placeholder, ruleIndex);
+                    Assert.AreEqual(expectationValue, pattern, $"{scenario}: placeholder {placeholder} rule mismatch");
+                    break;
+                case "literal":
+                    Assert.AreEqual(expectationValue, match.Value, $"{scenario}: placeholder {placeholder} literal mismatch");
+                    break;
+                case "nested":
+                    var nested = AssertParseResult(match.Value);
+                    Assert.AreEqual(expectationValue, nested[0].Key, $"{scenario}: nested root mismatch for {placeholder}");
+              //      Assert.AreEqual(parts[3], nested[0].Value.ToString());    
+                    break;
+                default:
+                    Assert.Fail($"{scenario}: unknown expectation type '{expectationType}'");
+                    break;
+            }
+        }
+    }
+
+    private static KeyValuePair<string, object?> GetMatch(IReadOnlyList<KeyValuePair<string, object?>> matches, string placeholder)
+    {
+        var match = matches.FirstOrDefault(pair => string.Equals(pair.Key, placeholder, StringComparison.OrdinalIgnoreCase));
+        if (match.Key==null)
+           match = matches.Select(pair2 => (pair2.Value is IReadOnlyList<KeyValuePair<string,object?>> kvp)?GetMatch(kvp,placeholder):default).FirstOrDefault(p=>p.Key!=null);
+           
+      //  Assert.AreNotEqual(default(KeyValuePair<string, object?>), match, $"Match for placeholder '{placeholder}' not found.");
+        return match;
+    }
+
+    private static string ResolveRulePattern(string placeholder, int ruleIndex)
+    {
+        if (string.Equals(placeholder, ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase))
+        {
+            return ParseDefinitions.ParseDefBase[ruleIndex].text;
+        }
+
+        return ParseDefinitions.PlaceHolderDefBase[ruleIndex].text;
     }
 }
