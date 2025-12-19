@@ -7,11 +7,11 @@ public class DriveCommand : IDriveCommand
 {
     public EDriveToken Token { get; }
     public byte SubToken { get; }
-    public int Par1 { get; }
+    public int Par1 { get; set; }
     public int Par2 { get; }
     public double Par3 { get; }
 
-    public DriveCommand(EDriveToken token, byte sub = 0, int par1 = 0, int par2 = 0, int par3 = 0)
+    public DriveCommand(EDriveToken token, byte sub = 0, int par1 = 0, int par2 = 0, double par3 = 0)
     {
         this.Token = token;
         this.SubToken = sub;

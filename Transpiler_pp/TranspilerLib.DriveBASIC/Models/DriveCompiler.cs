@@ -963,7 +963,7 @@ public class DriveCompiler
             return;
         EnsureTokenSlot(tokenBuffer, index);
         var existing = tokenBuffer[index];
-        tokenBuffer[index] = new DriveCommand(existing.Token, new object[] { existing.SubToken, newValue, existing.Par2, existing.Par3 });
+         tokenBuffer[index].Par1 =  newValue ;
     }
 
     public IReadOnlyList<KeyValuePair<string, object?>>? ParseLine(string placeholder, string line, out int errp)

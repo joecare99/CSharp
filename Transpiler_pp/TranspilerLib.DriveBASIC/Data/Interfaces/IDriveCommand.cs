@@ -4,7 +4,7 @@ public interface IDriveCommand
 {
     EDriveToken Token { get; }
     byte SubToken { get; }
-    int Par1 { get; }
+    int Par1 { get; set; }
     int Par2 { get; }
     double Par3 { get; }
 }
