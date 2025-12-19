@@ -738,8 +738,8 @@ public class DriveCompiler
 
         if (type == EVarType.vt_dimension && normalized.Length >= 2)
         {
-            var axisChar = trimmedName[^1];
-            var baseDisplayName = trimmedName[..^1];
+            var axisChar = trimmedName[trimmedName.Length - 1];
+            var baseDisplayName = trimmedName.Substring(0, trimmedName.Length - 1);
             var baseVariable = EnsureVariableEntry(baseDisplayName, EVarType.vt_point);
             var axis = GetAxisNumber(axisChar.ToString());
             if (axis <= 0)
