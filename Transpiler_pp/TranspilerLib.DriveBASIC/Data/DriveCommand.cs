@@ -28,14 +28,31 @@ public class DriveCommand : IDriveCommand
         {
             switch (o)
             {
-                case byte b: SubToken = b; break;
-                case int i when ++Pc == 1: Par1 = i; break;
-                case int i when Pc == 2: Par2 = i; break;
-                case int i when Pc == 3: Par3 = i; break;
-                case double d: Par3 = d; Pc = 3; break;
+                case int i when ++Pc == 1: SubToken = (byte)i; break;
+                case int i when Pc == 2: Par1 = i; break;
+                case int i when Pc == 3: Par2 = i; break;
+                case int i when Pc == 4: Par3 = i; break;
+                case double d: Par3 = d; Pc = 4; break;
+                case decimal f: Par3 = (double)f; Pc = 4; break;
                 default:
                     throw new ArgumentException($"Ungültiger Parameter-Typ {o.GetType()} in DriveCommand-Array", nameof(oExp));
             }
         }
+    }
+
+    public override string ToString()
+    {
+        return $"DriveCommand(Token={Token}, SubToken={SubToken}, Par1={Par1}, Par2={Par2}, Par3={Par3})";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is IDriveCommand dc?
+            Token == dc.Token 
+            && SubToken == dc.SubToken 
+            && Par1 == dc.Par1
+            && Par2 == dc.Par2
+            && Par3 == dc.Par3
+            : false;
     }
 }

@@ -41,7 +41,7 @@ public class ParseDefinitions
         new(){Token= EDriveToken.tt_Nop, SubToken= 0,  text= ""},
         new(){Token= EDriveToken.tt_Nop, SubToken= 1, text= "NOP" },
         new(){Token= EDriveToken.tt_Nop, SubToken= 2, text= "DECLARE <Variable3>"},
-        new(){Token= EDriveToken.tt_Nop, SubToken= 3, text= "DEFINE <Integer=Param1>,\"<Text:Message>\""},
+        new(){Token= EDriveToken.tt_Nop, SubToken= 3, text= "DEFINE <Integer:Param1>,\"<Text:Message>\""},
         new(){Token= EDriveToken.tt_Nop,    SubToken= 4, text= "DEF_LBL <Identifyer:Label>"},
         new(){Token= EDriveToken.tt_Nop,    SubToken= 5, text= "SUB <Identifyer:Label>"},
         new(){Token= EDriveToken.tt_goto, SubToken= 0,    text= "GOTO <Integer:Param1>"},
@@ -146,14 +146,14 @@ public class ParseDefinitions
     /// <summary>
     /// Definiert die erlaubten Zeichen fuer die verschiedenen Platzhalter-Typen
     /// </summary>
-    public static (string Placeholder, bool HasPointAsSep, bool MaybeEmpty, IList<char> first, IList<char>? inner, IList<char>? last)[] SysPHCharset =
-    [("<Integer:",false,false, CharSets.numbers, CharSets.numbers,null),
-     ("<Float:",false,false, CharSets.numbers.Concat(['+','-']).ToList(), CharSets.numbersExt,CharSets.numbers),
-     ("<Identifyer:",true,false, CharSets.letters, CharSets.lettersAndNumbers.Concat(['_']).ToList(), null),
-     ("<Identifyer:",false,false, CharSets.letters, CharSets.lettersAndNumbers.Concat(['_']).ToList(),new List<char>(){'%', '&', '.' }),
-     ("<Axis:",false,false, 'x'.To('z').Concat('a'.To('c')).Concat('1'.To('6')).ToList(), null ,null ),
-     ("<Text:",false,false, CharSets.allVisible, CharSets.allVisible,null),
-     ("<W>",false,true, CharSets.whitespace, CharSets.whitespace,null)];
+    public static (string Placeholder, bool HasPointAsSep, bool MaybeEmpty, ISet<char> first, ISet<char>? inner, ISet<char>? last)[] SysPHCharset =
+    [("<Integer:",false,false, CharSets.numbers.ToHashSet(), CharSets.numbers.ToHashSet(),null),
+     ("<Float:",false,false, CharSets.numbers.Concat(['+','-']).ToHashSet(), CharSets.numbersExt.ToHashSet(),CharSets.numbers.ToHashSet()),
+     ("<Identifyer:",true,false, CharSets.letters.ToHashSet(), CharSets.lettersAndNumbers.Concat(['_']).ToHashSet(), null),
+     ("<Identifyer:",false,false, CharSets.letters.ToHashSet(), CharSets.lettersAndNumbers.Concat(['_']).ToHashSet(),new HashSet<char>(){'%', '&', '.' }),
+     ("<Axis:",false,false, 'x'.To('z').Concat('a'.To('c')).Concat('1'.To('6')).ToHashSet(), null ,null ),
+     ("<Text:",false,false, CharSets.allNormal, CharSets.allNormal,null),
+     ("<W>",false,true, CharSets.whitespace.ToHashSet(), CharSets.whitespace.ToHashSet(),null)];
 
 
     public static (EDriveToken Token, int SubToken, EDriveToken ReferencingToken, int ReferencingSubtoken, bool Backward)[] ReferencingToken =
