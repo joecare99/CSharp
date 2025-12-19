@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -42,6 +43,81 @@ public class DriveCompiler
     Dictionary<EDriveToken, int> Sindex = [];
     char[] replace = ['§', 'm', '¹', '²', '³', 'f', '1', '2', '3', 'x', ' ', 't', 'a', '¹', '²', '³'];
 
+    private sealed class CompilerVariable : IVariable
+    {
+        public string? Name { get; set; }
+        public int Index { get; set; }
+        public object? Value { get; set; }
+        public EVarType Type { get; set; }
+    }
+
+    private sealed class CompilerLabel : ILabel
+    {
+        public string? Name { get; set; }
+        public int Index { get; set; } = -1;
+    }
+
+    private sealed class CommandBuilderState
+    {
+        public bool HasToken { get; private set; }
+        public EDriveToken Token { get; private set; }
+        public int SubToken { get; private set; }
+        public int Param1 { get; set; }
+        public int Param2 { get; set; }
+        public double Param3 { get; set; }
+
+        public void Initialize(EDriveToken token, int subToken)
+        {
+            HasToken = true;
+            Token = token;
+            SubToken = TteTokens.Contains(token) ? subToken * 64 : subToken;
+            Param1 = 0;
+            Param2 = 0;
+            Param3 = 0d;
+        }
+
+        public void AddSubToken(int delta) => SubToken += delta;
+
+        public DriveCommand ToDriveCommand()
+            => new(Token, new object[] { (byte)(SubToken & 0xFF), Param1, Param2, Param3 });
+    }
+
+    private static readonly HashSet<EDriveToken> TteTokens = new()
+    {
+        EDriveToken.tte_goto2,
+        EDriveToken.tte_if,
+        EDriveToken.tte_while,
+        EDriveToken.tte_let,
+        EDriveToken.tte_wait,
+        EDriveToken.tte_Msg2,
+        EDriveToken.tte_funct2,
+        EDriveToken.tte_sync2,
+        EDriveToken.tte_drive,
+        EDriveToken.tte_drive_async,
+        EDriveToken.tte_drive_via
+    };
+
+    private static readonly Dictionary<char, int> AxisMap = new()
+    {
+        ['x'] = 1, ['1'] = 1,
+        ['y'] = 2, ['2'] = 2,
+        ['z'] = 3, ['3'] = 3,
+        ['a'] = 4, ['4'] = 4,
+        ['b'] = 5, ['5'] = 5,
+        ['c'] = 6, ['6'] = 6
+    };
+
+    private readonly Dictionary<string, CompilerVariable> _variablesByName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, CompilerLabel> _labelsByName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, int> _messageNumbers = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<EVarType, int> _varMax = new();
+    private int _maxMessage;
+
+    private const int VarTypeStride = 0x4000;
+    private const int PointBase = 0x8000;
+    private const int DimensionBase = 0xC000;
+    private const int MaxRecursionDepth = 15;
+
     public DriveCompiler()
     {
         foreach (var def in ParseDefinitions.ParseDefBase)
@@ -56,6 +132,11 @@ public class DriveCompiler
                 Sindex.Add(def, 0);
             if (Sindex.TryGetValue(def - 1, out int s1))
                 Sindex[def] = s1 + (TextsPerToken.TryGetValue(def, out int i) ? i : 0);
+        }
+
+        foreach (EVarType type in Enum.GetValues(typeof(EVarType)))
+        {
+            _varMax[type] = 0;
         }
 
         BuildExpressionNormal(ParseDefinitions.CExpression,expressionNormals.Add);
@@ -95,6 +176,18 @@ public class DriveCompiler
         return result;
     }
 
+    private void ResetStateForCompile()
+    {
+        _variablesByName.Clear();
+        _labelsByName.Clear();
+        _messageNumbers.Clear();
+        foreach (EVarType type in Enum.GetValues(typeof(EVarType)))
+        {
+            _varMax[type] = 0;
+        }
+        _maxMessage = 0;
+    }
+
     public bool Compile()
     {
         // Checks
@@ -115,22 +208,35 @@ public class DriveCompiler
         if (Labels == null)
         {
             AppendLog(-1, StrLeeresLabelArray);
-            Labels = [];
+            Labels = new List<ILabel>();
+        }
+        else
+        {
+            Labels.Clear();
         }
 
         // Pruefe Text-Arrays zugewiessen
         if (Messages == null)
         {
             AppendLog(-1, StrLeeresMessageArray);
-            Messages = [];
+            Messages = new List<string>();
+        }
+        else
+        {
+            Messages.Clear();
         }
 
         if (Variables == null)
         {
             AppendLog(-1, StrKeinSystemVariab);
-            Variables = [];
+            Variables = new List<IVariable>();
+        }
+        else
+        {
+            Variables.Clear();
         }
 
+        ResetStateForCompile();
         TokenCode = [];
         var vv = new List<IReadOnlyList<KeyValuePair<string, object?>>?> ();
 
