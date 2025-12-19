@@ -960,3 +960,225 @@ public class DriveCompiler
         var existing = tokenBuffer[index];
         tokenBuffer[index] = new DriveCommand(existing.Token, new object[] { existing.SubToken, newValue, existing.Par2, existing.Par3 });
     }
+
+    public IReadOnlyList<KeyValuePair<string, object?>>? ParseLine(string placeholder, string line, out int errp)
+    {
+        errp = 1;
+        placeholder ??= string.Empty;
+        line ??= string.Empty;
+
+        var isTokenPlaceholder = placeholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase);
+        var isExpressionPlaceholder = placeholder.Equals(ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase);
+
+        int iterationCount = isTokenPlaceholder
+            ? parseDefs.Length
+            : isExpressionPlaceholder
+                ? expressionNormals.Count
+                : PlaceHolderSubst.Length;
+
+        var trimmedLine = line.Trim();
+
+        for (int index = 0; index < iterationCount; index++)
+        {
+            string testedPlaceholder = isTokenPlaceholder
+                ? ParseDefinitions.CToken
+                : isExpressionPlaceholder
+                    ? ParseDefinitions.CExpression
+                    : PlaceHolderSubst[index].PlaceHolder;
+
+            if (!placeholder.Equals(testedPlaceholder, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            string matchingText = isTokenPlaceholder
+                ? parseDefs[index].text
+                : isExpressionPlaceholder
+                    ? expressionNormals[index].Item3
+                    : PlaceHolderSubst[index].text;
+
+            matchingText = MTSpaceTrim(matchingText ?? string.Empty);
+
+            var wildcardMatches = new List<KeyValuePair<string, string>>();
+            if (!TryPlaceHolderMatching(trimmedLine, matchingText, wildcardMatches))
+                continue;
+
+            var resultMatches = new List<KeyValuePair<string, object?>>
+            {
+                new(testedPlaceholder, index)
+            };
+
+            bool success = true;
+            int localError = 0;
+
+            for (int matchIndex = 0; matchIndex < wildcardMatches.Count; matchIndex++)
+            {
+                var currentMatch = wildcardMatches[matchIndex];
+                var matchedPlaceholder = currentMatch.Key;
+                var matchedText = currentMatch.Value?.Trim() ?? string.Empty;
+
+                bool isCToken = matchedPlaceholder.Equals(ParseDefinitions.CTToken, StringComparison.OrdinalIgnoreCase);
+                bool isSystemPlaceholder = IsSystemPlaceholder(matchedPlaceholder);
+
+                if (isSystemPlaceholder && !isCToken)
+                {
+                    if (!TestPlaceHolderCharset(matchedPlaceholder, matchedText))
+                    {
+                        success = false;
+                        localError = 1 + matchIndex;
+                        break;
+                    }
+                    resultMatches.Add(new KeyValuePair<string, object?>(matchedPlaceholder, matchedText));
+                    continue;
+                }
+
+                var nestedPlaceholder = isCToken ? ParseDefinitions.CToken : matchedPlaceholder;
+                var nested = ParseLine(nestedPlaceholder, matchedText, out var nestedError);
+                if (nestedError != 0)
+                {
+                    success = false;
+                    localError = nestedError + (matchIndex + 1) * 2;
+                    break;
+                }
+
+                object? nestedValue = (object?)nested ?? matchedText;
+                resultMatches.Add(new KeyValuePair<string, object?>(matchedPlaceholder, nestedValue));
+            }
+
+            if (success)
+            {
+                errp = 0;
+                return resultMatches;
+            }
+
+            if (localError != 0)
+                errp = localError;
+        }
+
+        return null;
+    }
+
+    public bool TryPlaceHolderMatching(string Probe, string Mask, List<KeyValuePair<string, string>> WilldCardFill, Func<string, string, bool>? checkPlaceholderCharset = null)
+    {
+        if (WilldCardFill == null)
+            throw new ArgumentNullException(nameof(WilldCardFill));
+
+        Probe ??= string.Empty;
+        Mask ??= string.Empty;
+
+        return Match(Mask, Probe);
+
+        bool Match(string currentMask, string currentProbe)
+        {
+            var placeholderIndex = FindPlaceholderIndex(currentMask);
+            if (placeholderIndex >= currentMask.Length)
+                return currentMask.Equals(currentProbe, StringComparison.OrdinalIgnoreCase);
+
+            var literalPrefix = currentMask.Substring(0, placeholderIndex);
+            if (!currentProbe.StartsWith(literalPrefix, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            var placeholderEnd = currentMask.IndexOf('>', placeholderIndex);
+            if (placeholderEnd < 0)
+                return false;
+
+            var placeholderToken = currentMask.Substring(placeholderIndex, placeholderEnd - placeholderIndex + 1);
+            var suffix = currentMask.Substring(placeholderEnd + 1);
+            var probeRemainder = currentProbe.Substring(literalPrefix.Length);
+
+            if (suffix.Length == 0)
+                return TryAssignCandidate(probeRemainder, placeholderToken, suffix, string.Empty);
+
+            return TryMatchWithAnchors(placeholderToken, suffix, probeRemainder);
+        }
+
+        bool TryMatchWithAnchors(string placeholderToken, string suffix, string probeRemainder)
+        {
+            var nextPlaceholder = FindPlaceholderIndex(suffix);
+            var literalAnchor = nextPlaceholder >= suffix.Length ? suffix : suffix.Substring(0, nextPlaceholder);
+
+            if (!string.IsNullOrEmpty(literalAnchor))
+            {
+                var searchIndex = 0;
+                while (true)
+                {
+                    var anchorPos = probeRemainder.IndexOf(literalAnchor, searchIndex, StringComparison.OrdinalIgnoreCase);
+                    if (anchorPos < 0)
+                        break;
+
+                    if (TryAssignCandidate(probeRemainder.Substring(0, anchorPos), placeholderToken, suffix, probeRemainder.Substring(anchorPos)))
+                        return true;
+
+                    searchIndex = anchorPos + 1;
+                }
+
+                return false;
+            }
+
+            for (var split = 0; split <= probeRemainder.Length; split++)
+            {
+                if (TryAssignCandidate(probeRemainder.Substring(0, split), placeholderToken, suffix, probeRemainder.Substring(split)))
+                    return true;
+            }
+
+            return false;
+        }
+
+        bool TryAssignCandidate(string value, string placeholderToken, string suffix, string remainingProbe)
+        {
+            var trimmed = value.Trim();
+            if (checkPlaceholderCharset?.Invoke(placeholderToken, trimmed) == false)
+                return false;
+
+            WilldCardFill.Add(new KeyValuePair<string, string>(placeholderToken, trimmed));
+            if (Match(suffix, remainingProbe))
+                return true;
+
+            WilldCardFill.RemoveAt(WilldCardFill.Count - 1);
+            return false;
+        }
+
+        int FindPlaceholderIndex(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+                return pattern.Length;
+
+            var next = GetNextPlaceHolder(0, pattern);
+            return next >= pattern.Length ? pattern.Length : next;
+        }
+    }
+
+    bool CheckPlaceholderCharset(string placeholderToken, string trimmed)
+        => !IsSysPlaceholder(placeholderToken, out _) || TestPlaceHolderCharset(placeholderToken, trimmed);
+
+    public static string MTSpaceTrim(string MT)
+    {
+        IList<char> result = [];
+        char _last = ' ';
+        for (var I = 0; I < MT.Length; I++)
+        {
+            if (MT[I] == ' ')
+            {
+                if (I == 0 || I == MT.Length - 1 || _last == ' ')
+                    continue;
+
+                if ((CharSets.lettersAndNumbers.Contains(_last) == CharSets.lettersAndNumbers.Contains(MT[I + 1]) && MT[I + 1] != ' ')
+                   || (_last is '>' or '<')
+                   || (MT[I + 1] is '>' or '<' or ':'))
+                    result.Add(_last = MT[I]);
+            }
+            else
+                result.Add(_last = MT[I]);
+        }
+        return string.Join("", result);
+    }
+
+    private enum BCErr
+    {
+        BC_OK,
+        BC_ErrExpression,
+        BC_SyntaxError,
+        BC_UnknownPlaceHolder,
+        BC_Exception,
+        BC_CharsetErr,
+        BC_FaultyRef
+    }
+}
