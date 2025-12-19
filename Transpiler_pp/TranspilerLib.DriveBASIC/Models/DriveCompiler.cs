@@ -650,6 +650,7 @@ public class DriveCompiler
 
     private enum BCErr
     {
+        BC_OK,
         BC_ErrExpression,
         BC_SyntaxError,
         BC_UnknownPlaceHolder,
