@@ -490,7 +490,10 @@ public class DriveCompilerTests
     {
         IReadOnlyList<KeyValuePair<string, object?>>? parseResult =null;
         if (source is string sSource)
+        {
             parseResult = FCompiler.ParseLine("<COMMAND>", sSource, out _);
+            Debug.WriteLine(TokenParseTreeDbg(parseResult!));
+        }
         else if (source is object[] arrSource)
             parseResult = TokenParseTree(arrSource);
         
