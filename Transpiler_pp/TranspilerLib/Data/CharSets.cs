@@ -1,4 +1,6 @@
 ﻿using BaseLib.Helper;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TranspilerLib.Data;
@@ -11,11 +13,11 @@ public static class CharSets
     /// <summary>
     /// The set of operator characters.
     /// </summary>
-    public static readonly char[] operatorSet = [';', ',', '.', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '=', '<', '>', '?', ':', '"', '\'', '\\', '#', '@'];
+    public static readonly ISet<char> operatorSet = new HashSet<char>() { ';', ',', '.', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '=', '<', '>', '?', ':', '"', '\'', '\\', '#', '@' };
     /// <summary>
     /// The set of bracket characters: (), {}, [].
     /// </summary>
-    public static readonly char[] bracketsSet = ['(', ')', '{', '}', '[', ']'];
+    public static readonly ISet<char> bracketsSet = new HashSet<char>() { '(', ')', '{', '}', '[', ']' };
     /// <summary>
     /// The set of whitespace characters considered by tokenizers.
     /// </summary>
@@ -44,4 +46,10 @@ public static class CharSets
     /// All visible characters combining letters, digits, operators, and brackets.
     /// </summary>
     public static readonly char[] allVisible = lettersAndNumbers.Concat(operatorSet).Concat(bracketsSet).ToArray();
+    /// <summary>
+    /// ASCII letters (A-Z, a-z).
+    /// </summary>
+    public static readonly ISet<char> allNormal = ' '.To('\x7f').Concat(['§']).ToHashSet();
+
+
 }

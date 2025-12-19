@@ -54,6 +54,11 @@
             All visible characters combining letters, digits, operators, and brackets.
             </summary>
         </member>
+        <member name="F:TranspilerLib.Data.CharSets.allNormal">
+            <summary>
+            ASCII letters (A-Z, a-z).
+            </summary>
+        </member>
         <member name="T:TranspilerLib.Data.CodeBlockType">
             <summary>
             Enum CodeBlockType
