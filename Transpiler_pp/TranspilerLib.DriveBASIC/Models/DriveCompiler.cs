@@ -85,17 +85,17 @@ public class DriveCompiler
 
     private static readonly HashSet<EDriveToken> TteTokens = new()
     {
+        EDriveToken.tte_let,
         EDriveToken.tte_goto2,
         EDriveToken.tte_if,
         EDriveToken.tte_while,
-        EDriveToken.tte_let,
         EDriveToken.tte_wait,
         EDriveToken.tte_Msg2,
         EDriveToken.tte_funct2,
         EDriveToken.tte_sync2,
         EDriveToken.tte_drive,
+        EDriveToken.tte_drive_via,
         EDriveToken.tte_drive_async,
-        EDriveToken.tte_drive_via
     };
 
     private static readonly Dictionary<char, int> AxisMap = new()
@@ -473,10 +473,10 @@ public class DriveCompiler
         }
     }
 
-    private BCErr ProcessNode(IReadOnlyList<KeyValuePair<string, object?>> node, CommandBuilderState builder, IList<IDriveCommand> tokenBuffer, int level, int pc, out string error)
+    private BCErr ProcessNode(IReadOnlyList<KeyValuePair<string, object?>> nodes, CommandBuilderState builder, IList<IDriveCommand> tokenBuffer, int level, int pc, out string error)
     {
         error = string.Empty;
-        if (node.Count == 0)
+        if (nodes.Count == 0)
         {
             error = StrSyntaxError;
             return BCErr.BC_SyntaxError;
@@ -488,7 +488,7 @@ public class DriveCompiler
             return BCErr.BC_SyntaxError;
         }
 
-        if (node[0].Value == null)
+        if (nodes[0].Value == null)
         {
             error = StrSyntaxError;
             return BCErr.BC_SyntaxError;
@@ -497,7 +497,7 @@ public class DriveCompiler
         int ruleIndex;
         try
         {
-            ruleIndex = Convert.ToInt32(node[0].Value, CultureInfo.InvariantCulture);
+            ruleIndex = Convert.ToInt32(nodes[0].Value, CultureInfo.InvariantCulture);
         }
         catch
         {
@@ -505,7 +505,7 @@ public class DriveCompiler
             return BCErr.BC_SyntaxError;
         }
 
-        var placeholder = node[0].Key ?? string.Empty;
+        var placeholder = nodes[0].Key ?? string.Empty;
         var isTokenNode = placeholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase);
         var isExpressionNode = placeholder.Equals(ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase);
         var isCommandNode = placeholder.Equals(ParseDefinitions.CCommand, StringComparison.OrdinalIgnoreCase);
@@ -531,7 +531,7 @@ public class DriveCompiler
         }
         else if (isCommandNode)
         {
-            RegisterInlineLabels(node, pc);
+            RegisterInlineLabels(nodes, pc);
         }
         else
         {
@@ -543,29 +543,27 @@ public class DriveCompiler
             builder.AddSubToken(PlaceHolderSubst[ruleIndex].Number);
         }
 
-        for (int i = 1; i < node.Count; i++)
+        foreach(var node2 in nodes)
         {
-            var childPlaceholder = node[i].Key ?? string.Empty;
-            var childValue = node[i].Value;
 
-            if (IsSystemPlaceholder(childPlaceholder)
-                && !childPlaceholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase)
-                && !childPlaceholder.Equals(ParseDefinitions.CTToken, StringComparison.OrdinalIgnoreCase))
+            if (IsSystemPlaceholder(node2.Key)
+                && !node2.Key.ToUpper().Equals(ParseDefinitions.CToken)
+                && !node2.Key.ToUpper().Equals(ParseDefinitions.CTToken))
             {
-                var placeholderIndex = ParsePlaceholderIndex(childPlaceholder);
+                var placeholderIndex = ParsePlaceholderIndex(node2.Key);
                 if (placeholderIndex < 0)
                 {
-                    error = childPlaceholder;
+                    error = node2.Key;
                     return BCErr.BC_UnknownPlaceHolder;
                 }
 
-                var sysResult = HandleSystemPlaceholder(placeholderIndex, childValue, builder, isCommandNode, level, pc, out error);
+                var sysResult = HandleSystemPlaceholder(placeholderIndex, node2.Value, builder, isCommandNode, level, pc, out error);
                 if (sysResult != BCErr.BC_OK)
                     return sysResult;
                 continue;
             }
 
-            if (childValue is IReadOnlyList<KeyValuePair<string, object?>> nested)
+            if (node2.Value is IReadOnlyList<KeyValuePair<string, object?>> nested)
             {
                 var nestedResult = ProcessNode(nested, builder, tokenBuffer, level + 1, pc, out error);
                 if (nestedResult != BCErr.BC_OK)
@@ -573,7 +571,7 @@ public class DriveCompiler
             }
             else
             {
-                var literal = (childValue as string)?.Trim() ?? string.Empty;
+                var literal = (node2.Value as string)?.Trim() ?? string.Empty;
                 if (!string.IsNullOrEmpty(literal))
                 {
                     error = literal;
