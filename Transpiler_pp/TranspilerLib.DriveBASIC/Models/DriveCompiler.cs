@@ -132,7 +132,7 @@ public class DriveCompiler
         }
 
         TokenCode = [];
-        var vv = new List<object?>();
+        var vv = new List<IReadOnlyList<KeyValuePair<string, object?>>?> ();
 
         // Pass 1: PreCheck
         int i = 0;
@@ -326,12 +326,12 @@ public class DriveCompiler
         throw new NotImplementedException();
     }
 
-    private BCErr BuildCommand(object v1, IList<IDriveCommand> tokenCode, int v2, int v3, out string fErrStr)
+    private BCErr BuildCommand(IReadOnlyList<KeyValuePair<string, object?>>? v1, IList<IDriveCommand> tokenCode, int v2, int v3, out string fErrStr)
     {
         throw new NotImplementedException();
     }
 
-    public IList<KeyValuePair<string, object?>>? ParseLine(string placeholder, string line, out int errp)
+    public IReadOnlyList<KeyValuePair<string, object?>>? ParseLine(string placeholder, string line, out int errp)
     {
         errp = 1;
         placeholder ??= string.Empty;
