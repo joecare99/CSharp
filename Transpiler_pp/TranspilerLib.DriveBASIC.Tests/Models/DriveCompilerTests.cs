@@ -34,7 +34,7 @@ public class DriveCompilerTests
     [DataRow("DEFINE 5,\"Dies ist ein Test\"", EDriveToken.tt_Nop, new object[] { (byte)3, 5u })]
     [DataRow("Goto 2", EDriveToken.tt_goto, new object[] { (byte)0, 2 })]
     [DataRow("Call 2", EDriveToken.tt_goto, new object[] { (byte)1, 2 })]
-    [DataRow("On 1", EDriveToken.tte_goto2, new object[] { (byte)0, 1d })]
+    [DataRow("On 1", EDriveToken.tte_goto2, new object[] { (byte)0,0,0, 1 })]
     [DataRow("End", EDriveToken.tt_end, new object[] { (byte)1 })]
     [DataRow("Stop", EDriveToken.tt_end, new object[] { (byte)2 })]
     [DataRow("Pause", EDriveToken.tt_end, new object[] { (byte)3 })]
@@ -56,10 +56,10 @@ public class DriveCompilerTests
     }
 
     [TestMethod]
-    [DataRow("DECLARE Testpunkt.", EDriveToken.tt_Nop, new object[] { (byte)2, 32769d }, "TESTPUNKT.", 32769)]
-    [DataRow("DECLARE TestReal%", EDriveToken.tt_Nop, new object[] { (byte)2, 16385d }, "TESTREAL%", 16385)]
-    [DataRow("DECLARE TestBool&", EDriveToken.tt_Nop, new object[] { (byte)2, 1d }, "TESTBOOL&", 1)]
-    [DataRow("onc TestInt%", EDriveToken.tte_goto2, new object[] { (byte)96, 16385d }, "TESTINT%", 1)]
+    [DataRow("DECLARE Testpunkt.", EDriveToken.tt_Nop, new object[] { (byte)2,0,0, 32769d }, "TESTPUNKT.", 32769)]
+    [DataRow("DECLARE TestReal%", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 16385d }, "TESTREAL%", 16385)]
+    [DataRow("DECLARE TestBool&", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("onc TestInt%", EDriveToken.tte_goto2, new object[] { (byte)96, 0, 0, 16385d }, "TESTINT%", 16385)]
     public void Compile2SL_Declare(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
     {
         // Arrange
@@ -69,7 +69,7 @@ public class DriveCompilerTests
         // Act
         bool LResult = FCompiler.Compile();
         // Assert
-        Assert.AreEqual(["Leerer TokenCode(OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)"], LMessage, "Log-Entry");
+        CollectionAssert.AreEqual(new List<string>() { "Leerer TokenCode (OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)" }, LMessage, "Log-Entry");
         Assert.HasCount(1, FCompiler.Variables, "Var Count");
         Assert.AreEqual(sExp, FCompiler.Variables[0].Name, "Var[0].Name");
         Assert.AreEqual(iExp, FCompiler.Variables[0].Index, "Var[0].Index");
@@ -78,10 +78,10 @@ public class DriveCompilerTests
     }
 
     [TestMethod]
-    [DataRow("Let TestBool& := 1", EDriveToken.tte_let, new object[] { (byte)0, 1, 1d }, "TESTBOOL&", 1)]
-    [DataRow("Let TestReal% := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 16385, 1.1d }, "TESTPUNKT%", 16385)]
-    [DataRow("Let TestPoint. := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 32769, 1.1d }, "TESTPUNKT.", 32769)]
-    [DataRow("Let TestPoint.z := 1", EDriveToken.tte_let, new object[] { (byte)0, 49160, 1d }, "TESTPUNKT.", 32769)]
+    [DataRow("Let TestBool& := 1", EDriveToken.tte_let, new object[] { (byte)0, 1, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("Let TestReal% := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 16385, 0, 1.1 }, "TESTREAL%", 16385)]
+    [DataRow("Let TestPoint. := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 32769, 0, 1.1 }, "TESTPOINT.", 32769)]
+    [DataRow("Let TestPoint.z := 1", EDriveToken.tte_let, new object[] { (byte)0, 49160, 0, 1d }, "TESTPOINT.", 32769)]
     public void Compile3LetConst(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
     {
         // Arrange
@@ -91,7 +91,7 @@ public class DriveCompilerTests
         // Act
         bool LResult = FCompiler.Compile();
         // Assert
-        Assert.AreEqual(["Leerer TokenCode(OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)"], LMessage, "Log-Entry");
+        CollectionAssert.AreEqual(new List<string>() { "Leerer TokenCode (OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)" }, LMessage, "Log-Entry");
         Assert.HasCount(1, FCompiler.Variables, "Var Count");
         Assert.AreEqual(sExp, FCompiler.Variables[0].Name, "Var[0].Name");
         Assert.AreEqual(iExp, FCompiler.Variables[0].Index, "Var[0].Index");
@@ -100,10 +100,10 @@ public class DriveCompilerTests
     }
 
     [TestMethod]
-    [DataRow("Let TestBool& := Active&", EDriveToken.tte_let, new object[] { (byte)32, 2, 1d }, "TESTBOOL&", 1)]
-    [DataRow("Let TestReal% := Active&", EDriveToken.tte_let, new object[] { (byte)32, 16385, 1d }, "TESTPUNKT%", 16385)]
-    [DataRow("Let TestPoint. := Active&", EDriveToken.tte_let, new object[] { (byte)32, 32769, 1d }, "TESTPUNKT.", 32769)]
-    [DataRow("Let TestPoint.z := Active&", EDriveToken.tte_let, new object[] { (byte)32, 49160, 1d }, "TESTPUNKT.", 32769)]
+    [DataRow("Let TestBool& := Active&", EDriveToken.tte_let, new object[] { (byte)32, 1, 0, 2d }, "TESTBOOL&", 1)]
+    [DataRow("Let TestReal% := Active&", EDriveToken.tte_let, new object[] { (byte)32, 16385, 0, 1d }, "TESTREAL%", 16385)]
+    [DataRow("Let TestPoint. := Active&", EDriveToken.tte_let, new object[] { (byte)32, 32769, 0, 1d }, "TESTPOINT.", 32769)]
+    [DataRow("Let TestPoint.z := Active&", EDriveToken.tte_let, new object[] { (byte)32, 49160, 0, 1d }, "TESTPOINT.", 32769)]
     public void Compile4LetVar(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
     {
         // Arrange
@@ -113,19 +113,29 @@ public class DriveCompilerTests
         // Act
         bool LResult = FCompiler.Compile();
         // Assert
-        Assert.AreEqual(["Leerer TokenCode(OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)"], LMessage, "Log-Entry");
+        CollectionAssert.AreEqual(new List<string>() { "Leerer TokenCode (OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)" }, LMessage, "Log-Entry");
         Assert.HasCount(2, FCompiler.Variables, "Var Count");
-        Assert.AreEqual("Active&", FCompiler.Variables[0].Name, "Var[0].Name");
-        Assert.AreEqual(1, FCompiler.Variables[0].Index, "Var[0].Index");
-        Assert.AreEqual(sExp, FCompiler.Variables[1].Name, "Var[1].Name");
-        Assert.AreEqual(iExp, FCompiler.Variables[1].Index, "Var[1].Index");
+        if (iExp == 1)
+        {
+            Assert.AreEqual(sExp, FCompiler.Variables[0].Name, "Var[0].Name");
+            Assert.AreEqual(iExp, FCompiler.Variables[0].Index, "Var[0].Index");
+            Assert.AreEqual("ACTIVE&", FCompiler.Variables[1].Name, "Var[1].Name");
+            Assert.AreEqual(2, FCompiler.Variables[1].Index, "Var[1].Index");
+        }
+        else
+        {
+            Assert.AreEqual("ACTIVE&", FCompiler.Variables[0].Name, "Var[0].Name");
+            Assert.AreEqual(1, FCompiler.Variables[0].Index, "Var[0].Index");
+            Assert.AreEqual(sExp, FCompiler.Variables[1].Name, "Var[1].Name");
+            Assert.AreEqual(iExp, FCompiler.Variables[1].Index, "Var[1].Index");
+        }
         Assert.HasCount(1, FCompiler.TokenCode, "Tokens Count");
         Assert.AreEqual(new DriveCommand(token, oExp), FCompiler.TokenCode[0], "Token[0]");
     }
 
     [TestMethod]
-    [DataRow("TestLbl: Goto TestLbl", EDriveToken.tt_goto, new object[] { (byte)2 }, "TESTLBL", 1)]
-    [DataRow("TestLbl: Call TestLbl", EDriveToken.tt_goto, new object[] { (byte)3 }, "TESTLBL", 1)]
+    [DataRow("TestLbl: Goto TestLbl", EDriveToken.tt_goto, new object[] { (byte)2 }, "TESTLBL", 0)]
+    [DataRow("TestLbl: Call TestLbl", EDriveToken.tt_goto, new object[] { (byte)3 }, "TESTLBL", 0)]
     public void Compile5GotoLbl(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
     {
         // Arrange
@@ -135,7 +145,7 @@ public class DriveCompilerTests
         // Act
         bool LResult = FCompiler.Compile();
         // Assert
-        Assert.AreEqual(["Leerer TokenCode(OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)"], LMessage, "Log-Entry");
+        CollectionAssert.AreEqual(new List<string>() { "Leerer TokenCode (OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)" }, LMessage, "Log-Entry");
         Assert.HasCount(0, FCompiler.Variables, "Var Count");
         Assert.HasCount(1, FCompiler.Labels, "Label Count");
         Assert.AreEqual(sExp, FCompiler.Labels[0].Name, "Labels[0].Name");
@@ -148,34 +158,34 @@ public class DriveCompilerTests
     [DataRow(new[] { "ON 1", "Goto 1", "Goto 2" },
         new[] { EDriveToken.tte_goto2, EDriveToken.tt_goto, EDriveToken.tt_goto },
         new object[]{
-         new object[]{(byte)0,1d },
+         new object[]{(byte)0,0,0,1d },
          new object[]{(byte)0,1 },
          new object[]{(byte)0,2 }
         })]
     [DataRow(new[] { "IF 1 THEN", "ENDIF" },
         new[] { EDriveToken.tte_if, EDriveToken.tt_end },
         new object[]{
-         new object[]{(byte)0,1,1d },
+         new object[]{(byte)0,1,0,1d },
          new object[]{(byte)4 },
         })]
     [DataRow(new[] { "IF 1 THEN", "ELSE", "ENDIF" },
         new[] { EDriveToken.tte_if,EDriveToken.tt_else, EDriveToken.tt_end },
         new object[]{
-         new object[]{(byte)0,1,1d },
+         new object[]{(byte)0,1,0,1d },
          new object[]{(byte)0,2 },
          new object[]{(byte)4 },
         })]
     [DataRow(new[] { "IF 1 THEN", "ELSIF 0 THEN", "ENDIF" },
         new[] { EDriveToken.tte_if,EDriveToken.tte_if, EDriveToken.tt_end },
         new object[]{
-         new object[]{(byte)0,1,1d },
+         new object[]{(byte)0,1,0, 1d },
          new object[]{(byte)64,2 },
          new object[]{(byte)4 },
         })]
     [DataRow(new[] { "IF 1 THEN", "ELSIF 0 THEN", "ELSE", "ENDIF" },
         new[] { EDriveToken.tte_if, EDriveToken.tte_if, EDriveToken.tt_else, EDriveToken.tt_end },
         new object[]{
-         new object[]{(byte)0,1,1d },
+         new object[]{(byte)0,1,0, 1d },
          new object[]{(byte)64,2 },
          new object[]{(byte)0,3 },
          new object[]{(byte)4 },
@@ -183,7 +193,7 @@ public class DriveCompilerTests
     [DataRow(new[] { "While 1", "NOP", "WEND" },
         new[] { EDriveToken.tte_while, EDriveToken.tt_Nop, EDriveToken.tt_end },
         new object[]{
-         new object[]{(byte)0,2,1d },
+         new object[]{(byte)0,2,0,1d },
          new object[]{(byte)1 },
          new object[]{(byte)6 },
         })]
@@ -196,7 +206,7 @@ public class DriveCompilerTests
         // Act
         bool LResult = FCompiler.Compile();
         // Assert
-        List<string> expectedMessages = ["Leerer TokenCode(OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)"];
+        List<string> expectedMessages = ["Leerer TokenCode (OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)"];
         
         CollectionAssert.AreEqual(expectedMessages, LMessage, "Log-Entry");
         Assert.HasCount(0, FCompiler.Variables, "Var Count");
@@ -393,6 +403,39 @@ public class DriveCompilerTests
         "<TEXT:TOKEN>|nested|<TOKEN>",
          "<TOKEN>|rule|NOP"
    })]
+    [DataRow("a define-Command", "DEFINE 5,\"Dies ist ein Test\"", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|DEFINE <Integer:Param1>,\"<Text:Message>\"",
+        "<Integer:Param1>|literal|5",
+        "<Text:Message>|literal|Dies ist ein Test"
+    })]
+    [DataRow("a declare-Command", "DECLARE TestBool&", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|DECLARE <Variable3>",
+        "<Variable3>|nested|<Variable3>",
+        "<Identifyer:Param3>|literal|TestBool&",
+    })]
+    [DataRow("a while-Command", "While 1", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|WHILE <EXPRESSION>",
+        "<EXPRESSION>|nested|<EXPRESSION>",
+        "<Float:Param3>|literal|1",
+    })]
+    [DataRow("a If-Then command", "If 1 Then", new[]
+    {
+        "<COMMAND>|rule|<TEXT:TOKEN>",
+        "<TEXT:TOKEN>|nested|<TOKEN>",
+        "<TOKEN>|rule|IF <EXPRESSION> THEN",
+        "<EXPRESSION>|nested|<EXPRESSION>",
+        "<Float:Param3>|literal|1",
+    })]
+
     public void ParseLine_Succeeds(string scenario, string line, string[] expectations)
     {
         var parseResult = AssertParseResult(FCompiler.ParseLine(ParseDefinitions.CCommand, line, out var errorCode));
@@ -401,6 +444,21 @@ public class DriveCompilerTests
         Assert.AreEqual(0, errorCode, $"{scenario}: unexpected error code");
         AssertMatchesSpec(parseResult, expectations, scenario);
     }
+
+    [TestMethod]
+    [DataRow("", "1", "<Wert2>", new[] { "<Wert2>|rule|<Float:Param3>", "<Float:Param3>|literal|1" })]
+    [DataRow("", "1", "<EXPRESSION>", new[] { "<EXPRESSION>|rule|<Float:Param3>", "<Float:Param3>|literal|1" })]
+    [DataRow("", "WHILE 1", "<TOKEN>", new[] { "<TOKEN>|rule|WHILE <EXPRESSION>", "<Float:Param3>|literal|1" })]
+    [DataRow("", "IF 1 THEN", "<TOKEN>", new[] { "<TOKEN>|rule|IF <EXPRESSION> THEN", "<Float:Param3>|literal|1" })]
+    public void ParseLine_Succeeds2(string scenario, string line,string ph, string[] expectations)
+    {
+        var parseResult = AssertParseResult(FCompiler.ParseLine(ph, line, out var errorCode));
+        Debug.WriteLine(TokenParseTreeDbg(parseResult));
+
+        Assert.AreEqual(0, errorCode, $"{scenario}: unexpected error code");
+        AssertMatchesSpec(parseResult, expectations, scenario);
+    }
+
 
     [TestMethod]
     [DataRow("Invalid integer placeholder", "FUNC TEXT", DisplayName = "Integer placeholder requires numeric value")]
@@ -419,7 +477,7 @@ public class DriveCompilerTests
         return (IReadOnlyList<KeyValuePair<string, object?>>)candidate;
     }
 
-    private static void AssertMatchesSpec(IReadOnlyList<KeyValuePair<string, object?>> matches, string[] spec, string scenario)
+    private void AssertMatchesSpec(IReadOnlyList<KeyValuePair<string, object?>> matches, string[] spec, string scenario)
     {
         foreach (var entry in spec)
         {
@@ -463,11 +521,15 @@ public class DriveCompilerTests
         return match;
     }
 
-    private static string ResolveRulePattern(string placeholder, int ruleIndex)
+    private string ResolveRulePattern(string placeholder, int ruleIndex)
     {
         if (string.Equals(placeholder, ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase))
         {
             return ParseDefinitions.ParseDefBase[ruleIndex].text;
+        }
+        if (string.Equals(placeholder, ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase))
+        {
+            return FCompiler.ExpressionNormals[ruleIndex].Item3;
         }
 
         return ParseDefinitions.PlaceHolderDefBase[ruleIndex].text;
@@ -485,7 +547,7 @@ public class DriveCompilerTests
         new object[] {"<TEXT:TOKEN>", new object[] {
             new object[] {"<TOKEN>", 5 },
             new object[] {"<Identifyer:Label>", "Start" },
-        } }, }, EDriveToken.tt_Nop, (byte)5, 0, 0, 1d)]
+        } }, }, EDriveToken.tt_Nop, (byte)5, 0, 0, 0d)]
     public void BuildCommand_ProducesDriveCommandFromParseTree(object source, EDriveToken expectedToken, byte expectedSubToken, int expectedPar1, int expectedPar2, double expectedPar3)
     {
         IReadOnlyList<KeyValuePair<string, object?>>? parseResult =null;
