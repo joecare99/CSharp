@@ -79,7 +79,7 @@ public class DriveCompiler
         public void AddSubToken(int delta) => SubToken += delta;
 
         public DriveCommand ToDriveCommand()
-            => new(Token, new object[] { (byte)(SubToken & 0xFF), Param1, Param2, Param3 });
+            => new(Token, [(SubToken & 0xFF), Param1, Param2, Param3]);
     }
 
     private static readonly HashSet<EDriveToken> TteTokens = new()
@@ -99,12 +99,18 @@ public class DriveCompiler
 
     private static readonly Dictionary<char, int> AxisMap = new()
     {
-        ['x'] = 1, ['1'] = 1,
-        ['y'] = 2, ['2'] = 2,
-        ['z'] = 3, ['3'] = 3,
-        ['a'] = 4, ['4'] = 4,
-        ['b'] = 5, ['5'] = 5,
-        ['c'] = 6, ['6'] = 6
+        ['x'] = 1,
+        ['1'] = 1,
+        ['y'] = 2,
+        ['2'] = 2,
+        ['z'] = 3,
+        ['3'] = 3,
+        ['a'] = 4,
+        ['4'] = 4,
+        ['b'] = 5,
+        ['5'] = 5,
+        ['c'] = 6,
+        ['6'] = 6
     };
 
     private readonly Dictionary<string, CompilerVariable> _variablesByName = new(StringComparer.OrdinalIgnoreCase);
@@ -139,7 +145,7 @@ public class DriveCompiler
             _varMax[type] = 0;
         }
 
-        BuildExpressionNormal(ParseDefinitions.CExpression,expressionNormals.Add);
+        BuildExpressionNormal(ParseDefinitions.CExpression, expressionNormals.Add);
     }
 
     public void AppendLog(int LineNr, string text)
@@ -238,7 +244,7 @@ public class DriveCompiler
 
         ResetStateForCompile();
         TokenCode = [];
-        var vv = new List<IReadOnlyList<KeyValuePair<string, object?>>?> ();
+        var vv = new List<IReadOnlyList<KeyValuePair<string, object?>>?>();
 
         // Pass 1: PreCheck
         int i = 0;
@@ -285,7 +291,7 @@ public class DriveCompiler
         i = 0;
         foreach (var v in vv)
             if (TokenCode[i++].Token is EDriveToken.tt_goto)
-                BuildCommand(v, TokenCode, 0, i, out _);
+                BuildCommand(v, TokenCode, 0, i-1, out _);
 
 
         return true;
@@ -400,25 +406,25 @@ public class DriveCompiler
 
     public bool TestPlaceHolderCharset(string PlaceHolder, string PHtxt)
     {
-        var result = true; 
+        var result = true;
         foreach (var ph in ParseDefinitions.SysPHCharset)
         {
             if (PlaceHolder.ToUpper().StartsWith(ph.Placeholder.ToUpper()))
             {
                 var PsepPos = 0;
-                if (ph.HasPointAsSep) 
+                if (ph.HasPointAsSep)
                     PsepPos = PHtxt.IndexOf('.');
 
-                for(var p =0; p< PHtxt.Length;p++)
+                for (var p = 0; p < PHtxt.Length; p++)
                 {
-                    if (p==0)
+                    if (p == 0)
                         result &= ph.first.Contains(PHtxt[p]);
-                    else if (p== PHtxt.Length -1 && ph.last!=null)
+                    else if (p == PHtxt.Length - 1 && ph.last != null)
                         result &= ph.last.Contains(PHtxt[p]);
-                    else if (ph.inner != null && p!=PsepPos)
+                    else if (ph.inner != null && p != PsepPos)
                         result &= ph.inner.Contains(PHtxt[p]);
                     else
-                        result &= p==PsepPos;
+                        result &= p == PsepPos;
                 }
                 if (result)
                     return true;
@@ -440,10 +446,6 @@ public class DriveCompiler
             fErrStr = StrSyntaxError;
             return BCErr.BC_SyntaxError;
         }
-
-        tokenBuffer ??= new List<IDriveCommand>();
-        if (!ReferenceEquals(TokenCode, tokenBuffer))
-            TokenCode = tokenBuffer;
 
         var builder = new CommandBuilderState();
 
@@ -545,7 +547,9 @@ public class DriveCompiler
             var childPlaceholder = node[i].Key ?? string.Empty;
             var childValue = node[i].Value;
 
-            if (IsSystemPlaceholder(childPlaceholder) && !childPlaceholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase))
+            if (IsSystemPlaceholder(childPlaceholder)
+                && !childPlaceholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase)
+                && !childPlaceholder.Equals(ParseDefinitions.CTToken, StringComparison.OrdinalIgnoreCase))
             {
                 var placeholderIndex = ParsePlaceholderIndex(childPlaceholder);
                 if (placeholderIndex < 0)
@@ -1051,8 +1055,8 @@ public class DriveCompiler
 
             if (localError != 0)
                 errp = localError;
-        }
 
+        }
         return null;
     }
 
