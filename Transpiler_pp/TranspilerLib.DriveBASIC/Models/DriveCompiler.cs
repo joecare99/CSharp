@@ -807,7 +807,7 @@ public class DriveCompiler
             return EVarType.vt_real;
         if (name.EndsWith(".", StringComparison.Ordinal))
             return EVarType.vt_point;
-        if (name.Length >= 2 && name[^2] == '.')
+        if (name.Length >= 2 && name[name.Length - 2] == '.')
             return EVarType.vt_dimension;
         return EVarType.vt_real;
     }
