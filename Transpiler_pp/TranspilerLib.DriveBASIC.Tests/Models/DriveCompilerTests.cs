@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TranspilerLib.DriveBASIC.Data;
+using TranspilerLib.DriveBASIC.Data.Interfaces;
 
 #pragma warning disable IDE0130 // Der Namespace entspricht stimmt nicht der Ordnerstruktur.
 namespace TranspilerLib.DriveBASIC.Models.Tests;
@@ -275,7 +278,7 @@ public class DriveCompilerTests
 
     private const string RootPlaceholder = "<Root>";
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("NOP", "NOP", true, "", DisplayName = "Matches literal-only mask")]
     [DataRow("SUB Start", "SUB <Identifyer:Label>", true, "<Identifyer:Label>=Start", DisplayName = "Matches trailing placeholder")]
     [DataRow("Start: HELLO", "<Identifyer:Label>: <Text:Token>", true, "<Identifyer:Label>=Start|<Text:Token>=HELLO", DisplayName = "Matches placeholder surrounded by literals")]
@@ -301,7 +304,7 @@ public class DriveCompilerTests
             Assert.AreEqual(expectedPairs[index].Value, actualPairs[index].Value);
         }
     }
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("NOP", "NOP", true, "", DisplayName = "Matches literal-only mask")]
     [DataRow("SUB Start", "SUB <Identifyer:Label>", true, "<Identifyer:Label>=Start", DisplayName = "Matches trailing placeholder")]
     [DataRow("Start: HELLO", "<Identifyer:Label>: <Text:Token>", true, "<Identifyer:Label>=Start|<Text:Token>=HELLO", DisplayName = "Matches placeholder surrounded by literals")]
@@ -363,7 +366,7 @@ public class DriveCompilerTests
         return result;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Empty line", "", new[]
     {
         "<COMMAND>|rule|<TEXT:TOKEN>",
@@ -393,12 +396,13 @@ public class DriveCompilerTests
     public void ParseLine_Succeeds(string scenario, string line, string[] expectations)
     {
         var parseResult = AssertParseResult(FCompiler.ParseLine(ParseDefinitions.CCommand, line, out var errorCode));
+        Debug.WriteLine(TokenParseTreeDbg(parseResult));
 
         Assert.AreEqual(0, errorCode, $"{scenario}: unexpected error code");
         AssertMatchesSpec(parseResult, expectations, scenario);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Invalid integer placeholder", "FUNC TEXT", DisplayName = "Integer placeholder requires numeric value")]
     public void ParseLine_Fails(string scenario, string line)
     {
@@ -467,5 +471,130 @@ public class DriveCompilerTests
         }
 
         return ParseDefinitions.PlaceHolderDefBase[ruleIndex].text;
+    }
+
+    [TestMethod]
+    [DataRow(new object[] { 
+        new object[] { "<COMMAND>", 4 }, 
+        new object[] { "<TEXT:TOKEN>", new object[] {
+            new object[] { "<TOKEN>", 1 } } } }, EDriveToken.tt_Nop, (byte)1, 0, 0, 0d)]
+    [DataRow("CALL 2", EDriveToken.tt_goto, (byte)1, 2, 0, 0d)]
+    [DataRow("ON 1", EDriveToken.tte_goto2, (byte)0, 0, 0, 1d)]
+    [DataRow(new object[] {
+        new object[] {"<COMMAND>", 4 },
+        new object[] {"<TEXT:TOKEN>", new object[] {
+            new object[] {"<TOKEN>", 5 },
+            new object[] {"<Identifyer:Label>", "Start" },
+        } }, }, EDriveToken.tt_Nop, (byte)5, 0, 0, 1d)]
+    public void BuildCommand_ProducesDriveCommandFromParseTree(object source, EDriveToken expectedToken, byte expectedSubToken, int expectedPar1, int expectedPar2, double expectedPar3)
+    {
+        IReadOnlyList<KeyValuePair<string, object?>>? parseResult =null;
+        if (source is string sSource)
+            parseResult = FCompiler.ParseLine("<COMMAND>", sSource, out _);
+        else if (source is object[] arrSource)
+            parseResult = TokenParseTree(arrSource);
+        
+        var tokenBuffer = new List<IDriveCommand>();
+        const int pc = 0;
+        InitializeCompilerState(tokenBuffer, pc);
+
+        var resultName = InvokeBuildCommand(parseResult, tokenBuffer, 0, pc, out var errorText);
+
+        Assert.AreEqual("BC_OK", resultName, $"{source}: unexpected build result");
+        Assert.AreEqual(string.Empty, errorText, $"{source}: error text must stay empty");
+        Assert.IsTrue(pc < tokenBuffer.Count, $"{source}: token buffer does not contain index {pc}");
+        var command = tokenBuffer[pc];
+        Assert.IsNotNull(command, $"{source}: token buffer entry must not be null");
+        Assert.AreEqual(expectedToken, command.Token, $"{source}: token mismatch");
+        Assert.AreEqual(expectedSubToken, command.SubToken, $"{source}: sub token mismatch");
+        Assert.AreEqual(expectedPar1, command.Par1, $"{source}: Par1 mismatch");
+        Assert.AreEqual(expectedPar2, command.Par2, $"{source}: Par2 mismatch");
+        Assert.AreEqual(expectedPar3, command.Par3, $"{source}: Par3 mismatch");
+    }
+
+    [TestMethod]
+    [DataRow(null, "BC_SyntaxError")]
+    [DataRow("plain text payload", "BC_SyntaxError")]
+    public void BuildCommand_ReturnsSyntaxErrorForInvalidPayload(object? invalidPayload, string expectedResult)
+    {
+        var tokenBuffer = new List<IDriveCommand>();
+        InitializeCompilerState(tokenBuffer, 0);
+        var placeholder = tokenBuffer[0];
+
+        var resultName = InvokeBuildCommand(invalidPayload, tokenBuffer, 0, 0, out var errorText);
+
+        Assert.AreEqual(expectedResult, resultName, "Invalid payload should yield syntax error");
+        Assert.IsFalse(string.IsNullOrWhiteSpace(errorText), "Expected descriptive error text");
+        Assert.AreSame(placeholder, tokenBuffer[0], "Invalid payload must not mutate the token buffer");
+    }
+
+    private static IReadOnlyList<KeyValuePair<string, object?>> TokenParseTree(object[] objects)
+    {
+        var result = new List<KeyValuePair<string, object?>>();
+        foreach (var o in objects)
+        {
+            if (o is object[] arr && arr.Length >= 1)
+            {
+                if (arr[1] is object[] arr2)
+                    result.Add(new KeyValuePair<string, object?>((string)arr[0], TokenParseTree(arr2)));
+                else
+                    result.Add(new KeyValuePair<string, object?>((string)arr[0], arr[1]));
+            }
+        }
+
+        return result;
+    }
+
+    private static string TokenParseTreeDbg(IReadOnlyList<KeyValuePair<string,object?>> tree)
+    {
+        var sb = new StringBuilder();
+        void Recurse(IReadOnlyList<KeyValuePair<string,object?>> nodes, int level)
+        {
+            var indent = new string(' ', level * 2);
+            foreach (var node in nodes)
+            {
+                if (node.Value is IReadOnlyList<KeyValuePair<string, object?>> subnode)
+                {
+                    sb.AppendLine($"{indent} new object[] {{\"{node.Key}\", new object[] {{");
+                    Recurse(subnode, level + 1);
+                    sb.AppendLine($"{indent}}} }},");
+                } 
+                else
+                {                    
+                    var quotedValue = node.Value is string ? $"\"{node.Value}\"" : node.Value?.ToString() ?? "null";
+                    sb.AppendLine($"{indent} new object[] {{\"{node.Key}\", {quotedValue} }},");
+                }
+            }
+        }
+        sb.AppendLine("new object[] {");
+        Recurse(tree, 0);
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    private void InitializeCompilerState(IList<IDriveCommand> tokenBuffer, int targetPc)
+    {
+        FCompiler.Log = new List<string>();
+        FCompiler.Messages = new List<string>();
+        FCompiler.Variables = new List<IVariable>();
+        FCompiler.Labels = new List<ILabel>();
+        FCompiler.TokenCode = tokenBuffer;
+        FCompiler.SourceCode ??= Array.Empty<string>();
+
+        while (tokenBuffer.Count <= targetPc)
+        {
+            tokenBuffer.Add(new DriveCommand(EDriveToken.tt_Nop));
+        }
+    }
+
+    private string InvokeBuildCommand(object? parseTree, IList<IDriveCommand> tokenBuffer, int level, int pc, out string errorText)
+    {
+        var method = typeof(DriveCompiler).GetMethod("BuildCommand", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("BuildCommand method not found.");
+
+        var arguments = new object?[] { parseTree, tokenBuffer, level, pc, string.Empty };
+        var result = method.Invoke(FCompiler, arguments);
+        errorText = arguments[4] as string ?? string.Empty;
+        return result?.ToString() ?? string.Empty;
     }
 }
