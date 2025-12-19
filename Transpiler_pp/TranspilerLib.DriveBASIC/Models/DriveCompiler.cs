@@ -38,6 +38,7 @@ public class DriveCompiler
     ParseDef[] parseDefs = ParseDefinitions.ParseDefBase;
     ParseDef2[] PlaceHolderSubst = ParseDefinitions.PlaceHolderDefBase;
     IList<(int, bool, string)> expressionNormals = [];
+    public IReadOnlyList<(int, bool, string)> ExpressionNormals => expressionNormals.ToList();
     string[] PlaceHolders = ParseDefinitions.ParseStrings;
     Dictionary<EDriveToken, int> TextsPerToken = [];
     Dictionary<EDriveToken, int> Sindex = [];
@@ -406,9 +407,9 @@ public class DriveCompiler
 
     public bool TestPlaceHolderCharset(string PlaceHolder, string PHtxt)
     {
-        var result = true;
         foreach (var ph in ParseDefinitions.SysPHCharset)
         {
+            var result = true;
             if (PlaceHolder.ToUpper().StartsWith(ph.Placeholder.ToUpper()))
             {
                 var PsepPos = 0;
@@ -763,7 +764,7 @@ public class DriveCompiler
         {
             variable = new CompilerVariable
             {
-                Name = displayName.Trim(),
+                Name = normalized,
                 Type = type,
                 Index = AllocateVarNo(type)
             };
