@@ -432,230 +432,531 @@ public class DriveCompiler
         throw new NotImplementedException();
     }
 
-    private BCErr BuildCommand(IReadOnlyList<KeyValuePair<string, object?>>? v1, IList<IDriveCommand> tokenCode, int v2, int v3, out string fErrStr)
+    private BCErr BuildCommand(IReadOnlyList<KeyValuePair<string, object?>>? parseTree, IList<IDriveCommand> tokenBuffer, int level, int pc, out string fErrStr)
     {
-        throw new NotImplementedException();
+        fErrStr = string.Empty;
+        if (parseTree == null)
+        {
+            fErrStr = StrSyntaxError;
+            return BCErr.BC_SyntaxError;
+        }
+
+        tokenBuffer ??= new List<IDriveCommand>();
+        if (!ReferenceEquals(TokenCode, tokenBuffer))
+            TokenCode = tokenBuffer;
+
+        var builder = new CommandBuilderState();
+
+        try
+        {
+            var result = ProcessNode(parseTree, builder, tokenBuffer, level, pc, out fErrStr);
+            if (result != BCErr.BC_OK)
+                return result;
+
+            if (!builder.HasToken)
+            {
+                fErrStr = StrSyntaxError;
+                return BCErr.BC_SyntaxError;
+            }
+
+            EnsureTokenSlot(tokenBuffer, pc);
+            tokenBuffer[pc] = builder.ToDriveCommand();
+            return BCErr.BC_OK;
+        }
+        catch (Exception ex)
+        {
+            fErrStr = ex.Message;
+            return BCErr.BC_Exception;
+        }
     }
 
-    public IReadOnlyList<KeyValuePair<string, object?>>? ParseLine(string placeholder, string line, out int errp)
+    private BCErr ProcessNode(IReadOnlyList<KeyValuePair<string, object?>> node, CommandBuilderState builder, IList<IDriveCommand> tokenBuffer, int level, int pc, out string error)
     {
-        errp = 1;
-        placeholder ??= string.Empty;
-        line ??= string.Empty;
-
-        var isTokenPlaceholder = placeholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase);
-        var isExpressionPlaceholder = placeholder.Equals(ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase);
-
-        int iterationCount = isTokenPlaceholder
-            ? parseDefs.Length
-            : isExpressionPlaceholder
-                ? expressionNormals.Count
-                : PlaceHolderSubst.Length;
-
-        var trimmedLine = line.Trim();
-
-        for (int index = 0; index < iterationCount; index++)
+        error = string.Empty;
+        if (node.Count == 0)
         {
-            string testedPlaceholder = isTokenPlaceholder
-                ? ParseDefinitions.CToken
-                : isExpressionPlaceholder
-                    ? ParseDefinitions.CExpression
-                    : PlaceHolderSubst[index].PlaceHolder;
+            error = StrSyntaxError;
+            return BCErr.BC_SyntaxError;
+        }
 
-            if (!placeholder.Equals(testedPlaceholder, StringComparison.OrdinalIgnoreCase))
+        if (level >= MaxRecursionDepth)
+        {
+            error = StrFehlerInBuildComm;
+            return BCErr.BC_SyntaxError;
+        }
+
+        if (node[0].Value == null)
+        {
+            error = StrSyntaxError;
+            return BCErr.BC_SyntaxError;
+        }
+
+        int ruleIndex;
+        try
+        {
+            ruleIndex = Convert.ToInt32(node[0].Value, CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            error = StrSyntaxError;
+            return BCErr.BC_SyntaxError;
+        }
+
+        var placeholder = node[0].Key ?? string.Empty;
+        var isTokenNode = placeholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase);
+        var isExpressionNode = placeholder.Equals(ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase);
+        var isCommandNode = placeholder.Equals(ParseDefinitions.CCommand, StringComparison.OrdinalIgnoreCase);
+
+        if (isTokenNode)
+        {
+            if (ruleIndex < 0 || ruleIndex >= parseDefs.Length)
+            {
+                error = StrSyntaxError;
+                return BCErr.BC_SyntaxError;
+            }
+            var def = parseDefs[ruleIndex];
+            builder.Initialize(def.Token, def.SubToken);
+        }
+        else if (isExpressionNode)
+        {
+            if (ruleIndex < 0 || ruleIndex >= expressionNormals.Count)
+            {
+                error = StrSyntaxError;
+                return BCErr.BC_SyntaxError;
+            }
+            builder.AddSubToken(expressionNormals[ruleIndex].Item1);
+        }
+        else if (isCommandNode)
+        {
+            RegisterInlineLabels(node, pc);
+        }
+        else
+        {
+            if (ruleIndex < 0 || ruleIndex >= PlaceHolderSubst.Length)
+            {
+                error = StrSyntaxError;
+                return BCErr.BC_SyntaxError;
+            }
+            builder.AddSubToken(PlaceHolderSubst[ruleIndex].Number);
+        }
+
+        for (int i = 1; i < node.Count; i++)
+        {
+            var childPlaceholder = node[i].Key ?? string.Empty;
+            var childValue = node[i].Value;
+
+            if (IsSystemPlaceholder(childPlaceholder) && !childPlaceholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase))
+            {
+                var placeholderIndex = ParsePlaceholderIndex(childPlaceholder);
+                if (placeholderIndex < 0)
+                {
+                    error = childPlaceholder;
+                    return BCErr.BC_UnknownPlaceHolder;
+                }
+
+                var sysResult = HandleSystemPlaceholder(placeholderIndex, childValue, builder, isCommandNode, level, pc, out error);
+                if (sysResult != BCErr.BC_OK)
+                    return sysResult;
                 continue;
-
-            string matchingText = isTokenPlaceholder
-                ? parseDefs[index].text
-                : isExpressionPlaceholder
-                    ? expressionNormals[index].Item3
-                    : PlaceHolderSubst[index].text;
-
-            matchingText = MTSpaceTrim(matchingText ?? string.Empty);
-
-            var wildcardMatches = new List<KeyValuePair<string, string>>();
-            if (!TryPlaceHolderMatching(trimmedLine, matchingText, wildcardMatches))
-                continue;
-
-            var resultMatches = new List<KeyValuePair<string, object?>>
-            {
-                new(testedPlaceholder, index)
-            };
-
-            bool success = true;
-            int localError = 0;
-
-            for (int matchIndex = 0; matchIndex < wildcardMatches.Count; matchIndex++)
-            {
-                var currentMatch = wildcardMatches[matchIndex];
-                var matchedPlaceholder = currentMatch.Key;
-                var matchedText = currentMatch.Value?.Trim() ?? string.Empty;
-
-                bool isCToken = matchedPlaceholder.Equals(ParseDefinitions.CTToken, StringComparison.OrdinalIgnoreCase);
-                bool isSystemPlaceholder = IsSystemPlaceholder(matchedPlaceholder);
-
-                if (isSystemPlaceholder && !isCToken)
-                {
-                    if (!TestPlaceHolderCharset(matchedPlaceholder, matchedText))
-                    {
-                        success = false;
-                        localError = 1 + matchIndex;
-                        break;
-                    }
-                    resultMatches.Add(new KeyValuePair<string, object?>(matchedPlaceholder, matchedText));
-                    continue;
-                }
-
-                var nestedPlaceholder = isCToken ? ParseDefinitions.CToken : matchedPlaceholder;
-                var nested = ParseLine(nestedPlaceholder, matchedText, out var nestedError);
-                if (nestedError != 0)
-                {
-                    success = false;
-                    localError = nestedError + (matchIndex + 1) * 2;
-                    break;
-                }
-
-                object? nestedValue = (object?)nested ?? matchedText;
-                resultMatches.Add(new KeyValuePair<string, object?>(matchedPlaceholder, nestedValue));
             }
 
-            if (success)
+            if (childValue is IReadOnlyList<KeyValuePair<string, object?>> nested)
             {
-                errp = 0;
-                return resultMatches;
-            }
-
-            if (localError != 0)
-                errp = localError;
-        }
-
-        return null;
-    }
-
-    public bool TryPlaceHolderMatching(string Probe, string Mask, List<KeyValuePair<string, string>> WilldCardFill, Func<string,string,bool>? checkPlaceholderCharset = null)
-    {
-        if (WilldCardFill == null)
-            throw new ArgumentNullException(nameof(WilldCardFill));
-
-        Probe ??= string.Empty;
-        Mask ??= string.Empty;
-
-        return Match(Mask, Probe);
-
-        bool Match(string currentMask, string currentProbe)
-        {
-            var placeholderIndex = FindPlaceholderIndex(currentMask);
-            if (placeholderIndex >= currentMask.Length)
-                return currentMask.Equals(currentProbe, StringComparison.OrdinalIgnoreCase);
-
-            var literalPrefix = currentMask.Substring(0, placeholderIndex);
-            if (!currentProbe.StartsWith(literalPrefix, StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            var placeholderEnd = currentMask.IndexOf('>', placeholderIndex);
-            if (placeholderEnd < 0)
-                return false;
-
-            var placeholderToken = currentMask.Substring(placeholderIndex, placeholderEnd - placeholderIndex + 1);
-            var suffix = currentMask.Substring(placeholderEnd + 1);
-            var probeRemainder = currentProbe.Substring(literalPrefix.Length);
-
-            if (suffix.Length == 0)
-                return TryAssignCandidate(probeRemainder, placeholderToken, suffix, string.Empty);
-
-            return TryMatchWithAnchors(placeholderToken, suffix, probeRemainder);
-        }
-
-        bool TryMatchWithAnchors(string placeholderToken, string suffix, string probeRemainder)
-        {
-            var nextPlaceholder = FindPlaceholderIndex(suffix);
-            var literalAnchor = nextPlaceholder >= suffix.Length ? suffix : suffix.Substring(0, nextPlaceholder);
-
-            if (!string.IsNullOrEmpty(literalAnchor))
-            {
-                var searchIndex = 0;
-                while (true)
-                {
-                    var anchorPos = probeRemainder.IndexOf(literalAnchor, searchIndex, StringComparison.OrdinalIgnoreCase);
-                    if (anchorPos < 0)
-                        break;
-
-                    if (TryAssignCandidate(probeRemainder.Substring(0, anchorPos), placeholderToken, suffix, probeRemainder.Substring(anchorPos)))
-                        return true;
-
-                    searchIndex = anchorPos + 1;
-                }
-
-                return false;
-            }
-
-            for (var split = 0; split <= probeRemainder.Length; split++)
-            {
-                if (TryAssignCandidate(probeRemainder.Substring(0, split), placeholderToken, suffix, probeRemainder.Substring(split)))
-                    return true;
-            }
-
-            return false;
-        }
-
-        bool TryAssignCandidate(string value, string placeholderToken, string suffix, string remainingProbe)
-        {
-            var trimmed = value.Trim();
-            if (checkPlaceholderCharset?.Invoke(placeholderToken, trimmed) == false)
-                return false;
-
-            WilldCardFill.Add(new KeyValuePair<string, string>(placeholderToken, trimmed));
-            if (Match(suffix, remainingProbe))
-                return true;
-
-            WilldCardFill.RemoveAt(WilldCardFill.Count - 1);
-            return false;
-
-        }
-
-        int FindPlaceholderIndex(string pattern)
-        {
-            if (string.IsNullOrEmpty(pattern))
-                return pattern.Length;
-
-            var next = GetNextPlaceHolder(0, pattern);
-            return next >= pattern.Length ? pattern.Length : next;
-        }
-    }
-
-    bool CheckPlaceholderCharset(string placeholderToken, string trimmed) 
-        => !IsSysPlaceholder(placeholderToken, out _) || TestPlaceHolderCharset(placeholderToken, trimmed);
-
-    public static string MTSpaceTrim(string MT)
-    {
-        IList<char> result = [];
-        char _last = ' ';
-        for (var I = 0; I < MT.Length; I++)
-        {
-            if (MT[I] == ' ')
-            {
-                if (I == 0 || I == MT.Length - 1 || _last == ' ')
-                    continue;
-
-                if ((CharSets.lettersAndNumbers.Contains(_last) == CharSets.lettersAndNumbers.Contains(MT[I + 1]) && MT[I + 1]!=' ')
-                   || (_last is '>' or '<')
-                   || (MT[I + 1] is  '>' or '<' or ':') )
-                    result.Add(_last = MT[I]);
+                var nestedResult = ProcessNode(nested, builder, tokenBuffer, level + 1, pc, out error);
+                if (nestedResult != BCErr.BC_OK)
+                    return nestedResult;
             }
             else
-                result.Add(_last = MT[I]);
+            {
+                var literal = (childValue as string)?.Trim() ?? string.Empty;
+                if (!string.IsNullOrEmpty(literal))
+                {
+                    error = literal;
+                    return BCErr.BC_UnknownPlaceHolder;
+                }
+            }
         }
-        return string.Join("", result);
+
+        if (isTokenNode)
+        {
+            var refResult = ResolveReferences(builder, tokenBuffer, pc, out error);
+            if (refResult != BCErr.BC_OK)
+                return refResult;
+        }
+
+        return BCErr.BC_OK;
     }
 
-    private enum BCErr
+    private void RegisterInlineLabels(IReadOnlyList<KeyValuePair<string, object?>> node, int pc)
     {
-        BC_OK,
-        BC_ErrExpression,
-        BC_SyntaxError,
-        BC_UnknownPlaceHolder,
-        BC_Exception,
-        BC_CharsetErr,
-        BC_FaultyRef
+        for (int i = 1; i < node.Count; i++)
+        {
+            if (IsLabelPlaceholder(node[i].Key) && node[i].Value is string labelText && !string.IsNullOrWhiteSpace(labelText))
+            {
+                SetLabel(labelText, pc);
+            }
+        }
     }
-}
+
+    private bool IsLabelPlaceholder(string? placeholder)
+        => !string.IsNullOrEmpty(placeholder)
+           && IsSystemPlaceholder(placeholder)
+           && placeholder.EndsWith("Label>", StringComparison.OrdinalIgnoreCase);
+
+    private BCErr HandleSystemPlaceholder(int placeholderIndex, object? rawValue, CommandBuilderState builder, bool isCommandNode, int level, int pc, out string error)
+    {
+        error = string.Empty;
+        var text = (rawValue as string)?.Trim() ?? rawValue?.ToString()?.Trim() ?? string.Empty;
+
+        switch (placeholderIndex)
+        {
+            case 0:
+                if (isCommandNode)
+                    return BCErr.BC_OK;
+                var definitionTarget = level < 1 || (builder.Token == EDriveToken.tt_Nop && builder.SubToken == 5) ? pc : -1;
+                var labelIndex = GetLabelIndex(text, definitionTarget);
+                builder.Param1 = labelIndex >= 0 ? labelIndex : ushort.MaxValue;
+                return BCErr.BC_OK;
+            case 1:
+                builder.Param1 = GetMessageNumber(text);
+                return BCErr.BC_OK;
+            case 2:
+                builder.Param1 = GetVariableNumber(text);
+                return BCErr.BC_OK;
+            case 3:
+                builder.Param2 = GetVariableNumber(text);
+                return BCErr.BC_OK;
+            case 4:
+                builder.Param3 = GetVariableNumber(text);
+                return BCErr.BC_OK;
+            case 5:
+            case 8:
+                if (!TryParseFloatValue(text, out var floatValue))
+                {
+                    error = text;
+                    return BCErr.BC_SyntaxError;
+                }
+                builder.Param3 = floatValue;
+                return BCErr.BC_OK;
+            case 6:
+                if (!TryParseIntValue(text, out var intValue1))
+                {
+                    error = text;
+                    return BCErr.BC_SyntaxError;
+                }
+                builder.Param1 = intValue1;
+                return BCErr.BC_OK;
+            case 7:
+                if (!TryParseIntValue(text, out var intValue2))
+                {
+                    error = text;
+                    return BCErr.BC_SyntaxError;
+                }
+                builder.Param2 = intValue2;
+                return BCErr.BC_OK;
+            case 9:
+                var axis = GetAxisNumber(text);
+                if (axis <= 0)
+                {
+                    error = text;
+                    return BCErr.BC_SyntaxError;
+                }
+                builder.Param1 = axis;
+                return BCErr.BC_OK;
+            default:
+                if (!string.IsNullOrEmpty(text))
+                {
+                    error = text;
+                    return BCErr.BC_UnknownPlaceHolder;
+                }
+                return BCErr.BC_OK;
+        }
+    }
+
+    private int ParsePlaceholderIndex(string placeholderToken)
+    {
+        for (int i = 0; i < PlaceHolders.Length; i++)
+        {
+            if (placeholderToken.EndsWith(PlaceHolders[i], StringComparison.OrdinalIgnoreCase))
+                return i;
+        }
+        return -1;
+    }
+
+    private CompilerLabel EnsureLabel(string labelName)
+    {
+        var normalized = NormalizeIdentifier(labelName);
+        if (!_labelsByName.TryGetValue(normalized, out var label))
+        {
+            label = new CompilerLabel { Name = normalized };
+            _labelsByName[normalized] = label;
+            Labels.Add(label);
+        }
+        return label;
+    }
+
+    private void SetLabel(string labelName, int destinationPc)
+    {
+        if (destinationPc < 0 || string.IsNullOrWhiteSpace(labelName))
+            return;
+        var label = EnsureLabel(labelName);
+        label.Index = destinationPc;
+    }
+
+    private int GetLabelIndex(string labelName, int destinationPc)
+    {
+        if (string.IsNullOrWhiteSpace(labelName))
+            return -1;
+        var label = EnsureLabel(labelName);
+        if (destinationPc >= 0)
+            label.Index = destinationPc;
+        return label.Index;
+    }
+
+    private int GetMessageNumber(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return 0;
+        var normalized = NormalizeIdentifier(text);
+        if (!_messageNumbers.TryGetValue(normalized, out var number))
+        {
+            number = ++_maxMessage;
+            _messageNumbers[normalized] = number;
+            Messages.Add(text.Trim());
+        }
+        return number;
+    }
+
+    private int GetVariableNumber(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return 0;
+
+        var trimmedName = name.Trim();
+        var normalized = NormalizeIdentifier(trimmedName);
+        var type = DetectVariableType(normalized);
+
+        if (type == EVarType.vt_dimension && normalized.Length >= 2)
+        {
+            var axisChar = trimmedName[^1];
+            var baseDisplayName = trimmedName[..^1];
+            var baseVariable = EnsureVariableEntry(baseDisplayName, EVarType.vt_point);
+            var axis = GetAxisNumber(axisChar.ToString());
+            if (axis <= 0)
+                return 0;
+            return DimensionBase + (baseVariable.Index - PointBase) * 6 + axis - 1;
+        }
+
+        var resolvedType = type == EVarType.vt_dimension ? EVarType.vt_point : type;
+        var variable = EnsureVariableEntry(trimmedName, resolvedType);
+        return variable.Index;
+    }
+
+    private CompilerVariable EnsureVariableEntry(string displayName, EVarType type)
+    {
+        var normalized = NormalizeIdentifier(displayName);
+        if (!_variablesByName.TryGetValue(normalized, out var variable))
+        {
+            variable = new CompilerVariable
+            {
+                Name = displayName.Trim(),
+                Type = type,
+                Index = AllocateVarNo(type)
+            };
+            _variablesByName[normalized] = variable;
+            InsertVariable(variable);
+        }
+        return variable;
+    }
+
+    private void InsertVariable(CompilerVariable variable)
+    {
+        var list = Variables ??= new List<IVariable>();
+        var insertIndex = 0;
+        while (insertIndex < list.Count && list[insertIndex].Index <= variable.Index)
+        {
+            insertIndex++;
+        }
+        list.Insert(insertIndex, variable);
+    }
+
+    private int AllocateVarNo(EVarType type)
+    {
+        var key = type switch
+        {
+            EVarType.vt_universal => EVarType.vt_real,
+            EVarType.vt_dimension => EVarType.vt_point,
+            _ => type
+        };
+
+        var current = _varMax.TryGetValue(key, out var max) ? max : 0;
+        current++;
+        _varMax[key] = current;
+        return current + (int)key * VarTypeStride;
+    }
+
+    private static EVarType DetectVariableType(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return EVarType.vt_real;
+        if (name.EndsWith("?", StringComparison.Ordinal))
+            return EVarType.vt_universal;
+        if (name.EndsWith("&", StringComparison.Ordinal))
+            return EVarType.vt_bool;
+        if (name.EndsWith("%", StringComparison.Ordinal))
+            return EVarType.vt_real;
+        if (name.EndsWith(".", StringComparison.Ordinal))
+            return EVarType.vt_point;
+        if (name.Length >= 2 && name[^2] == '.')
+            return EVarType.vt_dimension;
+        return EVarType.vt_real;
+    }
+
+    private static string NormalizeIdentifier(string? text)
+        => text?.Trim().ToUpperInvariant() ?? string.Empty;
+
+    private static bool TryParseFloatValue(string text, out double value)
+    {
+        if (double.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+            return true;
+        var normalized = text.Replace(',', '.');
+        if (double.TryParse(normalized, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+            return true;
+        return double.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out value);
+    }
+
+    private static bool TryParseIntValue(string text, out int value)
+        => int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+
+    private static int GetAxisNumber(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return 0;
+        var key = char.ToLowerInvariant(text.Trim()[0]);
+        return AxisMap.TryGetValue(key, out var axis) ? axis : 0;
+    }
+
+    private static void EnsureTokenSlot(IList<IDriveCommand> tokenBuffer, int pc)
+    {
+        while (tokenBuffer.Count <= pc)
+        {
+            tokenBuffer.Add(new DriveCommand(EDriveToken.tt_Nop));
+        }
+    }
+
+    private BCErr ResolveReferences(CommandBuilderState builder, IList<IDriveCommand> tokenBuffer, int pc, out string error)
+    {
+        error = string.Empty;
+        bool backwardRuleHit = false;
+        bool backwardResolved = false;
+        bool forwardRuleHit = false;
+        bool forwardResolved = false;
+        int forwardTarget = -1;
+
+        foreach (var rule in ParseDefinitions.ReferencingToken)
+        {
+            bool matchesBackward = rule.Backward
+                && builder.Token == rule.Token
+                && (rule.SubToken == -1 || GetComparableSubToken(builder.Token, builder.SubToken) == rule.SubToken);
+
+            bool matchesForward = !rule.Backward
+                && builder.Token == rule.ReferencingToken
+                && (rule.ReferencingSubtoken == -1 || GetComparableSubToken(builder.Token, builder.SubToken) == rule.ReferencingSubtoken);
+
+            if (!matchesBackward && !matchesForward)
+                continue;
+
+            var searchToken = matchesBackward ? rule.ReferencingToken : rule.Token;
+            var searchSubToken = matchesBackward ? rule.ReferencingSubtoken : rule.SubToken;
+            var found = FindReferenceTarget(tokenBuffer, pc - 1, searchToken, searchSubToken);
+
+            if (matchesBackward)
+            {
+                backwardRuleHit = true;
+                if (found >= 0)
+                {
+                    builder.Param1 = found;
+                    backwardResolved = true;
+                }
+            }
+            else
+            {
+                forwardRuleHit = true;
+                if (found > forwardTarget)
+                {
+                    forwardTarget = found;
+                    forwardResolved = found >= 0;
+                }
+            }
+        }
+
+        if (forwardRuleHit)
+        {
+            if (forwardResolved && forwardTarget >= 0)
+            {
+                UpdateCommandParam1(tokenBuffer, forwardTarget, pc);
+            }
+            else
+            {
+                return BCErr.BC_FaultyRef;
+            }
+        }
+
+        if (backwardRuleHit && !backwardResolved)
+            return BCErr.BC_FaultyRef;
+
+        return BCErr.BC_OK;
+    }
+
+    private static int GetComparableSubToken(EDriveToken token, int subToken)
+        => TteTokens.Contains(token) ? subToken / 64 : subToken;
+
+    private int FindReferenceTarget(IList<IDriveCommand> tokenBuffer, int startIndex, EDriveToken searchToken, int searchSubToken)
+    {
+        var index = startIndex;
+        while (index >= 0)
+        {
+            var jumped = false;
+            for (int k = 0; k < ParseDefinitions.ReferencingToken.Length; k++)
+            {
+                var rule = ParseDefinitions.ReferencingToken[k];
+                if (!rule.Backward || index >= tokenBuffer.Count)
+                    continue;
+
+                var candidate = tokenBuffer[index];
+                if (candidate.Token == rule.Token
+                    && (rule.SubToken == -1 || GetComparableSubToken(candidate.Token, candidate.SubToken) == rule.SubToken)
+                    && candidate.Par1 <= index)
+                {
+                    index = candidate.Par1 - 1;
+                    jumped = true;
+                    break;
+                }
+            }
+
+            if (!jumped)
+            {
+                if (index < tokenBuffer.Count)
+                {
+                    var candidate = tokenBuffer[index];
+                    if (candidate.Token == searchToken
+                        && (searchSubToken == -1 || GetComparableSubToken(candidate.Token, candidate.SubToken) == searchSubToken))
+                    {
+                        return index;
+                    }
+                }
+                index--;
+            }
+        }
+
+        return -1;
+    }
+
+    private void UpdateCommandParam1(IList<IDriveCommand> tokenBuffer, int index, int newValue)
+    {
+        if (index < 0)
+            return;
+        EnsureTokenSlot(tokenBuffer, index);
+        var existing = tokenBuffer[index];
+        tokenBuffer[index] = new DriveCommand(existing.Token, new object[] { existing.SubToken, newValue, existing.Par2, existing.Par3 });
+    }
