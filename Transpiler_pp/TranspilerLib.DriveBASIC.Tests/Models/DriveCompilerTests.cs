@@ -662,4 +662,45 @@ public class DriveCompilerTests
         errorText = arguments[4] as string ?? string.Empty;
         return result?.ToString() ?? string.Empty;
     }
+
+// PSEUDOCODE
+// - Prepare helper to invoke private DriveCompiler.GetAxisName via reflection.
+//   * Resolve MethodInfo once per call, ensure non-null, invoke with axis argument, ensure string result.
+// - Test mapped axes:
+//   * Use DataRow to cover several axis numbers (1, 2, 3, 4).
+//   * For each axis, call helper and assert returned axis identifier matches expected string.
+// - Test fallback path:
+//   * Call helper with unmapped axis (e.g., 99).
+//   * Assert the method returns the numeric string representation of the axis.
+
+    [TestMethod]
+    [DataRow(1, "x")]
+    [DataRow(2, "y")]
+    [DataRow(3, "z")]
+    [DataRow(4, "a")]
+    public void GetAxisName_ReturnsAxisIdentifier_ForMappedAxis(int axis, string expected)
+    {
+        var actual = InvokeGetAxisName(axis);
+
+        Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void GetAxisName_ReturnsNumericFallback_ForUnknownAxis()
+    {
+        var actual = InvokeGetAxisName(99);
+
+        Assert.AreEqual("99", actual);
+    }
+
+    private string InvokeGetAxisName(int axis)
+    {
+        var method = typeof(DriveCompiler).GetMethod("GetAxisName", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("GetAxisName method not found.");
+
+        var result = method.Invoke(FCompiler, new object[] { axis }) as string;
+        Assert.IsNotNull(result, "GetAxisName returned null.");
+
+        return result!;
+    }
 }
