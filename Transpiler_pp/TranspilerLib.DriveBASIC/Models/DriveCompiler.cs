@@ -1,17 +1,23 @@
-﻿using System;
+﻿using BaseLib.Helper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using TranspilerLib.Data;
 using TranspilerLib.DriveBASIC.Data;
 using TranspilerLib.DriveBASIC.Data.Interfaces;
+using TranspilerLib.Models;
+using static System.Net.Mime.MediaTypeNames;
+using static TranspilerLib.DriveBASIC.Data.ParseDefinitions;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
-public class DriveCompiler
+public partial class DriveCompiler
 {
     //  resourcestring
     const string
@@ -35,68 +41,14 @@ public class DriveCompiler
     public IList<ILabel> Labels { get; set; }
     public IList<IDriveCommand> TokenCode { get; set; }
 
-    ParseDef[] parseDefs = ParseDefinitions.ParseDefBase;
-    ParseDef2[] PlaceHolderSubst = ParseDefinitions.PlaceHolderDefBase;
+    ParseDef[] parseDefs = ParseDefBase;
+    ParseDef2[] PlaceHolderSubst = PlaceHolderDefBase;
     IList<(int, bool, string)> expressionNormals = [];
     public IReadOnlyList<(int, bool, string)> ExpressionNormals => expressionNormals.ToList();
-    string[] PlaceHolders = ParseDefinitions.ParseStrings;
+    string[] PlaceHolders = ParseStrings;
     Dictionary<EDriveToken, int> TextsPerToken = [];
     Dictionary<EDriveToken, int> Sindex = [];
     char[] replace = ['§', 'm', '¹', '²', '³', 'f', '1', '2', '3', 'x', ' ', 't', 'a', '¹', '²', '³'];
-
-    private sealed class CompilerVariable : IVariable
-    {
-        public string? Name { get; set; }
-        public int Index { get; set; }
-        public object? Value { get; set; }
-        public EVarType Type { get; set; }
-    }
-
-    private sealed class CompilerLabel : ILabel
-    {
-        public string? Name { get; set; }
-        public int Index { get; set; } = -1;
-    }
-
-    private sealed class CommandBuilderState
-    {
-        public bool HasToken { get; private set; }
-        public EDriveToken Token { get; private set; }
-        public int SubToken { get; private set; }
-        public int Param1 { get; set; }
-        public int Param2 { get; set; }
-        public double Param3 { get; set; }
-
-        public void Initialize(EDriveToken token, int subToken)
-        {
-            HasToken = true;
-            Token = token;
-            SubToken = TteTokens.Contains(token) ? subToken * 64 : subToken;
-            Param1 = 0;
-            Param2 = 0;
-            Param3 = 0d;
-        }
-
-        public void AddSubToken(int delta) => SubToken += delta;
-
-        public DriveCommand ToDriveCommand()
-            => new(Token, [(SubToken & 0xFF), Param1, Param2, Param3]);
-    }
-
-    private static readonly HashSet<EDriveToken> TteTokens = new()
-    {
-        EDriveToken.tte_let,
-        EDriveToken.tte_goto2,
-        EDriveToken.tte_if,
-        EDriveToken.tte_while,
-        EDriveToken.tte_wait,
-        EDriveToken.tte_Msg2,
-        EDriveToken.tte_funct2,
-        EDriveToken.tte_sync2,
-        EDriveToken.tte_drive,
-        EDriveToken.tte_drive_via,
-        EDriveToken.tte_drive_async,
-    };
 
     private static readonly Dictionary<char, int> AxisMap = new()
     {
@@ -127,7 +79,7 @@ public class DriveCompiler
 
     public DriveCompiler()
     {
-        foreach (var def in ParseDefinitions.ParseDefBase)
+        foreach (var def in ParseDefBase)
         {
             if (!TextsPerToken.TryGetValue(def.Token, out _))
                 TextsPerToken.Add(def.Token, 0);
@@ -146,7 +98,7 @@ public class DriveCompiler
             _varMax[type] = 0;
         }
 
-        BuildExpressionNormal(ParseDefinitions.CExpression, expressionNormals.Add);
+        BuildExpressionNormal(CExpression, expressionNormals.Add);
     }
 
     public void AppendLog(int LineNr, string text)
@@ -156,10 +108,10 @@ public class DriveCompiler
     public static string Compress(string s, char[] chars)
     {
         var result = s;
-        for (int i = ParseDefinitions.ParseStrings.Count(); i < 0; i--)
+        for (int i = ParseStrings.Count(); i < 0; i--)
         {
-            var P = result.IndexOf(ParseDefinitions.ParseStrings[i]);
-            var L = ParseDefinitions.ParseStrings[i].Length;
+            var P = result.IndexOf(ParseStrings[i]);
+            var L = ParseStrings[i].Length;
 
             if (P > -1)
             {
@@ -251,7 +203,7 @@ public class DriveCompiler
         int i = 0;
         foreach (var line in SourceCode)
         {
-            vv.Add(ParseLine(ParseDefinitions.CCommand, line, out int Errp));
+            vv.Add(ParseLine(CCommand, line, out int Errp));
             if (Errp > 0 && string.IsNullOrWhiteSpace(line))
             {
                 AppendLog(i, StrFehlerBeimParsen + $"{Errp}");
@@ -370,7 +322,7 @@ public class DriveCompiler
 
     private bool IsSysPlaceholder(string sysPHCandidate, out bool setP2Used)
     {
-        foreach (var ph in ParseDefinitions.SysPHCharset)
+        foreach (var ph in SysPHCharset)
         {
             if (sysPHCandidate.ToUpper().StartsWith(ph.Placeholder.ToUpper()))
             {
@@ -407,7 +359,7 @@ public class DriveCompiler
 
     public bool TestPlaceHolderCharset(string PlaceHolder, string PHtxt)
     {
-        foreach (var ph in ParseDefinitions.SysPHCharset)
+        foreach (var ph in SysPHCharset)
         {
             var result = true;
             if (PlaceHolder.ToUpper().StartsWith(ph.Placeholder.ToUpper()))
@@ -436,8 +388,338 @@ public class DriveCompiler
 
     private string DecompileTC(IDriveCommand cmd, bool l, int i)
     {
-        throw new NotImplementedException();
+        ParseDef? found = null; 
+        foreach (var pdCand in parseDefs)
+        {
+            if (cmd.Token == pdCand.Token)
+            {
+                if (TteTokens.Contains(cmd.Token))
+                {
+                    if (cmd.SubToken / 64 == pdCand.SubToken)
+                    {
+                        found = pdCand;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (cmd.SubToken == pdCand.SubToken)
+                    {
+                        found = pdCand;
+                        break;
+                    }
+                }
+            }
+        }
+        string result;
+        if (found != null && found.text !=null)
+        {
+            // SUB
+            if (cmd.Token == EDriveToken.tt_Nop && cmd.SubToken == 5)
+            {
+                cmd.Par1 = i; // Sich selbst als Sprungmarke setzen (nur lokal)
+            }
+            result = found.text!;
+        }
+        else
+        {
+            result = string.Empty;
+        }
+        int nextPh = GetNextPlaceHolder(0, result);
+        while (nextPh < result.Length)
+        {
+            result = SubstitutePlaceHolder(result, cmd);
+            nextPh = GetNextPlaceHolder(0, result);
+        }
+        bool hasLabel = false;
+        if (cmd.Token != EDriveToken.tt_Nop || cmd.SubToken != 5)
+        {
+            for (int k = 0; k < Labels.Count; k++)
+            {
+                if (Labels[k].Index == i)
+                {
+                    result = $"{Labels[k].Name}: {result}";
+                    hasLabel = true;
+                }
+            }
+        }
+        return result;
     }
+
+    /*
+     function TCompiler.SubstitutePlaceHolder(Line: STRING; tc: TDriveCmd): STRING;
+
+  FUNCTION getlabelText(ID: integer): STRING;
+  VAR
+    Found, I: integer;
+  BEGIN
+    Found := -1;
+    FOR I := 0 TO High(FLabels) DO
+      IF FLabels[I].PC = ID THEN
+      BEGIN
+        Found := I;
+        break
+      END;
+
+    IF Found >= 0 THEN
+      result := FLabels[Found].name
+    ELSE
+      result := inttostr(ID);
+
+  END;
+
+  FUNCTION getMessageText(ID: integer): STRING;
+  VAR
+    Found, I: integer;
+  BEGIN
+    Found := -1;
+    FOR I := 0 TO High(FMessages) DO
+      IF FMessages[I].MsgNo = ID THEN
+      BEGIN
+        Found := I;
+        break
+      END;
+
+    IF Found >= 0 THEN
+      result := FMessages[Found].MsgText
+    ELSE
+      result := '#' + trim(inttostr(ID));
+
+  END;
+
+  FUNCTION getAxisName(ID: integer): STRING;
+  VAR
+    Found, I: integer;
+  BEGIN
+    Found := -1;
+    FOR I := 0 TO High(AxisDef) DO
+      IF AxisDef[I].AxNo = ID THEN
+      BEGIN
+        Found := I;
+        break
+      END;
+
+    IF Found >= 0 THEN
+      result := AxisDef[Found].text
+    ELSE
+      result := trim(inttostr(ID));
+
+  END;
+
+  FUNCTION getVariableText(ID: integer): STRING;
+  VAR
+    Found, I: integer;
+    Lax: integer;
+    Lid: integer;
+  BEGIN
+    Found := -1;
+    IF ID >= $C000 THEN
+    BEGIN
+      Lid := ((ID - $C000) DIV 6) + $8000;
+      Lax := ((ID - $C000) MOD 6) + 1;
+    END
+    ELSE
+    BEGIN
+      Lid := ID;
+      Lax := 0;
+    END;
+    FOR I := 0 TO High(FVariableNames) DO
+      IF FVariableNames[I].VarNo = Lid THEN
+      BEGIN
+        Found := I;
+        break
+      END;
+
+    IF Found >= 0 THEN
+      result := FVariableNames[Found].name
+    ELSE
+      result := '#' + trim(inttostr(ID));
+
+    IF Lax > 0 THEN
+      result := result + getAxisName(Lax);
+
+  END;
+
+VAR
+  PhPos: integer;
+  PhEnd, I: integer;
+  Found: ARRAY OF integer;
+  phst: STRING;
+
+BEGIN
+  PhPos := GetNextPlaceHolder(1, Line);
+  PhEnd := pos(PhPos, '>', Line);
+  IF (PhPos <> 0) AND (PhEnd <> 0) THEN
+  BEGIN
+    phst := copy(Line, PhPos, PhEnd - PhPos + 1);
+    IF IsSysPlaceholder(copy(Line, PhPos, PhEnd - PhPos + 1)) THEN
+      try
+        CASE ParseStr(phst, PlaceHolders, psm_End) OF
+          0:
+            result := StringReplace(Line, phst, getlabelText(tc.param1),
+              [rfReplaceAll]);
+          1:
+            result := StringReplace(Line, phst, getMessageText(tc.param1),
+              [rfReplaceAll]);
+          2:
+            result := StringReplace(Line, phst, getVariableText(tc.param1),
+              [rfReplaceAll]);
+          3:
+            result := StringReplace(Line, phst, getVariableText(tc.Param2),
+              [rfReplaceAll]);
+          4:
+            result := StringReplace(Line, phst, getVariableText(round(tc.Param3)
+              ), [rfReplaceAll]);
+          5:
+            result := StringReplace(Line, phst, FloatToStr(tc.Param3),
+              [rfReplaceAll]);
+          6:
+            result := StringReplace(Line, phst, inttostr(round(tc.param1)),
+              [rfReplaceAll]);
+          7:
+            result := StringReplace(Line, phst, inttostr(round(tc.param2)),
+              [rfReplaceAll]);
+          8:
+            result := StringReplace(Line, phst, inttostr(round(tc.Param3)),
+              [rfReplaceAll]);
+          9:
+            result := StringReplace(Line, phst, getAxisName(tc.param1),
+              [rfReplaceAll]);
+          10:
+            result := StringReplace(Line, phst, ' ', [rfReplaceAll]);
+        else
+        END;
+      finally
+      END
+    ELSE IF phst = CExpression THEN
+    BEGIN
+      FOR I := 0 TO High(ExpressionNormal) DO
+        IF ((tc.SubToken AND 63) = ExpressionNormal[I].Number) AND
+          (ExpressionNormal[I].Param2used = (tc.Param2 <> 0)) THEN
+        BEGIN
+          result := StringReplace(Line, phst, ExpressionNormal[I].text,
+            [rfReplaceAll]);
+          break;
+        END
+    END
+    ELSE
+
+    BEGIN
+      // Suche nach Placeholder
+      setlength(Found, 0);
+      FOR I := 0 TO High(PlaceHolderSubst) DO
+        IF UpperCase(PlaceHolderSubst[I].PlaceHolder) = UpperCase(phst) THEN
+        BEGIN
+          setlength(Found, High(Found) + 2);
+          Found[High(Found)] := I;
+        END;
+      IF High(Found) = 0 THEN
+        result := StringReplace(Line, phst, PlaceHolderSubst[Found[0]].text, [])
+
+    END;
+  END
+  ELSE
+    result := Line;
+END;
+     */
+    private string SubstitutePlaceHolder(string line, IDriveCommand cmd)
+    {
+        int phPos = GetNextPlaceHolder(0, line);
+        int phEnd = line.IndexOf('>', phPos);
+        if (phPos >= 0 && phEnd > phPos)
+        {
+            var phst = line.Substring(phPos, phEnd - phPos + 1);
+            if (IsSystemPlaceholder(phst))
+            {
+                switch (ParsePlaceholderIndex(phst))
+                {
+                    case 0:
+                        return line.Replace(phst, GetLabelText(cmd.Par1));
+                    case 1:
+                        return line.Replace(phst, GetMessageText(cmd.Par1));
+                    case 2:
+                        return line.Replace(phst, GetVariableText(cmd.Par1));
+                    case 3:
+                        return line.Replace(phst, GetVariableText(cmd.Par2));
+                    case 4:
+                        return line.Replace(phst, GetVariableText((int)Math.Round(cmd.Par3)));
+                    case 5:
+                        return line.Replace(phst, cmd.Par3.ToString(CultureInfo.InvariantCulture));
+                    case 6:
+                        return line.Replace(phst, cmd.Par1.ToString(CultureInfo.InvariantCulture));
+                    case 7:
+                        return line.Replace(phst, cmd.Par2.ToString(CultureInfo.InvariantCulture));
+                    case 8:
+                        return line.Replace(phst, ((int)Math.Round(cmd.Par3)).ToString(CultureInfo.InvariantCulture));
+                    case 9:
+                        return line.Replace(phst, GetAxisName(cmd.Par1));
+                    case 10:
+                        return line.Replace(phst, " ");
+                    default:
+                        return line;
+                }
+            }
+            else if (phst.Equals(CExpression, StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var en in expressionNormals)
+                {
+                    if ((cmd.SubToken & 63) == en.Item1 && en.Item2 == (cmd.Par2 != 0))
+                    {
+                        return line.Replace(phst, en.Item3);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < PlaceHolderSubst.Length; i++)
+                {
+                    if (PlaceHolderSubst[i].PlaceHolder.Equals(phst, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return line.Replace(phst, PlaceHolderSubst[i].text);
+                    }
+                }
+            }
+        }
+        return line;
+    }
+
+    private string GetLabelText(int par1)
+    {
+        var label = Labels.FirstOrDefault(l => l.Index == par1);
+        return label != null ? label.Name ?? par1.ToString() : par1.ToString();
+    }
+
+    private string GetMessageText(int par1)
+    {
+        var message = par1 >= 0 && par1 < Messages.Count ? Messages[par1] : null;
+        return message ?? $"#{par1}";
+    }
+
+    private string GetVariableText(int v)
+    {
+        int lid;
+        int lax;
+        if (v >= DimensionBase)
+        {
+            lid = ((v - DimensionBase) / 6) + PointBase;
+            lax = ((v - DimensionBase) % 6) + 1;
+        }
+        else
+        {
+            lid = v;
+            lax = 0;
+        }
+        var variable = Variables.FirstOrDefault(var => var.Index == lid);
+        var varName = variable != null ? variable.Name ?? $"#{lid}" : $"#{lid}";
+        if (lax > 0)
+        {
+            varName += GetAxisName(lax);
+        }
+        return varName;
+    }
+
+    private string GetAxisName(int par1) 
+        => AxisMap.Values.Contains(par1) ? $"{AxisMap.Keys.ToList()[AxisMap.Values.IndexOf(par1)]}":par1.ToString();
 
     private BCErr BuildCommand(IReadOnlyList<KeyValuePair<string, object?>>? parseTree, IList<IDriveCommand> tokenBuffer, int level, int pc, out string fErrStr)
     {
@@ -506,9 +788,9 @@ public class DriveCompiler
         }
 
         var placeholder = nodes[0].Key ?? string.Empty;
-        var isTokenNode = placeholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase);
-        var isExpressionNode = placeholder.Equals(ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase);
-        var isCommandNode = placeholder.Equals(ParseDefinitions.CCommand, StringComparison.OrdinalIgnoreCase);
+        var isTokenNode = placeholder.Equals(CToken, StringComparison.OrdinalIgnoreCase);
+        var isExpressionNode = placeholder.Equals(CExpression, StringComparison.OrdinalIgnoreCase);
+        var isCommandNode = placeholder.Equals(CCommand, StringComparison.OrdinalIgnoreCase);
 
         if (isTokenNode)
         {
@@ -547,8 +829,8 @@ public class DriveCompiler
         {
 
             if (IsSystemPlaceholder(node2.Key)
-                && !node2.Key.ToUpper().Equals(ParseDefinitions.CToken)
-                && !node2.Key.ToUpper().Equals(ParseDefinitions.CTToken))
+                && !node2.Key.ToUpper().Equals(CToken)
+                && !node2.Key.ToUpper().Equals(CTToken))
             {
                 var placeholderIndex = ParsePlaceholderIndex(node2.Key);
                 if (placeholderIndex < 0)
@@ -856,7 +1138,7 @@ public class DriveCompiler
         bool forwardResolved = false;
         int forwardTarget = -1;
 
-        foreach (var rule in ParseDefinitions.ReferencingToken)
+        foreach (var rule in ReferencingToken)
         {
             bool matchesBackward = rule.Backward
                 && builder.Token == rule.Token
@@ -920,9 +1202,9 @@ public class DriveCompiler
         while (index >= 0)
         {
             var jumped = false;
-            for (int k = 0; k < ParseDefinitions.ReferencingToken.Length; k++)
+            for (int k = 0; k < ReferencingToken.Length; k++)
             {
-                var rule = ParseDefinitions.ReferencingToken[k];
+                var rule = ReferencingToken[k];
                 if (!rule.Backward || index >= tokenBuffer.Count)
                     continue;
 
@@ -970,8 +1252,8 @@ public class DriveCompiler
         placeholder ??= string.Empty;
         line ??= string.Empty;
 
-        var isTokenPlaceholder = placeholder.Equals(ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase);
-        var isExpressionPlaceholder = placeholder.Equals(ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase);
+        var isTokenPlaceholder = placeholder.Equals(CToken, StringComparison.OrdinalIgnoreCase);
+        var isExpressionPlaceholder = placeholder.Equals(CExpression, StringComparison.OrdinalIgnoreCase);
 
         int iterationCount = isTokenPlaceholder
             ? parseDefs.Length
@@ -984,9 +1266,9 @@ public class DriveCompiler
         for (int index = 0; index < iterationCount; index++)
         {
             string testedPlaceholder = isTokenPlaceholder
-                ? ParseDefinitions.CToken
+                ? CToken
                 : isExpressionPlaceholder
-                    ? ParseDefinitions.CExpression
+                    ? CExpression
                     : PlaceHolderSubst[index].PlaceHolder;
 
             if (!placeholder.Equals(testedPlaceholder, StringComparison.OrdinalIgnoreCase))
@@ -1018,7 +1300,7 @@ public class DriveCompiler
                 var matchedPlaceholder = currentMatch.Key;
                 var matchedText = currentMatch.Value?.Trim() ?? string.Empty;
 
-                bool isCToken = matchedPlaceholder.Equals(ParseDefinitions.CTToken, StringComparison.OrdinalIgnoreCase);
+                bool isCToken = matchedPlaceholder.Equals(CTToken, StringComparison.OrdinalIgnoreCase);
                 bool isSystemPlaceholder = IsSystemPlaceholder(matchedPlaceholder);
 
                 if (isSystemPlaceholder && !isCToken)
@@ -1033,7 +1315,7 @@ public class DriveCompiler
                     continue;
                 }
 
-                var nestedPlaceholder = isCToken ? ParseDefinitions.CToken : matchedPlaceholder;
+                var nestedPlaceholder = isCToken ? CToken : matchedPlaceholder;
                 var nested = ParseLine(nestedPlaceholder, matchedText, out var nestedError);
                 if (nestedError != 0)
                 {
