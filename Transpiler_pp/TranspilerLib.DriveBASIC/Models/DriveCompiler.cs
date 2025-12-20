@@ -287,7 +287,7 @@ public partial class DriveCompiler
 
     public void BuildExpressionNormal(string line, Action<(int, bool, string)> actAdd, int SubTokenp = 0, bool Param2Usedp = false)
     {
-        var StartPos = GetNextPlaceHolder(0, line);
+        var StartPos = StringUtils.GetNextPlaceHolder(0, line);
         string NonSysph = "";
         while (StartPos < line.Length && NonSysph == "")
         {
@@ -301,7 +301,7 @@ public partial class DriveCompiler
             {
                 NonSysph = SysPHCandidate;
             }
-            StartPos = GetNextPlaceHolder(EndPos + 1, line);
+            StartPos = StringUtils.GetNextPlaceHolder(EndPos + 1, line);
         }
         if (NonSysph == "")
         {
@@ -332,29 +332,6 @@ public partial class DriveCompiler
         }
         setP2Used = false;
         return false;
-    }
-
-    private int GetNextPlaceHolder(int v, string line)
-    {
-        int result = line.Length + 1;
-        int i = v;
-        while (i < line.Length)
-        {
-            var p = line.IndexOf('<', i);
-            if (p > -1 && p < line.Length - 2)
-            {
-                if (CharSets.letters.Contains(line[p + 1]))
-                {
-                    result = p;
-                    i = line.Length;
-                }
-                else
-                    i = p + 1;
-            }
-            else
-                i = line.Length;
-        }
-        return result;
     }
 
     public bool TestPlaceHolderCharset(string PlaceHolder, string PHtxt)
@@ -425,11 +402,11 @@ public partial class DriveCompiler
         {
             result = string.Empty;
         }
-        int nextPh = GetNextPlaceHolder(0, result);
+        int nextPh = StringUtils.GetNextPlaceHolder(0, result);
         while (nextPh < result.Length)
         {
             result = SubstitutePlaceHolder(result, cmd);
-            nextPh = GetNextPlaceHolder(0, result);
+            nextPh = StringUtils.GetNextPlaceHolder(0, result);
         }
         bool hasLabel = false;
         if (cmd.Token != EDriveToken.tt_Nop || cmd.SubToken != 5)
@@ -446,185 +423,9 @@ public partial class DriveCompiler
         return result;
     }
 
-    /*
-     function TCompiler.SubstitutePlaceHolder(Line: STRING; tc: TDriveCmd): STRING;
-
-  FUNCTION getlabelText(ID: integer): STRING;
-  VAR
-    Found, I: integer;
-  BEGIN
-    Found := -1;
-    FOR I := 0 TO High(FLabels) DO
-      IF FLabels[I].PC = ID THEN
-      BEGIN
-        Found := I;
-        break
-      END;
-
-    IF Found >= 0 THEN
-      result := FLabels[Found].name
-    ELSE
-      result := inttostr(ID);
-
-  END;
-
-  FUNCTION getMessageText(ID: integer): STRING;
-  VAR
-    Found, I: integer;
-  BEGIN
-    Found := -1;
-    FOR I := 0 TO High(FMessages) DO
-      IF FMessages[I].MsgNo = ID THEN
-      BEGIN
-        Found := I;
-        break
-      END;
-
-    IF Found >= 0 THEN
-      result := FMessages[Found].MsgText
-    ELSE
-      result := '#' + trim(inttostr(ID));
-
-  END;
-
-  FUNCTION getAxisName(ID: integer): STRING;
-  VAR
-    Found, I: integer;
-  BEGIN
-    Found := -1;
-    FOR I := 0 TO High(AxisDef) DO
-      IF AxisDef[I].AxNo = ID THEN
-      BEGIN
-        Found := I;
-        break
-      END;
-
-    IF Found >= 0 THEN
-      result := AxisDef[Found].text
-    ELSE
-      result := trim(inttostr(ID));
-
-  END;
-
-  FUNCTION getVariableText(ID: integer): STRING;
-  VAR
-    Found, I: integer;
-    Lax: integer;
-    Lid: integer;
-  BEGIN
-    Found := -1;
-    IF ID >= $C000 THEN
-    BEGIN
-      Lid := ((ID - $C000) DIV 6) + $8000;
-      Lax := ((ID - $C000) MOD 6) + 1;
-    END
-    ELSE
-    BEGIN
-      Lid := ID;
-      Lax := 0;
-    END;
-    FOR I := 0 TO High(FVariableNames) DO
-      IF FVariableNames[I].VarNo = Lid THEN
-      BEGIN
-        Found := I;
-        break
-      END;
-
-    IF Found >= 0 THEN
-      result := FVariableNames[Found].name
-    ELSE
-      result := '#' + trim(inttostr(ID));
-
-    IF Lax > 0 THEN
-      result := result + getAxisName(Lax);
-
-  END;
-
-VAR
-  PhPos: integer;
-  PhEnd, I: integer;
-  Found: ARRAY OF integer;
-  phst: STRING;
-
-BEGIN
-  PhPos := GetNextPlaceHolder(1, Line);
-  PhEnd := pos(PhPos, '>', Line);
-  IF (PhPos <> 0) AND (PhEnd <> 0) THEN
-  BEGIN
-    phst := copy(Line, PhPos, PhEnd - PhPos + 1);
-    IF IsSysPlaceholder(copy(Line, PhPos, PhEnd - PhPos + 1)) THEN
-      try
-        CASE ParseStr(phst, PlaceHolders, psm_End) OF
-          0:
-            result := StringReplace(Line, phst, getlabelText(tc.param1),
-              [rfReplaceAll]);
-          1:
-            result := StringReplace(Line, phst, getMessageText(tc.param1),
-              [rfReplaceAll]);
-          2:
-            result := StringReplace(Line, phst, getVariableText(tc.param1),
-              [rfReplaceAll]);
-          3:
-            result := StringReplace(Line, phst, getVariableText(tc.Param2),
-              [rfReplaceAll]);
-          4:
-            result := StringReplace(Line, phst, getVariableText(round(tc.Param3)
-              ), [rfReplaceAll]);
-          5:
-            result := StringReplace(Line, phst, FloatToStr(tc.Param3),
-              [rfReplaceAll]);
-          6:
-            result := StringReplace(Line, phst, inttostr(round(tc.param1)),
-              [rfReplaceAll]);
-          7:
-            result := StringReplace(Line, phst, inttostr(round(tc.param2)),
-              [rfReplaceAll]);
-          8:
-            result := StringReplace(Line, phst, inttostr(round(tc.Param3)),
-              [rfReplaceAll]);
-          9:
-            result := StringReplace(Line, phst, getAxisName(tc.param1),
-              [rfReplaceAll]);
-          10:
-            result := StringReplace(Line, phst, ' ', [rfReplaceAll]);
-        else
-        END;
-      finally
-      END
-    ELSE IF phst = CExpression THEN
-    BEGIN
-      FOR I := 0 TO High(ExpressionNormal) DO
-        IF ((tc.SubToken AND 63) = ExpressionNormal[I].Number) AND
-          (ExpressionNormal[I].Param2used = (tc.Param2 <> 0)) THEN
-        BEGIN
-          result := StringReplace(Line, phst, ExpressionNormal[I].text,
-            [rfReplaceAll]);
-          break;
-        END
-    END
-    ELSE
-
-    BEGIN
-      // Suche nach Placeholder
-      setlength(Found, 0);
-      FOR I := 0 TO High(PlaceHolderSubst) DO
-        IF UpperCase(PlaceHolderSubst[I].PlaceHolder) = UpperCase(phst) THEN
-        BEGIN
-          setlength(Found, High(Found) + 2);
-          Found[High(Found)] := I;
-        END;
-      IF High(Found) = 0 THEN
-        result := StringReplace(Line, phst, PlaceHolderSubst[Found[0]].text, [])
-
-    END;
-  END
-  ELSE
-    result := Line;
-END;
-     */
     private string SubstitutePlaceHolder(string line, IDriveCommand cmd)
     {
-        int phPos = GetNextPlaceHolder(0, line);
+        int phPos = StringUtils.GetNextPlaceHolder(0, line);
         int phEnd = line.IndexOf('>', phPos);
         if (phPos >= 0 && phEnd > phPos)
         {
@@ -1283,7 +1084,7 @@ END;
             matchingText = MTSpaceTrim(matchingText ?? string.Empty);
 
             var wildcardMatches = new List<KeyValuePair<string, string>>();
-            if (!TryPlaceHolderMatching(trimmedLine, matchingText, wildcardMatches))
+            if (!StringUtils.TryPlaceHolderMatching(trimmedLine, matchingText, wildcardMatches))
                 continue;
 
             var resultMatches = new List<KeyValuePair<string, object?>>
@@ -1341,95 +1142,6 @@ END;
         return null;
     }
 
-    public bool TryPlaceHolderMatching(string Probe, string Mask, List<KeyValuePair<string, string>> WilldCardFill, Func<string, string, bool>? checkPlaceholderCharset = null)
-    {
-        if (WilldCardFill == null)
-            throw new ArgumentNullException(nameof(WilldCardFill));
-
-        Probe ??= string.Empty;
-        Mask ??= string.Empty;
-
-        return Match(Mask, Probe);
-
-        bool Match(string currentMask, string currentProbe)
-        {
-            var placeholderIndex = FindPlaceholderIndex(currentMask);
-            if (placeholderIndex >= currentMask.Length)
-                return currentMask.Equals(currentProbe, StringComparison.OrdinalIgnoreCase);
-
-            var literalPrefix = currentMask.Substring(0, placeholderIndex);
-            if (!currentProbe.StartsWith(literalPrefix, StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            var placeholderEnd = currentMask.IndexOf('>', placeholderIndex);
-            if (placeholderEnd < 0)
-                return false;
-
-            var placeholderToken = currentMask.Substring(placeholderIndex, placeholderEnd - placeholderIndex + 1);
-            var suffix = currentMask.Substring(placeholderEnd + 1);
-            var probeRemainder = currentProbe.Substring(literalPrefix.Length);
-
-            if (suffix.Length == 0)
-                return TryAssignCandidate(probeRemainder, placeholderToken, suffix, string.Empty);
-
-            return TryMatchWithAnchors(placeholderToken, suffix, probeRemainder);
-        }
-
-        bool TryMatchWithAnchors(string placeholderToken, string suffix, string probeRemainder)
-        {
-            var nextPlaceholder = FindPlaceholderIndex(suffix);
-            var literalAnchor = nextPlaceholder >= suffix.Length ? suffix : suffix.Substring(0, nextPlaceholder);
-
-            if (!string.IsNullOrEmpty(literalAnchor))
-            {
-                var searchIndex = 0;
-                while (true)
-                {
-                    var anchorPos = probeRemainder.IndexOf(literalAnchor, searchIndex, StringComparison.OrdinalIgnoreCase);
-                    if (anchorPos < 0)
-                        break;
-
-                    if (TryAssignCandidate(probeRemainder.Substring(0, anchorPos), placeholderToken, suffix, probeRemainder.Substring(anchorPos)))
-                        return true;
-
-                    searchIndex = anchorPos + 1;
-                }
-
-                return false;
-            }
-
-            for (var split = 0; split <= probeRemainder.Length; split++)
-            {
-                if (TryAssignCandidate(probeRemainder.Substring(0, split), placeholderToken, suffix, probeRemainder.Substring(split)))
-                    return true;
-            }
-
-            return false;
-        }
-
-        bool TryAssignCandidate(string value, string placeholderToken, string suffix, string remainingProbe)
-        {
-            var trimmed = value.Trim();
-            if (checkPlaceholderCharset?.Invoke(placeholderToken, trimmed) == false)
-                return false;
-
-            WilldCardFill.Add(new KeyValuePair<string, string>(placeholderToken, trimmed));
-            if (Match(suffix, remainingProbe))
-                return true;
-
-            WilldCardFill.RemoveAt(WilldCardFill.Count - 1);
-            return false;
-        }
-
-        int FindPlaceholderIndex(string pattern)
-        {
-            if (string.IsNullOrEmpty(pattern))
-                return pattern.Length;
-
-            var next = GetNextPlaceHolder(0, pattern);
-            return next >= pattern.Length ? pattern.Length : next;
-        }
-    }
 
     bool CheckPlaceholderCharset(string placeholderToken, string trimmed)
         => !IsSysPlaceholder(placeholderToken, out _) || TestPlaceHolderCharset(placeholderToken, trimmed);
