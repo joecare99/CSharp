@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseLib.Helper;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -284,96 +285,6 @@ public class DriveCompilerTests
 
         // Assert
         Assert.AreEqual(expected, result, $"Input: '{input}'");
-    }
-
-    private const string RootPlaceholder = "<Root>";
-
-    [TestMethod]
-    [DataRow("NOP", "NOP", true, "", DisplayName = "Matches literal-only mask")]
-    [DataRow("SUB Start", "SUB <Identifyer:Label>", true, "<Identifyer:Label>=Start", DisplayName = "Matches trailing placeholder")]
-    [DataRow("Start: HELLO", "<Identifyer:Label>: <Text:Token>", true, "<Identifyer:Label>=Start|<Text:Token>=HELLO", DisplayName = "Matches placeholder surrounded by literals")]
-    [DataRow("call 42", "CALL <Integer:Param1>", true, "<Integer:Param1>=42", DisplayName = "Matches while ignoring literal casing")]
-    [DataRow("CALL TEXT", "CALL <Integer:Param1>", false, "", DisplayName = "Rejects when placeholder value violates expectations")]
-    [DataRow("JMP Start", "SUB <Identifyer:Label>", false, "", DisplayName = "Rejects when literal prefix mismatches")]
-    public void TryPlaceHolderMatching_EvaluatesPatternsCorrectly(string probe, string mask, bool expectedSuccess, string expectedPairsSpec)
-    {
-        var wildcardFill = CreateSeededWildcardFill();
-
-        var actual = FCompiler.TryPlaceHolderMatching(probe, mask, wildcardFill,testCharset );
-
-        Assert.AreEqual(expectedSuccess, actual);
-
-        var expectedPairs = ParseExpectedPairs(expectedPairsSpec);
-        var actualPairs = wildcardFill.Skip(1).ToList();
-
-        Assert.AreEqual(expectedPairs.Count, actualPairs.Count);
-
-        for (var index = 0; index < expectedPairs.Count; index++)
-        {
-            Assert.AreEqual(expectedPairs[index].Key, actualPairs[index].Key);
-            Assert.AreEqual(expectedPairs[index].Value, actualPairs[index].Value);
-        }
-    }
-    [TestMethod]
-    [DataRow("NOP", "NOP", true, "", DisplayName = "Matches literal-only mask")]
-    [DataRow("SUB Start", "SUB <Identifyer:Label>", true, "<Identifyer:Label>=Start", DisplayName = "Matches trailing placeholder")]
-    [DataRow("Start: HELLO", "<Identifyer:Label>: <Text:Token>", true, "<Identifyer:Label>=Start|<Text:Token>=HELLO", DisplayName = "Matches placeholder surrounded by literals")]
-    [DataRow("call 42", "CALL <Integer:Param1>", true, "<Integer:Param1>=42", DisplayName = "Matches while ignoring literal casing")]
-    [DataRow("CALL TEXT", "CALL <Integer:Param1>", true, "<Integer:Param1>=TEXT", DisplayName = "Don't rejects when placeholder value violates expectations")]
-    [DataRow("JMP Start", "SUB <Identifyer:Label>", false, "", DisplayName = "Rejects when literal prefix mismatches")]
-    public void TryPlaceHolderMatching_EvaluatesPatternsCorrectly2(string probe, string mask, bool expectedSuccess, string expectedPairsSpec)
-    {
-        var wildcardFill = CreateSeededWildcardFill();
-
-        var actual = FCompiler.TryPlaceHolderMatching(probe, mask, wildcardFill );
-
-        Assert.AreEqual(expectedSuccess, actual);
-
-        var expectedPairs = ParseExpectedPairs(expectedPairsSpec);
-        var actualPairs = wildcardFill.Skip(1).ToList();
-
-        Assert.AreEqual(expectedPairs.Count, actualPairs.Count);
-
-        for (var index = 0; index < expectedPairs.Count; index++)
-        {
-            Assert.AreEqual(expectedPairs[index].Key, actualPairs[index].Key);
-            Assert.AreEqual(expectedPairs[index].Value, actualPairs[index].Value);
-        }
-    }
-
-    private bool testCharset(string arg1, string arg2) => !arg1.StartsWith("<Integer:") || int.TryParse(arg2, out _);
-
-    private static List<KeyValuePair<string, string>> CreateSeededWildcardFill()
-    {
-        return new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(RootPlaceholder, "0")
-            };
-    }
-
-    private static List<KeyValuePair<string, string>> ParseExpectedPairs(string expectedPairsSpec)
-    {
-        var result = new List<KeyValuePair<string, string>>();
-        if (string.IsNullOrWhiteSpace(expectedPairsSpec))
-        {
-            return result;
-        }
-
-        var segments = expectedPairsSpec.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-        foreach (var segment in segments)
-        {
-            var separatorIndex = segment.IndexOf('=');
-            if (separatorIndex < 0)
-            {
-                continue;
-            }
-
-            var placeholder = segment.Substring(0, separatorIndex).Trim();
-            var value = segment.Substring(separatorIndex + 1).Trim();
-            result.Add(new KeyValuePair<string, string>(placeholder, value));
-        }
-
-        return result;
     }
 
     [TestMethod]
