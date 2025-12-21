@@ -85,7 +85,7 @@ public partial class DriveCompiler
 
     public DriveCompiler()
     {
-        foreach (var def in ParseDefBase)
+        foreach (var def in parseDefs)
         {
             if (!TextsPerToken.TryGetValue(def.Token, out _))
                 TextsPerToken.Add(def.Token, 0);
