@@ -57,6 +57,38 @@ public class DriveCompilerTests
     }
 
     [TestMethod]
+    [TestCategory("DriveCompiler")]
+    [DataRow("      ", EDriveToken.tt_Nop, new object[] { })]
+    [DataRow("      NOP", EDriveToken.tt_Nop, new object[] { (byte)1 })]
+    [DataRow("      DEFINE 5,\"Dies ist ein Test\"", EDriveToken.tt_Nop, new object[] { (byte)3, 5u })]
+    [DataRow("      GOTO 2", EDriveToken.tt_goto, new object[] { (byte)0, 2 })]
+    [DataRow("      CALL 2", EDriveToken.tt_goto, new object[] { (byte)1, 2 })]
+    [DataRow("      ON 1", EDriveToken.tte_goto2, new object[] { (byte)0, 0, 0, 1 })]
+    [DataRow("  END", EDriveToken.tt_end, new object[] { (byte)1 })]
+    [DataRow("  STOP", EDriveToken.tt_end, new object[] { (byte)2 })]
+    [DataRow("  PAUSE", EDriveToken.tt_end, new object[] { (byte)3 })]
+    public void DeCompile1Nop(string? line, EDriveToken token, object[] oExp)
+    {
+        // Arrange
+        var LMessage = new List<string>();
+        FCompiler.TokenCode = [new DriveCommand(token, oExp)];
+        FCompiler.Labels = [];
+        FCompiler.Variables = [];
+        FCompiler.Messages = ["","","","","", "Dies ist ein Test"];
+        FCompiler.Log = LMessage;
+        // Act
+        FCompiler.Decompile();
+        // Assert
+
+        CollectionAssert.AreEqual(new List<string>() , LMessage, "Log-Entry");
+        Assert.HasCount(0, FCompiler.Variables, "Var Count");
+        Assert.HasCount(0, FCompiler.Labels, "Labels Count");
+        Assert.HasCount(1, FCompiler.SourceCode, "Source Count");
+        Assert.AreEqual(line, FCompiler.SourceCode.First(), "Source[0]");
+    }
+
+
+    [TestMethod]
     [DataRow("DECLARE Testpunkt.", EDriveToken.tt_Nop, new object[] { (byte)2,0,0, 32769d }, "TESTPUNKT.", 32769)]
     [DataRow("DECLARE TestReal%", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 16385d }, "TESTREAL%", 16385)]
     [DataRow("DECLARE TestBool&", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 1d }, "TESTBOOL&", 1)]
@@ -531,7 +563,7 @@ public class DriveCompilerTests
 
     private string InvokeBuildCommand(object? parseTree, IList<IDriveCommand> tokenBuffer, int level, int pc, out string errorText)
     {
-        var method = typeof(DriveCompiler).GetMethod("BuildCommand", BindingFlags.Instance | BindingFlags.NonPublic)
+        var method = typeof(DriveCompiler).GetMethod("BuildCommand", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             ?? throw new InvalidOperationException("BuildCommand method not found.");
 
         var arguments = new object?[] { parseTree, tokenBuffer, level, pc, string.Empty };
