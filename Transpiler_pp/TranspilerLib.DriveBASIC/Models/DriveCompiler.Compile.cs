@@ -1,123 +1,146 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using TranspilerLib.DriveBASIC.Data;
 using TranspilerLib.DriveBASIC.Data.Interfaces;
-using static TranspilerLib.DriveBASIC.Data.ParseDefinitions;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
 public partial class DriveCompiler
 {
-    public void AppendLog(int lineNr, string text)
+
+    public bool Compile()=>new Compiler(this).Compile();
+
+    public partial class Compiler
     {
-        Log.Add(lineNr >= 0 ? $"Line {lineNr}: {text}" : text);
-    }
+        private readonly Dictionary<string, CompilerVariable> _variablesByName = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, CompilerLabel> _labelsByName = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, int> _messageNumbers = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<EVarType, int> _varMax = new();
+        private int _maxMessage;
 
-    private void ResetStateForCompile()
-    {
-        _variablesByName.Clear();
-        _labelsByName.Clear();
-        _messageNumbers.Clear();
-        foreach (EVarType type in Enum.GetValues(typeof(EVarType)))
-        {
-            _varMax[type] = 0;
-        }
-        _maxMessage = 0;
-    }
+        private DriveCompiler _parent;
 
-    public bool Compile()
-    {
-        if (SourceCode == null)
+        public Compiler(DriveCompiler parent)
         {
-            AppendLog(-1, StrKeineQuelleIstZw);
-            return false;
-        }
+            _parent = parent;
 
-        if (TokenCode == null)
-        {
-            AppendLog(-1, StrLeererTokenCodeOK);
-        }
-
-        if (Labels == null)
-        {
-            AppendLog(-1, StrLeeresLabelArray);
-            Labels = new List<ILabel>();
-        }
-        else
-        {
-            Labels.Clear();
-        }
-
-        if (Messages == null)
-        {
-            AppendLog(-1, StrLeeresMessageArray);
-            Messages = new List<string>();
-        }
-        else
-        {
-            Messages.Clear();
-        }
-
-        if (Variables == null)
-        {
-            AppendLog(-1, StrKeinSystemVariab);
-            Variables = new List<IVariable>();
-        }
-        else
-        {
-            Variables.Clear();
-        }
-
-        ResetStateForCompile();
-        TokenCode = [];
-        var parseResults = new List<IReadOnlyList<KeyValuePair<string, object?>>?>();
-
-        int lineIndex = 0;
-        foreach (var line in SourceCode)
-        {
-            parseResults.Add(ParseLine(CCommand, line, out int parseError));
-            if (parseError > 0 && string.IsNullOrWhiteSpace(line))
+            foreach (EVarType type in Enum.GetValues(typeof(EVarType)))
             {
-                AppendLog(lineIndex, StrFehlerBeimParsen + $"{parseError}");
+                _varMax[type] = 0;
             }
-            lineIndex++;
-        }
 
-        lineIndex = 0;
-        foreach (var parseTree in parseResults)
+            InitCompilerEmit(ParseDefinitions.ReferencingToken);
+
+        }
+        public void AppendLog(int lineNr, string text)
         {
-            switch (BuildCommand(parseTree, TokenCode, 0, lineIndex++, out string errorText))
-            {
-                case BCErr.BC_ErrExpression:
-                    AppendLog(lineIndex, StrFehlerBeiAusdruck + errorText);
-                    break;
-                case BCErr.BC_SyntaxError:
-                    AppendLog(lineIndex, StrSyntaxError + errorText);
-                    break;
-                case BCErr.BC_UnknownPlaceHolder:
-                    AppendLog(lineIndex, StrUnbekannterPlatzhal + errorText);
-                    break;
-                case BCErr.BC_Exception:
-                    AppendLog(lineIndex, StrFehlerInBuildComm);
-                    break;
-                case BCErr.BC_CharsetErr:
-                    AppendLog(lineIndex, StrUngueltigesZeichenF + errorText);
-                    break;
-                case BCErr.BC_FaultyRef:
-                    AppendLog(lineIndex, StrReferenzNichtGefun);
-                    break;
-            }
+            _parent.Log.Add(lineNr >= 0 ? $"Line {lineNr}: {text}" : text);
         }
 
-        lineIndex = 0;
-        foreach (var parseTree in parseResults)
+        private void ResetStateForCompile()
         {
-            if (TokenCode[lineIndex++].Token is EDriveToken.tt_goto)
+            _variablesByName.Clear();
+            _labelsByName.Clear();
+            _messageNumbers.Clear();
+            foreach (EVarType type in Enum.GetValues(typeof(EVarType)))
             {
-                BuildCommand(parseTree, TokenCode, 0, lineIndex - 1, out _);
+                _varMax[type] = 0;
             }
+            _maxMessage = 0;
         }
 
-        return true;
+        public bool Compile()
+        {
+            if (_parent.SourceCode == null)
+            {
+                AppendLog(-1, StrKeineQuelleIstZw);
+                return false;
+            }
+
+            if (_parent.TokenCode == null)
+            {
+                AppendLog(-1, StrLeererTokenCodeOK);
+            }
+
+            if (_parent.Labels == null)
+            {
+                AppendLog(-1, StrLeeresLabelArray);
+                _parent.Labels = new List<ILabel>();
+            }
+            else
+            {
+                _parent.Labels.Clear();
+            }
+
+            if (_parent.Messages == null)
+            {
+                AppendLog(-1, StrLeeresMessageArray);
+                _parent.Messages = new List<string>();
+            }
+            else
+            {
+                //??
+                _parent.Messages.Clear();
+            }
+
+            if (_parent.Variables == null)
+            {
+                AppendLog(-1, StrKeinSystemVariab);
+                _parent.Variables = new List<IVariable>();
+            }
+
+            ResetStateForCompile();
+            _parent.TokenCode = [];
+            var parseResults = new List<IReadOnlyList<KeyValuePair<string, object?>>?>();
+
+            int lineIndex = 0;
+            foreach (var line in _parent.SourceCode)
+            {
+                parseResults.Add(ParseLine(_parent.CCommand, line, out int parseError));
+                if (parseError > 0 && string.IsNullOrWhiteSpace(line))
+                {
+                    AppendLog(lineIndex, StrFehlerBeimParsen + $"{parseError}");
+                }
+                lineIndex++;
+            }
+
+            lineIndex = 0;
+            foreach (var parseTree in parseResults)
+            {
+                switch (BuildCommand(parseTree, _parent.TokenCode, 0, lineIndex++, out string errorText))
+                {
+                    case BCErr.BC_ErrExpression:
+                        AppendLog(lineIndex, StrFehlerBeiAusdruck + errorText);
+                        break;
+                    case BCErr.BC_SyntaxError:
+                        AppendLog(lineIndex, StrSyntaxError + errorText);
+                        break;
+                    case BCErr.BC_UnknownPlaceHolder:
+                        AppendLog(lineIndex, StrUnbekannterPlatzhal + errorText);
+                        break;
+                    case BCErr.BC_Exception:
+                        AppendLog(lineIndex, StrFehlerInBuildComm);
+                        break;
+                    case BCErr.BC_CharsetErr:
+                        AppendLog(lineIndex, StrUngueltigesZeichenF + errorText);
+                        break;
+                    case BCErr.BC_FaultyRef:
+                        AppendLog(lineIndex, StrReferenzNichtGefun);
+                        break;
+                }
+            }
+
+            lineIndex = 0;
+            foreach (var parseTree in parseResults)
+            {
+                if (_parent.TokenCode[lineIndex++].Token is EDriveToken.tt_goto)
+                {
+                    BuildCommand(parseTree, _parent.TokenCode, 0, lineIndex - 1, out _);
+                }
+            }
+
+            return true;
+        }
     }
 }
