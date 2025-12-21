@@ -72,6 +72,12 @@ public partial class DriveCompiler
 
     public DriveCompiler()
     {
+        parseDefs = ParseDefBase
+            .Select(def => DefinitionUsesExpression(def.text)
+                ? def with { SubToken = def.SubToken * 64 }
+                : def)
+            .ToArray();
+
         foreach (var def in parseDefs)
         {
             if (!TextsPerToken.TryGetValue(def.Token, out _))
