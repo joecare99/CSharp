@@ -41,20 +41,7 @@ public partial class DriveCompiler
     Dictionary<EDriveToken, int> Sindex = [];
     char[] replace = ['§', 'm', '¹', '²', '³', 'f', '1', '2', '3', 'x', ' ', 't', 'a', '¹', '²', '³'];
 
-    private static readonly HashSet<EDriveToken> TteTokens = new()
-    {
-        EDriveToken.tte_goto2,
-        EDriveToken.tte_if,
-        EDriveToken.tte_while,
-        EDriveToken.tte_let,
-        EDriveToken.tte_wait,
-        EDriveToken.tte_Msg2,
-        EDriveToken.tte_funct2,
-        EDriveToken.tte_sync2,
-        EDriveToken.tte_drive,
-        EDriveToken.tte_drive_async,
-        EDriveToken.tte_drive_via
-    };
+    private readonly HashSet<EDriveToken> _expressionTokens = new();
 
     private static readonly Dictionary<char, int> AxisMap = new()
     {
@@ -104,6 +91,24 @@ public partial class DriveCompiler
             _varMax[type] = 0;
         }
 
+        InitializeExpressionTokens();
         BuildExpressionNormal(CExpression, expressionNormals.Add);
     }
+
+    private void InitializeExpressionTokens()
+    {
+        _expressionTokens.Clear();
+        foreach (var def in parseDefs)
+        {
+            if (DefinitionUsesExpression(def.text))
+            {
+                _expressionTokens.Add(def.Token);
+            }
+        }
+    }
+
+    private static bool DefinitionUsesExpression(string? text)
+        => !string.IsNullOrEmpty(text) && text.IndexOf(CExpression, StringComparison.OrdinalIgnoreCase) >= 0;
+
+    private bool IsExpressionToken(EDriveToken token) => _expressionTokens.Contains(token);
 }
