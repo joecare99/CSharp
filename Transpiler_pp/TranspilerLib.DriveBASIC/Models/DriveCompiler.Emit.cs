@@ -8,7 +8,7 @@ using TranspilerLib.DriveBASIC.Data.Interfaces;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
-public partial class DriveCompiler
+public partial class DriveBasic
 {
     public Compiler.BCErr BuildCommand(IReadOnlyList<KeyValuePair<string, object?>>? parseTree, IList<IDriveCommand> tokenBuffer, int level, int pc, out string errorText)=>
         new Compiler(this).BuildCommand(parseTree, tokenBuffer, level, pc, out errorText);

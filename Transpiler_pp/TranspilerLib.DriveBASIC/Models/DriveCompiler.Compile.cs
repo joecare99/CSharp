@@ -6,7 +6,7 @@ using TranspilerLib.DriveBASIC.Data.Interfaces;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
-public partial class DriveCompiler
+public partial class DriveBasic
 {
 
     public bool Compile()=>new Compiler(this).Compile();
@@ -19,9 +19,9 @@ public partial class DriveCompiler
         private readonly Dictionary<EVarType, int> _varMax = new();
         private int _maxMessage;
 
-        private DriveCompiler _parent;
+        private DriveBasic _parent;
 
-        public Compiler(DriveCompiler parent)
+        public Compiler(DriveBasic parent)
         {
             _parent = parent;
 

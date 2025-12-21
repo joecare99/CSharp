@@ -167,5 +167,5 @@ public class ParseDefinitions
      (EDriveToken.tte_while,-1,EDriveToken.tt_end,6,false)
         ];
 
-    // Removed obsolete static TteTokens set now that DriveCompiler builds it dynamically
+    // Removed obsolete static TteTokens set now that DriveBasic builds it dynamically
  }

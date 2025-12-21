@@ -9,12 +9,12 @@ using static TranspilerLib.DriveBASIC.Data.ParseDefinitions;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
-public partial class DriveCompiler
+public partial class DriveBasic
 {
     public void Decompile()
       => new Decompiler(this).Decompile();
 
-    public class Decompiler(DriveCompiler parent)
+    public class Decompiler(DriveBasic parent)
     {
         public void Decompile()
         {

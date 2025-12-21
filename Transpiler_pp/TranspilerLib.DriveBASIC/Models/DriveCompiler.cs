@@ -9,7 +9,7 @@ using TranspilerLib.DriveBASIC.Data.Interfaces;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
-public partial class DriveCompiler
+public partial class DriveBasic
 {
     //  resourcestring
     const string
@@ -69,7 +69,7 @@ public partial class DriveCompiler
     private const int DimensionBase = 0xC000;
     private const int MaxRecursionDepth = 15;
 
-    public DriveCompiler()
+    public DriveBasic()
     {
         parseDefs = ParseDefinitions.ParseDefBase
             .Select(def => DefinitionUsesExpression(def.text)

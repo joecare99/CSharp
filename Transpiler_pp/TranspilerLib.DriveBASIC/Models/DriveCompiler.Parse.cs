@@ -5,7 +5,7 @@ using TranspilerLib.DriveBASIC.Data;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
-public partial class DriveCompiler
+public partial class DriveBasic
 {
     public IReadOnlyList<KeyValuePair<string, object?>>? ParseLine(string placeholder, string line, out int errp)=>
         new Compiler(this).ParseLine(placeholder,line, out errp);
