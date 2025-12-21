@@ -1,10 +1,13 @@
 ﻿using TranspilerLib.DriveBASIC.Data;
-using static TranspilerLib.DriveBASIC.Data.ParseDefinitions;
 
 namespace TranspilerLib.DriveBASIC.Models;
 
 public sealed class CommandBuilderState
 {
+    public CommandBuilderState()
+    {
+    }
+
     public bool HasToken { get; private set; }
     public EDriveToken Token { get; private set; }
     public int SubToken { get; private set; }
@@ -16,7 +19,7 @@ public sealed class CommandBuilderState
     {
         HasToken = true;
         Token = token;
-        SubToken = TteTokens.Contains(token) ? subToken * 64 : subToken;
+        SubToken = subToken;
         Param1 = 0;
         Param2 = 0;
         Param3 = 0d;

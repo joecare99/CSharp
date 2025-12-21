@@ -167,18 +167,5 @@ public class ParseDefinitions
      (EDriveToken.tte_while,-1,EDriveToken.tt_end,6,false)
         ];
 
-    public static readonly HashSet<EDriveToken> TteTokens = new()
-    {
-        EDriveToken.tte_let,
-        EDriveToken.tte_goto2,
-        EDriveToken.tte_if,
-        EDriveToken.tte_while,
-        EDriveToken.tte_wait,
-        EDriveToken.tte_Msg2,
-        EDriveToken.tte_funct2,
-        EDriveToken.tte_sync2,
-        EDriveToken.tte_drive,
-        EDriveToken.tte_drive_via,
-        EDriveToken.tte_drive_async,
-    };
-}
+    // Removed obsolete static TteTokens set now that DriveCompiler builds it dynamically
+ }

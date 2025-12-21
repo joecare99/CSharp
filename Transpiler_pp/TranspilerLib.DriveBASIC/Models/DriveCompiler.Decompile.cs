@@ -58,7 +58,7 @@ public partial class DriveCompiler
             if (cmd.Token != definition.Token)
                 continue;
 
-            if (TteTokens.Contains(cmd.Token))
+            if (IsExpressionToken(cmd.Token))
             {
                 if (cmd.SubToken / 64 == definition.SubToken)
                 {

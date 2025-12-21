@@ -480,8 +480,8 @@ public partial class DriveCompiler
         return BCErr.BC_OK;
     }
 
-    private static int GetComparableSubToken(EDriveToken token, int subToken)
-        => TteTokens.Contains(token) ? subToken / 64 : subToken;
+    private int GetComparableSubToken(EDriveToken token, int subToken)
+        => IsExpressionToken(token) ? subToken / 64 : subToken;
 
     private int FindReferenceTarget(IList<IDriveCommand> tokenBuffer, int startIndex, EDriveToken searchToken, int searchSubToken)
     {
