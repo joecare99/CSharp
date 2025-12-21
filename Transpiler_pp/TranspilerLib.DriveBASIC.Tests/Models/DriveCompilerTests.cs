@@ -19,13 +19,13 @@ namespace TranspilerLib.DriveBASIC.Models.Tests;
 public class DriveCompilerTests
 {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-    private DriveCompiler FCompiler;
+    private DriveBasic FCompiler;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
     [TestInitialize]
     public void TestInitialize()
     {
-        FCompiler = new DriveCompiler();
+        FCompiler = new DriveBasic();
     }
 
     [TestMethod]
@@ -67,7 +67,7 @@ public class DriveCompilerTests
     [DataRow("  END", EDriveToken.tt_end, new object[] { (byte)1 })]
     [DataRow("  STOP", EDriveToken.tt_end, new object[] { (byte)2 })]
     [DataRow("  PAUSE", EDriveToken.tt_end, new object[] { (byte)3 })]
-    public void DeCompile1Nop(string? line, EDriveToken token, object[] oExp)
+    public void Decompile1Nop(string? line, EDriveToken token, object[] oExp)
     {
         // Arrange
         var LMessage = new List<string>();
@@ -89,7 +89,7 @@ public class DriveCompilerTests
 
 
     [TestMethod]
-    [DataRow("DECLARE Testpunkt.", EDriveToken.tt_Nop, new object[] { (byte)2,0,0, 32769d }, "TESTPUNKT.", 32769)]
+    [DataRow("DECLARE Testpunkt.", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 32769d }, "TESTPUNKT.", 32769)]
     [DataRow("DECLARE TestReal%", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 16385d }, "TESTREAL%", 16385)]
     [DataRow("DECLARE TestBool&", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 1d }, "TESTBOOL&", 1)]
     [DataRow("onc TestInt%", EDriveToken.tte_goto2, new object[] { (byte)96, 0, 0, 16385d }, "TESTINT%", 16385)]
@@ -111,7 +111,29 @@ public class DriveCompilerTests
     }
 
     [TestMethod]
+    [DataRow("      DECLARE TESTPUNKT.", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 32769d }, "TESTPUNKT.", 32769)]
+    [DataRow("      DECLARE TESTREAL%", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 16385d }, "TESTREAL%", 16385)]
+    [DataRow("      DECLARE TESTBOOL&", EDriveToken.tt_Nop, new object[] { (byte)2, 0, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("      ONC TESTINT%", EDriveToken.tte_goto2, new object[] { (byte)96, 0, 0, 16385d }, "TESTINT%", 16385)]
+    public void Decompile2SL_Declare(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
+    {
+        // Arrange
+        var LMessage = new List<string>();
+        FCompiler.TokenCode = [new DriveCommand(token, oExp)];
+        FCompiler.Labels = [];
+        FCompiler.Variables = [new CompilerVariable() {Name = sExp,Index=iExp }];
+        FCompiler.Log = LMessage;
+        // Act
+        FCompiler.Decompile();
+        // Assert
+        CollectionAssert.AreEqual(new List<string>() , LMessage, "Log-Entry");
+        Assert.HasCount(1, FCompiler.SourceCode, "Source Count");
+        Assert.AreEqual(line, FCompiler.SourceCode.First(), "Source[0]");
+    }
+
+    [TestMethod]
     [DataRow("Let TestBool& := 1", EDriveToken.tte_let, new object[] { (byte)0, 1, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("TestBool& := 1", EDriveToken.tte_let, new object[] { (byte)64, 1, 0, 1d }, "TESTBOOL&", 1)]
     [DataRow("Let TestReal% := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 16385, 0, 1.1 }, "TESTREAL%", 16385)]
     [DataRow("Let TestPoint. := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 32769, 0, 1.1 }, "TESTPOINT.", 32769)]
     [DataRow("Let TestPoint.z := 1", EDriveToken.tte_let, new object[] { (byte)0, 49160, 0, 1d }, "TESTPOINT.", 32769)]
@@ -131,6 +153,32 @@ public class DriveCompilerTests
         Assert.HasCount(1, FCompiler.TokenCode, "Tokens Count");
         Assert.AreEqual(new DriveCommand(token, oExp), FCompiler.TokenCode[0], "Token[0]");
     }
+
+    [TestMethod]
+    [DataRow("      LET TESTBOOL& := 1", EDriveToken.tte_let, new object[] { (byte)0, 1, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("      TESTBOOL& := 1", EDriveToken.tte_let, new object[] { (byte)64, 1, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("      LET TESTREAL% := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 16385, 0, 1.1 }, "TESTREAL%", 16385)]
+    [DataRow("      TESTREAL% := 1.1", EDriveToken.tte_let, new object[] { (byte)64, 16385, 0, 1.1 }, "TESTREAL%", 16385)]
+    [DataRow("      LET TESTPOINT. := 1.1", EDriveToken.tte_let, new object[] { (byte)0, 32769, 0, 1.1 }, "TESTPOINT.", 32769)]
+    [DataRow("      TESTPOINT. := 1.1", EDriveToken.tte_let, new object[] { (byte)64, 32769, 0, 1.1 }, "TESTPOINT.", 32769)]
+    [DataRow("      LET TESTPOINT.z := 1", EDriveToken.tte_let, new object[] { (byte)0, 49160, 0, 1d }, "TESTPOINT.", 32769)]
+    [DataRow("      TESTPOINT.z := 1", EDriveToken.tte_let, new object[] { (byte)64, 49160, 0, 1d }, "TESTPOINT.", 32769)]
+    public void Decompile3LetConst(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
+    {
+        // Arrange
+        var LMessage = new List<string>();
+        FCompiler.TokenCode = [new DriveCommand(token, oExp)];
+        FCompiler.Labels = [];
+        FCompiler.Variables = [new CompilerVariable() { Name = sExp, Index = iExp }];
+        FCompiler.Log = LMessage;
+        // Act
+        FCompiler.Decompile();
+        // Assert
+        CollectionAssert.AreEqual(new List<string>(), LMessage, "Log-Entry");
+        Assert.HasCount(1, FCompiler.SourceCode, "Source Count");
+        Assert.AreEqual(line, FCompiler.SourceCode.First(), "Source[0]");
+    }
+
 
     [TestMethod]
     [DataRow("Let TestBool& := Active&", EDriveToken.tte_let, new object[] { (byte)32, 1, 0, 2d }, "TESTBOOL&", 1)]
@@ -247,6 +295,53 @@ public class DriveCompilerTests
         Assert.HasCount(token.Length, FCompiler.TokenCode, "Tokens Count");
         for (int i = 0; i < token.Length; i++)
             Assert.AreEqual(new DriveCommand(token[i], oExp[i] as object[]), FCompiler.TokenCode[i], $"Token[{i}]");
+    }
+
+    [TestMethod]
+    [DataRow("Drive TestBool&", EDriveToken.tte_drive, new object[] { (byte)32, 0, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("Drive_x TestBool&", EDriveToken.tte_drive, new object[] { (byte)96, 1, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("Drive_rel TestReal%", EDriveToken.tte_drive, new object[] { (byte)160, 0, 0, 16385 }, "TESTREAL%", 16385)]
+    [DataRow("Drive_rel_y TestReal%", EDriveToken.tte_drive, new object[] { (byte)224, 2, 0, 16385 }, "TESTREAL%", 16385)]
+    [DataRow("Drivevia TestPoint.", EDriveToken.tte_drive_via, new object[] { (byte)32, 0, 0, 32769 }, "TESTPOINT.", 32769)]
+    [DataRow("Drivevia_z TestPoint.z", EDriveToken.tte_drive_via, new object[] { (byte)96, 3, 0, 49160 }, "TESTPOINT.", 32769)]
+    public void Compile7DriveVar(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
+    {
+        // Arrange
+        var LMessage = new List<string>();
+        FCompiler.SourceCode = [line];
+        FCompiler.Log = LMessage;
+        // Act
+        bool LResult = FCompiler.Compile();
+        // Assert
+        CollectionAssert.AreEqual(new List<string>() { "Leerer TokenCode (OK)", "Leeres Label-Array (OK)", "Leeres Message-Array (OK)", "Kein (System-)Variablen-Array (OK)" }, LMessage, "Log-Entry");
+        Assert.HasCount(1, FCompiler.Variables, "Var Count");
+        Assert.AreEqual(sExp, FCompiler.Variables[0].Name, "Var[0].Name");
+        Assert.AreEqual(iExp, FCompiler.Variables[0].Index, "Var[0].Index");
+        Assert.HasCount(1, FCompiler.TokenCode, "Tokens Count");
+        Assert.AreEqual(new DriveCommand(token, oExp), FCompiler.TokenCode[0], "Token[0]");
+    }
+
+    [TestMethod]
+    [DataRow("      DRIVE TESTBOOL&", EDriveToken.tte_drive, new object[] { (byte)32, 0, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("      DRIVE_x TESTBOOL&", EDriveToken.tte_drive, new object[] { (byte)96, 1, 0, 1d }, "TESTBOOL&", 1)]
+    [DataRow("      DRIVE_REL TESTREAL%", EDriveToken.tte_drive, new object[] { (byte)160, 0, 0, 16385 }, "TESTREAL%", 16385)]
+    [DataRow("      DRIVE_REL_y TESTREAL%", EDriveToken.tte_drive, new object[] { (byte)224, 2, 0, 16385 }, "TESTREAL%", 16385)]
+    [DataRow("      DRIVEVIA TESTPOINT.", EDriveToken.tte_drive_via, new object[] { (byte)32, 0, 0, 32769 }, "TESTPOINT.", 32769)]
+    [DataRow("      DRIVEVIA_z TESTPOINT.z", EDriveToken.tte_drive_via, new object[] { (byte)96, 3, 0, 49160 }, "TESTPOINT.", 32769)]
+    public void Decompile7DriveVar(string line, EDriveToken token, object[] oExp, string sExp, int iExp)
+    {
+        // Arrange
+        var LMessage = new List<string>();
+        FCompiler.TokenCode = [new DriveCommand(token, oExp)];
+        FCompiler.Labels = [];
+        FCompiler.Variables = [new CompilerVariable() { Name = sExp, Index = iExp }];
+        FCompiler.Log = LMessage;
+        // Act
+        FCompiler.Decompile();
+        // Assert
+        CollectionAssert.AreEqual(new List<string>(), LMessage, "Log-Entry");
+        Assert.HasCount(1, FCompiler.SourceCode, "Source Count");
+        Assert.AreEqual(line, FCompiler.SourceCode.First(), "Source[0]");
     }
 
     [TestMethod]
@@ -563,7 +658,7 @@ public class DriveCompilerTests
 
     private string InvokeBuildCommand(object? parseTree, IList<IDriveCommand> tokenBuffer, int level, int pc, out string errorText)
     {
-        var method = typeof(DriveCompiler).GetMethod("BuildCommand", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+        var method = typeof(DriveBasic).GetMethod("BuildCommand", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             ?? throw new InvalidOperationException("BuildCommand method not found.");
 
         var arguments = new object?[] { parseTree, tokenBuffer, level, pc, string.Empty };
@@ -573,7 +668,7 @@ public class DriveCompilerTests
     }
 
 // PSEUDOCODE
-// - Prepare helper to invoke private DriveCompiler.GetAxisName via reflection.
+// - Prepare helper to invoke private DriveBasic.GetAxisName via reflection.
 //   * Resolve MethodInfo once per call, ensure non-null, invoke with axis argument, ensure string result.
 // - Test mapped axes:
 //   * Use DataRow to cover several axis numbers (1, 2, 3, 4).
@@ -604,7 +699,7 @@ public class DriveCompilerTests
 
     private string InvokeGetAxisName(int axis)
     {
-        var method = typeof(DriveCompiler).GetMethod("GetAxisName", BindingFlags.Instance | BindingFlags.NonPublic)
+        var method = typeof(DriveBasic).GetMethod("GetAxisName", BindingFlags.Instance | BindingFlags.NonPublic)
             ?? throw new InvalidOperationException("GetAxisName method not found.");
 
         var result = method.Invoke(FCompiler, new object[] { axis }) as string;
