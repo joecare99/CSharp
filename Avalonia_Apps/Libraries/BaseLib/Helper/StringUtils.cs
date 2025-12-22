@@ -14,10 +14,11 @@
 // including quoting/unquoting, splitting, formatting, validation, and substring operations.
 // </summary>
 // ***********************************************************************
-using System.Collections.Generic;
-using System;
-using System.Linq;
 using BaseLib.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace BaseLib.Helper;
 
@@ -683,4 +684,172 @@ public static class StringUtils
                 asKont[i + offs] = asData[i];
         return asKont;
     }
+
+    /// <summary>
+    /// Finds the index of the next placeholder opening bracket ('&lt;') in the specified line that is followed by an alphabetical character.
+    /// </summary>
+    /// <param name="line">The source text that may contain placeholder tokens.</param>
+    /// <param name="offset">The starting position in the line from which the search begins.</param>
+    /// <returns>
+    /// The zero-based index of the next placeholder start if one exists; otherwise, the length of the line plus one.
+    /// </returns>
+    public static int GetNextPlaceHolder(this string line, int offset=0)
+    {
+        int result = line.Length + 1;
+        int i = offset;
+        while (i < line.Length)
+        {
+            var p = line.IndexOf('<', i);
+            if (p > -1 && p < line.Length - 2)
+            {
+                if (Alpha.Contains(line[p + 1]))
+                {
+                    result = p;
+                    i = line.Length;
+                }
+                else
+                    i = p + 1;
+            }
+            else
+                i = line.Length;
+        }
+        return result;
+    }
+
+
+    /// <summary>
+    /// Attempts to match a probe string against a mask containing named placeholders while collecting the values that fill those placeholders.
+    /// </summary>
+    /// <param name="Probe">The input text that should conform to the placeholder mask.</param>
+    /// <param name="Mask">The pattern that may contain literal text and placeholder tokens of the form "&lt;Name&gt;".</param>
+    /// <param name="WilldCardFill">A list that receives the resolved placeholder/value pairs when the match succeeds.</param>
+    /// <param name="checkPlaceholderCharset">
+    /// An optional callback that can validate whether a candidate value is acceptable for a given placeholder token; returning <c>false</c> rejects the candidate.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the probe string can be fully matched to the mask with consistent placeholder assignments; otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// The algorithm walks through the mask, matching literal segments case-insensitively and treating placeholders as flexible sections that can absorb
+    /// varying amounts of text. When placeholders are bounded by literal anchors, the method tests each possible split until a consistent assignment is found.
+    /// </para>
+    /// <para>
+    /// Any assignments that fail deeper in the recursion are rolled back to ensure <paramref name="WilldCardFill"/> only contains results from successful matches.
+    /// </para>
+    /// </remarks>
+    public static bool TryPlaceHolderMatching(string Probe, string Mask, List<KeyValuePair<string, string>> WilldCardFill, Func<string, string, bool>? checkPlaceholderCharset = null)
+    {
+        if (WilldCardFill == null)
+            throw new ArgumentNullException(nameof(WilldCardFill));
+
+        Probe ??= string.Empty;
+        Mask ??= string.Empty;
+
+        return Match(Mask, Probe);
+
+
+        bool Match(string currentMask, string currentProbe)
+        {
+            var placeholderIndex = FindPlaceholderIndex(currentMask);
+            if (placeholderIndex >= currentMask.Length)
+                return currentMask.Equals(currentProbe, StringComparison.OrdinalIgnoreCase);
+
+            var literalPrefix = currentMask.Substring(0, placeholderIndex);
+            if (!currentProbe.StartsWith(literalPrefix, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            var placeholderEnd = currentMask.IndexOf('>', placeholderIndex);
+            if (placeholderEnd < 0)
+                return false;
+
+            var placeholderToken = currentMask.Substring(placeholderIndex, placeholderEnd - placeholderIndex + 1);
+            var suffix = currentMask.Substring(placeholderEnd + 1);
+            var probeRemainder = currentProbe.Substring(literalPrefix.Length);
+
+            if (suffix.Length == 0)
+                return TryAssignCandidate(probeRemainder, placeholderToken, suffix, string.Empty);
+
+            return TryMatchWithAnchors(placeholderToken, suffix, probeRemainder);
+        }
+
+        bool TryMatchWithAnchors(string placeholderToken, string suffix, string probeRemainder)
+        {
+            var nextPlaceholder = FindPlaceholderIndex(suffix);
+            var literalAnchor = nextPlaceholder >= suffix.Length ? suffix : suffix.Substring(0, nextPlaceholder);
+
+            if (!string.IsNullOrEmpty(literalAnchor))
+            {
+                var searchIndex = 0;
+                while (true)
+                {
+                    var anchorPos = probeRemainder.IndexOf(literalAnchor, searchIndex, StringComparison.OrdinalIgnoreCase);
+                    if (anchorPos < 0)
+                        break;
+
+                    if (TryAssignCandidate(probeRemainder.Substring(0, anchorPos), placeholderToken, suffix, probeRemainder.Substring(anchorPos)))
+                        return true;
+
+                    searchIndex = anchorPos + 1;
+                }
+
+                return false;
+            }
+
+            for (var split = 0; split <= probeRemainder.Length; split++)
+            {
+                if (TryAssignCandidate(probeRemainder.Substring(0, split), placeholderToken, suffix, probeRemainder.Substring(split)))
+                    return true;
+            }
+
+            return false;
+        }
+
+        bool TryAssignCandidate(string value, string placeholderToken, string suffix, string remainingProbe)
+        {
+            var trimmed = value.Trim();
+            if (checkPlaceholderCharset?.Invoke(placeholderToken, trimmed) == false)
+                return false;
+
+            WilldCardFill.Add(new KeyValuePair<string, string>(placeholderToken, trimmed));
+            if (Match(suffix, remainingProbe))
+                return true;
+
+            WilldCardFill.RemoveAt(WilldCardFill.Count - 1);
+            return false;
+        }
+
+        int FindPlaceholderIndex(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+                return pattern.Length;
+
+            var next = pattern.GetNextPlaceHolder();
+            return next >= pattern.Length ? pattern.Length : next;
+        }
+    }
+
+    public static string MTSpaceTrim(this string MT)
+    {
+        IList<char> result = [];
+        char _last = ' ';
+        for (var I = 0; I < MT.Length; I++)
+        {
+            if (MT[I] == ' ')
+            {
+                if (I == 0 || I == MT.Length - 1 || _last == ' ')
+                    continue;
+
+                if ((AlphaNumeric.Contains(_last) == AlphaNumeric.Contains(MT[I + 1]) && MT[I + 1] != ' ')
+                   || (_last is '>' or '<')
+                   || (MT[I + 1] is '>' or '<' or ':'))
+                    result.Add(_last = MT[I]);
+            }
+            else
+                result.Add(_last = MT[I]);
+        }
+        return string.Join("", result);
+    }
+
+
 }
