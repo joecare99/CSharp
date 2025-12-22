@@ -685,10 +685,18 @@ public static class StringUtils
         return asKont;
     }
 
-    public static int GetNextPlaceHolder(int v, string line)
+    /// <summary>
+    /// Finds the index of the next placeholder opening bracket ('&lt;') in the specified line that is followed by an alphabetical character.
+    /// </summary>
+    /// <param name="line">The source text that may contain placeholder tokens.</param>
+    /// <param name="offset">The starting position in the line from which the search begins.</param>
+    /// <returns>
+    /// The zero-based index of the next placeholder start if one exists; otherwise, the length of the line plus one.
+    /// </returns>
+    public static int GetNextPlaceHolder(this string line, int offset=0)
     {
         int result = line.Length + 1;
-        int i = v;
+        int i = offset;
         while (i < line.Length)
         {
             var p = line.IndexOf('<', i);
@@ -709,6 +717,27 @@ public static class StringUtils
     }
 
 
+    /// <summary>
+    /// Attempts to match a probe string against a mask containing named placeholders while collecting the values that fill those placeholders.
+    /// </summary>
+    /// <param name="Probe">The input text that should conform to the placeholder mask.</param>
+    /// <param name="Mask">The pattern that may contain literal text and placeholder tokens of the form "&lt;Name&gt;".</param>
+    /// <param name="WilldCardFill">A list that receives the resolved placeholder/value pairs when the match succeeds.</param>
+    /// <param name="checkPlaceholderCharset">
+    /// An optional callback that can validate whether a candidate value is acceptable for a given placeholder token; returning <c>false</c> rejects the candidate.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the probe string can be fully matched to the mask with consistent placeholder assignments; otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// The algorithm walks through the mask, matching literal segments case-insensitively and treating placeholders as flexible sections that can absorb
+    /// varying amounts of text. When placeholders are bounded by literal anchors, the method tests each possible split until a consistent assignment is found.
+    /// </para>
+    /// <para>
+    /// Any assignments that fail deeper in the recursion are rolled back to ensure <paramref name="WilldCardFill"/> only contains results from successful matches.
+    /// </para>
+    /// </remarks>
     public static bool TryPlaceHolderMatching(string Probe, string Mask, List<KeyValuePair<string, string>> WilldCardFill, Func<string, string, bool>? checkPlaceholderCharset = null)
     {
         if (WilldCardFill == null)
@@ -795,9 +824,32 @@ public static class StringUtils
             if (string.IsNullOrEmpty(pattern))
                 return pattern.Length;
 
-            var next = GetNextPlaceHolder(0, pattern);
+            var next = pattern.GetNextPlaceHolder();
             return next >= pattern.Length ? pattern.Length : next;
         }
     }
+
+    public static string MTSpaceTrim(this string MT)
+    {
+        IList<char> result = [];
+        char _last = ' ';
+        for (var I = 0; I < MT.Length; I++)
+        {
+            if (MT[I] == ' ')
+            {
+                if (I == 0 || I == MT.Length - 1 || _last == ' ')
+                    continue;
+
+                if ((AlphaNumeric.Contains(_last) == AlphaNumeric.Contains(MT[I + 1]) && MT[I + 1] != ' ')
+                   || (_last is '>' or '<')
+                   || (MT[I + 1] is '>' or '<' or ':'))
+                    result.Add(_last = MT[I]);
+            }
+            else
+                result.Add(_last = MT[I]);
+        }
+        return string.Join("", result);
+    }
+
 
 }

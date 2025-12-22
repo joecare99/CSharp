@@ -419,6 +419,41 @@ public class StringUtilsTests
         }
     }
 
+    [TestMethod]
+    [DataRow("   ", "")]
+    [DataRow("  Both  ", "Both")]
+    [DataRow("  Leading", "Leading")]
+    [DataRow("", "")]
+    [DataRow("< NoIdentifyer >", "< NoIdentifyer >")] // Leerzeichen innerhalb von <> werden entfernt, wenn sie am Rand stehen
+    [DataRow("<Identifyer>", "<Identifyer>")]
+    [DataRow("1 + 2 * 3", "1+2*3")]
+    [DataRow("A + B", "A+B")]
+    [DataRow("A  +  B", "A+B")]
+    [DataRow("IF A > B THEN", "IF A > B THEN")]
+    [DataRow("IF A < B THEN", "IF A < B THEN")]
+    [DataRow("VAR < 10", "VAR < 10")]
+    [DataRow("VAR > 10", "VAR > 10")]
+    [DataRow("Label:", "Label:")]
+    [DataRow("NoLabel :", "NoLabel :")]
+    [DataRow("A := B", "A :=B")]
+    [DataRow("A : = B", "A : =B")]
+    [DataRow("A <Identifyer> B", "A <Identifyer> B")]
+    [DataRow("A < NoIdentifyer > B", "A < NoIdentifyer > B")]
+    [DataRow("String \"  Text  \"", "String\"Text\"")] // Anführungszeichen werden hier nicht gesondert behandelt, Logik entfernt Spaces basierend auf Nachbarn
+    [DataRow("Trailing  ", "Trailing")]
+    [DataRow("A . B", "A.B")]
+    [DataRow("Func ( A , B )", "Func(A,B)")]
+    [DataRow("A<B>C", "A<B>C")]
+    [DataRow("A < B > C", "A < B > C")]
+    [DataRow("Name : <Type>", "Name : <Type>")]
+    public void MTSpaceTrimTests(string input, string expected)
+    {
+        // Act
+        var result = input.MTSpaceTrim();
+
+        // Assert
+        Assert.AreEqual(expected, result, $"Input: '{input}'");
+    }
 
     private bool testCharset(string arg1, string arg2) => !arg1.StartsWith("<Integer:") || int.TryParse(arg2, out _);
 
