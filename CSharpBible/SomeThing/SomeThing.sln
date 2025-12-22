@@ -5,8 +5,11 @@ VisualStudioVersion = 18.0.11121.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
+		CONTRIBUTING.md = CONTRIBUTING.md
+		AsciiClock_org.cs = AsciiClock_org.cs
 		Pattern_Tutorial.props = Pattern_Tutorial.props
 		Pattern_Tutorial_net.props = Pattern_Tutorial_net.props
+		README.md = README.md
 		Solution.props = Solution.props
 		Solution_net.props = Solution_net.props
 	EndProjectSection
@@ -24,6 +27,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Something", "Something", "{1067FA2D-C07E-4E87-8E37-7559EA8B31C9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Quine", "Quine", "{248D1A78-625C-46E0-92D2-15193C335773}"
+	ProjectSection(SolutionItems) = preProject
+		AsciiClock_org.cs = AsciiClock_org.cs
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quine1", "Quine1\Quine1.csproj", "{B7779B0C-53AE-494F-B9C5-23C4C0E7ABF5}"
 EndProject
@@ -62,6 +68,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLib.Show", "..\Libraries\BaseLib.Show\BaseLib.Show.csproj", "{E0226FE6-4EFB-4545-B13C-C0DC7D9B4323}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quine4", "Quine4\Quine4.csproj", "{91F3D415-0111-47AE-BFDD-AF524FAE68CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfMaze", "SelfMaze\SelfMaze.csproj", "{6EB906BF-19F7-4F0E-8EF9-F683FB589421}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quine5", "Quine5\Quine5.csproj", "{118FDB6D-284F-6611-63EA-47D7FCA58528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +163,14 @@ Global
 		{91F3D415-0111-47AE-BFDD-AF524FAE68CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91F3D415-0111-47AE-BFDD-AF524FAE68CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91F3D415-0111-47AE-BFDD-AF524FAE68CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EB906BF-19F7-4F0E-8EF9-F683FB589421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EB906BF-19F7-4F0E-8EF9-F683FB589421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EB906BF-19F7-4F0E-8EF9-F683FB589421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EB906BF-19F7-4F0E-8EF9-F683FB589421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +197,8 @@ Global
 		{60B4EAB6-3CBF-B3F1-056F-725763740EE7} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 		{E0226FE6-4EFB-4545-B13C-C0DC7D9B4323} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 		{91F3D415-0111-47AE-BFDD-AF524FAE68CD} = {248D1A78-625C-46E0-92D2-15193C335773}
+		{6EB906BF-19F7-4F0E-8EF9-F683FB589421} = {1067FA2D-C07E-4E87-8E37-7559EA8B31C9}
+		{118FDB6D-284F-6611-63EA-47D7FCA58528} = {248D1A78-625C-46E0-92D2-15193C335773}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E467667-4F27-4777-8092-287F0B5D8ED5}
