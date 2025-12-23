@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.IO.Compression;
 
 // Run with: dotnet run AsciiClock.cs
 
@@ -22,43 +20,6 @@ static char PairToChar(bool top, bool bottom)
     if (top && !bottom) return '▀';
     if (!top && bottom) return '▄';
     return '█';
-}
-
-static byte[] PackFontLinesToBytes(IList<IList<string>> lines)
-{
-    // Wir packen jedes Zeichen zum Bit, vollkommen übertrieben linearisiert
-    var totalBits = GW * GH;
-    var byteCount = ((totalBits + 7) / 8);
-    var buffer = new byte[byteCount * lines.Count];
-
-    for (var cc = 0; cc < lines.Count; cc++)
-    {
-        var allCharsFlattened = lines[cc]
-            .SelectMany(line => line.PadRight(GW).Substring(0, GW))
-            .ToArray();
-
-
-        var bitIndex = 0;
-        foreach (var c in allCharsFlattened)
-        {
-            var byteIndex = bitIndex / 8;
-            var innerBitIndex = bitIndex % 8;
-
-            var isSet = c != ' ';
-            if (isSet)
-            {
-                buffer[byteIndex+cc*byteCount] |= (byte)(1 << innerBitIndex);
-            }
-            else
-            {
-                buffer[byteIndex + cc * byteCount] &= (byte)~(1 << innerBitIndex);
-            }
-
-            bitIndex++;
-        }
-    }
-
-    return buffer;
 }
 
 static bool[,] UnpackFontBytesToGlyph(byte[] packedBytes,int o)
@@ -85,183 +46,11 @@ static bool[,] UnpackFontBytesToGlyph(byte[] packedBytes,int o)
 
 // Font-Definition: Text-Zeilen
 var font = new Dictionary<char, bool[,]>();
-var fontdef = new Dictionary<char, IList<string>>()
-{
-    ['0'] = [
-        "  ######  ",
-        " ######## ",
-        "####  ####",
-        "###    ###",
-        "###    ###",
-        "###    ###",
-        "###    ###",
-        "###    ###",
-        "###    ###",
-        "####  ####",
-        " ######## ",
-        "  ######  "
-    ],
-    ['1'] = [
-        "      ##  ",
-        "     ###  ",
-        "    ####  ",
-        "   #####  ",
-        "  ######  ",
-        " #######  ",
-        "     ###  ",
-        "     ###  ",
-        "     ###  ",
-        "     ###  ",
-        " #########",
-        " #########",
-    ],
-    ['2'] = [
-        " #######  ",
-        " ######## ",
-        "      ####",
-        "       ###",
-        "       ###",
-        "      ####",
-        "     #### ",
-        "    ####  ",
-        "   ####   ",
-        "  ####    ",
-        " #########",
-        "##########"
-    ],
-    ['3'] = [    
-        " #########",
-        " ######## ",
-        "     ###  ",
-        "    ###   ",
-        "   #####  ",
-        "  ####### ",
-        "      ####",
-        "       ###",
-        "       ###",
-        "      ####",
-        " ######## ",
-        " #######  "
-    ],
-    ['4'] = [
-        "     ###  ",
-        "    ####  ",
-        "    ####  ",
-        "   #####  ",
-        "   #####  ",
-        "  ######  ",
-        "  ## ###  ",
-        " ### ###  ",
-        " #########",
-        "##########",
-        "     ###  ",
-        "     ###  "
-    ],
-    ['5'] = [
-        " #########",
-        " #########",
-        " ###      ",
-        " ###      ",
-        " #######  ",
-        " ######## ",
-        "      ####",
-        "       ###",
-        "       ###",
-        "      ####",
-        " ######## ",
-        " #######  "
-    ],
-    ['6'] = [
-        "   ###### ",
-        "  ####### ",
-        " ###      ",
-        "###       ",
-        "########  ",
-        "######### ",
-        "###   ####",
-        "###    ###",
-        "###    ###",
-        "####  ####",
-        " ######## ",
-        "  ######  "
-    ],
-    ['7'] = [
-        "##########",
-        "##########",
-        "       ###",
-        "       ###",
-        "      ####",
-        "     #### ",
-        "    ####  ",
-        "   ####   ",
-        "  ####    ",
-        " ####     ",
-        "####      ",
-        "###       "
-    ],
-    ['8'] = new[]
-    {
-        "  ######  ",
-        " ######## ",
-        "####  ####",
-        "###    ###",
-        "##########",
-        " ######## ",
-        "####  ####",
-        "###    ###",
-        "###    ###",
-        "####  ####",
-        " ######## ",
-        "  ######  "
-    },
-    ['9'] = [
-        "  ######  ",
-        " ######## ",
-        "####  ####",
-        "###    ###",
-        "##########",
-        " #########",
-        "       ###",
-        "       ###",
-        "       ###",
-        "      ####",
-        "  ####### ",
-        "  ######  "
-    ],
-    [':'] = [
-        "          ",
-        "          ",
-        "    ##    ",
-        "   ####   ",
-        "   ####   ",
-        "    ##    ",
-        "          ",
-        "          ",
-        "    ##    ",
-        "   ####   ",
-        "   ####   ",
-        "    ##    "
-    ]
-};
-
-var packed = PackFontLinesToBytes(fontdef.Values.ToList());
-var s=Convert.ToBase64String(packed);
-Console.WriteLine(s);
-using var e= new BrotliEncoder(10,22);
-var outputSpan=new Span<byte>(new byte[packed.Length]);
-e.Compress(packed, outputSpan,out int r, out var bytesWritten,true);
-s=Convert.ToBase64String(outputSpan.S);
-Console.WriteLine(s);
-    Console.WriteLine($"{packed.Length}, {r}, {bytesWritten}");
-Console.ReadLine();
 
 var packedBytes = Convert.FromBase64String("/Pj3/OGHH3744Yc/7x8/wIADDz78+AMOOOCA47///vgHPOCAAw8ePHjw4P///vsHDhz48Ac84IAD758/4MADDz748MOOO/7/Dw44/vvvgAP++Ac84IAD758/+PHnwAH//Hf84Yc/7x8///8POODAgwcPHjx48MAB/Pj3/OH/+/f84Yc/7x8//Pj3/OH/+w844IADzx8/AAAAAx54wAAAADDggQcM");
 for (int c = 0;c<11;c++)
 {
-    // 2. Bytes wieder in bool[,]-Glyph wandeln
-    var glyph = UnpackFontBytesToGlyph(packedBytes, c);
-
-    font["0123456789:"[c]] = glyph;
+    font["0123456789:"[c]] = UnpackFontBytesToGlyph(packedBytes, c);
 }
 
 

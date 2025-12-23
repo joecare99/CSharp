@@ -5,8 +5,9 @@ VisualStudioVersion = 18.0.11121.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
-		CONTRIBUTING.md = CONTRIBUTING.md
+		AsciiClock.cs = AsciiClock.cs
 		AsciiClock_org.cs = AsciiClock_org.cs
+		CONTRIBUTING.md = CONTRIBUTING.md
 		Pattern_Tutorial.props = Pattern_Tutorial.props
 		Pattern_Tutorial_net.props = Pattern_Tutorial_net.props
 		README.md = README.md
@@ -27,9 +28,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Something", "Something", "{1067FA2D-C07E-4E87-8E37-7559EA8B31C9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Quine", "Quine", "{248D1A78-625C-46E0-92D2-15193C335773}"
-	ProjectSection(SolutionItems) = preProject
-		AsciiClock_org.cs = AsciiClock_org.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quine1", "Quine1\Quine1.csproj", "{B7779B0C-53AE-494F-B9C5-23C4C0E7ABF5}"
 EndProject
@@ -72,6 +70,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfMaze", "SelfMaze\SelfMaze.csproj", "{6EB906BF-19F7-4F0E-8EF9-F683FB589421}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quine5", "Quine5\Quine5.csproj", "{118FDB6D-284F-6611-63EA-47D7FCA58528}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quine6", "Quine6\Quine6.csproj", "{BF69795C-3A3A-F9FD-5A02-C47263A66ADE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuineTest", "QuineTest\QuineTest.csproj", "{D8315EA5-17A4-4235-BF2F-C9302F8A9726}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurpriseConsole", "SurpriseConsole\SurpriseConsole.csproj", "{6B297265-48A1-9E81-0666-D3A49F88AD82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +175,18 @@ Global
 		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{118FDB6D-284F-6611-63EA-47D7FCA58528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF69795C-3A3A-F9FD-5A02-C47263A66ADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF69795C-3A3A-F9FD-5A02-C47263A66ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF69795C-3A3A-F9FD-5A02-C47263A66ADE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF69795C-3A3A-F9FD-5A02-C47263A66ADE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8315EA5-17A4-4235-BF2F-C9302F8A9726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8315EA5-17A4-4235-BF2F-C9302F8A9726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8315EA5-17A4-4235-BF2F-C9302F8A9726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8315EA5-17A4-4235-BF2F-C9302F8A9726}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,6 +215,9 @@ Global
 		{91F3D415-0111-47AE-BFDD-AF524FAE68CD} = {248D1A78-625C-46E0-92D2-15193C335773}
 		{6EB906BF-19F7-4F0E-8EF9-F683FB589421} = {1067FA2D-C07E-4E87-8E37-7559EA8B31C9}
 		{118FDB6D-284F-6611-63EA-47D7FCA58528} = {248D1A78-625C-46E0-92D2-15193C335773}
+		{BF69795C-3A3A-F9FD-5A02-C47263A66ADE} = {248D1A78-625C-46E0-92D2-15193C335773}
+		{D8315EA5-17A4-4235-BF2F-C9302F8A9726} = {248D1A78-625C-46E0-92D2-15193C335773}
+		{6B297265-48A1-9E81-0666-D3A49F88AD82} = {1067FA2D-C07E-4E87-8E37-7559EA8B31C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E467667-4F27-4777-8092-287F0B5D8ED5}
