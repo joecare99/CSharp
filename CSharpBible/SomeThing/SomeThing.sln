@@ -77,6 +77,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuineTest", "QuineTest\Quin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurpriseConsole", "SurpriseConsole\SurpriseConsole.csproj", "{6B297265-48A1-9E81-0666-D3A49F88AD82}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoPlus", "MemoPlus\MemoPlus.csproj", "{55BABD01-A653-46BA-9045-B04AC3ECF4FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +189,10 @@ Global
 		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B297265-48A1-9E81-0666-D3A49F88AD82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55BABD01-A653-46BA-9045-B04AC3ECF4FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55BABD01-A653-46BA-9045-B04AC3ECF4FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55BABD01-A653-46BA-9045-B04AC3ECF4FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55BABD01-A653-46BA-9045-B04AC3ECF4FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,6 +224,7 @@ Global
 		{BF69795C-3A3A-F9FD-5A02-C47263A66ADE} = {248D1A78-625C-46E0-92D2-15193C335773}
 		{D8315EA5-17A4-4235-BF2F-C9302F8A9726} = {248D1A78-625C-46E0-92D2-15193C335773}
 		{6B297265-48A1-9E81-0666-D3A49F88AD82} = {1067FA2D-C07E-4E87-8E37-7559EA8B31C9}
+		{55BABD01-A653-46BA-9045-B04AC3ECF4FF} = {1067FA2D-C07E-4E87-8E37-7559EA8B31C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E467667-4F27-4777-8092-287F0B5D8ED5}
