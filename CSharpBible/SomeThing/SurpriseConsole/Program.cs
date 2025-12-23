@@ -1,6 +1,6 @@
 ﻿// Einfaches Demonstrationsprogramm
 // Version 1.0 - Hello World Example
-Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.InputEncoding = Console.OutputEncoding = System.Text.Encoding.UTF8;
 Console.WriteLine("Willkommen zum Demonstrationsprogramm!");
 Console.WriteLine("======================================");
 Console.WriteLine();
@@ -9,7 +9,7 @@ Console.WriteLine("  - Variablen und Datentypen");
 Console.WriteLine("  - Schleifen und Bedingungen");
 Console.WriteLine("  - Benutzereingaben");
 Console.WriteLine();
-Console.WriteLine("Druecken Sie eine beliebige Taste zum Fortfahren...");
+Console.WriteLine("Drücken Sie eine beliebige Taste zum Fortfahren...");
 Console.ReadKey(true);
 
 // Ab hier wird es interessant...
@@ -19,7 +19,7 @@ Thread.Sleep(300);
 string[] glitch = [
     "SYSTEM OVERRIDE DETECTED",
     "INITIALISIERE VERSTECKTES MODUL...",
-    "*** LOADING ***"
+    "█▓▒░ LOADING ░▒▓█"
 ];
 
 foreach (var line in glitch)
@@ -54,13 +54,13 @@ void DrawGame()
 {
     Console.SetCursorPosition(0, 0);
     Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.WriteLine($"+{"".PadLeft(width, '-')}+  [GAME] UEBERRASCHUNG!");
+    Console.WriteLine($"╔{"".PadLeft(width, '═')}╗  🎮 ÜBERRASCHUNG!");
     Console.ResetColor();
     
     for (int y = 0; y < height; y++)
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write("|");
+        Console.Write("║");
         Console.ResetColor();
         
         for (int x = 0; x < width; x++)
@@ -68,12 +68,12 @@ void DrawGame()
             if (x == playerX && y == playerY)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("@");
+                Console.Write("☺");
             }
             else if (treasures.Any(t => t.x == x && t.y == y))
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.Write("*");
+                Console.Write("◆");
             }
             else
             {
@@ -83,17 +83,17 @@ void DrawGame()
         }
         
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("|");
+        Console.WriteLine("║");
         Console.ResetColor();
     }
     
     Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.WriteLine($"+{"".PadLeft(width, '-')}+");
+    Console.WriteLine($"╚{"".PadLeft(width, '═')}╝");
     Console.ResetColor();
     
     Console.WriteLine();
     Console.ForegroundColor = ConsoleColor.White;
-    Console.WriteLine($"  Punkte: {score}   |   Sammle die * ein!");
+    Console.WriteLine($"  Punkte: {score}   |   Sammle die ◆ ein!");
     Console.WriteLine("  Steuerung: Pfeiltasten   |   ESC = Beenden");
     Console.ResetColor();
 }
@@ -118,9 +118,9 @@ while (true)
                 Console.Clear();
                 Console.CursorVisible = true;
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n  Danke fuers Spielen! *");
+                Console.WriteLine("\n  Danke fürs Spielen! 🎉");
                 Console.WriteLine($"  Endpunktzahl: {score}");
-                Console.WriteLine("\n  Das war das 'einfache Demonstrationsprogramm' ;)");
+                Console.WriteLine("\n  Das war das 'einfache Demonstrationsprogramm' 😉");
                 Console.ResetColor();
                 return;
         }
