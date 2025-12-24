@@ -120,10 +120,10 @@ namespace CanvasWPF_CT.ViewModel
 						{
 							while (xRunning)
 							{
-								lock (_rectangles)
-									foreach (var point in _rectangles) { point.Step(); }
-								lock (_circles)
-									foreach (var point in _circles) { point.Step(); }
+								lock (Rectangles)
+									foreach (var point in Rectangles) { point.Step(); }
+								lock (Circles)
+									foreach (var point in Circles) { point.Step(); }
 								Thread.Sleep(5);
 							}
 						});
