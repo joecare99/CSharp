@@ -15,7 +15,7 @@ namespace CreateCards.Model
         public PointF[] PntSuits = { };
 
         // Optional custom drawing callback for face cards or other special layouts
-        public Action<Graphics, Rectangle, Color>? CustomDraw;
+        public Action<Graphics, Rectangle, Color, string>? CustomDraw;
 
         public CardDrawDef(string _pv,double _ss=0.2d) { 
             PrintValue = _pv; SuitSize = _ss;
