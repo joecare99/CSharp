@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,15 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using SharpHack.Base.Model;
+using BaseLib.Models.Interfaces;
 using Point = SharpHack.Base.Model.Point; // Resolve ambiguity with System.Drawing.Point
 
 namespace SharpHack.LevelGen.BSP;
 
 public class BSPMapGenerator : IMapGenerator
 {
-    private readonly Random _random = new Random();
+    private readonly IRandom _random;
     private const int MinNodeSize = 10;
     private const int MinRoomSize = 6;
+
+    public BSPMapGenerator(IRandom random)
+    {
+        _random = random;
+    }
 
     public Map Generate(int width, int height)
     {
