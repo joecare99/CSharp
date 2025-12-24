@@ -1,0 +1,192 @@
+<svg width="800" height="1200" viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hintergrund -->
+  <rect width="800" height="1200" fill="#0b1020"/>
+
+  <!-- Leucht-Halo hinter dem Fenster -->
+  <radialGradient id="halo" cx="50%" cy="25%" r="50%">
+    <stop offset="0%" stop-color="#ffe9b3" stop-opacity="0.9"/>
+    <stop offset="40%" stop-color="#f6c766" stop-opacity="0.5"/>
+    <stop offset="100%" stop-color="#0b1020" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="800" height="1200" fill="url(#halo)" opacity="0.8"/>
+
+  <!-- Kirchenfenster-Rahmen -->
+  <defs>
+    <linearGradient id="frameGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b2a1a"/>
+      <stop offset="50%" stop-color="#8c5b2f"/>
+      <stop offset="100%" stop-color="#3b2a1a"/>
+    </linearGradient>
+    <radialGradient id="glassGlow" cx="50%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffd88a"/>
+      <stop offset="40%" stop-color="#f4b03a"/>
+      <stop offset="100%" stop-color="#7b3a2a"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Fensterform (gotischer Bogen) -->
+  <g transform="translate(150,120)">
+    <!-- Außenrahmen -->
+    <path d="
+      M250 0
+      C150 80 50 210 50 340
+      L50 820
+      Q50 860 90 860
+      L410 860
+      Q450 860 450 820
+      L450 340
+      C450 210 350 80 250 0
+      Z"
+      fill="url(#frameGrad)" stroke="#21140a" stroke-width="6"/>
+
+    <!-- Innenfläche (Glas) -->
+    <path d="
+      M250 40
+      C165 110 90 225 90 335
+      L90 800
+      Q90 830 115 830
+      L385 830
+      Q410 830 410 800
+      L410 335
+      C410 225 335 110 250 40
+      Z"
+      fill="url(#glassGlow)" stroke="#fbe6c5" stroke-width="3" opacity="0.98"/>
+
+    <!-- Blei-Linien im Glas -->
+    <g stroke="#5a321c" stroke-width="4" opacity="0.9">
+      <!-- Vertikal -->
+      <line x1="250" y1="60" x2="250" y2="830"/>
+      <!-- Horizontal -->
+      <line x1="110" y1="260" x2="390" y2="260"/>
+      <line x1="110" y1="420" x2="390" y2="420"/>
+      <line x1="110" y1="580" x2="390" y2="580"/>
+      <!-- Strahlenförmig -->
+      <line x1="250" y1="260" x2="140" y2="150"/>
+      <line x1="250" y1="260" x2="360" y2="150"/>
+    </g>
+
+    <!-- Kerzenflamme-Glow -->
+    <radialGradient id="flameGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#fff9d5" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#ffd26a" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#f0822a" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Leuchthof um die Kerze -->
+    <circle cx="250" cy="510" r="130" fill="url(#flameGlow)" opacity="0.9"/>
+
+    <!-- Kerze -->
+    <!-- Kerzenkörper -->
+    <rect x="230" y="500" width="40" height="170" rx="8" ry="8"
+          fill="#fdf5e6" stroke="#e4d2b0" stroke-width="3"/>
+
+    <!-- Wachsverlauf -->
+    <linearGradient id="candleBodyGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fefcf6"/>
+      <stop offset="50%" stop-color="#f2ddba"/>
+      <stop offset="100%" stop-color="#fefcf6"/>
+    </linearGradient>
+    <rect x="233" y="503" width="34" height="164" rx="7" ry="7"
+          fill="url(#candleBodyGrad)" opacity="0.95"/>
+
+    <!-- Wachstropfen -->
+    <path d="M240 530 C238 540 238 552 242 560" fill="none" stroke="#e8cfaa" stroke-width="3"/>
+    <path d="M260 530 C262 540 262 552 258 560" fill="none" stroke="#e8cfaa" stroke-width="3"/>
+
+    <!-- Docht -->
+    <rect x="247" y="485" width="6" height="18" fill="#2b2220"/>
+
+    <!-- Flamme -->
+    <linearGradient id="flameGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffbe3"/>
+      <stop offset="40%" stop-color="#ffe08a"/>
+      <stop offset="100%" stop-color="#ff9b3b"/>
+    </linearGradient>
+    <path d="
+      M250 445
+      C238 465 236 482 246 494
+      C248 497 252 497 254 494
+      C264 482 262 465 250 445
+      Z"
+      fill="url(#flameGrad)" stroke="#f4a53a" stroke-width="2"/>
+
+    <!-- Kleiner innerer Flammenkern -->
+    <path d="
+      M250 452
+      C243 465 243 476 249 482
+      C251 484 253 484 255 482
+      C261 476 261 465 250 452
+      Z"
+      fill="#fffef5" opacity="0.9"/>
+
+    <!-- Glanzpunkte auf der Kerze -->
+    <path d="M236 510 C234 540 234 570 238 600" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+
+    <!-- Tannenzweig unter der Kerze -->
+    <!-- Ast -->
+    <path d="M160 650 Q250 680 340 650" stroke="#5a3a20" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+    <!-- Nadeln (links) -->
+    <g stroke="#0b4b2a" stroke-width="4" stroke-linecap="round">
+      <line x1="190" y1="660" x2="155" y2="635"/>
+      <line x1="205" y1="665" x2="170" y2="640"/>
+      <line x1="220" y1="670" x2="185" y2="645"/>
+      <line x1="235" y1="675" x2="200" y2="650"/>
+      <line x1="250" y1="678" x2="215" y2="653"/>
+    </g>
+
+    <!-- Nadeln (rechts) -->
+    <g stroke="#0e5f32" stroke-width="4" stroke-linecap="round">
+      <line x1="310" y1="670" x2="345" y2="645"/>
+      <line x1="295" y1="675" x2="330" y2="650"/>
+      <line x1="280" y1="678" x2="315" y2="653"/>
+      <line x1="265" y1="680" x2="300" y2="655"/>
+    </g>
+
+    <!-- Tannenzweig-Lichtreflexe -->
+    <g stroke="#1fae5f" stroke-width="2" stroke-linecap="round" opacity="0.7">
+      <line x1="205" y1="660" x2="187" y2="646"/>
+      <line x1="295" y1="665" x2="313" y2="651"/>
+    </g>
+
+    <!-- Kleine Lichtpunkte im Glas -->
+    <g fill="#fff8d9" opacity="0.8">
+      <circle cx="200" cy="300" r="3"/>
+      <circle cx="290" cy="230" r="2.5"/>
+      <circle cx="320" cy="340" r="2.5"/>
+      <circle cx="180" cy="380" r="2"/>
+      <circle cx="250" cy="210" r="3.5"/>
+      <circle cx="220" cy="350" r="2.5"/>
+      <circle cx="280" cy="390" r="2"/>
+    </g>
+  </g>
+
+  <!-- Text: Frohe Weihnachten -->
+  <defs>
+    <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe9b3"/>
+      <stop offset="50%" stop-color="#ffd26a"/>
+      <stop offset="100%" stop-color="#f7f0d8"/>
+    </linearGradient>
+  </defs>
+
+  <text x="50%" y="950"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="64"
+        fill="url(#textGrad)"
+        stroke="#5f3a1c"
+        stroke-width="1.5">
+    Frohe Weihnachten
+  </text>
+
+  <!-- Kleiner Untertitel -->
+  <text x="50%" y="1005"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="26"
+        fill="#f5e7c8"
+        opacity="0.9">
+    Möge das Licht der Hoffnung hell in dir leuchten.
+  </text>
+</svg>

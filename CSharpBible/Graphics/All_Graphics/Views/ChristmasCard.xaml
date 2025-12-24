@@ -15,10 +15,10 @@
         <Color x:Key="CremeColor">#FFF8F0</Color>
         <Color x:Key="LightGrayColor">#EDEDED</Color>
 
-        <LinearGradientBrush x:Key="BackgroundGradient" StartPoint="0,0" EndPoint="0,1">
-          <GradientStop Color="{StaticResource CremeColor}" Offset="0"/>
+        <RadialGradientBrush x:Key="BackgroundGradient" Center="0.5,0.35" GradientOrigin="0.5,0.35" RadiusX="0.7" RadiusY="0.6">
+          <GradientStop Color="#FFFFF5" Offset="0"/>
           <GradientStop Color="{StaticResource LightGrayColor}" Offset="1"/>
-        </LinearGradientBrush>
+        </RadialGradientBrush>
 
         <SolidColorBrush x:Key="TannengruenBrush" Color="{StaticResource TannengruenColor}"/>
         <SolidColorBrush x:Key="GoldBrush" Color="{StaticResource GoldColor}"/>
@@ -56,34 +56,41 @@
               Stroke="{StaticResource GrayBrush}" StrokeThickness="1" 
               Canvas.Left="360" Canvas.Top="140" Width="18" Height="18" Opacity="0.85"/>
 
-        <!-- Stilisiertes Tannenbaum-Icon (zentral, flach, vektor) -->
-        <Path x:Name="TreeShadow" Data="M250,220 L200,320 L300,320 Z M250,260 L210,340 L290,340 Z M250,300 L220,360 L280,360 Z"
-              Fill="#000000" Opacity="0.08" Canvas.Left="0" Canvas.Top="0" RenderTransformOrigin="0.5,0.5">
-          <Path.RenderTransform>
-            <TranslateTransform X="4" Y="6"/>
-          </Path.RenderTransform>
-        </Path>
+        <!-- Tree Group (Scaled) -->
+        <Canvas x:Name="TreeGroup">
+            <Canvas.RenderTransform>
+                <ScaleTransform ScaleX="1.25" ScaleY="1.25" CenterX="250" CenterY="280"/>
+            </Canvas.RenderTransform>
 
-        <Path x:Name="Tree" Data="M250,200 L200,300 L300,300 Z M250,240 L210,320 L290,320 Z M250,280 L220,360 L280,360 Z"
-              Fill="{StaticResource TannengruenBrush}" Stroke="{StaticResource TannengruenBrush}" StrokeThickness="0.5"/>
-
-        <!-- Baum-Ornamente (Kreise) -->
-        <Ellipse Fill="{StaticResource CremeBrush}" Width="10" Height="10" Canvas.Left="245" Canvas.Top="235"/>
-        <Ellipse Fill="{StaticResource CremeBrush}" Width="8" Height="8" Canvas.Left="215" Canvas.Top="295"/>
-        <Ellipse Fill="{StaticResource CremeBrush}" Width="9" Height="9" Canvas.Left="275" Canvas.Top="295"/>
-        <Ellipse Fill="{StaticResource CremeBrush}" Width="7" Height="7" Canvas.Left="235" Canvas.Top="325"/>
-
-        <!-- Goldener Stern oben am Baum -->
-        <Path Data="M250,190 L256,204 L272,206 L260,216 L264,232 L250,222 L236,232 L240,216 L228,206 L244,204 Z"
-              Fill="{StaticResource GoldBrush}" Stroke="{StaticResource GoldBrush}" StrokeThickness="0.3" Canvas.Left="0" Canvas.Top="0"/>
+            <!-- Stilisiertes Tannenbaum-Icon (zentral, flach, vektor) -->
+            <Path x:Name="TreeShadow" Data="M250,220 L200,320 L300,320 Z M250,260 L210,340 L290,340 Z M250,300 L220,360 L280,360 Z"
+                  Fill="#000000" Opacity="0.08" Canvas.Left="0" Canvas.Top="0" RenderTransformOrigin="0.5,0.5">
+              <Path.RenderTransform>
+                <TranslateTransform X="4" Y="6"/>
+              </Path.RenderTransform>
+            </Path>
+    
+            <Path x:Name="Tree" Data="M250,200 L200,300 L300,300 Z M250,240 L210,320 L290,320 Z M250,280 L220,360 L280,360 Z"
+                  Fill="{StaticResource TannengruenBrush}" Stroke="{StaticResource TannengruenBrush}" StrokeThickness="0.5"/>
+    
+            <!-- Baum-Ornamente (Kreise) -->
+            <Ellipse Fill="{StaticResource CremeBrush}" Width="10" Height="10" Canvas.Left="245" Canvas.Top="235"/>
+            <Ellipse Fill="{StaticResource CremeBrush}" Width="8" Height="8" Canvas.Left="215" Canvas.Top="295"/>
+            <Ellipse Fill="{StaticResource CremeBrush}" Width="9" Height="9" Canvas.Left="275" Canvas.Top="295"/>
+            <Ellipse Fill="{StaticResource CremeBrush}" Width="7" Height="7" Canvas.Left="235" Canvas.Top="325"/>
+    
+            <!-- Goldener Stern oben am Baum -->
+            <Path Data="M250,190 L256,204 L272,206 L260,216 L264,232 L250,222 L236,232 L240,216 L228,206 L244,204 Z"
+                  Fill="{StaticResource GoldBrush}" Stroke="{StaticResource GoldBrush}" StrokeThickness="0.3" Canvas.Left="0" Canvas.Top="0"/>
+        </Canvas>
 
         <!-- Stilisiertes Laub / Zweige (links und rechts) -->
         <Path Data="M80,420 C110,380 150,360 200,350" Stroke="{StaticResource TannengruenBrush}" StrokeThickness="6"  StrokeLineJoin="Round" Opacity="0.95" Canvas.Left="0" Canvas.Top="0"/>
         <Path Data="M420,420 C390,380 350,360 300,350" Stroke="{StaticResource TannengruenBrush}" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Opacity="0.95" Canvas.Left="0" Canvas.Top="0"/>
 
         <!-- Feine goldene Rahmen-Elemente (launisch, dezent) -->
-        <Path Data="M60,80 C120,40 380,40 440,80" Stroke="{StaticResource GoldBrush}" StrokeThickness="1.2" Opacity="0.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-        <Path Data="M60,620 C120,660 380,660 440,620" Stroke="{StaticResource GoldBrush}" StrokeThickness="1.2" Opacity="0.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+        <Path Data="M40,40 C100,20 400,20 460,40" Stroke="{StaticResource GoldBrush}" StrokeThickness="1.5" Opacity="0.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+        <Path Data="M40,660 C100,680 400,680 460,660" Stroke="{StaticResource GoldBrush}" StrokeThickness="1.5" Opacity="0.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
 
         <!-- Dezente, cremefarbene Schneeflocken-Sprenkler (Kreise) -->
         <Ellipse Fill="{StaticResource CremeBrush}" Width="3" Height="3" Canvas.Left="90" Canvas.Top="90" Opacity="0.9"/>
@@ -96,38 +103,39 @@
       <!-- Text Layer -->
       <Canvas x:Name="Text" Width="500" Height="700">
         <!-- Band-Hintergrund für Schriftzug (leicht abgerundet) -->
-        <Rectangle Width="420" Height="110" RadiusX="8" RadiusY="8"
-                   Fill="{StaticResource TannengruenBrush}" Canvas.Left="40" Canvas.Top="420" Opacity="0.98"/>
+        <!-- Golden Ratio Line at Y=433. Text Area Height approx 267. -->
+        <Rectangle Width="420" Height="160" RadiusX="8" RadiusY="8"
+                   Fill="{StaticResource TannengruenBrush}" Canvas.Left="40" Canvas.Top="450" Opacity="0.98"/>
 
         <!-- leichter Schatten für Band (als Offset-Fill) -->
-        <Rectangle Width="420" Height="110" RadiusX="8" RadiusY="8"
-                   Fill="#000000" Canvas.Left="44" Canvas.Top="424" Opacity="0.06"/>
+        <Rectangle Width="420" Height="160" RadiusX="8" RadiusY="8"
+                   Fill="#000000" Canvas.Left="44" Canvas.Top="454" Opacity="0.06"/>
 
         <!-- Hauptschriftzug (Script) -->
         <TextBlock Text="Frohe Weihnachten und besinnliche Feiertage"
                    FontFamily="{StaticResource ScriptFont}"
-                   FontSize="28"
+                   FontSize="32"
                    Foreground="{StaticResource CremeBrush}"
                    TextAlignment="Center"
-                   Width="420"
-                   Canvas.Left="40"
-                   Canvas.Top="440"
+                   Width="380"
+                   Canvas.Left="60"
+                   Canvas.Top="480"
                    TextWrapping="Wrap"
                    FontWeight="SemiBold"/>
 
         <!-- Unterzeile -->
         <TextBlock Text="Von Herzen"
                    FontFamily="{StaticResource SansFont}"
-                   FontSize="14"
+                   FontSize="16"
                    Foreground="{StaticResource CremeBrush}"
                    TextAlignment="Center"
                    Width="420"
                    Canvas.Left="40"
-                   Canvas.Top="485"
+                   Canvas.Top="570"
                    Opacity="0.95"/>
 
         <!-- Optional: kleine Signatur-Linie -->
-        <Line X1="200" Y1="520" X2="300" Y2="520" Stroke="{StaticResource CremeBrush}" StrokeThickness="0.8" Opacity="0.6"/>
+        <Line X1="200" Y1="555" X2="300" Y2="555" Stroke="{StaticResource CremeBrush}" StrokeThickness="0.8" Opacity="0.6"/>
       </Canvas>
 
     </Grid>
