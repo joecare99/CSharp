@@ -20,6 +20,9 @@ public class Tile
     public List<Item> Items { get; } = new();
     public Creature? Creature { get; set; }
     
+    public bool IsVisible { get; set; }
+    public bool IsExplored { get; set; }
+
     public bool IsWalkable => Type != TileType.Wall && Type != TileType.Empty && (Type != TileType.DoorClosed);
     public bool IsTransparent => Type != TileType.Wall && Type != TileType.DoorClosed;
 }
