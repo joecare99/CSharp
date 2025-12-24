@@ -19,7 +19,7 @@ public class RendererServiceTests
 
         var sut = new RendererService();
         var res = sut.Render(opts);
-        Assert.AreEqual(16, res.Pixels.Length);
+        Assert.HasCount(16, res.Pixels);
         Assert.AreEqual(4, res.Width);
         Assert.AreEqual(4, res.Height);
         // spot-check a few pixels
