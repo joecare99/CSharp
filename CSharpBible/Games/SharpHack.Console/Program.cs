@@ -2,6 +2,7 @@ using System;
 using SharpHack.Base.Model;
 using SharpHack.Engine;
 using SharpHack.LevelGen;
+using SharpHack.LevelGen.BSP; // Add this using
 
 namespace SharpHack.Console;
 
@@ -9,7 +10,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        var generator = new SimpleMapGenerator();
+        var generator = new BSPMapGenerator(); // Switch to BSP generator
         var session = new GameSession(generator);
 
         System.Console.CursorVisible = false;
@@ -32,15 +33,27 @@ class Program
         {
             for (int x = 0; x < map.Width; x++)
             {
+                var tile = map[x, y];
+                
+                if (!tile.IsExplored)
+                {
+                    System.Console.Write(' ');
+                    continue;
+                }
+
                 if (x == player.Position.X && y == player.Position.Y)
                 {
                     System.Console.ForegroundColor = player.Color;
                     System.Console.Write(player.Symbol);
                 }
-                else
+                else if (tile.IsVisible)
                 {
-                    var tile = map[x, y];
                     System.Console.ForegroundColor = GetTileColor(tile.Type);
+                    System.Console.Write(GetTileSymbol(tile.Type));
+                }
+                else // Explored but not visible
+                {
+                    System.Console.ForegroundColor = ConsoleColor.DarkGray;
                     System.Console.Write(GetTileSymbol(tile.Type));
                 }
             }
