@@ -3,6 +3,7 @@ using SharpHack.Base.Model;
 using SharpHack.Engine;
 using SharpHack.LevelGen;
 using SharpHack.LevelGen.BSP; // Add this using
+using BaseLib.Models;
 
 namespace SharpHack.Console;
 
@@ -10,7 +11,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        var generator = new BSPMapGenerator(); // Switch to BSP generator
+        var random = new CRandom();
+        var generator = new BSPMapGenerator(random); // Switch to BSP generator
         var session = new GameSession(generator);
 
         System.Console.CursorVisible = false;
