@@ -5,7 +5,7 @@ VisualStudioVersion = 18.0.11018.127
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
-		CONTRIBUTING.md = CONTRIBUTING.md
+		..\..\..\GitHub\Transpiler_pp\Transpiler_pp\CONTRIBUTING.md = ..\..\..\GitHub\Transpiler_pp\Transpiler_pp\CONTRIBUTING.md
 		Games.props = Games.props
 		Games_net.props = Games_net.props
 		Packages.props = Packages.props
@@ -192,6 +192,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.Persist", "SharpHack.Persist\SharpHack.Persist.csproj", "{91B84BFC-97CC-E5E4-75C6-BF0ECA68BB86}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.Console", "SharpHack.Console\SharpHack.Console.csproj", "{CDE6FA94-FC6F-564C-FADE-6C271986355F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.BaseTests", "SharpHack.BaseTests\SharpHack.BaseTests.csproj", "{25FD9DE1-23C2-DE1D-AAF3-D2066D3FD5B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -487,6 +489,10 @@ Global
 		{CDE6FA94-FC6F-564C-FADE-6C271986355F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDE6FA94-FC6F-564C-FADE-6C271986355F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDE6FA94-FC6F-564C-FADE-6C271986355F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25FD9DE1-23C2-DE1D-AAF3-D2066D3FD5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25FD9DE1-23C2-DE1D-AAF3-D2066D3FD5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25FD9DE1-23C2-DE1D-AAF3-D2066D3FD5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25FD9DE1-23C2-DE1D-AAF3-D2066D3FD5B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -548,6 +554,7 @@ Global
 		{33DDE076-23D7-21DA-36E5-A48345A46292} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{91B84BFC-97CC-E5E4-75C6-BF0ECA68BB86} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{CDE6FA94-FC6F-564C-FADE-6C271986355F} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
+		{25FD9DE1-23C2-DE1D-AAF3-D2066D3FD5B5} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51252E6F-E712-436A-B391-1C5243F65ABE}
