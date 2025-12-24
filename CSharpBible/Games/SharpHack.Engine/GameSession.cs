@@ -1,5 +1,6 @@
 using SharpHack.Base.Model;
 using SharpHack.LevelGen;
+using SharpHack.LevelGen.BSP; // Add this using
 
 namespace SharpHack.Engine;
 
@@ -10,11 +11,14 @@ public class GameSession
     public bool IsRunning { get; private set; } = true;
 
     private readonly IMapGenerator _mapGenerator;
+    private readonly FieldOfView _fov;
 
     public GameSession(IMapGenerator mapGenerator)
     {
         _mapGenerator = mapGenerator;
         Initialize();
+        _fov = new FieldOfView(Map);
+        UpdateFov();
     }
 
     private void Initialize()
@@ -45,6 +49,11 @@ public class GameSession
         }
     }
 
+    private void UpdateFov()
+    {
+        _fov.Compute(Player.Position, 10); // 10 is the view radius
+    }
+
     public void Update()
     {
         // Game logic update (turn processing)
@@ -68,6 +77,7 @@ public class GameSession
         if (Map.IsValid(newPos) && Map[newPos].IsWalkable)
         {
             Player.Position = newPos;
+            UpdateFov();
         }
     }
 }
