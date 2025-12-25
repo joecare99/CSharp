@@ -189,4 +189,42 @@ public class GameSessionTests
         Assert.AreEqual(sword, session.Player.MainHand);
         Assert.IsFalse(map[1, 1].Items.Contains(sword));
     }
+
+    [TestMethod]
+    public void NextLevel_PlacesStairsUp_AtEntryPosition()
+    {
+        // Arrange
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        
+        var map1 = new Map(10, 10);
+        map1[1, 1].Type = TileType.StairsDown; // Player is here
+        
+        var map2 = new Map(10, 10);
+        map2[1, 1].Type = TileType.Wall; // Initially a wall, should be forced to floor/stairs
+        
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map1, map2); // Return map1 first, then map2
+        random.Next(Arg.Any<int>()).Returns(0);
+
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1);
+
+        // Act
+        // Trigger NextLevel via MovePlayer onto StairsDown
+        session.MovePlayer(Direction.East); // Assuming player moves onto stairs? No, setup says player IS at 1,1.
+        // Wait, MovePlayer checks destination. If player is at 0,1 and moves East to 1,1 (StairsDown).
+        
+        // Let's adjust setup: Player at 0,1. Stairs at 1,1.
+        session.Player.Position = new Point(0, 1);
+        map1[0, 1].Type = TileType.Floor;
+        
+        session.MovePlayer(Direction.East); // Move to 1,1
+
+        // Assert
+        Assert.AreEqual(2, session.Level);
+        Assert.AreEqual(new Point(1, 1), session.Player.Position);
+        Assert.AreEqual(TileType.StairsUp, session.Map[1, 1].Type);
+    }
 }
