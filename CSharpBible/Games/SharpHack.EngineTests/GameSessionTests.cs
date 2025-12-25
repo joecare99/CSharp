@@ -5,7 +5,8 @@ using SharpHack.LevelGen;
 using SharpHack.Base.Model;
 using System.Collections.Generic;
 using BaseLib.Models.Interfaces;
-using SharpHack.Base.Interfaces; // Add using
+using SharpHack.Base.Interfaces;
+using System.Linq; // Add using
 
 namespace SharpHack.EngineTests;
 
@@ -18,7 +19,8 @@ public class GameSessionTests
         // Arrange
         var mapGenerator = Substitute.For<IMapGenerator>();
         var random = Substitute.For<IRandom>();
-        var combatSystem = Substitute.For<ICombatSystem>(); // Mock combat system
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>(); // Mock AI
         var map = new Map(10, 10);
         map[1, 1].Type = TileType.Floor; 
         map[5, 5].Type = TileType.Floor;
@@ -26,7 +28,7 @@ public class GameSessionTests
         random.Next(Arg.Any<int>()).Returns(5); 
 
         // Act
-        var session = new GameSession(mapGenerator, random, combatSystem); // Pass mock
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI); // Pass mock
 
         // Assert
         Assert.IsNotNull(session.Enemies);
@@ -40,6 +42,7 @@ public class GameSessionTests
         var mapGenerator = Substitute.For<IMapGenerator>();
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -48,7 +51,7 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0); 
 
-        var session = new GameSession(mapGenerator, random, combatSystem);
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
         
         var enemy = session.Enemies.Find(e => e.Position.X == 2 && e.Position.Y == 1);
@@ -66,11 +69,11 @@ public class GameSessionTests
     [TestMethod]
     public void MovePlayer_AttacksEnemy_DealsDamage()
     {
-        // This test is now testing interaction with ICombatSystem, not the damage calculation itself
         // Arrange
         var mapGenerator = Substitute.For<IMapGenerator>();
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -79,7 +82,7 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0);
 
-        var session = new GameSession(mapGenerator, random, combatSystem);
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
         
         var enemy = session.Enemies.Find(e => e.Position.X == 2 && e.Position.Y == 1);
@@ -98,6 +101,7 @@ public class GameSessionTests
         var mapGenerator = Substitute.For<IMapGenerator>();
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -106,7 +110,7 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0);
 
-        var session = new GameSession(mapGenerator, random, combatSystem);
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
         
         var enemy = session.Enemies.Find(e => e.Position.X == 2 && e.Position.Y == 1);
@@ -121,5 +125,37 @@ public class GameSessionTests
         // Assert
         Assert.IsFalse(session.Enemies.Contains(enemy), "Enemy should be removed from list.");
         Assert.IsNull(map[2, 1].Creature, "Enemy should be removed from map tile.");
+    }
+
+    [TestMethod]
+    public void Update_MovesEnemies()
+    {
+        // Arrange
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var map = new Map(10, 10);
+        
+        map[1, 1].Type = TileType.Floor;
+        map[5, 5].Type = TileType.Floor; // Enemy start
+        map[5, 4].Type = TileType.Floor; // Enemy dest
+        
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(5); // Spawn at 5,5
+
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var enemy = session.Enemies.First();
+        
+        // Mock AI to move enemy North
+        enemyAI.GetNextMove(enemy, session.Player, map).Returns(new Point(5, 4));
+
+        // Act
+        session.Update();
+
+        // Assert
+        Assert.AreEqual(new Point(5, 4), enemy.Position);
+        Assert.IsNull(map[5, 5].Creature);
+        Assert.AreEqual(enemy, map[5, 4].Creature);
     }
 }
