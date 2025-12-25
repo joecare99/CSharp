@@ -14,7 +14,7 @@ public partial class GameViewModel : ObservableObject
     private string _playerName;
 
     [ObservableProperty]
-    private int _hp;
+    private int _hP;
 
     [ObservableProperty]
     private int _maxHP;
