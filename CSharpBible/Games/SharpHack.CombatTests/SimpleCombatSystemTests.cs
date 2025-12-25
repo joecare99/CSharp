@@ -12,8 +12,8 @@ public class SimpleCombatSystemTests
     public void Attack_DealsCorrectDamage()
     {
         var system = new SimpleCombatSystem();
-        var attacker = new Creature { Name = "Attacker", Attack = 10 };
-        var defender = new Creature { Name = "Defender", Defense = 2, HP = 20 };
+        var attacker = new Creature { Name = "Attacker", BaseAttack = 10 }; // Changed Attack to BaseAttack
+        var defender = new Creature { Name = "Defender", BaseDefense = 2, HP = 20 }; // Changed Defense to BaseDefense
         var messages = new List<string>();
 
         system.Attack(attacker, defender, msg => messages.Add(msg));
@@ -27,8 +27,8 @@ public class SimpleCombatSystemTests
     public void Attack_ReportsDeath()
     {
         var system = new SimpleCombatSystem();
-        var attacker = new Creature { Name = "Attacker", Attack = 10 };
-        var defender = new Creature { Name = "Defender", Defense = 0, HP = 5 };
+        var attacker = new Creature { Name = "Attacker", BaseAttack = 10 }; // Changed Attack to BaseAttack
+        var defender = new Creature { Name = "Defender", BaseDefense = 0, HP = 5 }; // Changed Defense to BaseDefense
         var messages = new List<string>();
 
         system.Attack(attacker, defender, msg => messages.Add(msg));
