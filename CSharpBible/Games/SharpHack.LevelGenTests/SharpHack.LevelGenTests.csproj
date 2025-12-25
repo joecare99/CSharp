@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -12,10 +12,11 @@
     <PackageReference Include="MSTest.TestAdapter" Version="3.6.1" />
     <PackageReference Include="MSTest.TestFramework" Version="3.6.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
+    <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
   </ItemGroup>
 
