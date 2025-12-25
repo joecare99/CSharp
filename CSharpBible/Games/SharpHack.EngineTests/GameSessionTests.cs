@@ -158,4 +158,35 @@ public class GameSessionTests
         Assert.IsNull(map[5, 5].Creature);
         Assert.AreEqual(enemy, map[5, 4].Creature);
     }
+
+    [TestMethod]
+    public void PickUpItem_AddsToInventory_AndEquips()
+    {
+        // Arrange
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var map = new Map(10, 10);
+        
+        map[1, 1].Type = TileType.Floor;
+        var sword = new Weapon { Name = "Sword", AttackBonus = 5, Position = new Point(1, 1) };
+        map[1, 1].Items.Add(sword);
+        
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(0); // No enemies spawned or items spawned by Initialize
+
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1); // Player starts on item (or moves to it)
+
+        // Act
+        // Simulate move to 1,1 (or just call PickUp directly if player is already there)
+        // Since Initialize puts player at 1,1, let's just call PickUp
+        session.PickUpItem(session.Player, sword);
+
+        // Assert
+        Assert.IsTrue(session.Player.Inventory.Contains(sword));
+        Assert.AreEqual(sword, session.Player.MainHand);
+        Assert.IsFalse(map[1, 1].Items.Contains(sword));
+    }
 }
