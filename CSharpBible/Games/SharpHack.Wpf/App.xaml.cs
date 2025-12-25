@@ -9,6 +9,7 @@ using SharpHack.AI;
 using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using SharpHack.Base.Interfaces;
+using SharpHack.Wpf.Services;
 
 namespace SharpHack.Wpf;
 
@@ -30,6 +31,7 @@ public partial class App : Application
         services.AddSingleton<IMapGenerator, BSPMapGenerator>();
         services.AddSingleton<ICombatSystem, SimpleCombatSystem>();
         services.AddSingleton<IEnemyAI, SimpleEnemyAI>();
+        services.AddSingleton<ITileService, TileService>(); // Register TileService
         
         // Game Session
         services.AddSingleton<GameSession>();
