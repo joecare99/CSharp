@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4"/>
-    <PackageReference Include="MSTest" Version="4.0.2"/>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="MSTest" Version="4.0.2" />
   </ItemGroup>
 	
   <ItemGroup>
