@@ -9,7 +9,13 @@
 - **Strict Separation of Concerns:** Each class should have a single responsibility.
 - **Strict Separation of Code and generated Stuff:** The code you write should be separate from any generated code.
 - **I18n/L10n:** All user-facing strings must be localized.
+- Prefer short methods (max about. 20 lines). If a method exceeds this, consider refactoring.
+- Try to achieve high code-coverage with unit tests.
+- Detailed XML documentation is required for all public members. 
+  - Use `<summary>`, `<param>`, and `<returns>` tags where appropriate.
+  - Also document Methods, longer than 5 lines, with remarks about their behavior.
 
+	
 ### Testing & TDD
 - **Test-Driven Development (TDD):** Tests must be created *before* the implementation.
 - **Frameworks:**
