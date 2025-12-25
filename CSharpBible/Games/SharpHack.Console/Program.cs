@@ -5,7 +5,8 @@ using SharpHack.LevelGen.BSP;
 using SharpHack.Base.Model;
 using SharpHack.Combat;
 using SharpHack.AI;
-using SharpHack.ViewModel; // Add using
+using SharpHack.ViewModel;
+using BaseLib.Models; // Add using
 
 namespace SharpHack.Console;
 
@@ -16,7 +17,7 @@ public class Program
     public static void Main(string[] args)
     {
         // Setup dependencies
-        var random = new BaseLib.Helper.RandomRng();
+        var random = new CRandom();
         var mapGenerator = new BSPMapGenerator(random);
         var combatSystem = new SimpleCombatSystem();
         var enemyAI = new SimpleEnemyAI();
@@ -70,8 +71,8 @@ public class Program
         int offsetY = player.Position.Y - viewHeight / 2;
 
         // Clamp offset
-        offsetX = Math.Max(0, Math.Min(offsetX, map.Width - viewWidth));
-        offsetY = Math.Max(0, Math.Min(offsetY, map.Height - viewHeight));
+        offsetX = Math.Clamp(offsetX,0, map.Width - viewWidth);
+        offsetY = Math.Clamp(offsetY, 0, map.Height - viewHeight);
 
         System.Console.SetCursorPosition(0, 0);
         for (int y = 0; y < viewHeight; y++)
@@ -91,7 +92,12 @@ public class Program
                 
                 if (tile.IsVisible)
                 {
-                    if (tile.Creature != null)
+                    if (mapX == player.Position.X && mapY == player.Position.Y)
+                    {
+                        System.Console.ForegroundColor = player.Color;
+                        System.Console.Write(player.Symbol);
+                    }
+                    else if (tile.Creature != null)
                     {
                         System.Console.ForegroundColor = tile.Creature.Color;
                         System.Console.Write(tile.Creature.Symbol);
