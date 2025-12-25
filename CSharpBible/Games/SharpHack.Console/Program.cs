@@ -2,18 +2,30 @@ using System;
 using SharpHack.Base.Model;
 using SharpHack.Engine;
 using SharpHack.LevelGen;
-using SharpHack.LevelGen.BSP; // Add this using
+using SharpHack.LevelGen.BSP;
 using BaseLib.Models;
+using SharpHack.Combat;
+using SharpHack.AI; // Add using
 
 namespace SharpHack.Console;
 
 class Program
 {
+    private static readonly List<string> _messages = new();
+
     static void Main(string[] args)
     {
         var random = new CRandom();
-        var generator = new BSPMapGenerator(random); // Switch to BSP generator
-        var session = new GameSession(generator);
+        var generator = new BSPMapGenerator(random);
+        var combatSystem = new SimpleCombatSystem();
+        var enemyAI = new SimpleEnemyAI(); // Instantiate AI
+        var session = new GameSession(generator, random, combatSystem, enemyAI); // Pass to GameSession
+
+        session.OnMessage += (msg) => 
+        {
+            _messages.Add(msg);
+            if (_messages.Count > 5) _messages.RemoveAt(0);
+        };
 
         System.Console.CursorVisible = false;
 
@@ -50,8 +62,16 @@ class Program
                 }
                 else if (tile.IsVisible)
                 {
-                    System.Console.ForegroundColor = GetTileColor(tile.Type);
-                    System.Console.Write(GetTileSymbol(tile.Type));
+                    if (tile.Creature != null)
+                    {
+                        System.Console.ForegroundColor = tile.Creature.Color;
+                        System.Console.Write(tile.Creature.Symbol);
+                    }
+                    else
+                    {
+                        System.Console.ForegroundColor = GetTileColor(tile.Type);
+                        System.Console.Write(GetTileSymbol(tile.Type));
+                    }
                 }
                 else // Explored but not visible
                 {
@@ -60,6 +80,14 @@ class Program
                 }
             }
             System.Console.WriteLine();
+        }
+
+        // Render Messages
+        System.Console.SetCursorPosition(0, map.Height + 1);
+        System.Console.ForegroundColor = ConsoleColor.White;
+        foreach (var msg in _messages)
+        {
+            System.Console.WriteLine(msg.PadRight(80));
         }
     }
 

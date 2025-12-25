@@ -1,0 +1,39 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SharpHack.Base.Model;
+using SharpHack.Combat;
+using System.Collections.Generic;
+
+namespace SharpHack.CombatTests;
+
+[TestClass]
+public class SimpleCombatSystemTests
+{
+    [TestMethod]
+    public void Attack_DealsCorrectDamage()
+    {
+        var system = new SimpleCombatSystem();
+        var attacker = new Creature { Name = "Attacker", Attack = 10 };
+        var defender = new Creature { Name = "Defender", Defense = 2, HP = 20 };
+        var messages = new List<string>();
+
+        system.Attack(attacker, defender, msg => messages.Add(msg));
+
+        Assert.AreEqual(12, defender.HP); // 20 - (10 - 2) = 12
+        Assert.IsTrue(messages.Count > 0);
+        Assert.IsTrue(messages[0].Contains("8 damage"));
+    }
+
+    [TestMethod]
+    public void Attack_ReportsDeath()
+    {
+        var system = new SimpleCombatSystem();
+        var attacker = new Creature { Name = "Attacker", Attack = 10 };
+        var defender = new Creature { Name = "Defender", Defense = 0, HP = 5 };
+        var messages = new List<string>();
+
+        system.Attack(attacker, defender, msg => messages.Add(msg));
+
+        Assert.IsTrue(defender.HP <= 0);
+        Assert.IsTrue(messages.Exists(m => m.Contains("dies")));
+    }
+}

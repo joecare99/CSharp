@@ -11,6 +11,8 @@
     <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
+    <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
   </ItemGroup>
 
 </Project>
