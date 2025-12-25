@@ -67,6 +67,12 @@ class Program
                         System.Console.ForegroundColor = tile.Creature.Color;
                         System.Console.Write(tile.Creature.Symbol);
                     }
+                    else if (tile.Items.Count > 0)
+                    {
+                        var item = tile.Items[0]; // Draw top item
+                        System.Console.ForegroundColor = item.Color;
+                        System.Console.Write(item.Symbol);
+                    }
                     else
                     {
                         System.Console.ForegroundColor = GetTileColor(tile.Type);
