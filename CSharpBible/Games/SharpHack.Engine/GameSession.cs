@@ -32,7 +32,7 @@ public class GameSession
         UpdateFov();
     }
 
-    private void Initialize()
+    private void Initialize(Point? startPosition = null)
     {
         Map = _mapGenerator.Generate(80, 25);
         if (Player == null) // Only create player if not exists (preserve stats between levels)
@@ -49,19 +49,33 @@ public class GameSession
                 Position = new Point(1, 1)
             };
         }
-        
-        // Ensure player is on a valid tile
-        if (!Map.IsValid(Player.Position) || !Map[Player.Position].IsWalkable)
+
+        if (startPosition.HasValue)
         {
-             // Simple fallback search for a walkable tile
-             for(int x=0; x<Map.Width; x++)
-                 for(int y=0; y<Map.Height; y++)
-                     if(Map[x,y].IsWalkable)
-                     {
-                         Player.Position = new Point(x,y);
-                         goto Found;
-                     }
-             Found:;
+            Player.Position = startPosition.Value;
+            // Ensure the start position is walkable (force floor if wall)
+            if (Map[Player.Position].Type == TileType.Wall)
+            {
+                Map[Player.Position].Type = TileType.Floor;
+            }
+            // Place stairs up
+            Map[Player.Position].Type = TileType.StairsUp;
+        }
+        else
+        {
+            // Ensure player is on a valid tile (initial spawn)
+            if (!Map.IsValid(Player.Position) || !Map[Player.Position].IsWalkable)
+            {
+                 // Simple fallback search for a walkable tile
+                 for(int x=0; x<Map.Width; x++)
+                     for(int y=0; y<Map.Height; y++)
+                         if(Map[x,y].IsWalkable)
+                         {
+                             Player.Position = new Point(x,y);
+                             goto Found;
+                         }
+                 Found:;
+            }
         }
 
         SpawnEnemies();
@@ -156,9 +170,10 @@ public class GameSession
 
     private void NextLevel()
     {
+        var currentPos = Player.Position;
         Level++;
         Enemies.Clear();
-        Initialize();
+        Initialize(currentPos); // Pass current position as start for next level
         _fov.Map = Map; // Update FOV map reference
         UpdateFov();
         Log($"You descend to level {Level}.");
