@@ -41,8 +41,8 @@ public class GameSession
             Color = System.ConsoleColor.Yellow,
             HP = 100,
             MaxHP = 100,
-            Attack = 10, // Set default attack
-            Defense = 2, // Set default defense
+            BaseAttack = 10, // Changed from Attack
+            BaseDefense = 2, // Changed from Defense
             Position = new Point(1, 1) // TODO: Find valid start position
         };
         
@@ -61,6 +61,34 @@ public class GameSession
         }
 
         SpawnEnemies();
+        SpawnItems(); // Add call
+    }
+
+    private void SpawnItems()
+    {
+        int itemCount = 5;
+        for (int i = 0; i < itemCount; i++)
+        {
+            int x, y;
+            do
+            {
+                x = _random.Next(Map.Width);
+                y = _random.Next(Map.Height);
+            } while (!Map[x, y].IsWalkable || Map[x, y].Items.Count > 0);
+
+            var itemType = _random.Next(2);
+            Item item;
+            if (itemType == 0)
+            {
+                item = new Weapon { Name = "Sword", Symbol = '/', Color = System.ConsoleColor.Cyan, AttackBonus = 5 };
+            }
+            else
+            {
+                item = new Armor { Name = "Leather Armor", Symbol = '[', Color = System.ConsoleColor.Cyan, DefenseBonus = 2 };
+            }
+            item.Position = new Point(x, y);
+            Map[x, y].Items.Add(item);
+        }
     }
 
     private void SpawnEnemies()
@@ -89,8 +117,8 @@ public class GameSession
                     Color = System.ConsoleColor.Green,
                     HP = 20,
                     MaxHP = 20,
-                    Attack = 5,
-                    Defense = 1,
+                    BaseAttack = 5, // Changed from Attack
+                    BaseDefense = 1, // Changed from Defense
                     Position = new Point(x, y)
                 };
                 Enemies.Add(enemy);
@@ -151,6 +179,18 @@ public class GameSession
             if (Map[newPos].Creature == null)
             {
                 Player.Position = newPos;
+                
+                // Check for items
+                if (Map[newPos].Items.Count > 0)
+                {
+                    foreach (var item in Map[newPos].Items.ToList())
+                    {
+                        Log($"You see a {item.Name}.");
+                        // Auto-pickup for now
+                        PickUpItem(Player, item);
+                    }
+                }
+
                 UpdateFov();
                 Update(); // Enemy turn after player moves
             }
@@ -158,6 +198,28 @@ public class GameSession
             {
                 Attack(Player, Map[newPos].Creature!);
                 Update(); // Enemy turn after player attacks
+            }
+        }
+    }
+
+    public void PickUpItem(Creature creature, Item item)
+    {
+        if (Map[item.Position].Items.Contains(item))
+        {
+            Map[item.Position].Items.Remove(item);
+            creature.Inventory.Add(item);
+            Log($"{creature.Name} picks up {item.Name}.");
+
+            // Auto-equip if slot is empty
+            if (item is Weapon w && creature.MainHand == null)
+            {
+                creature.MainHand = w;
+                Log($"{creature.Name} equips {w.Name}.");
+            }
+            else if (item is Armor a && creature.Body == null)
+            {
+                creature.Body = a;
+                Log($"{creature.Name} equips {a.Name}.");
             }
         }
     }
