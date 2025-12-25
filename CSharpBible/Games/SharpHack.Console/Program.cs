@@ -1,66 +1,95 @@
 using System;
-using SharpHack.Base.Model;
 using SharpHack.Engine;
 using SharpHack.LevelGen;
 using SharpHack.LevelGen.BSP;
-using BaseLib.Models;
+using SharpHack.Base.Model;
 using SharpHack.Combat;
-using SharpHack.AI; // Add using
+using SharpHack.AI;
+using SharpHack.ViewModel; // Add using
 
 namespace SharpHack.Console;
 
-class Program
+public class Program
 {
-    private static readonly List<string> _messages = new();
+    private static GameViewModel _viewModel; // Use ViewModel instead of Session directly
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
-        var random = new CRandom();
-        var generator = new BSPMapGenerator(random);
+        // Setup dependencies
+        var random = new BaseLib.Helper.RandomRng();
+        var mapGenerator = new BSPMapGenerator(random);
         var combatSystem = new SimpleCombatSystem();
-        var enemyAI = new SimpleEnemyAI(); // Instantiate AI
-        var session = new GameSession(generator, random, combatSystem, enemyAI); // Pass to GameSession
+        var enemyAI = new SimpleEnemyAI();
 
-        session.OnMessage += (msg) => 
-        {
-            _messages.Add(msg);
-            if (_messages.Count > 5) _messages.RemoveAt(0);
-        };
+        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        _viewModel = new GameViewModel(session); // Initialize ViewModel
 
         System.Console.CursorVisible = false;
+        System.Console.Title = "SharpHack";
 
-        while (session.IsRunning)
+        bool running = true;
+        while (running)
         {
-            Render(session);
-            HandleInput(session);
+            Render();
+            var key = System.Console.ReadKey(true).Key;
+            running = HandleInput(key);
         }
     }
 
-    static void Render(GameSession session)
+    private static bool HandleInput(ConsoleKey key)
     {
-        System.Console.SetCursorPosition(0, 0);
-        var map = session.Map;
-        var player = session.Player;
-
-        // Simple viewport rendering (or full map if small enough)
-        for (int y = 0; y < map.Height; y++)
+        switch (key)
         {
-            for (int x = 0; x < map.Width; x++)
+            case ConsoleKey.UpArrow: _viewModel.Move(Direction.North); break;
+            case ConsoleKey.DownArrow: _viewModel.Move(Direction.South); break;
+            case ConsoleKey.LeftArrow: _viewModel.Move(Direction.West); break;
+            case ConsoleKey.RightArrow: _viewModel.Move(Direction.East); break;
+            case ConsoleKey.NumPad7: _viewModel.Move(Direction.NorthWest); break;
+            case ConsoleKey.NumPad9: _viewModel.Move(Direction.NorthEast); break;
+            case ConsoleKey.NumPad1: _viewModel.Move(Direction.SouthWest); break;
+            case ConsoleKey.NumPad3: _viewModel.Move(Direction.SouthEast); break;
+            case ConsoleKey.NumPad5: _viewModel.Wait(); break; // Wait command
+            case ConsoleKey.Escape: return false;
+        }
+        return true;
+    }
+
+    private static void Render()
+    {
+        // Render Map
+        var map = _viewModel.Map;
+        var player = _viewModel.Player;
+        
+        // ... (Rendering logic mostly stays the same, accessing data via _viewModel)
+        // Optimization: Only redraw if changed? For now, redraw all.
+        
+        // Simple camera centering on player
+        int viewWidth = 80;
+        int viewHeight = 25;
+        int offsetX = player.Position.X - viewWidth / 2;
+        int offsetY = player.Position.Y - viewHeight / 2;
+
+        // Clamp offset
+        offsetX = Math.Max(0, Math.Min(offsetX, map.Width - viewWidth));
+        offsetY = Math.Max(0, Math.Min(offsetY, map.Height - viewHeight));
+
+        System.Console.SetCursorPosition(0, 0);
+        for (int y = 0; y < viewHeight; y++)
+        {
+            for (int x = 0; x < viewWidth; x++)
             {
-                var tile = map[x, y];
-                
-                if (!tile.IsExplored)
+                int mapX = x + offsetX;
+                int mapY = y + offsetY;
+
+                if (mapX < 0 || mapX >= map.Width || mapY < 0 || mapY >= map.Height)
                 {
                     System.Console.Write(' ');
                     continue;
                 }
 
-                if (x == player.Position.X && y == player.Position.Y)
-                {
-                    System.Console.ForegroundColor = player.Color;
-                    System.Console.Write(player.Symbol);
-                }
-                else if (tile.IsVisible)
+                var tile = map[mapX, mapY];
+                
+                if (tile.IsVisible)
                 {
                     if (tile.Creature != null)
                     {
@@ -69,7 +98,7 @@ class Program
                     }
                     else if (tile.Items.Count > 0)
                     {
-                        var item = tile.Items[0]; // Draw top item
+                        var item = tile.Items[0];
                         System.Console.ForegroundColor = item.Color;
                         System.Console.Write(item.Symbol);
                     }
@@ -79,54 +108,64 @@ class Program
                         System.Console.Write(GetTileSymbol(tile.Type));
                     }
                 }
-                else // Explored but not visible
+                else if (tile.IsExplored)
                 {
-                    System.Console.ForegroundColor = ConsoleColor.DarkGray;
+                    System.Console.ForegroundColor = System.ConsoleColor.DarkGray;
                     System.Console.Write(GetTileSymbol(tile.Type));
+                }
+                else
+                {
+                    System.Console.Write(' ');
                 }
             }
             System.Console.WriteLine();
         }
 
-        // Render Messages
-        System.Console.SetCursorPosition(0, map.Height + 1);
-        System.Console.ForegroundColor = ConsoleColor.White;
-        foreach (var msg in _messages)
+        // Render UI
+        System.Console.ForegroundColor = System.ConsoleColor.White;
+        System.Console.SetCursorPosition(0, 26);
+        System.Console.Write($"HP: {_viewModel.HP}/{_viewModel.MaxHP}  Lvl: {_viewModel.Level}  ");
+        
+        // Clear previous messages
+        System.Console.Write(new string(' ', 50)); 
+        System.Console.SetCursorPosition(0, 27);
+        
+        // Show last message
+        if (_viewModel.Messages.Count > 0)
         {
-            System.Console.WriteLine(msg.PadRight(80));
+            System.Console.Write(_viewModel.Messages[_viewModel.Messages.Count - 1].PadRight(79));
+        }
+        else
+        {
+             System.Console.Write(new string(' ', 79));
         }
     }
 
-    static void HandleInput(GameSession session)
+    private static ConsoleColor GetTileColor(TileType type)
     {
-        var key = System.Console.ReadKey(true).Key;
-        switch (key)
+        return type switch
         {
-            case ConsoleKey.UpArrow: session.MovePlayer(Direction.North); break;
-            case ConsoleKey.DownArrow: session.MovePlayer(Direction.South); break;
-            case ConsoleKey.LeftArrow: session.MovePlayer(Direction.West); break;
-            case ConsoleKey.RightArrow: session.MovePlayer(Direction.East); break;
-            case ConsoleKey.Escape: Environment.Exit(0); break;
-        }
+            TileType.Wall => System.ConsoleColor.Gray,
+            TileType.Floor => System.ConsoleColor.DarkGray,
+            TileType.DoorClosed => System.ConsoleColor.DarkYellow,
+            TileType.DoorOpen => System.ConsoleColor.DarkYellow,
+            TileType.StairsDown => System.ConsoleColor.White,
+            TileType.StairsUp => System.ConsoleColor.White,
+            _ => System.ConsoleColor.Black
+        };
     }
 
-    static char GetTileSymbol(TileType type) => type switch
+    private static char GetTileSymbol(TileType type)
     {
-        TileType.Floor => '.',
-        TileType.Wall => '#',
-        TileType.DoorClosed => '+',
-        TileType.DoorOpen => '/',
-        TileType.StairsUp => '<',
-        TileType.StairsDown => '>',
-        _ => ' '
-    };
-
-    static ConsoleColor GetTileColor(TileType type) => type switch
-    {
-        TileType.Floor => ConsoleColor.Gray,
-        TileType.Wall => ConsoleColor.DarkGray,
-        TileType.DoorClosed => ConsoleColor.DarkYellow,
-        TileType.DoorOpen => ConsoleColor.DarkYellow,
-        _ => ConsoleColor.Black
-    };
+        return type switch
+        {
+            TileType.Wall => '#',
+            TileType.Floor => '.',
+            TileType.DoorClosed => '+',
+            TileType.DoorOpen => '/',
+            TileType.StairsDown => '>',
+            TileType.StairsUp => '<',
+            _ => ' '
+        };
+    }
 }

@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
     <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
+    <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
   </ItemGroup>
 
 </Project>
