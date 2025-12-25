@@ -11,6 +11,7 @@ public class GameSession
     public Creature Player { get; private set; }
     public List<Creature> Enemies { get; private set; } = new();
     public bool IsRunning { get; private set; } = true;
+    public int Level { get; private set; } = 1; // Add Level property
 
     private readonly IMapGenerator _mapGenerator;
     private readonly IRandom _random;
@@ -34,17 +35,20 @@ public class GameSession
     private void Initialize()
     {
         Map = _mapGenerator.Generate(80, 25);
-        Player = new Creature
+        if (Player == null) // Only create player if not exists (preserve stats between levels)
         {
-            Name = "Hero",
-            Symbol = '@',
-            Color = System.ConsoleColor.Yellow,
-            HP = 100,
-            MaxHP = 100,
-            BaseAttack = 10, // Changed from Attack
-            BaseDefense = 2, // Changed from Defense
-            Position = new Point(1, 1) // TODO: Find valid start position
-        };
+            Player = new Creature
+            {
+                Name = "Hero",
+                Symbol = '@',
+                Color = System.ConsoleColor.Yellow,
+                HP = 100,
+                MaxHP = 100,
+                BaseAttack = 10,
+                BaseDefense = 2,
+                Position = new Point(1, 1)
+            };
+        }
         
         // Ensure player is on a valid tile
         if (!Map.IsValid(Player.Position) || !Map[Player.Position].IsWalkable)
@@ -61,7 +65,8 @@ public class GameSession
         }
 
         SpawnEnemies();
-        SpawnItems(); // Add call
+        SpawnItems();
+        SpawnStairs(); // Add call
     }
 
     private void SpawnItems()
@@ -70,24 +75,29 @@ public class GameSession
         for (int i = 0; i < itemCount; i++)
         {
             int x, y;
+            int attempts = 0;
             do
             {
                 x = _random.Next(Map.Width);
                 y = _random.Next(Map.Height);
-            } while (!Map[x, y].IsWalkable || Map[x, y].Items.Count > 0);
+                attempts++;
+            } while ((!Map[x, y].IsWalkable || Map[x, y].Items.Count > 0) && attempts < 100);
 
-            var itemType = _random.Next(2);
-            Item item;
-            if (itemType == 0)
+            if (Map[x, y].IsWalkable && Map[x, y].Items.Count == 0)
             {
-                item = new Weapon { Name = "Sword", Symbol = '/', Color = System.ConsoleColor.Cyan, AttackBonus = 5 };
+                var itemType = _random.Next(2);
+                Item item;
+                if (itemType == 0)
+                {
+                    item = new Weapon { Name = "Sword", Symbol = '/', Color = System.ConsoleColor.Cyan, AttackBonus = 5 };
+                }
+                else
+                {
+                    item = new Armor { Name = "Leather Armor", Symbol = '[', Color = System.ConsoleColor.Cyan, DefenseBonus = 2 };
+                }
+                item.Position = new Point(x, y);
+                Map[x, y].Items.Add(item);
             }
-            else
-            {
-                item = new Armor { Name = "Leather Armor", Symbol = '[', Color = System.ConsoleColor.Cyan, DefenseBonus = 2 };
-            }
-            item.Position = new Point(x, y);
-            Map[x, y].Items.Add(item);
         }
     }
 
@@ -125,6 +135,33 @@ public class GameSession
                 Map[x, y].Creature = enemy;
             }
         }
+    }
+
+    private void SpawnStairs()
+    {
+        int x, y;
+        int attempts = 0;
+        do
+        {
+            x = _random.Next(Map.Width);
+            y = _random.Next(Map.Height);
+            attempts++;
+        } while ((!Map[x, y].IsWalkable || Map[x, y].Items.Count > 0 || (x == Player.Position.X && y == Player.Position.Y)) && attempts < 100);
+
+        if (Map[x, y].IsWalkable)
+        {
+            Map[x, y].Type = TileType.StairsDown;
+        }
+    }
+
+    private void NextLevel()
+    {
+        Level++;
+        Enemies.Clear();
+        Initialize();
+        _fov.Map = Map; // Update FOV map reference
+        UpdateFov();
+        Log($"You descend to level {Level}.");
     }
 
     private void UpdateFov()
@@ -189,6 +226,13 @@ public class GameSession
                         // Auto-pickup for now
                         PickUpItem(Player, item);
                     }
+                }
+
+                // Check for stairs
+                if (Map[newPos].Type == TileType.StairsDown)
+                {
+                    NextLevel();
+                    return; // Skip update after level change to avoid immediate enemy move on new level
                 }
 
                 UpdateFov();

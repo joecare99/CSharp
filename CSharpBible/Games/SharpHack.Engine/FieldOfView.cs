@@ -5,12 +5,14 @@ namespace SharpHack.Engine;
 
 public class FieldOfView
 {
-    private readonly Map _map;
+    private Map _map;
 
     public FieldOfView(Map map)
     {
-        _map = map;
+        Map = map;
     }
+
+    public Map Map { get => _map; set => _map = value; } // Make setter public to update reference on level change
 
     public void Compute(Point origin, int range)
     {
