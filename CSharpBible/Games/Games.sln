@@ -207,6 +207,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.AITests", "SharpH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.LevelGenTests", "SharpHack.LevelGenTests\SharpHack.LevelGenTests.csproj", "{67BD8215-F651-9402-C943-270BFDA2D2DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.ViewModel", "SharpHack.ViewModel\SharpHack.ViewModel.csproj", "{C02E5B81-004A-4D92-134B-98F372244F2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -529,6 +531,10 @@ Global
 		{67BD8215-F651-9402-C943-270BFDA2D2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67BD8215-F651-9402-C943-270BFDA2D2DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67BD8215-F651-9402-C943-270BFDA2D2DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C02E5B81-004A-4D92-134B-98F372244F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C02E5B81-004A-4D92-134B-98F372244F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C02E5B81-004A-4D92-134B-98F372244F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C02E5B81-004A-4D92-134B-98F372244F2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -597,6 +603,7 @@ Global
 		{2B50CB0E-EC5F-21A9-D6A0-84676C9256DB} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{7517CB22-E79C-2795-94AD-2043D3629591} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{67BD8215-F651-9402-C943-270BFDA2D2DE} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
+		{C02E5B81-004A-4D92-134B-98F372244F2C} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51252E6F-E712-436A-B391-1C5243F65ABE}
