@@ -1,0 +1,40 @@
+<Window x:Class="SharpHack.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SharpHack.Wpf"
+        xmlns:vm="clr-namespace:SharpHack.ViewModel;assembly=SharpHack.ViewModel"
+        mc:Ignorable="d"
+        Title="SharpHack WPF" Height="600" Width="800"
+        d:DataContext="{d:DesignInstance Type=vm:GameViewModel}">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Map View (Placeholder for now, implementing a full tile renderer in XAML is complex without a custom control or heavy ItemsControl usage) -->
+        <!-- For simplicity in this step, we'll use a Viewbox with a Canvas or UniformGrid, but binding 2D array is tricky. -->
+        <!-- Let's use a simple text block for status to verify connectivity first, then we can do a custom render control -->
+        <Viewbox Grid.Row="0" Stretch="Uniform">
+            <Canvas Name="MapCanvas" Width="800" Height="600" Background="Black"/>
+        </Viewbox>
+
+        <!-- Stats -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="HP: " FontWeight="Bold" />
+            <TextBlock Text="{Binding HP}" />
+            <TextBlock Text="/" />
+            <TextBlock Text="{Binding MaxHP}" Margin="0,0,10,0"/>
+            
+            <TextBlock Text="Level: " FontWeight="Bold" />
+            <TextBlock Text="{Binding Level}" />
+        </StackPanel>
+
+        <!-- Messages -->
+        <ListBox Grid.Row="2" Height="100" ItemsSource="{Binding Messages}" Background="LightGray" />
+    </Grid>
+</Window>
