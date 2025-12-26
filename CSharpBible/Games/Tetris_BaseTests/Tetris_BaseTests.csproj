@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
-    <ProjectReference Include="..\Tetris_Base\Tetris_Base.csproj" />
   </ItemGroup>
 
 </Project>
