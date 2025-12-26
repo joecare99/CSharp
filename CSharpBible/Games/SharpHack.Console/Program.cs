@@ -57,121 +57,56 @@ public class Program
 
     private static void Render()
     {
-        // Render Map
-        var map = _viewModel.Map;
-        var player = _viewModel.Player;
-        
-        // ... (Rendering logic mostly stays the same, accessing data via _viewModel)
-        // Optimization: Only redraw if changed? For now, redraw all.
-        
-        // Simple camera centering on player
-        int viewWidth = 80;
-        int viewHeight = 25;
-        int offsetX = player.Position.X - viewWidth / 2;
-        int offsetY = player.Position.Y - viewHeight / 2;
-
-        // Clamp offset
-        offsetX = Math.Clamp(offsetX,0, map.Width - viewWidth);
-        offsetY = Math.Clamp(offsetY, 0, map.Height - viewHeight);
+        var tiles = _viewModel.DisplayTiles;
+        int viewWidth = _viewModel.ViewWidth;
+        int viewHeight = _viewModel.ViewHeight;
 
         System.Console.SetCursorPosition(0, 0);
+        int index = 0;
         for (int y = 0; y < viewHeight; y++)
         {
             for (int x = 0; x < viewWidth; x++)
             {
-                int mapX = x + offsetX;
-                int mapY = y + offsetY;
-
-                if (mapX < 0 || mapX >= map.Width || mapY < 0 || mapY >= map.Height)
-                {
-                    System.Console.Write(' ');
-                    continue;
-                }
-
-                var tile = map[mapX, mapY];
-                
-                if (tile.IsVisible)
-                {
-                    if (mapX == player.Position.X && mapY == player.Position.Y)
-                    {
-                        System.Console.ForegroundColor = player.Color;
-                        System.Console.Write(player.Symbol);
-                    }
-                    else if (tile.Creature != null)
-                    {
-                        System.Console.ForegroundColor = tile.Creature.Color;
-                        System.Console.Write(tile.Creature.Symbol);
-                    }
-                    else if (tile.Items.Count > 0)
-                    {
-                        var item = tile.Items[0];
-                        System.Console.ForegroundColor = item.Color;
-                        System.Console.Write(item.Symbol);
-                    }
-                    else
-                    {
-                        System.Console.ForegroundColor = GetTileColor(tile.Type);
-                        System.Console.Write(GetTileSymbol(tile.Type));
-                    }
-                }
-                else if (tile.IsExplored)
-                {
-                    System.Console.ForegroundColor = System.ConsoleColor.DarkGray;
-                    System.Console.Write(GetTileSymbol(tile.Type));
-                }
-                else
-                {
-                    System.Console.Write(' ');
-                }
+                var tile = tiles[index++];
+                var glyph = GetGlyph(tile);
+                System.Console.ForegroundColor = glyph.color;
+                System.Console.Write(glyph.symbol);
             }
             System.Console.WriteLine();
         }
 
-        // Render UI
         System.Console.ForegroundColor = System.ConsoleColor.White;
-        System.Console.SetCursorPosition(0, 26);
+        System.Console.SetCursorPosition(0, viewHeight + 1);
         System.Console.Write($"HP: {_viewModel.HP}/{_viewModel.MaxHP}  Lvl: {_viewModel.Level}  ");
-        
-        // Clear previous messages
-        System.Console.Write(new string(' ', 50)); 
-        System.Console.SetCursorPosition(0, 27);
-        
-        // Show last message
+        System.Console.Write(new string(' ', 50));
+        System.Console.SetCursorPosition(0, viewHeight + 2);
+
         if (_viewModel.Messages.Count > 0)
         {
-            System.Console.Write(_viewModel.Messages[_viewModel.Messages.Count - 1].PadRight(79));
+            var lastMessage = _viewModel.Messages[_viewModel.Messages.Count - 1];
+            System.Console.Write(lastMessage.PadRight(79));
         }
         else
         {
-             System.Console.Write(new string(' ', 79));
+            System.Console.Write(new string(' ', 79));
         }
     }
 
-    private static ConsoleColor GetTileColor(TileType type)
+    private static (char symbol, ConsoleColor color) GetGlyph(DisplayTile tile)
     {
-        return type switch
+        return tile switch
         {
-            TileType.Wall => System.ConsoleColor.Gray,
-            TileType.Floor => System.ConsoleColor.DarkGray,
-            TileType.DoorClosed => System.ConsoleColor.DarkYellow,
-            TileType.DoorOpen => System.ConsoleColor.DarkYellow,
-            TileType.StairsDown => System.ConsoleColor.White,
-            TileType.StairsUp => System.ConsoleColor.White,
-            _ => System.ConsoleColor.Black
-        };
-    }
-
-    private static char GetTileSymbol(TileType type)
-    {
-        return type switch
-        {
-            TileType.Wall => '#',
-            TileType.Floor => '.',
-            TileType.DoorClosed => '+',
-            TileType.DoorOpen => '/',
-            TileType.StairsDown => '>',
-            TileType.StairsUp => '<',
-            _ => ' '
+            DisplayTile.Archaeologist => ('@', ConsoleColor.Yellow),
+            DisplayTile.Goblin => ('g', ConsoleColor.Green),
+            DisplayTile.Wall_EW => ('#', ConsoleColor.Gray),
+            DisplayTile.Floor_Lit => ('.', ConsoleColor.DarkGray),
+            DisplayTile.Door_Closed => ('+', ConsoleColor.DarkYellow),
+            DisplayTile.Door_Open => ('/', ConsoleColor.DarkYellow),
+            DisplayTile.Stairs_Up => ('<', ConsoleColor.White),
+            DisplayTile.Stairs_Down => ('>', ConsoleColor.White),
+            DisplayTile.Sword => ('/', ConsoleColor.Cyan),
+            DisplayTile.Armor => ('[', ConsoleColor.Cyan),
+            _ => (' ', ConsoleColor.Black)
         };
     }
 }
