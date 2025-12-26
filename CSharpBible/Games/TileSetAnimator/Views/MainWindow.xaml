@@ -1,0 +1,311 @@
+<Window x:Class="TileSetAnimator.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:TileSetAnimator.Properties"
+        xmlns:conv="clr-namespace:TileSetAnimator.Converters"
+        xmlns:controls="clr-namespace:TileSetAnimator.Views.Controls"
+        mc:Ignorable="d"
+        Title="{x:Static p:Resources.AppTitle}"
+        Width="1200"
+        Height="800">
+    <Window.Resources>
+        <conv:CroppedBitmapConverter x:Key="CroppedBitmapConverter" />
+        <Style TargetType="ListBoxItem" x:Key="TileListItemStyle">
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="RootBorder"
+                                BorderThickness="2"
+                                BorderBrush="Transparent"
+                                Background="Transparent">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource TileBorderBrush}" />
+                                <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource TileSelectionBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="330" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Column="0"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="12">
+                <Expander Header="{x:Static p:Resources.TileSheetExpanderTitle}"
+                          IsExpanded="True">
+                    <StackPanel>
+                        <GroupBox Header="{x:Static p:Resources.FileGroupTitle}">
+                            <StackPanel>
+                                <Button Content="{x:Static p:Resources.LoadSheetButtonText}"
+                                        Command="{Binding LoadSheetCommand}" />
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           Margin="0,6,0,0"
+                                           TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button Content="{x:Static p:Resources.ExportTileEnumButtonText}"
+                                            Command="{Binding ExportTileEnumCommand}" />
+                                    <Button Content="{x:Static p:Resources.ImportTileEnumButtonText}"
+                                            Command="{Binding ImportTileEnumCommand}"
+                                            Margin="8,0,0,0" />
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="{x:Static p:Resources.TileSettingsGroupTitle}">
+                            <UniformGrid Columns="2" Margin="0,4,0,0">
+                                <TextBlock Text="{x:Static p:Resources.TileWidthLabel}" />
+                                <TextBox Text="{Binding TileWidth, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{x:Static p:Resources.TileHeightLabel}" />
+                                <TextBox Text="{Binding TileHeight, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{x:Static p:Resources.SpacingLabel}" />
+                                <TextBox Text="{Binding TileSpacing, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{x:Static p:Resources.MarginLabel}" />
+                                <TextBox Text="{Binding TileMargin, UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </GroupBox>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="{x:Static p:Resources.TileMetadataExpanderTitle}"
+                          Margin="0,12,0,0"
+                          IsExpanded="True">
+                    <StackPanel>
+                        <GroupBox Header="{x:Static p:Resources.SelectedTileHeader}">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.TileClassKeyLabel}" />
+                                <TextBox Text="{Binding TileSetClassKey, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{x:Static p:Resources.TileNameLabel}" />
+                                <TextBox Text="{Binding SelectedTileName, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{x:Static p:Resources.TileCategoryLabel}" Margin="0,8,0,0" />
+                                <ComboBox ItemsSource="{Binding TileCategories}"
+                                          SelectedItem="{Binding SelectedTileCategory, Mode=TwoWay}"
+                                          Margin="0,4,0,0" />
+                                <TextBlock Text="{x:Static p:Resources.TileSubCategoryLabel}" Margin="0,8,0,0" />
+                                <ComboBox ItemsSource="{Binding SubCategoryOptions}"
+                                          IsEditable="True"
+                                          Text="{Binding SelectedTileSubCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Margin="0,4,0,0" />
+                                <TextBlock Text="{x:Static p:Resources.TileNotesLabel}" Margin="0,8,0,0" />
+                                <TextBox Text="{Binding SelectedTileNotes, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <TextBlock Text="{x:Static p:Resources.ZoomLabel}" VerticalAlignment="Center" />
+                                    <Slider Minimum="1" Maximum="12" Value="{Binding ZoomFactor}" Width="140" Margin="8,0,0,0" />
+                                </StackPanel>
+                                <Button Content="{x:Static p:Resources.SaveTileButtonText}"
+                                        Command="{Binding SaveTileCommand}"
+                                        Margin="0,8,0,0" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="{x:Static p:Resources.AnimationToolsExpanderTitle}"
+                          Margin="0,12,0,0"
+                          IsExpanded="False">
+                    <StackPanel>
+                        <GroupBox Header="{x:Static p:Resources.AnimationSettingsGroupTitle}">
+                            <StackPanel>
+                                <UniformGrid Columns="2" Margin="0,4,0,0">
+                                    <TextBlock Text="{x:Static p:Resources.MinimumAnimationLengthLabel}" />
+                                    <TextBox Text="{Binding MinimumAnimationLength, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Text="{x:Static p:Resources.FrameDurationLabel}" />
+                                    <TextBox Text="{Binding FrameDuration, UpdateSourceTrigger=PropertyChanged}" />
+                                </UniformGrid>
+                                <Button Content="{x:Static p:Resources.DetectAnimationsButtonText}"
+                                        Command="{Binding DetectAnimationsCommand}"
+                                        Margin="0,8,0,0" />
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="{x:Static p:Resources.PendingAnimationGroupTitle}">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.PendingAnimationHint}"
+                                           TextWrapping="Wrap" />
+                                <ItemsControl ItemsSource="{Binding PendingFrames}" Margin="0,8,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button Content="{x:Static p:Resources.AddFrameButtonText}"
+                                            Command="{Binding AddFrameCommand}" />
+                                    <Button Content="{x:Static p:Resources.ClearFramesButtonText}"
+                                            Command="{Binding ClearFramesCommand}"
+                                            Margin="8,0,0,0" />
+                                    <Button Content="{x:Static p:Resources.CommitAnimationButtonText}"
+                                            Command="{Binding CommitAnimationCommand}"
+                                            Margin="8,0,0,0" />
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="{x:Static p:Resources.AnimationListTitle}">
+                            <StackPanel>
+                                <ListBox ItemsSource="{Binding Animations}"
+                                         SelectedItem="{Binding SelectedAnimation}"
+                                         DisplayMemberPath="Name"
+                                         Height="120" />
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button Content="{x:Static p:Resources.StartPreviewButtonText}"
+                                            Command="{Binding StartPreviewCommand}" />
+                                    <Button Content="{x:Static p:Resources.StopPreviewButtonText}"
+                                            Command="{Binding StopPreviewCommand}"
+                                            Margin="8,0,0,0" />
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="{x:Static p:Resources.MiniMapGroupTitle}"
+                          Margin="0,12,0,0"
+                          IsExpanded="False">
+                    <controls:MiniMapControl Margin="0,8,0,0" />
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Column="1" Margin="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="220" />
+            </Grid.RowDefinitions>
+
+            <GroupBox Header="{x:Static p:Resources.TileCatalogHeader}" Grid.Row="0">
+                <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="1">
+                    <ListBox ItemsSource="{Binding Tiles}"
+                             SelectedItem="{Binding SelectedTile}"
+                             ItemContainerStyle="{StaticResource TileListItemStyle}"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             HorizontalContentAlignment="Stretch">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="2">
+                                    <Image Width="{Binding Bounds.Width}" Height="{Binding Bounds.Height}">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource CroppedBitmapConverter}">
+                                                <Binding Path="DataContext.TileSheet" RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                                <Binding Path="Bounds" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </GroupBox>
+
+            <Grid Grid.Row="1" Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="320" />
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Header="{x:Static p:Resources.SelectedTileHeader}" Grid.Column="0">
+                    <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="1" Margin="8">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <Image Source="{Binding SelectedTileImage}">
+                                <Image.LayoutTransform>
+                                    <ScaleTransform ScaleX="{Binding ZoomFactor}" ScaleY="{Binding ZoomFactor}" />
+                                </Image.LayoutTransform>
+                            </Image>
+                        </ScrollViewer>
+                    </Border>
+                </GroupBox>
+
+                <GroupBox Header="{x:Static p:Resources.PreviewGroupTitle}" Grid.Column="1">
+                    <Border BorderBrush="{StaticResource TileBorderBrush}"
+                            BorderThickness="1"
+                            Margin="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                        <Image Source="{Binding PreviewTileImage}" />
+                    </Border>
+                </GroupBox>
+
+                <GroupBox Header="{x:Static p:Resources.MiniMapPreviewHeader}" Grid.Column="2">
+                    <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="1" Margin="4">
+                        <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border Width="200" Height="200" BorderThickness="0" Padding="0">
+                                <ItemsControl ItemsSource="{Binding SelectedMiniMap.Slots}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="5" Columns="5" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderThickness="0" Padding="0">
+                                                <Grid>
+                                                    <Image Stretch="Uniform">
+                                                        <Image.Style>
+                                                            <Style TargetType="Image">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Tile}" Value="{x:Null}">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                        <Image.Source>
+                                                            <MultiBinding Converter="{StaticResource CroppedBitmapConverter}">
+                                                                <Binding Path="DataContext.TileSheet" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                                                <Binding Path="Tile.Bounds" />
+                                                            </MultiBinding>
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{Binding DisplayLabel}"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="Gray">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Tile}" Value="{x:Null}">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </Viewbox>
+                    </Border>
+                </GroupBox>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

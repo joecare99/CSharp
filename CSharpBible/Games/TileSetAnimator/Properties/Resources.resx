@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>TileSet Animator</value>
+  </data>
+  <data name="FileGroupTitle" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="LoadSheetButtonText" xml:space="preserve">
+    <value>TileSet laden...</value>
+  </data>
+  <data name="TileSettingsGroupTitle" xml:space="preserve">
+    <value>Tile-Einstellungen</value>
+  </data>
+  <data name="TileWidthLabel" xml:space="preserve">
+    <value>Breite (px)</value>
+  </data>
+  <data name="TileHeightLabel" xml:space="preserve">
+    <value>Hoehe (px)</value>
+  </data>
+  <data name="SpacingLabel" xml:space="preserve">
+    <value>Abstand (px)</value>
+  </data>
+  <data name="MarginLabel" xml:space="preserve">
+    <value>Rand (px)</value>
+  </data>
+  <data name="TileCatalogHeader" xml:space="preserve">
+    <value>Tiles</value>
+  </data>
+  <data name="SelectedTileHeader" xml:space="preserve">
+    <value>Ausgewaehltes Tile</value>
+  </data>
+  <data name="TileNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TileNotesLabel" xml:space="preserve">
+    <value>Notizen</value>
+  </data>
+  <data name="ZoomLabel" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="SaveTileButtonText" xml:space="preserve">
+    <value>Tile speichern...</value>
+  </data>
+  <data name="AnimationSettingsGroupTitle" xml:space="preserve">
+    <value>Animationserkennung</value>
+  </data>
+  <data name="MinimumAnimationLengthLabel" xml:space="preserve">
+    <value>Mindestanzahl Frames</value>
+  </data>
+  <data name="DetectAnimationsButtonText" xml:space="preserve">
+    <value>Animationen finden</value>
+  </data>
+  <data name="FrameDurationLabel" xml:space="preserve">
+    <value>Frame-Dauer (ms)</value>
+  </data>
+  <data name="NewAnimationButtonText" xml:space="preserve">
+    <value>Neue Animation anlegen</value>
+  </data>
+  <data name="PendingAnimationGroupTitle" xml:space="preserve">
+    <value>Neue Animation</value>
+  </data>
+  <data name="PendingAnimationHint" xml:space="preserve">
+    <value>Markieren Sie Tiles unten und klicken Sie anschliessend auf "Frame hinzufuegen".</value>
+  </data>
+  <data name="AddFrameButtonText" xml:space="preserve">
+    <value>Frame hinzufÃ¼gen</value>
+  </data>
+  <data name="ClearFramesButtonText" xml:space="preserve">
+    <value>Zuruecksetzen</value>
+  </data>
+  <data name="CommitAnimationButtonText" xml:space="preserve">
+    <value>Animation speichern</value>
+  </data>
+  <data name="AnimationListTitle" xml:space="preserve">
+    <value>Animationen</value>
+  </data>
+  <data name="StartPreviewButtonText" xml:space="preserve">
+    <value>Vorschau starten</value>
+  </data>
+  <data name="StopPreviewButtonText" xml:space="preserve">
+    <value>Vorschau stoppen</value>
+  </data>
+  <data name="SelectTileFirstMessage" xml:space="preserve">
+    <value>Bitte waehlen Sie zuerst ein Tile aus.</value>
+  </data>
+  <data name="NoSheetLoadedMessage" xml:space="preserve">
+    <value>Es ist noch kein TileSet geladen.</value>
+  </data>
+  <data name="SaveTileDialogTitle" xml:space="preserve">
+    <value>Tile speichern</value>
+  </data>
+  <data name="PreviewGroupTitle" xml:space="preserve">
+    <value>Vorschau</value>
+  </data>
+  <data name="TileCountFormat" xml:space="preserve">
+    <value>Tiles: {0}</value>
+  </data>
+  <data name="AnimationCountFormat" xml:space="preserve">
+    <value>Animationen: {0}</value>
+  </data>
+  <data name="MiniMapGroupTitle" xml:space="preserve">
+    <value>Mini-Map (5x5)</value>
+  </data>
+  <data name="MiniMapSuggestedSlotLabel" xml:space="preserve">
+    <value>Vorauswahl</value>
+  </data>
+  <data name="MiniMapPlaceTileButtonText" xml:space="preserve">
+    <value>Tile einfuegen</value>
+  </data>
+  <data name="MiniMapClearSlotButtonText" xml:space="preserve">
+    <value>Slot leeren</value>
+  </data>
+  <data name="MiniMapClearButtonText" xml:space="preserve">
+    <value>Mini-Map leeren</value>
+  </data>
+   <data name="MiniMapApplySuggestionButtonText" xml:space="preserve">
+    <value>Vorauswahl uebernehmen</value>
+  </data>
+  <data name="TileSheetExpanderTitle" xml:space="preserve">
+    <value>TileSet &amp; Raster</value>
+  </data>
+  <data name="TileMetadataExpanderTitle" xml:space="preserve">
+    <value>Tile-Metadaten</value>
+  </data>
+  <data name="AnimationToolsExpanderTitle" xml:space="preserve">
+    <value>Animationen</value>
+  </data>
+  <data name="TileClassKeyLabel" xml:space="preserve">
+    <value>Tile-Klasse</value>
+  </data>
+  <data name="MiniMapSelectionLabel" xml:space="preserve">
+    <value>Mini-Map Auswahl</value>
+  </data>
+  <data name="MiniMapNameLabel" xml:space="preserve">
+    <value>Mini-Map Name</value>
+  </data>
+  <data name="MiniMapAddButtonText" xml:space="preserve">
+    <value>Mini-Map hinzufuegen</value>
+  </data>
+  <data name="MiniMapRemoveButtonText" xml:space="preserve">
+    <value>Mini-Map entfernen</value>
+  </data>
+  <data name="MiniMapPreviewHeader" xml:space="preserve">
+    <value>Mini-Map Vorschau</value>
+  </data>
+  <data name="TileSubCategoryLabel" xml:space="preserve">
+    <value>Unterkategorie</value>
+  </data>
+  <data name="TileCategoryLabel" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="ExportTileEnumButtonText" xml:space="preserve">
+    <value>Tile-Enum exportieren</value>
+  </data>
+  <data name="ImportTileEnumButtonText" xml:space="preserve">
+    <value>Tile-Enum importieren</value>
+  </data>
+  <data name="ExportTileEnumDialogTitle" xml:space="preserve">
+    <value>Tile-Enum exportieren</value>
+  </data>
+  <data name="ImportTileEnumDialogTitle" xml:space="preserve">
+    <value>Tile-Enum importieren</value>
+  </data>
+</root>
