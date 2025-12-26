@@ -11,8 +11,14 @@
     <ProjectReference Include="..\Treppen.Base\Treppen.Base.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="MSTest" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk">
+      <Version>18.0.1</Version>
+      <Version>18.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="MSTest">
+      <Version>4.0.2</Version>
+      <Version>4.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
