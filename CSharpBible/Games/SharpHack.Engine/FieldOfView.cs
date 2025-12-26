@@ -3,17 +3,36 @@ using SharpHack.Base.Model;
 
 namespace SharpHack.Engine;
 
+/// <summary>
+/// Provides recursive shadow-casting visibility calculations for a given map instance.
+/// </summary>
 public class FieldOfView
 {
     private Map _map;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FieldOfView"/> class bound to the supplied map.
+    /// </summary>
+    /// <param name="map">The map that will be queried and updated with visibility information.</param>
     public FieldOfView(Map map)
     {
         Map = map;
     }
 
+    /// <summary>
+    /// Gets or sets the map currently associated with this field-of-view calculator.
+    /// </summary>
     public Map Map { get => _map; set => _map = value; } // Make setter public to update reference on level change
 
+    /// <summary>
+    /// Computes visibility information for all tiles within the provided range around the origin.
+    /// </summary>
+    /// <param name="origin">The tile used as the center of vision.</param>
+    /// <param name="range">The maximum distance, measured as a circular radius, that can be seen.</param>
+    /// <remarks>
+    /// The method clears visibility flags for the entire map, marks the origin as visible, then traverses all octants
+    /// via recursive shadow casting to determine which tiles become visible and explored.
+    /// </remarks>
     public void Compute(Point origin, int range)
     {
         // Reset visibility
@@ -34,18 +53,48 @@ public class FieldOfView
         }
     }
 
+    /// <summary>
+    /// Encapsulates the upper and lower slope boundaries that bound the recursive shadow-casting beam.
+    /// </summary>
     private struct Slope
     {
+        /// <summary>
+        /// Represents the numerator (Y) and denominator (X) parts of a slope used to track current scan boundaries.
+        /// </summary>
         public int Y, X;
+
+        /// <summary>
+        /// Initializes a new <see cref="Slope"/> instance with the provided numerator and denominator components.
+        /// </summary>
+        /// <param name="y">The numerator portion of the slope.</param>
+        /// <param name="x">The denominator portion of the slope.</param>
         public Slope(int y, int x) { Y = y; X = x; }
     }
 
+    /// <summary>
+    /// Recursively scans a single octant to determine which tiles remain visible while respecting opaque blockers.
+    /// </summary>
+    /// <param name="octant">The octant index (0-7) currently being processed.</param>
+    /// <param name="origin">The point about which visibility is measured.</param>
+    /// <param name="range">The maximum radius allowed for visibility checks.</param>
+    /// <param name="x">The current distance from the origin along the primary axis.</param>
+    /// <param name="top">The slope describing the upper boundary of the scan beam.</param>
+    /// <param name="bottom">The slope describing the lower boundary of the scan beam.</param>
+    /// <remarks>
+    /// The algorithm walks tiles row by row, updating visibility when within range, and splits the scan beam when
+    /// encountering opaque transitions so that shadows are correctly propagated deeper into the octant.
+    /// </remarks>
     private void ComputeOctant(int octant, Point origin, int range, int x, Slope top, Slope bottom)
     {
         for (; x <= range; x++)
         {
-            int topY = x * top.Y / top.X;
-            int bottomY = x * bottom.Y / bottom.X;
+            int topY = ProjectTopY(x, top);
+            int bottomY = ProjectBottomY(x, bottom);
+
+            if (topY < bottomY)
+            {
+                continue;
+            }
 
             int wasOpaque = -1; // 0: false, 1: true, -1: not initialized
 
@@ -103,5 +152,15 @@ public class FieldOfView
 
             if (wasOpaque != -1 && wasOpaque == 1) break; // If the last cell was opaque, stop processing this row
         }
+    }
+    
+    private static int ProjectTopY(int x, Slope slope)
+    {
+        return ((x * 2 - 1) * slope.Y + slope.X) / (slope.X * 2);
+    }
+
+    private static int ProjectBottomY(int x, Slope slope)
+    {
+        return ((x * 2 + 1) * slope.Y - slope.X) / (slope.X * 2);
     }
 }
