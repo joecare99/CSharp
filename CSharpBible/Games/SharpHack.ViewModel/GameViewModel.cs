@@ -1,14 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Runtime.ExceptionServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SharpHack.Engine;
 using SharpHack.Base.Model;
-using System.Collections.ObjectModel;
+using SharpHack.Engine;
 
 namespace SharpHack.ViewModel;
 
 public partial class GameViewModel : ObservableObject
 {
     private readonly GameSession _session;
+    private readonly List<DisplayTile> _displayTiles;
 
     [ObservableProperty]
     private string _playerName;
@@ -29,15 +33,28 @@ public partial class GameViewModel : ObservableObject
     public Creature Player => _session.Player;
     public List<Creature> Enemies => _session.Enemies;
 
-    public GameViewModel(GameSession session)
+    public int ViewWidth { get; }
+    public int ViewHeight { get; }
+
+    public IReadOnlyList<DisplayTile> DisplayTiles => _displayTiles;
+
+    public GameViewModel(GameSession session, int viewWidth = 80, int viewHeight = 25)
     {
         _session = session;
         _session.OnMessage += OnGameMessage;
-        
-        // Initialize properties
+
+        ViewWidth = viewWidth;
+        ViewHeight = viewHeight;
+        _displayTiles = new List<DisplayTile>(ViewWidth * ViewHeight);
+        for (int i = 0; i < ViewWidth * ViewHeight; i++)
+        {
+            _displayTiles.Add(DisplayTile.Empty);
+        }
+
         PlayerName = _session.Player.Name;
         UpdateStats();
         UpdateInventory();
+        UpdateDisplayBuffer();
     }
 
     private void OnGameMessage(string message)
@@ -65,13 +82,127 @@ public partial class GameViewModel : ObservableObject
         }
     }
 
+    private void UpdateDisplayBuffer()
+    {
+        var map = Map;
+        var player = Player;
+        var playerPos = player.Position;
+
+        int maxOffsetX = Math.Max(0, map.Width - ViewWidth);
+        int maxOffsetY = Math.Max(0, map.Height - ViewHeight);
+        int offsetX = Math.Clamp(playerPos.X - ViewWidth / 2, 0, maxOffsetX);
+        int offsetY = Math.Clamp(playerPos.Y - ViewHeight / 2, 0, maxOffsetY);
+
+        int index = 0;
+        for (int y = 0; y < ViewHeight; y++)
+        {
+            int mapY = y + offsetY;
+            bool rowInBounds = mapY >= 0 && mapY < map.Height;
+
+            for (int x = 0; x < ViewWidth; x++)
+            {
+                int mapX = x + offsetX;
+                DisplayTile displayTile;
+
+                if (!rowInBounds || mapX < 0 || mapX >= map.Width)
+                {
+                    displayTile = DisplayTile.Empty;
+                }
+                else
+                {
+                    var tile = map[mapX, mapY];
+                    var surWall = 0;
+                    if (tile.Type == TileType.Wall)
+                    {
+                        
+                        foreach (var d in new List<(byte, int, int)>() { (1, 1, 0), (2, 0, -1), (4, -1, 0), (8, 0, 1) })
+                            if (map.IsValid(mapX + d.Item2, mapY + d.Item3) && map[mapX + d.Item2, mapY + d.Item3].IsExplored && map[mapX + d.Item2, mapY + d.Item3].Type == TileType.Wall )
+                                surWall |= d.Item1;
+                    }
+                    bool isPlayer = mapX == playerPos.X && mapY == playerPos.Y;
+                    displayTile = CreateDisplayTile(tile, surWall, player, isPlayer);
+                }
+
+                _displayTiles[index] = displayTile;
+                index++;
+            }
+        }
+    }
+
+    private static DisplayTile CreateDisplayTile(Tile tile,int surWall, Creature player, bool isPlayer)
+    {
+        if (!tile.IsExplored)
+        {
+            return DisplayTile.Empty;
+        }
+
+        if (!tile.IsVisible && tile.Type == TileType.Floor) 
+        {
+            return tile.IsExplored ? DisplayTile.Floor_Lit : DisplayTile.Floor_Dark;
+        }
+
+        if (isPlayer)
+        {
+            return DisplayTile.Archaeologist;
+        }
+
+        if (tile.Creature is Creature creature)
+        {
+            return creature.Name switch
+            {
+                "Goblin" => DisplayTile.Goblin,
+                _ => DisplayTile.Goblin
+            };
+        }
+
+        if (tile.Items.Count > 0)
+        {
+            var item = tile.Items[0];
+            return item.Symbol switch
+            {
+                '[' => DisplayTile.Armor,
+                _ => DisplayTile.Sword
+            };
+        }
+
+        return tile.Type switch
+        {
+            TileType.Wall => surWall switch
+            {
+                0 => DisplayTile.Wall_NS,
+                1 => DisplayTile.Wall_EW,
+                3 => DisplayTile.Wall_ES,
+                4 => DisplayTile.Wall_EW,
+                5 => DisplayTile.Wall_EW,
+                6 => DisplayTile.Wall_WS,
+                7 => DisplayTile.Wall_ENW,
+                8 => DisplayTile.Wall_NS,
+                9=> DisplayTile.Wall_EN,
+                10 => DisplayTile.Wall_NS,
+                11 => DisplayTile.Wall_ENS,
+                12 => DisplayTile.Wall_NW,
+                13 => DisplayTile.Wall_EWS,
+                14 => DisplayTile.Wall_NWS,
+                _ => DisplayTile.Wall_ENWS               
+            },
+            TileType.Floor => DisplayTile.Floor_Lit,
+            TileType.DoorClosed => DisplayTile.Door_Closed,
+            TileType.DoorOpen => DisplayTile.Door_Open,
+            TileType.StairsDown => DisplayTile.Stairs_Down,
+            TileType.StairsUp => DisplayTile.Stairs_Up,
+            _ => DisplayTile.Empty
+        };
+    }
+
     [RelayCommand]
     public void Move(Direction direction)
     {
         _session.MovePlayer(direction);
         UpdateStats();
-        UpdateInventory(); // In case we picked up something
-        OnPropertyChanged(nameof(Map)); // Notify map update (though map object ref might be same, content changed)
+        UpdateInventory();
+        UpdateDisplayBuffer();
+        OnPropertyChanged(nameof(Map));
+        OnPropertyChanged(nameof(DisplayTiles));
     }
 
     [RelayCommand]
@@ -79,5 +210,8 @@ public partial class GameViewModel : ObservableObject
     {
         _session.Update();
         UpdateStats();
+        UpdateDisplayBuffer();
+        OnPropertyChanged(nameof(Map));
+        OnPropertyChanged(nameof(DisplayTiles));
     }
 }
