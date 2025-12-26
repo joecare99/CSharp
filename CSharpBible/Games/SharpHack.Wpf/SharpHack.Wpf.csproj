@@ -1,24 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
-  <ItemGroup>
-    <Page Include="App.xaml" />
-  </ItemGroup>
+	<Import Project="..\Packages.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="tiles.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="tiles.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Page Include="App.xaml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
-    <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
-    <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />
-    <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
-    <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
-    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
+		<ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
+		<ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />
+		<ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
+		<ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
+		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
 
 </Project>

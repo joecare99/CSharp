@@ -10,7 +10,8 @@ using SharpHack.Combat;
 using SharpHack.AI;
 using BaseLib.Models;
 using SharpHack.Base.Model;
-using SharpHack.Wpf.Services; // Add using
+using SharpHack.Wpf.Services;
+using System.Collections.Generic; // Add using
 
 namespace SharpHack.Wpf;
 
@@ -19,6 +20,8 @@ public partial class MainWindow : Window
     private readonly GameViewModel _viewModel;
     private readonly ITileService _tileService; // Add field
     private const int TileSize = 32; // Update tile size to 32 for NetHack tiles
+
+    public List<DisplayTile> MapBuffer { get; }
 
     public MainWindow(GameViewModel viewModel, ITileService tileService) // Inject TileService
     {
@@ -41,7 +44,9 @@ public partial class MainWindow : Window
                 DrawMap();
             }
         };
-
+        MapBuffer = new List<DisplayTile>(_viewModel.ViewWidth * _viewModel.ViewHeight);
+        for (var i = 0; i < _viewModel.ViewWidth * _viewModel.ViewHeight; i++)
+            MapBuffer.Add(DisplayTile.Empty);
         // Initial Draw
         DrawMap();
 
@@ -65,9 +70,9 @@ public partial class MainWindow : Window
         DrawMap(); // Redraw after move
     }
 
+
     private void DrawMap()
     {
-        MapCanvas.Children.Clear();
         var map = _viewModel.Map;
         var player = _viewModel.Player;
 
@@ -75,34 +80,17 @@ public partial class MainWindow : Window
         MapCanvas.Width = map.Width * TileSize;
         MapCanvas.Height = map.Height * TileSize;
 
-        for (int x = 0; x < map.Width; x++)
+        for (int x = 0; x < _viewModel.ViewWidth; x++)
         {
-            for (int y = 0; y < map.Height; y++)
+            for (int y = 0; y < _viewModel.ViewHeight; y++)
             {
-                var tile = map[x, y];
-                if (!tile.IsExplored) continue;
-
-                // Draw Floor/Wall
-                var tileImg = _tileService.GetTile(tile.Type);
-                if (tileImg != null)
+                var ix = y*_viewModel.ViewWidth+x;
+                if (MapBuffer[ix] != _viewModel.DisplayTiles[ix])
                 {
-                    DrawImage(tileImg, x, y, tile.IsVisible ? 1.0 : 0.5); // Dim if not visible
-                }
-
-                if (tile.IsVisible)
-                {
-                    if (x == player.Position.X && y == player.Position.Y)
-                    {
-                        DrawImage(_tileService.GetPlayer(), x, y);
-                    }
-                    else if (tile.Creature != null)
-                    {
-                        DrawImage(_tileService.GetCreature(tile.Creature), x, y);
-                    }
-                    else if (tile.Items.Count > 0)
-                    {
-                        DrawImage(_tileService.GetItem(tile.Items[0]), x, y);
-                    }
+                    MapBuffer[ix] = _viewModel.DisplayTiles[ix];
+                    var tileType = _viewModel.DisplayTiles[ix];
+                    var tileImage = _tileService.GetTile(tileType);
+                    DrawImage(tileImage, x, y);
                 }
             }
         }
