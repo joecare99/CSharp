@@ -17,7 +17,6 @@
     <PackageVersion Include="Avalonia.Android" Version="11.3.9" />
     <PackageVersion Include="Avalonia.Svg" Version="11.2.0.2" />
     <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="11.3.6.2" />
-    <PackageVersion Include="Avalonia.Svg" Version="11.2.0.2" />
     <PackageVersion Include="Avalonia.Svg.Skia" Version="11.3.0" />
     <PackageVersion Include="Avalonia.Labs.Controls.ColorPicker" Version="11.2.2" />
     <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="11.3.10" />
