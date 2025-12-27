@@ -230,5 +230,23 @@ namespace VTileEdit.WPF.Properties {
                 return ResourceManager.GetString("TileListHint", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Zeichenkarte ähnelt.
+        /// </summary>
+        public static string CharMapHeader {
+            get {
+                return ResourceManager.GetString("CharMapHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Wähle ein Zeichen aus der Liste. ähnelt.
+        /// </summary>
+        public static string CharMapHint {
+            get {
+                return ResourceManager.GetString("CharMapHint", resourceCulture);
+            }
+        }
     }
 }

@@ -115,4 +115,10 @@
   <data name="PaletteBackgroundHeader" xml:space="preserve">
     <value>Palette Hintergrund</value>
   </data>
+  <data name="CharMapHeader" xml:space="preserve">
+    <value>Zeichenauswahl</value>
+  </data>
+  <data name="CharMapHint" xml:space="preserve">
+    <value>Wähle ein Zeichen zur schnellen Übernahme.</value>
+  </data>
 </root>

@@ -33,7 +33,7 @@ public partial class App : Application
     /// Registers the supplied <see cref="Application"/> instance, builds the service provider, and wires it into the shared IoC helper.
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="appInstance"/> is <c>null</c>.</exception>
-    internal static IServiceProvider ConfigureServices(App appInstance)
+    public static IServiceProvider ConfigureServices(App appInstance)
     {
         ArgumentNullException.ThrowIfNull(appInstance);
 

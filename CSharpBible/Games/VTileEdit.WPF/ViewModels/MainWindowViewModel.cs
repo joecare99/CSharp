@@ -24,6 +24,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         Tiles = new ObservableCollection<TileViewModel>(TileViewModel.CreateSampleTiles());
         Palette = new ObservableCollection<ColorSwatchViewModel>(Enum.GetValues<ConsoleColor>().Select(color => new ColorSwatchViewModel(color)));
+        CharacterPalette = new ObservableCollection<char>(Enumerable.Range(32, 96).Select(i => (char)i));
 
         SelectedTile = Tiles.FirstOrDefault();
         if (SelectedTile != null)
@@ -39,6 +40,7 @@ public partial class MainWindowViewModel : ObservableObject
         SelectGlyphCommand = new RelayCommand<GlyphCellViewModel>(SelectGlyph, glyph => glyph != null);
         ApplyForegroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyForeground, swatch => swatch != null);
         ApplyBackgroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyBackground, swatch => swatch != null);
+        ApplyCharacterCommand = new RelayCommand<char>(ApplyCharacter);
     }
 
     /// <summary>
@@ -59,6 +61,11 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the palette used for both foreground and background colors.
     /// </summary>
     public ObservableCollection<ColorSwatchViewModel> Palette { get; }
+
+    /// <summary>
+    /// Gets the character palette for the charmap view.
+    /// </summary>
+    public ObservableCollection<char> CharacterPalette { get; }
 
     [ObservableProperty]
     private TileViewModel? selectedTile;
@@ -97,6 +104,11 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the command applying a background swatch.
     /// </summary>
     public IRelayCommand ApplyBackgroundCommand { get; }
+
+    /// <summary>
+    /// Gets the command applying a character from the charmap.
+    /// </summary>
+    public IRelayCommand ApplyCharacterCommand { get; }
 
     [RelayCommand]
     private void New()
@@ -228,6 +240,16 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedBackgroundSwatch = swatch;
         SelectedBackgroundSwatch.IsBackgroundSelection = true;
         SelectedGlyph?.SetBackground(swatch.Color);
+    }
+
+    private void ApplyCharacter(char character)
+    {
+        if (SelectedGlyph == null)
+        {
+            return;
+        }
+
+        SelectedGlyph.Character = character;
     }
 
     private static void ShowPlaceholderMessage(string context)
