@@ -320,5 +320,23 @@ namespace VTileEdit.WPF.Properties {
                 return ResourceManager.GetString("TileSetApplyButtonLabel", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Nicht übernommene Änderungen vorhanden. ähnelt.
+        /// </summary>
+        public static string TileSetPendingIndicator {
+            get {
+                return ResourceManager.GetString("TileSetPendingIndicator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Verwerfen ähnelt.
+        /// </summary>
+        public static string TileSetDiscardButtonLabel {
+            get {
+                return ResourceManager.GetString("TileSetDiscardButtonLabel", resourceCulture);
+            }
+        }
     }
 }

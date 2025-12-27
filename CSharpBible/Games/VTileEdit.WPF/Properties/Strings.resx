@@ -142,7 +142,10 @@
   <data name="TileSetApplyWarning" xml:space="preserve">
     <value>Hinweis: Änderungen wirken auf alle Kacheln. Beim Verkleinern gehen Glyphen ausserhalb des neuen Bereichs verloren.</value>
   </data>
-  <data name="TileSetApplyButtonLabel" xml:space="preserve">
-    <value>Übernehmen</value>
+  <data name="TileSetPendingIndicator" xml:space="preserve">
+    <value>Nicht übernommene Änderungen vorhanden.</value>
+  </data>
+  <data name="TileSetDiscardButtonLabel" xml:space="preserve">
+    <value>Verwerfen</value>
   </data>
 </root>

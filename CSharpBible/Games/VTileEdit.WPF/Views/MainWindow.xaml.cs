@@ -2,6 +2,7 @@ using BaseLib.Helper;
 using CommonDialogs.Interfaces;
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using VTileEdit.WPF.ViewModels;
 
 namespace VTileEdit.WPF.Views;
@@ -23,4 +24,17 @@ public partial class MainWindow : Window
     }
 
     private bool ShowFileDialog(IFileDialog dialog) => dialog.ShowDialog(this) ?? false;
+
+    private void TileSetExpander_Collapsed(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Expander expander)
+        {
+            return;
+        }
+
+        if (DataContext is MainWindowViewModel vm && vm.TileSetHasPendingChanges)
+        {
+            expander.IsExpanded = true;
+        }
+    }
 }

@@ -1,5 +1,7 @@
 using CommonDialogs;
 using CommonDialogs.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,6 +48,7 @@ public partial class MainWindowViewModel : ObservableObject
         TileSetNameInput = TileSetName;
         TileSetTileWidthInput = TileSetTileWidth;
         TileSetTileHeightInput = TileSetTileHeight;
+        EvaluateTileSetInputs();
  
         ApplyForeground(Palette.FirstOrDefault());
         ApplyBackground(Palette.FirstOrDefault());
@@ -56,7 +59,8 @@ public partial class MainWindowViewModel : ObservableObject
         ApplyForegroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyForeground, swatch => swatch != null);
         ApplyBackgroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyBackground, swatch => swatch != null);
         ApplyCharacterCommand = new RelayCommand<char>(ApplyCharacter);
-        ApplyTileSetChangesCommand = new RelayCommand(ApplyTileSetChanges);
+        ApplyTileSetChangesCommand = new RelayCommand(ApplyTileSetChanges, () => TileSetHasPendingChanges);
+        DiscardTileSetChangesCommand = new RelayCommand(DiscardTileSetChanges, () => TileSetHasPendingChanges);
     }
 
     /// <summary>
@@ -87,6 +91,12 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private int tileSetTileHeightInput = DefaultTileHeight;
+
+    [ObservableProperty]
+    private bool tileSetHasPendingChanges;
+
+    [ObservableProperty]
+    private bool tileSetShowsShrinkWarning;
 
     /// <summary>
     /// Represents a delegate that displays a file dialog and returns a value indicating whether the user confirmed the
@@ -169,6 +179,11 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the command applying tile-set metadata updates.
     /// </summary>
     public IRelayCommand ApplyTileSetChangesCommand { get; }
+
+    /// <summary>
+    /// Gets the command discarding tile-set metadata changes.
+    /// </summary>
+    public IRelayCommand DiscardTileSetChangesCommand { get; }
 
     [RelayCommand]
     private void New()
@@ -328,11 +343,18 @@ public partial class MainWindowViewModel : ObservableObject
         {
             SelectGlyph(SelectedTile?.Glyphs.FirstOrDefault());
         }
+ 
+        EvaluateTileSetInputs();
     }
  
     private static int NormalizeTileDimension(int value)
         => value <= 0 ? 1 : value;
-
+ 
+    private void DiscardTileSetChanges()
+    {
+        RestoreTileSetInputs();
+    }
+ 
     private static void ShowPlaceholderMessage(string context)
         => Debug.WriteLine($"Command '{context}' is not yet implemented.");
 
@@ -416,9 +438,24 @@ public partial class MainWindowViewModel : ObservableObject
         {
             return;
         }
-
+ 
         SetBackgroundSelection(value, updateBinding: false);
         SelectedGlyph?.SetBackground(value.Color);
+    }
+
+    partial void OnTileSetNameInputChanged(string value)
+        => EvaluateTileSetInputs();
+
+    partial void OnTileSetTileWidthInputChanged(int value)
+        => EvaluateTileSetInputs();
+
+    partial void OnTileSetTileHeightInputChanged(int value)
+        => EvaluateTileSetInputs();
+
+    partial void OnTileSetHasPendingChangesChanged(bool value)
+    {
+        (ApplyTileSetChangesCommand as RelayCommand)?.NotifyCanExecuteChanged();
+        (DiscardTileSetChangesCommand as RelayCommand)?.NotifyCanExecuteChanged();
     }
 
     private static IEnumerable<FontFamily> GetConsoleFontFamilies()
@@ -477,5 +514,25 @@ public partial class MainWindowViewModel : ObservableObject
     partial void OnTileFilterTextChanged(string value)
     {
         TilesView.Refresh();
+    }
+
+    private void EvaluateTileSetInputs()
+    {
+        var currentName = (TileSetName ?? string.Empty).Trim();
+        var pendingName = (TileSetNameInput ?? string.Empty).Trim();
+        TileSetShowsShrinkWarning = TileSetTileWidthInput < TileSetTileWidth
+            || TileSetTileHeightInput < TileSetTileHeight;
+        var hasChanges = !string.Equals(currentName, pendingName, StringComparison.Ordinal)
+            || TileSetTileWidthInput != TileSetTileWidth
+            || TileSetTileHeightInput != TileSetTileHeight;
+        TileSetHasPendingChanges = hasChanges;
+    }
+ 
+    private void RestoreTileSetInputs()
+    {
+        TileSetNameInput = TileSetName;
+        TileSetTileWidthInput = TileSetTileWidth;
+        TileSetTileHeightInput = TileSetTileHeight;
+        EvaluateTileSetInputs();
     }
  }

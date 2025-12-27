@@ -13,6 +13,9 @@
          MinWidth="960"
          MinHeight="640">
     <DockPanel>
+        <DockPanel.Resources>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </DockPanel.Resources>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{x:Static properties:Strings.MenuFileHeader}">
                 <MenuItem Header="{x:Static properties:Strings.MenuFileNew}" Command="{Binding NewCommand}" />
@@ -40,9 +43,18 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Expander Grid.Row="0"
-                          Header="{x:Static properties:Strings.TileSetDetailsHeader}"
                           Margin="0,0,0,8"
+                          Collapsed="TileSetExpander_Collapsed"
                           IsExpanded="True">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Static properties:Strings.TileSetDetailsHeader}" />
+                            <TextBlock Text=" *"
+                                       Foreground="DarkOrange"
+                                       Visibility="{Binding TileSetHasPendingChanges, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       ToolTip="{x:Static properties:Strings.TileSetPendingIndicator}" />
+                        </StackPanel>
+                    </Expander.Header>
                     <StackPanel Margin="0,4,0,0">
                         <Grid>
                              <Grid.ColumnDefinitions>
@@ -84,13 +96,21 @@
                         <TextBlock Text="{x:Static properties:Strings.TileSetApplyWarning}"
                                    TextWrapping="Wrap"
                                    Margin="0,8,0,8"
-                                   Foreground="DarkRed" />
-                        <Button Content="{x:Static properties:Strings.TileSetApplyButtonLabel}"
-                                Command="{Binding ApplyTileSetChangesCommand}"
-                                HorizontalAlignment="Right"
-                                Width="140" />
+                                   Foreground="DarkRed"
+                                   Visibility="{Binding TileSetShowsShrinkWarning, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="{x:Static properties:Strings.TileSetDiscardButtonLabel}"
+                                    Command="{Binding DiscardTileSetChangesCommand}"
+                                    Width="140"
+                                    Margin="0,0,8,0"
+                                    IsEnabled="{Binding TileSetHasPendingChanges}" />
+                            <Button Content="{x:Static properties:Strings.TileSetApplyButtonLabel}"
+                                    Command="{Binding ApplyTileSetChangesCommand}"
+                                    Width="140"
+                                    IsEnabled="{Binding TileSetHasPendingChanges}" />
+                        </StackPanel>
                     </StackPanel>
-                 </Expander>
+                </Expander>
                 <controls:TileListView Grid.Row="1" FontFamily="{Binding SelectedFontFamily}" />
             </Grid>
             <GridSplitter Grid.Column="1"
