@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
              xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels"
+             xmlns:self="clr-namespace:VTileEdit.WPF.Views.Controls"
              x:Name="Root">
     <UserControl.Resources>
         <converters:PaletteSelectionConverter x:Key="PaletteSelectionConverter" />
@@ -16,7 +17,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:ColorSwatchViewModel}">
-                    <ToggleButton Command="{Binding Command, ElementName=Root}"
+                    <ToggleButton Command="{Binding Command, RelativeSource={RelativeSource AncestorType={x:Type self:PaletteSelectorView}}}"
                                   CommandParameter="{Binding}"
                                   Margin="2"
                                   Width="50"
