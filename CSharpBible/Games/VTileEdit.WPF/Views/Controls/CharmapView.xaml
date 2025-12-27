@@ -23,7 +23,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button Content="{Binding}"
-                                    FontFamily="Consolas"
+                                    FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=controls:CharmapView}}"
                                     FontSize="14"
                                     Margin="2"
                                     Width="30"

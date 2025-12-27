@@ -1,11 +1,13 @@
 using CommonDialogs;
 using CommonDialogs.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 
 namespace VTileEdit.WPF.ViewModels;
 
@@ -16,6 +18,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private const int DefaultTileWidth = 8;
     private const int DefaultTileHeight = 8;
+    private static readonly string[] PreferredConsoleFonts = new[] { "Consolas", "Cascadia Mono", "Cascadia Code", "Lucida Console", "Courier New" };
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -25,6 +28,8 @@ public partial class MainWindowViewModel : ObservableObject
         Tiles = new ObservableCollection<TileViewModel>(TileViewModel.CreateSampleTiles());
         Palette = new ObservableCollection<ColorSwatchViewModel>(Enum.GetValues<ConsoleColor>().Select(color => new ColorSwatchViewModel(color)));
         CharacterPalette = new ObservableCollection<char>(Enumerable.Range(32, 96).Select(i => (char)i));
+        AvailableFontFamilies = new ObservableCollection<FontFamily>(GetConsoleFontFamilies());
+        SelectedFontFamily = AvailableFontFamilies.FirstOrDefault() ?? SystemFonts.MessageFontFamily;
 
         SelectedTile = Tiles.FirstOrDefault();
         if (SelectedTile != null)
@@ -42,6 +47,14 @@ public partial class MainWindowViewModel : ObservableObject
         ApplyBackgroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyBackground, swatch => swatch != null);
         ApplyCharacterCommand = new RelayCommand<char>(ApplyCharacter);
     }
+
+    /// <summary>
+    /// Gets the list of console-friendly font families available to the application.
+    /// </summary>
+    public ObservableCollection<FontFamily> AvailableFontFamilies { get; }
+
+    [ObservableProperty]
+    private FontFamily selectedFontFamily = SystemFonts.MessageFontFamily;
 
     /// <summary>
     /// Represents a delegate that displays a file dialog and returns a value indicating whether the user confirmed the
@@ -336,5 +349,43 @@ public partial class MainWindowViewModel : ObservableObject
 
         SetBackgroundSelection(value, updateBinding: false);
         SelectedGlyph?.SetBackground(value.Color);
+    }
+
+    private static IEnumerable<FontFamily> GetConsoleFontFamilies()
+    {
+        var installed = Fonts.SystemFontFamilies.ToList();
+        var added = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var preferred in PreferredConsoleFonts)
+        {
+            var match = installed.FirstOrDefault(f => string.Equals(f.Source, preferred, StringComparison.OrdinalIgnoreCase) ||
+                                                      f.FamilyNames.Values.Any(name => string.Equals(name, preferred, StringComparison.OrdinalIgnoreCase)));
+            if (match != null && added.Add(match.Source))
+            {
+                yield return match;
+            }
+        }
+
+        foreach (var candidate in installed.Where(IsConsoleCandidate))
+        {
+            if (added.Add(candidate.Source))
+            {
+                yield return candidate;
+            }
+        }
+
+        if (added.Add(SystemFonts.MessageFontFamily.Source))
+        {
+            yield return SystemFonts.MessageFontFamily;
+        }
+    }
+
+    private static bool IsConsoleCandidate(FontFamily family)
+    {
+        var source = family.Source;
+        return source.Contains("Mono", StringComparison.OrdinalIgnoreCase)
+            || source.Contains("Console", StringComparison.OrdinalIgnoreCase)
+            || source.Contains("Courier", StringComparison.OrdinalIgnoreCase)
+            || source.Contains("Code", StringComparison.OrdinalIgnoreCase);
     }
 }
