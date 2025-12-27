@@ -3,10 +3,12 @@ using CommonDialogs.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace VTileEdit.WPF.ViewModels;
@@ -30,6 +32,8 @@ public partial class MainWindowViewModel : ObservableObject
         CharacterPalette = new ObservableCollection<char>(Enumerable.Range(32, 96).Select(i => (char)i));
         AvailableFontFamilies = new ObservableCollection<FontFamily>(GetConsoleFontFamilies());
         SelectedFontFamily = AvailableFontFamilies.FirstOrDefault() ?? SystemFonts.MessageFontFamily;
+        TilesView = CollectionViewSource.GetDefaultView(Tiles);
+        TilesView.Filter = FilterTile;
 
         SelectedTile = Tiles.FirstOrDefault();
         if (SelectedTile != null)
@@ -56,6 +60,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private FontFamily selectedFontFamily = SystemFonts.MessageFontFamily;
 
+    [ObservableProperty]
+    private string tileFilterText = string.Empty;
+
     /// <summary>
     /// Represents a delegate that displays a file dialog and returns a value indicating whether the user confirmed the
     /// dialog.
@@ -69,6 +76,11 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the tiles displayed in the list.
     /// </summary>
     public ObservableCollection<TileViewModel> Tiles { get; }
+
+    /// <summary>
+    /// Gets a filtered view of <see cref="Tiles"/> honoring <see cref="TileFilterText"/>.
+    /// </summary>
+    public ICollectionView TilesView { get; }
 
     /// <summary>
     /// Gets the palette used for both foreground and background colors.
@@ -387,5 +399,25 @@ public partial class MainWindowViewModel : ObservableObject
             || source.Contains("Console", StringComparison.OrdinalIgnoreCase)
             || source.Contains("Courier", StringComparison.OrdinalIgnoreCase)
             || source.Contains("Code", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool FilterTile(object obj)
+    {
+        if (string.IsNullOrWhiteSpace(TileFilterText))
+        {
+            return true;
+        }
+
+        if (obj is not TileViewModel tile)
+        {
+            return false;
+        }
+
+        return tile.DisplayName.Contains(TileFilterText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    partial void OnTileFilterTextChanged(string value)
+    {
+        TilesView.Refresh();
     }
 }

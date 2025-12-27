@@ -5,16 +5,33 @@
              xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
              xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels">
     <GroupBox Header="{x:Static properties:Strings.TileListHeader}">
-        <DockPanel>
-            <TextBlock Text="{x:Static properties:Strings.TileListHint}"
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Text="{x:Static properties:Strings.TileListHint}"
                        Margin="0,0,0,8"
                        Foreground="Gray" />
-            <ListBox ItemsSource="{Binding Tiles}"
+            <DockPanel Grid.Row="1" Margin="0,0,0,8">
+                <TextBlock Text="{x:Static properties:Strings.TileListFilterLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <TextBox Width="200"
+                         Text="{Binding TileFilterText, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+            <ListBox Grid.Row="2"
+                     ItemsSource="{Binding TilesView}"
                      SelectedItem="{Binding SelectedTile}"
-                     DockPanel.Dock="Bottom">
+                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:TileViewModel}">
-                        <StackPanel>
+                        <StackPanel Width="140" Margin="0,0,8,8">
                             <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" />
                             <ItemsControl ItemsSource="{Binding Glyphs}">
                                 <ItemsControl.ItemsPanel>
@@ -31,7 +48,7 @@
                                                        Foreground="{Binding ForegroundBrush}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
-                                                       FontFamily="Consolas"
+                                                       FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"
                                                        FontSize="10" />
                                         </Border>
                                     </DataTemplate>
@@ -41,6 +58,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </DockPanel>
+        </Grid>
     </GroupBox>
 </UserControl>

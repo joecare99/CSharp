@@ -248,5 +248,23 @@ namespace VTileEdit.WPF.Properties {
                 return ResourceManager.GetString("CharMapHint", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Schriftart ähnelt.
+        /// </summary>
+        public static string FontSelectorLabel {
+            get {
+                return ResourceManager.GetString("FontSelectorLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Filter ähnelt.
+        /// </summary>
+        public static string TileListFilterLabel {
+            get {
+                return ResourceManager.GetString("TileListFilterLabel", resourceCulture);
+            }
+        }
     }
 }

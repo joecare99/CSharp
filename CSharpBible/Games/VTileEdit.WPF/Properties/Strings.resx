@@ -121,4 +121,10 @@
   <data name="CharMapHint" xml:space="preserve">
     <value>Wähle ein Zeichen zur schnellen Übernahme.</value>
   </data>
+  <data name="FontSelectorLabel" xml:space="preserve">
+    <value>Schriftart:</value>
+  </data>
+  <data name="TileListFilterLabel" xml:space="preserve">
+    <value>Filter:</value>
+  </data>
 </root>
