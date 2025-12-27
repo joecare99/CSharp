@@ -1,3 +1,6 @@
+using BaseLib.Helper;
+using CommonDialogs.Interfaces;
+using System;
 using System.Windows;
 using VTileEdit.WPF.ViewModels;
 
@@ -14,6 +17,10 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext ??= new MainWindowViewModel();
+        MainWindowViewModel vm;
+        DataContext = vm = IoC.GetRequiredService<MainWindowViewModel>();
+        vm.ShowFileDlg = ShowFileDialog;
     }
+
+    private bool ShowFileDialog(IFileDialog dialog) => dialog.ShowDialog(this) ?? false;
 }

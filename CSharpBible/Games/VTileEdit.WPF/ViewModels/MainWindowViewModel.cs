@@ -1,6 +1,9 @@
+using CommonDialogs;
+using CommonDialogs.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -31,17 +34,21 @@ public partial class MainWindowViewModel : ObservableObject
         ApplyForeground(Palette.FirstOrDefault());
         ApplyBackground(Palette.FirstOrDefault());
 
-        NewCommand = new RelayCommand(CreateNewTile);
-        OpenCommand = new RelayCommand(() => ShowPlaceholderMessage("Open"));
-        SaveCommand = new RelayCommand(() => ShowPlaceholderMessage("Save"));
-        SaveAsCommand = new RelayCommand(() => ShowPlaceholderMessage("SaveAs"));
-        ExitCommand = new RelayCommand(() => Application.Current?.Shutdown());
         UndoCommand = new RelayCommand(() => ShowPlaceholderMessage("Undo"));
         RedoCommand = new RelayCommand(() => ShowPlaceholderMessage("Redo"));
         SelectGlyphCommand = new RelayCommand<GlyphCellViewModel>(SelectGlyph, glyph => glyph != null);
         ApplyForegroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyForeground, swatch => swatch != null);
         ApplyBackgroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyBackground, swatch => swatch != null);
     }
+
+    /// <summary>
+    /// Represents a delegate that displays a file dialog and returns a value indicating whether the user confirmed the
+    /// dialog.
+    /// </summary>
+    /// <remarks>Assign a method to this delegate to customize how file dialogs are shown within the
+    /// application. The delegate should return <see langword="true"/> if the user confirms the dialog (such as by
+    /// clicking OK), or <see langword="false"/> if the dialog is canceled.</remarks>
+    public Func<IFileDialog, bool> ShowFileDlg;
 
     /// <summary>
     /// Gets the tiles displayed in the list.
@@ -64,31 +71,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private ColorSwatchViewModel? selectedBackgroundSwatch;
-
-    /// <summary>
-    /// Gets the command adding a new tile to the list.
-    /// </summary>
-    public IRelayCommand NewCommand { get; }
-
-    /// <summary>
-    /// Gets the command opening an existing tile set.
-    /// </summary>
-    public IRelayCommand OpenCommand { get; }
-
-    /// <summary>
-    /// Gets the command saving the tile set.
-    /// </summary>
-    public IRelayCommand SaveCommand { get; }
-
-    /// <summary>
-    /// Gets the command saving to a new file.
-    /// </summary>
-    public IRelayCommand SaveAsCommand { get; }
-
-    /// <summary>
-    /// Gets the command closing the application.
-    /// </summary>
-    public IRelayCommand ExitCommand { get; }
+    private string _Filename;
 
     /// <summary>
     /// Gets the undo command placeholder.
@@ -114,6 +97,62 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the command applying a background swatch.
     /// </summary>
     public IRelayCommand ApplyBackgroundCommand { get; }
+
+    [RelayCommand]
+    private void New()
+    {
+        CreateNewTile();
+    }
+
+    [RelayCommand]
+    private void Open()
+    {
+        var openDlg = new OpenFileDialogProxy()
+        {
+            Title = "Open Tile File",
+            Filter = "Tile Files (*.tile)|*.tile|All Files (*.*)|*.*",
+            CheckFileExists = true,
+            Multiselect = false,
+        };
+        if (ShowFileDlg?.Invoke(openDlg) == true)
+        {
+            _Filename = openDlg.FileName;
+        }
+    }
+
+    [RelayCommand]
+    private void Save()
+    {
+        if (File.Exists(_Filename))
+        {
+            // Save to existing file
+            return;
+        }
+        SaveAs();
+    }
+
+    [RelayCommand]
+    private void SaveAs()
+    {
+        var saveDlg = new SaveFileDialogProxy()
+        {
+            Title = "Open Tile File",
+            Filter = "Tile Files (*.tile)|*.tile|All Files (*.*)|*.*",
+            CheckFileExists = true,
+        };
+        if (ShowFileDlg?.Invoke(saveDlg) == true)
+        {
+            _Filename = saveDlg.FileName;
+        }
+    }
+
+
+    [RelayCommand]
+    private void Exit()
+    {
+        Application.Current?.Shutdown();
+    }
+
 
     partial void OnSelectedTileChanged(TileViewModel? value)
     {
