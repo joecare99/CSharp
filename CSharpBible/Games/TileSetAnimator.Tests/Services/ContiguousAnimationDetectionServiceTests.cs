@@ -16,10 +16,10 @@ public class ContiguousAnimationDetectionServiceTests
     {
         var tiles = new List<TileDefinition>
         {
-            new(0, 0, 0, new Int32Rect(0, 0, 16, 16), "A", string.Empty),
-            new(1, 0, 1, new Int32Rect(16, 0, 16, 16), "B", string.Empty),
-            new(2, 0, 2, new Int32Rect(32, 0, 16, 16), "C", string.Empty),
-            new(3, 1, 0, new Int32Rect(0, 16, 16, 16), "D", string.Empty),
+            new(0, 0, 0, new Int32Rect(0, 0, 16, 16), "A", string.Empty, TileCategory.Unknown, string.Empty),
+            new(1, 0, 1, new Int32Rect(16, 0, 16, 16), "B", string.Empty, TileCategory.Unknown, string.Empty),
+            new(2, 0, 2, new Int32Rect(32, 0, 16, 16), "C", string.Empty, TileCategory.Unknown, string.Empty),
+            new(3, 1, 0, new Int32Rect(0, 16, 16, 16), "D", string.Empty, TileCategory.Unknown, string.Empty),
         };
 
         var service = new ContiguousAnimationDetectionService();

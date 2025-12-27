@@ -1,4 +1,4 @@
-namespace TileSetAnimator.Models;
+namespace VTileEdit.Models;
 
 /// <summary>
 /// Enumerates the supported top-level tile categories.
