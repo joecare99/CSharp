@@ -266,5 +266,59 @@ namespace VTileEdit.WPF.Properties {
                 return ResourceManager.GetString("TileListFilterLabel", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TileSet-Basisdaten ähnelt.
+        /// </summary>
+        public static string TileSetDetailsHeader {
+            get {
+                return ResourceManager.GetString("TileSetDetailsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Name: ähnelt.
+        /// </summary>
+        public static string TileSetNameLabel {
+            get {
+                return ResourceManager.GetString("TileSetNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Kachelbreite: ähnelt.
+        /// </summary>
+        public static string TileSetWidthLabel {
+            get {
+                return ResourceManager.GetString("TileSetWidthLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Kachelhöhe: ähnelt.
+        /// </summary>
+        public static string TileSetHeightLabel {
+            get {
+                return ResourceManager.GetString("TileSetHeightLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hinweis: Änderungen wirken auf alle Kacheln. Beim Verkleinern gehen Glyphen ausserhalb des neuen Bereichs verloren. ähnelt.
+        /// </summary>
+        public static string TileSetApplyWarning {
+            get {
+                return ResourceManager.GetString("TileSetApplyWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Übernehmen ähnelt.
+        /// </summary>
+        public static string TileSetApplyButtonLabel {
+            get {
+                return ResourceManager.GetString("TileSetApplyButtonLabel", resourceCulture);
+            }
+        }
     }
 }

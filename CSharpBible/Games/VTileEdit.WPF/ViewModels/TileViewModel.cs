@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +11,9 @@ namespace VTileEdit.WPF.ViewModels;
 /// </summary>
 public partial class TileViewModel : ObservableObject
 {
+    private const ConsoleColor DefaultForeground = ConsoleColor.Gray;
+    private const ConsoleColor DefaultBackground = ConsoleColor.Black;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TileViewModel"/> class.
     /// </summary>
@@ -35,20 +39,58 @@ public partial class TileViewModel : ObservableObject
     /// </summary>
     public string DisplayName { get; }
 
-    /// <summary>
-    /// Gets the tile width.
-    /// </summary>
-    public int TileWidth { get; }
+    [ObservableProperty]
+    private int tileWidth;
 
-    /// <summary>
-    /// Gets the tile height.
-    /// </summary>
-    public int TileHeight { get; }
+    [ObservableProperty]
+    private int tileHeight;
 
     /// <summary>
     /// Gets the glyphs composing the tile.
     /// </summary>
     public ObservableCollection<GlyphCellViewModel> Glyphs { get; }
+
+    /// <summary>
+    /// Adjusts the glyph surface to fit the supplied dimensions.
+    /// </summary>
+    public void ApplyDimensions(int width, int height)
+    {
+        if (width <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(width));
+        }
+
+        if (height <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(height));
+        }
+
+        if (width == TileWidth && height == TileHeight)
+        {
+            return;
+        }
+
+        var existing = Glyphs.ToDictionary(g => (g.Row, g.Column));
+        Glyphs.Clear();
+
+        for (var row = 0; row < height; row++)
+        {
+            for (var column = 0; column < width; column++)
+            {
+                if (existing.TryGetValue((row, column), out var glyph))
+                {
+                    Glyphs.Add(glyph);
+                }
+                else
+                {
+                    Glyphs.Add(new GlyphCellViewModel(row, column, ' ', DefaultForeground, DefaultBackground));
+                }
+            }
+        }
+
+        TileWidth = width;
+        TileHeight = height;
+    }
 
     /// <summary>
     /// Creates a small set of demo tiles that light up the UI before real data is wired.

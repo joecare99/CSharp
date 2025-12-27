@@ -127,4 +127,22 @@
   <data name="TileListFilterLabel" xml:space="preserve">
     <value>Filter:</value>
   </data>
+  <data name="TileSetDetailsHeader" xml:space="preserve">
+    <value>TileSet-Basisdaten</value>
+  </data>
+  <data name="TileSetNameLabel" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="TileSetWidthLabel" xml:space="preserve">
+    <value>Kachelbreite:</value>
+  </data>
+  <data name="TileSetHeightLabel" xml:space="preserve">
+    <value>Kachelhöhe:</value>
+  </data>
+  <data name="TileSetApplyWarning" xml:space="preserve">
+    <value>Hinweis: Änderungen wirken auf alle Kacheln. Beim Verkleinern gehen Glyphen ausserhalb des neuen Bereichs verloren.</value>
+  </data>
+  <data name="TileSetApplyButtonLabel" xml:space="preserve">
+    <value>Übernehmen</value>
+  </data>
 </root>

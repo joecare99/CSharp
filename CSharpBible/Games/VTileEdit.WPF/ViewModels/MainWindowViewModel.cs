@@ -34,13 +34,19 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedFontFamily = AvailableFontFamilies.FirstOrDefault() ?? SystemFonts.MessageFontFamily;
         TilesView = CollectionViewSource.GetDefaultView(Tiles);
         TilesView.Filter = FilterTile;
-
+ 
         SelectedTile = Tiles.FirstOrDefault();
         if (SelectedTile != null)
         {
             SelectGlyph(SelectedTile.Glyphs.FirstOrDefault());
         }
-
+        TileSetName = SelectedTile?.DisplayName ?? "Tile Set";
+        TileSetTileWidth = SelectedTile?.TileWidth ?? DefaultTileWidth;
+        TileSetTileHeight = SelectedTile?.TileHeight ?? DefaultTileHeight;
+        TileSetNameInput = TileSetName;
+        TileSetTileWidthInput = TileSetTileWidth;
+        TileSetTileHeightInput = TileSetTileHeight;
+ 
         ApplyForeground(Palette.FirstOrDefault());
         ApplyBackground(Palette.FirstOrDefault());
 
@@ -50,6 +56,7 @@ public partial class MainWindowViewModel : ObservableObject
         ApplyForegroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyForeground, swatch => swatch != null);
         ApplyBackgroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyBackground, swatch => swatch != null);
         ApplyCharacterCommand = new RelayCommand<char>(ApplyCharacter);
+        ApplyTileSetChangesCommand = new RelayCommand(ApplyTileSetChanges);
     }
 
     /// <summary>
@@ -62,6 +69,24 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string tileFilterText = string.Empty;
+
+    [ObservableProperty]
+    private string tileSetName = "Tile Set";
+
+    [ObservableProperty]
+    private int tileSetTileWidth = DefaultTileWidth;
+
+    [ObservableProperty]
+    private int tileSetTileHeight = DefaultTileHeight;
+
+    [ObservableProperty]
+    private string tileSetNameInput = "Tile Set";
+
+    [ObservableProperty]
+    private int tileSetTileWidthInput = DefaultTileWidth;
+
+    [ObservableProperty]
+    private int tileSetTileHeightInput = DefaultTileHeight;
 
     /// <summary>
     /// Represents a delegate that displays a file dialog and returns a value indicating whether the user confirmed the
@@ -140,6 +165,11 @@ public partial class MainWindowViewModel : ObservableObject
     /// </summary>
     public IRelayCommand ApplyCharacterCommand { get; }
 
+    /// <summary>
+    /// Gets the command applying tile-set metadata updates.
+    /// </summary>
+    public IRelayCommand ApplyTileSetChangesCommand { get; }
+
     [RelayCommand]
     private void New()
     {
@@ -208,7 +238,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void CreateNewTile()
     {
-        var tile = CreateEmptyTile($"Tile {Tiles.Count + 1}", DefaultTileWidth, DefaultTileHeight);
+        var tile = CreateEmptyTile($"Tile {Tiles.Count + 1}", TileSetTileWidth, TileSetTileHeight);
         Tiles.Add(tile);
         SelectedTile = tile;
     }
@@ -271,9 +301,37 @@ public partial class MainWindowViewModel : ObservableObject
         {
             return;
         }
-
+ 
         SelectedGlyph.Character = character;
     }
+ 
+    private void ApplyTileSetChanges()
+    {
+        var normalizedWidth = NormalizeTileDimension(TileSetTileWidthInput);
+        var normalizedHeight = NormalizeTileDimension(TileSetTileHeightInput);
+        var normalizedName = string.IsNullOrWhiteSpace(TileSetNameInput) ? "Tile Set" : TileSetNameInput.Trim();
+ 
+        TileSetNameInput = normalizedName;
+        TileSetTileWidthInput = normalizedWidth;
+        TileSetTileHeightInput = normalizedHeight;
+ 
+        foreach (var tile in Tiles)
+        {
+            tile.ApplyDimensions(normalizedWidth, normalizedHeight);
+        }
+ 
+        TileSetName = normalizedName;
+        TileSetTileWidth = normalizedWidth;
+        TileSetTileHeight = normalizedHeight;
+ 
+        if (SelectedGlyph != null && (SelectedGlyph.Column >= normalizedWidth || SelectedGlyph.Row >= normalizedHeight))
+        {
+            SelectGlyph(SelectedTile?.Glyphs.FirstOrDefault());
+        }
+    }
+ 
+    private static int NormalizeTileDimension(int value)
+        => value <= 0 ? 1 : value;
 
     private static void ShowPlaceholderMessage(string context)
         => Debug.WriteLine($"Command '{context}' is not yet implemented.");
@@ -407,12 +465,12 @@ public partial class MainWindowViewModel : ObservableObject
         {
             return true;
         }
-
+ 
         if (obj is not TileViewModel tile)
         {
             return false;
         }
-
+ 
         return tile.DisplayName.Contains(TileFilterText, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -420,4 +478,4 @@ public partial class MainWindowViewModel : ObservableObject
     {
         TilesView.Refresh();
     }
-}
+ }
