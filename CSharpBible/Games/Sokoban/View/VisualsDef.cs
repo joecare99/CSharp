@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 08-05-2022
 //
@@ -12,11 +12,11 @@
 // <summary></summary>
 // ***********************************************************************
 using ConsoleDisplay.View;
-using Sokoban_Base.ViewModels;
+using Sokoban.ViewModels;
 using System;
 using System.Drawing;
 
-namespace Sokoban_Base.View {
+namespace Sokoban.View {
 	/// <summary>
 	/// Class VisualsDef.
 	/// </summary>
