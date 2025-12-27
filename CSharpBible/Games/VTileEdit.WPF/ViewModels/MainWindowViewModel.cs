@@ -50,7 +50,7 @@ public partial class MainWindowViewModel : ObservableObject
     /// <remarks>Assign a method to this delegate to customize how file dialogs are shown within the
     /// application. The delegate should return <see langword="true"/> if the user confirms the dialog (such as by
     /// clicking OK), or <see langword="false"/> if the dialog is canceled.</remarks>
-    public Func<IFileDialog, bool> ShowFileDlg;
+    public Func<IFileDialog, bool>? ShowFileDlg { get; set; }
 
     /// <summary>
     /// Gets the tiles displayed in the list.
@@ -78,7 +78,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private ColorSwatchViewModel? selectedBackgroundSwatch;
-    private string _Filename;
+    private string? _fileName;
 
     /// <summary>
     /// Gets the undo command placeholder.
@@ -128,14 +128,14 @@ public partial class MainWindowViewModel : ObservableObject
         };
         if (ShowFileDlg?.Invoke(openDlg) == true)
         {
-            _Filename = openDlg.FileName;
+            _fileName = openDlg.FileName;
         }
     }
 
     [RelayCommand]
     private void Save()
     {
-        if (File.Exists(_Filename))
+        if (!string.IsNullOrEmpty(_fileName) && File.Exists(_fileName))
         {
             // Save to existing file
             return;
@@ -148,13 +148,13 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var saveDlg = new SaveFileDialogProxy()
         {
-            Title = "Open Tile File",
+            Title = "Save Tile File",
             Filter = "Tile Files (*.tile)|*.tile|All Files (*.*)|*.*",
-            CheckFileExists = true,
+            CheckFileExists = false,
         };
         if (ShowFileDlg?.Invoke(saveDlg) == true)
         {
-            _Filename = saveDlg.FileName;
+            _fileName = saveDlg.FileName;
         }
     }
 
