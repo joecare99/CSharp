@@ -4,6 +4,8 @@ using System.Drawing;
 using VTileEdit.ViewModels;
 using VTileEdit.Models;
 using Microsoft.Win32;
+using BaseLib.Helper;
+using CommonDialogs.Interfaces;
 
 namespace VTileEdit.Views;
 
@@ -52,12 +54,24 @@ public class VTEVisual : IVisual
             Console.WriteLine();
             switch (key.KeyChar)
             {
-                case '1': _viewModel.NewTilesCommand.Execute(this); break;
-                case '2': _viewModel.LoadTilesCommand.Execute(this); break;
-                case '3': _viewModel.SaveTilesCommand.Execute(this); break;
-                case '4': _viewModel.SelectTileCommand.Execute(this); break;
-                case '5': _viewModel.EditTileCommand.Execute(this); break;
-                case '0': _viewModel.QuitCommand.Execute(this); break;
+                case '1':
+                    _viewModel.NewTilesCommand.Execute(this);
+                    break;
+                case '2':
+                    _viewModel.LoadTilesCommand.Execute(this);
+                    break;
+                case '3':
+                    _viewModel.SaveTilesCommand.Execute(this);
+                    break;
+                case '4':
+                    _viewModel.SelectTileCommand.Execute(this);
+                    break;
+                case '5':
+                    _viewModel.EditTileCommand.Execute(this);
+                    break;
+                case '0':
+                    _viewModel.QuitCommand.Execute(this);
+                    break;
             }
         }
     }
@@ -68,7 +82,8 @@ public class VTEVisual : IVisual
         var path = Console.ReadLine();
         if (!string.IsNullOrWhiteSpace(path))
         {
-            try { _viewModel.SaveToPath(path); Console.WriteLine("Gespeichert."); }
+            try
+            { _viewModel.SaveToPath(path); Console.WriteLine("Gespeichert."); }
             catch (Exception ex) { Console.WriteLine($"Fehler: {ex.Message}"); }
         }
     }
@@ -101,7 +116,8 @@ public class VTEVisual : IVisual
         var lines = _viewModel.CurrentLines.Length == size.Height ? (string[])_viewModel.CurrentLines.Clone() : new string[size.Height];
         for (int y = 0; y < size.Height; y++)
         {
-            if (lines[y] == null || lines[y].Length != size.Width) lines[y] = new string(' ', size.Width);
+            if (lines[y] == null || lines[y].Length != size.Width)
+                lines[y] = new string(' ', size.Width);
         }
         var colors = _viewModel.CurrentColors.Length == size.Width * size.Height ? (FullColor[])_viewModel.CurrentColors.Clone() : new FullColor[size.Width * size.Height];
 
@@ -116,15 +132,24 @@ public class VTEVisual : IVisual
             key = Console.ReadKey(true).Key;
             switch (key)
             {
-                case ConsoleKey.LeftArrow: cx = Math.Max(0, cx - 1); break;
-                case ConsoleKey.RightArrow: cx = Math.Min(size.Width - 1, cx + 1); break;
-                case ConsoleKey.UpArrow: cy = Math.Max(0, cy - 1); break;
-                case ConsoleKey.DownArrow: cy = Math.Min(size.Height - 1, cy + 1); break;
+                case ConsoleKey.LeftArrow:
+                    cx = Math.Max(0, cx - 1);
+                    break;
+                case ConsoleKey.RightArrow:
+                    cx = Math.Min(size.Width - 1, cx + 1);
+                    break;
+                case ConsoleKey.UpArrow:
+                    cy = Math.Max(0, cy - 1);
+                    break;
+                case ConsoleKey.DownArrow:
+                    cy = Math.Min(size.Height - 1, cy + 1);
+                    break;
                 case ConsoleKey.C:
                     Console.Write("Zeichen eingeben: ");
                     var ch = Console.ReadKey(true).KeyChar;
                     var arr = lines[cy].ToCharArray();
-                    arr[cx] = ch; lines[cy] = new string(arr);
+                    arr[cx] = ch;
+                    lines[cy] = new string(arr);
                     break;
                 case ConsoleKey.F:
                     colors[cy * size.Width + cx].fgr = PickColor("Vordergrundfarbe (0-15)");
@@ -141,9 +166,11 @@ public class VTEVisual : IVisual
     private ConsoleColor PickColor(string prompt)
     {
         Console.WriteLine(prompt);
-        for (int i = 0; i < 16; i++) Console.WriteLine($"{i}: {(ConsoleColor)i}");
+        for (int i = 0; i < 16; i++)
+            Console.WriteLine($"{i}: {(ConsoleColor)i}");
         var s = Console.ReadLine();
-        if (int.TryParse(s, out int v) && v >= 0 && v < 16) return (ConsoleColor)v;
+        if (int.TryParse(s, out int v) && v >= 0 && v < 16)
+            return (ConsoleColor)v;
         return ConsoleColor.White;
     }
 
@@ -184,36 +211,21 @@ public class VTEVisual : IVisual
     private static string? ShowOpenFileDialog()
     {
         string? chosenPath = null;
-        try
-        {
-            var t = new System.Threading.Thread(() =>
-            {
-                var ofd = new OpenFileDialog
-                {
-                    Title = "Datei öffnen",
-                    Filter = "Tile-Dateien (*.tdf;*.tdt;*.tdj;*.tdx)|*.tdf;*.tdt;*.tdj;*.tdx|Alle Dateien (*.*)|*.*",
-                    CheckFileExists = true,
-                    CheckPathExists = true,
-                    Multiselect = false,
-                    RestoreDirectory = true,
-                    InitialDirectory = Environment.CurrentDirectory,
-                    DefaultExt = "tdf"
-                };
 
-                var result = ofd.ShowDialog();
-                if (result == true)
-                {
-                    chosenPath = ofd.FileName;
-                }
-            });
+        IOpenFileDialog ofd = IoC.GetRequiredService<IOpenFileDialog>();
 
-            t.SetApartmentState(System.Threading.ApartmentState.STA);
-            t.Start();
-            t.Join();
-        }
-        catch
+        ofd.Title = "Datei öffnen";
+        ofd.Filter = "Tile-Dateien (*.tdf;*.tdt;*.tdj;*.tdx)|*.tdf;*.tdt;*.tdj;*.tdx|Alle Dateien (*.*)|*.*";
+        ofd.CheckFileExists = true;
+        ofd.Multiselect = false;
+        ofd.RestoreDirectory = true;
+        ofd.InitialDirectory = Environment.CurrentDirectory;
+        ofd.DefaultExt = "tdf";
+
+        var result = ofd.ShowDialog();
+        if (result == true)
         {
-            // Ignorieren, null zurückgeben
+            chosenPath = ofd.FileName;
         }
 
         return chosenPath;

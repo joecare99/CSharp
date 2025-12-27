@@ -6,6 +6,7 @@
         Text,
         Json,
         Code,
-        Xml
+        Xml,
+        Json2
     }
 }

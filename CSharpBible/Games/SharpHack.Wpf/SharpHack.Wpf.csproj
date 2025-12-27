@@ -10,7 +10,7 @@
 		<None Remove="tiles.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="tiles.png">
+		<EmbeddedResource Include="*.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</EmbeddedResource>
 	</ItemGroup>

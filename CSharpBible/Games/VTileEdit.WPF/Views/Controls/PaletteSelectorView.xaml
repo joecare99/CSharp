@@ -1,0 +1,36 @@
+<UserControl x:Class="VTileEdit.WPF.Views.Controls.PaletteSelectorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
+             xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels"
+             x:Name="Root">
+    <UserControl.Resources>
+        <converters:PaletteSelectionConverter x:Key="PaletteSelectionConverter" />
+    </UserControl.Resources>
+    <GroupBox Header="{Binding Header, ElementName=Root}">
+        <ItemsControl ItemsSource="{Binding ItemsSource, ElementName=Root}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:ColorSwatchViewModel}">
+                    <ToggleButton Command="{Binding Command, ElementName=Root}"
+                                  CommandParameter="{Binding}"
+                                  Margin="2"
+                                  Width="50"
+                                  Height="30">
+                        <ToggleButton.IsChecked>
+                            <MultiBinding Converter="{StaticResource PaletteSelectionConverter}" Mode="OneWay">
+                                <Binding />
+                                <Binding ElementName="Root" Path="SelectionMode" />
+                            </MultiBinding>
+                        </ToggleButton.IsChecked>
+                        <Border Background="{Binding Brush}" CornerRadius="4" />
+                    </ToggleButton>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </GroupBox>
+</UserControl>

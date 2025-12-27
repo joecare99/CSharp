@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Sokoban.Model;
 
-namespace Sokoban_Base.ViewModels;
+namespace Sokoban.ViewModels;
 
 /// <summary>
 /// Enum TileDef

@@ -16,6 +16,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Class1.cs" />
+	  <Compile Remove="TaskDialog.cs" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="CommonDialogs.csproj.bak" />
