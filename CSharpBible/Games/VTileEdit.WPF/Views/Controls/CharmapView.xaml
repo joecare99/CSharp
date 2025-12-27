@@ -43,8 +43,47 @@
                                                             BorderBrush="{TemplateBinding BorderBrush}"
                                                             BorderThickness="{TemplateBinding BorderThickness}"
                                                             CornerRadius="3">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        <ContentPresenter x:Name="contentPresenter"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          RenderTransformOrigin="0.5,0.5">
+                                                            <ContentPresenter.RenderTransform>
+                                                                <ScaleTransform x:Name="scaleTransform" ScaleX="1" ScaleY="1" />
+                                                            </ContentPresenter.RenderTransform>
+                                                        </ContentPresenter>
                                                     </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <EventTrigger RoutedEvent="MouseEnter">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
+                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                                                     To="2"
+                                                                                     Duration="0:0:0.2"
+                                                                                     FillBehavior="HoldEnd" />
+                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
+                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                                                     To="2"
+                                                                                     Duration="0:0:0.2"
+                                                                                     FillBehavior="HoldEnd" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                        <EventTrigger RoutedEvent="MouseLeave">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
+                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                                                     To="1"
+                                                                                     Duration="0:0:0.2" />
+                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
+                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                                                     To="1"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                    </ControlTemplate.Triggers>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
