@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MainWindowTitle" xml:space="preserve">
+    <value>VTileEdit WPF</value>
+  </data>
+  <data name="MenuFileHeader" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="MenuFileNew" xml:space="preserve">
+    <value>Neu...</value>
+  </data>
+  <data name="MenuFileOpen" xml:space="preserve">
+    <value>Öffnen...</value>
+  </data>
+  <data name="MenuFileSave" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="MenuFileSaveAs" xml:space="preserve">
+    <value>Speichern unter...</value>
+  </data>
+  <data name="MenuFileExit" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+  <data name="MenuEditHeader" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="MenuEditUndo" xml:space="preserve">
+    <value>Rückgängig</value>
+  </data>
+  <data name="MenuEditRedo" xml:space="preserve">
+    <value>Wiederholen</value>
+  </data>
+  <data name="TileListHeader" xml:space="preserve">
+    <value>Kacheln</value>
+  </data>
+  <data name="TileListHint" xml:space="preserve">
+    <value>Wähle eine Kachel aus der Liste.</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Vorschau</value>
+  </data>
+  <data name="GlyphDetailsHeader" xml:space="preserve">
+    <value>Kacheldetails</value>
+  </data>
+  <data name="GlyphCharacterLabel" xml:space="preserve">
+    <value>Zeichen</value>
+  </data>
+  <data name="GlyphForegroundLabel" xml:space="preserve">
+    <value>Vordergrundfarbe</value>
+  </data>
+  <data name="GlyphBackgroundLabel" xml:space="preserve">
+    <value>Hintergrundfarbe</value>
+  </data>
+  <data name="PaletteForegroundHeader" xml:space="preserve">
+    <value>Palette Vordergrund</value>
+  </data>
+  <data name="PaletteBackgroundHeader" xml:space="preserve">
+    <value>Palette Hintergrund</value>
+  </data>
+</root>
