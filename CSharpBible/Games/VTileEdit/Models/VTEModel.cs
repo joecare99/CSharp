@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,8 @@ public class VTEModel : IVTEModel
     private readonly VisTileData _data = new();
 
     public Size TileSize => _data.TileSize;
+
+    public IEnumerable<Enum> TileKeys => _data.Keys;
 
     public Type KeyType => _data.KeyType;
 
@@ -25,4 +28,8 @@ public class VTEModel : IVTEModel
 
     public void SetTileDef(Enum tile, string[] lines, FullColor[] colors)
         => _data.SetTileDef(tile, new SingleTile(lines, colors));
+
+    public TileInfo GetTileInfo(Enum tile) => _data.GetTileInfo(tile);
+
+    public void SetTileInfo(Enum tile, TileInfo info) => _data.SetTileInfo(tile, info);
 }
