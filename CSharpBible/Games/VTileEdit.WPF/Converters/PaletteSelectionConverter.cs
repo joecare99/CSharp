@@ -13,17 +13,20 @@ public sealed class PaletteSelectionConverter : IMultiValueConverter
     /// <inheritdoc />
     public object? Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (values.Length < 2)
+        if (values.Length < 3)
         {
             return false;
         }
 
-        if (values[0] is not ColorSwatchViewModel swatch || values[1] is not PaletteSelectionMode mode)
+        if (values[2] is not PaletteSelectionMode mode)
         {
             return false;
         }
 
-        return mode == PaletteSelectionMode.Foreground ? swatch.IsForegroundSelection : swatch.IsBackgroundSelection;
+        var foregroundSelected = values[0] as bool? ?? false;
+        var backgroundSelected = values[1] as bool? ?? false;
+
+        return mode == PaletteSelectionMode.Foreground ? foregroundSelected : backgroundSelected;
     }
 
     /// <inheritdoc />

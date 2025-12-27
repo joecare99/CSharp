@@ -27,7 +27,8 @@
                                   Focusable="False">
                         <ToggleButton.IsChecked>
                             <MultiBinding Converter="{StaticResource PaletteSelectionConverter}" Mode="OneWay">
-                                <Binding />
+                                <Binding Path="IsForegroundSelection" />
+                                <Binding Path="IsBackgroundSelection" />
                                 <Binding ElementName="Root" Path="SelectionMode" />
                             </MultiBinding>
                         </ToggleButton.IsChecked>
