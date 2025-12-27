@@ -16,7 +16,7 @@ using Sokoban.ViewModels;
 using System;
 using System.Drawing;
 
-namespace Sokoban_Base.View {
+namespace Sokoban.View {
 	/// <summary>
 	/// Class VisualsDef.
 	/// </summary>
