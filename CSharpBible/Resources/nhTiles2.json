@@ -1,0 +1,270 @@
+{
+  "tileWidth": 4,
+  "tileHeight": 2,
+  "tiles": [
+    {
+      "id": "player_hero",
+      "tags": ["entity", "player"],
+      "visuals": [
+        " /\"\\", 
+        "(@@)"
+      ],
+      "colors": [
+        8, 15, 7, 8,
+        14, 12, 12, 14
+      ]
+    },
+    {
+      "id": "enemy_goblin",
+      "tags": ["entity", "monster"],
+      "visuals": [
+        " ^ ^",
+        "(oo)"
+      ],
+      "colors": [
+        0, 10, 0, 10,
+        2, 12, 12, 2
+      ]
+    },
+    {
+      "id": "enemy_orc",
+      "tags": ["entity", "monster"],
+      "visuals": [
+        " <->",
+        "[OO]"
+      ],
+      "colors": [
+        0, 2, 2, 0,
+        2, 12, 12, 2
+      ]
+    },
+    {
+      "id": "item_weapon_longsword",
+      "tags": ["item", "weapon"],
+      "visuals": [
+        "  | ",
+        "-[+]"
+      ],
+      "colors": [
+        0, 0, 11, 0,
+        6, 11, 14, 11
+      ]
+    },
+    {
+      "id": "item_weapon_dagger",
+      "tags": ["item", "weapon"],
+      "visuals": [
+        "   |",
+        " `! "
+      ],
+      "colors": [
+        0, 0, 0, 11,
+        0, 8, 14, 0
+      ]
+    },
+    {
+      "id": "item_weapon_bow",
+      "tags": ["item", "weapon"],
+      "visuals": [
+        " (\\ ",
+        " ` )"
+      ],
+      "colors": [
+        0, 6, 7, 0,
+        0, 7, 6, 0
+      ]
+    },
+    {
+      "id": "item_armor_leather",
+      "tags": ["item", "armor"],
+      "visuals": [
+        " ._.",
+        "(###)"
+      ],
+      "colors": [
+        0, 6, 6, 0,
+        6, 6, 6, 6
+      ]
+    },
+    {
+      "id": "item_armor_plate",
+      "tags": ["item", "armor"],
+      "visuals": [
+        " ][ ",
+        "/||\\"
+      ],
+      "colors": [
+        0, 8, 8, 0,
+        15, 7, 7, 15
+      ]
+    },
+    {
+      "id": "item_shield_wood",
+      "tags": ["item", "armor"],
+      "visuals": [
+        " [=]",
+        "  v "
+      ],
+      "colors": [
+        0, 6, 14, 6,
+        0, 0, 6, 0
+      ]
+    },
+    {
+      "id": "item_gold",
+      "tags": ["item", "money"],
+      "visuals": [
+        " .. ",
+        " $$ "
+      ],
+      "colors": [
+        0, 14, 14, 0,
+        0, 14, 14, 0
+      ]
+    },
+    {
+      "id": "item_food_ration",
+      "tags": ["item", "food"],
+      "visuals": [
+        " ._,",
+        "(,,)"
+      ],
+      "colors": [
+        0, 6, 4, 6,
+        6, 6, 6, 6
+      ]
+    },
+    {
+      "id": "wall_solid",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "####",
+        "####"
+      ],
+      "colors": [
+        135, 135, 135, 135,
+        135, 135, 135, 135
+      ]
+    },
+    {
+      "id": "wall_horizontal",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "----",
+        "----"
+      ],
+      "colors": [
+        135, 135, 135, 135,
+        135, 135, 135, 135
+      ]
+    },
+    {
+      "id": "wall_vertical",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "|  |",
+        "|  |"
+      ],
+      "colors": [
+        135, 0, 0, 135,
+        135, 0, 0, 135
+      ]
+    },
+    {
+      "id": "wall_corner_top_left",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "____",
+        "|   "
+      ],
+      "colors": [
+        135, 135, 135, 135,
+        135, 0, 0, 0
+      ]
+    },
+    {
+      "id": "wall_corner_top_right",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "____",
+        "   |"
+      ],
+      "colors": [
+        135, 135, 135, 135,
+        0, 0, 0, 135
+      ]
+    },
+    {
+      "id": "wall_corner_bottom_left",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "|___",
+        "    "
+      ],
+      "colors": [
+        135, 135, 135, 135,
+        0, 0, 0, 0
+      ]
+    },
+    {
+      "id": "wall_corner_bottom_right",
+      "tags": ["environment", "wall"],
+      "visuals": [
+        "___|",
+        "    "
+      ],
+      "colors": [
+        135, 135, 135, 135,
+        0, 0, 0, 0
+      ]
+    },
+    {
+      "id": "door_closed",
+      "tags": ["environment", "door"],
+      "visuals": [
+        "____",
+        "|o |"
+      ],
+      "colors": [
+        6, 6, 6, 6,
+        6, 14, 6, 6
+      ]
+    },
+    {
+      "id": "door_open",
+      "tags": ["environment", "door"],
+      "visuals": [
+        "|  /",
+        "| / "
+      ],
+      "colors": [
+        6, 0, 0, 6,
+        6, 0, 6, 0
+      ]
+    },
+    {
+      "id": "stairs_up",
+      "tags": ["environment", "stairs"],
+      "visuals": [
+        "|  |",
+        "|<<|"
+      ],
+      "colors": [
+        7, 0, 0, 7,
+        7, 15, 15, 7
+      ]
+    },
+    {
+      "id": "stairs_down",
+      "tags": ["environment", "stairs"],
+      "visuals": [
+        "|  |",
+        "|>>|"
+      ],
+      "colors": [
+        7, 0, 0, 7,
+        7, 15, 15, 7
+      ]
+    }
+  ]
+}
