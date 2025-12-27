@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
@@ -161,10 +162,10 @@ public class VisTileData : ITileDef
                                             lines[j] = value;
                                     }
                                     int colorCount = 0;
-                                        if (keyValuePairs.TryGetValue($"Colors{i}", out value))
-                                        {
-                                            colorCount = int.Parse(value);
-                                        }
+                                    if (keyValuePairs.TryGetValue($"Colors{i}", out value))
+                                    {
+                                        colorCount = int.Parse(value);
+                                    }
                                     FullColor[] colors = new FullColor[colorCount];
                                     for (int j = 0; j < colorCount; j++)
                                     {
@@ -309,6 +310,17 @@ public class VisTileData : ITileDef
                     }
                     return true;
                 }
+            case EStreamType.Json2:
+                {
+                    Type _keyType = _storage.Count > 0 ? _storage.First().Key.GetType() : typeof(object);
+                    Json2Data data = new(_keyType.AssemblyQualifiedName, _size.Width,_size.Height, _storage.Select(v => new Json2Data.TileEntry((int)(object)v.Key, [$"{v.Key}"], v.Value.lines, v.Value.colors.Select(c => (byte)(((int)c.bgr) * 16 + (byte)c.fgr)).ToArray())).ToList());
+                    var json = JsonSerializer.Serialize(data);
+                    using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
+                    {
+                        writer.Write(json);
+                    }
+                    return true;
+                }
             case EStreamType.Code:
                 {
                     const string code = @"//***************************************************************
@@ -446,4 +458,17 @@ public record struct FullColor(ConsoleColor fgr, ConsoleColor bgr)
 
     public bool Equals(FullColor other)
         => fgr == other.fgr && bgr == other.bgr;
+}
+
+public record Json2Data(
+    string KeyType,
+    int TileWidth,
+    int TileHeight,
+    List<Json2Data.TileEntry> Tiles)
+{
+    public record TileEntry(
+        int Key,
+        IList<string> Tags,
+        string[] Lines,
+        byte[] Colors);
 }

@@ -9,5 +9,6 @@ public enum TileCategory
     Creature,
     Item,
     StructuralElement,
-    Effects
+    Effects,
+    Character,
 }
