@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
              xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
+             xmlns:controls="clr-namespace:VTileEdit.WPF.Views.Controls"
              x:Name="Root">
     <UserControl.Resources>
         <converters:CharacterSelectionConverter x:Key="CharacterSelectionConverter" />
@@ -27,7 +28,7 @@
                                     Margin="2"
                                     Width="30"
                                     Height="30"
-                                    Command="{Binding Command, ElementName=Root}"
+                                    Command="{Binding Command, RelativeSource={RelativeSource AncestorType={x:Type controls:CharmapView}}}"
                                     CommandParameter="{Binding}"
                                     ToolTip="{Binding}">
                                 <Button.Style>
@@ -36,6 +37,12 @@
                                         <Setter Property="BorderBrush" Value="#33000000" />
                                         <Setter Property="BorderThickness" Value="1" />
                                         <Setter Property="Foreground" Value="Black" />
+                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                                        <Setter Property="RenderTransform">
+                                            <Setter.Value>
+                                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            </Setter.Value>
+                                        </Setter>
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="Button">
@@ -43,51 +50,39 @@
                                                             BorderBrush="{TemplateBinding BorderBrush}"
                                                             BorderThickness="{TemplateBinding BorderThickness}"
                                                             CornerRadius="3">
-                                                        <ContentPresenter x:Name="contentPresenter"
-                                                                          HorizontalAlignment="Center"
-                                                                          VerticalAlignment="Center"
-                                                                          RenderTransformOrigin="0.5,0.5">
-                                                            <ContentPresenter.RenderTransform>
-                                                                <ScaleTransform x:Name="scaleTransform" ScaleX="1" ScaleY="1" />
-                                                            </ContentPresenter.RenderTransform>
-                                                        </ContentPresenter>
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center" />
                                                     </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <EventTrigger RoutedEvent="MouseEnter">
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
-                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                                                     To="2"
-                                                                                     Duration="0:0:0.2"
-                                                                                     FillBehavior="HoldEnd" />
-                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
-                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                                                     To="2"
-                                                                                     Duration="0:0:0.2"
-                                                                                     FillBehavior="HoldEnd" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                        <EventTrigger RoutedEvent="MouseLeave">
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
-                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                                                     To="1"
-                                                                                     Duration="0:0:0.2" />
-                                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
-                                                                                     Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                                                     To="1"
-                                                                                     Duration="0:0:0.2" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                    </ControlTemplate.Triggers>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
                                         <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard x:Name="GrowStoryboard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                                             To="2"
+                                                                             Duration="0:0:0.2" />
+                                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                                             To="2"
+                                                                             Duration="0:0:0.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <BeginStoryboard x:Name="ShrinkStoryboard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                                             To="1"
+                                                                             Duration="0:0:0.2" />
+                                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                                             To="1"
+                                                                             Duration="0:0:0.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.ExitActions>
+                                            </Trigger>
                                             <DataTrigger Value="True">
                                                 <DataTrigger.Binding>
                                                     <MultiBinding Converter="{StaticResource CharacterSelectionConverter}">
