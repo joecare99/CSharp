@@ -1,4 +1,4 @@
-using CommonDialogs;
+﻿using CommonDialogs;
 using CommonDialogs.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -23,6 +24,16 @@ public partial class MainWindowViewModel : ObservableObject
     private const int DefaultTileWidth = 8;
     private const int DefaultTileHeight = 8;
     private static readonly string[] PreferredConsoleFonts = new[] { "Consolas", "Cascadia Mono", "Cascadia Code", "Lucida Console", "Courier New" };
+    private static readonly char[] DecorativeCp437Glyphs =
+    {
+        ' ', '☺', '☻', '♥', '♦', '♣', '♠', '•', '◘', '○', '◙', '♂', '♀', '♪', '♫', '☼',
+        '►', '◄', '↕', '‼', '¶', '§', '▬', '↨', '↑', '↓', '→', '←', '∟', '↔', '▲', '▼'
+    };
+
+    static MainWindowViewModel()
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -31,7 +42,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         Tiles = new ObservableCollection<TileViewModel>(TileViewModel.CreateSampleTiles());
         Palette = new ObservableCollection<ColorSwatchViewModel>(Enum.GetValues<ConsoleColor>().Select(color => new ColorSwatchViewModel(color)));
-        CharacterPalette = new ObservableCollection<char>(Enumerable.Range(32, 96).Select(i => (char)i));
+        CharacterPalette = new ObservableCollection<char>(GetConsoleCharacters());
         AvailableFontFamilies = new ObservableCollection<FontFamily>(GetConsoleFontFamilies());
         SelectedFontFamily = AvailableFontFamilies.FirstOrDefault() ?? SystemFonts.MessageFontFamily;
         TilesView = CollectionViewSource.GetDefaultView(Tiles);
@@ -534,5 +545,23 @@ public partial class MainWindowViewModel : ObservableObject
         TileSetTileWidthInput = TileSetTileWidth;
         TileSetTileHeightInput = TileSetTileHeight;
         EvaluateTileSetInputs();
+    }
+
+    private static IEnumerable<char> GetConsoleCharacters()
+    {
+        var encoding = Encoding.GetEncoding(437);
+        var buffer = new byte[1];
+
+        for (var i = 0; i < 256; i++)
+        {
+            buffer[0] = (byte)i;
+            var glyph = encoding.GetChars(buffer)[0];
+            if (i < DecorativeCp437Glyphs.Length)
+            {
+                glyph = DecorativeCp437Glyphs[i];
+            }
+
+            yield return glyph;
+        }
     }
  }
