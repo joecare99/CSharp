@@ -57,56 +57,58 @@
                     </Expander.Header>
                     <StackPanel Margin="0,4,0,0">
                         <Grid>
-                             <Grid.ColumnDefinitions>
-                                 <ColumnDefinition Width="Auto" />
-                                 <ColumnDefinition Width="*" />
-                             </Grid.ColumnDefinitions>
-                             <Grid.RowDefinitions>
-                                 <RowDefinition Height="Auto" />
-                                 <RowDefinition Height="Auto" />
-                                 <RowDefinition Height="Auto" />
-                             </Grid.RowDefinitions>
-                             <TextBlock Grid.Column="0"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0"
                                         Text="{x:Static properties:Strings.TileSetNameLabel}"
                                         Margin="0,0,8,8"
                                         VerticalAlignment="Center" />
-                             <TextBox Grid.Column="1"
+                            <TextBox Grid.Column="1"
                                       Text="{Binding TileSetNameInput, UpdateSourceTrigger=PropertyChanged}"
-                                      Margin="0,0,12,8" />
-                             <TextBlock Grid.Column="0"
+                                      Margin="0,0,8,8" />
+                            <TextBlock Grid.Column="0"
                                         Grid.Row="1"
                                         Text="{x:Static properties:Strings.TileSetWidthLabel}"
                                         Margin="0,0,8,8"
                                         VerticalAlignment="Center" />
-                             <TextBox Grid.Column="1"
+                            <TextBox Grid.Column="1"
                                         Grid.Row="1"
-                                        Width="80"
                                         Text="{Binding TileSetTileWidthInput, UpdateSourceTrigger=PropertyChanged}"
-                                        Margin="0,0,12,8" />
-                             <TextBlock Grid.Column="0"
+                                        Margin="0,0,8,8" />
+                            <TextBlock Grid.Column="0"
                                         Grid.Row="2"
                                         Text="{x:Static properties:Strings.TileSetHeightLabel}"
                                         Margin="0,0,8,0"
                                         VerticalAlignment="Center" />
-                             <TextBox Grid.Column="1"
+                            <TextBox Grid.Column="1"
                                         Grid.Row="2"
-                                        Width="80"
-                                        Text="{Binding TileSetTileHeightInput, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding TileSetTileHeightInput, UpdateSourceTrigger=PropertyChanged}" 
+                                        Margin="0,0,8,8"/>
                         </Grid>
                         <TextBlock Text="{x:Static properties:Strings.TileSetApplyWarning}"
                                    TextWrapping="Wrap"
-                                   Margin="0,8,0,8"
+                                   Margin="8,8,8,8"
                                    Foreground="DarkRed"
                                    Visibility="{Binding TileSetShowsShrinkWarning, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Content="{x:Static properties:Strings.TileSetDiscardButtonLabel}"
                                     Command="{Binding DiscardTileSetChangesCommand}"
                                     Width="140"
+                                    Height="40"
                                     Margin="0,0,8,0"
                                     IsEnabled="{Binding TileSetHasPendingChanges}" />
                             <Button Content="{x:Static properties:Strings.TileSetApplyButtonLabel}"
                                     Command="{Binding ApplyTileSetChangesCommand}"
+                                    Height="40"
                                     Width="140"
+                                    Margin="0,0,8,0"
                                     IsEnabled="{Binding TileSetHasPendingChanges}" />
                         </StackPanel>
                     </StackPanel>

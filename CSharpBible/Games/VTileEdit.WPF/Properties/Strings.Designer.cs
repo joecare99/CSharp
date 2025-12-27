@@ -61,6 +61,33 @@ namespace VTileEdit.WPF.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Zeichenauswahl ähnelt.
+        /// </summary>
+        public static string CharMapHeader {
+            get {
+                return ResourceManager.GetString("CharMapHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Wähle ein Zeichen zur schnellen Übernahme. ähnelt.
+        /// </summary>
+        public static string CharMapHint {
+            get {
+                return ResourceManager.GetString("CharMapHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Schriftart: ähnelt.
+        /// </summary>
+        public static string FontSelectorLabel {
+            get {
+                return ResourceManager.GetString("FontSelectorLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hintergrundfarbe ähnelt.
         /// </summary>
         public static string GlyphBackgroundLabel {
@@ -214,6 +241,15 @@ namespace VTileEdit.WPF.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Filter: ähnelt.
+        /// </summary>
+        public static string TileListFilterLabel {
+            get {
+                return ResourceManager.GetString("TileListFilterLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Kacheln ähnelt.
         /// </summary>
         public static string TileListHeader {
@@ -232,74 +268,11 @@ namespace VTileEdit.WPF.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Zeichenkarte ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Übernehmen ähnelt.
         /// </summary>
-        public static string CharMapHeader {
+        public static string TileSetApplyButtonLabel {
             get {
-                return ResourceManager.GetString("CharMapHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Wähle ein Zeichen aus der Liste. ähnelt.
-        /// </summary>
-        public static string CharMapHint {
-            get {
-                return ResourceManager.GetString("CharMapHint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Schriftart ähnelt.
-        /// </summary>
-        public static string FontSelectorLabel {
-            get {
-                return ResourceManager.GetString("FontSelectorLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Filter ähnelt.
-        /// </summary>
-        public static string TileListFilterLabel {
-            get {
-                return ResourceManager.GetString("TileListFilterLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die TileSet-Basisdaten ähnelt.
-        /// </summary>
-        public static string TileSetDetailsHeader {
-            get {
-                return ResourceManager.GetString("TileSetDetailsHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Name: ähnelt.
-        /// </summary>
-        public static string TileSetNameLabel {
-            get {
-                return ResourceManager.GetString("TileSetNameLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Kachelbreite: ähnelt.
-        /// </summary>
-        public static string TileSetWidthLabel {
-            get {
-                return ResourceManager.GetString("TileSetWidthLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Kachelhöhe: ähnelt.
-        /// </summary>
-        public static string TileSetHeightLabel {
-            get {
-                return ResourceManager.GetString("TileSetHeightLabel", resourceCulture);
+                return ResourceManager.GetString("TileSetApplyButtonLabel", resourceCulture);
             }
         }
         
@@ -313,11 +286,38 @@ namespace VTileEdit.WPF.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Übernehmen ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Basisdaten ähnelt.
         /// </summary>
-        public static string TileSetApplyButtonLabel {
+        public static string TileSetDetailsHeader {
             get {
-                return ResourceManager.GetString("TileSetApplyButtonLabel", resourceCulture);
+                return ResourceManager.GetString("TileSetDetailsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Verwerfen ähnelt.
+        /// </summary>
+        public static string TileSetDiscardButtonLabel {
+            get {
+                return ResourceManager.GetString("TileSetDiscardButtonLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Kachelhöhe: ähnelt.
+        /// </summary>
+        public static string TileSetHeightLabel {
+            get {
+                return ResourceManager.GetString("TileSetHeightLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Name: ähnelt.
+        /// </summary>
+        public static string TileSetNameLabel {
+            get {
+                return ResourceManager.GetString("TileSetNameLabel", resourceCulture);
             }
         }
         
@@ -331,11 +331,11 @@ namespace VTileEdit.WPF.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Verwerfen ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Kachelbreite: ähnelt.
         /// </summary>
-        public static string TileSetDiscardButtonLabel {
+        public static string TileSetWidthLabel {
             get {
-                return ResourceManager.GetString("TileSetDiscardButtonLabel", resourceCulture);
+                return ResourceManager.GetString("TileSetWidthLabel", resourceCulture);
             }
         }
     }
