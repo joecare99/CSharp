@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDialogs", "..\Librari
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEdit.WPF", "VTileEdit.WPF\VTileEdit.WPF.csproj", "{5B09754B-82A4-BBEB-2BA6-65D9C1A883B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEdit.WPFTests", "VTileEdit.WPFTests\VTileEdit.WPFTests.csproj", "{6EE74200-0650-52A4-5922-3D6079F4AED0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -277,6 +279,10 @@ Global
 		{5B09754B-82A4-BBEB-2BA6-65D9C1A883B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B09754B-82A4-BBEB-2BA6-65D9C1A883B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B09754B-82A4-BBEB-2BA6-65D9C1A883B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE74200-0650-52A4-5922-3D6079F4AED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE74200-0650-52A4-5922-3D6079F4AED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE74200-0650-52A4-5922-3D6079F4AED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE74200-0650-52A4-5922-3D6079F4AED0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

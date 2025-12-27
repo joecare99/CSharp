@@ -1,0 +1,46 @@
+<UserControl x:Class="VTileEdit.WPF.Views.Controls.TileListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
+             xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels">
+    <GroupBox Header="{x:Static properties:Strings.TileListHeader}">
+        <DockPanel>
+            <TextBlock Text="{x:Static properties:Strings.TileListHint}"
+                       Margin="0,0,0,8"
+                       Foreground="Gray" />
+            <ListBox ItemsSource="{Binding Tiles}"
+                     SelectedItem="{Binding SelectedTile}"
+                     DisplayMemberPath="DisplayName"
+                     DockPanel.Dock="Bottom">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:TileViewModel}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" />
+                            <ItemsControl ItemsSource="{Binding Glyphs}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="{Binding TileWidth}" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:GlyphCellViewModel}">
+                                        <Border Background="{Binding BackgroundBrush}"
+                                                BorderBrush="#22000000"
+                                                BorderThickness="0.5">
+                                            <TextBlock Text="{Binding Character}"
+                                                       Foreground="{Binding ForegroundBrush}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontFamily="Consolas"
+                                                       FontSize="10" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </GroupBox>
+</UserControl>
