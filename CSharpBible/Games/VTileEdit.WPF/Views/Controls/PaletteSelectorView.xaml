@@ -20,14 +20,32 @@
                                   CommandParameter="{Binding}"
                                   Margin="2"
                                   Width="50"
-                                  Height="30">
+                                  Height="30"
+                                  Background="{Binding Brush}"
+                                  BorderBrush="#33000000"
+                                  BorderThickness="1"
+                                  Focusable="False">
                         <ToggleButton.IsChecked>
                             <MultiBinding Converter="{StaticResource PaletteSelectionConverter}" Mode="OneWay">
                                 <Binding />
                                 <Binding ElementName="Root" Path="SelectionMode" />
                             </MultiBinding>
                         </ToggleButton.IsChecked>
-                        <Border Background="{Binding Brush}" CornerRadius="4" />
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Border x:Name="ColorBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="4" />
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="ColorBorder" Property="BorderBrush" Value="#FF5A9BD8" />
+                                        <Setter TargetName="ColorBorder" Property="BorderThickness" Value="2" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
                     </ToggleButton>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

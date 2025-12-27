@@ -80,6 +80,11 @@ public partial class MainWindowViewModel : ObservableObject
     private ColorSwatchViewModel? selectedBackgroundSwatch;
     private string? _fileName;
 
+    private ColorSwatchViewModel? _activeForegroundSwatch;
+    private ColorSwatchViewModel? _activeBackgroundSwatch;
+    private bool _isUpdatingForegroundSwatch;
+    private bool _isUpdatingBackgroundSwatch;
+
     /// <summary>
     /// Gets the undo command placeholder.
     /// </summary>
@@ -206,6 +211,11 @@ public partial class MainWindowViewModel : ObservableObject
 
         SelectedGlyph = glyph;
         SelectedGlyph?.SetSelection(true);
+
+        if (glyph != null)
+        {
+            SyncSwatchesWithGlyph(glyph);
+        }
     }
 
     private void ApplyForeground(ColorSwatchViewModel? swatch)
@@ -215,13 +225,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        if (SelectedForegroundSwatch != null)
-        {
-            SelectedForegroundSwatch.IsForegroundSelection = false;
-        }
-
-        SelectedForegroundSwatch = swatch;
-        SelectedForegroundSwatch.IsForegroundSelection = true;
+        SetForegroundSelection(swatch, updateBinding: true);
         SelectedGlyph?.SetForeground(swatch.Color);
     }
 
@@ -232,13 +236,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        if (SelectedBackgroundSwatch != null)
-        {
-            SelectedBackgroundSwatch.IsBackgroundSelection = false;
-        }
-
-        SelectedBackgroundSwatch = swatch;
-        SelectedBackgroundSwatch.IsBackgroundSelection = true;
+        SetBackgroundSelection(swatch, updateBinding: true);
         SelectedGlyph?.SetBackground(swatch.Color);
     }
 
@@ -254,4 +252,89 @@ public partial class MainWindowViewModel : ObservableObject
 
     private static void ShowPlaceholderMessage(string context)
         => Debug.WriteLine($"Command '{context}' is not yet implemented.");
+
+    private void SyncSwatchesWithGlyph(GlyphCellViewModel glyph)
+    {
+        var foregroundSwatch = Palette.FirstOrDefault(p => p.Color == glyph.Foreground);
+        if (foregroundSwatch != null)
+        {
+            SetForegroundSelection(foregroundSwatch, updateBinding: true);
+        }
+
+        var backgroundSwatch = Palette.FirstOrDefault(p => p.Color == glyph.Background);
+        if (backgroundSwatch != null)
+        {
+            SetBackgroundSelection(backgroundSwatch, updateBinding: true);
+        }
+    }
+
+    private void SetForegroundSelection(ColorSwatchViewModel swatch, bool updateBinding)
+    {
+        if (updateBinding)
+        {
+            try
+            {
+                _isUpdatingForegroundSwatch = true;
+                SelectedForegroundSwatch = swatch;
+            }
+            finally
+            {
+                _isUpdatingForegroundSwatch = false;
+            }
+        }
+
+        if (_activeForegroundSwatch != null && _activeForegroundSwatch != swatch)
+        {
+            _activeForegroundSwatch.IsForegroundSelection = false;
+        }
+
+        swatch.IsForegroundSelection = true;
+        _activeForegroundSwatch = swatch;
+    }
+
+    private void SetBackgroundSelection(ColorSwatchViewModel swatch, bool updateBinding)
+    {
+        if (updateBinding)
+        {
+            try
+            {
+                _isUpdatingBackgroundSwatch = true;
+                SelectedBackgroundSwatch = swatch;
+            }
+            finally
+            {
+                _isUpdatingBackgroundSwatch = false;
+            }
+        }
+
+        if (_activeBackgroundSwatch != null && _activeBackgroundSwatch != swatch)
+        {
+            _activeBackgroundSwatch.IsBackgroundSelection = false;
+        }
+
+        swatch.IsBackgroundSelection = true;
+        _activeBackgroundSwatch = swatch;
+    }
+
+    partial void OnSelectedForegroundSwatchChanged(ColorSwatchViewModel? value)
+    {
+        if (value == null || _isUpdatingForegroundSwatch)
+        {
+            return;
+        }
+
+        SetForegroundSelection(value, updateBinding: false);
+        SelectedGlyph?.SetForeground(value.Color);
+    }
+
+    partial void OnSelectedBackgroundSwatchChanged(ColorSwatchViewModel? value)
+    {
+        if (value == null || _isUpdatingBackgroundSwatch)
+        {
+            return;
+        }
+
+        SetBackgroundSelection(value, updateBinding: false);
+        SelectedGlyph?.SetBackground(value.Color);
+    }
 }
