@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
              xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels"
+             xmlns:self="clr-namespace:VTileEdit.WPF.Views.Controls"
              x:Name="Root">
     <UserControl.Resources>
         <converters:PaletteSelectionConverter x:Key="PaletteSelectionConverter" />
@@ -16,18 +17,37 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:ColorSwatchViewModel}">
-                    <ToggleButton Command="{Binding Command, ElementName=Root}"
+                    <ToggleButton Command="{Binding Command, RelativeSource={RelativeSource AncestorType={x:Type self:PaletteSelectorView}}}"
                                   CommandParameter="{Binding}"
                                   Margin="2"
                                   Width="50"
-                                  Height="30">
+                                  Height="30"
+                                  Background="{Binding Brush}"
+                                  BorderBrush="#33000000"
+                                  BorderThickness="1"
+                                  Focusable="False">
                         <ToggleButton.IsChecked>
                             <MultiBinding Converter="{StaticResource PaletteSelectionConverter}" Mode="OneWay">
-                                <Binding />
+                                <Binding Path="IsForegroundSelection" />
+                                <Binding Path="IsBackgroundSelection" />
                                 <Binding ElementName="Root" Path="SelectionMode" />
                             </MultiBinding>
                         </ToggleButton.IsChecked>
-                        <Border Background="{Binding Brush}" CornerRadius="4" />
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Border x:Name="ColorBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="4" />
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="ColorBorder" Property="BorderBrush" Value="#FF5A9BD8" />
+                                        <Setter TargetName="ColorBorder" Property="BorderThickness" Value="2" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
                     </ToggleButton>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

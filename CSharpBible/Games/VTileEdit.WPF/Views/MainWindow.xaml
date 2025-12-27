@@ -4,7 +4,7 @@
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
          xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
-        xmlns:controls="clr-namespace:VTileEdit.WPF.Views.Controls"
+         xmlns:controls="clr-namespace:VTileEdit.WPF.Views.Controls"
          xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels"
          mc:Ignorable="d"
          Title="{x:Static properties:Strings.MainWindowTitle}"
@@ -12,9 +12,12 @@
          Width="1200"
          MinWidth="960"
          MinHeight="640">
-     <DockPanel>
-         <Menu DockPanel.Dock="Top">
-             <MenuItem Header="{x:Static properties:Strings.MenuFileHeader}">
+    <DockPanel>
+        <DockPanel.Resources>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </DockPanel.Resources>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="{x:Static properties:Strings.MenuFileHeader}">
                 <MenuItem Header="{x:Static properties:Strings.MenuFileNew}" Command="{Binding NewCommand}" />
                 <MenuItem Header="{x:Static properties:Strings.MenuFileOpen}" Command="{Binding OpenCommand}" />
                 <Separator />
@@ -22,32 +25,121 @@
                 <MenuItem Header="{x:Static properties:Strings.MenuFileSaveAs}" Command="{Binding SaveAsCommand}" />
                 <Separator />
                 <MenuItem Header="{x:Static properties:Strings.MenuFileExit}" Command="{Binding ExitCommand}" />
-             </MenuItem>
-             <MenuItem Header="{x:Static properties:Strings.MenuEditHeader}">
-                 <MenuItem Header="{x:Static properties:Strings.MenuEditUndo}" Command="{Binding UndoCommand}" />
-                 <MenuItem Header="{x:Static properties:Strings.MenuEditRedo}" Command="{Binding RedoCommand}" />
-             </MenuItem>
-         </Menu>
-         <Grid>
+            </MenuItem>
+            <MenuItem Header="{x:Static properties:Strings.MenuEditHeader}">
+                <MenuItem Header="{x:Static properties:Strings.MenuEditUndo}" Command="{Binding UndoCommand}" />
+                <MenuItem Header="{x:Static properties:Strings.MenuEditRedo}" Command="{Binding RedoCommand}" />
+            </MenuItem>
+        </Menu>
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="320" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <controls:TileListView Grid.Column="0" Margin="5" />
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#22000000" />
+            <Grid Grid.Column="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Expander Grid.Row="0"
+                          Margin="0,0,0,8"
+                          Collapsed="TileSetExpander_Collapsed"
+                          IsExpanded="True">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Static properties:Strings.TileSetDetailsHeader}" />
+                            <TextBlock Text=" *"
+                                       Foreground="DarkOrange"
+                                       Visibility="{Binding TileSetHasPendingChanges, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       ToolTip="{x:Static properties:Strings.TileSetPendingIndicator}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel Margin="0,4,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0"
+                                        Text="{x:Static properties:Strings.TileSetNameLabel}"
+                                        Margin="0,0,8,8"
+                                        VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                      Text="{Binding TileSetNameInput, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0,0,8,8" />
+                            <TextBlock Grid.Column="0"
+                                        Grid.Row="1"
+                                        Text="{x:Static properties:Strings.TileSetWidthLabel}"
+                                        Margin="0,0,8,8"
+                                        VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                        Grid.Row="1"
+                                        Text="{Binding TileSetTileWidthInput, UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="0,0,8,8" />
+                            <TextBlock Grid.Column="0"
+                                        Grid.Row="2"
+                                        Text="{x:Static properties:Strings.TileSetHeightLabel}"
+                                        Margin="0,0,8,0"
+                                        VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                        Grid.Row="2"
+                                        Text="{Binding TileSetTileHeightInput, UpdateSourceTrigger=PropertyChanged}" 
+                                        Margin="0,0,8,8"/>
+                        </Grid>
+                        <TextBlock Text="{x:Static properties:Strings.TileSetApplyWarning}"
+                                   TextWrapping="Wrap"
+                                   Margin="8,8,8,8"
+                                   Foreground="DarkRed"
+                                   Visibility="{Binding TileSetShowsShrinkWarning, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="{x:Static properties:Strings.TileSetDiscardButtonLabel}"
+                                    Command="{Binding DiscardTileSetChangesCommand}"
+                                    Width="140"
+                                    Height="40"
+                                    Margin="0,0,8,0"
+                                    IsEnabled="{Binding TileSetHasPendingChanges}" />
+                            <Button Content="{x:Static properties:Strings.TileSetApplyButtonLabel}"
+                                    Command="{Binding ApplyTileSetChangesCommand}"
+                                    Height="40"
+                                    Width="140"
+                                    Margin="0,0,8,0"
+                                    IsEnabled="{Binding TileSetHasPendingChanges}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+                <controls:TileListView Grid.Row="1" FontFamily="{Binding SelectedFontFamily}" />
+            </Grid>
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="#22000000" />
             <Grid Grid.Column="2" Margin="5">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <controls:TileEditorView Grid.Row="0" Margin="0,0,0,8" />
-                <controls:CharmapView Grid.Row="1"
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Static properties:Strings.FontSelectorLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox Width="220"
+                              ItemsSource="{Binding AvailableFontFamilies}"
+                              SelectedItem="{Binding SelectedFontFamily}"
+                              DisplayMemberPath="Source" />
+                </StackPanel>
+                <controls:TileEditorView Grid.Row="1" Margin="0,0,0,8" />
+                <controls:CharmapView Grid.Row="2"
                                       ItemsSource="{Binding CharacterPalette}"
                                       Command="{Binding ApplyCharacterCommand}"
                                       Margin="0,0,0,8" />
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -67,5 +159,5 @@
                 </Grid>
             </Grid>
         </Grid>
-     </DockPanel>
- </Window>
+    </DockPanel>
+</Window>

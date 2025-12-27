@@ -47,7 +47,12 @@
                                 <Button Style="{StaticResource GlyphButtonStyle}"
                                         Command="{Binding DataContext.SelectGlyphCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}">
-                                    <TextBlock Text="{Binding Character}" FontFamily="Consolas" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{Binding ForegroundBrush}" />
+                                    <TextBlock Text="{Binding Character}"
+                                               FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="{Binding ForegroundBrush}" />
                                 </Button>
                             </Border>
                         </DataTemplate>
@@ -67,11 +72,49 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Text="{x:Static properties:Strings.GlyphCharacterLabel}" Margin="0,0,12,8" VerticalAlignment="Center" />
-                <TextBox Grid.Column="1" Text="{Binding SelectedGlyph.CharacterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" FontSize="16" HorizontalContentAlignment="Center" />
+                <TextBox Grid.Column="1"
+                         Text="{Binding SelectedGlyph.CharacterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         FontFamily="{Binding SelectedFontFamily}"
+                         FontSize="16"
+                         HorizontalContentAlignment="Center" />
                 <TextBlock Grid.Row="1" Text="{x:Static properties:Strings.GlyphForegroundLabel}" Margin="0,0,12,8" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Palette}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedForegroundSwatch}" />
+                <ComboBox Grid.Row="1"
+                          Grid.Column="1"
+                          ItemsSource="{Binding Palette}"
+                          SelectedItem="{Binding SelectedForegroundSwatch}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:ColorSwatchViewModel}">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="16"
+                                           Height="16"
+                                           Fill="{Binding Brush}"
+                                           Stroke="#33000000"
+                                           StrokeThickness="1"
+                                           Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <TextBlock Grid.Row="2" Text="{x:Static properties:Strings.GlyphBackgroundLabel}" Margin="0,0,12,0" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Palette}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedBackgroundSwatch}" />
+                <ComboBox Grid.Row="2"
+                          Grid.Column="1"
+                          ItemsSource="{Binding Palette}"
+                          SelectedItem="{Binding SelectedBackgroundSwatch}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:ColorSwatchViewModel}">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="16"
+                                           Height="16"
+                                           Fill="{Binding Brush}"
+                                           Stroke="#33000000"
+                                           StrokeThickness="1"
+                                           Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </Grid>
         </GroupBox>
     </Grid>
