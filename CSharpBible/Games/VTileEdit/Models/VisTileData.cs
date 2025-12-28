@@ -503,7 +503,7 @@ public class TileDef : TileDefBase
         return result;
     }}
 
-    public TileDef():base() => TileSize = new Size({3});
+    public TileDef() : base() => TileSize = new Size({3});
 }}";
                     using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
                     {

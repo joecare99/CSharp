@@ -6,12 +6,50 @@ using System.IO;
 using System.Diagnostics;
 using static BaseLib.Helper.TestHelper;
 using System.IO.Compression;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace VTileEdit.Models.Tests
 {
+
     [TestClass()]
     public class VisTileDataTests
     {
+        public static IEnumerable<object[]> TestData()
+        {
+            foreach(var item in Directory.EnumerateDirectories( Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources")))
+            {
+                if (File.Exists(Path.Combine(item,Path.GetFileName( item)+ ".inf")))
+                {
+                    var name = Path.GetFileName(item);
+                    var nr = int.Parse(File.ReadAllText(Path.Combine(item, Path.GetFileName(item) + ".inf")));
+                    if ( File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Text, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdb")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Binary, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdb") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdx")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Xml, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdx") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdj")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Json, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdj") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_TileDef_Expected.cs")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Code, Path.Combine(item, Path.GetFileName(item) + "_TileDef_Expected.cs") };
+                    }
+                }
+            }
+        } 
+             
+
+
+
         private const string csExp0CodeC = "H4sIAAAAAAACCqxXwW7bRhC9G/A/bAgUkGxZpIW0h1hyrUhM0MJGi8qODrIg0NRKJkByhV1KNmsY8KGHosghbWyn195awEB88KnoSZ/CL+lwl5S4lEg7SgiBXO68NzM7MztaqurG513ra6qK6oxh58T2UXy9QC3i4NeGg3svDYYFaOydEopQAnRgUS5qUGx4uJ8Uadtb8Ktola9DBEftG8xDB6RvDSzAvvQTCmTRD+6CArTxZS6uq2qSkU+t4amHBpaNa8qbQ3g08aBsMgWZxBkZrl9Tvm9stcjAU3Y5KbwaM17BLKJIXkZ120Z8miGKGaYT3C8LQ+rMklBSZWPHMai/W1Xj0Zdd3ZhZ7hC1fOZhZyd+bRCXEVigxUa24ZffWPhsR4aWm9Q4g1eYDv1JOCpeD08xCmnIhZJgI8PE5QinysCqMfbIELuYhgVBTKSCYEaKPeEusCxjDdtgDMUpEXPfOSMbO9iFEHvgS5VhjEyKBzUlwl2ET3apgMEFnwBs2IxkEtbXRuMT2zKRmbQMNRiNxBa4WF8LayDlcDwVRsgDOOrjgeVankVcxDwKMU3QVJk3otYEwgRFY/SJC9tPEDrdThf1JpHxlkdRDXUEI7w6e0r4ULolUKo7I8+XZLWt2pZSQnsKPGsC1LSoJ2GC66vg+iG4voMBx/KJOz53JThtw7Zlm8HN++DmFgn87fvg9vfg9g8YRDYw8yzXCNctm3r7bnq/V+QsFLz9K/xd/Sc4P0I1YirB1enH6cdjjj7u9VSBa3nExRKsO72f3nc4rPfsWS+KhYsdv3c0ku1/+AXsz6DHSehP4caU9RKyXGvzTF5Wd296H9z+y7FqCruPB7JWNbj5G35Ll3VAJrMaiSO9uRH8+o+I882fwc274MNve8mINaFeMuqhCQXmZ+X6ISfXvaMU6y5dIQ/LWO0s1kMe66j9ZGN3CVrzycaSrKPmSsbaK1pb4D1pq/X01ZKmr5Y1fcW06avlTV8xcfqKmdNXTV1E7PK/pqf1e5PYhLJPaPInvocTLb7B+akWr51r2tL+rp1/oy/r6dr581fL+jYo0kto2b1S5/cKn6mIcU4nB8OvljftmUvpNq2db3MbdW1+365ntepH0elu/ShB7tmPwlNtW17WQptOxSPVkudpSvVjKU9Sz5Ul7WxOtqiZTcoWtXNYOTI9m5UtauewcmTNHFqOrJ3HS+31nJ3+GkeHztTxrpy95/ncyKCGww/MNSWkKrtxzyhXVS5Moin2xtRlu4X4DIhsy8WshArRCT06OvN2gQZDWkLLBCdDWgSuaEpFMBTrTZhadkTnnUocgskEU2r1MVp0ZdGHHONh4KIzbEF3x863fO1FYetinpnPNQOfXGPbgwYKqTFgtDNXLURlrhcA4FCdUsPXxadEIXnGLgnvZsWQoJtxh3bhA+hJziXtlvexO/RO0YbkTUfrRoJuwl/x1xCuLPz+yHJY/GPMHY7ZAzBfmBgUWUDVduBRRZ/iCTA2N4tzfQsh6Fhd0PwSnDwklXDV3JOCcLdjoa8iz+OVFaVUhHUY6YvmL+NgR5UXV0vxxQl8cRWKqLbL51rWzzgKfzgsPC9VQtWX/wMAAP//AwByNfB7/RAAAA==";
         private const string csExp1CodeC = "H4sIAAAAAAACCqxVXW/TMBR9n7T/cBWESLcuSbuNAWsKWxkTCMRDJ15KNbmp21lK4spOu4Wx/86NHXfx6iIQWJGSnPt1rnNyHYZ7/7Z2d8IQzqSk2SQtwaw3MOQZvSQZvT4nkmqnZXHDBUDD6QsTyjQQlBR02jRFnQO8ulH3uPJQXp+JLOALn7IZQ9/zspHANn3NNxLA3v9ZKlcv4YtSsPlNATOW0tj7doW393QWJNKDhGcLkpex92lwMOSzwuuroGoN1nF+0oLaHsBZmoKCJQgqqVjRaaALhetKOklPLrOMiLLfC83T/+1uKVk+h2EpC5qdmtcBzyXHBplcpKQMvjF6e2q7Bu8FucVXhCs+DaL69eqGQhUGOUpCLkhCg9ovtB17ZFnwOc2pqATBEwjRsA4yTBQFua3YICVSgvkkGvuYLVKa0Ry3uEAuPUkpJILOYq/2u6/u8sHDghuc0Jmkkm8N2N1ZLCcpSyBpVkYN1k/6F7jf3ak08ISwgaodKtAdpnTGclYwnoMsBO5pIyy04xaCrXCbUDRkynP8/XTAaDwaw/WqLj4sBMQw0hHVGr3zALxxG1NeR5GF/7w2eMfCnz0zeNfCw+8GP7TwFy8MfmTn/2nwYwvvPRj8pYV/Dw1+YuH3fYO/svD4wOCvLbzdrvGO3e9BbHC73/19g3e34Idb8KMtuN1vvK5b9ztWWv4zgSQ85UL+hSomZUEbmhio+CeaiO6iE4ckorujDw5FoPfAIYjo7uzCoQf0vnDIoQEfu5O8dMMnbviVO/drJ9yJ3HDHDXfdsLvLjrvLzrEbtiTwGwFc0np4PRkTwXYpKGxBBMnU4I29KtTrGykFvVAZm96CFkuRy75vZgmkLKeyDX496esRrFQEs7log8swmYsWxmqttrCQydso5Rr1SsB6mPIVFYJNKWxS2eTwm+LVxtWz0L/Il9lb1XtL17p//Cb/WgaP7mVa4H+Fn4bg0+ljam0KVF50QEJnQpDyQh9JfnNWtzW7tRga4Yn5cXM8SP+IXLNu8Jnm8+IG9iw2o2hcG8YNvnpiVJ1V59g2wnqQPBI20TMs76+IAIah0SneevA3TDBif7/1mG9jC0ZsjJnPkeQV71ZdKya+pjti8LxmbjprWZ+i0mGdr8YfzGbXyjNqab2Z4MnttyDuK2zIftB6+6tHv9vuVKkffgEAAP//AwAjWdJIRQsAAA==";
         private const string csExp2CodeC = "H4sIAAAAAAACCqxX/26bSBD+P1LeYYV0EqQ2+KzeVWqw7xLHqXpq0kpE9R+ugzZ47aDjh7WL3XAh79Rn6JN1dhccFgxH1KJI4J3vm/l2mJ0MlnXyc9fxkWWhM8ZIeBekqLjeIicOyTscEvccMyJB2+Q+pgiVQFc+FaYJJTghy7Jp8Hsf/oaD4R8cIVAfMEvQVbz0Vz5gz9OSA9X0Mao5QCe/5hK+bC/epNRf3ydo5QdkpH2+gdsFWZke05AXhxscpSPtn0nfiVeJNhYkfk32PN0zUG430VkQILHMECWM0B1ZmjKQtY8kndhsG4aYpmPbKp5+7e62zI/WyElZQsLT4uckjlgMG/TZJsCp+dknX09VqHlB8Vf4CctcT0mo/HlzTxCnoQhKgm2wR8wcZ6lAG2+TeE0iQnlBxB6ywLAnFUqEBNYUbBJgxlDxSuTa+3ATkJBEkOIEtNiMEORRshppOe6R39mTBgFrmgCMAxY3Eo6PNtu7wPeQV44MNZg/ySPweHzEa6AiuFjiGUoAjpZk5Ud+4scRYgmFnJZolsrbUH8HaYKiwcs4guMnCfPFfIHcXR7cSSgaoblk8Gv+t8Zv2qIHTqfhJkkV29zNFloPwUPmLiRohoNAwZjIRAIDd1NiLoM4pvUgHGSPRmMJuiAs8SPMN6dAM93IBFR3XUNCP0GlkYpD+/s3Q8DGbuaWYR93hHLfCty6vf0i0F9c15JoJ4kjooB6/X5PgDLXzUqg91HNX9Om3StM/yXLLkl0r9VtFyhXRc06oa5nnUI63YQ53ZQ5HaXVorpF1KyEm3ZCXU+rQd0iaBk26wa7nnWL6nQU53RU53SVVwGWqr6fZeWqr9TJ/x+PCkH//q1gZLe3qmvnpa6dquuxPCxZ1rcVz9OXes4JC9Huu/VQLw5iyl7QOO/ShJTa5kTwK21z8DB4c7BnDh5evznUJwcPw7ODvREMly39cG+u9cCK5UDbGzz8OT3Y6sBw2dLeVK31lqbsUWljqmXWzGk2Oc2kZtOshdVimzazmk2zFlaLzWmhtdhmbbyqUSmISvoPFksbpvImDvNbMO60A185zy2n+R3Jh7XKWGQ2n2uxtsEUh2LQHGmcqo2LvmDaljCW0ZQkWxqxsV7MTijwI8J6SM8n23zkFC0Brda0hw4Z7tbUAK5sPAYEKvyWQh0abUU3ksNjDAmi/pKgupS6hpbgPHH57KdPo234l9i7IWM9Pr+gnw0DnyrbIIEmCa8Gw9Pps2tpMoVfAICgM0pxOpUjuF6eTXtS3b4YSnSv6MIRfDh0EleOa34g0Tq5RyeKmvlgkRsWJb2y/fOd8bm9SbD8r/AsuGCvILy+wxT5QB2cws1GL1ECjFevjGd/tRTM/QV4PgeRN/GQ71oo0aXcuY9+y5UXOzOUV8HrMPeXrz8Vyc4rr6gW4+0dfKnoBhqNxZrj/0fy9PNH/XVvyF0//QAAAP//AwBpvTAoNRAAAA==";
@@ -505,12 +543,41 @@ public class TileDef : TileDefBase
             if (iAct2 == EStreamType.Json)
                 sr = sr.Replace("],", "],\r\n");
             var sExp = Decompress(asExp[0]);
+            File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Expected.txt", sExp);
+            File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Actual.txt", sr);
             if (sExp != sr)
             {
                 Debug.WriteLine("Result:");
                 Debug.WriteLine(sr);
                 Debug.WriteLine("Packed:");
                 Debug.WriteLine(Compress(sr));
+                AssertAreEqual(sExp, sr);
+            }
+            else
+                Assert.AreEqual(sExp, sr);
+
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(TestData),DynamicDataSourceType.Method)]
+        public void WriteToStreamTest2(string name, int iAct1, EStreamType iAct2, string asExpFile)
+        {
+            _testDefs[iAct1].Item1(testClass);
+            var ms = new MemoryStream();
+            var act = testClass.WriteToStream(ms, iAct2);
+            Assert.IsTrue(act);
+
+            ms.Position = 0L;
+            var sr = new StreamReader(ms).ReadToEnd();
+            if (iAct2 == EStreamType.Json)
+                sr = sr.Replace("],", "],\r\n");
+
+            var sExp = File.ReadAllText(asExpFile);
+
+            if (sExp != sr)
+            {
+                Debug.WriteLine("Result:");
+                Debug.WriteLine(sr);
                 AssertAreEqual(sExp, sr);
             }
             else

@@ -17,6 +17,9 @@
 	</PropertyGroup>
 	<PropertyGroup />
 	<ItemGroup>
+	  <Compile Remove="Resources\**" />
+	</ItemGroup>
+	<ItemGroup>
 	  <Compile Include="..\Snake_Console\View\TileDef.cs" Link="Models\Snake_TileDef.cs" />
 	  <Compile Include="..\Sokoban_Base\Models\FieldDef.cs" Link="Models\SB_FieldDef.cs" />
 	  <Compile Include="..\Sokoban_Base\ViewModels\TileDef.cs" Link="Models\SB_Tiles.cs" />
@@ -39,5 +42,13 @@
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
 		<ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\**">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="Resources\Snake\Snake_TileDef_Expected.cs" />
+	</ItemGroup>
+	
 </Project>

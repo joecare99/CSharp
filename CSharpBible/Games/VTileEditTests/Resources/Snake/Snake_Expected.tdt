@@ -1,0 +1,105 @@
+Count:17
+Size:2,1
+KeyType:VTileEdit.Models.Tests.VisTileDataTests+Enum29, VTileEditTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+Key0:_00 (Enum29)
+Lines0:1
+L0_0:@"  "
+Colors0:2
+C0_0:0x07
+C0_1:0x07
+Key1:_01 (Enum29)
+Lines1:1
+L1_0:@"|_"
+Colors1:2
+C1_0:0x4F
+C1_1:0x4F
+Key2:_02 (Enum29)
+Lines2:1
+L2_0:@"##"
+Colors2:2
+C2_0:0x0C
+C2_1:0x0C
+Key3:_03 (Enum29)
+Lines3:1
+L3_0:@"/\"
+Colors3:2
+C3_0:0xAE
+C3_1:0xAE
+Key4:_04 (Enum29)
+Lines4:1
+L4_0:@"''"
+Colors4:2
+C4_0:0x0E
+C4_1:0x0E
+Key5:_05 (Enum29)
+Lines5:1
+L5_0:@"||"
+Colors5:2
+C5_0:0x0E
+C5_1:0x0E
+Key6:_06 (Enum29)
+Lines6:1
+L6_0:@"<}"
+Colors6:2
+C6_0:0xAE
+C6_1:0xAE
+Key7:_07 (Enum29)
+Lines7:1
+L7_0:@"\/"
+Colors7:2
+C7_0:0xAE
+C7_1:0xAE
+Key8:_08 (Enum29)
+Lines8:1
+L8_0:@"{>"
+Colors8:2
+C8_0:0xAE
+C8_1:0xAE
+Key9:_09 (Enum29)
+Lines9:1
+L9_0:@"=-"
+Colors9:2
+C9_0:0x0E
+C9_1:0x0E
+Key10:_10 (Enum29)
+Lines10:1
+L10_0:@",,"
+Colors10:2
+C10_0:0x0E
+C10_1:0x0E
+Key11:_11 (Enum29)
+Lines11:1
+L11_0:@"-="
+Colors11:2
+C11_0:0x0E
+C11_1:0x0E
+Key12:_12 (Enum29)
+Lines12:1
+L12_0:@"++"
+Colors12:2
+C12_0:0x0E
+C12_1:0x0E
+Key13:_13 (Enum29)
+Lines13:1
+L13_0:@"++"
+Colors13:2
+C13_0:0x0E
+C13_1:0x0E
+Key14:_14 (Enum29)
+Lines14:1
+L14_0:@"++"
+Colors14:2
+C14_0:0x0E
+C14_1:0x0E
+Key15:_15 (Enum29)
+Lines15:1
+L15_0:@"++"
+Colors15:2
+C15_0:0x0E
+C15_1:0x0E
+Key16:_16 (Enum29)
+Lines16:1
+L16_0:@"=="
+Colors16:2
+C16_0:0x0E
+C16_1:0x0E
