@@ -92,5 +92,5 @@ public class TileDef : TileDefBase
         return result;
     }
 
-    public TileDef() : base() => TileSize = new Size(2,1);
+    public TileDef() : base() => TileSize = new Size(2, 1);
 }

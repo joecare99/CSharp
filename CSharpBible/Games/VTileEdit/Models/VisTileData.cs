@@ -517,7 +517,7 @@ public class TileDef : TileDefBase
                             "JC-Soft",
                             string.Join($"{Environment.NewLine.PadRight(10,' ')}",sLines),
                             string.Join($"{Environment.NewLine.PadRight(10,' ')}",sColors),
-                            $"{_size.Width},{_size.Height}"
+                            $"{_size.Width}, {_size.Height}"
                             ]));
                     }
                     return true;
