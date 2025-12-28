@@ -1,0 +1,183 @@
+Count:30
+Size:4,2
+KeyType:Sokoban.ViewModels.TileDef, VTileEditTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+Key0:Empty (TileDef)
+Lines0:2
+L0_0:@"    "
+L0_1:@"    "
+Colors0:1
+C0_0:0x07
+Key1:Wall (TileDef)
+Lines1:2
+L1_0:@"[_|]"
+L1_1:@"[|_]"
+Colors1:1
+C1_0:0x47
+Key2:Floor (TileDef)
+Lines2:2
+L2_0:@". . "
+L2_1:@" . ."
+Colors2:1
+C2_0:0x2A
+Key3:Destination (TileDef)
+Lines3:2
+L3_0:@"    "
+L3_1:@"<==>"
+Colors3:1
+C3_0:0x2F
+Key4:Player (TileDef)
+Lines4:2
+L4_0:@"|()|"
+L4_1:@"(__)"
+Colors4:1
+C4_0:0x2F
+Key5:PlayerOverDest (TileDef)
+Lines5:2
+L5_0:@" <°)"
+L5_1:@">_|_"
+Colors5:1
+C5_0:0x2F
+Key6:Stone (TileDef)
+Lines6:2
+L6_0:@"/^^\"
+L6_1:@"\__/"
+Colors6:1
+C6_0:0x6E
+Key7:StoneInDest (TileDef)
+Lines7:2
+L7_0:@",--,"
+L7_1:@"|__|"
+Colors7:1
+C7_0:0x6F
+Key8:Floor_Marked (TileDef)
+Lines8:2
+L8_0:@". . "
+L8_1:@" . ."
+Colors8:1
+C8_0:0x2A
+Key9:Wall_N (TileDef)
+Lines9:2
+L9_0:@"[_|]"
+L9_1:@"[|_]"
+Colors9:1
+C9_0:0x47
+Key10:Wall_W (TileDef)
+Lines10:2
+L10_0:@"|_|]"
+L10_1:@"_|_]"
+Colors10:1
+C10_0:0x47
+Key11:Wall_NW (TileDef)
+Lines11:2
+L11_0:@"|_|]"
+L11_1:@"_|_]"
+Colors11:1
+C11_0:0x47
+Key12:Wall_S (TileDef)
+Lines12:2
+L12_0:@"[_|]"
+L12_1:@"[|_]"
+Colors12:1
+C12_0:0x47
+Key13:Wall_NS (TileDef)
+Lines13:2
+L13_0:@"[_|]"
+L13_1:@"[|_]"
+Colors13:1
+C13_0:0x47
+Key14:Wall_WS (TileDef)
+Lines14:2
+L14_0:@"|_|]"
+L14_1:@"_|_]"
+Colors14:1
+C14_0:0x47
+Key15:Wall_NWS (TileDef)
+Lines15:2
+L15_0:@"|_|]"
+L15_1:@"_|_]"
+Colors15:1
+C15_0:0x47
+Key16:Wall_E (TileDef)
+Lines16:2
+L16_0:@"[_|_"
+L16_1:@"[|_|"
+Colors16:1
+C16_0:0x47
+Key17:Wall_NE (TileDef)
+Lines17:2
+L17_0:@"[_|_"
+L17_1:@"[|_|"
+Colors17:1
+C17_0:0x47
+Key18:Wall_WE (TileDef)
+Lines18:2
+L18_0:@"|_|_"
+L18_1:@"_|_|"
+Colors18:1
+C18_0:0x47
+Key19:Wall_NWE (TileDef)
+Lines19:2
+L19_0:@"|_|_"
+L19_1:@"_|_|"
+Colors19:1
+C19_0:0x47
+Key20:Wall_SE (TileDef)
+Lines20:2
+L20_0:@"[_|_"
+L20_1:@"[|_|"
+Colors20:1
+C20_0:0x47
+Key21:Wall_NSE (TileDef)
+Lines21:2
+L21_0:@"[_|_"
+L21_1:@"[|_|"
+Colors21:1
+C21_0:0x47
+Key22:Wall_WSE (TileDef)
+Lines22:2
+L22_0:@"|_|_"
+L22_1:@"_|_|"
+Colors22:1
+C22_0:0x47
+Key23:Wall_NWSE (TileDef)
+Lines23:2
+L23_0:@"|_|_"
+L23_1:@"_|_|"
+Colors23:1
+C23_0:0x47
+Key24:Player_W (TileDef)
+Lines24:2
+L24_0:@" <°)"
+L24_1:@">-||"
+Colors24:1
+C24_0:0x2F
+Key25:PlayerOverDest_W (TileDef)
+Lines25:2
+L25_0:@" <°)"
+L25_1:@">_|_"
+Colors25:1
+C25_0:0x2F
+Key26:Player_S (TileDef)
+Lines26:2
+L26_0:@"(°°)"
+L26_1:@"|^^|"
+Colors26:1
+C26_0:0x2F
+Key27:PlayerOverDest_S (TileDef)
+Lines27:2
+L27_0:@" <°)"
+L27_1:@">_|_"
+Colors27:1
+C27_0:0x2F
+Key28:Player_E (TileDef)
+Lines28:2
+L28_0:@"(°> "
+L28_1:@"||-<"
+Colors28:1
+C28_0:0x2F
+Key29:PlayerOverDest_E (TileDef)
+Lines29:2
+L29_0:@" <°)"
+L29_1:@">_|_"
+Colors29:1
+C29_0:0x2F

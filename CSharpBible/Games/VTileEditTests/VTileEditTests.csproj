@@ -49,6 +49,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="Resources\Snake\Snake_TileDef_Expected.cs" />
+	  <None Include="Resources\Sokoban\Sokoban_TileDef_Expected.cs" />
 	</ItemGroup>
 	
 </Project>
