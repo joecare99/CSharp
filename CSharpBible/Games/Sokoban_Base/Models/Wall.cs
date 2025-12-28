@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 07-09-2022
 //
@@ -11,11 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban.Model.Interfaces;
+using Sokoban.Models.Interfaces;
 using System;
 using System.Drawing;
 
-namespace Sokoban.Model;
+namespace Sokoban.Models;
 
 /// <summary>
 /// Class Wall.

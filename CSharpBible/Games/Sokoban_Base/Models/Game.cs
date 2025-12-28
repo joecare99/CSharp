@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 08-04-2022
 //
@@ -11,15 +11,14 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban_Base.Model;
 using Sokoban.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Sokoban_Base.ViewModels;
-using Sokoban.Model.Interfaces;
+using Sokoban.ViewModels;
+using Sokoban.Models.Interfaces;
 
-namespace Sokoban.Model;
+namespace Sokoban.Models;
 
 /// <summary>
 /// Class Game.

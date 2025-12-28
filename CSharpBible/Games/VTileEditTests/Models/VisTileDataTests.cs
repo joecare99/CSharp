@@ -388,7 +388,7 @@ public class TileDef : TileDefBase
 
             _testDefs.Add(0, ((t) => t.SetTileDefs<Werner_Flaschbier_Base.Model.Tiles>(new Werner_Flaschbier_Base.View.VTileDef()), 29));
             _testDefs.Add(1, ((t) => t.SetTileDefs<Enum29>(new Snake_Console.View.TileDef()), 16));
-            _testDefs.Add(2, ((t) => t.SetTileDefs<Sokoban.ViewModels.TileDef>(new Sokoban_Base.View.VisualsDef()), 23));
+            _testDefs.Add(2, ((t) => t.SetTileDefs<Sokoban.ViewModels.TileDef>(new Sokoban.View.VisualsDef()), 23));
             _testDefs.Add(3, ((t) => t.SetTileDefs<Werner_Flaschbier_Base.Model.Tiles>(new Console.Views.TileDef()), 29));
         }
 

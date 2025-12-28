@@ -1,25 +1,26 @@
 ﻿// ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 07-09-2022
 //
 // Last Modified By : Mir
 // Last Modified On : 09-09-2022
 // ***********************************************************************
-// <copyright file="Field.cs" company="JC-Soft">
+// <copyright file="Player.cs" company="JC-Soft">
 //     Copyright © JC-Soft 2022
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.Drawing;
+using Sokoban.Models;
+using System.Collections.Generic;
 
-namespace Sokoban.Model.Interfaces
+namespace Sokoban.Models.Interfaces
 {
-    public interface IField
+    public interface IPlayer: IPlayObject
     {
-        FieldDef fieldDef { get; }
-        IPlayObject? Item { get; set; }
-        IPlayfield? Parent { get; }
-        Point Position { get; }
+        Direction? LastDir { get; set; }
+
+        bool Go(Direction? aDir);
+        IEnumerable<Direction> MoveableDirs();
     }
 }

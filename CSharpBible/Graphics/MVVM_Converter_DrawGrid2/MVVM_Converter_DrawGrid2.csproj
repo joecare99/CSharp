@@ -17,6 +17,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Include="..\..\Games\Sokoban_Base\Sokoban_Base.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">

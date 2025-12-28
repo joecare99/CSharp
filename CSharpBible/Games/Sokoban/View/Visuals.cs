@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 08-04-2022
 //
@@ -15,15 +15,15 @@ using BaseLib.Interfaces;
 using BaseLib.Models;
 using ConsoleDisplay.View;
 using Sokoban;
-using Sokoban.Model;
+using Sokoban.Models;
 using Sokoban.Properties;
-using Sokoban_Base.ViewModels;
+using Sokoban.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 
-namespace Sokoban_Base.View
+namespace Sokoban.View
 {
     /// <summary>
     /// The class that handles the UI

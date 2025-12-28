@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<RootNamespace>Sokoban</RootNamespace>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 07-09-2022
 //
@@ -11,11 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban_Base.Model;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Sokoban.Model.Interfaces
+namespace Sokoban.Models.Interfaces
 {
     public interface IPlayfield
     {

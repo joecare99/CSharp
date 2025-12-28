@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 07-24-2022
 //
@@ -11,43 +11,41 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban.Model;
+using Sokoban.Models;
 
-namespace Sokoban_Base.ViewModels
+namespace Sokoban.ViewModels;
+
+/// <summary>
+/// Enum UserAction
+/// </summary>
+public enum UserAction
 {
-
     /// <summary>
-    /// Enum UserAction
+    /// The go north
     /// </summary>
-    public enum UserAction
-    {
-        /// <summary>
-        /// The go north
-        /// </summary>
-        GoNorth = Direction.North,
-        /// <summary>
-        /// The none
-        /// </summary>
-        GoWest = Direction.West,
-        /// <summary>
-        /// The move left
-        /// </summary>
-        GoSouth = Direction.South,
-        /// <summary>
-        /// The move right
-        /// </summary>
-        GoEast = Direction.East,
-        /// <summary>
-        /// The move down
-        /// </summary>
-        Quit,
-        /// <summary>
-        /// The rotate left
-        /// </summary>
-        Help,
-        /// <summary>
-        /// The rotate right
-        /// </summary>
-        Restart
-    }
+    GoNorth = Direction.North,
+    /// <summary>
+    /// The none
+    /// </summary>
+    GoWest = Direction.West,
+    /// <summary>
+    /// The move left
+    /// </summary>
+    GoSouth = Direction.South,
+    /// <summary>
+    /// The move right
+    /// </summary>
+    GoEast = Direction.East,
+    /// <summary>
+    /// The move down
+    /// </summary>
+    Quit,
+    /// <summary>
+    /// The rotate left
+    /// </summary>
+    Help,
+    /// <summary>
+    /// The rotate right
+    /// </summary>
+    Restart
 }
