@@ -13,7 +13,7 @@ public class MenuItemAdvancedTests : TestBase
     [DataTestMethod]
     [DataRow("&File", 'F')]
     [DataRow("Edit", 'E')]
-    [DataRow("&&Amp", 'A')]
+    [DataRow("&&Amp", '\0')]
     public void SetText_Sets_Accelerator(string text, char expected)
     {
         var mi = new MenuItem();

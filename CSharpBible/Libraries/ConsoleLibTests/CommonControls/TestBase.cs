@@ -3,7 +3,7 @@ using ConsoleLib;
 using ConsoleLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Reflection;
 using TestConsole;
@@ -33,7 +33,7 @@ public class TestBase
             rect.Height = Math.Min(50,_tstCon.WindowHeight);
             dimField.SetValue(canvas, rect);
         }
-        ConsoleLib.Control.MessageQueue = new Stack<(Action<object,EventArgs>,object,EventArgs)>();
+        ConsoleLib.Control.MessageQueue = new ConcurrentQueue<(Action<object,EventArgs>,object,EventArgs)>();
     }
 
     [TestCleanup]

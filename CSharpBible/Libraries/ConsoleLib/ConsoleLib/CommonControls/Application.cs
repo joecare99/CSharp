@@ -14,7 +14,7 @@
 using BaseLib.Interfaces;
 using ConsoleLib.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -62,7 +62,7 @@ public class Application : Panel, IApplication
         ConsoleFramework.ExtendedConsole.KeyEvent += HandleKeyEvent;
         ConsoleFramework.ExtendedConsole.WindowBufferSizeEvent += HandleWinBufEvent;
         Border = new Char[] { };
-        Control.MessageQueue = new Stack<(Action<object, EventArgs>, object, EventArgs)>();
+        Control.MessageQueue ??= new ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>();
         Default = this; 
     }
 
@@ -146,11 +146,9 @@ public class Application : Panel, IApplication
         while (running)
         {
             HandleMessages();
-            // DoOnIdle
-
-            Thread.Sleep(1);
-            //   Console.Clear();
+            Control.MessageWaitHandle.WaitOne();
         }
+        HandleMessages();
         ConsoleFramework.console.SetCursorPosition(0, Position.Y+size.Height);
     }
 
@@ -159,18 +157,15 @@ public class Application : Panel, IApplication
     /// </summary>
     private void HandleMessages()
     {
-        if (Control.MessageQueue != null)
+        bool processed = false;
+        while (Control.TryDequeueMessage(out var workItem))
         {
-            int cc = Control.MessageQueue.Count;
-            if (cc > 0)
-            {
-                while (cc-- > 0)
-                {
-                    (var Act, var sender, var arg2) = Control.MessageQueue.Pop();
-                    Act?.Invoke(sender, arg2);
-                }
-                DoUpdate();
-            }
+            workItem.handler?.Invoke(workItem.sender, workItem.args);
+            processed = true;
+        }
+        if (processed)
+        {
+            DoUpdate();
         }
     }
 
@@ -179,12 +174,15 @@ public class Application : Panel, IApplication
     /// </summary>
     public void Stop()
     {
-        ConsoleFramework.ExtendedConsole.Stop();
         running = false;
+        Control.EnqueueMessage(static (_, _) => { }, this, EventArgs.Empty);
+        ConsoleFramework.ExtendedConsole.Stop();
     }
 
     public void Dispatch(Action act)
     {
-        MessageQueue?.Push(((s,e)=>act(), this, EventArgs.Empty));
+        if (act == null)
+            return;
+        Control.EnqueueMessage((_, _) => act(), this, EventArgs.Empty);
     }
 }

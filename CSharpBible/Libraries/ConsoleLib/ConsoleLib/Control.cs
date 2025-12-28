@@ -14,10 +14,12 @@
 using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Drawing;
+using System.Threading;
 
 namespace ConsoleLib
 {
@@ -36,7 +38,29 @@ namespace ConsoleLib
         /// Gets or sets the message queue.
         /// </summary>
         /// <value>The message queue.</value>
-        public static Stack<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
+        public static ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
+
+        internal static WaitHandle MessageWaitHandle => _messageSignal;
+
+        private static readonly AutoResetEvent _messageSignal = new(false);
+
+        internal static bool TryDequeueMessage(out (Action<object, EventArgs> handler, object sender, EventArgs args) workItem)
+        {
+            if (MessageQueue != null && MessageQueue.TryDequeue(out workItem))
+            {
+                return true;
+            }
+            workItem = default;
+            return false;
+        }
+
+        internal static void EnqueueMessage(Action<object, EventArgs> handler, object sender, EventArgs args)
+        {
+            if (MessageQueue == null)
+                return;
+            MessageQueue.Enqueue((handler, sender, args));
+            _messageSignal.Set();
+        }
 
         /// <summary>
         /// Gets the real dim.
@@ -317,21 +341,21 @@ namespace ConsoleLib
         /// Handles the control move.
         /// </summary>
         /// <param name="_lastDim">The last Dimension.</param>
-        private void HandleControlMove(Rectangle _lastDim)
+        private void HandleControlMove(Rectangle lastDim)
         {
             if (Parent == null)
             {
                 // Todo: Restore From Background
-                ConsoleFramework.Canvas.FillRect(_lastDim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
+                ConsoleFramework.Canvas.FillRect(lastDim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
             }
             else
             {
-                _lastDim.Location = Point.Add(_lastDim.Location, (Size)Parent.Position);
+                var redrawRect = lastDim;
                 if (Shadow)
                 {
-                     _lastDim.Inflate(1,1); 
+                     redrawRect.Inflate(1,1); 
                 }
-                Parent.ReDraw(_lastDim);
+                Parent.ReDraw(redrawRect);
             }
             if (IsVisible)
             {
@@ -339,7 +363,7 @@ namespace ConsoleLib
                 var mp = Application.Default?.MousePos;
                 if (mp != null )
                 {
-                    Point lastMousePos = mp.Value + (Size)Position - (Size)_lastDim.Location;
+                    Point lastMousePos = mp.Value + (Size)Position - (Size)lastDim.Location;
                     bool _mouseInside = Over(lastMousePos);
                     bool nowInside = Over(mp.Value);
                         if (nowInside)
@@ -419,7 +443,7 @@ namespace ConsoleLib
         public void Invalidate()
         {
             _valid = false;
-            MessageQueue?.Push((DoRedraw, this, new EventArgs()));
+            EnqueueMessage(DoRedraw, this, EventArgs.Empty);
         }
 
         /// <summary>

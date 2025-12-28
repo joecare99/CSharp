@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="..\Libraries.props" />
   <PropertyGroup>
     <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>

@@ -21,7 +21,7 @@ namespace ConsoleLib.CommonControls
     ///  - Two way binding for SelectedItem
     ///  - Mouse wheel scrolling & hover highlighting
     /// </summary>
-    public class ListBox : Control
+    public class ListBox : Control, IDisposable
     {
         private IList? _itemsSource;
         private INotifyCollectionChanged? _notifyCol;
@@ -306,6 +306,11 @@ namespace ConsoleLib.CommonControls
         #region Binding SelectedItem
         public void BindSelected(INotifyPropertyChanged model, string propertyName)
         {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            DetachSelectedBinding();
+
             _selBindingModel = model;
             _selBindingPropertyName = propertyName;
             _selBindingPropInfo = model.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -318,7 +323,7 @@ namespace ConsoleLib.CommonControls
                 }
                 catch { }
             }
-            model.PropertyChanged += SelModel_PropertyChanged;
+            _selBindingModel.PropertyChanged += SelModel_PropertyChanged;
         }
 
         private void SelModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -346,6 +351,27 @@ namespace ConsoleLib.CommonControls
             {
                 try { _selBindingPropInfo.SetValue(_selBindingModel, _selectedItem); } catch { }
             }
+        }
+        
+        private void DetachSelectedBinding()
+        {
+            if (_selBindingModel != null)
+            {
+                _selBindingModel.PropertyChanged -= SelModel_PropertyChanged;
+            }
+        }
+
+        public void Dispose()
+        {
+            DetachSelectedBinding();
+            if (_notifyCol != null)
+            {
+                _notifyCol.CollectionChanged -= Items_CollectionChanged;
+                _notifyCol = null;
+            }
+            _selBindingModel = null;
+            _selBindingPropInfo = null;
+            _selBindingPropertyName = null;
         }
         #endregion
     }

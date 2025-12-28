@@ -42,9 +42,9 @@ public class MenuItem : CommandControl
             if (ShortcutKey == '\0')
             {
                 var idx = value.IndexOf('&');
-                if (idx >= 0 && idx + 1 < value.Length)
+                if (idx >= 0 && idx + 1 < value.Length && value[idx+1]!='&')
                     Accelerator = char.ToUpperInvariant(value[idx + 1]);
-                else if (value.Length > 0)
+                else if (value.Length > 0 && value[0]>'@')
                     Accelerator = char.ToUpperInvariant(value[0]);
             }
         }
