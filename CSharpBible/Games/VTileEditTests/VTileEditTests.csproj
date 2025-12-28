@@ -17,16 +17,16 @@
 	</PropertyGroup>
 	<PropertyGroup />
 	<ItemGroup>
-	  <Compile Remove="Resources\**" />
+		<Compile Remove="Resources\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Include="..\Snake_Console\View\TileDef.cs" Link="Models\Snake_TileDef.cs" />
-	  <Compile Include="..\Sokoban_Base\Models\FieldDef.cs" Link="Models\SB_FieldDef.cs" />
-	  <Compile Include="..\Sokoban_Base\ViewModels\TileDef.cs" Link="Models\SB_Tiles.cs" />
-	  <Compile Include="..\Sokoban_Base\View\VisualsDef.cs" Link="Models\SB_TileDef.cs" />
-	  <Compile Include="..\Werner_Flaschbier\Model\FieldDef.cs" Link="Models\FB_FieldDef.cs" />
-	  <Compile Include="..\Werner_Flaschbier\Model\Tiles.cs" Link="Models\FB_Tiles.cs" />
-	  <Compile Include="..\Werner_Flaschbier\View\VTileDef.cs" Link="Models\FB_TileDef.cs" />
+		<Compile Include="..\Snake_Console\View\TileDef.cs" Link="Models\Snake_TileDef.cs" />
+		<Compile Include="..\Sokoban_Base\Models\FieldDef.cs" Link="Models\SB_FieldDef.cs" />
+		<Compile Include="..\Sokoban_Base\ViewModels\TileDef.cs" Link="Models\SB_Tiles.cs" />
+		<Compile Include="..\Sokoban_Base\View\VisualsDef.cs" Link="Models\SB_TileDef.cs" />
+		<Compile Include="..\Werner_Flaschbier\Model\FieldDef.cs" Link="Models\FB_FieldDef.cs" />
+		<Compile Include="..\Werner_Flaschbier\Model\Tiles.cs" Link="Models\FB_Tiles.cs" />
+		<Compile Include="..\Werner_Flaschbier\View\VTileDef.cs" Link="Models\FB_TileDef.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -43,13 +43,9 @@
 		<ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="Resources\**" />
 		<EmbeddedResource Include="Resources\**">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
-	<ItemGroup>
-	  <None Include="Resources\Snake\Snake_TileDef_Expected.cs" />
-	  <None Include="Resources\Sokoban\Sokoban_TileDef_Expected.cs" />
-	</ItemGroup>
-	
 </Project>
