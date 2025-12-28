@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
              xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels"
+             xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:Width="600"
@@ -17,18 +18,29 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
         </Style>
+        <converters:WidthToHeightConverter x:Key="WidthToHeightConverter" Ratio="2" />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <GroupBox Header="{x:Static properties:Strings.PreviewHeader}">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <GroupBox Header="{x:Static properties:Strings.PreviewHeader}" Margin="0,0,0,8">
+            <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ItemsControl ItemsSource="{Binding SelectedTile.Glyphs}">
-                    <ItemsControl.LayoutTransform>
-                        <ScaleTransform ScaleX="0.5" />
-                    </ItemsControl.LayoutTransform>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="VerticalAlignment" Value="Stretch" />
+                            <Setter Property="Height">
+                                <Setter.Value>
+                                    <Binding Path="ActualWidth"
+                                             RelativeSource="{RelativeSource Self}"
+                                             Converter="{StaticResource WidthToHeightConverter}" />
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="{Binding SelectedTile.TileWidth}" />
@@ -55,18 +67,22 @@
                                 <Button Style="{StaticResource GlyphButtonStyle}"
                                         Command="{Binding DataContext.SelectGlyphCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}">
-                                    <TextBlock Text="{Binding Character}"
-                                               FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                               FontSize="16"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Foreground="{Binding ForegroundBrush}" />
+                                    <Viewbox Stretch="Uniform"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalAlignment="Stretch">
+                                        <TextBlock Text="{Binding Character}"
+                                                   FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                   FontSize="16"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{Binding ForegroundBrush}" />
+                                    </Viewbox>
                                 </Button>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </ScrollViewer>
+            </Viewbox>
         </GroupBox>
         <GroupBox Header="{x:Static properties:Strings.GlyphDetailsHeader}" Grid.Column="1">
             <StackPanel Margin="8" Orientation="Vertical">
