@@ -109,20 +109,17 @@ namespace ConsoleLib
         {
             lock (this)
             {
+                var canvasRect = new Rectangle(0, 0, _dimension.Width, _dimension.Height);
+                var target = Rectangle.Intersect(canvasRect, dimension);
+                if (target.Width <= 0 || target.Height <= 0)
+                    return;
+
                 _console.BackgroundColor = bkcolor;
                 _console.ForegroundColor = frcolor;
 
-                if (_dimension.Contains(dimension.Location))
-                {
-                    // Stringzeile einmal aufbauen (Breite des Rechtecks).
-                    string sLine = "";
-                    for (int j = dimension.X; j < dimension.Right; j++)
-                        sLine += c;
-
-                    // Jede Zeile im Rechteck ausgeben.
-                    for (int i = dimension.Y; i < dimension.Bottom; i++)
-                        _OutTextXY(dimension.X, i, sLine);
-                }
+                string line = new string(c, target.Width);
+                for (int y = target.Top; y < target.Bottom; y++)
+                    _OutTextXY(target.Left, y, line);
             }
         }
 
@@ -153,48 +150,66 @@ namespace ConsoleLib
             {
                 if (dimension.Width == 0 || dimension.Height == 0) return;
 
-                // Spezialfall: nur ein Spaltenbreiter vertikaler Strich
-                if (dimension.Width == 1)
-                {
-                    for (int i = dimension.Y; i < dimension.Bottom; i++)
-                        _OutTextXY(dimension.Left, i, boarder[1]);
-                    return;
-                }
-
-                // Spezialfall: nur eine Zeile (horizontale Linie)
-                if (dimension.Height == 1)
-                {
-                    for (int j = dimension.X; j < dimension.Right; j++)
-                        _OutTextXY(j, dimension.Top, boarder[0]);
-                    return;
-                }
+                var canvasRect = new Rectangle(0, 0, _dimension.Width, _dimension.Height);
+                if (!canvasRect.IntersectsWith(dimension)) return;
 
                 _console.BackgroundColor = bkcolor;
                 _console.ForegroundColor = frcolor;
 
-                // Vertikale Linien (nur wenn Startpunkt innerhalb des Canvas liegt).
-                if (_dimension.Contains(dimension.Location))
+                if (dimension.Width == 1)
                 {
-                    for (int i = dimension.Y + 1; i < dimension.Bottom - 1; i++)
-                    {
-                        _OutTextXY(dimension.Left, i, boarder[1]);
-                        _OutTextXY(dimension.Right - 1, i, boarder[1]);
-                    }
+                    int x = dimension.Left;
+                    if (x < canvasRect.Left || x >= canvasRect.Right) return;
+                    int startY = Math.Max(dimension.Top, canvasRect.Top);
+                    int endY = Math.Min(dimension.Bottom, canvasRect.Bottom);
+                    for (int y = startY; y < endY; y++)
+                        _OutTextXY(x, y, boarder[1]);
+                    return;
                 }
 
-                // Horizontale Linien zwischen den Ecken aufbauen.
-                string sLine = "";
-                for (int j = dimension.X; j < dimension.Right - 2; j++)
-                    sLine += boarder[0];
+                if (dimension.Height == 1)
+                {
+                    int y = dimension.Top;
+                    if (y < canvasRect.Top || y >= canvasRect.Bottom) return;
+                    int startX = Math.Max(dimension.Left, canvasRect.Left);
+                    int endX = Math.Min(dimension.Right, canvasRect.Right);
+                    if (startX >= endX) return;
+                    _OutTextXY(startX, y, new string(boarder[0], endX - startX));
+                    return;
+                }
 
-                _OutTextXY(dimension.X + 1, dimension.Top, sLine);
-                _OutTextXY(dimension.X + 1, dimension.Bottom - 1, sLine);
+                int left = dimension.Left;
+                int right = dimension.Right - 1;
+                int top = dimension.Top;
+                int bottom = dimension.Bottom - 1;
 
-                // Ecken setzen
-                _OutTextXY(dimension.Location, boarder[2]);
-                _OutTextXY(dimension.Right - 1, dimension.Top, boarder[3]);
-                _OutTextXY(dimension.Left, dimension.Bottom - 1, boarder[4]);
-                _OutTextXY(dimension.Right - 1, dimension.Bottom - 1, boarder[5]);
+                int horizStart = Math.Max(left + 1, canvasRect.Left);
+                int horizEnd = Math.Min(right - 1, canvasRect.Right - 1);
+                if (horizStart <= horizEnd)
+                {
+                    string hLine = new string(boarder[0], horizEnd - horizStart + 1);
+                    if (top >= canvasRect.Top && top < canvasRect.Bottom)
+                        _OutTextXY(horizStart, top, hLine);
+                    if (bottom >= canvasRect.Top && bottom < canvasRect.Bottom)
+                        _OutTextXY(horizStart, bottom, hLine);
+                }
+
+                int vertStart = Math.Max(top + 1, canvasRect.Top);
+                int vertEnd = Math.Min(bottom - 1, canvasRect.Bottom - 1);
+                if (vertStart <= vertEnd)
+                {
+                    if (left >= canvasRect.Left && left < canvasRect.Right)
+                        for (int y = vertStart; y <= vertEnd; y++)
+                            _OutTextXY(left, y, boarder[1]);
+                    if (right >= canvasRect.Left && right < canvasRect.Right)
+                        for (int y = vertStart; y <= vertEnd; y++)
+                            _OutTextXY(right, y, boarder[1]);
+                }
+
+                DrawCorner(left, top, boarder[2]);
+                DrawCorner(right, top, boarder[3]);
+                DrawCorner(left, bottom, boarder[4]);
+                DrawCorner(right, bottom, boarder[5]);
             }
         }
 
@@ -347,5 +362,13 @@ namespace ConsoleLib
         /// <param name="y">Neue Höhe.</param>
         public void SetDimension(int x, int y)
             => (_dimension.Width, _dimension.Height) = (x, y);
+
+        private void DrawCorner(int x, int y, char ch)
+        {
+            if (x >= 0 && x < _dimension.Width && y >= 0 && y < _dimension.Height)
+            {
+                _OutTextXY(x, y, ch);
+            }
+        }
     }
 }
