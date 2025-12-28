@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using VTileEdit.Models;
 
-namespace VTileEditTests.Models;
+namespace VTileEdit.Models.Tests;
 
 [TestClass]
 public class VisTileDataMetadataTests
