@@ -1,0 +1,367 @@
+Count:28
+Size:4,2
+KeyType:Werner_Flaschbier_Base.Model.Tiles, Werner_Flaschbier_Base, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+Key0:Empty (Tiles)
+Lines0:2
+L0_0:@"    "
+L0_1:@"    "
+Colors0:8
+C0_0:0x00
+C0_1:0x00
+C0_2:0x00
+C0_3:0x00
+C0_4:0x00
+C0_5:0x00
+C0_6:0x00
+C0_7:0x00
+Key1:Dirt (Tiles)
+Lines1:2
+L1_0:@"=-=-"
+L1_1:@"-=-="
+Colors1:8
+C1_0:0x6E
+C1_1:0x6E
+C1_2:0x6E
+C1_3:0x6E
+C1_4:0x6E
+C1_5:0x6E
+C1_6:0x6E
+C1_7:0x6E
+Key2:Wall (Tiles)
+Lines2:2
+L2_0:@"─┴┬─"
+L2_1:@"─┬┴─"
+Colors2:8
+C2_0:0x4F
+C2_1:0x4F
+C2_2:0x4F
+C2_3:0x4F
+C2_4:0x4F
+C2_5:0x4F
+C2_6:0x4F
+C2_7:0x4F
+Key3:Destination (Tiles)
+Lines3:2
+L3_0:@" ╓╖ "
+L3_1:@"▓░▒▓"
+Colors3:8
+C3_0:0x0E
+C3_1:0x0E
+C3_2:0x0E
+C3_3:0x0E
+C3_4:0x2A
+C3_5:0x22
+C3_6:0x02
+C3_7:0x22
+Key4:Player (Tiles)
+Lines4:2
+L4_0:@"⌐°@)"
+L4_1:@" ⌡⌡‼"
+Colors4:8
+C4_0:0x6F
+C4_1:0x6F
+C4_2:0x6F
+C4_3:0x6F
+C4_4:0x6F
+C4_5:0x6F
+C4_6:0x6F
+C4_7:0x6F
+Key5:Stone (Tiles)
+Lines5:2
+L5_0:@"/¯¯\"
+L5_1:@"\__/"
+Colors5:8
+C5_0:0x6E
+C5_1:0x6E
+C5_2:0x6E
+C5_3:0x6E
+C5_4:0x6E
+C5_5:0x6E
+C5_6:0x6E
+C5_7:0x6E
+Key6:Enemy_Up (Tiles)
+Lines6:2
+L6_0:@"]°°["
+L6_1:@"_!!_"
+Colors6:8
+C6_0:0x1A
+C6_1:0xA0
+C6_2:0xA0
+C6_3:0x1A
+C6_4:0x1A
+C6_5:0xA0
+C6_6:0xA0
+C6_7:0x1A
+Key7:Enemy_Right (Tiles)
+Lines7:2
+L7_0:@"◄°@["
+L7_1:@"_!!\"
+Colors7:8
+C7_0:0x1A
+C7_1:0xA0
+C7_2:0xA0
+C7_3:0x1A
+C7_4:0x1A
+C7_5:0xA0
+C7_6:0xA0
+C7_7:0x1A
+Key8:Enemy_Dwn (Tiles)
+Lines8:2
+L8_0:@"]oo["
+L8_1:@"_!!_"
+Colors8:8
+C8_0:0x1A
+C8_1:0xA0
+C8_2:0xA0
+C8_3:0x1A
+C8_4:0x1A
+C8_5:0xA0
+C8_6:0xA0
+C8_7:0x1A
+Key9:Enemy_Left (Tiles)
+Lines9:2
+L9_0:@"]@°►"
+L9_1:@"/!!_"
+Colors9:8
+C9_0:0x1A
+C9_1:0xA0
+C9_2:0xA0
+C9_3:0x1A
+C9_4:0x1A
+C9_5:0xA0
+C9_6:0xA0
+C9_7:0x1A
+Key10:StoneMoving (Tiles)
+Lines10:2
+L10_0:@"/╨╨\"
+L10_1:@"\__/"
+Colors10:8
+C10_0:0x6E
+C10_1:0x6E
+C10_2:0x6E
+C10_3:0x6E
+C10_4:0x6E
+C10_5:0x6E
+C10_6:0x6E
+C10_7:0x6E
+Key11:PlayerDead (Tiles)
+Lines11:2
+L11_0:@" +*∩"
+L11_1:@"╘═◊@"
+Colors11:8
+C11_0:0x6F
+C11_1:0x6F
+C11_2:0x6F
+C11_3:0x6F
+C11_4:0x6F
+C11_5:0x6F
+C11_6:0x6F
+C11_7:0x6F
+Key12:Dummy (Tiles)
+Lines12:2
+L12_0:@"    "
+L12_1:@"    "
+Colors12:8
+C12_0:0x6E
+C12_1:0x6E
+C12_2:0x6E
+C12_3:0x6E
+C12_4:0x6E
+C12_5:0x6E
+C12_6:0x6E
+C12_7:0x6E
+Key13:Wall_U (Tiles)
+Lines13:2
+L13_0:@"─┴┬┴"
+L13_1:@"─┬┴─"
+Colors13:8
+C13_0:0x4F
+C13_1:0x4F
+C13_2:0x4F
+C13_3:0x4F
+C13_4:0x4F
+C13_5:0x4F
+C13_6:0x4F
+C13_7:0x4F
+Key14:Wall_W (Tiles)
+Lines14:2
+L14_0:@"┬┴┬─"
+L14_1:@"┴┬┴─"
+Colors14:8
+C14_0:0x4F
+C14_1:0x4F
+C14_2:0x4F
+C14_3:0x4F
+C14_4:0x4F
+C14_5:0x4F
+C14_6:0x4F
+C14_7:0x4F
+Key15:Wall_UW (Tiles)
+Lines15:2
+L15_0:@"┬┴┬┴"
+L15_1:@"┴┬┴─"
+Colors15:8
+C15_0:0x4F
+C15_1:0x4F
+C15_2:0x4F
+C15_3:0x4F
+C15_4:0x4F
+C15_5:0x4F
+C15_6:0x4F
+C15_7:0x4F
+Key16:Wall_D (Tiles)
+Lines16:2
+L16_0:@"┬┴┬─"
+L16_1:@"┴┬┴┬"
+Colors16:8
+C16_0:0x4F
+C16_1:0x4F
+C16_2:0x4F
+C16_3:0x4F
+C16_4:0x4F
+C16_5:0x4F
+C16_6:0x4F
+C16_7:0x4F
+Key17:Wall_UD (Tiles)
+Lines17:2
+L17_0:@"┬┴┬┴"
+L17_1:@"┴┬┴┬"
+Colors17:8
+C17_0:0x4F
+C17_1:0x4F
+C17_2:0x4F
+C17_3:0x4F
+C17_4:0x4F
+C17_5:0x4F
+C17_6:0x4F
+C17_7:0x4F
+Key18:Wall_WD (Tiles)
+Lines18:2
+L18_0:@"┬┴┬─"
+L18_1:@"┴┬┴┬"
+Colors18:8
+C18_0:0x4F
+C18_1:0x4F
+C18_2:0x4F
+C18_3:0x4F
+C18_4:0x4F
+C18_5:0x4F
+C18_6:0x4F
+C18_7:0x4F
+Key19:Wall_UWD (Tiles)
+Lines19:2
+L19_0:@"┬┴┬┴"
+L19_1:@"┴┬┴┬"
+Colors19:8
+C19_0:0x4F
+C19_1:0x4F
+C19_2:0x4F
+C19_3:0x4F
+C19_4:0x4F
+C19_5:0x4F
+C19_6:0x4F
+C19_7:0x4F
+Key20:Wall_E (Tiles)
+Lines20:2
+L20_0:@"─┴┬─"
+L20_1:@"─┬┴─"
+Colors20:8
+C20_0:0x4F
+C20_1:0x4F
+C20_2:0x4F
+C20_3:0x4F
+C20_4:0x4F
+C20_5:0x4F
+C20_6:0x4F
+C20_7:0x4F
+Key21:Wall_UE (Tiles)
+Lines21:2
+L21_0:@"─┴┬┴"
+L21_1:@"─┬┴─"
+Colors21:8
+C21_0:0x4F
+C21_1:0x4F
+C21_2:0x4F
+C21_3:0x4F
+C21_4:0x4F
+C21_5:0x4F
+C21_6:0x4F
+C21_7:0x4F
+Key22:Wall_WE (Tiles)
+Lines22:2
+L22_0:@"┬┴┬─"
+L22_1:@"┴┬┴─"
+Colors22:8
+C22_0:0x4F
+C22_1:0x4F
+C22_2:0x4F
+C22_3:0x4F
+C22_4:0x4F
+C22_5:0x4F
+C22_6:0x4F
+C22_7:0x4F
+Key23:Wall_UWE (Tiles)
+Lines23:2
+L23_0:@"┬┴┬┴"
+L23_1:@"┴┬┴─"
+Colors23:8
+C23_0:0x4F
+C23_1:0x4F
+C23_2:0x4F
+C23_3:0x4F
+C23_4:0x4F
+C23_5:0x4F
+C23_6:0x4F
+C23_7:0x4F
+Key24:Wall_DE (Tiles)
+Lines24:2
+L24_0:@"┬┴┬─"
+L24_1:@"┴┬┴┬"
+Colors24:8
+C24_0:0x4F
+C24_1:0x4F
+C24_2:0x4F
+C24_3:0x4F
+C24_4:0x4F
+C24_5:0x4F
+C24_6:0x4F
+C24_7:0x4F
+Key25:Wall_UDE (Tiles)
+Lines25:2
+L25_0:@"┬┴┬┴"
+L25_1:@"┴┬┴┬"
+Colors25:8
+C25_0:0x4F
+C25_1:0x4F
+C25_2:0x4F
+C25_3:0x4F
+C25_4:0x4F
+C25_5:0x4F
+C25_6:0x4F
+C25_7:0x4F
+Key26:Wall_WDE (Tiles)
+Lines26:2
+L26_0:@"┬┴┬─"
+L26_1:@"┴┬┴┬"
+Colors26:8
+C26_0:0x4F
+C26_1:0x4F
+C26_2:0x4F
+C26_3:0x4F
+C26_4:0x4F
+C26_5:0x4F
+C26_6:0x4F
+C26_7:0x4F
+Key27:Wall_UWDE (Tiles)
+Lines27:2
+L27_0:@"┬┴┬┴"
+L27_1:@"┴┬┴┬"
+Colors27:8
+C27_0:0x4F
+C27_1:0x4F
+C27_2:0x4F
+C27_3:0x4F
+C27_4:0x4F
+C27_5:0x4F
+C27_6:0x4F
+C27_7:0x4F

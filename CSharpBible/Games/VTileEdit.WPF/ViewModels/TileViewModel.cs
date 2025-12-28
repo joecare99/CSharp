@@ -100,8 +100,8 @@ public partial class TileViewModel : ObservableObject
     {
         var samples = new List<TileViewModel>
         {
-            CreatePatternTile("Checker", 8, 8, (row, column) => (row + column) % 2 == 0 ? '#' : '.'),
-            CreatePatternTile("Borders", 8, 8, (row, column) => row == 0 || column == 0 || row == 7 || column == 7 ? '+' : ' ')
+            CreatePatternTile("Checker", 8, 4, (row, column) => (row + column) % 2 == 0 ? '#' : '.'),
+            CreatePatternTile("Borders", 8, 4, (row, column) => row == 0 || column == 0 || row == 3 || column == 7 ? '+' : ' ')
         };
 
         return samples;

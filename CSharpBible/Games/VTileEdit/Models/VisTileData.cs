@@ -503,7 +503,7 @@ public class TileDef : TileDefBase
         return result;
     }}
 
-    public TileDef():base() => TileSize = new Size({3});
+    public TileDef() : base() => TileSize = new Size({3});
 }}";
                     using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
                     {
@@ -517,7 +517,7 @@ public class TileDef : TileDefBase
                             "JC-Soft",
                             string.Join($"{Environment.NewLine.PadRight(10,' ')}",sLines),
                             string.Join($"{Environment.NewLine.PadRight(10,' ')}",sColors),
-                            $"{_size.Width},{_size.Height}"
+                            $"{_size.Width}, {_size.Height}"
                             ]));
                     }
                     return true;
