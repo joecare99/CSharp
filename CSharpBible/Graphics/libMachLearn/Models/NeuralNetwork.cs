@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace libMachLearn.Models;
 
@@ -6,6 +7,19 @@ public class NeuralNetwork
 {
     private Layer[] _layers;
     private double _learningRate;
+
+    public class NetworkModelData
+    {
+        public required int[] LayerSizes { get; set; }
+        public float LearningRate { get; set; }
+        public required List<LayerData> Layers { get; set; }
+    }
+
+    public class LayerData
+    {
+        public required float[] Biases { get; set; }
+        public required float[][] Weights { get; set; } // Gewichte als flaches oder 2D Array
+    }
 
     public Layer[] Layers => _layers;
     public double LearningRate { get => _learningRate; set => _learningRate = value; }
@@ -23,9 +37,58 @@ public class NeuralNetwork
     }
 
 
+    public void SaveModel(string path)
+    {
+        var modelData = new NetworkModelData
+        {
+            LayerSizes = this._layers.Select(l => l.Neurons.Length).ToArray(), // Musst du in deiner Klasse speichern
+            LearningRate = (float)this._learningRate,
+            Layers = _layers.Skip(1).Select(l => new LayerData
+            {
+                Biases = l.Biases,
+                Weights = l.Weights
+            }).ToList()
+        };
+
+        string json = JsonSerializer.Serialize(modelData, new JsonSerializerOptions { WriteIndented = false });
+        File.WriteAllText(path, json);
+    }
+
+    public static NeuralNetwork LoadModel(string path)
+    {
+        string json = File.ReadAllText(path);
+        var data = JsonSerializer.Deserialize<NetworkModelData>(json);
+
+        var nn = new NeuralNetwork(data.LearningRate, data.LayerSizes);
+        // Hier die Gewichte/Biases aus data.Layers zurück in die nn.Layers kopieren
+        for (int i = 1; i < data.LayerSizes.Length; i++)
+        {
+            nn.Layers[i].Weights = data.Layers[i].Weights;
+            nn.Layers[i].Biases = data.Layers[i].Biases;
+        }
+
+        return nn;
+    }
+
+    public void SaveBinary(string path)
+    {
+        using var writer = new BinaryWriter(File.Open(path, FileMode.Create));
+
+        // Header
+        writer.Write(_layers.Length);
+        foreach (var size in _layers.Select(l => l.Neurons.Length)) writer.Write(size);
+
+        // Daten
+        foreach (var layer in _layers.Skip(1))
+        {
+            foreach (var b in layer.Biases) writer.Write(b);
+            foreach (var row in layer.Weights)
+                foreach (var w in row) writer.Write(w);
+        }
+    }
 
     // Vorhersage berechnen
-    public float[] FeedForward(float[] inputs,Func<float, float>? activFunc =null)
+    public float[] FeedForward(float[] inputs, Func<float, float>? activFunc = null)
     {
         if (activFunc == null) activFunc = Activation.ReLU;
         _layers[0].Neurons = inputs;
@@ -39,7 +102,7 @@ public class NeuralNetwork
             Parallel.For(0, current.Neurons.Length, j =>
             {
                 float sum = current.Biases[j] + LinearAlgebra.VectorDotProduct(previous.Neurons, current.Weights[j]);
-                current.Neurons[j] = activFunc(sum)/current.Neurons.Length;
+                current.Neurons[j] = activFunc(sum) / current.Neurons.Length;
             });
         }
         return _layers[^1].Neurons;
@@ -65,13 +128,13 @@ public class NeuralNetwork
     }
 
     // Eingabevektor für gegebenes Ziel erzeugen
-    public float[] GenerateInputForTarget(float[] targets, int iterations, float inputLearningRate )
+    public float[] GenerateInputForTarget(float[] targets, int iterations, float inputLearningRate)
     {
         float[] inputs = new float[_layers[0].Neurons.Length];
         float[] gradients = targets;
         for (var l = Layers.Length - 1; l > 0; l--)
         {
-            var next = new float[_layers[l-1].Neurons.Length];
+            var next = new float[_layers[l - 1].Neurons.Length];
             next.Initialize();
             for (var k = 0; k < next.Length; k++)
                 for (var n = 0; n < _layers[l].Neurons.Length; n++)
@@ -80,13 +143,13 @@ public class NeuralNetwork
         }
         var gMax = gradients.Max();
         var gMin = gradients.Min();
-        if (gMax> gMin) 
-            gradients=gradients.Select(g=> (g - gMin)/ (gMax-gMin)).ToArray();
+        if (gMax > gMin)
+            gradients = gradients.Select(g => (g - gMin) / (gMax - gMin)).ToArray();
         return gradients;
     }
 
     // Training mittels Backpropagation
-    public void Train(float[] inputs, float[] targets, float dropOut=0.2f, Func<float, float>? derivative= null)
+    public void Train(float[] inputs, float[] targets, float dropOut = 0.2f, Func<float, float>? derivative = null)
     {
         if (derivative == null) derivative = Activation.ReLUderivation;
 
@@ -94,11 +157,11 @@ public class NeuralNetwork
         // 
         _layers[1].ApplyDropout(dropOut);
         // 1. Fehler am Output-Layer berechnen
-        Layer outputLayer = _layers[^1];         
+        Layer outputLayer = _layers[^1];
         Parallel.For(0, outputLayer.Neurons.Length, i =>
         {
             float error = targets[i] - outputLayer.Neurons[i];
-            outputLayer.Deltas[i] = error * derivative(outputLayer.Neurons[i]+ error * 0.5f);
+            outputLayer.Deltas[i] = error * derivative(outputLayer.Neurons[i] + error * 0.5f);
         });
 
         // 2. Fehler rückwärts durch die Hidden Layers leiten
@@ -121,7 +184,7 @@ public class NeuralNetwork
                     {
                         error += next.Deltas[k] * next.Weights[k][j];
                     }
-                    current.Deltas[j] = error * derivative(current.Neurons[j]+error *0.5f);
+                    current.Deltas[j] = error * derivative(current.Neurons[j] + error * 0.5f);
                 }
             });
         }
