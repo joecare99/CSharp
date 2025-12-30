@@ -12,11 +12,13 @@ namespace Cnt3Learn;
 
 class Program
 {
+    const int hiddenSize = 64;
+
     static void Init()
     {
         IoC.GetReqSrv = t => t switch
         {
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.005, 784, 128, 10),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.001, 784, hiddenSize, 10),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}"),
         };
@@ -33,63 +35,72 @@ class Program
 
         Console.WriteLine("Lade MNIST Daten...");
         var trainingData = MnistReader.ReadTrainingData(imgPath, lblPath).ToList();
+
+        string timgPath = "t10k-images.idx3-ubyte";
+        string tlblPath = "t10k-labels.idx1-ubyte";
+        var testData = MnistReader.ReadTrainingData(timgPath, tlblPath).ToList();
+
         int[] idx = [-29, -28, -27, -1, 0, 1, 27, 28, 29];
 
         Console.WriteLine($"Starte Training mit {trainingData.Count} Bildern...");
-        for (int epoch = 0; epoch < 30; epoch++)
+        for (int epoch = 0; epoch < 20; epoch++)
         {
             for (int i = 5; i > epoch; i--)
             {
-                nn.AdjustILWeights(idx,
-                               [0.001, 0.002, 0.001, 0.002, 0.99, 0.002, 0.001, 0.002, 0.001]);
             }
-
-            nn.LearningRate *= 0.95;
-            for (int i = 0; i < trainingData.Count; i++)
+            double r = 0.5;
+            nn.LearningRate *= 0.9;
+            for (int _i = 0; _i < trainingData.Count; _i++)
             {
-                //nn.Train(trainingData[i].Data, trainingData[i].Label);
-                
-                var rOffs = rnd.Next(9);
-                var rAmt = rnd.NextDouble() * 0.2;
-                var rData = new double[trainingData[i].Data.Length];
+                //nn.Train(trainingData[_i].Data, trainingData[_i].Label,0.2);
+                //          nn.FeedForward(trainingData[_i].Data);
+                var i = rnd.Next(trainingData.Count);
+                //var rOffs = rnd.Next(9);
+                 var rOffs = 5;
+                //var rAmt = (float)rnd.NextDouble() * 0.3f;
+                   var rAmt = 0;
+                var rData = new float[trainingData[i].Data.Length];
                 rData.Initialize();
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
                     if (j + idx[rOffs] >= 0 && j + idx[rOffs] < trainingData[i].Data.Length)
-                    rData[j] = ((trainingData[i].Data[j + idx[rOffs]] * 2 - 1) * (1.0-rAmt + rnd.NextDouble() * rAmt)) * 0.5 + 1;
-             
-                nn.Train(rData, trainingData[i].Label);
-          //      nn.Train(trainingData[i].Data, trainingData[i].Label);
-                
-                if (i % 5000 == 0)
-                    Console.WriteLine($"E{epoch + 1} {i} Bilder verarbeitet...");
+                        rData[j] = ((trainingData[i].Data[j + idx[rOffs]] * 2 - 1) * (1.0f - rAmt + (float)rnd.NextDouble() * rAmt)) * 0.5f + 1;
+
+                nn.Train(rData, trainingData[i].Label,0.2f);
+                r = r * 0.99 + nn.Layers[^1].Neurons[trainingData[i].Label.IndexOf(1)] * 0.01;
+
+                //if (_i % 1000 == 0 && epoch<6 )
+                //    nn.AdjustILWeights(idx,
+                //                   [0.001f, 0.002f, 0.001f, 0.002f, 0.99f, 0.002f, 0.001f, 0.002f, 0.001f]);
+                //  */
+                if (_i % 100 == 0)
+                    Console.Write($"{r:F4}\r");
+                if (_i % 5000 == 0)
+                    Console.WriteLine($"E{epoch + 1} {_i} Bilder verarbeitet...");
             }
 
 
-            string timgPath = "t10k-images.idx3-ubyte";
-            string tlblPath = "t10k-labels.idx1-ubyte";
-            var testData = MnistReader.ReadTrainingData(timgPath, tlblPath).ToList();
 
             int correct = 0;
             int correct2 = 0;
             int correct3 = 0;
             foreach (var testImg in testData)
             {
-                double[] prediction = nn.FeedForward(testImg.Data);
+                float[] prediction = nn.FeedForward(testImg.Data);
                 int predictedDigit = Array.IndexOf(prediction, prediction.Max());
-                if (predictedDigit == Array.IndexOf(testImg.Label, 1d)) correct++;
-                var rData = new double[testImg.Data.Length];
+                if (predictedDigit == Array.IndexOf(testImg.Label, 1f)) correct++;
+                var rData = new float[testImg.Data.Length];
 
                 for (int i = 0; i < testImg.Data.Length; i++)
-                    rData[i] = ((testImg.Data[i] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1;
-                double[] prediction2 = nn.FeedForward(rData);
+                    rData[i] = ((testImg.Data[i] * 2 - 1) * (0.9f + (float)rnd.NextDouble() * 0.1f)) * 0.5f + 1;
+                float[] prediction2 = nn.FeedForward(rData);
                 int predictedDigit2 = Array.IndexOf(prediction2, prediction2.Max());
-                if (predictedDigit2 == Array.IndexOf(testImg.Label, 1d)) correct2++;
+                if (predictedDigit2 == Array.IndexOf(testImg.Label, 1f)) correct2++;
 
                 for (int i = 0; i < testImg.Data.Length; i++)
-                    rData[i] = ((testImg.Data[i] * 2 - 1) * (0.8 + rnd.NextDouble() * 0.2)) * 0.5 + 1;
-                double[] prediction3 = nn.FeedForward(rData);
+                    rData[i] = ((testImg.Data[i] * 2 - 1) * (0.8f + (float)rnd.NextDouble() * 0.2f)) * 0.5f + 1;
+                float[] prediction3 = nn.FeedForward(rData);
                 int predictedDigit3 = Array.IndexOf(prediction3, prediction3.Max());
-                if (predictedDigit3 == Array.IndexOf(testImg.Label, 1d)) correct3++;
+                if (predictedDigit3 == Array.IndexOf(testImg.Label, 1f)) correct3++;
             }
 
             Console.WriteLine($"Ergebnis E{epoch + 1} ohne Rauschen: {correct} von {testData.Count} richtig ({(double)correct / testData.Count * 100:0.00}%)");
@@ -103,7 +114,6 @@ class Program
     static void VisualizeImportantNeurons(NeuralNetwork nn)
     {
         const int inputSize = 784;
-        const int hiddenSize = 128;
         const int outputSize = 10;
         const int imageSide = 28;
 
@@ -120,17 +130,17 @@ class Program
             int maxIdx = IndexOfMax(hoRow);
             int minIdx = IndexOfMin(hoRow);
 
-            var outp = new double[outputSize];
+            var outp = new float[outputSize];
             outp.Initialize();
-            outp[digit] = 1.0;
-            var optinput = nn.GenerateInputForTarget(outp, 1000, 0.1);  
+            outp[digit] = 1.0f;
+            var optinput = nn.GenerateInputForTarget(outp, 1000, 0.1f);
 
             Console.WriteLine($"Ziffer {digit}: höchster Einfluss Hidden #{maxIdx}, niedrigster Einfluss Hidden #{minIdx}");
             RenderNeuron($"   Höchster Einfluss (Gewicht {hoRow[maxIdx]:0.000})  Niedrigster Einfluss (Gewicht {hoRow[minIdx]:0.000})", matrices.InputHidden[maxIdx], matrices.InputHidden[minIdx], optinput, imageSide);
         }
     }
 
-    static void RenderNeuron(string title, double[] weights,double[] weights2, double[] optinput, int side)
+    static void RenderNeuron(string title, float[] weights, float[] weights2, float[] optinput, int side)
     {
         Console.WriteLine(title);
         if (weights.Length != side * side)
@@ -139,17 +149,17 @@ class Program
             return;
         }
 
-        double maxAbs = weights.Select(Math.Abs).DefaultIfEmpty(0d).Max();
-        double maxAbs2 = weights2.Select(Math.Abs).DefaultIfEmpty(0d).Max();
-        double maxAbs3 = optinput.Select(Math.Abs).DefaultIfEmpty(0d).Max();
-        if (maxAbs == 0d) maxAbs = 1d;
-        if (maxAbs2 == 0d) maxAbs2 = 1d;
-        if (maxAbs3 == 0d) maxAbs3 = 1d;
+        float maxAbs = weights.Select(Math.Abs).DefaultIfEmpty(0f).Max();
+        float maxAbs2 = weights2.Select(Math.Abs).DefaultIfEmpty(0f).Max();
+        float maxAbs3 = optinput.Select(Math.Abs).DefaultIfEmpty(0f).Max();
+        if (maxAbs == 0f) maxAbs = 1f;
+        if (maxAbs2 == 0f) maxAbs2 = 1f;
+        if (maxAbs3 == 0f) maxAbs3 = 1f;
 
         for (int row = 0; row < side; row += 2)
         {
             var line = new StringBuilder();
-          
+
             for (int col = 0; col < side; col++)
             {
                 double topValue = weights[row * side + col];
@@ -203,7 +213,7 @@ class Program
         return value > 0d ? (0, intensity, 0) : (intensity, 0, 0);
     }
 
-    static int IndexOfMax(double[] values)
+    static int IndexOfMax(float[] values)
     {
         int index = 0;
         double max = double.MinValue;
@@ -219,7 +229,7 @@ class Program
         return index;
     }
 
-    static int IndexOfMin(double[] values)
+    static int IndexOfMin(float[] values)
     {
         int index = 0;
         double min = double.MaxValue;
@@ -238,14 +248,14 @@ class Program
     static bool TryResolveWeightMatrices(NeuralNetwork nn, int inputSize, int hiddenSize, int outputSize, out WeightMatrices matrices)
     {
         matrices = default;
-        var candidates = nn.Layers.Select(l=>l.Weights).ToList();
+        var candidates = nn.Layers.Select(l => l.Weights).ToList();
         if (candidates.Count == 0)
         {
             return false;
         }
 
-        double[][]? inputHidden = null;
-        double[][]? hiddenOutput = null;
+        float[][]? inputHidden = null;
+        float[][]? hiddenOutput = null;
 
         foreach (var candidate in candidates)
         {
@@ -262,7 +272,7 @@ class Program
         return false;
     }
 
-    static double[][]? MatchMatrix(double[][]? matrix, int expectedRows, int expectedCols)
+    static float[][]? MatchMatrix(float[][]? matrix, int expectedRows, int expectedCols)
     {
         if (matrix?.Length == expectedRows && HasExpectedColumns(matrix, expectedCols))
         {
@@ -277,22 +287,22 @@ class Program
         return null;
     }
 
-    static bool HasExpectedColumns(double[][] matrix, int expectedCols)
+    static bool HasExpectedColumns(float[][] matrix, int expectedCols)
         => matrix.All(row => row != null && row.Length == expectedCols);
 
-    static double[][] Transpose(double[][] matrix)
+    static float[][] Transpose(float[][] matrix)
     {
         if (matrix.Length == 0 || matrix[0] == null)
         {
-            return Array.Empty<double[]>();
+            return Array.Empty<float[]>();
         }
 
         int rows = matrix.Length;
         int cols = matrix[0].Length;
-        var transposed = new double[cols][];
+        var transposed = new float[cols][];
         for (int c = 0; c < cols; c++)
         {
-            transposed[c] = new double[rows];
+            transposed[c] = new float[rows];
             for (int r = 0; r < rows; r++)
             {
                 transposed[c][r] = matrix[r][c];
@@ -302,5 +312,5 @@ class Program
         return transposed;
     }
 
-    private sealed record WeightMatrices(double[][] InputHidden, double[][] HiddenOutput);
+    private sealed record WeightMatrices(float[][] InputHidden, float[][] HiddenOutput);
 }
