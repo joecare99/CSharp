@@ -22,9 +22,12 @@ public class NeuralNetwork
         }
     }
 
+
+
     // Vorhersage berechnen
-    public double[] FeedForward(double[] inputs)
+    public float[] FeedForward(float[] inputs,Func<float, float>? activFunc =null)
     {
+        if (activFunc == null) activFunc = Activation.ReLU;
         _layers[0].Neurons = inputs;
 
         for (int i = 1; i < _layers.Length; i++)
@@ -32,20 +35,17 @@ public class NeuralNetwork
             Layer current = _layers[i];
             Layer previous = _layers[i - 1];
 
-            for (int j = 0; j < current.Neurons.Length; j++)
+            // Parallelisierung der Neuronen-Berechnung eines Layers
+            Parallel.For(0, current.Neurons.Length, j =>
             {
-                double sum = current.Biases[j];
-                for (int k = 0; k < previous.Neurons.Length; k++)
-                {
-                    sum += current.Weights[j][k] * previous.Neurons[k];
-                }
-                current.Neurons[j] = Activation.Sigmoid(sum);
-            }
+                float sum = current.Biases[j] + LinearAlgebra.VectorDotProduct(previous.Neurons, current.Weights[j]);
+                current.Neurons[j] = activFunc(sum)/current.Neurons.Length;
+            });
         }
         return _layers[^1].Neurons;
     }
 
-    public void AdjustILWeights(int[] idx, double[] qnt)
+    public void AdjustILWeights(int[] idx, float[] qnt)
     {
         for (int i = 0; i < _layers[1].Weights.Length; i++)
         {
@@ -53,7 +53,7 @@ public class NeuralNetwork
 
             Parallel.For(0, _layers[1].Weights[i].Length, (k) =>
             {
-                var value = 0.0d;
+                var value = 0.0f;
                 for (int j = 0; j < idx.Length; j++)
                     if (k + idx[j] >= 0 && k + idx[j] < _layers[1].Weights[i].Length)
                         value += Layer[k + idx[j]] * qnt[j];
@@ -65,74 +65,40 @@ public class NeuralNetwork
     }
 
     // Eingabevektor für gegebenes Ziel erzeugen
-    public double[] GenerateInputForTarget(double[] targets, int iterations, double inputLearningRate)
+    public float[] GenerateInputForTarget(float[] targets, int iterations, float inputLearningRate )
     {
-        double[] inputs = new double[_layers[0].Neurons.Length];
-        double[] inputGradients = new double[_layers[0].Neurons.Length];
-
-        for (int iteration = 0; iteration < iterations; iteration++)
+        float[] inputs = new float[_layers[0].Neurons.Length];
+        float[] gradients = targets;
+        for (var l = Layers.Length - 1; l > 0; l--)
         {
-            FeedForward(inputs);
-
-            Layer outputLayer = _layers[^1];
-            Parallel.For(0, outputLayer.Neurons.Length, i =>
-            {
-                double error = targets[i] - outputLayer.Neurons[i];
-                outputLayer.Deltas[i] = error * Activation.SigmoidDerivative(outputLayer.Neurons[i]);
-            });
-
-            for (int i = _layers.Length - 2; i > 0; i--)
-            {
-                Layer current = _layers[i];
-                Layer next = _layers[i + 1];
-
-                Parallel.For(0, current.Neurons.Length, j =>
-                {
-                    double error = 0;
-                    for (int k = 0; k < next.Neurons.Length; k++)
-                    {
-                        error += next.Deltas[k] * next.Weights[k][j];
-                    }
-                    current.Deltas[j] = error * Activation.SigmoidDerivative(current.Neurons[j]);
-                });
-            }
-
-            Layer firstHidden = _layers.Length > 1 ? _layers[1] : null;
-            if (firstHidden == null)
-            {
-                return inputs;
-            }
-
-            Parallel.For(0, _layers[0].Neurons.Length, j =>
-            {
-                double gradient = 0;
-                for (int k = 0; k < firstHidden.Neurons.Length; k++)
-                {
-                    gradient += firstHidden.Deltas[k] * firstHidden.Weights[k][j];
-                }
-                inputGradients[j] = gradient;
-            });
-
-            for (int j = 0; j < inputs.Length; j++)
-            {
-                inputs[j] += inputLearningRate * inputGradients[j];
-            }
+            var next = new float[_layers[l-1].Neurons.Length];
+            next.Initialize();
+            for (var k = 0; k < next.Length; k++)
+                for (var n = 0; n < _layers[l].Neurons.Length; n++)
+                    next[k] += _layers[l].Weights[n][k] * gradients[n];
+            gradients = next;
         }
-
-        return inputs;
+        var gMax = gradients.Max();
+        var gMin = gradients.Min();
+        if (gMax> gMin) 
+            gradients=gradients.Select(g=> (g - gMin)/ (gMax-gMin)).ToArray();
+        return gradients;
     }
 
     // Training mittels Backpropagation
-    public void Train(double[] inputs, double[] targets)
+    public void Train(float[] inputs, float[] targets, float dropOut=0.2f, Func<float, float>? derivative= null)
     {
-        FeedForward(inputs);
+        if (derivative == null) derivative = Activation.ReLUderivation;
 
+        FeedForward(inputs, Activation.ReLU);
+        // 
+        _layers[1].ApplyDropout(dropOut);
         // 1. Fehler am Output-Layer berechnen
-        Layer outputLayer = _layers[^1];
+        Layer outputLayer = _layers[^1];         
         Parallel.For(0, outputLayer.Neurons.Length, i =>
         {
-            double error = targets[i] - outputLayer.Neurons[i];
-            outputLayer.Deltas[i] = error * Activation.SigmoidDerivative(outputLayer.Neurons[i]);
+            float error = targets[i] - outputLayer.Neurons[i];
+            outputLayer.Deltas[i] = error * derivative(outputLayer.Neurons[i]+ error * 0.5f);
         });
 
         // 2. Fehler rückwärts durch die Hidden Layers leiten
@@ -143,28 +109,39 @@ public class NeuralNetwork
 
             Parallel.For(0, current.Neurons.Length, j =>
             {
-                double error = 0;
-                for (int k = 0; k < next.Neurons.Length; k++)
+                // WICHTIG: Wenn das Neuron durch Dropout deaktiviert war, ist sein Fehler 0
+                if (!current.DropoutMask[j])
                 {
-                    error += next.Deltas[k] * next.Weights[k][j];
+                    current.Deltas[j] = 0;
                 }
-                current.Deltas[j] = error * Activation.SigmoidDerivative(current.Neurons[j]);
+                else
+                {
+                    float error = 0;
+                    for (int k = 0; k < next.Neurons.Length; k++)
+                    {
+                        error += next.Deltas[k] * next.Weights[k][j];
+                    }
+                    current.Deltas[j] = error * derivative(current.Neurons[j]+error *0.5f);
+                }
             });
         }
 
-        // 3. Gewichte und Biases aktualisieren (Gradient Descent)
+        // Innerhalb von NeuralNetwork.Train, nach der Fehlerberechnung:
         for (int i = 1; i < _layers.Length; i++)
         {
             Layer current = _layers[i];
             Layer previous = _layers[i - 1];
 
+            // Parallel über die Neuronen des aktuellen Layers
             Parallel.For(0, current.Neurons.Length, j =>
             {
-                for (int k = 0; k < previous.Neurons.Length; k++)
-                {
-                    current.Weights[j][k] += _learningRate * current.Deltas[j] * previous.Neurons[k];
-                }
-                current.Biases[j] += _learningRate * current.Deltas[j];
+                float scale = (float)_learningRate * current.Deltas[j];
+
+                // Vektorisierte Aktualisierung der Gewichte für dieses Neuron
+                LinearAlgebra.VectorAddScaled(current.Weights[j], previous.Neurons, scale);
+
+                // Bias ist nur ein einzelner Wert
+                current.Biases[j] += scale;
             });
         }
     }
