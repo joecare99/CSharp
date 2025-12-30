@@ -6,6 +6,7 @@
     <ProjectGuid>{DA21C175-58F7-4701-B0B1-E0AA5EB624FA}</ProjectGuid>
     <UseWpf>true</UseWpf>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
