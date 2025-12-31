@@ -6,16 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 
-struct Vector3
-{
-    public float X, Y, Z;
-    public Vector3(float x, float y, float z) { X = x; Y = y; Z = z; }
-    public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-    public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-    public static Vector3 operator *(Vector3 a, float s) => new Vector3(a.X * s, a.Y * s, a.Z * s);
-}
-
-class Program
+partial class Program
 {
     static void Main()
     {
@@ -33,9 +24,9 @@ class Program
         // Kamera / Stereo-Parameter
         float yawDeg = -5f;   // Drehung um Y (horizontal)
         float pitchDeg = -18f;  // Drehung um X (vertical)
-        float distance = 2.0f; // Abstand Kamera -> Szene (in HSL-Einheiten)
+        float distance = 3.0f; // Abstand Kamera -> Szene (in HSL-Einheiten)
         float baseline = 0.1f; // Augenabstand (klein, in HSL-Einheiten)
-        float fovDeg = 45f;
+        float fovDeg = 20f;
 
         // Szene: H,S,L liegen in [0,1]. Wir zentrieren die Szene um (0.5,0.5,0.5)
         Vector3 sceneCenter = new Vector3(0.5f, 0.5f, 0.5f);
@@ -55,13 +46,13 @@ class Program
                 Vector3 camRight = new Vector3(1, 0, 0);
 
                 // Rotation matrices (yaw then pitch)
-                float pitch = DegToRad(pitchDeg);
-                float yaw = DegToRad(yawDeg);
-                var rot = MatrixRotateYawPitch(yaw, pitch);
+                float pitch = MathHelpers.DegToRad(pitchDeg);
+                float yaw = MathHelpers.DegToRad(yawDeg);
+                var rot = MathHelpers.MatrixRotateYawPitch(yaw, pitch);
 
-                camForward = Transform(rot, camForward);
-                camUp = Transform(rot, camUp);
-                camRight = Transform(rot, camRight);
+                camForward = MathHelpers.Transform(rot, camForward);
+                camUp = MathHelpers.Transform(rot, camUp);
+                camRight = MathHelpers.Transform(rot, camRight);
 
                 // Camera position: place at sceneCenter + camForward * distance
                 Vector3 camPos = sceneCenter + camForward * distance;
@@ -72,7 +63,7 @@ class Program
 
                 // Projection parameters
                 float aspect = (float)viewWidth / viewHeight;
-                float fov = DegToRad(fovDeg);
+                float fov = MathHelpers.DegToRad(fovDeg);
                 float focal = 1f / (float)Math.Tan(fov / 2f); // simple focal
 
                 // Project nodes to 2D for this view
@@ -85,9 +76,9 @@ class Program
                     Vector3 rel = world - camPos;
 
                     // camera coordinate system: x = right, y = up, z = forward
-                    float cx = Dot(rel, camRight);
-                    float cy = Dot(rel, camUp);
-                    float cz = Dot(rel, camForward);
+                    float cx = MathHelpers.Dot(rel, camRight);
+                    float cy = MathHelpers.Dot(rel, camUp);
+                    float cz = MathHelpers.Dot(rel, camForward);
 
                     // if cz <= 0, point is behind camera; still project but mark depth
                     float eps = 1e-6f;
@@ -106,7 +97,7 @@ class Program
                     float cyPixel = viewHeight / 2f - py * scale;
 
                     // radius from L (use L to scale)
-                    float radius = 2f + 64f / zproj;
+                    float radius = 2f + 100f / zproj;
 
                     projected.Add((i, zproj, new PointF(cxPixel, cyPixel), n.ColorRgb, radius));
                 }
@@ -188,7 +179,7 @@ class Program
                         (int)Math.Round((g + 0.5) * 255.0 / levels),
                         (int)Math.Round((b + 0.5) * 255.0 / levels)
                     );
-                    RgbToHsl(node.ColorRgb, out node.H, out node.S, out node.L);
+                    MathHelpers.RgbToHsl(node.ColorRgb, out node.H, out node.S, out node.L);
                     list.Add(node);
                 }
         return list;
@@ -207,82 +198,5 @@ class Program
                 if (manhattan == 1) a.Neighbors.Add(j);
             }
         }
-    }
-
-    static float Dot(Vector3 a, Vector3 b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-
-    static Matrix3x3 MatrixRotateYawPitch(float yaw, float pitch)
-    {
-        // yaw around Y, pitch around X: R = R_x(pitch) * R_y(yaw)
-        float cy = (float)Math.Cos(yaw), sy = (float)Math.Sin(yaw);
-        float cx = (float)Math.Cos(pitch), sx = (float)Math.Sin(pitch);
-
-        // R_y(yaw)
-        var Ry = new Matrix3x3(
-            cy, 0, sy,
-            0, 1, 0,
-            -sy, 0, cy
-        );
-        // R_x(pitch)
-        var Rx = new Matrix3x3(
-            1, 0, 0,
-            0, cx, -sx,
-            0, sx, cx
-        );
-        return Multiply(Rx, Ry);
-    }
-
-    static Vector3 Transform(Matrix3x3 m, Vector3 v)
-    {
-        return new Vector3(
-            m.M11 * v.X + m.M12 * v.Y + m.M13 * v.Z,
-            m.M21 * v.X + m.M22 * v.Y + m.M23 * v.Z,
-            m.M31 * v.X + m.M32 * v.Y + m.M33 * v.Z
-        );
-    }
-
-    static Matrix3x3 Multiply(Matrix3x3 a, Matrix3x3 b)
-    {
-        return new Matrix3x3(
-            a.M11 * b.M11 + a.M12 * b.M21 + a.M13 * b.M31,
-            a.M11 * b.M12 + a.M12 * b.M22 + a.M13 * b.M32,
-            a.M11 * b.M13 + a.M12 * b.M23 + a.M13 * b.M33,
-
-            a.M21 * b.M11 + a.M22 * b.M21 + a.M23 * b.M31,
-            a.M21 * b.M12 + a.M22 * b.M22 + a.M23 * b.M32,
-            a.M21 * b.M13 + a.M22 * b.M23 + a.M23 * b.M33,
-
-            a.M31 * b.M11 + a.M32 * b.M21 + a.M33 * b.M31,
-            a.M31 * b.M12 + a.M32 * b.M22 + a.M33 * b.M32,
-            a.M31 * b.M13 + a.M32 * b.M23 + a.M33 * b.M33
-        );
-    }
-
-    struct Matrix3x3
-    {
-        public float M11, M12, M13, M21, M22, M23, M31, M32, M33;
-        public Matrix3x3(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33)
-        { M11 = m11; M12 = m12; M13 = m13; M21 = m21; M22 = m22; M23 = m23; M31 = m31; M32 = m32; M33 = m33; }
-    }
-
-    static float DegToRad(float d) => (float)(d * Math.PI / 180.0);
-
-    // Convert System.Drawing.Color to HSL (0..1)
-    static void RgbToHsl(Color c, out float h, out float s, out float l)
-    {
-        float r = c.R / 255f;
-        float g = c.G / 255f;
-        float b = c.B / 255f;
-        float max = Math.Max(r, Math.Max(g, b));
-        float min = Math.Min(r, Math.Min(g, b));
-        l = (max + min) / 2f;
-        if (Math.Abs(max - min) < 1e-6f) { h = 0f; s = 0f; return; }
-        float d = max - min;
-        s = l > 0.5f ? d / (2f - max - min) : d / (max + min);
-        if (max == r) h = (g - b) / d + (g < b ? 6f : 0f);
-        else if (max == g) h = (b - r) / d + 2f;
-        else h = (r - g) / d + 4f;
-        h /= 6f;
-        h = h - (float)Math.Floor(h);
     }
 }
