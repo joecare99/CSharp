@@ -1,19 +1,10 @@
-﻿using System;
+﻿using ColorVis.Data;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
-
-class RgbNode
-{
-    public int R, G, B;           // 0..7
-    public float H, S, L;         // 0..1
-    public Color ColorRgb;
-    public List<int> Neighbors = new List<int>();
-    // 3D position in HSL space
-    public Vector3 Pos3 => new Vector3(S, 1.0f-L, H);
-}
 
 struct Vector3
 {
