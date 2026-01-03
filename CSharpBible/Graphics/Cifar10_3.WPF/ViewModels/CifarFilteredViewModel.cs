@@ -11,6 +11,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Cifar10.WPF.Model;
+using Microsoft.ML;
+using Microsoft.ML.Data;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -42,10 +44,11 @@ public partial class CifarFilteredViewModel : ObservableObject
         set => SetProperty(ref _statusText, value);
     }
 
+    private readonly MLContext mlContext = new();
+    private UpscaleModel? upscaler;
+
     private const int BatchSize = 100;
     private const int SamplesPerImage = 64;
-
-    private readonly UpscaleConvNet convNet = UpscaleConvNet.CreateDefault(16, 16);
 
     public Func<IFileDialog, bool>? showfiledlg { get; set; }
 
@@ -81,111 +84,94 @@ public partial class CifarFilteredViewModel : ObservableObject
     [RelayCommand]
     private async Task ProcImages()
     {
-        await ProcImagesInternal();
-    }
-
-    private async Task ProcImagesInternal()
-    {
         if (data == null)
             return;
 
-        await Task.Run(async () =>
+        var rand = new Random();
+        int totalRecords = data.Length / 3073;
+        int batchCount = (int)Math.Ceiling(totalRecords / (double)BatchSize);
+        if (batchCount == 0)
+            return;
+
+        for (int batchIndex = 0; batchIndex < batchCount; batchIndex++)
         {
-            var rand = new Random();
-            int totalRecords = data.Length / 3073;
-            int batchCount = (int)Math.Ceiling(totalRecords / (double)BatchSize);
-            if (batchCount == 0)
-                return;
+            int start = batchIndex * BatchSize;
+            int count = Math.Min(BatchSize, totalRecords - start);
+            if (count <= 0) break;
 
-            for (int batchIndex = 0; batchIndex < batchCount; batchIndex++)
+            var samples = new List<UpscalePixelInput>(count * SamplesPerImage * 3);
+
+            float[]? sampleR = null;
+            float[]? sampleG = null;
+            float[]? sampleB = null;
+            float[]? sampleR16 = null;
+            float[]? sampleG16 = null;
+            float[]? sampleB16 = null;
+
+            var c10r = new Cifar10Record();
+            for (int i = 0; i < count; i++)
             {
-                int start = batchIndex * BatchSize;
-                int count = Math.Min(BatchSize, totalRecords - start);
-                if (count <= 0)
-                    break;
+                c10r.ReadFrom(data, (start + i) * 3073);
 
-                float batchLoss = 0f;
-                int batchPixels = 0;
+                float[] r = ExtractData(c10r.ImageData, 0, 1024);
+                float[] g = ExtractData(c10r.ImageData, 1024, 1024);
+                float[] b = ExtractData(c10r.ImageData, 2048, 1024);
+                float[] r2 = Resize(r, 32, 16);
+                float[] g2 = Resize(g, 32, 16);
+                float[] b2 = Resize(b, 32, 16);
 
-                float[]? sampleR = null;
-                float[]? sampleG = null;
-                float[]? sampleB = null;
-                float[]? sampleR16 = null;
-                float[]? sampleG16 = null;
-                float[]? sampleB16 = null;
+                var lowResFeatures = UpscaleModel.MergeLowResChannels(r2, g2, b2);
 
-                var c10r = new Cifar10Record();
-                for (int i = 0; i < count; i++)
+                for (int s = 0; s < SamplesPerImage; s++)
                 {
-                    c10r.ReadFrom(data, (start + i) * 3073);
+                    int idx = rand.Next(32 * 32);
+                    int px = idx % 32;
+                    int py = idx / 32;
+                    int hiIdx = py * 32 + px;
 
-                    float[] r = ExtractData(c10r.ImageData, 0, 1024);
-                    float[] g = ExtractData(c10r.ImageData, 1024, 1024);
-                    float[] b = ExtractData(c10r.ImageData, 2048, 1024);
-                    float[] r2 = Resize(r, 32, 16);
-                    float[] g2 = Resize(g, 32, 16);
-                    float[] b2 = Resize(b, 32, 16);
-
-                    var (pr, pg, pb) = convNet.Upscale(r2, g2, b2);
-
-                    for (int s = 0; s < SamplesPerImage; s++)
-                    {
-                        int idx = rand.Next(32 * 32);
-                        int px = idx % 32;
-                        int py = idx / 32;
-                        int hiIdx = py * 32 + px;
-
-                        batchLoss += Math.Abs(pr[hiIdx] - r[hiIdx]);
-                        batchLoss += Math.Abs(pg[hiIdx] - g[hiIdx]);
-                        batchLoss += Math.Abs(pb[hiIdx] - b[hiIdx]);
-                        batchPixels += 3;
-                    }
-
-                    if (sampleR == null || rand.NextDouble() < 1.0 / (i + 1))
-                    {
-                        sampleR = r;
-                        sampleG = g;
-                        sampleB = b;
-                        sampleR16 = r2;
-                        sampleG16 = g2;
-                        sampleB16 = b2;
-                    }
+                    samples.Add(UpscaleModel.CreateSample(lowResFeatures, px, py, 0, r[hiIdx]));
+                    samples.Add(UpscaleModel.CreateSample(lowResFeatures, px, py, 1, g[hiIdx]));
+                    samples.Add(UpscaleModel.CreateSample(lowResFeatures, px, py, 2, b[hiIdx]));
                 }
 
-                float mae = 0f;
-                float accuracy = Accuracy;
-                if (batchPixels > 0)
+                if (sampleR == null || rand.NextDouble() < 1.0 / (i + 1))
                 {
-                    mae = batchLoss / batchPixels;
-                    accuracy = 1f - mae;
+                    sampleR = r;
+                    sampleG = g;
+                    sampleB = b;
+                    sampleR16 = r2;
+                    sampleG16 = g2;
+                    sampleB16 = b2;
                 }
-
-                string status = $"Batch {batchIndex + 1}/{batchCount} - Records {count}, MAE: {mae:F3}";
-                float[]? uiSampleR = sampleR;
-                float[]? uiSampleG = sampleG;
-                float[]? uiSampleB = sampleB;
-                float[]? uiSampleR16 = sampleR16;
-                float[]? uiSampleG16 = sampleG16;
-                float[]? uiSampleB16 = sampleB16;
-
-                await Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    Accuracy = accuracy;
-                    StatusText = status;
-
-                    if (uiSampleR != null && uiSampleG != null && uiSampleB != null && uiSampleR16 != null && uiSampleG16 != null && uiSampleB16 != null)
-                    {
-                        OrginalImage = CreateImage(uiSampleR, uiSampleG, uiSampleB, 32);
-                        DestImage = CreateImage(uiSampleR16, uiSampleG16, uiSampleB16, 16);
-
-                        var (pr, pg, pb) = convNet.Upscale(uiSampleR16, uiSampleG16, uiSampleB16);
-                        GenResultImage = CreateImage(pr, pg, pb, 32);
-                    }
-                });
-
-                await Task.Yield();
             }
-        });
+
+            RegressionMetrics? metrics = null;
+            upscaler = new UpscaleModel(mlContext);
+            await Task.Run(() =>
+            {
+                metrics = upscaler.Train(samples);
+            });
+
+            if (metrics != null)
+                Accuracy = (float)metrics.RSquared;
+
+            SetProperty(ref _statusText, $"Batch {batchIndex + 1}/{batchCount} - Records {count}, R²: {Accuracy:F3}");
+
+            if (sampleR != null && sampleG != null && sampleB != null && sampleR16 != null && sampleG16 != null && sampleB16 != null)
+            {
+                OrginalImage = CreateImage(sampleR, sampleG, sampleB, 32);
+                DestImage = CreateImage(sampleR16, sampleG16, sampleB16, 16);
+
+                if (upscaler != null)
+                {
+                    var lowRes = UpscaleModel.MergeLowResChannels(sampleR16, sampleG16, sampleB16);
+                    var (pr, pg, pb) = await Task.Run(() => upscaler.Upscale(lowRes));
+                    GenResultImage = CreateImage(pr, pg, pb, 32);
+                }
+            }
+
+            await Task.Yield();
+        }
     }
 
     public byte[] Combine(float[] r, float[] g, float[] b)
