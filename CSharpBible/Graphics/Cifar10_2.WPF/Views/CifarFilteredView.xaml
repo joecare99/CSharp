@@ -47,14 +47,29 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0">
-                    <Label DockPanel.Dock="Top"></Label>
+                    <Label DockPanel.Dock="Top">Original</Label>
+                    <Image
+                       Width="128"
+                       Height="128"
+                        Source="{Binding OrginalImage}"
+                        Stretch="Uniform" />
                 </DockPanel>
                 <DockPanel Grid.Column="1">
-                    <Label DockPanel.Dock="Top"></Label>
+                    <Label DockPanel.Dock="Top">Low-Res Input</Label>
+                    <Image
+                       Width="128"
+                       Height="128"
+                       Source="{Binding DestImage}"
+                       Stretch="Uniform" />
 
                 </DockPanel>
                 <DockPanel Grid.Column="2">
-                    <Label DockPanel.Dock="Top"></Label>
+                    <Label DockPanel.Dock="Top">Upscaled (ML.NET)</Label>
+                    <Image
+                       Width="128"
+                       Height="128"
+                        Source="{Binding GenResultImage}"
+                        Stretch="Uniform" />
 
                 </DockPanel>
 
@@ -80,6 +95,11 @@
                 </ItemsControl>
             </ScrollViewer>
             </Grid>
+            <StackPanel>
+                <Button Content="Train &amp; Upscale" Command="{Binding ProcImagesCommand}" Height="42"/>
+                <TextBlock Text="{Binding Accuracy, StringFormat=R²: {0:F3}}" Margin="0,6,0,0" />
+                <TextBlock Text="{Binding StatusText}" Margin="0,4,0,0" TextWrapping="Wrap" />
+            </StackPanel>
         </Grid>
     </DockPanel>
 </Page>
