@@ -5,7 +5,7 @@ using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using libMachLearn.Models;
 
-namespace Cnt3Learn;
+namespace Mnist2Learn;
 
 class Program
 {
@@ -43,11 +43,11 @@ class Program
             for (int i = 0; i < trainingData.Count; i++)
             {
                 nn.Train(trainingData[i].Data, trainingData[i].Label);
-                var rData = new double[trainingData[i].Data.Length];
+                var rData = new float[trainingData[i].Data.Length];
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
-                    rData[j] = ((trainingData[i].Data[j] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1; // Add Noise
+                    rData[j] = (float)(((trainingData[i].Data[j] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1); // Add Noise
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
-                    trainingData[i].Data[j] = 1d - trainingData[i].Data[j];
+                    trainingData[i].Data[j] = 1f - trainingData[i].Data[j];
                 nn.Train(rData, trainingData[i].Label);
                 nn.Train(trainingData[i].Data, trainingData[i].Label);
 
@@ -65,22 +65,22 @@ class Program
             int correct3 = 0;
             foreach (var testImg in testData)
             {
-                double[] prediction = nn.FeedForward(testImg.Data);
+                float[] prediction = nn.FeedForward(testImg.Data);
                 int predictedDigit = Array.IndexOf(prediction, prediction.Max());
-                double prob = prediction[predictedDigit];
+                float prob = prediction[predictedDigit];
                 if (predictedDigit == Array.IndexOf(testImg.Label, 1d)) correct++;
-                var rData = new double[testImg.Data.Length];
+                var rData = new float[testImg.Data.Length];
 
                 for (int i = 0; i < testImg.Data.Length; i++)
-                    rData[i] = ((testImg.Data[i] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1; // Add Noise
-                double[] prediction2 = nn.FeedForward(rData);
+                    rData[i] = (float)(((testImg.Data[i] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1); // Add Noise
+                float[] prediction2 = nn.FeedForward(rData);
                 int predictedDigit2 = Array.IndexOf(prediction2, prediction2.Max());
                 double prob2 = prediction[predictedDigit];
                 if (predictedDigit2 == Array.IndexOf(testImg.Label, 1d)) correct2++;
 
                 for (int i = 0; i < testImg.Data.Length; i++)
-                    rData[i] = ((testImg.Data[i] * 2 - 1) * (0.8 + rnd.NextDouble() * 0.2)) * 0.5 + 1; // Add Noise
-                double[] prediction3 = nn.FeedForward(rData);
+                    rData[i] = (float)(((testImg.Data[i] * 2 - 1) * (0.8 + rnd.NextDouble() * 0.2)) * 0.5 + 1); // Add Noise
+                float[] prediction3 = nn.FeedForward(rData);
                 int predictedDigit3 = Array.IndexOf(prediction3, prediction3.Max());
                 double prob3 = prediction[predictedDigit];
                 if (predictedDigit3 == Array.IndexOf(testImg.Label, 1d)) correct3++;
