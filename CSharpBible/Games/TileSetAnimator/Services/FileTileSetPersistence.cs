@@ -22,19 +22,24 @@ public sealed class FileTileSetPersistence : ITileSetPersistence
     /// <inheritdoc />
     public async Task<TileSetState?> LoadStateAsync(string tileSheetPath, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(tileSheetPath))
+        try { if (string.IsNullOrWhiteSpace(tileSheetPath))
+            {
+                return null;
+            }
+
+            var targetFile = GetStateFilePath(tileSheetPath);
+            if (!File.Exists(targetFile))
+            {
+                return null;
+            }
+
+            await using var stream = File.OpenRead(targetFile);
+            return await JsonSerializer.DeserializeAsync<TileSetState>(stream, SerializerOptions, cancellationToken).ConfigureAwait(false);
+        }
+        catch (JsonException)
         {
             return null;
         }
-
-        var targetFile = GetStateFilePath(tileSheetPath);
-        if (!File.Exists(targetFile))
-        {
-            return null;
-        }
-
-        await using var stream = File.OpenRead(targetFile);
-        return await JsonSerializer.DeserializeAsync<TileSetState>(stream, SerializerOptions, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
