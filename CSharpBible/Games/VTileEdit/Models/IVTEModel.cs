@@ -18,4 +18,5 @@ public interface IVTEModel
     TileInfo GetTileInfo(Enum tile);
     void SetTileInfo(Enum tile, TileInfo info);
     Type KeyType { get; }
- }
+    void SaveTileToStream(Enum tile, Stream stream, EStreamType eStreamType);
+}

@@ -48,6 +48,8 @@ public class VTEVisual : IVisual
                 Console.WriteLine("4) Tile auswählen");
             if (_viewModel.EditTileCommand.CanExecute(this))
                 Console.WriteLine("5) Tile editieren");
+            if (_viewModel.SaveTileCommand.CanExecute(this))
+                Console.WriteLine("6) Tile speichern");
             Console.WriteLine("0) Beenden");
             Console.Write("Auswahl: ");
             var key = Console.ReadKey();
@@ -58,16 +60,19 @@ public class VTEVisual : IVisual
                     _viewModel.NewTilesCommand.Execute(this);
                     break;
                 case '2':
-                    _viewModel.LoadTilesCommand.Execute(this);
+                    LoadTiles();
                     break;
                 case '3':
-                    _viewModel.SaveTilesCommand.Execute(this);
+                    SaveTiles();
                     break;
                 case '4':
                     _viewModel.SelectTileCommand.Execute(this);
                     break;
                 case '5':
                     _viewModel.EditTileCommand.Execute(this);
+                    break;
+                case '6':
+                    SaveSingleTile();
                     break;
                 case '0':
                     _viewModel.QuitCommand.Execute(this);
@@ -86,6 +91,12 @@ public class VTEVisual : IVisual
             { _viewModel.SaveToPath(path); Console.WriteLine("Gespeichert."); }
             catch (Exception ex) { Console.WriteLine($"Fehler: {ex.Message}"); }
         }
+    }
+
+    private string? RequestSavePath()
+    {
+        Console.Write("Datei speichern als (*.tdf;*.tdt;*.tdj;*.tdx;*.cs): ");
+        return Console.ReadLine();
     }
 
     private void SelectTile()
@@ -229,5 +240,69 @@ public class VTEVisual : IVisual
         }
 
         return chosenPath;
+    }
+
+    private void SaveSingleTile()
+    {
+        if (_viewModel.SelectedTile == null)
+        {
+            Console.WriteLine("Kein Tile ausgewählt.");
+            return;
+        }
+
+        var path = RequestSavePath();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        try
+        {
+            _viewModel.SaveTileCommand.Execute(path);
+            Console.WriteLine("Tile gespeichert.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fehler: {ex.Message}");
+        }
+    }
+
+    private void LoadTiles()
+    {
+        Console.Write("Datei laden (*.tdf;*.tdt;*.tdj;*.tdx): ");
+        var path = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        try
+        {
+            _viewModel.LoadTilesCommand.Execute(path);
+            Console.WriteLine("Geladen.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fehler: {ex.Message}");
+        }
+    }
+
+    private void SaveTiles()
+    {
+        var path = RequestSavePath();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        try
+        {
+            _viewModel.SaveTilesCommand.Execute(path);
+            Console.WriteLine("Gespeichert.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fehler: {ex.Message}");
+        }
     }
 }

@@ -9,8 +9,9 @@ namespace VTileEdit.ViewModels;
 public interface IVTEViewModel : INotifyPropertyChanged
 {
     IRelayCommand NewTilesCommand { get; }
-    IRelayCommand LoadTilesCommand { get; }
-    IRelayCommand SaveTilesCommand { get; }
+    IRelayCommand<string?> LoadTilesCommand { get; }
+    IRelayCommand<string?> SaveTilesCommand { get; }
+    IRelayCommand<string?> SaveTileCommand { get; }
     IRelayCommand SelectTileCommand { get; }
     IRelayCommand EditTileCommand { get; }
     IRelayCommand QuitCommand { get; }
@@ -21,5 +22,6 @@ public interface IVTEViewModel : INotifyPropertyChanged
     Size TileSize { get; }
 
     void SaveToPath(string path);
+    void SaveTileToPath(Enum tile, string path);
     void UpdateCurrentTile(string[] lines, FullColor[] colors);
 }

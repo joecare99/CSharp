@@ -32,4 +32,15 @@ public class VTEModel : IVTEModel
     public TileInfo GetTileInfo(Enum tile) => _data.GetTileInfo(tile);
 
     public void SetTileInfo(Enum tile, TileInfo info) => _data.SetTileInfo(tile, info);
+
+    public void SaveTileToStream(Enum tile, Stream stream, EStreamType eStreamType)
+    {
+        var single = new VisTileData();
+        single.SetTileSize(_data.TileSize);
+        var def = _data.GetTileDef(tile);
+        var info = _data.GetTileInfo(tile);
+        single.SetTileDef(tile, def);
+        single.SetTileInfo(tile, info);
+        single.WriteToStream(stream, eStreamType);
+    }
 }

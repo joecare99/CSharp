@@ -64,6 +64,20 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
         }
     }
 
+    public void SaveTileToPath(Enum tile, string path)
+    {
+        using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
+        switch (Path.GetExtension(path).ToLowerInvariant())
+        {
+            case ".txt": _model.SaveTileToStream(tile, fs, EStreamType.Text); break;
+            case ".tdf": _model.SaveTileToStream(tile, fs, EStreamType.Binary); break;
+            case ".tdj": _model.SaveTileToStream(tile, fs, EStreamType.Json); break;
+            case ".tdx": _model.SaveTileToStream(tile, fs, EStreamType.Xml); break;
+            case ".cs": _model.SaveTileToStream(tile, fs, EStreamType.Code); break;
+            default: throw new NotSupportedException("Unsupported file extension");
+        }
+    }
+
     public void SelectTile(Enum tile)
     {
         SelectedTile = tile;
@@ -92,18 +106,39 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     }
 
     [RelayCommand]
-    private void LoadTiles()
+    private void LoadTiles(string? path)
     {
-        _model.Clear();
-        
-        CurrentLines = Array.Empty<string>(); 
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        LoadFromPath(path);
+
+        CurrentLines = Array.Empty<string>();
         CurrentColors = Array.Empty<FullColor>();
     }
 
     [RelayCommand]
-    private void SaveTiles()
+    private void SaveTiles(string? path)
     {
-        // No action needed here, as saving is handled externally
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        SaveToPath(path);
+    }
+
+    [RelayCommand]
+    private void SaveTile(string? path)
+    {
+        if (SelectedTile == null || string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        SaveTileToPath(SelectedTile, path);
     }
 
     [RelayCommand]
