@@ -28,7 +28,7 @@ class Program
         NeuralNetwork nn = IoC.GetRequiredService<NeuralNetwork>();
 
         // 2. Trainingsdaten (XOR-Logik)
-        double[][] inputs =
+        float[][] inputs =
         [
             [0, 0],
             [0, 1],
@@ -36,7 +36,7 @@ class Program
             [1, 1]
         ];
 
-        double[][] targets =
+        float[][] targets =
         [
             [0],
             [1],
@@ -64,7 +64,7 @@ class Program
         // 4. Testen
         foreach (var input in inputs)
         {
-            double[] output = nn.FeedForward(input);
+            float[] output = nn.FeedForward(input);
             Console.WriteLine($"Input: {input[0]}, {input[1]} | Vorhersage: {output[0]:F4}");
         }
 
