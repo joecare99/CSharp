@@ -13,6 +13,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using VTileEdit.Models;
+using CoreViewModels = VTileEdit;
 
 namespace VTileEdit.WPF.ViewModels;
 
@@ -24,11 +26,10 @@ public partial class MainWindowViewModel : ObservableObject
     private const int DefaultTileWidth = 8;
     private const int DefaultTileHeight = 8;
     private static readonly string[] PreferredConsoleFonts = new[] { "Consolas", "Cascadia Mono", "Cascadia Code", "Lucida Console", "Courier New" };
-    private static readonly char[] DecorativeCp437Glyphs =
-    {
-        ' ', '☺', '☻', '♥', '♦', '♣', '♠', '•', '◘', '○', '◙', '♂', '♀', '♪', '♫', '☼',
-        '►', '◄', '↕', '‼', '¶', '§', '▬', '↨', '↑', '↓', '→', '←', '∟', '↔', '▲', '▼'
-    };
+
+    private readonly CoreViewModels.TileDocument _document;
+    private readonly Dictionary<TileViewModel, CoreViewModels.TileDefinition> _tileLookup = new();
+    private readonly VTEModel _persistenceModel = new();
 
     static MainWindowViewModel()
     {
@@ -40,27 +41,26 @@ public partial class MainWindowViewModel : ObservableObject
     /// </summary>
     public MainWindowViewModel()
     {
-        Tiles = new ObservableCollection<TileViewModel>(TileViewModel.CreateSampleTiles());
+        _document = CoreViewModels.TileDocument.CreateSample(DefaultTileWidth, DefaultTileHeight);
+
+        Tiles = new ObservableCollection<TileViewModel>();
         Palette = new ObservableCollection<ColorSwatchViewModel>(Enum.GetValues<ConsoleColor>().Select(color => new ColorSwatchViewModel(color)));
-        CharacterPalette = new ObservableCollection<char>(GetConsoleCharacters());
+        CharacterPalette = new ObservableCollection<char>(_document.CharacterPalette);
         AvailableFontFamilies = new ObservableCollection<FontFamily>(GetConsoleFontFamilies());
         SelectedFontFamily = AvailableFontFamilies.FirstOrDefault() ?? SystemFonts.MessageFontFamily;
         TilesView = CollectionViewSource.GetDefaultView(Tiles);
         TilesView.Filter = FilterTile;
- 
-        SelectedTile = Tiles.FirstOrDefault();
-        if (SelectedTile != null)
-        {
-            SelectGlyph(SelectedTile.Glyphs.FirstOrDefault());
-        }
-        TileSetName = SelectedTile?.DisplayName ?? "Tile Set";
-        TileSetTileWidth = SelectedTile?.TileWidth ?? DefaultTileWidth;
-        TileSetTileHeight = SelectedTile?.TileHeight ?? DefaultTileHeight;
+
+        SyncTilesFromDocument();
+
+        TileSetName = _document.Name;
+        TileSetTileWidth = _document.TileWidth;
+        TileSetTileHeight = _document.TileHeight;
         TileSetNameInput = TileSetName;
         TileSetTileWidthInput = TileSetTileWidth;
         TileSetTileHeightInput = TileSetTileHeight;
         EvaluateTileSetInputs();
- 
+
         ApplyForeground(Palette.FirstOrDefault());
         ApplyBackground(Palette.FirstOrDefault());
 
@@ -208,13 +208,14 @@ public partial class MainWindowViewModel : ObservableObject
         var openDlg = new OpenFileDialogProxy()
         {
             Title = "Open Tile File",
-            Filter = "Tile Files (*.tile)|*.tile|All Files (*.*)|*.*",
+            Filter = "Tile Files (*.tdf;*.tdt;*.tdj;*.tdx)|*.tdf;*.tdt;*.tdj;*.tdx|All Files (*.*)|*.*",
             CheckFileExists = true,
             Multiselect = false,
         };
         if (ShowFileDlg?.Invoke(openDlg) == true)
         {
             _fileName = openDlg.FileName;
+            LoadFromFile(_fileName);
         }
     }
 
@@ -224,6 +225,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (!string.IsNullOrEmpty(_fileName) && File.Exists(_fileName))
         {
             // Save to existing file
+            SaveToFile(_fileName);
             return;
         }
         SaveAs();
@@ -235,12 +237,13 @@ public partial class MainWindowViewModel : ObservableObject
         var saveDlg = new SaveFileDialogProxy()
         {
             Title = "Save Tile File",
-            Filter = "Tile Files (*.tile)|*.tile|All Files (*.*)|*.*",
+            Filter = "Tile Files (*.tdf;*.tdt;*.tdj;*.tdx;*.cs)|*.tdf;*.tdt;*.tdj;*.tdx;*.cs|All Files (*.*)|*.*",
             CheckFileExists = false,
         };
         if (ShowFileDlg?.Invoke(saveDlg) == true)
         {
             _fileName = saveDlg.FileName;
+            SaveToFile(_fileName);
         }
     }
 
@@ -264,23 +267,49 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void CreateNewTile()
     {
-        var tile = CreateEmptyTile($"Tile {Tiles.Count + 1}", TileSetTileWidth, TileSetTileHeight);
+        var documentTile = _document.CreateTile($"Tile {Tiles.Count + 1}");
+        var tile = CreateTileViewModel(documentTile);
         Tiles.Add(tile);
+        _tileLookup[tile] = documentTile;
         SelectedTile = tile;
     }
 
-    private static TileViewModel CreateEmptyTile(string name, int width, int height)
+    private static TileViewModel CreateTileViewModel(CoreViewModels.TileDefinition definition)
     {
-        var glyphs = new GlyphCellViewModel[width * height];
-        for (var row = 0; row < height; row++)
+        var glyphs = definition.Glyphs
+            .Select(g => new GlyphCellViewModel(g.Row, g.Column, g.Character, g.Foreground, g.Background));
+        return new TileViewModel(definition.DisplayName, definition.Width, definition.Height, glyphs);
+    }
+
+    private void SyncTilesFromDocument()
+    {
+        Tiles.Clear();
+        _tileLookup.Clear();
+
+        foreach (var definition in _document.Tiles)
         {
-            for (var column = 0; column < width; column++)
-            {
-                glyphs[row * width + column] = new GlyphCellViewModel(row, column, ' ', ConsoleColor.Gray, ConsoleColor.Black);
-            }
+            var tile = CreateTileViewModel(definition);
+            Tiles.Add(tile);
+            _tileLookup[tile] = definition;
         }
 
-        return new TileViewModel(name, width, height, glyphs);
+        SelectedTile = Tiles.FirstOrDefault();
+        if (SelectedTile != null)
+        {
+            SelectGlyph(SelectedTile.Glyphs.FirstOrDefault());
+        }
+    }
+
+    private bool TryGetSelectedDefinition(out CoreViewModels.TileDefinition definition)
+    {
+        definition = null!;
+        if (SelectedTile != null && _tileLookup.TryGetValue(SelectedTile, out var match))
+        {
+            definition = match;
+            return true;
+        }
+
+        return false;
     }
 
     private void SelectGlyph(GlyphCellViewModel? glyph)
@@ -307,7 +336,11 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         SetForegroundSelection(swatch, updateBinding: true);
-        SelectedGlyph?.SetForeground(swatch.Color);
+        if (SelectedGlyph != null)
+        {
+            SelectedGlyph.SetForeground(swatch.Color);
+            UpdateDocumentForeground(SelectedGlyph);
+        }
     }
 
     private void ApplyBackground(ColorSwatchViewModel? swatch)
@@ -318,7 +351,11 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         SetBackgroundSelection(swatch, updateBinding: true);
-        SelectedGlyph?.SetBackground(swatch.Color);
+        if (SelectedGlyph != null)
+        {
+            SelectedGlyph.SetBackground(swatch.Color);
+            UpdateDocumentBackground(SelectedGlyph);
+        }
     }
 
     private void ApplyCharacter(char character)
@@ -329,6 +366,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
  
         SelectedGlyph.Character = character;
+        UpdateDocumentCharacter(SelectedGlyph);
     }
  
     private void ApplyTileSetChanges()
@@ -340,20 +378,15 @@ public partial class MainWindowViewModel : ObservableObject
         TileSetNameInput = normalizedName;
         TileSetTileWidthInput = normalizedWidth;
         TileSetTileHeightInput = normalizedHeight;
- 
-        foreach (var tile in Tiles)
-        {
-            tile.ApplyDimensions(normalizedWidth, normalizedHeight);
-        }
- 
-        TileSetName = normalizedName;
-        TileSetTileWidth = normalizedWidth;
-        TileSetTileHeight = normalizedHeight;
- 
-        if (SelectedGlyph != null && (SelectedGlyph.Column >= normalizedWidth || SelectedGlyph.Row >= normalizedHeight))
-        {
-            SelectGlyph(SelectedTile?.Glyphs.FirstOrDefault());
-        }
+
+        _document.Rename(normalizedName);
+        _document.ApplyDimensions(normalizedWidth, normalizedHeight);
+
+        TileSetName = _document.Name;
+        TileSetTileWidth = _document.TileWidth;
+        TileSetTileHeight = _document.TileHeight;
+
+        SyncTilesFromDocument();
  
         EvaluateTileSetInputs();
     }
@@ -432,6 +465,30 @@ public partial class MainWindowViewModel : ObservableObject
         _activeBackgroundSwatch = swatch;
     }
 
+    private void UpdateDocumentForeground(GlyphCellViewModel glyph)
+    {
+        if (TryGetSelectedDefinition(out var definition))
+        {
+            _document.SetForeground(definition, glyph.Row, glyph.Column, glyph.Foreground);
+        }
+    }
+
+    private void UpdateDocumentBackground(GlyphCellViewModel glyph)
+    {
+        if (TryGetSelectedDefinition(out var definition))
+        {
+            _document.SetBackground(definition, glyph.Row, glyph.Column, glyph.Background);
+        }
+    }
+
+    private void UpdateDocumentCharacter(GlyphCellViewModel glyph)
+    {
+        if (TryGetSelectedDefinition(out var definition))
+        {
+            _document.SetGlyphCharacter(definition, glyph.Row, glyph.Column, glyph.Character);
+        }
+    }
+
     partial void OnSelectedForegroundSwatchChanged(ColorSwatchViewModel? value)
     {
         if (value == null || _isUpdatingForegroundSwatch)
@@ -440,7 +497,11 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         SetForegroundSelection(value, updateBinding: false);
-        SelectedGlyph?.SetForeground(value.Color);
+        if (SelectedGlyph != null)
+        {
+            SelectedGlyph.SetForeground(value.Color);
+            UpdateDocumentForeground(SelectedGlyph);
+        }
     }
 
     partial void OnSelectedBackgroundSwatchChanged(ColorSwatchViewModel? value)
@@ -451,7 +512,11 @@ public partial class MainWindowViewModel : ObservableObject
         }
  
         SetBackgroundSelection(value, updateBinding: false);
-        SelectedGlyph?.SetBackground(value.Color);
+        if (SelectedGlyph != null)
+        {
+            SelectedGlyph.SetBackground(value.Color);
+            UpdateDocumentBackground(SelectedGlyph);
+        }
     }
 
     partial void OnTileSetNameInputChanged(string value)
@@ -529,7 +594,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void EvaluateTileSetInputs()
     {
-        var currentName = (TileSetName ?? string.Empty).Trim();
+        var currentName = (_document.Name ?? string.Empty).Trim();
         var pendingName = (TileSetNameInput ?? string.Empty).Trim();
         TileSetShowsShrinkWarning = TileSetTileWidthInput < TileSetTileWidth
             || TileSetTileHeightInput < TileSetTileHeight;
@@ -541,27 +606,123 @@ public partial class MainWindowViewModel : ObservableObject
  
     private void RestoreTileSetInputs()
     {
-        TileSetNameInput = TileSetName;
-        TileSetTileWidthInput = TileSetTileWidth;
-        TileSetTileHeightInput = TileSetTileHeight;
+        TileSetNameInput = _document.Name;
+        TileSetTileWidthInput = _document.TileWidth;
+        TileSetTileHeightInput = _document.TileHeight;
         EvaluateTileSetInputs();
     }
 
-    private static IEnumerable<char> GetConsoleCharacters()
+    private static EStreamType ResolveStreamType(string path)
     {
-        var encoding = Encoding.GetEncoding(437);
-        var buffer = new byte[1];
-
-        for (var i = 0; i < 256; i++)
+        var ext = Path.GetExtension(path).ToLowerInvariant();
+        return ext switch
         {
-            buffer[0] = (byte)i;
-            var glyph = encoding.GetChars(buffer)[0];
-            if (i < DecorativeCp437Glyphs.Length)
-            {
-                glyph = DecorativeCp437Glyphs[i];
-            }
+            ".txt" => EStreamType.Text,
+            ".tdf" => EStreamType.Binary,
+            ".tdj" => EStreamType.Json,
+            ".tdx" => EStreamType.Xml,
+            ".cs" => EStreamType.Code,
+            _ => throw new NotSupportedException($"Unsupported file extension '{ext}'")
+        };
+    }
 
-            yield return glyph;
+    private void SaveToFile(string path)
+    {
+        var streamType = ResolveStreamType(path);
+
+        _persistenceModel.Clear();
+        _persistenceModel.SetTileSize(new System.Drawing.Size(TileSetTileWidth, TileSetTileHeight));
+
+        var index = 0;
+        foreach (var tile in Tiles)
+        {
+            var (lines, colors) = ExtractTile(tile);
+            _persistenceModel.SetTileDef((TileKey)index++, lines, colors);
+        }
+
+        using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
+        _persistenceModel.SaveToStream(fs, streamType);
+    }
+
+    private void LoadFromFile(string path)
+    {
+        var streamType = ResolveStreamType(path);
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+        _persistenceModel.Clear();
+        _persistenceModel.LoadFromStream(fs, streamType);
+
+        var size = _persistenceModel.TileSize;
+        TileSetTileWidth = size.Width;
+        TileSetTileHeight = size.Height;
+        TileSetName = Path.GetFileNameWithoutExtension(path);
+        TileSetNameInput = TileSetName;
+        TileSetTileWidthInput = TileSetTileWidth;
+        TileSetTileHeightInput = TileSetTileHeight;
+
+        Tiles.Clear();
+        foreach (var key in _persistenceModel.TileKeys)
+        {
+            var def = _persistenceModel.GetTileDef(key);
+            var tileVm = BuildTileFrom(def.lines, def.colors, TileSetTileWidth, TileSetTileHeight, key.ToString());
+            Tiles.Add(tileVm);
+        }
+
+        SyncDocumentFromTiles();
+
+        EvaluateTileSetInputs();
+    }
+
+    private (string[] lines, FullColor[] colors) ExtractTile(TileViewModel tile)
+    {
+        var lines = new string[tile.TileHeight];
+        var colors = new FullColor[tile.TileWidth * tile.TileHeight];
+
+        for (var row = 0; row < tile.TileHeight; row++)
+        {
+            var sb = new StringBuilder(tile.TileWidth);
+            for (var col = 0; col < tile.TileWidth; col++)
+            {
+                var glyph = tile.Glyphs[row * tile.TileWidth + col];
+                sb.Append(glyph.Character);
+                colors[row * tile.TileWidth + col] = new FullColor(glyph.Foreground, glyph.Background);
+            }
+            lines[row] = sb.ToString();
+        }
+
+        return (lines, colors);
+    }
+
+    private static TileViewModel BuildTileFrom(string[] lines, FullColor[] colors, int width, int height, string name)
+    {
+        var glyphs = new List<GlyphCellViewModel>(width * height);
+        for (var row = 0; row < height; row++)
+        {
+            for (var col = 0; col < width; col++)
+            {
+                var ch = row < lines.Length && col < lines[row].Length ? lines[row][col] : ' ';
+                var color = colors.Length > row * width + col ? colors[row * width + col] : new FullColor(ConsoleColor.Gray, ConsoleColor.Black);
+                glyphs.Add(new GlyphCellViewModel(row, col, ch, color.fgr, color.bgr));
+            }
+        }
+
+        return new TileViewModel(name, width, height, glyphs);
+    }
+
+    private void SyncDocumentFromTiles()
+    {
+        _document.Rename(TileSetName);
+        _document.ApplyDimensions(TileSetTileWidth, TileSetTileHeight);
+        _document.Tiles.Clear();
+        _tileLookup.Clear();
+
+        foreach (var tile in Tiles)
+        {
+            var glyphs = tile.Glyphs.Select(g => new VTileEdit.GlyphData(g.Row, g.Column, g.Character, g.Foreground, g.Background)).ToList();
+            var def = new VTileEdit.TileDefinition(tile.DisplayName, tile.TileWidth, tile.TileHeight, glyphs);
+            _document.Tiles.Add(def);
+            _tileLookup[tile] = def;
         }
     }
+ 
+    private enum TileKey { }
  }
