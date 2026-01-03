@@ -147,7 +147,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorVis", "ConsoleApp1\Col
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cifar10_2.WPF", "Cifar10_2.WPF\Cifar10_2.WPF.csproj", "{0990F35E-B58B-E527-863A-56AAC5207FBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperResolutionOnnxSample", "SuperResolutionOnnxSample\SuperResolutionOnnxSample.csproj", "{E17F4211-C974-D0F7-010E-80EA36C8DC22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperResolutionOnnxSample1", "SuperResolutionOnnxSample\SuperResolutionOnnxSample1.csproj", "{E17F4211-C974-D0F7-010E-80EA36C8DC22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
