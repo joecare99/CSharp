@@ -5,7 +5,7 @@ using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using libMachLearn.Models;
 
-namespace Cnt3Learn;
+namespace Mnist1Learn;
 
 class Program
 {
@@ -42,7 +42,7 @@ class Program
         {
             nn.Train(trainingData[i].Data, trainingData[i].Label);
             for (int j = 0; j < trainingData[i].Data.Length; j++)
-                trainingData[i].Data[j] = 1d - trainingData[i].Data[j];
+                trainingData[i].Data[j] = 1f - trainingData[i].Data[j];
             nn.Train(trainingData[i].Data, trainingData[i].Label);
 
             if (i % 5000 == 0)
@@ -52,10 +52,10 @@ class Program
         // Testen mit einem Bild aus dem Datensatz
         var rnd = IoC.GetRequiredService<IRandom>();
         var testImg = trainingData[rnd.Next(trainingData.Count)];
-        double[] prediction = nn.FeedForward(testImg.Data);
+        float[] prediction = nn.FeedForward(testImg.Data);
         for (int i = 0; i < testImg.Data.Length; i++)
-            testImg.Data[i] = ((testImg.Data[i] * 2 - 1) * (0.75 + rnd.NextDouble() * 0.25)) * 0.5 + 1; // Add Noise
-        double[] prediction2 = nn.FeedForward(testImg.Data);
+            testImg.Data[i] = ((testImg.Data[i] * 2 - 1) * (0.75f + (float)rnd.NextDouble() * 0.25f)) * 0.5f + 1; // Add Noise
+        float[] prediction2 = nn.FeedForward(testImg.Data);
 
         int predictedDigit = Array.IndexOf(prediction, prediction.Max());
         int predictedDigit2 = Array.IndexOf(prediction2, prediction2.Max());
