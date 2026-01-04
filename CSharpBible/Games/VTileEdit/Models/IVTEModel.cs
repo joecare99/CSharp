@@ -12,11 +12,12 @@ public interface IVTEModel
     void Clear();
     void SetTileSize(Size size);
     Size TileSize { get; }
-    IEnumerable<Enum> TileKeys { get; }
-    SingleTile GetTileDef(Enum? tile);
-    void SetTileDef(Enum tile, string[] lines, FullColor[] colors);
-    TileInfo GetTileInfo(Enum tile);
-    void SetTileInfo(Enum tile, TileInfo info);
+    IEnumerable<int> TileKeys { get; }
+    SingleTile GetTileDef(int? tile);
+    void SetTileDef(int tile, string[] lines, FullColor[] colors);
+    TileInfo GetTileInfo(int tile);
+    void SetTileInfo(int tile, TileInfo info);
     Type KeyType { get; }
-    void SaveTileToStream(Enum tile, Stream stream, EStreamType eStreamType);
+    void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType);
+    void LoadTileToStream(int tile, Stream stream, EStreamType eStreamType);
 }

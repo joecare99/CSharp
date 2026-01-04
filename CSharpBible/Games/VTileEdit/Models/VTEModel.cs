@@ -12,7 +12,7 @@ public class VTEModel : IVTEModel
 
     public Size TileSize => _data.TileSize;
 
-    public IEnumerable<Enum> TileKeys => _data.Keys;
+    public IEnumerable<int> TileKeys => _data.Keys;
 
     public Type KeyType => _data.KeyType;
 
@@ -24,16 +24,16 @@ public class VTEModel : IVTEModel
 
     public void SetTileSize(Size size) => _data.SetTileSize(size);
 
-    public SingleTile GetTileDef(Enum? tile) => _data.GetTileDef(tile);
+    public SingleTile GetTileDef(int? tile) => _data.GetTileDef(tile);
 
-    public void SetTileDef(Enum tile, string[] lines, FullColor[] colors)
+    public void SetTileDef(int tile, string[] lines, FullColor[] colors)
         => _data.SetTileDef(tile, new SingleTile(lines, colors));
 
-    public TileInfo GetTileInfo(Enum tile) => _data.GetTileInfo(tile);
+    public TileInfo GetTileInfo(int tile) => _data.GetTileInfo(tile);
 
-    public void SetTileInfo(Enum tile, TileInfo info) => _data.SetTileInfo(tile, info);
+    public void SetTileInfo(int tile, TileInfo info) => _data.SetTileInfo(tile, info);
 
-    public void SaveTileToStream(Enum tile, Stream stream, EStreamType eStreamType)
+    public void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType)
     {
         var single = new VisTileData();
         single.SetTileSize(_data.TileSize);
@@ -42,5 +42,15 @@ public class VTEModel : IVTEModel
         single.SetTileDef(tile, def);
         single.SetTileInfo(tile, info);
         single.WriteToStream(stream, eStreamType);
+    }
+
+    public void LoadTileToStream(int tile, Stream stream, EStreamType eStreamType)
+    {
+        var single = new VisTileData();
+        single.LoadFromStream(stream, eStreamType);
+        var def = single.GetTileDef(tile);
+        var info = single.GetTileInfo(tile);
+        _data.SetTileDef(tile, def);
+        _data.SetTileInfo(tile, info);
     }
 }

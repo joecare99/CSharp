@@ -15,13 +15,13 @@ public interface IVTEViewModel : INotifyPropertyChanged
     IRelayCommand SelectTileCommand { get; }
     IRelayCommand EditTileCommand { get; }
     IRelayCommand QuitCommand { get; }
-    Enum? SelectedTile { get; set; }
+    int? SelectedTile { get; set; }
     string[] CurrentLines { get; set; }
     FullColor[] CurrentColors { get; set; }
     Func<Size> DoNewTileDialog { get; set; }
     Size TileSize { get; }
 
     void SaveToPath(string path);
-    void SaveTileToPath(Enum tile, string path);
+    void SaveTileToPath(int tile, string path);
     void UpdateCurrentTile(string[] lines, FullColor[] colors);
 }

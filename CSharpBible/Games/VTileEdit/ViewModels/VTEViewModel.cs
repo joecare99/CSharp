@@ -25,7 +25,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     public IVTEModel Model => _model;
 
     [ObservableProperty]
-    public partial Enum? SelectedTile { get; set; }
+    public partial int? SelectedTile { get; set; }
 
     [ObservableProperty]
     public partial string[] CurrentLines { get; set; } = Array.Empty<string>();
@@ -64,7 +64,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
         }
     }
 
-    public void SaveTileToPath(Enum tile, string path)
+    public void SaveTileToPath(int tile, string path)
     {
         using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
         switch (Path.GetExtension(path).ToLowerInvariant())
@@ -78,7 +78,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
         }
     }
 
-    public void SelectTile(Enum tile)
+    public void SelectTile(int tile)
     {
         SelectedTile = tile;
         var st = _model.GetTileDef(tile);
@@ -90,7 +90,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     {
         if (SelectedTile != null)
         {
-            _model.SetTileDef(SelectedTile, lines, colors);
+            _model.SetTileDef(SelectedTile.Value, lines, colors);
             CurrentLines = lines;
             CurrentColors = colors;
         }
@@ -138,7 +138,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
             return;
         }
 
-        SaveTileToPath(SelectedTile, path);
+        SaveTileToPath(SelectedTile.Value, path);
     }
 
     [RelayCommand]
