@@ -1,7 +1,7 @@
 Count:28
 Size:4,2
-KeyType:Werner_Flaschbier_Base.Model.Tiles, Werner_Flaschbier_Base, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-Key0:Empty (Tiles)
+KeyType:Werner_Flaschbier_Base.Model.Tiles, VTileEditTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+Key0:0 (Empty)
 Lines0:2
 L0_0:@"    "
 L0_1:@"    "
@@ -14,7 +14,7 @@ C0_4:0x00
 C0_5:0x00
 C0_6:0x00
 C0_7:0x00
-Key1:Dirt (Tiles)
+Key1:1 (Dirt)
 Lines1:2
 L1_0:@"=-=-"
 L1_1:@"-=-="
@@ -27,7 +27,7 @@ C1_4:0x6E
 C1_5:0x6E
 C1_6:0x6E
 C1_7:0x6E
-Key2:Wall (Tiles)
+Key2:2 (Wall)
 Lines2:2
 L2_0:@"─┴┬─"
 L2_1:@"─┬┴─"
@@ -40,7 +40,7 @@ C2_4:0x4F
 C2_5:0x4F
 C2_6:0x4F
 C2_7:0x4F
-Key3:Destination (Tiles)
+Key3:3 (Destination)
 Lines3:2
 L3_0:@" ╓╖ "
 L3_1:@"▓░▒▓"
@@ -53,7 +53,7 @@ C3_4:0x2A
 C3_5:0x22
 C3_6:0x02
 C3_7:0x22
-Key4:Player (Tiles)
+Key4:4 (Player)
 Lines4:2
 L4_0:@"⌐°@)"
 L4_1:@" ⌡⌡‼"
@@ -66,7 +66,7 @@ C4_4:0x6F
 C4_5:0x6F
 C4_6:0x6F
 C4_7:0x6F
-Key5:Stone (Tiles)
+Key5:5 (Stone)
 Lines5:2
 L5_0:@"/¯¯\"
 L5_1:@"\__/"
@@ -79,7 +79,7 @@ C5_4:0x6E
 C5_5:0x6E
 C5_6:0x6E
 C5_7:0x6E
-Key6:Enemy_Up (Tiles)
+Key6:6 (Enemy_Up)
 Lines6:2
 L6_0:@"]°°["
 L6_1:@"_!!_"
@@ -92,7 +92,7 @@ C6_4:0x1A
 C6_5:0xA0
 C6_6:0xA0
 C6_7:0x1A
-Key7:Enemy_Right (Tiles)
+Key7:7 (Enemy_Right)
 Lines7:2
 L7_0:@"◄°@["
 L7_1:@"_!!\"
@@ -105,7 +105,7 @@ C7_4:0x1A
 C7_5:0xA0
 C7_6:0xA0
 C7_7:0x1A
-Key8:Enemy_Dwn (Tiles)
+Key8:8 (Enemy_Dwn)
 Lines8:2
 L8_0:@"]oo["
 L8_1:@"_!!_"
@@ -118,7 +118,7 @@ C8_4:0x1A
 C8_5:0xA0
 C8_6:0xA0
 C8_7:0x1A
-Key9:Enemy_Left (Tiles)
+Key9:9 (Enemy_Left)
 Lines9:2
 L9_0:@"]@°►"
 L9_1:@"/!!_"
@@ -131,7 +131,7 @@ C9_4:0x1A
 C9_5:0xA0
 C9_6:0xA0
 C9_7:0x1A
-Key10:StoneMoving (Tiles)
+Key10:10 (StoneMoving)
 Lines10:2
 L10_0:@"/╨╨\"
 L10_1:@"\__/"
@@ -144,7 +144,7 @@ C10_4:0x6E
 C10_5:0x6E
 C10_6:0x6E
 C10_7:0x6E
-Key11:PlayerDead (Tiles)
+Key11:11 (PlayerDead)
 Lines11:2
 L11_0:@" +*∩"
 L11_1:@"╘═◊@"
@@ -157,7 +157,7 @@ C11_4:0x6F
 C11_5:0x6F
 C11_6:0x6F
 C11_7:0x6F
-Key12:Dummy (Tiles)
+Key12:12 (Dummy)
 Lines12:2
 L12_0:@"    "
 L12_1:@"    "
@@ -170,7 +170,7 @@ C12_4:0x6E
 C12_5:0x6E
 C12_6:0x6E
 C12_7:0x6E
-Key13:Wall_U (Tiles)
+Key13:13 (Wall_U)
 Lines13:2
 L13_0:@"─┴┬┴"
 L13_1:@"─┬┴─"
@@ -183,7 +183,7 @@ C13_4:0x4F
 C13_5:0x4F
 C13_6:0x4F
 C13_7:0x4F
-Key14:Wall_W (Tiles)
+Key14:14 (Wall_W)
 Lines14:2
 L14_0:@"┬┴┬─"
 L14_1:@"┴┬┴─"
@@ -196,7 +196,7 @@ C14_4:0x4F
 C14_5:0x4F
 C14_6:0x4F
 C14_7:0x4F
-Key15:Wall_UW (Tiles)
+Key15:15 (Wall_UW)
 Lines15:2
 L15_0:@"┬┴┬┴"
 L15_1:@"┴┬┴─"
@@ -209,7 +209,7 @@ C15_4:0x4F
 C15_5:0x4F
 C15_6:0x4F
 C15_7:0x4F
-Key16:Wall_D (Tiles)
+Key16:16 (Wall_D)
 Lines16:2
 L16_0:@"┬┴┬─"
 L16_1:@"┴┬┴┬"
@@ -222,7 +222,7 @@ C16_4:0x4F
 C16_5:0x4F
 C16_6:0x4F
 C16_7:0x4F
-Key17:Wall_UD (Tiles)
+Key17:17 (Wall_UD)
 Lines17:2
 L17_0:@"┬┴┬┴"
 L17_1:@"┴┬┴┬"
@@ -235,7 +235,7 @@ C17_4:0x4F
 C17_5:0x4F
 C17_6:0x4F
 C17_7:0x4F
-Key18:Wall_WD (Tiles)
+Key18:18 (Wall_WD)
 Lines18:2
 L18_0:@"┬┴┬─"
 L18_1:@"┴┬┴┬"
@@ -248,7 +248,7 @@ C18_4:0x4F
 C18_5:0x4F
 C18_6:0x4F
 C18_7:0x4F
-Key19:Wall_UWD (Tiles)
+Key19:19 (Wall_UWD)
 Lines19:2
 L19_0:@"┬┴┬┴"
 L19_1:@"┴┬┴┬"
@@ -261,7 +261,7 @@ C19_4:0x4F
 C19_5:0x4F
 C19_6:0x4F
 C19_7:0x4F
-Key20:Wall_E (Tiles)
+Key20:20 (Wall_E)
 Lines20:2
 L20_0:@"─┴┬─"
 L20_1:@"─┬┴─"
@@ -274,7 +274,7 @@ C20_4:0x4F
 C20_5:0x4F
 C20_6:0x4F
 C20_7:0x4F
-Key21:Wall_UE (Tiles)
+Key21:21 (Wall_UE)
 Lines21:2
 L21_0:@"─┴┬┴"
 L21_1:@"─┬┴─"
@@ -287,7 +287,7 @@ C21_4:0x4F
 C21_5:0x4F
 C21_6:0x4F
 C21_7:0x4F
-Key22:Wall_WE (Tiles)
+Key22:22 (Wall_WE)
 Lines22:2
 L22_0:@"┬┴┬─"
 L22_1:@"┴┬┴─"
@@ -300,7 +300,7 @@ C22_4:0x4F
 C22_5:0x4F
 C22_6:0x4F
 C22_7:0x4F
-Key23:Wall_UWE (Tiles)
+Key23:23 (Wall_UWE)
 Lines23:2
 L23_0:@"┬┴┬┴"
 L23_1:@"┴┬┴─"
@@ -313,7 +313,7 @@ C23_4:0x4F
 C23_5:0x4F
 C23_6:0x4F
 C23_7:0x4F
-Key24:Wall_DE (Tiles)
+Key24:24 (Wall_DE)
 Lines24:2
 L24_0:@"┬┴┬─"
 L24_1:@"┴┬┴┬"
@@ -326,7 +326,7 @@ C24_4:0x4F
 C24_5:0x4F
 C24_6:0x4F
 C24_7:0x4F
-Key25:Wall_UDE (Tiles)
+Key25:25 (Wall_UDE)
 Lines25:2
 L25_0:@"┬┴┬┴"
 L25_1:@"┴┬┴┬"
@@ -339,7 +339,7 @@ C25_4:0x4F
 C25_5:0x4F
 C25_6:0x4F
 C25_7:0x4F
-Key26:Wall_WDE (Tiles)
+Key26:26 (Wall_WDE)
 Lines26:2
 L26_0:@"┬┴┬─"
 L26_1:@"┴┬┴┬"
@@ -352,7 +352,7 @@ C26_4:0x4F
 C26_5:0x4F
 C26_6:0x4F
 C26_7:0x4F
-Key27:Wall_UWDE (Tiles)
+Key27:27 (Wall_UWDE)
 Lines27:2
 L27_0:@"┬┴┬┴"
 L27_1:@"┴┬┴┬"

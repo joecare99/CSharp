@@ -17,8 +17,8 @@ public class VisTileDataMetadataTests
     {
         _sut = new VisTileData();
         _sut.SetTileSize(new Size(2, 1));
-        _sut.SetTileDef(TestTile.First, CreateTile("AB"));
-        _sut.SetTileDef(TestTile.Second, CreateTile("CD"));
+        _sut.SetTileDef(0, CreateTile("AB"));
+        _sut.SetTileDef(1, CreateTile("CD"));
     }
 
     [TestMethod]
@@ -26,7 +26,7 @@ public class VisTileDataMetadataTests
     {
         var keys = _sut.Keys.ToList();
 
-        CollectionAssert.AreEquivalent(new Enum[] { TestTile.First, TestTile.Second }, keys);
+        CollectionAssert.AreEquivalent(new int[] { 0, 1}, keys);
     }
 
     [TestMethod]
@@ -39,9 +39,9 @@ public class VisTileDataMetadataTests
             Tags = new[] { "lava", "flying" }
         };
 
-        _sut.SetTileInfo(TestTile.First, expected);
+        _sut.SetTileInfo(0, expected);
 
-        var retrieved = _sut.GetTileInfo(TestTile.First);
+        var retrieved = _sut.GetTileInfo(0);
         CollectionAssert.AreEqual(expected.Tags.ToArray(), retrieved.Tags.ToArray());
         Assert.AreEqual(expected.Category, retrieved.Category);
         Assert.AreEqual(expected.SubCategory, retrieved.SubCategory);
@@ -49,7 +49,7 @@ public class VisTileDataMetadataTests
         retrieved.SubCategory = "Changed";
         retrieved.Tags = new[] { "other" };
 
-        var secondFetch = _sut.GetTileInfo(TestTile.First);
+        var secondFetch = _sut.GetTileInfo(0);
         Assert.AreEqual("Boss", secondFetch.SubCategory);
         CollectionAssert.AreEqual(new[] { "lava", "flying" }, secondFetch.Tags.ToArray());
     }
@@ -57,7 +57,7 @@ public class VisTileDataMetadataTests
     [TestMethod]
     public void Json2RoundtripPreservesMetadata()
     {
-        _sut.SetTileInfo(TestTile.First, new TileInfo
+        _sut.SetTileInfo(0, new TileInfo
         {
             Category = TileCategory.Item,
             SubCategory = "Artifact",
@@ -71,7 +71,7 @@ public class VisTileDataMetadataTests
         var clone = new VisTileData();
         Assert.IsTrue(clone.LoadFromStream(stream, EStreamType.Json2));
 
-        var clonedInfo = clone.GetTileInfo(TestTile.First);
+        var clonedInfo = clone.GetTileInfo(0);
         Assert.AreEqual(TileCategory.Item, clonedInfo.Category);
         Assert.AreEqual("Artifact", clonedInfo.SubCategory);
         CollectionAssert.AreEqual(new[] { "legendary", "quest" }, clonedInfo.Tags.ToArray());
@@ -86,9 +86,5 @@ public class VisTileDataMetadataTests
         return new SingleTile(lines, colors);
     }
 
-    private enum TestTile
-    {
-        First = 0,
-        Second = 1,
-    }
+    
 }

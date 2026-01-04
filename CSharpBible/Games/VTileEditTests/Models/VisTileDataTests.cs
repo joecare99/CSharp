@@ -460,7 +460,7 @@ public class TileDef : TileDefBase
         public void SetTileDefsTest(int iAct1, int iAct2, string[] asExp)
         {
             _testDefs[iAct1].Item1(testClass);
-            var act = testClass.GetTileDef((Enum)(Enum29)iAct2).lines;
+            var act = testClass.GetTileDef(iAct2).lines;
             Assert.IsNotNull(act);
             for (int i = 0; i < asExp.Length; i++)
                 Assert.AreEqual(asExp[i], act[i]);
