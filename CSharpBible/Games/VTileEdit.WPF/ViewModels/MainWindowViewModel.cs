@@ -637,7 +637,7 @@ public partial class MainWindowViewModel : ObservableObject
         foreach (var tile in Tiles)
         {
             var (lines, colors) = ExtractTile(tile);
-            _persistenceModel.SetTileDef((TileKey)index++, lines, colors);
+            _persistenceModel.SetTileDef(index++, lines, colors);
         }
 
         using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
