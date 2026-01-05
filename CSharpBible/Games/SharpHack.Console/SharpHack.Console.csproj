@@ -15,6 +15,7 @@
     <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
     <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
   </ItemGroup>
 
 </Project>
