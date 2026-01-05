@@ -115,7 +115,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTileEdit.WPFTests", "VTile
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLibTests", "..\Libraries\ConsoleLibTests\ConsoleLibTests.csproj", "{E14A9353-7AD6-1EED-D034-E535DD63D6D3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VTileEdit_", "VTileEdit_", "{F8444123-7091-43B2-AF24-DB3201ABF105}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VTileEdit", "VTileEdit", "{F8444123-7091-43B2-AF24-DB3201ABF105}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
