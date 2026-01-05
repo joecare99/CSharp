@@ -15,7 +15,7 @@ public enum TileType
 
 public class Tile
 {
-    public Point Position { get; set; }
+    public Point Position { get; set  { OldPosition = field; field = value; } }
     public TileType Type { get; set; }
     public List<Item> Items { get; } = new();
     public Creature? Creature { get; set; }
@@ -25,4 +25,6 @@ public class Tile
 
     public bool IsWalkable => Type != TileType.Wall && Type != TileType.Empty && (Type != TileType.DoorClosed);
     public bool IsTransparent => Type != TileType.Wall && Type != TileType.DoorClosed;
+
+    public Point OldPosition { get; internal set; }
 }

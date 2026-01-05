@@ -36,4 +36,9 @@ public class Map
 
     public bool IsValid(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
     public bool IsValid(Point p) => IsValid(p.X, p.Y);
+
+    public (int X,int Y) GetOldPos(int x, int y)
+    {
+       return _tiles[x, y].OldPosition;
+    }
 }
