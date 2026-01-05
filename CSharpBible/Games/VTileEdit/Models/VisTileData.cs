@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
+using VTileEdit;
 
 namespace VTileEdit.Models;
 
@@ -150,33 +151,9 @@ public class VisTileData : ITileDef
             case EStreamType.Binary:
                 {
                     _storage.Clear();
-                    using (BinaryReader reader = new BinaryReader(stream))
-                    {
-                        Type _keyType = typeof(object);
-                        int count = reader.ReadInt32();
-                        if (count > 0)
-                        {
-                            _size = new Size(reader.ReadInt32(), reader.ReadInt32());
-                            _keyType = Type.GetType(reader.ReadString()) ?? Assembly.GetExecutingAssembly().GetType();
-                        }
-                        for (int i = 0; i < count; i++)
-                        {
-                            int key = reader.ReadInt32();
-                            int lineCount = reader.ReadInt32();
-                            string[] lines = new string[lineCount];
-                            for (int j = 0; j < lineCount; j++)
-                            {
-                                lines[j] = reader.ReadString();
-                            }
-                            int colorCount = reader.ReadInt32();
-                            FullColor[] colors = new FullColor[colorCount];
-                            for (int j = 0; j < colorCount; j++)
-                            {
-                                colors[j] = ((ConsoleColor)reader.ReadByte(), (ConsoleColor)reader.ReadByte());
-                            }
-                            _storage.Add(key, new TileEntry(new SingleTile(lines, colors), TileInfo.Default));
-                        }
-                    }
+                    VTileEdit.TileBinaryLoader.Load(stream,
+                        size => _size = size,
+                        (key, lines, colors) => _storage.Add(key, new TileEntry(new SingleTile(lines, colors.Select(c => new FullColor(c.fgr, c.bgr)).ToArray()), TileInfo.Default)));
                     return true;
                 }
             case EStreamType.Text:
