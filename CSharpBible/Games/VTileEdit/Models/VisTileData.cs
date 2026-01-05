@@ -1,4 +1,5 @@
 ﻿using BaseLib.Helper;
+using ConsoleDisplay.Helpers;
 using ConsoleDisplay.View;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
-using VTileEdit;
 
 namespace VTileEdit.Models;
 
@@ -151,9 +152,11 @@ public class VisTileData : ITileDef
             case EStreamType.Binary:
                 {
                     _storage.Clear();
-                    VTileEdit.TileBinaryLoader.Load(stream,
+                    TileBinaryLoader.Load(stream,
                         size => _size = size,
-                        (key, lines, colors) => _storage.Add(key, new TileEntry(new SingleTile(lines, colors.Select(c => new FullColor(c.fgr, c.bgr)).ToArray()), TileInfo.Default)));
+                        (key, lines, colors) => _storage.Add(key, new TileEntry(new SingleTile(lines, colors.Select(c => new FullColor(c.fgr, c.bgr)).ToArray()), TileInfo.Default)),
+                        (blob) => { var KeyTypeStr = Encoding.UTF8.GetString(blob); KeyType = Type.GetType(KeyTypeStr) ?? typeof(int); }
+                        );
                     return true;
                 }
             case EStreamType.Text:
@@ -309,7 +312,10 @@ public class VisTileData : ITileDef
                         {
                             writer.Write(_size.Width);
                             writer.Write(_size.Height);
-                            writer.Write(KeyType.AssemblyQualifiedName);
+                            // Additional Data
+                            var blob = Encoding.UTF8.GetBytes(KeyType.AssemblyQualifiedName);
+                            writer.Write(blob.Length);
+                            writer.Write(blob);
                         }
                         foreach (var item in _storage)
                         {
@@ -325,6 +331,11 @@ public class VisTileData : ITileDef
                                 writer.Write((byte)color.fgr);
                                 writer.Write((byte)color.bgr);
                             }
+                            // Additional Data
+                            var blob = item.Value.Info.Name;
+                            writer.Write(blob.Length);
+                            writer.Write(blob);
+
                         }
                     }
                     return true;

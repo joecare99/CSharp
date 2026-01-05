@@ -24,7 +24,6 @@
 		<ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="Helpers\TileBinaryLoader.cs" />
 	</ItemGroup>
 
 </Project>
