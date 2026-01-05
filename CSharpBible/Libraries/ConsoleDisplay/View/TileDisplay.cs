@@ -67,7 +67,7 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// <value>The tile definition.</value>
     public ITileDef? TileDef { get => _tileDef ?? tileDef; set => _tileDef = value; }
 
-		public Point DispOffset { get; set; } = Point.Empty;
+    public Point DispOffset { get; set; } = Point.Empty;
     public Func<Point, T>? FncGetTile { get; set; }
     public Func<Point, Point>? FncOldPos { get; set; }
 
@@ -99,6 +99,8 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// The (local) tile-definition
     /// </summary>
     private ITileDef? _tileDef;
+    private static ConsoleColor _bgr;
+    private static ConsoleColor _fgr;
     #endregion
     #endregion
 
@@ -146,8 +148,10 @@ public class TileDisplay<T>: ITileDisplay<T>
     /// <param name="pc">The pc.</param>
     private static void WriteTileChunk(IConsole console,Point Offset, PointF p, (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) def, Size s, Point pc)
     {
-        console.ForegroundColor = def.colors[pc.X + pc.Y * s.Width].fgr;
-        console.BackgroundColor = def.colors[pc.X + pc.Y * s.Width].bgr;
+        if (_fgr!= def.colors[pc.X + pc.Y * s.Width].fgr || (p.X == 0 && p.Y==0))
+            console.ForegroundColor =_fgr= def.colors[pc.X + pc.Y * s.Width].fgr;
+        if (_bgr != def.colors[pc.X + pc.Y * s.Width].bgr || (p.X == 0 && p.Y == 0))
+            console.BackgroundColor =_bgr= def.colors[pc.X + pc.Y * s.Width].bgr;
         console.SetCursorPosition(Offset.X + (int)(p.X * s.Width) + pc.X, Offset.Y + (int)(p.Y * s.Height) + pc.Y);
         console.Write(def.lines[pc.Y][pc.X]);
     }
@@ -253,6 +257,8 @@ public class TileDisplay<T>: ITileDisplay<T>
 
     public void Update(bool e)
     {
+        _bgr = ConsoleColor.Black;
+        _fgr = ConsoleColor.Black;
         var diffFields = new List<(Point, T, Point?)>();
         var p = new Point();
         Point p3 = new();
@@ -265,7 +271,7 @@ public class TileDisplay<T>: ITileDisplay<T>
                 p3.Y = p.Y + DispOffset.Y;
                 T td = FncGetTile(p3)!;
                 T? ot = GetTile(p);
-                var po = FncOldPos?.Invoke(p3);
+                var po = e? FncOldPos?.Invoke(p3):null;
                 bool x1 = !td.Equals(ot);
                 bool x2 = (po != null) && (po != p3);
 
