@@ -18,7 +18,7 @@ public class BSPMapGenerator : IMapGenerator
         _random = random;
     }
 
-    public Map Generate(int width, int height)
+    public Map Generate(int width, int height, Point? point=null)
     {
         var map = new Map(width, height);
         
@@ -27,17 +27,50 @@ public class BSPMapGenerator : IMapGenerator
             for (int y = 0; y < height; y++)
                 map[x, y].Type = TileType.Wall;
 
+        var maxRooms = (width * height) / (MinNodeSize * MinNodeSize);
+        var maxSplits = _random.Next(maxRooms-4, maxRooms);
         var root = new BSPNode(new Rectangle(0, 0, width, height));
-        Split(root);
+        Split(root, maxSplits);
+        if (point.HasValue)
+          CreateStart(root, map, point.Value);
         CreateRooms(root, map);
         ConnectRooms(root, map);
 
         return map;
     }
 
-    private void Split(BSPNode node)
+    private void CreateStart(BSPNode root, Map map, Point point)
     {
-        if (node.Bounds.Width < MinNodeSize * 2 && node.Bounds.Height < MinNodeSize * 2)
+        // Find a leaf node to place the starting room at given point
+        BSPNode? node = root;
+        while (!node.IsLeaf)
+        {
+            if (node.Left != null && node.Left.Bounds.Contains(point.X, point.Y))
+                node = node.Left;
+            else if (node.Right != null && node.Right.Bounds.Contains(point.X, point.Y))
+                node = node.Right;
+            else
+                break; // Point is not in either child, break out
+        }
+        int w = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Width - 2));
+        int h = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Height - 2));
+        // make sure the random room contains the point
+        int x = Math.Clamp(point.X - w / 2, node.Bounds.X + 1, node.Bounds.Right - w - 1);
+        int y = Math.Clamp(point.Y - h / 2, node.Bounds.Y + 1, node.Bounds.Bottom - h - 1);
+        node.Room = new Rectangle(x, y, w, h);
+        for (int rx = x; rx < x + w; rx++)
+        {
+            for (int ry = y; ry < y + h; ry++)
+            {
+                if (map.IsValid(rx, ry))
+                    map[rx, ry].Type = TileType.Floor;
+            }
+        }
+    }
+
+    private void Split(BSPNode node, int maxspl)
+    {
+        if (maxspl==0 || node.Bounds.Width < MinNodeSize * 2 && node.Bounds.Height < MinNodeSize * 2)
             return;
 
         bool splitH = _random.Next(2) == 0;
@@ -63,13 +96,20 @@ public class BSPMapGenerator : IMapGenerator
         node.Left.Parent = node;
         node.Right.Parent = node;
 
-        Split(node.Left);
-        Split(node.Right);
+        if (_random.Next(2) == 0)
+        {
+            Split(node.Left, (max + 1) / 2);
+            Split(node.Right, max / 2);
+        }
+        else
+        {
+            Split(node.Right, (max + 1) / 2);
+            Split(node.Left, max / 2);
+        }
     }
-
     private void CreateRooms(BSPNode node, Map map)
     {
-        if (node.IsLeaf)
+        if (node.IsLeaf && node.Room==null)
         {
             int w = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Width - 2));
             int h = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Height - 2));
@@ -113,7 +153,7 @@ public class BSPMapGenerator : IMapGenerator
 
     private Rectangle GetRoom(BSPNode node)
     {
-        if (node.IsLeaf) return node.Room;
+        if (node.IsLeaf) return node.Room.Value;
         // If not leaf, pick a random room from one of its children to connect to
         return _random.Next(2) == 0 ? GetRoom(node.Left!) : GetRoom(node.Right!);
     }

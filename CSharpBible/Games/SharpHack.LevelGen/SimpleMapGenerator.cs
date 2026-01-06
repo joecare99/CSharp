@@ -4,7 +4,7 @@ namespace SharpHack.LevelGen;
 
 public class SimpleMapGenerator : IMapGenerator
 {
-    public Map Generate(int width, int height)
+    public Map Generate(int width, int height,Point? point = null)
     {
         var map = new Map(width, height);
 
