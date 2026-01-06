@@ -313,7 +313,7 @@ public class VisTileData : ITileDef
                             writer.Write((byte)_size.Width);
                             writer.Write((byte)_size.Height);
                             // Additional Data
-                            var blob = Encoding.UTF8.GetBytes(KeyType.AssemblyQualifiedName);
+                            var blob = Encoding.UTF8.GetBytes(KeyType?.AssemblyQualifiedName);
                             writer.Write(blob.Length);
                             writer.Write(blob);
                         }
@@ -343,7 +343,7 @@ public class VisTileData : ITileDef
                 {
                     using (TextWriter writer = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true))
                     {
-                        (string KeyType, Size sz, List<object[]> Data) data = (KeyType.AssemblyQualifiedName, _size, _storage.Select(v => new object[] { v.Key, v.Value.Tile }).ToList());
+                        (string KeyType, Size sz, List<object[]> Data) data = (KeyType?.AssemblyQualifiedName, _size, _storage.Select(v => new object[] { v.Key, v.Value.Tile }).ToList());
                         var xml = new XmlSerializer(data.GetType(), [typeof(SingleTile), typeof(Size)]);
                         xml.Serialize(writer, data);
                     }
@@ -377,7 +377,7 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json:
                 {
-                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(KeyType.AssemblyQualifiedName, _size, _storage.Select(v => new Tuple<int, SingleTile>((int)(object)v.Key, v.Value.Tile)).ToList());
+                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(KeyType?.AssemblyQualifiedName, _size, _storage.Select(v => new Tuple<int, SingleTile>((int)(object)v.Key, v.Value.Tile)).ToList());
                     var json = JsonSerializer.Serialize(data);
                     using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
                     {
