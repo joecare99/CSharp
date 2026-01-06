@@ -18,6 +18,44 @@ public class GameSession
     private readonly ICombatSystem _combatSystem;
     private readonly IEnemyAI _enemyAI; // Add field
     private readonly FieldOfView _fov;
+    public byte[] MiniMap {
+        get
+        {
+            // Simple minimap representation: 1 byte per tile
+            var miniMap = new byte[Map.Width * Map.Height];
+            for (int x = 0; x < Map.Width; x++)
+            {
+                for (int y = 0; y < Map.Height; y++)
+                {
+                    var tile = Map[x, y];
+                    byte value = !tile.IsExplored? (byte)0 : (byte)(tile.Type switch
+                    {
+                        TileType.Wall => 8,
+                        TileType.Floor => 1,
+                        TileType.StairsUp => 4,
+                        TileType.StairsDown => 4,
+                        TileType.DoorClosed => 4,
+                        TileType.DoorOpen => 4,
+                        _ => 0
+                    });
+                    if (tile.IsVisible && tile.Creature != null)
+                    {
+                       value |= 0x40; // Enemy
+                    }
+                    if (tile.IsExplored && tile.Items.Count > 0)
+                    {
+                       value |= 0x2; // Items
+                    }
+                    if (Player.Position.X == x && Player.Position.Y == y)
+                    {
+                        value |= 0x80; // Player
+                    }
+                    miniMap[y * Map.Width + x] = value;
+                }
+            }
+            return miniMap;
+        }
+    }
 
     public event Action<string>? OnMessage;
 
@@ -34,7 +72,7 @@ public class GameSession
 
     private void Initialize(Point? startPosition = null)
     {
-        Map = _mapGenerator.Generate(80, 25);
+        Map = _mapGenerator.Generate(80, 50);
         if (Player == null) // Only create player if not exists (preserve stats between levels)
         {
             Player = new Creature
