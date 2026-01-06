@@ -307,11 +307,11 @@ public class VisTileData : ITileDef
                 {
                     using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, true))
                     {
-                        writer.Write(_storage.Count);
+                        writer.Write((short)_storage.Count);
                         if (_storage.Count > 0)
                         {
-                            writer.Write(_size.Width);
-                            writer.Write(_size.Height);
+                            writer.Write((byte)_size.Width);
+                            writer.Write((byte)_size.Height);
                             // Additional Data
                             var blob = Encoding.UTF8.GetBytes(KeyType.AssemblyQualifiedName);
                             writer.Write(blob.Length);
@@ -320,22 +320,21 @@ public class VisTileData : ITileDef
                         foreach (var item in _storage)
                         {
                             writer.Write(Convert.ToInt32(item.Key));
-                            writer.Write(item.Value.Tile.lines.Length);
+                            writer.Write((byte)item.Value.Tile.lines.Length);
                             foreach (var line in item.Value.Tile.lines)
                             {
                                 writer.Write(line);
                             }
-                            writer.Write(item.Value.Tile.colors.Length);
+                            writer.Write((byte)item.Value.Tile.colors.Length);
                             foreach (var color in item.Value.Tile.colors)
                             {
-                                writer.Write((byte)color.fgr);
-                                writer.Write((byte)color.bgr);
+                                byte b = (byte)(((byte)color.bgr << 4) + (byte)color.fgr);
+                                writer.Write(b);
                             }
                             // Additional Data
-                            var blob = item.Value.Info.Name;
+                            var blob = Encoding.UTF8.GetBytes(item.Value.Info.Name);
                             writer.Write(blob.Length);
                             writer.Write(blob);
-
                         }
                     }
                     return true;
