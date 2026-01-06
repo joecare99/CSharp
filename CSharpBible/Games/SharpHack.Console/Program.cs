@@ -45,7 +45,7 @@ public class Program
 
         var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
         _viewModel = new GameViewModel(session); // Initialize ViewModel
-
+        _viewModel.SetViewSize(70/4, 20/2);
         _tileDef = new SharpHackTileDef();
         _tileDisplay = new TileDisplay<DisplayTile>(new ConsoleProxy(), _tileDef, DrawingPoint.Empty, new DrawingSize(70 / 4, 20 / 2), _tileDef.TileSize)
         {
@@ -63,7 +63,7 @@ public class Program
 
     private static DrawingPoint GetOldPos(DrawingPoint point)
     {
-       return  _viewModel.Map.GetOldPos(point.X,point.Y) is (int x,int y) p? new DrawingPoint(p.X,p.Y):DrawingPoint.Empty;
+        return _viewModel.Map.GetOldPos(point.X, point.Y) is (int x, int y) p ? new DrawingPoint(p.X, p.Y) : DrawingPoint.Empty;
     }
 
     private static bool HandleInput(ConsoleKey key)
@@ -86,21 +86,6 @@ public class Program
 
     private static void Render()
     {
-        var p = _tileDisplay.DispOffset;
-        if (_viewModel.Player.Position.X<10)
-            p.X = 0;
-        else if (_viewModel.Player.Position.X > _viewModel.ViewWidth -7)
-            p.X = _viewModel.ViewWidth - 17;
-        else
-            p.X = _viewModel.Player.Position.X-10;
-        if (_viewModel.Player.Position.Y < 5)
-            p.Y = 0;
-        else if (_viewModel.Player.Position.Y > _viewModel.ViewHeight- 5)
-            p.Y = _viewModel.ViewHeight - 10;
-        else
-            p.Y = _viewModel.Player.Position.Y-5;
-        _tileDisplay.DispOffset = p;
-
         _tileDisplay.Update(false);
 
         var hudY = 20;
@@ -125,11 +110,12 @@ public class Program
 
     private static void DrawMiniMap()
     {
-        var ratioX = ((_viewModel.ViewWidth-1) / _miniMap.dSize.Width)+1;
-        var ratioY = ((_viewModel.ViewHeight-1) / _miniMap.dSize.Height)+1;
-        for (var x= 0;x < _miniMap.dSize.Width; x++)
+        var ratioX = ((_viewModel.Map.Width - 1) / _miniMap.dSize.Width) + 1;
+        var ratioY = ((_viewModel.Map.Height - 1) / _miniMap.dSize.Height) + 1;
+        var mm = _viewModel.miniMap;
+        for (var x = 0; x < _miniMap.dSize.Width; x++)
         {
-            for (var y= 0;y < _miniMap.dSize.Height; y++)
+            for (var y = 0; y < _miniMap.dSize.Height; y++)
             {
                 var xMonster = false;
                 var xWay = false;
@@ -142,39 +128,29 @@ public class Program
                     {
                         var mapX = x * ratioX + xx;
                         var mapY = y * ratioY + yy;
-                        if (mapX >= _viewModel.ViewWidth || mapY >= _viewModel.ViewHeight)
+                        if (mapX >= _viewModel.Map.Width || mapY >= _viewModel.Map.Height)
                             continue;
-                        if (mapX == _viewModel.Player.Position.X && mapY == _viewModel.Player.Position.Y)
-                        {
-                            xPlayer = true;
-                            continue;
-                        }
-                        var tile = (int)_viewModel.DisplayTiles[mapY * _viewModel.ViewWidth + mapX];
-                        if (tile is >= 0 and < (int)DisplayTile.Archaeologist)
-                            xMonster = true;
-                        else if (tile == (int)DisplayTile.Door_Closed 
-                            ||  tile == (int)DisplayTile.Door_Open
-                            ||  tile == (int)DisplayTile.Stairs_Down
-                            ||  tile == (int)DisplayTile.Stairs_Up)
-                            xWay = true;
-                        else if (tile is >= (int)DisplayTile.Sword and <=  (int)DisplayTile.Armor)
-                            xItem = true;
-                        else if (tile != (int)DisplayTile.Empty)
-                            xExplored = true;
+                        var tile = mm[mapY * _viewModel.Map.Width + mapX];
+                        xPlayer |= (tile & 0x80) != 0;
+                        xMonster |= (tile & 0x40) != 0;
+                        // xWall = (tile & 0x8) != 0; 
+                        xWay |= (tile & 0x4) != 0;
+                        xItem |= (tile & 0x2) != 0;
+                        xExplored |= (tile & 0x1) != 0;
                     }
                 }
                 if (xPlayer)
-                    _miniMap.PutPixel(x, y,  ConsoleColor.Yellow);
+                    _miniMap.PutPixel(x, y, ConsoleColor.Yellow);
                 else if (xMonster)
-                    _miniMap.PutPixel(x, y,  ConsoleColor.Red);
+                    _miniMap.PutPixel(x, y, ConsoleColor.Red);
                 else if (xWay)
-                    _miniMap.PutPixel(x, y,  ConsoleColor.Gray);
+                    _miniMap.PutPixel(x, y, ConsoleColor.Gray);
                 else if (xItem)
-                    _miniMap.PutPixel(x, y,  ConsoleColor.Green);
+                    _miniMap.PutPixel(x, y, ConsoleColor.Green);
                 else if (xExplored)
-                    _miniMap.PutPixel(x, y,  ConsoleColor.DarkGray);
+                    _miniMap.PutPixel(x, y, ConsoleColor.DarkGray);
                 else
-                    _miniMap.PutPixel(x, y,  ConsoleColor.Black);
+                    _miniMap.PutPixel(x, y, ConsoleColor.Black);
 
             }
         }
