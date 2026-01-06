@@ -77,8 +77,8 @@ public partial class MainWindow : Window
         var player = _viewModel.Player;
 
         // Adjust Canvas size
-        MapCanvas.Width = map.Width * TileSize;
-        MapCanvas.Height = map.Height * TileSize;
+        MapCanvas.Width = _viewModel.ViewWidth * TileSize;
+        MapCanvas.Height = _viewModel.ViewHeight * TileSize;
 
         for (int x = 0; x < _viewModel.ViewWidth; x++)
         {
