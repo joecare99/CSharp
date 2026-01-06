@@ -27,6 +27,8 @@
 		<Compile Include="..\Werner_Flaschbier\Model\FieldDef.cs" Link="Models\FB_FieldDef.cs" />
 		<Compile Include="..\Werner_Flaschbier\Model\Tiles.cs" Link="Models\FB_Tiles.cs" />
 		<Compile Include="..\Werner_Flaschbier\View\VTileDef.cs" Link="Models\FB_TileDef.cs" />
+		<Compile Include="..\SharpHack.ViewModel\DisplayTile.cs" Link="Models\SH_Tiles.cs" />
+		<Compile Include="..\SharpHack.Console\SharpHackTileDef.cs" Link="Models\SH_TileDef.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />

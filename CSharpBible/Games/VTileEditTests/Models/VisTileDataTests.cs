@@ -17,13 +17,13 @@ namespace VTileEdit.Models.Tests
     {
         public static IEnumerable<object[]> TestData()
         {
-            foreach(var item in Directory.EnumerateDirectories( Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources")))
+            foreach (var item in Directory.EnumerateDirectories(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources")))
             {
-                if (File.Exists(Path.Combine(item,Path.GetFileName( item)+ ".inf")))
+                if (File.Exists(Path.Combine(item, Path.GetFileName(item) + ".inf")))
                 {
                     var name = Path.GetFileName(item);
                     var nr = int.Parse(File.ReadAllText(Path.Combine(item, Path.GetFileName(item) + ".inf")));
-                    if ( File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt")))
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt")))
                     {
                         yield return new object[] { name, nr, EStreamType.Text, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt") };
                     }
@@ -45,8 +45,8 @@ namespace VTileEdit.Models.Tests
                     }
                 }
             }
-        } 
-             
+        }
+
 
 
 
@@ -400,6 +400,7 @@ public class TileDef : TileDefBase
         private const string csExp1JsonC = "H4sIAAAAAAACCrTTQWvCMBQH8Ptg36E8r7E2aZ0z0IuuMBmDHcQdVhlVo4bFdjTJQWq/+9bqpM6UwaoUUvrS/v6PNMlgpNgGA4XJmAsWLLiyn5MFE9IeM6mkPeGymHiIVFQWQu04ZBDEekP6yDp+VM59P7NU8iT2se0UF7KGWiidMj9mWqWRQNaLngk+f2LbcfLBYj/WQgAqmyBAMxjJYPOptkCXkZAMwStfqDVQguCR8dVaAcX5/nUX6Fv2071TIQSPmfyeBMuCKbq9gXkiklSWry9XKdAegllxd3J0VpnmRfGgYpO6ezeruHtAvCNbKZ24xOS2WjUuOWu3UjpxXZPbCcMa2DsouCJXaie0Z6LLvdDbj39kGCJ+JXSNi71r7N7Vde4O8wssTM/Ih50L0PcmOitbDy7A902832684Nh4GBFqDhvPY9tvDpPa3T3Yj80j3OtHeNeP6F4/wnhe/f/+5Gn+BQAA//8DAPgKlDHiBgAA";
         private const string csExp2JsonC = "H4sIAAAAAAACCrTVbWuCQAAH8PeDfQe5VwWn6WlZgm/WhMUYDBbtRdnRw1XSpcMHxuj87vOhtjWu4uBS8BT15/+PT3swSMnOAA54i7bRfBZqo4B8vkRLQhNtGFDySFZQGZVr3jJIhyRJk2KbxEkQha6h6eUMlX5G0ywmbkiyNJ5RqLxmcxosnsnXMNqS0A0zSgGsroWAsweDxNt9pF/AWc1oQiB4D5bpBjgWBE8kWG9S4KC8PtwEznh/DKn/IWgQkqTYCZRiKuxq8OH9HVhENIqT6rzVOgaODcG8HPXcz3P4gxk8bIyZX2Bjhv3LmHWKIR6mKVqVrBj5mKEfNHSqmRd6TjJdN/uuW43eGbfNdy2eyxpNVrgNjJtiWpubss5XLh/05jGvhxkWwzs8vDWdTialOcG4dcazDl7n1LN5HlRVWHAMY3Yl3T+tK/V292Q+iQb3JWG1hoU1Q6qGpDY1pWqW1KZtqVrnTFNcN2Vimi1V655piuumglpPpoZ0mU2RIVVDUpuaUjVL4NOuMib2aUc3/XEg7rvSqN1fnU2norHtm8buXolteuXPhTG1vqCg3pOf3c+/AQAA//8DAGV5pO89CgAA";
         private const string csExp3JsonC = "H4sIAAAAAAACCuSYW2vbMBTH3wf7Dq7eNtxEOrbc2GBIYlpWxmAPYX1ogslFbcxUe/jyUEK++yTbSedG7mUEgqsEjuMjWdJPf/mcQzboOmcPBHnohqUxS8MrPs+W60Ukfo7nGev9SFaM9yYRZ5lp/JLXy1WUT1iWy3uWZlES+6SH5dc0goLnRcr8mBV5Ouem8bNY8Gj5nT1Okt8s9uOCc2SWcwLyNug6u3z4kz8i727OM2aim2iVr5Fnm+gbi+7XOfJgW3W3kHe72S0W/zMEj2KWiUZkiA+amZ8/oWXCkzQrH7i7T8vui/K6Nf/LM9tKZz03Uc3tn/vngktYX70EYtejOfvxT+pqIIEKaVoAxVhay5YWgsojMJ+aKmfVQTSp0Wk9q/20kFO6GuiW8iRJHGqV1jFqYLe8d0lpofK8ojU+3Pl3u3anEPYuaPVgRZ8Grd0itEWEmhiP8fCLoJX4FpC9xVbwirLO4T6fwtVgpSrWvsQcXdV2KqWdhmG/g++so8KbVSpW9lbQhWdnYQvc7mCRg4BH8EsuxYPHGKsBd9EWkAK7Pqc1nJCwe3QDpXRJ0mHBXCXScHccgY5HAq7fTTiCW0IJUGdQ2y6HEkJakiDGMP4qAAHcOgnSkpeWkgajYQfTAoH31Y7H323r7dWWZX+saou0FSANtGeVZnNDustO386+1/2jsDtH0R2CLrJfHEX3brIPNNbd1Vd3wPr+owBE3/wOoG9+B0vf/A62vnEeqMZxXuO6DrSr62bbvwAAAP//AwD4UonvLhoAAA==";
+        private const string csExp4JsonC = "H4sIAAAAAAACCuTXT2vCMBQA8Ptg36HkHLq2af1TKIw5QRmDwcQdnIeqUYOxlaZliOt332umMJt4GYza9RXy6ovt6w9sMAc0TOnWRj56XYfJbhDON+aY0Y/neEG5+cjEjof7EeMUG+Mi9RcsHVGRCvhME8HiKLBNqziw0ct4miU0iGiWJiHHxks242z+RPejeEOjIMo4R1g2dJB/QEPR3+7SPfKXIRcUoze2SNfIdzEaULZap8h38u+vE+RPDqcnbVk/7sFZRAXMohUE3FymKb69QfOYx4mQFy5XCfJtuGxWnFg5vobSNC+qRxMhng51DwEomfQoV21RZekM5RJHh7qDAJRMepSttqiydIbyrK4ONYEAlEz1Q3UcLcqAAJRMWpT6A6+mco4h2gXiEwIwMmkxbaVBNZUSxtZhAgjAyFQnjHZBeM8sy3lQRwBenKoTmjQR7TYR7TUR3Woiut1EdKeJ6G4D0a7VRPTf/jlpKQ9STaWEJr/aol0pRrtAmRCAkUmL6SgNqqmUMN1/hPHsS+8W6anj8d3STuk315661a2yVMJfXFhIXx1PeN1UXfDT/AsAAP//AwAsxaeeWBQAAA==";
 
         private const string csExp0XmlC = "H4sIAAAAAAACCuyc7U/TQBzH35v4P5S+U2G3B1Ak7UBUlIiZcQtoxCxdd2MnR0vaqxNf8cIXxvjCBzZ96ztNSOAFr4yv9qf0L/FWBuiiHehuNPANS7jeQz/07vrh1/Y6Y/rFGteeU89nrmPqmVRa16hju1XmrJh6IGpjk/p0/uIFY9HiAS0F65wWakXhyeIie0kXmC8KtRueZ20UaoXKM2oLTe7Q8ade+MzU60KsTxHSaDRSjVzK9VZINp3OkEf3F4p2na5ZY8zxheXYVD9sVe3fSpd/j6YZ84KuZfJL1HOoV57jlm/XK0wmZy2fpu67VcpTJcapP6otdn7frjJRor7obHcPVx5t52dUuxlwEXjUdGggPIuPag+CCmf2PbpRclepYzoB5wbZBx6ys1FSbiyxqqjnxw2yn+jm3qVspS7yWYN0U1FDctQy2knuoHq3D284G6WNddrNlfnWfoYm+3NKyISpyz6aYo7Q82mDWP2rF+VQcdrpAf2wmqzImUP9XzJklh8Naz5Kk+7GCSoYpHefhu1y1+uhzMm+vNnJ/y1bFtRWvPwst+xVg3SSPaWVo9JKT6lB/rxPoIA6JyiD9JxqvWowyB8F8y/ayajRjjlmjsVqR5abirTzmHLuNv46FLcsb/WgymCGHkAAzyFwmJrKqtFUuLUZbu2FW9syEaurqOJ2VHdTkbaW6kzQ2OF5SKuDmgyAAXZGYcPUUk7RRVvY/Bg2W/EXbmHrY9h6H7Y+yMTpRFIDjZ/B+n/WHY9SJ/Y86tYYDO6XHSYHOdAOVXCEw9TTuKKo6e279u7MpfjbSuHbL53P5o9TC5cGGz6DB9554g3TUxNqPEXaO+2d5VhNLZfLBLehAAQQt6GOIaqrakT1tL3b3n0SK6ryyEhZkaj6B7iz8mnxcJ6TDPRiYYio4fYhRixpfThMCV1TdFX36ZW8qutroWVYCBbCiJ17C00qCoVcF4EQJjRGDArqq6DrihQ0094NW99jLURgIVgIIwYLyRWUilZuk7D5VX5w/xpAAHH/ejCuUrTcW7tyOXz9LX65UvNz2HwXfnozgwUB4IGHBQFxnsqevbfh8K8RQADPWDyVU/5eyh7eSwEMMLyXciIvqVr53XXNMd6X24OXAAMMXvrNSxPKvbQHLwEGGLx0Ii9dTU68tA0vAQYYvNTx0rXkxEvwEmCAwUuRlyYRL2HaAQZYwrx0HfESph1ggCXs6yvT+P5KTDvAAEuYlzJYv4RpBxhgCfNSFuuXMO0AAyxhXsph/RKmHWCAJcxL43geh2kHGGAJ89IEnsdh2gEGWMK8hPXemHaAAZY0L2G9N6YdYIAp85JB5gVdy8m0QRYt+ZWapWCd00KtGJ3qRfaSLjBfyDb7TQuVZ9QW+Z8AAAD//wMAxVw3ulmCAAA=";
         private const string csExp1XmlC = "H4sIAAAAAAACCuyabWvbMBDH3w/2HYwL7YskVh7arU1ll65PG2vJWEK6QWEo9iXRqsjBkpdm6777ZMfLOtPSMSwbgsib8//udNL9cBzOwUd3M2Z9g0jQkLt2y2naFnA/DCifuHYsx419+8h7+QIPCYthEM8Z9MZ9GSl3n36HSypkb3wcRWTZG/dGX8GXllqQi+6doK49lXLeRWixWDiLjhNGE9RuNlvo09Vl35/CjDQoF5JwH+x1VvB8lq32Y1n4nYRZyxsOKIOzgErnKgyACWcAQgpnSEXiOCWSpELtjMez9kHdWsensrrOjq5Onnzq1knMZByByyGWEWF160M8YtR/D8tBeAvc5TFjGK2Kr/fRTk11cU0DOfXaGK2MTH0LdDKVXgujzEoT0Z/MdJHO7/Csn8d8OVjOIVOVTlaCpXrblcpwbdWvLuXS9poYkefD+wobg6QD9jpMBTLKQTwQlCRSxF6yy8x8EI/yCdgPWRjlljhXjTpJ9L9k5RhPIu9CnRCjxMo5R0p6w4h/i9Eo58Xo8SXLqoRR7pj5nmP0KLn/4dnSw/P+iyae11Mq4ck2n5Lo9iMERSEttFiZVNt6qG5taaKatrGMm7SwQmXS7OihiW400fwMjIWLJ/t8EQHwooAWWatMprt6mO7sVMO00Ju0yFplMt3T9Cy9N0wrY/pKD9NtJg9/mq/fyrC+1oP1BhmmlTHd18P0x/ZEHhqslWE90IPVbZinanVTB01jpHrdQK0OqqZZUsM1UKuDqmmUVKsZqNVB7Riomwd110DdPKh7BurmQdU0VHLND6UioK7elycvyTH6538jeL8AAAD//wMA9EziKuEgAAA=";
@@ -410,9 +411,15 @@ public class TileDef : TileDefBase
         private const string csExp1TextC = "H4sIAAAAAAACCmTSQYucMBjG8fvAfAfZPWzLuLN5okYNtbRMp5duodBhTwvDtJuD1GoZFbrt9rs3eaNJZPDyGuVnDP9dN7aDRL5efa3/KMljrFef1PPh+ZeSD4e6Ufuneth+7p5U028Pqh/67UPdmwcfTsOJFjb7dvzJyzhy79Oyvlfnvu7aCltmrjjajc0wnlXVqnE4n5o4+jJ+a+rv5nvdD9VW7dg09HkmWfTqyNjr9eq+blXPpN7WPTsy+e4qiq7Wq13XdGe9zPVoltlvltOIadQIJAyCGQEhIOTl6BAQAkLSjzRiGjXCJTcInxFOCCfk+tohnBBud7KjEdOokUQmBklmJCEkIeTu0SEJIQkh7/c0Yho1ksrUIOmMpISkhNzcOCQlJLU72dOIadRIJjODZDOSEZLZM3lxSEZI5pEsRIQUBhEzIggRhLz55xBBiPC/I8LfyWVukHxGckJyQh7vHJITknskD5FCFgYpZqQgpCDk71uHFIQUHilCpJSlQcoZKQkpCaluHVISUvozKcMzgU7UNAvXLGy0sNXGsQ/OZgvmKbCFpUs16cKnO7Vr472tvDXVi8DCwtLBmoLhCoZNGLbhzcZbNmLwwOILS3drQoYLGbZkJBeWbRlJYCULS+dreobrGTZopBeWTRpB01hEDV2xyRoua9iukV1YtmwEaWPRNnTMpm64umHzhu27Cs7eBg4RWMJZ/wEAAP//AwB5fCDnWQUAAA==";
         private const string csExp2TextC = "H4sIAAAAAAACCmzWW0vcQBTA8XfB7xD2KcK65pzcgystXqBUW2FFH7yEtU5hMU1kL20t+VB+Bj9ZJ+dkJjlu9MWB5eeZZP6Ox9WmXGe+t7szW/xTWTDG3Z2v6vXq9UVls+q5epyXk+uF+nNRPaliNblaFOpE/Rw7181Pp0+L9ZVarVd6rZarRVVOYeI132PneFOsN0s1LdVmvZwXY+dy81gsfjR29azKabkpCvpVXuY57umvl/Xr3u7O+aJUKy/TQ5x7uZd9Gjn6a0Qr6FbHVVEt9cdA/9h8zPvrxWRBBo57My8KQwFRQNRtXt+PaNVQt3V+bykgCogKmMIMHfesqKqlsZAsJGviTGgs5LH00lpIFpKFn8nyM99xT/SDWpTztX5KRvRJ9MVGfRIPp9MjK/ok+iyekRhkgeNeFvNXZccLCAsIq929ekSrBnPzfM9iAWFBHwuz0GDff6tlM6hBQ0JDnvDw/a1x9LJRj/I6t2pIathXoyxy3Nm6KpXBIsIiwg4eHu5GtGqsuzw/sFZEVkRWdEpWnMWt9aXsjxeTGJM43t8fj2jViHWe11aMSYxZ5OmSLGlfb34xXz6rJ0MmRCbiLSfbbzkhMum/5TRL+fDl3wyWEpaK45duH7+UsLR//ECfbq/lbuxp5jKA06jNeeY2cnGgOQ7whKmPOZgRO7RtBCQKA2ibiegE9HnHFp1Zk1sBlOHhQHmcC6Aw9Yn3zaAdyrmAL1F/AOViwBeoPvmBeaIdytlAIHcfDOyey4FAoPrgh/aRdip3A6FUwwGVy4FQqDqBqFVPrcn5QGS2n4942W6/O+7ABUEkTB1BbCbtUC4IYonGAyhHBLFAdQaJeaYdyg1BYnbPaGJ230M5I0gEqnOwJfVUjglSqaYDKvcEIijU7ZigZhZFLgo9sX/0tvePXBSKolC3Y4vqqZwUglRhQOWkUF49uh60J7VT2wsIxQNA3H4A2N5BIirU+fjdUe1Yzgp9yfoDLGeFIivUAdm7qPtThdwVBvLqQA7raL/usRwWijsJdUFbt1KP58Dww82EA1cTcmEoLifUMUV2atstcmPIjbnvb8blyuqHh97YXBlGwtU9xVtjdz7nhvGHseOBsbk3jAWvy0rs2N0r5OAwMWMf8T8nXFxd7x92LBeHiWB1WunW1B3P5WH6Yep0YGpOD1PL/wcAAP//AwCglhGfYQoAAA==";
 
-        private const string csExp0BinC = "H4sIAAAAAAACCpJhYGBgAWImIM4MTy3KSy2Kd8tJLE7OSMoEMp0Si1P1fPNTUnP0QjJzUot1FMJAtGtKZklIanEJiJ9aVJyZn2drqGcAgjoKzqU5JaVFqbZ5qaUlRYk5OgoBpUk5mcneqZUh+dmpebZ5pTk5DFAbWRSAAExwMGACRpgqW11bXRYgtgWp4mNDhUxQVTyPpjQ8mrLl0ZQ1QAaEswbMbwDp4mdBhcxQXRwKj6ZOfjR1mgLPo2mTH02b+GjaJCADbA8UcjEBAQMTEyyU2B/1TDi0wUGTS+FRz0IQatgDtoANFbJClbPpH1p/aH0MS0x8vD4257PB1MUe2nBoQzRLvKJiPEgdFyMDFwMXFyOMZodbP70FaD1YYQw2hRywUIvNz8dtHCfMuFiHQxseTdvFoo9DIRcsoPQfTV0BRLh9wg3ziYK21qOOlVyPps54NHXCo+ldDtjChwdrEkA3kxdL5G4hGLl8CF1rkJPEFry6+LHo2kJQlwAhu9Zg0yVIyC6suoTIskuYLLtEyMpWomTFlxhZ8SVOVnxJkBWGkmSFoRRZdkmTZRcAAAD//wMAJ9q0ZskFAAA=";
-        private const string csExp1BinC = "H4sIAAAAAAACCmTOT2vCMBgG8Np1/ulc675BwIOHxrrtJhgvmycZeCiehFFnDmFZCk1yGOp3Nyk+vZSHF5JfkjfvSxAEoaueK7svhOSbkzD5V3XiUucF10bne6H9wWdpygayjbJ/70tK2vsNuz2vtagUe8tffSj5sNLYmjPFralLScnOHqX42fL/ovrliikrZXD/PSTEDzJw6YEu357SKI0wYzid+uXY5QG0OHhK4iSOQLNZQy6Pba8LqA9aXfFwADosQEPQeQ0agdgcvWIQpaAn0JyBxqAsAz13KelS2qVJO0Tb/gYAAP//AwAfetHlxQEAAA==";
-        private const string csExp2BinC = "H4sIAAAAAAACCnSRW0vDMBiGu5p1OnWb57PksoO20/t1N+qVCIJjN9v60bkIZaGFHhAhP2q/Yb/MZG3GFL6EhOR5875J+O4NwyBymHKEH8kimYWxN4rY91syZzzzhhFnz+zLoSO1eplH+ZBleSb3LM2iJPYfvQfVHfpU8LxImR+zIk9D7tD3Ysajz1f2M0wWLPbjgnOjuolQ2dZTTe4aRk3zMYgpGQuYrjkxNfeoJ8/LWfGmufMnp+/7A8Xbpv4JEXZXEBugW/J6xeu0v1p2yQAElIKlDb0gmJAJQE/xltXQ3HFdhwgAsT5v7SIP2kM+0Nw8SHHY8H2EHyA5hwhvITlthHe2ckDliJIfIfx4KwdUTsVPEH6K5Jwh/BzJuUD45b9CuqIsjHmFVfi6Eix7tVSKCILKcoNZbrUgLQNKhHD7pXCHOX4BAAD//wMAXe6gukYDAAA=";
+      //private const string csExp0BinC = "H4sIAAAAAAACCpJhYGBgAWImIM4MTy3KSy2Kd8tJLE7OSMoEMp0Si1P1fPNTUnP0QjJzUot1FMJAtGtKZklIanEJiJ9aVJyZn2drqGcAgjoKzqU5JaVFqbZ5qaUlRYk5OgoBpUk5mcneqZUh+dmpebZ5pTk5DFAbWRSAAExwMGACRpgqW11bXRYgtgWp4mNDhUxQVTyPpjQ8mrLl0ZQ1QAaEswbMbwDp4mdBhcxQXRwKj6ZOfjR1mgLPo2mTH02b+GjaJCADbA8UcjEBAQMTEyyU2B/1TDi0wUGTS+FRz0IQatgDtoANFbJClbPpH1p/aH0MS0x8vD4257PB1MUe2nBoQzRLvKJiPEgdFyMDFwMXFyOMZodbP70FaD1YYQw2hRywUIvNz8dtHCfMuFiHQxseTdvFoo9DIRcsoPQfTV0BRLh9wg3ziYK21qOOlVyPps54NHXCo+ldDtjChwdrEkA3kxdL5G4hGLl8CF1rkJPEFry6+LHo2kJQlwAhu9Zg0yVIyC6suoTIskuYLLtEyMpWomTFlxhZ8SVOVnxJkBWGkmSFoRRZdkmTZRcAAAD//wMAJ9q0ZskFAAA=";
+      //private const string csExp0BinC = "H4sIAAAAAAACCqxUzW7TQBBegkmcNED5Lz8H91hIk/IAlizY5QKVKkjxgUSW2yyt1Y1dOTbItxw4INRDoXHKlRtIkZpDTgiE5EfZF+AV2F2nSpRKSYxr7+zuWNrP33wzsw+AlLEAADp2bewaz4jZ2t7dstj2idnC5XWngUm5ahHcKimv+YoallfFLY/72G1Zjq0+Lq/xt6Q89Ynnu1i1se+5JikpG/4Wsbaf46Dq7GFbtX1C2L9ARlLYIyYZzHgucUPNfS+4IE6qq+qqxExlJ5fANJPYLEHL9TL8YJF22rQzoJ0e28ROT/htBqSAaSaAdJOQixxIVmh4RMOuUqTdI9r9TLtf2OZsHH///B5OIxcscINMPss2PaYdh87k6MFh1NdWCgo9+MZH+xeDWwPTLMvm7AYxA+xyhTLZSnQSndSkmmFUZiojNH3lOTbOirP1qB/130jG8rIhA+2U65C7FtvkNx6wjGzcDIzN/VwcxvEHFobAqc2NIxSJcV5aO7ueLLJcd5yEfPJsycc48L2dF4TqWtSn3Z9SJQlQgS2FGOgFfusVRM4rNPzOxpz6ipiEvuvOO8veWRAqK48e0o8/CjT8SsNDevxJm5lkQSVOMsRmo3imdeZIM/SbzeDyZAcMknWAqDbeAcbmlSFUb7yZBv8DpV+dhBokg+JVl4tZ6YtTafUS0ILXptLqJaEFr6ekNcLS4Y2UvETHDuWCN1PeiSO90K2UxTWmF7qdsrrG9EJ3UpbXuF5o6dwSCdHd80skRPdSEhuB6RDdT8lMXMKnJYb+AQAA//8DAF//151cCAAA";
+      //private const string csExp0BinC = "H4sIAAAAAAACCpRTy27TQBQ1xiSOE8r7FVi43bWkCXyApQg8bKCighQvSGS5zdBaTMaVHyDvsmCBUBeFxi5bdiBZahZZIRCSP2V+gF9gxnWdKA2Rez32zNjnzplz7vgeJ/Amx3EatDG09SfIcLZ2Nk06fGQ4sL5mdSGqt0wEnZr8ivWga7ot6LhsDm3HtLDysP6AXTX5sYdcz4YKhp5rG6gmr3ubyNx6Cv2W9RZiBXsIUS6OF2QayUPk0rhAb9Dbdf1zCUBZVVYFeisiTkOg71XTdnn2vUIGfTIYkUFEB8eTKJn3xedpMLxmIHSe4UWZBAckCOUKCQ9I+JmEX+hAXKCxssQvldnaVJSJDZcqYql8keztx8PmsiSTvW+s9X+JVhoFClhHhg9ttm2+0IiP4qO20Nb1RrZf9uWla2FYSCCdeBgPXwv64qIuVv/++U1b9aRnJgAMe76+sVs85j78QLkTePsUvJzBX5jbO66YGNaxrP+sXsrg6ntcSpbvNOMhCX8KjVl4KcM/g29cKbGvQYLvtE1JLJ9IXLPemXi7nAiV76+Qjz8kEnwlwT45/NTMXJMy11RodCtTB2HSN9Xr9fyL04UezS50IS20vrGQZkSTR2M0J0O7NJ0xmp1RzDi0y3NJotMk6pW5JNEMEvVqTpIsRVOv5WQRx1LU6zn/pUwLuJGzKGMt4GbOqoy1gFs5yzKhBdw+q2UquHNmy1RQzUkjjisD7ubkKU2UBvwDAAD//wMAIzJKVZoFAAA=";
+        private const string csExp0BinC = "H4sIAAAAAAACCpVTTW/TMBgOIbRpWsb3V+GQ7bbRtfADIlUQc4GJCTpyoFWUrWaLcJ0pH6DceuCA0A6DNRnHcQMp0nroCXHKT/Evwc5CWoWqyt7YiR0/rx8/7yM/4ATe5DhOgzaGtv4MGc7O3rZJh08MBzY3rD5EzY6JoNOQ37Av6JtuBzoum0PbMS2sPG4+Yk9Dfuoh17OhgqHn2gZqyJveNjJ3nkO/Y72HWMEeQpSL4wWZRvISuTQu0Q4G+65/IQEo68q6QLsi4jQE+l81bZdn6zUyGpLRhIwiOjibRMl8KL5Mg+E1A6GLDC/KJDgiQSjXSHhEwq8k/EYH4hKNtRV+pcr2pqJMbLhUEUvly+TgMB63VyWZHPxgbfhHtNIoUcAmMnxos2PzpVZ8Gp92ha6ut7LzspXXroVhKYH04nE8fivoy8u6WD85qbPOxAMMB76+tV8+4zz+RDkTWDeDVTPYK3N3zxWTAvUsK7dbJYOpH3El2a7Xjsck/C20ZnFShnsB37lSUp4WCX7SlpNQ/Sdhw/pg4t1qIkR+uEY+/5JI8J0Eh+T4SzuripRVRYVGv5YzerYuqjcY+JfzRk7mG1lKjdS3ltKMaNb6yYIM7Uo+YzI/o5xxaFcXkkT/k6jXFpJEc0jU6wVJshRNvVGQRZxKUW8WvCuZFnCroClTLeB2QVemWsCdgrbMaAF3z1syFdw7d8lUUC9II06dAfcL8lRmrAF/AYgPOhd6BQAA";
+        //private const string csExp1BinC = "H4sIAAAAAAACCmTOT2vCMBgG8Np1/ulc675BwIOHxrrtJhgvmycZeCiehFFnDmFZCk1yGOp3Nyk+vZSHF5JfkjfvSxAEoaueK7svhOSbkzD5V3XiUucF10bne6H9wWdpygayjbJ/70tK2vsNuz2vtagUe8tffSj5sNLYmjPFralLScnOHqX42fL/ovrliikrZXD/PSTEDzJw6YEu357SKI0wYzid+uXY5QG0OHhK4iSOQLNZQy6Pba8LqA9aXfFwADosQEPQeQ0agdgcvWIQpaAn0JyBxqAsAz13KelS2qVJO0Tb/gYAAP//AwAfetHlxQEAAA==";
+        private const string csExp1BinC = "H4sIAAAAAAACCl3Nu07DMBQGYMcFwiUEeANLHTrETZP0ApUwC3RCqAxRp0pVoB4sjCPF9oAor9RnJD0WRorO4vPZ/v8bhAOLEFqVQvLFVpj0pd5yqdOSa6PTldCHi6fKVADJQtnPYk6Jfw/c7rzRolYsT7PDUPJopbENZ4pb01SSklf7JsX7M/8q6w+umLJStr0owITgMOy1x02WBSC7DV4uneQYpN/HUeSk6IGM1ni/dzI+AhkMcBw7mRy7nJ2X6QnI/Y//NQtB1iMvt6cg3w9e7s5A2NDnzM9BKP2TPLsAGTIveQSSJF6Ky66M465MrroyvXbt/8mzX6q3voevAQAA";
+        //private const string csExp2BinC = "H4sIAAAAAAACCnSRW0vDMBiGu5p1OnWb57PksoO20/t1N+qVCIJjN9v60bkIZaGFHhAhP2q/Yb/MZG3GFL6EhOR5875J+O4NwyBymHKEH8kimYWxN4rY91syZzzzhhFnz+zLoSO1eplH+ZBleSb3LM2iJPYfvQfVHfpU8LxImR+zIk9D7tD3Ysajz1f2M0wWLPbjgnOjuolQ2dZTTe4aRk3zMYgpGQuYrjkxNfeoJ8/LWfGmufMnp+/7A8Xbpv4JEXZXEBugW/J6xeu0v1p2yQAElIKlDb0gmJAJQE/xltXQ3HFdhwgAsT5v7SIP2kM+0Nw8SHHY8H2EHyA5hwhvITlthHe2ckDliJIfIfx4KwdUTsVPEH6K5Jwh/BzJuUD45b9CuqIsjHmFVfi6Eix7tVSKCILKcoNZbrUgLQNKhHD7pXCHOX4BAAD//wMAXe6gukYDAAA=";
+        private const string csExp2BinC = "H4sIAAAAAAACCo2SXW/aMBSGY+oCHazr2u77Q7mEKSTdPeGm9aZp6lbJiFzQcpQWT4rw7CkknZD8o/ob+stqZ4MEI6QmkpWcx+9zjiV/dHAtdhyHypm8joU/StjfczllfO4PE87O2C/PHZkvMk2yIZtnc/3P0nkiRfjZPzGv557mPMtTFgqWZ2nMPfciv+bJzXe2GMoZE6HIOdc9nBp29VMsqLGrC+T3n2yBCjIGdYXHCq7QV6wLUcx5rQC+6+uIXtEnE/nCpUx3Slk/DAcoaOnCmZ4uEXGmR8MFV52uwh2ALgrqunDB4wVLjaO26/bv77p4AApQsL9iP29Zaiz1Ih5MJpf4EiBAwoRoJgVrFMTr9TysABSSrSX5JkyyaY/cXo4M53E6Y9M9+7D1/4eFH0/+DW0QrKOoZaPGKhW1txrpUxuVMbq/VRnRZzZrlu3owVIKRqoq/chzG5X9yOHSCcZZZRE5slmlHzneKqXkhc3KICUvt1ojSl7ZcK9yRPK6ekl6SqGgubokEL3ZuEIHG1cIordmV71zf2e2qclkXULfPUZC3xe7tGTgYqV6/TUH+fAYB3kAkMoOJOMDAAA=";
+        private const string csExp4BinC = "H4sIAAAAAAACCoXSYU+CQBzHcVIz0lXPeuzzHNVzMU1Ql6W2I3nQA0dy6c2TYwfMufWieoNt/e8/0KwcX7cfk33G6calViq8a5pGFp4M+95saUwYXT8Jn3LDYlHIvY3DOK3XJupi+yx2aBRH8J3KiInAvDVu1Kde6yQ8TiQ1A5rE0uP12jh542w2oBtHLGlgBgnnDTipUJpDOHolrQz3ewJ4MDpSogXh6OdpZyDacrbwqOBizqL4E+E1hKNX047Vn1kL6X8heIVw9kBbroQ0iwrUIBxdS1PAXoXxpongA8LRT7IAuB7n0yG5Q2JCOH+J7baQXEE4/5BhO48M3fvcp5BOHnGJdYCc7n6LS+wDSP+BurnGJb08A2f1888iD79MOa0KxhJCTjtcRNQfFPdfiIydZmwU0mCMyIBw9CyFulypRxY/H0CVLbI8uSSoGhCOfpGmHkVij8lo+hI6iJoQzhZVd8gS6+AbIH1uZoYDAAA=";
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private VisTileData testClass;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
@@ -428,6 +435,7 @@ public class TileDef : TileDefBase
             _testDefs.Add(1, ((t) => t.SetTileDefs<Enum29>(new Snake_Console.View.TileDef()), 16));
             _testDefs.Add(2, ((t) => t.SetTileDefs<Sokoban.ViewModels.TileDef>(new Sokoban.View.VisualsDef()), 23));
             _testDefs.Add(3, ((t) => t.SetTileDefs<Werner_Flaschbier_Base.Model.Tiles>(new Console.Views.TileDef()), 29));
+            _testDefs.Add(4, ((t) => t.SetTileDefs<SharpHack.ViewModel.DisplayTile>(new SharpHack.Console.SharpHackTileDef()), 29));
         }
 
         [TestMethod()]
@@ -453,7 +461,7 @@ public class TileDef : TileDefBase
         [DataRow(3, 4, new[] { "⌐°@)", " ⌡⌡‼" })]
         public void SetTileDefTest(int iAct1, int iAct2, string[] asExp)
         {
-            var tileDef = new SingleTile(asExp, [new FullColor((ConsoleColor)iAct1,(ConsoleColor)iAct2)]);
+            var tileDef = new SingleTile(asExp, [new FullColor((ConsoleColor)iAct1, (ConsoleColor)iAct2)]);
             testClass.SetTileDef(iAct2, tileDef);
 
             var act = testClass.GetTileDef(iAct2);
@@ -515,10 +523,9 @@ public class TileDef : TileDefBase
         [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
         public void LoadFromStreamTest(int iAct1, EStreamType iAct2, string[] asExp)
         {
-            var sAct = Decompress(asExp[0]);
-
             var ms = new MemoryStream();
-            ms.Write(Encoding.UTF8.GetBytes(sAct));
+            var sAct2 = DecompressBinary(asExp[0]);
+            ms.Write(sAct2);
             ms.Position = 0L;
             var act = testClass.LoadFromStream(ms, iAct2);
             Assert.IsTrue(act);
@@ -540,22 +547,25 @@ public class TileDef : TileDefBase
         [DataRow(0, EStreamType.Json, new[] { csExp0JsonC })]
         [DataRow(0, EStreamType.Text, new[] { csExp0TextC })]
         [DataRow(0, EStreamType.Xml, new[] { csExp0XmlC })]
-        
+
         [DataRow(1, EStreamType.Binary, new[] { csExp1BinC })]
         [DataRow(1, EStreamType.Code, new[] { csExp1CodeC })]
         [DataRow(1, EStreamType.Json, new[] { csExp1JsonC })]
         [DataRow(1, EStreamType.Text, new[] { csExp1TextC })]
         [DataRow(1, EStreamType.Xml, new[] { csExp1XmlC })]
-        
+
         [DataRow(2, EStreamType.Binary, new[] { csExp2BinC })]
         [DataRow(2, EStreamType.Code, new[] { csExp2CodeC })]
         [DataRow(2, EStreamType.Json, new[] { csExp2JsonC })]
         [DataRow(2, EStreamType.Text, new[] { csExp2TextC })]
         [DataRow(2, EStreamType.Xml, new[] { csExp2XmlC })]
-      
+
         [DataRow(3, EStreamType.Json, new[] { csExp3JsonC })]
         [DataRow(3, EStreamType.Code, new[] { csExp0CodeC })]
         [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
+
+        [DataRow(4, EStreamType.Binary, new[] { csExp4BinC })]
+        [DataRow(4, EStreamType.Json, new[] { csExp4JsonC })]
         public void WriteToStreamTest(int iAct1, EStreamType iAct2, string[] asExp)
         {
             _testDefs[iAct1].Item1(testClass);
@@ -564,27 +574,28 @@ public class TileDef : TileDefBase
             Assert.IsTrue(act);
 
             ms.Position = 0L;
-            var sr = new StreamReader(ms).ReadToEnd();
+            var sr = new BinaryReader(ms).ReadBytes((int)ms.Length);
+            var sr2 = Encoding.UTF8.GetString(sr);
             if (iAct2 == EStreamType.Json)
-                sr = sr.Replace("],", "],\r\n");
+                sr2 = sr2.Replace("],", "],\r\n");
             var sExp = Decompress(asExp[0]);
             File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Expected.txt", sExp);
-            File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Actual.txt", sr);
-            if (sExp != sr)
+            File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Actual.txt", sr2);
+            if (sExp != sr2)
             {
                 Debug.WriteLine("Result:");
-                Debug.WriteLine(sr);
+                Debug.WriteLine(sr2);
                 Debug.WriteLine("Packed:");
                 Debug.WriteLine(Compress(sr));
-                AssertAreEqual(sExp, sr);
+                AssertAreEqual(sExp, sr2);
             }
             else
-                Assert.AreEqual(sExp, sr);
+                Assert.AreEqual(sExp, sr2);
 
         }
 
         [TestMethod]
-        [DynamicData(nameof(TestData),DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestData), DynamicDataSourceType.Method)]
         public void WriteToStreamTest2(string name, int iAct1, EStreamType iAct2, string asExpFile)
         {
             _testDefs[iAct1].Item1(testClass);
@@ -610,12 +621,12 @@ public class TileDef : TileDefBase
 
         }
 
-        private static string Compress(string input)
+        private static string Compress(byte[] input)
         {
             using (var memoryStream = new MemoryStream())
             {
                 using (var gzipStream = new GZipStream(memoryStream, CompressionLevel.SmallestSize))
-                using (var writer = new StreamWriter(gzipStream))
+                using (var writer = new BinaryWriter(gzipStream))
                 {
                     writer.Write(input);
                 }
@@ -637,6 +648,24 @@ public class TileDef : TileDefBase
             catch (Exception ex)
             {
                 return input;
+            }
+        }
+        private static byte[] DecompressBinary(string input)
+        {
+            try
+            {
+                using (var memoryStream = new MemoryStream(Convert.FromBase64String(input)))
+                using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                using (var reader = new MemoryStream())
+                {
+                    gzipStream.CopyTo(reader);
+                    reader.Close();
+                    return reader.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Encoding.UTF8.GetBytes( input);
             }
         }
         private enum Enum29
