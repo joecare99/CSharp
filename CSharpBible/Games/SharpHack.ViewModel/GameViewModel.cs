@@ -12,7 +12,7 @@ namespace SharpHack.ViewModel;
 public partial class GameViewModel : ObservableObject
 {
     private readonly GameSession _session;
-    private readonly List<DisplayTile> _displayTiles;
+    private DisplayTile[] _displayTiles;
 
     [ObservableProperty]
     private string _playerName;
@@ -30,26 +30,33 @@ public partial class GameViewModel : ObservableObject
     public ObservableCollection<Item> Inventory { get; } = new();
 
     public Map Map => _session.Map;
+
+    public byte[] miniMap => _session.MiniMap;
     public Creature Player => _session.Player;
     public List<Creature> Enemies => _session.Enemies;
 
-    public int ViewWidth { get; }
-    public int ViewHeight { get; }
+    public int ViewWidth { get; private set; }
+    public int ViewHeight { get; private set; }
+
+    public void SetViewSize(int width, int height)
+    {
+        ViewWidth = width;
+        ViewHeight = height;
+        _displayTiles = new DisplayTile[ViewWidth * ViewHeight];
+        UpdateDisplayBuffer();
+        OnPropertyChanged(nameof(DisplayTiles));
+    }
 
     public IReadOnlyList<DisplayTile> DisplayTiles => _displayTiles;
 
-    public GameViewModel(GameSession session, int viewWidth = 80, int viewHeight = 25)
+    public GameViewModel(GameSession session, int viewWidth = 40, int viewHeight = 25)
     {
         _session = session;
         _session.OnMessage += OnGameMessage;
 
         ViewWidth = viewWidth;
         ViewHeight = viewHeight;
-        _displayTiles = new List<DisplayTile>(ViewWidth * ViewHeight);
-        for (int i = 0; i < ViewWidth * ViewHeight; i++)
-        {
-            _displayTiles.Add(DisplayTile.Empty);
-        }
+        _displayTiles = new DisplayTile[ViewWidth * ViewHeight];
 
         PlayerName = _session.Player.Name;
         UpdateStats();
