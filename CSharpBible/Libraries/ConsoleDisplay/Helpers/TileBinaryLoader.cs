@@ -27,11 +27,11 @@ public static class TileBinaryLoader
         Action<int, byte[]>? loadAdditionalTileData = null)
     {
         using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
-        var count = reader.ReadInt32();
+        var count = reader.ReadInt16();
         Size size = default;
         if (count > 0)
         {
-            size = new Size(reader.ReadInt32(), reader.ReadInt32());
+            size = new Size(reader.ReadByte(), reader.ReadByte());
             setSize(size);
             if (TryReadBlob(reader, out var blob))
             {
@@ -42,17 +42,18 @@ public static class TileBinaryLoader
         for (var i = 0; i < count; i++)
         {
             var key = reader.ReadInt32();
-            var lineCount = reader.ReadInt32();
+            var lineCount = reader.ReadByte();
             var lines = new string[lineCount];
             for (var j = 0; j < lineCount; j++)
             {
                 lines[j] = reader.ReadString();
             }
-            var colorCount = reader.ReadInt32();
+            var colorCount = reader.ReadByte();
             var colors = new (ConsoleColor fgr, ConsoleColor bgr)[colorCount];
             for (var j = 0; j < colorCount; j++)
             {
-                colors[j] = ((ConsoleColor)reader.ReadByte(), (ConsoleColor)reader.ReadByte());
+                var b = reader.ReadByte();
+                colors[j] = ((ConsoleColor)(b & 0xf), (ConsoleColor)(b >> 4));
             }
 
             if (TryReadBlob(reader, out var tileBlob))
