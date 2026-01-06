@@ -617,7 +617,10 @@ public partial class MainWindowViewModel : ObservableObject
         var ext = Path.GetExtension(path).ToLowerInvariant();
         return ext switch
         {
+            ".jdt" => EStreamType.Text,
             ".txt" => EStreamType.Text,
+            ".bin" => EStreamType.Binary,
+            ".tdb" => EStreamType.Binary,
             ".tdf" => EStreamType.Binary,
             ".tdj" => EStreamType.Json,
             ".tdx" => EStreamType.Xml,
