@@ -33,9 +33,9 @@ public class TileDocument
 
     public ReadOnlyCollection<char> CharacterPalette => _characterPalette;
 
-    public TileDefinition CreateTile(string displayName)
+    public TileDefinition CreateTile(int id, string displayName)
     {
-        var tile = new TileDefinition(displayName, TileWidth, TileHeight);
+        var tile = new TileDefinition(id, displayName, TileWidth, TileHeight);
         _tiles.Add(tile);
         return tile;
     }
@@ -50,30 +50,18 @@ public class TileDocument
         }
     }
 
-    public void Rename(string name)
-    {
-        Name = NormalizeName(name);
-    }
+    public void Rename(string name) => Name = NormalizeName(name);
 
-    public void SetGlyphCharacter(TileDefinition tile, int row, int column, char character)
-    {
-        tile.SetGlyph(row, column, character);
-    }
+    public void SetGlyphCharacter(TileDefinition tile, int row, int column, char character) => tile.SetGlyph(row, column, character);
 
-    public void SetForeground(TileDefinition tile, int row, int column, ConsoleColor color)
-    {
-        tile.SetForeground(row, column, color);
-    }
+    public void SetForeground(TileDefinition tile, int row, int column, ConsoleColor color) => tile.SetForeground(row, column, color);
 
-    public void SetBackground(TileDefinition tile, int row, int column, ConsoleColor color)
-    {
-        tile.SetBackground(row, column, color);
-    }
+    public void SetBackground(TileDefinition tile, int row, int column, ConsoleColor color) => tile.SetBackground(row, column, color);
 
     public static TileDocument CreateSample(int defaultWidth, int defaultHeight)
     {
-        var checker = TileDefinition.CreatePattern("Checker", defaultWidth, defaultHeight, (row, column) => (row + column) % 2 == 0 ? '#' : '.');
-        var borders = TileDefinition.CreatePattern("Borders", defaultWidth, defaultHeight, (row, column) => row == 0 || column == 0 || row == defaultHeight - 1 || column == defaultWidth - 1 ? '+' : ' ');
+        var checker = TileDefinition.CreatePattern(0, "Checker", defaultWidth, defaultHeight, (row, column) => (row + column) % 2 == 0 ? '#' : '.');
+        var borders = TileDefinition.CreatePattern(1, "Borders", defaultWidth, defaultHeight, (row, column) => row == 0 || column == 0 || row == defaultHeight - 1 || column == defaultWidth - 1 ? '+' : ' ');
         return new TileDocument("Tile Set", defaultWidth, defaultHeight, new[] { checker, borders });
     }
 

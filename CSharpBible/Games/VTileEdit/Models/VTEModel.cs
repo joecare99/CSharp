@@ -14,7 +14,7 @@ public class VTEModel : IVTEModel
 
     public IEnumerable<int> TileKeys => _data.Keys;
 
-    public Type KeyType => _data.KeyType;
+    public string KeyTypeStr => _data.KeyTypeStr;
 
     public void Clear() => _data.Clear();
 

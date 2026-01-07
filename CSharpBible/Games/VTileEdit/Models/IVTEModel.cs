@@ -17,7 +17,7 @@ public interface IVTEModel
     void SetTileDef(int tile, string[] lines, FullColor[] colors);
     TileInfo GetTileInfo(int tile);
     void SetTileInfo(int tile, TileInfo info);
-    Type KeyType { get; }
+    string KeyTypeStr { get; }
     void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType);
     void LoadTileToStream(int tile, Stream stream, EStreamType eStreamType);
 }

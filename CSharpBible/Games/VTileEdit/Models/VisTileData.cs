@@ -42,10 +42,7 @@ public class VisTileData : ITileDef
     // Expose key type used by storage
     public string KeyTypeStr { get; set; }
 
-    public static bool EqualTo<T>(IEnumerable<T> a, IEnumerable<T> b)
-    {
-        return a.Zip(b).All((t) => t.First!.Equals(t.Second));
-    }
+    public static bool EqualTo<T>(IEnumerable<T> a, IEnumerable<T> b) => a.Zip(b).All((t) => t.First!.Equals(t.Second));
 
     public SingleTile GetTileDef(int? tile)
     {
@@ -155,7 +152,8 @@ public class VisTileData : ITileDef
                     TileBinaryLoader.Load(stream,
                         size => _size = size,
                         (key, lines, colors) => _storage.Add(key, new TileEntry(new SingleTile(lines, colors.Select(c => new FullColor(c.fgr, c.bgr)).ToArray()), TileInfo.Default)),
-                        (blob) => { var KeyTypeStr = Encoding.UTF8.GetString(blob);this.KeyTypeStr = KeyTypeStr; }
+                        (blob) => { var KeyTypeStr = Encoding.UTF8.GetString(blob);this.KeyTypeStr = KeyTypeStr; },
+                        (key,Blob) => { if (_storage.TryGetValue(key, out var tile)) tile.Info.Name = Encoding.UTF8.GetString(Blob); }
                         );
                     return true;
                 }
@@ -334,7 +332,7 @@ public class VisTileData : ITileDef
                                 writer.Write(b);
                             }
                             // Additional Data
-                            var blob = Encoding.UTF8.GetBytes(item.Value.Info.Name);
+                            var blob = Encoding.UTF8.GetBytes(item.Value.Info.Name??"");
                             writer.Write(blob.Length);
                             writer.Write(blob);
                         }

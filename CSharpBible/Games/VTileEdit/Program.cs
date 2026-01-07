@@ -40,9 +40,6 @@ namespace VTileEdit
             visual.HandleUserInput();
         }
 
-        private void Init(string[] args)
-        {
-            OnStartUp();
-        }
+        private void Init(string[] args) => OnStartUp();
     }
 }

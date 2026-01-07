@@ -208,11 +208,9 @@ public class VTEVisual : IVisual
         }
     }
 
-    public bool ShowFileDialog(IFileDialogData fileDialog)
-    {
+    public bool ShowFileDialog(IFileDialogData fileDialog) =>
         // Not used
-        return false;
-    }
+        false;
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

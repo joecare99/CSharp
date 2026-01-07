@@ -7,11 +7,12 @@ public class TileDefinition
 {
     private GlyphData[,] _glyphs;
 
-    public TileDefinition(string displayName, int width, int height, IEnumerable<GlyphData>? glyphs = null)
+    public TileDefinition(int id, string displayName, int width, int height, IEnumerable<GlyphData>? glyphs = null)
     {
         DisplayName = displayName;
         Width = width;
         Height = height;
+        ID = id;
         _glyphs = InitializeGrid(width, height, glyphs);
     }
 
@@ -20,6 +21,7 @@ public class TileDefinition
     public int Width { get; private set; }
 
     public int Height { get; private set; }
+    public int ID { get; private set; }
 
     public IEnumerable<GlyphData> Glyphs
     {
@@ -79,7 +81,7 @@ public class TileDefinition
         _glyphs = newGrid;
     }
 
-    public static TileDefinition CreatePattern(string name, int width, int height, Func<int, int, char> selector)
+    public static TileDefinition CreatePattern(int id, string name, int width, int height, Func<int, int, char> selector)
     {
         var glyphs = new List<GlyphData>(width * height);
         for (var row = 0; row < height; row++)
@@ -90,7 +92,7 @@ public class TileDefinition
             }
         }
 
-        return new TileDefinition(name, width, height, glyphs);
+        return new TileDefinition(id, name, width, height, glyphs);
     }
 
     private static GlyphData[,] InitializeGrid(int width, int height, IEnumerable<GlyphData>? glyphs)
