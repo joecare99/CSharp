@@ -10,6 +10,7 @@ using SharpHack.ViewModel;
 using BaseLib.Models; // Add using
 using DrawingPoint = System.Drawing.Point;
 using DrawingSize = System.Drawing.Size;
+using SharpHack.Persist;
 
 namespace SharpHack.Console;
 
@@ -17,7 +18,7 @@ public class Program
 {
     private static GameViewModel _viewModel; // Use ViewModel instead of Session directly
     private static TileDisplay<DisplayTile> _tileDisplay;
-    private static SharpHackTileDef _tileDef;
+    private static ITileDef _tileDef;
     private static Display _miniMap;
     private static int px;
     private static int py;
@@ -42,15 +43,16 @@ public class Program
         var mapGenerator = new BSPMapGenerator(random);
         var combatSystem = new SimpleCombatSystem();
         var enemyAI = new SimpleEnemyAI();
+        var gamePersist = new InMemoryGamePersist();
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator,gamePersist, random, combatSystem, enemyAI);
         _viewModel = new GameViewModel(session); // Initialize ViewModel
-        _viewModel.SetViewSize(70/4, 20/2);
-        _tileDef = new SharpHackTileDef();
-        _tileDisplay = new TileDisplay<DisplayTile>(new ConsoleProxy(), _tileDef, DrawingPoint.Empty, new DrawingSize(70 / 4, 20 / 2), _tileDef.TileSize)
+        _tileDef = new TileDefRes(".\\Resources\\Tiles4x2.tdj");
+        _viewModel.SetViewSize(70/_tileDef.TileSize.Width, 20 / _tileDef.TileSize.Height);
+        _tileDisplay = new TileDisplay<DisplayTile>(new ConsoleProxy(), _tileDef, DrawingPoint.Empty, new DrawingSize(70 / _tileDef.TileSize.Width, 20 / _tileDef.TileSize.Height), _tileDef.TileSize)
         {
             FncGetTile = GetTileAt,
-            FncOldPos = GetOldPos,
+        //    FncOldPos = GetOldPos,
         };
         TileDisplay<DisplayTile>.defaultTile = DisplayTile.Empty;
 

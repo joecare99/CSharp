@@ -1,1 +1,362 @@
-{"Item1":null,"Item2":{"IsEmpty":false,"Width":2,"Height":1},"Item3":[{"Item1":0,"Item2":{"lines":["g "],"colors":[{"fgr":10,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":1,"Item2":{"lines":["@ "],"colors":[{"fgr":14,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":2,"Item2":{"lines":["/ "],"colors":[{"fgr":11,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":3,"Item2":{"lines":["\u2320{"],"colors":[{"fgr":4,"bgr":0},{"fgr":4,"bgr":0}]}},{"Item1":4,"Item2":{"lines":["  "],"colors":[{"fgr":0,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":5,"Item2":{"lines":["\u2502\u2502"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":6,"Item2":{"lines":["\u2550\u2550"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":7,"Item2":{"lines":["\u2552\u2564"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":8,"Item2":{"lines":["\u2564\u2555"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":9,"Item2":{"lines":["\u2558\u2567"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":10,"Item2":{"lines":["\u2567\u255B"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":11,"Item2":{"lines":["\u2561\u255E"],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":12,"Item2":{"lines":["\u002B "],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":13,"Item2":{"lines":["\u002B "],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":14,"Item2":{"lines":["\u002B "],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":15,"Item2":{"lines":["\u002B "],"colors":[{"fgr":7,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":16,"Item2":{"lines":["\u2551\u00AC"],"colors":[{"fgr":6,"bgr":0},{"fgr":6,"bgr":0}]}},{"Item1":17,"Item2":{"lines":["//"],"colors":[{"fgr":6,"bgr":0},{"fgr":6,"bgr":0}]}},{"Item1":18,"Item2":{"lines":[". "],"colors":[{"fgr":8,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":19,"Item2":{"lines":[". "],"colors":[{"fgr":8,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":20,"Item2":{"lines":["\u003C\u00AB"],"colors":[{"fgr":15,"bgr":0},{"fgr":7,"bgr":0}]}},{"Item1":21,"Item2":{"lines":["\u003E]"],"colors":[{"fgr":15,"bgr":0},{"fgr":15,"bgr":0}]}}]}
+{
+  "Item1": "SharpHack.ViewModel.DisplayTile, VTileEditTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Item2": {
+    "IsEmpty": false,
+    "Width": 2,
+    "Height": 1
+  },
+  "Item3": [
+    {
+      "Item1": 60,
+      "Item2": {
+        "lines": [ "g " ],
+        "colors": [
+          {
+            "fgr": 10,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 335,
+      "Item2": {
+        "lines": [ "@ " ],
+        "colors": [
+          {
+            "fgr": 14,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 432,
+      "Item2": {
+        "lines": [ "/ " ],
+        "colors": [
+          {
+            "fgr": 11,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 509,
+      "Item2": {
+        "lines": [ "\u2320{" ],
+        "colors": [
+          {
+            "fgr": 4,
+            "bgr": 0
+          },
+          {
+            "fgr": 4,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 829,
+      "Item2": {
+        "lines": [ "  " ],
+        "colors": [
+          {
+            "fgr": 0,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 830,
+      "Item2": {
+        "lines": [ "\u2502\u2502" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 831,
+      "Item2": {
+        "lines": [ "\u2550\u2550" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 832,
+      "Item2": {
+        "lines": [ "\u2552\u2564" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 833,
+      "Item2": {
+        "lines": [ "\u2564\u2555" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 834,
+      "Item2": {
+        "lines": [ "\u2558\u2567" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 835,
+      "Item2": {
+        "lines": [ "\u2567\u255B" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 836,
+      "Item2": {
+        "lines": [ "\u2561\u255E" ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 837,
+      "Item2": {
+        "lines": [ "\u002B " ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 838,
+      "Item2": {
+        "lines": [ "\u002B " ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 839,
+      "Item2": {
+        "lines": [ "\u002B " ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 840,
+      "Item2": {
+        "lines": [ "\u002B " ],
+        "colors": [
+          {
+            "fgr": 7,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 842,
+      "Item2": {
+        "lines": [ "\u2551\u00AC" ],
+        "colors": [
+          {
+            "fgr": 6,
+            "bgr": 0
+          },
+          {
+            "fgr": 6,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 843,
+      "Item2": {
+        "lines": [ "//" ],
+        "colors": [
+          {
+            "fgr": 6,
+            "bgr": 0
+          },
+          {
+            "fgr": 6,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 848,
+      "Item2": {
+        "lines": [ ". " ],
+        "colors": [
+          {
+            "fgr": 8,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 849,
+      "Item2": {
+        "lines": [ ". " ],
+        "colors": [
+          {
+            "fgr": 8,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 851,
+      "Item2": {
+        "lines": [ "\u003C\u00AB" ],
+        "colors": [
+          {
+            "fgr": 15,
+            "bgr": 0
+          },
+          {
+            "fgr": 7,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 852,
+      "Item2": {
+        "lines": [ "\u003E]" ],
+        "colors": [
+          {
+            "fgr": 15,
+            "bgr": 0
+          },
+          {
+            "fgr": 15,
+            "bgr": 0
+          }
+        ]
+      }
+    }
+  ]
+}
