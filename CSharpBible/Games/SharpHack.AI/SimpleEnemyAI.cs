@@ -6,7 +6,7 @@ namespace SharpHack.AI;
 
 public class SimpleEnemyAI : IEnemyAI
 {
-    public Point GetNextMove(Creature enemy, Creature target, Map map)
+    public Point GetNextMove(ICreature enemy, ICreature target, IMap map)
     {
         int dx = target.Position.X - enemy.Position.X;
         int dy = target.Position.Y - enemy.Position.Y;
@@ -38,7 +38,7 @@ public class SimpleEnemyAI : IEnemyAI
         return enemy.Position;
     }
 
-    private bool IsWalkable(Map map, Point p)
+    private bool IsWalkable(IMap map, Point p)
     {
         return map.IsValid(p) && map[p].IsWalkable && map[p].Creature == null;
     }
