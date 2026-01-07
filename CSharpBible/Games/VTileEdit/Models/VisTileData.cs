@@ -377,7 +377,7 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json:
                 {
-                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(KeyType?.AssemblyQualifiedName, _size, _storage.Select(v => new Tuple<int, SingleTile>((int)(object)v.Key, v.Value.Tile)).ToList());
+                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(KeyType?.AssemblyQualifiedName, _size, _storage.Select(v => new Tuple<int, SingleTile>(v.Key, v.Value.Tile)).ToList());
                     var json = JsonSerializer.Serialize(data);
                     using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
                     {
