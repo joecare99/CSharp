@@ -6,7 +6,7 @@ namespace SharpHack.Combat;
 
 public class SimpleCombatSystem : ICombatSystem
 {
-    public void Attack(Creature attacker, Creature defender, Action<string> onMessage)
+    public void Attack(ICreature attacker, ICreature defender, Action<string> onMessage)
     {
         int damage = Math.Max(0, attacker.Attack - defender.Defense);
         defender.HP -= damage;
