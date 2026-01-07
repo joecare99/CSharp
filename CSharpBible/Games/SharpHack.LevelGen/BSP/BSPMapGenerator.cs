@@ -56,8 +56,8 @@ public class BSPMapGenerator : IMapGenerator
         int w = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Width - 2));
         int h = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Height - 2));
         // make sure the random room contains the point
-        int x = Math.Clamp(point.X - w / 2, node.Bounds.X + 1, node.Bounds.Right - w - 1);
-        int y = Math.Clamp(point.Y - h / 2, node.Bounds.Y + 1, node.Bounds.Bottom - h - 1);
+        int x = Math.Clamp(point.X - w / 2, node.Bounds.X , node.Bounds.Right - w );
+        int y = Math.Clamp(point.Y - h / 2, node.Bounds.Y , node.Bounds.Bottom - h);
         node.Room = new Rectangle(x, y, w, h);
         for (int rx = x; rx < x + w; rx++)
         {
