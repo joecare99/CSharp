@@ -56,11 +56,11 @@ public static class TileBinaryLoader
                 colors[j] = ((ConsoleColor)(b & 0xf), (ConsoleColor)(b >> 4));
             }
 
+            addTile(key, lines, colors);
             if (TryReadBlob(reader, out var tileBlob))
             {
                 loadAdditionalTileData?.Invoke(key, tileBlob);
             }
-            addTile(key, lines, colors);
         }
     }
 
