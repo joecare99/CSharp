@@ -22,6 +22,7 @@ public class GameSessionTests
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
         var enemyAI = Substitute.For<IEnemyAI>(); // Mock AI
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var map = new Map(10, 10);
         map[1, 1].Type = TileType.Floor; 
         map[5, 5].Type = TileType.Floor;
@@ -29,7 +30,7 @@ public class GameSessionTests
         random.Next(Arg.Any<int>()).Returns(5); 
 
         // Act
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI); // Pass mock
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI); // Pass mock
 
         // Assert
         Assert.IsNotNull(session.Enemies);
@@ -44,6 +45,7 @@ public class GameSessionTests
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
         var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -52,10 +54,10 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0); 
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
         
-        var enemy = session.Enemies.Find(e => e.Position.X == 2 && e.Position.Y == 1);
+        var enemy = session.Enemies.FirstOrDefault(e => e.Position.X == 2 && e.Position.Y == 1);
         Assert.IsNotNull(enemy);
 
         // Act
@@ -75,6 +77,7 @@ public class GameSessionTests
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
         var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -83,10 +86,10 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0);
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
         
-        var enemy = session.Enemies.Find(e => e.Position.X == 2 && e.Position.Y == 1);
+        var enemy = session.Enemies.FirstOrDefault(e => e.Position.X == 2 && e.Position.Y == 1);
 
         // Act
         session.MovePlayer(Direction.East);
@@ -103,6 +106,7 @@ public class GameSessionTests
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
         var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -111,10 +115,10 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0);
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
         
-        var enemy = session.Enemies.Find(e => e.Position.X == 2 && e.Position.Y == 1);
+        var enemy = session.Enemies.FirstOrDefault(e => e.Position.X == 2 && e.Position.Y == 1);
         
         // Simulate combat system killing the enemy
         combatSystem.When(x => x.Attack(session.Player, enemy, Arg.Any<System.Action<string>>()))
@@ -136,6 +140,7 @@ public class GameSessionTests
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
         var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -145,7 +150,7 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(5); // Spawn at 5,5
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         var enemy = session.Enemies.First();
         
         // Mock AI to move enemy North
@@ -168,6 +173,7 @@ public class GameSessionTests
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
         var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var map = new Map(10, 10);
         
         map[1, 1].Type = TileType.Floor;
@@ -177,7 +183,7 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(0); // No enemies spawned or items spawned by Initialize
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1); // Player starts on item (or moves to it)
 
         // Act
@@ -198,6 +204,7 @@ public class GameSessionTests
         var mapGenerator = Substitute.For<IMapGenerator>();
         var random = Substitute.For<IRandom>();
         var combatSystem = Substitute.For<ICombatSystem>();
+        var gamePersist = Substitute.For<IGamePersist>(); // Mock AI
         var enemyAI = Substitute.For<IEnemyAI>();
         
         var map1 = new Map(10, 10);
@@ -209,7 +216,7 @@ public class GameSessionTests
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map1, map2); // Return map1 first, then map2
         random.Next(Arg.Any<int>()).Returns(0);
 
-        var session = new GameSession(mapGenerator, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         session.Player.Position = new Point(1, 1);
 
         // Act
