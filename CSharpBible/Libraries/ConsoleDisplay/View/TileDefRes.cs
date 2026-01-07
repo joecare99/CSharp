@@ -1,6 +1,7 @@
 using ConsoleDisplay.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,7 +49,7 @@ public sealed class TileDefRes : TileDefBase
                     LoadInternal(fs, ResolveStreamType(Path.GetExtension(text)));
                 }
                 break;
-            case string json:
+            case string json when json.StartsWith("{"):
                 using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
                 {
                     LoadInternal(ms, EStreamType.Json);
@@ -94,22 +95,21 @@ public sealed class TileDefRes : TileDefBase
 #endif
 
         var json = sr.ReadToEnd();
-        var payload = JsonSerializer.Deserialize<Json2Data>(json);
+        var payload = JsonSerializer.Deserialize< Tuple<string, Size, List<Tuple<int, SingleTile>>>>(json);
         if (payload == null)
         {
             throw new InvalidDataException("Unable to parse tile JSON.");
         }
 
-        TileSize = new System.Drawing.Size(payload.TileWidth, payload.TileHeight);
-        if (payload.Tiles == null)
+        TileSize = payload.Item2;
+        if (payload.Item3 == null)
         {
             return;
         }
 
-        foreach (var entry in payload.Tiles)
+        foreach (var entry in payload.Item3)
         {
-            var colors = entry.Colors.Select(DecodePackedColor).ToArray();
-            _tiles[entry.Key] = (entry.Lines, colors);
+            _tiles[entry.Item1] = (entry.Item2.lines, entry.Item2.colors.Select(f=> ((ConsoleColor, ConsoleColor))f).ToArray());
         }
     }
 
@@ -133,8 +133,11 @@ public sealed class TileDefRes : TileDefBase
 
     private enum EStreamType { Binary, Json }
 
-    private record Json2Data(string KeyType, int TileWidth, int TileHeight, List<Json2Data.Json2TileEntry> Tiles)
-    {
-        public record Json2TileEntry(int Key, string[] Lines, byte[] Colors);
+    public record struct SingleTile(string[] lines, FullColor[] colors);
+    public record struct FullColor(ConsoleColor fgr, ConsoleColor bgr) {
+        public static implicit operator (ConsoleColor fgr, ConsoleColor bgr)(FullColor value)
+        => (value.fgr, value.bgr);
+
     }
+
 }
