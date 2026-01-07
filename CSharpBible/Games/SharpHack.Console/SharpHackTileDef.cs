@@ -45,7 +45,7 @@ public sealed class SharpHackTileDef : TileDefBase
         if (tile == null)
             return _empty;
 
-        var key = Convert.ToInt32(tile);
+        var key = Tile2Int(tile);
         return _defs.TryGetValue(key, out var def) ? def : _empty;
     }
 
