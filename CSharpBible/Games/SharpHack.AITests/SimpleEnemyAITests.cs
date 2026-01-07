@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpHack.AI;
+using SharpHack.Base.Data;
 using SharpHack.Base.Model;
 
 namespace SharpHack.AITests;
