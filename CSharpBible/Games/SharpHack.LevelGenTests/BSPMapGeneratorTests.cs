@@ -1,8 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using SharpHack.LevelGen.BSP;
-using SharpHack.Base.Model;
 using BaseLib.Models.Interfaces;
+using SharpHack.Base.Data;
 
 namespace SharpHack.LevelGenTests;
 
