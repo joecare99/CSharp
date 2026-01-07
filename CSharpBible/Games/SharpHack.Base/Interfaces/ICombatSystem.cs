@@ -5,5 +5,5 @@ namespace SharpHack.Base.Interfaces;
 
 public interface ICombatSystem
 {
-    void Attack(Creature attacker, Creature defender, Action<string> onMessage);
+    void Attack(ICreature attacker, ICreature defender, Action<string> onMessage);
 }

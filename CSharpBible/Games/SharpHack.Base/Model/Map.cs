@@ -1,8 +1,11 @@
+using SharpHack.Base.Data;
+using SharpHack.Base.Interfaces;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SharpHack.Base.Model;
 
-public class Map
+public class Map : IMap
 {
     public int Width { get; }
     public int Height { get; }
@@ -31,14 +34,19 @@ public class Map
             return new Tile { Position = new Point(x, y), Type = TileType.Empty };
         }
     }
-    
+
     public Tile this[Point p] => this[p.X, p.Y];
 
     public bool IsValid(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
     public bool IsValid(Point p) => IsValid(p.X, p.Y);
 
-    public (int X,int Y) GetOldPos(int x, int y)
+    public (int X, int Y) GetOldPos(int x, int y)
     {
-       return _tiles[x, y].OldPosition;
+        return _tiles[x, y].OldPosition;
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        return _tiles.GetEnumerator();
     }
 }

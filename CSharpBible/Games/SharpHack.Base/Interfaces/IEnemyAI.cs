@@ -4,5 +4,5 @@ namespace SharpHack.Base.Interfaces;
 
 public interface IEnemyAI
 {
-    Point GetNextMove(Creature enemy, Creature target, Map map);
+    Point GetNextMove(ICreature enemy, ICreature target, IMap map);
 }
