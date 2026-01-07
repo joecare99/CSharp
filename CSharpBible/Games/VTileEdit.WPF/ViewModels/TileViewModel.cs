@@ -21,7 +21,7 @@ public partial class TileViewModel : ObservableObject
     /// <param name="tileWidth">The tile width.</param>
     /// <param name="tileHeight">The tile height.</param>
     /// <param name="glyphs">The glyph collection describing the tile.</param>
-    public TileViewModel(string displayName, int tileWidth, int tileHeight, IEnumerable<GlyphCellViewModel> glyphs)
+    public TileViewModel(int id, string displayName, int tileWidth, int tileHeight, IEnumerable<GlyphCellViewModel> glyphs)
     {
         if (glyphs is null)
         {
@@ -31,6 +31,7 @@ public partial class TileViewModel : ObservableObject
         DisplayName = displayName;
         TileWidth = tileWidth;
         TileHeight = tileHeight;
+        ID = id;
         Glyphs = new ObservableCollection<GlyphCellViewModel>(glyphs);
     }
 
@@ -49,6 +50,7 @@ public partial class TileViewModel : ObservableObject
     /// Gets the glyphs composing the tile.
     /// </summary>
     public ObservableCollection<GlyphCellViewModel> Glyphs { get; }
+    public int ID { get; internal set; }
 
     /// <summary>
     /// Adjusts the glyph surface to fit the supplied dimensions.
@@ -100,14 +102,14 @@ public partial class TileViewModel : ObservableObject
     {
         var samples = new List<TileViewModel>
         {
-            CreatePatternTile("Checker", 8, 4, (row, column) => (row + column) % 2 == 0 ? '#' : '.'),
-            CreatePatternTile("Borders", 8, 4, (row, column) => row == 0 || column == 0 || row == 3 || column == 7 ? '+' : ' ')
+            CreatePatternTile(0,"Checker", 8, 4, (row, column) => (row + column) % 2 == 0 ? '#' : '.'),
+            CreatePatternTile(1,"Borders", 8, 4, (row, column) => row == 0 || column == 0 || row == 3 || column == 7 ? '+' : ' ')
         };
 
         return samples;
     }
 
-    private static TileViewModel CreatePatternTile(string name, int width, int height, Func<int, int, char> selector)
+    private static TileViewModel CreatePatternTile(int id, string name, int width, int height, Func<int, int, char> selector)
     {
         var glyphs = new List<GlyphCellViewModel>(width * height);
         for (var row = 0; row < height; row++)
@@ -121,6 +123,6 @@ public partial class TileViewModel : ObservableObject
             }
         }
 
-        return new TileViewModel(name, width, height, glyphs);
+        return new TileViewModel(id, name, width, height, glyphs);
     }
 }

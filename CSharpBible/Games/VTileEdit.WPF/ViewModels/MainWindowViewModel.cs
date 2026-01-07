@@ -24,7 +24,7 @@ namespace VTileEdit.WPF.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private const int DefaultTileWidth = 8;
-    private const int DefaultTileHeight = 8;
+    private const int DefaultTileHeight = 4;
     private static readonly string[] PreferredConsoleFonts = new[] { "Consolas", "Cascadia Mono", "Cascadia Code", "Lucida Console", "Courier New" };
 
     private readonly CoreViewModels.TileDocument _document;
@@ -66,10 +66,6 @@ public partial class MainWindowViewModel : ObservableObject
 
         UndoCommand = new RelayCommand(() => ShowPlaceholderMessage("Undo"));
         RedoCommand = new RelayCommand(() => ShowPlaceholderMessage("Redo"));
-        SelectGlyphCommand = new RelayCommand<GlyphCellViewModel>(SelectGlyph, glyph => glyph != null);
-        ApplyForegroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyForeground, swatch => swatch != null);
-        ApplyBackgroundCommand = new RelayCommand<ColorSwatchViewModel>(ApplyBackground, swatch => swatch != null);
-        ApplyCharacterCommand = new RelayCommand<char>(ApplyCharacter);
         ApplyTileSetChangesCommand = new RelayCommand(ApplyTileSetChanges, () => TileSetHasPendingChanges);
         DiscardTileSetChangesCommand = new RelayCommand(DiscardTileSetChanges, () => TileSetHasPendingChanges);
     }
@@ -165,27 +161,7 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the redo command placeholder.
     /// </summary>
     public IRelayCommand RedoCommand { get; }
-
-    /// <summary>
-    /// Gets the command selecting a glyph from the preview grid.
-    /// </summary>
-    public IRelayCommand SelectGlyphCommand { get; }
-
-    /// <summary>
-    /// Gets the command applying a foreground swatch.
-    /// </summary>
-    public IRelayCommand ApplyForegroundCommand { get; }
-
-    /// <summary>
-    /// Gets the command applying a background swatch.
-    /// </summary>
-    public IRelayCommand ApplyBackgroundCommand { get; }
-
-    /// <summary>
-    /// Gets the command applying a character from the charmap.
-    /// </summary>
-    public IRelayCommand ApplyCharacterCommand { get; }
-
+   
     /// <summary>
     /// Gets the command applying tile-set metadata updates.
     /// </summary>
@@ -267,7 +243,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void CreateNewTile()
     {
-        var documentTile = _document.CreateTile($"Tile {Tiles.Count + 1}");
+        var documentTile = _document.CreateTile(Tiles.Count + 1,$"Tile {Tiles.Count + 1}");
         var tile = CreateTileViewModel(documentTile);
         Tiles.Add(tile);
         _tileLookup[tile] = documentTile;
@@ -278,7 +254,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var glyphs = definition.Glyphs
             .Select(g => new GlyphCellViewModel(g.Row, g.Column, g.Character, g.Foreground, g.Background));
-        return new TileViewModel(definition.DisplayName, definition.Width, definition.Height, glyphs);
+        return new TileViewModel(definition.ID, definition.DisplayName, definition.Width, definition.Height, glyphs);
     }
 
     private void SyncTilesFromDocument()
@@ -312,6 +288,10 @@ public partial class MainWindowViewModel : ObservableObject
         return false;
     }
 
+    bool CanSelectGlyph(GlyphCellViewModel? glyph)
+        => glyph != null;
+
+    [RelayCommand(CanExecute = nameof(CanSelectGlyph))]
     private void SelectGlyph(GlyphCellViewModel? glyph)
     {
         if (SelectedGlyph != null)
@@ -328,6 +308,10 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    bool CanApplyColor(ColorSwatchViewModel? swatch)
+    => swatch != null;
+
+    [RelayCommand(CanExecute = nameof(CanApplyColor))]
     private void ApplyForeground(ColorSwatchViewModel? swatch)
     {
         if (swatch == null)
@@ -342,6 +326,8 @@ public partial class MainWindowViewModel : ObservableObject
             UpdateDocumentForeground(SelectedGlyph);
         }
     }
+
+    [RelayCommand(CanExecute = nameof(CanApplyColor))]
 
     private void ApplyBackground(ColorSwatchViewModel? swatch)
     {
@@ -358,6 +344,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
     private void ApplyCharacter(char character)
     {
         if (SelectedGlyph == null)
@@ -640,7 +627,7 @@ public partial class MainWindowViewModel : ObservableObject
         foreach (var tile in Tiles)
         {
             var (lines, colors) = ExtractTile(tile);
-            _persistenceModel.SetTileDef(index++, lines, colors);
+            _persistenceModel.SetTileDef(tile.ID, lines, colors);
         }
 
         using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
@@ -666,7 +653,8 @@ public partial class MainWindowViewModel : ObservableObject
         foreach (var key in _persistenceModel.TileKeys)
         {
             var def = _persistenceModel.GetTileDef(key);
-            var tileVm = BuildTileFrom(def.lines, def.colors, TileSetTileWidth, TileSetTileHeight, key.ToString());
+            var info = _persistenceModel.GetTileInfo(key);
+            var tileVm = BuildTileFrom(key, def.lines, def.colors, TileSetTileWidth, TileSetTileHeight, $"{key} - {info.Name}");
             Tiles.Add(tileVm);
         }
 
@@ -695,7 +683,7 @@ public partial class MainWindowViewModel : ObservableObject
         return (lines, colors);
     }
 
-    private static TileViewModel BuildTileFrom(string[] lines, FullColor[] colors, int width, int height, string name)
+    private static TileViewModel BuildTileFrom(int ID, string[] lines, FullColor[] colors, int width, int height, string name)
     {
         var glyphs = new List<GlyphCellViewModel>(width * height);
         for (var row = 0; row < height; row++)
@@ -708,7 +696,7 @@ public partial class MainWindowViewModel : ObservableObject
             }
         }
 
-        return new TileViewModel(name, width, height, glyphs);
+        return new TileViewModel(ID, name, width, height, glyphs);
     }
 
     private void SyncDocumentFromTiles()
@@ -721,7 +709,7 @@ public partial class MainWindowViewModel : ObservableObject
         foreach (var tile in Tiles)
         {
             var glyphs = tile.Glyphs.Select(g => new VTileEdit.GlyphData(g.Row, g.Column, g.Character, g.Foreground, g.Background)).ToList();
-            var def = new VTileEdit.TileDefinition(tile.DisplayName, tile.TileWidth, tile.TileHeight, glyphs);
+            var def = new VTileEdit.TileDefinition(tile.ID, tile.DisplayName, tile.TileWidth, tile.TileHeight, glyphs);
             _document.Tiles.Add(def);
             _tileLookup[tile] = def;
         }
