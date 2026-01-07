@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Runtime.ExceptionServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SharpHack.Base.Data;
+using SharpHack.Base.Interfaces;
 using SharpHack.Base.Model;
 using SharpHack.Engine;
 
@@ -29,11 +31,11 @@ public partial class GameViewModel : ObservableObject
     public ObservableCollection<string> Messages { get; } = new();
     public ObservableCollection<Item> Inventory { get; } = new();
 
-    public Map Map => _session.Map;
+    public IMap Map => _session.Map;
 
     public byte[] miniMap => _session.MiniMap;
-    public Creature Player => _session.Player;
-    public List<Creature> Enemies => _session.Enemies;
+    public ICreature Player => _session.Player;
+    public IList<ICreature> Enemies => _session.Enemies;
 
     public int ViewWidth { get; private set; }
     public int ViewHeight { get; private set; }
@@ -136,7 +138,7 @@ public partial class GameViewModel : ObservableObject
         }
     }
 
-    private static DisplayTile CreateDisplayTile(Tile tile,int surWall, Creature player, bool isPlayer)
+    private static DisplayTile CreateDisplayTile(ITile tile,int surWall, ICreature player, bool isPlayer)
     {
         if (!tile.IsExplored)
         {
