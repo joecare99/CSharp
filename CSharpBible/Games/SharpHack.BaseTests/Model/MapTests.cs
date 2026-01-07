@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SharpHack.Base.Data;
 using SharpHack.Base.Model;
 
 namespace SharpHack.BaseTests.Model;
