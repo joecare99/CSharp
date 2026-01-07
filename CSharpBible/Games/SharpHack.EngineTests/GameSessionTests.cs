@@ -6,7 +6,8 @@ using SharpHack.Base.Model;
 using System.Collections.Generic;
 using BaseLib.Models.Interfaces;
 using SharpHack.Base.Interfaces;
-using System.Linq; // Add using
+using System.Linq;
+using SharpHack.Base.Data; // Add using
 
 namespace SharpHack.EngineTests;
 
