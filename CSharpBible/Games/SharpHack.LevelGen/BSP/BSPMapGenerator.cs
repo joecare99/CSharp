@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using SharpHack.Base.Model;
 using BaseLib.Models.Interfaces;
-using Point = SharpHack.Base.Model.Point; // Resolve ambiguity with System.Drawing.Point
+using Point = SharpHack.Base.Model.Point;
+using SharpHack.Base.Data; // Resolve ambiguity with System.Drawing.Point
 
 namespace SharpHack.LevelGen.BSP;
 

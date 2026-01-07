@@ -1,3 +1,4 @@
+using SharpHack.Base.Data;
 using SharpHack.Base.Model;
 
 namespace SharpHack.LevelGen;
