@@ -1,4 +1,5 @@
 using System;
+using SharpHack.Base.Interfaces;
 using SharpHack.Base.Model;
 
 namespace SharpHack.Engine;
@@ -8,13 +9,13 @@ namespace SharpHack.Engine;
 /// </summary>
 public class FieldOfView
 {
-    private Map _map;
+    private IMap _map;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FieldOfView"/> class bound to the supplied map.
     /// </summary>
     /// <param name="map">The map that will be queried and updated with visibility information.</param>
-    public FieldOfView(Map map)
+    public FieldOfView(IMap map)
     {
         Map = map;
     }
@@ -22,7 +23,7 @@ public class FieldOfView
     /// <summary>
     /// Gets or sets the map currently associated with this field-of-view calculator.
     /// </summary>
-    public Map Map { get => _map; set => _map = value; } // Make setter public to update reference on level change
+    public IMap Map { get => _map; set => _map = value; } // Make setter public to update reference on level change
 
     /// <summary>
     /// Computes visibility information for all tiles within the provided range around the origin.

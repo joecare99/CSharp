@@ -1,15 +1,16 @@
 using SharpHack.Base.Model;
 using SharpHack.LevelGen;
 using BaseLib.Models.Interfaces;
-using SharpHack.Base.Interfaces; // Add using
+using SharpHack.Base.Interfaces;
+using SharpHack.Base.Data; // Add using
 
 namespace SharpHack.Engine;
 
 public class GameSession
 {
-    public Map Map { get; private set; }
-    public Creature Player { get; private set; }
-    public List<Creature> Enemies { get; private set; } = new();
+    public IMap Map { get; private set; }
+    public ICreature Player { get; private set; }
+    public IList<ICreature> Enemies { get; private set; } = [];
     public bool IsRunning { get; private set; } = true;
     public int Level { get; private set; } = 1; // Add Level property
 
@@ -18,6 +19,8 @@ public class GameSession
     private readonly ICombatSystem _combatSystem;
     private readonly IEnemyAI _enemyAI; // Add field
     private readonly FieldOfView _fov;
+    private readonly IGamePersist _persistence;
+
     public byte[] MiniMap {
         get
         {
@@ -59,12 +62,13 @@ public class GameSession
 
     public event Action<string>? OnMessage;
 
-    public GameSession(IMapGenerator mapGenerator, IRandom random, ICombatSystem combatSystem, IEnemyAI enemyAI) // Update constructor
+    public GameSession(IMapGenerator mapGenerator,IGamePersist gamePersist, IRandom random, ICombatSystem combatSystem, IEnemyAI enemyAI) // Update constructor
     {
         _mapGenerator = mapGenerator;
         _random = random;
         _combatSystem = combatSystem;
         _enemyAI = enemyAI; // Assign field
+        _persistence = gamePersist;
         Initialize();
         _fov = new FieldOfView(Map);
         UpdateFov();
@@ -209,12 +213,40 @@ public class GameSession
     private void NextLevel()
     {
         var currentPos = Player.Position;
+        _persistence.SaveLevel(Level, Map, Player, Enemies);
         Level++;
-        Enemies.Clear();
-        Initialize(currentPos); // Pass current position as start for next level
+        if (_persistence.LoadLevel(Level, out var _Map, out var _Enemies))
+        { 
+            Map = _Map;
+            Enemies = _Enemies;
+        }
+        else
+        {
+            Enemies.Clear();
+            Initialize(currentPos); // Pass current position as start for next level
+        }
         _fov.Map = Map; // Update FOV map reference
         UpdateFov();
         Log($"You descend to level {Level}.");
+    }
+    private void PrevLevel()
+    {
+        var currentPos = Player.Position;
+        _persistence.SaveLevel(Level, Map, Player, Enemies);
+        Level--;
+        if (_persistence.LoadLevel(Level, out var _Map, out var _Enemies))
+        {
+            Map = _Map;
+            Enemies = _Enemies;
+        }
+        else
+        {
+            Enemies.Clear();
+            Initialize(currentPos); // Pass current position as start for next level
+        }
+        _fov.Map = Map; // Update FOV map reference
+        UpdateFov();
+        Log($"You accend to level {Level}.");
     }
 
     private void UpdateFov()
@@ -288,6 +320,13 @@ public class GameSession
                     return; // Skip update after level change to avoid immediate enemy move on new level
                 }
 
+                // Check for stairs
+                if (Map[newPos].Type == TileType.StairsUp)
+                {
+                    PrevLevel();
+                    return; // Skip update after level change to avoid immediate enemy move on new level
+                }
+
                 UpdateFov();
                 Update(); // Enemy turn after player moves
             }
@@ -299,7 +338,8 @@ public class GameSession
         }
     }
 
-    public void PickUpItem(Creature creature, Item item)
+
+    public void PickUpItem(ICreature creature, Item item)
     {
         if (Map[item.Position].Items.Contains(item))
         {
@@ -321,7 +361,7 @@ public class GameSession
         }
     }
 
-    private void Attack(Creature attacker, Creature defender)
+    private void Attack(ICreature attacker, ICreature defender)
     {
         _combatSystem.Attack(attacker, defender, Log); // Delegate to combat system
 
