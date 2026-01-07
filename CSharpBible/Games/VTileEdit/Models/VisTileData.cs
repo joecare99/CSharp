@@ -40,7 +40,7 @@ public class VisTileData : ITileDef
     public IEnumerable<int> Keys => _storage.Keys;
 
     // Expose key type used by storage
-    public Type KeyType { get; set; }
+    public string KeyTypeStr { get; set; }
 
     public static bool EqualTo<T>(IEnumerable<T> a, IEnumerable<T> b)
     {
@@ -125,7 +125,7 @@ public class VisTileData : ITileDef
     {
         Clear();
         _size = tiledef.TileSize;
-        KeyType = typeof(T);
+        KeyTypeStr = typeof(T).AssemblyQualifiedName;
         foreach (T e in Enum.GetValues(typeof(T)))
         {
             var tile = tiledef.GetTileDef(e);
@@ -155,7 +155,7 @@ public class VisTileData : ITileDef
                     TileBinaryLoader.Load(stream,
                         size => _size = size,
                         (key, lines, colors) => _storage.Add(key, new TileEntry(new SingleTile(lines, colors.Select(c => new FullColor(c.fgr, c.bgr)).ToArray()), TileInfo.Default)),
-                        (blob) => { var KeyTypeStr = Encoding.UTF8.GetString(blob); KeyType = Type.GetType(KeyTypeStr) ?? typeof(int); }
+                        (blob) => { var KeyTypeStr = Encoding.UTF8.GetString(blob);this.KeyTypeStr = KeyTypeStr; }
                         );
                     return true;
                 }
@@ -236,6 +236,7 @@ public class VisTileData : ITileDef
                     {
                         var xml = new XmlSerializer(typeof((string, Size, List<object[]>)), extraTypes: [typeof(SingleTile)]);
                         var xdata = ((string KeyType, Size sz, List<object[]> Data)?)xml.Deserialize(reader);
+                        KeyTypeStr = xdata.Value.KeyType;
                         _size = xdata.Value.sz;
                         foreach (var itm in xdata.Value.Data)
                         {
@@ -249,6 +250,7 @@ public class VisTileData : ITileDef
                 {
                     Dictionary<int, TileEntry>? data = new();
                     var lst = JsonSerializer.Deserialize<Tuple<string, Size, List<Tuple<int, SingleTile>>>>(new StreamReader(stream).ReadToEnd());
+                    KeyTypeStr = lst.Item1;
                     _size = lst.Item2;
                     foreach (var itm in lst.Item3)
                     {
@@ -313,7 +315,7 @@ public class VisTileData : ITileDef
                             writer.Write((byte)_size.Width);
                             writer.Write((byte)_size.Height);
                             // Additional Data
-                            var blob = Encoding.UTF8.GetBytes(KeyType?.AssemblyQualifiedName);
+                            var blob = Encoding.UTF8.GetBytes(KeyTypeStr);
                             writer.Write(blob.Length);
                             writer.Write(blob);
                         }
@@ -343,7 +345,7 @@ public class VisTileData : ITileDef
                 {
                     using (TextWriter writer = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true))
                     {
-                        (string KeyType, Size sz, List<object[]> Data) data = (KeyType?.AssemblyQualifiedName, _size, _storage.Select(v => new object[] { v.Key, v.Value.Tile }).ToList());
+                        (string KeyType, Size sz, List<object[]> Data) data = (KeyTypeStr, _size, _storage.Select(v => new object[] { v.Key, v.Value.Tile }).ToList());
                         var xml = new XmlSerializer(data.GetType(), [typeof(SingleTile), typeof(Size)]);
                         xml.Serialize(writer, data);
                     }
@@ -355,7 +357,7 @@ public class VisTileData : ITileDef
                     {
                         writer.WriteLine($"Count:{_storage.Count}");
                         writer.WriteLine($"Size:{_size.Width},{_size.Height}");
-                        writer.WriteLine($"KeyType:{KeyType.AssemblyQualifiedName}");
+                        writer.WriteLine($"KeyType:{KeyTypeStr}");
                         for (int i = 0; i < _storage.Count; i++)
                         {
                             var item = _storage.ElementAt(i);
@@ -377,7 +379,7 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json:
                 {
-                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(KeyType?.AssemblyQualifiedName, _size, _storage.Select(v => new Tuple<int, SingleTile>(v.Key, v.Value.Tile)).ToList());
+                    Tuple<string, Size, List<Tuple<int, SingleTile>>> data = new(KeyTypeStr, _size, _storage.Select(v => new Tuple<int, SingleTile>(v.Key, v.Value.Tile)).ToList());
                     var json = JsonSerializer.Serialize(data);
                     using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
                     {
@@ -387,9 +389,8 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json2:
                 {
-                    Type _keyType = _storage.Count > 0 ? _storage.First().Key.GetType() : typeof(object);
                     Json2Data data = new(
-                        _keyType.AssemblyQualifiedName,
+                        KeyTypeStr,
                         _size.Width,
                         _size.Height,
                         _storage.Select(v =>
