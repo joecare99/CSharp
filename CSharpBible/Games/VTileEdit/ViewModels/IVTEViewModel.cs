@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using VTileEdit.Models;
@@ -20,6 +21,7 @@ public interface IVTEViewModel : INotifyPropertyChanged
     FullColor[] CurrentColors { get; set; }
     Func<Size> DoNewTileDialog { get; set; }
     Size TileSize { get; }
+    ReadOnlyCollection<char> CharacterPalette { get; }
 
     void SaveToPath(string path);
     void SaveTileToPath(int tile, string path);

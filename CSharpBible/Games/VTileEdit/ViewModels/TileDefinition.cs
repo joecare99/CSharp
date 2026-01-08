@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 namespace VTileEdit;
 
-public class TileDefinition
+public class _TileDefinition
 {
-    private GlyphData[,] _glyphs;
 
-    public TileDefinition(int id, string displayName, int width, int height, IEnumerable<GlyphData>? glyphs = null)
+    public _TileDefinition(int id, string displayName, int width, int height, IEnumerable<GlyphData>? glyphs = null)
     {
         DisplayName = displayName;
         Width = width;

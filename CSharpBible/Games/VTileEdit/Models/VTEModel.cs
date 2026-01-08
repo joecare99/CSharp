@@ -16,6 +16,8 @@ public class VTEModel : IVTEModel
 
     public string KeyTypeStr => _data.KeyTypeStr;
 
+    public string TileSetName { get; private set; }
+
     public void Clear() => _data.Clear();
 
     public void LoadFromStream(Stream stream, EStreamType eStreamType) => _data.LoadFromStream(stream, eStreamType);

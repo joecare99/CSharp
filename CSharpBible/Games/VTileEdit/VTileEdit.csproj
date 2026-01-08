@@ -16,6 +16,10 @@
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Compile Remove="ViewModels\TileDefinition.cs" />
+	  <Compile Remove="ViewModels\TileDocument.cs" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 	</ItemGroup>

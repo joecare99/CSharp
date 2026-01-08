@@ -18,6 +18,8 @@ public interface IVTEModel
     TileInfo GetTileInfo(int tile);
     void SetTileInfo(int tile, TileInfo info);
     string KeyTypeStr { get; }
+    string TileSetName { get; }
+
     void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType);
     void LoadTileToStream(int tile, Stream stream, EStreamType eStreamType);
 }

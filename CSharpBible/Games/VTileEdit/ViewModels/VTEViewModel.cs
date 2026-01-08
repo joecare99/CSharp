@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -16,13 +17,16 @@ namespace VTileEdit;
 public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyPropertyChanged
 {
     private IVTEModel _model;
+    private readonly ReadOnlyCollection<char> _characterPalette;
 
     public VTEViewModel(IVTEModel model)
     {
         _model = model;
+        _characterPalette = BuildCharacterPalette();
     }
 
     public IVTEModel Model => _model;
+    public ReadOnlyCollection<char> CharacterPalette => _characterPalette;
 
     [ObservableProperty]
     public partial int? SelectedTile { get; set; }
@@ -163,6 +167,34 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     {
         // Show edit-colors dialog
     }
+
+    private static ReadOnlyCollection<char> BuildCharacterPalette()
+    {
+        var encoding = Encoding.GetEncoding(437);
+        var buffer = new byte[1];
+        var decorative = DecorativeCp437Glyphs;
+        var glyphs = new char[256];
+
+        for (var i = 0; i < glyphs.Length; i++)
+        {
+            buffer[0] = (byte)i;
+            var glyph = encoding.GetChars(buffer)[0];
+            if (i < decorative.Length)
+            {
+                glyph = decorative[i];
+            }
+
+            glyphs[i] = glyph;
+        }
+
+        return Array.AsReadOnly(glyphs);
+    }
+
+    private static readonly char[] DecorativeCp437Glyphs =
+    {
+        ' ', '☺', '☻', '♥', '♦', '♣', '♠', '•', '◘', '○', '◙', '♂', '♀', '♪', '♫', '☼',
+        '►', '◄', '↕', '‼', '¶', '§', '▬', '↨', '↑', '↓', '→', '←', '∟', '↔', '▲', '▼'
+    };
 }
 
 public static class FileDialogFilter
