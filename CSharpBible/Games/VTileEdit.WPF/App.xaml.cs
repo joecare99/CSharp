@@ -1,8 +1,10 @@
-using System;
-using System.Windows;
 using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Text;
+using System.Windows;
 using VTileEdit.Models;
+using VTileEdit.ViewModels;
 using VTileEdit.WPF.ViewModels;
 
 namespace VTileEdit.WPF;
@@ -35,12 +37,15 @@ public partial class App : Application
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="appInstance"/> is <c>null</c>.</exception>
     public static IServiceProvider ConfigureServices(App appInstance)
     {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
         ArgumentNullException.ThrowIfNull(appInstance);
 
         var services = new ServiceCollection();
         services.AddSingleton<Application>(_ => appInstance);
         services.AddSingleton<App>(_ => appInstance);
         services.AddSingleton<IVTEModel,VTEModel>();
+        services.AddTransient<IVTEViewModel,VTEViewModel>();
         services.AddTransient<MainWindowViewModel>();
 
         var provider = services.BuildServiceProvider();
