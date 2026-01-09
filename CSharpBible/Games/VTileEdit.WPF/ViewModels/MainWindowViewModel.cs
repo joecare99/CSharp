@@ -10,13 +10,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using VTileEdit.Models;
 using VTileEdit.ViewModels;
-using CoreViewModels = VTileEdit;
 
 namespace VTileEdit.WPF.ViewModels;
 
@@ -31,10 +31,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     private readonly IVTEModel _persistenceModel;
     private IVTEViewModel _viewModel;
-
-    static MainWindowViewModel()
-    {
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -71,8 +67,6 @@ public partial class MainWindowViewModel : ObservableObject
 
         UndoCommand = new RelayCommand(() => ShowPlaceholderMessage("Undo"));
         RedoCommand = new RelayCommand(() => ShowPlaceholderMessage("Redo"));
-        ApplyTileSetChangesCommand = new RelayCommand(ApplyTileSetChanges, () => TileSetHasPendingChanges);
-        DiscardTileSetChangesCommand = new RelayCommand(DiscardTileSetChanges, () => TileSetHasPendingChanges);
     }
 
     /// <summary>
@@ -105,6 +99,8 @@ public partial class MainWindowViewModel : ObservableObject
     private int tileSetTileHeightInput = DefaultTileHeight;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApplyTileSetChangesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DiscardTileSetChangesCommand))]
     private bool tileSetHasPendingChanges;
 
     [ObservableProperty]
@@ -166,16 +162,7 @@ public partial class MainWindowViewModel : ObservableObject
     /// Gets the redo command placeholder.
     /// </summary>
     public IRelayCommand RedoCommand { get; }
-
-    /// <summary>
-    /// Gets the command applying tile-set metadata updates.
-    /// </summary>
-    public IRelayCommand ApplyTileSetChangesCommand { get; }
-
-    /// <summary>
-    /// Gets the command discarding tile-set metadata changes.
-    /// </summary>
-    public IRelayCommand DiscardTileSetChangesCommand { get; }
+    public bool IsDirty { get; private set; }
 
     [RelayCommand]
     private void New()
@@ -254,15 +241,16 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedTile = tile;
     }
 
-    private static TileViewModel CreateTileViewModel(int id,string DisplayName, SingleTile def)
+    private TileViewModel CreateTileViewModel(int id,string DisplayName, SingleTile def)
     {
-        return BuildTileFrom(id, def.lines, def.colors, DefaultTileWidth, DefaultTileHeight, $"{id} - {DisplayName}");
+        return BuildTileFrom(id, def.lines, def.colors,TileSetTileWidth , TileSetTileHeight, $"{id} - {DisplayName}");
     }
 
     private void SyncTilesFromDocument()
     {
         Tiles.Clear();
-
+        TileSetTileHeight = _persistenceModel.TileSize.Height;
+        TileSetTileWidth = _persistenceModel.TileSize.Width;
         foreach (var keys in _persistenceModel.TileKeys)
         {
             var definition = _persistenceModel.GetTileDef(keys);
@@ -313,6 +301,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedGlyph != null)
         {
             SelectedGlyph.SetForeground(swatch.Color);
+            SetDirty(SelectedTile);
         }
     }
 
@@ -329,6 +318,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedGlyph != null)
         {
             SelectedGlyph.SetBackground(swatch.Color);
+            SetDirty(SelectedTile);
         }
     }
 
@@ -341,8 +331,11 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         SelectedGlyph.Character = character;
+        SetDirty(SelectedTile);
+
     }
 
+    [RelayCommand(CanExecute = nameof(TileSetHasPendingChanges))]
     private void ApplyTileSetChanges()
     {
         var normalizedWidth = NormalizeTileDimension(TileSetTileWidthInput);
@@ -353,6 +346,9 @@ public partial class MainWindowViewModel : ObservableObject
         TileSetTileWidthInput = normalizedWidth;
         TileSetTileHeightInput = normalizedHeight;
 
+        _persistenceModel.SetTileSize(new System.Drawing.Size(normalizedWidth, normalizedHeight));
+        _persistenceModel.SetTileName(normalizedName);
+
         SyncTilesFromDocument();
 
         EvaluateTileSetInputs();
@@ -361,6 +357,7 @@ public partial class MainWindowViewModel : ObservableObject
     private static int NormalizeTileDimension(int value)
         => value <= 0 ? 1 : value;
 
+    [RelayCommand(CanExecute = nameof(TileSetHasPendingChanges))]
     private void DiscardTileSetChanges()
     {
         RestoreTileSetInputs();
@@ -443,7 +440,24 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedGlyph != null)
         {
             SelectedGlyph.SetForeground(value.Color);
+            SetDirty(SelectedTile);
         }
+    }
+
+    async private void SetDirty(TileViewModel? selectedTile)
+    {
+        IsDirty = true;
+        Thread.Sleep(200);
+        if (IsDirty)
+        {
+            await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                IsDirty = false;
+                var (lines, colors) = ExtractTile(selectedTile);
+                _persistenceModel.SetTileDef(selectedTile.ID, lines, colors);
+            });
+        }
+
     }
 
     partial void OnSelectedBackgroundSwatchChanged(ColorSwatchViewModel? value)
@@ -457,6 +471,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedGlyph != null)
         {
             SelectedGlyph.SetBackground(value.Color);
+            SetDirty(SelectedTile);
         }
     }
 
@@ -469,11 +484,6 @@ public partial class MainWindowViewModel : ObservableObject
     partial void OnTileSetTileHeightInputChanged(int value)
         => EvaluateTileSetInputs();
 
-    partial void OnTileSetHasPendingChangesChanged(bool value)
-    {
-        (ApplyTileSetChangesCommand as RelayCommand)?.NotifyCanExecuteChanged();
-        (DiscardTileSetChangesCommand as RelayCommand)?.NotifyCanExecuteChanged();
-    }
 
     private static IEnumerable<FontFamily> GetConsoleFontFamilies()
     {
@@ -573,16 +583,6 @@ public partial class MainWindowViewModel : ObservableObject
     private void SaveToFile(string path)
     {
         var streamType = ResolveStreamType(path);
-
-        _persistenceModel.Clear();
-        _persistenceModel.SetTileSize(new System.Drawing.Size(TileSetTileWidth, TileSetTileHeight));
-
-        var index = 0;
-        foreach (var tile in Tiles)
-        {
-            var (lines, colors) = ExtractTile(tile);
-            _persistenceModel.SetTileDef(tile.ID, lines, colors);
-        }
 
         using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
         _persistenceModel.SaveToStream(fs, streamType);
