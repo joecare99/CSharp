@@ -21,5 +21,6 @@ public interface IVTEModel
     string TileSetName { get; }
 
     void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType);
-    void LoadTileToStream(int tile, Stream stream, EStreamType eStreamType);
+    void LoadTileFromStream(int tile, Stream stream, EStreamType eStreamType);
+    void SetTileName(string name);
 }

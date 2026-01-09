@@ -16,7 +16,7 @@ public class VTEModel : IVTEModel
 
     public string KeyTypeStr => _data.KeyTypeStr;
 
-    public string TileSetName { get; private set; }
+    public string TileSetName { get; private set; } = "";
 
     public void Clear() => _data.Clear();
 
@@ -25,6 +25,7 @@ public class VTEModel : IVTEModel
     public void SaveToStream(Stream stream, EStreamType eStreamType) => _data.WriteToStream(stream, eStreamType);
 
     public void SetTileSize(Size size) => _data.SetTileSize(size);
+    public void SetTileName(string name) => TileSetName = name;
 
     public SingleTile GetTileDef(int? tile) => _data.GetTileDef(tile);
 
@@ -46,12 +47,15 @@ public class VTEModel : IVTEModel
         single.WriteToStream(stream, eStreamType);
     }
 
-    public void LoadTileToStream(int tile, Stream stream, EStreamType eStreamType)
+    public void LoadTileFromStream(int tile, Stream stream, EStreamType eStreamType)
     {
         var single = new VisTileData();
         single.LoadFromStream(stream, eStreamType);
-        var def = single.GetTileDef(tile);
-        var info = single.GetTileInfo(tile);
+        var source = tile;
+        if (single.Keys.Count() == 1)
+            source = single.Keys.First();
+        var def = single.GetTileDef(source);
+        var info = single.GetTileInfo(source);
         _data.SetTileDef(tile, def);
         _data.SetTileInfo(tile, info);
     }

@@ -67,7 +67,51 @@ public class VisTileData : ITileDef
     }
 
     // Allow external editor to change tile-size
-    public void SetTileSize(Size size) => _size = size;
+    public void SetTileSize(Size size)
+    {
+        _size = size;
+        foreach (var entry in _storage)
+        {
+            var tile = entry.Value.Tile;
+            if (tile.lines.Length != size.Height
+                || (tile.lines.Length > 0 && tile.lines[0].Length != size.Width))
+            {
+                var newLines = new string[size.Height];
+                for (var y = 0; y < size.Height; y++)
+                {
+                    if (y < tile.lines.Length)
+                    {
+                        var line = tile.lines[y];
+                        if (line.Length != size.Width)
+                        {
+                            newLines[y] = line.PadRight(size.Width).Substring(0, size.Width);
+                        }
+                        else
+                        {
+                            newLines[y] = line;
+                        }
+                    }
+                    else
+                    {
+                        newLines[y] = new string(' ', size.Width);
+                    }
+                }
+                var newColors = new FullColor[size.Width * size.Height];
+                for (var i = 0; i < newColors.Length; i++)
+                {
+                    if (i < tile.colors.Length)
+                    {
+                        newColors[i] = tile.colors[i];
+                    }
+                    else
+                    {
+                        newColors[i] = new FullColor(ConsoleColor.White, ConsoleColor.Black);
+                    }
+                }
+                entry.Value.Tile = new SingleTile(newLines, newColors);
+            }
+        }
+    }
 
     // Allow external editor to set/replace a tile definition
     public void SetTileDef(int key, SingleTile tile)
@@ -313,7 +357,7 @@ public class VisTileData : ITileDef
                             writer.Write((byte)_size.Width);
                             writer.Write((byte)_size.Height);
                             // Additional Data
-                            var blob = Encoding.UTF8.GetBytes(KeyTypeStr);
+                            var blob = Encoding.UTF8.GetBytes(KeyTypeStr??"");
                             writer.Write(blob.Length);
                             writer.Write(blob);
                         }
@@ -343,7 +387,7 @@ public class VisTileData : ITileDef
                 {
                     using (TextWriter writer = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true))
                     {
-                        (string KeyType, Size sz, List<object[]> Data) data = (KeyTypeStr, _size, _storage.Select(v => new object[] { v.Key, v.Value.Tile }).ToList());
+                        (string KeyType, Size sz, List<object[]> Data) data = (KeyTypeStr??"", _size, _storage.Select(v => new object[] { v.Key, v.Value.Tile }).ToList());
                         var xml = new XmlSerializer(data.GetType(), [typeof(SingleTile), typeof(Size)]);
                         xml.Serialize(writer, data);
                     }
