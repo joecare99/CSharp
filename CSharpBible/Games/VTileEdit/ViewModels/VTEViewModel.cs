@@ -36,7 +36,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
 
     [ObservableProperty]
     public partial FullColor[] CurrentColors { get; set; } = Array.Empty<FullColor>();
-    public Func<Size> DoNewTileDialog { get; set; }
+    public Func<Size>? DoNewTileDialog { get; set; }
 
     public Size TileSize => _model.TileSize;
 
@@ -205,11 +205,11 @@ public static class FileDialogFilter
         foreach (var filter in filters)
         {
             sb.Append(filter.Item1);
-            sb.Append("|");
+            sb.Append('|');
             sb.Append(string.Join(";", filter.Item2.Select(e => $"*.{e}")));
-            sb.Append("|");
+            sb.Append('|');
         }
-        sb.Append("|");
+        sb.Append('|');
         return sb.ToString();
     }
 }

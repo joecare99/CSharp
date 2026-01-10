@@ -28,7 +28,7 @@ public sealed class TileInfo
     /// Gets or sets the arbitrary tag collection associated with the tile.
     /// </summary>
     public IReadOnlyList<string> Tags { get; set; } = Array.Empty<string>();
-    public string Name { get; internal set; }
+    public string Name { get; set; } = "";
 
     /// <summary>
     /// Creates a deep copy of the current instance.

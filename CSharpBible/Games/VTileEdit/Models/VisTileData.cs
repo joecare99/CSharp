@@ -32,7 +32,7 @@ public class VisTileData : ITileDef
     }
 
     private Size _size;
-    private Dictionary<int, TileEntry> _storage = new();
+    private Dictionary<int, TileEntry> _storage = [];
 
     public Size TileSize => _size;
 
@@ -166,7 +166,7 @@ public class VisTileData : ITileDef
     {
         Clear();
         _size = tiledef.TileSize;
-        KeyTypeStr = typeof(T).AssemblyQualifiedName;
+        KeyTypeStr = typeof(T).AssemblyQualifiedName ?? "";
         foreach (T e in Enum.GetValues(typeof(T)))
         {
             var tile = tiledef.GetTileDef(e);
@@ -205,11 +205,11 @@ public class VisTileData : ITileDef
                 {
                     int iSplPos;
 
-                    Dictionary<int, TileEntry>? data = new();
+                    Dictionary<int, TileEntry>? data = [];
                     using (TextReader reader = new StreamReader(stream))
                     {
                         string? line;
-                        Dictionary<string, string> keyValuePairs = new();
+                        Dictionary<string, string> keyValuePairs = [];
                         while ((line = reader.ReadLine()) != null)
                         {
                             var (key, value2) = (line.Substring(0, iSplPos = line.IndexOf(':')), line.Substring(iSplPos + 1));
@@ -217,7 +217,7 @@ public class VisTileData : ITileDef
                         }
                         if (keyValuePairs.TryGetValue("Count", out var value))
                         {
-                            data = new();
+                            data = [];
                             int count = int.Parse(value);
                             if (count > 0)
                             {
@@ -260,7 +260,8 @@ public class VisTileData : ITileDef
                                         }
                                     }
 
-                                    data.Add(keyE.Value, new TileEntry(new SingleTile(lines, colors), TileInfo.Default));
+                                    if (keyE.HasValue)
+                                        data.Add(keyE.Value, new TileEntry(new SingleTile(lines, colors), TileInfo.Default));
 
                                 }
                             }
@@ -272,13 +273,13 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Xml:
                 {
-                    Dictionary<int, TileEntry>? data = new();
+                    Dictionary<int, TileEntry>? data = [];
 
                     using (TextReader reader = new StreamReader(stream))
                     {
                         var xml = new XmlSerializer(typeof((string, Size, List<object[]>)), extraTypes: [typeof(SingleTile)]);
                         var xdata = ((string KeyType, Size sz, List<object[]> Data)?)xml.Deserialize(reader);
-                        KeyTypeStr = xdata.Value.KeyType;
+                        KeyTypeStr = xdata.Value.KeyType??"";
                         _size = xdata.Value.sz;
                         foreach (var itm in xdata.Value.Data)
                         {
@@ -290,9 +291,9 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json:
                 {
-                    Dictionary<int, TileEntry>? data = new();
+                    Dictionary<int, TileEntry>? data = [];
                     var lst = JsonSerializer.Deserialize<Tuple<string, Size, List<Tuple<int, SingleTile>>>>(new StreamReader(stream).ReadToEnd());
-                    KeyTypeStr = lst.Item1;
+                    KeyTypeStr = lst.Item1 ?? "";
                     _size = lst.Item2;
                     foreach (var itm in lst.Item3)
                     {
@@ -304,7 +305,7 @@ public class VisTileData : ITileDef
                 }
             case EStreamType.Json2:
                 {
-                    Dictionary<int, TileEntry>? data = new();
+                    Dictionary<int, TileEntry>? data = [];
                     var payload = JsonSerializer.Deserialize<Json2Data>(new StreamReader(stream).ReadToEnd());
                     if (payload == null)
                     {
@@ -634,6 +635,20 @@ public record struct SingleTile(string[] lines, FullColor[] colors)
             && lines.Zip(other.lines).All((t) => t.First!.Equals(t.Second))
             && colors.Length == other.colors.Length
             && colors.Zip(other.colors).All((t) => t.First!.Equals(t.Second));
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        foreach (var line in lines)
+        {
+            hash.Add(line);
+        }
+        foreach (var color in colors)
+        {
+            hash.Add(color);
+        }
+        return hash.ToHashCode();
+    }
 }
 
 public record struct FullColor(ConsoleColor fgr, ConsoleColor bgr)
@@ -646,6 +661,9 @@ public record struct FullColor(ConsoleColor fgr, ConsoleColor bgr)
 
     public bool Equals(FullColor other)
         => fgr == other.fgr && bgr == other.bgr;
+
+    public override int GetHashCode()
+        => HashCode.Combine(fgr, bgr);
 }
 
 public record Json2Data(
