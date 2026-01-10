@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
 		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Packages.props = Directory.Packages.props
 		Games.props = Games.props
 		Games_net.props = Games_net.props
 		Packages.props = Packages.props
