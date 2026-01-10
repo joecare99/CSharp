@@ -143,8 +143,8 @@ public class BSPMapGenerator : IMapGenerator
         ConnectRooms(node.Right!, map);
 
         // Connect the rooms of the left and right children
-        var leftRoom = GetRoom(node.Left!);
-        var rightRoom = GetRoom(node.Right!);
+        var leftRoom = GetRoom(node.Left!)!.Value;
+        var rightRoom = GetRoom(node.Right!)!.Value;
 
         var start = new Point(leftRoom.X + leftRoom.Width / 2, leftRoom.Y + leftRoom.Height / 2);
         var end = new Point(rightRoom.X + rightRoom.Width / 2, rightRoom.Y + rightRoom.Height / 2);
@@ -152,9 +152,9 @@ public class BSPMapGenerator : IMapGenerator
         CreateCorridor(map, start, end);
     }
 
-    private Rectangle GetRoom(BSPNode node)
+    private Rectangle? GetRoom(BSPNode node)
     {
-        if (node.IsLeaf) return node.Room.Value;
+        if (node.IsLeaf) return node.Room;
         // If not leaf, pick a random room from one of its children to connect to
         return _random.Next(2) == 0 ? GetRoom(node.Left!) : GetRoom(node.Right!);
     }
