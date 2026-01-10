@@ -4,7 +4,8 @@ using System.Drawing;
 using SharpHack.Base.Model;
 using BaseLib.Models.Interfaces;
 using Point = SharpHack.Base.Model.Point;
-using SharpHack.Base.Data; // Resolve ambiguity with System.Drawing.Point
+using SharpHack.Base.Data;
+using SharpHack.Base.Interfaces; // Resolve ambiguity with System.Drawing.Point
 
 namespace SharpHack.LevelGen.BSP;
 
@@ -19,10 +20,10 @@ public class BSPMapGenerator : IMapGenerator
         _random = random;
     }
 
-    public Map Generate(int width, int height, Point? point=null)
+    public IMap Generate(int width, int height, Point? point=null)
     {
         var map = new Map(width, height);
-        
+
         // Initialize with walls
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
@@ -36,6 +37,8 @@ public class BSPMapGenerator : IMapGenerator
           CreateStart(root, map, point.Value);
         CreateRooms(root, map);
         ConnectRooms(root, map);
+
+        PlaceDoors(map);
 
         return map;
     }
@@ -182,6 +185,106 @@ public class BSPMapGenerator : IMapGenerator
             {
                 if (y != end.Y) y += y < end.Y ? 1 : -1;
                 else if (x != end.X) x += x < end.X ? 1 : -1;
+            }
+        }
+    }
+
+    private void PlaceDoors(Map map)
+    {
+        // Room?Corridor: almost always
+        const int roomDoorChancePercent = 99;
+        // Corridor?Corridor junctions: sometimes
+        const int junctionDoorChancePercent = 30;
+
+        // Small helper to count cardinal floor neighbors
+        int CountCardinalFloor(int x, int y)
+        {
+            int c = 0;
+            if (map.IsValid(x + 1, y) && map[x + 1, y].Type == TileType.Floor) c++;
+            if (map.IsValid(x - 1, y) && map[x - 1, y].Type == TileType.Floor) c++;
+            if (map.IsValid(x, y + 1) && map[x, y + 1].Type == TileType.Floor) c++;
+            if (map.IsValid(x, y - 1) && map[x, y - 1].Type == TileType.Floor) c++;
+            return c;
+        }
+
+        bool IsRoomLike(int x, int y)
+        {
+            // Rough heuristic: room interiors tend to have many adjacent floor tiles.
+            int neighbors8 = 0;
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+                    if (map.IsValid(x + dx, y + dy) && map[x + dx, y + dy].Type == TileType.Floor)
+                        neighbors8++;
+                }
+            }
+            return neighbors8 >= 6;
+        }
+
+        bool IsCorridorLike(int x, int y)
+        {
+            // Corridor tiles usually have 1-2 cardinal floor neighbors (dead-end/straight/turn)
+            // and not be room-like.
+            if (IsRoomLike(x, y)) return false;
+            int card = CountCardinalFloor(x, y);
+            return card is 1 or 2 or 3;
+        }
+
+        void TrySetDoor(int x, int y)
+        {
+            if (!map.IsValid(x, y)) return;
+            var t = map[x, y];
+            if (t.Type != TileType.Floor) return;
+            if (t.Creature != null) return;
+            t.Type = TileType.DoorClosed;
+        }
+
+        for (int x = 1; x < map.Width - 1; x++)
+        {
+            for (int y = 1; y < map.Height - 1; y++)
+            {
+                if (map[x, y].Type != TileType.Floor)
+                    continue;
+
+                // Candidate 1: "connector" tile (exactly 2 opposite cardinal neighbors and walls on the other axis)
+                //   e.g. corridor passes through a doorway in a wall.
+                bool east = map[x + 1, y].Type == TileType.Floor;
+                bool west = map[x - 1, y].Type == TileType.Floor;
+                bool north = map[x, y - 1].Type == TileType.Floor;
+                bool south = map[x, y + 1].Type == TileType.Floor;
+
+                bool horizontalPass = east && west && !north && !south;
+                bool verticalPass = north && south && !east && !west;
+
+                if (horizontalPass || verticalPass)
+                {
+                    // Decide whether this looks like room?corridor by checking if one side is room-like.
+                    bool roomSide =
+                        (east && IsRoomLike(x + 1, y)) ||
+                        (west && IsRoomLike(x - 1, y)) ||
+                        (north && IsRoomLike(x, y - 1)) ||
+                        (south && IsRoomLike(x, y + 1));
+
+                    int chance = roomSide ? roomDoorChancePercent : 0;
+                    if (chance > 0 && _random.Next(100) < chance)
+                    {
+                        TrySetDoor(x, y);
+                    }
+
+                    continue;
+                }
+
+                // Candidate 2: corridor junction (3+ cardinal neighbors) -> 30% chance
+                int card = CountCardinalFloor(x, y);
+                if (card >= 3 && IsCorridorLike(x, y))
+                {
+                    if (_random.Next(100) < junctionDoorChancePercent)
+                    {
+                        TrySetDoor(x, y);
+                    }
+                }
             }
         }
     }

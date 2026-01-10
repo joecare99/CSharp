@@ -1,11 +1,12 @@
 using SharpHack.Base.Data;
+using SharpHack.Base.Interfaces;
 using SharpHack.Base.Model;
 
 namespace SharpHack.LevelGen;
 
 public class SimpleMapGenerator : IMapGenerator
 {
-    public Map Generate(int width, int height,Point? point = null)
+    public IMap Generate(int width, int height,Point? point = null)
     {
         var map = new Map(width, height);
 
