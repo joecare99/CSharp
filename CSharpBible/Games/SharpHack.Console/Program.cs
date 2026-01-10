@@ -114,7 +114,7 @@ public class Program
     {
         var ratioX = ((_viewModel.Map.Width - 1) / _miniMap.dSize.Width) + 1;
         var ratioY = ((_viewModel.Map.Height - 1) / _miniMap.dSize.Height) + 1;
-        var mm = _viewModel.miniMap;
+        var mm = _viewModel.MiniMap;
         for (var x = 0; x < _miniMap.dSize.Width; x++)
         {
             for (var y = 0; y < _miniMap.dSize.Height; y++)
