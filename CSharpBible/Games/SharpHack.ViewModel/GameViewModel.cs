@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.ExceptionServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SharpHack.Base.Data;
@@ -28,24 +27,41 @@ public partial class GameViewModel : ObservableObject
     [ObservableProperty]
     private int _level;
 
+    [ObservableProperty]
+    private bool _autoPickup = true;
+
+    [ObservableProperty]
+    private bool _autoEquip = true;
+
     public ObservableCollection<string> Messages { get; } = new();
     public ObservableCollection<Item> Inventory { get; } = new();
 
     public IMap Map => _session.Map;
 
-    public byte[] miniMap => _session.MiniMap;
+    public byte[] MiniMap => _session.MiniMap;
+
     public ICreature Player => _session.Player;
     public IList<ICreature> Enemies => _session.Enemies;
 
     public int ViewWidth { get; private set; }
     public int ViewHeight { get; private set; }
 
+    private byte[]? _lastMiniMap;
+
     public void SetViewSize(int width, int height)
     {
+        if (ViewWidth == width && ViewHeight == height)
+        {
+            return;
+        }
+
         ViewWidth = width;
         ViewHeight = height;
         _displayTiles = new DisplayTile[ViewWidth * ViewHeight];
         UpdateDisplayBuffer();
+
+        OnPropertyChanged(nameof(ViewWidth));
+        OnPropertyChanged(nameof(ViewHeight));
         OnPropertyChanged(nameof(DisplayTiles));
     }
 
@@ -203,15 +219,31 @@ public partial class GameViewModel : ObservableObject
         };
     }
 
+    private void NotifyMiniMapIfChanged()
+    {
+        var current = _session.MiniMap;
+        if (!ReferenceEquals(_lastMiniMap, current))
+        {
+            _lastMiniMap = current;
+            OnPropertyChanged(nameof(MiniMap));
+        }
+    }
+
+    public void RefreshMiniMap()
+    {
+        _lastMiniMap = null;
+        OnPropertyChanged(nameof(MiniMap));
+    }
+
     [RelayCommand]
     public void Move(Direction direction)
     {
-        _session.MovePlayer(direction);
+        _session.MovePlayer(direction, autoPickup: AutoPickup, autoEquip: AutoEquip);
         UpdateStats();
         UpdateInventory();
         UpdateDisplayBuffer();
-        OnPropertyChanged(nameof(Map));
         OnPropertyChanged(nameof(DisplayTiles));
+        NotifyMiniMapIfChanged();
     }
 
     [RelayCommand]
@@ -220,7 +252,7 @@ public partial class GameViewModel : ObservableObject
         _session.Update();
         UpdateStats();
         UpdateDisplayBuffer();
-        OnPropertyChanged(nameof(Map));
         OnPropertyChanged(nameof(DisplayTiles));
+        NotifyMiniMapIfChanged();
     }
 }
