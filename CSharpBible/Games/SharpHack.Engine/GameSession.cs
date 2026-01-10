@@ -246,7 +246,7 @@ public class GameSession
         }
         _fov.Map = Map; // Update FOV map reference
         UpdateFov();
-        Log($"You accend to level {Level}.");
+        Log($"You ascend to level {Level}.");
     }
 
     private void UpdateFov()
