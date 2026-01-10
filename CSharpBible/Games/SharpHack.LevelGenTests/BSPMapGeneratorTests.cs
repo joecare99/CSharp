@@ -70,6 +70,6 @@ public class BSPMapGeneratorTests
         var map = generator.Generate(40, 40 , new Base.Model.Point(x,y));
 
 
-        Assert.IsTrue(map[x, y].Type == TileType.Floor, "Map should contain floor tiles.");
+        Assert.AreEqual(TileType.Floor, map[x, y].Type, "Map should contain floor tiles.");
     }
 }
