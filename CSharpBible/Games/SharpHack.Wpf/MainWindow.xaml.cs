@@ -2,52 +2,48 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using SharpHack.ViewModel;
-using SharpHack.Engine;
-using SharpHack.LevelGen.BSP;
-using SharpHack.Combat;
-using SharpHack.AI;
-using BaseLib.Models;
 using SharpHack.Base.Model;
+using SharpHack.ViewModel;
 using SharpHack.Wpf.Services;
-using System.Collections.Generic; // Add using
+using System.Collections.Generic;
 
 namespace SharpHack.Wpf;
 
 public partial class MainWindow : Window
 {
     private readonly GameViewModel _viewModel;
-    private readonly ITileService _tileService; // Add field
-    private const int TileSize = 32; // Update tile size to 32 for NetHack tiles
+    private readonly ITileService _tileService;
+    private const int TileSize = 32;
+
+    private readonly List<Image> _tileImages = new();
 
     public List<DisplayTile> MapBuffer { get; }
 
-    public MainWindow(GameViewModel viewModel, ITileService tileService) // Inject TileService
+    public MainWindow(GameViewModel viewModel, ITileService tileService)
     {
         InitializeComponent();
-        
+
         _viewModel = viewModel;
         _tileService = tileService;
-        
-        // Load tileset (placeholder path, user should replace or we provide a default)
-        // For now, we assume a file named "tiles.png" in the output directory or use fallback
+
         _tileService.LoadTileset("tiles.png", TileSize);
 
         DataContext = _viewModel;
 
-        // Listen for property changes to redraw map (not ideal for MVVM but simple for Canvas rendering)
-        _viewModel.PropertyChanged += (s, e) => 
+        _viewModel.PropertyChanged += (s, e) =>
         {
             if (e.PropertyName == nameof(GameViewModel.Map))
             {
+                EnsureRenderGrid();
                 DrawMap();
             }
         };
+
         MapBuffer = new List<DisplayTile>(_viewModel.ViewWidth * _viewModel.ViewHeight);
         for (var i = 0; i < _viewModel.ViewWidth * _viewModel.ViewHeight; i++)
             MapBuffer.Add(DisplayTile.Empty);
-        // Initial Draw
+
+        EnsureRenderGrid();
         DrawMap();
 
         KeyDown += OnKeyDown;
@@ -67,46 +63,68 @@ public partial class MainWindow : Window
             case Key.NumPad3: _viewModel.Move(Direction.SouthEast); break;
             case Key.NumPad5: _viewModel.Wait(); break;
         }
-        DrawMap(); // Redraw after move
+        DrawMap();
     }
 
+    private void EnsureRenderGrid()
+    {
+        MapCanvas.Width = _viewModel.ViewWidth * TileSize;
+        MapCanvas.Height = _viewModel.ViewHeight * TileSize;
+
+        int required = _viewModel.ViewWidth * _viewModel.ViewHeight;
+        if (_tileImages.Count == required)
+        {
+            return;
+        }
+
+        MapCanvas.Children.Clear();
+        _tileImages.Clear();
+
+        for (int y = 0; y < _viewModel.ViewHeight; y++)
+        {
+            for (int x = 0; x < _viewModel.ViewWidth; x++)
+            {
+                var img = new Image
+                {
+                    Width = TileSize,
+                    Height = TileSize,
+                    SnapsToDevicePixels = true
+                };
+
+                Canvas.SetLeft(img, x * TileSize);
+                Canvas.SetTop(img, y * TileSize);
+
+                _tileImages.Add(img);
+                MapCanvas.Children.Add(img);
+            }
+        }
+
+        MapBuffer.Clear();
+        for (var i = 0; i < required; i++)
+        {
+            MapBuffer.Add(DisplayTile.Empty);
+        }
+    }
 
     private void DrawMap()
     {
-        var map = _viewModel.Map;
-        var player = _viewModel.Player;
-
-        // Adjust Canvas size
-        MapCanvas.Width = _viewModel.ViewWidth * TileSize;
-        MapCanvas.Height = _viewModel.ViewHeight * TileSize;
+        EnsureRenderGrid();
 
         for (int x = 0; x < _viewModel.ViewWidth; x++)
         {
             for (int y = 0; y < _viewModel.ViewHeight; y++)
             {
-                var ix = y*_viewModel.ViewWidth+x;
-                if (MapBuffer[ix] != _viewModel.DisplayTiles[ix])
+                var ix = y * _viewModel.ViewWidth + x;
+                var tileType = _viewModel.DisplayTiles[ix];
+
+                if (MapBuffer[ix] == tileType)
                 {
-                    MapBuffer[ix] = _viewModel.DisplayTiles[ix];
-                    var tileType = _viewModel.DisplayTiles[ix];
-                    var tileImage = _tileService.GetTile(tileType);
-                    DrawImage(tileImage, x, y);
+                    continue;
                 }
+
+                MapBuffer[ix] = tileType;
+                _tileImages[ix].Source = _tileService.GetTile(tileType);
             }
         }
-    }
-
-    private void DrawImage(ImageSource source, int x, int y, double opacity = 1.0)
-    {
-        Image img = new Image
-        {
-            Source = source,
-            Width = TileSize,
-            Height = TileSize,
-            Opacity = opacity
-        };
-        Canvas.SetLeft(img, x * TileSize);
-        Canvas.SetTop(img, y * TileSize);
-        MapCanvas.Children.Add(img);
     }
 }
