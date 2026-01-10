@@ -5,36 +5,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SharpHack.Wpf"
         xmlns:vm="clr-namespace:SharpHack.ViewModel;assembly=SharpHack.ViewModel"
+        xmlns:controls="clr-namespace:SharpHack.Wpf.Controls"
+        xmlns:baseModel="clr-namespace:SharpHack.Base.Model;assembly=SharpHack.Base"
         mc:Ignorable="d"
         Title="SharpHack WPF" Height="600" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:GameViewModel}">
-    
+
+    <Window.InputBindings>
+        <KeyBinding Key="Up" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.North}" />
+        <KeyBinding Key="Down" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.South}" />
+        <KeyBinding Key="Left" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.West}" />
+        <KeyBinding Key="Right" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.East}" />
+
+        <KeyBinding Key="NumPad7" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.NorthWest}" />
+        <KeyBinding Key="NumPad9" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.NorthEast}" />
+        <KeyBinding Key="NumPad1" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthWest}" />
+        <KeyBinding Key="NumPad3" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthEast}" />
+
+        <KeyBinding Key="NumPad5" Command="{Binding WaitCommand}" />
+    </Window.InputBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="260" />
+        </Grid.ColumnDefinitions>
 
-        <!-- Map View (Placeholder for now, implementing a full tile renderer in XAML is complex without a custom control or heavy ItemsControl usage) -->
-        <!-- For simplicity in this step, we'll use a Viewbox with a Canvas or UniformGrid, but binding 2D array is tricky. -->
-        <!-- Let's use a simple text block for status to verify connectivity first, then we can do a custom render control -->
-        <Viewbox Grid.Row="0" Stretch="Uniform">
-            <Canvas Name="MapCanvas" Width="800" Height="600" Background="Black"/>
-        </Viewbox>
+        <controls:MapRendererControl Grid.Row="0" Grid.Column="0"
+                                    DisplayTiles="{Binding DisplayTiles}"
+                                    ViewWidth="{Binding ViewWidth}"
+                                    ViewHeight="{Binding ViewHeight}"
+                                    TileService="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=TileService}" />
 
-        <!-- Stats -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5" Orientation="Vertical">
+            <controls:MiniMapControl MiniMap="{Binding MiniMap}"
+                                    MapWidth="{Binding Map.Width}"
+                                    MapHeight="{Binding Map.Height}"
+                                    Margin="0,0,0,8" />
+
+            <controls:InventoryControl />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="5">
             <TextBlock Text="HP: " FontWeight="Bold" />
             <TextBlock Text="{Binding HP}" />
             <TextBlock Text="/" />
             <TextBlock Text="{Binding MaxHP}" Margin="0,0,10,0"/>
-            
+
             <TextBlock Text="Level: " FontWeight="Bold" />
             <TextBlock Text="{Binding Level}" />
         </StackPanel>
 
-        <!-- Messages -->
-        <ListBox Grid.Row="2" Height="100" ItemsSource="{Binding Messages}" Background="LightGray" />
+        <ListBox Grid.Row="2" Grid.ColumnSpan="2" Height="100" ItemsSource="{Binding Messages}" Background="LightGray" />
     </Grid>
 </Window>
