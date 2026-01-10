@@ -13,7 +13,7 @@ public sealed class WidthToHeightConverterTests
     {
         var converter = new WidthToHeightConverter();
 
-        var result = converter.Convert(10d, typeof(double), parameter: null, culture: CultureInfo.InvariantCulture);
+        var result = converter.Convert(10d, typeof(double), parameter: null!, culture: CultureInfo.InvariantCulture);
 
         Assert.AreEqual(20d, result);
     }
@@ -23,7 +23,7 @@ public sealed class WidthToHeightConverterTests
     {
         var converter = new WidthToHeightConverter { Ratio = 1.5d };
 
-        var result = converter.Convert(8d, typeof(double), parameter: null, culture: CultureInfo.InvariantCulture);
+        var result = converter.Convert(8d, typeof(double), parameter: null!, culture: CultureInfo.InvariantCulture);
 
         Assert.AreEqual(12d, result);
     }
@@ -37,7 +37,7 @@ public sealed class WidthToHeightConverterTests
     {
         var converter = new WidthToHeightConverter();
 
-        var result = converter.Convert(value, typeof(double), parameter: null, culture: CultureInfo.InvariantCulture);
+        var result = converter.Convert(value, typeof(double), parameter: null!, culture: CultureInfo.InvariantCulture);
 
         Assert.AreEqual(0d, result);
     }
@@ -47,7 +47,7 @@ public sealed class WidthToHeightConverterTests
     {
         var converter = new WidthToHeightConverter();
 
-        var result = converter.ConvertBack(5d, typeof(double), parameter: null, culture: CultureInfo.InvariantCulture);
+        var result = converter.ConvertBack(5d, typeof(double), parameter: null!, culture: CultureInfo.InvariantCulture);
 
         Assert.AreEqual(Binding.DoNothing, result);
     }

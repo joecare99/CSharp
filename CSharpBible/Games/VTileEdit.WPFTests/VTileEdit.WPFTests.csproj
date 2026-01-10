@@ -1,6 +1,5 @@
 ﻿<Project>
 	<Import Project="..\Games_net.props" />
-	<Import Project="..\Packages.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net8.0-windows</TargetFrameworks>
