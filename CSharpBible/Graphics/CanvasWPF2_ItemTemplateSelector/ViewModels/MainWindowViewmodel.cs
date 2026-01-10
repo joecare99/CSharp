@@ -15,15 +15,15 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 	{
         #region Properties
         #region private Propeties
-        private Random r = new Random();
+        private readonly Random r = new Random();
 
 		private enum SelectedShape { None, Circle, Rectangle }
-		private SelectedShape Shape1 = SelectedShape.None;
+		private readonly SelectedShape Shape1 = SelectedShape.None;
 
 		private Task? t;
 
-		private object? _editShape = null; // Wird mit einem Leeren Shape initialisiert
-		private ObservableCollection<IVisualObject> _shapes = new ObservableCollection<IVisualObject>();
+		private readonly object? _editShape = null; // Wird mit einem Leeren Shape initialisiert
+		private ObservableCollection<IVisualObject> _shapes = [];
 		private bool xRunning;
 		private string _dataText="";
 		#endregion
