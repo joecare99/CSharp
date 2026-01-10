@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using SharpHack.ViewModel;
 using SharpHack.Wpf.Services;
@@ -49,6 +50,10 @@ public partial class MapRendererControl : UserControl
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) => Render();
         Unloaded += (_, _) => UnhookFromDataContext();
+
+        MapCanvas.MouseLeftButtonUp += OnMapClick;
+        MapCanvas.MouseMove += OnMapMouseMove;
+        MapCanvas.MouseLeave += (_, _) => Mouse.OverrideCursor = null;
     }
 
     public IReadOnlyList<DisplayTile>? DisplayTiles
@@ -183,5 +188,92 @@ public partial class MapRendererControl : UserControl
             _buffer[i] = tile;
             _tileImages[i].Source = TileService.GetTile(tile);
         }
+    }
+
+    private void OnMapClick(object sender, MouseButtonEventArgs e)
+    {
+        if (ViewWidth <= 0 || ViewHeight <= 0)
+        {
+            return;
+        }
+
+        var pos = e.GetPosition(MapCanvas);
+        int x = (int)(pos.X / TileSize);
+        int y = (int)(pos.Y / TileSize);
+
+        if (x < 0 || y < 0 || x >= ViewWidth || y >= ViewHeight)
+        {
+            return;
+        }
+
+        if (DataContext is not GameViewModel vm)
+        {
+            return;
+        }
+
+        var p = new SharpHack.Base.Model.Point(x, y);
+        var action = vm.GetHoverActionForView(p);
+
+        if (action == GameViewModel.TileHoverAction.ToggleDoor)
+        {
+            if (vm.ToggleDoorAtViewCommand.CanExecute(p))
+            {
+                vm.ToggleDoorAtViewCommand.Execute(p);
+            }
+            return;
+        }
+
+        if (action == GameViewModel.TileHoverAction.Pickup)
+        {
+            if (vm.PickupAtViewCommand.CanExecute(p))
+            {
+                vm.PickupAtViewCommand.Execute(p);
+            }
+            return;
+        }
+
+        if (action == GameViewModel.TileHoverAction.GoTo)
+        {
+            if (vm.GoToViewCommand.CanExecute(p))
+            {
+                vm.GoToViewCommand.Execute(p);
+            }
+        }
+    }
+
+    private void OnMapMouseMove(object sender, MouseEventArgs e)
+    {
+        if (ViewWidth <= 0 || ViewHeight <= 0)
+        {
+            Mouse.OverrideCursor = null;
+            return;
+        }
+
+        if (DataContext is not GameViewModel vm)
+        {
+            Mouse.OverrideCursor = null;
+            return;
+        }
+
+        var pos = e.GetPosition(MapCanvas);
+        int x = (int)(pos.X / TileSize);
+        int y = (int)(pos.Y / TileSize);
+
+        if (x < 0 || y < 0 || x >= ViewWidth || y >= ViewHeight)
+        {
+            Mouse.OverrideCursor = null;
+            return;
+        }
+
+        var p = new SharpHack.Base.Model.Point(x, y);
+        var action = vm.GetHoverActionForView(p);
+
+        Mouse.OverrideCursor = action switch
+        {
+            GameViewModel.TileHoverAction.ToggleDoor => Cursors.SizeWE,
+            GameViewModel.TileHoverAction.GoTo => Cursors.Hand,
+            GameViewModel.TileHoverAction.Pickup => Cursors.Hand,
+            _ => Cursors.No
+        };
     }
 }
