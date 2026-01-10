@@ -1,8 +1,9 @@
+using System.Linq;
 using SharpHack.Base.Model;
 using SharpHack.LevelGen;
 using BaseLib.Models.Interfaces;
 using SharpHack.Base.Interfaces;
-using SharpHack.Base.Data; // Add using
+using SharpHack.Base.Data;
 
 namespace SharpHack.Engine;
 
@@ -14,6 +15,13 @@ public class GameSession
     public bool IsRunning { get; private set; } = true;
     public int Level { get; private set; } = 1; // Add Level property
 
+#if _DEBUG
+    private const int Width = 30;
+    private const int Height = 20;
+#else
+    private const int Width = 80;
+    private const int Height = 50;
+#endif
     private readonly IMapGenerator _mapGenerator;
     private readonly IRandom _random;
     private readonly ICombatSystem _combatSystem;
@@ -74,10 +82,78 @@ public class GameSession
         UpdateFov();
     }
 
+    private static IEnumerable<Point> GetAdjacent8(Point p)
+    {
+        yield return new Point(p.X - 1, p.Y - 1);
+        yield return new Point(p.X, p.Y - 1);
+        yield return new Point(p.X + 1, p.Y - 1);
+        yield return new Point(p.X - 1, p.Y);
+        yield return new Point(p.X + 1, p.Y);
+        yield return new Point(p.X - 1, p.Y + 1);
+        yield return new Point(p.X, p.Y + 1);
+        yield return new Point(p.X + 1, p.Y + 1);
+    }
+
+    private void EnsureEntryAreaWalkable(Point entry)
+    {
+        if (!Map.IsValid(entry))
+        {
+            return;
+        }
+
+        var entryTile = Map[entry];
+        if (entryTile == null)
+        {
+            return;
+        }
+
+        if (entryTile.Type == TileType.Wall)
+        {
+            entryTile.Type = TileType.Floor;
+        }
+
+        bool hasExit = GetAdjacent8(entry).Any(p =>
+        {
+            if (!Map.IsValid(p))
+            {
+                return false;
+            }
+
+            var t = Map[p];
+            return t != null && t.IsWalkable;
+        });
+
+        if (hasExit)
+        {
+            return;
+        }
+
+        foreach (var p in GetAdjacent8(entry))
+        {
+            if (!Map.IsValid(p))
+            {
+                continue;
+            }
+
+            var t = Map[p];
+            if (t == null)
+            {
+                continue;
+            }
+
+            if (t.Type == TileType.Wall)
+            {
+                t.Type = TileType.Floor;
+                break;
+            }
+        }
+    }
+
     private void Initialize(Point? startPosition = null)
     {
-        Map = _mapGenerator.Generate(80, 50);
-        if (Player == null) // Only create player if not exists (preserve stats between levels)
+        Map = _mapGenerator.Generate(Width, Height, startPosition);
+
+        if (Player == null)
         {
             Player = new Creature
             {
@@ -95,12 +171,7 @@ public class GameSession
         if (startPosition.HasValue)
         {
             Player.Position = startPosition.Value;
-            // Ensure the start position is walkable (force floor if wall)
-            if (Map[Player.Position].Type == TileType.Wall)
-            {
-                Map[Player.Position].Type = TileType.Floor;
-            }
-            // Place stairs up
+            EnsureEntryAreaWalkable(Player.Position);
             Map[Player.Position].Type = TileType.StairsUp;
         }
         else
@@ -210,28 +281,26 @@ public class GameSession
         }
     }
 
-    private void NextLevel()
+    private void NextLevel(Point entryPosition)
     {
-        var currentPos = Player.Position;
         _persistence.SaveLevel(Level, Map, Player, Enemies);
         Level++;
         if (_persistence.LoadLevel(Level, out var _Map, out var _Enemies))
-        { 
+        {
             Map = _Map;
             Enemies = _Enemies;
         }
         else
         {
             Enemies.Clear();
-            Initialize(currentPos); // Pass current position as start for next level
+            Initialize(entryPosition);
         }
-        _fov.Map = Map; // Update FOV map reference
+        _fov.Map = Map;
         UpdateFov();
         Log($"You descend to level {Level}.");
     }
-    private void PrevLevel()
+    private void PrevLevel(Point entryPosition)
     {
-        var currentPos = Player.Position;
         _persistence.SaveLevel(Level, Map, Player, Enemies);
         Level--;
         if (_persistence.LoadLevel(Level, out var _Map, out var _Enemies))
@@ -242,9 +311,9 @@ public class GameSession
         else
         {
             Enemies.Clear();
-            Initialize(currentPos); // Pass current position as start for next level
+            Initialize(entryPosition);
         }
-        _fov.Map = Map; // Update FOV map reference
+        _fov.Map = Map;
         UpdateFov();
         Log($"You ascend to level {Level}.");
     }
@@ -280,7 +349,7 @@ public class GameSession
         }
     }
 
-    public void MovePlayer(Direction direction)
+    public void MovePlayer(Direction direction, bool autoPickup = true, bool autoEquip = true)
     {
         var newPos = Player.Position;
         switch (direction)
@@ -297,49 +366,46 @@ public class GameSession
 
         if (Map.IsValid(newPos) && Map[newPos].IsWalkable)
         {
-            // Check for creature
             if (Map[newPos].Creature == null)
             {
                 Player.Position = newPos;
-                
-                // Check for items
+
                 if (Map[newPos].Items.Count > 0)
                 {
                     foreach (var item in Map[newPos].Items.ToList())
                     {
                         Log($"You see a {item.Name}.");
-                        // Auto-pickup for now
-                        PickUpItem(Player, item);
+                        if (autoPickup)
+                        {
+                            PickUpItem(Player, item, autoEquip);
+                        }
                     }
                 }
 
-                // Check for stairs
                 if (Map[newPos].Type == TileType.StairsDown)
                 {
-                    NextLevel();
-                    return; // Skip update after level change to avoid immediate enemy move on new level
+                    NextLevel(newPos);
+                    return;
                 }
 
-                // Check for stairs
                 if (Map[newPos].Type == TileType.StairsUp)
                 {
-                    PrevLevel();
-                    return; // Skip update after level change to avoid immediate enemy move on new level
+                    PrevLevel(newPos);
+                    return;
                 }
 
                 UpdateFov();
-                Update(); // Enemy turn after player moves
+                Update();
             }
             else
             {
                 Attack(Player, Map[newPos].Creature!);
-                Update(); // Enemy turn after player attacks
+                Update();
             }
         }
     }
 
-
-    public void PickUpItem(ICreature creature, Item item)
+    public void PickUpItem(ICreature creature, Item item, bool autoEquip = true)
     {
         if (Map[item.Position].Items.Contains(item))
         {
@@ -347,7 +413,11 @@ public class GameSession
             creature.Inventory.Add(item);
             Log($"{creature.Name} picks up {item.Name}.");
 
-            // Auto-equip if slot is empty
+            if (!autoEquip)
+            {
+                return;
+            }
+
             if (item is Weapon w && creature.MainHand == null)
             {
                 creature.MainHand = w;
