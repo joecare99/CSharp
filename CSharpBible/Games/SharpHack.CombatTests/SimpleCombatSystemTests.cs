@@ -19,8 +19,8 @@ public class SimpleCombatSystemTests
         system.Attack(attacker, defender, msg => messages.Add(msg));
 
         Assert.AreEqual(12, defender.HP); // 20 - (10 - 2) = 12
-        Assert.IsTrue(messages.Count > 0);
-        Assert.IsTrue(messages[0].Contains("8 damage"));
+        Assert.IsNotEmpty(messages);
+        Assert.Contains("8 damage", messages[0]);
     }
 
     [TestMethod]
@@ -33,7 +33,7 @@ public class SimpleCombatSystemTests
 
         system.Attack(attacker, defender, msg => messages.Add(msg));
 
-        Assert.IsTrue(defender.HP <= 0);
+        Assert.IsLessThanOrEqualTo(0, defender.HP);
         Assert.IsTrue(messages.Exists(m => m.Contains("dies")));
     }
 }
