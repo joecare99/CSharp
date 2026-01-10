@@ -19,7 +19,7 @@ public interface IVTEViewModel : INotifyPropertyChanged
     int? SelectedTile { get; set; }
     string[] CurrentLines { get; set; }
     FullColor[] CurrentColors { get; set; }
-    Func<Size> DoNewTileDialog { get; set; }
+    Func<Size>? DoNewTileDialog { get; set; }
     Size TileSize { get; }
     ReadOnlyCollection<char> CharacterPalette { get; }
 
