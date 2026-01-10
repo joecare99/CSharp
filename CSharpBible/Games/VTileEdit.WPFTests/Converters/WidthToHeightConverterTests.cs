@@ -28,7 +28,7 @@ public sealed class WidthToHeightConverterTests
         Assert.AreEqual(12d, result);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(double.NaN)]
     [DataRow(double.PositiveInfinity)]
     [DataRow("not-a-double")]
