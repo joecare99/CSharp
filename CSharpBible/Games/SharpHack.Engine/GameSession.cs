@@ -96,6 +96,11 @@ public class GameSession
 
     private void EnsureEntryAreaWalkable(Point entry)
     {
+        if (Map == null)
+        {
+            return;
+        }
+
         if (!Map.IsValid(entry))
         {
             return;
@@ -172,7 +177,12 @@ public class GameSession
         {
             Player.Position = startPosition.Value;
             EnsureEntryAreaWalkable(Player.Position);
-            Map[Player.Position].Type = TileType.StairsUp;
+
+            var st = Map[Player.Position];
+            if (st != null)
+            {
+                st.Type = TileType.StairsUp;
+            }
         }
         else
         {
@@ -442,5 +452,54 @@ public class GameSession
             Enemies.Remove(defender);
             Map[defender.Position].Creature = null;
         }
+    }
+
+    public bool ToggleDoorAt(Point position)
+    {
+        if (!Map.IsValid(position))
+        {
+            return false;
+        }
+
+        // Only allow if adjacent (8-neighborhood)
+        if (Math.Abs(position.X - Player.Position.X) > 1 || Math.Abs(position.Y - Player.Position.Y) > 1)
+        {
+            return false;
+        }
+
+        var tile = Map[position];
+        if (tile == null)
+        {
+            return false;
+        }
+
+        if (!tile.IsExplored)
+        {
+            return false;
+        }
+
+        if (tile.Type == TileType.DoorClosed)
+        {
+            tile.Type = TileType.DoorOpen;
+            UpdateFov();
+            Log("You open the door.");
+            return true;
+        }
+
+        if (tile.Type == TileType.DoorOpen)
+        {
+            // Don't close on creatures; basic safety
+            if (tile.Creature != null)
+            {
+                return false;
+            }
+
+            tile.Type = TileType.DoorClosed;
+            UpdateFov();
+            Log("You close the door.");
+            return true;
+        }
+
+        return false;
     }
 }
