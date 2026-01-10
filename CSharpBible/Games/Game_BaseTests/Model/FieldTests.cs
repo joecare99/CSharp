@@ -154,7 +154,7 @@ internal class TestParent : IHasChildren<Field<TestItem>>, IPlacedObject
     /// <summary>
     /// The items
     /// </summary>
-    public List<Field<TestItem>> _items = new List<Field<TestItem>>();
+    public List<Field<TestItem>> _items = [];
 
     /// <summary>
     /// The log operation
@@ -354,7 +354,7 @@ public class FieldTests
         Assert.IsTrue(testField.AddItem(item));
         Assert.AreEqual(testField.GetPlace(), item.GetPlace());
         Assert.AreEqual(testField, item.GetParent());
-        Assert.IsTrue(testField.Items.Contains(item));
+        Assert.Contains(item, testField.Items);
         Assert.IsFalse(testField.AddItem(item));
         Assert.AreEqual(cExpResult, ResultData);
     }
@@ -365,7 +365,7 @@ public class FieldTests
     /// <param name="sItems">The s items.</param>
     /// <param name="cExpr">The c expr.</param>
     /// <param name="sExpResult">The s exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("Apple", new bool[] { true }, new string[] { cExpResult1 })]
     [DataRow("Apple;Pear", new bool[] { true, true }, new string[] { cExpResult2 })]
     [DataRow("Apple;Apple", new bool[] { true, false }, new string[] { cExpResult1 })]
@@ -376,7 +376,7 @@ public class FieldTests
         {
             var item = new TestItem() { Name = sItem };
             Assert.AreEqual(cExpr[i], testField.AddItem(item));
-            Assert.IsTrue(testField.Items.Contains(item));
+            Assert.Contains(item, testField.Items);
             if (cExpr[i])
             {
                 Assert.AreEqual(testField.GetPlace(), item.GetPlace());
@@ -385,7 +385,7 @@ public class FieldTests
             else
             {
                 Assert.AreEqual(Point.Empty, item.GetPlace());
-                Assert.AreEqual(null, item.GetParent());
+                Assert.IsNull(item.GetParent());
             }
             Assert.IsFalse(testField.AddItem(item));
             i++;
@@ -399,7 +399,7 @@ public class FieldTests
     /// <param name="sData">The s data.</param>
     /// <param name="iExpCount">The i exp count.</param>
     /// <param name="sExpResult">The s exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(cExpResultEmpty, 0, new string[] { cExpResultEmpty })]
     [DataRow("Apple",1, new string[] { cExpResult1 })]
     [DataRow("Apple;Apple", 1, new string[] { cExpResult1 })]
@@ -422,7 +422,7 @@ public class FieldTests
     /// <param name="axExpSuc">The ax exp suc.</param>
     /// <param name="iExpCount">The i exp count.</param>
     /// <param name="sExpResult">The s exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(cExpResultEmpty, "Apple",new bool[] { false }, 0, new string[] { cExpResultEmpty })]
     [DataRow("Apple", "Apple",new bool[] { true }, 0, new string[] { cExpResRemApple })]
     [DataRow("Apple", "Pear",new bool[] { false }, 1, new string[] { cExpResultEmpty })]
@@ -454,7 +454,7 @@ public class FieldTests
     /// </summary>
     /// <param name="Name">The name.</param>
     /// <param name="p">The p.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0,9",new int[] { 0, 9 })]
     [DataRow("0,0", new int[] { 0, 0 })]
     [DataRow("0,-1", new int[] { 0, -1 })]
@@ -473,7 +473,7 @@ public class FieldTests
     /// <param name="sData">The s data.</param>
     /// <param name="p">The p.</param>
     /// <param name="sExpResult">The s exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", new int[] { 3, 2 }, new string[] { "DataChange: Field({X=3,Y=2},I:0)\to:{X=7,Y=5}\tn:{X=3,Y=2}\tc:SetPlaceTest1\r\n" })]
     [DataRow("Apple", new int[] { 0, 9 }, new string[] { "Place changed: TestItem(Apple,{X=0,Y=9})\to:{X=7,Y=5}\tn:{X=0,Y=9}\tc:Place\r\nDataChange: Field({X=0,Y=9},I:1)\to:{X=7,Y=5}\tn:{X=0,Y=9}\tc:SetPlaceTest1\r\n" })]
     [DataRow("Apple;Pear", new int[] { 0, 0 }, new string[] { "Place changed: TestItem(Apple,{X=0,Y=0})\to:{X=7,Y=5}\tn:{X=0,Y=0}\tc:Place\r\nPlace changed: TestItem(Pear,{X=0,Y=0})\to:{X=7,Y=5}\tn:{X=0,Y=0}\tc:Place\r\nDataChange: Field({X=0,Y=0},I:2)\to:{X=7,Y=5}\tn:{X=0,Y=0}\tc:SetPlaceTest1\r\n" })]
@@ -507,7 +507,7 @@ public class FieldTests
     /// <param name="sData">The s data.</param>
     /// <param name="iExpCount">The i exp count.</param>
     /// <param name="o">The o.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("", 0, new string[] { cExpResultEmpty })]
     [DataRow("Apple", 1, new string[] { cExpResultEmpty })]
     [DataRow("Apple;Pear", 2, new string[] { cExpResultEmpty })]
@@ -527,7 +527,7 @@ public class FieldTests
     /// <param name="sData">The s data.</param>
     /// <param name="p">The p.</param>
     /// <param name="sExpResult">The s exp result.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0,9", "", new int[] { 0, 9 }, new string[] { "DataChange: Field({X=0,Y=9},I:0)\to:{X=7,Y=5}\tn:{X=0,Y=9}\tc:Place\r\nDataChange: Field({X=0,Y=9},I:0)\to:\tn:TestParent(0,9,{X=0,Y=9})\tc:SetParentTest\r\n" })]
     [DataRow("0,0", "Apple", new int[] { 0, 0 }, new string[] { "Place changed: TestItem(Apple,{X=0,Y=0})\to:{X=7,Y=5}\tn:{X=0,Y=0}\tc:Place\r\nDataChange: Field({X=0,Y=0},I:1)\to:{X=7,Y=5}\tn:{X=0,Y=0}\tc:Place\r\nDataChange: Field({X=0,Y=0},I:1)\to:\tn:TestParent(0,0,{X=0,Y=0})\tc:SetParentTest\r\n" })]
     [DataRow("0,-1", "Apple;Pear", new int[] { 0, -1 }, new string[] { "Place changed: TestItem(Apple,{X=0,Y=-1})\to:{X=7,Y=5}\tn:{X=0,Y=-1}\tc:Place\r\nPlace changed: TestItem(Pear,{X=0,Y=-1})\to:{X=7,Y=5}\tn:{X=0,Y=-1}\tc:Place\r\nDataChange: Field({X=0,Y=-1},I:2)\to:{X=7,Y=5}\tn:{X=0,Y=-1}\tc:Place\r\nDataChange: Field({X=0,Y=-1},I:2)\to:\tn:TestParent(0,-1,{X=0,Y=-1})\tc:SetParentTest\r\n" })]
@@ -558,7 +558,7 @@ public class FieldTests
     /// <param name="name">The name.</param>
     /// <param name="sData">The s data.</param>
     /// <param name="p">The p.</param>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow("0,9", "", new int[] { 0, 9 })]
     [DataRow("0,0", "Apple", new int[] { 0, 0 })]
     [DataRow("0,-1", "Apple;Pear", new int[] { 0, -1 })]

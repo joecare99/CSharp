@@ -1,0 +1,6 @@
+<Project>
+  <Target Name="Any">
+      <Message Text="$(TargetFramework) in the project file $(MSBuildProjectName)" />
+  </Target>
+  <Import Project="Packages.props" />
+</Project>
