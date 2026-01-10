@@ -58,12 +58,12 @@ namespace CanvasWPF_CT.ViewModel
 		/// The rectangles
 		/// </summary>
 		[ObservableProperty]
-		private ObservableCollection<ObservablePoint> _rectangles = new ObservableCollection<ObservablePoint>();
+		private ObservableCollection<ObservablePoint> _rectangles = [];
         /// <summary>
         /// The circles
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<ObservablePoint> _circles = new ObservableCollection<ObservablePoint>();
+        private ObservableCollection<ObservablePoint> _circles = [];
 		/// <summary>
 		/// The x running
 		/// </summary>
