@@ -29,6 +29,7 @@ public class GameSessionPrevLevelTests
         map0[1, 1].Type = TileType.Wall;
 
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map1, map0);
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<Point>()).Returns(map1, map0);
         random.Next(Arg.Any<int>()).Returns(0);
 
         var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
@@ -59,6 +60,7 @@ public class GameSessionPrevLevelTests
         map0[1, 1].Type = TileType.Floor;
 
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map1, map0);
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<Point>()).Returns(map1, map0);
         random.Next(Arg.Any<int>()).Returns(0);
 
         var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);

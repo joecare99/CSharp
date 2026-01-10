@@ -8,6 +8,7 @@ using BaseLib.Models.Interfaces;
 using SharpHack.Base.Interfaces;
 using System.Linq;
 using SharpHack.Base.Data;
+using NSubstitute.Core.Arguments;
 
 namespace SharpHack.EngineTests;
 
@@ -26,6 +27,7 @@ public class GameSessionTests
         var map = new Map(10, 10);
         map[1, 1].Type = TileType.Floor;
         map[5, 5].Type = TileType.Floor;
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>(),Arg.Any<Point>()).Returns(map);
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
         random.Next(Arg.Any<int>()).Returns(5);
 
@@ -211,6 +213,7 @@ public class GameSessionTests
         map2[1, 1].Type = TileType.Wall;
 
         mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map1, map2);
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>(),Arg.Any<Point>()).Returns(map1, map2);
         random.Next(Arg.Any<int>()).Returns(0);
 
         var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
