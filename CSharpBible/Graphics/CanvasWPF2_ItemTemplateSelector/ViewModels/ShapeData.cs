@@ -71,12 +71,12 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
 		/// Gets or sets the mouse left button down.
 		/// </summary>
 		/// <value>The mouse left button down.</value>
-		public DelegateCommand<object> MouseLeftButtonDown { get; set; } = default;
+		public DelegateCommand<object>? MouseLeftButtonDown { get; set; } = default;
 		/// <summary>
 		/// Gets or sets the mouse hover.
 		/// </summary>
 		/// <value>The mouse hover.</value>
-		public DelegateCommand<object> MouseHover { get; set; } = default;
+		public DelegateCommand<object>? MouseHover { get; set; } = default;
 		#endregion
 
 		#region Methods
