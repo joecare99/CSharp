@@ -10,7 +10,7 @@ public class CommandControlTests : TestBase
 {
     private class TestCmdCtrl : CommandControl { public bool Clicked; public override void Click(){ base.Click(); Clicked = true; } }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
     public void Command_Set_Attaches_And_Evaluates_CanExecute(bool initialCanExec)

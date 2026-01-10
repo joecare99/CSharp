@@ -8,7 +8,7 @@ namespace ConsoleLibTests.CommonControls;
 [TestClass]
 public class TerminalTests : TestBase
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(10,5,14,6,"ABC","D")]
     [DataRow(12,6,16,8,"Hello","World")] 
     public void Resize_Preserves_Content(int w1,int h1,int w2,int h2,string first,string second)
@@ -31,7 +31,7 @@ public class TerminalTests : TestBase
         Assert.IsTrue(true);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Data","After")] 
     [DataRow("123","456")] 
     public void Clear_Resets_Area(string first,string second)

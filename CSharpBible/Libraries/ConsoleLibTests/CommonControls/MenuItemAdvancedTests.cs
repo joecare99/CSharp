@@ -10,7 +10,7 @@ namespace ConsoleLibTests.CommonControls;
 [TestClass]
 public class MenuItemAdvancedTests : TestBase
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("&File", 'F')]
     [DataRow("Edit", 'E')]
     [DataRow("&&Amp", '\0')]
@@ -24,8 +24,11 @@ public class MenuItemAdvancedTests : TestBase
     [TestMethod]
     public void Separator_Draw_Fills_Line()
     {
-        var mi = new MenuItem{ IsSeparator = true };
-        mi.Parent = new Panel{ Dimension=new Rectangle(0,0,20,3)};
+        var mi = new MenuItem
+        {
+            IsSeparator = true,
+            Parent = new Panel { Dimension = new Rectangle(0, 0, 20, 3) }
+        };
         mi.SetText("---");
         mi.Draw();
         Assert.AreEqual(1, mi.size.Height);
@@ -73,8 +76,10 @@ public class MenuItemAdvancedTests : TestBase
     [TestMethod]
     public void Disabled_Ignores_Click_And_Key()
     {
-        var mi = new MenuItem();
-        mi.Enabled = false;
+        var mi = new MenuItem
+        {
+            Enabled = false
+        };
         bool clicked=false;
         mi.OnClick += (_,_)=>clicked=true;
         mi.Click();

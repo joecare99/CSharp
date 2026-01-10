@@ -20,7 +20,7 @@ public class ControlTests : TestBase
         var c = new TestControl();
         Control.MessageQueue = new ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>();
         c.Invalidate();
-        Assert.AreEqual(1, Control.MessageQueue!.Count);
+        Assert.HasCount(1, Control.MessageQueue);
     }
 
     [TestMethod]
@@ -52,9 +52,11 @@ public class ControlTests : TestBase
     [TestMethod]
     public void Visible_False_Deactivates()
     {
-        var c = new TestControl();
-        c.Active = true;
-        c.Visible = false;
+        var c = new TestControl
+        {
+            Active = true,
+            Visible = false
+        };
         Assert.IsFalse(c.Active);
         c.Visible = true;
         Assert.IsTrue(c.Visible);
@@ -64,8 +66,11 @@ public class ControlTests : TestBase
     public void Shadow_Set_Invalidates_Parent()
     {
         var parent = new TestControl();
-        var child = new TestControl { Parent = parent };
-        child.Shadow = true;
+        var child = new TestControl
+        {
+            Parent = parent,
+            Shadow = true
+        };
         Assert.IsTrue(child.Shadow);
     }
 
@@ -78,7 +83,7 @@ public class ControlTests : TestBase
         Assert.AreSame(p,c.Parent);
         p.Remove(c);
         Assert.IsNull(c.Parent);
-        Assert.AreEqual(0,p.Children.Count);
+        Assert.IsEmpty(p.Children);
     }
 
     [TestMethod]

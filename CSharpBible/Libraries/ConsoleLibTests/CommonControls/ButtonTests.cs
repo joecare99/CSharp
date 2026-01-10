@@ -11,7 +11,7 @@ namespace ConsoleLib.CommonControls.Tests;
 [TestClass]
 public class ButtonTests : TestBase
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(5,3,"Ok", ConsoleColor.DarkGreen)]
     [DataRow(0,0,"X", ConsoleColor.Blue)]
     public void Set_Configures_Size_Position_And_Text(int x,int y,string text, ConsoleColor col)
@@ -32,7 +32,7 @@ public class ButtonTests : TestBase
         Assert.IsFalse(b.Valid); // Invalidate ausgelöst
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(false,true)]
     [DataRow(true,false)]
     public void Command_Sets_Enabled_From_CanExecute(bool first,bool second)

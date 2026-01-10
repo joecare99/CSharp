@@ -34,7 +34,7 @@ public class MenuItemTests
     {
         var mi = new MenuItem();
         mi.SetText("File");
-        Assert.IsTrue(mi.size.Width >= 4); // simplistic assumption
+        Assert.IsGreaterThanOrEqualTo(4, mi.size.Width); // simplistic assumption
     }
 
     [TestMethod]
@@ -60,8 +60,10 @@ public class MenuItemTests
     [TestMethod]
     public void HandlePressKeyEvents_Invokes_Click_On_Shortcut()
     {
-        var mi = new MenuItem();
-        mi.ShortcutKey = 'X';
+        var mi = new MenuItem
+        {
+            ShortcutKey = 'X'
+        };
         var ke = Substitute.For<Interfaces.IKeyEvent>();
         ke.bKeyDown.Returns(true);
         ke.KeyChar.Returns('x');

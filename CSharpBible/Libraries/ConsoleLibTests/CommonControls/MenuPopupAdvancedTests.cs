@@ -8,7 +8,7 @@ namespace ConsoleLib.CommonControls.Tests;
 [TestClass]
 public class MenuPopupAdvancedTests : TestBase
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]  // popup visible before adding second item
     [DataRow(false)] // popup hidden before adding second item
     public void LayoutItems_Recalculates_Size_For_Visibility(bool makeVisibleFirst)
@@ -23,7 +23,7 @@ public class MenuPopupAdvancedTests : TestBase
         // Assertions common
         Assert.AreEqual(new Point(1,1), i1.Position);
         Assert.AreEqual(new Point(1,2), i2.Position);
-        Assert.IsTrue(popup.size.Width >= i2.size.Width + 2);
+        Assert.IsGreaterThanOrEqualTo(i2.size.Width + 2, popup.size.Width);
         if (makeVisibleFirst)
         {
             Assert.IsTrue(popup.Visible); // remained visible and invalidated
