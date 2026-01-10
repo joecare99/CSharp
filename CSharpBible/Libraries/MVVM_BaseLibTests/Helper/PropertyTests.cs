@@ -99,7 +99,7 @@ public class TestStructTests
     public void TestnEqualsTest()
     {
         var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
-        Assert.AreNotEqual((object)ts, (object)3);
+        Assert.AreNotEqual((object)3, (object)ts);
     }
 
     [TestMethod]
