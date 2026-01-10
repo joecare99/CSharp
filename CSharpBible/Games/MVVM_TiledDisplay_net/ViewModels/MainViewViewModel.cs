@@ -11,8 +11,8 @@ namespace MVVM_TiledDisplay.ViewModel
     public class MainViewViewModel : BaseViewModel
     {
         #region Properties
-        public DelegateCommand<object> cmdButton { get; set; }
-        public event EventHandler<string> SetFrame = default;
+        public DelegateCommand<object>? cmdButton { get; set; }
+        public event EventHandler<string>? SetFrame = default;
         #endregion
 
         #region Methods

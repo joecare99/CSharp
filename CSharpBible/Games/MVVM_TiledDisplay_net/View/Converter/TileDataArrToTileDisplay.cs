@@ -30,7 +30,7 @@ namespace MVVM_TiledDisplay.View.Converter
         /// Gets or sets the background.
         /// </summary>
         /// <value>The background.</value>
-        public Style ItemStyle { get; set; } = default; 
+        public Style? ItemStyle { get; set; } = default; 
         public Brush background { get; set; } = Brushes.DarkBlue;
         /// <summary>
         /// Gets or sets the size of the tile.
