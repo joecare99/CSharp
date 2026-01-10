@@ -8,7 +8,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.1" />
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple"  />
 	</ItemGroup>
 
 	<ItemGroup>
