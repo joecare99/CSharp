@@ -16,8 +16,8 @@
 	  <Compile Remove="Program.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.6.1" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
     <ProjectReference Include="..\Game_Base\Game_Base.csproj" />
