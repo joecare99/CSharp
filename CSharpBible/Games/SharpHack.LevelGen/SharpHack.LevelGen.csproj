@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
+    <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
   </ItemGroup>
 
 </Project>
