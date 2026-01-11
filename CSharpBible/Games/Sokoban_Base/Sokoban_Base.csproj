@@ -47,8 +47,8 @@
 
 	<ItemGroup>
 		<Folder Include="Resources\" />
-    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.1" />
-    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange" Version="1.1.0" />
+    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple"  />
+    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange"  />
   </ItemGroup>
 
 	<ItemGroup>
