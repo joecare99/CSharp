@@ -7,11 +7,11 @@ namespace SharpHack.Base.Interfaces
         int Attack { get; }
         int BaseAttack { get; set; }
         int BaseDefense { get; set; }
-        Armor? Body { get; set; }
+        IArmor? Body { get; set; }
         int Defense { get; }
         int HP { get; set; }
-        List<Item> Inventory { get; }
-        Weapon? MainHand { get; set; }
+        List<IItem> Inventory { get; }
+        IWeapon? MainHand { get; set; }
         int MaxHP { get; set; }
         int Speed { get; set; }
         Point OldPosition { get; }

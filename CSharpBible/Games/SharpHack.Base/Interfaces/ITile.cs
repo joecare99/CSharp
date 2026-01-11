@@ -10,7 +10,7 @@ public interface ITile
     bool IsTransparent { get; }
     bool IsVisible { get; set; }
     bool IsWalkable { get; }
-    IList<Item> Items { get; }
+    IList<IItem> Items { get; }
     Point OldPosition { get; }
     Point Position { get; set; }
     TileType Type { get; set; }

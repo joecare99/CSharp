@@ -1,6 +1,8 @@
+using SharpHack.Base.Interfaces;
+
 namespace SharpHack.Base.Model;
 
-public class Item : GameObject
+public class Item : GameObject, IItem
 {
     public double Weight { get; set; }
     public bool IsStackable { get; set; }

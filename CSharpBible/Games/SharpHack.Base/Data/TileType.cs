@@ -4,6 +4,7 @@ public enum TileType
 {
     Empty,
     Floor,
+    Room,
     Wall,
     DoorClosed,
     DoorOpen,

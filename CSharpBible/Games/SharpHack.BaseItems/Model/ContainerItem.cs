@@ -5,7 +5,7 @@ namespace SharpHack.Base.Model;
 
 public abstract class ContainerItem : Item, IContainerItem
 {
-    private readonly List<Item> _items = new();
+    private readonly IList<IItem> _items = [];
 
-    public IList<Item> Items => _items;
+    public IList<IItem> Items => _items;
 }

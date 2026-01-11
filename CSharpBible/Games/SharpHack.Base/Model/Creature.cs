@@ -16,9 +16,9 @@ public class Creature : GameObject, ICreature
 
     public int Speed { get; set; }
 
-    public List<Item> Inventory { get; } = new();
-    public Weapon? MainHand { get; set; }
-    public Armor? Body { get; set; }
+    public List<IItem> Inventory { get; } = new();
+    public IWeapon? MainHand { get; set; }
+    public IArmor? Body { get; set; }
 
     public Point OldPosition => _oldPosition;
 }
