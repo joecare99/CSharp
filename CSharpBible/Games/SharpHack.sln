@@ -118,6 +118,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLibTests", "..\Libra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VTileEdit", "VTileEdit", "{F8444123-7091-43B2-AF24-DB3201ABF105}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.MapExport", "SharpHack.MapExport\SharpHack.MapExport.csproj", "{FB00036B-0AF6-BC98-0FFD-550509BAC39C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -292,6 +294,10 @@ Global
 		{E14A9353-7AD6-1EED-D034-E535DD63D6D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E14A9353-7AD6-1EED-D034-E535DD63D6D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E14A9353-7AD6-1EED-D034-E535DD63D6D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -336,6 +342,7 @@ Global
 		{5B09754B-82A4-BBEB-2BA6-65D9C1A883B3} = {F8444123-7091-43B2-AF24-DB3201ABF105}
 		{6EE74200-0650-52A4-5922-3D6079F4AED0} = {F8444123-7091-43B2-AF24-DB3201ABF105}
 		{E14A9353-7AD6-1EED-D034-E535DD63D6D3} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{FB00036B-0AF6-BC98-0FFD-550509BAC39C} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51252E6F-E712-436A-B391-1C5243F65ABE}
