@@ -1,9 +1,9 @@
 using System.Linq;
 using SharpHack.Base.Model;
-using SharpHack.LevelGen;
 using BaseLib.Models.Interfaces;
 using SharpHack.Base.Interfaces;
 using SharpHack.Base.Data;
+using SharpHack.Engine.Pathfinding;
 
 namespace SharpHack.Engine;
 
@@ -29,7 +29,8 @@ public class GameSession
     private readonly FieldOfView _fov;
     private readonly IGamePersist _persistence;
 
-    public byte[] MiniMap {
+    public byte[] MiniMap
+    {
         get
         {
             // Simple minimap representation: 1 byte per tile
@@ -39,10 +40,11 @@ public class GameSession
                 for (int y = 0; y < Map.Height; y++)
                 {
                     var tile = Map[x, y];
-                    byte value = !tile.IsExplored? (byte)0 : (byte)(tile.Type switch
+                    byte value = !tile.IsExplored ? (byte)0 : (byte)(tile.Type switch
                     {
                         TileType.Wall => 8,
                         TileType.Floor => 1,
+                        TileType.Room => 1,
                         TileType.StairsUp => 4,
                         TileType.StairsDown => 4,
                         TileType.DoorClosed => 4,
@@ -51,11 +53,11 @@ public class GameSession
                     });
                     if (tile.IsVisible && tile.Creature != null)
                     {
-                       value |= 0x40; // Enemy
+                        value |= 0x40; // Enemy
                     }
                     if (tile.IsExplored && tile.Items.Count > 0)
                     {
-                       value |= 0x2; // Items
+                        value |= 0x2; // Items
                     }
                     if (Player.Position.X == x && Player.Position.Y == y)
                     {
@@ -70,7 +72,7 @@ public class GameSession
 
     public event Action<string>? OnMessage;
 
-    public GameSession(IMapGenerator mapGenerator,IGamePersist gamePersist, IRandom random, ICombatSystem combatSystem, IEnemyAI enemyAI) // Update constructor
+    public GameSession(IMapGenerator mapGenerator, IGamePersist gamePersist, IRandom random, ICombatSystem combatSystem, IEnemyAI enemyAI) // Update constructor
     {
         _mapGenerator = mapGenerator;
         _random = random;
@@ -189,15 +191,15 @@ public class GameSession
             // Ensure player is on a valid tile (initial spawn)
             if (!Map.IsValid(Player.Position) || !Map[Player.Position].IsWalkable)
             {
-                 // Simple fallback search for a walkable tile
-                 for(int x=0; x<Map.Width; x++)
-                     for(int y=0; y<Map.Height; y++)
-                         if(Map[x,y].IsWalkable)
-                         {
-                             Player.Position = new Point(x,y);
-                             goto Found;
-                         }
-                 Found:;
+                // Simple fallback search for a walkable tile
+                for (int x = 0; x < Map.Width; x++)
+                    for (int y = 0; y < Map.Height; y++)
+                        if (Map[x, y].IsWalkable)
+                        {
+                            Player.Position = new Point(x, y);
+                            goto Found;
+                        }
+                    Found:;
             }
         }
 
@@ -344,7 +346,7 @@ public class GameSession
         foreach (var enemy in Enemies.ToList()) // ToList to allow modification of collection if needed (though we don't remove here)
         {
             var nextPos = _enemyAI.GetNextMove(enemy, Player, Map);
-            
+
             if (nextPos.X == Player.Position.X && nextPos.Y == Player.Position.Y)
             {
                 Attack(enemy, Player);
@@ -415,7 +417,7 @@ public class GameSession
         }
     }
 
-    public void PickUpItem(ICreature creature, Item item, bool autoEquip = true)
+    public void PickUpItem(ICreature creature, IItem item, bool autoEquip = true)
     {
         if (Map[item.Position].Items.Contains(item))
         {
@@ -501,5 +503,37 @@ public class GameSession
         }
 
         return false;
+    }
+
+    public void RevealAll(bool visible = true)
+    {
+        if (Map == null)
+        {
+            return;
+        }
+
+        for (int x = 0; x < Map.Width; x++)
+        {
+            for (int y = 0; y < Map.Height; y++)
+            {
+                var t = Map[x, y];
+                if (t == null)
+                {
+                    continue;
+                }
+
+                var p = new Point(x, y);
+                if (p.GetNeighbors8().Any(p => Map.IsValid(p) && Map[p].IsWalkable))
+                {
+                    t.IsExplored = true;
+                    t.IsVisible = visible;
+                }
+            }
+        }
+
+        if (visible)
+        {
+            UpdateFov();
+        }
     }
 }

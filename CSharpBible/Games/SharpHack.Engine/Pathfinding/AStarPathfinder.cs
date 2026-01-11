@@ -7,19 +7,13 @@ namespace SharpHack.Engine.Pathfinding;
 
 public static class AStarPathfinder
 {
-    public static List<Point>? FindPath(IMap map, Point start, Point goal, Func<Point, bool>? canEnter = null)
+    public static List<Point>? FindPath(this IMap map, Point start, Point goal, Func<Point, bool>? canEnter = null, bool goDiagonal = true)
     {
-        if (!map.IsValid(start) || !map.IsValid(goal))
-        {
-            return null;
-        }
-
-        if (!map[goal].IsWalkable)
-        {
-            return null;
-        }
-
         canEnter ??= (p => map[p].IsWalkable);
+        if (!map.IsValid(start) || !map.IsValid(goal) || !canEnter(goal))
+        {
+            return null;
+        }
 
         var open = new PriorityQueue<Point, int>();
         var cameFrom = new Dictionary<Point, Point>();
@@ -39,25 +33,20 @@ public static class AStarPathfinder
                 return ReconstructPath(cameFrom, current);
             }
 
-            foreach (var n in GetNeighbors8(current))
+            foreach (var n in GetNeighbors8(current,goDiagonal))
             {
-                if (!map.IsValid(n))
+                if (!map.IsValid(n) || !canEnter(n))
                 {
                     continue;
                 }
 
-                if (!canEnter(n))
-                {
-                    continue;
-                }
-
-                var tentative = gScore[current] + 1;
+                var tentative = gScore[current] + (map[n].IsWalkable?1:2);
 
                 if (!gScore.TryGetValue(n, out var existing) || tentative < existing)
                 {
                     cameFrom[n] = current;
                     gScore[n] = tentative;
-                    var f = tentative + Heuristic(n, goal);
+                    var f = tentative + Heuristic(n, goal)*2;
                     open.Enqueue(n, f);
                 }
             }
@@ -72,16 +61,16 @@ public static class AStarPathfinder
         return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
     }
 
-    private static IEnumerable<Point> GetNeighbors8(Point p)
+    public static IEnumerable<Point> GetNeighbors8(this Point p,bool goDiagonal = true)
     {
-        yield return new Point(p.X - 1, p.Y - 1);
-        yield return new Point(p.X, p.Y - 1);
-        yield return new Point(p.X + 1, p.Y - 1);
-        yield return new Point(p.X - 1, p.Y);
         yield return new Point(p.X + 1, p.Y);
-        yield return new Point(p.X - 1, p.Y + 1);
+        if (goDiagonal) yield return new Point(p.X + 1, p.Y + 1);
         yield return new Point(p.X, p.Y + 1);
-        yield return new Point(p.X + 1, p.Y + 1);
+        if (goDiagonal) yield return new Point(p.X - 1, p.Y + 1);
+        yield return new Point(p.X - 1, p.Y);
+        if (goDiagonal) yield return new Point(p.X - 1, p.Y - 1);
+        yield return new Point(p.X, p.Y - 1);
+        if (goDiagonal) yield return new Point(p.X + 1, p.Y - 1);
     }
 
     private static List<Point> ReconstructPath(Dictionary<Point, Point> cameFrom, Point current)
