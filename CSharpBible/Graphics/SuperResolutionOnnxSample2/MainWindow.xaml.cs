@@ -1,8 +1,11 @@
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.Win32;
-using SuperResolutionOnnxSample.ImageTiling;
-using SuperResolutionOnnxSample.SuperResolution;
 using System;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -10,36 +13,26 @@ namespace SuperResolutionOnnxSample;
 
 public partial class MainWindow : Window
 {
-    private readonly OnnxYSuperResampler _resampler = new();
-    private readonly SuperResolutionPipeline _pipeline;
-
+    private readonly OnnxSuperResizer _resizer = new();
     private BitmapImage? _input;
     private BitmapImage? _output;
 
     public MainWindow()
     {
         InitializeComponent();
-        _pipeline = new SuperResolutionPipeline(_resampler);
-        Closed += (_, _) => _resampler.Dispose();
     }
 
-    private void OnEstimateTileClick(object sender, RoutedEventArgs e)
+    private async void OnLoadClick(object sender, RoutedEventArgs e)
     {
-        if (_input == null)
+        var dlg = new OpenFileDialog
         {
-            StatusText.Text = "Bitte zuerst ein Bild laden.";
-            return;
-        }
-
-        int tile = TileSizeEstimator.EstimateSquareTileSize(_input.PixelWidth, _input.PixelHeight, maxTiles: 2000);
-        if (tile > 0)
+            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp;*.gif"
+        };
+        if (dlg.ShowDialog() == true)
         {
-            TileSizeBox.Text = tile.ToString();
-            StatusText.Text = $"Geschaetzt: {tile} px";
-        }
-        else
-        {
-            StatusText.Text = "Keine sinnvolle Tilegroesse erkannt.";
+            _input = LoadBitmap(dlg.FileName);
+            InputImage.Source = _input;
+            StatusText.Text = $"Geladen: {System.IO.Path.GetFileName(dlg.FileName)}";
         }
     }
 
@@ -53,20 +46,10 @@ public partial class MainWindow : Window
 
         try
         {
+            StatusText.Text = "Lade Modell...";
+            await _resizer.EnsureModelAsync();
             StatusText.Text = "Berechne...";
-
-            if (TilesetMode.IsChecked == true)
-            {
-                if (!int.TryParse(TileSizeBox.Text, out int tile) || tile <= 0)
-                    throw new InvalidOperationException("Ungueltige Tilegroesse.");
-
-                _output = await _pipeline.UpscaleTilesetAsync(_input, tile);
-            }
-            else
-            {
-                _output = await _pipeline.UpscaleImageAsync(_input);
-            }
-
+            _output = await _resizer.UpscaleAsync(_input);
             OutputImage.Source = _output;
             StatusText.Text = "Fertig.";
         }
@@ -95,20 +78,6 @@ public partial class MainWindow : Window
             encoder.Frames.Add(BitmapFrame.Create(_output));
             encoder.Save(fs);
             StatusText.Text = $"Gespeichert: {dlg.FileName}";
-        }
-    }
-
-    private void OnLoadClick(object sender, RoutedEventArgs e)
-    {
-        var dlg = new OpenFileDialog
-        {
-            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp;*.gif"
-        };
-        if (dlg.ShowDialog() == true)
-        {
-            _input = LoadBitmap(dlg.FileName);
-            InputImage.Source = _input;
-            StatusText.Text = $"Geladen: {System.IO.Path.GetFileName(dlg.FileName)}";
         }
     }
 
