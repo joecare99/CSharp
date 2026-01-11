@@ -4,6 +4,7 @@ using BaseLib.Models.Interfaces;
 using SharpHack.Base.Interfaces;
 using SharpHack.Base.Data;
 using SharpHack.Engine.Pathfinding;
+using SharpHack.BaseItems.Model;
 
 namespace SharpHack.Engine;
 
