@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
     <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
+    <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />
     <ProjectReference Include="..\SharpHack.Persist\SharpHack.Persist.csproj" />
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
     <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />

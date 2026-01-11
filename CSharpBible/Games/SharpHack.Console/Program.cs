@@ -1,8 +1,6 @@
 using System;
 using ConsoleDisplay.View;
 using SharpHack.Engine;
-using SharpHack.LevelGen;
-using SharpHack.LevelGen.BSP;
 using SharpHack.Base.Model;
 using SharpHack.Combat;
 using SharpHack.AI;
@@ -11,6 +9,7 @@ using BaseLib.Models; // Add using
 using DrawingPoint = System.Drawing.Point;
 using DrawingSize = System.Drawing.Size;
 using SharpHack.Persist;
+using SharpHack.LevelGen.BSP;
 
 namespace SharpHack.Console;
 
