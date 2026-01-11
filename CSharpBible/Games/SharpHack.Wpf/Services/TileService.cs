@@ -70,8 +70,8 @@ public class TileService : ITileService
             DrawChar(dc, size, (int)DisplayTile.Wall_EWS, "#", Brushes.Gray);
             DrawChar(dc, size, (int)DisplayTile.Wall_NWS, "#", Brushes.Gray);
             DrawChar(dc, size, (int)DisplayTile.Floor_Lit, ".", Brushes.DarkGray);
-            DrawChar(dc, size, (int)DisplayTile.Door_Closed, "+", Brushes.DarkKhaki);
-            DrawChar(dc, size, (int)DisplayTile.Door_Open, "/", Brushes.DarkKhaki);
+            DrawChar(dc, size, (int)DisplayTile.Door_Closed_NS, "+", Brushes.DarkKhaki);
+            DrawChar(dc, size, (int)DisplayTile.Door_Open_NS, "/", Brushes.DarkKhaki);
             DrawChar(dc, size, (int)DisplayTile.Stairs_Up, "<", Brushes.White);
             DrawChar(dc, size, (int)DisplayTile.Stairs_Down, ">", Brushes.White);
             DrawChar(dc, size, (int)DisplayTile.Goblin, "g", Brushes.Green);
@@ -116,7 +116,7 @@ public class TileService : ITileService
             return;
         }
 
-        LoadTileset(path: "tiles.png", tileSize: 32);
+        LoadTileset(path: "tiles2.png", tileSize: 96);
     }
 
     private ImageSource GetEmptyTile()

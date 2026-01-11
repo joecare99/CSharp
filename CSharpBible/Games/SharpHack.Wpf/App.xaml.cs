@@ -2,7 +2,6 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using SharpHack.ViewModel;
 using SharpHack.Engine;
-using SharpHack.LevelGen;
 using SharpHack.LevelGen.BSP;
 using SharpHack.Combat;
 using SharpHack.AI;

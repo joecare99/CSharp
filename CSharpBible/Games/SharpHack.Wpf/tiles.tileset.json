@@ -16,28 +16,28 @@
       "Index": 0,
       "Name": "Tile 0",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 1,
-      "Name": "Bee",
+      "Name": "Tile 1",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 2,
       "Name": "Tile 2",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 3,
       "Name": "Tile 3",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -3719,21 +3719,21 @@
       "Index": 529,
       "Name": "Tile 529",
       "Notes": null,
-      "Category": "Item",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 530,
       "Name": "Tile 530",
       "Notes": null,
-      "Category": "Item",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 531,
       "Name": "Tile 531",
       "Notes": null,
-      "Category": "Item",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -4158,23 +4158,23 @@
     },
     {
       "Index": 592,
-      "Name": "Key",
+      "Name": "Tile 592",
       "Notes": null,
-      "Category": "Item",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 593,
-      "Name": "SkeletonKey",
+      "Name": "Tile 593",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 594,
-      "Name": "CreditCard",
+      "Name": "Tile 594",
       "Notes": null,
-      "Category": "Item",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -5516,7 +5516,7 @@
     },
     {
       "Index": 786,
-      "Name": "PileGold",
+      "Name": "Tile 786",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
@@ -5784,7 +5784,7 @@
       "Index": 824,
       "Name": "Tile 824",
       "Notes": null,
-      "Category": "Item",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -5819,63 +5819,63 @@
       "Index": 829,
       "Name": "Tile 829",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 830,
-      "Name": "Wall_NS",
+      "Name": "Tile 830",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 831,
-      "Name": "Wall_EW",
+      "Name": "Tile 831",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 832,
-      "Name": "Wall_ES",
+      "Name": "Tile 832",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 833,
-      "Name": "Wall_WS",
+      "Name": "Tile 833",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 834,
-      "Name": "Wall_EN",
+      "Name": "Tile 834",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 835,
       "Name": "Tile 835",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 836,
       "Name": "Tile 836",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 837,
       "Name": "Tile 837",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -5950,14 +5950,14 @@
     },
     {
       "Index": 848,
-      "Name": "Floor_Lit",
+      "Name": "Tile 848",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 849,
-      "Name": "Floor_Dark",
+      "Name": "Tile 849",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
@@ -5971,56 +5971,56 @@
     },
     {
       "Index": 851,
-      "Name": "Stairs_Up",
+      "Name": "Tile 851",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 852,
-      "Name": "Stairs_Down",
+      "Name": "Tile 852",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 853,
-      "Name": "Ladder_Up",
+      "Name": "Tile 853",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 854,
-      "Name": "Ladder_Down",
+      "Name": "Tile 854",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 855,
-      "Name": "Althar",
+      "Name": "Tile 855",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 856,
-      "Name": "Tombstone",
+      "Name": "Tile 856",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 857,
-      "Name": "Throne",
+      "Name": "Tile 857",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 858,
-      "Name": "Sink",
+      "Name": "Tile 858",
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null
@@ -6400,7 +6400,7 @@
       "Index": 912,
       "Name": "Tile 912",
       "Notes": null,
-      "Category": "Effects",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -7058,7 +7058,7 @@
       "Index": 1006,
       "Name": "Tile 1006",
       "Notes": null,
-      "Category": "Effects",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -7107,21 +7107,21 @@
       "Index": 1013,
       "Name": "Tile 1013",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 1014,
       "Name": "Tile 1014",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
       "Index": 1015,
       "Name": "Tile 1015",
       "Notes": null,
-      "Category": "StructuralElement",
+      "Category": "Unknown",
       "SubCategory": null
     },
     {
@@ -7577,1412 +7577,8 @@
   "MiniMap": [],
   "MiniMaps": [
     {
-      "Id": "ec3eac59-2d77-4d98-b7c0-84170b95f7ee",
-      "Name": "Walls",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": 832,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": 838,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": 831,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": 833,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": 840,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 836,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 831,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 839,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": 830,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 830,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 830,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": 834,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 837,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 831,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": 835,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": "Tile 120"
-        }
-      ]
-    },
-    {
-      "Id": "85f417fe-c001-4768-a87d-6a555b8e1438",
-      "Name": "Fireball",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 957,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 958,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 959,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 960,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 961,
-          "SuggestionKey": "Tile 1003"
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 962,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 963,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 964,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": 965,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "c4cbc8a6-80ee-4270-bd9b-1702d20a3a3b",
-      "Name": "Ballustrade",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 1037,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 1043,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 1036,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": 1038,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 1045,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 1041,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 1036,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": 1044,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 1035,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 1035,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": 1035,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": 1039,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": 1042,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": 1036,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": 1040,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "e1adaa0d-20d6-41fc-a802-d48febe460dd",
-      "Name": "Mini-Map 4",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 1015,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 1021,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 1014,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": 1016,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 1023,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 1019,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 1014,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": 1022,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 1013,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 1013,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": "Tile 1035"
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": 1013,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": 1017,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": 1020,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": 1014,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": 1018,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "62ab04f5-c724-445b-8dc9-87cd75d63195",
-      "Name": "RedWalls",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 1026,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 1034,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 1025,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": 1027,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 1033,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 1030,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 1025,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": 1032,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 1024,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 1024,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": 1024,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": 1028,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": 1031,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": 1025,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": 1029,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "bd838b4e-bbb5-434f-80bc-23a01613edc0",
-      "Name": "GreenWalls",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 1048,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 1054,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 1047,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": 1049,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 1056,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 1052,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 1047,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": 1055,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 1046,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 1046,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": 1046,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": 1050,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": 1053,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": 1047,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": 1051,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "c6ff300f-b00d-48fb-9cf9-73b32a7388d3",
-      "Name": "Mini-Map 7",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 904,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 905,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 906,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 907,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 908,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 909,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 910,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": 911,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "8a93d174-cf9c-4b9e-9cf8-d2214b47e280",
-      "Name": "Mini-Map 8",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": 866,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 860,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 863,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 860,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": 865,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 864,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 864,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 864,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": 865,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 860,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 863,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": 860,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": 866,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": 848,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "47221da9-7a15-4ea4-a22a-8eaef1a82ed6",
-      "Name": "Mini-Map 9",
-      "Slots": [
-        {
-          "Row": 0,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 0,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 1,
-          "TileIndex": 912,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 2,
-          "TileIndex": 913,
-          "SuggestionKey": "Tile 0"
-        },
-        {
-          "Row": 1,
-          "Column": 3,
-          "TileIndex": 914,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 1,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 1,
-          "TileIndex": 915,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 2,
-          "TileIndex": 916,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 3,
-          "TileIndex": 917,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 2,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 1,
-          "TileIndex": 918,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 2,
-          "TileIndex": 919,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 3,
-          "TileIndex": 920,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 3,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 0,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 1,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 2,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 3,
-          "TileIndex": null,
-          "SuggestionKey": null
-        },
-        {
-          "Row": 4,
-          "Column": 4,
-          "TileIndex": null,
-          "SuggestionKey": null
-        }
-      ]
-    },
-    {
-      "Id": "aff83249-5b46-45af-ad1c-cc203bbf84a2",
-      "Name": "Mini-Map 10",
+      "Id": "efb402ab-4117-45f5-89d4-c8666d170e56",
+      "Name": "Mini-Map 1",
       "Slots": [
         {
           "Row": 0,
@@ -9137,5 +7733,5 @@
       ]
     }
   ],
-  "SelectedMiniMapId": "ec3eac59-2d77-4d98-b7c0-84170b95f7ee"
+  "SelectedMiniMapId": "efb402ab-4117-45f5-89d4-c8666d170e56"
 }
