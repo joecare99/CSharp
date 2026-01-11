@@ -38,6 +38,7 @@ public class BSPMapGeneratorTests
         var map = generator.Generate(40, 40);
 
         bool hasFloor = false;
+        bool hasRoom = false;
         for (int x = 0; x < map.Width; x++)
         {
             for (int y = 0; y < map.Height; y++)
@@ -45,12 +46,20 @@ public class BSPMapGeneratorTests
                 if (map[x, y].Type == TileType.Floor)
                 {
                     hasFloor = true;
+                }
+                if (map[x, y].Type == TileType.Room)
+                {
+                    hasRoom = true;
+                }
+                if (hasFloor && hasRoom)
+                {
                     break;
                 }
             }
         }
 
         Assert.IsTrue(hasFloor, "Map should contain floor tiles.");
+        Assert.IsTrue(hasRoom, "Map should contain room tiles.");
     }
 
     [TestMethod]
@@ -70,6 +79,6 @@ public class BSPMapGeneratorTests
         var map = generator.Generate(40, 40 , new Base.Model.Point(x,y));
 
 
-        Assert.AreEqual(TileType.Floor, map[x, y].Type, "Map should contain floor tiles.");
+        Assert.AreEqual(TileType.Room, map[x, y].Type, "startpoint should be room tiles.");
     }
 }
