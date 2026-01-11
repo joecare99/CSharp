@@ -10,4 +10,8 @@
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
