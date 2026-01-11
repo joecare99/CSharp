@@ -4,7 +4,6 @@ using SharpHack.Base.Data;
 using SharpHack.Base.Interfaces;
 using SharpHack.Base.Model;
 using SharpHack.Engine;
-using SharpHack.LevelGen;
 using BaseLib.Models.Interfaces;
 
 namespace SharpHack.EngineTests;

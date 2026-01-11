@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using SharpHack.Engine;
-using SharpHack.LevelGen;
 using SharpHack.Base.Model;
 using System.Collections.Generic;
 using BaseLib.Models.Interfaces;
