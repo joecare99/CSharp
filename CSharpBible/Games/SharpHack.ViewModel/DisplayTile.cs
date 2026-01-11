@@ -76,14 +76,23 @@ public enum DisplayTile
     Wall_ENS = 840,
 
     /// <summary>
-    /// Closed door (index 842).
+    /// Open door (index 843).
     /// </summary>
-    Door_Closed = 842,
-
+    Door_Open_EW = 843,
     /// <summary>
     /// Open door (index 843).
     /// </summary>
-    Door_Open = 843,
+    Door_Open_NS = 842,
+
+    /// <summary>
+    /// Closed door (index 842).
+    /// </summary>
+    Door_Closed_EW= 845,
+
+    /// <summary>
+    /// Closed door (index 842).
+    /// </summary>
+    Door_Closed_NS = 844,
 
     /// <summary>
     /// Lit floor (index 848).

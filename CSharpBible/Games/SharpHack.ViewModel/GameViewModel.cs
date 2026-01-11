@@ -43,7 +43,7 @@ public partial class GameViewModel : ObservableObject
     private bool _autoEquip = true;
 
     public ObservableCollection<string> Messages { get; } = new();
-    public ObservableCollection<Item> Inventory { get; } = new();
+    public ObservableCollection<IItem> Inventory { get; } = new();
 
     public IMap Map => _session.Map;
 
@@ -161,10 +161,10 @@ public partial class GameViewModel : ObservableObject
                 {
                     var tile = map[mapX, mapY];
                     var surWall = 0;
-                    if (tile.Type == TileType.Wall)
+                    if (tile.Type == TileType.Wall || tile.Type == TileType.DoorClosed || tile.Type == TileType.DoorOpen)
                     {
                         foreach (var d in new List<(byte, int, int)>() { (1, 1, 0), (2, 0, -1), (4, -1, 0), (8, 0, 1) })
-                            if (map.IsValid(mapX + d.Item2, mapY + d.Item3) && map[mapX + d.Item2, mapY + d.Item3].IsExplored && map[mapX + d.Item2, mapY + d.Item3].Type == TileType.Wall)
+                            if (map.IsValid(mapX + d.Item2, mapY + d.Item3) && map[mapX + d.Item2, mapY + d.Item3].IsExplored && map[mapX + d.Item2, mapY + d.Item3].Type is TileType.Wall or TileType.DoorClosed or TileType.DoorOpen)
                                 surWall |= d.Item1;
                     }
                     bool isPlayer = mapX == playerPos.X && mapY == playerPos.Y;
@@ -217,7 +217,7 @@ public partial class GameViewModel : ObservableObject
             return DisplayTile.Empty;
         }
 
-        if (!tile.IsVisible && tile.Type == TileType.Floor) 
+        if (!tile.IsVisible && tile.Type == TileType.Room) 
         {
             return tile.IsExplored ? DisplayTile.Floor_Lit : DisplayTile.Floor_Dark;
         }
@@ -266,9 +266,23 @@ public partial class GameViewModel : ObservableObject
                 14 => DisplayTile.Wall_NWS,
                 _ => DisplayTile.Wall_ENWS               
             },
-            TileType.Floor => DisplayTile.Floor_Lit,
-            TileType.DoorClosed => DisplayTile.Door_Closed,
-            TileType.DoorOpen => DisplayTile.Door_Open,
+            TileType.Floor => DisplayTile.Floor_Dark,
+            TileType.Room => DisplayTile.Floor_Lit,
+            TileType.DoorClosed => surWall switch
+            {
+                2 => DisplayTile.Door_Closed_NS,
+                8 => DisplayTile.Door_Closed_NS,
+                10 => DisplayTile.Door_Closed_NS,
+                _ => DisplayTile.Door_Closed_EW
+            },
+
+                TileType.DoorOpen => surWall switch
+                {
+                    2 => DisplayTile.Door_Open_NS,
+                    8 => DisplayTile.Door_Open_NS,
+                    10 => DisplayTile.Door_Open_NS,
+                    _ => DisplayTile.Door_Open_EW
+                },
             TileType.StairsDown => DisplayTile.Stairs_Down,
             TileType.StairsUp => DisplayTile.Stairs_Up,
             _ => DisplayTile.Empty
