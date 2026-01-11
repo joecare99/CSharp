@@ -586,9 +586,9 @@ public class FieldTests
     [TestMethod]
     public void GetItems1Test()
     {
-        foreach (var i in testField.Items);
-            Assert.Fail();
-        Assert.AreEqual(this, testField.Parent);
+        foreach (var i in testField.Items)
+            Assert.Fail("There should be no item !");
+        Assert.IsNull(testField.Parent);
     }
 
     #region Private Methods
