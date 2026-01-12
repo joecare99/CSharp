@@ -40,10 +40,10 @@ class Program
         // Eine Epoche reicht oft schon für >90% Genauigkeit
         for (int i = 0; i < trainingData.Count; i++)
         {
-            nn.Train(trainingData[i].Data, trainingData[i].Label);
+            nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label);
             for (int j = 0; j < trainingData[i].Data.Length; j++)
                 trainingData[i].Data[j] = 1f - trainingData[i].Data[j];
-            nn.Train(trainingData[i].Data, trainingData[i].Label);
+            nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label);
 
             if (i % 5000 == 0)
                 Console.WriteLine($"{i} Bilder verarbeitet...");
@@ -52,10 +52,10 @@ class Program
         // Testen mit einem Bild aus dem Datensatz
         var rnd = IoC.GetRequiredService<IRandom>();
         var testImg = trainingData[rnd.Next(trainingData.Count)];
-        float[] prediction = nn.FeedForward(testImg.Data);
+        float[] prediction = nn.FeedForward_Parallel(testImg.Data);
         for (int i = 0; i < testImg.Data.Length; i++)
             testImg.Data[i] = ((testImg.Data[i] * 2 - 1) * (0.75f + (float)rnd.NextDouble() * 0.25f)) * 0.5f + 1; // Add Noise
-        float[] prediction2 = nn.FeedForward(testImg.Data);
+        float[] prediction2 = nn.FeedForward_Parallel(testImg.Data);
 
         int predictedDigit = Array.IndexOf(prediction, prediction.Max());
         int predictedDigit2 = Array.IndexOf(prediction2, prediction2.Max());
