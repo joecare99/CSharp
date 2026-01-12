@@ -67,6 +67,11 @@ public partial class MainWindowViewModel : ObservableObject
 
         UndoCommand = new RelayCommand(() => ShowPlaceholderMessage("Undo"));
         RedoCommand = new RelayCommand(() => ShowPlaceholderMessage("Redo"));
+
+        TileEditorHost = new TileEditorHostViewModel(new TileEditorViewModel(model));
+
+        // keep current font selection in sync for now
+        // TileEditorHost.Editor.SelectedFontFamily = SelectedFontFamily;
     }
 
     /// <summary>
@@ -485,6 +490,11 @@ public partial class MainWindowViewModel : ObservableObject
         => EvaluateTileSetInputs();
 
 
+    /// <summary>
+    /// Gets the host view-model for the right hand editor area.
+    /// </summary>
+    public TileEditorHostViewModel TileEditorHost { get; }
+
     private static IEnumerable<FontFamily> GetConsoleFontFamilies()
     {
         var installed = Fonts.SystemFontFamilies.ToList();
@@ -649,6 +659,11 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         return new TileViewModel(ID, name, width, height, glyphs);
+    }
+
+    partial void OnSelectedFontFamilyChanged(FontFamily value)
+    {
+        // no-op: font selection is hosted by TileEditorHostViewModel
     }
 
 }

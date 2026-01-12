@@ -1,0 +1,53 @@
+<UserControl x:Class="VTileEdit.WPF.Views.Controls.TileEditorHostView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
+             xmlns:controls="clr-namespace:VTileEdit.WPF.Views.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+            <TextBlock Text="{x:Static properties:Strings.FontSelectorLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <ComboBox Width="220"
+                      ItemsSource="{Binding AvailableFontFamilies}"
+                      SelectedItem="{Binding SelectedFontFamily}"
+                      DisplayMemberPath="Source" />
+        </StackPanel>
+
+        <controls:TileEditorView Grid.Row="1" Margin="0,0,0,8" />
+
+        <controls:CharmapView Grid.Row="2"
+                              ItemsSource="{Binding Editor.CharacterPalette}"
+                              Command="{Binding Editor.ApplyCharacterCommand}"
+                              Margin="0,0,0,8" />
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <controls:PaletteSelectorView Grid.Column="0"
+                                          Margin="0,0,4,0"
+                                          Header="{x:Static properties:Strings.PaletteForegroundHeader}"
+                                          ItemsSource="{Binding Palette}"
+                                          Command="{Binding ApplyForegroundCommand}"
+                                          SelectionMode="Foreground" />
+
+            <controls:PaletteSelectorView Grid.Column="1"
+                                          Margin="4,0,0,0"
+                                          Header="{x:Static properties:Strings.PaletteBackgroundHeader}"
+                                          ItemsSource="{Binding Palette}"
+                                          Command="{Binding ApplyBackgroundCommand}"
+                                          SelectionMode="Background" />
+        </Grid>
+    </Grid>
+</UserControl>
