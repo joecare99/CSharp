@@ -52,8 +52,8 @@ class Program
             nn.LearningRate *= 0.9;
             for (int _i = 0; _i < trainingData.Count; _i++)
             {
-                //nn.Train(trainingData[_i].Data, trainingData[_i].Label,0.2);
-                //          nn.FeedForward(trainingData[_i].Data);
+                //nn.Train_Parallel(trainingData[_i].Data, trainingData[_i].Label,0.2);
+                //          nn.FeedForward_Parallel(trainingData[_i].Data);
                 var i = rnd.Next(trainingData.Count);
                 //var rOffs = rnd.Next(9);
                  var rOffs = 5;
@@ -65,7 +65,7 @@ class Program
                     if (j + idx[rOffs] >= 0 && j + idx[rOffs] < trainingData[i].Data.Length)
                         rData[j] = ((trainingData[i].Data[j + idx[rOffs]] * 2 - 1) * (1.0f - rAmt + (float)rnd.NextDouble() * rAmt)) * 0.5f + 1;
 
-                nn.Train(rData, trainingData[i].Label,0.2f);
+                nn.Train_Parallel(rData, trainingData[i].Label,0.2f);
                 r = r * 0.99 + nn.Layers[^1].Neurons[trainingData[i].Label.IndexOf(1)] * 0.01;
 
                 //if (_i % 1000 == 0 && epoch<6 )
@@ -85,20 +85,20 @@ class Program
             int correct3 = 0;
             foreach (var testImg in testData)
             {
-                float[] prediction = nn.FeedForward(testImg.Data);
+                float[] prediction = nn.FeedForward_Parallel(testImg.Data);
                 int predictedDigit = Array.IndexOf(prediction, prediction.Max());
                 if (predictedDigit == Array.IndexOf(testImg.Label, 1f)) correct++;
                 var rData = new float[testImg.Data.Length];
 
                 for (int i = 0; i < testImg.Data.Length; i++)
                     rData[i] = ((testImg.Data[i] * 2 - 1) * (0.9f + (float)rnd.NextDouble() * 0.1f)) * 0.5f + 1;
-                float[] prediction2 = nn.FeedForward(rData);
+                float[] prediction2 = nn.FeedForward_Parallel(rData);
                 int predictedDigit2 = Array.IndexOf(prediction2, prediction2.Max());
                 if (predictedDigit2 == Array.IndexOf(testImg.Label, 1f)) correct2++;
 
                 for (int i = 0; i < testImg.Data.Length; i++)
                     rData[i] = ((testImg.Data[i] * 2 - 1) * (0.8f + (float)rnd.NextDouble() * 0.2f)) * 0.5f + 1;
-                float[] prediction3 = nn.FeedForward(rData);
+                float[] prediction3 = nn.FeedForward_Parallel(rData);
                 int predictedDigit3 = Array.IndexOf(prediction3, prediction3.Max());
                 if (predictedDigit3 == Array.IndexOf(testImg.Label, 1f)) correct3++;
             }

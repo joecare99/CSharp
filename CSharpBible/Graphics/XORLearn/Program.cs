@@ -29,29 +29,30 @@ class Program
         // Lernrate: 0.5
         NeuralNetwork nn = IoC.GetRequiredService<NeuralNetwork>();
 
-        // 2. Trainingsdaten (XOR-Logik)47
+        // 2. Trainingsdaten (Bin-Logik)
         float[][] inputs =
         [
-            [0, 0,0],
-            [0, 1 ,0],
-            [1, 0 ,0],
-            [1, 1,0],
-            [0, 0,1],
-            [0, 1 ,1],
-            [1, 0 ,1],
-            [1, 1,1]
+            [0, 0, 0],
+            [0, 1, 0],
+            [1, 0, 0],
+            [1, 1, 0],
+            [0, 0, 1],
+            [0, 1, 1],
+            [1, 0, 1],
+            [1, 1, 1]
         ];
 
+        // Zielwerte: Zweierkomplement Darstellung der Eingaben
         float[][] targets =
         [
-            [0,0],
-            [1,0],
-            [1,0],
-            [0,1],
-            [1,0],
-            [0,1],
-            [0,1],
-            [1,1]
+            [0, 0],
+            [1, 0],
+            [1, 0],
+            [0, 1],
+            [1, 0],
+            [0, 1],
+            [0, 1],
+            [1, 1]
         ];
 
         Console.WriteLine("Starte Training...");
@@ -71,7 +72,7 @@ class Program
                 var result = 1.0;
                 foreach (var tuple in inputs.Zip(targets))
                 {
-                    float[] output = nn.FeedForward(tuple.First);
+                    float[] output = nn.FeedForward_Parallel(tuple.First);
                     result *= (output[0] - 0.5) * (tuple.Second[0] - 0.5) * 4;
                     result *= (output[1] - 0.5) * (tuple.Second[1] - 0.5) * 4;
                 }
@@ -85,7 +86,7 @@ class Program
         var finalresult = 1.0;
         foreach (var tuple in inputs.Zip(targets))
         {
-            float[] output = nn.FeedForward(tuple.First);
+            float[] output = nn.FeedForward_Parallel(tuple.First);
             Console.WriteLine($"Input: {tuple.First[0]}, {tuple.First[1]}, {tuple.First[2]} | Vorhersage: {output[0]:F3}, {output[1]:F3}");
             finalresult *= (output[0] - 0.5) * (tuple.Second[0] - 0.5) * 4;
             finalresult *= (output[1] - 0.5) * (tuple.Second[1] - 0.5) * 4;

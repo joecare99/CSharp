@@ -88,7 +88,7 @@ public class NeuralNetwork
     }
 
     // Vorhersage berechnen
-    public float[] FeedForward(float[] inputs, Func<float, float>? activFunc = null)
+    public float[] FeedForward_Parallel(float[] inputs, Func<float, float>? activFunc = null)
     {
         if (activFunc == null) activFunc = Activation.ReLU;
         _layers[0].Neurons = inputs;
@@ -107,6 +107,34 @@ public class NeuralNetwork
         }
         return _layers[^1].Neurons;
     }
+
+    // Vorhersage berechnen
+    public float[] FeedForward(float[] inputs, Func<float, float>? activFunc = null)
+    {
+        if (activFunc == null)
+            activFunc = Activation.ReLU;
+        _layers[0].Neurons = inputs;
+
+        for (int i = 1; i < _layers.Length; i++)
+        {
+            Layer current = _layers[i];
+            Layer previous = _layers[i - 1];
+
+            // Berechnen der Neuronen-Berechnung eines Layers
+            for(var j =0; j< current.Neurons.Length; j ++)
+            {
+                float sum = 0.0f;
+                for (var k = 0; k < previous.Neurons.Length; k++)
+                {
+                    sum += previous.Neurons[k] * current.Weights[j][k];
+                }
+                sum += current.Biases[j] ;
+                current.Neurons[j] = activFunc(sum) / current.Neurons.Length;
+            };
+        }
+        return _layers[^1].Neurons;
+    }
+
 
     public void AdjustILWeights(int[] idx, float[] qnt)
     {
@@ -149,11 +177,11 @@ public class NeuralNetwork
     }
 
     // Training mittels Backpropagation
-    public void Train(float[] inputs, float[] targets, float dropOut = 0.2f, Func<float, float>? derivative = null)
+    public void Train_Parallel(float[] inputs, float[] targets, float dropOut = 0.2f, Func<float, float>? derivative = null)
     {
         if (derivative == null) derivative = Activation.ReLUderivation;
 
-        FeedForward(inputs, Activation.ReLU);
+        FeedForward_Parallel(inputs, Activation.ReLU);
         // 
         _layers[1].ApplyDropout(dropOut);
         // 1. Fehler am Output-Layer berechnen
@@ -189,7 +217,7 @@ public class NeuralNetwork
             });
         }
 
-        // Innerhalb von NeuralNetwork.Train, nach der Fehlerberechnung:
+        // Innerhalb von NeuralNetwork.Train_Parallel, nach der Fehlerberechnung:
         for (int i = 1; i < _layers.Length; i++)
         {
             Layer current = _layers[i];
@@ -206,6 +234,67 @@ public class NeuralNetwork
                 // Bias ist nur ein einzelner Wert
                 current.Biases[j] += scale;
             });
+        }
+    }
+    public void Train(float[] inputs, float[] targets, float dropOut = 0.2f, Func<float, float>? derivative = null)
+    {
+        if (derivative == null)
+            derivative = Activation.ReLUderivation;
+
+        FeedForward(inputs, Activation.ReLU);
+        // 
+        _layers[1].ApplyDropout(dropOut);
+        // 1. Fehler am Output-Layer berechnen
+        Layer outputLayer = _layers[^1];
+        for (var i = 0; i < outputLayer.Neurons.Length; i++) 
+        {
+            float error = targets[i] - outputLayer.Neurons[i];
+            outputLayer.Deltas[i] = error * derivative(outputLayer.Neurons[i] + error * 0.5f);
+        };
+
+        // 2. Fehler rückwärts durch die Hidden Layers leiten
+        for (int i = _layers.Length - 2; i > 0; i--)
+        {
+            Layer current = _layers[i];
+            Layer next = _layers[i + 1];
+
+            for(var j=0; j < current.Neurons.Length; j++)
+            {
+                // WICHTIG: Wenn das Neuron durch Dropout deaktiviert war, ist sein Fehler 0
+                if (!current.DropoutMask[j])
+                {
+                    current.Deltas[j] = 0;
+                }
+                else
+                {
+                    float error = 0;
+                    for (int k = 0; k < next.Neurons.Length; k++)
+                    {
+                        error += next.Deltas[k] * next.Weights[k][j];
+                    }
+                    current.Deltas[j] = error * derivative(current.Neurons[j] + error * 0.5f);
+                }
+            }
+        }
+
+        // Innerhalb von NeuralNetwork.Train_Parallel, nach der Fehlerberechnung:
+        for (int i = 1; i < _layers.Length; i++)
+        {
+            Layer current = _layers[i];
+            Layer previous = _layers[i - 1];
+
+            // Parallel über die Neuronen des aktuellen Layers
+            for(var j =0; j<current.Neurons.Length; j++ )            {
+                float scale = (float)_learningRate * current.Deltas[j];
+
+                // Vektorisierte Aktualisierung der Gewichte für dieses Neuron
+                for (var k =0; k< previous.Neurons.Length; k++)
+                {
+                    current.Weights[j][k] += scale * previous.Neurons[k];
+                }
+                // Bias ist nur ein einzelner Wert
+                current.Biases[j] += scale;
+            }
         }
     }
 }

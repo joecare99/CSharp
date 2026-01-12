@@ -42,14 +42,14 @@ class Program
             // Eine Epoche reicht oft schon für >90% Genauigkeit
             for (int i = 0; i < trainingData.Count; i++)
             {
-                nn.Train(trainingData[i].Data, trainingData[i].Label);
+                nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label);
                 var rData = new float[trainingData[i].Data.Length];
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
                     rData[j] = (float)(((trainingData[i].Data[j] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1); // Add Noise
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
                     trainingData[i].Data[j] = 1f - trainingData[i].Data[j];
-                nn.Train(rData, trainingData[i].Label);
-                nn.Train(trainingData[i].Data, trainingData[i].Label);
+                nn.Train_Parallel(rData, trainingData[i].Label);
+                nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label);
 
                 if (i % 5000 == 0)
                     Console.WriteLine($"E{epoch + 1} {i} Bilder verarbeitet...");
@@ -65,7 +65,7 @@ class Program
             int correct3 = 0;
             foreach (var testImg in testData)
             {
-                float[] prediction = nn.FeedForward(testImg.Data);
+                float[] prediction = nn.FeedForward_Parallel(testImg.Data);
                 int predictedDigit = Array.IndexOf(prediction, prediction.Max());
                 float prob = prediction[predictedDigit];
                 if (predictedDigit == Array.IndexOf(testImg.Label, 1d)) correct++;
@@ -73,14 +73,14 @@ class Program
 
                 for (int i = 0; i < testImg.Data.Length; i++)
                     rData[i] = (float)(((testImg.Data[i] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1); // Add Noise
-                float[] prediction2 = nn.FeedForward(rData);
+                float[] prediction2 = nn.FeedForward_Parallel(rData);
                 int predictedDigit2 = Array.IndexOf(prediction2, prediction2.Max());
                 double prob2 = prediction[predictedDigit];
                 if (predictedDigit2 == Array.IndexOf(testImg.Label, 1d)) correct2++;
 
                 for (int i = 0; i < testImg.Data.Length; i++)
                     rData[i] = (float)(((testImg.Data[i] * 2 - 1) * (0.8 + rnd.NextDouble() * 0.2)) * 0.5 + 1); // Add Noise
-                float[] prediction3 = nn.FeedForward(rData);
+                float[] prediction3 = nn.FeedForward_Parallel(rData);
                 int predictedDigit3 = Array.IndexOf(prediction3, prediction3.Max());
                 double prob3 = prediction[predictedDigit];
                 if (predictedDigit3 == Array.IndexOf(testImg.Label, 1d)) correct3++;
