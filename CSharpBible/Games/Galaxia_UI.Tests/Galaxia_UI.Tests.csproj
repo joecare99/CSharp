@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Galaxia_UI\Galaxia_UI.csproj" />
-    <PackageReference Include="MSTest"  />
+    <PackageReference Include="MSTest" />
   </ItemGroup>
 </Project>
