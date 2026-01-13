@@ -11,5 +11,5 @@ public static class Activation
     // Rectified Linear Unit
     public static float ReLU(float x) => Math.Max(0,x);
 
-    public static float ReLUderivation(float x)  => 1.0f;
+    public static float ReLUderivation(float x)  =>x>0f? 1.0f:0f;
 }

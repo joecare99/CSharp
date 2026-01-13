@@ -10,15 +10,19 @@ public class Layer
     public float[][] Weights;    // Gewichte zum vorherigen Layer
     public float[] Deltas;       // Fehlerwerte für Backpropagation
     public bool[] DropoutMask;    // Dropaut-Maske
+    public Func<float, float> activation;
+    public Func<float, float> actDeriv;
 
     private IRandom _random = IoC.GetRequiredService<IRandom>();
 
-    public Layer(int size, int previousLayerSize)
+    public Layer(int size, int previousLayerSize, bool xHeInit = false, Func<float, float>? activation=null, Func<float, float>? actDeriv=null)
     {
         Neurons = new float[size];
         Biases = new float[size];
         Deltas = new float[size];
         DropoutMask = new bool[size];
+        this.activation = activation ?? Activation.Sigmoid; 
+        this.actDeriv = actDeriv ?? Activation.SigmoidDerivative; 
 
         // Gewichte initialisieren (kleine Zufallswerte)
         if (previousLayerSize > 0)
@@ -27,10 +31,23 @@ public class Layer
             for (int i = 0; i < size; i++)
             {
                 Weights[i] = new float[previousLayerSize];
-                Biases[i] = (float)_random.NextDouble() * 0.2f - 0.1f;
+                if (xHeInit)
+                {
+                    float stddev = (float)Math.Sqrt(2.0 / previousLayerSize);
+                    Biases[i] = 0.01f;
+                    for (int j = 0; j < previousLayerSize; j++)
+                    {
+                        // Box-Muller für Normalverteilung
+                        Weights[i][j] = 
+                            (float)Math.Sqrt(-2.0 * Math.Log(1.0 - _random.NextDouble())) * 
+                            (float)Math.Sin(2.0 * Math.PI * _random.NextDouble()) * stddev;
+                    }
+                    continue;
+                }
+                Biases[i] = (float)_random.NextDouble() * 2f - 1f;
                 for (int j = 0; j < previousLayerSize; j++)
                 {
-                    Weights[i][j] = (float)_random.NextDouble() * 0.2f - 0.1f;
+                    Weights[i][j] = (float)_random.NextDouble() * 2f - 1f;
                 }
             }
         }
@@ -51,7 +68,7 @@ public class Layer
             else
             {
                 // Skalierung, damit die Gesamtsumme der Aktivierung stabil bleibt
-               Neurons[i] /= (1.0f -(float)dropoutRate);
+                Neurons[i] /= (1.0f - (float)dropoutRate);
             }
         }
     }
