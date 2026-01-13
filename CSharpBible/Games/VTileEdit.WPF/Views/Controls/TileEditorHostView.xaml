@@ -22,12 +22,15 @@
                       DisplayMemberPath="Source" />
         </StackPanel>
 
-        <controls:TileEditorView Grid.Row="1" Margin="0,0,0,8" />
+        <controls:TileEditorView Grid.Row="1"
+                         Margin="0,0,0,8"
+                         DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
 
         <controls:CharmapView Grid.Row="2"
-                              ItemsSource="{Binding Editor.CharacterPalette}"
-                              Command="{Binding Editor.ApplyCharacterCommand}"
-                              Margin="0,0,0,8" />
+                      DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
+                      ItemsSource="{Binding CharacterPalette}"
+                      Command="{Binding ApplyCharacterCommand}"
+                      Margin="0,0,0,8" />
 
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
@@ -37,6 +40,7 @@
 
             <controls:PaletteSelectorView Grid.Column="0"
                                           Margin="0,0,4,0"
+                                          DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
                                           Header="{x:Static properties:Strings.PaletteForegroundHeader}"
                                           ItemsSource="{Binding Palette}"
                                           Command="{Binding ApplyForegroundCommand}"
@@ -44,6 +48,7 @@
 
             <controls:PaletteSelectorView Grid.Column="1"
                                           Margin="4,0,0,0"
+                                          DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
                                           Header="{x:Static properties:Strings.PaletteBackgroundHeader}"
                                           ItemsSource="{Binding Palette}"
                                           Command="{Binding ApplyBackgroundCommand}"

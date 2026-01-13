@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<UserControl x:Class="VTileEdit.WPF.Views.Controls.TileListView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
-             xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels"
-             xmlns:converters="clr-namespace:VTileEdit.WPF.Converters">
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="VTileEdit.WPF.Views.Controls.TileListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
+    xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
+    xmlns:vm="clr-namespace:VTileEdit.WPF.ViewModels">
     <UserControl.Resources>
         <converters:WidthToHeightConverter x:Key="WidthToHeightConverter" Ratio="2" />
     </UserControl.Resources>
@@ -15,19 +16,23 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0"
-                        Text="{x:Static properties:Strings.TileListHint}"
-                        Margin="0,0,0,8"
-                        Foreground="Gray" />
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,8"
+                Foreground="Gray"
+                Text="{x:Static properties:Strings.TileListHint}" />
             <DockPanel Grid.Row="1" Margin="0,0,0,8">
-                <TextBlock Text="{x:Static properties:Strings.TileListFilterLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
-                <TextBox 
-                         Text="{Binding TileFilterText, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Text="{x:Static properties:Strings.TileListFilterLabel}" />
+                <TextBox Text="{Binding TileFilterText, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
-            <ListBox Grid.Row="2"
-                     ItemsSource="{Binding TilesView}"
-                     SelectedItem="{Binding SelectedTile}"                     
-                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox
+                Grid.Row="2"
+                ItemsSource="{Binding TilesView}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                SelectedItem="{Binding SelectedTile}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Vertical" />
@@ -36,7 +41,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:TileViewModel}">
                         <StackPanel Width="100" Margin="0,0,8,8">
-                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" />
+                            <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
                             <ItemsControl ItemsSource="{Binding Glyphs}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style TargetType="ContentPresenter">
@@ -44,9 +49,10 @@
                                         <Setter Property="VerticalAlignment" Value="Stretch" />
                                         <Setter Property="Height">
                                             <Setter.Value>
-                                                <Binding Path="ActualWidth"
-                                                         RelativeSource="{RelativeSource Self}"
-                                                         Converter="{StaticResource WidthToHeightConverter}" />
+                                                <Binding
+                                                    Converter="{StaticResource WidthToHeightConverter}"
+                                                    Path="ActualWidth"
+                                                    RelativeSource="{RelativeSource Self}" />
                                             </Setter.Value>
                                         </Setter>
                                     </Style>
@@ -58,18 +64,21 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type vm:GlyphCellViewModel}">
-                                        <Border Background="{Binding BackgroundBrush}"
-                                                BorderBrush="#22000000"
-                                                BorderThickness="0.5">
-                                            <Viewbox Stretch="Uniform"
-                                                     HorizontalAlignment="Stretch"
-                                                     VerticalAlignment="Stretch">
-                                                <TextBlock Text="{Binding Character}"
-                                                           Foreground="{Binding ForegroundBrush}"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                           FontSize="10" />
+                                        <Border
+                                            Background="{Binding BackgroundBrush}"
+                                            BorderBrush="#22000000"
+                                            BorderThickness="0.5">
+                                            <Viewbox
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Stretch="Uniform">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    FontSize="10"
+                                                    Foreground="{Binding ForegroundBrush}"
+                                                    Text="{Binding Character}" />
                                             </Viewbox>
                                         </Border>
                                     </DataTemplate>
