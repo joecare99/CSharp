@@ -18,7 +18,7 @@ class Program
     {
         IoC.GetReqSrv = t => t switch
         {
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.01, 784, hiddenSize, 10),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.01, 784, (hiddenSize,eActivation.Sigmoid), (10,eActivation.Sigmoid)),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}"),
         };
