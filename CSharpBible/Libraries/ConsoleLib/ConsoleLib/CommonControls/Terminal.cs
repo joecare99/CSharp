@@ -61,6 +61,10 @@ namespace ConsoleLib.CommonControls
         public string Title { get => Text; set { } }
         public int WindowHeight { get => size.Height -2; set { } }
         public int WindowWidth { get => size.Width - 2; set { } }
+
+        public bool CursorVisible { get; set; }
+        public int BufferWidth => WindowWidth;
+        public int BufferHeight => WindowHeight;
         #endregion
         /// <summary>
         /// Draws this instance.

@@ -32,7 +32,7 @@ namespace ConsoleLib
         /// <summary>
         /// The Dimension
         /// </summary>
-        protected Rectangle _dimension;
+        protected Rectangle _dimension=Rectangle.Empty;
 
         /// <summary>
         /// Gets or sets the message queue.
@@ -223,7 +223,10 @@ namespace ConsoleLib
                 if (_lastDim.Location != _dimension.Location)
                     OnMove?.Invoke(this, EventArgs.Empty);
                 if (_lastDim.Size != _dimension.Size)
+                {
+                    SetSize(_dimension.Size);
                     OnResize?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
