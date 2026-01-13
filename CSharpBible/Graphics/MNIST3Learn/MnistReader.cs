@@ -20,16 +20,16 @@ public class MnistReader
 
         for (int i = 0; i < numImages; i++)
         {
-            double[] pixels = new double[rows * cols];
+            float[] pixels = new float[rows * cols];
             for (int p = 0; p < pixels.Length; p++)
             {
                 // Normalisierung: 0-255 -> 0.0-1.0
-                pixels[p] = imgBr.ReadByte() / 255.0;
+                pixels[p] = imgBr.ReadByte() / 255.0f;
             }
 
             int label = lblBr.ReadByte();
-            double[] target = new double[10];
-            target[label] = 1.0; // One-Hot Encoding
+            float[] target = new float[10];
+            target[label] = 1.0f; // One-Hot Encoding
 
             yield return new MnistImage { Data = pixels, Label = target, ActualDigit = label };
         }
@@ -46,7 +46,7 @@ public class MnistReader
 
 public struct MnistImage
 {
-    public double[] Data;   // Die 784 Pixel
-    public double[] Label;  // Das Ziel-Array (z.B. [0,0,1,0...])
+    public float[] Data;   // Die 784 Pixel
+    public float[] Label;  // Das Ziel-Array (z.B. [0,0,1,0...])
     public int ActualDigit; // Die echte Ziffer für die Anzeige
 }
