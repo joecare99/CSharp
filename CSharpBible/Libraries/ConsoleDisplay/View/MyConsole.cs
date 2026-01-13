@@ -77,6 +77,15 @@ public class MyConsole : IConsole
     protected PropertyInfo? title { get; set; }
         = typeof(Console).GetProperty(nameof(Title));
 
+    protected PropertyInfo? cursorVisible { get; set; }
+        = typeof(Console).GetProperty(nameof(Console.CursorVisible));
+
+    protected PropertyInfo? bufferWidth { get; set; }
+        = typeof(Console).GetProperty(nameof(Console.BufferWidth));
+
+    protected PropertyInfo? bufferHeight { get; set; }
+        = typeof(Console).GetProperty(nameof(Console.BufferHeight));
+
     /// <summary>
     /// Gets or sets the clear.
     /// </summary>
@@ -206,6 +215,28 @@ public class MyConsole : IConsole
     public  string Title { 
         get => (string)(title?.GetValue(instance) ??""); 
         set => title?.SetValue(instance, value); }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether [cursor visible].
+    /// </summary>
+    /// <value><c>true</c> if [cursor visible]; otherwise, <c>false</c>.</value>
+    public bool CursorVisible
+    {
+        get => (bool)(cursorVisible?.GetValue(instance) ?? false);
+        set => cursorVisible?.SetValue(instance, value);
+    }
+
+    /// <summary>
+    /// Gets the width of the buffer.
+    /// </summary>
+    /// <value>The width of the buffer.</value>
+    public int BufferWidth => (int)(bufferWidth?.GetValue(instance) ?? 0);
+
+    /// <summary>
+    /// Gets the height of the buffer.
+    /// </summary>
+    /// <value>The height of the buffer.</value>
+    public int BufferHeight => (int)(bufferHeight?.GetValue(instance) ?? 0);
 
     public  bool IsOutputRedirected 
         => (bool)(isOutputRedirected?.GetValue(instance) ?? false);
