@@ -13,7 +13,7 @@ class Program
     {
         IoC.GetReqSrv = t => t switch
         {
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.1, 784, 64, 10),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.1, 784, (64, eActivation.Sigmoid), (10, eActivation.Sigmoid)),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}"),
         };
@@ -64,6 +64,8 @@ class Program
         Console.WriteLine($"Echte Ziffer: {testImg.ActualDigit}");
         Console.WriteLine($"KI Vorhersage: {predictedDigit} (Konfidenz: {prediction[predictedDigit]:P2})");
         Console.WriteLine($"KI Vorhersage2: {predictedDigit2} (Konfidenz: {prediction2[predictedDigit2]:P2})");
+
+
     }
 
 }
