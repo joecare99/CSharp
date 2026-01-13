@@ -362,7 +362,7 @@ public class GameSession
         }
     }
 
-    public void MovePlayer(Direction direction, bool autoPickup = true, bool autoEquip = true)
+    public void MovePlayer(Direction direction, bool autoPickup = true, bool autoEquip = true, bool autoDoorOpen = false)
     {
         var newPos = Player.Position;
         switch (direction)
@@ -377,7 +377,22 @@ public class GameSession
             case Direction.SouthEast: newPos.X++; newPos.Y++; break;
         }
 
-        if (Map.IsValid(newPos) && Map[newPos].IsWalkable)
+        if (!Map.IsValid(newPos))
+        {
+            return;
+        }
+
+        // Auto-open door by bumping into it
+        if (autoDoorOpen && Map[newPos].Type == TileType.DoorClosed)
+        {
+            if (TryOpenDoorBetween(Player.Position, newPos))
+            {
+                UpdateFov();
+                return;
+            }
+        }
+
+        if (Map[newPos].IsWalkable)
         {
             if (Map[newPos].Creature == null)
             {
@@ -418,6 +433,98 @@ public class GameSession
         }
     }
 
+    public bool OpenDoorAt(Point position)
+    {
+        if (!Map.IsValid(position))
+        {
+            return false;
+        }
+
+        if (Math.Abs(position.X - Player.Position.X) > 1 || Math.Abs(position.Y - Player.Position.Y) > 1)
+        {
+            return false;
+        }
+
+        var tile = Map[position];
+        if (tile == null || !tile.IsExplored)
+        {
+            return false;
+        }
+
+        if (tile.Type != TileType.DoorClosed)
+        {
+            return false;
+        }
+
+        tile.Type = TileType.DoorOpen;
+        UpdateFov();
+        Log("You open the door.");
+        return true;
+    }
+
+    public bool CloseDoorAt(Point position)
+    {
+        if (!Map.IsValid(position))
+        {
+            return false;
+        }
+
+        if (Math.Abs(position.X - Player.Position.X) > 1 || Math.Abs(position.Y - Player.Position.Y) > 1)
+        {
+            return false;
+        }
+
+        var tile = Map[position];
+        if (tile == null || !tile.IsExplored)
+        {
+            return false;
+        }
+
+        if (tile.Type != TileType.DoorOpen)
+        {
+            return false;
+        }
+
+        if (tile.Creature != null)
+        {
+            return false;
+        }
+
+        tile.Type = TileType.DoorClosed;
+        UpdateFov();
+        Log("You close the door.");
+        return true;
+    }
+
+    public bool TryOpenDoorBetween(Point from, Point to)
+    {
+        if (!Map.IsValid(to))
+        {
+            return false;
+        }
+
+        var tile = Map[to];
+        if (tile == null)
+        {
+            return false;
+        }
+
+        if (tile.Type != TileType.DoorClosed)
+        {
+            return false;
+        }
+
+        // Only allow if adjacent to the actor position
+        if (Math.Abs(to.X - from.X) > 1 || Math.Abs(to.Y - from.Y) > 1)
+        {
+            return false;
+        }
+
+        tile.Type = TileType.DoorOpen;
+        Log("You open the door.");
+        return true;
+    }
+
     public void PickUpItem(ICreature creature, IItem item, bool autoEquip = true)
     {
         if (Map[item.Position].Items.Contains(item))
@@ -454,6 +561,96 @@ public class GameSession
             // For now, we check HP after attack
             Enemies.Remove(defender);
             Map[defender.Position].Creature = null;
+        }
+    }
+
+    public enum PrimaryActionKind
+    {
+        None,
+        OpenDoor,
+        CloseDoor,
+        Pickup
+    }
+
+    public readonly record struct PrimaryAction(PrimaryActionKind Kind, Point Target, string Message);
+
+    public PrimaryAction GetPrimaryAction()
+    {
+        var pp = Player.Position;
+
+        // 1) Closed door adjacent -> open
+        foreach (var p in GetAdjacent8(pp))
+        {
+            if (!Map.IsValid(p))
+                continue;
+            var t = Map[p];
+            if (t == null || !t.IsExplored)
+                continue;
+
+            if (t.Type == TileType.DoorClosed)
+            {
+                return new PrimaryAction(PrimaryActionKind.OpenDoor, p, "There is a closed door nearby: open? (Enter)");
+            }
+        }
+
+        // 2) Item(s) adjacent -> pickup (only if exactly 1 and not container, matching view-model behavior)
+        foreach (var p in GetAdjacent8(pp))
+        {
+            if (!Map.IsValid(p))
+                continue;
+            var t = Map[p];
+            if (t == null || !t.IsExplored)
+                continue;
+
+            if (t.Items.Count == 1 && t.Items[0] is not SharpHack.Base.Interfaces.IContainerItem)
+            {
+                return new PrimaryAction(PrimaryActionKind.Pickup, p, $"There is a {t.Items[0].Name} nearby: pick up? (Enter)");
+            }
+        }
+
+        // 3) Open door adjacent -> close (optional)
+        foreach (var p in GetAdjacent8(pp))
+        {
+            if (!Map.IsValid(p))
+                continue;
+            var t = Map[p];
+            if (t == null || !t.IsExplored)
+                continue;
+
+            if (t.Type == TileType.DoorOpen)
+            {
+                return new PrimaryAction(PrimaryActionKind.CloseDoor, p, "There is an open door nearby: close? (Enter)" );
+            }
+        }
+
+        return new PrimaryAction(PrimaryActionKind.None, pp, string.Empty);
+    }
+
+    public bool ExecutePrimaryAction()
+    {
+        var action = GetPrimaryAction();
+        switch (action.Kind)
+        {
+            case PrimaryActionKind.OpenDoor:
+                return OpenDoorAt(action.Target);
+            case PrimaryActionKind.CloseDoor:
+                return CloseDoorAt(action.Target);
+            case PrimaryActionKind.Pickup:
+            {
+                var t = Map[action.Target];
+                if (t == null || t.Items.Count != 1)
+                {
+                    Log("Sorry, nothing to pick up.");
+                    return false;
+                }
+
+                var item = t.Items[0];
+                PickUpItem(Player, item, autoEquip: true);
+                return true;
+            }
+            default:
+                Log("Sorry, there is nothing to do here.");
+                return false;
         }
     }
 
