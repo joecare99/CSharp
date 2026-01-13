@@ -42,6 +42,9 @@ public partial class GameViewModel : ObservableObject
     [ObservableProperty]
     private bool _autoEquip = true;
 
+    [ObservableProperty]
+    private bool _autoDoorOpen = true;
+
     public ObservableCollection<string> Messages { get; } = new();
     public ObservableCollection<IItem> Inventory { get; } = new();
 
@@ -175,6 +178,8 @@ public partial class GameViewModel : ObservableObject
                 index++;
             }
         }
+
+        OnPropertyChanged(nameof(PrimaryActionHint));
     }
 
     private bool IsEnemyNearPlayer()
@@ -399,12 +404,88 @@ public partial class GameViewModel : ObservableObject
     [RelayCommand]
     public void Move(Direction direction)
     {
-        _session.MovePlayer(direction, autoPickup: AutoPickup, autoEquip: AutoEquip);
+        _session.MovePlayer(direction, autoPickup: AutoPickup, autoEquip: AutoEquip, autoDoorOpen: AutoDoorOpen);
         UpdateStats();
         UpdateInventory();
         UpdateDisplayBuffer();
         OnPropertyChanged(nameof(DisplayTiles));
         NotifyMiniMapIfChanged();
+    }
+
+    private Point? FindAdjacentDoor(bool closed)
+    {
+        var pp = Player.Position;
+        foreach (var p in new[]
+                 {
+                     new Point(pp.X, pp.Y - 1),
+                     new Point(pp.X + 1, pp.Y),
+                     new Point(pp.X, pp.Y + 1),
+                     new Point(pp.X - 1, pp.Y),
+                     new Point(pp.X - 1, pp.Y - 1),
+                     new Point(pp.X + 1, pp.Y - 1),
+                     new Point(pp.X - 1, pp.Y + 1),
+                     new Point(pp.X + 1, pp.Y + 1)
+                 })
+        {
+            if (!Map.IsValid(p))
+                continue;
+            var t = Map[p];
+            if (!t.IsExplored)
+                continue;
+            if (closed && t.Type == TileType.DoorClosed)
+                return p;
+            if (!closed && t.Type == TileType.DoorOpen)
+                return p;
+        }
+
+        return null;
+    }
+
+    [RelayCommand]
+    public void OpenDoorNearby()
+    {
+        var p = FindAdjacentDoor(closed: true);
+        if (p == null)
+            return;
+
+        if (_session.OpenDoorAt(p.Value))
+        {
+            UpdateDisplayBuffer();
+            OnPropertyChanged(nameof(DisplayTiles));
+            NotifyMiniMapIfChanged();
+        }
+    }
+
+    [RelayCommand]
+    public void CloseDoorNearby()
+    {
+        var p = FindAdjacentDoor(closed: false);
+        if (p == null)
+            return;
+
+        if (_session.CloseDoorAt(p.Value))
+        {
+            UpdateDisplayBuffer();
+            OnPropertyChanged(nameof(DisplayTiles));
+            NotifyMiniMapIfChanged();
+        }
+    }
+
+    [RelayCommand]
+    public void ToggleDoorNearby()
+    {
+        var closed = FindAdjacentDoor(closed: true);
+        if (closed != null)
+        {
+            OpenDoorNearby();
+            return;
+        }
+
+        var open = FindAdjacentDoor(closed: false);
+        if (open != null)
+        {
+            CloseDoorNearby();
+        }
     }
 
     [RelayCommand]
@@ -483,6 +564,29 @@ public partial class GameViewModel : ObservableObject
             Move(dir.Value);
 
             await Task.Delay(25, token);
+        }
+    }
+
+    public string? PrimaryActionHint
+    {
+        get
+        {
+            var a = _session.GetPrimaryAction();
+            return string.IsNullOrWhiteSpace(a.Message) ? null : a.Message;
+        }
+    }
+
+    [RelayCommand]
+    public void ExecutePrimaryAction()
+    {
+        if (_session.ExecutePrimaryAction())
+        {
+            UpdateStats();
+            UpdateInventory();
+            UpdateDisplayBuffer();
+            OnPropertyChanged(nameof(DisplayTiles));
+            NotifyMiniMapIfChanged();
+            OnPropertyChanged(nameof(PrimaryActionHint));
         }
     }
 }
