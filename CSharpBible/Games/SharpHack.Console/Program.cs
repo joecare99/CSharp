@@ -10,17 +10,27 @@ using DrawingPoint = System.Drawing.Point;
 using DrawingSize = System.Drawing.Size;
 using SharpHack.Persist;
 using SharpHack.LevelGen.BSP;
+using SharpHack.Base.Data;
+using BaseLib.Interfaces;
 
 namespace SharpHack.Console;
 
 public class Program
 {
+    private static readonly IConsole _console = new ConsoleProxy();
+
     private static GameViewModel _viewModel; // Use ViewModel instead of Session directly
     private static TileDisplay<DisplayTile> _tileDisplay;
     private static ITileDef _tileDef;
     private static Display _miniMap;
     private static int px;
     private static int py;
+
+    private static bool _autoDoorOpen = true;
+
+    private static string? _lastPrimaryHint;
+
+    private const int HudY = 20;
 
     public static void Main(string[] args)
     {
@@ -30,7 +40,7 @@ public class Program
         while (running)
         {
             Render();
-            var key = System.Console.ReadKey(true).Key;
+            var key = _console.ReadKey()?.Key ?? ConsoleKey.NoName;
             running = HandleInput(key);
         }
     }
@@ -44,27 +54,22 @@ public class Program
         var enemyAI = new SimpleEnemyAI();
         var gamePersist = new InMemoryGamePersist();
 
-        var session = new GameSession(mapGenerator,gamePersist, random, combatSystem, enemyAI);
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         _viewModel = new GameViewModel(session); // Initialize ViewModel
         _tileDef = new TileDefRes(".\\Resources\\Tiles4x2.tdj");
-        _viewModel.SetViewSize(70/_tileDef.TileSize.Width, 20 / _tileDef.TileSize.Height);
-        _tileDisplay = new TileDisplay<DisplayTile>(new ConsoleProxy(), _tileDef, DrawingPoint.Empty, new DrawingSize(70 / _tileDef.TileSize.Width, 20 / _tileDef.TileSize.Height), _tileDef.TileSize)
+        _viewModel.SetViewSize(70 / _tileDef.TileSize.Width, 20 / _tileDef.TileSize.Height);
+        _tileDisplay = new TileDisplay<DisplayTile>(_console, _tileDef, DrawingPoint.Empty,
+            new DrawingSize(70 / _tileDef.TileSize.Width, 20 / _tileDef.TileSize.Height), _tileDef.TileSize)
         {
             FncGetTile = GetTileAt,
-        //    FncOldPos = GetOldPos,
+            //    FncOldPos = GetOldPos,
         };
         TileDisplay<DisplayTile>.defaultTile = DisplayTile.Empty;
 
-        var hudY = 20;
         _miniMap = new Display(60, 21, 20, 12);
 
-        System.Console.CursorVisible = false;
-        System.Console.Title = "SharpHack";
-    }
-
-    private static DrawingPoint GetOldPos(DrawingPoint point)
-    {
-        return _viewModel.Map.GetOldPos(point.X, point.Y) is (int x, int y) p ? new DrawingPoint(p.X, p.Y) : DrawingPoint.Empty;
+        _console.CursorVisible = false;
+        _console.Title = "SharpHack";
     }
 
     private static bool HandleInput(ConsoleKey key)
@@ -79,34 +84,161 @@ public class Program
             case ConsoleKey.NumPad9: _viewModel.Move(Direction.NorthEast); break;
             case ConsoleKey.NumPad1: _viewModel.Move(Direction.SouthWest); break;
             case ConsoleKey.NumPad3: _viewModel.Move(Direction.SouthEast); break;
-            case ConsoleKey.NumPad5: _viewModel.Wait(); break; // Wait command
-            case ConsoleKey.Escape: return false;
+            case ConsoleKey.NumPad5:
+            case ConsoleKey.OemPeriod:
+                _viewModel.Wait();
+                break;
+
+            // Targeted commands
+            case ConsoleKey.O:
+                _viewModel.OpenDoorNearby();
+                break;
+            case ConsoleKey.C:
+                _viewModel.CloseDoorNearby();
+                break;
+            case ConsoleKey.T:
+                _viewModel.ToggleDoorNearby();
+                break;
+
+            case ConsoleKey.A:
+                _autoDoorOpen = !_autoDoorOpen;
+                _viewModel.AutoDoorOpen = _autoDoorOpen;
+                _viewModel.Messages.Add($"AutoDoorOpen: {(_autoDoorOpen ? "ON" : "OFF")}");
+                break;
+
+            case ConsoleKey.Enter:
+                _viewModel.ExecutePrimaryAction();
+                break;
+
+            case ConsoleKey.Escape:
+                return false;
+
+            case ConsoleKey.G:
+                GoRelative();
+                break;
         }
+
         return true;
+    }
+
+    private static void GoRelative()
+    {
+        var pp = _viewModel.Player.Position;
+
+        var (dx, dy) = ReadIntPairAtHud($"GoTo (dx,dy) from [{pp.X},{pp.Y}]: ");
+
+        var target = new Point(pp.X + dx, pp.Y + dy);
+
+        if (!_viewModel.Map.IsValid(target))
+        {
+            _viewModel.Messages.Add("Target is outside of the map.");
+            return;
+        }
+
+        _viewModel.GoToWorldAsync(target).GetAwaiter().GetResult();
+    }
+
+    private static (int dx, int dy) ReadIntPairAtHud(string prompt)
+    {
+        var prevCursorVisible = _console.CursorVisible;
+        var prevFore = _console.ForegroundColor;
+        var prevBack = _console.BackgroundColor;
+
+        try
+        {
+            _console.CursorVisible = true;
+            _console.ForegroundColor = ConsoleColor.White;
+            _console.BackgroundColor = ConsoleColor.Black;
+
+            while (true)
+            {
+                // Render once so we don't input over stale map frames
+                Render();
+
+                // Prompt on HUD message line
+                _console.SetCursorPosition(0, HudY + 1);
+                _console.Write(new string(' ', 79));
+                _console.SetCursorPosition(0, HudY + 1);
+                _console.Write(prompt);
+
+                // place cursor after prompt
+                var inputX = Math.Min(_console.BufferWidth - 1, prompt.Length);
+                _console.SetCursorPosition(inputX, HudY + 1);
+
+                var s = _console.ReadLine();
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    continue;
+                }
+
+                var parts = s.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 2)
+                {
+                    continue;
+                }
+
+                if (int.TryParse(parts[0], out var dx) && int.TryParse(parts[1], out var dy))
+                {
+                    return (dx, dy);
+                }
+            }
+        }
+        finally
+        {
+            _console.ForegroundColor = prevFore;
+            _console.BackgroundColor = prevBack;
+            _console.CursorVisible = prevCursorVisible;
+        }
     }
 
     private static void Render()
     {
         _tileDisplay.Update(false);
 
-        var hudY = 20;
-        System.Console.ForegroundColor = System.ConsoleColor.White;
-        System.Console.SetCursorPosition(0, hudY + 0);
-        System.Console.Write($"HP: {_viewModel.HP}/{_viewModel.MaxHP}  Lvl: {_viewModel.Level}  ");
-        System.Console.Write(new string(' ', 50));
-        System.Console.SetCursorPosition(0, hudY + 1);
+        UpdatePrimaryActionHint();
+
+        _console.ForegroundColor = ConsoleColor.White;
+        _console.SetCursorPosition(0, HudY + 0);
+        _console.Write($"HP: {_viewModel.HP}/{_viewModel.MaxHP}  Lvl: {_viewModel.Level}  AutoDoorOpen: {(_autoDoorOpen ? "ON" : "OFF")}  ");
+        _console.Write(new string(' ', 50));
+        _console.SetCursorPosition(0, HudY + 1);
 
         if (_viewModel.Messages.Count > 0)
         {
             var lastMessage = _viewModel.Messages[_viewModel.Messages.Count - 1];
-            System.Console.Write(lastMessage.PadRight(59));
+            _console.Write(lastMessage.PadRight(59));
         }
         else
         {
-            System.Console.Write(new string(' ', 59));
+            _console.Write(new string(' ', 59));
         }
 
         DrawMiniMap();
+    }
+
+    private static void UpdatePrimaryActionHint()
+    {
+        var hint = _viewModel.PrimaryActionHint;
+        if (hint != _lastPrimaryHint)
+        {
+            _lastPrimaryHint = hint;
+            if (hint != null)
+            {
+                _viewModel.Messages.Add(hint);
+            }
+        }
+    }
+
+    private static IEnumerable<Point> GetAdjacent8(Point p)
+    {
+        yield return new Point(p.X - 1, p.Y - 1);
+        yield return new Point(p.X, p.Y - 1);
+        yield return new Point(p.X + 1, p.Y - 1);
+        yield return new Point(p.X - 1, p.Y);
+        yield return new Point(p.X + 1, p.Y);
+        yield return new Point(p.X - 1, p.Y + 1);
+        yield return new Point(p.X, p.Y + 1);
+        yield return new Point(p.X + 1, p.Y + 1);
     }
 
     private static void DrawMiniMap()
