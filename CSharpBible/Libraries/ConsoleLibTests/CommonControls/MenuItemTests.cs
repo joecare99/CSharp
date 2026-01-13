@@ -9,25 +9,8 @@ using BaseLib.Interfaces; // use WPF ICommand if available
 namespace ConsoleLib.CommonControls.Tests;
 
 [TestClass]
-public class MenuItemTests
+public class MenuItemTests: TestBase
 {
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-    private static TstConsole _tstCon;
-    private IConsole _oldCon;
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-
-    [TestInitialize]
-    public void TestInit()
-    {
-        _tstCon ??= new TstConsole();
-        _oldCon = ConsoleFramework.console;
-        ConsoleFramework.console = _tstCon;
-    }
-    [TestCleanup]
-    public void TestCleanup()
-    {
-        ConsoleFramework.console = _oldCon;
-    }
 
     [TestMethod]
     public void SetText_Updates_Size()
