@@ -1,6 +1,6 @@
 {
   "TileSheetPath": "C:\\Projekte\\CSharp\\CSharpBible\\Games\\SharpHack.Wpf\\tiles2.png",
-  "TileSetClassKey": "Tiles2",
+  "TileSetClassKey": "DisplayTiles",
   "Grid": {
     "TileWidth": 96,
     "TileHeight": 96,
