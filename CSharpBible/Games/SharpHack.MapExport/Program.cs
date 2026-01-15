@@ -33,7 +33,7 @@ public static class Program
             services.AddSingleton<IGamePersist, InMemoryGamePersist>();
 
             // Map generator
-            services.AddSingleton<IMapGenerator, BSPMapGenerator>();
+            services.AddSingleton<IMapGenerator, BSPRoomMazeMapGenerator>();
 
             // WPF tile service
             services.AddSingleton<ITileService, TileService>();
