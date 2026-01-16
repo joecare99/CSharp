@@ -17,7 +17,8 @@ public sealed class TileCutoutService : ITileCutoutService
         BitmapSource sheet,
         TileDefinition foregroundTile,
         IReadOnlyList<TileDefinition> candidateBackgroundTiles,
-        TileCutoutOptions options)
+        TileCutoutOptions options,
+        Func<TileDefinition, double>? backgroundCandidatePenalty = null)
     {
         ArgumentNullException.ThrowIfNull(sheet);
         ArgumentNullException.ThrowIfNull(foregroundTile);
@@ -29,7 +30,7 @@ public sealed class TileCutoutService : ITileCutoutService
         var fg = new CroppedBitmap(sheet, foregroundTile.Bounds);
         fg.Freeze();
 
-        var bestBgTile = FindBestBackgroundTile(sheet, fg, candidateBackgroundTiles, options);
+        var bestBgTile = FindBestBackgroundTile(sheet, fg, candidateBackgroundTiles, options, backgroundCandidatePenalty);
         var bg = new CroppedBitmap(sheet, bestBgTile.Bounds);
         bg.Freeze();
 
@@ -56,7 +57,8 @@ public sealed class TileCutoutService : ITileCutoutService
         BitmapSource sheet,
         BitmapSource fg,
         IReadOnlyList<TileDefinition> candidates,
-        TileCutoutOptions options)
+        TileCutoutOptions options,
+        Func<TileDefinition, double>? candidatePenalty)
     {
         // Score by comparing a border of pixels. Lower score => better match.
         var fgPixels = GetPixelsBgra32(fg);
@@ -103,6 +105,10 @@ public sealed class TileCutoutService : ITileCutoutService
 
             if (count == 0) continue;
             double score = sum / (double)count;
+            if (candidatePenalty != null)
+            {
+                score += candidatePenalty(c);
+            }
             if (score < bestScore)
             {
                 bestScore = score;
@@ -123,6 +129,21 @@ public sealed class TileCutoutService : ITileCutoutService
         int h = fg.PixelHeight;
 
         var outPixels = new byte[w * h * 4];
+
+        if (options.BackgroundThreshold == int.MinValue)
+        {
+            // Special mode: background removal disabled.
+            var opaquePixels = GetPixelsBgra32(fg);
+            for (int i = 0; i < opaquePixels.Length; i += 4)
+            {
+                opaquePixels[i + 3] = 255;
+            }
+
+            var opaque = new WriteableBitmap(w, h, fg.DpiX, fg.DpiY, PixelFormats.Bgra32, null);
+            opaque.WritePixels(new Int32Rect(0, 0, w, h), opaquePixels, w * 4, 0);
+            opaque.Freeze();
+            return opaque;
+        }
 
         int t = Math.Max(0, options.BackgroundThreshold);
         int softMin = Math.Max(0, options.AlphaSoftThresholdMin);

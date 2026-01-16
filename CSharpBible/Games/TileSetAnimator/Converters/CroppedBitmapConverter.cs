@@ -24,9 +24,39 @@ public sealed class CroppedBitmapConverter : IMultiValueConverter
             return null;
         }
 
-        var cropped = new CroppedBitmap(source, rect);
-        cropped.Freeze();
-        return cropped;
+        // During image reloads/layout updates we can temporarily receive stale/out-of-range rectangles.
+        // Guard against invalid crop rectangles to avoid sporadic exceptions.
+        if (source.PixelWidth <= 0 || source.PixelHeight <= 0)
+        {
+            return null;
+        }
+
+        if (rect.X < 0 || rect.Y < 0 || rect.X >= source.PixelWidth || rect.Y >= source.PixelHeight)
+        {
+            return null;
+        }
+
+        if (rect.X + rect.Width > source.PixelWidth || rect.Y + rect.Height > source.PixelHeight)
+        {
+            return null;
+        }
+
+        try
+        {
+            var cropped = new CroppedBitmap(source, rect);
+            cropped.Freeze();
+            return cropped;
+        }
+        catch (ArgumentException)
+        {
+            // invalid region
+            return null;
+        }
+        catch (InvalidOperationException)
+        {
+            // source not ready / disposed during reload
+            return null;
+        }
     }
 
     /// <inheritdoc />

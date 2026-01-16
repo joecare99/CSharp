@@ -26,6 +26,11 @@ public interface IFileDialogService
     string? SaveCutout(string suggestedFileName);
 
     /// <summary>
+    /// Prompts for a target folder to export a full tileset cutout batch.
+    /// </summary>
+    string? SelectCutoutExportFolder();
+
+    /// <summary>
     /// Shows a save dialog for exporting C# enum definitions.
     /// </summary>
     /// <param name="suggestedFileName">Default file name without extension.</param>

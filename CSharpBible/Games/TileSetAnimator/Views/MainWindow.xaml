@@ -12,6 +12,8 @@
         Height="800">
     <Window.Resources>
         <conv:CroppedBitmapConverter x:Key="CroppedBitmapConverter" />
+        <conv:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <conv:BoolInverterConverter x:Key="BoolInverterConverter" />
         <Style TargetType="ListBoxItem" x:Key="TileListItemStyle">
             <Setter Property="Margin" Value="2" />
             <Setter Property="Padding" Value="0" />
@@ -125,20 +127,24 @@
 
                 <Expander Header="Cutout" Margin="0,12,0,0" IsExpanded="False">
                     <StackPanel>
-                        <GroupBox Header="Background">
+                        <GroupBox Header="Per-Tile">
                             <StackPanel>
+                                <TextBlock Text="Applies to the selected tile and is saved per tile." />
                                 <TextBlock Text="Background candidate set: StructuralElement" />
+                                <CheckBox Content="Auto background" IsChecked="{Binding CutoutUseAutoBackground}" />
                                 <ComboBox ItemsSource="{Binding CutoutBackgroundCandidates}"
                                           SelectedItem="{Binding SelectedCutoutBackgroundTile}"
                                           DisplayMemberPath="Name"
-                                          IsEditable="False" />
+                                          IsEditable="False"
+                                          IsEnabled="{Binding CutoutUseAutoBackground, Converter={StaticResource BoolInverterConverter}}" />
                                 <TextBlock Text="Used background:" Margin="0,8,0,0" />
                                 <TextBlock Text="{Binding UsedCutoutBackgroundTileName}" FontWeight="SemiBold" />
+                                <CheckBox Content="Disable background removal" Margin="0,8,0,0" IsChecked="{Binding CutoutDisableBackgroundRemoval}" />
                                 <Button Content="Refresh Preview" Command="{Binding RefreshCutoutPreviewCommand}" />
                             </StackPanel>
                         </GroupBox>
 
-                        <GroupBox Header="Settings">
+                        <GroupBox Header="Global Algorithm">
                             <UniformGrid Columns="2" Margin="0,4,0,0">
                                 <TextBlock Text="Border" />
                                 <TextBox Text="{Binding CutoutBorderThickness, UpdateSourceTrigger=PropertyChanged}" />
@@ -170,6 +176,7 @@
                         </GroupBox>
 
                         <Button Content="Export Cutout (PNG Alpha)" Command="{Binding ExportCutoutCommand}" />
+                        <Button Content="Export TileSet Cutout Sheet" Command="{Binding ExportTileSetCutoutsCommand}" Margin="0,8,0,0" />
                     </StackPanel>
                 </Expander>
 
@@ -244,6 +251,7 @@
         <Grid Grid.Column="1" Margin="12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="8" />
                 <RowDefinition Height="220" />
             </Grid.RowDefinitions>
 
@@ -278,14 +286,26 @@
                 </Border>
             </GroupBox>
 
-            <Grid Grid.Row="1" Margin="0,12,0,0">
+            <GridSplitter Grid.Row="1"
+                          Height="8"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeDirection="Rows"
+                          ResizeBehavior="PreviousAndNext"
+                          Background="Transparent" />
+
+            <Grid Grid.Row="2" Margin="0,12,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="320" />
                 </Grid.ColumnDefinitions>
 
-                <GroupBox Header="{x:Static p:Resources.SelectedTileHeader}" Grid.Column="0">
+                <GroupBox Header="{x:Static p:Resources.SelectedTileHeader}" Grid.RowSpan="2" Grid.Column="0">
                     <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="1" Margin="8">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <Image Source="{Binding SelectedTileImage}">
@@ -297,7 +317,7 @@
                     </Border>
                 </GroupBox>
 
-                <GroupBox Header="{x:Static p:Resources.PreviewGroupTitle}" Grid.Column="1">
+                <GroupBox Header="{x:Static p:Resources.PreviewGroupTitle}" Grid.Row="0" Grid.Column="1">
                     <Border BorderBrush="{StaticResource TileBorderBrush}"
                             BorderThickness="1"
                             Margin="8"
@@ -307,7 +327,19 @@
                     </Border>
                 </GroupBox>
 
-                <GroupBox Header="{x:Static p:Resources.MiniMapPreviewHeader}" Grid.Column="2">
+                <GroupBox Header="Cutout Preview" Grid.Row="1" Grid.Column="1" Margin="0,0,0,0">
+                    <Border BorderBrush="{StaticResource TileBorderBrush}"
+                            BorderThickness="1"
+                            Margin="8"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <Image Source="{Binding CutoutPreviewImage}" />
+                        </ScrollViewer>
+                    </Border>
+                </GroupBox>
+
+                <GroupBox Header="{x:Static p:Resources.MiniMapPreviewHeader}" Grid.RowSpan="2" Grid.Column="2">
                     <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="1" Margin="4">
                         <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Border Width="200" Height="200" BorderThickness="0" Padding="0">

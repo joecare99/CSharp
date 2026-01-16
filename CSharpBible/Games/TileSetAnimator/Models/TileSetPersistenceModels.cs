@@ -23,6 +23,11 @@ public sealed class TileMetadataSnapshot
     /// Optional background tile index to use for cutout computation for this tile.
     /// </summary>
     public int? CutoutBackgroundTileIndex { get; init; }
+
+    /// <summary>
+    /// If true, disables background removal for this tile (export as-is / alpha 255).
+    /// </summary>
+    public bool CutoutDisableBackgroundRemoval { get; init; }
 }
 
 /// <summary>

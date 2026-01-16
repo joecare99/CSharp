@@ -28,6 +28,24 @@ public sealed class FileDialogService : IFileDialogService
     }
 
     /// <inheritdoc />
+    public string? SelectCutoutExportFolder()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = "Folder selection|*.folder",
+            FileName = "Select this folder",
+            Title = "Select folder for cutout export"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return null;
+        }
+
+        return Path.GetDirectoryName(dialog.FileName);
+    }
+
+    /// <inheritdoc />
     public string? SaveCutout(string suggestedFileName)
     {
         var dialog = new SaveFileDialog

@@ -21,7 +21,12 @@ public sealed record TileCutoutResult(
 
 public interface ITileCutoutService
 {
-    TileCutoutResult CreateCutout(BitmapSource sheet, TileDefinition foregroundTile, IReadOnlyList<TileDefinition> candidateBackgroundTiles, TileCutoutOptions options);
+    TileCutoutResult CreateCutout(
+        BitmapSource sheet,
+        TileDefinition foregroundTile,
+        IReadOnlyList<TileDefinition> candidateBackgroundTiles,
+        TileCutoutOptions options,
+        Func<TileDefinition, double>? backgroundCandidatePenalty = null);
 
     Task SaveCutoutAsync(BitmapSource cutoutBitmap, string destinationPath, CancellationToken cancellationToken = default);
 }

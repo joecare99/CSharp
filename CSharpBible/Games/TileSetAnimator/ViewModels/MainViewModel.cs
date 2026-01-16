@@ -89,7 +89,10 @@ namespace TileSetAnimator.ViewModels;
         RemoveMiniMapCommand = new RelayCommand(RemoveSelectedMiniMap, CanRemoveSelectedMiniMap);
         ExportTileEnumCommand = new AsyncRelayCommand(ExportTileEnumAsync, () => Tiles.Count > 0);
         ImportTileEnumCommand = new AsyncRelayCommand(ImportTileEnumAsync);
+        ExportTileSetStructureCommand = new AsyncRelayCommand(ExportTileSetStructureAsync, () => TileSheet != null);
+        ImportTileSetStructureCommand = new AsyncRelayCommand(ImportTileSetStructureAsync, () => TileSheet != null);
         ExportCutoutCommand = new AsyncRelayCommand(ExportCutoutAsync, () => SelectedTile != null && TileSheet != null && Tiles.Count > 0);
+        ExportTileSetCutoutsCommand = new AsyncRelayCommand(ExportTileSetCutoutsAsync, () => TileSheet != null && Tiles.Count > 0);
         RefreshCutoutPreviewCommand = new RelayCommand(RefreshCutoutPreview, () => SelectedTile != null && TileSheet != null);
         miniMaps.CollectionChanged += OnMiniMapsCollectionChanged;
 
@@ -100,6 +103,13 @@ namespace TileSetAnimator.ViewModels;
         UpdateMiniMapCommands();
 
         StatusMessage = Resources.NoSheetLoadedMessage;
+    }
+
+    partial void OnTileSheetChanged(BitmapSource? value)
+    {
+        ExportTileSetStructureCommand?.NotifyCanExecuteChanged();
+        ImportTileSetStructureCommand?.NotifyCanExecuteChanged();
+        ExportTileSetCutoutsCommand?.NotifyCanExecuteChanged();
     }
 
     public ObservableCollection<TileDefinition> Tiles { get; } = new();
@@ -218,6 +228,8 @@ namespace TileSetAnimator.ViewModels;
 
     public IAsyncRelayCommand ExportCutoutCommand { get; }
 
+    public IAsyncRelayCommand ExportTileSetCutoutsCommand { get; }
+
     public IRelayCommand RefreshCutoutPreviewCommand { get; }
 
     [ObservableProperty]
@@ -239,14 +251,167 @@ namespace TileSetAnimator.ViewModels;
     [NotifyPropertyChangedFor(nameof(CutoutPreviewImage))]
     private TileDefinition? selectedCutoutBackgroundTile;
 
+    [ObservableProperty]
+    private bool cutoutDisableBackgroundRemoval;
+
+    partial void OnCutoutDisableBackgroundRemovalChanged(bool value)
+    {
+        PersistSelectedTileCutoutBackground();
+        RefreshCutoutPreview();
+    }
+
+    private async Task ExportTileSetCutoutsAsync()
+    {
+        if (TileSheet == null || Tiles.Count == 0)
+        {
+            StatusMessage = Resources.NoSheetLoadedMessage;
+            return;
+        }
+
+        var path = fileDialogService.SaveCutout("tileset_cutout");
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        // Build a full-size transparent sheet, then blit each tile cutout into its original position.
+        var sheetW = TileSheet.PixelWidth;
+        var sheetH = TileSheet.PixelHeight;
+        var composite = new WriteableBitmap(sheetW, sheetH, TileSheet.DpiX, TileSheet.DpiY, System.Windows.Media.PixelFormats.Bgra32, null);
+
+        // Start fully transparent.
+        var clear = new byte[sheetW * sheetH * 4];
+        composite.WritePixels(new System.Windows.Int32Rect(0, 0, sheetW, sheetH), clear, sheetW * 4, 0);
+
+        var meta = EnsureClassMetadata();
+
+        foreach (var tile in Tiles)
+        {
+            if (tile.Bounds.Width <= 0 || tile.Bounds.Height <= 0)
+            {
+                continue;
+            }
+
+            var perTile = meta.Tiles.FirstOrDefault(t => t.Index == tile.Index);
+            var disableRemoval = perTile?.CutoutDisableBackgroundRemoval == true;
+
+            var options = new TileCutoutOptions(
+                BorderThickness: Math.Max(1, CutoutBorderThickness),
+                BackgroundBorderThickness: Math.Max(1, CutoutBorderThickness),
+                BackgroundThreshold: disableRemoval ? int.MinValue : Math.Max(0, CutoutBackgroundThreshold),
+                AlphaSoftThresholdMin: Math.Max(0, CutoutSoftAlphaMin),
+                AlphaSoftThresholdMax: Math.Max(CutoutSoftAlphaMin + 1, CutoutSoftAlphaMax),
+                UseSoftAlpha: disableRemoval ? false : CutoutUseSoftAlpha,
+                PreserveSourceRgbOnTransparent: false);
+
+            var candidates = CutoutBackgroundCandidates.Where(t => t.Index != tile.Index).ToArray();
+            if (candidates.Length == 0)
+            {
+                continue;
+            }
+
+            IReadOnlyList<TileDefinition> bgSet = candidates;
+            if (perTile?.CutoutBackgroundTileIndex is int bgIndex)
+            {
+                var bg = FindTileByIndex(bgIndex);
+                if (bg != null)
+                {
+                    bgSet = new[] { bg };
+                }
+            }
+
+            var result = tileCutoutService.CreateCutout(
+                TileSheet,
+                tile,
+                bgSet,
+                options,
+                backgroundCandidatePenalty: candidate =>
+                {
+                    var snap = meta.Tiles.FirstOrDefault(t => t.Index == candidate.Index);
+                    return snap?.CutoutDisableBackgroundRemoval == true ? 0 : 25000;
+                });
+            var src = result.ResultBitmap;
+            if (src.Format != System.Windows.Media.PixelFormats.Bgra32)
+            {
+                var conv = new FormatConvertedBitmap(src, System.Windows.Media.PixelFormats.Bgra32, null, 0);
+                conv.Freeze();
+                src = conv;
+            }
+
+            var pixels = new byte[tile.Bounds.Width * tile.Bounds.Height * 4];
+            src.CopyPixels(pixels, tile.Bounds.Width * 4, 0);
+            composite.WritePixels(tile.Bounds, pixels, tile.Bounds.Width * 4, 0);
+        }
+
+        composite.Freeze();
+        await tileCutoutService.SaveCutoutAsync(composite, path).ConfigureAwait(true);
+        StatusMessage = $"TileSet cutout sheet: {path}";
+    }
+
+    [ObservableProperty]
+    private bool cutoutUseAutoBackground = true;
+
+    partial void OnCutoutUseAutoBackgroundChanged(bool value)
+    {
+        if (value)
+        {
+            // Auto mode clears any per-tile background override.
+            SelectedCutoutBackgroundTile = null;
+        }
+
+        PersistSelectedTileCutoutBackground();
+        RefreshCutoutPreview();
+    }
+
     public IReadOnlyList<TileDefinition> CutoutBackgroundCandidates => Tiles.Where(t => t.Category == TileCategory.StructuralElement).ToArray();
 
     public BitmapSource? CutoutPreviewImage => lastCutoutResult?.ResultBitmap;
 
     partial void OnSelectedCutoutBackgroundTileChanged(TileDefinition? value)
     {
+        // Manual selection means auto mode off for this tile.
+        if (value != null)
+        {
+            CutoutUseAutoBackground = false;
+        }
+
+        PersistSelectedTileCutoutBackground();
         RefreshCutoutPreviewCommand?.NotifyCanExecuteChanged();
         RefreshCutoutPreview();
+    }
+
+    private void PersistSelectedTileCutoutBackground()
+    {
+        if (SelectedTile == null)
+        {
+            return; 
+        }
+
+        var meta = EnsureClassMetadata();
+        var idx = meta.Tiles.FindIndex(t => t.Index == SelectedTile.Index);
+        var existing = idx >= 0 ? meta.Tiles[idx] : null;
+
+        var snapshot = new TileMetadataSnapshot
+        {
+            Index = SelectedTile.Index,
+            Name = existing?.Name ?? SelectedTile.Name,
+            Notes = existing?.Notes ?? (string.IsNullOrWhiteSpace(SelectedTile.Notes) ? null : SelectedTile.Notes),
+            Category = existing?.Category ?? SelectedTile.Category,
+            SubCategory = existing?.SubCategory ?? (string.IsNullOrWhiteSpace(SelectedTile.SubCategory) ? null : SelectedTile.SubCategory),
+            CutoutBackgroundTileIndex = CutoutUseAutoBackground ? null : SelectedCutoutBackgroundTile?.Index,
+            CutoutDisableBackgroundRemoval = CutoutDisableBackgroundRemoval
+        };
+
+        if (idx >= 0)
+        {
+            meta.Tiles[idx] = snapshot;
+        }
+        else
+        {
+            meta.Tiles.Add(snapshot);
+        }
+
+        RequestClassMetadataPersistence();
     }
 
     public BitmapSource? SelectedTileImage => CreateTileImage(SelectedTile);
@@ -289,6 +454,24 @@ namespace TileSetAnimator.ViewModels;
         RestoreAnimations(persistedState);
         RestoreMiniMaps(persistedState);
         UpdateMiniMapCommands();
+
+        // Ensure cutout background selection is restored after metadata is available.
+        if (SelectedTile != null)
+        {
+            var persistedBgIndex = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == SelectedTile.Index)?.CutoutBackgroundTileIndex;
+            if (persistedBgIndex.HasValue)
+            {
+                SelectedCutoutBackgroundTile = FindTileByIndex(persistedBgIndex.Value);
+                CutoutUseAutoBackground = false;
+            }
+            else
+            {
+                CutoutUseAutoBackground = true;
+                SelectedCutoutBackgroundTile = null;
+            }
+
+            CutoutDisableBackgroundRemoval = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == SelectedTile.Index)?.CutoutDisableBackgroundRemoval == true;
+        }
 
         StatusMessage = string.Format(CultureInfo.CurrentCulture, Resources.TileCountFormat, Tiles.Count);
         DetectAnimationsCommand.NotifyCanExecuteChanged();
@@ -444,10 +627,10 @@ namespace TileSetAnimator.ViewModels;
         var options = new TileCutoutOptions(
             BorderThickness: Math.Max(1, CutoutBorderThickness),
             BackgroundBorderThickness: Math.Max(1, CutoutBorderThickness),
-            BackgroundThreshold: Math.Max(0, CutoutBackgroundThreshold),
+            BackgroundThreshold: CutoutDisableBackgroundRemoval ? int.MinValue : Math.Max(0, CutoutBackgroundThreshold),
             AlphaSoftThresholdMin: Math.Max(0, CutoutSoftAlphaMin),
             AlphaSoftThresholdMax: Math.Max(CutoutSoftAlphaMin + 1, CutoutSoftAlphaMax),
-            UseSoftAlpha: CutoutUseSoftAlpha,
+            UseSoftAlpha: CutoutDisableBackgroundRemoval ? false : CutoutUseSoftAlpha,
             PreserveSourceRgbOnTransparent: false);
 
         var candidates = CutoutBackgroundCandidates.Where(t => t.Index != SelectedTile.Index).ToArray();
@@ -463,7 +646,17 @@ namespace TileSetAnimator.ViewModels;
             bgSet = new[] { SelectedCutoutBackgroundTile };
         }
 
-        lastCutoutResult = tileCutoutService.CreateCutout(TileSheet, SelectedTile, bgSet, options);
+        lastCutoutResult = tileCutoutService.CreateCutout(
+            TileSheet,
+            SelectedTile,
+            bgSet,
+            options,
+            backgroundCandidatePenalty: candidate =>
+            {
+                var snap = EnsureClassMetadata().Tiles.FirstOrDefault(t => t.Index == candidate.Index);
+                // Prefer real background tiles (typically: background removal disabled).
+                return snap?.CutoutDisableBackgroundRemoval == true ? 0 : 25000;
+            });
         UsedCutoutBackgroundTile = lastCutoutResult.BackgroundTile;
         OnPropertyChanged(nameof(CutoutPreviewImage));
 
@@ -491,10 +684,10 @@ namespace TileSetAnimator.ViewModels;
         var options = new TileCutoutOptions(
             BorderThickness: Math.Max(1, CutoutBorderThickness),
             BackgroundBorderThickness: Math.Max(1, CutoutBorderThickness),
-            BackgroundThreshold: Math.Max(0, CutoutBackgroundThreshold),
+            BackgroundThreshold: CutoutDisableBackgroundRemoval ? int.MinValue : Math.Max(0, CutoutBackgroundThreshold),
             AlphaSoftThresholdMin: Math.Max(0, CutoutSoftAlphaMin),
             AlphaSoftThresholdMax: Math.Max(CutoutSoftAlphaMin + 1, CutoutSoftAlphaMax),
-            UseSoftAlpha: CutoutUseSoftAlpha,
+            UseSoftAlpha: CutoutDisableBackgroundRemoval ? false : CutoutUseSoftAlpha,
             PreserveSourceRgbOnTransparent: false);
 
         IReadOnlyList<TileDefinition> bgSet = candidates;
@@ -503,7 +696,16 @@ namespace TileSetAnimator.ViewModels;
             bgSet = new[] { SelectedCutoutBackgroundTile };
         }
 
-        lastCutoutResult = tileCutoutService.CreateCutout(TileSheet, SelectedTile, bgSet, options);
+        lastCutoutResult = tileCutoutService.CreateCutout(
+            TileSheet,
+            SelectedTile,
+            bgSet,
+            options,
+            backgroundCandidatePenalty: candidate =>
+            {
+                var snap = EnsureClassMetadata().Tiles.FirstOrDefault(t => t.Index == candidate.Index);
+                return snap?.CutoutDisableBackgroundRemoval == true ? 0 : 25000;
+            });
         UsedCutoutBackgroundTile = lastCutoutResult.BackgroundTile;
         OnPropertyChanged(nameof(CutoutPreviewImage));
     }
@@ -576,9 +778,31 @@ namespace TileSetAnimator.ViewModels;
         UsedCutoutBackgroundTile = null;
         OnPropertyChanged(nameof(CutoutBackgroundCandidates));
 
-        // Restore persisted cutout background (per tile) if available.
-        var persistedBgIndex = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == value?.Index)?.CutoutBackgroundTileIndex;
-        SelectedCutoutBackgroundTile = persistedBgIndex.HasValue ? FindTileByIndex(persistedBgIndex.Value) : null;
+        // Restore persisted cutout settings (per tile).
+        if (value != null)
+        {
+            var persisted = EnsureClassMetadata().Tiles.FirstOrDefault(t => t.Index == value.Index);
+
+            var persistedBgIndex = persisted?.CutoutBackgroundTileIndex;
+            if (persistedBgIndex.HasValue)
+            {
+                SelectedCutoutBackgroundTile = FindTileByIndex(persistedBgIndex.Value);
+                CutoutUseAutoBackground = false;
+            }
+            else
+            {
+                CutoutUseAutoBackground = true;
+                SelectedCutoutBackgroundTile = null;
+            }
+
+            CutoutDisableBackgroundRemoval = persisted?.CutoutDisableBackgroundRemoval == true;
+        }
+        else
+        {
+            CutoutUseAutoBackground = true;
+            SelectedCutoutBackgroundTile = null;
+            CutoutDisableBackgroundRemoval = false;
+        }
 
         RefreshCutoutPreviewCommand?.NotifyCanExecuteChanged();
         RefreshCutoutPreview();
@@ -718,13 +942,19 @@ namespace TileSetAnimator.ViewModels;
             MinimumAnimationLength = MinimumAnimationLength,
             FrameDuration = FrameDuration,
             ZoomFactor = ZoomFactor,
-            Tiles = Tiles.Select(tile => new TileMetadataSnapshot
+            Tiles = Tiles.Select(tile =>
             {
-                Index = tile.Index,
-                Name = tile.Name,
-                Notes = string.IsNullOrWhiteSpace(tile.Notes) ? null : tile.Notes,
-                Category = tile.Category,
-                SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory
+                var cutoutSnapshot = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == tile.Index);
+                return new TileMetadataSnapshot
+                {
+                    Index = tile.Index,
+                    Name = tile.Name,
+                    Notes = string.IsNullOrWhiteSpace(tile.Notes) ? null : tile.Notes,
+                    Category = tile.Category,
+                    SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory,
+                    CutoutBackgroundTileIndex = cutoutSnapshot?.CutoutBackgroundTileIndex,
+                    CutoutDisableBackgroundRemoval = cutoutSnapshot?.CutoutDisableBackgroundRemoval == true
+                };
             }).ToList(),
             Animations = Animations.Select(animation => new TileAnimationSnapshot
             {
@@ -872,7 +1102,10 @@ namespace TileSetAnimator.ViewModels;
         CommitAnimationCommand.NotifyCanExecuteChanged();
         StartPreviewCommand.NotifyCanExecuteChanged();
         ExportTileEnumCommand?.NotifyCanExecuteChanged();
+        ExportTileSetStructureCommand?.NotifyCanExecuteChanged();
+        ImportTileSetStructureCommand?.NotifyCanExecuteChanged();
         ExportCutoutCommand?.NotifyCanExecuteChanged();
+        ExportTileSetCutoutsCommand?.NotifyCanExecuteChanged();
         RefreshCutoutPreviewCommand?.NotifyCanExecuteChanged();
     }
 
@@ -1081,6 +1314,7 @@ namespace TileSetAnimator.ViewModels;
         }
 
         var metadata = EnsureClassMetadata();
+        var existing = metadata.Tiles.FirstOrDefault(t => t.Index == tile.Index);
         var snapshot = new TileMetadataSnapshot
         {
             Index = tile.Index,
@@ -1088,7 +1322,8 @@ namespace TileSetAnimator.ViewModels;
             Notes = string.IsNullOrWhiteSpace(tile.Notes) ? null : tile.Notes,
             Category = tile.Category,
             SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory,
-            CutoutBackgroundTileIndex = metadata.Tiles.FirstOrDefault(t => t.Index == tile.Index)?.CutoutBackgroundTileIndex
+            CutoutBackgroundTileIndex = existing?.CutoutBackgroundTileIndex,
+            CutoutDisableBackgroundRemoval = existing?.CutoutDisableBackgroundRemoval == true
         };
 
         var existingIndex = metadata.Tiles.FindIndex(t => t.Index == tile.Index);
@@ -1166,6 +1401,23 @@ namespace TileSetAnimator.ViewModels;
         UpdateMiniMapSuggestionOptions();
         RebindMiniMapSlots();
         RefreshSubCategoryOptions(SelectedTileCategory);
+
+        if (SelectedTile != null)
+        {
+            var persistedBgIndex = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == SelectedTile.Index)?.CutoutBackgroundTileIndex;
+            if (persistedBgIndex.HasValue)
+            {
+                SelectedCutoutBackgroundTile = FindTileByIndex(persistedBgIndex.Value);
+                CutoutUseAutoBackground = false;
+            }
+            else
+            {
+                CutoutUseAutoBackground = true;
+                SelectedCutoutBackgroundTile = null;
+            }
+
+            CutoutDisableBackgroundRemoval = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == SelectedTile.Index)?.CutoutDisableBackgroundRemoval == true;
+        }
     }
 
     private async Task ExportTileEnumAsync()
@@ -1564,6 +1816,42 @@ namespace TileSetAnimator.ViewModels;
             }
         }
 
+        // Also merge cutout settings from the per-sheet state into the in-memory class metadata,
+        // so per-tile cutout UI can restore without relying on a separate class file.
+        if (state?.Tiles != null)
+        {
+            var meta = EnsureClassMetadata();
+            foreach (var snapshot in state.Tiles)
+            {
+                if (snapshot.CutoutBackgroundTileIndex == null && snapshot.CutoutDisableBackgroundRemoval == false)
+                {
+                    continue;
+                }
+
+                var idx = meta.Tiles.FindIndex(t => t.Index == snapshot.Index);
+                var existing = idx >= 0 ? meta.Tiles[idx] : null;
+                var merged = new TileMetadataSnapshot
+                {
+                    Index = snapshot.Index,
+                    Name = existing?.Name ?? snapshot.Name,
+                    Notes = existing?.Notes ?? snapshot.Notes,
+                    Category = existing?.Category ?? snapshot.Category,
+                    SubCategory = existing?.SubCategory ?? snapshot.SubCategory,
+                    CutoutBackgroundTileIndex = snapshot.CutoutBackgroundTileIndex,
+                    CutoutDisableBackgroundRemoval = snapshot.CutoutDisableBackgroundRemoval
+                };
+
+                if (idx >= 0)
+                {
+                    meta.Tiles[idx] = merged;
+                }
+                else
+                {
+                    meta.Tiles.Add(merged);
+                }
+            }
+        }
+
         for (var i = 0; i < Tiles.Count; i++)
         {
             var tile = Tiles[i];
@@ -1680,7 +1968,9 @@ namespace TileSetAnimator.ViewModels;
                 Name = tile.Name,
                 Notes = string.IsNullOrWhiteSpace(tile.Notes) ? null : tile.Notes,
                 Category = tile.Category,
-                SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory
+                SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory,
+                CutoutBackgroundTileIndex = EnsureClassMetadata().Tiles.FirstOrDefault(t => t.Index == tile.Index)?.CutoutBackgroundTileIndex,
+                CutoutDisableBackgroundRemoval = EnsureClassMetadata().Tiles.FirstOrDefault(t => t.Index == tile.Index)?.CutoutDisableBackgroundRemoval == true
             }).ToList(),
             Animations = Animations.Select(animation => new TileAnimationSnapshot
             {
