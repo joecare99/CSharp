@@ -2,11 +2,11 @@
   "TileSheetPath": "C:\\Projekte\\CSharp\\CSharpBible\\Games\\SharpHack.Wpf\\tiles.png",
   "TileSetClassKey": "Tiles",
   "Grid": {
-    "TileWidth": 32,
-    "TileHeight": 32,
+    "TileWidth": 0,
+    "TileHeight": 0,
     "Spacing": 0,
     "Margin": 0,
-    "IsValid": true
+    "IsValid": false
   },
   "MinimumAnimationLength": 2,
   "FrameDuration": 120,
@@ -7965,7 +7965,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -7974,7 +7974,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -7983,7 +7983,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8532,7 +8532,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8559,7 +8559,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8577,7 +8577,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8586,7 +8586,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8595,7 +8595,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8613,7 +8613,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8640,7 +8640,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8658,7 +8658,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8667,7 +8667,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8676,7 +8676,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8694,7 +8694,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8721,7 +8721,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {
@@ -8739,7 +8739,7 @@
       "Notes": null,
       "Category": "Unknown",
       "SubCategory": null,
-      "CutoutBackgroundTileIndex": 848,
+      "CutoutBackgroundTileIndex": null,
       "CutoutDisableBackgroundRemoval": false
     },
     {

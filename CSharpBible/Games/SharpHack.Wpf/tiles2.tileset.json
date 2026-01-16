@@ -1,6 +1,6 @@
 {
   "TileSheetPath": "C:\\Projekte\\CSharp\\CSharpBible\\Games\\SharpHack.Wpf\\tiles2.png",
-  "TileSetClassKey": "DisplayTiles",
+  "TileSetClassKey": "Tiles",
   "Grid": {
     "TileWidth": 96,
     "TileHeight": 96,
@@ -14,7 +14,7 @@
   "Tiles": [
     {
       "Index": 0,
-      "Name": "Tile 0",
+      "Name": "Ant",
       "Notes": null,
       "Category": "Creature",
       "SubCategory": null,
@@ -22,7 +22,7 @@
     },
     {
       "Index": 1,
-      "Name": "Tile 1",
+      "Name": "Bee",
       "Notes": null,
       "Category": "Creature",
       "SubCategory": null,
@@ -38,7 +38,7 @@
     },
     {
       "Index": 3,
-      "Name": "Tile 3",
+      "Name": "Red-Ant",
       "Notes": null,
       "Category": "Creature",
       "SubCategory": null,
@@ -48,7 +48,7 @@
       "Index": 4,
       "Name": "Tile 4",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -56,7 +56,7 @@
       "Index": 5,
       "Name": "Tile 5",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -64,7 +64,7 @@
       "Index": 6,
       "Name": "Tile 6",
       "Notes": null,
-      "Category": "Creature",
+      "Category": "Unknown",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -494,9 +494,9 @@
     },
     {
       "Index": 60,
-      "Name": "Tile 60",
+      "Name": "Goblin",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Creature",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -3166,9 +3166,9 @@
     },
     {
       "Index": 394,
-      "Name": "Tile 394",
+      "Name": "Chest",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Item",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -4750,9 +4750,9 @@
     },
     {
       "Index": 592,
-      "Name": "Tile 592",
+      "Name": "Key",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Item",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -4766,9 +4766,9 @@
     },
     {
       "Index": 594,
-      "Name": "Tile 594",
+      "Name": "Creditcard",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Item",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6649,22 +6649,22 @@
       "Name": "Empty",
       "Notes": null,
       "Category": "StructuralElement",
-      "SubCategory": "Background",
+      "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
     {
       "Index": 830,
-      "Name": "Tile 830",
+      "Name": "Walls_NS",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
     {
       "Index": 831,
-      "Name": "Tile 831",
+      "Name": "Walls_EW",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6672,7 +6672,7 @@
       "Index": 832,
       "Name": "Tile 832",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6680,7 +6680,7 @@
       "Index": 833,
       "Name": "Tile 833",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6688,7 +6688,7 @@
       "Index": 834,
       "Name": "Tile 834",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6696,7 +6696,7 @@
       "Index": 835,
       "Name": "Tile 835",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6704,7 +6704,7 @@
       "Index": 836,
       "Name": "Tile 836",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6712,7 +6712,7 @@
       "Index": 837,
       "Name": "Tile 837",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6720,7 +6720,7 @@
       "Index": 838,
       "Name": "Tile 838",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6728,7 +6728,7 @@
       "Index": 839,
       "Name": "Tile 839",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6736,7 +6736,7 @@
       "Index": 840,
       "Name": "Tile 840",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6750,17 +6750,17 @@
     },
     {
       "Index": 842,
-      "Name": "Tile 842",
+      "Name": "DoorOpen_NS",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
     {
       "Index": 843,
-      "Name": "Tile 843",
+      "Name": "DoorOpen_EW",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6798,15 +6798,15 @@
     },
     {
       "Index": 848,
-      "Name": "Floor_Lit",
+      "Name": "Floor",
       "Notes": null,
       "Category": "StructuralElement",
-      "SubCategory": "Background",
+      "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
     {
       "Index": 849,
-      "Name": "Floor_Dark",
+      "Name": "Tile 849",
       "Notes": null,
       "Category": "StructuralElement",
       "SubCategory": null,
@@ -6816,7 +6816,7 @@
       "Index": 850,
       "Name": "Tile 850",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -6966,9 +6966,9 @@
     },
     {
       "Index": 869,
-      "Name": "Tile 869",
+      "Name": "Water",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "StructuralElement",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7248,7 +7248,7 @@
       "Index": 904,
       "Name": "Tile 904",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7256,7 +7256,7 @@
       "Index": 905,
       "Name": "Tile 905",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7264,7 +7264,7 @@
       "Index": 906,
       "Name": "Tile 906",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7312,7 +7312,7 @@
       "Index": 912,
       "Name": "Tile 912",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7320,7 +7320,7 @@
       "Index": 913,
       "Name": "Tile 913",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7328,7 +7328,7 @@
       "Index": 914,
       "Name": "Tile 914",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7336,7 +7336,7 @@
       "Index": 915,
       "Name": "Tile 915",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -7344,7 +7344,7 @@
       "Index": 916,
       "Name": "Tile 916",
       "Notes": null,
-      "Category": "Unknown",
+      "Category": "Effects",
       "SubCategory": null,
       "CutoutBackgroundTileIndex": null
     },
@@ -8657,7 +8657,1255 @@
   "MiniMap": [],
   "MiniMaps": [
     {
-      "Id": "efb402ab-4117-45f5-89d4-c8666d170e56",
+      "Id": "d0023313-4c7e-42c9-9760-eee6a92354f5",
+      "Name": "Walls",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 832,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 838,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 843,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": 833,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 840,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 836,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 845,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": 839,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 842,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 844,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 848,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": 830,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": 834,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": 837,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": 831,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": 835,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "f6aafb28-3bf4-4bdc-9afa-24385f2d420f",
+      "Name": "Lava-Ring",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 904,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 905,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 906,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 907,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 848,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 908,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 909,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 910,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 911,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b73e90da-531b-4a13-8938-48b54e56d720",
+      "Name": "Expl1-Gray",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 912,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 913,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 914,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 915,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 916,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 917,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 918,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 919,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 920,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b73e90da-531b-4a13-8938-48b54e56d720",
+      "Name": "Expl2-Green",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 921,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 922,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 923,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 924,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 925,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 926,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 927,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 928,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 929,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b73e90da-531b-4a13-8938-48b54e56d720",
+      "Name": "Expl3-Red",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 930,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 931,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 932,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 933,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 934,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 935,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 936,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 937,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 938,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b73e90da-531b-4a13-8938-48b54e56d720",
+      "Name": "Expl4-BlueLt",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 939,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 940,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 941,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 942,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 943,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 944,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 945,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 946,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 947,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b73e90da-531b-4a13-8938-48b54e56d720",
+      "Name": "Expl5-Pink",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 948,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 949,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 950,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 951,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 952,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 953,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 954,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 955,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 956,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b73e90da-531b-4a13-8938-48b54e56d720",
+      "Name": "Expl6-Fire",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 957,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 958,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 959,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 960,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 961,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 962,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 963,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 964,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 965,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "b752223b-db11-4662-b562-616697263262",
       "Name": "Mini-Map 1",
       "Slots": [
         {
@@ -8699,19 +9947,643 @@
         {
           "Row": 1,
           "Column": 1,
-          "TileIndex": null,
+          "TileIndex": 1015,
           "SuggestionKey": null
         },
         {
           "Row": 1,
           "Column": 2,
-          "TileIndex": null,
+          "TileIndex": 1021,
           "SuggestionKey": null
         },
         {
           "Row": 1,
           "Column": 3,
+          "TileIndex": 1014,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": 1016,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
           "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 1023,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 1019,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 1014,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": 1022,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 1013,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 1013,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": 1013,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": 1017,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": 1020,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": 1014,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": 1018,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "1a036695-b0cb-419d-a1d8-d6070dea7dee",
+      "Name": "Mini-Map 2",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 1037,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 1043,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 1036,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": 1038,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 1045,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 1041,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 1036,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": 1044,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 1035,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 1035,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 848,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": 1035,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": 1039,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": 1042,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": 1036,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": 1040,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "ca5a3bac-6a36-47b9-bcf1-eea8ec5234df",
+      "Name": "Mini-Map 3",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 1026,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 1034,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 1025,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": 1027,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 1033,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 1030,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 1025,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": 1032,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 1024,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 1024,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": 1024,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": 1028,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": 1031,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": 1025,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": 1029,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "bbc6eb85-6fca-497d-838e-c1983c6c2b98",
+      "Name": "Mini-Map 4",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 1048,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 1054,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 1047,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 4,
+          "TileIndex": 1049,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 1,
+          "TileIndex": 1056,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 2,
+          "TileIndex": 1052,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 3,
+          "TileIndex": 1047,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 2,
+          "Column": 4,
+          "TileIndex": 1055,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 1,
+          "TileIndex": 1046,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 2,
+          "TileIndex": 1046,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 3,
+          "TileIndex": 848,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 3,
+          "Column": 4,
+          "TileIndex": 1046,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 1,
+          "TileIndex": 1050,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 2,
+          "TileIndex": 1053,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 3,
+          "TileIndex": 1047,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 4,
+          "Column": 4,
+          "TileIndex": 1051,
+          "SuggestionKey": null
+        }
+      ]
+    },
+    {
+      "Id": "57d3c198-4b26-4928-b059-67f97fed8a91",
+      "Name": "Expl-Blue",
+      "Slots": [
+        {
+          "Row": 0,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 1,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 2,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 3,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 0,
+          "Column": 4,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 0,
+          "TileIndex": null,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 1,
+          "TileIndex": 966,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 2,
+          "TileIndex": 967,
+          "SuggestionKey": null
+        },
+        {
+          "Row": 1,
+          "Column": 3,
+          "TileIndex": 968,
           "SuggestionKey": null
         },
         {
@@ -8729,19 +10601,19 @@
         {
           "Row": 2,
           "Column": 1,
-          "TileIndex": null,
+          "TileIndex": 969,
           "SuggestionKey": null
         },
         {
           "Row": 2,
           "Column": 2,
-          "TileIndex": null,
+          "TileIndex": 970,
           "SuggestionKey": null
         },
         {
           "Row": 2,
           "Column": 3,
-          "TileIndex": null,
+          "TileIndex": 971,
           "SuggestionKey": null
         },
         {
@@ -8759,19 +10631,19 @@
         {
           "Row": 3,
           "Column": 1,
-          "TileIndex": null,
+          "TileIndex": 972,
           "SuggestionKey": null
         },
         {
           "Row": 3,
           "Column": 2,
-          "TileIndex": null,
+          "TileIndex": 973,
           "SuggestionKey": null
         },
         {
           "Row": 3,
           "Column": 3,
-          "TileIndex": null,
+          "TileIndex": 974,
           "SuggestionKey": null
         },
         {
@@ -8813,5 +10685,5 @@
       ]
     }
   ],
-  "SelectedMiniMapId": "efb402ab-4117-45f5-89d4-c8666d170e56"
+  "SelectedMiniMapId": "d0023313-4c7e-42c9-9760-eee6a92354f5"
 }
