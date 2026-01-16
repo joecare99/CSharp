@@ -10,7 +10,9 @@ namespace TileSetAnimator.Services;
 public sealed class FileDialogService : IFileDialogService
 {
     private const string ImageFilter = "PNG (*.png)|*.png|Bitmap (*.bmp)|*.bmp|JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Alle Dateien (*.*)|*.*";
+    private const string PngFilter = "PNG (*.png)|*.png|Alle Dateien (*.*)|*.*";
     private const string CsFilter = "C#-Dateien (*.cs)|*.cs|Alle Dateien (*.*)|*.*";
+    private const string TileSetFilter = "TileSet (*.tileset.json)|*.tileset.json|JSON (*.json)|*.json|Alle Dateien (*.*)|*.*";
 
     /// <inheritdoc />
     public string? OpenTileSheet()
@@ -20,6 +22,19 @@ public sealed class FileDialogService : IFileDialogService
             Filter = ImageFilter,
             CheckFileExists = true,
             Title = Properties.Resources.LoadSheetButtonText,
+        };
+
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    /// <inheritdoc />
+    public string? SaveCutout(string suggestedFileName)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = PngFilter,
+            FileName = Path.ChangeExtension(suggestedFileName, ".png"),
+            Title = "Export Cutout",
         };
 
         return dialog.ShowDialog() == true ? dialog.FileName : null;
@@ -59,6 +74,32 @@ public sealed class FileDialogService : IFileDialogService
             Filter = CsFilter,
             CheckFileExists = true,
             Title = Properties.Resources.ImportTileEnumDialogTitle,
+        };
+
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    /// <inheritdoc />
+    public string? SaveTileSetStructure(string suggestedFileName)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = TileSetFilter,
+            FileName = string.IsNullOrWhiteSpace(suggestedFileName) ? "tileset.tileset.json" : suggestedFileName,
+            Title = "Export TileSet Structure",
+        };
+
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    /// <inheritdoc />
+    public string? OpenTileSetStructure()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = TileSetFilter,
+            CheckFileExists = true,
+            Title = "Import TileSet Structure",
         };
 
         return dialog.ShowDialog() == true ? dialog.FileName : null;

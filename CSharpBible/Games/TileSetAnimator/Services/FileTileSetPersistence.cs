@@ -43,6 +43,25 @@ public sealed class FileTileSetPersistence : ITileSetPersistence
     }
 
     /// <inheritdoc />
+    public async Task<TileSetState?> LoadStateFromFileAsync(string stateFilePath, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(stateFilePath) || !File.Exists(stateFilePath))
+            {
+                return null;
+            }
+
+            await using var stream = File.OpenRead(stateFilePath);
+            return await JsonSerializer.DeserializeAsync<TileSetState>(stream, SerializerOptions, cancellationToken).ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <inheritdoc />
     public async Task SaveStateAsync(TileSetState state, CancellationToken cancellationToken = default)
     {
         if (state == null)
@@ -53,6 +72,24 @@ public sealed class FileTileSetPersistence : ITileSetPersistence
         var targetFile = GetStateFilePath(state.TileSheetPath);
         Directory.CreateDirectory(Path.GetDirectoryName(targetFile)!);
         await using var stream = File.Open(targetFile, FileMode.Create, FileAccess.Write, FileShare.None);
+        await JsonSerializer.SerializeAsync(stream, state, SerializerOptions, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task SaveStateToFileAsync(TileSetState state, string stateFilePath, CancellationToken cancellationToken = default)
+    {
+        if (state == null)
+        {
+            throw new ArgumentNullException(nameof(state));
+        }
+
+        if (string.IsNullOrWhiteSpace(stateFilePath))
+        {
+            throw new ArgumentException("State file path is required.", nameof(stateFilePath));
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(stateFilePath) ?? Environment.CurrentDirectory);
+        await using var stream = File.Open(stateFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
         await JsonSerializer.SerializeAsync(stream, state, SerializerOptions, cancellationToken).ConfigureAwait(false);
     }
 

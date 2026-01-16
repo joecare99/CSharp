@@ -18,6 +18,11 @@ public sealed class TileMetadataSnapshot
     public TileCategory Category { get; init; } = TileCategory.Unknown;
 
     public string? SubCategory { get; init; }
+
+    /// <summary>
+    /// Optional background tile index to use for cutout computation for this tile.
+    /// </summary>
+    public int? CutoutBackgroundTileIndex { get; init; }
 }
 
 /// <summary>

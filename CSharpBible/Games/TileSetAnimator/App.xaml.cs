@@ -25,6 +25,7 @@ public partial class App : Application
             {
                 services.AddSingleton<IFileDialogService, FileDialogService>();
                 services.AddSingleton<ITileSetService, TileSetService>();
+                services.AddSingleton<ITileCutoutService, TileCutoutService>();
                 services.AddSingleton<IAnimationDetectionService, ContiguousAnimationDetectionService>();
                 services.AddSingleton<IAnimationPreviewService, DispatcherAnimationPreviewService>();
                 services.AddSingleton<ITileSetPersistence, FileTileSetPersistence>();

@@ -64,6 +64,14 @@
                                             Command="{Binding ImportTileEnumCommand}"
                                             Margin="8,0,0,0" />
                                 </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button Content="Export Structure"
+                                            Command="{Binding ExportTileSetStructureCommand}" />
+                                    <Button Content="Import Structure"
+                                            Command="{Binding ImportTileSetStructureCommand}"
+                                            Margin="8,0,0,0" />
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
 
@@ -112,6 +120,56 @@
                                         Margin="0,8,0,0" />
                             </StackPanel>
                         </GroupBox>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="Cutout" Margin="0,12,0,0" IsExpanded="False">
+                    <StackPanel>
+                        <GroupBox Header="Background">
+                            <StackPanel>
+                                <TextBlock Text="Background candidate set: StructuralElement" />
+                                <ComboBox ItemsSource="{Binding CutoutBackgroundCandidates}"
+                                          SelectedItem="{Binding SelectedCutoutBackgroundTile}"
+                                          DisplayMemberPath="Name"
+                                          IsEditable="False" />
+                                <TextBlock Text="Used background:" Margin="0,8,0,0" />
+                                <TextBlock Text="{Binding UsedCutoutBackgroundTileName}" FontWeight="SemiBold" />
+                                <Button Content="Refresh Preview" Command="{Binding RefreshCutoutPreviewCommand}" />
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Settings">
+                            <UniformGrid Columns="2" Margin="0,4,0,0">
+                                <TextBlock Text="Border" />
+                                <TextBox Text="{Binding CutoutBorderThickness, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Text="BG Threshold" />
+                                <TextBox Text="{Binding CutoutBackgroundThreshold, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Text="Soft Alpha" />
+                                <CheckBox IsChecked="{Binding CutoutUseSoftAlpha}" />
+
+                                <TextBlock Text="Soft Min" />
+                                <TextBox Text="{Binding CutoutSoftAlphaMin, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Text="Soft Max" />
+                                <TextBox Text="{Binding CutoutSoftAlphaMax, UpdateSourceTrigger=PropertyChanged}" />
+                            </UniformGrid>
+                        </GroupBox>
+
+                        <GroupBox Header="Preview">
+                            <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="1" Padding="4">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                    <Image Source="{Binding CutoutPreviewImage}">
+                                        <Image.LayoutTransform>
+                                            <ScaleTransform ScaleX="{Binding ZoomFactor}" ScaleY="{Binding ZoomFactor}" />
+                                        </Image.LayoutTransform>
+                                    </Image>
+                                </ScrollViewer>
+                            </Border>
+                        </GroupBox>
+
+                        <Button Content="Export Cutout (PNG Alpha)" Command="{Binding ExportCutoutCommand}" />
                     </StackPanel>
                 </Expander>
 

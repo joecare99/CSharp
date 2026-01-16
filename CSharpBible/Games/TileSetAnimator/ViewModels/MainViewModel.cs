@@ -31,6 +31,15 @@ namespace TileSetAnimator.ViewModels;
     private readonly IAnimationPreviewService animationPreviewService;
     private readonly ITileSetPersistence tileSetPersistence;
     private readonly ITileEnumSerializer tileEnumSerializer;
+    private readonly ITileCutoutService tileCutoutService;
+
+    private TileCutoutResult? lastCutoutResult;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(UsedCutoutBackgroundTileName))]
+    private TileDefinition? usedCutoutBackgroundTile;
+
+    public string UsedCutoutBackgroundTileName => UsedCutoutBackgroundTile?.Name ?? string.Empty;
 
     private readonly ObservableCollection<MiniMapDefinitionViewModel> miniMaps = new();
     private static readonly ObservableCollection<MiniMapSlotViewModel> emptyMiniMapSlots = new();
@@ -41,13 +50,18 @@ namespace TileSetAnimator.ViewModels;
     private bool suppressMiniMapNotifications;
     private CancellationTokenSource? statePersistenceCancellation;
 
+    private CancellationTokenSource? tileRebuildCancellation;
+    private const int MaxTilePreviewCount = 2000;
+    private static readonly TimeSpan TileRebuildDebounce = TimeSpan.FromMilliseconds(450);
+
     public MainViewModel(
         IFileDialogService fileDialogService,
         ITileSetService tileSetService,
         IAnimationDetectionService animationDetectionService,
         IAnimationPreviewService animationPreviewService,
         ITileSetPersistence tileSetPersistence,
-        ITileEnumSerializer tileEnumSerializer)
+        ITileEnumSerializer tileEnumSerializer,
+        ITileCutoutService tileCutoutService)
     {
         this.fileDialogService = fileDialogService;
         this.tileSetService = tileSetService;
@@ -55,6 +69,7 @@ namespace TileSetAnimator.ViewModels;
         this.animationPreviewService = animationPreviewService;
         this.tileSetPersistence = tileSetPersistence;
         this.tileEnumSerializer = tileEnumSerializer;
+        this.tileCutoutService = tileCutoutService;
 
         PendingFrames.CollectionChanged += OnPendingFramesChanged;
 
@@ -74,6 +89,8 @@ namespace TileSetAnimator.ViewModels;
         RemoveMiniMapCommand = new RelayCommand(RemoveSelectedMiniMap, CanRemoveSelectedMiniMap);
         ExportTileEnumCommand = new AsyncRelayCommand(ExportTileEnumAsync, () => Tiles.Count > 0);
         ImportTileEnumCommand = new AsyncRelayCommand(ImportTileEnumAsync);
+        ExportCutoutCommand = new AsyncRelayCommand(ExportCutoutAsync, () => SelectedTile != null && TileSheet != null && Tiles.Count > 0);
+        RefreshCutoutPreviewCommand = new RelayCommand(RefreshCutoutPreview, () => SelectedTile != null && TileSheet != null);
         miniMaps.CollectionChanged += OnMiniMapsCollectionChanged;
 
         InitializeMiniMaps();
@@ -195,6 +212,43 @@ namespace TileSetAnimator.ViewModels;
 
     public IAsyncRelayCommand ImportTileEnumCommand { get; }
 
+    public IAsyncRelayCommand ExportTileSetStructureCommand { get; }
+
+    public IAsyncRelayCommand ImportTileSetStructureCommand { get; }
+
+    public IAsyncRelayCommand ExportCutoutCommand { get; }
+
+    public IRelayCommand RefreshCutoutPreviewCommand { get; }
+
+    [ObservableProperty]
+    private int cutoutBorderThickness = 1;
+
+    [ObservableProperty]
+    private int cutoutBackgroundThreshold = 25;
+
+    [ObservableProperty]
+    private bool cutoutUseSoftAlpha = true;
+
+    [ObservableProperty]
+    private int cutoutSoftAlphaMin = 10;
+
+    [ObservableProperty]
+    private int cutoutSoftAlphaMax = 60;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CutoutPreviewImage))]
+    private TileDefinition? selectedCutoutBackgroundTile;
+
+    public IReadOnlyList<TileDefinition> CutoutBackgroundCandidates => Tiles.Where(t => t.Category == TileCategory.StructuralElement).ToArray();
+
+    public BitmapSource? CutoutPreviewImage => lastCutoutResult?.ResultBitmap;
+
+    partial void OnSelectedCutoutBackgroundTileChanged(TileDefinition? value)
+    {
+        RefreshCutoutPreviewCommand?.NotifyCanExecuteChanged();
+        RefreshCutoutPreview();
+    }
+
     public BitmapSource? SelectedTileImage => CreateTileImage(SelectedTile);
 
     public BitmapSource? PreviewTileImage => CreateTileImage(PreviewTile ?? SelectedAnimation?.FirstFrame);
@@ -253,6 +307,25 @@ namespace TileSetAnimator.ViewModels;
         }
 
         var settings = new TileGridSettings(TileWidth, TileHeight, TileSpacing, TileMargin);
+
+        // Avoid generating huge amounts of tiles (UI + memory). Only build tiles when it stays under the cap.
+        var estimatedCount = EstimateTileCount(TileSheet, settings);
+        if (estimatedCount <= 0)
+        {
+            SelectedTile = null;
+            StatusMessage = Resources.NoSheetLoadedMessage;
+            UpdateCommandStates();
+            return;
+        }
+
+        if (estimatedCount > MaxTilePreviewCount)
+        {
+            SelectedTile = null;
+            StatusMessage = $"Tile preview disabled: {estimatedCount} tiles would be generated (> {MaxTilePreviewCount}).";
+            UpdateCommandStates();
+            return;
+        }
+
         foreach (var tile in tileSetService.SliceTiles(TileSheet, settings))
         {
             Tiles.Add(tile);
@@ -263,6 +336,54 @@ namespace TileSetAnimator.ViewModels;
         UpdateMiniMapSuggestionOptions();
         RebindMiniMapSlots();
         RefreshSubCategoryOptions(SelectedTileCategory);
+    }
+
+    private static int EstimateTileCount(BitmapSource sheet, TileGridSettings settings)
+    {
+        if (sheet == null || !settings.IsValid) return 0;
+        var stepX = settings.TileWidth + settings.Spacing;
+        var stepY = settings.TileHeight + settings.Spacing;
+        if (stepX <= 0 || stepY <= 0) return 0;
+
+        var maxX = sheet.PixelWidth - settings.Margin;
+        var maxY = sheet.PixelHeight - settings.Margin;
+        if (maxX <= settings.Margin || maxY <= settings.Margin) return 0;
+
+        int cols = 0;
+        for (int x = settings.Margin; x + settings.TileWidth <= maxX; x += stepX) cols++;
+        int rows = 0;
+        for (int y = settings.Margin; y + settings.TileHeight <= maxY; y += stepY) rows++;
+        return cols * rows;
+    }
+
+    private void RequestTileRebuild()
+    {
+        if (TileSheet == null)
+        {
+            return;
+        }
+
+        tileRebuildCancellation?.Cancel();
+        tileRebuildCancellation = new CancellationTokenSource();
+        var token = tileRebuildCancellation.Token;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(TileRebuildDebounce, token).ConfigureAwait(false);
+                if (token.IsCancellationRequested) return;
+                await App.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    RebuildTiles();
+                    RequestStatePersistence();
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                // ignore
+            }
+        }, token);
     }
 
     private void DetectAnimations()
@@ -304,6 +425,87 @@ namespace TileSetAnimator.ViewModels;
 
         await tileSetService.SaveTileAsync(TileSheet, SelectedTile, path, ZoomFactor).ConfigureAwait(true);
         StatusMessage = path;
+    }
+
+    private async Task ExportCutoutAsync()
+    {
+        if (TileSheet == null || SelectedTile == null || Tiles.Count == 0)
+        {
+            StatusMessage = Resources.SelectTileFirstMessage;
+            return;
+        }
+
+        var path = fileDialogService.SaveCutout(SelectedTile.Name.Replace(' ', '_') + "_cutout");
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        var options = new TileCutoutOptions(
+            BorderThickness: Math.Max(1, CutoutBorderThickness),
+            BackgroundBorderThickness: Math.Max(1, CutoutBorderThickness),
+            BackgroundThreshold: Math.Max(0, CutoutBackgroundThreshold),
+            AlphaSoftThresholdMin: Math.Max(0, CutoutSoftAlphaMin),
+            AlphaSoftThresholdMax: Math.Max(CutoutSoftAlphaMin + 1, CutoutSoftAlphaMax),
+            UseSoftAlpha: CutoutUseSoftAlpha,
+            PreserveSourceRgbOnTransparent: false);
+
+        var candidates = CutoutBackgroundCandidates.Where(t => t.Index != SelectedTile.Index).ToArray();
+        if (candidates.Length == 0)
+        {
+            StatusMessage = "No StructuralElement background candidates available.";
+            return;
+        }
+
+        IReadOnlyList<TileDefinition> bgSet = candidates;
+        if (SelectedCutoutBackgroundTile != null)
+        {
+            bgSet = new[] { SelectedCutoutBackgroundTile };
+        }
+
+        lastCutoutResult = tileCutoutService.CreateCutout(TileSheet, SelectedTile, bgSet, options);
+        UsedCutoutBackgroundTile = lastCutoutResult.BackgroundTile;
+        OnPropertyChanged(nameof(CutoutPreviewImage));
+
+        await tileCutoutService.SaveCutoutAsync(lastCutoutResult.ResultBitmap, path).ConfigureAwait(true);
+        StatusMessage = $"Cutout: {path} (bg: {lastCutoutResult.BackgroundTile.Name})";
+    }
+
+    private void RefreshCutoutPreview()
+    {
+        if (TileSheet == null || SelectedTile == null)
+        {
+            lastCutoutResult = null;
+            OnPropertyChanged(nameof(CutoutPreviewImage));
+            return;
+        }
+
+        var candidates = CutoutBackgroundCandidates.Where(t => t.Index != SelectedTile.Index).ToArray();
+        if (candidates.Length == 0)
+        {
+            lastCutoutResult = null;
+            OnPropertyChanged(nameof(CutoutPreviewImage));
+            return;
+        }
+
+        var options = new TileCutoutOptions(
+            BorderThickness: Math.Max(1, CutoutBorderThickness),
+            BackgroundBorderThickness: Math.Max(1, CutoutBorderThickness),
+            BackgroundThreshold: Math.Max(0, CutoutBackgroundThreshold),
+            AlphaSoftThresholdMin: Math.Max(0, CutoutSoftAlphaMin),
+            AlphaSoftThresholdMax: Math.Max(CutoutSoftAlphaMin + 1, CutoutSoftAlphaMax),
+            UseSoftAlpha: CutoutUseSoftAlpha,
+            PreserveSourceRgbOnTransparent: false);
+
+        IReadOnlyList<TileDefinition> bgSet = candidates;
+        if (SelectedCutoutBackgroundTile != null)
+        {
+            bgSet = new[] { SelectedCutoutBackgroundTile };
+        }
+
+        lastCutoutResult = tileCutoutService.CreateCutout(TileSheet, SelectedTile, bgSet, options);
+        UsedCutoutBackgroundTile = lastCutoutResult.BackgroundTile;
+        OnPropertyChanged(nameof(CutoutPreviewImage));
     }
 
     private void AddFrame()
@@ -370,6 +572,16 @@ namespace TileSetAnimator.ViewModels;
         SaveTileCommand.NotifyCanExecuteChanged();
         AddFrameCommand.NotifyCanExecuteChanged();
         UpdateMiniMapCommands();
+
+        UsedCutoutBackgroundTile = null;
+        OnPropertyChanged(nameof(CutoutBackgroundCandidates));
+
+        // Restore persisted cutout background (per tile) if available.
+        var persistedBgIndex = currentClassMetadata?.Tiles?.FirstOrDefault(t => t.Index == value?.Index)?.CutoutBackgroundTileIndex;
+        SelectedCutoutBackgroundTile = persistedBgIndex.HasValue ? FindTileByIndex(persistedBgIndex.Value) : null;
+
+        RefreshCutoutPreviewCommand?.NotifyCanExecuteChanged();
+        RefreshCutoutPreview();
     }
 
     partial void OnSelectedAnimationChanged(TileAnimation? value)
@@ -413,26 +625,22 @@ namespace TileSetAnimator.ViewModels;
 
     partial void OnTileWidthChanged(int value)
     {
-        RebuildTiles();
-        RequestStatePersistence();
+        RequestTileRebuild();
     }
 
     partial void OnTileHeightChanged(int value)
     {
-        RebuildTiles();
-        RequestStatePersistence();
+        RequestTileRebuild();
     }
 
     partial void OnTileSpacingChanged(int value)
     {
-        RebuildTiles();
-        RequestStatePersistence();
+        RequestTileRebuild();
     }
 
     partial void OnTileMarginChanged(int value)
     {
-        RebuildTiles();
-        RequestStatePersistence();
+        RequestTileRebuild();
     }
 
     partial void OnMinimumAnimationLengthChanged(int value)
@@ -479,6 +687,162 @@ namespace TileSetAnimator.ViewModels;
         }
     }
 
+    private async Task ExportTileSetStructureAsync()
+    {
+        if (TileSheet == null)
+        {
+            StatusMessage = Resources.NoSheetLoadedMessage;
+            return;
+        }
+
+        var suggestedName = string.IsNullOrWhiteSpace(TileSetClassKey) ? "tileset.tileset.json" : $"{TileSetClassKey}.tileset.json";
+        var path = fileDialogService.SaveTileSetStructure(suggestedName);
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        // Reuse the same state model; override TileSheetPath to the currently loaded sheet.
+        if (string.IsNullOrWhiteSpace(currentTileSheetPath))
+        {
+            StatusMessage = Resources.NoSheetLoadedMessage;
+            return;
+        }
+
+        var state = new TileSetState
+        {
+            TileSheetPath = currentTileSheetPath,
+            TileSetClassKey = string.IsNullOrWhiteSpace(TileSetClassKey) ? null : TileSetClassKey,
+            // NOTE: Grid settings are tileset/sheet dependent and intentionally not exported as part of structure.
+            Grid = default,
+            MinimumAnimationLength = MinimumAnimationLength,
+            FrameDuration = FrameDuration,
+            ZoomFactor = ZoomFactor,
+            Tiles = Tiles.Select(tile => new TileMetadataSnapshot
+            {
+                Index = tile.Index,
+                Name = tile.Name,
+                Notes = string.IsNullOrWhiteSpace(tile.Notes) ? null : tile.Notes,
+                Category = tile.Category,
+                SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory
+            }).ToList(),
+            Animations = Animations.Select(animation => new TileAnimationSnapshot
+            {
+                Id = animation.Id,
+                Name = animation.Name,
+                FrameDuration = (int)Math.Max(30, animation.FrameDuration.TotalMilliseconds),
+                FrameIndices = animation.Frames.Select(frame => frame.Index).ToList()
+            }).ToList(),
+            MiniMaps = MiniMaps.Select(map => new MiniMapDefinitionSnapshot
+            {
+                Id = map.Id,
+                Name = map.Name,
+                Slots = map.Slots.Select(slot => new MiniMapSlotSnapshot
+                {
+                    Row = slot.Row,
+                    Column = slot.Column,
+                    TileIndex = slot.Tile?.Index,
+                    SuggestionKey = slot.SuggestionKey
+                }).ToList()
+            }).ToList(),
+            SelectedMiniMapId = SelectedMiniMap?.Id
+        };
+
+        try
+        {
+            await tileSetPersistence.SaveStateToFileAsync(state, path).ConfigureAwait(true);
+            StatusMessage = path;
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+        }
+    }
+
+    private async Task ImportTileSetStructureAsync()
+    {
+        if (TileSheet == null)
+        {
+            StatusMessage = Resources.NoSheetLoadedMessage;
+            return;
+        }
+
+        var path = fileDialogService.OpenTileSetStructure();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        TileSetState? state;
+        try
+        {
+            state = await tileSetPersistence.LoadStateFromFileAsync(path).ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+            return;
+        }
+
+        if (state == null)
+        {
+            StatusMessage = "Invalid tileset structure file.";
+            return;
+        }
+
+        // Dry-run / plausibility check (grid comes from current tileset settings, not from the structure file)
+        var currentGrid = new TileGridSettings(TileWidth, TileHeight, TileSpacing, TileMargin);
+        var currentEstimate = EstimateTileCount(TileSheet, currentGrid);
+
+        var warnings = new List<string>();
+        if (currentEstimate <= 0)
+        {
+            warnings.Add("Current grid yields no tiles on the loaded sheet.");
+        }
+        else if (currentEstimate > MaxTilePreviewCount)
+        {
+            warnings.Add($"Current grid would generate {currentEstimate} tiles (> {MaxTilePreviewCount}); preview will be disabled.");
+        }
+
+        if (state.Tiles.Count > 0 && currentEstimate > 0 && state.Tiles.Count != currentEstimate)
+        {
+            warnings.Add($"Tile metadata count mismatch: file has {state.Tiles.Count}, current grid generates {currentEstimate}.");
+        }
+
+        if (state.Animations.Count > 0 && currentEstimate > 0)
+        {
+            var invalidFrames = state.Animations.Sum(a => a.FrameIndices.Count(i => i < 0 || i >= currentEstimate));
+            if (invalidFrames > 0)
+            {
+                warnings.Add($"Animations reference {invalidFrames} frame indices outside the expected range 0..{Math.Max(0, currentEstimate - 1)}.");
+            }
+        }
+
+        if (warnings.Count > 0)
+        {
+            StatusMessage = "Import check warnings: " + string.Join(" | ", warnings);
+        }
+
+        MinimumAnimationLength = state.MinimumAnimationLength;
+        FrameDuration = state.FrameDuration;
+        ZoomFactor = state.ZoomFactor;
+        if (!string.IsNullOrWhiteSpace(state.TileSetClassKey))
+        {
+            TileSetClassKey = state.TileSetClassKey;
+        }
+
+        PendingFrames.Clear();
+        RebuildTiles();
+
+        // Apply tile metadata/animations/minimaps (uses the currently rebuilt Tiles)
+        ApplyTileMetadataSnapshots(state, currentClassMetadata);
+        RestoreAnimations(state);
+        RestoreMiniMaps(state);
+
+        await PersistStateAsync().ConfigureAwait(true);
+        StatusMessage = $"Imported structure: {path}";
+    }
+
     private void ApplyTileMetadata(Func<TileDefinition, TileDefinition> updater)
     {
         if (SelectedTile == null)
@@ -508,6 +872,8 @@ namespace TileSetAnimator.ViewModels;
         CommitAnimationCommand.NotifyCanExecuteChanged();
         StartPreviewCommand.NotifyCanExecuteChanged();
         ExportTileEnumCommand?.NotifyCanExecuteChanged();
+        ExportCutoutCommand?.NotifyCanExecuteChanged();
+        RefreshCutoutPreviewCommand?.NotifyCanExecuteChanged();
     }
 
     private void OnPendingFramesChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateCommandStates();
@@ -721,7 +1087,8 @@ namespace TileSetAnimator.ViewModels;
             Name = tile.Name,
             Notes = string.IsNullOrWhiteSpace(tile.Notes) ? null : tile.Notes,
             Category = tile.Category,
-            SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory
+            SubCategory = string.IsNullOrWhiteSpace(tile.SubCategory) ? null : tile.SubCategory,
+            CutoutBackgroundTileIndex = metadata.Tiles.FirstOrDefault(t => t.Index == tile.Index)?.CutoutBackgroundTileIndex
         };
 
         var existingIndex = metadata.Tiles.FindIndex(t => t.Index == tile.Index);

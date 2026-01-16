@@ -20,6 +20,16 @@ public interface ITileSetPersistence
     Task SaveStateAsync(TileSetState state, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Loads a tile set structure from a specific state file.
+    /// </summary>
+    Task<TileSetState?> LoadStateFromFileAsync(string stateFilePath, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Saves a tile set structure to a specific state file.
+    /// </summary>
+    Task SaveStateToFileAsync(TileSetState state, string stateFilePath, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Loads a shared metadata definition that can be reused across tile sets.
     /// </summary>
     Task<TileSetClassMetadata?> LoadClassAsync(string classKey, CancellationToken cancellationToken = default);
