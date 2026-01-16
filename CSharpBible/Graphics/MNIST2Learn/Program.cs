@@ -13,7 +13,7 @@ class Program
     {
         IoC.GetReqSrv = t => t switch
         {
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.08, 784, 64, 10),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.08, 784, (64, eActivation.Sigmoid), (10, eActivation.Sigmoid)),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}"),
         };
@@ -42,14 +42,14 @@ class Program
             // Eine Epoche reicht oft schon für >90% Genauigkeit
             for (int i = 0; i < trainingData.Count; i++)
             {
-                nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label);
+                nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label,0.0f);
                 var rData = new float[trainingData[i].Data.Length];
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
                     rData[j] = (float)(((trainingData[i].Data[j] * 2 - 1) * (0.9 + rnd.NextDouble() * 0.1)) * 0.5 + 1); // Add Noise
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
                     trainingData[i].Data[j] = 1f - trainingData[i].Data[j];
-                nn.Train_Parallel(rData, trainingData[i].Label);
-                nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label);
+                nn.Train_Parallel(rData, trainingData[i].Label, 0.0f);
+                nn.Train_Parallel(trainingData[i].Data, trainingData[i].Label, 0.0f);
 
                 if (i % 5000 == 0)
                     Console.WriteLine($"E{epoch + 1} {i} Bilder verarbeitet...");

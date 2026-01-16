@@ -265,7 +265,7 @@
     {
       "Item1": 842,
       "Item2": {
-        "lines": [ "\u2551\u00AC" ],
+        "lines": [ "##" ],
         "colors": [
           {
             "fgr": 6,
@@ -280,6 +280,38 @@
     },
     {
       "Item1": 843,
+      "Item2": {
+        "lines": [ "##" ],
+        "colors": [
+          {
+            "fgr": 6,
+            "bgr": 0
+          },
+          {
+            "fgr": 6,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 844,
+      "Item2": {
+        "lines": [ "\u2551\u00AC" ],
+        "colors": [
+          {
+            "fgr": 6,
+            "bgr": 0
+          },
+          {
+            "fgr": 6,
+            "bgr": 0
+          }
+        ]
+      }
+    },
+    {
+      "Item1": 845,
       "Item2": {
         "lines": [ "//" ],
         "colors": [

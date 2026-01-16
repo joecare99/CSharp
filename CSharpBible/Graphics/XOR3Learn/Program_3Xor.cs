@@ -5,15 +5,15 @@ using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using libMachLearn.Models;
 
-namespace Cnt3Learn;
+namespace XOR3Learn;
 
-class Program
+class Program_3Xor
 {
     static void Init()
     {
         IoC.GetReqSrv = t => t switch
         {
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.5, 3, 3, 2),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.5, 3, (3, eActivation.Sigmoid), (1, eActivation.Sigmoid)),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}"),
         };
@@ -29,30 +29,29 @@ class Program
         // Lernrate: 0.5
         NeuralNetwork nn = IoC.GetRequiredService<NeuralNetwork>();
 
-        // 2. Trainingsdaten (Bin-Logik)
+        // 2. Trainingsdaten (XOR-Logik)
         float[][] inputs =
         [
             [0, 0, 0],
-            [0, 1, 0],
-            [1, 0, 0],
+            [0, 1 ,0],
+            [1, 0 ,0],
             [1, 1, 0],
             [0, 0, 1],
-            [0, 1, 1],
-            [1, 0, 1],
+            [0, 1 ,1],
+            [1, 0 ,1],
             [1, 1, 1]
         ];
 
-        // Zielwerte: Zweierkomplement Darstellung der Eingaben
         float[][] targets =
         [
-            [0, 0],
-            [1, 0],
-            [1, 0],
-            [0, 1],
-            [1, 0],
-            [0, 1],
-            [0, 1],
-            [1, 1]
+            [0],
+            [1],
+            [1],
+            [0],
+            [1],
+            [0],
+            [0],
+            [1]
         ];
 
         Console.WriteLine("Starte Training...");
@@ -72,29 +71,27 @@ class Program
                 var result = 1.0;
                 foreach (var tuple in inputs.Zip(targets))
                 {
-                    float[] output = nn.FeedForward_Parallel(tuple.First);
+                    float[] output = nn.FeedForward(tuple.First);
                     result *= (output[0] - 0.5) * (tuple.Second[0] - 0.5) * 4;
-                    result *= (output[1] - 0.5) * (tuple.Second[1] - 0.5) * 4;
                 }
                 Console.WriteLine($"Zwischenergebnis: {result:F4}");
             }
         }
-        Console.WriteLine("\nTraining beendet. Testergebnisse:");
-        Console.WriteLine("------------------------------------");
+            Console.WriteLine("\nTraining beendet. Testergebnisse:");
+            Console.WriteLine("------------------------------------");
 
-        // 4. Testen
-        var finalresult = 1.0;
-        foreach (var tuple in inputs.Zip(targets))
-        {
-            float[] output = nn.FeedForward_Parallel(tuple.First);
-            Console.WriteLine($"Input: {tuple.First[0]}, {tuple.First[1]}, {tuple.First[2]} | Vorhersage: {output[0]:F3}, {output[1]:F3}");
-            finalresult *= (output[0] - 0.5) * (tuple.Second[0] - 0.5) * 4;
-            finalresult *= (output[1] - 0.5) * (tuple.Second[1] - 0.5) * 4;
-        }
-        Console.WriteLine($"Ergebnis: {finalresult:F4}");
+            // 4. Testen
+            var finalresult = 1.0;
+            foreach (var tuple in inputs.Zip(targets))
+            {
+                float[] output = nn.FeedForward(tuple.First);
+                Console.WriteLine($"Input: {tuple.First[0]}, {tuple.First[1]}, {tuple.First[2]} | Vorhersage: {output[0]:F4}");
+                finalresult *= (output[0] - 0.5) * (tuple.Second[0] - 0.5) * 4;
+            }
+            Console.WriteLine($"Ergebnis: {finalresult:F4}");
 
 
-        Console.ReadLine();
-
+            Console.ReadLine();
+        
     }
 }

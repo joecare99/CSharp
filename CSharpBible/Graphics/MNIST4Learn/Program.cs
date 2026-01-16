@@ -18,7 +18,7 @@ class Program
     {
         IoC.GetReqSrv = t => t switch
         {
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.1, 784, hiddenSize, 10),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.01, 784, (hiddenSize,eActivation.Sigmoid), (10,eActivation.Sigmoid)),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}"),
         };
@@ -54,11 +54,11 @@ class Program
             nn.LearningRate *= 0.9;
             for (int _i = 0; _i < trainingData.Count; _i++)
             {
-                nn.Train(trainingData[_i].Data, trainingData[_i].Label);
+                nn.Train_Parallel(trainingData[_i].Data, trainingData[_i].Label);
              /*   var i = rnd.Next(trainingData.Count);
                 var rOffs = rnd.Next(9);
                 var rAmt = rnd.NextDouble() * 0.05;
-                var rData = new double[trainingData[i].Data.Length];
+                var rData = new float[trainingData[i].Data.Length];
                 rData.Initialize();
                 for (int j = 0; j < trainingData[i].Data.Length; j++)
                     if (j + idx[rOffs] >= 0 && j + idx[rOffs] < trainingData[i].Data.Length)
@@ -96,9 +96,9 @@ class Program
                 if (predictedDigit3 == Array.IndexOf(testImg.Label, 1d)) correct3++;
             }
 
-            Console.WriteLine($"Ergebnis E{epoch + 1} ohne Rauschen: {correct} von {testData.Count} richtig ({(double)correct / testData.Count * 100:0.00}%)");
-            Console.WriteLine($"Ergebnis E{epoch + 1} mit Rauschen: {correct2} von {testData.Count} richtig ({(double)correct2 / testData.Count * 100:0.00}%)");
-            Console.WriteLine($"Ergebnis E{epoch + 1} mit Rauschen: {correct3} von {testData.Count} richtig ({(double)correct3 / testData.Count * 100:0.00}%)");
+            Console.WriteLine($"Ergebnis E{epoch + 1} ohne Rauschen: {correct} von {testData.Count} richtig ({(float)correct / testData.Count * 100:0.00}%)");
+            Console.WriteLine($"Ergebnis E{epoch + 1} mit Rauschen: {correct2} von {testData.Count} richtig ({(float)correct2 / testData.Count * 100:0.00}%)");
+            Console.WriteLine($"Ergebnis E{epoch + 1} mit Rauschen: {correct3} von {testData.Count} richtig ({(float)correct3 / testData.Count * 100:0.00}%)");
             VisualizeImportantNeurons(nn);
         }
 
@@ -133,7 +133,7 @@ class Program
         }
     }
 
-    static void RenderNeuron(string title, double[] weights,double[] weights2, double[] optinput, int side)
+    static void RenderNeuron(string title, float[] weights,float[] weights2, float[] optinput, int side)
     {
         Console.WriteLine(title);
         if (weights.Length != side * side)
@@ -142,12 +142,12 @@ class Program
             return;
         }
 
-        double maxAbs = weights.Select(Math.Abs).DefaultIfEmpty(0d).Max();
-        double maxAbs2 = weights2.Select(Math.Abs).DefaultIfEmpty(0d).Max();
-        double maxAbs3 = optinput.Select(Math.Abs).DefaultIfEmpty(0d).Max();
-        if (maxAbs == 0d) maxAbs = 1d;
-        if (maxAbs2 == 0d) maxAbs2 = 1d;
-        if (maxAbs3 == 0d) maxAbs3 = 1d;
+        float maxAbs = weights.Select(Math.Abs).DefaultIfEmpty(0f).Max();
+        float maxAbs2 = weights2.Select(Math.Abs).DefaultIfEmpty(0f).Max();
+        float maxAbs3 = optinput.Select(Math.Abs).DefaultIfEmpty(0f).Max();
+        if (maxAbs == 0d) maxAbs = 1f;
+        if (maxAbs2 == 0d) maxAbs2 = 1f;
+        if (maxAbs3 == 0d) maxAbs3 = 1f;
 
         for (int row = 0; row < side; row += 2)
         {
@@ -155,8 +155,8 @@ class Program
           
             for (int col = 0; col < side; col++)
             {
-                double topValue = weights[row * side + col];
-                double bottomValue = weights[(row + 1) * side + col];
+                float topValue = weights[row * side + col];
+                float bottomValue = weights[(row + 1) * side + col];
                 line.Append(BuildHalfBlock(topValue, bottomValue, maxAbs));
             }
 
@@ -164,8 +164,8 @@ class Program
 
             for (int col = 0; col < side; col++)
             {
-                double topValue = weights2[row * side + col];
-                double bottomValue = weights2[(row + 1) * side + col];
+                float topValue = weights2[row * side + col];
+                float bottomValue = weights2[(row + 1) * side + col];
                 line.Append(BuildHalfBlock(topValue, bottomValue, maxAbs2));
             }
 
@@ -173,8 +173,8 @@ class Program
 
             for (int col = 0; col < side; col++)
             {
-                double topValue = optinput[row * side + col];
-                double bottomValue = optinput[(row + 1) * side + col];
+                float topValue = optinput[row * side + col];
+                float bottomValue = optinput[(row + 1) * side + col];
                 line.Append(BuildHalfBlock(topValue, bottomValue, maxAbs3));
             }
 
@@ -185,7 +185,7 @@ class Program
         Console.WriteLine("\u001b[0m");
     }
 
-    static string BuildHalfBlock(double topValue, double bottomValue, double maxAbs)
+    static string BuildHalfBlock(float topValue, float bottomValue, float maxAbs)
     {
         var topColor = MapValueToColor(topValue, maxAbs);
         var bottomColor = MapValueToColor(bottomValue, maxAbs);
@@ -193,23 +193,23 @@ class Program
         return $"\u001b[38;2;{topColor.r};{topColor.g};{topColor.b}m\u001b[48;2;{bottomColor.r};{bottomColor.g};{bottomColor.b}m▀";
     }
 
-    static (int r, int g, int b) MapValueToColor(double value, double maxAbs)
+    static (int r, int g, int b) MapValueToColor(float value, float maxAbs)
     {
-        if (Math.Abs(value) < double.Epsilon)
+        if (Math.Abs(value) < float.Epsilon)
         {
             return (0, 0, 0);
         }
 
-        double normalized = Math.Clamp(Math.Abs(value) / maxAbs, 0d, 1d);
+        float normalized = Math.Clamp(Math.Abs(value) / maxAbs, 0f, 1f);
         int intensity = (int)Math.Round(normalized * 255d, MidpointRounding.AwayFromZero);
 
         return value > 0d ? (0, intensity, 0) : (intensity, 0, 0);
     }
 
-    static int IndexOfMax(double[] values)
+    static int IndexOfMax(float[] values)
     {
         int index = 0;
-        double max = double.MinValue;
+        float max = float.MinValue;
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i] > max)
@@ -222,10 +222,10 @@ class Program
         return index;
     }
 
-    static int IndexOfMin(double[] values)
+    static int IndexOfMin(float[] values)
     {
         int index = 0;
-        double min = double.MaxValue;
+        float min = float.MaxValue;
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i] < min)
@@ -265,7 +265,7 @@ class Program
         return false;
     }
 
-    static double[][]? MatchMatrix(double[][]? matrix, int expectedRows, int expectedCols)
+    static float[][]? MatchMatrix(float[][]? matrix, int expectedRows, int expectedCols)
     {
         if (matrix?.Length == expectedRows && HasExpectedColumns(matrix, expectedCols))
         {
@@ -280,22 +280,22 @@ class Program
         return null;
     }
 
-    static bool HasExpectedColumns(double[][] matrix, int expectedCols)
+    static bool HasExpectedColumns(float[][] matrix, int expectedCols)
         => matrix.All(row => row != null && row.Length == expectedCols);
 
-    static double[][] Transpose(double[][] matrix)
+    static float[][] Transpose(float[][] matrix)
     {
         if (matrix.Length == 0 || matrix[0] == null)
         {
-            return Array.Empty<double[]>();
+            return Array.Empty<float[]>();
         }
 
         int rows = matrix.Length;
         int cols = matrix[0].Length;
-        var transposed = new double[cols][];
+        var transposed = new float[cols][];
         for (int c = 0; c < cols; c++)
         {
-            transposed[c] = new double[rows];
+            transposed[c] = new float[rows];
             for (int r = 0; r < rows; r++)
             {
                 transposed[c][r] = matrix[r][c];
@@ -305,5 +305,5 @@ class Program
         return transposed;
     }
 
-    private sealed record WeightMatrices(double[][] InputHidden, double[][] HiddenOutput);
+    private sealed record WeightMatrices(float[][] InputHidden, float[][] HiddenOutput);
 }

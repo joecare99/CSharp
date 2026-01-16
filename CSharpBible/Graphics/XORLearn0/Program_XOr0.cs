@@ -5,13 +5,13 @@ using BaseLib.Models;
 using BaseLib.Models.Interfaces;
 using libMachLearn.Models;
 
-namespace XORLearn;
-class Program
+namespace XORLearn0;
+class Program_XOr0
 {
     static void Init()
     {
         IoC.GetReqSrv= t => t switch { 
-            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.5, 2, 3, 1),
+            _ when t == typeof(NeuralNetwork) => new NeuralNetwork(0.5, 2, (3,eActivation.Sigmoid), (1,eActivation.Sigmoid)),
             _ when t == typeof(IRandom) => new CRandom(),
             _ => throw new NotImplementedException($"No service for {t}") ,
         };
@@ -43,19 +43,20 @@ class Program
             [1],
             [0]
         ];
-
+        nn.LearningRate = 0.5f;
         Console.WriteLine("Starte Training...");
-
+        float accuracy = 0f;
         // 3. Training: Wir lassen das Netz 50.000 Mal über die Daten laufen (Epochs)
         for (int i = 0; i < 50000; i++)
         {
             for (int j = 0; j < inputs.Length; j++)
             {
-                nn.Train(inputs[j], targets[j]);
+                nn.Train(inputs[j], targets[j],0.1f);
+                accuracy += 1f- MathF.Abs(nn.Layers[2].Neurons[0] - targets[j][0]);
             }
 
             // Fortschritt alle 10.000 Epochen anzeigen
-            if (i % 10000 == 0) Console.WriteLine($"Epoche {i} abgeschlossen...");
+            if (i % 1000 == 0) Console.WriteLine($"Epoche {i} abgeschlossen... {accuracy/i/4f}");
         }
 
         Console.WriteLine("\nTraining beendet. Testergebnisse:");
