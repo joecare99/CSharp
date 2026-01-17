@@ -120,6 +120,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VTileEdit", "VTileEdit", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.MapExport", "SharpHack.MapExport\SharpHack.MapExport.csproj", "{FB00036B-0AF6-BC98-0FFD-550509BAC39C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperResolutionOnnxSample3", "..\Graphics\SuperResolutionOnnxSample\SuperResolutionOnnxSample3.csproj", "{7D25D666-107F-57AD-0CAE-2EFF45DFC5DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -298,6 +300,10 @@ Global
 		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB00036B-0AF6-BC98-0FFD-550509BAC39C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D25D666-107F-57AD-0CAE-2EFF45DFC5DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D25D666-107F-57AD-0CAE-2EFF45DFC5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D25D666-107F-57AD-0CAE-2EFF45DFC5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D25D666-107F-57AD-0CAE-2EFF45DFC5DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -343,6 +349,7 @@ Global
 		{6EE74200-0650-52A4-5922-3D6079F4AED0} = {F8444123-7091-43B2-AF24-DB3201ABF105}
 		{E14A9353-7AD6-1EED-D034-E535DD63D6D3} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
 		{FB00036B-0AF6-BC98-0FFD-550509BAC39C} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
+		{7D25D666-107F-57AD-0CAE-2EFF45DFC5DB} = {79430A25-1F0B-49B9-9A68-720A422E91AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51252E6F-E712-436A-B391-1C5243F65ABE}
