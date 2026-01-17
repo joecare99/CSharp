@@ -29,6 +29,8 @@ public class Display
     /// The color map
     /// </summary>
     static ConsoleColor[]? colorMap = null;
+
+    private readonly IConsole _console;
     /// <summary>
     /// My console
     /// </summary>
@@ -46,7 +48,14 @@ public class Display
     /// <param name="width">The width.</param>
     /// <param name="height">The height.</param>
     public Display(int x, int y, int width, int height)
+        : this(new ConsoleProxy(), x, y, width, height)
     {
+    }
+
+    public Display(IConsole console, int x, int y, int width, int height)
+    {
+        _console = console ?? throw new ArgumentNullException(nameof(console));
+
         Origin = new Point(x, y);
         dSize = new Size(width, height);
         ScreenBuffer = new ConsoleColor[dSize.Width * dSize.Height];
@@ -118,17 +127,17 @@ public class Display
     /// </summary>
     public void Update()
     {
-        var _fgr = myConsole.ForegroundColor;
-        var _bgr = myConsole.BackgroundColor;
+        var _fgr = _console.ForegroundColor;
+        var _bgr = _console.BackgroundColor;
         for (int y = 0; y < dSize.Height / 2 * 2; y += 2)
             for (int x = 0; x < dSize.Width; x++)
                 if (ScreenBuffer[y * dSize.Width + x] != OutBuffer[y * dSize.Width + x] ||
                     ScreenBuffer[(y + 1) * dSize.Width + x] != OutBuffer[(y + 1) * dSize.Width + x])
                 {
-                    myConsole.BackgroundColor = ScreenBuffer[(y + 0) * dSize.Width + x];
-                    myConsole.ForegroundColor = ScreenBuffer[(y + 1) * dSize.Width + x];
-                    myConsole.SetCursorPosition(Origin.X + x, Origin.Y + y / 2);
-                    myConsole.Write(hBlock);
+                    _console.BackgroundColor = ScreenBuffer[(y + 0) * dSize.Width + x];
+                    _console.ForegroundColor = ScreenBuffer[(y + 1) * dSize.Width + x];
+                    _console.SetCursorPosition(Origin.X + x, Origin.Y + y / 2);
+                    _console.Write(hBlock);
                     OutBuffer[y * dSize.Width + x] = ScreenBuffer[y * dSize.Width + x];
                     OutBuffer[(y + 1) * dSize.Width + x] = ScreenBuffer[(y + 1) * dSize.Width + x];
                 }
@@ -138,15 +147,15 @@ public class Display
             for (int x = 0; x < dSize.Width; x++)
                 if (ScreenBuffer[y * dSize.Width + x] != OutBuffer[y * dSize.Width + x])
                 {
-                    myConsole.BackgroundColor = ScreenBuffer[(y + 0) * dSize.Width + x];
-                    myConsole.ForegroundColor = ConsoleColor.Black;
-                    myConsole.SetCursorPosition(Origin.X + x, Origin.Y + y / 2);
-                    myConsole.Write(hBlock);
+                    _console.BackgroundColor = ScreenBuffer[(y + 0) * dSize.Width + x];
+                    _console.ForegroundColor = ConsoleColor.Black;
+                    _console.SetCursorPosition(Origin.X + x, Origin.Y + y / 2);
+                    _console.Write(hBlock);
                     OutBuffer[y * dSize.Width + x] = ScreenBuffer[y * dSize.Width + x];
                 }
         }
-        myConsole.ForegroundColor = _fgr;
-        myConsole.BackgroundColor = _bgr;
+        _console.ForegroundColor = _fgr;
+        _console.BackgroundColor = _bgr;
     }
 
     /// <summary>
