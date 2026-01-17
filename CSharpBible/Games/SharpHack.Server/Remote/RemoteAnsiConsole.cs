@@ -135,7 +135,7 @@ internal sealed class RemoteAnsiConsole : IConsole
         try
         {
             var info = _keys.ReadAsync(CancellationToken.None).GetAwaiter().GetResult();
-            _log?.Invoke($"ReadKey: {info.Key} '{(info.Char == '\0' ? "\\0" : info.Char.ToString())}'");
+         //   _log?.Invoke($"ReadKey: {info.Key} '{(info.Char == '\0' ? "\\0" : info.Char.ToString())}'");
 
             return info.Key switch
             {
