@@ -38,7 +38,7 @@ internal sealed class GameSetup
         var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
         var viewModel = new GameViewModel(session);
 
-        var tileDef = new TileDefRes(".\\Resources\\Tiles1x1.tdj");
+        var tileDef = new TileDefRes(".\\Resources\\Tiles4x2.tdj");
         var viewWidth = 70 / tileDef.TileSize.Width;
         var viewHeight = 20 / tileDef.TileSize.Height;
         viewModel.SetViewSize(viewWidth, viewHeight);
@@ -47,7 +47,7 @@ internal sealed class GameSetup
             new DrawingSize(viewWidth, viewHeight), tileDef.TileSize);
         TileDisplay<DisplayTile>.defaultTile = DisplayTile.Empty;
 
-        var miniMap = new Display(60, 21, 20, 12);
+        var miniMap = new Display(console, 60, 21, 20, 12);
 
         return new GameContext(viewModel, tileDisplay, tileDef, miniMap);
     }

@@ -11,7 +11,7 @@ namespace SharpHack.Console;
 /// <summary>
 /// Coordinates the console game's life cycle.
 /// </summary>
-internal sealed class ConsoleGameApp
+public sealed class ConsoleGameApp
 {
     private readonly IConsole _console;
     private readonly GameViewModel _viewModel;
@@ -22,9 +22,13 @@ internal sealed class ConsoleGameApp
 
     private bool _autoDoorOpen = true;
 
-    public ConsoleGameApp()
+    public ConsoleGameApp() : this(new ConsoleProxy())
     {
-        _console = new ConsoleProxy();
+    }
+
+    public ConsoleGameApp(IConsole console)
+    {
+        _console = console ?? throw new ArgumentNullException(nameof(console));
         var setup = new GameSetup();
         var context = setup.Create(_console);
         _viewModel = context.ViewModel;
