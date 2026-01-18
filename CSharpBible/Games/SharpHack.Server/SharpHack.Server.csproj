@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Game\**" />
+    <EmbeddedResource Remove="Game\**" />
+    <None Remove="Game\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteTerminal\RemoteTerminal.csproj" />
     <ProjectReference Include="..\SharpHack.Console\SharpHack.Console.csproj" />
     <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
@@ -17,11 +24,6 @@
     <ProjectReference Include="..\SharpHack.Persist\SharpHack.Persist.csproj" />
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Ansi\" />
-    <Folder Include="Remote\" />
   </ItemGroup>
 
 </Project>

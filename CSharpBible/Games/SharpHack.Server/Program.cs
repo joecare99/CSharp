@@ -3,8 +3,7 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using SharpHack.Server.Net;
-using SharpHack.Server.Remote;
+using RemoteTerminal.Remote;
 
 namespace SharpHack.Server;
 
@@ -81,15 +80,6 @@ public static class Program
                 }
             }
 
-            try
-            {
-                // Best-effort: if user connects via PuTTY TELNET, this helps to disable line mode / echo.
-                TelnetNegotiation.SendBasicServerNegotiation(stream);
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine($"[{remote}] Telnet negotiation failed: {ex.Message}");
-            }
 
             void Log(string msg) => System.Console.WriteLine($"[{remote}] {msg}");
 

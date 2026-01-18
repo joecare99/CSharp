@@ -41,6 +41,16 @@ public sealed class RemoteAnsiConsole : IConsole
         _bufferWidth = bufferWidth;
         _bufferHeight = bufferHeight;
         _log = log;
+       
+        try
+        {
+            // Best-effort: if user connects via PuTTY TELNET, this helps to disable line mode / echo.
+            TelnetNegotiation.SendBasicServerNegotiation(stream);
+        }
+        catch (Exception ex)
+        {
+            _log?.Invoke($"Telnet negotiation failed: {ex.Message}");
+        }
 
         _ansi.Write("\x1b[0m\x1b[2J\x1b[H\x1b[?25l\x1b[?7l");
         _ansi.Flush();
@@ -79,6 +89,10 @@ public sealed class RemoteAnsiConsole : IConsole
         {
             try
             {
+                // Cooperative scheduling: Visuals uses short Thread.Sleep loops and then polls KeyAvailable.
+                // Yielding here avoids starving background I/O / socket processing on some runtimes.
+                Thread.Yield();
+                _ansi.Flush();
                 return _stream is NetworkStream ns && ns.DataAvailable;
             }
             catch
@@ -150,6 +164,9 @@ public sealed class RemoteAnsiConsole : IConsole
     {
         try
         {
+            // Cooperative scheduling: allow I/O/other work to run before potentially blocking.
+            _ansi.Flush();
+            Thread.Yield();
             var info = _keys.ReadAsync(CancellationToken.None).GetAwaiter().GetResult();
             return info.Key switch
             {

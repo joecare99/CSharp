@@ -14,6 +14,7 @@
 using Sokoban.Models;
 using Sokoban.View;
 using Sokoban.ViewModels;
+using BaseLib.Models;
 
 namespace Sokoban
 {
@@ -23,6 +24,7 @@ namespace Sokoban
     public class Program
     {
         static IGame? _SokobanGame;
+        static Visuals? _visuals;
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
@@ -62,12 +64,12 @@ namespace Sokoban
         {
             // Setup Visuals
             _SokobanGame = new Game();
-            Visuals.SokobanGame = _SokobanGame;
+            _visuals = new Visuals(new ConsoleProxy(), _SokobanGame);
             _SokobanGame.Init();
-            _SokobanGame.visSetMessage = (s) => Visuals.Message = s;
-            _SokobanGame.visShow = Visuals.Show;
-            _SokobanGame.visUpdate = Visuals.Update;
-            _SokobanGame.visGetUserAction = Visuals.WaitforUser;
+            _SokobanGame.visSetMessage = (s) => _visuals.Message = s;
+            _SokobanGame.visShow = _visuals.Show;
+            _SokobanGame.visUpdate = _visuals.Update;
+            _SokobanGame.visGetUserAction = _visuals.WaitforUser;
         }
 
     }

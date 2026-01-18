@@ -1,4 +1,4 @@
-?using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RemoteTerminal.Remote;
 using System.IO;
 

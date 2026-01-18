@@ -74,14 +74,47 @@ public sealed class AnsiKeyReader
                 return new AnsiKeyInfo(AnsiKey.Escape, '\x1b');
             }
 
-            return ((char)b[0]) switch
+            char ch3 = (char)b[0];
+
+            // Arrow keys.
+            switch (ch3)
             {
-                'A' => new AnsiKeyInfo(AnsiKey.Up, '\0'),
-                'B' => new AnsiKeyInfo(AnsiKey.Down, '\0'),
-                'C' => new AnsiKeyInfo(AnsiKey.Right, '\0'),
-                'D' => new AnsiKeyInfo(AnsiKey.Left, '\0'),
-                _ => new AnsiKeyInfo(AnsiKey.Escape, '\x1b'),
-            };
+                case 'A': return new AnsiKeyInfo(AnsiKey.Up, '\0');
+                case 'B': return new AnsiKeyInfo(AnsiKey.Down, '\0');
+                case 'C': return new AnsiKeyInfo(AnsiKey.Right, '\0');
+                case 'D': return new AnsiKeyInfo(AnsiKey.Left, '\0');
+            }
+
+            // Ignore non-input ANSI sequences that some terminals send (notably on window resize).
+            // Examples: CSI 8 ; rows ; cols t   (xterm resize)
+            //           CSI ? ... h/l          (mode changes)
+            if (ch3 == '8' || ch3 == '?' || char.IsDigit(ch3))
+            {
+                await ConsumeCsiToFinalByteAsync(cancellationToken).ConfigureAwait(false);
+                continue;
+            }
+
+            return new AnsiKeyInfo(AnsiKey.Escape, '\x1b');
+        }
+    }
+
+    private async Task ConsumeCsiToFinalByteAsync(CancellationToken cancellationToken)
+    {
+        // CSI parameters/intermediates end with final byte in range 0x40..0x7E
+        var b = new byte[1];
+        while (true)
+        {
+            int read = await _stream.ReadAsync(b, 0, 1, cancellationToken).ConfigureAwait(false);
+            if (read == 0)
+            {
+                return;
+            }
+
+            byte ch = b[0];
+            if (ch >= 0x40 && ch <= 0x7E)
+            {
+                return;
+            }
         }
     }
 }
