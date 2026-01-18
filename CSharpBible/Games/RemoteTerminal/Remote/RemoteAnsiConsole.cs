@@ -1,11 +1,17 @@
 using BaseLib.Interfaces;
-using SharpHack.Server.Ansi;
-using SharpHack.Server.Net;
+using RemoteTerminal.Ansi;
+using RemoteTerminal.Net;
+using System;
+using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
-namespace SharpHack.Server.Remote;
+namespace RemoteTerminal.Remote;
 
-internal sealed class RemoteAnsiConsole : IConsole
+/// <summary>
+/// Implements <see cref="IConsole"/> on top of a remote ANSI-compatible terminal.
+/// </summary>
+public sealed class RemoteAnsiConsole : IConsole
 {
     private readonly Stream _stream;
     private readonly AnsiWriter _ansi;
@@ -17,11 +23,16 @@ internal sealed class RemoteAnsiConsole : IConsole
     private ConsoleColor _bg = ConsoleColor.Black;
     private bool _cursorVisible;
 
-    // We can't reliably know the remote terminal size in RAW mode.
-    // Use a sane default and allow server-side configuration later.
     private readonly int _bufferWidth;
     private readonly int _bufferHeight;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RemoteAnsiConsole"/> class.
+    /// </summary>
+    /// <param name="stream">The underlying bidirectional stream.</param>
+    /// <param name="bufferWidth">The assumed buffer width in columns.</param>
+    /// <param name="bufferHeight">The assumed buffer height in rows.</param>
+    /// <param name="log">Optional log callback.</param>
     public RemoteAnsiConsole(Stream stream, int bufferWidth = 120, int bufferHeight = 40, Action<string>? log = null)
     {
         _stream = stream;
@@ -31,16 +42,12 @@ internal sealed class RemoteAnsiConsole : IConsole
         _bufferHeight = bufferHeight;
         _log = log;
 
-        // Basic ANSI handshake / reset.
-        // - reset attributes
-        // - clear screen
-        // - hide cursor initially
-        // - disable line wrap (some terminals)
         _ansi.Write("\x1b[0m\x1b[2J\x1b[H\x1b[?25l\x1b[?7l");
         _ansi.Flush();
         _log?.Invoke("RemoteAnsiConsole initialized (ANSI reset/clear + hide cursor)");
     }
 
+    /// <inheritdoc />
     public ConsoleColor ForegroundColor
     {
         get => _fg;
@@ -51,6 +58,7 @@ internal sealed class RemoteAnsiConsole : IConsole
         }
     }
 
+    /// <inheritdoc />
     public ConsoleColor BackgroundColor
     {
         get => _bg;
@@ -61,15 +69,17 @@ internal sealed class RemoteAnsiConsole : IConsole
         }
     }
 
+    /// <inheritdoc />
     public bool IsOutputRedirected => false;
 
+    /// <inheritdoc />
     public bool KeyAvailable
     {
         get
         {
             try
             {
-                return _stream is NetworkStream ns ? ns.DataAvailable : true;
+                return _stream is NetworkStream ns && ns.DataAvailable;
             }
             catch
             {
@@ -78,65 +88,69 @@ internal sealed class RemoteAnsiConsole : IConsole
         }
     }
 
+    /// <inheritdoc />
     public int LargestWindowHeight => _bufferHeight;
 
+    /// <inheritdoc />
     public string Title
     {
         get => string.Empty;
-        set
-        {
-            // OSC title: ESC ] 0 ; title BEL
-            _ansi.Write($"\x1b]0;{value}\x07");
-        }
+        set => _ansi.Write($"\x1b]0;{value}\x07");
     }
 
+    /// <inheritdoc />
     public int WindowHeight
     {
         get => _bufferHeight;
         set { }
     }
 
+    /// <inheritdoc />
     public int WindowWidth
     {
         get => _bufferWidth;
         set { }
     }
 
+    /// <inheritdoc />
     public bool CursorVisible
     {
         get => _cursorVisible;
         set
         {
             _cursorVisible = value;
-            if (value) _ansi.ShowCursor(); else _ansi.HideCursor();
+            if (value)
+            {
+                _ansi.ShowCursor();
+            }
+            else
+            {
+                _ansi.HideCursor();
+            }
         }
     }
 
+    /// <inheritdoc />
     public int BufferWidth => _bufferWidth;
 
+    /// <inheritdoc />
     public int BufferHeight => _bufferHeight;
 
-    public void Beep(int freq, int len)
-    {
-        // BEL
-        _ansi.Write("\x07");
-    }
+    /// <inheritdoc />
+    public void Beep(int freq, int len) => _ansi.Write("\x07");
 
+    /// <inheritdoc />
     public void Clear() => _ansi.Clear();
 
-    public (int Left, int Top) GetCursorPosition()
-    {
-        // Not tracked. Return 0,0.
-        return (0, 0);
-    }
+    /// <inheritdoc />
+    public (int Left, int Top) GetCursorPosition() => (0, 0);
 
+    /// <inheritdoc />
     public ConsoleKeyInfo? ReadKey()
     {
         try
         {
             var info = _keys.ReadAsync(CancellationToken.None).GetAwaiter().GetResult();
-         //   _log?.Invoke($"ReadKey: {info.Key} '{(info.Char == '\0' ? "\\0" : info.Char.ToString())}'");
-
             return info.Key switch
             {
                 AnsiKey.Up => new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false),
@@ -157,6 +171,7 @@ internal sealed class RemoteAnsiConsole : IConsole
         }
     }
 
+    /// <inheritdoc />
     public string ReadLine()
     {
         var sb = new System.Text.StringBuilder();
@@ -164,7 +179,7 @@ internal sealed class RemoteAnsiConsole : IConsole
         while (true)
         {
             var k = ReadKey();
-            if (k == null)
+            if (k is null)
             {
                 continue;
             }
@@ -197,21 +212,16 @@ internal sealed class RemoteAnsiConsole : IConsole
         }
     }
 
-    public void SetCursorPosition(int left, int top)
-    {
-        // Console coordinates are 0-based; ANSI uses 1-based.
-        _ansi.MoveCursor(top + 1, left + 1);
-    }
+    /// <inheritdoc />
+    public void SetCursorPosition(int left, int top) => _ansi.MoveCursor(top + 1, left + 1);
 
-    public void Write(char ch)
-    {
-        // Preserve \n semantics: keep it as \n (StreamWriter.NewLine is \n).
-        _ansi.Write(ch.ToString());
-    }
+    /// <inheritdoc />
+    public void Write(char ch) => _ansi.Write(ch.ToString());
 
+    /// <inheritdoc />
     public void Write(string? st)
     {
-        if (st == null)
+        if (st is null)
         {
             return;
         }
@@ -219,6 +229,7 @@ internal sealed class RemoteAnsiConsole : IConsole
         _ansi.Write(st);
     }
 
+    /// <inheritdoc />
     public void WriteLine(string? st = "")
     {
         if (!string.IsNullOrEmpty(st))
