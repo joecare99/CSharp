@@ -116,7 +116,9 @@ public class TileService : ITileService
             return;
         }
 
-        LoadTileset(path: "tiles2.png", tileSize: 96);
+        // Default to the tileset used by the WPF2D front-end.
+        // The file is expected to be present next to the executable (CopyToOutputDirectory).
+        LoadTileset(path: "tileset_cutout3.png", tileSize: 96);
     }
 
     private ImageSource GetEmptyTile()

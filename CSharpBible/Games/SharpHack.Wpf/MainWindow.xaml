@@ -16,10 +16,18 @@
         <KeyBinding Key="Down" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.South}" />
         <KeyBinding Key="Left" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.West}" />
         <KeyBinding Key="Right" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.East}" />
+        <KeyBinding Key="NumPad8" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.North}" />
+        <KeyBinding Key="NumPad2" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.South}" />
+        <KeyBinding Key="NumPad4" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.West}" />
+        <KeyBinding Key="NumPad6" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.East}" />
 
         <KeyBinding Key="NumPad7" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.NorthWest}" />
         <KeyBinding Key="NumPad9" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.NorthEast}" />
         <KeyBinding Key="NumPad1" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthWest}" />
+        <KeyBinding Key="NumPad3" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthEast}" />
+        <KeyBinding Key="Return" Command="{Binding ExecutePrimaryActionCommand}" />
+        <KeyBinding Key="o" Command="{Binding OpenDoorNearbyCommand}" />
+        <KeyBinding Key="c" Command="{Binding CloseDoorNearbyCommand}" />
         <KeyBinding Key="NumPad3" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthEast}" />
 
         <KeyBinding Key="NumPad5" Command="{Binding WaitCommand}" />

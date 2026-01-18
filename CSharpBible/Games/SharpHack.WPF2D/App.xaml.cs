@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
+using SharpHack.Wpf.Services;
 
 namespace SharpHack.WPF2D;
 
@@ -48,5 +49,6 @@ public partial class App : Application
         services.AddSingleton<MainWindow>();
         services.AddSingleton<ViewModels.MainViewModel>();
         services.AddSingleton(Services.GameSessionFactory.CreateLayeredGameViewModel);
+        services.AddSingleton<ITileService, TileService>();
     }
 }

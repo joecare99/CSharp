@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,8 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="tileset_cutout3.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="tileset_cutout3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <ProjectReference Include="..\SharpHack.Wpf\SharpHack.Wpf.csproj" />
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
     <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
     <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />

@@ -17,7 +17,7 @@ public partial class MainWindow : Window
         _viewModel = viewModel;
         TileService = tileService;
 
-        TileService.LoadTileset("tiles.png", tileSize: 32);
+        TileService.LoadTileset("tiles2.png", tileSize: 96);
 
         DataContext = _viewModel;
     }
