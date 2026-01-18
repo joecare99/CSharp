@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
+    <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
+    <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />
+    <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
+    <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
+    <ProjectReference Include="..\SharpHack.Persist\SharpHack.Persist.csproj" />
+    <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+  </ItemGroup>
+
+</Project>
