@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
     <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
     <ProjectReference Include="..\Arkanoid.Base\Arkanoid.Base.csproj" />

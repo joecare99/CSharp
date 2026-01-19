@@ -141,6 +141,14 @@ public class MyConsole : IConsole
         = typeof(Console).GetMember(nameof(Beep))?.First(
             (o) => (o as MethodInfo)?.GetParameters().Length == 2) as MethodInfo;
     /// <summary>
+    /// Gets or sets the beep int.
+    /// </summary>
+    /// <value>The beep int.</value>
+    protected MethodInfo? resetcolor_int { get; set; }
+        = typeof(Console).GetMember(nameof(ResetColor))?.First(
+            (o) => (o as MethodInfo)?.GetParameters().Length == 2) as MethodInfo;
+
+    /// <summary>
     /// Gets or sets the get cursor position.
     /// </summary>
     /// <value>The get cursor position.</value>
@@ -294,5 +302,7 @@ public class MyConsole : IConsole
     /// <param name="freq">The freq.</param>
     /// <param name="dur">The dur.</param>
     public  void Beep(int freq,int dur) => beep_int?.Invoke(instance, new object[] { freq, dur });
+
+    public void ResetColor() => resetcolor_int?.Invoke(instance, new object[] { });
 
 }

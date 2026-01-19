@@ -259,6 +259,12 @@ namespace ConsoleLib.CommonControls
         {
             Write(st + "\r\n");
         }
+
+        public void ResetColor()
+        {
+            ForeColor = ConsoleColor.Gray;
+            BackColor = ConsoleColor.Black;
+        }
     }
 
     public record struct ScreenCell(char c, FullColor fc)

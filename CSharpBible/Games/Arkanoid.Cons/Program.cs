@@ -1,7 +1,11 @@
 ﻿using Arkanoid.Base;
+using BaseLib.Interfaces;
+using BaseLib.Models;
 using ConsoleDisplay.View;
 using ConsoleLib;
 using ConsoleLib.Interfaces;
+using System;
+using System.Threading;
 
 namespace Arkanoid.Cons
 {
@@ -9,7 +13,8 @@ namespace Arkanoid.Cons
     {
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;
+            IConsole console = new ConsoleProxy(); 
+            console.CursorVisible = false;
             var engine = new GameEngine();
 
             var displayWidth = (int)engine.State.FieldWidth;
@@ -142,8 +147,8 @@ namespace Arkanoid.Cons
                 Thread.Sleep(10);
             }
 
-            Console.ResetColor();
-            Console.CursorVisible = true;
+            console.ResetColor();
+            console.CursorVisible = true;
         }
     }
 }
