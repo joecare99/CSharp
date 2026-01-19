@@ -29,6 +29,9 @@ public class ConsoleProxy : IConsole
     PropertyInfo _Title = typeof(Console).GetProperty(nameof(Console.Title))!;
     PropertyInfo _WindowHeight = typeof(Console).GetProperty(nameof(Console.WindowHeight))!;
     PropertyInfo _WindowWidth = typeof(Console).GetProperty(nameof(Console.WindowWidth))!;
+    PropertyInfo _CursorVisible = typeof(Console).GetProperty(nameof(Console.CursorVisible))!;
+    PropertyInfo _BufferWidth = typeof(Console).GetProperty(nameof(Console.BufferWidth))!;
+    PropertyInfo _BufferHeight = typeof(Console).GetProperty(nameof(Console.BufferHeight))!;
 
     public ConsoleColor ForegroundColor { get => _ForegroundColor?.GetValue(null) as ConsoleColor? ?? ConsoleColor.White; set => _ForegroundColor?.SetValue(null,value); }
     public ConsoleColor BackgroundColor { get => _BackgroundColor?.GetValue(null) as ConsoleColor? ?? ConsoleColor.Black; set => _BackgroundColor?.SetValue(null, value); }
@@ -38,6 +41,9 @@ public class ConsoleProxy : IConsole
     public string Title { get => _Title?.GetValue(null) as string ?? string.Empty; set => _Title?.SetValue(null, value); }
     public int WindowHeight { get => _WindowHeight?.GetValue(null) as int? ?? 0; set => _WindowHeight?.SetValue(null, value); }
     public int WindowWidth { get => _WindowWidth?.GetValue(null) as int? ?? 0; set => _WindowWidth?.SetValue(null, value); }
+    public bool CursorVisible { get => _CursorVisible?.GetValue(null) as bool? ?? false; set => _CursorVisible?.SetValue(null, value); }
+    public int BufferWidth => _BufferWidth?.GetValue(null) as int? ?? 0;
+    public int BufferHeight => _BufferHeight?.GetValue(null) as int? ?? 0;
 
 
     public void Beep(int freq, int len) => _beep?.Invoke(null, [freq, len]);
