@@ -1,6 +1,5 @@
 <Project>
 	<Import Project="..\Games_net.props" />
-	<Import Project="..\Packages.props" />
 	<PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
