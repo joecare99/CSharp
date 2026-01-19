@@ -25,11 +25,4 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageVersion Update="Avalonia" Version="11.3.10" />
-	  <PackageVersion Update="Avalonia.Desktop" Version="11.3.10" />
-	  <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.10" />
-	  <PackageVersion Update="Avalonia.Fonts.Inter" Version="11.3.10" />
-	  <PackageVersion Update="Avalonia.Themes.Fluent" Version="11.3.10" />
-	</ItemGroup>
 </Project>
