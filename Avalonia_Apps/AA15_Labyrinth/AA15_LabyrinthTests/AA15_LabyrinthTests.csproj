@@ -24,9 +24,4 @@
 		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <PackageVersion Update="Avalonia.Fonts.Inter" Version="11.3.10" />
-	  <PackageVersion Update="Avalonia.Headless" Version="11.3.10" />
-	</ItemGroup>
-
 </Project>

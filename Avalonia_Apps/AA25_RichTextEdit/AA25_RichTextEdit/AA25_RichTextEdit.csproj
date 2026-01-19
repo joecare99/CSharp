@@ -21,6 +21,7 @@
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
+		<Compile Remove="ViewModels\Helper\RichTextboxHelper.cs" />
 		<!-- Remove WPF resource image from build action 'Resource'; will use Avalonia asset -->
 		<None Remove="Resources\all64_2.png" />
 	</ItemGroup>
@@ -70,5 +71,8 @@
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="ViewModels\Helper\" />
 	</ItemGroup>
 </Project>
