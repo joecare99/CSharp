@@ -39,7 +39,9 @@
 		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Avalonia\Avln_CommonDialogs.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Base\Avln_CommonDialogs.Base.csproj" />
+    <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Treat image as Avalonia asset -->
