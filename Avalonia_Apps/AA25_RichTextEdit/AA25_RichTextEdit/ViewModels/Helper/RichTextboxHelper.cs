@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Markup;
+using Avalonia.Markup;
 
 namespace AA25_RichTextEdit.ViewModels.Helper;
 
