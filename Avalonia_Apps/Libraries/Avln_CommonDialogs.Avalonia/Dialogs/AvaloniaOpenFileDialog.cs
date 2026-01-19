@@ -23,7 +23,7 @@ public sealed class AvaloniaOpenFileDialog : IOpenFileDialog
     public bool AllowMultiple { get; set; }
 
     public IList<FileTypeFilter> MutableFilters { get; } = new List<FileTypeFilter>();
-    public IReadOnlyList<FileTypeFilter> Filters => MutableFilters;
+    public IReadOnlyList<FileTypeFilter> Filters => MutableFilters as IReadOnlyList<FileTypeFilter>;
 
     public ValueTask<IReadOnlyList<string>> ShowAsync(object owner)
         => ShowInternalAsync(TopLevelOwner.From(owner));

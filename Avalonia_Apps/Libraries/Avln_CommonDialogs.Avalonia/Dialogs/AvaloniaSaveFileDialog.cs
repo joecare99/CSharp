@@ -24,7 +24,7 @@ public sealed class AvaloniaSaveFileDialog : ISaveFileDialog
     public bool OverwritePrompt { get; set; }
 
     public IList<FileTypeFilter> MutableFilters { get; } = new List<FileTypeFilter>();
-    public IReadOnlyList<FileTypeFilter> Filters => MutableFilters;
+    public IReadOnlyList<FileTypeFilter> Filters => MutableFilters as IReadOnlyList<FileTypeFilter>;
 
     public ValueTask<string?> ShowAsync(object owner)
         => ShowInternalAsync(TopLevelOwner.From(owner));
