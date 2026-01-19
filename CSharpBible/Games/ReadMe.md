@@ -1,6 +1,6 @@
 # Games
 a collection of "small" games 
-mostly the engines with a easy interface.
+mostly the engines with an easy interface.
 
 ## Sokoban
 Push all the Stones to the destiantion places<br/>
