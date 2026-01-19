@@ -26,10 +26,10 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="11.3.10" />
-	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.10" />
+	  <PackageReference Include="Avalonia" Version="11.3.11" />
+	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.11" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
