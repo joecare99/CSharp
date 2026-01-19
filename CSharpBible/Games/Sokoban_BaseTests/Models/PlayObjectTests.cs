@@ -30,13 +30,13 @@ namespace Sokoban.Models.Tests
         [TestMethod()]
         public void TestMoveTest()
         {
-            Assert.AreEqual(false,testItem.TestMove(Direction.North));
+            Assert.IsFalse(testItem.TestMove(Direction.North));
         }
 
         [TestMethod()]
         public void TryMoveTest()
         {
-            Assert.AreEqual(false, testItem.TestMove(Direction.North));
+            Assert.IsFalse(testItem.TestMove(Direction.North));
         }
 
         [TestMethod()]

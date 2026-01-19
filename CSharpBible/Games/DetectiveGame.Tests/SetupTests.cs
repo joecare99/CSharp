@@ -12,7 +12,7 @@ public class SetupTests
         var svc = new GameService();
         var state = svc.CreateNew(new[] { "A", "B", "C", "D" });
         var counts = state.Players.Select(p => p.Hand.Count).ToList();
-        Assert.IsTrue(counts.Max() - counts.Min() <= 1);
+        Assert.IsLessThanOrEqualTo(1, counts.Max() - counts.Min());
         // total cards should be 27 - 3 = 24
         Assert.AreEqual(24, counts.Sum());
     }
@@ -24,9 +24,9 @@ public class SetupTests
         var state = svc.CreateNew(new[] { "A", "B", "C" });
         foreach (var p in state.Players)
         {
-            Assert.IsFalse(p.Hand.Contains(state.Solution.Person));
-            Assert.IsFalse(p.Hand.Contains(state.Solution.Weapon));
-            Assert.IsFalse(p.Hand.Contains(state.Solution.Room));
+            Assert.DoesNotContain(state.Solution.Person, p.Hand);
+            Assert.DoesNotContain(state.Solution.Weapon, p.Hand);
+            Assert.DoesNotContain(state.Solution.Room, p.Hand);
         }
     }
 }

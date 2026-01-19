@@ -143,7 +143,7 @@ public class Playfield2DTests
         Assert.AreEqual(_pf, item.GetParent());
 #endif
         Assert.AreSame(item, _pf[new Point(2, 3)]);
-        Assert.AreEqual(1, new List<TestItem2D>(_pf.Items).Count);
+        Assert.HasCount(1, new List<TestItem2D>(_pf.Items));
         StringAssert.Contains(_result, "DataChange: Items\to:\tn:TestItem2D(A,{X=2,Y=3})");
     }
 
@@ -154,7 +154,7 @@ public class Playfield2DTests
         _pf[new Point(7, 7)] = item;
 
         Assert.IsNull(_pf[new Point(7, 7)]);
-        Assert.AreEqual(0, new List<TestItem2D>(_pf.Items).Count);
+        Assert.IsEmpty(new List<TestItem2D>(_pf.Items));
         Assert.AreEqual("", _result);
     }
 
@@ -168,7 +168,7 @@ public class Playfield2DTests
         _pf[new Point(1, 1)] = null;
 
         Assert.IsNull(_pf[new Point(1, 1)]);
-        Assert.AreEqual(0, new List<TestItem2D>(_pf.Items).Count);
+        Assert.IsEmpty(new List<TestItem2D>(_pf.Items));
 #if NET6_0_OR_GREATER
         Assert.IsNull(item.Parent);
 #else

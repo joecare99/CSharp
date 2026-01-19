@@ -15,7 +15,7 @@ namespace Tetris_Base.Helper.Tests
 		/// <param name="xExp">if set to <c>true</c> [x exp].</param>
 		/// <param name="value">The value.</param>
 		/// <param name="data">The data.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow("Null", null, false, null, null)]
 		[DataRow("int,Null", null, true, null, 1)]
 		[DataRow("Null,int", 1, true, 1, null)]
@@ -55,7 +55,7 @@ namespace Tetris_Base.Helper.Tests
 		/// <param name="xExp">if set to <c>true</c> [x exp].</param>
 		/// <param name="value">The value.</param>
 		/// <param name="data">The data.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow("Null", null, false, null, null)]
 		[DataRow("int,Null", null, true, null, 1)]
 		[DataRow("Null,int", 1, true, 1, null)]

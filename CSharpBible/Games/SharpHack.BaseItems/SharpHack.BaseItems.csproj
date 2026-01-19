@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
   </ItemGroup>

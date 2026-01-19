@@ -10,11 +10,17 @@
     <RootNamespace>AsteroidsModern.UI</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm"  />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf"  />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.Hosting"  />
-    <PackageReference Include="NAudio"  />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="NAudio" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AsteroidsModernEngine\AsteroidsModernEngine.csproj" />

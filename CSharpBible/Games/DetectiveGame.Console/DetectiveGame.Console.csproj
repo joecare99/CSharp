@@ -8,6 +8,11 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\DetectiveGame.Engine\DetectiveGame.Engine.csproj" />
     <ProjectReference Include="..\..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
@@ -16,6 +21,6 @@
   <ItemGroup>
     <!-- Direkte Referenz erforderlich für Source-Generatoren von CommunityToolkit.Mvvm -->
     <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 </Project>

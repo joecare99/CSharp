@@ -27,7 +27,7 @@ namespace Sokoban.Models.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, 0, Direction.South, false)]
         [DataRow(1, 0, Direction.South, false)]
         [DataRow(0, 1, Direction.North,false)]

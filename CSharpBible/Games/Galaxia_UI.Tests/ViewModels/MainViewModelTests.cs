@@ -30,7 +30,7 @@ namespace Galaxia_UI.Tests.ViewModels
 
             vm.InitializeCommand.Execute(null);
 
-            Assert.IsTrue(vm.Sectors.Count > 0, "Sektoren sollten nach Initialisierung vorhanden sein.");
+            Assert.IsNotEmpty(vm.Sectors, "Sektoren sollten nach Initialisierung vorhanden sein.");
         }
 
         [TestMethod]

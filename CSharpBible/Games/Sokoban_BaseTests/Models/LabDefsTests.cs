@@ -12,7 +12,7 @@ public class LabDefsTests
     {
         (var fd, var s) = LabDefs.GetLevel(1);
         Assert.AreEqual(new Size(14,10),s);
-        Assert.AreEqual(140, fd.Length);
+        Assert.HasCount(140, fd);
         Assert.AreEqual(FieldDef.Wall, fd[0]);
     }
 

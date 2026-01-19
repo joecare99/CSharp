@@ -47,7 +47,7 @@ namespace Sokoban.Models.Tests
         /// <summary>
         /// Defines the test method WallTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null,FieldDef.Floor)]
         [DataRow(FieldDef.Player, FieldDef.Player)]
         [DataRow(FieldDef.Stone, FieldDef.Stone)]
@@ -71,7 +71,7 @@ namespace Sokoban.Models.Tests
         /// <summary>
         /// Defines the test method WallTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(null, null,FieldDef.Floor)]
         [DataRow(null,FieldDef.Player, FieldDef.Player)]
         [DataRow(null, FieldDef.Stone, FieldDef.Stone)]

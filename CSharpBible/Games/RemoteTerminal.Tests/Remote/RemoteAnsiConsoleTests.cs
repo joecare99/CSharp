@@ -14,6 +14,6 @@ public sealed class RemoteAnsiConsoleTests
         _ = new RemoteAnsiConsole(stream);
 
         var bytes = stream.ToArray();
-        Assert.IsTrue(bytes.Length > 0);
+        Assert.IsNotEmpty(bytes);
     }
 }

@@ -40,8 +40,8 @@ public class GameWorldTests
     {
         var gw = CreateWorld(new(100, 80));
         Assert.AreEqual(new Vector2(50, 40), gw.Ship.Position);
-        Assert.IsTrue(gw.Asteroids.Count > 0);
-        Assert.AreEqual(0, gw.Bullets.Count);
+        Assert.IsNotEmpty(gw.Asteroids);
+        Assert.IsEmpty(gw.Bullets);
     }
 
     [TestMethod]
@@ -54,7 +54,7 @@ public class GameWorldTests
 
         var velBefore = gw.Ship.Velocity;
         gw.Update(_input, _time, _sound);
-        Assert.IsTrue(gw.Ship.Velocity.Length() > velBefore.Length());
+        Assert.IsGreaterThan(velBefore.Length(), gw.Ship.Velocity.Length());
         _sound.Received().PlayThrust();
     }
 
@@ -85,18 +85,18 @@ public class GameWorldTests
         // t=0, first shot
         _time.TotalTime.Returns(0.0);
         gw.Update(_input, _time, _sound);
-        Assert.AreEqual(1, gw.Bullets.Count);
+        Assert.HasCount(1, gw.Bullets);
         _sound.Received().PlayShoot();
 
         // t=0.1, still cooldown, no extra bullet
         _time.TotalTime.Returns(0.1);
         gw.Update(_input, _time, _sound);
-        Assert.AreEqual(1, gw.Bullets.Count);
+        Assert.HasCount(1, gw.Bullets);
 
         // t=0.2, second shot
         _time.TotalTime.Returns(0.2);
         gw.Update(_input, _time, _sound);
-        Assert.AreEqual(2, gw.Bullets.Count);
+        Assert.HasCount(2, gw.Bullets);
     }
 
     [TestMethod]
@@ -108,7 +108,7 @@ public class GameWorldTests
         _time.DeltaTime.Returns(0.016);
         _time.TotalTime.Returns(0.0);
         gw.Update(_input, _time, _sound);
-        Assert.AreEqual(1, gw.Bullets.Count);
+        Assert.HasCount(1, gw.Bullets);
 
         // Advance life beyond bullet life
         for (int i = 0; i < 100; i++)
@@ -116,7 +116,7 @@ public class GameWorldTests
             _time.TotalTime.Returns(i * 0.05);
             gw.Update(_input, _time, _sound);
         }
-        Assert.AreEqual(0, gw.Bullets.Count);
+        Assert.IsEmpty(gw.Bullets);
     }
 
     [TestMethod]
@@ -174,8 +174,8 @@ public class GameWorldTests
 
         gw.Update(_input, _time, _sound);
         _sound.Received().PlayBang();
-        Assert.IsTrue(gw.Asteroids.Count >= 1); // split into 2 if large, or removed if small
-        Assert.AreEqual(0, gw.Bullets.Count);
+        Assert.IsGreaterThanOrEqualTo(1, gw.Asteroids.Count); // split into 2 if large, or removed if small
+        Assert.IsEmpty(gw.Bullets);
     }
 
     [TestMethod]

@@ -32,7 +32,7 @@ public class DestinationTests
     /// <summary>
     /// Defines the test method WallTest.
     /// </summary>
-    [DataTestMethod()]
+    [TestMethod()]
     [DataRow(null, FieldDef.Destination)]
     [DataRow(FieldDef.Player, FieldDef.PlayerOverDest)]
     [DataRow(FieldDef.Stone, FieldDef.StoneInDest)]

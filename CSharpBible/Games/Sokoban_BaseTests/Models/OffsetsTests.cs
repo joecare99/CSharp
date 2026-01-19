@@ -15,7 +15,7 @@ namespace Sokoban.Models.Tests
         /// </summary>
         /// <param name="dir">The dir.</param>
         /// <param name="Koor">The koor.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(Direction.North,new int[] { 0, -1 })]
         [DataRow(Direction.West, new int[] { -1, 0 })]
         [DataRow(Direction.South, new int[] { 0, 1 })]
@@ -31,7 +31,7 @@ namespace Sokoban.Models.Tests
         /// <param name="dir">The dir.</param>
         /// <param name="Koor">The koor.</param>
         /// <param name="Pnkt">The PNKT.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(Direction.North, new int[] { 4, 6 }, new int[] { 4, 7 })]
         [DataRow(Direction.West, new int[] { 4, 8 }, new int[] { 5, 8 })]
         [DataRow(Direction.South, new int[] { 6, 10 }, new int[] { 6, 9 })]

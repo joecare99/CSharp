@@ -11,7 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Game_Base.Model;
+using Game.Model;
+using Game.Model.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Snake_Base.Models.Interfaces;
 using System.Drawing;
@@ -100,7 +101,7 @@ namespace Snake_Base.Models.Tests
         {
             Point pp = Point.Empty;
             var _testApple = new Apple(pp = new Point(2, 1));
-            Assert.AreEqual(null, plf?[pp]);
+            Assert.IsNull(plf?[pp]);
             _testApple.Parent = plf;
             Assert.AreEqual(_testApple, plf?[pp]);
             Assert.AreEqual(cExpResult1, ResultData);
@@ -115,7 +116,7 @@ namespace Snake_Base.Models.Tests
             Point pp = new Point(2, 0);
             var _testApple = new Apple();
             _testApple.Place = pp; 
-            Assert.AreEqual(null, plf?[pp]);
+            Assert.IsNull(plf?[pp]);
             _testApple.Parent = plf;
             Assert.AreEqual(_testApple, plf?[pp]);
             Assert.AreEqual(cExpResult0, ResultData);
@@ -145,10 +146,10 @@ namespace Snake_Base.Models.Tests
             var _testApple = new Apple(pp = new Point(1, 2));
             Assert.AreEqual(_testApple, plf?[pp]);
             Point pp1 = new Point(2, 0);
-            Assert.AreEqual(null, plf?[pp1]);
+            Assert.IsNull(plf?[pp1]);
             _testApple.Place = pp1;
             Assert.AreEqual(_testApple, plf?[pp1]);
-            Assert.AreEqual(null, plf?[pp]);
+            Assert.IsNull(plf?[pp]);
             Assert.AreEqual(cExpResultMove, ResultData);
         }
 
