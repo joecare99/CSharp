@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
 		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Packages.props = Directory.Packages.props
 		Games.props = Games.props
 		Games_net.props = Games_net.props
 		Packages.props = Packages.props
@@ -98,6 +99,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_Converter_DrawGrid2", "..\Graphics\MVVM_Converter_DrawGrid2\MVVM_Converter_DrawGrid2.csproj", "{B8AF8A55-0C98-4EF4-973B-148FCB9CA675}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ConsoleApps", "ConsoleApps", "{A8BFD1B7-37A4-4A93-944B-B63A04DBF88B}"
+	ProjectSection(SolutionItems) = preProject
+		..\ConsoleApps\ConsoleApps_net.props = ..\ConsoleApps\ConsoleApps_net.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HexaBan", "HexaBan", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -226,8 +230,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.MapExport", "SharpHack.MapExport\SharpHack.MapExport.csproj", "{FB00036B-0AF6-BC98-0FFD-550509BAC39C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.BaseItemsTests", "SharpHack.BaseItemsTests\SharpHack.BaseItemsTests.csproj", "{E2FEE45C-7120-8530-EB7F-A66EA2B44175}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsteroidsModernEngineTests", "AsteroidsModernEngineTests\AsteroidsModernEngineTests.csproj", "{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.Server", "SharpHack.Server\SharpHack.Server.csproj", "{B7E2E7C3-4F34-4591-AA73-ED0A4272C2CB}"
 EndProject
@@ -1313,18 +1315,6 @@ Global
 		{E2FEE45C-7120-8530-EB7F-A66EA2B44175}.Release|x64.Build.0 = Release|Any CPU
 		{E2FEE45C-7120-8530-EB7F-A66EA2B44175}.Release|x86.ActiveCfg = Release|Any CPU
 		{E2FEE45C-7120-8530-EB7F-A66EA2B44175}.Release|x86.Build.0 = Release|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Debug|x64.Build.0 = Debug|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Debug|x86.Build.0 = Debug|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Release|x64.ActiveCfg = Release|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Release|x64.Build.0 = Release|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Release|x86.ActiveCfg = Release|Any CPU
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1}.Release|x86.Build.0 = Release|Any CPU
 		{B7E2E7C3-4F34-4591-AA73-ED0A4272C2CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7E2E7C3-4F34-4591-AA73-ED0A4272C2CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7E2E7C3-4F34-4591-AA73-ED0A4272C2CB}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -1492,7 +1482,6 @@ Global
 		{6EE74200-0650-52A4-5922-3D6079F4AED0} = {81476B55-B0FC-48EC-AD7E-C37C06F9E527}
 		{FB00036B-0AF6-BC98-0FFD-550509BAC39C} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{E2FEE45C-7120-8530-EB7F-A66EA2B44175} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
-		{E973776D-0F6E-4EF6-85AA-2DF8B9D0F4A1} = {4BE42477-1420-4A81-BDFA-4C34DA898F05}
 		{B7E2E7C3-4F34-4591-AA73-ED0A4272C2CB} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{2C60E94D-361B-495D-9F7D-69F81AA4B355} = {AC84E02A-08F3-46BF-9672-3BA37D5BB067}
 		{C162A8DF-BF0D-46C6-9EC3-1A8BC818E748} = {8E0BEE1E-8100-46C8-AB90-74EA8A5E96C5}
