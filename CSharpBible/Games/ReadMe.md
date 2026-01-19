@@ -19,18 +19,18 @@ Bring Werner(player) to the Flaschbier(destination) and avoid enemies, and falli
 Eat all the apples, but don't eat yourself<br/>
 
 ## Arkanoid
-Hit all bricks, but don't loose the Ball
+Hit all bricks, but don't loose the Ball.<br/>
 <img width=270 src="https://github.com/joecare99/CSharp/blob/master/CSharpBible/Games/Resources/Arkanoid.png?raw=true">
 
 ## Asteroids
-Destroy all asteroids, but don't get hit by one.
+Destroy all asteroids, but don't get hit by one.<br/>
 <img width=270 src="https://github.com/joecare99/CSharp/blob/master/CSharpBible/Games/Resources/Asteroids.png?raw=true">
 
 ## Treppen (Stairs)
-Build a labyrinth from stairs.
+Build a labyrinth from stairs.<br/>
 <img width=270 src="https://github.com/joecare99/CSharp/blob/master/CSharpBible/Games/Resources/Treppen.png?raw=true">
 
 ## SharpHack
-A rogue-like dungeon crawler inspired by NetHack.
+A rogue-like dungeon crawler inspired by NetHack.<br/>
 <img width=270 src="https://github.com/joecare99/CSharp/blob/master/CSharpBible/Games/Resources/SharpHack.Cons.png?raw=trueG">
 <img width=270 src="https://github.com/joecare99/CSharp/blob/master/CSharpBible/Games/Resources/SharpHack.WPF.png?raw=true">
