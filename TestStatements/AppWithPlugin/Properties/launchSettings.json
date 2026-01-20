@@ -18,6 +18,10 @@
     "Profil \"1\"": {
       "commandName": "Project",
       "commandLineArgs": "Test"
+    },
+    "AppWithPlugin Sokoban": {
+      "commandName": "Project",
+      "commandLineArgs": "sokoban"
     }
   }
 }
