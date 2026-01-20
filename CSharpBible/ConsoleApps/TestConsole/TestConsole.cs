@@ -192,6 +192,12 @@ namespace TestConsole
             }
         }
 
+        public void ResetColor()
+        {
+            ForegroundColor = ConsoleColor.Gray;
+            BackgroundColor = ConsoleColor.Black;
+        }
+
         /// <summary>
         /// Gets the content.
         /// </summary>
