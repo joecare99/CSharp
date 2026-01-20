@@ -26,6 +26,7 @@
 		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
 		<ProjectReference Include="..\PluginBase\PluginBase.csproj" />
 	</ItemGroup>
 	<ItemGroup>

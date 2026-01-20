@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using BaseLib.Interfaces;
+using BaseLib.Models;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PluginBase.Interfaces;
@@ -14,7 +16,7 @@ namespace AppWithPlugin.Model;
 
 public class AppWithPlugin : IEnvironment, IUserInterface
 {
-    static Assembly LoadPlugin(string relativePath)
+    static Assembly? LoadPlugin(string relativePath)
     {
         string pluginLocation, assemblyPath;
         if (File.Exists(relativePath))
@@ -35,7 +37,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
             pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar), "Debug", "net6.0"));
             assemblyPath = Path.Combine(pluginLocation, relativePath) + ".dll";
         }
-
+        if (!File.Exists(assemblyPath)) return null;
         Console.WriteLine($"Loading commands from: {pluginLocation}");
         PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
         
@@ -43,6 +45,8 @@ public class AppWithPlugin : IEnvironment, IUserInterface
        
         if (!assembly?.IsFullyTrusted ?? false)
             return null;
+
+        PluginLoadContext.loadedAssemblies[assembly?.FullName] = assembly;
 
         // Additional check for a valid signature (if applicable)
 #if SIGNED_BUILD
@@ -73,28 +77,33 @@ public class AppWithPlugin : IEnvironment, IUserInterface
     static IEnumerable<ICommand> CreateCommands(Assembly assembly,IEnvironment env)
     {
         int count = 0;
-
-        foreach (Type type in assembly.GetTypes())
+        Type[]? _types = null;
+        try
         {
-            if (typeof(ICommand).IsAssignableFrom(type))
+            _types = assembly?.GetTypes();
+        }
+        catch {  }
+            foreach (Type type in _types ?? [typeof(object)])
             {
-                ICommand result = Activator.CreateInstance(type) as ICommand;
-                if (result != null)
+                if (typeof(ICommand).IsAssignableFrom(type))
                 {
-                    result.Initialize(env);
-                    count++;
-                    yield return result;
+                    ICommand result = Activator.CreateInstance(type) as ICommand;
+                    if (result != null)
+                    {
+                        result.Initialize(env);
+                        count++;
+                        yield return result;
+                    }
                 }
             }
-        }
 
-        if (count == 0)
-        {
-            string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
-            throw new ApplicationException(
-                $"Can't find any type which implements ICommand in {assembly} from {assembly.Location}.\n" +
-                $"Available types: {availableTypes}");
-        }
+            if (assembly != null && count == 0 && assembly.FullName.ToLower().Contains("plugin"))
+            {
+                string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
+                throw new ApplicationException(
+                    $"Can't find any type which implements ICommand in {assembly} from {assembly?.Location}.\n" +
+                    $"Available types: {availableTypes}");
+            }
     }
 
     IEnumerable<ICommand>? commands;
@@ -112,7 +121,8 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         _sp = (_sc=(_sc ?? new ServiceCollection())
             .AddTransient<IRandom, Random>()
             .AddTransient<ISysTime, SysTime>()
-            .AddSingleton<ILogger, Logging>())
+            .AddSingleton<ILogger, Logging>()
+            .AddSingleton<IConsole, ConsoleProxy>())
             .BuildServiceProvider();
 
 
@@ -166,7 +176,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
                         Console.WriteLine("No such command is known.");
                         return;
                     }
-
+                    Directory.SetCurrentDirectory(Path.GetDirectoryName(command.GetType().Assembly.Location)!);
                     command.Execute();
 
                     Console.WriteLine();
