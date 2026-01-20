@@ -149,6 +149,7 @@ public interface IConsole
     /// The next line of characters from the input stream, or an empty string if no input is available.
     /// </returns>
     string ReadLine();
+    void ResetColor();
 
     /// <summary>
     /// Sets the position of the cursor within the console buffer.
