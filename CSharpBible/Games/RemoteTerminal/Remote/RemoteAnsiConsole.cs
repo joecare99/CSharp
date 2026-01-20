@@ -298,4 +298,10 @@ public sealed class RemoteAnsiConsole : IConsole
 
         return ConsoleKey.NoName;
     }
+
+    public void ResetColor()
+    {
+        ForegroundColor = ConsoleColor.Gray;
+        BackgroundColor = ConsoleColor.Black;
+    }
 }

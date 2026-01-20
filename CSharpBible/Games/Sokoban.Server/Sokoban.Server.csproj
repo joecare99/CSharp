@@ -8,9 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sokoban\Sokoban.csproj" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RemoteTerminal\RemoteTerminal.csproj" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\Sokoban\Sokoban.csproj" />
     <ProjectReference Include="..\Sokoban_Base\Sokoban_Base.csproj" />
   </ItemGroup>
 
