@@ -24,6 +24,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
 		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+		<!-- Condition="'$(TargetFrameWork).Contains(net3)'=='false'" -->
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />

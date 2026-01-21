@@ -6,6 +6,7 @@ using Sokoban.ViewModels;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -16,6 +17,9 @@ namespace Sokoban.Server;
 /// </summary>
 public static class Program
 {
+    private static readonly string SOKOSERVER_TLS_CERT_PATH= "SOKOSERVER_TLS_CERT_PATH";
+    private static readonly string SOKOSERVER_TLS_CERT_PASSWORD = "SOKOSERVER_TLS_CERT_PASSWORD";
+    private static readonly string SOKOSERVER_TLS = "SOKOSERVER_TLS";
 
     public static async Task Main(string[] args)
     {
@@ -30,11 +34,11 @@ public static class Program
         var listener = new TcpListener(IPAddress.Any, port);
         listener.Start();
 
-        System.Console.WriteLine($"SharpHack server listening on 0.0.0.0:{port}");
+        System.Console.WriteLine($"{Assembly.GetExecutingAssembly().GetName().Name} server listening on 0.0.0.0:{port}");
         if (useTls)
         {
             System.Console.WriteLine("TLS enabled: connect with an SSL/TLS capable client, then use TELNET/RAW over the secure channel.");
-            System.Console.WriteLine($"Certificate: {(string.IsNullOrWhiteSpace(certPath) ? "<from env SHARPHACK_TLS_CERT_PATH>" : certPath)}");
+            System.Console.WriteLine($"Certificate: {(string.IsNullOrWhiteSpace(certPath) ? $"<from env {SOKOSERVER_TLS_CERT_PATH}>" : certPath)}");
         }
         else
         {
@@ -178,19 +182,19 @@ public static class Program
 
         if (!useTls)
         {
-            var envTls = Environment.GetEnvironmentVariable("SHARPHACK_TLS") ?? Environment.GetEnvironmentVariable("SHARPHACK_SSL");
+            var envTls = Environment.GetEnvironmentVariable(SOKOSERVER_TLS) ?? Environment.GetEnvironmentVariable("SHARPHACK_SSL");
             if (!string.IsNullOrWhiteSpace(envTls) && (envTls.Equals("1") || envTls.Equals("true", StringComparison.OrdinalIgnoreCase) || envTls.Equals("yes", StringComparison.OrdinalIgnoreCase)))
             {
                 useTls = true;
             }
         }
 
-        certPath ??= Environment.GetEnvironmentVariable("SHARPHACK_TLS_CERT_PATH");
-        certPassword ??= Environment.GetEnvironmentVariable("SHARPHACK_TLS_CERT_PASSWORD");
+        certPath ??= Environment.GetEnvironmentVariable(SOKOSERVER_TLS_CERT_PATH);
+        certPassword ??= Environment.GetEnvironmentVariable(SOKOSERVER_TLS_CERT_PASSWORD);
 
         if (useTls && string.IsNullOrWhiteSpace(certPath))
         {
-            throw new InvalidOperationException("TLS is enabled but no certificate was provided. Use --cert <path> or set SHARPHACK_TLS_CERT_PATH.");
+            throw new InvalidOperationException($"TLS is enabled but no certificate was provided. Use --cert <path> or set {SOKOSERVER_TLS_CERT_PATH}.");
         }
     }
 
