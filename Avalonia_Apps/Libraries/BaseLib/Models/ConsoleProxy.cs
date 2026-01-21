@@ -20,6 +20,7 @@ public class ConsoleProxy : IConsole
     MethodInfo _writeCh = typeof(Console).GetMethod(nameof(Console.Write), [typeof(char)])!;
     MethodInfo _writeS = typeof(Console).GetMethod(nameof(Console.Write), [typeof(string)])!;
     MethodInfo _clear = typeof(Console).GetMethod(nameof(Console.Clear), [])!;
+    MethodInfo _resetColor = typeof(Console).GetMethod(nameof(Console.ResetColor), [])!;
 
     PropertyInfo _ForegroundColor = typeof(Console).GetProperty(nameof(Console.ForegroundColor))!;
     PropertyInfo _BackgroundColor = typeof(Console).GetProperty(nameof(Console.BackgroundColor))!;
@@ -55,6 +56,9 @@ public class ConsoleProxy : IConsole
 #endif
     public ConsoleKeyInfo? ReadKey() => _ReadKey?.Invoke(null, []) as ConsoleKeyInfo?;
     public string ReadLine() => _Readline?.Invoke(null, [])?.ToString() ?? string.Empty;
+
+    public void ResetColor() => _resetColor?.Invoke(null, []);
+
     public void SetCursorPosition(int left, int top) => _setCursorPosition?.Invoke(null, [left, top]);
     public void Write(char ch) => _writeCh?.Invoke(null, [ch]);
     public void Write(string? st) => _writeS?.Invoke(null, [st]);
