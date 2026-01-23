@@ -24,7 +24,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Remove private projects
-        run: 
+        run: |
            dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Mobile/MauiApp1/MauiApp1.csproj"
            dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Simulation/AGVFktTests/AGVFktTests.csproj"
            dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Simulation/AGVFkt/AGVFkt.csproj"
