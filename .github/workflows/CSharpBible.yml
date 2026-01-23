@@ -50,7 +50,6 @@ jobs:
             fi
           done       
           
-
       - name: Restore
         run: dotnet restore CSharpBible.sln
 
