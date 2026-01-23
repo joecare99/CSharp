@@ -39,4 +39,4 @@ w++]=i;}if(w!=0){var i=Il[r.Next(w)]&3;P=lQ[i]+A;E[A]=a|(O<<i);E[P]|=Z|(O<<((i
 +2)%4));ll[L++]=P;}else if(L>=h)P=ll[h++];}Q(D-2);for(A=O;A<u;A++)Q(D>>O);Q(D+
 O);for(A=O;A<u+O;A++){for(P=O;P<u+O;P++)Q(E[l++] & 6);Q(D);}
 ```
-..
+...
