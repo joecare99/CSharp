@@ -427,7 +427,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_00_TemplateTests", "MV
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_06_Converters_4_net", "MVVM_Tutorial\MVVM_06_Converters_4\MVVM_06_Converters_4_net.csproj", "{70AD3FCB-F529-4E08-BE39-E56C940EA114}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_16_Usercontrol1_net", "MVVM_Tutorial\MVVM_16_Usercontrol1\MVVM_16_Usercontrol1_net.csproj", "{CDC8B1F7-3C94-4686-9EE0-6841231E6144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_16_Usercontrol1_net", "MVVM_Tutorial\MVVM_16_Usercontrol1\MVVM_16_UserControl1_net.csproj", "{CDC8B1F7-3C94-4686-9EE0-6841231E6144}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Simulation", "Simulation", "{0DF8EC71-8008-41CF-9A87-946604FBD24D}"
 	ProjectSection(SolutionItems) = preProject
