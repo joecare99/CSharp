@@ -27,7 +27,7 @@ jobs:
         run: dotnet restore CSharpBible.sln
 
       - name: Build
-        run: dotnet build CSharpBible.sln --configuration Release --no-restore
+        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0
 
       - name: Test
-        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0
