@@ -45,7 +45,7 @@ jobs:
         run: dotnet restore CSharpBible.sln -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
 
       - name: Build
-        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0
+        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
 
       - name: Test
-        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0
+        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
