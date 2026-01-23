@@ -2,6 +2,5 @@
   <Target Name="Any">
       <Message Text="$(TargetFramework) in the project file $(MSBuildProjectName)" />
   </Target>
-  <Import Project="Games_net.props" />
   <Import Project="Packages.props" />
 </Project>
