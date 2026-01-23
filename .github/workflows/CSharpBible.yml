@@ -1,4 +1,4 @@
-name: CSharpBible CI2
+name: CSharpBible CI3
 
 on:
   push:
@@ -25,15 +25,30 @@ jobs:
 
       - name: Remove private projects
         run: |
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Mobile/MauiApp1/MauiApp1.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Simulation/AGVFktTests/AGVFktTests.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Simulation/AGVFkt/AGVFkt.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/DB/ADO_Test/ADO_Test.csproj" 
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Libraries/CSFreeVision_/CSFreeVision.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Mobile/DXMauiApp1/DXMauiApp1.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Client/MyComponent.Client.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Server/MyComponent.Server.csproj"
-
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Mobile/MauiApp1/MauiApp1.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Simulation/AGVFktTests/AGVFktTests.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Simulation/AGVFkt/AGVFkt.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/DB/ADO_Test/ADO_Test.csproj" 
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Libraries/CSFreeVision_/CSFreeVision.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Mobile/DXMauiApp1/DXMauiApp1.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Client/MyComponent.Client.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Shared/MyComponent.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/WinUI/App1/App1/App1.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/App2/App2.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/PackageDwnLd.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/BlazorApp1/BlazorApp1.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/WebApp1/BlazorApp2/BlazorApp2.csproj"
+         dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/WebApp1/WebApplication1/WebApplication1/WebApplication1.csproj"
+         
+      - name: Check for missing projects
+        run: |
+          for project in $(cat CSharpBible.sln | grep .csproj | awk -F\" '{print $4}'); do
+            if [ ! -f "$project" ]; then
+              echo "Missing $project"
+              exit 1
+            fi
+          done       
+          
       - name: Restore
         run: dotnet restore CSharpBible.sln
 
