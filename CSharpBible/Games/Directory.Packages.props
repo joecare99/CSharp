@@ -1,6 +1,9 @@
 <Project>
   <Target Name="Any">
-      <Message Text="$(TargetFramework) in the project file $(MSBuildProjectName)" />
+    <Message Text="$(TargetFramework) in the project file $(MSBuildProjectName)" />
   </Target>
   <Import Project="Packages.props" />
+  <ItemGroup>
+    <PackageVersion Include="IsExternalInit" Version="1.0.3" />
+  </ItemGroup>
 </Project>

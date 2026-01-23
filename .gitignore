@@ -1,4 +1,5 @@
 .vs
+.gitignore
 bin
 obj
 *.db
@@ -24,7 +25,7 @@ obj
 /CSharpBible/Libraries/CSFreeVision_
 /CSharpBible/Libraries/MathLibraryTests/TestResults
 /CSharpBible/Graphics/PermutationTests/TestResults
-/CSharpBible/MVVM_Tutorial/UWP_00_Test
+/CSharpBible/MVVM_Tutorial
 /CSharpBible/WinUI/App1
 /TestStatements/Help
 /CSharpBible/Games/SharpHack.Wpf/tiles.png
