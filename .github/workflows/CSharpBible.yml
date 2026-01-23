@@ -32,8 +32,14 @@ jobs:
            dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Libraries/CSFreeVision_/CSFreeVision.csproj"
            dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Mobile/DXMauiApp1/DXMauiApp1.csproj"
            dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Client/MyComponent.Client.csproj"
-           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Server/MyComponent.Server.csproj"
-
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/MyComponent/Shared/MyComponent.csproj"
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/WinUI/App1/App1/App1.csproj"
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/App2/App2.csproj"
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/PackageDwnLd.csproj"
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/BlazorApp1/BlazorApp1.csproj"
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/WebApp1/BlazorApp2/BlazorApp2.csproj"
+           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/WebApp1/WebApplication1/WebApplication1/WebApplication1.csproj"
+           
       - name: Restore
         run: dotnet restore CSharpBible.sln
 
