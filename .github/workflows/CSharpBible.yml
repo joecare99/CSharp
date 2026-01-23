@@ -42,7 +42,7 @@ jobs:
           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/WebApp1/WebApplication1/WebApplication1/WebApplication1.csproj"
           
       - name: Restore
-        run: dotnet restore CSharpBible.sln
+        run: dotnet restore CSharpBible.sln -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
 
       - name: Build
         run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0
