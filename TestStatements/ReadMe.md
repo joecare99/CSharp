@@ -259,4 +259,4 @@ Original German section retained for native reference; English expansion supplie
 
 ---
 Happy exploring! ??
-.
+
