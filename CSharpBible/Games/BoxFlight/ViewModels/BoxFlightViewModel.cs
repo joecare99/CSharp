@@ -36,7 +36,7 @@ public partial class BoxFlightViewModel : ObservableObject, IBoxFlightViewModel
     {
         _world = world;
 
-        int width = 640, height = 360;
+        int width = 1280, height = 720;
         Frame = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
         MiniMap = new WriteableBitmap(400, 400, 96, 96, PixelFormats.Bgra32, null);
         _render = new RenderEntry[width];
@@ -128,7 +128,7 @@ public partial class BoxFlightViewModel : ObservableObject, IBoxFlightViewModel
         for (int x = 0; x < _render.Length; x++)
         {
             var re = _render[x];
-            if (re.Height > re.Shad / 2)
+            if (re.Shad !=0 && re.Height > re.Shad / 2)
                 DrawVLine(buffer, stride, x, bd2 + re.Shad, bd2 + re.Shad / 2, Colors.Black);
 
             int c1 = Math.Clamp(re.Light, 0, 255);

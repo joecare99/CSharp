@@ -71,17 +71,15 @@ public sealed class GameWorld : IGameWorld
         var lCv2 = new Vector(lCv1.Y, -lCv1.X);
 
         _cMove = _cPoint - cMoveOld;
+        
         _cPoint.X -= Math.Truncate(_cPoint.X / 400.0) * 400.0;
         _cPoint.Y -= Math.Truncate(_cPoint.Y / 400.0) * 400.0;
 
-        var sPnt = _cPoint;
-        if (stereo) { _cPoint.X += _cView.Y * 0.4; _cPoint.Y += -_cView.X * 0.4; }
-        else        { _cPoint.X += -_cView.Y * 0.4; _cPoint.Y +=  _cView.X * 0.4; }
-        sPnt.X += _cView.X; sPnt.Y += _cView.Y;
 
         foreach (var o in Objects)
         {
-            o.Visible = false; o.Hit = false;
+            o.Visible = false; 
+            o.Hit = false;
             if (o.Size <= 0) continue;
             var vp = new Vector(o.Pos.X, o.Pos.Y) + (Vector)_cPoint + new Vector(400, 400);
             vp -= new Vector(Math.Floor(vp.X / 400.0) * 400.0, Math.Floor(vp.Y / 400.0) * 400.0);
@@ -95,20 +93,38 @@ public sealed class GameWorld : IGameWorld
             o.Visible = vis;
         }
 
+
         int half = render.Length / 2;
         int hrc2 = half / 2;
         int obj = -1;
-        for (int j = 0; j < render.Length; j++)
+        Parallel.For (0,render.Length, (j)=>
         {
+            var sPnt = _cPoint;
             double s, c;
-            if (j <= half) { s = Math.Sin((hrc2 - j) * 0.6 / hrc2); c = Math.Cos((hrc2 - j) * 0.6 / hrc2); }
-            else           { s = Math.Sin((-j + hrc2 * 3) * 0.6 / hrc2); c = Math.Cos((-j + hrc2 * 3) * 0.6 / hrc2); }
+            if (stereo)
+            if (j <= half) 
+            { 
+                    sPnt.X -= _cView.Y * 0.4; 
+                    sPnt.Y += _cView.X * 0.4;
+                    s = Math.Sin((hrc2 - j) * 0.6 / hrc2); 
+                c = Math.Cos((hrc2 - j) * 0.6 / hrc2); 
+            }
+            else           
+            {
+                    sPnt.X += _cView.Y * 0.4; 
+                    sPnt.Y -= _cView.X * 0.4;
+                    s = Math.Sin((-j + hrc2 * 3) * 0.6 / hrc2); 
+                c = Math.Cos((-j + hrc2 * 3) * 0.6 / hrc2); 
+            }
+            else
+            {
+                s = Math.Sin((half - j) * 0.6 / half);
+                c = Math.Cos((half - j) * 0.6 / half);
+            }
             var renDir = new Vector(_cView.X * c + _cView.Y * s, -_cView.X * s + _cView.Y * c);
             render[j] = Trace(maxHeight, sPnt, obj, renDir, j == focusX);
-        }
+        });
 
-        if (stereo) { _cPoint.X += -_cView.Y * 0.8; _cPoint.Y += _cView.X * 0.8; }
-        else        { _cPoint.X +=  _cView.Y * 0.8; _cPoint.Y += -_cView.X * 0.8; }
 
         cPoint2 = _cPoint2; cPoint3 = _cPoint3;
     }
@@ -118,10 +134,10 @@ public sealed class GameWorld : IGameWorld
         float rDistQ, r;
         double rDist; double rr = 0; int hObj = obj;
         var entry = new RenderEntry { Oo1 = -1, Oo2 = -1, Light = 0, Height = 0, Light2 = 0, Height2 = 0, Shad = 0 };
-        if (obj >= 0 && Objects[obj].HitTest(_cPoint, renDir, out rDistQ, out r) && rDistQ > 2 && rDistQ < 300) { rDist = rDistQ; rr = r; }
+        if (obj >= 0 && Objects[obj].HitTest(sPnt, renDir, out rDistQ, out r) && rDistQ > 2 && rDistQ < 300) { rDist = rDistQ; rr = r; }
         else { obj = -1; rDist = 300.0; }
 
-        ObjHit(_cPoint, renDir, -1, ref obj, ref rDist, ref rr);
+        ObjHit(sPnt, renDir, -1, ref obj, ref rDist, ref rr);
         if (obj >= 0)
         {
             var o = Objects[obj];
@@ -155,7 +171,8 @@ public sealed class GameWorld : IGameWorld
 
         int lsobj = hObj; double shDist = 300.0; double shRr = 0.0;
         ObjHit(sPnt, renDir, -1, ref lsobj, ref shDist, ref shRr);
-        if (lsobj >= 0) entry.Shad = (int)(maxHeight / (shDist + 1.0)); else entry.Shad = 0;
+    //    if (lsobj >= 0) entry.Shad = (int)(maxHeight / (shDist + 1.0)); else 
+            entry.Shad = 0;
         return entry;
     }
 
