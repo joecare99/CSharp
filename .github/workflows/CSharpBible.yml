@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     defaults:
       run:
         working-directory: CSharpBible
@@ -42,10 +42,10 @@ jobs:
           dotnet sln CSharpBible.sln remove "/home/runner/work/CSharp/CSharp/CSharpBible/Web/WebApp1/WebApplication1/WebApplication1/WebApplication1.csproj"
           
       - name: Restore
-        run: dotnet restore CSharpBible.sln -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+        run: dotnet restore CSharpBible.sln -p:TargetFramework=net8.0-windows
 
       - name: Build
-        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0-windows
 
       - name: Test
-        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0-windows
