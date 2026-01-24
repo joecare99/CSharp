@@ -257,6 +257,8 @@ public class TileDisplay<T>: ITileDisplay<T>
 
     public void Update(bool e)
     {
+        var cv = console.CursorVisible;
+        console.CursorVisible = false;
         _bgr = ConsoleColor.Black;
         _fgr = ConsoleColor.Black;
         var diffFields = new List<(Point, T, Point?)>();
@@ -271,7 +273,7 @@ public class TileDisplay<T>: ITileDisplay<T>
                 p3.Y = p.Y + DispOffset.Y;
                 T td = FncGetTile(p3)!;
                 T? ot = GetTile(p);
-                var po = e? FncOldPos?.Invoke(p3):null;
+                var po = FncOldPos?.Invoke(p3);
                 bool x1 = !td.Equals(ot);
                 bool x2 = (po != null) && (po != p3);
 
@@ -311,10 +313,13 @@ public class TileDisplay<T>: ITileDisplay<T>
                 }
                 WriteTile(f.Item1, f.Item2);
             }
+        console.CursorVisible = cv;
     }
 
     public void FullRedraw()
     {
+        var cv = console.CursorVisible;
+        console.CursorVisible = false;
         if (FncGetTile == null) return;
         // Draw playfield
         Point p = new();
@@ -325,6 +330,7 @@ public class TileDisplay<T>: ITileDisplay<T>
 					p2.Y = p.Y + DispOffset.Y;	
                 WriteTile(p, _tiles[p] = FncGetTile(p2));
 				}
+        console.CursorVisible = cv;
     }
     #endregion
     #endregion
