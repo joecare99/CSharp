@@ -1,0 +1,36 @@
+name: TestStatemens CI0
+
+on:
+  push:
+    paths:
+      - "TestStatemens/**"
+  pull_request:
+    paths:
+      - "TestStatemens/**"
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: TestStatemens
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Remove private projects
+        run: |
+          
+      - name: Restore
+        run: dotnet restore CSharpBible.sln -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+
+      - name: Build
+        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+
+      - name: Test
+        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
