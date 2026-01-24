@@ -27,7 +27,7 @@ jobs:
         run: |
           
       - name: Restore
-        run: dotnet restore TestStatements.sln -p:TargetFramework=net8.0
+        run: dotnet restore TestStatements.sln -p:TargetFramework=net8.0-windows
 
       - name: Build
         run: dotnet build TestStatements.sln --configuration Release --no-restore -p:TargetFramework=net8.0-windows
