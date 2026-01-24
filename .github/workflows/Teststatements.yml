@@ -3,10 +3,10 @@ name: TestStatemens CI0
 on:
   push:
     paths:
-      - "TestStatemens/**"
+      - "TestStatements/**"
   pull_request:
     paths:
-      - "TestStatemens/**"
+      - "TestStatements/**"
 
 jobs:
   build-test:
