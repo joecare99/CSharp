@@ -1,7 +1,7 @@
 # TestStatements
 inspired by [MS Walktroughs] 
 
-## (DE) Überblick
+## (DE) Ãœberblick
 Dies ist eine Sammlung von Beispielprojekten rund um C#, Sprachelemente, .NET-Laufzeiten, Desktop (WinForms/WPF), Reflection, Generics, Plugins, dynamisches Laden, asynchrone Programmierung, Geometrie/Algorithmik und Spezialthemen wie Unicode & GPU-Rechnen.
 
 ---
@@ -11,7 +11,7 @@ Dies ist eine Sammlung von Beispielprojekten rund um C#, Sprachelemente, .NET-La
 Dies ist das **Hauptprojekt** mit den meisten Beispielen.
 
 #### [Anweisungen](TestStatements/Anweisungen)
-Beispiele für verschiedene Sprach-/System-Anweisungen:
+Beispiele fÃ¼r verschiedene Sprach-/System-Anweisungen:
 - Checking
 - Conditional statements (If ...)
 - Declarations
@@ -26,13 +26,13 @@ Beispiele für verschiedene Sprach-/System-Anweisungen:
 - Yield statement
 
 #### [CS-Concepts](TestStatements/CS_Concepts)
-Beispiele für das C#-Typsystem.
+Beispiele fÃ¼r das C#-Typsystem.
 
 #### [Classes and objects](TestStatements/ClassesAndObjects)
-Beispiele für Interfaces & Klassen-Member.
+Beispiele fÃ¼r Interfaces & Klassen-Member.
 
 #### [Collection/Generic](TestStatements/Collection/Generic)
-Beispiele für den Namensraum `System.Collections.Generic`:
+Beispiele fÃ¼r den Namensraum `System.Collections.Generic`:
 - Comparer
 - Dictionary
 - SortedList
@@ -42,7 +42,7 @@ Beispiele für den Namensraum `System.Collections.Generic`:
 Konstanten vs. readonly-Felder/Eigenschaften.
 
 #### [DataTypes](TestStatements/DataTypes)
-Beispiele für Datentypen:
+Beispiele fÃ¼r Datentypen:
 - Enum
 - String & Formatting
 - Integrierte Typen
@@ -69,22 +69,22 @@ Beispiele für Datentypen:
 Beispiele rund um `System` & XML.
 
 #### [Threading/Tasks](TestStatements/Threading/Tasks)
-Frühstücks-/Async-Beispiele.
+FrÃ¼hstÃ¼cks-/Async-Beispiele.
 
 ---
 ## (DE) Weitere Projekte (Kurz)
-- TestStatementTests – Tests für TestStatements.
-- CallAllExamples – Starter für alle Beispiele.
-- ctlClockLib / TestClockApp – WinForms Uhr-/Alarm-Controls & Host-App.
-- TestNamespaces – Namespace-Experimente.
-- AsyncExampleWPF – Async in WPF (Full Framework).
-- Tutorials – Kuratierte Schritt-für-Schritt Beispiele.
-- PluginBase / AppWithPlugin / AppWithPluginWpf / HelloPlugin / OtherPlugin – Plugin-Architektur & Demonstrationen.
-- DynamicSample – Dynamik & Reflection (getrennt für .NET Framework & moderne .NET).
-- TestStatementsNew – Moderne WPF-Variante der Beispiel-Sammlung.
-- TestGJKAlg / TestGJKAlgTest – Geometrischer Algorithmus (GJK) + Tests.
-- ZeroLengthChar – Unicode / Zero-width Zeichen.
-- SOq1 – ILGPU / GPU-Rechnen Beispiel.
+- TestStatementTests â€“ Tests fÃ¼r TestStatements.
+- CallAllExamples â€“ Starter fÃ¼r alle Beispiele.
+- ctlClockLib / TestClockApp â€“ WinForms Uhr-/Alarm-Controls & Host-App.
+- TestNamespaces â€“ Namespace-Experimente.
+- AsyncExampleWPF â€“ Async in WPF (Full Framework).
+- Tutorials â€“ Kuratierte Schritt-fÃ¼r-Schritt Beispiele.
+- PluginBase / AppWithPlugin / AppWithPluginWpf / HelloPlugin / OtherPlugin â€“ Plugin-Architektur & Demonstrationen.
+- DynamicSample â€“ Dynamik & Reflection (getrennt fÃ¼r .NET Framework & moderne .NET).
+- TestStatementsNew â€“ Moderne WPF-Variante der Beispiel-Sammlung.
+- TestGJKAlg / TestGJKAlgTest â€“ Geometrischer Algorithmus (GJK) + Tests.
+- ZeroLengthChar â€“ Unicode / Zero-width Zeichen.
+- SOq1 â€“ ILGPU / GPU-Rechnen Beispiel.
 
 ---
 # (EN) TestStatements Suite
@@ -119,15 +119,15 @@ Coverage highlights:
 - Dependency Injection / Hosting (Extensions.* packages in modern variant)
 
 Folder mapping (representative):
-- `Anweisungen` (Statements) – language statements & control constructs
-- `CS_Concepts` – type system exploration
-- `ClassesAndObjects` – members, interfaces, nested types
-- `Collection/Generic` – generic collections & algorithms
-- `DataTypes` – primitives, formatting, Unicode handling
-- `Threading/Tasks` – task orchestration examples
-- `Reflection` – runtime inspection
-- `Runtime/Loader` – dynamic compile & load
-- `SystemNS` – system namespace & XML demos
+- `Anweisungen` (Statements) â€“ language statements & control constructs
+- `CS_Concepts` â€“ type system exploration
+- `ClassesAndObjects` â€“ members, interfaces, nested types
+- `Collection/Generic` â€“ generic collections & algorithms
+- `DataTypes` â€“ primitives, formatting, Unicode handling
+- `Threading/Tasks` â€“ task orchestration examples
+- `Reflection` â€“ runtime inspection
+- `Runtime/Loader` â€“ dynamic compile & load
+- `SystemNS` â€“ system namespace & XML demos
 
 ### Assembly Versioning
 Modern variant pins `AssemblyVersion` to a static semantic (+ illustrative build number). Classic variant mirrors for parity.
@@ -151,11 +151,11 @@ A curated linear path distinct from the broad, exploratory catalog. Focuses on c
 ---
 ## 6. Plugin Architecture
 Projects:
-- `PluginBase` – shared contracts & MVVM helpers (CommunityToolkit.Mvvm)
+- `PluginBase` â€“ shared contracts & MVVM helpers (CommunityToolkit.Mvvm)
 - `AppWithPlugin` (console host)
 - `AppWithPluginWpf` (WPF host)
-- `HelloPlugin`, `OtherPlugin` – plugin implementations (localized resources, dynamic loading enabled)
-- `AppWithPluginTest`, `HelloPluginTest` – contract & behavior verification with MSTest + NSubstitute
+- `HelloPlugin`, `OtherPlugin` â€“ plugin implementations (localized resources, dynamic loading enabled)
+- `AppWithPluginTest`, `HelloPluginTest` â€“ contract & behavior verification with MSTest + NSubstitute
 
 Features:
 - Dynamic assembly discovery (content-copied plugin DLLs + satellite resource assemblies)
@@ -170,21 +170,21 @@ Extension ideas:
 
 ---
 ## 7. Desktop UI Samples
-- `ctlClockLib` – reusable WinForms clock/alarm UserControls
-- `TestClockApp` – host application embedding the controls
-- `AsyncExampleWPF` – async responsiveness patterns in WPF (legacy frameworks)
-- `AppWithPluginWpf` – plugin-enabled GUI host
+- `ctlClockLib` â€“ reusable WinForms clock/alarm UserControls
+- `TestClockApp` â€“ host application embedding the controls
+- `AsyncExampleWPF` â€“ async responsiveness patterns in WPF (legacy frameworks)
+- `AppWithPluginWpf` â€“ plugin-enabled GUI host
 
 ---
 ## 8. Specialized Domains
-- `TestGJKAlg` & `TestGJKAlgTest` – GJK collision detection visualization + algorithm tests
-- `SOq1` – ILGPU sample (GPU kernel & accelerator usage)
-- `ZeroLengthChar` – Unicode / zero-width character exploration
+- `TestGJKAlg` & `TestGJKAlgTest` â€“ GJK collision detection visualization + algorithm tests
+- `SOq1` â€“ ILGPU sample (GPU kernel & accelerator usage)
+- `ZeroLengthChar` â€“ Unicode / zero-width character exploration
 
 ---
 ## 9. Testing Infrastructure
 Multi-target test suites ensure cross-runtime consistency:
-- `TestStatements_netTest` (net6–net9)
+- `TestStatements_netTest` (net6â€“net9)
 - `TestStatementsTest` (full framework set)
 - Plugin & geometry focused test projects
 
@@ -225,7 +225,7 @@ Purpose:
 ---
 ## Plugin Demo Usage
 1. Build `PluginBase`, `HelloPlugin`, `OtherPlugin`, and host (`AppWithPlugin` or `AppWithPluginWpf`).
-2. Run host – it probes the `PlugIns` directory (content items copied during build).
+2. Run host â€“ it probes the `PlugIns` directory (content items copied during build).
 3. Observe loaded plugin list & invoked behaviors.
 
 Optional enhancements: add command-line filtering or interactive reload.
@@ -259,3 +259,4 @@ Original German section retained for native reference; English expansion supplie
 
 ---
 Happy exploring! ??
+.
