@@ -27,10 +27,9 @@ jobs:
         run: |
           
       - name: Restore
-        run: dotnet restore TestStatements.sln -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+        run: dotnet restore TestStatements.sln -p:TargetFramework=net8.0
 
       - name: Build
-        run: dotnet build TestStatements.sln --configuration Release --no-restore -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
-
+        run: dotnet build TestStatements.sln --configuration Release --no-restore -p:TargetFramework=net8.0-windows
       - name: Test
-        run: dotnet test TestStatements.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0 -p:EnableWindowsTargeting=true
+        run: dotnet test TestStatements.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0-windows
