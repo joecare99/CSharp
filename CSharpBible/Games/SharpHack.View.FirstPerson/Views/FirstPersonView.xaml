@@ -1,0 +1,27 @@
+<UserControl x:Class="SharpHack.View.FirstPerson.Views.FirstPersonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:SharpHack.ViewModel;assembly=SharpHack.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance vm:FirstPersonGameViewModel}">
+    <Grid Background="Black">
+        <!-- Placeholder for first-person rendering -->
+        <TextBlock Text="{Binding FacingDirection}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10"/>
+        
+        <Canvas Name="ViewportCanvas">
+            <!-- Walls would be drawn here based on ViewpModel.GetRelativeTile results -->
+            <Rectangle Fill="DarkGray" Width="100" Height="200" Canvas.Left="50" Canvas.Top="125"/>
+            <Rectangle Fill="Gray" Width="100" Height="300" Canvas.Left="150" Canvas.Top="75"/>
+            <Rectangle Fill="DarkGray" Width="100" Height="200" Canvas.Right="50" Canvas.Top="125"/>
+        </Canvas>
+
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="20">
+            <Button Content="Rotate Left" Command="{Binding RotateLeftCommand}" Margin="5" Padding="10"/>
+            <Button Content="Move Forward" Command="{Binding MoveForwardCommand}" Margin="5" Padding="10"/>
+            <Button Content="Rotate Right" Command="{Binding RotateRightCommand}" Margin="5" Padding="10"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
