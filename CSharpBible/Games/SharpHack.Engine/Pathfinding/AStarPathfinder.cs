@@ -14,8 +14,11 @@ public static class AStarPathfinder
         {
             return null;
         }
-
+#if NET5_0_OR_GREATER
         var open = new PriorityQueue<Point, int>();
+#else
+        var open = new SimplePriorityQueue<Point, int>();
+#endif
         var cameFrom = new Dictionary<Point, Point>();
         var gScore = new Dictionary<Point, int>
         {

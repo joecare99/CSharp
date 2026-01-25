@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="..\Games_net.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -18,11 +18,11 @@
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
-    <PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="IsExternalInit">
+    <PackageReference Condition="'$(TargetFrameWork.Contains(net4))'" Include="IsExternalInit">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" />
+    <!--<PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" />-->
   </ItemGroup>
 
   <ItemGroup>

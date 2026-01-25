@@ -340,7 +340,11 @@ public sealed class BSPRoomMazeMapGenerator : IMapGenerator
 
     private static int ClampEven(int value, int min, int max)
     {
+#if NET5_0_OR_GREATER
         int v = Math.Clamp(value, min, max);
+#else
+        int v = Math.Max(min, Math.Min(max, value));
+#endif
         if ((v & 1) == 1)
         {
             if (v + 1 <= max) v++;

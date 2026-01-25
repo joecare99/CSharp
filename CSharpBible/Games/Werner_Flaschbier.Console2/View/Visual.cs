@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using Werner_Flaschbier_Base.Model;
 using Werner_Flaschbier_Base.ViewModels;
 
@@ -14,6 +15,7 @@ namespace Werner_Flaschbier.Console2.View
         private readonly TileDisplay<Tiles> _display;
         private readonly IWernerViewModel _viewModel;
         private readonly IConsole _console;
+        private readonly List<UserAction> _actionBuffer = new List<UserAction>();
 
         public static Dictionary<char, UserAction> keyAction = new Dictionary<char, UserAction> {
             { 'I', UserAction.GoUp },
@@ -34,6 +36,7 @@ namespace Werner_Flaschbier.Console2.View
         {
             _viewModel = viewModel;
             _console = console;
+            _console.CursorVisible = false;
             _display = new TileDisplay<Tiles>(console, tileDef);
             _display.FncGetTile = (p) => (Tiles)_viewModel.Tiles[p];
             _display.FncOldPos = (p) => _viewModel.OldPos(p);
@@ -46,7 +49,12 @@ namespace Werner_Flaschbier.Console2.View
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Tiles")
+            {
                 _display.Update(_viewModel!.HalfStep);
+                _console.SetCursorPosition(0, 24);
+                _console.BackgroundColor = ConsoleColor.Black;
+                _console.ForegroundColor = ConsoleColor.Yellow;
+            }
             else if (e.PropertyName == "Level")
                 FullRedraw();
         }
@@ -91,19 +99,37 @@ namespace Werner_Flaschbier.Console2.View
 
         public bool CheckUserAction()
         {
-            bool result = false;
-            UserAction action = UserAction.Nop;
-            if (_console.KeyAvailable)
+            while (_console.KeyAvailable)
             {
-                var ch = _console.ReadKey()?.KeyChar ?? '\x00';
-                ch = Char.ToUpper(ch);
-                if (keyAction.ContainsKey(ch))
+                var ch = char.ToUpper(_console.ReadKey()?.KeyChar ?? '\x00');
+                if (keyAction.TryGetValue(ch, out var action))
                 {
-                    action = keyAction[ch];
-                    result = true;
+                    int sameCount = 0;
+                    for (int i = _actionBuffer.Count - 1; i >= 0 && _actionBuffer[i] == action; i--)
+                    {
+                        sameCount++;
+                    }
+
+                    if (sameCount < 2)
+                    {
+                        _actionBuffer.Add(action);
+                    }
+                    if (_actionBuffer.Count > 2)
+                    {
+                        _actionBuffer.RemoveAt(0);
+                    }
                 }
             }
-            _viewModel?.HandleUserAction(action);
+            UserAction currentAction = UserAction.Nop;
+            bool result = _actionBuffer.Count > 0;
+
+            if (result)
+            {
+                currentAction = _actionBuffer[0];
+                _actionBuffer.RemoveAt(0);
+            }
+
+            _viewModel?.HandleUserAction(currentAction);
             return result;
         }
     }
