@@ -10,5 +10,6 @@
     <Copyright>Copyright © JC-Soft 2024</Copyright>
 	  <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 	  <SuppressTfmSupportBuildWarning>true</SuppressTfmSupportBuildWarning>
+	  <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 </Project>

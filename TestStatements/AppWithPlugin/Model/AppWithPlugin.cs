@@ -49,7 +49,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         if (!assembly?.IsFullyTrusted ?? false)
             return null;
 
-        PluginLoadContext.loadedAssemblies[assembly?.FullName] = assembly;
+        PluginLoadContext.loadedAssemblies[assembly!.FullName] = assembly;
 
         // Additional check for a valid signature (if applicable)
 #if SIGNED_BUILD
