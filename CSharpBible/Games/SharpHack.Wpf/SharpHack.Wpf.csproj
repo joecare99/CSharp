@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
+  
 	<ItemGroup>
 		<None Remove="tiles.png" />
 	</ItemGroup>

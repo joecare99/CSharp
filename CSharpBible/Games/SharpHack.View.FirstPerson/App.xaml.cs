@@ -39,6 +39,7 @@ public partial class App : Application
         services.AddSingleton<IRandom, CRandom>();
         services.AddSingleton<IMapGenerator, BSPRoomMazeMapGenerator>();
         services.AddSingleton<ICombatSystem, SimpleCombatSystem>();
+        services.AddSingleton<ICombatSystem, SimpleCombatSystem>();
         services.AddSingleton<IEnemyAI, SimpleEnemyAI>();
         services.AddSingleton<IGamePersist, InMemoryGamePersist>();
         
