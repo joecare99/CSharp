@@ -252,6 +252,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpHack.WPF2D", "SharpHack.WPF2D\SharpHack.WPF2D.csproj", "{9F55A149-DA32-BB7C-D552-73C3ECDF7C8B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestStatements", "TestStatements", "{D44D28AA-A653-4BFC-A3CF-0CC30230A191}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\TestStatements\Solution_net.props = ..\..\TestStatements\Solution_net.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginBase", "..\..\TestStatements\PluginBase\PluginBase.csproj", "{0E45D0C0-4231-737D-1CCF-E1C23B5656E8}"
 EndProject
