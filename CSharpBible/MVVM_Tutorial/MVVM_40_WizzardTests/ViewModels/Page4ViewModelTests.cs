@@ -11,13 +11,15 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
-using MVVM.ViewModel;
 using BaseLib.Helper;
-using System;
-using NSubstitute;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.ViewModel;
 using MVVM_40_Wizzard.Models.Interfaces;
+using NSubstitute;
+using System;
+using System.ComponentModel;
+using System.Globalization;
 
 /// <summary>
 /// The Tests namespace.
@@ -32,8 +34,10 @@ namespace MVVM_40_Wizzard.ViewModels.Tests;
 [TestClass()]
 public class Page4ViewModelTests:BaseTestViewModel<Page4ViewModel>
 {
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     private IWizzardModel? _model;
+    private IMessenger? _messenger;
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+    private CultureInfo _cc;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
     /// <summary>
@@ -46,9 +50,18 @@ public class Page4ViewModelTests:BaseTestViewModel<Page4ViewModel>
         IoC.GetReqSrv=(t)=>t switch
         {
             Type _t when _t == typeof(IWizzardModel) => _model ??= Substitute.For<IWizzardModel>(),
-            _ => null
+            Type _t when _t == typeof(IMessenger) => _messenger ??= Substitute.For<IMessenger>(),
+            _ => throw new NotImplementedException($"No setup for type {t} in IoC")
         };
         base.Init();
+        _cc = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        CultureInfo.CurrentUICulture = _cc;
     }
 
     /// <summary>
@@ -77,7 +90,7 @@ public class Page4ViewModelTests:BaseTestViewModel<Page4ViewModel>
     [DataRow(nameof(IWizzardModel.Additional3), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page4ViewModel,Additional3)=\r\n" })]
     public void OnMPChangedTest(string prop, string[] asExp)
     {
-        _model.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_model, new PropertyChangedEventArgs(prop));
+        _model!.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_model, new PropertyChangedEventArgs(prop));
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
