@@ -15,7 +15,7 @@ using MVVM.ViewModel;
 using System.Drawing;
 using MVVM_Converter_CTDrawGrid2.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Sokoban.Model;
+using Sokoban.Models;
 
 namespace MVVM_Converter_CTDrawGrid2.ViewModel
 {

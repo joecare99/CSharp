@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
+    <ProjectReference Include="..\..\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
     <ProjectReference Include="..\libCIFAR\libCIFAR.csproj" />
     <ProjectReference Include="..\libMachLearn\libMachLearn.csproj" />
   </ItemGroup>

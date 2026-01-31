@@ -10,7 +10,7 @@ namespace CanvasWPF2_ItemTemplateSelector.ViewModel
         double Dx { get; set; }
         double Dy { get; set; }
         int sType { get; set; }
-        DelegateCommand<object> MouseHover { get; set; }
+        DelegateCommand<object>? MouseHover { get; set; }
         Point point { get; set; }
 
         void Step();

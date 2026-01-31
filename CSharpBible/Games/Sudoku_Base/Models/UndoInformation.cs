@@ -27,14 +27,14 @@ public class UndoInformation : IUndoInformation
             }
             else if (ov is int i && xf && f!.Value == i || ov == null && xf)
             {
-                f.Value = nv as int?;
+                f!.Value = nv as int?;
             }
             else if (nv is IList<int> li && xf)
             {
-                f.PossibleValues.Clear();
+                f?.PossibleValues.Clear();
                 foreach (var l in li)
                 {
-                    f.PossibleValues.Add(l);
+                    f?.PossibleValues.Add(l);
                 }
             }
         }
@@ -51,14 +51,14 @@ public class UndoInformation : IUndoInformation
             }
             else if (nv is int i && xf && f!.Value == i || nv == null && xf)
             {
-                f.Value = ov as int?;
+                f!.Value = ov as int?;
             }
             else if (ov is IList<int> li && xf)
             {
-                f.PossibleValues.Clear();
+                f?.PossibleValues.Clear();
                 foreach (var l in li)
                 {
-                    f.PossibleValues.Add(l);
+                    f?.PossibleValues.Add(l);
                 }
             }
         }

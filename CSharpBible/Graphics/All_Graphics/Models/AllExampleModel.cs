@@ -94,7 +94,7 @@ namespace All_Graphics.Models
                 try
                 {
                     Debug.WriteLine($"{ex.Description} {ex.ExType}");
-                    var desc = new Dictionary<string, string>();
+                    var desc = new Dictionary<string, string?>();
                     Type? t = ex.ExType.Assembly.GetTypes().First((t) => t.Name.EndsWith(nameof(Resources)));
                     if (t != null)
                     {
@@ -102,7 +102,7 @@ namespace All_Graphics.Models
                             if (prop.PropertyType == typeof(string))
                             {
                                 Debug.WriteLine($"  {prop.Name} {prop.PropertyType} ");
-                                desc[prop.Name] = (string)prop.GetValue(null);
+                                desc[prop.Name] = (string?)prop.GetValue(null);
                             }
                         ex.Additionals = desc;
                     }

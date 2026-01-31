@@ -108,7 +108,7 @@ public static class StreamHelpers
                     break;
                 case Type t when typeof(IEnumerable<IPersistence>).IsAssignableFrom(t):
                     Type t1 = typeof(IPersistence);
-                    if (t.IsArray && t.HasElementType) t1=t.GetElementType();
+                    if (t.IsArray && t.HasElementType) t1=t.GetElementType()!;
                     streamBytes = new byte[sizeof(int)];
                     _ = stream.Read(streamBytes, 0, sizeof(int));
                     var count2 = BitConverter.ToInt32(streamBytes, 0);

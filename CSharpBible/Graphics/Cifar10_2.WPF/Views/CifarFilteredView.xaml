@@ -31,74 +31,76 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid
-                Grid.Column="0"
-                Margin="5" >
-                
-            </Grid>
+            <Grid Grid.Column="0" Margin="5" />
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0">
                     <Label DockPanel.Dock="Top">Original</Label>
                     <Image
-                       Width="128"
-                       Height="128"
+                        Width="128"
+                        Height="128"
                         Source="{Binding OrginalImage}"
                         Stretch="Uniform" />
                 </DockPanel>
                 <DockPanel Grid.Column="1">
                     <Label DockPanel.Dock="Top">Low-Res Input</Label>
                     <Image
-                       Width="128"
-                       Height="128"
-                       Source="{Binding DestImage}"
-                       Stretch="Uniform" />
+                        Width="128"
+                        Height="128"
+                        Source="{Binding DestImage}"
+                        Stretch="Uniform" />
 
                 </DockPanel>
                 <DockPanel Grid.Column="2">
                     <Label DockPanel.Dock="Top">Upscaled (ML.NET)</Label>
                     <Image
-                       Width="128"
-                       Height="128"
+                        Width="128"
+                        Height="128"
                         Source="{Binding GenResultImage}"
                         Stretch="Uniform" />
 
                 </DockPanel>
 
                 <ScrollViewer
-                Grid.Row="1"
+                    Grid.Row="1"
                     Grid.ColumnSpan="3"
-                HorizontalScrollBarVisibility="Disabled"
-                VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Images}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Image
-                                MaxWidth="64"
-                                Source="{Binding}"
-                                Stretch="Uniform" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Images}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    MaxWidth="64"
+                                    Source="{Binding}"
+                                    Stretch="Uniform" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
             <StackPanel>
-                <Button Content="Train &amp; Upscale" Command="{Binding ProcImagesCommand}" Height="42"/>
-                <TextBlock Text="{Binding Accuracy, StringFormat=R²: {0:F3}}" Margin="0,6,0,0" />
-                <TextBlock Text="{Binding StatusText}" Margin="0,4,0,0" TextWrapping="Wrap" />
+                <Button
+                    Height="42"
+                    Command="{Binding ProcImagesCommand}"
+                    Content="Train &amp; Upscale" />
+                <TextBlock Margin="0,6,0,0" Text="{Binding Accuracy, StringFormat=R²: {0:F3}}" />
+                <TextBlock
+                    Margin="0,4,0,0"
+                    Text="{Binding StatusText}"
+                    TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
     </DockPanel>

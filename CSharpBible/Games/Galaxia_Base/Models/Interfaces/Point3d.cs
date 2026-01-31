@@ -2,9 +2,11 @@
 
 namespace Galaxia.Models.Interfaces;
 
+#pragma warning disable CS0659 // Typ überschreibt Object.Equals(object o), überschreibt jedoch nicht Object.GetHashCode()
 public struct Point3d
+#pragma warning restore CS0659 // Typ überschreibt Object.Equals(object o), überschreibt jedoch nicht Object.GetHashCode()
 {
-    internal static readonly Point3d Zero;
+    internal static readonly Point3d Zero=new();
 
     public int X { get; }
     public int Y { get; }

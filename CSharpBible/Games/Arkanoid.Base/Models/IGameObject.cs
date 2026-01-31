@@ -1,7 +1,14 @@
-﻿namespace Arkanoid.Base.Models
+﻿namespace Arkanoid.Base.Models;
+/// <summary>
+/// Interface IGameObject
+/// </summary>
+public interface IGameObject
 {
-    public interface IGameObject
-    {
-        Vector2 Position { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the position.
+    /// </summary>
+    /// <value>
+    /// The position.
+    /// </value>
+    Vector2 Position { get; set; }
 }
