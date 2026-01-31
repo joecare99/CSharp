@@ -1,6 +1,7 @@
+using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Drawing;
 using System;
+using System.Drawing;
 using TestConsole;
 using static BaseLib.Helper.TestHelper;
 
@@ -56,7 +57,7 @@ namespace ConsoleDisplay.View.Tests
         [" 1.75", 1.75f, 0.25f],
         ];
 
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[TestCategory("Math")]
 		[DynamicData(nameof(ZigZagTestData))]
@@ -68,7 +69,7 @@ namespace ConsoleDisplay.View.Tests
 			}
 		}
 
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("Math")]
         [DynamicData(nameof(ZigZagTestData))]
@@ -82,7 +83,7 @@ namespace ConsoleDisplay.View.Tests
             }
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[TestCategory("Math")]
         [DynamicData(nameof(PointHexTestData))]
@@ -91,7 +92,7 @@ namespace ConsoleDisplay.View.Tests
 			Assert.AreEqual(pfExp, HexMath.HexPointF((fVal[0], fVal[1]),xVal), $"{name}({fVal[0]},{fVal[1]})");
 		}
 
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("Math")]
         [DynamicData(nameof(PointHexTestData))]
@@ -101,7 +102,7 @@ namespace ConsoleDisplay.View.Tests
             Assert.AreEqual(pfExp, (fVal[0], fVal[1]).HexPointF(xVal), $"{name}({fVal[0]},{fVal[1]})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("Math")]
         [DynamicData(nameof(PointHexTestData))]
@@ -111,7 +112,7 @@ namespace ConsoleDisplay.View.Tests
             Assert.AreEqual(pfExp, HexMath.HexKPoint((fExp[0], fExp[1]), xVal), $"{name}({fExp[0]},{fExp[1]})");
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("Math")]
         [DynamicData(nameof(PointHexTestData))]
@@ -138,7 +139,7 @@ namespace ConsoleDisplay.View.Tests
         private void Thread_Sleep(int _) =>
 			System.Threading.Thread.Sleep(0);
 
-        private static MyConsoleBase? console;
+        private static IConsole? console;
         private static TstConsole? _tstCon;
         private readonly string cExpWriteTile=@"\c00    \x00\x00\x00\x00\x00\x00\x00\x00\c4F─┴┬─\c00\x00\x00\x00\x00\x00\x00\x00\x00\c6F⌐°@)\c00\x00\x00\x00\x00\x00\x00\x00\x00\c1A]\cA0°°\c1A[\c00
     \x00\x00\c6E=-=-\c00\x00\x00\c4F─┬┴─\c00\x00\x00\c0E ╓╖ \c00\x00\x00\c6F ⌡⌡‼\c00\x00\x00\c6E/¯¯\\\c00\x00\x00\c1A_\cA0!!\c1A_\c00\x00\x00\c1A◄\cA0°@\c1A[\c00
@@ -354,7 +355,7 @@ namespace ConsoleDisplay.View.Tests
             Thread_Sleep(100);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author","J.C.")]
         [DataRow("0 _",VTiles.zero, "\\c00\r\n\\x00\\x00        \r\n\\x00\\x00\\x00       \r\n\\x00\\x00        \r\n\\x00\\x00\\x00")]
         [DataRow("1 _", VTiles.tile1, "\\c00\r\n\\x00\\x00\\c6E=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\c6E=-=-=-=\\c00\r\n\\x00\\x00\\c6E=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\c6E=-=-=-=\\c00")]
@@ -387,7 +388,7 @@ namespace ConsoleDisplay.View.Tests
             Thread_Sleep(100);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [DataRow("00 _", VTiles.zero, VTiles.zero, new string[] {
 			"\\c00\\x00\\x00        \r\n\\x00\\x00\\x00       \r\n\\x00\\x00        \r\n\\x00\\x00\\x00" ,
@@ -596,7 +597,7 @@ namespace ConsoleDisplay.View.Tests
             static bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
         }
 
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[DataRow("00 _", VTiles.zero, "\\c00\r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00")]
 		[DataRow("01 _", VTiles.tile1, "\\c00\r\n\\x00\\x00\\c6E=-=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\c6E-=-=-=-=-=-=-=-=\\c00\r\n\\x00\\x00\\x00\\x00\\c6E=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\x00\\c6E-=-=-=-=-=-=-=\\c00\r\n\\x00\\x00\\c6E=-=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\c6E-=-=-=-=-=-=-=-=\\c00\r\n\\x00\\x00\\x00\\x00\\c6E=-=-=-=-=-=-=-\\c00\r\n\\x00\\x00\\x00\\x00\\c6E-=-=-=-=-=-=-=\\c00")]
@@ -627,7 +628,7 @@ namespace ConsoleDisplay.View.Tests
 			Thread_Sleep(100);
 		}
 
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[DataRow("00 _", VTiles.zero, "\\c00\r\n\\x00\\x00    \\x00\\x00\\x00\\x00    \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00")]
 		[DataRow("01 _", VTiles.tile1, "\\c00\r\n\\x00\\x00\\c6E=-=-\\c00\\x00\\x00\\x00\\x00\\c6E=-=-\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00\r\n\\x00\\x00\\c6E=-=--=-==-=--=-=\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00\r\n\\x00\\x00\\c6E=-=--=-==-=--=-=\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00\r\n\\x00\\x00\\c6E=-=--=-==-=--=-=\\c00\r\n\\x00\\x00\\c6E-=-==-=--=-==-=-\\c00")]
@@ -658,7 +659,7 @@ namespace ConsoleDisplay.View.Tests
 			Thread_Sleep(100);
 		}
 
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[DataRow("00 _", VTiles.zero, VTiles.zero, new string[] {
 			"\\c00\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00\\x00\\x00              \r\n\\x00\\x00\\x00\\x00" ,
@@ -957,7 +958,7 @@ namespace ConsoleDisplay.View.Tests
             static bool xTst(Point p) => p.X > 0 && p.Y > 0 && p.X < 3 && p.Y < 3;
 		}
 
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[DataRow("00 _", VTiles.zero, VTiles.zero, new string[] {
 			"\\c00\\x00\\x00    \\x00\\x00\\x00\\x00    \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00                \r\n\\x00\\x00" ,

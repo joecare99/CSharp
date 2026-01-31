@@ -144,7 +144,7 @@ PQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ !""#$%&'()*+,-./0123456789:;<=
         /// <summary>
         /// Defines the test method SetCursorPositionTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("0,0",0,0)]
         [DataRow("0,1", 0, 1)]
         [DataRow("1,0", 1, 0)]
