@@ -23,6 +23,7 @@ using MVVM_40_Wizzard.Models;
 using MVVM_40_Wizzard.Properties;
 using MVVM_40_Wizzard.Models.Interfaces;
 using static BaseLib.Helper.TestHelper;
+using System.Globalization;
 
 /// <summary>
 /// The Tests namespace.
@@ -38,8 +39,9 @@ namespace MVVM_40_Wizzard.ViewModels.Tests;
 public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
 {
     private const string csMainSel = "MainSelection{0}";
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     private IWizzardModel? _model;
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+    private CultureInfo _cc;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
     /// <summary>
@@ -52,10 +54,18 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
         IoC.GetReqSrv=(t)=>t switch
         {
             Type _t when _t == typeof(IWizzardModel) => _model ??= Substitute.For<IWizzardModel>(),
-            _ => null
+            _ => throw new NotImplementedException($"No setup for type {t} in IoC")
         };
         base.Init();
         _model!.MainOptions.Returns(new List<int> { 0, 1, 3 });
+        _cc = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture; 
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        CultureInfo.CurrentUICulture = _cc;
     }
 
     /// <summary>
@@ -78,7 +88,7 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
     public void SetMainSelectionTest(int iAct, string[] asExp)
     {
         testModel.MainSelection = new ListEntry(iAct, "Test");
-        Assert.AreEqual(iAct, _model.MainSelection);
+        Assert.AreEqual(iAct, _model!.MainSelection);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
@@ -86,7 +96,7 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
     [DataRow(new[] { 0, 1, 3 })]
     public void MainOptionsTest(int[] aiAct)
     {
-        var lst = aiAct.Select(i=> new ListEntry(i, Resources.ResourceManager.GetString(csMainSel.Format(i)))).ToList();
+        var lst = aiAct.Select(i=> new ListEntry(i, Resources.ResourceManager.GetString($"MainSelection{i}")??"")).ToList();
         AssertAreEqual(lst, testModel.MainOptions);
     }
 
@@ -104,14 +114,14 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
     [TestMethod]
     [DataRow(nameof(IWizzardModel.AdditOptions), new[] { "" })]
     [DataRow(nameof(IWizzardModel.Now), new[] { "" })]
-    [DataRow(nameof(IWizzardModel.MainSelection), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,MainSelection)=1. Entry\r\n" })]
+    [DataRow(nameof(IWizzardModel.MainSelection), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,MainSelection)=1. Entry\r\nPropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,Selection)=0\r\nPropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,ImageSource)=file:///C:/Projekte/CSharp/bin/MVVM_40_Wizzard_netTests/Debug/net10.0-windows/Resources/MainSelection0.png\r\nPropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,Document)=<FlowDocument PagePadding=\"5,0,5,0\" AllowDrop=\"True\" NumberSubstitution.CultureSource=\"User\" xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"><Paragraph TextAlignment=\"Justify\"><Run FontWeight=\"Bold\" FontSize=\"23.25\" xml:space=\"preserve\"><Run.TextDecorations><TextDecoration Location=\"Underline\" /></Run.TextDecorations>“MainSelection2” </Run><LineBreak />is a versatile and captivating choice. It stands at the forefront, ready to capture attention. While it may not be the most glamorous option, it exudes understated elegance, making it a reliable and solid decision.</Paragraph><Paragraph TextAlignment=\"Justify\">This choice can symbolize the beginning of something new. It opens possibilities and unlocks doors. In a world full of decisions and options, it serves as the starting point from which we embark on our journey.</Paragraph><Paragraph TextAlignment=\"Justify\">Its simple beauty is timeless. Unburdened by excessive details or unnecessary frills, it radiates quiet strength. Sometimes, it’s the unassuming, seemingly insignificant choices that leave the greatest impact.</Paragraph><Paragraph TextAlignment=\"Justify\"><Run FontWeight=\"Bold\">“MainSelection2”</Run> can also serve as a metaphor for life itself. We make choices every day, both big and small. Sometimes, it’s the inconspicuous options that have the most profound influence on our destiny.</Paragraph><Paragraph TextAlignment=\"Justify\">In a world of technology and progress, <Run FontWeight=\"Bold\">“MainSelection2”</Run> remains a relic of the past. It reminds us that it’s not always about the newest and most exciting. Sometimes, the tried-and-true is precisely what we need.</Paragraph><Paragraph TextAlignment=\"Justify\">Overall, <Run FontWeight=\"Bold\">“MainSelection2”</Run> is a versatile and meaningful choice. It may appear unremarkable at first glance, but upon closer inspection, it reveals its true significance. May it accompany us on our journey, reminding us that often, it’s the little things that make all the difference. 🌟</Paragraph></FlowDocument>\r\n" })]
     [DataRow(nameof(IWizzardModel.MainOptions), new[] { "PropChg(MVVM_40_Wizzard.ViewModels.Page1ViewModel,MainOptions)=System.Collections.Generic.List`1[MVVM_40_Wizzard.Models.ListEntry]\r\n" })]
     [DataRow(nameof(IWizzardModel.SubSelection), new[] { "" })]
     [DataRow(nameof(IWizzardModel.Additional1), new[] { "" })]
     [DataRow(nameof(IWizzardModel.Additional2), new[] { "" })]
     public void OnMPChangedTest(string prop, string[] asExp)
     {
-        _model.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_model, new PropertyChangedEventArgs(prop));
+        _model!.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_model, new PropertyChangedEventArgs(prop));
         Assert.AreEqual(asExp[0], DebugLog);
     }
 
