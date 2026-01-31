@@ -77,7 +77,7 @@ namespace Galaxia.Models
             // Test if a double jump is possible (2 ships in hyperspace and combined reachable sectors)
             if (!Actions.Any(a => a is JumpAction) && hyperspace.CombReachableSectors().Count() > 0)
             {
-                possibleActions.Add(new DoubleJump(this, hyperspace.HyperSlots[0].Fleet, hyperspace.HyperSlots[1].Fleet, null));
+                possibleActions.Add(new DoubleJump(this, hyperspace.HyperSlots[0].Fleet!, hyperspace.HyperSlots[1].Fleet!, null));
             }
 
             // test if a Hyperslot is free or gets free this turn -> Embark is possible 

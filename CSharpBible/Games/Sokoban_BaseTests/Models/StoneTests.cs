@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sokoban.Models;
+using Sokoban.Models.Interfaces;
 using System.Drawing;
 
 namespace Sokoban.Models.Tests
@@ -38,8 +39,8 @@ namespace Sokoban.Models.Tests
         [DataRow(1, 1, Direction.East, false)]
         public void TestMoveTest(int x,int y,Direction d,bool xExp)
         {
-            if (y>0)
-              pf[new Point(x,y)].Item = testItem;
+            if (y>0 && pf[new Point(x, y)] is IField fld )
+              fld.Item = testItem;
             else if (x > 0)
                 new Floor(Point.Empty,null).Item = testItem;
             Assert.AreEqual(xExp,testItem.TestMove(d));
@@ -56,8 +57,8 @@ namespace Sokoban.Models.Tests
         [DataRow(1, 1, Direction.East, false)]
         public void TryMoveTest(int x, int y, Direction d, bool xExp)
         {
-            if (y > 0)
-                pf[new Point(x, y)].Item = testItem;
+            if (y > 0 && pf[new Point(x, y)] is IField fld)
+                fld.Item = testItem;
             else if (x>0)
                 new Floor(Point.Empty,null).Item = testItem;
             Assert.AreEqual(xExp, testItem.TryMove(d));

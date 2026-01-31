@@ -176,7 +176,7 @@ public class Application : Panel, IApplication
     {
         running = false;
         Control.EnqueueMessage(static (_, _) => { }, this, EventArgs.Empty);
-        ConsoleFramework.ExtendedConsole.Stop();
+        ConsoleFramework.ExtendedConsole?.Stop();
     }
 
     public void Dispatch(Action act)

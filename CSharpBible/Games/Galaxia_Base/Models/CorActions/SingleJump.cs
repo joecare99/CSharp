@@ -8,20 +8,11 @@ namespace Galaxia.Models.CorActions
     /// </summary>
     public class SingleJump : JumpAction, ICorAction
     {
-        /// <summary>
-        /// Die Corporation, die die Aktion ausführt.
-        /// </summary>
-        public ICorporation Corporation { get; }
-
-        /// <summary>
-        /// Die Flotte, die den Hyperjump ausführen soll.
-        /// </summary>
-        public IFleet Fleet { get; }
 
         /// <summary>
         /// Das Ziel-Sternensystem für den Hyperjump.
         /// </summary>
-        public IStarsystem TargetStarsystem { get; }
+        public IStarsystem? TargetStarsystem { get; }
 
         /// <summary>
         /// Erstellt eine neue SingleJump-Aktion.
@@ -29,7 +20,7 @@ namespace Galaxia.Models.CorActions
         /// <param name="corporation">Die ausführende Corporation.</param>
         /// <param name="fleet">Die springende Flotte.</param>
         /// <param name="targetStarsystem">Das Ziel-Sternensystem.</param>
-        public SingleJump(ICorporation corporation, IFleet fleet, IStarsystem targetStarsystem):base(corporation,fleet)
+        public SingleJump(ICorporation corporation, IFleet? fleet, IStarsystem? targetStarsystem):base(corporation,fleet)
         {
             TargetStarsystem = targetStarsystem;
         }
@@ -41,7 +32,7 @@ namespace Galaxia.Models.CorActions
         public override bool Execute()
         {
             // Überprüfe, ob die Flotte zur Corporation gehört und sich im Hyperspace befindet
-            if (Fleet.Owner != Corporation || Fleet.Container is not IHyperSlot hs )
+            if (Fleet?.Owner != Corporation || Fleet.Container is not IHyperSlot hs )
                 return false;
 
             // Überprüfe, ob das Zielsystem erreichbar ist (optional, je nach Spielmechanik)

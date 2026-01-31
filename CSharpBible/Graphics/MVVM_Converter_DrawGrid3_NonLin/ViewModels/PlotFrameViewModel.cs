@@ -14,7 +14,7 @@
 using MVVM.ViewModel;
 using System.Drawing;
 using MVVM_Converter_DrawGrid3_NonLin.Model;
-using Sokoban.Model;
+using Sokoban.Models;
 
 namespace MVVM_Converter_DrawGrid3_NonLin.ViewModel
 {

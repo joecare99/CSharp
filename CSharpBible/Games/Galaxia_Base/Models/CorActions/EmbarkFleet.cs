@@ -25,7 +25,7 @@ namespace Galaxia.Models.CorActions
         /// <summary>
         /// Das Sternensystem, aus dem die Flotte startet.
         /// </summary>
-        public IStarsystem SourceStarsystem { get; }
+        public IStarsystem? SourceStarsystem { get; }
 
         /// <summary>
         /// Erstellt eine neue EmbarkFleet-Aktion.
@@ -33,7 +33,7 @@ namespace Galaxia.Models.CorActions
         /// <param name="corporation">Die ausführende Corporation.</param>
         /// <param name="fleet">Die einzuschiffende Flotte.</param>
         /// <param name="sourceStarsystem">Das Start-Sternensystem.</param>
-        public EmbarkFleet(ICorporation corporation, IFleet fleet, IStarsystem sourceStarsystem,float fleetSize =0f)
+        public EmbarkFleet(ICorporation corporation, IFleet? fleet, IStarsystem? sourceStarsystem,float fleetSize =0f)
         {
             Corporation = corporation;
             Fleet = fleet;
@@ -52,13 +52,13 @@ namespace Galaxia.Models.CorActions
                 return false;
 
             // Versuche, die Flotte ins Hyperspace-System einzuschiffen
-            if ((FleetSize > 1f) && (Fleet.Size > FleetSize)) 
+            if ((FleetSize > 1f) && (Fleet!.Size > FleetSize)) 
             {
                 // Nicht genug Platz in den HyperSlots
-                return Corporation.hyperspace.Embark(Fleet.Split(FleetSize));
+                return Corporation.hyperspace.Embark(Fleet.Split(FleetSize)!);
             }
             else
-                return Corporation.hyperspace.Embark(Fleet);
+                return Corporation.hyperspace.Embark(Fleet!);
         }
     }
 }

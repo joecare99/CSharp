@@ -31,7 +31,6 @@ namespace Tetris_Base.View {
         /// The display2
         /// </summary>
         static public Display display2 = new Display(18, 2, 6, 6);
-        private static bool flag;
 
         /// <summary>
         /// Gets or sets the console.

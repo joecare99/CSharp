@@ -655,7 +655,7 @@ public class TileDef : TileDefBase
                     return reader.ReadToEnd();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return input;
             }
@@ -673,7 +673,7 @@ public class TileDef : TileDefBase
                     return reader.ToArray();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Encoding.UTF8.GetBytes( input);
             }
