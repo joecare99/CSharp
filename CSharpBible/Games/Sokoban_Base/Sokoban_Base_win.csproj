@@ -50,8 +50,12 @@
 	<ItemGroup>
 		<Folder Include="Resources\" />
     <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
-    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange"  />
+    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange" />
   </ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
+	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(TargetFramework)'=='net6.0'">
 		<Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Version.svn" />
