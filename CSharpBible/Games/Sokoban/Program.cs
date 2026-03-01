@@ -50,7 +50,7 @@ namespace Sokoban
         public static void Run()
         {
             UserAction? direction = null;
-            while (direction!=UserAction.Quit && LabDefs.SLevels.Length > _SokobanGame.level)
+            while (direction!=UserAction.Quit && LabDefs.SLevels.Length > _SokobanGame?.level)
             {
                 direction = _SokobanGame?.Run();
             }

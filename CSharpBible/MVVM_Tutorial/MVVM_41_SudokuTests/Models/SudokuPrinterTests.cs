@@ -18,12 +18,18 @@ public class SudokuPrinterTests
 {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     ISudokuModel _model;
+    private int _nr;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
-    
+
     [TestInitialize]
     public void Init()
     {
         _model = new SudokuModel(Substitute.For<ISysTime>(),Substitute.For<ILog>());
+        _nr = new Random().Next(1000);
+        if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestSudoku{_nr}.xps"))
+            File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestSudoku{_nr}.xps");
+        if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestInt{_nr}.xps"))
+            File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestInt{_nr}.xps");
     }
 
 
@@ -97,11 +103,11 @@ public class SudokuPrinterTests
    //     Assert.AreEqual(74360,stream.Length);
    //     Assert.AreEqual(74360,stream.Position);
         stream.Seek(0, SeekOrigin.Begin);  
-        using(var fs = new FileStream($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestSudoku.xps", FileMode.CreateNew))
+        using(var fs = new FileStream($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestSudoku{_nr}.xps", FileMode.CreateNew))
         {
             stream.CopyTo(fs);
         }
-
+        Assert.IsTrue(File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestSudoku{_nr}.xps"));
     } 
 
     [TestMethod()]
@@ -133,10 +139,11 @@ public class SudokuPrinterTests
    //     Assert.AreEqual(74360,stream.Length);
    //     Assert.AreEqual(74360,stream.Position);
         stream.Seek(0, SeekOrigin.Begin);  
-        using(var fs = new FileStream($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestInt.xps", FileMode.CreateNew))
+        using(var fs = new FileStream($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestInt{_nr}.xps", FileMode.CreateNew))
         {
             stream.CopyTo(fs);
         }
+        Assert.IsTrue(File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\TestInt{_nr}.xps"));
 
     }
 }

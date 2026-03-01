@@ -11,6 +11,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+#if NET6_0_OR_GREATER
+using System.Runtime.Loader;
+#endif
 
 namespace AppWithPlugin.Model;
 
@@ -22,7 +25,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         if (File.Exists(relativePath))
         {
             // Use the current directory
-            pluginLocation = Path.GetFullPath(Path.GetDirectoryName(relativePath));
+            pluginLocation = Path.GetFullPath(Path.GetDirectoryName(relativePath)!);
             assemblyPath = Path.GetFullPath(relativePath);
         }
         else
@@ -32,7 +35,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
                     Path.GetDirectoryName(
                         Path.GetDirectoryName(
                             Path.GetDirectoryName(
-                                Path.GetDirectoryName(typeof(Program).Assembly.Location))))));
+                                Path.GetDirectoryName(typeof(Program).Assembly.Location))))!));
 
             pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar), "Debug", "net6.0"));
             assemblyPath = Path.Combine(pluginLocation, relativePath) + ".dll";
@@ -46,7 +49,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         if (!assembly?.IsFullyTrusted ?? false)
             return null;
 
-        PluginLoadContext.loadedAssemblies[assembly?.FullName] = assembly;
+        PluginLoadContext.loadedAssemblies[assembly!.FullName!] = assembly;
 
         // Additional check for a valid signature (if applicable)
 #if SIGNED_BUILD
@@ -74,7 +77,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         }
     }
 
-    static IEnumerable<ICommand> CreateCommands(Assembly assembly,IEnvironment env)
+    static IEnumerable<ICommand> CreateCommands(Assembly? assembly,IEnvironment env)
     {
         int count = 0;
         Type[]? _types = null;
@@ -87,7 +90,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
             {
                 if (typeof(ICommand).IsAssignableFrom(type))
                 {
-                    ICommand result = Activator.CreateInstance(type) as ICommand;
+                    ICommand? result = Activator.CreateInstance(type) as ICommand;
                     if (result != null)
                     {
                         result.Initialize(env);
@@ -97,7 +100,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
                 }
             }
 
-            if (assembly != null && count == 0 && assembly.FullName.ToLower().Contains("plugin"))
+            if (assembly != null && count == 0 && assembly.FullName!.ToLower().Contains("plugin"))
             {
                 string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
                 throw new ApplicationException(
@@ -132,14 +135,14 @@ public class AppWithPlugin : IEnvironment, IUserInterface
             ];
         
         foreach (string pluginPath in Directory.EnumerateFiles(
-            Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location),"..","PlugIns"),"*.dll"))
+            Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location)!,"..","PlugIns"),"*.dll"))
         {
             pluginPaths.Add(pluginPath);
         }
         
         commands = pluginPaths.SelectMany(pluginPath =>
         {
-            Assembly pluginAssembly = LoadPlugin(pluginPath);
+            Assembly? pluginAssembly = LoadPlugin(pluginPath);
             return CreateCommands(pluginAssembly,this);
         }).ToList();
         Console.WriteLine("AppWithPlugin is initialized.");
@@ -159,6 +162,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
             if (args.Length == 0)
             {
                 Console.WriteLine("Commands: ");
+                if (commands != null)
                 foreach (ICommand command in commands)
                 {
                     Console.WriteLine($"{command.Name}\t - {command.Description}");
@@ -170,7 +174,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
                 {
                     Console.WriteLine($"-- {commandName} --");
 
-                    ICommand command = commands.FirstOrDefault(c => c.Name.ToUpper() == commandName.ToUpper());
+                    ICommand? command = commands?.FirstOrDefault(c => c.Name.ToUpper() == commandName.ToUpper());
                     if (command == null)
                     {
                         Console.WriteLine("No such command is known.");
@@ -191,6 +195,7 @@ public class AppWithPlugin : IEnvironment, IUserInterface
 
     public T? GetService<T>()
     {
+        if (_sp == null) throw new InvalidOperationException("ServiceProvider is not initialized.");    
         return _sp.GetService<T>();
     }
 

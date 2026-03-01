@@ -9,8 +9,10 @@ namespace MVVM_17_1_CSV_Laden.Views.Converter.Tests;
 [TestClass()]
 public class WindowPortToGridLinesTests
 {
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     WindowPortToGridLines testVC;
-    SWindowPort wp;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+    SWindowPort? wp;
 
     public static IEnumerable<object[]> ConvertTestData
     {
@@ -39,14 +41,14 @@ public class WindowPortToGridLinesTests
         Assert.IsInstanceOfType(wp, typeof(SWindowPort));
     }
 
-    [TestMethod()]
+    [STATestMethod()]
     [DynamicData(nameof(ConvertTestData))]
     public void ConvertTest(object o)
     {
         var test = testVC.Convert(o, null!, null!, null!);
         Assert.IsNotNull(test);
         Assert.IsInstanceOfType(test, typeof(System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>));
-        Assert.HasCount(19, test as IList);
+        Assert.HasCount(19, (test as IList)!);
     }
 
     [TestMethod()]
@@ -65,7 +67,7 @@ public class WindowPortToGridLinesTests
 
     private static void RunSTA(Action a)
     {
-        Exception ex = null;
+        Exception? ex = null;
         var t = new System.Threading.Thread(() =>
         {
             try { a(); }
@@ -77,7 +79,7 @@ public class WindowPortToGridLinesTests
         if (ex != null) throw ex;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(200, 100, -10f, -10f, 20f, 20f, -20f, -10f, 40f, 20f)]
     [DataRow(100, 200, -10f, -10f, 20f, 20f, -10f, -20f, 20f, 40f)]
     public void GetAdjustedRect_Various_ReturnsExpected(
@@ -103,7 +105,7 @@ public class WindowPortToGridLinesTests
         });
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(200, 100)]
     public void Convert_WindowPort_GeneratesGridAndLabels(int winW, int winH)
     {
@@ -153,7 +155,7 @@ public class WindowPortToGridLinesTests
         });
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(200, 100, -10.0, -10.0, 10.0, 10.0, 1)]
     [DataRow(200, 100, 0.0, 0.0, 1000.0, 1000.0, 1)]
     [DataRow(200, 100, -1000.0, -1000.0, 1000.0, 1000.0, 0)]
@@ -211,10 +213,10 @@ public class WindowPortToGridLinesTests
                 WindowSize = new System.Windows.Size(200, 100),
                 Parent = null!
             };
-            _ = conv.Convert(wp, null, null, System.Globalization.CultureInfo.InvariantCulture);
+            _ = conv.Convert(wp, null!, null!, System.Globalization.CultureInfo.InvariantCulture);
 
             var arr = new Model.DataPoint[0];
-            var res = conv.Convert(arr, null, null, System.Globalization.CultureInfo.InvariantCulture)
+            var res = conv.Convert(arr, null!, null!, System.Globalization.CultureInfo.InvariantCulture)
                 as System.Collections.ObjectModel.ObservableCollection<System.Windows.FrameworkElement>;
             Assert.IsNotNull(res);
             Assert.IsEmpty(res);

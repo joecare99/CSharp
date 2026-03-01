@@ -124,4 +124,8 @@
     <value>A Sokoban game</value>
     <comment>Description of test-command</comment>
   </data>
+  <data name="cmdDescription2" xml:space="preserve">
+    <value>A Sokoban game (mini)</value>
+    <comment>Description of test-command</comment>
+  </data>
 </root>

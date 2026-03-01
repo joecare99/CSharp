@@ -38,7 +38,7 @@ namespace All_Graphics.ViewModels
         private ObservableCollection<ExItem> _examples = new();
 
         [ObservableProperty]
-        string _exFilter;
+        string? _exFilter;
         #endregion
   
         #region Methods
@@ -57,7 +57,7 @@ namespace All_Graphics.ViewModels
             OnExFilterChanged(ExFilter);
         }
 
-        private void OnMPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnMPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName); 
         }

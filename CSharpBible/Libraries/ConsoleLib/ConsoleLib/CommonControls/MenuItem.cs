@@ -59,7 +59,7 @@ public class MenuItem : CommandControl
         var dim = RealDimOf(Dimension);
         if (IsSeparator)
         {
-            dim.Width = Parent.Dimension.Width-2;
+            dim.Width = Parent?.Dimension.Width-2 ?? 0;
             ConsoleFramework.Canvas.FillRect(dim, ForeColor, BackColor, '-');
             return;
         }

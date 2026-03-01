@@ -70,6 +70,15 @@ namespace Sokoban.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die A Sokoban game (mini) ähnelt.
+        /// </summary>
+        public static string cmdDescription2 {
+            get {
+                return ResourceManager.GetString("cmdDescription2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die A test ! ähnelt.
         /// </summary>
         public static string msgTitle {

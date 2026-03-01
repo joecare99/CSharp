@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
     <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />

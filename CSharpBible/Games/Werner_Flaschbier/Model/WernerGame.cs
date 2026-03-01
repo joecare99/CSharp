@@ -163,7 +163,7 @@ namespace Werner_Flaschbier_Base.Model
         public Point OldPos(Point p)
         {
             var field = playfield[p];
-            if (field is Space s && s.Item != null)
+            if (field is Space s && s.Item != null && !(s.Item is Dirt) )
                 return s.Item.OldPosition;
             else
                 return p;
@@ -242,7 +242,11 @@ namespace Werner_Flaschbier_Base.Model
                 foreach (PlayObject po in playfield.ActiveObjects)
                     po.Handled = false;
                 foreach (Space sp in playfield.Spaces)
+                {
                     sp.OldItem = sp.Item;
+                    if (sp.Item != null)
+                        sp.Item.OldPosition = sp.Position;
+                }
                 playfield.player?.TryMove(actDir);
                 actDir = nextDir;
                 nextDir = nextDir2;

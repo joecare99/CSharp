@@ -48,7 +48,7 @@ public class Display
     /// <param name="width">The width.</param>
     /// <param name="height">The height.</param>
     public Display(int x, int y, int width, int height)
-        : this(new ConsoleProxy(), x, y, width, height)
+        : this(myConsole, x, y, width, height)
     {
     }
 

@@ -16,7 +16,7 @@ namespace Galaxia.Models.CorActions
         /// <summary>
         /// Das Ziel-Sternensystem für den Hyperjump.
         /// </summary>
-        public IStarsystem TargetStarsystem { get; }
+        public IStarsystem? TargetStarsystem { get; }
 
         /// <summary>
         /// Erstellt eine neue DoubleJump-Aktion.
@@ -24,7 +24,7 @@ namespace Galaxia.Models.CorActions
         /// <param name="corporation">Die ausführende Corporation.</param>
         /// <param name="fleet">Die springende Flotte.</param>
         /// <param name="targetStarsystem">Das Ziel-Sternensystem.</param>
-        public DoubleJump(ICorporation corporation, IFleet fleet1, IFleet fleet2, IStarsystem targetStarsystem):base(corporation,fleet1)
+        public DoubleJump(ICorporation corporation, IFleet fleet1, IFleet fleet2, IStarsystem? targetStarsystem):base(corporation,fleet1)
         {
             Fleet2 = fleet2;
             TargetStarsystem = targetStarsystem;
@@ -37,7 +37,7 @@ namespace Galaxia.Models.CorActions
         public override bool Execute()
         {
             // Überprüfe, ob die Flotte zur Corporation gehört und sich im Hyperspace befindet
-            if (Fleet.Owner != Corporation || Fleet.Container is not IHyperSlot hs )
+            if (Fleet?.Owner != Corporation || Fleet.Container is not IHyperSlot hs )
                 return false;
 
             // Überprüfe, ob die Flotte zur Corporation gehört und sich im Hyperspace befindet
@@ -58,7 +58,7 @@ namespace Galaxia.Models.CorActions
                 // Die Flotte verlässt den HyperSlot und wird dem Zielsystem zugewiesen
                 // Dies kann je nach Implementierung variieren
                 TargetStarsystem.Sector.SetFleet(Fleet);
-                TargetStarsystem.Sector.Fleet.Join(Fleet2);
+                TargetStarsystem.Sector.Fleet?.Join(Fleet2);
                 TargetStarsystem.SetFleet(Fleet);
                 return true;
             }

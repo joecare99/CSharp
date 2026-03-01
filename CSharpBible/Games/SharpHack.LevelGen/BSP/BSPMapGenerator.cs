@@ -6,7 +6,8 @@ using BaseLib.Models.Interfaces;
 using Point = SharpHack.Base.Model.Point;
 using SharpHack.Base.Data;
 using SharpHack.Base.Interfaces;
-using SharpHack.Engine.Pathfinding; // Resolve ambiguity with System.Drawing.Point
+using SharpHack.Engine.Pathfinding;
+using System.Linq; // Resolve ambiguity with System.Drawing.Point
 
 namespace SharpHack.LevelGen.BSP;
 
@@ -61,8 +62,13 @@ public class BSPMapGenerator : IMapGenerator
         int w = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Width - 2));
         int h = _random.Next(MinRoomSize, Math.Max(MinRoomSize, node.Bounds.Height - 2));
         // make sure the random room contains the point
+#if NET5_0_OR_GREATER
         int x = Math.Clamp(point.X - w / 2, node.Bounds.X, node.Bounds.Right - w);
         int y = Math.Clamp(point.Y - h / 2, node.Bounds.Y, node.Bounds.Bottom - h);
+#else
+        int x = Math.Max(node.Bounds.X, Math.Min(point.X - w / 2, node.Bounds.Right - w));
+        int y = Math.Max(node.Bounds.Y, Math.Min(point.Y - h / 2, node.Bounds.Bottom - h));
+#endif
         node.Room = new Rectangle(x, y, w, h);
         for (int rx = x; rx < x + w; rx++)
         {
@@ -209,7 +215,11 @@ public class BSPMapGenerator : IMapGenerator
         {
             bool toRight = dx >= 0;
             int doorX = toRight ? room.Right  : room.Left-1;
+#if NET5_0_OR_GREATER
             int doorY = Math.Clamp(otherCenterY, room.Top + 1, room.Bottom - 1);
+#else
+            int doorY = Math.Max(room.Top + 1, Math.Min(otherCenterY, room.Bottom - 1));
+#endif
             var door = new Point(doorX, doorY);
             var outside = new Point(doorX + (toRight ? 1 : -1), doorY);
             return (door, outside);
@@ -218,7 +228,11 @@ public class BSPMapGenerator : IMapGenerator
         {
             bool toDown = dy >= 0;
             int doorY = toDown ? room.Bottom : room.Top-1;
+#if NET5_0_OR_GREATER
             int doorX = Math.Clamp(otherCenterX, room.Left + 1, room.Right - 1);
+#else
+            int doorX = Math.Max(room.Left + 1, Math.Min(otherCenterX, room.Right - 1));
+#endif
             var door = new Point(doorX, doorY);
             var outside = new Point(doorX, doorY + (toDown ? 1 : -1));
             return (door, outside);
@@ -323,7 +337,15 @@ public class BSPMapGenerator : IMapGenerator
                     blocked = true;
                     room.Inflate(-1, -1);
                     var d = (room.X + room.Width / 2 - end.X, room.Y + room.Height / 2 - end.Y);
-                    d = Math.Abs(d.Item1)>Math.Abs(d.Item2)?(Math.Clamp(d.Item1, -1, 1), 0):(0, Math.Clamp(d.Item2, -1, 1));
+#if NET5_0_OR_GREATER
+                    d = Math.Abs(d.Item1)>Math.Abs(d.Item2)?
+                        (Math.Clamp(d.Item1, -1, 1), 0):
+                        (0, Math.Clamp(d.Item2, -1, 1));
+#else
+                    d = Math.Abs(d.Item1)>Math.Abs(d.Item2)?
+                        (d.Item1<0?-1:d.Item1>0?1:0, 0):
+                        (0, d.Item2<0?-1:d.Item2>0?1:0);
+#endif
                     room.Offset(d.Item1, d.Item2);
                     if (d.Item1 * (end.X - x) + d.Item2 * (end.Y - y) < 3)
                     {
@@ -333,7 +355,12 @@ public class BSPMapGenerator : IMapGenerator
                     {
                         var rm = (room.X + room.Width / 2 - x, room.Y + room.Height / 2 - y);
                         // we are about to carve into a room wall, compute, to get around it.
+#if NET5_0_OR_GREATER
                         (x, y) = (x + Math.Clamp((rm.Item1 * 2 + 1) * -Math.Abs(d.Item2), -1, 1), y + Math.Clamp((rm.Item2 * 2 + 1) * -Math.Abs(d.Item1), -1, 1));
+#else
+                        (x, y) = (x + ((rm.Item1 * 2 + 1) * -Math.Abs(d.Item2) < 0 ? -1 : ((rm.Item1 * 2 + 1) * -Math.Abs(d.Item2) > 0 ? 1 : 0)),
+                                  y + ((rm.Item2 * 2 + 1) * -Math.Abs(d.Item1) < 0 ? -1 : ((rm.Item2 * 2 + 1) * -Math.Abs(d.Item1) > 0 ? 1 : 0)));
+#endif
                     }
                     else 
                         (x, y) = (x - d.Item1, y - d.Item2);

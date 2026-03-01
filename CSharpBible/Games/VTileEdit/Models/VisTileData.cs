@@ -16,7 +16,9 @@ using System.Xml.Serialization;
 
 namespace VTileEdit.Models;
 
+#pragma warning disable CS0659 // Typ überschreibt Object.Equals(object o), überschreibt jedoch nicht Object.GetHashCode()
 public class VisTileData : ITileDef
+#pragma warning restore CS0659 // Typ überschreibt Object.Equals(object o), überschreibt jedoch nicht Object.GetHashCode()
 {
     private sealed class TileEntry
     {
@@ -293,9 +295,10 @@ public class VisTileData : ITileDef
                 {
                     Dictionary<int, TileEntry>? data = [];
                     var lst = JsonSerializer.Deserialize<Tuple<string, Size, List<Tuple<int, SingleTile>>>>(new StreamReader(stream).ReadToEnd());
-                    KeyTypeStr = lst.Item1 ?? "";
-                    _size = lst.Item2;
-                    foreach (var itm in lst.Item3)
+                    KeyTypeStr = lst?.Item1 ?? "";
+                    _size = lst?.Item2 ?? default;
+                    if (lst?.Item3 != null)
+                    foreach (var itm in lst!.Item3)
                     {
                         data.Add(itm.Item1, new TileEntry(itm.Item2, TileInfo.Default));
                     }
@@ -446,6 +449,7 @@ public class VisTileData : ITileDef
 
                             return new Json2Data.TileEntry(
                                 (int)(object)v.Key,
+                                
                                 tags.ToArray(),
                                 tile.lines,
                                 tile.colors.Select(c => (byte)(((int)c.bgr) * 16 + (byte)c.fgr)).ToArray(),
