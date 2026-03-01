@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MVVM_42a_3DView.Properties {
+namespace MVVM_42b_3DView.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace MVVM_42a_3DView.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_42a_3DView.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MVVM_42b_3DView.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -75,9 +75,9 @@ namespace MVVM_42a_3DView.Properties {
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
-        ///      xmlns:local=&quot;clr-namespace:MVVM_42a_3DView.Views&quot;
-        ///      xmlns:p=&quot;clr-namespace:MVVM_42a_3DView.Properties&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_42a_3DView.ViewModels&quot;
+        ///      xmlns:local=&quot;clr-namespace:MVVM_42b_3DView.Views&quot;
+        ///      xmlns:p=&quot;clr-namespace:MVVM_42b_3DView.Properties&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_42b_3DView.ViewModels&quot;
         ///      xmlns:i=&quot;http://schemas.microsoft.com/xa [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ThreeDView {
@@ -88,7 +88,7 @@ namespace MVVM_42a_3DView.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
-        ///// Assembly         : MVVM_42a_3DView
+        ///// Assembly         : MVVM_42b_3DView
         ///// Author           : Mir
         ///// Created          : 03-09-2025
         /////
