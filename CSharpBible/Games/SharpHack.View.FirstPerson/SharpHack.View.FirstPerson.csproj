@@ -36,4 +36,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
+  </ItemGroup>
+
 </Project>

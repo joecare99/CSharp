@@ -10,7 +10,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest" />
     <PackageReference Include="NSubstitute" />
-    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,5 +21,11 @@
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
     <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="coverlet.collector" Version="8.0.0" />
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Update="MSTest" Version="4.1.0" />
   </ItemGroup>
 </Project>
