@@ -20,4 +20,10 @@
 		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 		<ProjectReference Include="..\Game_Base\Game_Base.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="coverlet.collector" Version="8.0.0" />
+	  <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+	  <PackageVersion Update="MSTest" Version="4.1.0" />
+	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
+	</ItemGroup>
 </Project>

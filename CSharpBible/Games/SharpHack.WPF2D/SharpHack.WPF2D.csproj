@@ -39,4 +39,8 @@
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.Hosting" Version="10.0.3" />
+  </ItemGroup>
+
 </Project>
