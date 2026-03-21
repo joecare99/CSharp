@@ -23,4 +23,10 @@
 		<ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Console.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageVersion Update="coverlet.collector" Version="8.0.1" />
+	  <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+	  <PackageVersion Update="MSTest" Version="4.1.0" />
+	</ItemGroup>
+
 </Project>

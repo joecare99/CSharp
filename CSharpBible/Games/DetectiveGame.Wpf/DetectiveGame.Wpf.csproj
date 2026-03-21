@@ -13,4 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DetectiveGame.Engine\DetectiveGame.Engine.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+  </ItemGroup>
 </Project>
