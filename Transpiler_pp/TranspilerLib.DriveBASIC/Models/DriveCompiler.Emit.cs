@@ -270,7 +270,6 @@ public partial class DriveBasic
             {
                 label = new CompilerLabel { Name = normalized };
                 _labelsByName[normalized] = label;
-                _parent.Labels.Add(label);
             }
             return label;
         }
@@ -302,7 +301,7 @@ public partial class DriveBasic
             {
                 number = ++_maxMessage;
                 _messageNumbers[normalized] = number;
-                _parent.Messages.Add(text.Trim());
+                _messagesList.Add(text.Trim());
             }
             return number;
         }
@@ -344,20 +343,8 @@ public partial class DriveBasic
                     Index = AllocateVarNo(type)
                 };
                 _variablesByName[normalized] = variable;
-                InsertVariable(variable);
             }
             return variable;
-        }
-
-        private void InsertVariable(CompilerVariable variable)
-        {
-            var list = _parent.Variables ??= new List<IVariable>();
-            var insertIndex = 0;
-            while (insertIndex < list.Count && list[insertIndex].Index <= variable.Index)
-            {
-                insertIndex++;
-            }
-            list.Insert(insertIndex, variable);
         }
 
         private int AllocateVarNo(EVarType type)
