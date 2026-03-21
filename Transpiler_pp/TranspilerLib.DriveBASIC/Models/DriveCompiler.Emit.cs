@@ -208,7 +208,14 @@ public partial class DriveBasic
                     builder.Param1 = labelIndex >= 0 ? labelIndex : ushort.MaxValue;
                     return BCErr.BC_OK;
                 case 1:
-                    builder.Param1 = GetMessageNumber(text);
+                    if (builder.Token == EDriveToken.tt_Nop && builder.SubToken == 3)
+                    {
+                        GetMessageNumber(text, builder.Param1);
+                    }
+                    else
+                    {
+                        builder.Param1 = GetMessageNumber(text);
+                    }
                     return BCErr.BC_OK;
                 case 2:
                     builder.Param1 = GetVariableNumber(text);
@@ -292,14 +299,17 @@ public partial class DriveBasic
             return label.Index;
         }
 
-        private int GetMessageNumber(string text)
+        private int GetMessageNumber(string text, int? forcedId = null)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return 0;
             var normalized = NormalizeIdentifier(text);
             if (!_messageNumbers.TryGetValue(normalized, out var number))
             {
-                number = ++_maxMessage;
+                number = forcedId ?? ++_maxMessage;
+                if (forcedId.HasValue && forcedId.Value > _maxMessage)
+                    _maxMessage = forcedId.Value;
+                    
                 _messageNumbers[normalized] = number;
                 _messagesList.Add(text.Trim());
             }
