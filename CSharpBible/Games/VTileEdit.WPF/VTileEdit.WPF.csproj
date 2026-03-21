@@ -46,4 +46,7 @@
 			<DependentUpon>Strings.resx</DependentUpon>
 		</Compile>
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+	</ItemGroup>
 </Project>
