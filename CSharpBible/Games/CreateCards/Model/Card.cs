@@ -12,6 +12,23 @@ namespace CreateCards.Model
 
     public class Card
     {
+        // Helper methods for color manipulation (replacing ControlPaint)
+        private static Color DarkenColor(Color color, float factor)
+        {
+            int r = (int)(color.R * (1 - factor));
+            int g = (int)(color.G * (1 - factor));
+            int b = (int)(color.B * (1 - factor));
+            return Color.FromArgb(color.A, System.Math.Max(0, r), System.Math.Max(0, g), System.Math.Max(0, b));
+        }
+
+        private static Color LightenColor(Color color, float factor)
+        {
+            int r = (int)(color.R + (255 - color.R) * factor);
+            int g = (int)(color.G + (255 - color.G) * factor);
+            int b = (int)(color.B + (255 - color.B) * factor);
+            return Color.FromArgb(color.A, System.Math.Min(255, r), System.Math.Min(255, g), System.Math.Min(255, b));
+        }
+
         public static Dictionary<CardValues, CardDrawDef> DrawDef = new() {
             { CardValues.Ace ,new("A",0.8){  
                 PntSuits=new[]{new PointF(0.5f,0.5f) } } },
@@ -240,7 +257,7 @@ namespace CreateCards.Model
             RectangleF tunicRect = new RectangleF(half.X + half.Width * 0.18f, half.Y + half.Height * 0.4f,
                                                    half.Width * 0.64f, half.Height * 0.6f);
             using var tunicGradient = new LinearGradientBrush(tunicRect, 
-                Color.FromArgb(255, color), Color.FromArgb(200, ControlPaint.Dark(color, 0.2f)), 0f);
+                Color.FromArgb(255, color), Color.FromArgb(200, DarkenColor(color, 0.2f)), 0f);
 
             PointF[] tunic = {
                 new PointF(half.X + half.Width * 0.22f, half.Bottom),
@@ -325,9 +342,9 @@ namespace CreateCards.Model
             g.FillEllipse(blushBrush, headRect.X + headW * 0.6f, headRect.Y + headH * 0.45f, headW * 0.25f, headH * 0.15f);
 
             // Elaborate beret/cap with feather
-            using var capGradient = new LinearGradientBrush(
-                new RectangleF(headRect.X - headW * 0.2f, headRect.Y - headH * 0.35f, headW * 1.6f, headH * 0.6f),
-                ControlPaint.Light(color, 0.2f), color, 90f);
+            RectangleF capRect = new RectangleF(headRect.X - headW * 0.2f, headRect.Y - headH * 0.35f, headW * 1.6f, headH * 0.6f);
+            using var capGradient = new LinearGradientBrush(capRect,
+                LightenColor(color, 0.2f), color, 90f);
             PointF[] cap = {
                 new PointF(headRect.X - headW * 0.18f, headRect.Y + headH * 0.18f),
                 new PointF(headRect.X + headW * 0.1f, headRect.Y - headH * 0.15f),
@@ -372,42 +389,34 @@ namespace CreateCards.Model
                 g.DrawLine(barbPen, bx, by, bx - headW * 0.1f, by - headH * 0.12f);
             }
 
-            // Eye with detail
-            float eyeW = headW * 0.14f;
-            float eyeH = headH * 0.08f;
-            float eyeX = headRect.X + headW * 0.52f;
+            // Eyes - two symmetric eyes (front view like Queen and King)
+            float eyeW = headW * 0.12f;
+            float eyeH = headH * 0.07f;
             float eyeY = headRect.Y + headH * 0.36f;
 
-            // Eye white
-            using var eyeWhiteBrush = new SolidBrush(Color.FromArgb(250, 250, 250));
-            g.FillEllipse(eyeWhiteBrush, eyeX, eyeY, eyeW, eyeH);
+            // Left eye
+            float leftEyeX = headRect.X + headW * 0.22f;
+            DrawJackEye(g, leftEyeX, eyeY, eyeW, eyeH, thinPen);
 
-            // Iris
-            using var irisBrush = new SolidBrush(Color.FromArgb(80, 60, 40));
-            g.FillEllipse(irisBrush, eyeX + eyeW * 0.3f, eyeY + eyeH * 0.1f, eyeW * 0.5f, eyeH * 0.8f);
+            // Right eye
+            float rightEyeX = headRect.X + headW * 0.66f;
+            DrawJackEye(g, rightEyeX, eyeY, eyeW, eyeH, thinPen);
 
-            // Pupil
-            using var pupilBrush = new SolidBrush(Color.Black);
-            g.FillEllipse(pupilBrush, eyeX + eyeW * 0.4f, eyeY + eyeH * 0.25f, eyeW * 0.3f, eyeH * 0.5f);
-
-            // Eye highlight
-            using var eyeHighlight = new SolidBrush(Color.White);
-            g.FillEllipse(eyeHighlight, eyeX + eyeW * 0.35f, eyeY + eyeH * 0.2f, eyeW * 0.15f, eyeH * 0.3f);
-            g.DrawEllipse(thinPen, eyeX, eyeY, eyeW, eyeH);
-
-            // Eyebrow
+            // Eyebrows
             using var browPen = new Pen(hairColor, thinPen.Width * 1.2f);
-            g.DrawArc(browPen, eyeX - eyeW * 0.1f, eyeY - eyeH * 0.8f, eyeW * 1.2f, eyeH, 10, 70);
+            g.DrawArc(browPen, leftEyeX - eyeW * 0.1f, eyeY - eyeH * 1.0f, eyeW * 1.2f, eyeH, 200, 70);
+            g.DrawArc(browPen, rightEyeX - eyeW * 0.1f, eyeY - eyeH * 1.0f, eyeW * 1.2f, eyeH, 250, 70);
 
-            // Nose with shadow
-            g.DrawLine(thinPen,
-                new PointF(headRect.X + headW * 0.62f, headRect.Y + headH * 0.42f),
-                new PointF(headRect.X + headW * 0.68f, headRect.Y + headH * 0.55f));
-            g.DrawArc(thinPen, headRect.X + headW * 0.58f, headRect.Y + headH * 0.52f, headW * 0.12f, headH * 0.08f, 30, 120);
+            // Nose (centered)
+            g.DrawBezier(thinPen,
+                new PointF(headRect.X + headW * 0.48f, headRect.Y + headH * 0.4f),
+                new PointF(headRect.X + headW * 0.5f, headRect.Y + headH * 0.48f),
+                new PointF(headRect.X + headW * 0.52f, headRect.Y + headH * 0.54f),
+                new PointF(headRect.X + headW * 0.5f, headRect.Y + headH * 0.56f));
 
-            // Mouth
+            // Mouth (centered)
             using var lipPen = new Pen(Color.FromArgb(180, 100, 90), thinPen.Width);
-            g.DrawArc(lipPen, headRect.X + headW * 0.52f, headRect.Y + headH * 0.62f, headW * 0.2f, headH * 0.1f, 0, 180);
+            g.DrawArc(lipPen, headRect.X + headW * 0.4f, headRect.Y + headH * 0.62f, headW * 0.2f, headH * 0.1f, 0, 180);
 
             // Halberd with detailed blade
             float shaftX = half.X + half.Width * 0.10f;
@@ -596,7 +605,7 @@ namespace CreateCards.Model
             RectangleF gownRect = new RectangleF(half.X + half.Width * 0.12f, half.Y + half.Height * 0.42f,
                                                   half.Width * 0.76f, half.Height * 0.58f);
             using var gownGradient = new LinearGradientBrush(gownRect,
-                Color.FromArgb(255, color), Color.FromArgb(200, ControlPaint.Dark(color, 0.15f)), 90f);
+                Color.FromArgb(255, color), Color.FromArgb(200, DarkenColor(color, 0.15f)), 90f);
 
             // Full gown shape
             PointF[] gown = {
@@ -880,9 +889,9 @@ namespace CreateCards.Model
         private static void DrawElaborateFlower(Graphics g, float x, float y, float size, Color petalColor, Color centerColor, Pen outlinePen, Pen thinPen)
         {
             // Outer petals
-            using var petalGradient = new LinearGradientBrush(
-                new RectangleF(x - size, y - size, size * 2, size * 2),
-                ControlPaint.Light(petalColor, 0.3f), petalColor, 45f);
+            RectangleF petalRect = new RectangleF(x - size, y - size, size * 2, size * 2);
+            using var petalGradient = new LinearGradientBrush(petalRect,
+                LightenColor(petalColor, 0.3f), petalColor, 45f);
 
             for (int i = 0; i < 6; i++)
             {
@@ -901,7 +910,7 @@ namespace CreateCards.Model
                 float px = x + (float)System.Math.Cos(angle) * size * 0.4f;
                 float py = y + (float)System.Math.Sin(angle) * size * 0.4f;
 
-                using var innerBrush = new SolidBrush(ControlPaint.Light(petalColor, 0.2f));
+                using var innerBrush = new SolidBrush(LightenColor(petalColor, 0.2f));
                 g.FillEllipse(innerBrush, px - size * 0.3f, py - size * 0.3f, size * 0.6f, size * 0.6f);
             }
 
@@ -921,55 +930,144 @@ namespace CreateCards.Model
             }
         }
 
+        private static void DrawJackEye(Graphics g, float x, float y, float w, float h, Pen outlinePen)
+        {
+            // Eye white
+            using var whiteBrush = new SolidBrush(Color.FromArgb(252, 252, 252));
+            g.FillEllipse(whiteBrush, x, y, w, h);
+
+            // Iris
+            using var irisBrush = new SolidBrush(Color.FromArgb(80, 60, 40));
+            float irisW = w * 0.5f;
+            float irisH = h * 0.85f;
+            g.FillEllipse(irisBrush, x + w * 0.25f, y + h * 0.08f, irisW, irisH);
+
+            // Pupil
+            using var pupilBrush = new SolidBrush(Color.Black);
+            g.FillEllipse(pupilBrush, x + w * 0.35f, y + h * 0.2f, irisW * 0.6f, irisH * 0.6f);
+
+            // Highlight
+            using var highlightBrush = new SolidBrush(Color.White);
+            g.FillEllipse(highlightBrush, x + w * 0.32f, y + h * 0.15f, w * 0.12f, h * 0.25f);
+
+            // Eye outline
+            g.DrawEllipse(outlinePen, x, y, w, h);
+        }
+
         private static void DrawKing(Graphics g, Rectangle rect, Color color, string suit)
         {
-            // French-style King (Roi) - mirrored double-headed design
+            // French-style King (Roi) - elaborate mirrored double-headed design
             float penW = System.Math.Max(1f, rect.Width / 120f);
-            using var outlinePen = new Pen(Color.FromArgb(60, 40, 20), penW);
-            using var thinPen = new Pen(Color.FromArgb(60, 40, 20), penW * 0.6f);
+            using var outlinePen = new Pen(Color.FromArgb(50, 30, 15), penW);
+            using var thinPen = new Pen(Color.FromArgb(50, 30, 15), penW * 0.5f);
 
-            // Colors
-            Color cream = Color.FromArgb(255, 250, 240);
-            Color gold = Color.FromArgb(218, 165, 32);
-            Color darkGold = Color.FromArgb(184, 134, 11);
+            // Colors - royal palette
+            Color cream = Color.FromArgb(255, 252, 245);
+            Color gold = Color.FromArgb(212, 175, 55);
+            Color darkGold = Color.FromArgb(170, 135, 30);
+            Color lightGold = Color.FromArgb(255, 223, 120);
             Color skinTone = Color.FromArgb(255, 218, 185);
-            Color beardColor = Color.FromArgb(120, 80, 40);
+            Color skinShadow = Color.FromArgb(235, 190, 160);
+            Color beardColor = Color.FromArgb(110, 75, 40);
+            Color beardHighlight = Color.FromArgb(150, 110, 65);
 
-            // Draw decorative frame
-            RectangleF frameRect = new RectangleF(rect.X + rect.Width * 0.12f, rect.Y + rect.Height * 0.08f,
-                                                   rect.Width * 0.76f, rect.Height * 0.84f);
-            using var frameBrush = new SolidBrush(cream);
+            // Draw decorative frame with gradient
+            RectangleF frameRect = new RectangleF(rect.X + rect.Width * 0.10f, rect.Y + rect.Height * 0.06f,
+                                                   rect.Width * 0.80f, rect.Height * 0.88f);
+            using var frameBrush = new LinearGradientBrush(frameRect, cream, Color.FromArgb(250, 245, 235), 45f);
             g.FillRectangle(frameBrush, frameRect);
 
-            // Inner decorative border
+            // Royal cross-hatch pattern in background
+            using var patternPen = new Pen(Color.FromArgb(10, color), penW * 0.3f);
+            for (float i = frameRect.X; i < frameRect.Right + frameRect.Height; i += rect.Width * 0.035f)
+            {
+                g.DrawLine(patternPen, i, frameRect.Y, i - frameRect.Height * 0.4f, frameRect.Bottom);
+                g.DrawLine(patternPen, i - frameRect.Height * 0.4f, frameRect.Y, i, frameRect.Bottom);
+            }
+
+            // Inner decorative border - triple line royal style
             float borderInset = rect.Width * 0.02f;
             RectangleF innerFrame = RectangleF.Inflate(frameRect, -borderInset * 2, -borderInset * 2);
-            using var borderPen = new Pen(color, penW * 0.8f);
+            using var borderPen = new Pen(color, penW * 1.2f);
+            using var goldBorderPen = new Pen(gold, penW * 0.6f);
             g.DrawRectangle(borderPen, innerFrame.X, innerFrame.Y, innerFrame.Width, innerFrame.Height);
+            g.DrawRectangle(goldBorderPen, innerFrame.X - penW, innerFrame.Y - penW, innerFrame.Width + penW * 2, innerFrame.Height + penW * 2);
+            g.DrawRectangle(goldBorderPen, innerFrame.X + penW * 2, innerFrame.Y + penW * 2, innerFrame.Width - penW * 4, innerFrame.Height - penW * 4);
+
+            // Royal crown corner ornaments
+            DrawRoyalCorner(g, innerFrame.X, innerFrame.Y, rect.Width * 0.1f, gold, color, outlinePen, false, false);
+            DrawRoyalCorner(g, innerFrame.Right, innerFrame.Y, rect.Width * 0.1f, gold, color, outlinePen, true, false);
+            DrawRoyalCorner(g, innerFrame.X, innerFrame.Bottom, rect.Width * 0.1f, gold, color, outlinePen, false, true);
+            DrawRoyalCorner(g, innerFrame.Right, innerFrame.Bottom, rect.Width * 0.1f, gold, color, outlinePen, true, true);
 
             // Draw upper half figure
-            DrawKingHalf(g, innerFrame, color, suit, false, outlinePen, thinPen, skinTone, beardColor, gold, darkGold);
+            DrawKingHalf(g, innerFrame, color, suit, false, outlinePen, thinPen, skinTone, skinShadow, beardColor, beardHighlight, gold, darkGold, lightGold);
 
             // Draw lower half figure (mirrored)
-            DrawKingHalf(g, innerFrame, color, suit, true, outlinePen, thinPen, skinTone, beardColor, gold, darkGold);
+            DrawKingHalf(g, innerFrame, color, suit, true, outlinePen, thinPen, skinTone, skinShadow, beardColor, beardHighlight, gold, darkGold, lightGold);
 
-            // Center dividing area with suit symbol
+            // Center medallion with suit symbol and royal seal
             float centerY = innerFrame.Y + innerFrame.Height / 2;
-            using var suitFont = new Font("Segoe UI Symbol", innerFrame.Width * 0.12f, FontStyle.Bold);
+            float medalSize = innerFrame.Width * 0.26f;
+            RectangleF medalRect = new RectangleF(innerFrame.X + innerFrame.Width / 2 - medalSize / 2,
+                                                   centerY - medalSize / 2, medalSize, medalSize);
+
+            // Royal seal medallion with multiple rings
+            using var sealGradient = new LinearGradientBrush(medalRect, Color.White, Color.FromArgb(245, 240, 225), 135f);
+            g.FillEllipse(sealGradient, medalRect);
+
+            // Decorative rings
+            using var outerRingPen = new Pen(gold, penW * 2.5f);
+            g.DrawEllipse(outerRingPen, medalRect);
+            using var innerRingPen = new Pen(color, penW * 1.2f);
+            g.DrawEllipse(innerRingPen, RectangleF.Inflate(medalRect, -penW * 3, -penW * 3));
+            using var centerRingPen = new Pen(gold, penW * 0.8f);
+            g.DrawEllipse(centerRingPen, RectangleF.Inflate(medalRect, -penW * 5, -penW * 5));
+
+            // Suit symbol
+            using var suitFont = new Font("Segoe UI Symbol", medalSize * 0.4f, FontStyle.Bold);
             using var suitBrush = new SolidBrush(color);
             StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-            RectangleF suitRect = new RectangleF(innerFrame.X, centerY - innerFrame.Width * 0.1f, 
-                                                  innerFrame.Width, innerFrame.Width * 0.2f);
+            g.DrawString(suit, suitFont, suitBrush, medalRect, sf);
+        }
 
-            // White background for center suit
-            using var whiteBrush = new SolidBrush(Color.White);
-            g.FillEllipse(whiteBrush, innerFrame.X + innerFrame.Width * 0.35f, centerY - innerFrame.Width * 0.15f,
-                          innerFrame.Width * 0.3f, innerFrame.Width * 0.3f);
-            g.DrawString(suit, suitFont, suitBrush, suitRect, sf);
+        private static void DrawRoyalCorner(Graphics g, float x, float y, float size, Color gold, Color accent, Pen outlinePen, bool flipH, bool flipV)
+        {
+            var state = g.Save();
+            g.TranslateTransform(x, y);
+            if (flipH) g.ScaleTransform(-1, 1);
+            if (flipV) g.ScaleTransform(1, -1);
+
+            using var goldBrush = new SolidBrush(gold);
+            using var accentBrush = new SolidBrush(accent);
+
+            // Crown-like corner ornament
+            PointF[] crownOrn = {
+                new PointF(0, 0),
+                new PointF(size * 0.4f, 0),
+                new PointF(size * 0.3f, size * 0.15f),
+                new PointF(size * 0.5f, size * 0.08f),
+                new PointF(size * 0.35f, size * 0.25f),
+                new PointF(size * 0.25f, size * 0.35f),
+                new PointF(size * 0.08f, size * 0.5f),
+                new PointF(size * 0.15f, size * 0.3f),
+                new PointF(0, size * 0.4f)
+            };
+            g.FillPolygon(goldBrush, crownOrn);
+            g.DrawPolygon(outlinePen, crownOrn);
+
+            // Small jewel
+            float jewelX = size * 0.12f;
+            float jewelY = size * 0.12f;
+            float jewelSize = size * 0.1f;
+            g.FillEllipse(accentBrush, jewelX, jewelY, jewelSize, jewelSize);
+
+            g.Restore(state);
         }
 
         private static void DrawKingHalf(Graphics g, RectangleF rect, Color color, string suit, bool mirrored,
-            Pen outlinePen, Pen thinPen, Color skinTone, Color beardColor, Color gold, Color darkGold)
+            Pen outlinePen, Pen thinPen, Color skinTone, Color skinShadow, Color beardColor, Color beardHighlight, 
+            Color gold, Color darkGold, Color lightGold)
         {
             var state = g.Save();
 
@@ -980,153 +1078,379 @@ namespace CreateCards.Model
                 g.TranslateTransform(-(rect.X + rect.Width / 2), -(rect.Y + rect.Height / 2));
             }
 
-            float halfH = rect.Height * 0.48f;
+            float halfH = rect.Height * 0.47f;
             RectangleF half = new RectangleF(rect.X, rect.Y, rect.Width, halfH);
 
-            // Royal robe
-            using var robeBrush = new SolidBrush(Color.FromArgb(220, color));
-            using var ermineBrush = new SolidBrush(Color.White);
-            using var ermineSpotBrush = new SolidBrush(Color.FromArgb(40, 30, 20));
+            // Royal robe with rich gradient and ermine trim
+            RectangleF robeRect = new RectangleF(half.X + half.Width * 0.1f, half.Y + half.Height * 0.38f,
+                                                  half.Width * 0.8f, half.Height * 0.62f);
+            using var robeGradient = new LinearGradientBrush(robeRect,
+                Color.FromArgb(255, color), Color.FromArgb(200, DarkenColor(color, 0.2f)), 90f);
 
-            // Robe shape
             PointF[] robe = {
-                new PointF(half.X + half.Width * 0.12f, half.Bottom),
-                new PointF(half.X + half.Width * 0.18f, half.Y + half.Height * 0.5f),
-                new PointF(half.X + half.Width * 0.25f, half.Y + half.Height * 0.45f),
-                new PointF(half.X + half.Width * 0.5f, half.Y + half.Height * 0.4f),
-                new PointF(half.X + half.Width * 0.75f, half.Y + half.Height * 0.45f),
-                new PointF(half.X + half.Width * 0.82f, half.Y + half.Height * 0.5f),
-                new PointF(half.X + half.Width * 0.88f, half.Bottom)
+                new PointF(half.X + half.Width * 0.1f, half.Bottom),
+                new PointF(half.X + half.Width * 0.15f, half.Y + half.Height * 0.52f),
+                new PointF(half.X + half.Width * 0.22f, half.Y + half.Height * 0.45f),
+                new PointF(half.X + half.Width * 0.5f, half.Y + half.Height * 0.38f),
+                new PointF(half.X + half.Width * 0.78f, half.Y + half.Height * 0.45f),
+                new PointF(half.X + half.Width * 0.85f, half.Y + half.Height * 0.52f),
+                new PointF(half.X + half.Width * 0.9f, half.Bottom)
             };
-            g.FillPolygon(robeBrush, robe);
+            g.FillPolygon(robeGradient, robe);
             g.DrawPolygon(outlinePen, robe);
 
-            // Ermine collar (white with black spots - royal trim)
+            // Robe folds
+            using var foldPen = new Pen(Color.FromArgb(50, 0, 0, 0), thinPen.Width);
+            using var highlightPen = new Pen(Color.FromArgb(60, 255, 255, 255), thinPen.Width);
+            g.DrawBezier(foldPen,
+                new PointF(half.X + half.Width * 0.35f, half.Y + half.Height * 0.48f),
+                new PointF(half.X + half.Width * 0.32f, half.Y + half.Height * 0.65f),
+                new PointF(half.X + half.Width * 0.28f, half.Y + half.Height * 0.8f),
+                new PointF(half.X + half.Width * 0.22f, half.Bottom));
+            g.DrawBezier(highlightPen,
+                new PointF(half.X + half.Width * 0.38f, half.Y + half.Height * 0.48f),
+                new PointF(half.X + half.Width * 0.36f, half.Y + half.Height * 0.65f),
+                new PointF(half.X + half.Width * 0.33f, half.Y + half.Height * 0.8f),
+                new PointF(half.X + half.Width * 0.28f, half.Bottom));
+            g.DrawBezier(foldPen,
+                new PointF(half.X + half.Width * 0.65f, half.Y + half.Height * 0.48f),
+                new PointF(half.X + half.Width * 0.68f, half.Y + half.Height * 0.65f),
+                new PointF(half.X + half.Width * 0.72f, half.Y + half.Height * 0.8f),
+                new PointF(half.X + half.Width * 0.78f, half.Bottom));
+
+            // Elaborate ermine collar with spots
+            using var ermineBrush = new SolidBrush(Color.FromArgb(255, 252, 248));
             PointF[] collar = {
-                new PointF(half.X + half.Width * 0.28f, half.Y + half.Height * 0.45f),
-                new PointF(half.X + half.Width * 0.35f, half.Y + half.Height * 0.52f),
-                new PointF(half.X + half.Width * 0.5f, half.Y + half.Height * 0.55f),
-                new PointF(half.X + half.Width * 0.65f, half.Y + half.Height * 0.52f),
-                new PointF(half.X + half.Width * 0.72f, half.Y + half.Height * 0.45f),
-                new PointF(half.X + half.Width * 0.5f, half.Y + half.Height * 0.4f)
+                new PointF(half.X + half.Width * 0.25f, half.Y + half.Height * 0.45f),
+                new PointF(half.X + half.Width * 0.32f, half.Y + half.Height * 0.52f),
+                new PointF(half.X + half.Width * 0.42f, half.Y + half.Height * 0.56f),
+                new PointF(half.X + half.Width * 0.5f, half.Y + half.Height * 0.58f),
+                new PointF(half.X + half.Width * 0.58f, half.Y + half.Height * 0.56f),
+                new PointF(half.X + half.Width * 0.68f, half.Y + half.Height * 0.52f),
+                new PointF(half.X + half.Width * 0.75f, half.Y + half.Height * 0.45f),
+                new PointF(half.X + half.Width * 0.5f, half.Y + half.Height * 0.38f)
             };
             g.FillPolygon(ermineBrush, collar);
             g.DrawPolygon(thinPen, collar);
 
-            // Ermine spots
-            float spotSize = half.Width * 0.015f;
-            g.FillEllipse(ermineSpotBrush, half.X + half.Width * 0.4f, half.Y + half.Height * 0.47f, spotSize, spotSize * 2);
-            g.FillEllipse(ermineSpotBrush, half.X + half.Width * 0.5f, half.Y + half.Height * 0.5f, spotSize, spotSize * 2);
-            g.FillEllipse(ermineSpotBrush, half.X + half.Width * 0.6f, half.Y + half.Height * 0.47f, spotSize, spotSize * 2);
+            // Ermine spots (black tail tips)
+            using var spotBrush = new SolidBrush(Color.FromArgb(35, 25, 15));
+            float spotH = half.Width * 0.012f;
+            float spotW = spotH * 0.6f;
+            float[] spotXs = { 0.35f, 0.42f, 0.5f, 0.58f, 0.65f };
+            float[] spotYs = { 0.48f, 0.52f, 0.54f, 0.52f, 0.48f };
+            for (int i = 0; i < spotXs.Length; i++)
+            {
+                g.FillEllipse(spotBrush, half.X + half.Width * spotXs[i], half.Y + half.Height * spotYs[i], spotW, spotH * 2.5f);
+            }
+            // Second row
+            float[] spotXs2 = { 0.38f, 0.46f, 0.54f, 0.62f };
+            for (int i = 0; i < spotXs2.Length; i++)
+            {
+                g.FillEllipse(spotBrush, half.X + half.Width * spotXs2[i], half.Y + half.Height * 0.44f, spotW, spotH * 2.5f);
+            }
 
-            // Gold chain/medallion
-            using var goldBrush = new SolidBrush(gold);
-            using var goldPen = new Pen(gold, outlinePen.Width * 1.5f);
+            // Royal chain with medallion
+            using var chainPen = new Pen(gold, outlinePen.Width * 2f);
+            g.DrawArc(chainPen, half.X + half.Width * 0.35f, half.Y + half.Height * 0.48f,
+                      half.Width * 0.3f, half.Height * 0.16f, 0, 180);
+
+            // Chain links detail
+            using var linkPen = new Pen(darkGold, thinPen.Width);
+            for (float lx = half.X + half.Width * 0.38f; lx < half.X + half.Width * 0.62f; lx += half.Width * 0.04f)
+            {
+                float ly = half.Y + half.Height * 0.52f + (float)System.Math.Sin((lx - half.X) * 0.1f) * half.Height * 0.04f;
+                g.DrawEllipse(linkPen, lx, ly, half.Width * 0.025f, half.Height * 0.02f);
+            }
+
+            // Royal medallion on chain
+            using var medalGradient = new LinearGradientBrush(
+                new RectangleF(half.X + half.Width * 0.44f, half.Y + half.Height * 0.58f, half.Width * 0.12f, half.Width * 0.12f),
+                lightGold, gold, 135f);
             float medalX = half.X + half.Width * 0.5f;
-            float medalY = half.Y + half.Height * 0.58f;
-            float medalSize = half.Width * 0.08f;
-            g.DrawArc(goldPen, half.X + half.Width * 0.35f, half.Y + half.Height * 0.48f, 
-                      half.Width * 0.3f, half.Height * 0.15f, 0, 180);
-            g.FillEllipse(goldBrush, medalX - medalSize/2, medalY, medalSize, medalSize);
-            g.DrawEllipse(outlinePen, medalX - medalSize/2, medalY, medalSize, medalSize);
+            float medalY = half.Y + half.Height * 0.62f;
+            float medalSize = half.Width * 0.1f;
+            g.FillEllipse(medalGradient, medalX - medalSize / 2, medalY, medalSize, medalSize);
+            g.DrawEllipse(outlinePen, medalX - medalSize / 2, medalY, medalSize, medalSize);
 
-            // Head
-            float headW = half.Width * 0.22f;
-            float headH = half.Height * 0.3f;
-            RectangleF headRect = new RectangleF(half.X + half.Width * 0.5f - headW / 2, 
-                                                  half.Y + half.Height * 0.12f, headW, headH);
-            using var skinBrush = new SolidBrush(skinTone);
-            g.FillEllipse(skinBrush, headRect);
+            // Cross on medallion
+            using var crossPen = new Pen(color, thinPen.Width * 1.5f);
+            g.DrawLine(crossPen, medalX, medalY + medalSize * 0.2f, medalX, medalY + medalSize * 0.8f);
+            g.DrawLine(crossPen, medalX - medalSize * 0.3f, medalY + medalSize * 0.5f, medalX + medalSize * 0.3f, medalY + medalSize * 0.5f);
+
+            // Head with detailed shading
+            float headW = half.Width * 0.24f;
+            float headH = half.Height * 0.32f;
+            RectangleF headRect = new RectangleF(half.X + half.Width * 0.5f - headW / 2,
+                                                  half.Y + half.Height * 0.08f, headW, headH);
+
+            // Face with gradient
+            using var faceGradient = new LinearGradientBrush(headRect, skinTone, skinShadow, 130f);
+            g.FillEllipse(faceGradient, headRect);
             g.DrawEllipse(outlinePen, headRect);
 
-            // Beard
-            using var beardBrush = new SolidBrush(beardColor);
-            RectangleF beardRect = new RectangleF(headRect.X + headW * 0.15f, headRect.Y + headH * 0.5f,
-                                                   headW * 0.7f, headH * 0.6f);
-            g.FillEllipse(beardBrush, beardRect);
+            // Elaborate beard with gradient and texture
+            using var beardGradient = new LinearGradientBrush(
+                new RectangleF(headRect.X + headW * 0.1f, headRect.Y + headH * 0.45f, headW * 0.8f, headH * 0.7f),
+                beardHighlight, beardColor, 90f);
 
-            // Mustache
-            g.FillEllipse(beardBrush, headRect.X + headW * 0.1f, headRect.Y + headH * 0.45f, headW * 0.35f, headH * 0.2f);
-            g.FillEllipse(beardBrush, headRect.X + headW * 0.55f, headRect.Y + headH * 0.45f, headW * 0.35f, headH * 0.2f);
+            // Main beard shape
+            PointF[] beard = {
+                new PointF(headRect.X + headW * 0.15f, headRect.Y + headH * 0.5f),
+                new PointF(headRect.X + headW * 0.1f, headRect.Y + headH * 0.7f),
+                new PointF(headRect.X + headW * 0.2f, headRect.Y + headH * 0.9f),
+                new PointF(headRect.X + headW * 0.35f, headRect.Y + headH * 1.05f),
+                new PointF(headRect.X + headW * 0.5f, headRect.Y + headH * 1.1f),
+                new PointF(headRect.X + headW * 0.65f, headRect.Y + headH * 1.05f),
+                new PointF(headRect.X + headW * 0.8f, headRect.Y + headH * 0.9f),
+                new PointF(headRect.X + headW * 0.9f, headRect.Y + headH * 0.7f),
+                new PointF(headRect.X + headW * 0.85f, headRect.Y + headH * 0.5f)
+            };
+            g.FillPolygon(beardGradient, beard);
+            g.DrawPolygon(thinPen, beard);
 
-            // Eyes
-            float eyeSize = headW * 0.1f;
-            using var eyeBrush = new SolidBrush(Color.FromArgb(60, 40, 20));
-            g.FillEllipse(eyeBrush, headRect.X + headW * 0.25f, headRect.Y + headH * 0.3f, eyeSize, eyeSize * 0.6f);
-            g.FillEllipse(eyeBrush, headRect.X + headW * 0.65f, headRect.Y + headH * 0.3f, eyeSize, eyeSize * 0.6f);
+            // Beard texture (wavy lines)
+            using var beardTexturePen = new Pen(Color.FromArgb(60, 80, 55, 30), thinPen.Width * 0.5f);
+            for (int i = 0; i < 5; i++)
+            {
+                float bx = headRect.X + headW * (0.25f + i * 0.12f);
+                g.DrawBezier(beardTexturePen,
+                    new PointF(bx, headRect.Y + headH * 0.55f),
+                    new PointF(bx - headW * 0.03f, headRect.Y + headH * 0.7f),
+                    new PointF(bx + headW * 0.03f, headRect.Y + headH * 0.85f),
+                    new PointF(bx, headRect.Y + headH * 1.0f));
+            }
 
-            // Crown (elaborate royal crown)
-            float crownH = headH * 0.55f;
-            float crownW = headW * 1.4f;
-            float crownX = headRect.X - headW * 0.2f;
-            float crownY = headRect.Y - crownH * 0.5f;
+            // Mustache with detail
+            using var mustacheBrush = new SolidBrush(beardColor);
+            PointF[] leftMustache = {
+                new PointF(headRect.X + headW * 0.48f, headRect.Y + headH * 0.52f),
+                new PointF(headRect.X + headW * 0.3f, headRect.Y + headH * 0.48f),
+                new PointF(headRect.X + headW * 0.15f, headRect.Y + headH * 0.55f),
+                new PointF(headRect.X + headW * 0.2f, headRect.Y + headH * 0.6f),
+                new PointF(headRect.X + headW * 0.35f, headRect.Y + headH * 0.58f),
+                new PointF(headRect.X + headW * 0.48f, headRect.Y + headH * 0.6f)
+            };
+            g.FillPolygon(mustacheBrush, leftMustache);
 
-            // Crown base
-            RectangleF crownBase = new RectangleF(crownX, crownY + crownH * 0.6f, crownW, crownH * 0.4f);
-            g.FillRectangle(goldBrush, crownBase);
+            PointF[] rightMustache = {
+                new PointF(headRect.X + headW * 0.52f, headRect.Y + headH * 0.52f),
+                new PointF(headRect.X + headW * 0.7f, headRect.Y + headH * 0.48f),
+                new PointF(headRect.X + headW * 0.85f, headRect.Y + headH * 0.55f),
+                new PointF(headRect.X + headW * 0.8f, headRect.Y + headH * 0.6f),
+                new PointF(headRect.X + headW * 0.65f, headRect.Y + headH * 0.58f),
+                new PointF(headRect.X + headW * 0.52f, headRect.Y + headH * 0.6f)
+            };
+            g.FillPolygon(mustacheBrush, rightMustache);
+
+            // Detailed eyes
+            float eyeW = headW * 0.13f;
+            float eyeH = headH * 0.07f;
+            DrawKingEye(g, headRect.X + headW * 0.22f, headRect.Y + headH * 0.32f, eyeW, eyeH, thinPen);
+            DrawKingEye(g, headRect.X + headW * 0.65f, headRect.Y + headH * 0.32f, eyeW, eyeH, thinPen);
+
+            // Stern eyebrows
+            using var browPen = new Pen(beardColor, thinPen.Width * 1.5f);
+            g.DrawLine(browPen, headRect.X + headW * 0.18f, headRect.Y + headH * 0.28f, 
+                       headRect.X + headW * 0.38f, headRect.Y + headH * 0.25f);
+            g.DrawLine(browPen, headRect.X + headW * 0.62f, headRect.Y + headH * 0.25f, 
+                       headRect.X + headW * 0.82f, headRect.Y + headH * 0.28f);
+
+            // Nose
+            g.DrawBezier(thinPen,
+                new PointF(headRect.X + headW * 0.48f, headRect.Y + headH * 0.35f),
+                new PointF(headRect.X + headW * 0.5f, headRect.Y + headH * 0.42f),
+                new PointF(headRect.X + headW * 0.52f, headRect.Y + headH * 0.48f),
+                new PointF(headRect.X + headW * 0.5f, headRect.Y + headH * 0.5f));
+
+            // Elaborate royal crown with cross
+            float crownH = headH * 0.6f;
+            float crownW = headW * 1.5f;
+            float crownX = headRect.X - headW * 0.25f;
+            float crownY = headRect.Y - crownH * 0.45f;
+
+            // Crown base band
+            using var crownBaseGradient = new LinearGradientBrush(
+                new RectangleF(crownX, crownY + crownH * 0.55f, crownW, crownH * 0.45f),
+                lightGold, gold, 90f);
+            RectangleF crownBase = new RectangleF(crownX, crownY + crownH * 0.55f, crownW, crownH * 0.45f);
+            g.FillRectangle(crownBaseGradient, crownBase);
             g.DrawRectangle(outlinePen, crownBase.X, crownBase.Y, crownBase.Width, crownBase.Height);
 
-            // Crown points
-            PointF[] crownPts = {
-                new PointF(crownX, crownY + crownH * 0.6f),
-                new PointF(crownX + crownW * 0.1f, crownY + crownH * 0.2f),
-                new PointF(crownX + crownW * 0.2f, crownY + crownH * 0.5f),
-                new PointF(crownX + crownW * 0.3f, crownY),
-                new PointF(crownX + crownW * 0.4f, crownY + crownH * 0.4f),
-                new PointF(crownX + crownW * 0.5f, crownY - crownH * 0.1f),
-                new PointF(crownX + crownW * 0.6f, crownY + crownH * 0.4f),
-                new PointF(crownX + crownW * 0.7f, crownY),
-                new PointF(crownX + crownW * 0.8f, crownY + crownH * 0.5f),
-                new PointF(crownX + crownW * 0.9f, crownY + crownH * 0.2f),
-                new PointF(crownX + crownW, crownY + crownH * 0.6f)
+            // Velvet interior (visible above base)
+            using var velvetBrush = new SolidBrush(color);
+            RectangleF velvetRect = new RectangleF(crownX + crownW * 0.08f, crownY + crownH * 0.4f, 
+                                                    crownW * 0.84f, crownH * 0.2f);
+            g.FillRectangle(velvetBrush, velvetRect);
+
+            // Crown arches with gradient
+            using var archGradient = new LinearGradientBrush(
+                new RectangleF(crownX, crownY, crownW, crownH * 0.6f), lightGold, gold, 90f);
+
+            PointF[] crownArch = {
+                new PointF(crownX + crownW * 0.08f, crownY + crownH * 0.55f),
+                new PointF(crownX + crownW * 0.15f, crownY + crownH * 0.2f),
+                new PointF(crownX + crownW * 0.3f, crownY + crownH * 0.35f),
+                new PointF(crownX + crownW * 0.5f, crownY - crownH * 0.05f),
+                new PointF(crownX + crownW * 0.7f, crownY + crownH * 0.35f),
+                new PointF(crownX + crownW * 0.85f, crownY + crownH * 0.2f),
+                new PointF(crownX + crownW * 0.92f, crownY + crownH * 0.55f)
             };
-            g.FillPolygon(goldBrush, crownPts);
-            g.DrawPolygon(outlinePen, crownPts);
+            g.FillPolygon(archGradient, crownArch);
+            g.DrawPolygon(outlinePen, crownArch);
 
-            // Jewels on crown
-            float jewelSize = crownW * 0.07f;
-            using var jewelBrush = new SolidBrush(color);
-            using var rubyBrush = new SolidBrush(Color.FromArgb(220, 20, 60));
-            g.FillEllipse(rubyBrush, crownX + crownW * 0.5f - jewelSize/2, crownY - crownH * 0.1f - jewelSize * 0.3f, jewelSize, jewelSize);
-            g.FillEllipse(jewelBrush, crownX + crownW * 0.3f - jewelSize/2, crownY - jewelSize * 0.3f, jewelSize * 0.8f, jewelSize * 0.8f);
-            g.FillEllipse(jewelBrush, crownX + crownW * 0.7f - jewelSize/2, crownY - jewelSize * 0.3f, jewelSize * 0.8f, jewelSize * 0.8f);
+            // Fleur-de-lis points on crown
+            DrawFleurDeLis(g, crownX + crownW * 0.15f, crownY + crownH * 0.15f, crownW * 0.08f, gold, outlinePen);
+            DrawFleurDeLis(g, crownX + crownW * 0.5f, crownY - crownH * 0.1f, crownW * 0.1f, gold, outlinePen);
+            DrawFleurDeLis(g, crownX + crownW * 0.85f, crownY + crownH * 0.15f, crownW * 0.08f, gold, outlinePen);
 
-            // Cross on top of crown
-            float crossW = crownW * 0.06f;
-            float crossH = crownH * 0.25f;
-            float crossX = crownX + crownW * 0.5f - crossW / 2;
-            float crossY = crownY - crownH * 0.1f - crossH;
-            g.FillRectangle(goldBrush, crossX, crossY, crossW, crossH);
-            g.FillRectangle(goldBrush, crossX - crossW, crossY + crossH * 0.2f, crossW * 3, crossW);
+            // Cross on top (monde)
+            float crossX = crownX + crownW * 0.5f;
+            float crossY = crownY - crownH * 0.15f;
+            float crossSize = crownW * 0.08f;
 
-            // Sword (typical King attribute - behind shoulder)
-            float swordX = half.X + half.Width * 0.08f;
-            using var bladeBrush = new SolidBrush(Color.Silver);
-            using var handleBrush = new SolidBrush(darkGold);
+            // Orb
+            using var orbGradient = new LinearGradientBrush(
+                new RectangleF(crossX - crossSize * 0.7f, crossY - crossSize * 0.3f, crossSize * 1.4f, crossSize * 1.4f),
+                lightGold, gold, 135f);
+            g.FillEllipse(orbGradient, crossX - crossSize * 0.5f, crossY, crossSize, crossSize);
+            g.DrawEllipse(outlinePen, crossX - crossSize * 0.5f, crossY, crossSize, crossSize);
 
-            // Blade
-            PointF[] blade = {
-                new PointF(swordX + half.Width * 0.02f, half.Y + half.Height * 0.05f),
-                new PointF(swordX + half.Width * 0.05f, half.Y + half.Height * 0.05f),
-                new PointF(swordX + half.Width * 0.04f, half.Y + half.Height * 0.65f),
-                new PointF(swordX + half.Width * 0.03f, half.Y + half.Height * 0.65f)
-            };
-            g.FillPolygon(bladeBrush, blade);
-            g.DrawPolygon(thinPen, blade);
+            // Cross on orb
+            using var crossBrush = new SolidBrush(gold);
+            g.FillRectangle(crossBrush, crossX - crossSize * 0.08f, crossY - crossSize * 0.5f, crossSize * 0.16f, crossSize * 0.6f);
+            g.FillRectangle(crossBrush, crossX - crossSize * 0.25f, crossY - crossSize * 0.3f, crossSize * 0.5f, crossSize * 0.12f);
 
-            // Guard
-            g.FillRectangle(handleBrush, swordX - half.Width * 0.02f, half.Y + half.Height * 0.65f, 
-                            half.Width * 0.1f, half.Width * 0.02f);
+            // Crown jewels
+            float jewelSize = crownW * 0.055f;
+            using var rubyBrush = new SolidBrush(Color.FromArgb(180, 20, 40));
+            using var sapphireBrush = new SolidBrush(Color.FromArgb(30, 60, 150));
+            using var emeraldBrush = new SolidBrush(Color.FromArgb(30, 120, 60));
 
-            // Handle
-            g.FillRectangle(handleBrush, swordX + half.Width * 0.02f, half.Y + half.Height * 0.67f, 
-                            half.Width * 0.03f, half.Height * 0.15f);
+            // Band jewels
+            g.FillEllipse(rubyBrush, crownX + crownW * 0.2f, crownY + crownH * 0.65f, jewelSize, jewelSize);
+            g.FillEllipse(sapphireBrush, crownX + crownW * 0.4f, crownY + crownH * 0.65f, jewelSize, jewelSize);
+            g.FillEllipse(emeraldBrush, crownX + crownW * 0.5f - jewelSize / 2, crownY + crownH * 0.62f, jewelSize * 1.2f, jewelSize * 1.2f);
+            g.FillEllipse(sapphireBrush, crownX + crownW * 0.6f, crownY + crownH * 0.65f, jewelSize, jewelSize);
+            g.FillEllipse(rubyBrush, crownX + crownW * 0.8f - jewelSize, crownY + crownH * 0.65f, jewelSize, jewelSize);
 
-            // Pommel
-            g.FillEllipse(goldBrush, swordX + half.Width * 0.015f, half.Y + half.Height * 0.8f,
-                          half.Width * 0.04f, half.Width * 0.04f);
+            // Jewel highlights
+            using var jewelHighlight = new SolidBrush(Color.FromArgb(100, 255, 255, 255));
+            g.FillEllipse(jewelHighlight, crownX + crownW * 0.5f - jewelSize * 0.3f, crownY + crownH * 0.64f, jewelSize * 0.3f, jewelSize * 0.3f);
+
+            // Royal sword (behind shoulder)
+            DrawRoyalSword(g, half.X + half.Width * 0.06f, half.Y + half.Height * 0.02f, half.Width * 0.12f, half.Height * 0.95f, 
+                          gold, darkGold, outlinePen, thinPen);
 
             g.Restore(state);
+        }
+
+        private static void DrawKingEye(Graphics g, float x, float y, float w, float h, Pen thinPen)
+        {
+            using var whiteBrush = new SolidBrush(Color.FromArgb(250, 250, 250));
+            g.FillEllipse(whiteBrush, x, y, w, h);
+
+            using var irisBrush = new SolidBrush(Color.FromArgb(70, 55, 45));
+            g.FillEllipse(irisBrush, x + w * 0.28f, y + h * 0.1f, w * 0.45f, h * 0.8f);
+
+            using var pupilBrush = new SolidBrush(Color.Black);
+            g.FillEllipse(pupilBrush, x + w * 0.38f, y + h * 0.22f, w * 0.25f, h * 0.56f);
+
+            using var highlightBrush = new SolidBrush(Color.White);
+            g.FillEllipse(highlightBrush, x + w * 0.35f, y + h * 0.18f, w * 0.12f, h * 0.25f);
+
+            g.DrawEllipse(thinPen, x, y, w, h);
+        }
+
+        private static void DrawFleurDeLis(Graphics g, float x, float y, float size, Color gold, Pen outlinePen)
+        {
+            using var goldBrush = new SolidBrush(gold);
+
+            // Center petal
+            PointF[] center = {
+                new PointF(x, y + size),
+                new PointF(x - size * 0.15f, y + size * 0.3f),
+                new PointF(x, y - size * 0.2f),
+                new PointF(x + size * 0.15f, y + size * 0.3f)
+            };
+            g.FillPolygon(goldBrush, center);
+
+            // Left petal
+            PointF[] left = {
+                new PointF(x - size * 0.1f, y + size * 0.5f),
+                new PointF(x - size * 0.4f, y),
+                new PointF(x - size * 0.35f, y + size * 0.6f)
+            };
+            g.FillPolygon(goldBrush, left);
+
+            // Right petal
+            PointF[] right = {
+                new PointF(x + size * 0.1f, y + size * 0.5f),
+                new PointF(x + size * 0.4f, y),
+                new PointF(x + size * 0.35f, y + size * 0.6f)
+            };
+            g.FillPolygon(goldBrush, right);
+        }
+
+        private static void DrawRoyalSword(Graphics g, float x, float y, float w, float h, Color gold, Color darkGold, Pen outlinePen, Pen thinPen)
+        {
+            // Blade with gradient
+            using var bladeGradient = new LinearGradientBrush(
+                new RectangleF(x, y, w, h * 0.7f),
+                Color.FromArgb(230, 235, 240), Color.FromArgb(180, 185, 195), 0f);
+
+            PointF[] blade = {
+                new PointF(x + w * 0.35f, y),
+                new PointF(x + w * 0.65f, y),
+                new PointF(x + w * 0.6f, y + h * 0.65f),
+                new PointF(x + w * 0.4f, y + h * 0.65f)
+            };
+            g.FillPolygon(bladeGradient, blade);
+            g.DrawPolygon(outlinePen, blade);
+
+            // Blade center line (fuller)
+            using var fullerPen = new Pen(Color.FromArgb(60, 100, 100, 100), thinPen.Width);
+            g.DrawLine(fullerPen, x + w * 0.5f, y + h * 0.05f, x + w * 0.5f, y + h * 0.55f);
+
+            // Elaborate crossguard
+            using var guardGradient = new LinearGradientBrush(
+                new RectangleF(x - w * 0.3f, y + h * 0.63f, w * 1.6f, h * 0.06f),
+                Color.FromArgb(255, 223, 120), gold, 90f);
+            RectangleF guard = new RectangleF(x - w * 0.2f, y + h * 0.64f, w * 1.4f, h * 0.04f);
+            g.FillRectangle(guardGradient, guard);
+            g.DrawRectangle(outlinePen, guard.X, guard.Y, guard.Width, guard.Height);
+
+            // Guard ends (quillons)
+            using var goldBrush = new SolidBrush(gold);
+            g.FillEllipse(goldBrush, x - w * 0.3f, y + h * 0.635f, w * 0.15f, h * 0.05f);
+            g.FillEllipse(goldBrush, x + w * 1.15f, y + h * 0.635f, w * 0.15f, h * 0.05f);
+
+            // Handle (grip) with wire wrapping
+            using var gripGradient = new LinearGradientBrush(
+                new RectangleF(x + w * 0.35f, y + h * 0.68f, w * 0.3f, h * 0.2f),
+                darkGold, Color.FromArgb(120, 85, 30), 0f);
+            RectangleF grip = new RectangleF(x + w * 0.38f, y + h * 0.68f, w * 0.24f, h * 0.18f);
+            g.FillRectangle(gripGradient, grip);
+            g.DrawRectangle(outlinePen, grip.X, grip.Y, grip.Width, grip.Height);
+
+            // Wire wrapping
+            using var wirePen = new Pen(gold, thinPen.Width * 0.7f);
+            for (float wy = grip.Y + h * 0.02f; wy < grip.Bottom - h * 0.01f; wy += h * 0.025f)
+            {
+                g.DrawLine(wirePen, grip.X, wy, grip.Right, wy + h * 0.01f);
+            }
+
+            // Pommel
+            using var pommelGradient = new LinearGradientBrush(
+                new RectangleF(x + w * 0.3f, y + h * 0.85f, w * 0.4f, w * 0.4f),
+                Color.FromArgb(255, 223, 120), gold, 135f);
+            g.FillEllipse(pommelGradient, x + w * 0.32f, y + h * 0.86f, w * 0.36f, w * 0.36f);
+            g.DrawEllipse(outlinePen, x + w * 0.32f, y + h * 0.86f, w * 0.36f, w * 0.36f);
+
+            // Jewel in pommel
+            using var jewelBrush = new SolidBrush(Color.FromArgb(150, 20, 40));
+            float jewelSize = w * 0.12f;
+            g.FillEllipse(jewelBrush, x + w * 0.5f - jewelSize / 2, y + h * 0.88f, jewelSize, jewelSize);
         }
 
         private GraphicsPath RoundedRectangle(Rectangle r, int d)
