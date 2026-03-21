@@ -6,6 +6,6 @@
   <ItemGroup>
     <PackageVersion Include="IsExternalInit" Version="1.0.3" />
     <PackageVersion Include="MSTest" Version="4.1.0" />
-    <PackageVersion Include="Microsoft.Build" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Build" Version="18.4.0" />
   </ItemGroup>
 </Project>
