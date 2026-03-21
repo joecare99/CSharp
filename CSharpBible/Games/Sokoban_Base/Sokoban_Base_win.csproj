@@ -54,6 +54,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+	  <PackageVersion Update="IndexRange" Version="1.1.1" />
 	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
 	</ItemGroup>
 
