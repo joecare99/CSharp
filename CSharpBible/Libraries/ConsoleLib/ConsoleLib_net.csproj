@@ -19,7 +19,7 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
