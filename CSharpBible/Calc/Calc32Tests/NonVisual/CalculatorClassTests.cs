@@ -129,7 +129,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// <summary>
         /// Defines the test method ButtonTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("432", new int[] { 4, 3, 2 }, new int[] { 4, 43, 432 })]
         [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
         [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
@@ -147,7 +147,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// <summary>
         /// Defines the test method ButtonBack.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("4", 4, false, 0, "Calc32.NonVisual.CalculatorClass.Change(Accumulator,4=>0)\r\n")]
         [DataRow("431", 431, false, 0, "Calc32.NonVisual.CalculatorClass.Change(Accumulator,431=>0)\r\n")]
         [DataRow("4", 4, true, 0, "Calc32.NonVisual.CalculatorClass.Change(Accumulator,4=>0)\r\n")]
@@ -191,7 +191,7 @@ namespace CSharpBible.Calc32.NonVisual.Tests
         /// <summary>
         /// Defines the test method ButtonTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow("4+3", CalculatorClass.eOpMode.Plus, new int[] { 4, 3 }, 7, new string[] { @"Calc32.NonVisual.CalculatorClass.Change(OperationText,=>=)
 Calc32.NonVisual.CalculatorClass.Change(Accumulator,0=>4)
 Calc32.NonVisual.CalculatorClass.Change(OperationText,==>+)
