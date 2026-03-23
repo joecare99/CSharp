@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Core.Tests</name>
+  </assembly>
+  <members>
+    <member name="P:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsDateTimeData">
+      <summary>
+   Gets the test data2 ok x.
+   </summary>
+      <value>The test data2 ok x.</value>
+    </member>
+    <member name="P:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsSizeData">
+      <summary>
+   Gets the test data2 ok x.
+   </summary>
+      <value>The test data2 ok x.</value>
+    </member>
+    <member name="M:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsTimeStampLTest(System.String,System.Object,System.Int64)">
+      <summary>As TimeStamp-L test.</summary>
+      <param name="name">The name.</param>
+      <param name="o">The o.</param>
+      <param name="lExp">The l exp.</param>
+    </member>
+    <member name="M:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsTimeStampLTest1(System.String,System.Object,System.Int64)">
+      <summary>As TimeStamp-L test.</summary>
+      <param name="name">The name.</param>
+      <param name="o">The o.</param>
+      <param name="lExp">The l exp.</param>
+    </member>
+    <member name="M:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsUInt64Test(System.String,System.Object,System.UInt64)">
+      <summary>As UInt64 test.</summary>
+      <param name="name">The name.</param>
+      <param name="o">The o.</param>
+      <param name="ulExp">The ul exp.</param>
+    </member>
+    <member name="M:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsUInt32Test(System.String,System.Object,System.UInt32)">
+      <summary>As Uint32 test.</summary>
+      <param name="name">The name.</param>
+      <param name="o">The o.</param>
+      <param name="ulExp">The ul exp.</param>
+    </member>
+    <member name="M:JCAMS.Core.Extensions.Tests.SAsNumericXtntnTests.AsUInt32Test1(System.String,System.Object,System.UInt32)">
+      <summary>As UInt32 test 1.</summary>
+      <param name="name">The name.</param>
+      <param name="o">The o.</param>
+      <param name="ulExp">The ul exp.</param>
+    </member>
+  </members>
+</doc>
