@@ -36,4 +36,9 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+  </ItemGroup>
+
 </Project>

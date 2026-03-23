@@ -24,4 +24,7 @@
 	  <ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	  <ProjectReference Include="..\Asteroids_Base\Asteroids_Base.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+	</ItemGroup>
 </Project>

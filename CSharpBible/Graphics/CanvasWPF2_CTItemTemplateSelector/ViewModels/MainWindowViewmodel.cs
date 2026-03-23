@@ -119,7 +119,7 @@ namespace CanvasWPF2_CTItemTemplateSelector.ViewModel
 		private void CreateRectangle()
 		{
             lock (Shapes)
-				Shapes.Add(new ShapeData(_rnd.Next(0, 600), _rnd.Next(0, 400)) { Dx = _rnd.NextDouble() * 40 - 20, Dy = _rnd.NextDouble() * 40 - 20, SType = 0, MouseHover = Shape_MouseHover });
+				Shapes.Add(new ShapeData(_rnd.Next(0, 600), _rnd.Next(0, 400)) { Dx = _rnd.NextDouble() * 40 - 20, Dy = _rnd.NextDouble() * 40 - 20, SType = 0, MouseHover = new DelegateCommand<object>(Shape_MouseHover) });
 		}
 
 		private void CreateCircle()

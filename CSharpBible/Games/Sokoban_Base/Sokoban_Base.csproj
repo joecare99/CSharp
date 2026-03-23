@@ -47,8 +47,8 @@
 
 	<ItemGroup>
 		<Folder Include="Resources\" />
-    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple"  />
-    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange"  />
+    <PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
+    <PackageReference Condition="'$(TargetFramework.StartsWith(net4))'" Include="IndexRange" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -57,6 +57,11 @@
 	    <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
 	    <CustomToolNamespace>Sokoban.Properties</CustomToolNamespace>
 	  </Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="IndexRange" Version="1.1.1" />
+	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
 	</ItemGroup>
 
 

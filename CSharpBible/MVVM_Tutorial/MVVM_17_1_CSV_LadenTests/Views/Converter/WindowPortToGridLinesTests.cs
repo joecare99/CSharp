@@ -54,7 +54,8 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void GetAdjustedRectTest()
     {
-        var r2 = testVC.GetAdjustedRect(wp);
+        if (!wp.HasValue) return;
+        var r2 = testVC.GetAdjustedRect(wp.Value);
         System.Drawing.RectangleF rExp = new(-20, -10, 40, 20);
         Assert.AreEqual(rExp, r2);
     }

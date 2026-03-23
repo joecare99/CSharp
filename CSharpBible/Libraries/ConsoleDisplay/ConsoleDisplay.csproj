@@ -19,10 +19,10 @@
 	  <Compile Remove="View\MyConsoleBase.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.1" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.0" />
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.2" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.1" />
 		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3" />
-		<PackageReference Include="System.Text.Json" Version="10.0.2" />
+		<PackageReference Include="System.Text.Json" Version="10.0.5" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />

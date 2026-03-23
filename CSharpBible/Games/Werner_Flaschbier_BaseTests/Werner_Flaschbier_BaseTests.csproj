@@ -15,16 +15,22 @@
   <ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="MSTest" />
-		<PackageReference Include="coverlet.collector" >
+		<PackageReference Include="coverlet.collector">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="NSubstitute"  />
+		<PackageReference Include="NSubstitute" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
 		<ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="coverlet.collector" Version="8.0.1" />
+	  <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+	  <PackageVersion Update="MSTest" Version="4.1.0" />
 	</ItemGroup>
 
 </Project>

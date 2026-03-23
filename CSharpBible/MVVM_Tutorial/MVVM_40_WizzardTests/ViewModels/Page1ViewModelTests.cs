@@ -24,6 +24,7 @@ using MVVM_40_Wizzard.Properties;
 using MVVM_40_Wizzard.Models.Interfaces;
 using static BaseLib.Helper.TestHelper;
 using System.Globalization;
+using CommunityToolkit.Mvvm.Messaging;
 
 /// <summary>
 /// The Tests namespace.
@@ -40,6 +41,7 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
 {
     private const string csMainSel = "MainSelection{0}";
     private IWizzardModel? _model;
+    private IMessenger? _messenger;
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     private CultureInfo _cc;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
@@ -54,6 +56,7 @@ public class Page1ViewModelTests:BaseTestViewModel<Page1ViewModel>
         IoC.GetReqSrv=(t)=>t switch
         {
             Type _t when _t == typeof(IWizzardModel) => _model ??= Substitute.For<IWizzardModel>(),
+            Type _t when _t == typeof(IMessenger) => _messenger ??= Substitute.For<IMessenger>(),
             _ => throw new NotImplementedException($"No setup for type {t} in IoC")
         };
         base.Init();

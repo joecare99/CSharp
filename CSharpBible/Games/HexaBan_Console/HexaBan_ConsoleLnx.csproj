@@ -16,5 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\HexaBan\HexaBan.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+  </ItemGroup>
 
 </Project>
