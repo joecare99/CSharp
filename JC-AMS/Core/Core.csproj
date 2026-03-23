@@ -1,0 +1,44 @@
+﻿<Project>
+	<Import Project="..\JC-AMS.props" />
+	<PropertyGroup>
+		<RootNamespace>JCAMS</RootNamespace>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Core\Logging\CProtocol.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resource.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Data.SqlClient" />
+		<PackageReference Include="System.IO.Ports" />
+		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" />
+		<PackageReference Include="System.Management" />
+		<PackageReference Include="System.Text.RegularExpressions"  />
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Resource\" />
+	</ItemGroup>
+	<Target Condition="'$(TargetFramework)'=='net8.0-windows'" Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="svn up --accept p -q&#xD;&#xA;echo ---&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;echo ===&#xD;&#xA;set errorlevel=" />
+	</Target>
+</Project>
