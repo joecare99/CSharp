@@ -22,9 +22,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="IsExternalInit" Version="1.0.3" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />

@@ -24,5 +24,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+	</ItemGroup>
 
 </Project>

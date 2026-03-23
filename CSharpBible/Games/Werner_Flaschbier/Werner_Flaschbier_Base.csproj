@@ -37,4 +37,9 @@
 			<LastGenOutput>Resource1.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
+	</ItemGroup>
 </Project>

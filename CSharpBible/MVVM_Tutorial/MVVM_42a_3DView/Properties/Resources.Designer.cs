@@ -75,10 +75,10 @@ namespace MVVM_42a_3DView.Properties {
         ///      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
         ///      xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot; 
         ///      xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot; 
-        ///      xmlns:local=&quot;clr-namespace:MVVM_42_3DView.Views&quot;
-        ///      xmlns:p=&quot;clr-namespace:MVVM_42_3DView.Properties&quot;
-        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_42_3DView.ViewModels&quot;
-        ///      xmlns:i=&quot;http://schemas.microsoft.com/xaml/ [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///      xmlns:local=&quot;clr-namespace:MVVM_42a_3DView.Views&quot;
+        ///      xmlns:p=&quot;clr-namespace:MVVM_42a_3DView.Properties&quot;
+        ///      xmlns:mvvm=&quot;clr-namespace:MVVM_42a_3DView.ViewModels&quot;
+        ///      xmlns:i=&quot;http://schemas.microsoft.com/xa [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ThreeDView {
             get {
@@ -88,7 +88,7 @@ namespace MVVM_42a_3DView.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die // ***********************************************************************
-        ///// Assembly         : MVVM_42_3DView
+        ///// Assembly         : MVVM_42a_3DView
         ///// Author           : Mir
         ///// Created          : 03-09-2025
         /////
@@ -99,7 +99,7 @@ namespace MVVM_42a_3DView.Properties {
         /////     Copyright � JC-Soft 2025
         ///// &lt;/copyright&gt;
         ///// &lt;summary&gt;&lt;/summary&gt;
-        ///// *********************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///// ********************************************************** [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ThreeDViewModel {
             get {

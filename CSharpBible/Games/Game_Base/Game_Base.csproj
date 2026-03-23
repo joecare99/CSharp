@@ -15,11 +15,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple"  />
+		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
 	</ItemGroup>
 
 </Project>

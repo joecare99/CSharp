@@ -126,6 +126,7 @@ public class TileService : ITileService
         if (_emptyTile is not null)
         {
             return _emptyTile;
+
         }
 
         EnsureLoaded();

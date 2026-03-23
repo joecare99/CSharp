@@ -16,6 +16,7 @@ public partial class DriveBasic
         private readonly Dictionary<string, CompilerVariable> _variablesByName = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, CompilerLabel> _labelsByName = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, int> _messageNumbers = new(StringComparer.OrdinalIgnoreCase);
+        private readonly List<string> _messagesList = new();
         private readonly Dictionary<EVarType, int> _varMax = new();
         private int _maxMessage;
 
@@ -43,6 +44,7 @@ public partial class DriveBasic
             _variablesByName.Clear();
             _labelsByName.Clear();
             _messageNumbers.Clear();
+            _messagesList.Clear();
             foreach (EVarType type in Enum.GetValues(typeof(EVarType)))
             {
                 _varMax[type] = 0;
@@ -66,28 +68,16 @@ public partial class DriveBasic
             if (_parent.Labels == null)
             {
                 AppendLog(-1, StrLeeresLabelArray);
-                _parent.Labels = new List<ILabel>();
-            }
-            else
-            {
-                _parent.Labels.Clear();
             }
 
             if (_parent.Messages == null)
             {
                 AppendLog(-1, StrLeeresMessageArray);
-                _parent.Messages = new List<string>();
-            }
-            else
-            {
-                //??
-                _parent.Messages.Clear();
             }
 
             if (_parent.Variables == null)
             {
                 AppendLog(-1, StrKeinSystemVariab);
-                _parent.Variables = new List<IVariable>();
             }
 
             ResetStateForCompile();
@@ -139,6 +129,14 @@ public partial class DriveBasic
                     BuildCommand(parseTree, _parent.TokenCode, 0, lineIndex - 1, out _);
                 }
             }
+
+            _parent.Labels = [.. _labelsByName.Values];
+            
+            var vars = new List<IVariable>(_variablesByName.Values);
+            vars.Sort((a, b) => a.Index.CompareTo(b.Index));
+            _parent.Variables = vars;
+
+            _parent.Messages = [.. _messagesList];
 
             return true;
         }
