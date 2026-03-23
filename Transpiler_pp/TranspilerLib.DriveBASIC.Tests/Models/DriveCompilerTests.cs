@@ -661,7 +661,9 @@ public class DriveCompilerTests
         var method = typeof(DriveBasic).GetMethod("BuildCommand", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             ?? throw new InvalidOperationException("BuildCommand method not found.");
 
-        var arguments = new object?[] { parseTree, tokenBuffer, level, pc, string.Empty };
+        var treeArg = parseTree is string ? new List<KeyValuePair<string, object?>>() : parseTree;
+
+        var arguments = new object?[] { treeArg, tokenBuffer, level, pc, string.Empty };
         var result = method.Invoke(FCompiler, arguments);
         errorText = arguments[4] as string ?? string.Empty;
         return result?.ToString() ?? string.Empty;
