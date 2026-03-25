@@ -1,5 +1,6 @@
-using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Windows.Media;
 
 namespace Trnsp.Show.Lfm.Models.Components;
 
@@ -24,6 +25,7 @@ public partial class TBitBtn : TButton
     private int _numGlyphs = 1;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EffectiveImageIndex))]
     private int _imageIndex = -1;
 
     /// <summary>
@@ -45,9 +47,9 @@ public partial class TBitBtn : TButton
     /// Gets the effective image index, considering linked action.
     /// </summary>
     public int EffectiveImageIndex =>
-        _imageIndexExplicitlySet || LinkedAction == null
+        _imageIndexExplicitlySet || LinkedAction == null || !LinkedAction.TryGetTarget(out var t)
             ? ImageIndex
-            : (LinkedAction.ImageIndex >= 0 ? LinkedAction.ImageIndex : ImageIndex);
+            : (t.ImageIndex >= 0 ? t.ImageIndex : ImageIndex);
 
     public TBitBtn()
     {
@@ -84,20 +86,17 @@ public partial class TBitBtn : TButton
         }
     }
 
-    protected override void OnActionLinked()
+    protected override void OnActionChanged(TAction? reference)
     {
-        base.OnActionLinked();
+        base.OnActionChanged(reference);
 
-        if (LinkedAction == null) return;
+        if (reference == null) return;
 
         // Inherit ImageIndex if not explicitly set
-        if (!_imageIndexExplicitlySet && LinkedAction.ImageIndex >= 0)
+        if (!_imageIndexExplicitlySet && reference.ImageIndex >= 0)
         {
-            ImageIndex = LinkedAction.ImageIndex;
+            ImageIndex = reference.ImageIndex;
         }
-
-        OnPropertyChanged(nameof(EffectiveImageIndex));
-        OnPropertyChanged(nameof(EffectiveCaption));
     }
 
     private static BitBtnKind ParseKind(string? value) => value?.ToLower() switch

@@ -1,6 +1,5 @@
 <Project>
 	<Import Project="..\Games_net.props" />
-	<Import Project="..\Packages.props" />
 	<PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
@@ -22,5 +21,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\MathLibrary\MathLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
   </ItemGroup>
 </Project>

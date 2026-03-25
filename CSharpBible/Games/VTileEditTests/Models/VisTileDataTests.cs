@@ -6,15 +6,53 @@ using System.IO;
 using System.Diagnostics;
 using static BaseLib.Helper.TestHelper;
 using System.IO.Compression;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace VTileEdit.Models.Tests
 {
+
     [TestClass()]
     public class VisTileDataTests
     {
-        private const string csExp0CodeC = "H4sIAAAAAAACCqxXwW7bRhC9G/A/bAgUkGxZpIW0h1hyrUhM0MJGi8qODrIg0NRKJkByhV1KNmsY8KGHosghbWyn195awEB88KnoSZ/CL+lwl5S4lEg7SgiBXO68NzM7MztaqurG513ra6qK6oxh58T2UXy9QC3i4NeGg3svDYYFaOydEopQAnRgUS5qUGx4uJ8Uadtb8Ktola9DBEftG8xDB6RvDSzAvvQTCmTRD+6CArTxZS6uq2qSkU+t4amHBpaNa8qbQ3g08aBsMgWZxBkZrl9Tvm9stcjAU3Y5KbwaM17BLKJIXkZ120Z8miGKGaYT3C8LQ+rMklBSZWPHMai/W1Xj0Zdd3ZhZ7hC1fOZhZyd+bRCXEVigxUa24ZffWPhsR4aWm9Q4g1eYDv1JOCpeD08xCmnIhZJgI8PE5QinysCqMfbIELuYhgVBTKSCYEaKPeEusCxjDdtgDMUpEXPfOSMbO9iFEHvgS5VhjEyKBzUlwl2ET3apgMEFnwBs2IxkEtbXRuMT2zKRmbQMNRiNxBa4WF8LayDlcDwVRsgDOOrjgeVankVcxDwKMU3QVJk3otYEwgRFY/SJC9tPEDrdThf1JpHxlkdRDXUEI7w6e0r4ULolUKo7I8+XZLWt2pZSQnsKPGsC1LSoJ2GC66vg+iG4voMBx/KJOz53JThtw7Zlm8HN++DmFgn87fvg9vfg9g8YRDYw8yzXCNctm3r7bnq/V+QsFLz9K/xd/Sc4P0I1YirB1enH6cdjjj7u9VSBa3nExRKsO72f3nc4rPfsWS+KhYsdv3c0ku1/+AXsz6DHSehP4caU9RKyXGvzTF5Wd296H9z+y7FqCruPB7JWNbj5G35Ll3VAJrMaiSO9uRH8+o+I882fwc274MNve8mINaFeMuqhCQXmZ+X6ISfXvaMU6y5dIQ/LWO0s1kMe66j9ZGN3CVrzycaSrKPmSsbaK1pb4D1pq/X01ZKmr5Y1fcW06avlTV8xcfqKmdNXTV1E7PK/pqf1e5PYhLJPaPInvocTLb7B+akWr51r2tL+rp1/oy/r6dr581fL+jYo0kto2b1S5/cKn6mIcU4nB8OvljftmUvpNq2db3MbdW1+365ntepH0elu/ShB7tmPwlNtW17WQptOxSPVkudpSvVjKU9Sz5Ul7WxOtqiZTcoWtXNYOTI9m5UtauewcmTNHFqOrJ3HS+31nJ3+GkeHztTxrpy95/ncyKCGww/MNSWkKrtxzyhXVS5Moin2xtRlu4X4DIhsy8WshArRCT06OvN2gQZDWkLLBCdDWgSuaEpFMBTrTZhadkTnnUocgskEU2r1MVp0ZdGHHONh4KIzbEF3x863fO1FYetinpnPNQOfXGPbgwYKqTFgtDNXLURlrhcA4FCdUsPXxadEIXnGLgnvZsWQoJtxh3bhA+hJziXtlvexO/RO0YbkTUfrRoJuwl/x1xCuLPz+yHJY/GPMHY7ZAzBfmBgUWUDVduBRRZ/iCTA2N4tzfQsh6Fhd0PwSnDwklXDV3JOCcLdjoa8iz+OVFaVUhHUY6YvmL+NgR5UXV0vxxQl8cRWKqLbL51rWzzgKfzgsPC9VQtWX/wMAAP//AwByNfB7/RAAAA==";
-        private const string csExp1CodeC = "H4sIAAAAAAACCqxVXW/TMBR9n7T/cBWESLcuSbuNAWsKWxkTCMRDJ15KNbmp21lK4spOu4Wx/86NHXfx6iIQWJGSnPt1rnNyHYZ7/7Z2d8IQzqSk2SQtwaw3MOQZvSQZvT4nkmqnZXHDBUDD6QsTyjQQlBR02jRFnQO8ulH3uPJQXp+JLOALn7IZQ9/zspHANn3NNxLA3v9ZKlcv4YtSsPlNATOW0tj7doW393QWJNKDhGcLkpex92lwMOSzwuuroGoN1nF+0oLaHsBZmoKCJQgqqVjRaaALhetKOklPLrOMiLLfC83T/+1uKVk+h2EpC5qdmtcBzyXHBplcpKQMvjF6e2q7Bu8FucVXhCs+DaL69eqGQhUGOUpCLkhCg9ovtB17ZFnwOc2pqATBEwjRsA4yTBQFua3YICVSgvkkGvuYLVKa0Ry3uEAuPUkpJILOYq/2u6/u8sHDghuc0Jmkkm8N2N1ZLCcpSyBpVkYN1k/6F7jf3ak08ISwgaodKtAdpnTGclYwnoMsBO5pIyy04xaCrXCbUDRkynP8/XTAaDwaw/WqLj4sBMQw0hHVGr3zALxxG1NeR5GF/7w2eMfCnz0zeNfCw+8GP7TwFy8MfmTn/2nwYwvvPRj8pYV/Dw1+YuH3fYO/svD4wOCvLbzdrvGO3e9BbHC73/19g3e34Idb8KMtuN1vvK5b9ztWWv4zgSQ85UL+hSomZUEbmhio+CeaiO6iE4ckorujDw5FoPfAIYjo7uzCoQf0vnDIoQEfu5O8dMMnbviVO/drJ9yJ3HDHDXfdsLvLjrvLzrEbtiTwGwFc0np4PRkTwXYpKGxBBMnU4I29KtTrGykFvVAZm96CFkuRy75vZgmkLKeyDX496esRrFQEs7log8swmYsWxmqttrCQydso5Rr1SsB6mPIVFYJNKWxS2eTwm+LVxtWz0L/Il9lb1XtL17p//Cb/WgaP7mVa4H+Fn4bg0+ljam0KVF50QEJnQpDyQh9JfnNWtzW7tRga4Yn5cXM8SP+IXLNu8Jnm8+IG9iw2o2hcG8YNvnpiVJ1V59g2wnqQPBI20TMs76+IAIah0SneevA3TDBif7/1mG9jC0ZsjJnPkeQV71ZdKya+pjti8LxmbjprWZ+i0mGdr8YfzGbXyjNqab2Z4MnttyDuK2zIftB6+6tHv9vuVKkffgEAAP//AwAjWdJIRQsAAA==";
-        private const string csExp2CodeC = "H4sIAAAAAAACCqxX/26bSBD+P1LeYYV0EqQ2+KzeVWqw7xLHqXpq0kpE9R+ugzZ47aDjh7WL3XAh79Rn6JN1dhccFgxH1KJI4J3vm/l2mJ0MlnXyc9fxkWWhM8ZIeBekqLjeIicOyTscEvccMyJB2+Q+pgiVQFc+FaYJJTghy7Jp8Hsf/oaD4R8cIVAfMEvQVbz0Vz5gz9OSA9X0Mao5QCe/5hK+bC/epNRf3ydo5QdkpH2+gdsFWZke05AXhxscpSPtn0nfiVeJNhYkfk32PN0zUG430VkQILHMECWM0B1ZmjKQtY8kndhsG4aYpmPbKp5+7e62zI/WyElZQsLT4uckjlgMG/TZJsCp+dknX09VqHlB8Vf4CctcT0mo/HlzTxCnoQhKgm2wR8wcZ6lAG2+TeE0iQnlBxB6ywLAnFUqEBNYUbBJgxlDxSuTa+3ATkJBEkOIEtNiMEORRshppOe6R39mTBgFrmgCMAxY3Eo6PNtu7wPeQV44MNZg/ySPweHzEa6AiuFjiGUoAjpZk5Ud+4scRYgmFnJZolsrbUH8HaYKiwcs4guMnCfPFfIHcXR7cSSgaoblk8Gv+t8Zv2qIHTqfhJkkV29zNFloPwUPmLiRohoNAwZjIRAIDd1NiLoM4pvUgHGSPRmMJuiAs8SPMN6dAM93IBFR3XUNCP0GlkYpD+/s3Q8DGbuaWYR93hHLfCty6vf0i0F9c15JoJ4kjooB6/X5PgDLXzUqg91HNX9Om3StM/yXLLkl0r9VtFyhXRc06oa5nnUI63YQ53ZQ5HaXVorpF1KyEm3ZCXU+rQd0iaBk26wa7nnWL6nQU53RU53SVVwGWqr6fZeWqr9TJ/x+PCkH//q1gZLe3qmvnpa6dquuxPCxZ1rcVz9OXes4JC9Huu/VQLw5iyl7QOO/ShJTa5kTwK21z8DB4c7BnDh5evznUJwcPw7ODvREMly39cG+u9cCK5UDbGzz8OT3Y6sBw2dLeVK31lqbsUWljqmXWzGk2Oc2kZtOshdVimzazmk2zFlaLzWmhtdhmbbyqUSmISvoPFksbpvImDvNbMO60A185zy2n+R3Jh7XKWGQ2n2uxtsEUh2LQHGmcqo2LvmDaljCW0ZQkWxqxsV7MTijwI8J6SM8n23zkFC0Brda0hw4Z7tbUAK5sPAYEKvyWQh0abUU3ksNjDAmi/pKgupS6hpbgPHH57KdPo234l9i7IWM9Pr+gnw0DnyrbIIEmCa8Gw9Pps2tpMoVfAICgM0pxOpUjuF6eTXtS3b4YSnSv6MIRfDh0EleOa34g0Tq5RyeKmvlgkRsWJb2y/fOd8bm9SbD8r/AsuGCvILy+wxT5QB2cws1GL1ECjFevjGd/tRTM/QV4PgeRN/GQ71oo0aXcuY9+y5UXOzOUV8HrMPeXrz8Vyc4rr6gW4+0dfKnoBhqNxZrj/0fy9PNH/XVvyF0//QAAAP//AwBpvTAoNRAAAA==";
+        public static IEnumerable<object[]> TestData()
+        {
+            foreach (var item in Directory.EnumerateDirectories(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources")))
+            {
+                if (File.Exists(Path.Combine(item, Path.GetFileName(item) + ".inf")))
+                {
+                    var name = Path.GetFileName(item);
+                    var nr = int.Parse(File.ReadAllText(Path.Combine(item, Path.GetFileName(item) + ".inf")));
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Text, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdt") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdb")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Binary, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdb") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdx")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Xml, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdx") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_Expected.tdj")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Json, Path.Combine(item, Path.GetFileName(item) + "_Expected.tdj") };
+                    }
+                    if (File.Exists(Path.Combine(item, Path.GetFileName(item) + "_TileDef_Expected.cs")))
+                    {
+                        yield return new object[] { name, nr, EStreamType.Code, Path.Combine(item, Path.GetFileName(item) + "_TileDef_Expected.cs") };
+                    }
+                }
+            }
+        }
+
+
+
+
+        private const string csExp0CodeC = "H4sIAAAAAAACCqxXQW/bNhS+B8h/YAUMsBPHUoxuh8XO4tpq0SHBhjmpD45hKDLtEJBEg5SdaEGAHHYYhh66NUl33W0DAjSHnIad/FP0S/ZESrYkW0rqVhAkiu/73nvke3wiVXXj8671NVVFdc6xfWJ5KLq+RS1q41eGjXsvDI4laOyeUoZQDHRAmBA1GDZc3I+LtO0tuCta5esAIVD7BnfRAe2TAQHsCy+mICn6wVlQgDa+zCV0VU068hgZnrpoQCxcU94cwquJB2WTK8ik9shwvJryfWOrRQeusitIwdWY8QpmEYXyMqpbFhLdHDHMMZvgflkaUmeWpJIqH9u2wbzdqhq1vuzoxpw4Q9TyuIvtneizQR1OYYCEjyzDK78h+GwnCS03mXEGn9Ad+BNzVH4enmIU0JADKcFHhonLIU5NAqvG2KVD7GAWJAQ1kQqCGSnyRLjAs4w1LINzFIVE9r22Rxa2sQNT7IIvVY4xMhke1JQQdxG8+aUCBhd8ArBhcZpJWF8bjU8sYiIzbhlyMGzJJXCxvhbkQMrhqCuYIRfgqI8HxCEuoQ7iLoM5jdHUJG/EyASmCZLG6FMHlp8kdLqdLupNQuMtl6Ea6khGcHX2lOCldEugVLdHrpeQ1bZqW0oJ7SnwrklQkzA3gfGvr/zrB//6DhoCKzruRN+V5LQNy0ra9G/e+ze3SOJv3/u3v/u3f0AjtIG5SxwjGHfS1Nt30/u9omAh/+1fwX31n+T8CNmIWQKuTj9OPx4L9HGvp0pcy6UOTsC60/vpfUfAes+e9cK5cLDt9Y5GSfsffgH7M+hxHPpTsDCTeildrrV5lhxWd29679/+K7BqCruPB0mtqn/zN9xLh3VAJ7MciWZ6c8P/9R85zzd/+jfv/A+/7cVnrAn5kpEPTUgwLyvWDzmx7h2lWHfpDHlYxmpnsR7yWEftJxu7i9GaTzYWZx01VzLWXtHaAu9JS62nrxY0fbWo6SuGTV8tbvqKgdNXjJy+auhCYlf8mp5W701qUcY/ocifeC6OlfiG4KdKvHauaUvru3b+jb6spmvnz18uq9ugSC+hZc9KXTwroqci2zmVHAy/XF60Zy6ly7R2vi1s1LX5c7ueVaofRaer9aOEZM1+FJ4q28lhLZTp1HykSvI8TKl6nIhTouYmJe1sTraomU3KFrVzWDkyPZuVLWrnsHJkzRxajqydx0ut9ZyV/gqHm87U9q6cveZF38hghi02zDUloCq7Uc0oV1UhjKMZdsfM4buFaA+ILOJgXkKFcIcebp1FuUCDISuhZYKTISsCVxalIhiK9MZMLduii0olN8F0ghkjfYwWXVn0Icd4MHHhHragO2P7OzH2orR1MY/M55qBI9fYcqGAQmgMaO3MVUtRWegFADhUZ8zwdHmUKMT32CXp3SwZYnQzqtAOHICe5FzcbnkfO0P3FG0kvOlo3VDQjfkrfw3ByILzR5bD8o8xdzhiD8B8YWIwRICq7cCrij7FE2Bsbhbn+hamoEO6oPkFOHlIK8GohScF6W6HoK9Cz6ORFROhCPIw1Bf2X0aTHWZelC1FOHqdwJkLGrVd0dsiP+MwAEGz8LyEKoH2y/8BAAD//wMALEzPuwARAAA=";
+        private const string csExp1CodeC = "H4sIAAAAAAACCqxVbW/TOhT+Pmn/4SgI0W5dkpaNwV1T2MouAoHuh058KdXkpm5nKYkrO+0Wxv77PbbjLl5dBAIrUpzH5+U59pPjKDr4s7G/F0VwLiXNp1kFdvwDI57TDySn1xdEUmO0Km+4AGgYfWFCLw0FJSWdNZfi7hE+vbh3oiy01WciS/jCZ2zO0PaiagRwl/4rtgLAwd8ZOlY/5ctKsMVNCXOW0ST4eoWv93QepjKAlOdLUlRJ8Gl4NOLzMhhoJzWGG79W2oZ6PYTzLAMNSxBUUrGms9AkijaZTJC+XOU5EdWgH9nZ361uJVmxgFElS5qf2c8hLyTHAplcZqQKvzJ6e+aahu8FucVPhBWfBlHzeXVDQblBgZKQS5LSsLaLXMM+WZV8QQsqlCB4ChEubJwsE01B7ko2zIiUYI/EYB/zZUZzWuAWl8ilLymFVNB5EtR29+otHwJMuMUJjUkm+U6H/b3lapqxFNJmZtRgPTO/wP3+ntLAE8IWUjtUojnM6JwVrGS8AFkK3NOGW+T6LQVb4zahaMiMF/j7GYfxZDyB63WdfFQKSGBsPNQYvwsAgkkHQ17HsYP/uLZ418GfPbN4z8GjbxZ/6eAvXlj82I3/w+InDt5/sPgrB/8WWfzUwe8HFn/t4MmRxd84eKdT41233qPE4m69h4cW7+3AX+7Aj3fgbr3JJm9d70Rr+dcEkvKMC/kbqphWJW1oYqj9n2givotPPZKI747/9SgCrYceQcR355cePaD1pUcODfjEH+SVHz71w6/9sd944W7sh7t+uOeH/VV2/VV2T/ywI4GfCOADrZvXkzYR7paCxpZEkFw33iRQrsHASinsR3qxaS1ouRKFHLRsL4GMFVR2oFV3+roFaxXBfCE64FuYLkQbfY1W25jIxm2k8rV6LWDTTPmaCsFmFLapbHP4SXK1cXUvbF0Wq/ytrr1tct0/nsmfpsGre5WV+F/h0RCcnT2GNkuhjosGSOhcCFJdmiup1ezVHcNuI4aGe2p/3AIv0l8i18wbfqbForyBA4fNOJ7UC5MGX9MxVGXqHttF2DSSR8LWe47pW2sigKFrfIavPvwOE/Q4PGw/xtvagjGbYOQLJHnFe6pqzaRl6I4ZPK+Z28razlEoHdbxavzBbnatPKuWNl7hU7y7cZIMNDpi32l9AGra6nWgq6I//A8AAP//AwB1kC/uSAsAAA==";
+        private const string csExp2CodeC = "H4sIAAAAAAACCqxXbW7bOBD9HyB3IAQsIKW25DW6W6CRvZs4TtGiSQsoqH+4jsDItCOsPgxSdqONcqeeoSfbISk5omRpFbRCANGc92YeyeFkZFknP/ccH1kWOmOMhHdBiornLXLikLzDIXHPMSMStE3uY4pQCXTlU2GaUIITsiybBr/34W84GP7BEQL1EbMEXcVLf+UD9jwtOVBNn6KaA3Tyax7hy/biTUr99X2CVn5ARtqXG3hdkJXpMQ15cbjBUTrSPkz6TrxKtLEg8Wey5+megXK7ic6CAIlphihhhO7I0pSBrH0k6cRm2zDENB3bVjH6tavbMj9aIydlCQlPi5+TOGIxLNBnmwCn5heffDtVoeYFxd/gJ0xzPSWh8ufNPUGchiJICbbBHjFznKUCbbxN4jWJCOUJEXvIAsOeVCgRElhTsEmAGUPFkci59+EmICGJYIsT0GIzQpBHyWqk5bhH/mZPGgSsaQIwDljcSDg+2mzvAt9DXjky5GA+klfg8fiI50BFcDHFdygBOFqSlR/5iR9HiCUU9rREs1Tehvo72CZIGryMI7h+kjBfzBfI3eXBnYSiEZpLBn/mf2v8pS164HQabpJUsc3dbKH1EAwydyFBMxwECsZEJhIYeJsScxnEMa0H4SB7NBpL0AVhiR9hvjgFmulGJqC66xoS+hkyjVQc2j++GwI2djO3DPu0I5T7VuDW7e1Xgf7qupZEO0kcEQXU6/d7ApS5blYCvY9q/poW7V5h+g9ZdtlE91pddoFyVdSsE+p61imk002Y002Z01FaLapbRM1KuGkn1PW0GtQtgpZhs26w61m3qE5HcU5HdU5XeRVgKev7WVbO+kqe/P/1qBD0H98LRnZ7q7p2Xuraqboey8uSZX1b8Tx9qeecsBDlvlsN9eIgpuwFhfMuTUipbE4Ev1I2Bw+DNwdr5uDh9ZtDdXLwMDw7WBvBcNlSD/fmWg2sWA6UvcHDn9ODpQ4Mly3lTdVaL2nKGpUyplpmzZxmk9NMajbNWlgttmkzq9k0a2G12JwWWott1sarGpWEqGz/wWRpw1RO4jC/BeNOO/CV+9xym9+RvFmrtEVm870WcxtMcSgazZHGqdq4qAumbQljGU1JsqURG+tF74QCPyKsh/S8s81bTlES0GpNe+iQ4W5NDeDKwmNAoMJvKdSh1lZUI9k8xrBB1F8SVJdS19ASnG9c3vvp02gb/iXWbshYj88H9LNh4FNlGyRQJOFoMIxOn11Lkyn8AgAEnVGK06lswfVyb9qT6vbJUKJ7RRWO4MOhk7hyXPMjidbJPTpR1MwHi9ywKOmV5Z+vjPftTYLlf4VnwQV7BeH1HabIB+rgFF42eokSYLx6ZTz7q23B3F+A53MQeRMP+aqFEl3Knfvot1x5sTJDOQqeh7m/fP6p2Ow884psMeCT5Q6+VWAwGotZx/+X5AfAh/rrHhpy70//AQAA//8DAB3QgsM4EAAA";
         private const string csExp3CodeC = "";
 
         private const string csExp0Code = @"//***************************************************************
@@ -358,23 +396,31 @@ public class TileDef : TileDefBase
         private const string csExp1Json = @"[[0,{""lines"":[""  ""],""colors"":[{""fgr"":7,""bgr"":0},{""fgr"":7,""bgr"":0}]}],[1,{""lines"":[""|_""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[2,{""lines"":[""##""],""colors"":[{""fgr"":12,""bgr"":0},{""fgr"":12,""bgr"":0}]}],[3,{""lines"":[""/\\""],""colors"":[{""fgr"":14,""bgr"":10},{""fgr"":14,""bgr"":10}]}],[4,{""lines"":[""\u0027\u0027""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[5,{""lines"":[""||""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[6,{""lines"":[""\u003C}""],""colors"":[{""fgr"":14,""bgr"":10},{""fgr"":14,""bgr"":10}]}],[7,{""lines"":[""\\/""],""colors"":[{""fgr"":14,""bgr"":10},{""fgr"":14,""bgr"":10}]}],[8,{""lines"":[""{\u003E""],""colors"":[{""fgr"":14,""bgr"":10},{""fgr"":14,""bgr"":10}]}],[9,{""lines"":[""=-""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[10,{""lines"":["",,""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[11,{""lines"":[""-=""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[12,{""lines"":[""\u002B\u002B""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[13,{""lines"":[""\u002B\u002B""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[14,{""lines"":[""\u002B\u002B""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[15,{""lines"":[""\u002B\u002B""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}],[16,{""lines"":[""==""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0}]}]]";
         private const string csExp2Json = @"[[0,{""lines"":[""    "",""    ""],""colors"":[{""fgr"":7,""bgr"":0}]}],[1,{""lines"":[""[_|]"",""[|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[2,{""lines"":["". . "","" . .""],""colors"":[{""fgr"":10,""bgr"":2}]}],[3,{""lines"":[""    "",""\u003C==\u003E""],""colors"":[{""fgr"":15,""bgr"":2}]}],[4,{""lines"":[""|()|"",""(__)""],""colors"":[{""fgr"":15,""bgr"":2}]}],[5,{""lines"":["" \u003C\u00B0)"",""\u003E_|_""],""colors"":[{""fgr"":15,""bgr"":2}]}],[6,{""lines"":[""/^^\\"",""\\__/""],""colors"":[{""fgr"":14,""bgr"":6}]}],[7,{""lines"":["",--,"",""|__|""],""colors"":[{""fgr"":15,""bgr"":6}]}],[8,{""lines"":["". . "","" . .""],""colors"":[{""fgr"":10,""bgr"":2}]}],[9,{""lines"":[""[_|]"",""[|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[10,{""lines"":[""|_|]"",""_|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[11,{""lines"":[""|_|]"",""_|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[12,{""lines"":[""[_|]"",""[|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[13,{""lines"":[""[_|]"",""[|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[14,{""lines"":[""|_|]"",""_|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[15,{""lines"":[""|_|]"",""_|_]""],""colors"":[{""fgr"":7,""bgr"":4}]}],[16,{""lines"":[""[_|_"",""[|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[17,{""lines"":[""[_|_"",""[|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[18,{""lines"":[""|_|_"",""_|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[19,{""lines"":[""|_|_"",""_|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[20,{""lines"":[""[_|_"",""[|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[21,{""lines"":[""[_|_"",""[|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[22,{""lines"":[""|_|_"",""_|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[23,{""lines"":[""|_|_"",""_|_|""],""colors"":[{""fgr"":7,""bgr"":4}]}],[24,{""lines"":["" \u003C\u00B0)"",""\u003E-||""],""colors"":[{""fgr"":15,""bgr"":2}]}],[25,{""lines"":["" \u003C\u00B0)"",""\u003E_|_""],""colors"":[{""fgr"":15,""bgr"":2}]}],[26,{""lines"":[""(\u00B0\u00B0)"",""|^^|""],""colors"":[{""fgr"":15,""bgr"":2}]}],[27,{""lines"":["" \u003C\u00B0)"",""\u003E_|_""],""colors"":[{""fgr"":15,""bgr"":2}]}],[28,{""lines"":[""(\u00B0\u003E "",""||-\u003C""],""colors"":[{""fgr"":15,""bgr"":2}]}],[29,{""lines"":["" \u003C\u00B0)"",""\u003E_|_""],""colors"":[{""fgr"":15,""bgr"":2}]}]]";
         private const string csExp3Json = @"[[0,{""lines"":[""    ""],""colors"":[{""fgr"":0,""bgr"":0},{""fgr"":0,""bgr"":0},{""fgr"":0,""bgr"":0},{""fgr"":0,""bgr"":0}]}],[1,{""lines"":[""=-=-"",""-=-=""],""colors"":[{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6}]}],[2,{""lines"":[""\u2500\u2534\u252C\u2500"",""\u2500\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[3,{""lines"":["" \u2553\u2556 "",""\u2593\u2591\u2592\u2593""],""colors"":[{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0},{""fgr"":14,""bgr"":0},{""fgr"":10,""bgr"":2},{""fgr"":2,""bgr"":2},{""fgr"":2,""bgr"":0},{""fgr"":2,""bgr"":2}]}],[4,{""lines"":[""\u2310\u00B0@)"","" \u2321\u2321\u203C""],""colors"":[{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6}]}],[5,{""lines"":[""/\u00AF\u00AF\\"",""\\__/""],""colors"":[{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6}]}],[6,{""lines"":[""]\u00B0\u00B0["",""_!!_""],""colors"":[{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1},{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1}]}],[7,{""lines"":[""\u25C4\u00B0@["",""_!!\\""],""colors"":[{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1},{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1}]}],[8,{""lines"":[""]oo["",""_!!_""],""colors"":[{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1},{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1}]}],[9,{""lines"":[""]@\u00B0\u25BA"",""/!!_""],""colors"":[{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1},{""fgr"":10,""bgr"":1},{""fgr"":0,""bgr"":10},{""fgr"":0,""bgr"":10},{""fgr"":10,""bgr"":1}]}],[10,{""lines"":[""/\u2568\u2568\\"",""\\__/""],""colors"":[{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6}]}],[11,{""lines"":["" \u002B*\u2229"",""\u2558\u2550\u25CA@""],""colors"":[{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6},{""fgr"":15,""bgr"":6}]}],[12,{""lines"":[""    ""],""colors"":[{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6},{""fgr"":14,""bgr"":6}]}],[13,{""lines"":[""\u2500\u2534\u252C\u2534"",""\u2500\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[14,{""lines"":[""\u252C\u2534\u252C\u2500"",""\u2534\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[15,{""lines"":[""\u252C\u2534\u252C\u2534"",""\u2534\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[16,{""lines"":[""\u252C\u2534\u252C\u2500"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[17,{""lines"":[""\u252C\u2534\u252C\u2534"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[18,{""lines"":[""\u252C\u2534\u252C\u2500"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[19,{""lines"":[""\u252C\u2534\u252C\u2534"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[20,{""lines"":[""\u2500\u2534\u252C\u2500"",""\u2500\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[21,{""lines"":[""\u2500\u2534\u252C\u2534"",""\u2500\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[22,{""lines"":[""\u252C\u2534\u252C\u2500"",""\u2534\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[23,{""lines"":[""\u252C\u2534\u252C\u2534"",""\u2534\u252C\u2534\u2500""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[24,{""lines"":[""\u252C\u2534\u252C\u2500"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[25,{""lines"":[""\u252C\u2534\u252C\u2534"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[26,{""lines"":[""\u252C\u2534\u252C\u2500"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}],[27,{""lines"":[""\u252C\u2534\u252C\u2534"",""\u2534\u252C\u2534\u252C""],""colors"":[{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4},{""fgr"":15,""bgr"":4}]}]]";
-        private const string csExp0JsonC = "H4sIAAAAAAACCuSYXW+bMBSG7yf1P1DfbaKJfcA0ICElQatWTZN2UbUXTYSS1G1QXZj4uKii/PcaQ9LRmH5MkTLqRDokr+0DD6+xj1ih85w9EOShK5bGLA3P+CxbLOeR+DmeZaz3K7lhvHcRcZaZhrqPaVyyNIuS2Cc9XH5NIyh4XqTMj1mRpzNuGr+LOY8WP9njRXLPYj8uOEemPDcgb4XOs+8Pf/JH5N3OuEiIrqKbfIk820Q/WHS3zJEH66q7hbzr1eai8V8peBSzTDQiQ3xEbnmYmkdf0CLhSZrJcbd3qRw1l8e1eVBlui7FGoWoUPwT/0SgiOirUYhdZ3O2+Q8qNZBAhTQpgGJcRssuIwSVIjCfmyqx6iCa1Oi0Pqv9fCGHlBrolnJiljjUktExamBX/neJjFApb3iNd+/8h6XNLIStBK0KVvRp0NotRltEuInxGA+/lg9kqQDZRmwFbzjr7N7nQ0gNVqpi7ZeYo7M6TkprJ2HY7+Az66jwppWLVbwWdOHxcdgCt5lYZGfBI/g1STFwH7kacKdtC1Jg1/O0hhMWdo9uoLQuSTpsmKtEGm6mI9DxSMD1uwlHcMtSAtQZ1LHLSwkhLZsgxjD+JgAB3HoTpJKXSkuD0bCD2wKBfypF/28DrfcXcJb9uQo40lbTNNBeFK/NG9Jddvp+9q3vn4Xd2YvvEHSR/XQvvneTfaCx766+vgPW9yUFEH33dwB993ew9N3fwdZ3nQeq8TqvcV0H2tV10/UTAAAA//8DAP3NjozYGgAA";
+        private const string csExp0JsonC = "H4sIAAAAAAACCuSYXWvbMBSG7wf7D67uNtxEOrbc2GBIYlpWxmAXYb1ogsmH2pip9vDHRQn575NsJ50bue1GIHOVwFH86sN+9MrSIRt0nbMHgjx0w9KYpeEVn2fL9SISP8fzjPW+JSvGe5OIs8w0fsjychXlE5bl8pqlWZTEPulh+TWNoOB5kTI/ZkWezrlpfC8WPFp+ZY+T5CeL/bjgHJnlPQF5G3SdXT78yh+RdzfnGTPRTbTK18izTfSFRffrHHmwrZpbyLvd7B4W/zEEj2KWiUpkiI8Yuyxm5scPaJnwJM3Kfnf3adlrUZZb86TKbCvFGoWoUPxz/1ygiOirUYhdj+bsxz+p1EACFdK0AIqxjJYtIwSVIjCfqiqxaiCq1Oi0vqv99CCnlBrolnJhShxqldExamC3vHZJGaFSXvEaH878X0u7VQh7CVoVrGjToLVbjLaIcBPjMR5+ki+kVIDsI7aCV5x1Duf5FFKDlapY+xJzdFXHqbR2Gob9Dr6zjgpvVrlYxVtBF56dhS1wu4VFDjY8gl+SFB2PMVYD7qJtQwrsep3WcMLC7tENlNYlSYcNc5VIw91yBDoeCbh+N+EIbtlKgDqDOnZ5KyGk5RDEGMafBSCAWx+CtOSlpaXBaNjBY4HAP6Wi/7eB1tsTOMt+XwkcactpGmjPktfmhHSXnb6dfe/7e2F3juI7BF1kvziK791kH2jsu6uv74D1/ZMCiL7nO4C+5ztY+p7vYOu7zwPVeJ/XOK8D7fK62fY3AAAA//8DAHJ3zxnQGgAA";
         private const string csExp1JsonC = "H4sIAAAAAAACCrTTQWvCMBQH8Ptg36E8r7E2aZ0z0IuuMBmDHcQdVhlVo4bFdjTJQWq/+9bqpM6UwaoUUvrS/v6PNMlgpNgGA4XJmAsWLLiyn5MFE9IeM6mkPeGymHiIVFQWQu04ZBDEekP6yDp+VM59P7NU8iT2se0UF7KGWiidMj9mWqWRQNaLngk+f2LbcfLBYj/WQgAqmyBAMxjJYPOptkCXkZAMwStfqDVQguCR8dVaAcX5/nUX6Fv2071TIQSPmfyeBMuCKbq9gXkiklSWry9XKdAegllxd3J0VpnmRfGgYpO6ezeruHtAvCNbKZ24xOS2WjUuOWu3UjpxXZPbCcMa2DsouCJXaie0Z6LLvdDbj39kGCJ+JXSNi71r7N7Vde4O8wssTM/Ih50L0PcmOitbDy7A902832684Nh4GBFqDhvPY9tvDpPa3T3Yj80j3OtHeNeP6F4/wnhe/f/+5Gn+BQAA//8DAPgKlDHiBgAA";
-        private const string csExp2JsonC = "H4sIAAAAAAACCrTV22rCMAAG4PvB3qHkSiHWNq2nQm90hckYDCbuwtbgIWoxtqMHxjB99/Wgm46oBGILzUXTr/9Pm3YPhgnZ6cAC7+E2nM8C3J/FRB375Os1XBIaqyOfkieygsrpBKiMSRT7YWDrqlbsUBmkNEkjYgckTaIZhcpbOqf+4oV8j8ItCewgpRTA8nYIWHswjJ3dZ/INrNWM5iD48JfJBlgmBM/EX28SYKGsmm4Aa7I/5tROCOoHJM5PAiXfcrscPPj4ABYhDaO4vG61joDVgWBejFrmZRn8xXQeNsHMy7EJw951zDzHEA9TFbVMlo98TNcOGjrXjCs93VTTjIFtl6NzwW3xXZPnslqd5W4N47qY1uKmrPIVx75WP+Z1MMNieJuHN6dT1y1MF+PmBc88eO1zr8PzYKMBc45hzG6k+6d1pT7unsw3UecuElZpWFjTpWpIalNDqmZKbdqSqrUvNMVVUyamdaRq3QtNcdVUUOvJ1JAmsynSpWpIalNDqmYKfNobjIl92tFdfxyIu1Zqlfuns+lUNHbnrrG7N2IbTvFzYaxR3VBQ78nP7mU/AAAA//8DAKfrqHRACgAA";
-        private const string csExp3JsonC = "H4sIAAAAAAACCuSYy2rjMBSG9wPzDq52M7iJdGS5scGQxEyZUgqzKO2iCSZJ1caMag++LErIu1e+JB03cm8EgqsETpJfsuRPv6xzyAqdZfyBIBdd8yTiSXAqZuliOQ/l1/Es5b2L+JaL3mUoeGoa6j6mccWTNIwjj/Rw8TYNPxdZnnAv4nmWzIRp/MnnIlyc88fL+C+PvCgXApnl3IDcFTpLfz38yx6RezcTckB0Hd5mS+RaJvrNw/tlhlxYV90pcm9Wm5vG/w0hwoinshEZ8oWm5vdvaBGLOEnLC+7uk7L7vPxcm59SputCrOcmqrm9Y+9YcsnoqW+BWPVo9nb8g0oNJFAhTXJgGBeRWkUEv1Ik5nNTJVYdZJMandWzWs83ckipgU6VO6nAYbSMtlEDO+Vvh5QRKuUNr/Huyn9Y2uxC2ErQqmBFnwat1WI0JdJNjMd4+EPSFvgUyDZi6r/hrL27zoeQGqxMxdovMEendZwU1k6CoN/BZ9ZW4U0rF6t4I+mCo6OgBW6zscjOgUfwa5Liwn2M1YA7aTuQfKvepzWctLB7dAOldXHcYcMcJdJwsx2BjUcSrt9NOIJbjhJg9qCOXT5KCGlJghjD+KcEBHDqJMhKXlZa6o+GHUwLBD5WO+5/ten7qy1qfa1qi7QVIA20F5Vmc0G6y87ez771/auw23vxHfwusp/sxfdusg809t3R13fA+v6jAETf/A6gb34Hqm9+B0vfcx6Yxue8xnUdaFfXTddPAAAA//8DAOQcp7s2GgAA";
-       
-        private const string csExp0XmlC = "H4sIAAAAAAACCuycTVPTQByH7874HWJuKnT7AoJMUl50UEecOrYDOuJ00nRLA0vCJBsLnDh4cBwOKLR69aYzzMiBk+OpHyWfxG2ovHQwBe2WDP0NPWz3JU+zu3n4J9lEm1xfZcpb6nqWY+tqKpFUFWqbTtmyl3TV55XhcXUye/OGNm8wnxb8NUZzlTx3RXHe2qRzlsdzlWnXNTZylVxpmZpcERu0vYl1z9LVKudrE4TUarVELZNw3CWSTiZT5OWzubxZpavGsGV73LBNqh63KndvpYrfoyjaE05XU9kF6trULc4ywzOrJUskZwyPJp45ZcoSBYtRb0g5v86QMt/ebbHXrb8h5YHPuO9S3aY+dw02pDz3S8wyn9KNgrNCbd32GdPIEfj4N6TDpPiyYJV5NTuikaNEO/cxtZaqPJvWSDsVNiQnLcONZP5Ub/fltL1R2Fij7VyRbxxlKKJfJ7hI6KroqwnL5mo2qRGje/W8GDJGWz2iHlcTFZllU+9UhsjywuHNhmnS/nKJChrp3KZmOsxxOyizoi8ftPLPZIuCypKbnWGGuaKRVrKjtHRSWuoo1cj52wQKqAFBaaTjUOtUg0bOFcy/aCclRzv6sD4cqR1RrkvSzivKmFP761A8NNyVP1V6M/QAAjiAwH5qKi1HU8HeVrB3GOzti0SkrsKK+2HdLUnaWqhanEYOzwta7tVkAAywawrrp5Yykk7agvpuUG9En7gFjd2g8TFofBKJq4mkeho/g/X/rEcupXbkcdSu0RvcqQ3GB9nTDpWwh/3U04ikqGl7p3kwdTv6slKw/bX12fp1ZeFSb8Nn8MAbJF4/PTUqx1Ok+aP5YzFSU4vFIsFlKAABxGWoC4jqnhxRvWkeNA9eR4qqeOtWUZKouge4M+KucX/uk/T0ZKGPqP72IUYsbn3YTwmNSTqr+/xOnNV1tdAiLAQLYcQG3kLjkkIhx0EghAmNEYOCuiroviQFTTUPgsbPSAsRWAgWwojBQmIFpaSV2ySofxMfXL8GEEBcv+6NqyQt91bu3gnef49erlT/EtR3gs8fprAgADzwsCAgylPp6/c0HP41AgjgNYunMtKfSznEcymAAYbnUi7lJVkrv9uuucDzcofwEmCAwUtnvDQq3UuH8BJggMFLl/LSvfjES/vwEmCAwUstL43FJ16ClwADDF4KvTSOeAnTDjDAYual+4iXMO0AAyxmr69M4v2VmHaAARYzL6WwfgnTDjDAYualNNYvYdoBBljMvJTB+iVMO8AAi5mXRnA/DtMOMMBi5qVR3I/DtAMMsJh5Ceu9Me0AAyxuXsJ6b0w7wACT5iWNPOF0NSPSGpk3xCs1C/4ao7lKPjzU89YmnbM8LtocNc2VlqnJs78BAAD//wMAG2/34GGCAAA=";
-        private const string csExp1XmlC = "H4sIAAAAAAACCuyabWvbMBDH3w/2HYwL7YskVh7arU1ll65PG2vJWEK6QWEo9iXRqsjBkpdm6777ZMfLOtPSMSwbgsib8//udNL9cBzOwUd3M2Z9g0jQkLt2y2naFnA/DCifuHYsx419+8h7+QIPCYthEM8Z9MZ9GSl3n36HSypkb3wcRWTZG/dGX8GXllqQi+6doK49lXLeRWixWDiLjhNGE9RuNlvo09Vl35/CjDQoF5JwH+x1VvB8lq32Y1n4nYRZyxsOKIOzgErnKgyACWcAQgpnSEXiOCWSpELtjMez9kHdWsensrrOjq5Onnzq1knMZByByyGWEWF160M8YtR/D8tBeAvc5TFjGK2Kr/fRTk11cU0DOfXaGK2MTH0LdDKVXgujzEoT0Z/MdJHO7/Csn8d8OVjOIVOVTlaCpXrblcpwbdWvLuXS9poYkefD+wobg6QD9jpMBTLKQTwQlCRSxF6yy8x8EI/yCdgPWRjlljhXjTpJ9L9k5RhPIu9CnRCjxMo5R0p6w4h/i9Eo58Xo8SXLqoRR7pj5nmP0KLn/4dnSw/P+iyae11Mq4ck2n5Lo9iMERSEttFiZVNt6qG5taaKatrGMm7SwQmXS7OihiW400fwMjIWLJ/t8EQHwooAWWatMprt6mO7sVMO00Ju0yFplMt3T9Cy9N0wrY/pKD9NtJg9/mq/fyrC+1oP1BhmmlTHd18P0x/ZEHhqslWE90IPVbZinanVTB01jpHrdQK0OqqZZUsM1UKuDqmmUVKsZqNVB7Riomwd110DdPKh7BurmQdU0VHLND6UioK7elycvyTH6538jeL8AAAD//wMA9EziKuEgAAA=";
-        private const string csExp2XmlC = "H4sIAAAAAAACCuzb607bMBQA4P+T9g5RfiCQ2rg3oBQniIt20UCd1go2AbXS1m29GgclzkonPxTPwJPNaQODFCXbJKueZPWPe3KStOfTOSJygQd3N9T6gcOIBMy1q07FtjAbBEPCxq4d81G5aR94b9/Ac5/GuBvfUtwedXgoD3fIT3xKIt4eHYahP2+P2v3veMAteUEWte4i4toTzm9bAMxmM2dWd4JwDGqVShV8PTvtDCb4xi8TFnGfDbD9dNaw+Cxbfh7Lgh85vql6nWAa9H2GjvwIO+cEz86CIaaR0yUUn+BRyXqeULLO028qv2jyKlnHMeVxiF2GYx76tGR9jvuUDD7heTeYYuaymFIIlvd6um1tsZRvLsiQT7wGBMtFGv2AyXjCvRoE6WpxIvh95uIi9cf0tHyHbN6d3+I0KuP+MmDJUra4XLi2LE+LMG57FQj84vSOVKI4qYT9lCYTKWE4ehaQoWgh6i3WIH3zFwkQZK8JBwENwsxd3slaHifxF2F5YDQOvfeyCBAkq8zBvgwdUX8whaCfOQrBa5eEIHPzbLEgeLXk/wJRVQNxicR1LsSlQNfrgDjxw+kXPNSRoqaGwrGcgp6QGcooMGa5FmmGfhr1NU2oDcr3XXdjzPcVmVxMCMf/p0lDjYnY3BK5JpsIbRmNrMa2og5JOuDhfiu/S2R/IIEMShZlRw0K6PWuckGuEAKKNL5hSoNZLsdjin4eu2o8SuVyKddDICTW1h36cjTN31gaaeyZhw9tngMVPZGLIgtkLFYsqsZCG4uamVHaWNSNhTYWDTOjtLHYNhbaWOwom1GoaEYJY/HSYtdYaGPRVDajUNGMMhYZiz1joc2mX8XMKG0sqsZCG4uamVHaWNSNhTYWjTXvupaFMLuuKypmL1xHFUXP4psP90UmotczbbIKsmvaREOVprI2SWqevzEuRDnBMyorKnumV1SqLH/OnvyGHYI//t8A7xcAAAD//wMAGxib7G8wAAA=";
-        private const string csExp3XmlC = "H4sIAAAAAAACCuydy27TQBSG90i8g+sdkGRy6TWy0xsqIFoFkagFURQ5ySQxndqV7ZCGVRcsEOqi0CZlyw6kSs0iK8Qqj+InYXLpLSpOSzPB0F/NYjIe+4tnTr8c2+NYmd3eZNJbatm6aahyJBSWJWrkzLxuFFW57BSC0/Js4u4dZVVjZZoubzGaLKQciy9O6e/osm47ycK8ZWnVZCGZfUNzjsQ3aNjxbVtX5ZLjbMUJqVQqoUosZFpFEg2HI+TFynIqV6KbWlA3bEczclQ+XSs/eC2Zfx5JUp44dDOSWKOWQa3MEtPsXCmr8+KCZtPQipmnLJTWGbUD0uVtAtJqb7f5Xrf/AtJimTlli6oGLTuWxgLSs3KW6bmntJo2N6ihGmXGFNIFn36GaKfI36zpeaeUGFdIt9CrfUz1YslJRBXSK3VWJGdrdjYSO2ne68t5o5qubtFeLa/XuhUS79e4wwuqzPsqrhuOnAgrRBvcPMWHjNF2j8inzXhDphvUPlfBq+zO8CY6ZdJ7c24N0r+KkjOZafVtZIl31WK7/kI1X1AoWokFpuU2FNIu9i3Nni3N9i1VyOXbBOpGKIX0DV9/NCnk0pj8k0iNiIlUNagGL4nUswZ8uSoolF9SxszKb4fioWZtnDQZztADCOAtBI5SU1ExmnIPdtyDpntwxAueuuo0POq03RGkrbWS7lDP4XlO88MKBsAA+09ho9RSTFCe79b23Vpd8lZSfd+tf3Lrn3nh72RSQ82fwbo565FFqeH5f9RrMRzcuQ36BznUDhWwh6PU07igrGl3r9WYu+dpJ8nd/dp+7fz8a+nScNNn8MC7TbxRempCjKdI67h1vO6pqfVMhuA0FIAA4jTUFUQ1KUZUr1uNVuOVp6gyY2MZQaIanOAu8AuNo7lOMtSDhRGiRtuHGDG/9eEoJTQl6Kju8D0/qhtooXVYCBbCiN16C00LSoVME4kQAhojBgUNVNCMIAXNtRpu/YenhQgsBAthxGAhPoNS0GRf4ta+8RfOXwMIIM5fD8dVgqZ7Sw/uux++e09Xqn1xa3vu4cc5TAgADzxMCPDyVPSfu4EK33z4qr0QwjHhtyw0ccsCYIDhloVreUnUpOCea65wK1UTXgIMMHjpgpcmhHupCS8BBhi8dC0vTfonXzqClwADDF5qe2nKP/kSvAQYYPBSx0vTyJcQdoAB5jMvzSBfQtgBBpjPftkwjJ82RNgBBpjPvBTB/CWEHWCA+cxLUcxfQtgBBpjPvBTD/CWEHWCA+cxL47geh7ADDDCfeWkC1+MQdoAB5jMvYb43wg4wwPzmJcz3RtgBBpgwL3WfgN5+7LlCrvxs+cQvAAAA//8DAJFA8RKvfgAA";
-        
-        private const string csExp0TextC = "H4sIAAAAAAACCnzXT28TRxjH8TsS78H4VNpA5nl2Z2d2pUihcbgUJFSgHEplGdiCVcdGjk2bnjj0UFUcaCGh195aCYkcOFU95aXsK+n6mbWf3/7BwOHxYikfxuP5Mgez5XSRsb986e745zyLd/jypa/yk3snz/PsQT6f5vPhzcno+PGzR+Ny/HJ0nF+/PXuST67fG0/y451e93t2et/k8+PxbLpH183q907vYDlZLOf53jRfLuajyU7vzvLRZPx49bNmP+TTvelyMpEfbbLDo+eLk95n8hOuXr50azzNj01Wwm6Zocn2+73yV19ekb46mE1m8/Jt5b/kYPU285MxMpKOrGOkY6yj1THR0VVjiaNsMJ4vGjYSG4lt79retb68WtnKF3sbG4mNxJYcykg6so6RjrGOVsdER1eNpY2zB6PJpGFjsbHYircvi7cfi7fvy6EvT2n99L38xcuNlcXKYo1vykg6so6RjrGOVsdER1eNpTXKBvnxYjwdLcpN0iBHQo7CR12cvilOz+TjjgL37E1x9ntx9kc5bLiRcKPwsR/KSDqyjpGOKy7fkHHFZZZRPvYwuuppyY2zO5PRST5vSGORxmFxX72+ON+/2pcHsi+LV3+t/rz8b8OMhRmHHXBTRtKRdYx0jHW0OiY6umosmTa7u5hN84bSitKKcvfiw8WHh315vUI+HA53NzwrPKsb1OoGtbpBrW5QqxvU6ga1ukEtbtAkO5zmRyfD+88bwkSEiQi/uzi/OP+2L69XwuGVK8ONMBFhIkK6IeNKeMPIyDpG+oZYR6tvSHR01RtKoauEX4+fPmt+y50gXfiw3/1SftiidGvlw43SidKp0qnSqdKp0qnSqdKp0qHSV8rBj82vjhejDws5mwnQt5fRC9Ar0CvQK9Ar0CvQK9Ar0CMwrYC38u+bq5iKMA3C/Yvz4uzfvjxYIXcRmQoyVWSqyFSRqSJTRaaKTBWZIpJM+Lbcnr0YT582j/TQGwrB2S1O/y7/yPeGTPuLQyE7ZOBsN3C4GzjdDRzvBs53Awe8gRPe4DeIqDqIBvnoSZNcZSh0qPfF58Wv//TDAzk3T/8sTl8X737bV3ZVJNIDiUhPJCI9koj0TCLSQ4lITyUiPZaI8FwizgbLo6Nm0ynEibhWdeJ21in0iBgWmGGBGRaYYYEZFphhgRkWmGsLHElEh/eb1BAlipoh/dgPjz9ZUgptokhbSpHGlCKtKUWaU4q0pxRpUCnSolKESaU40B806aFSVGWqAq7/D0BxRf/YQQ+9ohjoMdBjoMdAj4EeAz0Gelyj22rVW/bQLrJNe1h2u8UeYkYW7BbsFuwW7BbsFuwW7LZmT4J90KSHqFHSvexJk/5e6aFylAA9AXoC9AToCdAToCdAT2p0Vy17yx5aR6572d0We2gfObA7sDuwO7A7sDuwO7C7mt1Xu71lDw0k373ufos9ZJE82D3YPdg92D3YPdg92H3Nnq63ewsf8khp98KnW/Ahl5QCPgV8CvgU8CngU8CngE8RzybgD5sXjVBMNt1XDbPlrhHqyQZuGwauGwbuGwYuHAZuHAauHAbuHKZGp2rdW/aQTqbO051piz0klAnsBHYCO4GdwE5gJ7BTzc7Vfm/Zqxsed+535k8fkVxd8vCWh9c8vOfhRQ9venjVw7te7bLH66i28SGrHHXud4624ENWGbLKkFWGrDJklSGrDFllyCrXsspVVgcte+gqd3eV409/Vzl0laGrDF1l6CpDVxm6ytBVhq5yrau87mobH8LK3WFluwUfwsoQVoawMoSVIawMYWUIK0NYuRZWTtYnfAsf0srdaeUtaeWQVoa0MqSVIa0MaWVIK0NaGdLKtbSy2xzxLX2IK3fHlbfElUNcGeLKEFeGuDLElSGuDHFliCtrXP8HAAD//wMAPgv00hIUAAA=";
-        private const string csExp1TextC = "H4sIAAAAAAACCmTTX4ubQBQF8PdAvoPsPmxL3Oyc8b/U0pKmL91CoWGfFkLanQep1RIVuu32u/fmXhlHJS83o/wcx3N2TV93OZL16mv5x+Tax3r1yTwfnn+Z/OFQVmb/VHbbz82TqdrtwbRdu30o28uFD6fuxAubfd3/1Jnv2ft5mf6bc1s2dYGtuvx8b9dXXX82RW367nyqfO9L/60qv1+e1/wwdVH3VcWPV/lRKe+VwK/Xq/uyNq3KaW/36qjyd1eed7Ve7ZqqOdOypvGyrH6rhEcMI0kgCXMJLIGll6OVwBJYCj/yiGEkSZOk55JmSbN0fW0lzZKWPe14xDCSFJAUzKWApYClu0crBSwFLL3f84hhJCkkKZxLIUshSzc3VgpZCmVPex4xjCRFJEVzKWIpknN6sVLEUjRKkSvFJMVzKWYpZunNPyvFLMXj28Xu2yUkJXMpYSlh6fHOSglLySglrpSSlM6llKWUpb9vrZSylI5S6koZSdlcyljKWCpurZSxlI3nlLnnBAo5FiGHpBwSc98fwyk5hxo5qIlHUccy6kPWJey3xegNaYfjYeJR4LEIPCTxkMhvNqMnmYd2PD3xKPZYxB6SewQLT5KPwPGCiUfhxyL8kPQjXHiSfzgFwKQBoApgUQFIBxAtPGkBnBpg0gNQEbAoAqQJkCoUzveQLiB2vNh6/wEAAP//AwCpBQShpwUAAA==";
-        private const string csExp2TextC = "H4sIAAAAAAACCmzW207bQBCA4Xsk3iHKVZCS4BmfLRK1BSpVhRYpCC6ArELZShGujXJom8oPxTPwZLVnbOPJLtywUvR5vOzPcppvs03iOocHs+U/nXhDPDz4qnfXuxedzPLn/HGRqU+LtR7fLPWfy/xJp+vx9TLVZ/rnsNf9wLB3o1frZZ5NYOxU38Pe6TbdbFd6kuntZrVIh72r7WO6/FHx+bPOJtk2TelpTnL+62Wz6w1q+ejw4GKZ6bWTlNNcOMpJPvR75VefVvC+Os3TfFV+DMofq485f52QREhuF2lqgEAgEHinioc+rSrwrlAPLQgEAoEeg5h8TvN8ZYhIIpI47o1pROQRy2UrIolIIn4k0U3O9HqzzBabctMM1yXXFa/uknsymUxb1yXXZfczuV5ylS522hzVI9IjshgcFX1aVeRAqaOW9Ij0uqRfk99/61U1tEH7RPs87cnba6WVy8qeqkK1tk+237WDZLbJM22QAZEBkcfz+X2fVpV4r9RxKwYkBiQG5ySGLH7JrKOG5IbkDkejYZ9WlVsoVbRuSG7ILk8a8RFQl4vVs34y4IjgSJyEyDwJEcFR9yTEdFjVN4OMiYzFcY3N4xoTGXePKzhs3poJcFTAVRVNBJyVEhVwV+AIGOphLXJdF0gZLHIdmCgMkOWZCXNkgLJbtITLnQEK2K1HtsicGbhSdi0ylwaukL16ly0y1wae3AzPshkcHHhC9pttttBcG/iS9i009wa+oAOmz02Ym4Og2Q3V52W9G+91AGcHgYDDemaLzNVBKOXQInN4EAo5qvfZInN2EDWbwXLUbEZH5vIgEnLTno3m/CCWdGyhuUAQCWKd4MyUkRtER2wHOuZ2IDeIokFsGrTRHCGCpMFCc4QorzlsTrSFru86FPuBaO4H1tedyBDd9khbbA4RXWm7FptDRBEiNpee5Q8econoydsJOcXpqOjYnCKKyw/3bz/bMzhJ3LsB0XIFIjeJ4hLEoJnfzB25SuQqB2+vDc5dFvN55wW4SwwEHu6/gOUhHCiGey8QWl6AC8VQPCNqXsDyu+VEMWpeYMr/JXGjRTE6ebe5UYyEHe/Pb3kGt4rx3vyxZX6OFeP2Gf8BAAD//wMA42meKAQLAAA=";
-        
-        private const string csExp0BinC = "H4sIAAAAAAACCpJhYGBgAWImIC4MTy3KSy2Kd8tJLE7OSMoEMp0Si1P1fPNTUnP0QjJzUot1FLCr0VEISy0qzszPszXUMwBBHQXn0pyS0qJU27zU0pKixBwdhYDSpJzMZO/UypD87NQ827zSnBwGqM0sCkAAJjgYMAEjTJWtrq0uCxDbglTxsaFCJqgqnkdTGh5N2fJoyhogA8JZA+Y3gHTxs6BCZqguDoVHUyc/mjpNgefRtMmPpk18NG0SkAG2Bwq5mICAgYkJFlrsj3omHNrgoMml8KhnIQg17AFbwIYKWaHK2fQPrT+0PoYlJj5eH5vz2WDqYg9tOLQhmiVeUTEepI6LkYGLgYuLEUazw62f3gK0HqwwBptCDlioxebn4zaOE2ZcrMOhDY+m7WLRx6GQCxZQ+o+mrgAi3D7hhvlEQVvrUcdKrkdTZzyaOuHR9C4HbOHDgzUJoJvJiyVytxCMXD6ErjXISWILXl38WHRtIahLgJBda7DpEiRkF1ZdQmTZJUyWXSJkZStRsuJLjKz4EicrviTICkNJssJQiiy7pMmyCwAAAP//AwCEr84E0QUAAA==";
-        private const string csExp1BinC = "H4sIAAAAAAACCmTOT2vCMBgG8Np1/ulc675BwIOHxrrtJhgvmycZeCiehFFnDmFZCk1yGOp3Nyk+vZSHF5JfkjfvSxAEoaueK7svhOSbkzD5V3XiUucF10bne6H9wWdpygayjbJ/70tK2vsNuz2vtagUe8tffSj5sNLYmjPFralLScnOHqX42fL/ovrliikrZXD/PSTEDzJw6YEu357SKI0wYzid+uXY5QG0OHhK4iSOQLNZQy6Pba8LqA9aXfFwADosQEPQeQ0agdgcvWIQpaAn0JyBxqAsAz13KelS2qVJO0Tb/gYAAP//AwAfetHlxQEAAA==";
-        private const string csExp2BinC = "H4sIAAAAAAACCnSRXWvCMBSGaxfr5jZ1398jlxXaut1bL7bdjcFg4o3ag84MiqGF1jIG+VH+Bn/ZkraRbnASEsjznvdNwrk3DIPIZcq1+IiX8XwWwdMsZd4oZN9v8YLx1BuGnL2wL4dWCxw6YkkaxpH/6D2o6dDnjK+yhPkRy1bJjDv0PZvz8POV/QzjJYv8KOPcKC8jVI58q8lTw6hpPgYxJWMB05wTU3OPerJe7oo3zZ0/OX3fHyjeNvVniLC7gtgA3YLXS16n/c26SwYgoBAsbegFwYRMAHqKt6yG5o7rOkQAiLze2kUetId8oLl9kOKw5fsIP0ByDhHeQnLaCO9UckDliIIfIfy4kgMqp+QnCD9Fcs4Qfo7kXCD88l8jXVE0xrzCOnxdCpa9WStFBEFpucEst1qQlgElQrj9QrjDHL8AAAD//wMAj4fkL0kDAAA=";
+        private const string csExp2JsonC = "H4sIAAAAAAACCrTVbWuCQAAH8PeDfQe5VwWn6WlZgm/WhMUYDBbtRdnRw1XSpcMHxuj87vOhtjWu4uBS8BT15/+PT3swSMnOAA54i7bRfBZqo4B8vkRLQhNtGFDySFZQGZVr3jJIhyRJk2KbxEkQha6h6eUMlX5G0ywmbkiyNJ5RqLxmcxosnsnXMNqS0A0zSgGsroWAsweDxNt9pF/AWc1oQiB4D5bpBjgWBE8kWG9S4KC8PtwEznh/DKn/IWgQkqTYCZRiKuxq8OH9HVhENIqT6rzVOgaODcG8HPXcz3P4gxk8bIyZX2Bjhv3LmHWKIR6mKVqVrBj5mKEfNHSqmRd6TjJdN/uuW43eGbfNdy2eyxpNVrgNjJtiWpubss5XLh/05jGvhxkWwzs8vDWdTialOcG4dcazDl7n1LN5HlRVWHAMY3Yl3T+tK/V292Q+iQb3JWG1hoU1Q6qGpDY1pWqW1KZtqVrnTFNcN2Vimi1V655piuumglpPpoZ0mU2RIVVDUpuaUjVL4NOuMib2aUc3/XEg7rvSqN1fnU2norHtm8buXolteuXPhTG1vqCg3pOf3c+/AQAA//8DAGV5pO89CgAA";
+        private const string csExp3JsonC = "H4sIAAAAAAACCuSYW2vbMBTH3wf7Dq7eNtxEOrbc2GBIYlpWxmAPYX1ogslFbcxUe/jyUEK++yTbSedG7mUEgqsEjuMjWdJPf/mcQzboOmcPBHnohqUxS8MrPs+W60Ukfo7nGev9SFaM9yYRZ5lp/JLXy1WUT1iWy3uWZlES+6SH5dc0goLnRcr8mBV5Ouem8bNY8Gj5nT1Okt8s9uOCc2SWcwLyNug6u3z4kz8i727OM2aim2iVr5Fnm+gbi+7XOfJgW3W3kHe72S0W/zMEj2KWiUZkiA+amZ8/oWXCkzQrH7i7T8vui/K6Nf/LM9tKZz03Uc3tn/vngktYX70EYtejOfvxT+pqIIEKaVoAxVhay5YWgsojMJ+aKmfVQTSp0Wk9q/20kFO6GuiW8iRJHGqV1jFqYLe8d0lpofK8ojU+3Pl3u3anEPYuaPVgRZ8Grd0itEWEmhiP8fCLoJX4FpC9xVbwirLO4T6fwtVgpSrWvsQcXdV2KqWdhmG/g++so8KbVSpW9lbQhWdnYQvc7mCRg4BH8EsuxYPHGKsBd9EWkAK7Pqc1nJCwe3QDpXRJ0mHBXCXScHccgY5HAq7fTTiCW0IJUGdQ2y6HEkJakiDGMP4qAAHcOgnSkpeWkgajYQfTAoH31Y7H323r7dWWZX+saou0FSANtGeVZnNDustO386+1/2jsDtH0R2CLrJfHEX3brIPNNbd1Vd3wPr+owBE3/wOoG9+B0vf/A62vnEeqMZxXuO6DrSr62bbvwAAAP//AwD4UonvLhoAAA==";
+        private const string csExp4JsonC = "H4sIAAAAAAACCuTXT2vCMBQA8Ptg36HkHLq2af1TKIw5QRmDwcQdnIeqUYOxlaZliOt332umMJt4GYza9RXy6ovt6w9sMAc0TOnWRj56XYfJbhDON+aY0Y/neEG5+cjEjof7EeMUG+Mi9RcsHVGRCvhME8HiKLBNqziw0ct4miU0iGiWJiHHxks242z+RPejeEOjIMo4R1g2dJB/QEPR3+7SPfKXIRcUoze2SNfIdzEaULZap8h38u+vE+RPDqcnbVk/7sFZRAXMohUE3FymKb69QfOYx4mQFy5XCfJtuGxWnFg5vobSNC+qRxMhng51DwEomfQoV21RZekM5RJHh7qDAJRMepSttqiydIbyrK4ONYEAlEz1Q3UcLcqAAJRMWpT6A6+mco4h2gXiEwIwMmkxbaVBNZUSxtZhAgjAyFQnjHZBeM8sy3lQRwBenKoTmjQR7TYR7TUR3Woiut1EdKeJ6G4D0a7VRPTf/jlpKQ9STaWEJr/aol0pRrtAmRCAkUmL6SgNqqmUMN1/hPHsS+8W6anj8d3STuk315661a2yVMJfXFhIXx1PeN1UXfDT/AsAAP//AwAsxaeeWBQAAA==";
+
+      //private const string csExp0XmlC = "H4sIAAAAAAACCuyc7U/TQBzH35v4P5S+U2G3B1Ak7UBUlIiZcQtoxCxdd2MnR0vaqxNf8cIXxvjCBzZ96ztNSOAFr4yv9qf0L/FWBuiiHehuNPANS7jeQz/07vrh1/Y6Y/rFGteeU89nrmPqmVRa16hju1XmrJh6IGpjk/p0/uIFY9HiAS0F65wWakXhyeIie0kXmC8KtRueZ20UaoXKM2oLTe7Q8ade+MzU60KsTxHSaDRSjVzK9VZINp3OkEf3F4p2na5ZY8zxheXYVD9sVe3fSpd/j6YZ84KuZfJL1HOoV57jlm/XK0wmZy2fpu67VcpTJcapP6otdn7frjJRor7obHcPVx5t52dUuxlwEXjUdGggPIuPag+CCmf2PbpRclepYzoB5wbZBx6ys1FSbiyxqqjnxw2yn+jm3qVspS7yWYN0U1FDctQy2knuoHq3D284G6WNddrNlfnWfoYm+3NKyISpyz6aYo7Q82mDWP2rF+VQcdrpAf2wmqzImUP9XzJklh8Naz5Kk+7GCSoYpHefhu1y1+uhzMm+vNnJ/y1bFtRWvPwst+xVg3SSPaWVo9JKT6lB/rxPoIA6JyiD9JxqvWowyB8F8y/ayajRjjlmjsVqR5abirTzmHLuNv46FLcsb/WgymCGHkAAzyFwmJrKqtFUuLUZbu2FW9syEaurqOJ2VHdTkbaW6kzQ2OF5SKuDmgyAAXZGYcPUUk7RRVvY/Bg2W/EXbmHrY9h6H7Y+yMTpRFIDjZ/B+n/WHY9SJ/Y86tYYDO6XHSYHOdAOVXCEw9TTuKKo6e279u7MpfjbSuHbL53P5o9TC5cGGz6DB9554g3TUxNqPEXaO+2d5VhNLZfLBLehAAQQt6GOIaqrakT1tL3b3n0SK6ryyEhZkaj6B7iz8mnxcJ6TDPRiYYio4fYhRixpfThMCV1TdFX36ZW8qutroWVYCBbCiJ17C00qCoVcF4EQJjRGDArqq6DrihQ0094NW99jLURgIVgIIwYLyRWUilZuk7D5VX5w/xpAAHH/ejCuUrTcW7tyOXz9LX65UvNz2HwXfnozgwUB4IGHBQFxnsqevbfh8K8RQADPWDyVU/5eyh7eSwEMMLyXciIvqVr53XXNMd6X24OXAAMMXvrNSxPKvbQHLwEGGLx0Ii9dTU68tA0vAQYYvNTx0rXkxEvwEmCAwUuRlyYRL2HaAQZYwrx0HfESph1ggCXs6yvT+P5KTDvAAEuYlzJYv4RpBxhgCfNSFuuXMO0AAyxhXsph/RKmHWCAJcxL43geh2kHGGAJ89IEnsdh2gEGWMK8hPXemHaAAZY0L2G9N6YdYIAp85JB5gVdy8m0QRYt+ZWapWCd00KtGJ3qRfaSLjBfyDb7TQuVZ9QW+Z8AAAD//wMAxVw3ulmCAAA=";
+        private const string csExp0XmlC = "H4sIAAAAAAACCu2c7U/TQBzH35v4P5S+U2G3B0Ag7UR8JGJm3AIaMUvX3djJ0ZL26sBXvPCFMb7wgQ3f+k4TEnnBKzUx2Z/Sf8B/wVuZqIt2orvZwDcs4XoP/dC764df2+u+fPxsXNhY49pD6vnMdUw9k0rrGnVst8qcFVMPRG1sSr+QP33KWLR4QEvBOqeFWlF4srjIHtEF5otC7aLnWZuFWqHygNpCkzt0/JkNn5l6XYj1GUIajUaqkUu53grJptMZcufmQtGu0zVrjDm+sByb6oetqv1b6fLv0TRjXtC1TH6Jeg71yle55dv1CpPJOcunqZtulfJUiXHqj2qLnd9XqkyUqC86293DlUfb+RnVLgVcBB41HRoIz+Kj2q2gwpl9g26W3FXqmE7AuUEOgIfsbJSUG0usKur5cYMcJLq51ylbqYt81iDdVNSQfG8Z7ST3rXq3Dy86m6XNddrNlfnWQYYm+3NGyISpyz6aYY7Q82mDWP2rF+VQcdrpAf2wmqzImUP9HzJklh8Naz5Kk+7GESoYpHefhu1y1+uhXJV9eamT/1O2LKitePk5btmrBukke0or30srPaUG+fU+gQLqhKAM0nOq9arBIL8UzN9oJ6NGO+aYORarHVluKtLOXcq52/jtUFy2vNVvVQYz9AACeAKBw9RUVo2mwu2tcHs/3N6ViVhdRRV3o7pbirS1VGeCxg7PbVod1GQADLBjChumlnKKLtrC5quw2Yq/cAtbr8LWi7D1Uib+TyQ10PgZrH9nXfModWLPo26NweB+2GFykAPtUAVHOEw9jSuKmp49b+/Nnom/rRQ+e9P5bH36b+HSYMNn8MA7SbxhempCjadI+337/XKsppbLZYLbUAACiNtQfyCqSTWiut/ea+/dixVVeWSkrEhU/QPcOfm0eDjPSQZ6sTBE1HD7ECOWtD4cpoTOK7qq23ksr+r6WmgZFoKFMGIn3kJTikIh10UghAmNEYOC+ipoWpGCZtt7YetDrIUILAQLYcRgIbmCUtHKbRI238oP7l8DCCDuXw/GVYqWe2vnzoZP3sUvV2q+DpvPw52ns1gQAB54WBAQ56ns8XsbDv8aAQTwmMVTOeXvpezjvRTAAMN7KUfykqqV313X/MH7cvvwEmCAwUs/eWlCuZf24SXAAIOXjuSlyeTES7vwEmCAwUsdL51PTrwELwEGGLwUeWkK8RKmHWCAJcxL04iXMO0AAyxhX1+ZxvdXYtoBBljCvJTB+iVMO8AAS5iXsli/hGkHGGAJ81IO65cw7QADLGFeGsfzOEw7wABLmJcm8DwO0w4wwBLmJaz3xrQDDLCkeQnrvTHtAANMmZcMMi/oWk6mDbJoya/ULAXrnBZqxehUL7JHdIH5QrY5aFqoPKC2yH8FzHEeFlyCAAA=";
+        private const string csExp1XmlC = "H4sIAAAAAAACCu2a32/TMBDH35H4H6JM2h7axv2xwdY5mcY2BmJTEa06kCYhN7m2pq5TJQ5ZYfxlPPAn8S/gpKGMaNMQihOpsvpy+d6dz76P0lSX/vz+Ax/dzJnxGYKQ+tw2W1bTNIC7vkf5xDYjMW7sm0fO0yd4SFgEg2jBoDfui0C6+/QLXNBQ9MbHQUCWvXFv9AlcYcgFedi9CaltToVYdBGK49iKO5YfTFC72Wyh95cXfXcKc9KgPBSEu2Cus7zHs0y5H8PArwXMW85wQBmceVRYl74HLLQGEIrQGtIwcZwSQVKhdsajefugbqzjU1leZ0eXJ08+deMkYiIKwOYQiYCwuvE2GjHqvoHlwJ8Bt3nEGEar4ut9tFNTXlxRT0ydNkYrI1NfAZ1MhdPCKLPSRPQnM12k8zs86+cxXw6WC8hUqZOVYMjedoU0bFP2q0u5MJ0mRuTx8L7ExiDpgLkOk4GMcgjvCFIKU8ROssvMvBOP8gnY9Zkf5JZ4KRt1kuh/ydIxngTOuTwhRomVc46k9IIRd4bRKOfF6P4ly6qEUe6Y+Z5jdC+5/+HZUsPz9qMinldTKuDBNp+SYPYOvKKQFlqsTKptNVS3thRRTdtYxk1aWKEyaXbU0ETXimh+AMb8+ME+nwcAvCigRdYqk+muGqY7O9UwLfQmLbJWmUz3FD1LbzXTypg+U8N0m4nDb/rrtzKsz9VgvUaaaWVM99Uw/bo9EYcaa2VYD9RgtRv6qVrd1EHRGKle11Crg6poltSwNdTqoCoaJdVqGmp1UDsa6uZB3dVQNw/qnoa6eVAVDZVs/UOpCKir9+XJS3KM/vnfCM4vALJYZuQgAAA=";
+        private const string csExp2XmlC = "H4sIAAAAAAACCu3b3U7bMBQA4PtJe4coFwikNu4fUIoTxGB/GqjTWsEmoFGauq1X10GJs9LJD8X9LibxQnuFOW1gI0XJNsmqJ1m9cU6cpDmfzlEjpz++fYcHN1NifEFhhANqm1WrYhqI+sEA05FtxmxYbpoHzvNn8MwjMerG1wS1hx0Wit0d/BWd4Ii1h4dh6M3bw3b/M/KZIU5Io9ZNhG1zzNh1C4DZbGbN6lYQjkCtUqmCj6cnHX+Mpl4Z04h51Efmw1GD4qNM8X0MA75laFp1OsEk6HvUOsNodhoMEImsLiboGA1LxlkyejnArIsiFont9DbFXSafknEUExaHyKYoZqFHSsb7uE+w/w7Nu8EEUZvGhECwvNDDNWuLodg4xwM2dhoQLAdp9A3CozFzahCko8WB4NeRi5PU76enuTuk8+78GqVREfeWAUPkscXEwDZFblqYMtOpQOAVT+8IIoKSDJgP08REgimKfguIULTgdBZjkG78xQQIsueEfkCCMHOVVyKXR0n8UVjsGI5C57VIAgTJKLOzL0IviOdPIOhn9kLw1CkhyFw8mywInkz5v0BU5UBcuPwqF+KCu1frgDj2wskHNFCRoiaHwjKsgpoQM6RRIERzLdIZ6mnU19ShNgjbt+2NEduXZHI+xgz9nyYNOSZ8c4vnmmy67pbWyGpsS6qQpALubrfyq0TUh8tdjZJF2ZGDAnq9y1yQS9cFkjQ+IUKCWS7H/RT1PHbleJTK5VKuB3ddvrbqUJejqX9jKaSxpx8+lHkOlPREzossXG2xYlHVFspY1HSPUsairi2UsWjoHqWMxba2UMZiR1qPcot6FNcWjy12tYUyFk1pPcot6lHaImOxpy2UWfSr6B6ljEVVWyhjUdM9ShmLurZQxqKx5lXXMud61XVFRa+Fq6gi6Vl88+62yIT3erpMVkF2dZkoqNKUViZJzvMXxjkvJ3haZUVlT9eKTJXl6+zJO+wQ/PEfA5yflxqwgG8wAAA=";
+        private const string csExp3XmlC = "H4sIAAAAAAACCuydTVPTQBjH7874HUJuKu32hfdJypuijjA4tgM64nTSdksjS8IkW0s9cfDgOBxQaPHqTWeYgQMnx1M/Sj6Jm1LeOpiCdEuU/9AZNptNfmT34dcnyabVxtdXmfKOOq5pW7oaj8ZUhVp5u2Bay7pa5sXIiDqeuntHWzBYmWbKa4zOF9PcEavT5ns6a7p8vjjpOEZ1vjife0vzXBE7tNyxddfU1RLna2OEVCqVaCUZtZ1lkojF4uTl3Gw6X6KrRsS0XG5YeaqebFXovJUq/h5F0Z5yuhpPLVLHok52hhluvpQzRXHKcGl0zi5QFs2YjLr9yoL/+1HB5Bnqcn+5dbjiaP2ffmW6zHjZobpFy9wxWL/yvJxjZv4ZrWbsFWrpVpkxjRwBT9iJZlEsLJoFXkoNaOSo0Kp9Qs3lEk8lNNIqNTckp1s2d5I8bt7qw0mrmqmu0VatqDeOKhTRn2NcFHRV9NGYaXE1FdOI0bl5WgwVo34PqCfNRENmWtQ9UyGq3Oawpppl0lo4swVp30TL28x22nYyI7pq2q8/Vy1WFJed1BQz8isa8Ytta3Ona3NtazVy8T6BuhZKI23D1x5NGrkwJv8mUuNyIlWP6JELIvW0gVivSwrlV5Qxu/LHoXhoOCvHTboz9AACeAuBvdRUQo6mvJ0Nb+fQ29kThUBdNRvuNdtuSNLWYsnkNHB4XtBCt4IBMMD+U1gvtZSUlOd7tW2vVleClVTf9uqfvfoXUbiZTKqr+TNY12c9dii1Av+PWi26gzuzw/Agu9qhEo6wl3oakJQ1bW41DibuBdpJ8Ta/+a+NXzeWLnU3fQYPvNvE66WnBuV4ijT2G/tLgZpaymYJLkMBCCAuQ11CVENyRPWmcdA4eB0oqmxfX1aSqDonuFPiBmNv7pN09WShh6je9iFGLGx92EsJDUs6q9v9IM7qOlpoCRaChTBit95CI5JSIdtGIoSAxohBQR0VNCpJQRONA6/+M9BCBBaChTBisJCYQSlpsi/xat/FC9evAQQQ16+74ypJ072VB/e9jz+CpyvVvnq1LW/30wQmBIAHHiYEBHkq8c89QIV3PrzVngvhpPRHFg7xyAJggOGRhSt5Sdak4JZrLvEo1SG8BBhg8NI5Lw1K99IhvAQYYPDSlbw0FJ58aQ9eAgwweMn30nB48iV4CTDA4KWml0aQLyHsAAMsZF4aRb6EsAMMsJB9smEMH22IsAMMsJB5KY75Swg7wAALmZcSmL+EsAMMsJB5KYn5Swg7wAALmZcGcD8OYQcYYCHz0iDuxyHsAAMsZF7CfG+EHWCAhc1LmO+NsAMMMGleOvoGdP9rzzVy6e+UT/0GAAD//wMA1iDFFad+AAA=";
+
+        private const string csExp0TextC = "H4sIAAAAAAACCnzXT28TRxjH8TsS78H4FNpA5nlmZ2d2pUih+XMpSKiEciiVZWALVh0bOXbb9MShh6riQEsSeu2tlZDIgVPVU17KvpLOzuzu81tYDJF4bCzlo/HsfDW789VsmbO7euXe5OciTzb56pUvi5PDk+dF/qBYzIrF6GA6Pn787NHEj1+Mj4ubd+ZPiunNw8m0ON4cfF39u/9ksjwsjpfV62JxPJnPtummqv5uDnZX0+VqUWzPitVyMZ5uDu6uHk0nj6vfMf++mG3PVtNp+JUqV4ON/aPny5PrV6/cnsyKY5V7zG01UvnOcOD/DMMrkle78+l84T/m9bvVx9RPSoWRZGQZtYyJjEbGVEZbjx5GOQ029iaLZeOi4KLg2r6xfWMYXlUu/2K7dVFwUXCl+2EkGVlGLWMio5ExldHWo3dxzoONB+PptHFxcHFwlacvytP35elbPwzDu9S8+zb8x4vWycHJwZkchJFkZBm1jImMRsZURluP3qlz7dfPb4/JbLz0e6Ph6sDV8estz16XZ+fhK9aRev66PP+9PP/DDy1VB6qOX/V+GElGllHLWFH5VhgrKnMYw1cdR1u/66lJngw27k7HJ8WiUSZBmcRFffnq8mLn+jC8EfZh+fKv6ufFfy0xCcQkfusHYSQZWUYtYyKjkTGV0dajJ5rcDDbuLeezohGaIDRBuHX57vLdw2F4XQEfjkZbLc0EmpENaWRDGtmQRjakkQ1pZEMa2ZAGN2Sap/4JnhVHJ6P7zxtdGnRp0H17eXF58c0wvK50o2vXRq0uDbo06OhWGCvdLRVGllHLBxIZjXwgldHWH/A6m9tG99Xk6bP2abYBaOMX/OYX/wUHoW2ED1uhDUIrQitCK0IrQitCK0IrQotCl7tGuPdj+5i44HNxAefzgHMfL58LOCc4JzgnOCc4JzgnOCc4h7gszxrc7eK7dvWyoMuibufyojz/dxjeqIBbCMwCMBNgJsBMgJkAMwFmAswEmCGQVE6qfjTuzH+YzJ6253UMCcWSbJVnf/uf8JCQ+vgpodgTUnBwKzi5FRzdCs5uBYe3gtNbwfGt8HEhHxZqjpu9Yvyk9daBiYUZfP5Z+es/w/hGOBnP/izPXpVvftsRc90akmOHSM4dIjl4iOTkIZKjh0jOHiI5fIjw9CHOyVdnb3V01GaaYneIO6Em/rjUFFNDDEvLsLQMS8uwtAxLy7C0DEvLnaXVOekYx9H91hmDQ/rDQL4fxrc/WUiK3SEtjSQtkSQtlSQtmSQtnSQtoSQtpSSNqaQkp6R2P2jdMUFUN6jWNWGnpHa/73HHGFEC7gTcCbgTcCfgTsCdgDvpuE1OpllvgccykfkQHhfcrIHHVJEBuAG4AbgBuAG4AbgBuOnA05zSGr7XumOzKO1f8PRD91txx4hRCu4U3Cm4U3Cn4E7BnYI77bhtTrZZcIHHlpHtX3C7Bh7bRhbgFuAW4BbgFuAW4BbgtgN3Oblmhws8Ro5c/4q7NfDYPXIAdwB3AHcAdwB3AHcAdx14llPWbnGRxwBS1r/k2Rp5DCJlIM9AnoE8A3kG8gzkGcgzlLPPn6rl++1dITaRVf9tQa25LsQ+soILg4Ibg4Irg4I7g4JLg4Jbg4Jrg+q4fQapWXGBxzgy9Z7iTGvgMZJMACeAE8AJ4ARwAjgBnDpwH0Ru9rjA6+sZ9+5x5k+fhlzf0PCKhnc0vKThLQ2vaXhPw4ta56bGvpBtNkEew8m6d4+zXiOP4WQIJ0M4GcLJEE6GcDKEkyGc3Akn+0Y24dwTeCwn95eTk08/nBzLyVBOhnIylJOhnAzlZCgnQzm5U072jWzLCfKYTu5PJ5s18phOhnQypJMhnQzpZEgnQzoZ0smddLKvZNqe5CKP8eT+ePKaeHKMJ0M8GeLJEE+GeDLEkyGeDPHkTjzZZ9LKUS70mE/uzyevySfHfDLkkyGfDPlkyCdDPhnyyZBPlnz+DwAA//8DAFcVviKsEwAA";
+        private const string csExp1TextC = "H4sIAAAAAAACCmTSQYucMBjG8fvAfAfZPWzLuLN5okYNtbRMp5duodBhTwvDtJuD1GoZFbrt9rs3eaNJZPDyGuVnDP9dN7aDRL5efa3/KMljrFef1PPh+ZeSD4e6Ufuneth+7p5U028Pqh/67UPdmwcfTsOJFjb7dvzJyzhy79Oyvlfnvu7aCltmrjjajc0wnlXVqnE4n5o4+jJ+a+rv5nvdD9VW7dg09HkmWfTqyNjr9eq+blXPpN7WPTsy+e4qiq7Wq13XdGe9zPVoltlvltOIadQIJAyCGQEhIOTl6BAQAkLSjzRiGjXCJTcInxFOCCfk+tohnBBud7KjEdOokUQmBklmJCEkIeTu0SEJIQkh7/c0Yho1ksrUIOmMpISkhNzcOCQlJLU72dOIadRIJjODZDOSEZLZM3lxSEZI5pEsRIQUBhEzIggRhLz55xBBiPC/I8LfyWVukHxGckJyQh7vHJITknskD5FCFgYpZqQgpCDk71uHFIQUHilCpJSlQcoZKQkpCaluHVISUvozKcMzgU7UNAvXLGy0sNXGsQ/OZgvmKbCFpUs16cKnO7Vr472tvDXVi8DCwtLBmoLhCoZNGLbhzcZbNmLwwOILS3drQoYLGbZkJBeWbRlJYCULS+dreobrGTZopBeWTRpB01hEDV2xyRoua9iukV1YtmwEaWPRNnTMpm64umHzhu27Cs7eBg4RWMJZ/wEAAP//AwB5fCDnWQUAAA==";
+        private const string csExp2TextC = "H4sIAAAAAAACCmzWW0vcQBTA8XfB7xD2KcK65pzcgystXqBUW2FFH7yEtU5hMU1kL20t+VB+Bj9ZJ+dkJjlu9MWB5eeZZP6Ox9WmXGe+t7szW/xTWTDG3Z2v6vXq9UVls+q5epyXk+uF+nNRPaliNblaFOpE/Rw7181Pp0+L9ZVarVd6rZarRVVOYeI132PneFOsN0s1LdVmvZwXY+dy81gsfjR29azKabkpCvpVXuY57umvl/Xr3u7O+aJUKy/TQ5x7uZd9Gjn6a0Qr6FbHVVEt9cdA/9h8zPvrxWRBBo57My8KQwFRQNRtXt+PaNVQt3V+bykgCogKmMIMHfesqKqlsZAsJGviTGgs5LH00lpIFpKFn8nyM99xT/SDWpTztX5KRvRJ9MVGfRIPp9MjK/ok+iyekRhkgeNeFvNXZccLCAsIq929ekSrBnPzfM9iAWFBHwuz0GDff6tlM6hBQ0JDnvDw/a1x9LJRj/I6t2pIathXoyxy3Nm6KpXBIsIiwg4eHu5GtGqsuzw/sFZEVkRWdEpWnMWt9aXsjxeTGJM43t8fj2jViHWe11aMSYxZ5OmSLGlfb34xXz6rJ0MmRCbiLSfbbzkhMum/5TRL+fDl3wyWEpaK45duH7+UsLR//ECfbq/lbuxp5jKA06jNeeY2cnGgOQ7whKmPOZgRO7RtBCQKA2ibiegE9HnHFp1Zk1sBlOHhQHmcC6Aw9Yn3zaAdyrmAL1F/AOViwBeoPvmBeaIdytlAIHcfDOyey4FAoPrgh/aRdip3A6FUwwGVy4FQqDqBqFVPrcn5QGS2n4942W6/O+7ABUEkTB1BbCbtUC4IYonGAyhHBLFAdQaJeaYdyg1BYnbPaGJ230M5I0gEqnOwJfVUjglSqaYDKvcEIijU7ZigZhZFLgo9sX/0tvePXBSKolC3Y4vqqZwUglRhQOWkUF49uh60J7VT2wsIxQNA3H4A2N5BIirU+fjdUe1Yzgp9yfoDLGeFIivUAdm7qPtThdwVBvLqQA7raL/usRwWijsJdUFbt1KP58Dww82EA1cTcmEoLifUMUV2atstcmPIjbnvb8blyuqHh97YXBlGwtU9xVtjdz7nhvGHseOBsbk3jAWvy0rs2N0r5OAwMWMf8T8nXFxd7x92LBeHiWB1WunW1B3P5WH6Yep0YGpOD1PL/wcAAP//AwCglhGfYQoAAA==";
+
+      //private const string csExp0BinC = "H4sIAAAAAAACCpJhYGBgAWImIM4MTy3KSy2Kd8tJLE7OSMoEMp0Si1P1fPNTUnP0QjJzUot1FMJAtGtKZklIanEJiJ9aVJyZn2drqGcAgjoKzqU5JaVFqbZ5qaUlRYk5OgoBpUk5mcneqZUh+dmpebZ5pTk5DFAbWRSAAExwMGACRpgqW11bXRYgtgWp4mNDhUxQVTyPpjQ8mrLl0ZQ1QAaEswbMbwDp4mdBhcxQXRwKj6ZOfjR1mgLPo2mTH02b+GjaJCADbA8UcjEBAQMTEyyU2B/1TDi0wUGTS+FRz0IQatgDtoANFbJClbPpH1p/aH0MS0x8vD4257PB1MUe2nBoQzRLvKJiPEgdFyMDFwMXFyOMZodbP70FaD1YYQw2hRywUIvNz8dtHCfMuFiHQxseTdvFoo9DIRcsoPQfTV0BRLh9wg3ziYK21qOOlVyPps54NHXCo+ldDtjChwdrEkA3kxdL5G4hGLl8CF1rkJPEFry6+LHo2kJQlwAhu9Zg0yVIyC6suoTIskuYLLtEyMpWomTFlxhZ8SVOVnxJkBWGkmSFoRRZdkmTZRcAAAD//wMAJ9q0ZskFAAA=";
+      //private const string csExp0BinC = "H4sIAAAAAAACCqxUzW7TQBBegkmcNED5Lz8H91hIk/IAlizY5QKVKkjxgUSW2yyt1Y1dOTbItxw4INRDoXHKlRtIkZpDTgiE5EfZF+AV2F2nSpRKSYxr7+zuWNrP33wzsw+AlLEAADp2bewaz4jZ2t7dstj2idnC5XWngUm5ahHcKimv+YoallfFLY/72G1Zjq0+Lq/xt6Q89Ynnu1i1se+5JikpG/4Wsbaf46Dq7GFbtX1C2L9ARlLYIyYZzHgucUPNfS+4IE6qq+qqxExlJ5fANJPYLEHL9TL8YJF22rQzoJ0e28ROT/htBqSAaSaAdJOQixxIVmh4RMOuUqTdI9r9TLtf2OZsHH///B5OIxcscINMPss2PaYdh87k6MFh1NdWCgo9+MZH+xeDWwPTLMvm7AYxA+xyhTLZSnQSndSkmmFUZiojNH3lOTbOirP1qB/130jG8rIhA+2U65C7FtvkNx6wjGzcDIzN/VwcxvEHFobAqc2NIxSJcV5aO7ueLLJcd5yEfPJsycc48L2dF4TqWtSn3Z9SJQlQgS2FGOgFfusVRM4rNPzOxpz6ipiEvuvOO8veWRAqK48e0o8/CjT8SsNDevxJm5lkQSVOMsRmo3imdeZIM/SbzeDyZAcMknWAqDbeAcbmlSFUb7yZBv8DpV+dhBokg+JVl4tZ6YtTafUS0ILXptLqJaEFr6ekNcLS4Y2UvETHDuWCN1PeiSO90K2UxTWmF7qdsrrG9EJ3UpbXuF5o6dwSCdHd80skRPdSEhuB6RDdT8lMXMKnJYb+AQAA//8DAF//151cCAAA";
+      //private const string csExp0BinC = "H4sIAAAAAAACCpRTy27TQBQ1xiSOE8r7FVi43bWkCXyApQg8bKCighQvSGS5zdBaTMaVHyDvsmCBUBeFxi5bdiBZahZZIRCSP2V+gF9gxnWdKA2Rez32zNjnzplz7vgeJ/Amx3EatDG09SfIcLZ2Nk06fGQ4sL5mdSGqt0wEnZr8ivWga7ot6LhsDm3HtLDysP6AXTX5sYdcz4YKhp5rG6gmr3ubyNx6Cv2W9RZiBXsIUS6OF2QayUPk0rhAb9Dbdf1zCUBZVVYFeisiTkOg71XTdnn2vUIGfTIYkUFEB8eTKJn3xedpMLxmIHSe4UWZBAckCOUKCQ9I+JmEX+hAXKCxssQvldnaVJSJDZcqYql8keztx8PmsiSTvW+s9X+JVhoFClhHhg9ttm2+0IiP4qO20Nb1RrZf9uWla2FYSCCdeBgPXwv64qIuVv/++U1b9aRnJgAMe76+sVs85j78QLkTePsUvJzBX5jbO66YGNaxrP+sXsrg6ntcSpbvNOMhCX8KjVl4KcM/g29cKbGvQYLvtE1JLJ9IXLPemXi7nAiV76+Qjz8kEnwlwT45/NTMXJMy11RodCtTB2HSN9Xr9fyL04UezS50IS20vrGQZkSTR2M0J0O7NJ0xmp1RzDi0y3NJotMk6pW5JNEMEvVqTpIsRVOv5WQRx1LU6zn/pUwLuJGzKGMt4GbOqoy1gFs5yzKhBdw+q2UquHNmy1RQzUkjjisD7ubkKU2UBvwDAAD//wMAIzJKVZoFAAA=";
+        private const string csExp0BinC = "H4sIAAAAAAACCpVTTW/TMBgOIbRpWsb3V+GQ7bbRtfADIlUQc4GJCTpyoFWUrWaLcJ0pH6DceuCA0A6DNRnHcQMp0nroCXHKT/Evwc5CWoWqyt7YiR0/rx8/7yM/4ATe5DhOgzaGtv4MGc7O3rZJh08MBzY3rD5EzY6JoNOQ37Av6JtuBzoum0PbMS2sPG4+Yk9Dfuoh17OhgqHn2gZqyJveNjJ3nkO/Y72HWMEeQpSL4wWZRvISuTQu0Q4G+65/IQEo68q6QLsi4jQE+l81bZdn6zUyGpLRhIwiOjibRMl8KL5Mg+E1A6GLDC/KJDgiQSjXSHhEwq8k/EYH4hKNtRV+pcr2pqJMbLhUEUvly+TgMB63VyWZHPxgbfhHtNIoUcAmMnxos2PzpVZ8Gp92ha6ut7LzspXXroVhKYH04nE8fivoy8u6WD85qbPOxAMMB76+tV8+4zz+RDkTWDeDVTPYK3N3zxWTAvUsK7dbJYOpH3El2a7Xjsck/C20ZnFShnsB37lSUp4WCX7SlpNQ/Sdhw/pg4t1qIkR+uEY+/5JI8J0Eh+T4SzuripRVRYVGv5YzerYuqjcY+JfzRk7mG1lKjdS3ltKMaNb6yYIM7Uo+YzI/o5xxaFcXkkT/k6jXFpJEc0jU6wVJshRNvVGQRZxKUW8WvCuZFnCroClTLeB2QVemWsCdgrbMaAF3z1syFdw7d8lUUC9II06dAfcL8lRmrAF/AYgPOhd6BQAA";
+        //private const string csExp1BinC = "H4sIAAAAAAACCmTOT2vCMBgG8Np1/ulc675BwIOHxrrtJhgvmycZeCiehFFnDmFZCk1yGOp3Nyk+vZSHF5JfkjfvSxAEoaueK7svhOSbkzD5V3XiUucF10bne6H9wWdpygayjbJ/70tK2vsNuz2vtagUe8tffSj5sNLYmjPFralLScnOHqX42fL/ovrliikrZXD/PSTEDzJw6YEu357SKI0wYzid+uXY5QG0OHhK4iSOQLNZQy6Pba8LqA9aXfFwADosQEPQeQ0agdgcvWIQpaAn0JyBxqAsAz13KelS2qVJO0Tb/gYAAP//AwAfetHlxQEAAA==";
+        private const string csExp1BinC = "H4sIAAAAAAACCl3Nu07DMBQGYMcFwiUEeANLHTrETZP0ApUwC3RCqAxRp0pVoB4sjCPF9oAor9RnJD0WRorO4vPZ/v8bhAOLEFqVQvLFVpj0pd5yqdOSa6PTldCHi6fKVADJQtnPYk6Jfw/c7rzRolYsT7PDUPJopbENZ4pb01SSklf7JsX7M/8q6w+umLJStr0owITgMOy1x02WBSC7DV4uneQYpN/HUeSk6IGM1ni/dzI+AhkMcBw7mRy7nJ2X6QnI/Y//NQtB1iMvt6cg3w9e7s5A2NDnzM9BKP2TPLsAGTIveQSSJF6Ky66M465MrroyvXbt/8mzX6q3voevAQAA";
+        //private const string csExp2BinC = "H4sIAAAAAAACCnSRW0vDMBiGu5p1OnWb57PksoO20/t1N+qVCIJjN9v60bkIZaGFHhAhP2q/Yb/MZG3GFL6EhOR5875J+O4NwyBymHKEH8kimYWxN4rY91syZzzzhhFnz+zLoSO1eplH+ZBleSb3LM2iJPYfvQfVHfpU8LxImR+zIk9D7tD3Ysajz1f2M0wWLPbjgnOjuolQ2dZTTe4aRk3zMYgpGQuYrjkxNfeoJ8/LWfGmufMnp+/7A8Xbpv4JEXZXEBugW/J6xeu0v1p2yQAElIKlDb0gmJAJQE/xltXQ3HFdhwgAsT5v7SIP2kM+0Nw8SHHY8H2EHyA5hwhvITlthHe2ckDliJIfIfx4KwdUTsVPEH6K5Jwh/BzJuUD45b9CuqIsjHmFVfi6Eix7tVSKCILKcoNZbrUgLQNKhHD7pXCHOX4BAAD//wMAXe6gukYDAAA=";
+        private const string csExp2BinC = "H4sIAAAAAAACCo2SXW/aMBSGY+oCHazr2u77Q7mEKSTdPeGm9aZp6lbJiFzQcpQWT4rw7CkknZD8o/ob+stqZ4MEI6QmkpWcx+9zjiV/dHAtdhyHypm8joU/StjfczllfO4PE87O2C/PHZkvMk2yIZtnc/3P0nkiRfjZPzGv557mPMtTFgqWZ2nMPfciv+bJzXe2GMoZE6HIOdc9nBp29VMsqLGrC+T3n2yBCjIGdYXHCq7QV6wLUcx5rQC+6+uIXtEnE/nCpUx3Slk/DAcoaOnCmZ4uEXGmR8MFV52uwh2ALgrqunDB4wVLjaO26/bv77p4AApQsL9iP29Zaiz1Ih5MJpf4EiBAwoRoJgVrFMTr9TysABSSrSX5JkyyaY/cXo4M53E6Y9M9+7D1/4eFH0/+DW0QrKOoZaPGKhW1txrpUxuVMbq/VRnRZzZrlu3owVIKRqoq/chzG5X9yOHSCcZZZRE5slmlHzneKqXkhc3KICUvt1ojSl7ZcK9yRPK6ekl6SqGgubokEL3ZuEIHG1cIordmV71zf2e2qclkXULfPUZC3xe7tGTgYqV6/TUH+fAYB3kAkMoOJOMDAAA=";
+        private const string csExp4BinC = "H4sIAAAAAAACCoXSYU+CQBzHcVIz0lXPeuzzHNVzMU1Ql6W2I3nQA0dy6c2TYwfMufWieoNt/e8/0KwcX7cfk33G6calViq8a5pGFp4M+95saUwYXT8Jn3LDYlHIvY3DOK3XJupi+yx2aBRH8J3KiInAvDVu1Kde6yQ8TiQ1A5rE0uP12jh542w2oBtHLGlgBgnnDTipUJpDOHolrQz3ewJ4MDpSogXh6OdpZyDacrbwqOBizqL4E+E1hKNX047Vn1kL6X8heIVw9kBbroQ0iwrUIBxdS1PAXoXxpongA8LRT7IAuB7n0yG5Q2JCOH+J7baQXEE4/5BhO48M3fvcp5BOHnGJdYCc7n6LS+wDSP+BurnGJb08A2f1888iD79MOa0KxhJCTjtcRNQfFPdfiIydZmwU0mCMyIBw9CyFulypRxY/H0CVLbI8uSSoGhCOfpGmHkVij8lo+hI6iJoQzhZVd8gS6+AbIH1uZoYDAAA=";
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private VisTileData testClass;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
@@ -388,14 +434,9 @@ public class TileDef : TileDefBase
 
             _testDefs.Add(0, ((t) => t.SetTileDefs<Werner_Flaschbier_Base.Model.Tiles>(new Werner_Flaschbier_Base.View.VTileDef()), 29));
             _testDefs.Add(1, ((t) => t.SetTileDefs<Enum29>(new Snake_Console.View.TileDef()), 16));
-            _testDefs.Add(2, ((t) => t.SetTileDefs<Sokoban_Base.ViewModels.TileDef>(new Sokoban_Base.View.VisualsDef()), 23));
+            _testDefs.Add(2, ((t) => t.SetTileDefs<Sokoban.ViewModels.TileDef>(new Sokoban.View.VisualsDef()), 23));
             _testDefs.Add(3, ((t) => t.SetTileDefs<Werner_Flaschbier_Base.Model.Tiles>(new Console.Views.TileDef()), 29));
-        }
-
-        [TestMethod()]
-        public void GetTileDefTest()
-        {
-            Assert.Fail();
+            _testDefs.Add(4, ((t) => t.SetTileDefs<SharpHack.ViewModel.DisplayTile>(new SharpHack.Console.SharpHackTileDef()), 29));
         }
 
         [TestMethod()]
@@ -419,10 +460,41 @@ public class TileDef : TileDefBase
         [DataRow(3, 2, new[] { "─┴┬─", "─┬┴─" })]
         [DataRow(3, 3, new[] { " ╓╖ ", "▓░▒▓" })]
         [DataRow(3, 4, new[] { "⌐°@)", " ⌡⌡‼" })]
-        public void SetTileDefsTest(int iAct1, int iAct2, string[] asExp)
+        public void SetTileDefTest(int iAct1, int iAct2, string[] asExp)
+        {
+            var tileDef = new SingleTile(asExp, [new FullColor((ConsoleColor)iAct1, (ConsoleColor)iAct2)]);
+            testClass.SetTileDef(iAct2, tileDef);
+
+            var act = testClass.GetTileDef(iAct2);
+            AssertAreEqual(tileDef.lines, act.lines);
+            AssertAreEqual(tileDef.colors, act.colors);
+        }
+
+        [TestMethod()]
+        [DataRow(0, 0, new[] { "    ", "    " })]
+        [DataRow(0, 1, new[] { "=-=-", "-=-=" })]
+        [DataRow(0, 2, new[] { "─┴┬─", "─┬┴─" })]
+        [DataRow(0, 3, new[] { " ╓╖ ", "▓░▒▓" })]
+        [DataRow(0, 4, new[] { "⌐°@)", " ⌡⌡‼" })]
+        [DataRow(1, 0, new[] { "  " })]
+        [DataRow(1, 1, new[] { "|_" })]
+        [DataRow(1, 2, new[] { "##" })]
+        [DataRow(1, 3, new[] { "/\\" })]
+        [DataRow(1, 4, new[] { "''" })]
+        [DataRow(2, 0, new[] { "    ", "    " })]
+        [DataRow(2, 1, new[] { "[_|]", "[|_]" })]
+        [DataRow(2, 2, new[] { ". . ", " . ." })]
+        [DataRow(2, 3, new[] { "    ", "<==>" })]
+        [DataRow(2, 4, new[] { "|()|", "(__)" })]
+        [DataRow(3, 0, new[] { "    " })]
+        [DataRow(3, 1, new[] { "=-=-", "-=-=" })]
+        [DataRow(3, 2, new[] { "─┴┬─", "─┬┴─" })]
+        [DataRow(3, 3, new[] { " ╓╖ ", "▓░▒▓" })]
+        [DataRow(3, 4, new[] { "⌐°@)", " ⌡⌡‼" })]
+        public void GetTileDefsTest(int iAct1, int iAct2, string[] asExp)
         {
             _testDefs[iAct1].Item1(testClass);
-            var act = testClass.GetTileDef((Enum)(Enum29)iAct2).lines;
+            var act = testClass.GetTileDef(iAct2).lines;
             Assert.IsNotNull(act);
             for (int i = 0; i < asExp.Length; i++)
                 Assert.AreEqual(asExp[i], act[i]);
@@ -433,29 +505,28 @@ public class TileDef : TileDefBase
         //[DataRow(1, EStreamType.Code, new[] { csExp1CodeC })]
         //[DataRow(2, EStreamType.Code, new[] { csExp2CodeC })]
         //[DataRow(3, EStreamType.Code, new[] { csExp0CodeC })]
-        [DataRow(0, EStreamType.Json, new[] { csExp0JsonC })]
-        [DataRow(1, EStreamType.Json, new[] { csExp1JsonC })]
-        [DataRow(2, EStreamType.Json, new[] { csExp2JsonC })]
-        [DataRow(3, EStreamType.Json, new[] { csExp3JsonC })]
-        [DataRow(0, EStreamType.Xml, new[] { csExp0XmlC })]
-        [DataRow(1, EStreamType.Xml, new[] { csExp1XmlC })]
-        [DataRow(2, EStreamType.Xml, new[] { csExp2XmlC })]
-        [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
-        [DataRow(0, EStreamType.Text, new[] { csExp0TextC })]
         [DataRow(0, EStreamType.Binary, new[] { csExp0BinC })]
-        [DataRow(1, EStreamType.Text, new[] { csExp1TextC })]
+        [DataRow(0, EStreamType.Json, new[] { csExp0JsonC })]
+        [DataRow(0, EStreamType.Text, new[] { csExp0TextC })]
+        [DataRow(0, EStreamType.Xml, new[] { csExp0XmlC })]
         [DataRow(1, EStreamType.Binary, new[] { csExp1BinC })]
-        [DataRow(2, EStreamType.Text, new[] { csExp2TextC })]
-        [DataRow(2, EStreamType.Binary, new[] { csExp2BinC })]
+        [DataRow(1, EStreamType.Json, new[] { csExp1JsonC })]
+        [DataRow(1, EStreamType.Text, new[] { csExp1TextC })]
         [DataRow(1, EStreamType.Xml, new[] { csExp1XmlC })]
+       // [DataRow(1, EStreamType.Xml, new[] { csExp1XmlC })]
+        [DataRow(2, EStreamType.Binary, new[] { csExp2BinC })]
+        [DataRow(2, EStreamType.Json, new[] { csExp2JsonC })]
+        [DataRow(2, EStreamType.Text, new[] { csExp2TextC })]
         [DataRow(2, EStreamType.Xml, new[] { csExp2XmlC })]
+       // [DataRow(2, EStreamType.Xml, new[] { csExp2XmlC })]
+        [DataRow(3, EStreamType.Json, new[] { csExp3JsonC })]
         [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
+       // [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
         public void LoadFromStreamTest(int iAct1, EStreamType iAct2, string[] asExp)
         {
-            var sAct = Decompress(asExp[0]);
-
             var ms = new MemoryStream();
-            ms.Write(Encoding.UTF8.GetBytes(sAct));
+            var sAct2 = DecompressBinary(asExp[0]);
+            ms.Write(sAct2);
             ms.Position = 0L;
             var act = testClass.LoadFromStream(ms, iAct2);
             Assert.IsTrue(act);
@@ -465,35 +536,77 @@ public class TileDef : TileDefBase
 
             if (!cExp.Equals(testClass))
             {
-                AssertAreEqual(cExp, testClass, []);
+                AssertAreEqual(cExp, testClass, ["KeyType"]);
             }
             else
                 Assert.AreEqual(cExp, testClass);
         }
 
         [TestMethod()]
-        [DataRow(0, EStreamType.Code, new[] { csExp0CodeC })]
-        [DataRow(1, EStreamType.Code, new[] { csExp1CodeC })]
-        [DataRow(2, EStreamType.Code, new[] { csExp2CodeC })]
-        [DataRow(3, EStreamType.Code, new[] { csExp0CodeC })]
-        [DataRow(0, EStreamType.Json, new[] { csExp0JsonC })]
-        [DataRow(1, EStreamType.Json, new[] { csExp1JsonC })]
-        [DataRow(2, EStreamType.Json, new[] { csExp2JsonC })]
-        [DataRow(3, EStreamType.Json, new[] { csExp3JsonC })]
-        [DataRow(0, EStreamType.Xml, new[] { csExp0XmlC })]
-        [DataRow(1, EStreamType.Xml, new[] { csExp1XmlC })]
-        [DataRow(2, EStreamType.Xml, new[] { csExp2XmlC })]
-        [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
-        [DataRow(0, EStreamType.Text, new[] { csExp0TextC })]
         [DataRow(0, EStreamType.Binary, new[] { csExp0BinC })]
-        [DataRow(1, EStreamType.Text, new[] { csExp1TextC })]
+        [DataRow(0, EStreamType.Code, new[] { csExp0CodeC })]
+        [DataRow(0, EStreamType.Json, new[] { csExp0JsonC })]
+        [DataRow(0, EStreamType.Text, new[] { csExp0TextC })]
+        [DataRow(0, EStreamType.Xml, new[] { csExp0XmlC })]
+
         [DataRow(1, EStreamType.Binary, new[] { csExp1BinC })]
-        [DataRow(2, EStreamType.Text, new[] { csExp2TextC })]
-        [DataRow(2, EStreamType.Binary, new[] { csExp2BinC })]
+        [DataRow(1, EStreamType.Code, new[] { csExp1CodeC })]
+        [DataRow(1, EStreamType.Json, new[] { csExp1JsonC })]
+        [DataRow(1, EStreamType.Text, new[] { csExp1TextC })]
         [DataRow(1, EStreamType.Xml, new[] { csExp1XmlC })]
+
+        [DataRow(2, EStreamType.Binary, new[] { csExp2BinC })]
+        [DataRow(2, EStreamType.Code, new[] { csExp2CodeC })]
+        [DataRow(2, EStreamType.Json, new[] { csExp2JsonC })]
+        [DataRow(2, EStreamType.Text, new[] { csExp2TextC })]
         [DataRow(2, EStreamType.Xml, new[] { csExp2XmlC })]
+
+        [DataRow(3, EStreamType.Json, new[] { csExp3JsonC })]
+        [DataRow(3, EStreamType.Code, new[] { csExp0CodeC })]
         [DataRow(3, EStreamType.Xml, new[] { csExp3XmlC })]
+
+        [DataRow(4, EStreamType.Binary, new[] { csExp4BinC })]
+        [DataRow(4, EStreamType.Json, new[] { csExp4JsonC })]
         public void WriteToStreamTest(int iAct1, EStreamType iAct2, string[] asExp)
+        {
+            _testDefs[iAct1].Item1(testClass);
+            var ms = new MemoryStream();
+            var act = testClass.WriteToStream(ms, iAct2);
+            Assert.IsTrue(act);
+
+            ms.Position = 0L;
+            var sr = new BinaryReader(ms).ReadBytes((int)ms.Length);
+            var sr2 = Encoding.UTF8.GetString(sr);
+            if (iAct2 == EStreamType.Json)
+                sr2 = sr2.Replace("],", "],\r\n");
+            var sExp0 = DecompressBinary(asExp[0]);
+            var sExp = Encoding.UTF8.GetString(sExp0);
+            if (iAct2 == EStreamType.Binary)
+            {
+                File.WriteAllBytes($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Expected.bin", sExp0);
+                File.WriteAllBytes($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Actual.bin", sr);
+            }
+            else
+            {
+                File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Expected.txt", sExp);
+                File.WriteAllText($"C:\\Temp\\VisTileData{iAct1}_{iAct2}_Actual.txt", sr2);
+            }
+            if (sExp != sr2)
+            {
+                Debug.WriteLine("Result:");
+                Debug.WriteLine(sr2);
+                Debug.WriteLine("Packed:");
+                Debug.WriteLine(Compress(sr));
+                AssertAreEqual(sExp, sr2);
+            }
+            else
+                Assert.AreEqual(sExp, sr2);
+
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(TestData), DynamicDataSourceType.Method)]
+        public void WriteToStreamTest2(string name, int iAct1, EStreamType iAct2, string asExpFile)
         {
             _testDefs[iAct1].Item1(testClass);
             var ms = new MemoryStream();
@@ -504,13 +617,13 @@ public class TileDef : TileDefBase
             var sr = new StreamReader(ms).ReadToEnd();
             if (iAct2 == EStreamType.Json)
                 sr = sr.Replace("],", "],\r\n");
-            var sExp = Decompress(asExp[0]);
+
+            var sExp = File.ReadAllText(asExpFile);
+
             if (sExp != sr)
             {
                 Debug.WriteLine("Result:");
                 Debug.WriteLine(sr);
-                Debug.WriteLine("Packed:");
-                Debug.WriteLine(Compress(sr));
                 AssertAreEqual(sExp, sr);
             }
             else
@@ -518,12 +631,12 @@ public class TileDef : TileDefBase
 
         }
 
-        private static string Compress(string input)
+        private static string Compress(byte[] input)
         {
             using (var memoryStream = new MemoryStream())
             {
                 using (var gzipStream = new GZipStream(memoryStream, CompressionLevel.SmallestSize))
-                using (var writer = new StreamWriter(gzipStream))
+                using (var writer = new BinaryWriter(gzipStream))
                 {
                     writer.Write(input);
                 }
@@ -542,9 +655,27 @@ public class TileDef : TileDefBase
                     return reader.ReadToEnd();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return input;
+            }
+        }
+        private static byte[] DecompressBinary(string input)
+        {
+            try
+            {
+                using (var memoryStream = new MemoryStream(Convert.FromBase64String(input)))
+                using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                using (var reader = new MemoryStream())
+                {
+                    gzipStream.CopyTo(reader);
+                    reader.Close();
+                    return reader.ToArray();
+                }
+            }
+            catch (Exception)
+            {
+                return Encoding.UTF8.GetBytes( input);
             }
         }
         private enum Enum29

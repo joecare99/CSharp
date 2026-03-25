@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 08-04-2022
 //
@@ -11,12 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban.Model.Interfaces;
+using Sokoban.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Sokoban_Base.ViewModels;
+namespace Sokoban.ViewModels;
 
 public interface IGame
 {

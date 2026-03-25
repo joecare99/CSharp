@@ -47,7 +47,7 @@ public class Bool2VisibilityConverterTests
     [DataRow(null, null)]
     public void ConvertTest(object? value, Visibility expected)
     {
-        var result = testConv.Convert(value, typeof(string), null, CultureInfo.InvariantCulture);
+        var result = testConv.Convert(value, typeof(string), null!, CultureInfo.InvariantCulture);
         Assert.AreEqual(expected, result);
     }
 
@@ -63,7 +63,7 @@ public class Bool2VisibilityConverterTests
     [DataRow(false, "Hallo")]
     public void ConvertBackTest(object? value, object expected)
     {
-        var result = testConv.ConvertBack(expected, typeof(string), null, CultureInfo.InvariantCulture);
+        var result = testConv.ConvertBack(expected, typeof(string), null!, CultureInfo.InvariantCulture);
         Assert.AreEqual(value, result);
     }
 }

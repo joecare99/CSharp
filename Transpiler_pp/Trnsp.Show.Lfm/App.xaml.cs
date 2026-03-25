@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Trnsp.Show.Lfm.Services;
+using Trnsp.Show.Lfm.Services.Interfaces;
 using Trnsp.Show.Lfm.ViewModels;
 
 namespace Trnsp.Show.Lfm;
@@ -37,6 +38,7 @@ public partial class App : Application
         services.AddSingleton<ILfmParserService, LfmParserService>();
         services.AddSingleton<IComponentFactory, ComponentFactory>();
         services.AddSingleton<IComponentRenderer, ComponentRenderer>();
+        services.AddSingleton<IXamlExporter, XamlExporter>();
 
         // ViewModels
         services.AddTransient<MainViewModel>();

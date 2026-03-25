@@ -3,7 +3,7 @@ using ConsoleLib;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Drawing;
 using NSubstitute;
 
@@ -18,9 +18,9 @@ public class ControlTests : TestBase
     public void Invalidate_Pushes_Message()
     {
         var c = new TestControl();
-        Control.MessageQueue = new Stack<(Action<object, EventArgs>, object, EventArgs)>();
+        Control.MessageQueue = new ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>();
         c.Invalidate();
-        Assert.AreEqual(1, Control.MessageQueue.Count);
+        Assert.HasCount(1, Control.MessageQueue);
     }
 
     [TestMethod]
@@ -52,9 +52,11 @@ public class ControlTests : TestBase
     [TestMethod]
     public void Visible_False_Deactivates()
     {
-        var c = new TestControl();
-        c.Active = true;
-        c.Visible = false;
+        var c = new TestControl
+        {
+            Active = true,
+            Visible = false
+        };
         Assert.IsFalse(c.Active);
         c.Visible = true;
         Assert.IsTrue(c.Visible);
@@ -64,8 +66,11 @@ public class ControlTests : TestBase
     public void Shadow_Set_Invalidates_Parent()
     {
         var parent = new TestControl();
-        var child = new TestControl { Parent = parent };
-        child.Shadow = true;
+        var child = new TestControl
+        {
+            Parent = parent,
+            Shadow = true
+        };
         Assert.IsTrue(child.Shadow);
     }
 
@@ -78,7 +83,7 @@ public class ControlTests : TestBase
         Assert.AreSame(p,c.Parent);
         p.Remove(c);
         Assert.IsNull(c.Parent);
-        Assert.AreEqual(0,p.Children.Count);
+        Assert.IsEmpty(p.Children);
     }
 
     [TestMethod]
@@ -118,7 +123,10 @@ public class ControlTests : TestBase
     {
         var p = new TestControl{ Dimension=new Rectangle(0,0,20,3)};
         var c = new TestControl{ Dimension=new Rectangle(2,0,5,1), Parent=p};
-        int enter=0, leave=0, move=0; c.OnMouseEnter+=(_,_)=>enter++; c.OnMouseLeave+=(_,_)=>leave++; c.OnMouseMove+=(_,e)=>move++;
+        int enter=0, leave=0, move=0; 
+        c.OnMouseEnter+=(_,_)=>enter++; 
+        c.OnMouseLeave+=(_,_)=>leave++; 
+        c.OnMouseMove+=(_,e)=>move++;
         var me = Substitute.For<IMouseEvent>();
         me.MousePos.Returns(new Point(3,0));
         p.MouseMove(me,new Point(10,0)); // enter
@@ -128,7 +136,7 @@ public class ControlTests : TestBase
         p.MouseMove(me3,new Point(4,0)); // leave
         Assert.AreEqual(1, enter);
         Assert.AreEqual(1, leave);
-        Assert.AreEqual(1, move);
+        Assert.AreEqual(2, move);
     }
 
     [TestMethod]
@@ -165,7 +173,11 @@ public class ControlTests : TestBase
         child.OnChange += (_,_)=>called=true; // trigger something on invalidate
         child.Invalidate();
         // manually process message queue like Application would
-        while(Control.MessageQueue!.Count>0){ var (a,s,e)=Control.MessageQueue.Pop(); a(s,e);}        
+        while(Control.MessageQueue!.TryDequeue(out var work))
+        {
+            var (a,s,e) = work;
+            a(s,e);
+        }
         p.DoUpdate();
         Assert.IsFalse(called); // OnChange not triggered by DoUpdate itself
     }

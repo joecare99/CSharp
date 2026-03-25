@@ -1,0 +1,24 @@
+<UserControl x:Class="SharpHack.Wpf.Controls.InventoryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="300">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical" Margin="5">
+            <CheckBox Content="Auto-Pickup" IsChecked="{Binding AutoPickup, Mode=TwoWay}" />
+            <CheckBox Content="Auto-Equip" IsChecked="{Binding AutoEquip, Mode=TwoWay}" />
+        </StackPanel>
+
+        <GroupBox Header="Inventory" Margin="5">
+            <ListBox ItemsSource="{Binding Inventory}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+    </DockPanel>
+</UserControl>

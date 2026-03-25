@@ -12,9 +12,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="MSTest" Version="4.0.2" />
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="MSTest" />
+		<PackageReference Include="coverlet.collector">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -23,6 +23,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Game_BaseTests\Game_BaseTests.csproj" />
 		<ProjectReference Include="..\Snake_Base\Snake_Base.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="coverlet.collector" Version="8.0.1" />
+	  <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+	  <PackageVersion Update="MSTest" Version="4.1.0" />
 	</ItemGroup>
 
 </Project>

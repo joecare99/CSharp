@@ -56,7 +56,7 @@ public class ApplicationTests : TestBase
         Assert.IsTrue(ran);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(2,1,'X')]
     [DataRow(3,1,'Y')]
     public void Mouse_Event_And_Key_Event_Routed(int mx,int my,char accel)

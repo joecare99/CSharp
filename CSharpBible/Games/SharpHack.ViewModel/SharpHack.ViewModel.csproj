@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
+    <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+  </ItemGroup>
+
+</Project>

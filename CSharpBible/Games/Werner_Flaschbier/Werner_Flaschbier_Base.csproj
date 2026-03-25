@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net462;net472;net48;net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<OutputType>Library</OutputType>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -15,8 +16,8 @@
 	  <Compile Remove="Program.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" Version="4.6.1" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
     <ProjectReference Include="..\Game_Base\Game_Base.csproj" />
@@ -35,5 +36,10 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resource1.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
 	</ItemGroup>
 </Project>

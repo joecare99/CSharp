@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TranspilerLib.Data;
+using TranspilerLib.IEC.Models.Scanner;
 using TranspilerLib.Interfaces;
 using TranspilerLib.Interfaces.Code;
-using TranspilerLib.Models.Scanner;
 
 namespace TranspilerLib.Models.Interpreter;
 

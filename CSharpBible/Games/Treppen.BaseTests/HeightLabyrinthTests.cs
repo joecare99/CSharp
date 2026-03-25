@@ -19,7 +19,7 @@ public class HeightLabyrinthTests
     {
         var hl = new HeightLabyrinth { Dimension = new Rectangle(0, 0, 3, 3) };
         Assert.AreEqual(1, hl.BaseLevel(0, 0));
-        Assert.IsTrue(hl.BaseLevel(2, 2) > hl.BaseLevel(0, 0));
+        Assert.IsGreaterThan(hl.BaseLevel(0, 0), hl.BaseLevel(2, 2));
     }
 
     [TestMethod]

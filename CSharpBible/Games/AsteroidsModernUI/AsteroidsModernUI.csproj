@@ -10,13 +10,26 @@
     <RootNamespace>AsteroidsModern.UI</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="NAudio" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AsteroidsModernEngine\AsteroidsModernEngine.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageVersion Update="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+    <PackageVersion Update="NAudio" Version="2.3.0" />
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Trnsp.Show.Lfm.Models.Components;
 using Trnsp.Show.Lfm.Services;
+using Trnsp.Show.Lfm.Services.Interfaces;
 
 namespace Trnsp.Show.Lfm.ViewModels;
 
@@ -18,6 +19,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly ILfmParserService _parserService;
     private readonly IComponentFactory _componentFactory;
+    private readonly IXamlExporter _xamlExporter;
 
     [ObservableProperty]
     private string _title = "LFM Viewer";
@@ -54,10 +56,11 @@ public partial class MainViewModel : ObservableObject
 
     public ObservableCollection<LfmObjectViewModel> RootObjects { get; } = [];
 
-    public MainViewModel(ILfmParserService parserService, IComponentFactory componentFactory)
+    public MainViewModel(ILfmParserService parserService, IComponentFactory componentFactory, IXamlExporter xamlExporter)
     {
         _parserService = parserService;
         _componentFactory = componentFactory;
+        _xamlExporter = xamlExporter;
     }
 
     [RelayCommand]
@@ -157,34 +160,19 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ExpandAll()
-    {
-        SetExpanded(RootObjects, true);
-    }
+    private void ExpandAll() => SetExpanded(RootObjects, true);
 
     [RelayCommand]
-    private void CollapseAll()
-    {
-        SetExpanded(RootObjects, false);
-    }
+    private void CollapseAll() => SetExpanded(RootObjects, false);
 
     [RelayCommand]
-    private void ZoomIn()
-    {
-        Zoom = Math.Min(4.0, Zoom + 0.25);
-    }
+    private void ZoomIn() => Zoom = Math.Min(4.0, Zoom + 0.25);
 
     [RelayCommand]
-    private void ZoomOut()
-    {
-        Zoom = Math.Max(0.25, Zoom - 0.25);
-    }
+    private void ZoomOut() => Zoom = Math.Max(0.25, Zoom - 0.25);
 
     [RelayCommand]
-    private void ZoomReset()
-    {
-        Zoom = 1.0;
-    }
+    private void ZoomReset() => Zoom = 1.0;
 
     private static void SetExpanded(IEnumerable<LfmObjectViewModel> objects, bool expanded)
     {
@@ -195,13 +183,42 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private static int CountObjects(TranspilerLib.Pascal.Models.LfmObject obj)
+    [RelayCommand]
+    private void ExportXaml()
     {
-        return 1 + obj.Children.Sum(CountObjects);
+        try
+        {
+            if (DesignerRoot == null)
+            {
+                StatusMessage = "Kein XAML exportierbar – kein Designerinhalt vorhanden.";
+                return;
+            }
+
+            var saveDialog = new SaveFileDialog
+            {
+                Filter = "XAML Dateien (*.xaml)|*.xaml|Alle Dateien (*.*)|*.*",
+                Title = "XAML exportieren",
+                FileName = string.IsNullOrWhiteSpace(FilePath)
+                    ? "Export.xaml"
+                    : Path.ChangeExtension(Path.GetFileName(FilePath), ".xaml")
+            };
+
+            if (saveDialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            _xamlExporter.ExportToFile(DesignerRoot, saveDialog.FileName);            
+
+            StatusMessage = $"XAML exportiert: {Path.GetFileName(saveDialog.FileName)}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Fehler beim XAML-Export: {ex.Message}";
+        }
     }
 
-    private static int CountProperties(TranspilerLib.Pascal.Models.LfmObject obj)
-    {
-        return obj.Properties.Count + obj.Children.Sum(CountProperties);
-    }
+    private static int CountObjects(TranspilerLib.Pascal.Models.LfmObject obj) => 1 + obj.Children.Sum(CountObjects);
+
+    private static int CountProperties(TranspilerLib.Pascal.Models.LfmObject obj) => obj.Properties.Count + obj.Children.Sum(CountProperties);
 }

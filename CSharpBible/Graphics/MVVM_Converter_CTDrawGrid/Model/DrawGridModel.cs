@@ -30,7 +30,7 @@ public partial class DrawGridModel : BaseViewModelCT , IDrawGridModel
     /// </summary>
     public void LoadLevel()
     {
-        _actLevel = 0;
+        ActLevel = 0;
         LevelData = LevelDefs.GetLevel(0);
     }
 

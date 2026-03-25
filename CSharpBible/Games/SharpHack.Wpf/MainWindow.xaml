@@ -1,0 +1,74 @@
+<Window x:Class="SharpHack.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SharpHack.Wpf"
+        xmlns:vm="clr-namespace:SharpHack.ViewModel;assembly=SharpHack.ViewModel"
+        xmlns:controls="clr-namespace:SharpHack.Wpf.Controls"
+        xmlns:baseModel="clr-namespace:SharpHack.Base.Model;assembly=SharpHack.Base"
+        mc:Ignorable="d"
+        Title="SharpHack WPF" Height="600" Width="800"
+        d:DataContext="{d:DesignInstance Type=vm:GameViewModel}">
+
+    <Window.InputBindings>
+        <KeyBinding Key="Up" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.North}" />
+        <KeyBinding Key="Down" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.South}" />
+        <KeyBinding Key="Left" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.West}" />
+        <KeyBinding Key="Right" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.East}" />
+        <KeyBinding Key="NumPad8" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.North}" />
+        <KeyBinding Key="NumPad2" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.South}" />
+        <KeyBinding Key="NumPad4" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.West}" />
+        <KeyBinding Key="NumPad6" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.East}" />
+
+        <KeyBinding Key="NumPad7" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.NorthWest}" />
+        <KeyBinding Key="NumPad9" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.NorthEast}" />
+        <KeyBinding Key="NumPad1" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthWest}" />
+        <KeyBinding Key="NumPad3" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthEast}" />
+        <KeyBinding Key="Return" Command="{Binding ExecutePrimaryActionCommand}" />
+        <KeyBinding Key="o" Command="{Binding OpenDoorNearbyCommand}" />
+        <KeyBinding Key="c" Command="{Binding CloseDoorNearbyCommand}" />
+        <KeyBinding Key="NumPad3" Command="{Binding MoveCommand}" CommandParameter="{x:Static baseModel:Direction.SouthEast}" />
+
+        <KeyBinding Key="NumPad5" Command="{Binding WaitCommand}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="260" />
+        </Grid.ColumnDefinitions>
+
+        <controls:MapRendererControl Grid.Row="0" Grid.Column="0"
+                                    DisplayTiles="{Binding DisplayTiles}"
+                                    ViewWidth="{Binding ViewWidth}"
+                                    ViewHeight="{Binding ViewHeight}"
+                                    TileService="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=TileService}" />
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5" Orientation="Vertical">
+            <controls:MiniMapControl MiniMap="{Binding MiniMap}"
+                                    MapWidth="{Binding Map.Width}"
+                                    MapHeight="{Binding Map.Height}"
+                                    Margin="0,0,0,8" />
+
+            <controls:InventoryControl />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="HP: " FontWeight="Bold" />
+            <TextBlock Text="{Binding HP}" />
+            <TextBlock Text="/" />
+            <TextBlock Text="{Binding MaxHP}" Margin="0,0,10,0"/>
+
+            <TextBlock Text="Level: " FontWeight="Bold" />
+            <TextBlock Text="{Binding Level}" />
+        </StackPanel>
+
+        <ListBox Grid.Row="2" Grid.ColumnSpan="2" Height="100" ItemsSource="{Binding Messages}" Background="LightGray" />
+    </Grid>
+</Window>

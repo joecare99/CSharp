@@ -4,6 +4,7 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
 		<UseWPF>true</UseWPF>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -22,7 +23,7 @@
 		<None Remove="App.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />

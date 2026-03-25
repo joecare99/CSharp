@@ -179,31 +179,37 @@ public class WindowPortToGridLines : IValueConverter
             case ArrowList al: 
                 result = new ObservableCollection<FrameworkElement>();
                 foreach (var sh in al)
-                {
-                    var P1 = real2VisP(sh.Start, actPort);
-                    var P2 = real2VisP(sh.End, actPort);
-                    foreach (var el in CreateArrow(al.Pen?.Brush, al.Pen?.Thickness ?? 1, P1, P2))
-                        result.Add(el);
-                }
+                    try
+                    {
+                        var P1 = real2VisP(sh.Start, actPort);
+                        var P2 = real2VisP(sh.End, actPort);
+                        foreach (var el in CreateArrow(al.Pen?.Brush, al.Pen?.Thickness ?? 1, P1, P2))
+                            result.Add(el);
+                    }
+                    catch { }
                 return result;
             case CircleList cl:
                 result = new ObservableCollection<FrameworkElement>();
                 foreach (var sh in cl)
-                {
-                    var P1 = real2VisP(sh.Center, actPort);
-                    var r = Real2VisP(PointF.Add(sh.Center,new SizeF((float)sh.Radius,0)), actPort).X-P1.X;
-                    result.Add(CreateCircle(cl.Pen?.Brush, cl.Pen?.Thickness ?? 1, P1, (float)r));
-                }
+                    try
+                    {
+                        var P1 = real2VisP(sh.Center, actPort);
+                        var r = Real2VisP(PointF.Add(sh.Center, new SizeF((float)sh.Radius, 0)), actPort).X - P1.X;
+                        result.Add(CreateCircle(cl.Pen?.Brush, cl.Pen?.Thickness ?? 1, P1, (float)r));
+                    }
+                    catch { }
                 return result;
             case PolynomeList pl:
                 result = new ObservableCollection<FrameworkElement>();
                 foreach (var sh in pl)
-                {
-                    var p = new PointCollection();
-                    foreach (var pnt in sh.Points)
-                        p.Add(real2VisP(pnt, actPort));
-                    result.Add(CreatePolynome(pl.Pen?.Brush, pl.Pen?.Thickness ?? 1, p));
-                }
+                    try
+                    {
+                        var p = new PointCollection();
+                        foreach (var pnt in sh.Points)
+                            p.Add(real2VisP(pnt, actPort));
+                        result.Add(CreatePolynome(pl.Pen?.Brush, pl.Pen?.Thickness ?? 1, p));
+                    }
+                    catch { }
                 return result;
             default: return new ObservableCollection<FrameworkElement>();
         }

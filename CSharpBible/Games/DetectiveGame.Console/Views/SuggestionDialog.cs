@@ -104,6 +104,6 @@ public class SuggestionDialog : Panel, IPopup
     public void Show()
     {
         Visible = true;
-        (Parent as IGroupControl).BringToFront(this);
+        (Parent as IGroupControl)?.BringToFront(this);
     }
 }

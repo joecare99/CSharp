@@ -21,6 +21,7 @@
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
+		<Compile Remove="ViewModels\Helper\RichTextboxHelper.cs" />
 		<!-- Remove WPF resource image from build action 'Resource'; will use Avalonia asset -->
 		<None Remove="Resources\all64_2.png" />
 	</ItemGroup>
@@ -38,7 +39,9 @@
 		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Avalonia\Avln_CommonDialogs.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Base\Avln_CommonDialogs.Base.csproj" />
+    <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Treat image as Avalonia asset -->
@@ -70,5 +73,8 @@
 			<Generator>PublicSettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="ViewModels\Helper\" />
 	</ItemGroup>
 </Project>

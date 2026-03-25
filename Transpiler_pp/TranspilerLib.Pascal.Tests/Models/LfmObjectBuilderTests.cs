@@ -63,7 +63,7 @@ end";
         Assert.AreEqual("Form1", result.Name);
         Assert.AreEqual("TForm1", result.TypeName);
         Assert.IsFalse(result.IsInherited);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         Assert.AreEqual("Left", result.Properties[0].Name);
         Assert.AreEqual(100, result.Properties[0].Value);
     }
@@ -103,7 +103,7 @@ end";
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         Assert.AreEqual("Caption", result.Properties[0].Name);
         Assert.AreEqual("Hello World", result.Properties[0].Value);
     }
@@ -124,9 +124,9 @@ end";
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(2, result.Properties.Count);
-        Assert.AreEqual(true, result.Properties[0].Value);
-        Assert.AreEqual(false, result.Properties[1].Value);
+        Assert.HasCount(2, result.Properties);
+        Assert.IsTrue((bool?)result.Properties[0].Value);
+        Assert.IsFalse((bool?)result.Properties[1].Value);
     }
 
     [TestMethod]
@@ -148,13 +148,13 @@ end";
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual("Form1", result.Name);
-        Assert.AreEqual(1, result.Properties.Count);
-        Assert.AreEqual(1, result.Children.Count);
+        Assert.HasCount(1, result.Properties);
+        Assert.HasCount(1, result.Children);
         
         var child = result.Children[0];
         Assert.AreEqual("Button1", child.Name);
         Assert.AreEqual("TButton", child.TypeName);
-        Assert.AreEqual(1, child.Properties.Count);
+        Assert.HasCount(1, child.Properties);
         Assert.AreEqual("Caption", child.Properties[0].Name);
         Assert.AreEqual("Click", child.Properties[0].Value);
     }
@@ -174,12 +174,12 @@ end";
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         Assert.AreEqual(LfmPropertyType.Set, result.Properties[0].PropertyType);
         
         var setItems = result.Properties[0].Value as List<string>;
         Assert.IsNotNull(setItems);
-        Assert.AreEqual(2, setItems.Count);
+        Assert.HasCount(2, setItems);
         Assert.AreEqual("biMinimize", setItems[0]);
         Assert.AreEqual("biMaximize", setItems[1]);
     }
@@ -199,7 +199,7 @@ end";
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         Assert.AreEqual("Min", result.Properties[0].Name);
         Assert.AreEqual(-1000, result.Properties[0].Value);
     }
@@ -219,7 +219,7 @@ end";
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         Assert.AreEqual("BorderStyle", result.Properties[0].Name);
         Assert.AreEqual("bsToolWindow", result.Properties[0].Value);
     }
@@ -239,7 +239,7 @@ end";
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         Assert.AreEqual("Font.Name", result.Properties[0].Name);
         Assert.AreEqual("Arial", result.Properties[0].Value);
     }
@@ -267,7 +267,7 @@ end";
         Assert.IsNotNull(result);
         Assert.AreEqual("StatusBar1", result.Name);
         Assert.AreEqual("TStatusBar", result.TypeName);
-        Assert.AreEqual(1, result.Properties.Count);
+        Assert.HasCount(1, result.Properties);
         
         var panelsProperty = result.Properties[0];
         Assert.AreEqual("Panels", panelsProperty.Name);
@@ -275,15 +275,15 @@ end";
         
         var items = panelsProperty.Value as List<LfmItem>;
         Assert.IsNotNull(items);
-        Assert.AreEqual(2, items.Count);
+        Assert.HasCount(2, items);
         
         // Check first item
-        Assert.AreEqual(1, items[0].Properties.Count);
+        Assert.HasCount(1, items[0].Properties);
         Assert.AreEqual("Width", items[0].Properties[0].Name);
         Assert.AreEqual(50, items[0].Properties[0].Value);
         
         // Check second item
-        Assert.AreEqual(1, items[1].Properties.Count);
+        Assert.HasCount(1, items[1].Properties);
         Assert.AreEqual("Width", items[1].Properties[0].Name);
         Assert.AreEqual(80, items[1].Properties[0].Value);
     }

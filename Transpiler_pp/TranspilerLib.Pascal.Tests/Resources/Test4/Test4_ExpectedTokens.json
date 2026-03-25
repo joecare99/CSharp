@@ -8,7 +8,7 @@
   {"Code":"Integer","type":"variable","Level":0},
   {"Code":";","type":"separator","Level":0},
   {"Code":"begin","type":"block","Level":1},
-  {"Code":"// Kommentar","type":"lComment","Level":1},
+  {"Code":"// Kommentar","type":"FLComment","Level":1},
   {"Code":"x","type":"variable","Level":1},
   {"Code":":=","type":"assignment","Level":1},
   {"Code":"$10","type":"number","Level":1},
@@ -22,7 +22,7 @@
   {"Code":"-","type":"operation","Level":1},
   {"Code":"1","type":"number","Level":1},
   {"Code":";","type":"separator","Level":1},
-  {"Code":"{ block comment }","type":"comment","Level":1},
+  {"Code":"{ block comment }","type":"FLComment","Level":1},
   {"Code":"end","type":"block","Level":1},
   {"Code":".","type":"operation","Level":0}
 ]

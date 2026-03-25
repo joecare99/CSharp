@@ -2,6 +2,7 @@
 <Window x:Class="RepoMigrator.App.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Loaded="WindowLoaded"
         Title="Repo Migrator" Height="520" Width="820">
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -35,8 +36,9 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Passwort" Width="80"/>
-                        <PasswordBox Width="240" PasswordChanged="SourcePasswordChanged"/>
+                        <PasswordBox x:Name="SourcePasswordBox" Width="240" PasswordChanged="SourcePasswordChanged"/>
                     </StackPanel>
+                    <Button Content="Quelle testen" Command="{Binding TestSourceCommand}" IsEnabled="{Binding IsIdle}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
                 </StackPanel>
             </GroupBox>
 
@@ -52,6 +54,19 @@
                         <TextBlock Text="URL/Pfad" Width="80"/>
                         <TextBox Width="240" Text="{Binding TargetUrl, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Branch" Width="80"/>
+                        <TextBox Width="240" Text="{Binding TargetBranch}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="User" Width="80"/>
+                        <TextBox Width="240" Text="{Binding TargetUser}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Passwort" Width="80"/>
+                        <PasswordBox x:Name="TargetPasswordBox" Width="240" PasswordChanged="TargetPasswordChanged"/>
+                    </StackPanel>
+                    <Button Content="Ziel testen" Command="{Binding TestTargetCommand}" IsEnabled="{Binding IsIdle}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>

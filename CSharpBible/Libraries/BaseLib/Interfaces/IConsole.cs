@@ -98,6 +98,21 @@ public interface IConsole
     int WindowWidth { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the cursor is visible.
+    /// </summary>
+    bool CursorVisible { get; set; }
+
+    /// <summary>
+    /// Gets the width of the console buffer area.
+    /// </summary>
+    int BufferWidth { get; }
+
+    /// <summary>
+    /// Gets the height of the console buffer area.
+    /// </summary>
+    int BufferHeight { get; }
+
+    /// <summary>
     /// Plays a beep sound through the console speaker.
     /// </summary>
     /// <param name="freq">The frequency of the beep sound in hertz (Hz). Valid range is typically 37 to 32767 Hz.</param>
@@ -134,6 +149,7 @@ public interface IConsole
     /// The next line of characters from the input stream, or an empty string if no input is available.
     /// </returns>
     string ReadLine();
+    void ResetColor();
 
     /// <summary>
     /// Sets the position of the cursor within the console buffer.

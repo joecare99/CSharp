@@ -11,7 +11,7 @@ namespace MVVM_Converter_CTImgGrid.Model
 
         public static FieldDef[]? LevelData { get => _levelData; set => PropertyHelper.SetProperty(ref _levelData,value, OnPropertyChanged); }
         public static int ActLevel { get => actLevel; set => PropertyHelper.SetProperty(ref actLevel, value, OnPropertyChanged); }
-        public static EventHandler<(string, object, object)>? PropertyChanged { get; set; }
+        public static EventHandler<(string, object?, object?)>? PropertyChanged { get; set; }
 
         public static void LoadLevel()
         {

@@ -1,0 +1,1 @@
+﻿var c=@"var c=@;Console.Write(c.Insert(7,'\x22'+c+'\x22'));";Console.Write(c.Insert(7,'\x22'+c+'\x22'));

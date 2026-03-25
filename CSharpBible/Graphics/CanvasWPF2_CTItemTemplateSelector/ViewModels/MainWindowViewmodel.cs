@@ -143,7 +143,7 @@ namespace CanvasWPF2_CTItemTemplateSelector.ViewModel
         [RelayCommand]
         private void DeleteShape(object? o) => throw new NotImplementedException();
 
-        private void Shape_MouseHover(object o)
+        private void Shape_MouseHover(object? o)
 		{
 			if (o is ShapeData obj)
 				DataText = $"{GetNameOfType(obj.SType)} at {obj.point}";

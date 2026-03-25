@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
@@ -11,7 +12,15 @@ public interface IVTEModel
     void Clear();
     void SetTileSize(Size size);
     Size TileSize { get; }
-    SingleTile GetTileDef(Enum? tile);
-    void SetTileDef(Enum tile, string[] lines, FullColor[] colors);
-    Type KeyType { get; }
- }
+    IEnumerable<int> TileKeys { get; }
+    SingleTile GetTileDef(int? tile);
+    void SetTileDef(int tile, string[] lines, FullColor[] colors);
+    TileInfo GetTileInfo(int tile);
+    void SetTileInfo(int tile, TileInfo info);
+    string KeyTypeStr { get; }
+    string TileSetName { get; }
+
+    void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType);
+    void LoadTileFromStream(int tile, Stream stream, EStreamType eStreamType);
+    void SetTileName(string name);
+}

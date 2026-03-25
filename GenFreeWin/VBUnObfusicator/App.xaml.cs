@@ -1,4 +1,4 @@
-﻿using MVVM.View.Extension;
+﻿using MVVM.Views.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using VBUnObfusicator.Models;

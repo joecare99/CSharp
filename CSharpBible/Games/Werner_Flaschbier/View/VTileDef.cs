@@ -14,7 +14,6 @@
 using System;
 using System.Drawing;
 using ConsoleDisplay.View;
-using Werner_Flaschbier_Base.Model;
 
 namespace Werner_Flaschbier_Base.View
 {
@@ -22,7 +21,7 @@ namespace Werner_Flaschbier_Base.View
 	/// <summary>
 	/// Class VTileDef.
 	/// </summary>
-	public class VTileDef :ITileDef {
+	public class VTileDef : TileDefBase, ITileDef {
 		/// <summary>
 		/// The v tile definition string
 		/// </summary>
@@ -84,31 +83,15 @@ namespace Werner_Flaschbier_Base.View
 
         public Size TileSize => new Size(4,2);
 
-        /// <summary>
-        /// Gets the tile string.
-        /// </summary>
-        /// <param name="tile">The tile.</param>
-        /// <returns>System.String[].</returns>
-        private string[] GetTileStr(Tiles? tile) {
-			if ((int?)tile < _vTileDefStr.Length)
-				return _vTileDefStr[(int)tile];
-			else 
-				return _vTileDefStr[_vTileDefStr.Length-1];
-		}
-
 		/// <summary>
 		/// Gets the tile colors.
 		/// </summary>
 		/// <param name="tile">The tile.</param>
 		/// <returns>FullColor[].</returns>
-		private (ConsoleColor fgr, ConsoleColor bgr)[] GetTileColors(Tiles? tile)
+		private (ConsoleColor fgr, ConsoleColor bgr)[] GetTileColors(Enum? tile)
 		{
 			var result = new (ConsoleColor fgr, ConsoleColor bgr)[8];
-			byte[] colDef;
-			if ((int?)tile < _vTileColors.Length)
-                colDef = _vTileColors[(int)tile];
-            else
-				colDef = _vTileColors[_vTileColors.Length - 1];
+			byte[] colDef = GetArrayElement(_vTileColors, tile);
 			for (var i =0;i<result.Length;i++)
             {
 				result[i] =
@@ -117,7 +100,7 @@ namespace Werner_Flaschbier_Base.View
 			return result;
 		}
 
-        public (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile) 
-			=> (GetTileStr((Tiles?)tile), GetTileColors((Tiles?)tile));
+        public override (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) GetTileDef(Enum? tile) 
+			=> (GetArrayElement(_vTileDefStr, tile), GetTileColors((Enum?)tile));
     }
 }

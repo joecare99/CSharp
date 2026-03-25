@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,7 +12,11 @@ public class VTEModel : IVTEModel
 
     public Size TileSize => _data.TileSize;
 
-    public Type KeyType => _data.KeyType;
+    public IEnumerable<int> TileKeys => _data.Keys;
+
+    public string KeyTypeStr => _data.KeyTypeStr;
+
+    public string TileSetName { get; private set; } = "";
 
     public void Clear() => _data.Clear();
 
@@ -20,9 +25,38 @@ public class VTEModel : IVTEModel
     public void SaveToStream(Stream stream, EStreamType eStreamType) => _data.WriteToStream(stream, eStreamType);
 
     public void SetTileSize(Size size) => _data.SetTileSize(size);
+    public void SetTileName(string name) => TileSetName = name;
 
-    public SingleTile GetTileDef(Enum? tile) => _data.GetTileDef(tile);
+    public SingleTile GetTileDef(int? tile) => _data.GetTileDef(tile);
 
-    public void SetTileDef(Enum tile, string[] lines, FullColor[] colors)
+    public void SetTileDef(int tile, string[] lines, FullColor[] colors)
         => _data.SetTileDef(tile, new SingleTile(lines, colors));
+
+    public TileInfo GetTileInfo(int tile) => _data.GetTileInfo(tile);
+
+    public void SetTileInfo(int tile, TileInfo info) => _data.SetTileInfo(tile, info);
+
+    public void SaveTileToStream(int tile, Stream stream, EStreamType eStreamType)
+    {
+        var single = new VisTileData();
+        single.SetTileSize(_data.TileSize);
+        var def = _data.GetTileDef(tile);
+        var info = _data.GetTileInfo(tile);
+        single.SetTileDef(tile, def);
+        single.SetTileInfo(tile, info);
+        single.WriteToStream(stream, eStreamType);
+    }
+
+    public void LoadTileFromStream(int tile, Stream stream, EStreamType eStreamType)
+    {
+        var single = new VisTileData();
+        single.LoadFromStream(stream, eStreamType);
+        var source = tile;
+        if (single.Keys.Count() == 1)
+            source = single.Keys.First();
+        var def = single.GetTileDef(source);
+        var info = single.GetTileInfo(source);
+        _data.SetTileDef(tile, def);
+        _data.SetTileInfo(tile, info);
+    }
 }

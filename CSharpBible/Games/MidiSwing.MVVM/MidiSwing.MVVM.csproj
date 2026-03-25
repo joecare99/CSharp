@@ -9,8 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="NAudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageVersion Update="NAudio" Version="2.3.0" />
   </ItemGroup>
 
 </Project>

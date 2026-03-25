@@ -13,11 +13,11 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Frame Grid.Column="0" Source="/View/VehicleView1.xaml" >
+        <Frame Grid.Column="0" Source="/Views/VehicleView1.xaml" >
 
         </Frame>
       <GridSplitter Width="5" />
-        <Frame Grid.Column="1" Source="/View/PlotFrame.xaml" ClipToBounds="True">
+        <Frame Grid.Column="1" Source="/Views/PlotFrame.xaml" ClipToBounds="True">
 
         </Frame>
     </Grid>

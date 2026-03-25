@@ -1,0 +1,119 @@
+<UserControl
+    x:Class="VTileEdit.WPF.Views.Controls.CharmapView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:VTileEdit.WPF.Views.Controls"
+    xmlns:converters="clr-namespace:VTileEdit.WPF.Converters"
+    xmlns:properties="clr-namespace:VTileEdit.WPF.Properties"
+    x:Name="Root">
+    <UserControl.Resources>
+        <converters:CharacterSelectionConverter x:Key="CharacterSelectionConverter" />
+    </UserControl.Resources>
+    <GroupBox Header="{x:Static properties:Strings.CharMapHeader}">
+        <StackPanel>
+            <TextBlock
+                Margin="0,0,0,8"
+                Foreground="Gray"
+                Text="{x:Static properties:Strings.CharMapHint}" />
+            <ScrollViewer Height="140">
+                <ItemsControl ItemsSource="{Binding ItemsSource, ElementName=Root}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="32" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Width="20"
+                                Height="30"
+                                Margin="2"
+                                Command="{Binding Command, RelativeSource={RelativeSource AncestorType={x:Type controls:CharmapView}}}"
+                                CommandParameter="{Binding}"
+                                Content="{Binding}"
+                                FontFamily="{Binding DataContext.SelectedFontFamily, RelativeSource={RelativeSource AncestorType=controls:CharmapView}}"
+                                FontSize="14"
+                                ToolTip="{Binding}">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="#33000000" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="Foreground" Value="Black" />
+                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                                        <Setter Property="RenderTransform">
+                                            <Setter.Value>
+                                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard x:Name="GrowStoryboard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                                To="2"
+                                                                Duration="0:0:0.2" />
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                                To="2"
+                                                                Duration="0:0:0.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <BeginStoryboard x:Name="ShrinkStoryboard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                                To="1"
+                                                                Duration="0:0:0.2" />
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                                To="1"
+                                                                Duration="0:0:0.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.ExitActions>
+                                            </Trigger>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource CharacterSelectionConverter}">
+                                                        <Binding />
+                                                        <Binding
+                                                            FallbackValue=" "
+                                                            Path="DataContext.SelectedGlyph.Character"
+                                                            RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                            TargetNullValue=" " />
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="#FF5A9BD8" />
+                                                <Setter Property="Foreground" Value="White" />
+                                                <Setter Property="BorderBrush" Value="#FF2E6DA4" />
+                                                <Setter Property="BorderThickness" Value="2" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

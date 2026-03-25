@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace ConsoleDisplay.View {
@@ -43,6 +44,16 @@ namespace ConsoleDisplay.View {
         /// <param name="tile">The tile.</param>
         /// <returns>T.</returns>
         protected static T GetArrayElement<T>(T[] array, Enum? tile) => Tile2Int(tile) < array.Length ? array[Tile2Int(tile)] : array[^1];
+
+        /// <summary>
+        /// Gets the indexed array element.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array">The array.</param>
+        /// <param name="tile">The tile.</param>
+        /// <returns>T.</returns>
+        protected static T GetIdxArrayElement<T>(T[] array, Enum? tile, IDictionary<int, int> idx) => idx.TryGetValue(Tile2Int(tile), out var i) && i < array.Length ? array[i] : array[^1];
+          
 
         /// <summary>
         /// Tile2s the int.

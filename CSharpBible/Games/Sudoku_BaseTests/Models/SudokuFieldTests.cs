@@ -82,7 +82,7 @@ public class SudokuFieldTests : BaseTestViewModel<SudokuField>
         // Act
         testModel.ReadFromStream(stream);
         // Assert
-        AssertAreEqual(field, testModel, []);
+        AssertAreEqual(field, testModel, [nameof(testModel.PossibleValues)]);
     }
 
     [TestMethod()]

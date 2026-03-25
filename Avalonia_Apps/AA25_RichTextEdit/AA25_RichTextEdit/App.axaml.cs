@@ -1,9 +1,11 @@
+using AA25_RichTextEdit.ViewModels;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avln_CommonDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using AA25_RichTextEdit.ViewModels;
 
 namespace AA25_RichTextEdit;
 
@@ -28,8 +30,16 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        var topLevelAccessor = new TopLevelAccessor();
+        services.AddSingleton(topLevelAccessor);
         services.AddSingleton<RichTextEditViewModel>();
         services.AddTransient<MainWindow>();
         services.AddTransient<Views.RichTextEditView>();
+        services.AddAvaloniaCommonDialogs(() => topLevelAccessor.Current);
     }
+}
+
+public sealed class TopLevelAccessor
+{
+    public TopLevel? Current { get; set; }
 }

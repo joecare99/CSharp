@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:GenFreeWpf.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vex="clr-namespace:MVVM.View.Extension;assembly=MVVM_BaseLib"
+    xmlns:vex="clr-namespace:MVVM.Views.Extension;assembly=MVVM_BaseLib"
     xmlns:vm="clr-namespace:GenFree.ViewModels.Interfaces;assembly=GenFreeUIItfs"
     DataContext="{vex:IoC2 Type=vm:IAdresseViewModel}"
     mc:Ignorable="d">

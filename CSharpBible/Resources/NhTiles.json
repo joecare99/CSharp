@@ -1,0 +1,280 @@
+{
+  "tiles": {
+    "Player": {
+      "id": 1,
+      "name": "Player",
+      "chars": [" @  ","/|\\ "],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Spielerfigur"
+    },
+    "Goblin": {
+      "id": 60,
+      "name": "Goblin",
+      "chars": [" g g","(o )"],
+      "colors": [["0x0A","0x0A","0x0A","0x0A"],["0x0A","0x0A","0x0A","0x0A"]],
+      "fg/bg": "Hellgrün",
+      "desc": "Kleiner Gegner"
+    },
+    "Archaeologist": {
+      "id": 61,
+      "name": "Archaeologist",
+      "chars": [" A  ","/\\  "],
+      "colors": [["0x0E","0x0E","0x0E","0x0E"],["0x0E","0x0E","0x0E","0x0E"]],
+      "fg/bg": "Gelb",
+      "desc": "Beruf: Archäologe"
+    },
+    "Wizard": {
+      "id": 62,
+      "name": "Wizard",
+      "chars": [" ^  ","/|\\ "],
+      "colors": [["0x09","0x09","0x09","0x09"],["0x09","0x09","0x09","0x09"]],
+      "fg/bg": "Blau",
+      "desc": "Zauberer / Magier"
+    },
+    "Sword": {
+      "id": 100,
+      "name": "Sword",
+      "chars": [" /\\ "," || "],
+      "colors": [["0x07","0x07","0x07","0x07"],["0x07","0x07","0x07","0x07"]],
+      "fg/bg": "Hellgrau",
+      "desc": "Waffe: Schwert"
+    },
+    "LeatherArmor": {
+      "id": 101,
+      "name": "LeatherArmor",
+      "chars": ["[==]"," | |"],
+      "colors": [["0x06","0x06","0x06","0x06"],["0x06","0x06","0x06","0x06"]],
+      "fg/bg": "Braun",
+      "desc": "Lederrüstung"
+    },
+    "Floor": {
+      "id": 200,
+      "name": "Floor",
+      "chars": ["....","...."],
+      "colors": [["0x07","0x07","0x07","0x07"],["0x07","0x07","0x07","0x07"]],
+      "fg/bg": "Hellgrau",
+      "desc": "Boden"
+    },
+    "Corridor": {
+      "id": 201,
+      "name": "Corridor",
+      "chars": ["::::","::::"],
+      "colors": [["0x08","0x08","0x08","0x08"],["0x08","0x08","0x08","0x08"]],
+      "fg/bg": "Dunkelgrau",
+      "desc": "Gang"
+    },
+    "Wall_NS": {
+      "id": 300,
+      "name": "Wall_NS",
+      "mask": 5,
+      "chars": ["│  │","│  │"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Vertikale Wand (N und S verbunden)"
+    },
+    "Wall_EW": {
+      "id": 301,
+      "name": "Wall_EW",
+      "mask": 10,
+      "chars": ["────","────"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Horizontale Wand (E und W verbunden)"
+    },
+    "Wall_NE": {
+      "id": 302,
+      "name": "Wall_NE",
+      "mask": 3,
+      "chars": ["───┐","   │"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Ecke: Verbindung nach N und E (Nord‑Ost)"
+    },
+    "Wall_NW": {
+      "id": 303,
+      "name": "Wall_NW",
+      "mask": 9,
+      "chars": ["┌───","│   "],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Ecke: Verbindung nach N und W (Nord‑West)"
+    },
+    "Wall_SE": {
+      "id": 304,
+      "name": "Wall_SE",
+      "mask": 6,
+      "chars": ["   │","┘───"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Ecke: Verbindung nach S und E (Süd‑Ost)"
+    },
+    "Wall_SW": {
+      "id": 305,
+      "name": "Wall_SW",
+      "mask": 12,
+      "chars": ["│   ","└───"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Ecke: Verbindung nach S und W (Süd‑West)"
+    },
+    "Wall_T_N": {
+      "id": 306,
+      "name": "Wall_T_N",
+      "mask": 11,
+      "chars": ["┬──┬","  │ "],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "T‑Verbindung mit offener Seite nach S (verbindet N,E,W)"
+    },
+    "Wall_T_S": {
+      "id": 307,
+      "name": "Wall_T_S",
+      "mask": 14,
+      "chars": ["  │ ","┴──┴"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "T‑Verbindung mit offener Seite nach N (verbindet S,E,W)"
+    },
+    "Wall_T_E": {
+      "id": 308,
+      "name": "Wall_T_E",
+      "mask": 7,
+      "chars": ["│  │","┤  ┤"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "T‑Verbindung mit offener Seite nach W (verbindet N,S,E)"
+    },
+    "Wall_T_W": {
+      "id": 309,
+      "name": "Wall_T_W",
+      "mask": 13,
+      "chars": ["┤  ┤","│  │"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "T‑Verbindung mit offener Seite nach E (verbindet N,S,W)"
+    },
+    "Wall_Cross": {
+      "id": 310,
+      "name": "Wall_Cross",
+      "mask": 15,
+      "chars": ["┼┼┼┼","┼┼┼┼"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß auf Schwarz",
+      "desc": "Kreuzung (N,E,S,W verbunden)"
+    }
+  }
+    "Door_Closed": {
+      "id": 400,
+      "name": "Door_Closed",
+      "chars": ["+--+","|  |"],
+      "colors": [["0x0E","0x0E","0x0E","0x0E"],["0x0E","0x0E","0x0E","0x0E"]],
+      "fg/bg": "Gelb",
+      "desc": "Geschlossene Tür"
+    },
+    "Door_Open": {
+      "id": 401,
+      "name": "Door_Open",
+      "chars": ["+  +","|\\/|"],
+      "colors": [["0x0E","0x0E","0x0E","0x0E"],["0x0E","0x0E","0x0E","0x0E"]],
+      "fg/bg": "Gelb",
+      "desc": "Offene Tür"
+    },
+    "Door_Locked": {
+      "id": 402,
+      "name": "Door_Locked",
+      "chars": ["+==+","|##|"],
+      "colors": [["0x04","0x04","0x04","0x04"],["0x04","0x04","0x04","0x04"]],
+      "fg/bg": "Rot",
+      "desc": "Verschlossene Tür"
+    },
+    "Stairs_Up": {
+      "id": 500,
+      "name": "Stairs_Up",
+      "chars": [" /\\ ","/__\\"],
+      "colors": [["0x0B","0x0B","0x0B","0x0B"],["0x0B","0x0B","0x0B","0x0B"]],
+      "fg/bg": "Cyan",
+      "desc": "Treppe nach oben"
+    },
+    "Stairs_Down": {
+      "id": 501,
+      "name": "Stairs_Down",
+      "chars": ["\\__/"," \\/ "],
+      "colors": [["0x0B","0x0B","0x0B","0x0B"],["0x0B","0x0B","0x0B","0x0B"]],
+      "fg/bg": "Cyan",
+      "desc": "Treppe nach unten"
+    },
+    "Chest_Closed": {
+      "id": 600,
+      "name": "Chest_Closed",
+      "chars": ["____","|__|"],
+      "colors": [["0x0E","0x0E","0x0E","0x0E"],["0x0E","0x0E","0x0E","0x0E"]],
+      "fg/bg": "Gelb",
+      "desc": "Geschlossene Truhe"
+    },
+    "Chest_Open": {
+      "id": 601,
+      "name": "Chest_Open",
+      "chars": ["____","\\__\\"],
+      "colors": [["0x0E","0x0E","0x0E","0x0E"],["0x0E","0x0E","0x0E","0x0E"]],
+      "fg/bg": "Gelb",
+      "desc": "Geöffnete Truhe"
+    },
+    "Potion": {
+      "id": 700,
+      "name": "Potion",
+      "chars": [" __ ","(==)"],
+      "colors": [["0x0D","0x0D","0x0D","0x0D"],["0x0D","0x0D","0x0D","0x0D"]],
+      "fg/bg": "Magenta",
+      "desc": "Trank"
+    },
+    "Scroll": {
+      "id": 701,
+      "name": "Scroll",
+      "chars": [" ~~~"," ~~~"],
+      "colors": [["0x0F","0x0F","0x0F","0x0F"],["0x0F","0x0F","0x0F","0x0F"]],
+      "fg/bg": "Weiß",
+      "desc": "Schriftrolle"
+    },
+    "Trap": {
+      "id": 800,
+      "name": "Trap",
+      "chars": ["^^^^","^^^^"],
+      "colors": [["0x04","0x04","0x04","0x04"],["0x04","0x04","0x04","0x04"]],
+      "fg/bg": "Rot",
+      "desc": "Falle"
+    },
+    "Water": {
+      "id": 900,
+      "name": "Water",
+      "chars": ["~~~~","~~~~"],
+      "colors": [["0x09","0x09","0x09","0x09"],["0x09","0x09","0x09","0x09"]],
+      "fg/bg": "Blau",
+      "desc": "Wasser"
+    },
+    "Lava": {
+      "id": 901,
+      "name": "Lava",
+      "chars": ["^^^^","~~~~"],
+      "colors": [["0x0C","0x0C","0x0C","0x0C"],["0x0C","0x0C","0x0C","0x0C"]],
+      "fg/bg": "Hellrot",
+      "desc": "Lava"
+    },
+    "Altar": {
+      "id": 1000,
+      "name": "Altar",
+      "chars": [" +  ","/|\\ "],
+      "colors": [["0x0E","0x0E","0x0E","0x0E"],["0x0E","0x0E","0x0E","0x0E"]],
+      "fg/bg": "Gelb",
+      "desc": "Altar"
+    },
+    "Fountain": {
+      "id": 1100,
+      "name": "Fountain",
+      "chars": [" ~  ","/~~\\"],
+      "colors": [["0x09","0x09","0x09","0x09"],["0x09","0x09","0x09","0x09"]],
+      "fg/bg": "Blau",
+      "desc": "Brunnen"
+    }
+  }
+}

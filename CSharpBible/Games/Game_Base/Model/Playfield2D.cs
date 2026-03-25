@@ -109,7 +109,7 @@ public class Playfield2D<T>: IPlayfield2D<T>, IHasChildren<T> where T : class
                         po.Parent = (IHasChildren<object>)this;
 #else
                     if (value is IParentedObject po && po.GetParent() != this)
-                        po.SetParent((IHasChildren<object>)this);
+                        po.SetParent(this);
 #endif
                     OnDataChanged?.Invoke(this, ("Items", null, value));
                 }

@@ -27,6 +27,9 @@ public partial class TForm : LfmComponentBase
     [ObservableProperty]
     private bool _showHint;
 
+    [ObservableProperty]
+    private WeakReference<TMainMenu>? _menu;
+
     public TForm()
     {
         Color = Color.FromRgb(240, 240, 240); // clBtnFace
@@ -57,6 +60,9 @@ public partial class TForm : LfmComponentBase
                 break;
             case "showhint":
                 ShowHint = ConvertToBool(value);
+                break;
+            case "menu":
+                ObjectResolver.ResolveOrDefer(value as string,this,(s)=>Menu = new WeakReference<TMainMenu>(s as TMainMenu));
                 break;
             default:
                 base.ApplyProperty(name, value);

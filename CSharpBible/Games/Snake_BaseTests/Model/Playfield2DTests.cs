@@ -12,9 +12,9 @@
 // <summary></summary>
 // ***********************************************************************
 using BaseLib.Interfaces;
-using Game_Base.Model;
-using Game_Base.Model.Interfaces;
-using Game_Base.Model.Tests;
+using Game.Model;
+using Game.Model.Interfaces;
+using Game.Model.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Snake_Base.Models.Interfaces;
 using System;
@@ -110,7 +110,7 @@ namespace Snake_Base.Models.Tests
         /// <summary>
         /// Defines the test method AddItemTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("AddData")]
         [DataRow("Nothing", new int[] { 0, 0 }, "Snake_Base.Models.Tests.TestItem", new string[] {
@@ -136,7 +136,7 @@ namespace Snake_Base.Models.Tests
         /// <summary>
         /// Defines the test method AddItemTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("AddData")]
         [DataRow("Nothing", new int[] { 0, 0 }, "Snake_Base.Models.Tests.TestItem", new string[] { 
@@ -160,22 +160,22 @@ namespace Snake_Base.Models.Tests
         /// <summary>
         /// Defines the test method RemoveItemTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("RemoveData")]
         public void RemoveItemTest()
         {
             CreateTestData();
-            Assert.AreEqual(true,testPlayfield!.RemoveItem(_oApple));
-            Assert.AreEqual(null, testPlayfield[new Point(2,2)]);
-            Assert.AreEqual(false, testPlayfield.RemoveItem(_oApple));
+            Assert.IsTrue(testPlayfield!.RemoveItem(_oApple));
+            Assert.IsNull(testPlayfield[new Point(2,2)]);
+            Assert.IsFalse(testPlayfield.RemoveItem(_oApple));
             
         }
 
         /// <summary>
         /// Defines the test method GetItemsTest.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("GetItem")]
         [DataRow("00-Nothing", new int[] { 0, 0 }, "" )]

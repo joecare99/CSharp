@@ -1,6 +1,5 @@
 ﻿<Project>
 	<Import Project="..\Games_net.props" />
-	<Import Project="..\Packages.props" />
 	<PropertyGroup>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
@@ -16,5 +15,9 @@
   </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Update="MSTest" Version="4.1.0" />
   </ItemGroup>
 </Project>

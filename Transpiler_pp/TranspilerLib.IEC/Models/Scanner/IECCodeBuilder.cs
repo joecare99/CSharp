@@ -2,8 +2,9 @@
 using System.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models.Scanner;
 
-namespace TranspilerLib.Models.Scanner;
+namespace TranspilerLib.IEC.Models.Scanner;
 
 public class IECCodeBuilder : CodeBuilder
 {
@@ -47,7 +48,7 @@ public class IECCodeBuilder : CodeBuilder
                     var td = tokenData;
                     td.Level = data.actualBlock.Level - 1;
                     base.OnToken(td, data);
-                    data.actualBlock = data.actualBlock.Parent;
+                    data.actualBlock = data.actualBlock.Parent!;
                 }
                 break;
             case "(" when data.actualBlock.Type is CodeBlockType.Variable or CodeBlockType.Function:
@@ -93,7 +94,7 @@ public class IECCodeBuilder : CodeBuilder
                     var td = tokenData;
                     td.type = CodeBlockType.Block;
                     td.Level = tokenData.Level - 1;
-                    while (data.actualBlock.Level > tokenData.Level)
+                    while (data.actualBlock?.Level > tokenData.Level && data.actualBlock.Parent!=null)
                         data.actualBlock = data.actualBlock.Parent;
                     base.OnToken(td, data);
                 }
@@ -211,7 +212,7 @@ public class IECCodeBuilder : CodeBuilder
                     td.Level = data.actualBlock.Level - 1;
                     td.type = CodeBlockType.Block;
                     base.OnToken(td, data);
-                    while (data.actualBlock.Level > tokenData.Level)
+                    while (data.actualBlock?.Level > tokenData.Level && data.actualBlock.Parent!= null)
                         data.actualBlock = data.actualBlock.Parent;
                 }
                 break;
@@ -245,10 +246,10 @@ public class IECCodeBuilder : CodeBuilder
                     else
                     if (block.Type == CodeBlockType.Operation
                         && new[] { "*", "/" }.Contains(block.Code)
-                        && new[] { "+", "-" }.Contains(block.Parent.Code)
+                        && new[] { "+", "-" }.Contains(block.Parent?.Code)
                         && new[] { "+", "-" }.Contains(td.Code))
                     {
-                        data.actualBlock.Parent = block.Parent.Parent;
+                        data.actualBlock.Parent = block.Parent!.Parent;
                         block.Parent.Parent = data.actualBlock;
                     }
                     else
