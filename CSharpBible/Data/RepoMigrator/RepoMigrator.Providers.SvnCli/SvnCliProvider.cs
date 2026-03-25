@@ -29,6 +29,48 @@ public sealed class SvnCliProvider : IVersionControlProvider
         return Task.CompletedTask;
     }
 
+    public async Task<RepositoryProbeResult> ProbeAsync(RepositoryEndpoint endpoint, RepositoryAccessMode accessMode, CancellationToken ct)
+    {
+        try
+        {
+            _endpoint = endpoint;
+            _wcPath = IsRemote(endpoint.UrlOrPath) ? null : Path.GetFullPath(endpoint.UrlOrPath);
+
+            var target = IsRemote(endpoint.UrlOrPath) ? endpoint.UrlOrPath : _wcPath!;
+            var infoXml = await RunSvnAsync($"info --xml \"{target}\"", workingDir: null, ct);
+            var doc = XDocument.Parse(infoXml);
+            var entry = doc.Root?.Element("entry");
+            var url = entry?.Element("url")?.Value;
+            var root = entry?.Element("repository")?.Element("root")?.Value;
+            var revision = entry?.Attribute("revision")?.Value;
+
+            var details = new List<string>();
+            if (!string.IsNullOrWhiteSpace(url))
+                details.Add($"URL: {url}");
+            if (!string.IsNullOrWhiteSpace(root))
+                details.Add($"Repository Root: {root}");
+            if (!string.IsNullOrWhiteSpace(revision))
+                details.Add($"Revision: {revision}");
+            if (accessMode == RepositoryAccessMode.Write)
+                details.Add("Hinweis: Der Test bestätigt Erreichbarkeit. Schreibrechte werden endgültig erst beim Commit geprüft.");
+
+            return new RepositoryProbeResult
+            {
+                Success = true,
+                Summary = "SVN-Repository ist erreichbar.",
+                Details = details
+            };
+        }
+        catch (Exception ex)
+        {
+            return new RepositoryProbeResult
+            {
+                Success = false,
+                Summary = ex.Message
+            };
+        }
+    }
+
     public async Task<IReadOnlyList<ChangeSetInfo>> GetChangeSetsAsync(ChangeSetQuery query, CancellationToken ct)
     {
         var repoUrl = await GetRepositoryUrlAsync(ct);
@@ -85,20 +127,22 @@ public sealed class SvnCliProvider : IVersionControlProvider
         await RunSvnAsync($"export -r {changeSetId} \"{repoUrl}\" \"{workDir}\" --force", workingDir: null, ct);
     }
 
-    public async Task InitializeTargetAsync(string targetPath, bool emptyInit, CancellationToken ct)
+    public async Task InitializeTargetAsync(RepositoryEndpoint endpoint, bool emptyInit, CancellationToken ct)
     {
-        if (_endpoint is null)
-            throw new InvalidOperationException("Endpoint nicht gesetzt. OpenAsync zuerst aufrufen.");
+        _endpoint = endpoint;
 
-        Directory.CreateDirectory(targetPath);
-        _wcPath = Path.GetFullPath(targetPath);
+        _wcPath = IsRemote(endpoint.UrlOrPath)
+            ? Path.Combine(Path.GetTempPath(), "RepoMigrator", "svn-target", Guid.NewGuid().ToString("N"))
+            : Path.GetFullPath(endpoint.UrlOrPath);
 
-        if (IsRemote(_endpoint.UrlOrPath))
+        Directory.CreateDirectory(_wcPath);
+
+        if (IsRemote(endpoint.UrlOrPath))
         {
             // Falls targetPath noch keine WC ist: checkout
             if (!await IsWorkingCopyAsync(_wcPath, ct))
             {
-                await RunSvnAsync($"checkout \"{_endpoint.UrlOrPath}\" \"{_wcPath}\"", workingDir: null, ct);
+                await RunSvnAsync($"checkout \"{endpoint.UrlOrPath}\" \"{_wcPath}\"", workingDir: null, ct);
             }
         }
         else
